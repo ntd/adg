@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY README SYSTEM "../README">
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>ADG Reference Manual</title>
+    <releaseinfo>for ADG &version;</releaseinfo>
+  </bookinfo>
+
+  <part>
+    <title>ADG Overview</title>
+    <chapter>
+      <title>Introduction</title>
+
+      <para>
+      The overall description of what it is the ADG library is well reported in the
+      README file.
+      </para>
+
+      <synopsis>&README;</synopsis>
+    </chapter>
+    <chapter>
+      <title>Compiling the ADG library</title>
+
+      <section>
+        <title>Requirements</title>
+        <para>
+        The ADG library is strongly based on the GObject framework (included inside
+        the GLib abstraction layer) and uses Cairo as rendering engine. Both the
+        libraries are required.
+        </para>
+
+        <variablelist>
+
+        <varlistentry>
+        <term><ulink url="http://www.gtk.org/">GLib</ulink></term>
+        <listitem><para>Required v.2.10 or later</para></listitem>
+        </varlistentry>
+
+        <varlistentry>
+        <term><ulink url="http://cairographics.org/">Cairo</ulink></term>
+        <listitem><para>Required v.1.0 or later</para></listitem>
+        </varlistentry>
+
+        </variablelist>
+
+        <para>In order to compile the adg-demo demonstration program, you need also
+        the Gtk+-2.0 user interface library.</para>
+
+        <variablelist>
+
+        <varlistentry>
+        <term><ulink url="http://www.gtk.org/">Gtk+-2.0</ulink></term>
+        <listitem><para>Required v.2.8 or later</para></listitem>
+        </varlistentry>
+
+        </variablelist>
+      </section>
+    </chapter>
+  </part>
+
+  <part>
+    <title>ADG Core Reference</title>
+    <xi:include href="xml/adgpair.xml"/>
+    <xi:include href="xml/adgmatrix.xml"/>
+    <xi:include href="xml/adgstyle.xml"/>
+    <xi:include href="xml/adgutil.xml"/>
+  </part>
+
+  <part>
+    <title>ADG Objects</title>
+    <chapter>
+      <title>Object Hierarchy</title>
+      <xi:include href="xml/tree_index.sgml"/>
+    </chapter>
+    <chapter>
+      <title>Fundamental Objects</title>
+      <xi:include href="xml/adgmodel.xml"/>
+      <xi:include href="xml/adgentity.xml"/>
+      <xi:include href="xml/adgcontainer.xml"/>
+      <xi:include href="xml/adgcanvas.xml"/>
+      <xi:include href="xml/adgdim.xml"/>
+    </chapter>
+    <chapter>
+      <title>Implemented Entities</title>
+      <xi:include href="xml/adgpath.xml"/>
+      <xi:include href="xml/adgldim.xml"/>
+    </chapter>
+  </part>
+
+  <index>
+    <title>Index</title>
+  </index>
+    
+</book>

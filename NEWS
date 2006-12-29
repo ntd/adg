@@ -1,0 +1,12 @@
+ADG v.0.2.0 released
+====================
+ 
+This is the first public release of the ADG library. It is in a early stage of
+developement, but the goal is quite ambitious!
+  
+The ADG library is based on Cairo (http://cairographics.org) and glib-2.0
+(http://www.gtk.org), found in any decent linux system.  Furthermore, I based the
+container/child relationship on the little gcontainer library
+(http://sourceforge.net/projects/gcontainer/): you must download and install it first.
+
+A lot of help needed ... feel free to contact me.

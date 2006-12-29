@@ -1,0 +1,40 @@
+General Information
+===================
+
+The ADG library (Automatic Drawing Generation) is a set of functions focused
+on automating the drawing of mechanical parts.
+
+It is not a CAD system but a GObject based library providing a non-interactive
+Cairo canvas where you can put common CAD entities, such as paths, xatches and
+quotes, to create your technical drawings.
+
+If you want to develop an application that needs to show and print drawings,
+also complex, where some data change but the overall design is ever the same,
+the ADG library is for you. In production factories, this is often a good
+choice and can help to greatly improve the production in technical offices.
+
+You can reach similar targets using parametric CADs, but a custom application
+provides the following benefits:
+
+o More customizable
+o Quicker and not so bloated as a parametric CAD
+o Can be easely connected to a database
+o The drawings are generated on-fly: this feature can be used, for instance,
+  in a dynamic site throught a web-based application
+
+More informations can be found in docs/reference/html/index.html.
+
+Installation
+============
+
+The adg library has the following dependencies:
+
+o glib-2.10.1 or later (http://www.gtk.org)
+o gcontainer v.1.99.1 or later (http://sourceforge.net/projects/gcontainer)
+o cairo-1.0 or later (http://cairographics.org)
+
+If you want some demo programs to be built, working in UI context, you
+o gtk+ v.2.8 or later (http://www.gtk.org/)
+
+
+See the file 'INSTALL' for further details.

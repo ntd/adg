@@ -1,0 +1,15 @@
+#include <adg/adg.h>
+
+adg_arrow_style_get_type
+adg_canvas_get_type
+adg_container_get_type
+adg_dim_get_type
+adg_dim_style_get_type
+adg_entity_get_type
+adg_font_style_get_type
+adg_ldim_get_type
+adg_line_style_get_type
+adg_matrix_get_type
+adg_model_get_type
+adg_pair_get_type
+adg_path_get_type
