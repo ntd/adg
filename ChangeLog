@@ -1,8 +1,12 @@
+2006-12-29  Fontana Nicola  <ntd@users.sourceforge.net>
+
+	* configure.ac: bumped version to 0.2.1.
+	* docs/adg-docs.xml: updated href to adgmodel.xml.
+	* First subversion commit on sourceforge.
+
 2006-12-27  Fontana Nicola  <ntd@users.sourceforge.net>
 
 	* NEWS: updated.
-	* configure.ac: bumped version to 0.2.1.
-	* docs/adg-docs.xml: updated href to adgmodel.xml.
 
 2006-12-22  Fontana Nicola  <ntd@users.sourceforge.net>
 

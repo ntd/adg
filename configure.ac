@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([adg], [0.2.0],
+AC_INIT([adg], [0.2.1],
         [ntd@users.sourceforge.net],
         [adg])
 AC_CONFIG_SRCDIR(README)
