@@ -79,15 +79,19 @@
     <chapter>
       <title>Fundamental Objects</title>
       <xi:include href="xml/adgmodel.xml"/>
-      <xi:include href="xml/adgentity.xml"/>
-      <xi:include href="xml/adgcontainer.xml"/>
       <xi:include href="xml/adgcanvas.xml"/>
+    </chapter>
+    <chapter>
+      <title>Abstract Base Classes</title>
+      <xi:include href="xml/adgcontainer.xml"/>
+      <xi:include href="xml/adgentity.xml"/>
       <xi:include href="xml/adgdim.xml"/>
     </chapter>
     <chapter>
-      <title>Implemented Entities</title>
+      <title>Entities</title>
       <xi:include href="xml/adgpath.xml"/>
       <xi:include href="xml/adgldim.xml"/>
+      <xi:include href="xml/adgadim.xml"/>
     </chapter>
   </part>
 

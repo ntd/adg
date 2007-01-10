@@ -1,5 +1,6 @@
 #include <adg/adg.h>
 
+adg_adim_get_type
 adg_arrow_style_get_type
 adg_canvas_get_type
 adg_container_get_type

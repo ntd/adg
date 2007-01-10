@@ -33,7 +33,7 @@ o glib-2.10.1 or later (http://www.gtk.org)
 o gcontainer v.1.99.1 or later (http://sourceforge.net/projects/gcontainer)
 o cairo-1.0 or later (http://cairographics.org)
 
-If you want some demo programs to be built, working in UI context, you
+If you want some demo programs to be built, working in UI context, you need:
 o gtk+ v.2.8 or later (http://www.gtk.org/)
 
 

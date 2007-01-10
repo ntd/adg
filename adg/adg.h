@@ -1,6 +1,7 @@
 #ifndef __ADG_H__
 #define __ADG_H__
 
+#include <adg/adgadim.h>
 #include <adg/adgcanvas.h>
 #include <adg/adgcontainer.h>
 #include <adg/adgdim.h>

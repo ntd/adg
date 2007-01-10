@@ -326,3 +326,27 @@ ADG_LDIM_CLASS
 ADG_IS_LDIM_CLASS
 ADG_LDIM_GET_CLASS
 </SECTION>
+
+<SECTION>
+<FILE>adgadim</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgADim
+<SUBSECTION>
+adg_adim_new
+adg_adim_new_full
+adg_adim_new_full_explicit
+<SUBSECTION>
+adg_adim_set_pos
+adg_adim_set_pos_explicit
+adg_adim_get_direction
+adg_adim_set_direction
+<SUBSECTION Standard>
+AdgADimClass
+adg_adim_get_type
+ADG_ADIM
+ADG_IS_ADIM
+ADG_TYPE_ADIM
+ADG_ADIM_CLASS
+ADG_IS_ADIM_CLASS
+ADG_ADIM_GET_CLASS
+</SECTION>
