@@ -33,26 +33,6 @@ struct _AdgADimClass
 GType           adg_adim_get_type               (void) G_GNUC_CONST;
 
 AdgEntity *     adg_adim_new                    (void);
-AdgEntity *     adg_adim_new_full               (const AdgPair  *ref1,
-                                                 const AdgPair  *ref2,
-                                                 double          direction,
-                                                 const AdgPair  *pos);
-AdgEntity *     adg_adim_new_full_explicit      (double          ref1_x,
-                                                 double          ref1_y,
-                                                 double          ref2_x,
-                                                 double          ref2_y,
-                                                 double          direction,
-                                                 double          pos_x,
-                                                 double          pos_y);
-
-void            adg_adim_set_pos                (AdgADim        *adim,
-                                                 const AdgPair  *pos);
-void            adg_adim_set_pos_explicit       (AdgADim        *adim,
-                                                 double          pos_x,
-                                                 double          pos_y);
-double          adg_adim_get_direction          (AdgADim        *adim);
-void            adg_adim_set_direction          (AdgADim        *adim,
-                                                 double          direction);
 
 G_END_DECLS
 

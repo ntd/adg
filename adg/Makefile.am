@@ -9,6 +9,7 @@ AM_LDFLAGS =			@GCONTAINER_LIBS@ \
 
 # file groups
 adg_h_sources =			adg.h \
+				adgadim.h \
 				adgcanvas.h \
 				adgcontainer.h \
 				adgdim.h \
@@ -26,7 +27,8 @@ adg_private_h_sources =		adgintl.h \
 				adgpathprivate.h
 adg_built_private_h_sources =
 
-adg_c_sources =			adgcanvas.c \
+adg_c_sources =			adgadim.c \
+				adgcanvas.c \
 				adgcontainer.c \
 				adgdim.c \
 				adgentity.c \
