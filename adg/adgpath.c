@@ -30,6 +30,7 @@
 
 #include "adgpath.h"
 #include "adgpathprivate.h"
+#include "adgutil.h"
 #include "adgcanvas.h"
 #include "adgintl.h"
 
@@ -110,9 +111,8 @@ adg_path_init (AdgPath *path)
   path->cairo_path.data = NULL;
   path->cairo_path.num_data = 0;
 
-  path->cp_defined = FALSE;
-  path->cp.x = 0.0;
-  path->cp.y = 0.0;
+  path->cp.x = ADG_NAN;
+  path->cp.y = ADG_NAN;
 
   path->create_func = NULL;
   path->user_data = NULL;
@@ -236,9 +236,8 @@ adg_path_add_portion (AdgPath               *path,
     case CAIRO_PATH_CLOSE_PATH:
       portion.header.length = 1;
       path->portions = g_array_append_val (path->portions, portion);
-      /* TODO */
-      portion.point.x = 0.0;
-      portion.point.y = 0.0;
+      portion.point.x = ADG_NAN;
+      portion.point.y = ADG_NAN;
       break;
 
     case CAIRO_PATH_MOVE_TO:
@@ -278,9 +277,9 @@ adg_path_add_portion (AdgPath               *path,
   path->cairo_path.data = (cairo_path_data_t *) path->portions->data;
   path->cairo_path.num_data = path->portions->len;
   path->cairo_path.status = CAIRO_STATUS_SUCCESS;
+
   path->cp.x = portion.point.x;
   path->cp.y = portion.point.y;
-  path->cp_defined = TRUE;
 }
 
 
@@ -317,9 +316,8 @@ adg_path_clear (AdgPath *path)
   g_array_free (path->portions, TRUE);
   path->cairo_path.data = NULL;
   path->cairo_path.num_data = 0;
-  path->cp_defined = FALSE;
-  path->cp.x = 0.0;
-  path->cp.y = 0.0;
+  path->cp.x = ADG_NAN;
+  path->cp.y = ADG_NAN;
 }
 
 
@@ -447,7 +445,7 @@ adg_path_get_current_point (AdgPath *path,
 {
   g_return_val_if_fail (ADG_IS_PATH (path), FALSE);
 
-  if (! path->cp_defined)
+  if (adg_isnan (path->cp.x) || adg_isnan (path->cp.y))
     return FALSE;
 
   if (x != NULL)

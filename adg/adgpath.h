@@ -50,7 +50,6 @@ struct _AdgPath
   GArray                *portions;
 
   /* Current point (cp) */
-  gboolean               cp_defined;
   AdgPair                cp;
 
   AdgCallback            create_func;

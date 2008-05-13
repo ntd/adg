@@ -18,8 +18,8 @@
  */
 
 
-/* This code is an adaptation for Adg of cairo-arc.c, taken from Cairo 1.3.8.
- * You can download it at http://cairographics.org/
+/* This code is an adaptation for ADG of cairo-arc.c, taken from Cairo 1.3.8.
+ * You can download it from http://cairographics.org/
  */
 
 #include "adgpathprivate.h"
