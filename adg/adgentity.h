@@ -49,15 +49,13 @@ typedef enum
   ADG_UPTODATE	       = 1 << 0
 } AdgEntityFlags;
 
-#define ADG_ENTITY_FLAGS(ent)        (ADG_ENTITY (ent)->flags)
-#define ADG_ENTITY_UPTODATE(ent)     ((ADG_ENTITY_FLAGS (ent) & (ADG_UPTODATE)) != 0)
+#define ADG_ENTITY_FLAGS(ent)        	 (ADG_ENTITY (ent)->flags)
+#define ADG_ENTITY_UPTODATE(ent)     	 ((ADG_ENTITY_FLAGS (ent) & (ADG_UPTODATE)) != 0)
 
-#define ADG_ENTITY_SET_FLAGS(ent,flag) \
-  G_STMT_START{ (ADG_ENTITY_FLAGS (ent) |= (flag)); }G_STMT_END
-#define ADG_ENTITY_UNSET_FLAGS(ent,flag) \
-  G_STMT_START{ (ADG_ENTITY_FLAGS (ent) &= ~(flag)); }G_STMT_END
+#define ADG_ENTITY_SET_FLAGS(ent,flag)	 G_STMT_START{ (ADG_ENTITY_FLAGS (ent) |= (flag)); }G_STMT_END
+#define ADG_ENTITY_UNSET_FLAGS(ent,flag) G_STMT_START{ (ADG_ENTITY_FLAGS (ent) &= ~(flag)); }G_STMT_END
 
-#define ADG_CALLBACK(f)              ((AdgCallback) (f))
+#define ADG_CALLBACK(f)              	 ((AdgCallback) (f))
 
 
 typedef struct _AdgEntity       AdgEntity;
