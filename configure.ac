@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT([adg], [0.2.1],
-        [ntd@users.sourceforge.net],
+        [ntd at entidi.it],
         [adg])
 AC_CONFIG_SRCDIR(README)
 AC_CONFIG_HEADER([config.h])

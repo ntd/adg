@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
  * @short_description: Angular dimensions
  *
  * The #AdgADim entity represents an angular dimension.
- **/
+ */
 
 #include "adgadim.h"
 #include "adgdimprivate.h"
@@ -172,7 +172,7 @@ adg_adim_default_label (AdgDim *dim)
  * adg_dim_set_pos().
  *
  * Return value: the new entity
- **/
+ */
 AdgEntity *
 adg_adim_new (void)
 {

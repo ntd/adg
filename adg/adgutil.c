@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
  * SECTION:adgutil
  * @title: Utilities
  * @short_description: A collection of miscellaneous functions
- **/
+ */
 
 #include "adgutil.h"
 
@@ -35,7 +35,7 @@
  * If @path has only one node, the function returns %NULL.
  *
  * Return value: the tail of @path, or %NULL on errors.
- **/
+ */
 cairo_path_data_t *
 adg_cairo_path_tail (cairo_path_t *path)
 {
@@ -69,7 +69,7 @@ adg_cairo_path_tail (cairo_path_t *path)
  * the function will return %TRUE.
  *
  * Return value: %TRUE if a valid startpoint is found, %FALSE on errors.
- **/
+ */
 gboolean
 adg_cairo_path_data_start_point (cairo_path_data_t *path_data,
                                  double            *p_x,
@@ -111,7 +111,7 @@ adg_cairo_path_data_start_point (cairo_path_data_t *path_data,
  * the function will return %TRUE.
  *
  * Return value: %TRUE if a valid endpoint is found, %FALSE on errors.
- **/
+ */
 gboolean
 adg_cairo_path_data_end_point (cairo_path_data_t *path_data,
                                double            *p_x,

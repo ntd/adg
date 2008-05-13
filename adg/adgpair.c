@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,7 @@
  * sizes, offsets or whatever have %x and %y components.
  *
  * The name comes from MetaPost.
- **/
+ */
 
 /**
  * AdgPair:
@@ -35,7 +35,7 @@
  * @y: the y component of the pair
  *
  * A generic 2D structure.
- **/
+ */
 
 /**
  * AdgVector:
@@ -45,7 +45,7 @@
  * A subclass of an #AdgPair. A vector represents the coordinates of a point
  * distant 1 from the origin. The vectors are useful to define a direction
  * instead of angles and are better suited to simplify interpolations.
- **/
+ */
 
 #include "adgpair.h"
 #include "adgutil.h"
@@ -72,7 +72,7 @@ adg_pair_get_type (void)
  *
  * Return value: the duplicate of @pair: must be freed with g_free()
  *               when no longer needed.
- **/
+ */
 AdgPair *
 adg_pair_dup (const AdgPair *pair)
 {
@@ -90,7 +90,7 @@ adg_pair_dup (const AdgPair *pair)
  * If src is %NULL, @pair will be unset.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_set (AdgPair       *pair,
               const AdgPair *src)
@@ -114,7 +114,7 @@ adg_pair_set (AdgPair       *pair,
  * Sets the @pair content to (@x,@y).
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_set_explicit (AdgPair *pair,
                        double   x,
@@ -141,7 +141,7 @@ adg_pair_set_explicit (AdgPair *pair,
  * To get the real length, use adg_pair_get_length().
  *
  * Return value: the square of the length of @pair or #ADG_NAN on errors
- **/
+ */
 double
 adg_pair_get_squared_length (const AdgPair *pair)
 {
@@ -159,7 +159,7 @@ adg_pair_get_squared_length (const AdgPair *pair)
  * since no square root operations are performed.
  *
  * Return value: the length of @pair or #ADG_NAN on errors
- **/
+ */
 double
 adg_pair_get_length (const AdgPair *pair)
 {
@@ -177,7 +177,7 @@ adg_pair_get_length (const AdgPair *pair)
  *
  * Return value: requested angle in radians (between 0 and 2pi)
  *               or #ADG_NAN on errors
- **/
+ */
 double
 adg_pair_get_angle (const AdgPair *pair)
 {
@@ -226,7 +226,7 @@ adg_pair_get_angle (const AdgPair *pair)
  * Adds @pair2 to @pair and store the result in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_add (AdgPair       *pair,
               const AdgPair *pair2)
@@ -248,7 +248,7 @@ adg_pair_add (AdgPair       *pair,
  * Subtracts @pair2 from @pair and store the result in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_sub (AdgPair       *pair,
               const AdgPair *pair2)
@@ -270,7 +270,7 @@ adg_pair_sub (AdgPair       *pair,
  * Multiplies @pair per @pair2 and store the result in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_mul (AdgPair       *pair,
               const AdgPair *pair2)
@@ -293,7 +293,7 @@ adg_pair_mul (AdgPair       *pair,
  * to multiply @pair per (@scale,@scale).
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_scale (AdgPair *pair,
                 double   scale)
@@ -315,7 +315,7 @@ adg_pair_scale (AdgPair *pair,
  * Gets the mid pair between @pair and @pair2 and store the result in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_mid (AdgPair       *pair,
               const AdgPair *pair2)
@@ -338,7 +338,7 @@ adg_pair_mid (AdgPair       *pair,
  * This is merely a wrapper that calls cairo_matrix_transform_distance().
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_transform (AdgPair         *pair,
                     const AdgMatrix *matrix)
@@ -361,7 +361,7 @@ adg_pair_transform (AdgPair         *pair,
  * adg_pair_transform (adg_pair_scale (@pair, @scale), @matrix).
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_scale_and_transform (AdgPair         *pair,
                               double           scale,
@@ -391,7 +391,7 @@ adg_pair_scale_and_transform (AdgPair         *pair,
  * direction. The resulting coordinates are stored in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_intersection (AdgPair         *pair,
                        const AdgVector *vector,
@@ -427,7 +427,7 @@ adg_pair_intersection (AdgPair         *pair,
  * with the @vector2 direction and stores the result in @pair.
  *
  * Return value: @pair
- **/
+ */
 AdgPair *
 adg_pair_projection (AdgPair         *pair,
                      const AdgPair   *pair2,
@@ -453,7 +453,7 @@ adg_pair_projection (AdgPair         *pair,
  * the origin, and store the result in @vector.
  *
  * Return value: @vector
- **/
+ */
 AdgVector *
 adg_vector_set_with_pair (AdgVector     *vector,
                           const AdgPair *pair)
@@ -481,7 +481,7 @@ adg_vector_set_with_pair (AdgVector     *vector,
  * @angle direction. The result is stored in @vector.
  *
  * Return value: @vector
- **/
+ */
 AdgVector *
 adg_vector_set_with_angle (AdgVector *vector,
                            double     angle)
@@ -541,7 +541,7 @@ adg_vector_set_with_angle (AdgVector *vector,
  * Changes @vector to the normal vector of the original one.
  *
  * Return value: @vector
- **/
+ */
 AdgVector *
 adg_vector_normal (AdgVector *vector)
 {

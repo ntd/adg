@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
  * If the C library define %NAN, %ADG_NAN is an alias of %NAN. In the other
  * cases, a decent NaN value is searched using an algorithm stolen from the
  * <ulink url="http://www.gnome.org/projects/guppi/">Guppi</ulink> program.
- **/
+ */
 
 #include "adgutil.h"
 
@@ -101,7 +101,7 @@ adg_nan (void)
  * the isnan() system function.
  *
  * Return value: %TRUE if @value is not a number, %FALSE otherwise
- **/
+ */
 gboolean
 adg_isnan (double value)
 {

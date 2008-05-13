@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +29,7 @@
  * to be applied to all its children.
  * This means an AdgContainer can be thought as a group of entities with the
  * same geometrical identity (same scale, reference point ecc...).
- **/
+ */
 
 #include "adgcontainer.h"
 #include "adgintl.h"

@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -74,7 +74,7 @@ _arc_max_angle_for_tolerance_normalized (double tolerance)
   return angle;
 }
 
-/* XXX: 22-12-2006 Fontana Nicola <ntd@users.sourceforge.net>
+/* XXX: 22-12-2006 Fontana Nicola <ntd at entidi.it>
  *      Removed the ctm parameter and the calculation of the major axis: I use
  *      the radius directly, instead. Hopefully, this will break only the
  *      calculations for ellipses ...
@@ -162,7 +162,7 @@ _arc_in_direction (AdgPath     *path,
       int i, segments;
       double angle, angle_step;
 
-      /* XXX: 22-12-2006 Fontana Nicola <ntd@users.sourceforge.net>
+      /* XXX: 22-12-2006 Fontana Nicola <ntd at entidi.it>
        *      Used the ADG_TOLERANCE constant instead of the cairo context
        *      dependent variable, because I do not have any cairo context here.
        */
@@ -196,7 +196,7 @@ _arc_in_direction (AdgPath     *path,
  * Compute a path for the given arc and append it onto @path.
  * The arc will be accurate within the current tolerance and
  * given the current transformation.
- **/
+ */
 void
 _adg_path_arc (AdgPath *path,
                double	  xc,
@@ -220,7 +220,7 @@ _adg_path_arc (AdgPath *path,
  * Compute a path for the given arc (defined in the negative
  * direction) and append it onto @path. The arc will be accurate within the
  * current tolerance and given the current transformation.
- **/
+ */
 void
 _adg_path_arc_negative (AdgPath *path,
                         double   xc,

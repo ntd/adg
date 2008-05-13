@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +25,7 @@
  *
  * This abstract class provides a base interface for all renderable objects
  * (all the objects that can be printed or viewed).
- **/
+ */
 
 #include "adgentity.h"
 #include "adgcanvas.h"
@@ -115,7 +115,7 @@ adg_entity_class_init (AdgEntityClass *klass)
    * @old_state: the old state of the "uptodate" flag
    *
    * The "uptodate" property value is changed.
-   **/
+   */
   signals[UPTODATE_SET] =
     g_signal_new ("uptodate-set",
 		  G_OBJECT_CLASS_TYPE (gobject_class),
@@ -131,7 +131,7 @@ adg_entity_class_init (AdgEntityClass *klass)
    * @old_ctm: the old current transformation matrix
    *
    * Emitted when the current trasformation matrix has changed.
-   **/
+   */
   signals[CTM_CHANGED] =
     g_signal_new ("ctm-changed",
 		  G_OBJECT_CLASS_TYPE (gobject_class),
@@ -258,7 +258,7 @@ adg_entity_render_unimplemented (AdgEntity *entity,
  *
  * Return value: the requested object or %NULL if there is no #AdgCanvas in
  *               the parent hierarchy.
- **/
+ */
 AdgCanvas *
 adg_entity_get_canvas (AdgEntity *entity)
 {
@@ -282,7 +282,7 @@ adg_entity_get_canvas (AdgEntity *entity)
  * Emits the "ctm-changed" signal on @entity.
  *
  * This function is only useful in entity implementations.
- **/
+ */
 void
 adg_entity_ctm_changed  (AdgEntity *entity)
 {
@@ -302,7 +302,7 @@ adg_entity_ctm_changed  (AdgEntity *entity)
  * a fallback line style is searched in the hierarchy of @entity.
  *
  * Return value: the requested line style
- **/
+ */
 const AdgLineStyle *
 adg_entity_get_line_style (AdgEntity *entity)
 {
@@ -342,7 +342,7 @@ adg_entity_get_line_style (AdgEntity *entity)
  *
  * Sets the line style for @entity to @line_style.
  * If @entity does not implement set_line_style, an error is logged.
- **/
+ */
 void
 adg_entity_set_line_style (AdgEntity    *entity,
                            AdgLineStyle *line_style)
@@ -368,7 +368,7 @@ adg_entity_set_line_style (AdgEntity    *entity,
  * a fallback font style is searched in the hierarchy of @entity.
  *
  * Return value: the requested font style
- **/
+ */
 const AdgFontStyle *
 adg_entity_get_font_style (AdgEntity *entity)
 {
@@ -408,7 +408,7 @@ adg_entity_get_font_style (AdgEntity *entity)
  *
  * Sets the font style for @entity to @font_style.
  * If @entity does not implement set_font_style, an error is logged.
- **/
+ */
 void
 adg_entity_set_font_style (AdgEntity    *entity,
                            AdgFontStyle *font_style)
@@ -434,7 +434,7 @@ adg_entity_set_font_style (AdgEntity    *entity,
  * a fallback arrow style is searched in the hierarchy of @entity.
  *
  * Return value: the requested arrow style
- **/
+ */
 const AdgArrowStyle *
 adg_entity_get_arrow_style (AdgEntity *entity)
 {
@@ -474,7 +474,7 @@ adg_entity_get_arrow_style (AdgEntity *entity)
  *
  * Sets the arrow style for @entity to @arrow_style.
  * If @entity does not implement set_arrow_style, an error is logged.
- **/
+ */
 void
 adg_entity_set_arrow_style (AdgEntity     *entity,
                             AdgArrowStyle *arrow_style)
@@ -500,7 +500,7 @@ adg_entity_set_arrow_style (AdgEntity     *entity,
  * a fallback dimension style is searched in the hierarchy of @entity.
  *
  * Return value: the requested dimension style
- **/
+ */
 const AdgDimStyle *
 adg_entity_get_dim_style (AdgEntity *entity)
 {
@@ -540,7 +540,7 @@ adg_entity_get_dim_style (AdgEntity *entity)
  *
  * Sets the dimension style for @entity to @dim_style.
  * If @entity does not implement set_dim_style, an error is logged.
- **/
+ */
 void
 adg_entity_set_dim_style (AdgEntity   *entity,
                           AdgDimStyle *dim_style)
@@ -571,7 +571,7 @@ adg_entity_set_dim_style (AdgEntity   *entity,
  * a valid matrix.
  *
  * Return value: the current transformation matrix of @entity
- **/
+ */
 const AdgMatrix *
 adg_entity_get_ctm (AdgEntity *entity)
 {
@@ -606,7 +606,7 @@ adg_entity_get_ctm (AdgEntity *entity)
  *
  * Updates @entity, that is regenerates the calculations needed by the
  * rendering process.
- **/
+ */
 void
 adg_entity_update (AdgEntity *entity)
 {
@@ -623,7 +623,7 @@ adg_entity_update (AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Same as adg_entity_update(), but also applied to all its children.
- **/
+ */
 void
 adg_entity_update_all (AdgEntity *entity)
 {
@@ -638,7 +638,7 @@ adg_entity_update_all (AdgEntity *entity)
  *
  * Outdates @entity, so its internal calculations will be regenerated before
  * the rendering process.
- **/
+ */
 void
 adg_entity_outdate (AdgEntity *entity)
 {
@@ -655,7 +655,7 @@ adg_entity_outdate (AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Same as adg_entity_outdate(), but also applied to all its children.
- **/
+ */
 void
 adg_entity_outdate_all (AdgEntity *entity)
 {
@@ -674,7 +674,7 @@ adg_entity_outdate_all (AdgEntity *entity)
  *
  * If @entity is not up to date, an update is performed before the rendering
  * process.
- **/
+ */
 void
 adg_entity_render (AdgEntity *entity,
                    cairo_t   *cr)

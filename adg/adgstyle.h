@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,7 +54,7 @@ struct _AdgLineStyle
  *
  * Numeric representation of line styles.
  * Some standard line styles are predefined.
- **/
+ */
 typedef enum
 {
   ADG_LINE_STYLE_DRAW,
@@ -94,7 +94,7 @@ struct _AdgFontStyle
  *
  * Numeric representation of font styles.
  * Some standard font styles are predefined.
- **/
+ */
 typedef enum
 {
   ADG_FONT_STYLE_TEXT,
@@ -125,7 +125,7 @@ typedef struct _AdgArrowStyle           AdgArrowStyle;
  *
  * Callback that renders the arrow with the specified @arrow_style following
  * the @path_data path.
- **/
+ */
 typedef void (*AdgArrowRenderFunc)      (cairo_t           *cr,
                                          AdgArrowStyle     *arrow_style,
                                          AdgPair           *poi,
@@ -152,7 +152,7 @@ struct _AdgArrowStyle
  *
  * Numeric representation of arrow styles.
  * Some standard arrow styles are predefined.
- **/
+ */
 typedef enum
 {
   ADG_ARROW_STYLE_ARROW,
@@ -213,7 +213,7 @@ struct _AdgDimStyle
  *
  * Numeric representation of dimension styles.
  * Some standard dimension styles are predefined.
- **/
+ */
 typedef enum
 {
   ADG_DIM_STYLE_ISO,

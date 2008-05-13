@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +36,7 @@ G_BEGIN_DECLS
  *
  * Unsets @pair, so its content is no more valid. Use adg_pair_is_set() to
  * check if the pair is valid.
- **/
+ */
 #define adg_pair_unset(pair)    adg_pair_set_explicit ((pair), ADG_NAN, ADG_NAN)
 
 /**
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
  * components are equal to #ADG_NAN.
  *
  * For performance reasons, this function is implemented as a macro.
- **/
+ */
 #define adg_pair_is_set(pair)                 \
   ((pair) != NULL && !adg_isnan ((pair)->x) && !adg_isnan ((pair)->y))
 

@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
  * @short_description: Linear dimensions
  *
  * The #AdgLDim entity represents a linear dimension.
- **/
+ */
 
 #include "adgldim.h"
 #include "adgdimprivate.h"
@@ -394,7 +394,7 @@ adg_ldim_default_label (AdgDim *dim)
  * or, better, adg_ldim_set_pos().
  *
  * Return value: the new entity
- **/
+ */
 AdgEntity *
 adg_ldim_new (void)
 {
@@ -412,7 +412,7 @@ adg_ldim_new (void)
  * one shot.
  *
  * Return value: the new entity
- **/
+ */
 AdgEntity *
 adg_ldim_new_full (const AdgPair *ref1,
                    const AdgPair *ref2,
@@ -441,7 +441,7 @@ adg_ldim_new_full (const AdgPair *ref1,
  * Wrappes adg_ldim_new_full() with explicit quotes.
  *
  * Return value: the new entity
- **/
+ */
 AdgEntity *
 adg_ldim_new_full_explicit (double ref1_x,
                             double ref1_y,
@@ -476,7 +476,7 @@ adg_ldim_new_full_explicit (double ref1_x,
  * single @pos point. Before this call, @ldim MUST HAVE defined the reference
  * points and the direction. If these conditions are not met, an error message
  * is logged and the position references will not be set.
- **/
+ */
 void
 adg_ldim_set_pos (AdgLDim       *ldim,
                   const AdgPair *pos)
@@ -517,7 +517,7 @@ adg_ldim_set_pos (AdgLDim       *ldim,
  * @pos_y: the new y coordinate position reference
  *
  * Wrappers adg_ldim_set_pos() with explicit coordinates.
- **/
+ */
 void
 adg_ldim_set_pos_explicit (AdgLDim *ldim,
                            double   pos_x,
@@ -538,7 +538,7 @@ adg_ldim_set_pos_explicit (AdgLDim *ldim,
  * Gets the direction where @ldim will extend.
  *
  * Return value: the direction angle, in radians
- **/
+ */
 double
 adg_ldim_get_direction (AdgLDim *ldim)
 {
@@ -553,7 +553,7 @@ adg_ldim_get_direction (AdgLDim *ldim)
  * @direction: an angle value, in radians
  *
  * Sets the direction angle where to extend @ldim.
- **/
+ */
 void
 adg_ldim_set_direction (AdgLDim *ldim,
                         double   direction)

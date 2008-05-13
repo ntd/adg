@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
  * @short_description: Root abstract class for all dimension entities
  *
  * The #AdgDim class is the base stub of all the dimension entities.
- **/
+ */
 
 #include "adgdim.h"
 #include "adgdimprivate.h"
@@ -725,7 +725,7 @@ adg_dim_set_note (AdgDim      *dim,
  * Renders the quote of @dim at the @org position.
  *
  * This function is only useful in new dimension implementations.
- **/
+ */
 void
 _adg_dim_render_quote (AdgDim  *dim,
                        cairo_t *cr)

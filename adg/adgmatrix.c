@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +24,7 @@
  * @short_description: A cairo_matrix_t structure
  *
  * The AdgMatrix is essentially a wrapper for #cairo_matrix_t structures.
- **/
+ */
 
 #include "adgmatrix.h"
 
@@ -49,7 +49,7 @@ adg_matrix_get_type (void)
  * identity matrix.
  *
  * Return value: the fallback matrix
- **/
+ */
 const AdgMatrix *
 adg_matrix_get_fallback (void)
 {
@@ -66,7 +66,7 @@ adg_matrix_get_fallback (void)
  *
  * Return value: the duplicate of @matrix: must be freed with g_free()
  *               when no longer needed.
- **/
+ */
 AdgMatrix *
 adg_matrix_dup (const AdgMatrix *matrix)
 {
@@ -83,7 +83,7 @@ adg_matrix_dup (const AdgMatrix *matrix)
  * Copies @matrix to @dst.
  *
  * Return value: @matrix
- **/
+ */
 AdgMatrix *
 adg_matrix_set (AdgMatrix       *matrix,
                 const AdgMatrix *src)
@@ -104,7 +104,7 @@ adg_matrix_set (AdgMatrix       *matrix,
  * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
  *
  * Return value: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
- **/
+ */
 gboolean
 adg_matrix_equal (const AdgMatrix *matrix1,
                   const AdgMatrix *matrix2)

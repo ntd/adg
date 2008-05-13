@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,7 +28,7 @@
  * #GtkWidget must have a #GtkWindow).
  *
  * Internally, the target is mantained as a #cairo_t context pointer.
- **/
+ */
 
 #include "adgcanvas.h"
 #include "adgintl.h"

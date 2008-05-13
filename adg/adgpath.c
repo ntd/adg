@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation.
- * Copyright (C) 2007 - Fontana Nicola <ntd@users.sourceforge.net>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007-2008, Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +26,7 @@
  * The #AdgPath object is peraphs the simplest entity.
  *
  * It contains a pointer to the desired #cairo_path_t structure.
- **/
+ */
 
 #include "adgpath.h"
 #include "adgpathprivate.h"
@@ -292,7 +292,7 @@ adg_path_add_portion (AdgPath               *path,
  * Creates a new path entity using @create_func as creation callback.
  *
  * Return value: the new entity
- **/
+ */
 AdgEntity *
 adg_path_new (AdgCallback create_func,
               gpointer    user_data)
