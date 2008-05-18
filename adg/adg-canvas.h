@@ -35,7 +35,8 @@ G_BEGIN_DECLS
 #define ADG_CANVAS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_CANVAS, AdgCanvasClass))
 
 /* AdgCanvas declared in adgentity.h */
-typedef struct _AdgCanvasClass  AdgCanvasClass;
+typedef struct _AdgCanvasClass   AdgCanvasClass;
+typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 
 struct _AdgCanvas
@@ -43,12 +44,7 @@ struct _AdgCanvas
   AdgContainer           container;
 
   /*< private >*/
-
-  /* Fallback styles */
-  AdgLineStyle          *line_style;
-  AdgFontStyle          *font_style;
-  AdgArrowStyle         *arrow_style;
-  AdgDimStyle           *dim_style;
+  AdgCanvasPrivate	*priv;
 };
 
 struct _AdgCanvasClass

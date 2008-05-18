@@ -31,6 +31,7 @@
  */
 
 #include "adg-canvas.h"
+#include "adg-canvas-private.h"
 #include "adg-intl.h"
 
 #define PARENT_CLASS ((AdgContainerClass *) adg_canvas_parent_class)
@@ -82,8 +83,10 @@ adg_canvas_class_init (AdgCanvasClass *klass)
   AdgEntityClass *entity_class;
   GParamSpec     *param;
 
-  gobject_class = G_OBJECT_CLASS (klass);
-  entity_class = ADG_ENTITY_CLASS (klass);
+  gobject_class = (GObjectClass *) klass;
+  entity_class = (AdgEntityClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (AdgCanvasPrivate));
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -129,10 +132,16 @@ adg_canvas_class_init (AdgCanvasClass *klass)
 static void
 adg_canvas_init (AdgCanvas *canvas)
 {
-  canvas->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DRAW);
-  canvas->font_style = adg_font_style_from_id (ADG_FONT_STYLE_TEXT);
-  canvas->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
-  canvas->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
+  AdgCanvasPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (canvas,
+							ADG_TYPE_CANVAS,
+							AdgCanvasPrivate);
+
+  priv->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DRAW);
+  priv->font_style = adg_font_style_from_id (ADG_FONT_STYLE_TEXT);
+  priv->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
+  priv->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
+
+  canvas->priv = priv;
 }
 
 
@@ -142,21 +151,21 @@ get_property (GObject    *object,
 	      GValue     *value,
 	      GParamSpec *pspec)
 {
-  AdgCanvas *canvas = ADG_CANVAS (object);
+  AdgCanvasPrivate *priv = ((AdgCanvas *) object)->priv;
 
   switch (prop_id)
     {
     case PROP_LINE_STYLE:
-      g_value_set_boxed (value, canvas->line_style);
+      g_value_set_boxed (value, priv->line_style);
       break;
     case PROP_FONT_STYLE:
-      g_value_set_boxed (value, canvas->font_style);
+      g_value_set_boxed (value, priv->font_style);
       break;
     case PROP_ARROW_STYLE:
-      g_value_set_boxed (value, canvas->arrow_style);
+      g_value_set_boxed (value, priv->arrow_style);
       break;
     case PROP_DIM_STYLE:
-      g_value_set_boxed (value, canvas->dim_style);
+      g_value_set_boxed (value, priv->dim_style);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -170,11 +179,7 @@ set_property (GObject      *object,
 	      const GValue *value,
 	      GParamSpec   *pspec)
 {
-  AdgCanvas *canvas;
-  AdgEntity *entity;
-
-  canvas = ADG_CANVAS (object);
-  entity = ADG_ENTITY (object);
+  AdgEntity *entity = (AdgEntity *) object;
 
   switch (prop_id)
     {
@@ -207,63 +212,55 @@ adg_canvas_new (void)
 static const AdgLineStyle *
 get_line_style (AdgEntity *entity)
 {
-  return ADG_CANVAS (entity)->line_style;
+  return ((AdgCanvas *) entity)->priv->line_style;
 }
 
 static void
 set_line_style (AdgEntity    *entity,
 		AdgLineStyle *line_style)
 {
-  g_return_if_fail (line_style != NULL);
-
-  ADG_CANVAS (entity)->line_style = line_style;
+  ((AdgCanvas *) entity)->priv->line_style = line_style;
   g_object_notify ((GObject *) entity, "line-style");
 }
 
 static const AdgFontStyle *
 get_font_style (AdgEntity *entity)
 {
-  return ADG_CANVAS (entity)->font_style;
+  return ((AdgCanvas *) entity)->priv->font_style;
 }
 
 static void
 set_font_style (AdgEntity    *entity,
 		AdgFontStyle *font_style)
 {
-  g_return_if_fail (font_style != NULL);
-
-  ADG_CANVAS (entity)->font_style = font_style;
+  ((AdgCanvas *) entity)->priv->font_style = font_style;
   g_object_notify ((GObject *) entity, "font-style");
 }
 
 static const AdgArrowStyle *
 get_arrow_style (AdgEntity *entity)
 {
-  return ADG_CANVAS (entity)->arrow_style;
+  return ((AdgCanvas *) entity)->priv->arrow_style;
 }
 
 static void
 set_arrow_style (AdgEntity     *entity,
 		 AdgArrowStyle *arrow_style)
 {
-  g_return_if_fail (arrow_style != NULL);
-
-  ADG_CANVAS (entity)->arrow_style = arrow_style;
+  ((AdgCanvas *) entity)->priv->arrow_style = arrow_style;
   g_object_notify ((GObject *) entity, "arrow-style");
 }
 
 static const AdgDimStyle *
 get_dim_style (AdgEntity *entity)
 {
-  return ADG_CANVAS (entity)->dim_style;
+  return ((AdgCanvas *) entity)->priv->dim_style;
 }
 
 static void
 set_dim_style (AdgEntity   *entity,
 	       AdgDimStyle *dim_style)
 {
-  g_return_if_fail (dim_style != NULL);
-
-  ADG_CANVAS (entity)->dim_style = dim_style;
+  ((AdgCanvas *) entity)->priv->dim_style = dim_style;
   g_object_notify ((GObject *) entity, "dim-style");
 }
