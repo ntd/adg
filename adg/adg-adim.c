@@ -32,6 +32,8 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((AdgDimClass *)adg_adim_parent_class)
+
 
 enum
 {
@@ -40,21 +42,17 @@ enum
 };
 
 
-static void	        adg_adim_finalize               (GObject        *object);
-
-static void             adg_adim_ctm_changed            (AdgEntity      *entity,
-                                                         AdgMatrix      *old_matrix);
-static void             adg_adim_update                 (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_adim_render                 (AdgEntity      *entity,
-                                                         cairo_t        *cr);
-
-static gchar *          adg_adim_default_label          (AdgDim         *dim);
+static void	        finalize               (GObject        *object);
+static void             ctm_changed            (AdgEntity      *entity,
+                                                AdgMatrix      *old_matrix);
+static void             update                 (AdgEntity      *entity,
+                                                gboolean        recursive);
+static void             render                 (AdgEntity      *entity,
+                                                cairo_t        *cr);
+static gchar *          default_label          (AdgDim         *dim);
 
 
 G_DEFINE_TYPE (AdgADim, adg_adim, ADG_TYPE_DIM);
-
-#define PARENT_CLASS ((AdgDimClass *) adg_adim_parent_class)
 
 
 static void
@@ -69,14 +67,14 @@ adg_adim_class_init (AdgADimClass *klass)
   entity_class = (AdgEntityClass *) klass;
   dim_class = (AdgDimClass *) klass;
 
-  gobject_class->finalize = adg_adim_finalize;
+  gobject_class->finalize = finalize;
 
-  entity_class->ctm_changed = adg_adim_ctm_changed;
-  entity_class->update = adg_adim_update;
-  entity_class->render = adg_adim_render;
+  entity_class->ctm_changed = ctm_changed;
+  entity_class->update = update;
+  entity_class->render = render;
 
   g_type_class_add_private (klass, sizeof (_AdgADimPrivate));
-  dim_class->default_label = adg_adim_default_label;
+  dim_class->default_label = default_label;
 
   param = g_param_spec_double ("direction",
                               P_("Direction"),
@@ -110,7 +108,7 @@ adg_adim_init (AdgADim *adim)
 }
 
 static void
-adg_adim_finalize (GObject *object)
+finalize (GObject *object)
 {
   _AdgADimPrivate *cache = _ADG_ADIM_GET_PRIVATE (object);
 
@@ -121,14 +119,14 @@ adg_adim_finalize (GObject *object)
 }
 
 static void
-adg_adim_ctm_changed (AdgEntity *entity,
-                      AdgMatrix *old_matrix)
+ctm_changed (AdgEntity *entity,
+	     AdgMatrix *old_matrix)
 {
   AdgContainer *container;
   AdgMatrix    *matrix;
 
   /* entity is yet outdated, no needs for further checks */
-  if (! ADG_ENTITY_UPTODATE (entity))
+  if (!ADG_ENTITY_UPTODATE (entity))
     return;
 
   container = (AdgContainer *) entity->parent;
@@ -141,22 +139,22 @@ adg_adim_ctm_changed (AdgEntity *entity,
 }
 
 static void
-adg_adim_update (AdgEntity *entity,
-                 gboolean   recursive)
+update (AdgEntity *entity,
+	gboolean   recursive)
 {
   /* TODO */
   ((AdgEntityClass *) PARENT_CLASS)->update (entity, recursive);
 }
 
 static void
-adg_adim_render (AdgEntity *entity,
-                 cairo_t   *cr)
+render (AdgEntity *entity,
+	cairo_t   *cr)
 {
   /* TODO */
 }
 
 static gchar *
-adg_adim_default_label (AdgDim *dim)
+default_label (AdgDim *dim)
 {
   /* TODO */
   return g_strdup ("TODO");

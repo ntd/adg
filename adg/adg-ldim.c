@@ -32,6 +32,8 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((AdgDimClass *) adg_ldim_parent_class)
+
 
 enum
 {
@@ -40,31 +42,27 @@ enum
 };
 
 
-static void	        adg_ldim_finalize               (GObject        *object);
-static void             adg_ldim_get_property	        (GObject	*object,
-                                                         guint		 param_id,
-                                                         GValue		*value,
-                                                         GParamSpec	*pspec);
-static void             adg_ldim_set_property	        (GObject	*object,
-                                                         guint		 param_id,
-                                                         const GValue	*value,
-                                                         GParamSpec	*pspec);
-
-static void             adg_ldim_ctm_changed            (AdgEntity      *entity,
-                                                         AdgMatrix      *old_matrix);
-static void             adg_ldim_update                 (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_ldim_outdate                (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_ldim_render                 (AdgEntity      *entity,
-                                                         cairo_t        *cr);
-
-static gchar *          adg_ldim_default_label          (AdgDim         *dim);
+static void	finalize	(GObject	*object);
+static void	get_property	(GObject	*object,
+				 guint		 param_id,
+				 GValue		*value,
+				 GParamSpec	*pspec);
+static void	set_property	(GObject	*object,
+				 guint		 param_id,
+				 const GValue	*value,
+				 GParamSpec	*pspec);
+static void	ctm_changed	(AdgEntity	*entity,
+				 AdgMatrix	*old_matrix);
+static void	update		(AdgEntity	*entity,
+				 gboolean	 recursive);
+static void	outdate		(AdgEntity	*entity,
+				 gboolean	 recursive);
+static void	render		(AdgEntity	*entity,
+				 cairo_t	*cr);
+static gchar *	default_label	(AdgDim		*dim);
 
 
 G_DEFINE_TYPE (AdgLDim, adg_ldim, ADG_TYPE_DIM);
-
-#define PARENT_CLASS ((AdgDimClass *) adg_ldim_parent_class)
 
 
 static void
@@ -79,23 +77,23 @@ adg_ldim_class_init (AdgLDimClass *klass)
   entity_class = (AdgEntityClass *) klass;
   dim_class = (AdgDimClass *) klass;
 
-  gobject_class->finalize = adg_ldim_finalize;
-  gobject_class->get_property = adg_ldim_get_property;
-  gobject_class->set_property = adg_ldim_set_property;
+  gobject_class->finalize = finalize;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
 
-  entity_class->ctm_changed = adg_ldim_ctm_changed;
-  entity_class->update = adg_ldim_update;
-  entity_class->outdate = adg_ldim_outdate;
-  entity_class->render = adg_ldim_render;
+  entity_class->ctm_changed = ctm_changed;
+  entity_class->update = update;
+  entity_class->outdate = outdate;
+  entity_class->render = render;
 
   g_type_class_add_private (klass, sizeof (_AdgLDimPrivate));
-  dim_class->default_label = adg_ldim_default_label;
+  dim_class->default_label = default_label;
 
   param = g_param_spec_double ("direction",
-                              P_("Direction"),
-                              P_("The inclination angle of the extension lines"),
-                              -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
-                              G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
+			       P_("Direction"),
+			       P_("The inclination angle of the extension lines"),
+			       -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
 
 }
@@ -125,7 +123,7 @@ adg_ldim_init (AdgLDim *ldim)
 }
 
 static void
-adg_ldim_finalize (GObject *object)
+finalize (GObject *object)
 {
   _AdgLDimPrivate *cache = _ADG_LDIM_GET_PRIVATE (object);
 
@@ -136,10 +134,10 @@ adg_ldim_finalize (GObject *object)
 }
 
 static void
-adg_ldim_get_property (GObject    *object,
-                       guint       prop_id,
-                       GValue     *value,
-                       GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   AdgLDim *ldim = ADG_LDIM (object);
 
@@ -155,10 +153,10 @@ adg_ldim_get_property (GObject    *object,
 }
 
 static void
-adg_ldim_set_property (GObject      *object,
-                       guint         prop_id,
-                       const GValue *value,
-                       GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   AdgLDim *ldim = ADG_LDIM (object);
   
@@ -175,8 +173,8 @@ adg_ldim_set_property (GObject      *object,
 
 
 static void
-adg_ldim_ctm_changed (AdgEntity *entity,
-                      AdgMatrix *old_matrix)
+ctm_changed (AdgEntity *entity,
+	     AdgMatrix *old_matrix)
 {
   AdgContainer *container;
   AdgMatrix    *matrix;
@@ -195,8 +193,8 @@ adg_ldim_ctm_changed (AdgEntity *entity,
 }
 
 static void
-adg_ldim_update (AdgEntity *entity,
-                 gboolean   recursive)
+update (AdgEntity *entity,
+	gboolean   recursive)
 {
   AdgDim            *dim;
   _AdgDimPrivate    *dim_cache;
@@ -329,15 +327,15 @@ adg_ldim_update (AdgEntity *entity,
 }
 
 static void
-adg_ldim_outdate (AdgEntity *entity,
-                  gboolean   recursive)
+outdate (AdgEntity *entity,
+	 gboolean   recursive)
 {
   ((AdgEntityClass *) PARENT_CLASS)->outdate (entity, recursive);
 }
 
 static void
-adg_ldim_render (AdgEntity *entity,
-                 cairo_t   *cr)
+render (AdgEntity *entity,
+	cairo_t   *cr)
 {
   AdgDim          *dim;
   AdgLDim         *ldim;
@@ -373,7 +371,7 @@ adg_ldim_render (AdgEntity *entity,
 }
 
 static gchar *
-adg_ldim_default_label (AdgDim *dim)
+default_label (AdgDim *dim)
 {
   AdgPair delta;
   double  measure;
@@ -382,7 +380,6 @@ adg_ldim_default_label (AdgDim *dim)
 
   return g_strdup_printf (dim->dim_style->measure_format, measure);
 }
-
 
 
 /**

@@ -33,6 +33,8 @@
 #include "adg-model.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((GObjectClass *) adg_model_parent_class)
+
 
 enum
 {
@@ -48,22 +50,21 @@ enum
   LAST_SIGNAL
 };
 
-static void		adg_model_finalize	(GObject	*object);
-static void		adg_model_get_property	(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void		adg_model_set_property	(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
 
-static guint		model_signals[LAST_SIGNAL] = { 0 };
+static void	finalize	(GObject	*object);
+static void	get_property	(GObject	*object,
+				 guint		 prop_id,
+				 GValue		*value,
+				 GParamSpec	*pspec);
+static void	set_property	(GObject	*object,
+				 guint		 prop_id,
+				 const GValue	*value,
+				 GParamSpec	*pspec);
+
+static guint	model_signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE (AdgModel, adg_model, G_TYPE_OBJECT);
-
-#define PARENT_CLASS ((GObjectClass *) adg_model_parent_class)
 
 
 static void
@@ -74,29 +75,29 @@ adg_model_class_init (AdgModelClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->set_property = adg_model_set_property;
-  gobject_class->get_property = adg_model_get_property;
-  gobject_class->finalize = adg_model_finalize;
+  gobject_class->set_property = set_property;
+  gobject_class->get_property = get_property;
+  gobject_class->finalize = finalize;
 
   param = g_param_spec_string ("name",
-			      P_("Part Name"),
-			      P_("Descriptive name of this part"),
-			      NULL,
-			      G_PARAM_READWRITE);
+			       P_("Part Name"),
+			       P_("Descriptive name of this part"),
+			       NULL,
+			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NAME, param);
 
   param = g_param_spec_string ("material",
-			      P_("Material"),
-			      P_("Material this part is done with"),
-			      NULL,
-			      G_PARAM_READWRITE);
+			       P_("Material"),
+			       P_("Material this part is done with"),
+			       NULL,
+			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_MATERIAL, param);
 
   param = g_param_spec_string ("treatment",
-			      P_("Treatment"),
-			      P_("Treatment this part must receive"),
-			      NULL,
-			      G_PARAM_READWRITE);
+			       P_("Treatment"),
+			       P_("Treatment this part must receive"),
+			       NULL,
+			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_TREATMENT, param);
 }
 
@@ -109,7 +110,7 @@ adg_model_init (AdgModel *model)
 }
 
 static void
-adg_model_finalize (GObject *object)
+finalize (GObject *object)
 {
   AdgModel *model = ADG_MODEL (object);
 
@@ -120,10 +121,10 @@ adg_model_finalize (GObject *object)
 
 
 static void
-adg_model_get_property (GObject    *object,
-	 		 guint       prop_id,
-			 GValue     *value,
-			 GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   AdgModel *model = ADG_MODEL (object);
 
@@ -145,10 +146,10 @@ adg_model_get_property (GObject    *object,
 }
 
 static void
-adg_model_set_property (GObject      *object,
-                       guint         prop_id,
-                       const GValue *value,
-                       GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   AdgModel *model = ADG_MODEL (object);
 
@@ -185,8 +186,8 @@ adg_model_get_name (AdgModel *model)
 }
 
 void
-adg_model_set_name (AdgModel   *model,
-                   const gchar *name)
+adg_model_set_name (AdgModel    *model,
+		    const gchar *name)
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 
@@ -213,8 +214,8 @@ adg_model_get_material (AdgModel *model)
 }
 
 void
-adg_model_set_material (AdgModel   *model,
-                       const gchar *material)
+adg_model_set_material (AdgModel    *model,
+			const gchar *material)
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 
@@ -241,8 +242,8 @@ adg_model_get_treatment (AdgModel *model)
 }
 
 void
-adg_model_set_treatment (AdgModel   *model,
-                        const gchar *treatment)
+adg_model_set_treatment (AdgModel    *model,
+			 const gchar *treatment)
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 

@@ -39,13 +39,13 @@
 #define FAKE_NAN        123.45678902468013579e-300
 
 
-static double   adg_nan_bigendian       (void);
-static double   adg_nan_littleendian    (void);
-static double   adg_nan_mixedendian     (void);
-static double   adg_nan_alpha           (void);
-static double   adg_nan_from_sqrt       (void);
+static double	try_bigendian		(void);
+static double	try_littleendian	(void);
+static double	try_mixedendian		(void);
+static double	try_alpha		(void);
+static double	try_sqrt		(void);
 
-static gboolean fake_isnan = FALSE;
+static gboolean	use_fakenan = FALSE;
 
 
 double
@@ -55,13 +55,13 @@ adg_nan (void)
 
   if G_UNLIKELY (nan_value == 0.0)
     {
-      nan_value = adg_nan_bigendian ();
+      nan_value = try_bigendian ();
 
       if (! isnan (nan_value))
-        nan_value = adg_nan_littleendian ();
+        nan_value = try_littleendian ();
 
       if (! isnan (nan_value))
-        nan_value = adg_nan_mixedendian ();
+        nan_value = try_mixedendian ();
 
 #ifdef HUGE_VAL
       /* Morten Welinder tells me that "Some people here argue that the
@@ -73,17 +73,17 @@ adg_nan (void)
 
       /* This is abusive, but I need a quick and dirty way of handling Alpha FP right away... */
       if (! isnan (nan_value))
-        nan_value = adg_nan_alpha ();
+        nan_value = try_alpha ();
 
       /* This is crazy, but we are desparate at this point... */
       if (! isnan (nan_value))
-        nan_value = adg_nan_from_sqrt ();
+        nan_value = try_sqrt ();
 
       /* All else has failed, so we have to use the awful FAKE_NAN hack. */
       if (! isnan (nan_value))
         {
           nan_value = FAKE_NAN;
-          fake_isnan = TRUE;
+          use_fakenan = TRUE;
           g_warning (_("Using awful FAKE_NAN hack."));
         }
     }
@@ -105,7 +105,7 @@ adg_nan (void)
 gboolean
 adg_isnan (double value)
 {
-  if (fake_isnan)
+  if (use_fakenan)
     return value == FAKE_NAN;
  
   return isnan (value);
@@ -113,7 +113,7 @@ adg_isnan (double value)
 
 
 static double
-adg_nan_bigendian (void)
+try_bigendian (void)
 {
   union
     {
@@ -137,7 +137,7 @@ adg_nan_bigendian (void)
 }
 
 static double
-adg_nan_littleendian (void)
+try_littleendian (void)
 {
   union
     {
@@ -160,7 +160,7 @@ adg_nan_littleendian (void)
 }
 
 static double
-adg_nan_mixedendian (void)
+try_mixedendian (void)
 {
   union
     {
@@ -184,7 +184,7 @@ adg_nan_mixedendian (void)
 }
 
 static double
-adg_nan_alpha (void)
+try_alpha (void)
 {
   union guint_double
     {
@@ -204,7 +204,7 @@ adg_nan_alpha (void)
 
 
 static double
-adg_nan_from_sqrt (void)
+try_sqrt (void)
 {
   double           value;
   struct sigaction fpe, old_fpe;

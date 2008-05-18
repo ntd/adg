@@ -36,6 +36,8 @@
 
 #include <math.h>
 
+#define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
+
 
 enum
 {
@@ -44,34 +46,30 @@ enum
 };
 
 
-static void	                adg_path_get_property   (GObject	*object,
-                                                         guint		 prop_id,
-                                                         GValue		*value,
-                                                         GParamSpec	*pspec);
-static void                     adg_path_set_property   (GObject	*object,
-                                                         guint		 prop_id,
-                                                         const GValue	*value,
-                                                         GParamSpec	*pspec);
-static void		        adg_path_finalize	(GObject	*object);
-
-static const AdgLineStyle *     adg_path_get_line_style (AdgEntity      *entity);
-static void                     adg_path_set_line_style (AdgEntity      *entity,
-                                                         AdgLineStyle   *line_style);
-static void                     adg_path_update         (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void                     adg_path_outdate        (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void                     adg_path_render         (AdgEntity      *entity,
-                                                         cairo_t        *cr);
-
-static void                     adg_path_add_portion    (AdgPath        *path,
-                                                         cairo_path_data_type_t type,
-                                                         ...);
+static void	                get_property   (GObject		*object,
+						guint		 prop_id,
+						GValue		*value,
+						GParamSpec	*pspec);
+static void                     set_property   (GObject		*object,
+						guint		 prop_id,
+						const GValue	*value,
+						GParamSpec	*pspec);
+static void		        finalize	(GObject	*object);
+static const AdgLineStyle *     get_line_style (AdgEntity	*entity);
+static void                     set_line_style (AdgEntity	*entity,
+						AdgLineStyle	*line_style);
+static void                     update         (AdgEntity	*entity,
+						gboolean	 recursive);
+static void                     outdate        (AdgEntity	*entity,
+						gboolean	 recursive);
+static void                     render         (AdgEntity	*entity,
+						cairo_t		*cr);
+static void                     add_portion    (AdgPath		*path,
+						cairo_path_data_type_t type,
+								 ...);
 
 
 G_DEFINE_TYPE (AdgPath, adg_path, ADG_TYPE_ENTITY);
-
-#define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
 
 
 static void
@@ -84,15 +82,15 @@ adg_path_class_init (AdgPathClass *klass)
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
 
-  gobject_class->get_property = adg_path_get_property;
-  gobject_class->set_property = adg_path_set_property;
-  gobject_class->finalize = adg_path_finalize;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
+  gobject_class->finalize = finalize;
 
-  entity_class->get_line_style = adg_path_get_line_style;
-  entity_class->set_line_style = adg_path_set_line_style;
-  entity_class->update = adg_path_update;
-  entity_class->outdate = adg_path_outdate;
-  entity_class->render = adg_path_render;
+  entity_class->get_line_style = get_line_style;
+  entity_class->set_line_style = set_line_style;
+  entity_class->update = update;
+  entity_class->outdate = outdate;
+  entity_class->render = render;
 
   param = g_param_spec_boxed ("line-style",
                               P_("Line Style"),
@@ -119,10 +117,10 @@ adg_path_init (AdgPath *path)
 }
 
 static void
-adg_path_get_property (GObject    *object,
-                       guint       prop_id,
-                       GValue     *value,
-                       GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   AdgPath *path = ADG_PATH (object);
 
@@ -138,10 +136,10 @@ adg_path_get_property (GObject    *object,
 }
 
 static void
-adg_path_set_property (GObject      *object,
-                       guint         prop_id,
-                       const GValue *value,
-                       GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   AdgPath *path;
   AdgEntity *entity;
@@ -162,7 +160,7 @@ adg_path_set_property (GObject      *object,
 
 
 static void
-adg_path_finalize (GObject *object)
+finalize (GObject *object)
 {
   adg_path_clear ((AdgPath *) object);
 
@@ -171,13 +169,13 @@ adg_path_finalize (GObject *object)
 
 
 static const AdgLineStyle *
-adg_path_get_line_style (AdgEntity *entity)
+get_line_style (AdgEntity *entity)
 {
   return ADG_PATH (entity)->line_style;
 }
 
 static void
-adg_path_set_line_style (AdgEntity    *entity,
+set_line_style (AdgEntity    *entity,
                          AdgLineStyle *line_style)
 {
   ADG_PATH (entity)->line_style = line_style;
@@ -185,7 +183,7 @@ adg_path_set_line_style (AdgEntity    *entity,
 }
 
 static void
-adg_path_update (AdgEntity *entity,
+update (AdgEntity *entity,
                  gboolean   recursive)
 {
   AdgPath *path = (AdgPath *) entity;
@@ -197,7 +195,7 @@ adg_path_update (AdgEntity *entity,
 }
 
 static void
-adg_path_outdate (AdgEntity *entity,
+outdate (AdgEntity *entity,
                   gboolean   recursive)
 {
   adg_path_clear ((AdgPath *) entity);
@@ -205,7 +203,7 @@ adg_path_outdate (AdgEntity *entity,
 }
 
 static void
-adg_path_render (AdgEntity *entity,
+render (AdgEntity *entity,
                  cairo_t   *cr)
 {
   AdgPath *path = (AdgPath *) entity;
@@ -216,7 +214,7 @@ adg_path_render (AdgEntity *entity,
 }
 
 static void
-adg_path_add_portion (AdgPath               *path,
+add_portion (AdgPath               *path,
                       cairo_path_data_type_t type,
                       ...)
 {
@@ -462,7 +460,7 @@ adg_path_close (AdgPath *path)
 {
   g_return_if_fail (ADG_IS_PATH (path));
 
-  adg_path_add_portion (path, CAIRO_PATH_CLOSE_PATH);
+  add_portion (path, CAIRO_PATH_CLOSE_PATH);
 }
 
 void
@@ -512,7 +510,7 @@ adg_path_curve_to (AdgPath *path,
 {
   g_return_if_fail (ADG_IS_PATH (path));
 
-  adg_path_add_portion (path, CAIRO_PATH_CURVE_TO, x1, y1, x2, y2, x3, y3);
+  add_portion (path, CAIRO_PATH_CURVE_TO, x1, y1, x2, y2, x3, y3);
 }
 
 void
@@ -522,7 +520,7 @@ adg_path_line_to (AdgPath *path,
 {
   g_return_if_fail (ADG_IS_PATH (path));
 
-  adg_path_add_portion (path, CAIRO_PATH_LINE_TO, x, y);
+  add_portion (path, CAIRO_PATH_LINE_TO, x, y);
 }
 
 void
@@ -532,7 +530,7 @@ adg_path_move_to (AdgPath *path,
 {
   g_return_if_fail (ADG_IS_PATH (path));
 
-  adg_path_add_portion (path, CAIRO_PATH_MOVE_TO, x, y);
+  add_portion (path, CAIRO_PATH_MOVE_TO, x, y);
 }
 
 void

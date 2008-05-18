@@ -31,6 +31,8 @@
 #include "adg-canvas.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((AdgEntityClass *)adg_container_parent_class)
+
 
 enum
 {
@@ -46,39 +48,35 @@ enum
 };
 
 
-static void     adg_entity_init	        	(AdgEntity	*entity);
-static void     adg_entity_childable_init	(GChildableIface*iface);
-static void     adg_entity_get_property         (GObject        *object,
-                                                 guint           prop_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-static void     adg_entity_set_property         (GObject        *object,
-                                                 guint           prop_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
+static void	childable_init		(GChildableIface*iface);
+static void	get_property		(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
 static GContainerable *
-                adg_entity_get_parent           (GChildable     *childable);
-static void     adg_entity_set_parent           (GChildable     *childable,
-                                                 GContainerable *new_parent);
-static void     adg_entity_parent_set           (GChildable     *childable,
-                                                 GContainerable *old_parent);
+		get_parent		(GChildable	*childable);
+static void	set_parent		(GChildable	*childable,
+					 GContainerable	*new_parent);
+static void	parent_set		(GChildable	*childable,
+					 GContainerable	*old_parent);
+static void	real_update		(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	real_outdate		(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	render_unimplemented	(AdgEntity	*entity,
+					 cairo_t	*cr);
 
-static void     adg_entity_real_update          (AdgEntity      *entity,
-                                                 gboolean        recursive);
-static void     adg_entity_real_outdate         (AdgEntity      *entity,
-                                                 gboolean        recursive);
-static void     adg_entity_render_unimplemented (AdgEntity      *entity,
-                                                 cairo_t        *cr);
 
-
-static guint    signals[LAST_SIGNAL] = { 0 };
+static guint	signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE_EXTENDED (AdgEntity, adg_entity, 
                         G_TYPE_INITIALLY_UNOWNED, G_TYPE_FLAG_ABSTRACT,
-                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, adg_entity_childable_init));
-
-#define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
+                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, childable_init));
 
 
 static void
@@ -88,8 +86,8 @@ adg_entity_class_init (AdgEntityClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->get_property = adg_entity_get_property;
-  gobject_class->set_property = adg_entity_set_property;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
   gobject_class->dispose = g_childable_dispose;
 
   g_object_class_override_property (gobject_class, PROP_PARENT, "parent");
@@ -105,9 +103,9 @@ adg_entity_class_init (AdgEntityClass *klass)
   klass->get_dim_style = NULL;
   klass->set_dim_style = NULL;
   klass->get_ctm = NULL;
-  klass->update = adg_entity_real_update;
-  klass->outdate = adg_entity_real_outdate;
-  klass->render = adg_entity_render_unimplemented;
+  klass->update = real_update;
+  klass->outdate = real_outdate;
+  klass->render = render_unimplemented;
 
   /**
    * AdgEntity::uptodate-set:
@@ -143,11 +141,11 @@ adg_entity_class_init (AdgEntityClass *klass)
 }
 
 static void
-adg_entity_childable_init (GChildableIface *iface)
+childable_init (GChildableIface *iface)
 {
-  iface->get_parent = adg_entity_get_parent;
-  iface->set_parent = adg_entity_set_parent;
-  iface->parent_set = adg_entity_parent_set;
+  iface->get_parent = get_parent;
+  iface->set_parent = set_parent;
+  iface->parent_set = parent_set;
 }
 
 static void
@@ -158,10 +156,10 @@ adg_entity_init (AdgEntity *entity)
 }
 
 static void
-adg_entity_get_property (GObject    *object,
-                         guint       prop_id,
-                         GValue     *value,
-                         GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   GChildable *childable = G_CHILDABLE (object);
 
@@ -177,10 +175,10 @@ adg_entity_get_property (GObject    *object,
 }
 
 static void
-adg_entity_set_property (GObject      *object,
-                         guint         prop_id,
-                         const GValue *value,
-                         GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   GChildable *childable = G_CHILDABLE (object);
 
@@ -197,21 +195,21 @@ adg_entity_set_property (GObject      *object,
 
 
 static GContainerable *
-adg_entity_get_parent (GChildable *childable)
+get_parent (GChildable *childable)
 {
   return ((AdgEntity *) childable)->parent;
 }
 
 static void
-adg_entity_set_parent (GChildable     *childable,
-                       GContainerable *new_parent)
+set_parent (GChildable     *childable,
+	    GContainerable *new_parent)
 {
   ((AdgEntity *) childable)->parent = new_parent;
 }
 
 static void
-adg_entity_parent_set (GChildable     *childable,
-                       GContainerable *old_parent)
+parent_set (GChildable     *childable,
+	    GContainerable *old_parent)
 {
   AdgMatrix *old_ctm;
 
@@ -225,24 +223,24 @@ adg_entity_parent_set (GChildable     *childable,
 
 
 static void
-adg_entity_real_update (AdgEntity *entity,
-                        gboolean   recursive)
+real_update (AdgEntity *entity,
+	     gboolean   recursive)
 {
   ADG_ENTITY_SET_FLAGS (entity, ADG_UPTODATE);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, FALSE);
 }
 
 static void
-adg_entity_real_outdate (AdgEntity *entity,
-                         gboolean   recursive)
+real_outdate (AdgEntity *entity,
+	      gboolean   recursive)
 {
   ADG_ENTITY_UNSET_FLAGS (entity, ADG_UPTODATE);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, TRUE);
 }
 
 static void
-adg_entity_render_unimplemented (AdgEntity *entity,
-                                 cairo_t   *cr)
+render_unimplemented (AdgEntity *entity,
+		      cairo_t   *cr)
 {
   g_warning ("AdgEntity::render not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (entity)));

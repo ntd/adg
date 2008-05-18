@@ -31,6 +31,8 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((AdgEntityClass *) adg_dim_parent_class)
+
 
 enum
 {
@@ -48,35 +50,30 @@ enum
 };
 
 
-static void	        adg_dim_finalize	        (GObject	*object);
-static void             adg_dim_get_property	        (GObject	*object,
-                                                         guint		 param_id,
-                                                         GValue		*value,
-                                                         GParamSpec	*pspec);
-static void             adg_dim_set_property	        (GObject	*object,
-                                                         guint		 param_id,
-                                                         const GValue	*value,
-                                                         GParamSpec	*pspec);
-
-static void             adg_dim_invalidate_quote        (AdgDim         *dim);
-
+static void	finalize		(GObject	*object);
+static void	get_property		(GObject	*object,
+					 guint		 param_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 param_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+static void	invalidate_quote	(AdgDim		*dim);
 static const AdgDimStyle *
-                        adg_dim_get_dim_style           (AdgEntity      *entity);
-static void             adg_dim_set_dim_style           (AdgEntity      *entity,
-                                                         AdgDimStyle    *dim_style);
-static void             adg_dim_update                  (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_dim_outdate                 (AdgEntity      *entity,
-                                                         gboolean        recursive);
-
-static gchar *          adg_dim_default_label           (AdgDim         *dim);
-static void             adg_dim_label_layout            (AdgDim         *dim,
-                                                         cairo_t        *cr);
+		get_dim_style		(AdgEntity	*entity);
+static void	set_dim_style		(AdgEntity	*entity,
+					 AdgDimStyle	*dim_style);
+static void	update			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	outdate			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static gchar *	default_label		(AdgDim		*dim);
+static void	label_layout		(AdgDim		*dim,
+					 cairo_t	*cr);
 
 
 G_DEFINE_ABSTRACT_TYPE (AdgDim, adg_dim, ADG_TYPE_ENTITY);
-
-#define PARENT_CLASS ((AdgEntityClass *) adg_dim_parent_class)
 
 
 static void
@@ -89,17 +86,17 @@ adg_dim_class_init (AdgDimClass *klass)
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
 
-  gobject_class->finalize = adg_dim_finalize;
-  gobject_class->get_property = adg_dim_get_property;
-  gobject_class->set_property = adg_dim_set_property;
+  gobject_class->finalize = finalize;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
 
-  entity_class->get_dim_style = adg_dim_get_dim_style;
-  entity_class->set_dim_style = adg_dim_set_dim_style;
-  entity_class->update = adg_dim_update;
-  entity_class->outdate = adg_dim_outdate;
+  entity_class->get_dim_style = get_dim_style;
+  entity_class->set_dim_style = set_dim_style;
+  entity_class->update = update;
+  entity_class->outdate = outdate;
 
-  klass->default_label = adg_dim_default_label;
-  klass->label_layout = adg_dim_label_layout;
+  klass->default_label = default_label;
+  klass->label_layout = label_layout;
 
   g_type_class_add_private (klass, sizeof (_AdgDimPrivate));
 
@@ -201,7 +198,7 @@ adg_dim_init (AdgDim *dim)
 }
 
 static void
-adg_dim_finalize (GObject *object)
+finalize (GObject *object)
 {
   AdgDim *dim = ADG_DIM (object);
 
@@ -213,10 +210,10 @@ adg_dim_finalize (GObject *object)
 }
 
 static void
-adg_dim_get_property (GObject    *object,
-                      guint       prop_id,
-                      GValue     *value,
-                      GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   AdgDim *dim = ADG_DIM (object);
 
@@ -259,10 +256,10 @@ adg_dim_get_property (GObject    *object,
 }
 
 static void
-adg_dim_set_property (GObject      *object,
-                      guint         prop_id,
-                      const GValue *value,
-                      GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   AdgDim *dim = ADG_DIM (object);
   
@@ -289,22 +286,22 @@ adg_dim_set_property (GObject      *object,
     case PROP_LABEL:
       g_free (dim->label);
       dim->label = g_value_dup_string (value);
-      adg_dim_invalidate_quote (dim);
+      invalidate_quote (dim);
       break;
     case PROP_TOLERANCE_UP:
       g_free (dim->tolerance_up);
       dim->tolerance_up = g_value_dup_string (value);
-      adg_dim_invalidate_quote (dim);
+      invalidate_quote (dim);
       break;
     case PROP_TOLERANCE_DOWN:
       g_free (dim->tolerance_down);
       dim->tolerance_down = g_value_dup_string (value);
-      adg_dim_invalidate_quote (dim);
+      invalidate_quote (dim);
       break;
     case PROP_NOTE:
       g_free (dim->note);
       dim->note = g_value_dup_string (value);
-      adg_dim_invalidate_quote (dim);
+      invalidate_quote (dim);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -314,7 +311,7 @@ adg_dim_set_property (GObject      *object,
 
 
 static void
-adg_dim_invalidate_quote (AdgDim *dim)
+invalidate_quote (AdgDim *dim)
 {
   _AdgDimPrivate *cache = _ADG_DIM_GET_PRIVATE (dim);
 
@@ -328,22 +325,22 @@ adg_dim_invalidate_quote (AdgDim *dim)
 
 
 static const AdgDimStyle *
-adg_dim_get_dim_style (AdgEntity *entity)
+get_dim_style (AdgEntity *entity)
 {
   return ADG_DIM (entity)->dim_style;
 }
 
 static void
-adg_dim_set_dim_style (AdgEntity   *entity,
-                       AdgDimStyle *dim_style)
+set_dim_style (AdgEntity   *entity,
+	       AdgDimStyle *dim_style)
 {
   ADG_DIM (entity)->dim_style = dim_style;
   g_object_notify (G_OBJECT (entity), "dim-style");
 }
 
 static void
-adg_dim_update (AdgEntity *entity,
-                gboolean   recursive)
+update (AdgEntity *entity,
+	gboolean   recursive)
 {
   AdgDim  *dim;
  
@@ -352,7 +349,7 @@ adg_dim_update (AdgEntity *entity,
   if (dim->label == NULL)
     {
       dim->label = ADG_DIM_GET_CLASS (dim)->default_label (dim);
-      adg_dim_invalidate_quote (dim);
+      invalidate_quote (dim);
       g_object_notify (G_OBJECT (dim), "label");
     }
 
@@ -360,8 +357,8 @@ adg_dim_update (AdgEntity *entity,
 }
 
 static void
-adg_dim_outdate (AdgEntity *entity,
-                 gboolean   recursive)
+outdate (AdgEntity *entity,
+	 gboolean   recursive)
 {
   _AdgDimPrivate *cache = _ADG_DIM_GET_PRIVATE (entity);
 
@@ -373,15 +370,15 @@ adg_dim_outdate (AdgEntity *entity,
 
 
 static gchar *
-adg_dim_default_label (AdgDim *dim)
+default_label (AdgDim *dim)
 {
   g_warning ("AdgDim::default_label not implemented for `%s'", g_type_name (G_TYPE_FROM_INSTANCE (dim)));
   return g_strdup ("");
 }
 
 static void
-adg_dim_label_layout (AdgDim  *dim,
-                      cairo_t *cr)
+label_layout (AdgDim  *dim,
+	      cairo_t *cr)
 {
   _AdgDimPrivate      *cache;
   AdgPair              offset;
@@ -622,7 +619,7 @@ adg_dim_set_label (AdgDim      *dim,
 
   g_free (dim->label);
   dim->label = g_strdup (label);
-  adg_dim_invalidate_quote (dim);
+  invalidate_quote (dim);
 
   g_object_notify ((GObject *) dim, "label");
 }
@@ -643,7 +640,7 @@ adg_dim_set_tolerance_up (AdgDim      *dim,
 
   g_free (dim->tolerance_up);
   dim->tolerance_down = g_strdup (tolerance_up);
-  adg_dim_invalidate_quote (dim);
+  invalidate_quote (dim);
 
   g_object_notify ((GObject *) dim, "tolerance-up");
 }
@@ -664,7 +661,7 @@ adg_dim_set_tolerance_down (AdgDim      *dim,
 
   g_free (dim->tolerance_down);
   dim->tolerance_down = g_strdup (tolerance_down);
-  adg_dim_invalidate_quote (dim);
+  invalidate_quote (dim);
 
   g_object_notify ((GObject *) dim, "tolerance-down");
 }
@@ -690,7 +687,7 @@ adg_dim_set_tolerances (AdgDim      *dim,
   dim->tolerance_down = g_strdup (tolerance_down);
   g_object_notify (object, "tolerance-down");
 
-  adg_dim_invalidate_quote (dim);
+  invalidate_quote (dim);
 
   g_object_thaw_notify (object);
 }
@@ -711,7 +708,7 @@ adg_dim_set_note (AdgDim      *dim,
 
   g_free (dim->note);
   dim->note = g_strdup (note);
-  adg_dim_invalidate_quote (dim);
+  invalidate_quote (dim);
 
   g_object_notify ((GObject *) dim, "note");
 }

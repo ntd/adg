@@ -34,6 +34,8 @@
 #include "adg-container.h"
 #include "adg-intl.h"
 
+#define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
+
 
 enum
 {
@@ -43,47 +45,45 @@ enum
 };
 
 
-static void             adg_container_containerable_init(GContainerableIface *iface);
-static void             adg_container_get_property      (GObject        *object,
-                                                         guint           prop_id,
-                                                         GValue         *value,
-                                                         GParamSpec     *pspec);
-static void             adg_container_set_property      (GObject        *object,
-                                                         guint           prop_id,
-                                                         const GValue   *value,
-                                                         GParamSpec     *pspec);
-
-static GSList *         adg_container_get_children      (GContainerable *containerable);
-static gboolean         adg_container_add               (GContainerable *containerable,
-                                                         GChildable     *childable);
-static gboolean         adg_container_remove            (GContainerable *containerable,
-                                                         GChildable     *childable);
-
-static void             adg_container_ctm_changed       (AdgEntity      *entity,
-                                                         AdgMatrix      *dummy_ctm);
-static const AdgMatrix *adg_container_get_ctm           (AdgEntity      *entity);
-static void             adg_container_update            (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_container_outdate           (AdgEntity      *entity,
-                                                         gboolean        recursive);
-static void             adg_container_render            (AdgEntity      *entity,
-                                                         cairo_t        *cr);
+static void	containerable_init
+				(GContainerableIface *iface);
+static void	get_property	(GObject	*object,
+				 guint		 prop_id,
+				 GValue		*value,
+				 GParamSpec	*pspec);
+static void	set_property	(GObject	*object,
+				 guint		 prop_id,
+				 const GValue	*value,
+				 GParamSpec	*pspec);
+static GSList *	get_children	(GContainerable	*containerable);
+static gboolean	add		(GContainerable	*containerable,
+				 GChildable	*childable);
+static gboolean	remove		(GContainerable	*containerable,
+				 GChildable	*childable);
+static void	ctm_changed	(AdgEntity	*entity,
+				 AdgMatrix	*dummy_ctm);
+static const AdgMatrix *
+		get_ctm		(AdgEntity	*entity);
+static void	update		(AdgEntity	*entity,
+				 gboolean	 recursive);
+static void	outdate		(AdgEntity	*entity,
+				 gboolean	 recursive);
+static void	render		(AdgEntity	*entity,
+				 cairo_t	*cr);
 
 
 G_DEFINE_TYPE_EXTENDED (AdgContainer, adg_container,
                         ADG_TYPE_ENTITY, 0,
                         G_IMPLEMENT_INTERFACE (G_TYPE_CONTAINERABLE,
-                                               adg_container_containerable_init));
-
-#define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
+                                               containerable_init));
 
 
 static void
-adg_container_containerable_init (GContainerableIface *iface)
+containerable_init (GContainerableIface *iface)
 {
-  iface->get_children = adg_container_get_children;
-  iface->add = adg_container_add;
-  iface->remove = adg_container_remove;
+  iface->get_children = get_children;
+  iface->add = add;
+  iface->remove = remove;
 }
 
 static void
@@ -96,15 +96,15 @@ adg_container_class_init (AdgContainerClass *klass)
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
 
-  gobject_class->get_property = adg_container_get_property;
-  gobject_class->set_property = adg_container_set_property;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
-  entity_class->ctm_changed = adg_container_ctm_changed;
-  entity_class->get_ctm = adg_container_get_ctm;
-  entity_class->update = adg_container_update;
-  entity_class->outdate = adg_container_outdate;
-  entity_class->render = adg_container_render;
+  entity_class->ctm_changed = ctm_changed;
+  entity_class->get_ctm = get_ctm;
+  entity_class->update = update;
+  entity_class->outdate = outdate;
+  entity_class->render = render;
 
   g_object_class_override_property (gobject_class, PROP_CHILD, "child");
 
@@ -126,10 +126,10 @@ adg_container_init (AdgContainer *container)
 }
 
 static void
-adg_container_get_property (GObject    *object,
-                            guint       prop_id,
-                            GValue     *value,
-                            GParamSpec *pspec)
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
   AdgContainer *container = ADG_CONTAINER (object);
 
@@ -145,10 +145,10 @@ adg_container_get_property (GObject    *object,
 }
 
 static void
-adg_container_set_property (GObject      *object,
-                            guint         prop_id,
-                            const GValue *value,
-                            GParamSpec   *pspec)
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
 {
   AdgContainer *container = ADG_CONTAINER (object);
 
@@ -167,7 +167,7 @@ adg_container_set_property (GObject      *object,
 
 
 static GSList *
-adg_container_get_children (GContainerable *containerable)
+get_children (GContainerable *containerable)
 {
   AdgContainer *container = ADG_CONTAINER (containerable);
 
@@ -175,8 +175,8 @@ adg_container_get_children (GContainerable *containerable)
 }
 
 static gboolean
-adg_container_add (GContainerable *containerable,
-                   GChildable     *childable)
+add (GContainerable *containerable,
+     GChildable     *childable)
 {
   AdgContainer *container;
 
@@ -188,8 +188,8 @@ adg_container_add (GContainerable *containerable,
 }
 
 static gboolean
-adg_container_remove (GContainerable *containerable,
-                      GChildable     *childable)
+remove (GContainerable *containerable,
+	GChildable     *childable)
 {
   AdgContainer *container;
   GSList       *node;
@@ -208,8 +208,8 @@ adg_container_remove (GContainerable *containerable,
 
 
 static void
-adg_container_ctm_changed (AdgEntity *entity,
-                           AdgMatrix *dummy_ctm)
+ctm_changed (AdgEntity *entity,
+	     AdgMatrix *dummy_ctm)
 {
   AdgContainer *container;
   AdgContainer *parent;
@@ -234,15 +234,15 @@ adg_container_ctm_changed (AdgEntity *entity,
 }
 
 const AdgMatrix *
-adg_container_get_ctm (AdgEntity *entity)
+get_ctm (AdgEntity *entity)
 {
   return & ADG_CONTAINER (entity)->ctm;
 }
 
 
 static void
-adg_container_update (AdgEntity *entity,
-                      gboolean   recursive)
+update (AdgEntity *entity,
+	gboolean   recursive)
 {
   if (recursive)
     g_containerable_foreach (G_CONTAINERABLE (entity),
@@ -252,8 +252,8 @@ adg_container_update (AdgEntity *entity,
 }
 
 static void
-adg_container_outdate (AdgEntity *entity,
-                       gboolean   recursive)
+outdate (AdgEntity *entity,
+	 gboolean   recursive)
 {
   if (recursive)
     g_containerable_foreach (G_CONTAINERABLE (entity),
@@ -263,8 +263,8 @@ adg_container_outdate (AdgEntity *entity,
 }
 
 static void
-adg_container_render (AdgEntity *entity,
-                      cairo_t   *cr)
+render (AdgEntity *entity,
+	cairo_t   *cr)
 {
   AdgContainer *container = ADG_CONTAINER (entity);
 
