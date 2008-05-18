@@ -47,8 +47,8 @@
  * instead of angles and are better suited to simplify interpolations.
  */
 
-#include "adgpair.h"
-#include "adgutil.h"
+#include "adg-pair.h"
+#include "adg-util.h"
 
 #include <string.h>
 

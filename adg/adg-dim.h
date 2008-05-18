@@ -21,9 +21,9 @@
 #ifndef __ADGDIM_H__
 #define __ADGDIM_H__
 
-#include <adg/adgentity.h>
-#include <adg/adgpair.h>
-#include <adg/adgstyle.h>
+#include <adg/adg-entity.h>
+#include <adg/adg-pair.h>
+#include <adg/adg-style.h>
 
 
 G_BEGIN_DECLS

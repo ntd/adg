@@ -21,9 +21,9 @@
 #ifndef __ADGENTITY_H__
 #define __ADGENTITY_H__
 
-#include <adg/adgpair.h>
-#include <adg/adgmatrix.h>
-#include <adg/adgstyle.h>
+#include <adg/adg-pair.h>
+#include <adg/adg-matrix.h>
+#include <adg/adg-style.h>
 #include <gcontainer/gcontainer.h>
 
 

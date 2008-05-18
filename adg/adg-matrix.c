@@ -26,7 +26,7 @@
  * The AdgMatrix is essentially a wrapper for #cairo_matrix_t structures.
  */
 
-#include "adgmatrix.h"
+#include "adg-matrix.h"
 
 #include <string.h>
 

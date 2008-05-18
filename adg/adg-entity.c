@@ -27,9 +27,9 @@
  * (all the objects that can be printed or viewed).
  */
 
-#include "adgentity.h"
-#include "adgcanvas.h"
-#include "adgintl.h"
+#include "adg-entity.h"
+#include "adg-canvas.h"
+#include "adg-intl.h"
 
 
 enum

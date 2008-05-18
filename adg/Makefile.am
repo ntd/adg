@@ -9,39 +9,39 @@ AM_LDFLAGS =			@GCONTAINER_LIBS@ \
 
 # file groups
 adg_h_sources =			adg.h \
-				adgadim.h \
-				adgcanvas.h \
-				adgcontainer.h \
-				adgdim.h \
-				adgentity.h \
-				adgldim.h \
-				adgmatrix.h \
-				adgpair.h \
-				adgmodel.h \
-				adgpath.h \
-				adgstyle.h \
-				adgutil.h
-adg_built_h_sources =		adgtypebuiltins.h
-adg_private_h_sources =		adgintl.h \
-				adgdimprivate.h \
-				adgpathprivate.h
+				adg-adim.h \
+				adg-canvas.h \
+				adg-container.h \
+				adg-dim.h \
+				adg-entity.h \
+				adg-ldim.h \
+				adg-matrix.h \
+				adg-pair.h \
+				adg-model.h \
+				adg-path.h \
+				adg-style.h \
+				adg-util.h
+adg_built_h_sources =		adg-type-builtins.h
+adg_private_h_sources =		adg-intl.h \
+				adg-dim-private.h \
+				adg-path-private.h
 adg_built_private_h_sources =
 
-adg_c_sources =			adgadim.c \
-				adgcanvas.c \
-				adgcontainer.c \
-				adgdim.c \
-				adgentity.c \
-				adgldim.c \
-				adgmatrix.c \
-				adgnan.c \
-				adgpair.c \
-				adgmodel.c \
-				adgpath.c \
-				adgpathprivate.c \
-				adgstyle.c \
-				adgutil.c
-adg_built_c_sources =		adgtypebuiltins.c
+adg_c_sources =			adg-adim.c \
+				adg-canvas.c \
+				adg-container.c \
+				adg-dim.c \
+				adg-entity.c \
+				adg-ldim.c \
+				adg-matrix.c \
+				adg-nan.c \
+				adg-pair.c \
+				adg-model.c \
+				adg-path.c \
+				adg-path-private.c \
+				adg-style.c \
+				adg-util.c
+adg_built_c_sources =		adg-type-builtins.c
 
 # targets
 BUILT_SOURCES =			$(adg_built_h_sources) \
@@ -62,7 +62,7 @@ libadg_la_SOURCES =		$(adg_h_sources) \
 				$(adg_built_c_sources)
 
 
-adgtypebuiltins.h: $(adg_h_sources) Makefile
+adg-type-builtins.h: $(adg_h_sources) Makefile
 	glib-mkenums \
 	--fhead "#ifndef __ADG_TYPE_BUILTINS_H__\n#define __ADG_TYPE_BUILTINS_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
 	--fprod "/* enumerations from \"@filename@\" */\n" \
@@ -70,7 +70,7 @@ adgtypebuiltins.h: $(adg_h_sources) Makefile
 	--ftail "G_END_DECLS\n\n#endif /* __ADG_TYPE_BUILTINS_H__ */" \
 	$(adg_h_sources) > $@
 
-adgtypebuiltins.c: $(adg_h_sources) Makefile
+adg-type-builtins.c: $(adg_h_sources) Makefile
 	glib-mkenums \
 	--fhead "#include \"adg.h\"\n\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \

@@ -26,10 +26,10 @@
  * The #AdgDim class is the base stub of all the dimension entities.
  */
 
-#include "adgdim.h"
-#include "adgdimprivate.h"
-#include "adgutil.h"
-#include "adgintl.h"
+#include "adg-dim.h"
+#include "adg-dim-private.h"
+#include "adg-util.h"
+#include "adg-intl.h"
 
 
 enum

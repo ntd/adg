@@ -26,11 +26,11 @@
  * The #AdgLDim entity represents a linear dimension.
  */
 
-#include "adgldim.h"
-#include "adgdimprivate.h"
-#include "adgcontainer.h"
-#include "adgutil.h"
-#include "adgintl.h"
+#include "adg-ldim.h"
+#include "adg-dim-private.h"
+#include "adg-container.h"
+#include "adg-util.h"
+#include "adg-intl.h"
 
 
 enum

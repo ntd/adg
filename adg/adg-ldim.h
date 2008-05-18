@@ -21,7 +21,7 @@
 #ifndef __ADGLDIM_H__
 #define __ADGLDIM_H__
 
-#include <adg/adgdim.h>
+#include <adg/adg-dim.h>
 
 
 G_BEGIN_DECLS

@@ -30,8 +30,8 @@
  * renderable, so the class is not derived from #AdgEntity.
  */
 
-#include "adgmodel.h"
-#include "adgintl.h"
+#include "adg-model.h"
+#include "adg-intl.h"
 
 
 enum

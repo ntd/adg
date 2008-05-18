@@ -26,8 +26,8 @@
  *
  */
 
-#include "adgstyle.h"
-#include "adgutil.h"
+#include "adg-style.h"
+#include "adg-util.h"
 
 #include <string.h>
 #include <math.h>

@@ -21,7 +21,7 @@
 #ifndef __ADGPAIR_H__
 #define __ADGPAIR_H__
 
-#include <adg/adgmatrix.h>
+#include <adg/adg-matrix.h>
 
 
 G_BEGIN_DECLS

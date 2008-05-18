@@ -42,7 +42,9 @@ CFILE_GLOB=$(top_srcdir)/adg/*.c
 
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
-IGNORE_HFILES=adgintl.h adgdimprivate.h
+IGNORE_HFILES =		adg-intl.h \
+			adg-dim-private.h \
+			adg-path-private.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

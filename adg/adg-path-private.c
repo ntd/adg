@@ -22,7 +22,7 @@
  * You can download it from http://cairographics.org/
  */
 
-#include "adgpathprivate.h"
+#include "adg-path-private.h"
 
 #include <math.h>
 

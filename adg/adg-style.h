@@ -24,7 +24,7 @@
 #include <glib-object.h>
 #include <cairo.h>
 
-#include <adg/adgpair.h>
+#include <adg/adg-pair.h>
 
 
 G_BEGIN_DECLS

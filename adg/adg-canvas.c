@@ -30,8 +30,8 @@
  * Internally, the target is mantained as a #cairo_t context pointer.
  */
 
-#include "adgcanvas.h"
-#include "adgintl.h"
+#include "adg-canvas.h"
+#include "adg-intl.h"
 
 enum
 {

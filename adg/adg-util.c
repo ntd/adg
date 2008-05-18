@@ -24,7 +24,7 @@
  * @short_description: A collection of miscellaneous functions
  */
 
-#include "adgutil.h"
+#include "adg-util.h"
 
 
 /**

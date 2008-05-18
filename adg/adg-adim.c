@@ -26,11 +26,11 @@
  * The #AdgADim entity represents an angular dimension.
  */
 
-#include "adgadim.h"
-#include "adgdimprivate.h"
-#include "adgcontainer.h"
-#include "adgutil.h"
-#include "adgintl.h"
+#include "adg-adim.h"
+#include "adg-dim-private.h"
+#include "adg-container.h"
+#include "adg-util.h"
+#include "adg-intl.h"
 
 
 enum

@@ -1,4 +1,4 @@
 # List of source files which contain translatable strings.
 
-adg/adgcanvas.c
-adg/adgmodel.c
+adg/adg-canvas.c
+adg/adg-model.c

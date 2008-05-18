@@ -21,7 +21,7 @@
 #ifndef ADG_PATH_PRIVATE_H
 #define ADG_PATH_PRIVATE_H
 
-#include "adgpath.h"
+#include "adg-path.h"
 
 #define ADG_TOLERANCE   0.1
 

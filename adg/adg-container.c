@@ -31,8 +31,8 @@
  * same geometrical identity (same scale, reference point ecc...).
  */
 
-#include "adgcontainer.h"
-#include "adgintl.h"
+#include "adg-container.h"
+#include "adg-intl.h"
 
 
 enum

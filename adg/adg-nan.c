@@ -28,12 +28,12 @@
  * <ulink url="http://www.gnome.org/projects/guppi/">Guppi</ulink> program.
  */
 
-#include "adgutil.h"
+#include "adg-util.h"
 
 
 #ifndef NAN
 
-#include "adgintl.h"
+#include "adg-intl.h"
 #include <signal.h>
 
 #define FAKE_NAN        123.45678902468013579e-300

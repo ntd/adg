@@ -21,7 +21,7 @@
 #ifndef __ADGCONTAINER_H__
 #define __ADGCONTAINER_H__
 
-#include <adg/adgentity.h>
+#include <adg/adg-entity.h>
 
 
 G_BEGIN_DECLS

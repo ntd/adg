@@ -21,8 +21,8 @@
 #ifndef __ADGCANVAS_H__
 #define __ADGCANVAS_H__
 
-#include <adg/adgcontainer.h>
-#include <adg/adgstyle.h>
+#include <adg/adg-container.h>
+#include <adg/adg-style.h>
 
 
 G_BEGIN_DECLS

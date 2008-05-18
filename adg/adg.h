@@ -21,18 +21,18 @@
 #ifndef __ADG_H__
 #define __ADG_H__
 
-#include <adg/adgadim.h>
-#include <adg/adgcanvas.h>
-#include <adg/adgcontainer.h>
-#include <adg/adgdim.h>
-#include <adg/adgentity.h>
-#include <adg/adgldim.h>
-#include <adg/adgmatrix.h>
-#include <adg/adgmodel.h>
-#include <adg/adgpair.h>
-#include <adg/adgpath.h>
-#include <adg/adgstyle.h>
-#include <adg/adgtypebuiltins.h>
-#include <adg/adgutil.h>
+#include <adg/adg-adim.h>
+#include <adg/adg-canvas.h>
+#include <adg/adg-container.h>
+#include <adg/adg-dim.h>
+#include <adg/adg-entity.h>
+#include <adg/adg-ldim.h>
+#include <adg/adg-matrix.h>
+#include <adg/adg-model.h>
+#include <adg/adg-pair.h>
+#include <adg/adg-path.h>
+#include <adg/adg-style.h>
+#include <adg/adg-type-builtins.h>
+#include <adg/adg-util.h>
 
 #endif /* __ADG_H__ */

@@ -28,11 +28,11 @@
  * It contains a pointer to the desired #cairo_path_t structure.
  */
 
-#include "adgpath.h"
-#include "adgpathprivate.h"
-#include "adgutil.h"
-#include "adgcanvas.h"
-#include "adgintl.h"
+#include "adg-path.h"
+#include "adg-path-private.h"
+#include "adg-util.h"
+#include "adg-canvas.h"
+#include "adg-intl.h"
 
 #include <math.h>
 

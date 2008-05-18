@@ -21,8 +21,8 @@
 #ifndef __ADGDIM_PRIVATE_H__
 #define __ADGDIM_PRIVATE_H__
 
-#include <adg/adgdim.h>
-#include <adg/adgldim.h>
+#include <adg/adg-dim.h>
+#include <adg/adg-ldim.h>
 
 
 G_BEGIN_DECLS
