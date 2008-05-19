@@ -27,6 +27,7 @@
  */
 
 #include "adg-ldim.h"
+#include "adg-ldim-private.h"
 #include "adg-dim-private.h"
 #include "adg-container.h"
 #include "adg-util.h"
@@ -79,6 +80,8 @@ adg_ldim_class_init (AdgLDimClass *klass)
   entity_class = (AdgEntityClass *) klass;
   dim_class = (AdgDimClass *) klass;
 
+  g_type_class_add_private (klass, sizeof (AdgLDimPrivate));
+
   gobject_class->finalize = finalize;
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
@@ -88,7 +91,6 @@ adg_ldim_class_init (AdgLDimClass *klass)
   entity_class->outdate = outdate;
   entity_class->render = render;
 
-  g_type_class_add_private (klass, sizeof (_AdgLDimPrivate));
   dim_class->default_label = default_label;
 
   param = g_param_spec_double ("direction",
@@ -97,42 +99,44 @@ adg_ldim_class_init (AdgLDimClass *klass)
 			       -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
 			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
-
 }
 
 static void
 adg_ldim_init (AdgLDim *ldim)
 {
-  _AdgLDimPrivate *cache = _ADG_LDIM_GET_PRIVATE (ldim);
+  AdgLDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (ldim, ADG_TYPE_LDIM,
+						      AdgLDimPrivate);
 
-  ldim->direction = ADG_DIR_RIGHT;
+  priv->direction = ADG_DIR_RIGHT;
 
-  cache->extension1.status = CAIRO_STATUS_SUCCESS;
-  cache->extension1.data = NULL;
-  cache->extension1.num_data = 4;
+  priv->extension1.status = CAIRO_STATUS_SUCCESS;
+  priv->extension1.data = NULL;
+  priv->extension1.num_data = 4;
 
-  cache->extension2.status = CAIRO_STATUS_SUCCESS;
-  cache->extension2.data = NULL;
-  cache->extension2.num_data = 4;
+  priv->extension2.status = CAIRO_STATUS_SUCCESS;
+  priv->extension2.data = NULL;
+  priv->extension2.num_data = 4;
 
-  cache->arrow_path.status = CAIRO_STATUS_SUCCESS;
-  cache->arrow_path.data = NULL;
-  cache->arrow_path.num_data = 4;
+  priv->arrow_path.status = CAIRO_STATUS_SUCCESS;
+  priv->arrow_path.data = NULL;
+  priv->arrow_path.num_data = 4;
 
-  cache->baseline.status = CAIRO_STATUS_SUCCESS;
-  cache->baseline.data = NULL;
-  cache->baseline.num_data = 4;
+  priv->baseline.status = CAIRO_STATUS_SUCCESS;
+  priv->baseline.data = NULL;
+  priv->baseline.num_data = 4;
+
+  ldim->priv = priv;
 }
 
 static void
 finalize (GObject *object)
 {
-  _AdgLDimPrivate *cache = _ADG_LDIM_GET_PRIVATE (object);
+  AdgLDimPrivate *priv = ((AdgLDim *) object)->priv;
 
-  g_free (cache->extension1.data);
-  g_free (cache->extension2.data);
-  g_free (cache->arrow_path.data);
-  g_free (cache->baseline.data);
+  g_free (priv->extension1.data);
+  g_free (priv->extension2.data);
+  g_free (priv->arrow_path.data);
+  g_free (priv->baseline.data);
 }
 
 static void
@@ -146,7 +150,7 @@ get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_DIRECTION:
-      g_value_set_double (value, ldim->direction);
+      g_value_set_double (value, ldim->priv->direction);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -165,7 +169,7 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_DIRECTION:
-      ldim->direction = g_value_get_double (value);
+      ldim->priv->direction = g_value_get_double (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -199,9 +203,7 @@ update (AdgEntity *entity,
 	gboolean   recursive)
 {
   AdgDim            *dim;
-  _AdgDimPrivate    *dim_cache;
   AdgLDim           *ldim;
-  _AdgLDimPrivate   *cache;
   AdgMatrix          device2user;
   AdgVector          vector;
   AdgPair            offset;
@@ -212,44 +214,40 @@ update (AdgEntity *entity,
   cairo_path_data_t *path_data;
 
   dim = (AdgDim *) entity;
-  dim_cache = _ADG_DIM_GET_PRIVATE (dim);
   ldim = (AdgLDim *) entity;
-  cache = _ADG_LDIM_GET_PRIVATE (ldim);
 
-  g_assert (dim_cache != NULL);
-  g_assert (cache != NULL);
-  g_return_if_fail (dim->dim_style != NULL);
-  g_return_if_fail (adg_pair_is_set (&dim->ref1));
-  g_return_if_fail (adg_pair_is_set (&dim->ref2));
-  g_return_if_fail (adg_pair_is_set (&dim->pos1));
-  g_return_if_fail (! adg_isnan (ldim->direction));
+  g_return_if_fail (dim->priv->dim_style != NULL);
+  g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
+  g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
+  g_return_if_fail (adg_pair_is_set (&dim->priv->pos1));
+  g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   /* Get the inverted transformation matrix */
   adg_matrix_set (&device2user, adg_entity_get_ctm (entity));
   g_return_if_fail (cairo_matrix_invert (&device2user) == CAIRO_STATUS_SUCCESS);
 
   /* Set vector to the direction where ldim will extend */
-  adg_vector_set_with_angle (&vector, ldim->direction);
+  adg_vector_set_with_angle (&vector, ldim->priv->direction);
 
   /* Calculate from1 and from2*/
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
-                                dim->dim_style->from_offset,
+                                dim->priv->dim_style->from_offset,
                                 &device2user);
   /* Checkpoint */
   g_return_if_fail (adg_pair_is_set (&offset));
-  adg_pair_add (adg_pair_set (&from1, &offset), &dim->ref1);
-  adg_pair_add (adg_pair_set (&from2, &offset), &dim->ref2);
+  adg_pair_add (adg_pair_set (&from1, &offset), &dim->priv->ref1);
+  adg_pair_add (adg_pair_set (&from2, &offset), &dim->priv->ref2);
 
   /* Calculate arrow1 and arrow2 */
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
-                                dim->level * dim->dim_style->baseline_spacing,
+                                dim->priv->level * dim->priv->dim_style->baseline_spacing,
                                 &device2user);
-  adg_pair_add (adg_pair_set (&arrow1, &dim->pos1), &offset);
-  adg_pair_add (adg_pair_set (&arrow2, &dim->pos2), &offset);
+  adg_pair_add (adg_pair_set (&arrow1, &dim->priv->pos1), &offset);
+  adg_pair_add (adg_pair_set (&arrow2, &dim->priv->pos2), &offset);
 
   /* Calculate to1 and to2 */
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
-                                dim->dim_style->to_offset,
+                                dim->priv->dim_style->to_offset,
                                 &device2user);
   adg_pair_add (adg_pair_set (&to1, &arrow1), &offset);
   adg_pair_add (adg_pair_set (&to2, &arrow2), &offset);
@@ -258,22 +256,22 @@ update (AdgEntity *entity,
   adg_pair_sub (adg_pair_set (&offset, &arrow2), &arrow1);
   adg_vector_set_with_pair (&vector, &offset);
 
-  /* Update the dim_cache contents */
-  adg_pair_mid (adg_pair_set (&dim_cache->quote_org, &arrow1), &arrow2);
-  dim_cache->quote_angle = adg_pair_get_angle (&vector);
+  /* Update the AdgDim cache contents */
+  adg_pair_mid (adg_pair_set (&dim->priv->quote_org, &arrow1), &arrow2);
+  dim->priv->quote_angle = adg_pair_get_angle (&vector);
 
   /* Calculate baseline1 and baseline2 */
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
-                                dim->dim_style->arrow_style->margin,
+                                dim->priv->dim_style->arrow_style->margin,
                                 &device2user);
   adg_pair_add (adg_pair_set (&baseline1, &arrow1), &offset);
   adg_pair_sub (adg_pair_set (&baseline2, &arrow2), &offset);
 
   /* Set extension1 */
-  if (cache->extension1.data == NULL)
-    cache->extension1.data = g_new (cairo_path_data_t, 4);
+  if (ldim->priv->extension1.data == NULL)
+    ldim->priv->extension1.data = g_new (cairo_path_data_t, 4);
 
-  path_data = cache->extension1.data;
+  path_data = ldim->priv->extension1.data;
   path_data[0].header.type = CAIRO_PATH_MOVE_TO;
   path_data[0].header.length = 2;
   path_data[1].point.x = from1.x;
@@ -284,10 +282,10 @@ update (AdgEntity *entity,
   path_data[3].point.y = to1.y;
 
   /* Set extension2 */
-  if (cache->extension2.data == NULL)
-    cache->extension2.data = g_new (cairo_path_data_t, 4);
+  if (ldim->priv->extension2.data == NULL)
+    ldim->priv->extension2.data = g_new (cairo_path_data_t, 4);
 
-  path_data = cache->extension2.data;
+  path_data = ldim->priv->extension2.data;
   path_data[0].header.type = CAIRO_PATH_MOVE_TO;
   path_data[0].header.length = 2;
   path_data[1].point.x = from2.x;
@@ -298,10 +296,10 @@ update (AdgEntity *entity,
   path_data[3].point.y = to2.y;
 
   /* Set arrow_path */
-  if (cache->arrow_path.data == NULL)
-    cache->arrow_path.data = g_new (cairo_path_data_t, 4);
+  if (ldim->priv->arrow_path.data == NULL)
+    ldim->priv->arrow_path.data = g_new (cairo_path_data_t, 4);
 
-  path_data = cache->arrow_path.data;
+  path_data = ldim->priv->arrow_path.data;
   path_data[0].header.type = CAIRO_PATH_MOVE_TO;
   path_data[0].header.length = 2;
   path_data[1].point.x = arrow1.x;
@@ -312,10 +310,10 @@ update (AdgEntity *entity,
   path_data[3].point.y = arrow2.y;
 
   /* Set baseline */
-  if (cache->baseline.data == NULL)
-    cache->baseline.data = g_new (cairo_path_data_t, 4);
+  if (ldim->priv->baseline.data == NULL)
+    ldim->priv->baseline.data = g_new (cairo_path_data_t, 4);
 
-  path_data = cache->baseline.data;
+  path_data = ldim->priv->baseline.data;
   path_data[0].header.type = CAIRO_PATH_MOVE_TO;
   path_data[0].header.length = 2;
   path_data[1].point.x = baseline1.x;
@@ -339,35 +337,32 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  AdgDim          *dim;
-  AdgLDim         *ldim;
-  _AdgLDimPrivate *cache;
+  AdgDim  *dim;
+  AdgLDim *ldim;
 
   dim = (AdgDim *) entity;
   ldim = (AdgLDim *) entity;
-  cache = _ADG_LDIM_GET_PRIVATE (ldim);
 
-  g_assert (cache != NULL);
-  g_return_if_fail (dim->dim_style != NULL);
+  g_return_if_fail (dim->priv->dim_style != NULL);
 
   cairo_save (cr);
-  cairo_set_source (cr, dim->dim_style->pattern);
+  cairo_set_source (cr, dim->priv->dim_style->pattern);
 
   /* Arrows */
-  adg_arrow_render (cr, dim->dim_style->arrow_style, &cache->arrow_path, ADG_PATH_POINT_START);
-  adg_arrow_render (cr, dim->dim_style->arrow_style, &cache->arrow_path, ADG_PATH_POINT_END);
+  adg_arrow_render (cr, dim->priv->dim_style->arrow_style, &ldim->priv->arrow_path, ADG_PATH_POINT_START);
+  adg_arrow_render (cr, dim->priv->dim_style->arrow_style, &ldim->priv->arrow_path, ADG_PATH_POINT_END);
 
   /* Lines */
-  adg_line_style_apply (dim->dim_style->line_style, cr);
+  adg_line_style_apply (dim->priv->dim_style->line_style, cr);
 
-  cairo_append_path (cr, &cache->extension1);
-  cairo_append_path (cr, &cache->extension2);
-  cairo_append_path (cr, &cache->baseline);
+  cairo_append_path (cr, &ldim->priv->extension1);
+  cairo_append_path (cr, &ldim->priv->extension2);
+  cairo_append_path (cr, &ldim->priv->baseline);
 
   cairo_stroke (cr);
 
   /* Quote */
-  _adg_dim_render_quote (dim, cr);
+  adg_dim_render_quote (dim, cr);
 
   cairo_restore (cr);
 }
@@ -378,9 +373,9 @@ default_label (AdgDim *dim)
   AdgPair delta;
   double  measure;
 
-  measure = adg_pair_get_length (adg_pair_sub (adg_pair_set (&delta, &dim->pos2), &dim->pos1));
+  measure = adg_pair_get_length (adg_pair_sub (adg_pair_set (&delta, &dim->priv->pos2), &dim->priv->pos1));
 
-  return g_strdup_printf (dim->dim_style->measure_format, measure);
+  return g_strdup_printf (dim->priv->dim_style->measure_format, measure);
 }
 
 
@@ -487,21 +482,21 @@ adg_ldim_set_pos (AdgLDim       *ldim,
 
   g_return_if_fail (ADG_IS_LDIM (ldim));
   g_return_if_fail (adg_pair_is_set (pos));
-  g_return_if_fail (! adg_isnan (ldim->direction));
+  g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   dim = (AdgDim *) ldim;
   object = (GObject *) ldim;
 
-  g_return_if_fail (adg_pair_is_set (&dim->ref1));
-  g_return_if_fail (adg_pair_is_set (&dim->ref2));
+  g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
+  g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
 
-  adg_pair_set (&dim->pos1, &dim->ref1);
-  adg_pair_set (&dim->pos2, &dim->ref2);
-  adg_vector_set_with_angle (&extension_vector, ldim->direction);
+  adg_pair_set (&dim->priv->pos1, &dim->priv->ref1);
+  adg_pair_set (&dim->priv->pos2, &dim->priv->ref2);
+  adg_vector_set_with_angle (&extension_vector, ldim->priv->direction);
   adg_vector_normal (adg_pair_set (&baseline_vector, &extension_vector));
 
-  adg_pair_intersection (&dim->pos1, &extension_vector, pos, &baseline_vector);
-  adg_pair_intersection (&dim->pos2, &extension_vector, pos, &baseline_vector);
+  adg_pair_intersection (&dim->priv->pos1, &extension_vector, pos, &baseline_vector);
+  adg_pair_intersection (&dim->priv->pos2, &extension_vector, pos, &baseline_vector);
 
   g_object_freeze_notify (object);
   g_object_notify (object, "pos1");
@@ -543,7 +538,7 @@ adg_ldim_get_direction (AdgLDim *ldim)
 {
   g_return_val_if_fail (ADG_IS_LDIM (ldim), ADG_NAN);
 
-  return ldim->direction;
+  return ldim->priv->direction;
 }
 
 /**
@@ -559,6 +554,6 @@ adg_ldim_set_direction (AdgLDim *ldim,
 {
   g_return_if_fail (ADG_IS_LDIM (ldim));
 
-  ldim->direction = direction;
+  ldim->priv->direction = direction;
   g_object_notify ((GObject *) ldim, "direction");
 }

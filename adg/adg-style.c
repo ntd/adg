@@ -681,6 +681,7 @@ adg_dim_style_init (void)
   style->note_offset.x = +5.0;
   style->note_offset.y =  0.0;
   style->measure_format = g_strdup ("%-.7g");
+  style->measure_tag = g_strdup ("<>");
 }
 
 AdgDimStyleId

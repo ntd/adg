@@ -27,10 +27,9 @@
  */
 
 #include "adg-adim.h"
-#include "adg-dim-private.h"
+#include "adg-adim-private.h"
 #include "adg-container.h"
 #include "adg-util.h"
-#include "adg-intl.h"
 #include "adg-intl.h"
 
 #include <gcontainer/gcontainer.h>
@@ -70,13 +69,14 @@ adg_adim_class_init (AdgADimClass *klass)
   entity_class = (AdgEntityClass *) klass;
   dim_class = (AdgDimClass *) klass;
 
+  g_type_class_add_private (klass, sizeof (AdgADimPrivate));
+
   gobject_class->finalize = finalize;
 
   entity_class->ctm_changed = ctm_changed;
   entity_class->update = update;
   entity_class->render = render;
 
-  g_type_class_add_private (klass, sizeof (_AdgADimPrivate));
   dim_class->default_label = default_label;
 
   param = g_param_spec_double ("direction",
@@ -91,34 +91,37 @@ adg_adim_class_init (AdgADimClass *klass)
 static void
 adg_adim_init (AdgADim *adim)
 {
-  _AdgADimPrivate *cache = _ADG_ADIM_GET_PRIVATE (adim);
+  AdgADimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (adim, ADG_TYPE_ADIM,
+						      AdgADimPrivate);
 
-  cache->extension1.status = CAIRO_STATUS_SUCCESS;
-  cache->extension1.data = NULL;
-  cache->extension1.num_data = 4;
+  priv->extension1.status = CAIRO_STATUS_SUCCESS;
+  priv->extension1.data = NULL;
+  priv->extension1.num_data = 4;
 
-  cache->extension2.status = CAIRO_STATUS_SUCCESS;
-  cache->extension2.data = NULL;
-  cache->extension2.num_data = 4;
+  priv->extension2.status = CAIRO_STATUS_SUCCESS;
+  priv->extension2.data = NULL;
+  priv->extension2.num_data = 4;
 
-  cache->arrow_path.status = CAIRO_STATUS_SUCCESS;
-  cache->arrow_path.data = NULL;
-  cache->arrow_path.num_data = 4;
+  priv->arrow_path.status = CAIRO_STATUS_SUCCESS;
+  priv->arrow_path.data = NULL;
+  priv->arrow_path.num_data = 4;
 
-  cache->baseline.status = CAIRO_STATUS_SUCCESS;
-  cache->baseline.data = NULL;
-  cache->baseline.num_data = 4;
+  priv->baseline.status = CAIRO_STATUS_SUCCESS;
+  priv->baseline.data = NULL;
+  priv->baseline.num_data = 4;
+
+  adim->priv = priv;
 }
 
 static void
 finalize (GObject *object)
 {
-  _AdgADimPrivate *cache = _ADG_ADIM_GET_PRIVATE (object);
+  AdgADimPrivate *priv = ((AdgADim *) object)->priv;
 
-  g_free (cache->extension1.data);
-  g_free (cache->extension2.data);
-  g_free (cache->arrow_path.data);
-  g_free (cache->baseline.data);
+  g_free (priv->extension1.data);
+  g_free (priv->extension2.data);
+  g_free (priv->arrow_path.data);
+  g_free (priv->baseline.data);
 }
 
 static void

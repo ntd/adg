@@ -22,10 +22,12 @@ adg_h_sources =			adg.h \
 				adg-style.h \
 				adg-util.h
 adg_built_h_sources =		adg-type-builtins.h
-adg_private_h_sources =		adg-intl.h \
+adg_private_h_sources =		adg-adim-private.h \
 				adg-canvas-private.h \
 				adg-dim-private.h \
 				adg-entity-private.h \
+				adg-intl.h \
+				adg-ldim-private.h \
 				adg-path-private.h
 adg_built_private_h_sources =
 

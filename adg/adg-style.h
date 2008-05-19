@@ -204,6 +204,7 @@ struct _AdgDimStyle
   AdgPair                note_offset;
 
   gchar                 *measure_format;
+  gchar			*measure_tag;
 };
 
 /**

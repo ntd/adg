@@ -23,12 +23,10 @@
 
 #include <adg/adg-entity.h>
 #include <adg/adg-pair.h>
-#include <adg/adg-style.h>
 
 
 G_BEGIN_DECLS
 
-#define ADG_DIM_MEASURE_TAG      "<>"
 
 #define ADG_TYPE_DIM             (adg_dim_get_type ())
 #define ADG_DIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_DIM, AdgDim))
@@ -37,27 +35,16 @@ G_BEGIN_DECLS
 #define ADG_IS_DIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_DIM))
 #define ADG_DIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_DIM, AdgDimClass))
 
-typedef struct _AdgDim       AdgDim;
-typedef struct _AdgDimClass  AdgDimClass;
+typedef struct _AdgDim        AdgDim;
+typedef struct _AdgDimClass   AdgDimClass;
+typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDim
 {
-  AdgEntity              entity;
+  AdgEntity		 entity;
 
   /*< private >*/
-
-  AdgDimStyle           *dim_style;
-
-  AdgPair                ref1;
-  AdgPair                ref2;
-  AdgPair                pos1;
-  AdgPair                pos2;
-  double                 level;
-
-  gchar                 *label;
-  gchar                 *tolerance_up;
-  gchar                 *tolerance_down;
-  gchar                 *note;
+  AdgDimPrivate		*priv;
 };
 
 struct _AdgDimClass
@@ -66,7 +53,6 @@ struct _AdgDimClass
 
 
   /* Virtual Table */
-
   gchar *               (*default_label)                (AdgDim         *dim);
   void                  (*label_layout)                 (AdgDim         *dim,
                                                          cairo_t        *cr);
@@ -113,6 +99,7 @@ void                     adg_dim_set_tolerances         (AdgDim         *dim,
 const gchar *            adg_dim_get_note               (AdgDim         *dim);
 void                     adg_dim_set_note               (AdgDim         *dim,
                                                          const gchar    *note);
+
 
 G_END_DECLS
 

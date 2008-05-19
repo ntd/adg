@@ -34,14 +34,16 @@ G_BEGIN_DECLS
 #define ADG_ADIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ADIM, AdgADimClass))
 
 
-typedef struct _AdgADim       AdgADim;
-typedef struct _AdgADimClass  AdgADimClass;
+typedef struct _AdgADim        AdgADim;
+typedef struct _AdgADimClass   AdgADimClass;
+typedef struct _AdgADimPrivate AdgADimPrivate;
 
 struct _AdgADim
 {
   AdgDim                 dim;
 
   /*< private >*/
+  AdgADimPrivate	*priv;
 };
 
 struct _AdgADimClass

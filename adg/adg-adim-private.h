@@ -18,45 +18,26 @@
  */
 
 
-#ifndef __ADGDIMPRIVATE_H__
-#define __ADGDIMPRIVATE_H__
+#ifndef __ADGADIMPRIVATE_H__
+#define __ADGADIMPRIVATE_H__
 
-#include <adg/adg-style.h>
-#include <adg/adg-pair.h>
+#include <cairo.h>
 
 
 G_BEGIN_DECLS
 
 
-struct _AdgDimPrivate
+struct _AdgADimPrivate
 {
-  AdgDimStyle		*dim_style;
-  AdgPair		 ref1;
-  AdgPair		 ref2;
-  AdgPair		 pos1;
-  AdgPair		 pos2;
-  double		 level;
-  gchar			*label;
-  gchar			*tolerance_up;
-  gchar			*tolerance_down;
-  gchar			*note;
-
   /* Cached data */
-  AdgPair		 quote_org;
-  gdouble		 quote_angle;
-
-  /* Cached data (quote related) */
-  AdgPair		 quote_offset;
-  AdgPair		 tolerance_up_offset;
-  AdgPair		 tolerance_down_offset;
-  AdgPair 		 note_offset;
+  cairo_path_t           extension1;
+  cairo_path_t           extension2;
+  cairo_path_t           arrow_path;
+  cairo_path_t           baseline;
 };
 
-
-void		adg_dim_render_quote		(AdgDim		*dim,
-						 cairo_t	*cr);
 
 G_END_DECLS
 
 
-#endif /* __ADGDIMPRIVATE_H__ */
+#endif /* __ADGADIMPRIVATE_H__ */

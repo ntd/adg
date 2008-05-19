@@ -34,16 +34,16 @@ G_BEGIN_DECLS
 #define ADG_LDIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_LDIM, AdgLDimClass))
 
 
-typedef struct _AdgLDim       AdgLDim;
-typedef struct _AdgLDimClass  AdgLDimClass;
+typedef struct _AdgLDim        AdgLDim;
+typedef struct _AdgLDimClass   AdgLDimClass;
+typedef struct _AdgLDimPrivate AdgLDimPrivate;
 
 struct _AdgLDim
 {
-  AdgDim                 dim;
+  AdgDim		 dim;
 
   /*< private >*/
-
-  double                 direction;
+  AdgLDimPrivate	*priv;
 };
 
 struct _AdgLDimClass
