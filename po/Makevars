@@ -7,5 +7,5 @@ top_builddir = ..
 
 XGETTEXT_OPTIONS = --keyword=_ --keyword=N_
 COPYRIGHT_HOLDER = Free Software Foundation, Inc.
-MSGID_BUGS_ADDRESS = ntd@users.sourceforge.net
+MSGID_BUGS_ADDRESS = ntd at entidi.it
 EXTRA_LOCALE_CATEGORIES =
