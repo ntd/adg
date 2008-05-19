@@ -28,8 +28,12 @@
  */
 
 #include "adg-entity.h"
+#include "adg-entity-private.h"
 #include "adg-canvas.h"
+#include "adg-util.h"
 #include "adg-intl.h"
+
+#include <gcontainer/gcontainer.h>
 
 #define PARENT_CLASS ((AdgEntityClass *)adg_container_parent_class)
 
@@ -84,7 +88,9 @@ adg_entity_class_init (AdgEntityClass *klass)
 {
   GObjectClass *gobject_class;
 
-  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class = (GObjectClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (AdgEntityPrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
@@ -151,8 +157,14 @@ childable_init (GChildableIface *iface)
 static void
 adg_entity_init (AdgEntity *entity)
 {
-  entity->parent = NULL;
-  entity->flags = 0;
+  AdgEntityPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (entity,
+							ADG_TYPE_ENTITY,
+							AdgEntityPrivate);
+
+  priv->parent = NULL;
+  priv->flags = 0;
+
+  entity->priv = priv;
 }
 
 static void
@@ -197,14 +209,14 @@ set_property (GObject      *object,
 static GContainerable *
 get_parent (GChildable *childable)
 {
-  return ((AdgEntity *) childable)->parent;
+  return (GContainerable *) ((AdgEntity *) childable)->priv->parent;
 }
 
 static void
 set_parent (GChildable     *childable,
 	    GContainerable *new_parent)
 {
-  ((AdgEntity *) childable)->parent = new_parent;
+  ((AdgEntity *) childable)->priv->parent = (AdgEntity *) new_parent;
 }
 
 static void
@@ -226,7 +238,7 @@ static void
 real_update (AdgEntity *entity,
 	     gboolean   recursive)
 {
-  ADG_ENTITY_SET_FLAGS (entity, ADG_UPTODATE);
+  ADG_SET (entity->priv->flags, ADG_ENTITY_UPDATED);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, FALSE);
 }
 
@@ -234,7 +246,7 @@ static void
 real_outdate (AdgEntity *entity,
 	      gboolean   recursive)
 {
-  ADG_ENTITY_UNSET_FLAGS (entity, ADG_UPTODATE);
+  ADG_UNSET (entity->priv->flags, ADG_ENTITY_UPDATED);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, TRUE);
 }
 
@@ -273,6 +285,7 @@ adg_entity_get_canvas (AdgEntity *entity)
   return NULL;
 }
 
+
 /**
  * adg_entity_ctm_changed:
  * @entity: an #AdgEntity
@@ -310,7 +323,7 @@ adg_entity_get_line_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->parent)
+  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -376,7 +389,7 @@ adg_entity_get_font_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->parent)
+  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -442,7 +455,7 @@ adg_entity_get_arrow_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->parent)
+  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -508,7 +521,7 @@ adg_entity_get_dim_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->parent)
+  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -590,11 +603,25 @@ adg_entity_get_ctm (AdgEntity *entity)
             return matrix;
         }
 
-      entity = (AdgEntity *) entity->parent;
+      entity = entity->priv->parent;
     }
 
   /* No valid matrix found in entity hierarchy */
   g_return_val_if_reached (adg_matrix_get_fallback ());
+}
+
+
+/**
+ * adg_entity_is_uptodate:
+ * @entity: an #AdgEntity
+ *
+ * Return value: %TRUE if @entity was previously updated
+ */
+gboolean
+adg_entity_is_uptodate (AdgEntity *entity)
+{
+  g_return_val_if_fail (ADG_IS_ENTITY (entity), FALSE);
+  return ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED);
 }
 
 
@@ -610,7 +637,7 @@ adg_entity_update (AdgEntity *entity)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  if (ADG_ENTITY_UPTODATE (entity))
+  if (ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
     return;
 
   ADG_ENTITY_GET_CLASS (entity)->update (entity, FALSE);
@@ -642,7 +669,7 @@ adg_entity_outdate (AdgEntity *entity)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  if (! ADG_ENTITY_UPTODATE (entity))
+  if (!ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
     return;
 
   ADG_ENTITY_GET_CLASS (entity)->outdate (entity, FALSE);
@@ -683,7 +710,7 @@ adg_entity_render (AdgEntity *entity,
 
   entity_class = ADG_ENTITY_GET_CLASS (entity);
 
-  if (! ADG_ENTITY_UPTODATE (entity))
+  if (!ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
       entity_class->update (entity, FALSE);
 
   entity_class->render (entity, cr);

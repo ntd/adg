@@ -24,13 +24,12 @@
 #include <adg/adg-pair.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-style.h>
-#include <gcontainer/gcontainer.h>
 
 
 G_BEGIN_DECLS
 
-/* Forward declarations */
 
+/* Forward declarations */
 typedef struct _AdgCanvas       AdgCanvas;
 
 
@@ -42,25 +41,9 @@ typedef struct _AdgCanvas       AdgCanvas;
 #define ADG_ENTITY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ENTITY, AdgEntityClass))
 
 
-/* AdgEntity flags management. */
-
-typedef enum
-{
-  ADG_UPTODATE	       = 1 << 0
-} AdgEntityFlags;
-
-#define ADG_ENTITY_FLAGS(ent)        	 (ADG_ENTITY (ent)->flags)
-#define ADG_ENTITY_UPTODATE(ent)     	 ((ADG_ENTITY_FLAGS (ent) & (ADG_UPTODATE)) != 0)
-
-#define ADG_ENTITY_SET_FLAGS(ent,flag)	 G_STMT_START{ (ADG_ENTITY_FLAGS (ent) |= (flag)); }G_STMT_END
-#define ADG_ENTITY_UNSET_FLAGS(ent,flag) G_STMT_START{ (ADG_ENTITY_FLAGS (ent) &= ~(flag)); }G_STMT_END
-
-#define ADG_CALLBACK(f)              	 ((AdgCallback) (f))
-
-
-typedef struct _AdgEntity       AdgEntity;
-typedef struct _AdgEntityClass  AdgEntityClass;
-typedef void (*AdgCallback) (AdgEntity *entity, gpointer user_data);
+typedef struct _AdgEntity        AdgEntity;
+typedef struct _AdgEntityClass   AdgEntityClass;
+typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 
 struct _AdgEntity
@@ -68,10 +51,7 @@ struct _AdgEntity
   GInitiallyUnowned	 child;
 
   /*< private >*/
-
-  GContainerable        *parent;
-
-  guint32                flags;
+  AdgEntityPrivate	*priv;
 };
 
 struct _AdgEntityClass
@@ -79,64 +59,69 @@ struct _AdgEntityClass
   GInitiallyUnownedClass parent_class;
 
   /* Signals */
-
-  void                  (*uptodate_set)                 (AdgEntity      *entity,
-                                                         gboolean        old_state);
-  void                  (*ctm_changed)                  (AdgEntity      *entity,
-                                                         AdgMatrix      *old_ctm);
+  void			(*uptodate_set)			(AdgEntity      *entity,
+							 gboolean        old_state);
+  void			(*ctm_changed)			(AdgEntity      *entity,
+							 AdgMatrix      *old_ctm);
 
   /* Virtual Table */
-
-  const AdgLineStyle *  (*get_line_style)               (AdgEntity      *entity);
-  void                  (*set_line_style)               (AdgEntity      *entity,
-                                                         AdgLineStyle   *line_style);
-  const AdgFontStyle *  (*get_font_style)               (AdgEntity      *entity);
-  void                  (*set_font_style)               (AdgEntity      *entity,
-                                                         AdgFontStyle   *font_style);
-  const AdgArrowStyle * (*get_arrow_style)              (AdgEntity      *entity);
-  void                  (*set_arrow_style)              (AdgEntity      *entity,
-                                                         AdgArrowStyle  *arrow_style);
-  const AdgDimStyle *   (*get_dim_style)                (AdgEntity      *entity);
-  void                  (*set_dim_style)                (AdgEntity      *entity,
-                                                         AdgDimStyle    *dim_style);
-
-  const AdgMatrix *     (*get_ctm)                      (AdgEntity      *entity);
-
-  void                  (*update)                       (AdgEntity      *entity,
-                                                         gboolean        recursive);
-  void                  (*outdate)                      (AdgEntity      *entity,
-                                                         gboolean        recursive);
-  void                  (*render)                       (AdgEntity      *entity,
-                                                         cairo_t        *cr);
+  const AdgLineStyle *	(*get_line_style)		(AdgEntity      *entity);
+  void			(*set_line_style)		(AdgEntity      *entity,
+							 AdgLineStyle   *line_style);
+  const AdgFontStyle *	(*get_font_style)		(AdgEntity      *entity);
+  void			(*set_font_style)		(AdgEntity      *entity,
+							 AdgFontStyle   *font_style);
+  const AdgArrowStyle *	(*get_arrow_style)		(AdgEntity      *entity);
+  void			(*set_arrow_style)		(AdgEntity      *entity,
+							 AdgArrowStyle  *arrow_style);
+  const AdgDimStyle *	(*get_dim_style)		(AdgEntity      *entity);
+  void			(*set_dim_style)		(AdgEntity      *entity,
+							 AdgDimStyle    *dim_style);
+  const AdgMatrix *	(*get_ctm)			(AdgEntity      *entity);
+  void			(*update)			(AdgEntity      *entity,
+							 gboolean        recursive);
+  void			(*outdate)			(AdgEntity      *entity,
+							 gboolean        recursive);
+  void			(*render)			(AdgEntity      *entity,
+							 cairo_t        *cr);
 };
 
 
-GType			adg_entity_get_type	        (void) G_GNUC_CONST;
+#define ADG_CALLBACK(f)		    ((AdgCallback) (f))
 
-AdgCanvas *             adg_entity_get_canvas           (AdgEntity      *entity);
 
-void                    adg_entity_ctm_changed          (AdgEntity      *entity);
-const AdgMatrix *       adg_entity_get_ctm              (AdgEntity      *entity);
+typedef void (*AdgCallback) (AdgEntity *entity, gpointer user_data);
 
-const AdgLineStyle *    adg_entity_get_line_style       (AdgEntity      *entity);
-void                    adg_entity_set_line_style       (AdgEntity      *entity,
-                                                         AdgLineStyle   *line_style);
-const AdgFontStyle *    adg_entity_get_font_style       (AdgEntity      *entity);
-void                    adg_entity_set_font_style       (AdgEntity      *entity,
-                                                         AdgFontStyle   *font_style);
-const AdgArrowStyle *   adg_entity_get_arrow_style      (AdgEntity      *entity);
-void                    adg_entity_set_arrow_style      (AdgEntity      *entity,
-                                                         AdgArrowStyle  *arrow_style);
-const AdgDimStyle *     adg_entity_get_dim_style        (AdgEntity      *entity);
-void                    adg_entity_set_dim_style        (AdgEntity      *entity,
-                                                         AdgDimStyle    *dim_style);
 
-void                    adg_entity_update               (AdgEntity      *entity);
-void                    adg_entity_update_all           (AdgEntity      *entity);
-void                    adg_entity_outdate              (AdgEntity      *entity);
-void                    adg_entity_outdate_all          (AdgEntity      *entity);
-void                    adg_entity_render               (AdgEntity      *entity,
-                                                         cairo_t        *cr);
+GType			adg_entity_get_type		(void) G_GNUC_CONST;
+
+AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
+
+void			adg_entity_ctm_changed		(AdgEntity      *entity);
+const AdgMatrix *	adg_entity_get_ctm		(AdgEntity      *entity);
+
+const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
+void			adg_entity_set_line_style	(AdgEntity      *entity,
+							 AdgLineStyle   *line_style);
+const AdgFontStyle *	adg_entity_get_font_style	(AdgEntity      *entity);
+void			adg_entity_set_font_style	(AdgEntity      *entity,
+							 AdgFontStyle   *font_style);
+const AdgArrowStyle *	adg_entity_get_arrow_style	(AdgEntity      *entity);
+void			adg_entity_set_arrow_style	(AdgEntity      *entity,
+							 AdgArrowStyle  *arrow_style);
+const AdgDimStyle *	adg_entity_get_dim_style	(AdgEntity      *entity);
+void			adg_entity_set_dim_style	(AdgEntity      *entity,
+							 AdgDimStyle    *dim_style);
+
+gboolean		adg_entity_is_uptodate		(AdgEntity      *entity);
+
+void			adg_entity_update		(AdgEntity      *entity);
+void			adg_entity_update_all		(AdgEntity      *entity);
+void			adg_entity_outdate		(AdgEntity      *entity);
+void			adg_entity_outdate_all		(AdgEntity      *entity);
+void			adg_entity_render		(AdgEntity      *entity,
+							 cairo_t        *cr);
+
 
 G_END_DECLS
 

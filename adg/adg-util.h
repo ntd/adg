@@ -28,6 +28,12 @@
 
 G_BEGIN_DECLS
 
+
+#define ADG_ISSET(flags,mask)	(((flags) & (mask)) != 0 ? TRUE : FALSE)
+#define ADG_SET(flags,mask)	G_STMT_START{ (flags) |= (mask); }G_STMT_END
+#define ADG_UNSET(flags,mask)	G_STMT_START{ (flags) &= ~(mask); }G_STMT_END
+
+
 #define ADG_CHECKPOINT_WITH_MESSAGE(message) \
                                 g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
                                        "file %s: line %d: %s", \
@@ -77,6 +83,7 @@ gboolean                adg_cairo_path_data_end_point   (cairo_path_data_t
                                                          double         *p_x,
                                                          double         *p_y);
 cairo_path_data_t *     adg_cairo_path_tail             (cairo_path_t   *path);
+
 
 G_END_DECLS
 

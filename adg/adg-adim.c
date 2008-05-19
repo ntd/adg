@@ -31,6 +31,9 @@
 #include "adg-container.h"
 #include "adg-util.h"
 #include "adg-intl.h"
+#include "adg-intl.h"
+
+#include <gcontainer/gcontainer.h>
 
 #define PARENT_CLASS ((AdgDimClass *)adg_adim_parent_class)
 
@@ -126,10 +129,10 @@ ctm_changed (AdgEntity *entity,
   AdgMatrix    *matrix;
 
   /* entity is yet outdated, no needs for further checks */
-  if (!ADG_ENTITY_UPTODATE (entity))
+  if (!adg_entity_is_uptodate (entity))
     return;
 
-  container = (AdgContainer *) entity->parent;
+  container = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
   g_return_if_fail (ADG_IS_CONTAINER (container));
 
   matrix = &container->ctm;

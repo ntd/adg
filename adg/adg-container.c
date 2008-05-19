@@ -34,6 +34,8 @@
 #include "adg-container.h"
 #include "adg-intl.h"
 
+#include <gcontainer/gcontainer.h>
+
 #define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
 
 
@@ -216,7 +218,7 @@ ctm_changed (AdgEntity *entity,
   AdgMatrix     old_ctm;
 
   container = ADG_CONTAINER (entity);
-  parent = (AdgContainer *) entity->parent;
+  parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
   adg_matrix_set (&old_ctm, &container->ctm);
 
   /* Refresh the ctm */

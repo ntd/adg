@@ -18,26 +18,27 @@
  */
 
 
-#ifndef __ADGCANVASPRIVATE_H__
-#define __ADGCANVASPRIVATE_H__
-
-#include <adg/adg-style.h>
+#ifndef __ADGENTITYPRIVATE_H__
+#define __ADGENTITYPRIVATE_H__
 
 
 G_BEGIN_DECLS
 
 
-struct _AdgCanvasPrivate
+typedef enum
 {
-  /* Fallback styles */
-  AdgLineStyle          *line_style;
-  AdgFontStyle          *font_style;
-  AdgArrowStyle         *arrow_style;
-  AdgDimStyle           *dim_style;
+  ADG_ENTITY_UPDATED	       = 1 << 0
+} AdgEntityFlags;
+
+
+struct _AdgEntityPrivate
+{
+  AdgEntity		*parent;
+  AdgEntityFlags	 flags;
 };
 
 
 G_END_DECLS
 
 
-#endif /* __ADGCANVASPRIVATE_H__ */
+#endif /* __ADGENTITYPRIVATE_H__ */
