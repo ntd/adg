@@ -1,14 +1,14 @@
-2006-12-29  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-12-29  Fontana Nicola  <ntd at entidi.it>
 
 	* configure.ac: bumped version to 0.2.1.
 	* docs/adg-docs.xml: updated href to adgmodel.xml.
 	* First subversion commit on sourceforge.
 
-2006-12-27  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-12-27  Fontana Nicola  <ntd at entidi.it>
 
 	* NEWS: updated.
 
-2006-12-22  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-12-22  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgstyle.[ch]: removed the `tolerance_format' unused field from
 	the AdgDimStyle structure. Also, modified the ISO measure_format to be
@@ -16,7 +16,7 @@
 	* demo/adg-demo.c: general code cleanup and added more dimensions.
 	* === Released 0.2.0 ===
 
-2006-12-21  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-12-21  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpair.[ch]: added AdgVector (alias to AdgPair) to improve API
 	understanding. Renamed some APIs. Implemented the long waited
@@ -30,30 +30,30 @@
 	better global known name.
 	* docs/*: renamed part to model.
 
-2006-12-18  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-12-18  Fontana Nicola  <ntd at entidi.it>
 	* adg/adgdim.c: after some attempts to use Pango, I implemented
 	_adg_dim_render_quote() protected method using the "toy" text API of
 	Cairo. This does not mean I do not intend to use Pango, but I'm
 	not ready to use it. Furthermore, I quickly need something to render
 	text to let the Adg library be usable.
 
-2006-09-06  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-09-06  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpair.[ch]: improved APIs consistency.
 
-2006-09-05  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-09-05  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgdim.[ch]: terminated the double tolerance implementation.
 	Added the automatic measure calculation and the labelize_...
 	virtual methods.
 	* adg/adgldim.c: implemented AdgDim::labelize_measure.
 
-2006-09-04  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-09-04  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgdimprivate.h: added private structure to AdgDim to cache the
 	quote text elements (label, tolerances and note).
 
-2006-09-01  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-09-01  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpair.[ch]: removed adg_pair_assign() as duplicate of
 	adg_pair_copy(). Replaced all its occurrences with the correct name.
@@ -61,7 +61,7 @@
 	double: this will allow to offset the automatic measure for
 	asymmethrical tolerances. To be terminated ...
 
-2006-08-31  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-31  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgprivate.h: merged in adgutil.h.
 	* adg/adgutil.h: improved STUB() and renamed in ADG_STUB(). Added some
@@ -70,7 +70,7 @@
 	quote rendering method, to be moved in AdgDim as general quote
 	renderer.
 
-2006-08-30  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-30  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpoint.[ch]: renamed point to pair to better suite xy items
 	different from points (such as sizes, offsets and others). Added
@@ -93,7 +93,7 @@
 	* adg/adgpath.[ch]: added line_style field in AdgPath. Implemented
 	get_line_style and set_line_style.
 
-2006-08-29  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-29  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgutil.[ch], adg/adgpoint.[ch]: added AdgPoint structure. Moved
 	geometrical stuff about points from adgutil to adgpoint.
@@ -102,20 +102,20 @@
 	draw linear dimension. To be improved ...
 	* adg/docs/*: added the new classes. Updated "Requirements".
 
-2006-08-28  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-28  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/tests: moved to adg/demo.
 	* configure.ac, Makefile.am: updated.
 	* adg/adgstyle.[ch]: added arrow rendering function stubs.
 
-2006-08-25  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-25  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/style.[ch]: added to AdgDimStyle some new fields to manage the
 	text layout.
 	* tests/adgdemo.[ch]: added in the dimension test the {from,to}_offset
 	management given by AdgDimStyle.
 
-2006-08-24  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-24  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgutil.[ch]: added some geometrical stuff here.
 	* adg/adgdim.[ch]: added tolerance_up, tolerance_down and note fields
@@ -125,7 +125,7 @@
 	* docs/adg-{docs.xml,sections.txt}: added documentation hooks for
 	adgdim.[ch], adgstyle.[ch] and adgutil.[ch].
 
-2006-08-23  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-23  Fontana Nicola  <ntd at entidi.it>
 
 	* configure.ac, Makefile.am: updated to make gettext happy.
 	* adg/adgprivate.h: added to manage some private macros (ex.: STUB()).
@@ -136,12 +136,12 @@
 	* tests/adgdemo.c: started to do some cairo text manipulations to be
 	ready to implement a simple linear dimension entity.
 
-2006-08-22  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-22  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgdim.*: added stubs for common dimension management.
 	* adg/Makefile.am: updated.
 
-2006-08-21  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-08-21  Fontana Nicola  <ntd at entidi.it>
 
 	* test: renamed to tests.
 
@@ -151,7 +151,7 @@
 	(EXTRA_DIST): Add config.rpath, mkinstalldirs, m4/ChangeLog.
 	* configure.ac (AC_CONFIG_FILES): Add po/Makefile.in.
 
-2006-07-05  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-07-05  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpath.*: implemented the cairo path manual construction using
 	a GArray structure.
@@ -161,27 +161,27 @@
 	* *: added i18n stuff.
 	* adg/adgstyle.*: added a stub for style management.
 
-2006-07-03  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-07-03  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgpath.*: defined adg_path* Cairo path wrapper functions.
 	Implemented all these functions but adg_path_arc() and
 	adg_path_arc_negative().
 
-2006-07-02  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-07-02  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgentity.*: added "uptodate-set" signal. Removed the "rendered"
 	property: an AdgEntity will be ever rendered when requested.
 	* adg/adgcontainer: implemented the update, outdate and render virtual
 	methods.
 
-2006-06-29  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-06-29  Fontana Nicola  <ntd at entidi.it>
 
 	* adg/adgentity.*: changed "uptodate" and "rendered" from properties
 	to AdgEntity flags.
 	* adg/Makefile.am: generate adg/adgtypebuiltins.* source files and
 	added to libadg (needed to register AdgEntityFlags).
 
-2006-06-28  Fontana Nicola  <ntd@users.sourceforge.net>
+2006-06-28  Fontana Nicola  <ntd at entidi.it>
 
 	* ChangeLog: started.
 	* adg/adgcontainer.[hc]: heavly modified to use libgcontainer as
