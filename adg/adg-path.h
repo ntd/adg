@@ -18,12 +18,10 @@
  */
 
 
-#ifndef __ADGPATH_H__
-#define __ADGPATH_H__
+#ifndef __ADG_PATH_H__
+#define __ADG_PATH_H__
 
 #include <adg/adg-entity.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-style.h>
 
 
 G_BEGIN_DECLS
@@ -35,25 +33,16 @@ G_BEGIN_DECLS
 #define ADG_IS_PATH_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_PATH))
 #define ADG_PATH_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_PATH, AdgPathClass))
 
-typedef struct _AdgPath       AdgPath;
-typedef struct _AdgPathClass  AdgPathClass;
+typedef struct _AdgPath        AdgPath;
+typedef struct _AdgPathClass   AdgPathClass;
+typedef struct _AdgPathPrivate AdgPathPrivate;
 
 struct _AdgPath
 {
   AdgEntity              entity;
 
   /*< private >*/
-
-  AdgLineStyle          *line_style;
-  
-  cairo_path_t           cairo_path;
-  GArray                *portions;
-
-  /* Current point (cp) */
-  AdgPair                cp;
-
-  AdgCallback            create_func;
-  gpointer               user_data;
+  AdgPathPrivate	*priv;
 };
 
 struct _AdgPathClass
@@ -63,20 +52,15 @@ struct _AdgPathClass
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
-
-
 AdgEntity *     adg_path_new                    (AdgCallback     create_func,
                                                  gpointer        user_data);
 void            adg_path_clear                  (AdgPath        *path);
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
-
 void            adg_path_chain_ymirror          (AdgPath        *path);
 void            adg_path_dump                   (AdgPath        *path);
 
-
-/* Cairo wrapper functions */
-
+/* Cairo wrappers */
 gboolean        adg_path_get_current_point      (AdgPath        *path,
                                                  double         *x,
                                                  double         *y);
@@ -125,7 +109,8 @@ void            adg_path_rel_move_to            (AdgPath        *path,
                                                  double          dx,
                                                  double          dy);
 
+
 G_END_DECLS
 
 
-#endif /* __ADGPATH_H__ */
+#endif /* __ADG_PATH_H__ */

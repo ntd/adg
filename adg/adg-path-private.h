@@ -18,39 +18,30 @@
  */
 
 
-#ifndef ADG_PATH_PRIVATE_H
-#define ADG_PATH_PRIVATE_H
+#ifndef __ADG_PATH_PRIVATE_H__
+#define __ADG_PATH_PRIVATE_H__
 
-#include "adg-path.h"
-
-#define ADG_TOLERANCE   0.1
+#include <cairo.h>
+#include <adg/adg-style.h>
+#include <adg/adg-pair.h>
+#include <adg/adg-entity.h>
 
 
 G_BEGIN_DECLS
 
-typedef enum _AdgDirection  AdgDirection;
 
-enum _AdgDirection
+struct _AdgPathPrivate
 {
-  ADG_DIRECTION_FORWARD,
-  ADG_DIRECTION_REVERSE
+  AdgLineStyle		*line_style;
+  cairo_path_t		 cairo_path;
+  GArray		*portions;
+  AdgPair		 cp;
+  AdgCallback		 create_func;
+  gpointer		 user_data;
 };
 
 
-void    _adg_path_arc                   (AdgPath *path,
-                                         double	  xc,
-                                         double	  yc,
-                                         double	  radius,
-                                         double	  angle1,
-                                         double	  angle2);
-
-void    _adg_path_arc_negative          (AdgPath *path,
-                                         double   xc,
-                                         double   yc,
-                                         double   radius,
-                                         double   angle1,
-                                         double   angle2);
-
 G_END_DECLS
 
-#endif /* ADG_PATH_PRIVATE_H */
+
+#endif /* __ADG_PATH_PRIVATE_H__ */

@@ -33,10 +33,10 @@
 #include "adg-util.h"
 #include "adg-canvas.h"
 #include "adg-intl.h"
-
 #include <math.h>
 
 #define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
+#define ARC_TOLERANCE   0.1
 
 
 enum
@@ -45,28 +45,56 @@ enum
   PROP_LINE_STYLE
 };
 
+typedef enum _Direction Direction;
+enum _Direction
+{
+  DIRECTION_FORWARD,
+  DIRECTION_REVERSE
+};
 
-static void	                get_property   (GObject		*object,
-						guint		 prop_id,
-						GValue		*value,
-						GParamSpec	*pspec);
-static void                     set_property   (GObject		*object,
-						guint		 prop_id,
-						const GValue	*value,
-						GParamSpec	*pspec);
-static void		        finalize	(GObject	*object);
-static const AdgLineStyle *     get_line_style (AdgEntity	*entity);
-static void                     set_line_style (AdgEntity	*entity,
-						AdgLineStyle	*line_style);
-static void                     update         (AdgEntity	*entity,
-						gboolean	 recursive);
-static void                     outdate        (AdgEntity	*entity,
-						gboolean	 recursive);
-static void                     render         (AdgEntity	*entity,
-						cairo_t		*cr);
-static void                     add_portion    (AdgPath		*path,
-						cairo_path_data_type_t type,
-								 ...);
+
+static void	get_property		(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+static void	finalize		(GObject	*object);
+static const AdgLineStyle *
+		get_line_style		(AdgEntity	*entity);
+static void	set_line_style		(AdgEntity	*entity,
+					 AdgLineStyle	*line_style);
+static void	update			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	outdate			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	render			(AdgEntity	*entity,
+					 cairo_t	*cr);
+static void	add_portion		(AdgPath	*path,
+					 cairo_path_data_type_t type,
+							 ...);
+/* Adapted from cairo-1.3.8 */
+static double	arc_error_normalized	(double		 angle);
+static double	arc_max_angle_for_tolerance_normalized
+					(double		 tolerance);
+static int	arc_segments_needed	(double		 angle,
+					 double		 radius,
+					 double		 tolerance);
+static void	arc_segment		(AdgPath	*path,
+					 double		 xc,
+					 double		 yc,
+					 double		 radius,
+					 double		 angle_A,
+					 double		 angle_B);
+static void	arc_in_direction	(AdgPath 	*path,
+					 double		 xc,
+					 double		 yc,
+					 double		 radius,
+					 double		 angle_min,
+					 double		 angle_max,
+					 Direction	 dir);
 
 
 G_DEFINE_TYPE (AdgPath, adg_path, ADG_TYPE_ENTITY);
@@ -81,6 +109,8 @@ adg_path_class_init (AdgPathClass *klass)
 
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (AdgPathPrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
@@ -103,17 +133,19 @@ adg_path_class_init (AdgPathClass *klass)
 static void
 adg_path_init (AdgPath *path)
 {
-  path->line_style = NULL;
+  AdgPathPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (path, ADG_TYPE_PATH,
+						      AdgPathPrivate);
 
-  path->cairo_path.status = CAIRO_STATUS_SUCCESS;
-  path->cairo_path.data = NULL;
-  path->cairo_path.num_data = 0;
+  priv->line_style = NULL;
+  priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
+  priv->cairo_path.data = NULL;
+  priv->cairo_path.num_data = 0;
+  priv->cp.x = ADG_NAN;
+  priv->cp.y = ADG_NAN;
+  priv->create_func = NULL;
+  priv->user_data = NULL;
 
-  path->cp.x = ADG_NAN;
-  path->cp.y = ADG_NAN;
-
-  path->create_func = NULL;
-  path->user_data = NULL;
+  path->priv = priv;
 }
 
 static void
@@ -122,12 +154,12 @@ get_property (GObject    *object,
 	      GValue     *value,
 	      GParamSpec *pspec)
 {
-  AdgPath *path = ADG_PATH (object);
+  AdgPathPrivate *priv = ((AdgPath *) object)->priv;
 
   switch (prop_id)
     {
     case PROP_LINE_STYLE:
-      g_value_set_boxed (value, path->line_style);
+      g_value_set_boxed (value, priv->line_style);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -141,16 +173,10 @@ set_property (GObject      *object,
 	      const GValue *value,
 	      GParamSpec   *pspec)
 {
-  AdgPath *path;
-  AdgEntity *entity;
-
-  path = ADG_PATH (object);
-  entity = ADG_ENTITY (object);
-
   switch (prop_id)
     {
     case PROP_LINE_STYLE:
-      path->line_style = g_value_get_boxed (value);
+      set_line_style ((AdgEntity *) object, g_value_get_boxed (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -171,32 +197,32 @@ finalize (GObject *object)
 static const AdgLineStyle *
 get_line_style (AdgEntity *entity)
 {
-  return ADG_PATH (entity)->line_style;
+  return ((AdgPath *) entity)->priv->line_style;
 }
 
 static void
 set_line_style (AdgEntity    *entity,
-                         AdgLineStyle *line_style)
+		AdgLineStyle *line_style)
 {
-  ADG_PATH (entity)->line_style = line_style;
+  ((AdgPath *) entity)->priv->line_style = line_style;
   g_object_notify (G_OBJECT (entity), "line-style");
 }
 
 static void
 update (AdgEntity *entity,
-                 gboolean   recursive)
+	gboolean   recursive)
 {
-  AdgPath *path = (AdgPath *) entity;
+  AdgPathPrivate *priv = ((AdgPath *) entity)->priv;
 
-  if (path->create_func != NULL)
-    path->create_func (entity, path->user_data);
+  if (priv->create_func != NULL)
+    priv->create_func (entity, priv->user_data);
 
   PARENT_CLASS->update (entity, recursive);
 }
 
 static void
 outdate (AdgEntity *entity,
-                  gboolean   recursive)
+	 gboolean   recursive)
 {
   adg_path_clear ((AdgPath *) entity);
   PARENT_CLASS->outdate (entity, recursive);
@@ -206,25 +232,26 @@ static void
 render (AdgEntity *entity,
                  cairo_t   *cr)
 {
-  AdgPath *path = (AdgPath *) entity;
+  AdgPathPrivate *priv = ((AdgPath *) entity)->priv;
 
   adg_line_style_apply (adg_entity_get_line_style (entity), cr);
-  cairo_append_path (cr, &path->cairo_path);
+  cairo_append_path (cr, &priv->cairo_path);
   cairo_stroke (cr);
 }
 
 static void
 add_portion (AdgPath               *path,
-                      cairo_path_data_type_t type,
-                      ...)
+	     cairo_path_data_type_t type,
+	     ...)
 {
+  AdgPathPrivate   *priv = path->priv;
   cairo_path_data_t portion;
   va_list           var_args;
 
-  if (! path->portions)
-    path->portions = g_array_sized_new (FALSE, FALSE,
-                                        sizeof (cairo_path_data_t),
-                                        10 /* Preallocated elements */);
+  if (!priv->portions)
+    priv->portions = g_array_sized_new (FALSE, FALSE,
+					sizeof (cairo_path_data_t),
+					10 /* Preallocated elements */);
 
   portion.header.type = type;
   va_start (var_args, type);
@@ -233,51 +260,51 @@ add_portion (AdgPath               *path,
     {
     case CAIRO_PATH_CLOSE_PATH:
       portion.header.length = 1;
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = ADG_NAN;
       portion.point.y = ADG_NAN;
       break;
 
     case CAIRO_PATH_MOVE_TO:
       portion.header.length = 2;
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = va_arg (var_args, double);
       portion.point.y = va_arg (var_args, double);
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       break;
 
     case CAIRO_PATH_LINE_TO:
       portion.header.length = 2;
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = va_arg (var_args, double);
       portion.point.y = va_arg (var_args, double);
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       break;
       
     case CAIRO_PATH_CURVE_TO:
       portion.header.length = 4;
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = va_arg (var_args, double);
       portion.point.y = va_arg (var_args, double);
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = va_arg (var_args, double);
       portion.point.y = va_arg (var_args, double);
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       portion.point.x = va_arg (var_args, double);
       portion.point.y = va_arg (var_args, double);
-      path->portions = g_array_append_val (path->portions, portion);
+      priv->portions = g_array_append_val (priv->portions, portion);
       break;
 
     default:
       g_assert_not_reached ();
     }
 
-  path->cairo_path.data = (cairo_path_data_t *) path->portions->data;
-  path->cairo_path.num_data = path->portions->len;
-  path->cairo_path.status = CAIRO_STATUS_SUCCESS;
+  priv->cairo_path.data = (cairo_path_data_t *) priv->portions->data;
+  priv->cairo_path.num_data = priv->portions->len;
+  priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
 
-  path->cp.x = portion.point.x;
-  path->cp.y = portion.point.y;
+  priv->cp.x = portion.point.x;
+  priv->cp.y = portion.point.y;
 }
 
 
@@ -294,14 +321,14 @@ AdgEntity *
 adg_path_new (AdgCallback create_func,
               gpointer    user_data)
 {
-  AdgEntity *entity;
-  AdgPath   *path;
+  AdgEntity      *entity;
+  AdgPathPrivate *priv;
  
   entity = (AdgEntity *) g_object_new (ADG_TYPE_PATH, NULL);
-  path = (AdgPath *) entity;
+  priv = ((AdgPath *) entity)->priv;
 
-  path->create_func = create_func;
-  path->user_data = user_data;
+  priv->create_func = create_func;
+  priv->user_data = user_data;
 
   return entity;
 }
@@ -309,13 +336,19 @@ adg_path_new (AdgCallback create_func,
 void
 adg_path_clear (AdgPath *path)
 {
+  AdgPathPrivate *priv;
+
   g_return_if_fail (ADG_IS_PATH (path));
 
-  g_array_free (path->portions, TRUE);
-  path->cairo_path.data = NULL;
-  path->cairo_path.num_data = 0;
-  path->cp.x = ADG_NAN;
-  path->cp.y = ADG_NAN;
+  priv = path->priv;
+
+  g_array_free (priv->portions, TRUE);
+  priv->portions = NULL;
+  priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
+  priv->cairo_path.data = NULL;
+  priv->cairo_path.num_data = 0;
+  priv->cp.x = ADG_NAN;
+  priv->cp.y = ADG_NAN;
 }
 
 
@@ -324,13 +357,14 @@ adg_path_get_cairo_path (AdgPath *path)
 {
   g_return_val_if_fail (ADG_IS_PATH (path), NULL);
 
-  return & path->cairo_path;
+  return &path->priv->cairo_path;
 }
 
 
 void
 adg_path_chain_ymirror (AdgPath *path)
 {
+  AdgPathPrivate    *priv;
   cairo_path_t      *cairo_path;
   cairo_path_data_t *src;
   cairo_path_data_t *p_src, *p_dst;
@@ -340,22 +374,23 @@ adg_path_chain_ymirror (AdgPath *path)
 
   g_return_if_fail (ADG_IS_PATH (path));
 
-  cairo_path = & path->cairo_path;
+  priv = path->priv;
+  cairo_path = &priv->cairo_path;
 
   g_return_if_fail (cairo_path->num_data > 2);
   g_return_if_fail (cairo_path->data->header.type == CAIRO_PATH_MOVE_TO);
 
   src = g_memdup (cairo_path->data, cairo_path->num_data * sizeof (cairo_path_data_t));
-  path->portions = g_array_set_size (path->portions, cairo_path->num_data * 2);
+  priv->portions = g_array_set_size (priv->portions, cairo_path->num_data * 2);
   p_src = src;
-  p_dst = (cairo_path_data_t *) path->portions->data + cairo_path->num_data * 2;
+  p_dst = (cairo_path_data_t *) priv->portions->data + cairo_path->num_data * 2;
   n_data = 2;
 
   ++ p_src;
   last_x = p_src->point.x;
   last_y = p_src->point.y;
-  path->cp.x = last_x;
-  path->cp.y = last_y;
+  priv->cp.x = last_x;
+  priv->cp.y = last_y;
   ++ p_src;
 
   while (n_data < cairo_path->num_data)
@@ -391,7 +426,7 @@ adg_path_chain_ymirror (AdgPath *path)
   g_free (src);
 
   cairo_path->num_data = cairo_path->num_data * 2;
-  cairo_path->data = (cairo_path_data_t *) path->portions->data;
+  cairo_path->data = (cairo_path_data_t *) priv->portions->data;
 }
 
 void
@@ -402,9 +437,9 @@ adg_path_dump (AdgPath *path)
 
   g_return_if_fail (ADG_IS_PATH (path));
 
-  for (n_data = 0; n_data < path->cairo_path.num_data; ++ n_data)
+  for (n_data = 0; n_data < path->priv->cairo_path.num_data; ++ n_data)
     {
-      data = path->cairo_path.data + n_data;
+      data = path->priv->cairo_path.data + n_data;
 
       switch (data->header.type)
         {
@@ -441,16 +476,20 @@ adg_path_get_current_point (AdgPath *path,
                             double  *x,
                             double  *y)
 {
+  AdgPathPrivate *priv;
+
   g_return_val_if_fail (ADG_IS_PATH (path), FALSE);
 
-  if (adg_isnan (path->cp.x) || adg_isnan (path->cp.y))
+  priv = path->priv;
+
+  if (adg_isnan (priv->cp.x) || adg_isnan (priv->cp.y))
     return FALSE;
 
   if (x != NULL)
-    *x = path->cp.x;
+    *x = priv->cp.x;
 
   if (y != NULL)
-    *y = path->cp.y;
+    *y = priv->cp.y;
 
   return TRUE;
 }
@@ -478,7 +517,7 @@ adg_path_arc (AdgPath *path,
     angle2 += 2 * G_PI;
 
   adg_path_line_to (path, x + radius * cos (angle1), y + radius * sin (angle1));
-  _adg_path_arc (path, x, y, radius, angle1, angle2);
+  arc_in_direction (path, x, y, radius, angle1, angle2, DIRECTION_FORWARD);
 }
 
 void
@@ -496,7 +535,7 @@ adg_path_arc_negative (AdgPath *path,
     angle2 -= 2 * G_PI;
 
   adg_path_line_to (path, x + radius * cos (angle1), y + radius * sin (angle1));
-  _adg_path_arc_negative (path, x, y, radius, angle1, angle2);
+  arc_in_direction (path, x, y, radius, angle2, angle1, DIRECTION_REVERSE);
 }
 
 void
@@ -590,4 +629,164 @@ adg_path_rel_move_to (AdgPath *path,
   g_return_if_fail (adg_path_get_current_point (path, &x, &y));
 
   adg_path_move_to (path, x+dx, y+dy);
+}
+
+
+/* The following code is adapted from cairo-1.3.8 */
+
+static double
+arc_error_normalized (double angle)
+{
+    return 2.0/27.0 * pow (sin (angle / 4), 6) / pow (cos (angle / 4), 2);
+}
+
+static double
+arc_max_angle_for_tolerance_normalized (double tolerance)
+{
+  double angle, error;
+  int i;
+
+  /* Use table lookup to reduce search time in most cases. */
+  struct
+    {
+      double angle;
+      double error;
+    } table[] = {
+      { M_PI / 1.0,   0.0185185185185185036127 },
+      { M_PI / 2.0,   0.000272567143730179811158 },
+      { M_PI / 3.0,   2.38647043651461047433e-05 },
+      { M_PI / 4.0,   4.2455377443222443279e-06 },
+      { M_PI / 5.0,   1.11281001494389081528e-06 },
+      { M_PI / 6.0,   3.72662000942734705475e-07 },
+      { M_PI / 7.0,   1.47783685574284411325e-07 },
+      { M_PI / 8.0,   6.63240432022601149057e-08 },
+      { M_PI / 9.0,   3.2715520137536980553e-08 },
+      { M_PI / 10.0,  1.73863223499021216974e-08 },
+      { M_PI / 11.0,  9.81410988043554039085e-09 },
+    };
+  int table_size = (sizeof (table) / sizeof (table[0]));
+
+  for (i = 0; i < table_size; i++)
+    if (table[i].error < tolerance)
+      return table[i].angle;
+
+  ++i;
+  do
+    {
+      angle = M_PI / i++;
+      error = arc_error_normalized (angle);
+    }
+  while (error > tolerance);
+
+  return angle;
+}
+
+/* XXX: 22-12-2006 Fontana Nicola <ntd at entidi.it>
+ *      Removed the ctm parameter and the calculation of the major axis: I use
+ *      the radius directly, instead. Hopefully, this will break only the
+ *      calculations for ellipses ...
+ */
+static int
+arc_segments_needed (double angle,
+		     double radius,
+		     double tolerance)
+{
+  double max_angle;
+
+  max_angle = arc_max_angle_for_tolerance_normalized (tolerance / radius);
+
+  return (int) ceil (angle / max_angle);
+}
+
+static void
+arc_segment (AdgPath *path,
+	     double   xc,
+	     double   yc,
+	     double   radius,
+	     double   angle_A,
+	     double   angle_B)
+{
+  double r_sin_A, r_cos_A;
+  double r_sin_B, r_cos_B;
+  double h;
+
+  r_sin_A = radius * sin (angle_A);
+  r_cos_A = radius * cos (angle_A);
+  r_sin_B = radius * sin (angle_B);
+  r_cos_B = radius * cos (angle_B);
+
+  h = 4.0/3.0 * tan ((angle_B - angle_A) / 4.0);
+
+  adg_path_curve_to (path,
+                     xc + r_cos_A - h * r_sin_A,
+                     yc + r_sin_A + h * r_cos_A,
+                     xc + r_cos_B + h * r_sin_B,
+                     yc + r_sin_B - h * r_cos_B,
+                     xc + r_cos_B,
+                     yc + r_sin_B);
+}
+
+static void
+arc_in_direction (AdgPath  *path,
+		  double    xc,
+		  double    yc,
+		  double    radius,
+		  double    angle_min,
+		  double    angle_max,
+		  Direction dir)
+{
+  while (angle_max - angle_min > 4 * M_PI)
+    angle_max -= 2 * M_PI;
+
+  /* Recurse if drawing arc larger than pi */
+  if (angle_max - angle_min > M_PI)
+    {
+      double angle_mid = angle_min + (angle_max - angle_min) / 2.0;
+      /* XXX: Something tells me this block could be condensed. */
+      if (dir == DIRECTION_FORWARD)
+        {
+          arc_in_direction (path, xc, yc, radius,
+			    angle_min, angle_mid,
+			    dir);
+
+          arc_in_direction (path, xc, yc, radius,
+			    angle_mid, angle_max,
+			    dir);
+        }
+      else
+        {
+          arc_in_direction (path, xc, yc, radius,
+			    angle_mid, angle_max,
+			    dir);
+
+          arc_in_direction (path, xc, yc, radius,
+			    angle_min, angle_mid,
+			    dir);
+        }
+    }
+  else
+    {
+      int i, segments;
+      double angle, angle_step;
+
+      /* XXX: 22-12-2006 Fontana Nicola <ntd at entidi.it>
+       *      Used the ARC_TOLERANCE constant instead of the cairo context
+       *      dependent variable, because I do not have any cairo context here.
+       */
+      segments = arc_segments_needed (angle_max - angle_min, radius, ARC_TOLERANCE);
+      angle_step = (angle_max - angle_min) / (double) segments;
+
+      if (dir == DIRECTION_FORWARD)
+        {
+          angle = angle_min;
+        }
+      else
+        {
+          angle = angle_max;
+          angle_step = - angle_step;
+        }
+
+      for (i = 0; i < segments; i++, angle += angle_step)
+        arc_segment (path, xc, yc, radius, angle, angle + angle_step);
+    }
 }

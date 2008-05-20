@@ -42,7 +42,6 @@ adg_c_sources =			adg-adim.c \
 				adg-pair.c \
 				adg-model.c \
 				adg-path.c \
-				adg-path-private.c \
 				adg-style.c \
 				adg-util.c
 adg_built_c_sources =		adg-type-builtins.c
