@@ -57,6 +57,8 @@ static void	set_property	(GObject	*object,
 				 guint		 prop_id,
 				 const GValue	*value,
 				 GParamSpec	*pspec);
+static gboolean	set_matrix	(AdgContainer	*container,
+				 AdgMatrix	*matrix);
 static GSList *	get_children	(GContainerable	*containerable);
 static gboolean	add		(GContainerable	*containerable,
 				 GChildable	*childable);
@@ -152,7 +154,7 @@ set_property (GObject      *object,
 	      const GValue *value,
 	      GParamSpec   *pspec)
 {
-  AdgContainer *container = ADG_CONTAINER (object);
+  AdgContainer *container = (AdgContainer *) object;
 
   switch (prop_id)
     {
@@ -160,7 +162,7 @@ set_property (GObject      *object,
       g_containerable_add ((GContainerable *) container, g_value_get_object (value));
       break;
     case PROP_MATRIX:
-      adg_container_set_matrix (container, g_value_get_boxed (value));
+      set_matrix (container, g_value_get_boxed (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -230,7 +232,7 @@ ctm_changed (AdgEntity *entity,
   cairo_matrix_multiply (&container->ctm, &container->ctm, &container->matrix);
 
   /* Check for ctm != old_ctm */
-  if (! adg_matrix_equal (&container->ctm, &old_ctm))
+  if (!adg_matrix_equal (&container->ctm, &old_ctm))
     g_containerable_propagate_by_name (G_CONTAINERABLE (container),
                                        "ctm-changed", &old_ctm);
 }
@@ -288,12 +290,9 @@ adg_container_set_matrix (AdgContainer *container,
                           AdgMatrix    *matrix)
 {
   g_return_if_fail (ADG_IS_CONTAINER (container));
-  g_return_if_fail (matrix != NULL);
 
-  adg_matrix_set (&container->matrix, matrix);
-
-  g_object_notify (G_OBJECT (container), "matrix");
-  adg_entity_ctm_changed ((AdgEntity *) container);
+  if (set_matrix (container, matrix))
+    g_object_notify (G_OBJECT (container), "matrix");
 }
 
 
@@ -316,8 +315,8 @@ adg_container_scale_explicit (AdgContainer *container,
   container->matrix.xx = sx;
   container->matrix.yy = sy;
 
-  g_object_notify (G_OBJECT (container), "matrix");
   adg_entity_ctm_changed ((AdgEntity *) container);
+  g_object_notify ((GObject *) container, "matrix");
 }
 
 void
@@ -372,6 +371,19 @@ adg_container_translate_explicit (AdgContainer *container,
   matrix->x0 = dx + ux * matrix->xx;
   matrix->y0 = dy + uy * matrix->yy;
 
-  g_object_notify (G_OBJECT (container), "matrix");
   adg_entity_ctm_changed ((AdgEntity *) container);
+  g_object_notify ((GObject *) container, "matrix");
+}
+
+
+static gboolean
+set_matrix (AdgContainer *container,
+	    AdgMatrix    *matrix)
+{
+  g_return_val_if_fail (matrix != NULL, FALSE);
+
+  adg_matrix_set (&container->matrix, matrix);
+  adg_entity_ctm_changed ((AdgEntity *) container);
+
+  return TRUE;
 }
