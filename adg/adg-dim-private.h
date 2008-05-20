@@ -53,7 +53,7 @@ struct _AdgDimPrivate
 };
 
 
-void		adg_dim_render_quote		(AdgDim		*dim,
+void		_adg_dim_render_quote		(AdgDim		*dim,
 						 cairo_t	*cr);
 
 G_END_DECLS

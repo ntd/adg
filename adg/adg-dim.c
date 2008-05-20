@@ -713,7 +713,7 @@ adg_dim_set_note (AdgDim      *dim,
 
 
 /**
- * adg_dim_render_quote:
+ * _adg_dim_render_quote:
  * @dim: an #AdgDim object
  * @cr: a #cairo_t drawing context
  *
@@ -722,8 +722,8 @@ adg_dim_set_note (AdgDim      *dim,
  * This function is only useful in new dimension implementations.
  */
 void
-adg_dim_render_quote (AdgDim  *dim,
-		      cairo_t *cr)
+_adg_dim_render_quote (AdgDim  *dim,
+		       cairo_t *cr)
 {
   AdgPair quote_offset;
   AdgPair tolerance_up_offset;

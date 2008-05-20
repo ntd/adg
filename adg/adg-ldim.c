@@ -361,8 +361,7 @@ render (AdgEntity *entity,
 
   cairo_stroke (cr);
 
-  /* Quote */
-  adg_dim_render_quote (dim, cr);
+  _adg_dim_render_quote (dim, cr);
 
   cairo_restore (cr);
 }
