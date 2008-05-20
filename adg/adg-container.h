@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGCONTAINER_H__
-#define __ADGCONTAINER_H__
+#ifndef __ADG_CONTAINER_H__
+#define __ADG_CONTAINER_H__
 
 #include <adg/adg-entity.h>
 
@@ -84,4 +84,4 @@ void                    adg_container_translate_explicit(AdgContainer   *contain
 G_END_DECLS
 
 
-#endif /* __ADGCONTAINER_H__ */
+#endif /* __ADG_CONTAINER_H__ */

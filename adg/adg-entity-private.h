@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGENTITYPRIVATE_H__
-#define __ADGENTITYPRIVATE_H__
+#ifndef __ADG_ENTITY_PRIVATE_H__
+#define __ADG_ENTITY_PRIVATE_H__
 
 
 G_BEGIN_DECLS
@@ -41,4 +41,4 @@ struct _AdgEntityPrivate
 G_END_DECLS
 
 
-#endif /* __ADGENTITYPRIVATE_H__ */
+#endif /* __ADG_ENTITY_PRIVATE_H__ */

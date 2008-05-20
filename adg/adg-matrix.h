@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGMATRIX_H__
-#define __ADGMATRIX_H__
+#ifndef __ADG_MATRIX_H__
+#define __ADG_MATRIX_H__
 
 #include <glib-object.h>
 #include <cairo.h>
@@ -44,4 +44,4 @@ gboolean                adg_matrix_equal                (const AdgMatrix *matrix
 G_END_DECLS
 
 
-#endif /* __ADGMATRIX_H__ */
+#endif /* __ADG_MATRIX_H__ */

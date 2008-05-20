@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGINTL_H__
-#define __ADGINTL_H__
+#ifndef __ADG_INTL_H__
+#define __ADG_INTL_H__
 
 #include <glib/gi18n.h>
 
@@ -29,4 +29,4 @@
 #define P_(String) (String)
 #endif
 
-#endif /* __ADGINTL_H__ */
+#endif /* __ADG_INTL_H__ */

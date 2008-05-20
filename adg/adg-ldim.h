@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGLDIM_H__
-#define __ADGLDIM_H__
+#ifndef __ADG_LDIM_H__
+#define __ADG_LDIM_H__
 
 #include <adg/adg-dim.h>
 
@@ -79,4 +79,4 @@ void            adg_ldim_set_direction          (AdgLDim        *ldim,
 G_END_DECLS
 
 
-#endif /* __ADGLDIM_H__ */
+#endif /* __ADG_LDIM_H__ */

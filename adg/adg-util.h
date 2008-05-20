@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGUTIL_H__
-#define __ADGUTIL_H__
+#ifndef __ADG_UTIL_H__
+#define __ADG_UTIL_H__
 
 #include <glib.h>
 #include <cairo.h>
@@ -88,4 +88,4 @@ cairo_path_data_t *     adg_cairo_path_tail             (cairo_path_t   *path);
 G_END_DECLS
 
 
-#endif /* __ADGUTIL_H__ */
+#endif /* __ADG_UTIL_H__ */

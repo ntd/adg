@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGDIMPRIVATE_H__
-#define __ADGDIMPRIVATE_H__
+#ifndef __ADG_DIM_PRIVATE_H__
+#define __ADG_DIM_PRIVATE_H__
 
 #include <adg/adg-style.h>
 #include <adg/adg-pair.h>
@@ -59,4 +59,4 @@ void		_adg_dim_render_quote		(AdgDim		*dim,
 G_END_DECLS
 
 
-#endif /* __ADGDIMPRIVATE_H__ */
+#endif /* __ADG_DIM_PRIVATE_H__ */

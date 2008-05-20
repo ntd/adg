@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGCANVAS_H__
-#define __ADGCANVAS_H__
+#ifndef __ADG_CANVAS_H__
+#define __ADG_CANVAS_H__
 
 #include <adg/adg-container.h>
 #include <adg/adg-style.h>
@@ -60,4 +60,4 @@ AdgCanvas *              adg_canvas_new                 (void);
 G_END_DECLS
 
 
-#endif /* __ADGCANVAS_H__ */
+#endif /* __ADG_CANVAS_H__ */

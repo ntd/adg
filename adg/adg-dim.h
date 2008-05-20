@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGDIM_H__
-#define __ADGDIM_H__
+#ifndef __ADG_DIM_H__
+#define __ADG_DIM_H__
 
 #include <adg/adg-entity.h>
 #include <adg/adg-pair.h>
@@ -104,4 +104,4 @@ void                     adg_dim_set_note               (AdgDim         *dim,
 G_END_DECLS
 
 
-#endif /* __ADGDIM_H__ */
+#endif /* __ADG_DIM_H__ */

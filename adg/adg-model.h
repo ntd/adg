@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGMODEL_H__
-#define __ADGMODEL_H__
+#ifndef __ADG_MODEL_H__
+#define __ADG_MODEL_H__
 
 #include <glib-object.h>
 
@@ -68,4 +68,4 @@ void                    adg_model_set_treatment (AdgModel        *model,
 G_END_DECLS
 
 
-#endif /* __ADGMODEL_H__ */
+#endif /* __ADG_MODEL_H__ */

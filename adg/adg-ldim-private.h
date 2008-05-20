@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGLDIMPRIVATE_H__
-#define __ADGLDIMPRIVATE_H__
+#ifndef __ADG_LDIM_PRIVATE_H__
+#define __ADG_LDIM_PRIVATE_H__
 
 #include <cairo.h>
 
@@ -42,4 +42,4 @@ struct _AdgLDimPrivate
 G_END_DECLS
 
 
-#endif /* __ADGLDIMPRIVATE_H__ */
+#endif /* __ADG_LDIM_PRIVATE_H__ */

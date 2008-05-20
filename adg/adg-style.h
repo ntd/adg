@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGSTYLE_H__
-#define __ADGSTYLE_H__
+#ifndef __ADG_STYLE_H__
+#define __ADG_STYLE_H__
 
 #include <glib-object.h>
 #include <cairo.h>
@@ -229,4 +229,4 @@ AdgDimStyleId   adg_dim_style_register  (AdgDimStyle    *new_style);
 G_END_DECLS
 
 
-#endif /* __ADGSTYLE_H__ */
+#endif /* __ADG_STYLE_H__ */

@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGPAIR_H__
-#define __ADGPAIR_H__
+#ifndef __ADG_PAIR_H__
+#define __ADG_PAIR_H__
 
 #include <adg/adg-matrix.h>
 
@@ -110,4 +110,4 @@ AdgVector *             adg_vector_normal               (AdgVector      *vector)
 G_END_DECLS
 
 
-#endif /* __ADGPAIR_H__ */
+#endif /* __ADG_PAIR_H__ */

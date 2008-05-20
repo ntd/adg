@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGADIMPRIVATE_H__
-#define __ADGADIMPRIVATE_H__
+#ifndef __ADG_ADIM_PRIVATE_H__
+#define __ADG_ADIM_PRIVATE_H__
 
 #include <cairo.h>
 
@@ -40,4 +40,4 @@ struct _AdgADimPrivate
 G_END_DECLS
 
 
-#endif /* __ADGADIMPRIVATE_H__ */
+#endif /* __ADG_ADIM_PRIVATE_H__ */

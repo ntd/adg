@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGCANVASPRIVATE_H__
-#define __ADGCANVASPRIVATE_H__
+#ifndef __ADG_CANVAS_PRIVATE_H__
+#define __ADG_CANVAS_PRIVATE_H__
 
 #include <adg/adg-style.h>
 
@@ -40,4 +40,4 @@ struct _AdgCanvasPrivate
 G_END_DECLS
 
 
-#endif /* __ADGCANVASPRIVATE_H__ */
+#endif /* __ADG_CANVAS_PRIVATE_H__ */

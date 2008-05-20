@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGENTITY_H__
-#define __ADGENTITY_H__
+#ifndef __ADG_ENTITY_H__
+#define __ADG_ENTITY_H__
 
 #include <adg/adg-pair.h>
 #include <adg/adg-matrix.h>
@@ -126,4 +126,4 @@ void			adg_entity_render		(AdgEntity      *entity,
 G_END_DECLS
 
 
-#endif /* __ADGENTITY_H__ */
+#endif /* __ADG_ENTITY_H__ */

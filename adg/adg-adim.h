@@ -18,8 +18,8 @@
  */
 
 
-#ifndef __ADGADIM_H__
-#define __ADGADIM_H__
+#ifndef __ADG_ADIM_H__
+#define __ADG_ADIM_H__
 
 #include <adg/adg-dim.h>
 
@@ -59,4 +59,4 @@ AdgEntity *     adg_adim_new                    (void);
 G_END_DECLS
 
 
-#endif /* __ADGADIM_H__ */
+#endif /* __ADG_ADIM_H__ */
