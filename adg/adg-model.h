@@ -33,18 +33,16 @@ G_BEGIN_DECLS
 #define ADG_IS_MODEL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_MODEL))
 #define ADG_MODEL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_MODEL, AdgModel))
 
-typedef struct _AdgModel       AdgModel;
-typedef struct _AdgModelClass  AdgModelClass;
+typedef struct _AdgModel        AdgModel;
+typedef struct _AdgModelClass   AdgModelClass;
+typedef struct _AdgModelPrivate AdgModelPrivate;
 
 struct _AdgModel
 {
   GObject		 object;
 
   /*< private >*/
-
-  gchar                 *name;
-  gchar                 *material;
-  gchar                 *treatment;
+  AdgModelPrivate	*priv;
 };
 
 struct _AdgModelClass

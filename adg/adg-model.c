@@ -31,6 +31,7 @@
  */
 
 #include "adg-model.h"
+#include "adg-model-private.h"
 #include "adg-intl.h"
 
 #define PARENT_CLASS ((GObjectClass *) adg_model_parent_class)
@@ -60,6 +61,12 @@ static void	set_property	(GObject	*object,
 				 guint		 prop_id,
 				 const GValue	*value,
 				 GParamSpec	*pspec);
+static void	set_name	(AdgModel	*model,
+				 const gchar	*name);
+static void	set_material	(AdgModel	*model,
+				 const gchar	*material);
+static void	set_treatment	(AdgModel	*model,
+				 const gchar	*treatment);
 
 static guint	model_signals[LAST_SIGNAL] = { 0 };
 
@@ -73,7 +80,9 @@ adg_model_class_init (AdgModelClass *klass)
   GObjectClass *gobject_class;
   GParamSpec   *param;
 
-  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class = (GObjectClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (AdgModelPrivate));
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
@@ -104,17 +113,23 @@ adg_model_class_init (AdgModelClass *klass)
 static void
 adg_model_init (AdgModel *model)
 {
-  model->name = NULL;
-  model->material = NULL;
-  model->treatment = NULL;
+  AdgModelPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (model, ADG_TYPE_MODEL,
+						       AdgModelPrivate);
+  priv->name = NULL;
+  priv->material = NULL;
+  priv->treatment = NULL;
+
+  model->priv = priv;
 }
 
 static void
 finalize (GObject *object)
 {
-  AdgModel *model = ADG_MODEL (object);
+  AdgModel *model = (AdgModel *) object;
 
-  g_free (model->name);
+  g_free (model->priv->name);
+  g_free (model->priv->material);
+  g_free (model->priv->treatment);
 
   PARENT_CLASS->finalize (object);
 }
@@ -126,18 +141,18 @@ get_property (GObject    *object,
 	      GValue     *value,
 	      GParamSpec *pspec)
 {
-  AdgModel *model = ADG_MODEL (object);
+  AdgModelPrivate *priv = ((AdgModel *) object)->priv;
 
   switch (prop_id)
     {
     case PROP_NAME:
-      g_value_set_string (value, model->name);
+      g_value_set_string (value, priv->name);
       break;
     case PROP_MATERIAL:
-      g_value_set_string (value, model->material);
+      g_value_set_string (value, priv->material);
       break;
     case PROP_TREATMENT:
-      g_value_set_string (value, model->treatment);
+      g_value_set_string (value, priv->treatment);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -156,16 +171,13 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_NAME:
-      g_free (model->name);
-      model->name = g_value_dup_string (value);
+      set_name (model, g_value_get_string (value));
       break;
     case PROP_MATERIAL:
-      g_free (model->material);
-      model->material = g_value_dup_string (value);
+      set_material (model, g_value_get_string (value));
       break;
     case PROP_TREATMENT:
-      g_free (model->treatment);
-      model->treatment = g_value_dup_string (value);
+      set_treatment (model, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -179,10 +191,7 @@ adg_model_get_name (AdgModel *model)
 {
   g_return_val_if_fail (ADG_IS_MODEL (model), NULL);
 
-  if (model->name == NULL)
-    return NULL;
-
-  return g_strdup (model->name);
+  return g_strdup (model->priv->name);
 }
 
 void
@@ -191,14 +200,8 @@ adg_model_set_name (AdgModel    *model,
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 
-  g_free (model->name);
-
-  if (name == NULL)
-    model->name = NULL;
-  else
-    model->name = g_strdup (name);
-
-  g_object_notify (G_OBJECT (model), "name");
+  set_name (model, name);
+  g_object_notify ((GObject *) model, "name");
 }
 
 
@@ -207,10 +210,7 @@ adg_model_get_material (AdgModel *model)
 {
   g_return_val_if_fail (ADG_IS_MODEL (model), NULL);
 
-  if (model->material == NULL)
-    return NULL;
-
-  return g_strdup (model->material);
+  return g_strdup (model->priv->material);
 }
 
 void
@@ -219,14 +219,8 @@ adg_model_set_material (AdgModel    *model,
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 
-  g_free (model->material);
-
-  if (material == NULL)
-    model->material = NULL;
-  else
-    model->material = g_strdup (material);
-
-  g_object_notify (G_OBJECT (model), "material");
+  set_material (model, material);
+  g_object_notify ((GObject *) model, "material");
 }
 
 
@@ -235,10 +229,7 @@ adg_model_get_treatment (AdgModel *model)
 {
   g_return_val_if_fail (ADG_IS_MODEL (model), NULL);
 
-  if (model->treatment == NULL)
-    return NULL;
-
-  return g_strdup (model->treatment);
+  return g_strdup (model->priv->treatment);
 }
 
 void
@@ -247,12 +238,30 @@ adg_model_set_treatment (AdgModel    *model,
 {
   g_return_if_fail (ADG_IS_MODEL (model));
 
-  g_free (model->treatment);
+  set_treatment (model, treatment);
+  g_object_notify ((GObject *) model, "treatment");
+}
 
-  if (treatment == NULL)
-    model->treatment = NULL;
-  else
-    model->treatment = g_strdup (treatment);
+static void
+set_name (AdgModel    *model,
+	  const gchar *name)
+{
+  g_free (model->priv->name);
+  model->priv->name = g_strdup (name);
+}
 
-  g_object_notify (G_OBJECT (model), "treatment");
+static void
+set_material (AdgModel    *model,
+	      const gchar *material)
+{
+  g_free (model->priv->material);
+  model->priv->material = g_strdup (material);
+}
+
+static void
+set_treatment (AdgModel    *model,
+	       const gchar *treatment)
+{
+  g_free (model->priv->treatment);
+  model->priv->treatment = g_strdup (treatment);
 }

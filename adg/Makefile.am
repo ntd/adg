@@ -28,6 +28,7 @@ adg_private_h_sources =		adg-adim-private.h \
 				adg-entity-private.h \
 				adg-intl.h \
 				adg-ldim-private.h \
+				adg-model-private.h \
 				adg-path-private.h
 adg_built_private_h_sources =
 
