@@ -173,10 +173,12 @@ set_property (GObject      *object,
 	      const GValue *value,
 	      GParamSpec   *pspec)
 {
+  AdgPath *path = (AdgPath *) object;
+
   switch (prop_id)
     {
     case PROP_LINE_STYLE:
-      set_line_style ((AdgEntity *) object, g_value_get_boxed (value));
+      path->priv->line_style = line_style;
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
