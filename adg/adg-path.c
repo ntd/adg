@@ -178,7 +178,7 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_LINE_STYLE:
-      path->priv->line_style = line_style;
+      path->priv->line_style = g_value_get_boxed (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
