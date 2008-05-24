@@ -48,7 +48,7 @@ typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 struct _AdgEntity
 {
-  GInitiallyUnowned	 child;
+  GInitiallyUnowned	 initially_unowned;
 
   /*< private >*/
   AdgEntityPrivate	*priv;

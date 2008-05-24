@@ -34,7 +34,7 @@
 
 #include <gcontainer/gcontainer.h>
 
-#define PARENT_CLASS ((AdgDimClass *)adg_adim_parent_class)
+#define PARENT_CLASS ((AdgDimClass *) adg_adim_parent_class)
 
 
 enum

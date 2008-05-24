@@ -35,7 +35,7 @@
 
 #include <gcontainer/gcontainer.h>
 
-#define PARENT_CLASS ((AdgEntityClass *)adg_container_parent_class)
+#define PARENT_CLASS ((GInitiallyUnownedClass *) adg_entity_parent_class)
 
 
 enum
