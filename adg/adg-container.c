@@ -32,6 +32,7 @@
  */
 
 #include "adg-container.h"
+#include "adg-container-private.h"
 #include "adg-intl.h"
 
 #include <gcontainer/gcontainer.h>
@@ -83,14 +84,6 @@ G_DEFINE_TYPE_EXTENDED (AdgContainer, adg_container,
 
 
 static void
-containerable_init (GContainerableIface *iface)
-{
-  iface->get_children = get_children;
-  iface->add = add;
-  iface->remove = remove;
-}
-
-static void
 adg_container_class_init (AdgContainerClass *klass)
 {
   GObjectClass   *gobject_class;
@@ -99,6 +92,8 @@ adg_container_class_init (AdgContainerClass *klass)
 
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
+
+  g_type_class_add_private (klass, sizeof (AdgContainerPrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
@@ -121,12 +116,25 @@ adg_container_class_init (AdgContainerClass *klass)
 }
 
 static void
+containerable_init (GContainerableIface *iface)
+{
+  iface->get_children = get_children;
+  iface->add = add;
+  iface->remove = remove;
+}
+
+static void
 adg_container_init (AdgContainer *container)
 {
-  container->children = NULL;
+  AdgContainerPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (container,
+							   ADG_TYPE_CONTAINER,
+							   AdgContainerPrivate);
 
-  cairo_matrix_init_identity (&container->matrix);
-  cairo_matrix_init_identity (&container->ctm);
+  priv->children = NULL;
+  cairo_matrix_init_identity (&priv->matrix);
+  cairo_matrix_init_identity (&priv->ctm);
+
+  container->priv = priv;
 }
 
 static void
@@ -135,12 +143,12 @@ get_property (GObject    *object,
 	      GValue     *value,
 	      GParamSpec *pspec)
 {
-  AdgContainer *container = ADG_CONTAINER (object);
+  AdgContainer *container = (AdgContainer *) object;
 
   switch (prop_id)
     {
     case PROP_MATRIX:
-      g_value_set_boxed (value, &container->matrix);
+      g_value_set_boxed (value, &container->priv->matrix);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -173,21 +181,18 @@ set_property (GObject      *object,
 static GSList *
 get_children (GContainerable *containerable)
 {
-  AdgContainer *container = ADG_CONTAINER (containerable);
+  AdgContainer *container = (AdgContainer *) containerable;
 
-  return g_slist_copy (container->children);
+  return g_slist_copy (container->priv->children);
 }
 
 static gboolean
 add (GContainerable *containerable,
      GChildable     *childable)
 {
-  AdgContainer *container;
+  AdgContainer *container = (AdgContainer *) containerable;
 
-  g_return_val_if_fail (ADG_IS_ENTITY (childable), FALSE);
-
-  container = ADG_CONTAINER (containerable);
-  container->children = g_slist_append (container->children, childable);
+  container->priv->children = g_slist_append (container->priv->children, childable);
   return TRUE;
 }
 
@@ -198,15 +203,13 @@ remove (GContainerable *containerable,
   AdgContainer *container;
   GSList       *node;
 
-  g_return_val_if_fail (ADG_IS_ENTITY (childable), FALSE);
+  container = (AdgContainer *) containerable;
+  node = g_slist_find (container->priv->children, childable);
 
-  container = ADG_CONTAINER (containerable);
-  node = g_slist_find (container->children, childable);
-
-  if (! node)
+  if (!node)
     return FALSE;
 
-  container->children = g_slist_delete_link (container->children, node);
+  container->priv->children = g_slist_delete_link (container->priv->children, node);
   return TRUE;
 }
 
@@ -219,28 +222,29 @@ ctm_changed (AdgEntity *entity,
   AdgContainer *parent;
   AdgMatrix     old_ctm;
 
-  container = ADG_CONTAINER (entity);
+  container = (AdgContainer *) entity;
   parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  adg_matrix_set (&old_ctm, &container->ctm);
+  adg_matrix_set (&old_ctm, &container->priv->ctm);
 
   /* Refresh the ctm */
   if (ADG_IS_CONTAINER (parent))
-    adg_matrix_set (&container->ctm, &parent->ctm);
+    adg_matrix_set (&container->priv->ctm, &parent->priv->ctm);
   else
-    cairo_matrix_init_identity (&container->ctm);
+    cairo_matrix_init_identity (&container->priv->ctm);
 
-  cairo_matrix_multiply (&container->ctm, &container->ctm, &container->matrix);
+  cairo_matrix_multiply (&container->priv->ctm, &container->priv->ctm,
+			 &container->priv->matrix);
 
   /* Check for ctm != old_ctm */
-  if (!adg_matrix_equal (&container->ctm, &old_ctm))
-    g_containerable_propagate_by_name (G_CONTAINERABLE (container),
+  if (!adg_matrix_equal (&container->priv->ctm, &old_ctm))
+    g_containerable_propagate_by_name ((GContainerable *) container,
                                        "ctm-changed", &old_ctm);
 }
 
 const AdgMatrix *
 get_ctm (AdgEntity *entity)
 {
-  return & ADG_CONTAINER (entity)->ctm;
+  return &((AdgContainer *) entity)->priv->ctm;
 }
 
 
@@ -249,7 +253,7 @@ update (AdgEntity *entity,
 	gboolean   recursive)
 {
   if (recursive)
-    g_containerable_foreach (G_CONTAINERABLE (entity),
+    g_containerable_foreach ((GContainerable *) entity,
                              G_CALLBACK (adg_entity_update_all), NULL);
 
   PARENT_CLASS->update (entity, recursive);
@@ -260,7 +264,7 @@ outdate (AdgEntity *entity,
 	 gboolean   recursive)
 {
   if (recursive)
-    g_containerable_foreach (G_CONTAINERABLE (entity),
+    g_containerable_foreach ((GContainerable *) entity,
                              G_CALLBACK (adg_entity_outdate_all), NULL);
 
   PARENT_CLASS->outdate (entity, recursive);
@@ -270,19 +274,18 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  AdgContainer *container = ADG_CONTAINER (entity);
-
-  cairo_set_matrix (cr, &container->ctm);
-  g_containerable_foreach (G_CONTAINERABLE (entity), G_CALLBACK (adg_entity_render), cr);
+  cairo_set_matrix (cr, &((AdgContainer *) entity)->priv->ctm);
+  g_containerable_foreach ((GContainerable *) entity,
+			   G_CALLBACK (adg_entity_render), cr);
 }
 
 
-const AdgMatrix *
+AdgMatrix *
 adg_container_get_matrix (AdgContainer *container)
 {
   g_return_val_if_fail (ADG_IS_CONTAINER (container), NULL);
 
-  return &container->matrix;
+  return &container->priv->matrix;
 }
 
 void
@@ -292,7 +295,7 @@ adg_container_set_matrix (AdgContainer *container,
   g_return_if_fail (ADG_IS_CONTAINER (container));
 
   if (set_matrix (container, matrix))
-    g_object_notify (G_OBJECT (container), "matrix");
+    g_object_notify ((GObject *) container, "matrix");
 }
 
 
@@ -310,13 +313,16 @@ adg_container_scale_explicit (AdgContainer *container,
                               double        sx,
                               double        sy)
 {
+  AdgMatrix matrix;
+
   g_return_if_fail (ADG_IS_CONTAINER (container));
 
-  container->matrix.xx = sx;
-  container->matrix.yy = sy;
+  adg_matrix_set (&matrix, &container->priv->matrix);
+  matrix.xx = sx;
+  matrix.yy = sy;
 
-  adg_entity_ctm_changed ((AdgEntity *) container);
-  g_object_notify ((GObject *) container, "matrix");
+  if (set_matrix (container, &matrix))
+    g_object_notify ((GObject *) container, "matrix");
 }
 
 void
@@ -363,16 +369,16 @@ adg_container_translate_explicit (AdgContainer *container,
                                   double        ux,
                                   double        uy)
 {
-  AdgMatrix *matrix;
+  AdgMatrix matrix;
 
   g_return_if_fail (ADG_IS_CONTAINER (container));
 
-  matrix = & container->matrix;
-  matrix->x0 = dx + ux * matrix->xx;
-  matrix->y0 = dy + uy * matrix->yy;
+  adg_matrix_set (&matrix, &container->priv->matrix);
+  matrix.x0 = dx + ux * matrix.xx;
+  matrix.y0 = dy + uy * matrix.yy;
 
-  adg_entity_ctm_changed ((AdgEntity *) container);
-  g_object_notify ((GObject *) container, "matrix");
+  if (set_matrix (container, &matrix))
+    g_object_notify ((GObject *) container, "matrix");
 }
 
 
@@ -380,10 +386,13 @@ static gboolean
 set_matrix (AdgContainer *container,
 	    AdgMatrix    *matrix)
 {
+  AdgMatrix old_matrix;
+
   g_return_val_if_fail (matrix != NULL, FALSE);
 
-  adg_matrix_set (&container->matrix, matrix);
-  adg_entity_ctm_changed ((AdgEntity *) container);
+  adg_matrix_set (&old_matrix, &container->priv->matrix);
+  adg_matrix_set (&container->priv->matrix, matrix);
 
+  adg_entity_ctm_changed ((AdgEntity *) container, &old_matrix);
   return TRUE;
 }
