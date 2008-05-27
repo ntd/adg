@@ -80,10 +80,10 @@ adg_adim_class_init (AdgADimClass *klass)
   dim_class->default_label = default_label;
 
   param = g_param_spec_double ("direction",
-                              P_("Direction"),
-                              P_("The inclination angle of the extension lines"),
-                              -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
-                              G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
+			       P_("Direction"),
+			       P_("The inclination angle of the extension lines"),
+			       -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
 
 }
@@ -128,17 +128,15 @@ static void
 ctm_changed (AdgEntity *entity,
 	     AdgMatrix *old_matrix)
 {
-  AdgContainer *container;
-  AdgMatrix    *matrix;
+  AdgContainer    *container;
+  const AdgMatrix *matrix;
 
   /* entity is yet outdated, no needs for further checks */
   if (!adg_entity_is_uptodate (entity))
     return;
 
   container = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  g_return_if_fail (ADG_IS_CONTAINER (container));
-
-  matrix = &container->ctm;
+  matrix = adg_container_get_matrix (container);
 
   if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
     adg_entity_outdate (entity);

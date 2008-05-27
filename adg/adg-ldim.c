@@ -192,7 +192,8 @@ ctm_changed (AdgEntity *entity,
   container = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
   g_return_if_fail (ADG_IS_CONTAINER (container));
 
-  matrix = &container->ctm;
+  matrix = adg_container_get_matrix (container);
+  g_return_if_fail (matrix != NULL);
 
   if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
     adg_entity_outdate (entity);

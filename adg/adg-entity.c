@@ -64,14 +64,14 @@ static void	set_property		(GObject	*object,
 static GContainerable *
 		get_parent		(GChildable	*childable);
 static void	set_parent		(GChildable	*childable,
-					 GContainerable	*new_parent);
+					 GContainerable	*parent);
 static void	parent_set		(GChildable	*childable,
 					 GContainerable	*old_parent);
-static void	real_update		(AdgEntity	*entity,
+static void	update			(AdgEntity	*entity,
 					 gboolean	 recursive);
-static void	real_outdate		(AdgEntity	*entity,
+static void	outdate			(AdgEntity	*entity,
 					 gboolean	 recursive);
-static void	render_unimplemented	(AdgEntity	*entity,
+static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 
 
@@ -79,8 +79,8 @@ static guint	signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE_EXTENDED (AdgEntity, adg_entity, 
-                        G_TYPE_INITIALLY_UNOWNED, G_TYPE_FLAG_ABSTRACT,
-                        G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, childable_init));
+			G_TYPE_INITIALLY_UNOWNED, G_TYPE_FLAG_ABSTRACT,
+			G_IMPLEMENT_INTERFACE (G_TYPE_CHILDABLE, childable_init));
 
 
 static void
@@ -109,9 +109,9 @@ adg_entity_class_init (AdgEntityClass *klass)
   klass->get_dim_style = NULL;
   klass->set_dim_style = NULL;
   klass->get_ctm = NULL;
-  klass->update = real_update;
-  klass->outdate = real_outdate;
-  klass->render = render_unimplemented;
+  klass->update = update;
+  klass->outdate = outdate;
+  klass->render = render;
 
   /**
    * AdgEntity::uptodate-set:
@@ -142,8 +142,8 @@ adg_entity_class_init (AdgEntityClass *klass)
 		  G_SIGNAL_RUN_FIRST,
 		  G_STRUCT_OFFSET (AdgEntityClass, ctm_changed),
 		  NULL, NULL,
-                  g_cclosure_marshal_VOID__OBJECT,
-		  G_TYPE_NONE, 1, ADG_TYPE_MATRIX);
+                  g_cclosure_marshal_VOID__BOXED,
+		  G_TYPE_NONE, 1, ADG_TYPE_MATRIX|G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
 static void
@@ -157,8 +157,7 @@ childable_init (GChildableIface *iface)
 static void
 adg_entity_init (AdgEntity *entity)
 {
-  AdgEntityPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (entity,
-							ADG_TYPE_ENTITY,
+  AdgEntityPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (entity, ADG_TYPE_ENTITY,
 							AdgEntityPrivate);
 
   priv->parent = NULL;
@@ -173,12 +172,12 @@ get_property (GObject    *object,
 	      GValue     *value,
 	      GParamSpec *pspec)
 {
-  GChildable *childable = G_CHILDABLE (object);
+  AdgEntity *entity = (AdgEntity *) object;
 
   switch (prop_id)
     {
     case PROP_PARENT:
-      g_value_set_object (value, g_childable_get_parent (childable));
+      g_value_set_object (value, entity->priv->parent);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -192,12 +191,12 @@ set_property (GObject      *object,
 	      const GValue *value,
 	      GParamSpec   *pspec)
 {
-  GChildable *childable = G_CHILDABLE (object);
+  AdgEntity *entity = (AdgEntity *) object;
 
   switch (prop_id)
     {
     case PROP_PARENT:
-      g_childable_set_parent (childable, (GContainerable *) g_value_get_object (value));
+      entity->priv->parent = (AdgContainer *) g_value_get_object (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -214,45 +213,41 @@ get_parent (GChildable *childable)
 
 static void
 set_parent (GChildable     *childable,
-	    GContainerable *new_parent)
+	    GContainerable *parent)
 {
-  ((AdgEntity *) childable)->priv->parent = (AdgEntity *) new_parent;
+  ((AdgEntity *) childable)->priv->parent = (AdgContainer *) parent;
+  g_object_notify ((GObject *) childable, "parent");
 }
 
 static void
 parent_set (GChildable     *childable,
 	    GContainerable *old_parent)
 {
-  AdgMatrix *old_ctm;
-
   if (ADG_IS_CONTAINER (old_parent))
-    old_ctm = & ((AdgContainer *) old_parent)->ctm;
-  else
-    old_ctm = NULL;
-
-  g_signal_emit (childable, signals[CTM_CHANGED], 0, old_ctm);
+    g_signal_emit (childable, signals[CTM_CHANGED], 0,
+		   adg_container_get_matrix ((AdgContainer *) old_parent));
 }
 
 
 static void
-real_update (AdgEntity *entity,
-	     gboolean   recursive)
+update (AdgEntity *entity,
+	gboolean   recursive)
 {
   ADG_SET (entity->priv->flags, ADG_ENTITY_UPDATED);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, FALSE);
 }
 
 static void
-real_outdate (AdgEntity *entity,
-	      gboolean   recursive)
+outdate (AdgEntity *entity,
+	 gboolean   recursive)
 {
   ADG_UNSET (entity->priv->flags, ADG_ENTITY_UPDATED);
   g_signal_emit (entity, signals[UPTODATE_SET], 0, TRUE);
 }
 
 static void
-render_unimplemented (AdgEntity *entity,
-		      cairo_t   *cr)
+render (AdgEntity *entity,
+	cairo_t   *cr)
 {
   g_warning ("AdgEntity::render not implemented for `%s'",
              g_type_name (G_TYPE_FROM_INSTANCE (entity)));
@@ -289,17 +284,19 @@ adg_entity_get_canvas (AdgEntity *entity)
 /**
  * adg_entity_ctm_changed:
  * @entity: an #AdgEntity
+ * @old_matrix: the old #AdgMatrix
  *
  * Emits the "ctm-changed" signal on @entity.
  *
  * This function is only useful in entity implementations.
  */
 void
-adg_entity_ctm_changed  (AdgEntity *entity)
+adg_entity_ctm_changed  (AdgEntity *entity,
+			 AdgMatrix *old_matrix)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  g_signal_emit (entity, signals[CTM_CHANGED], 0, NULL);
+  g_signal_emit (entity, signals[CTM_CHANGED], 0, old_matrix);
 }
 
 
@@ -323,7 +320,7 @@ adg_entity_get_line_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
+  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -389,7 +386,7 @@ adg_entity_get_font_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
+  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -455,7 +452,7 @@ adg_entity_get_arrow_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
+  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -521,7 +518,7 @@ adg_entity_get_dim_style (AdgEntity *entity)
 
   g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
 
-  for (is_parent = FALSE; entity != NULL; entity = entity->priv->parent)
+  for (is_parent = FALSE; entity != NULL; entity = (AdgEntity *) entity->priv->parent)
     {
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
@@ -589,10 +586,10 @@ adg_entity_get_ctm (AdgEntity *entity)
   AdgEntityClass  *entity_class;
   const AdgMatrix *matrix;
 
-  g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
-
   while (entity != NULL)
     {
+      g_return_val_if_fail (ADG_IS_ENTITY (entity), adg_matrix_get_fallback ());
+
       entity_class = ADG_ENTITY_GET_CLASS (entity);
 
       if (entity_class->get_ctm != NULL)
@@ -603,7 +600,7 @@ adg_entity_get_ctm (AdgEntity *entity)
             return matrix;
         }
 
-      entity = entity->priv->parent;
+      entity = (AdgEntity *) entity->priv->parent;
     }
 
   /* No valid matrix found in entity hierarchy */

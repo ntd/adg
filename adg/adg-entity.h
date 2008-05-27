@@ -21,7 +21,6 @@
 #ifndef __ADG_ENTITY_H__
 #define __ADG_ENTITY_H__
 
-#include <adg/adg-pair.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-style.h>
 
@@ -97,7 +96,8 @@ GType			adg_entity_get_type		(void) G_GNUC_CONST;
 
 AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
 
-void			adg_entity_ctm_changed		(AdgEntity      *entity);
+void			adg_entity_ctm_changed		(AdgEntity      *entity,
+							 AdgMatrix      *old_ctm);
 const AdgMatrix *	adg_entity_get_ctm		(AdgEntity      *entity);
 
 const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
