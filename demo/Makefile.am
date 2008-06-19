@@ -5,7 +5,7 @@ AM_CFLAGS =		@GCONTAINER_CFLAGS@ \
 			-I$(top_srcdir)
 AM_LDFLAGS =		@GCONTAINER_LIBS@ \
 		       	@GTK2_LIBS@
+LDADD =			$(top_builddir)/adg/libadg.la
 
 bin_PROGRAMS =		adg-demo
-adg_demo_SOURCES =	adg-demo.c
-adg_demo_LDADD =	$(top_builddir)/adg/libadg.la
+noinst_PROGRAMS =	ldim
