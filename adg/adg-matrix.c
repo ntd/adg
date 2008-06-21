@@ -43,22 +43,6 @@ adg_matrix_get_type (void)
 }
 
 /**
- * adg_matrix_get_fallback:
- *
- * Gets a fallback matrix. The fallback matrix is a statically allocated
- * identity matrix.
- *
- * Return value: the fallback matrix
- */
-const AdgMatrix *
-adg_matrix_get_fallback (void)
-{
-  static AdgMatrix fallback_matrix = { 1.0, 0.0, 0.0, 1.0, 0.0, 0.0 };
-
-  return &fallback_matrix;
-}
-
-/**
  * adg_matrix_dup:
  * @matrix: an #AdgMatrix structure
  *
@@ -73,6 +57,50 @@ adg_matrix_dup (const AdgMatrix *matrix)
   g_return_val_if_fail (matrix != NULL, NULL);
 
   return g_memdup (matrix, sizeof (AdgMatrix));
+}
+
+/**
+ * adg_matrix_get_fallback:
+ *
+ * Gets a fallback matrix. The fallback matrix is a statically allocated
+ * identity matrix.
+ *
+ * Return value: the fallback matrix
+ */
+const AdgMatrix *
+adg_matrix_get_fallback (void)
+{
+  static AdgMatrix fallback_matrix = { 1., 0., 0., 1., 0., 0. };
+
+  return &fallback_matrix;
+}
+
+/**
+ * adg_matrix_init_null:
+ * @matrix: the #AdgMatrix to nullify
+ *
+ * Nullifies a matrix, setting all its components to 0.
+ */
+void
+adg_matrix_init_null (AdgMatrix *matrix)
+{
+  cairo_matrix_init (matrix, 0., 0., 0., 0., 0., 0.);
+}
+
+/**
+ * adg_matrix_is_null:
+ * @matrix: the #AdgMatrix to check
+ *
+ * Checks if a matrix is a nullified matrix.
+ *
+ * Return value: %TRUE if the matrix is a null matrix, %FALSE otherwise
+ */
+gboolean
+adg_matrix_is_null (const AdgMatrix *matrix)
+{
+  return matrix->xx == 0. && matrix->yx == 0. &&
+    matrix->xy == 0. && matrix->yy == 0. &&
+    matrix->x0 == 0. && matrix->y0 == 0.;
 }
 
 /**
