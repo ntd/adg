@@ -50,31 +50,16 @@ struct _AdgContainer
 struct _AdgContainerClass
 {
   AdgEntityClass parent_class;
-
-  /* Signals */
-  void		(*scale)			(AdgContainer   *container,
-						 AdgPair        *factor);
 };
 
 
-GType		adg_container_get_type		(void) G_GNUC_CONST;
-AdgMatrix *	adg_container_get_matrix	(AdgContainer	*container);
-void		adg_container_set_matrix	(AdgContainer	*container,
-						 AdgMatrix	*matrix);
-void		adg_container_scale		(AdgContainer	*container,
-						 AdgPair	*factor);
-void		adg_container_scale_explicit	(AdgContainer	*container,
-						 double		 sx,
-						 double		 sy);
-void		adg_container_translate		(AdgContainer	*container,
-						 AdgPair	*device_offset,
-						 AdgPair	*user_offset);
-void		adg_container_translate_explicit(AdgContainer	*container,
-						 double		 dx,
-						 double		 dy,
-						 double		 ux,
-						 double		 uy);
-
+GType		 adg_container_get_type			(void) G_GNUC_CONST;
+const AdgMatrix *adg_container_get_model_transformation	(AdgContainer	*container);
+void		 adg_container_set_model_transformation	(AdgContainer	*container,
+							 AdgMatrix	*transformation);
+const AdgMatrix *adg_container_get_paper_transformation	(AdgContainer	*container);
+void		 adg_container_set_paper_transformation	(AdgContainer	*container,
+							 AdgMatrix	*transformation);
 
 G_END_DECLS
 

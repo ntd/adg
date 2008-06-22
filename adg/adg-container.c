@@ -25,8 +25,11 @@
  *                     other entities
  *
  * The #AdgContainer is an entity that implements the #GContainerable interface.
- * Each AdgContainer has its current transformation matrix (#AdgContainer:matrix)
- * to be applied to all its children.
+ * Each AdgContainer has its paper matrix (#AdgContainer:paper_matrix) to be
+ * used on paper-dependent references (such as font and arrow sizes, line
+ * thickness etc...) and a model matrix usually applied to the model view. See
+ * http://www.entidi.it/adg/tutorial/view/3 for details on this topic.
+ *
  * This means an AdgContainer can be thought as a group of entities with the
  * same geometrical identity (same scale, reference point ecc...).
  */
@@ -44,37 +47,39 @@ enum
 {
   PROP_0,
   PROP_CHILD,
-  PROP_MATRIX
+  PROP_MODEL_TRANSFORMATION,
+  PROP_PAPER_TRANSFORMATION
 };
 
 
-static void	containerable_init
-				(GContainerableIface *iface);
-static void	get_property	(GObject	*object,
-				 guint		 prop_id,
-				 GValue		*value,
-				 GParamSpec	*pspec);
-static void	set_property	(GObject	*object,
-				 guint		 prop_id,
-				 const GValue	*value,
-				 GParamSpec	*pspec);
-static gboolean	set_matrix	(AdgContainer	*container,
-				 AdgMatrix	*matrix);
-static GSList *	get_children	(GContainerable	*containerable);
-static gboolean	add		(GContainerable	*containerable,
-				 GChildable	*childable);
-static gboolean	remove		(GContainerable	*containerable,
-				 GChildable	*childable);
-static void	ctm_changed	(AdgEntity	*entity,
-				 AdgMatrix	*dummy_ctm);
+static void	containerable_init	(GContainerableIface *iface);
+static void	get_property		(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
 static const AdgMatrix *
-		get_ctm		(AdgEntity	*entity);
-static void	update		(AdgEntity	*entity,
-				 gboolean	 recursive);
-static void	outdate		(AdgEntity	*entity,
-				 gboolean	 recursive);
-static void	render		(AdgEntity	*entity,
-				 cairo_t	*cr);
+		get_model_matrix	(AdgEntity	*entity);
+static const AdgMatrix *
+		get_paper_matrix	(AdgEntity	*entity);
+static void	model_matrix_changed	(AdgEntity	*entity,
+					 AdgMatrix	*old_matrix);
+static void	paper_matrix_changed	(AdgEntity	*entity,
+					 AdgMatrix	*old_matrix);
+static GSList *	get_children		(GContainerable	*containerable);
+static gboolean	add			(GContainerable	*containerable,
+					 GChildable	*childable);
+static gboolean	remove			(GContainerable	*containerable,
+					 GChildable	*childable);
+static void	update			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	outdate			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	render			(AdgEntity	*entity,
+					 cairo_t	*cr);
 
 
 G_DEFINE_TYPE_EXTENDED (AdgContainer, adg_container,
@@ -99,20 +104,29 @@ adg_container_class_init (AdgContainerClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->dispose = g_containerable_dispose;
 
-  entity_class->ctm_changed = ctm_changed;
-  entity_class->get_ctm = get_ctm;
+  entity_class->model_matrix_changed = model_matrix_changed;
+  entity_class->paper_matrix_changed = paper_matrix_changed;
+  entity_class->get_model_matrix = get_model_matrix;
+  entity_class->get_paper_matrix = get_paper_matrix;
   entity_class->update = update;
   entity_class->outdate = outdate;
   entity_class->render = render;
 
   g_object_class_override_property (gobject_class, PROP_CHILD, "child");
 
-  param = g_param_spec_boxed ("matrix",
-                              P_("Matrix"),
-                              P_("The transformation matrix apported by this container"),
+  param = g_param_spec_boxed ("model-transformation",
+                              P_("The model transformation"),
+                              P_("The model transformation to be applied to this container and its children entities"),
                               ADG_TYPE_MATRIX,
                               G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_MATRIX, param);
+  g_object_class_install_property (gobject_class, PROP_MODEL_TRANSFORMATION, param);
+
+  param = g_param_spec_boxed ("paper-transformation",
+                              P_("The paper transformation"),
+                              P_("The paper transformation to be applied to this container and its children entities"),
+                              ADG_TYPE_MATRIX,
+                              G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_PAPER_TRANSFORMATION, param);
 }
 
 static void
@@ -131,8 +145,10 @@ adg_container_init (AdgContainer *container)
 							   AdgContainerPrivate);
 
   priv->children = NULL;
-  cairo_matrix_init_identity (&priv->matrix);
-  cairo_matrix_init_identity (&priv->ctm);
+  cairo_matrix_init_identity (&priv->model_transformation);
+  cairo_matrix_init_identity (&priv->paper_transformation);
+  adg_matrix_init_null (&priv->model_matrix);
+  adg_matrix_init_null (&priv->paper_matrix);
 
   container->priv = priv;
 }
@@ -147,8 +163,11 @@ get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_MATRIX:
-      g_value_set_boxed (value, &container->priv->matrix);
+    case PROP_MODEL_TRANSFORMATION:
+      g_value_set_boxed (value, &container->priv->model_transformation);
+      break;
+    case PROP_PAPER_TRANSFORMATION:
+      g_value_set_boxed (value, &container->priv->paper_transformation);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -169,8 +188,13 @@ set_property (GObject      *object,
     case PROP_CHILD:
       g_containerable_add ((GContainerable *) container, g_value_get_object (value));
       break;
-    case PROP_MATRIX:
-      set_matrix (container, g_value_get_boxed (value));
+    case PROP_MODEL_TRANSFORMATION:
+      adg_matrix_set (&container->priv->model_transformation,
+		      g_value_get_boxed (value));
+      break;
+    case PROP_PAPER_TRANSFORMATION:
+      adg_matrix_set (&container->priv->paper_transformation,
+		      g_value_get_boxed (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -215,36 +239,71 @@ remove (GContainerable *containerable,
 
 
 static void
-ctm_changed (AdgEntity *entity,
-	     AdgMatrix *dummy_ctm)
+model_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *old_matrix)
 {
   AdgContainer *container;
   AdgContainer *parent;
-  AdgMatrix     old_ctm;
+  AdgMatrix     matrix;
 
   container = (AdgContainer *) entity;
   parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  adg_matrix_set (&old_ctm, &container->priv->ctm);
+  adg_matrix_set (&matrix, &container->priv->model_matrix);
 
-  /* Refresh the ctm */
+  /* Refresh the model matrix */
   if (ADG_IS_CONTAINER (parent))
-    adg_matrix_set (&container->priv->ctm, &parent->priv->ctm);
+    adg_matrix_set (&container->priv->model_matrix, &parent->priv->model_matrix);
   else
-    cairo_matrix_init_identity (&container->priv->ctm);
+    cairo_matrix_init_identity (&container->priv->model_matrix);
 
-  cairo_matrix_multiply (&container->priv->ctm, &container->priv->ctm,
-			 &container->priv->matrix);
+  cairo_matrix_multiply (&container->priv->model_matrix,
+			 &container->priv->model_transformation,
+			 &container->priv->model_matrix);
 
-  /* Check for ctm != old_ctm */
-  if (!adg_matrix_equal (&container->priv->ctm, &old_ctm))
+  /* Check if the matrix changed */
+  if (!adg_matrix_equal (&container->priv->model_matrix, &matrix))
     g_containerable_propagate_by_name ((GContainerable *) container,
-                                       "ctm-changed", &old_ctm);
+                                       "model-matrix-changed", &matrix);
 }
 
-const AdgMatrix *
-get_ctm (AdgEntity *entity)
+static void
+paper_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *old_matrix)
 {
-  return &((AdgContainer *) entity)->priv->ctm;
+  AdgContainer *container;
+  AdgContainer *parent;
+  AdgMatrix     matrix;
+
+  container = (AdgContainer *) entity;
+  parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
+  adg_matrix_set (&matrix, &container->priv->paper_matrix);
+
+  /* Refresh the paper matrix */
+  if (ADG_IS_CONTAINER (parent))
+    adg_matrix_set (&container->priv->paper_matrix, &parent->priv->paper_matrix);
+  else
+    cairo_matrix_init_identity (&container->priv->paper_matrix);
+
+  cairo_matrix_multiply (&container->priv->paper_matrix,
+			 &container->priv->paper_transformation,
+			 &container->priv->paper_matrix);
+
+  /* Check if the matrix changed */
+  if (!adg_matrix_equal (&container->priv->paper_matrix, &matrix))
+    g_containerable_propagate_by_name ((GContainerable *) container,
+                                       "paper-matrix-changed", &matrix);
+}
+
+static const AdgMatrix *
+get_model_matrix (AdgEntity *entity)
+{
+  return &((AdgContainer *) entity)->priv->model_matrix;
+}
+
+static const AdgMatrix *
+get_paper_matrix (AdgEntity *entity)
+{
+  return &((AdgContainer *) entity)->priv->paper_matrix;
 }
 
 
@@ -274,125 +333,40 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  cairo_set_matrix (cr, &((AdgContainer *) entity)->priv->ctm);
+  cairo_set_matrix (cr, &((AdgContainer *) entity)->priv->model_matrix);
   g_containerable_foreach ((GContainerable *) entity,
 			   G_CALLBACK (adg_entity_render), cr);
 }
 
 
-AdgMatrix *
-adg_container_get_matrix (AdgContainer *container)
+const AdgMatrix *
+adg_container_get_model_transformation (AdgContainer *container)
 {
   g_return_val_if_fail (ADG_IS_CONTAINER (container), NULL);
-
-  return &container->priv->matrix;
+  return &container->priv->model_transformation;
 }
 
 void
-adg_container_set_matrix (AdgContainer *container,
-                          AdgMatrix    *matrix)
+adg_container_set_model_transformation (AdgContainer *container,
+					AdgMatrix    *transformation)
 {
   g_return_if_fail (ADG_IS_CONTAINER (container));
-
-  if (set_matrix (container, matrix))
-    g_object_notify ((GObject *) container, "matrix");
+  g_return_if_fail (transformation != NULL);
+  adg_matrix_set (&container->priv->model_transformation, transformation);
 }
 
-
-void
-adg_container_scale (AdgContainer *container,
-                     AdgPair      *factor)
+const AdgMatrix *
+adg_container_get_paper_transformation (AdgContainer *container)
 {
-  g_return_if_fail (factor != NULL);
-
-  adg_container_scale_explicit (container, factor->x, factor->y);
+  g_return_val_if_fail (ADG_IS_CONTAINER (container), NULL);
+  return &container->priv->paper_transformation;
 }
 
 void
-adg_container_scale_explicit (AdgContainer *container,
-                              double        sx,
-                              double        sy)
+adg_container_set_paper_transformation (AdgContainer *container,
+					AdgMatrix    *transformation)
 {
-  AdgMatrix matrix;
-
   g_return_if_fail (ADG_IS_CONTAINER (container));
-
-  adg_matrix_set (&matrix, &container->priv->matrix);
-  matrix.xx = sx;
-  matrix.yy = sy;
-
-  if (set_matrix (container, &matrix))
-    g_object_notify ((GObject *) container, "matrix");
-}
-
-void
-adg_container_translate (AdgContainer *container,
-                         AdgPair      *device_offset,
-                         AdgPair      *user_offset)
-{
-  double dx;
-  double dy;
-  double ux;
-  double uy;
-
-  g_return_if_fail (device_offset != NULL || user_offset != NULL);
-
-  if (device_offset != NULL)
-    {
-      dx = device_offset->x;
-      dy = device_offset->y;
-    }
-  else
-    {
-      dx = 0.0;
-      dy = 0.0;
-    }
-
-  if (user_offset != NULL)
-    {
-      ux = user_offset->x;
-      uy = user_offset->y;
-    }
-  else
-    {
-      ux = 0.0;
-      uy = 0.0;
-    }
-
-  adg_container_translate_explicit (container, dx, dy, ux, uy);
-}
-
-void
-adg_container_translate_explicit (AdgContainer *container,
-                                  double        dx,
-                                  double        dy,
-                                  double        ux,
-                                  double        uy)
-{
-  AdgMatrix matrix;
-
-  g_return_if_fail (ADG_IS_CONTAINER (container));
-
-  adg_matrix_set (&matrix, &container->priv->matrix);
-  matrix.x0 = dx + ux * matrix.xx;
-  matrix.y0 = dy + uy * matrix.yy;
-
-  if (set_matrix (container, &matrix))
-    g_object_notify ((GObject *) container, "matrix");
-}
-
-
-static gboolean
-set_matrix (AdgContainer *container,
-	    AdgMatrix    *matrix)
-{
-  AdgMatrix old_matrix;
-
-  g_return_val_if_fail (matrix != NULL, FALSE);
-
-  adg_matrix_set (&old_matrix, &container->priv->matrix);
-  adg_matrix_set (&container->priv->matrix, matrix);
-
-  adg_entity_ctm_changed ((AdgEntity *) container, &old_matrix);
-  return TRUE;
+  g_return_if_fail (transformation != NULL);
+  adg_matrix_set (&container->priv->paper_transformation, transformation);
 }

@@ -44,14 +44,14 @@ enum
 };
 
 
-static void	        finalize               (GObject        *object);
-static void             ctm_changed            (AdgEntity      *entity,
+static void	        finalize		(GObject        *object);
+static void             model_matrix_changed	(AdgEntity      *entity,
                                                 AdgMatrix      *old_matrix);
-static void             update                 (AdgEntity      *entity,
-                                                gboolean        recursive);
-static void             render                 (AdgEntity      *entity,
-                                                cairo_t        *cr);
-static gchar *          default_label          (AdgDim         *dim);
+static void             update			(AdgEntity      *entity,
+						 gboolean        recursive);
+static void             render			(AdgEntity      *entity,
+						 cairo_t        *cr);
+static gchar *          default_label		(AdgDim         *dim);
 
 
 G_DEFINE_TYPE (AdgADim, adg_adim, ADG_TYPE_DIM);
@@ -73,7 +73,7 @@ adg_adim_class_init (AdgADimClass *klass)
 
   gobject_class->finalize = finalize;
 
-  entity_class->ctm_changed = ctm_changed;
+  entity_class->model_matrix_changed = model_matrix_changed;
   entity_class->update = update;
   entity_class->render = render;
 
@@ -125,18 +125,16 @@ finalize (GObject *object)
 }
 
 static void
-ctm_changed (AdgEntity *entity,
-	     AdgMatrix *old_matrix)
+model_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *old_matrix)
 {
-  AdgContainer    *container;
   const AdgMatrix *matrix;
 
   /* entity is yet outdated, no needs for further checks */
   if (!adg_entity_is_uptodate (entity))
     return;
 
-  container = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  matrix = adg_container_get_matrix (container);
+  matrix = adg_entity_get_model_matrix (entity);
 
   if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
     adg_entity_outdate (entity);

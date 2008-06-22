@@ -31,8 +31,12 @@ G_BEGIN_DECLS
 struct _AdgContainerPrivate
 {
   GSList                *children;
-  AdgMatrix              matrix;
-  AdgMatrix              ctm;
+  AdgMatrix              model_transformation;
+  AdgMatrix              paper_transformation;
+
+  /* Cached data */
+  AdgMatrix		 model_matrix;
+  AdgMatrix		 paper_matrix;
 };
 
 

@@ -47,7 +47,8 @@ enum
 enum
 {
   UPTODATE_SET,
-  CTM_CHANGED,
+  MODEL_MATRIX_CHANGED,
+  PAPER_MATRIX_CHANGED,
   LAST_SIGNAL
 };
 
@@ -73,6 +74,10 @@ static void	outdate			(AdgEntity	*entity,
 					 gboolean	 recursive);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
+static const AdgMatrix *
+		get_model_matrix	(AdgEntity	*entity);
+static const AdgMatrix *
+		get_paper_matrix	(AdgEntity	*entity);
 
 
 static guint	signals[LAST_SIGNAL] = { 0 };
@@ -99,7 +104,8 @@ adg_entity_class_init (AdgEntityClass *klass)
   g_object_class_override_property (gobject_class, PROP_PARENT, "parent");
 
   klass->uptodate_set = NULL;
-  klass->ctm_changed = NULL;
+  klass->model_matrix_changed = NULL;
+  klass->paper_matrix_changed = NULL;
   klass->get_line_style = NULL;
   klass->set_line_style = NULL;
   klass->get_font_style = NULL;
@@ -108,7 +114,8 @@ adg_entity_class_init (AdgEntityClass *klass)
   klass->set_arrow_style = NULL;
   klass->get_dim_style = NULL;
   klass->set_dim_style = NULL;
-  klass->get_ctm = NULL;
+  klass->get_model_matrix = get_model_matrix;
+  klass->get_paper_matrix = get_paper_matrix;
   klass->update = update;
   klass->outdate = outdate;
   klass->render = render;
@@ -130,17 +137,33 @@ adg_entity_class_init (AdgEntityClass *klass)
 		  G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 
   /**
-   * AdgEntity::ctm-changed:
+   * AdgEntity::model-matrix-changed:
    * @entity: an #AdgEntity
-   * @old_ctm: the old current transformation matrix
+   * @old_matrix: the old model matrix
    *
-   * Emitted when the current trasformation matrix has changed.
+   * Emitted after the current model matrix has changed.
    */
-  signals[CTM_CHANGED] =
-    g_signal_new ("ctm-changed",
+  signals[MODEL_MATRIX_CHANGED] =
+    g_signal_new ("model-matrix-changed",
 		  G_OBJECT_CLASS_TYPE (gobject_class),
 		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (AdgEntityClass, ctm_changed),
+		  G_STRUCT_OFFSET (AdgEntityClass, model_matrix_changed),
+		  NULL, NULL,
+                  g_cclosure_marshal_VOID__BOXED,
+		  G_TYPE_NONE, 1, ADG_TYPE_MATRIX|G_SIGNAL_TYPE_STATIC_SCOPE);
+
+  /**
+   * AdgEntity::paper-matrix-changed:
+   * @entity: an #AdgEntity
+   * @old_matrix: the old paper matrix
+   *
+   * Emitted after the current paper matrix has changed.
+   */
+  signals[PAPER_MATRIX_CHANGED] =
+    g_signal_new ("paper-matrix-changed",
+		  G_OBJECT_CLASS_TYPE (gobject_class),
+		  G_SIGNAL_RUN_FIRST,
+		  G_STRUCT_OFFSET (AdgEntityClass, paper_matrix_changed),
 		  NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
 		  G_TYPE_NONE, 1, ADG_TYPE_MATRIX|G_SIGNAL_TYPE_STATIC_SCOPE);
@@ -224,8 +247,18 @@ parent_set (GChildable     *childable,
 	    GContainerable *old_parent)
 {
   if (ADG_IS_CONTAINER (old_parent))
-    g_signal_emit (childable, signals[CTM_CHANGED], 0,
-		   adg_container_get_matrix ((AdgContainer *) old_parent));
+    {
+      AdgEntity       *entity;
+      const AdgMatrix *old_model;
+      const AdgMatrix *old_paper;
+
+      entity = (AdgEntity *) childable;
+      old_model = adg_entity_get_model_matrix ((AdgEntity *) old_parent);
+      old_paper = adg_entity_get_paper_matrix ((AdgEntity *) old_parent);
+
+      adg_entity_model_matrix_changed (entity, old_model);
+      adg_entity_paper_matrix_changed (entity, old_paper);
+    }
 }
 
 
@@ -253,6 +286,25 @@ render (AdgEntity *entity,
              g_type_name (G_TYPE_FROM_INSTANCE (entity)));
 }
 
+static const AdgMatrix *
+get_model_matrix (AdgEntity *entity)
+{
+  AdgContainer *parent = entity->priv->parent;
+
+  g_return_val_if_fail (parent != NULL, NULL);
+
+  return ADG_ENTITY_GET_CLASS (parent)->get_model_matrix (entity);
+}
+
+static const AdgMatrix *
+get_paper_matrix (AdgEntity *entity)
+{
+  AdgContainer *parent = entity->priv->parent;
+
+  g_return_val_if_fail (parent != NULL, NULL);
+
+  return ADG_ENTITY_GET_CLASS (parent)->get_paper_matrix (entity);
+}
 
 /**
  * adg_entity_get_canvas:
@@ -282,21 +334,70 @@ adg_entity_get_canvas (AdgEntity *entity)
 
 
 /**
- * adg_entity_ctm_changed:
+ * adg_entity_get_model_matrix:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the model matrix to be used in rendering this @entity.
+ *
+ * Return value: the requested matrix
+ */
+const AdgMatrix *
+adg_entity_get_model_matrix (AdgEntity *entity)
+{
+  g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
+  return ADG_ENTITY_GET_CLASS (entity)->get_model_matrix (entity);
+}
+
+/**
+ * adg_entity_get_paper_matrix:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the paper matrix to be used in rendering this @entity.
+ *
+ * Return value: the requested matrix
+ */
+const AdgMatrix *
+adg_entity_get_paper_matrix (AdgEntity *entity)
+{
+  g_return_val_if_fail (ADG_IS_ENTITY (entity), NULL);
+  return ADG_ENTITY_GET_CLASS (entity)->get_paper_matrix (entity);
+}
+
+
+/**
+ * adg_entity_model_matrix_changed:
  * @entity: an #AdgEntity
  * @old_matrix: the old #AdgMatrix
  *
- * Emits the "ctm-changed" signal on @entity.
+ * Emits the "model-matrix-changed" signal on @entity.
  *
  * This function is only useful in entity implementations.
  */
 void
-adg_entity_ctm_changed  (AdgEntity *entity,
-			 AdgMatrix *old_matrix)
+adg_entity_model_matrix_changed (AdgEntity       *entity,
+				 const AdgMatrix *old_matrix)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  g_signal_emit (entity, signals[CTM_CHANGED], 0, old_matrix);
+  g_signal_emit (entity, signals[MODEL_MATRIX_CHANGED], 0, old_matrix);
+}
+
+/**
+ * adg_entity_paper_matrix_changed:
+ * @entity: an #AdgEntity
+ * @old_matrix: the old #AdgMatrix
+ *
+ * Emits the "paper-matrix-changed" signal on @entity.
+ *
+ * This function is only useful in entity implementations.
+ */
+void
+adg_entity_paper_matrix_changed (AdgEntity       *entity,
+				 const AdgMatrix *old_matrix)
+{
+  g_return_if_fail (ADG_IS_ENTITY (entity));
+
+  g_signal_emit (entity, signals[PAPER_MATRIX_CHANGED], 0, old_matrix);
 }
 
 
@@ -562,49 +663,6 @@ adg_entity_set_dim_style (AdgEntity   *entity,
   g_return_if_fail (entity_class->set_dim_style != NULL);
 
   entity_class->set_dim_style (entity, dim_style);
-}
-
-
-/**
- * adg_entity_get_ctm:
- * @entity: an #AdgEntity object
- *
- * Gets the current transformation matrix to be applied to @entity.
- * If "get_ctm" is not implemented by @entity itsself, the hierarchy of @entity
- * is scanned to find the first parent which implements "get_ctm" and which
- * returns a valid matrix. If not found, the function will return the fallback
- * matrix returned by adg_matrix_get_fallback().
- *
- * Apart specifing an invalid entity, this function will ever return
- * a valid matrix.
- *
- * Return value: the current transformation matrix of @entity
- */
-const AdgMatrix *
-adg_entity_get_ctm (AdgEntity *entity)
-{
-  AdgEntityClass  *entity_class;
-  const AdgMatrix *matrix;
-
-  while (entity != NULL)
-    {
-      g_return_val_if_fail (ADG_IS_ENTITY (entity), adg_matrix_get_fallback ());
-
-      entity_class = ADG_ENTITY_GET_CLASS (entity);
-
-      if (entity_class->get_ctm != NULL)
-        {
-          matrix = entity_class->get_ctm (entity);
-
-          if (matrix != NULL)
-            return matrix;
-        }
-
-      entity = (AdgEntity *) entity->priv->parent;
-    }
-
-  /* No valid matrix found in entity hierarchy */
-  g_return_val_if_reached (adg_matrix_get_fallback ());
 }
 
 

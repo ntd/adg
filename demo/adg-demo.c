@@ -307,7 +307,7 @@ piston_expose (GtkWidget      *widget,
   scale = (double) (width - 80.0) / 80.0;
 
   cairo_matrix_init (&matrix, scale, 0.0, 0.0, scale, scale + 71.0, 12.0 * scale);
-  adg_container_set_matrix (ADG_CONTAINER (canvas), &matrix);
+  adg_container_set_model_transformation (ADG_CONTAINER (canvas), &matrix);
 
   /* Rendering process */
   adg_entity_render (ADG_ENTITY (canvas), cr);
@@ -339,7 +339,7 @@ piston_to_ps (AdgCanvas *canvas)
 
   scale = 9.0;
   cairo_matrix_init (&matrix, scale, 0.0, 0.0, scale, 100.0, 4.5*scale + 100.0);
-  adg_container_set_matrix (ADG_CONTAINER (canvas), &matrix);
+  adg_container_set_model_transformation (ADG_CONTAINER (canvas), &matrix);
   cairo_scale (cr, 70.0, 70.0);
 
   /* Rendering process */

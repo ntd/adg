@@ -76,7 +76,7 @@ drawing_expose (GtkWidget      *widget,
   scale = (double) (width - 10.) / 10.;
 
   cairo_matrix_init (&matrix, scale, 0., 0., scale, 5., 75. + 10.*scale);
-  adg_container_set_matrix (ADG_CONTAINER (canvas), &matrix);
+  adg_container_set_model_transformation (ADG_CONTAINER (canvas), &matrix);
 
   /* Rendering process */
   adg_entity_render (ADG_ENTITY (canvas), cr);

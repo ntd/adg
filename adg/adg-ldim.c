@@ -45,24 +45,24 @@ enum
 };
 
 
-static void	finalize	(GObject	*object);
-static void	get_property	(GObject	*object,
-				 guint		 param_id,
-				 GValue		*value,
-				 GParamSpec	*pspec);
-static void	set_property	(GObject	*object,
-				 guint		 param_id,
-				 const GValue	*value,
-				 GParamSpec	*pspec);
-static void	ctm_changed	(AdgEntity	*entity,
-				 AdgMatrix	*old_matrix);
-static void	update		(AdgEntity	*entity,
-				 gboolean	 recursive);
-static void	outdate		(AdgEntity	*entity,
-				 gboolean	 recursive);
-static void	render		(AdgEntity	*entity,
-				 cairo_t	*cr);
-static gchar *	default_label	(AdgDim		*dim);
+static void	finalize		(GObject	*object);
+static void	get_property		(GObject	*object,
+					 guint		 param_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 param_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+static void	model_matrix_changed	(AdgEntity	*entity,
+					 AdgMatrix	*old_matrix);
+static void	update			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	outdate			(AdgEntity	*entity,
+					 gboolean	 recursive);
+static void	render			(AdgEntity	*entity,
+					 cairo_t	*cr);
+static gchar *	default_label		(AdgDim		*dim);
 
 
 G_DEFINE_TYPE (AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -86,7 +86,7 @@ adg_ldim_class_init (AdgLDimClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  entity_class->ctm_changed = ctm_changed;
+  entity_class->model_matrix_changed = model_matrix_changed;
   entity_class->update = update;
   entity_class->outdate = outdate;
   entity_class->render = render;
@@ -179,20 +179,16 @@ set_property (GObject      *object,
 
 
 static void
-ctm_changed (AdgEntity *entity,
-	     AdgMatrix *old_matrix)
+model_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *old_matrix)
 {
-  AdgContainer *container;
-  AdgMatrix    *matrix;
+  const AdgMatrix *matrix;
 
   /* entity is yet outdated, no needs for further checks */
   if (!adg_entity_is_uptodate (entity))
     return;
 
-  container = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  g_return_if_fail (ADG_IS_CONTAINER (container));
-
-  matrix = adg_container_get_matrix (container);
+  matrix = adg_entity_get_model_matrix (entity);
   g_return_if_fail (matrix != NULL);
 
   if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
@@ -224,7 +220,7 @@ update (AdgEntity *entity,
   g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   /* Get the inverted transformation matrix */
-  adg_matrix_set (&device2user, adg_entity_get_ctm (entity));
+  adg_matrix_set (&device2user, adg_entity_get_model_matrix (entity));
   g_return_if_fail (cairo_matrix_invert (&device2user) == CAIRO_STATUS_SUCCESS);
 
   /* Set vector to the direction where ldim will extend */

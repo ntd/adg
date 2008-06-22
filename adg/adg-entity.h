@@ -60,8 +60,10 @@ struct _AdgEntityClass
   /* Signals */
   void			(*uptodate_set)			(AdgEntity      *entity,
 							 gboolean        old_state);
-  void			(*ctm_changed)			(AdgEntity      *entity,
-							 AdgMatrix      *old_ctm);
+  void			(*model_matrix_changed)		(AdgEntity      *entity,
+							 AdgMatrix      *old_matrix);
+  void			(*paper_matrix_changed)		(AdgEntity      *entity,
+							 AdgMatrix      *old_matrix);
 
   /* Virtual Table */
   const AdgLineStyle *	(*get_line_style)		(AdgEntity      *entity);
@@ -76,7 +78,8 @@ struct _AdgEntityClass
   const AdgDimStyle *	(*get_dim_style)		(AdgEntity      *entity);
   void			(*set_dim_style)		(AdgEntity      *entity,
 							 AdgDimStyle    *dim_style);
-  const AdgMatrix *	(*get_ctm)			(AdgEntity      *entity);
+  const AdgMatrix *	(*get_model_matrix)		(AdgEntity      *entity);
+  const AdgMatrix *	(*get_paper_matrix)		(AdgEntity      *entity);
   void			(*update)			(AdgEntity      *entity,
 							 gboolean        recursive);
   void			(*outdate)			(AdgEntity      *entity,
@@ -96,9 +99,13 @@ GType			adg_entity_get_type		(void) G_GNUC_CONST;
 
 AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
 
-void			adg_entity_ctm_changed		(AdgEntity      *entity,
-							 AdgMatrix      *old_ctm);
-const AdgMatrix *	adg_entity_get_ctm		(AdgEntity      *entity);
+
+const AdgMatrix *	adg_entity_get_model_matrix	(AdgEntity	*entity);
+const AdgMatrix *	adg_entity_get_paper_matrix	(AdgEntity	*entity);
+void			adg_entity_model_matrix_changed	(AdgEntity      *entity,
+							 const AdgMatrix*old_matrix);
+void			adg_entity_paper_matrix_changed	(AdgEntity      *entity,
+							 const AdgMatrix*old_matrix);
 
 const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
 void			adg_entity_set_line_style	(AdgEntity      *entity,
