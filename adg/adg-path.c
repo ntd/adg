@@ -232,7 +232,7 @@ outdate (AdgEntity *entity,
 
 static void
 render (AdgEntity *entity,
-                 cairo_t   *cr)
+	cairo_t   *cr)
 {
   AdgPathPrivate *priv = ((AdgPath *) entity)->priv;
 

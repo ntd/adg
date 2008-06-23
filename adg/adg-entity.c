@@ -289,21 +289,13 @@ render (AdgEntity *entity,
 static const AdgMatrix *
 get_model_matrix (AdgEntity *entity)
 {
-  AdgContainer *parent = entity->priv->parent;
-
-  g_return_val_if_fail (parent != NULL, NULL);
-
-  return ADG_ENTITY_GET_CLASS (parent)->get_model_matrix (entity);
+  return adg_entity_get_model_matrix ((AdgEntity *) entity->priv->parent);
 }
 
 static const AdgMatrix *
 get_paper_matrix (AdgEntity *entity)
 {
-  AdgContainer *parent = entity->priv->parent;
-
-  g_return_val_if_fail (parent != NULL, NULL);
-
-  return ADG_ENTITY_GET_CLASS (parent)->get_paper_matrix (entity);
+  return adg_entity_get_paper_matrix ((AdgEntity *) entity->priv->parent);
 }
 
 /**

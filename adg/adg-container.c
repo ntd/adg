@@ -242,68 +242,76 @@ static void
 model_matrix_changed (AdgEntity *entity,
 		      AdgMatrix *old_matrix)
 {
-  AdgContainer *container;
-  AdgContainer *parent;
-  AdgMatrix     matrix;
+  if (adg_matrix_is_null (old_matrix))
+    old_matrix = &((AdgContainer *) entity)->priv->model_matrix;
 
-  container = (AdgContainer *) entity;
-  parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  adg_matrix_set (&matrix, &container->priv->model_matrix);
-
-  /* Refresh the model matrix */
-  if (ADG_IS_CONTAINER (parent))
-    adg_matrix_set (&container->priv->model_matrix, &parent->priv->model_matrix);
-  else
-    cairo_matrix_init_identity (&container->priv->model_matrix);
-
-  cairo_matrix_multiply (&container->priv->model_matrix,
-			 &container->priv->model_transformation,
-			 &container->priv->model_matrix);
-
-  /* Check if the matrix changed */
-  if (!adg_matrix_equal (&container->priv->model_matrix, &matrix))
-    g_containerable_propagate_by_name ((GContainerable *) container,
-                                       "model-matrix-changed", &matrix);
+  g_containerable_propagate_by_name ((GContainerable *) entity,
+				     "model-matrix-changed", old_matrix);
 }
 
 static void
 paper_matrix_changed (AdgEntity *entity,
 		      AdgMatrix *old_matrix)
 {
-  AdgContainer *container;
-  AdgContainer *parent;
-  AdgMatrix     matrix;
+  if (adg_matrix_is_null (old_matrix))
+    old_matrix = &((AdgContainer *) entity)->priv->paper_matrix;
 
-  container = (AdgContainer *) entity;
-  parent = (AdgContainer *) g_childable_get_parent ((GChildable *) entity);
-  adg_matrix_set (&matrix, &container->priv->paper_matrix);
-
-  /* Refresh the paper matrix */
-  if (ADG_IS_CONTAINER (parent))
-    adg_matrix_set (&container->priv->paper_matrix, &parent->priv->paper_matrix);
-  else
-    cairo_matrix_init_identity (&container->priv->paper_matrix);
-
-  cairo_matrix_multiply (&container->priv->paper_matrix,
-			 &container->priv->paper_transformation,
-			 &container->priv->paper_matrix);
-
-  /* Check if the matrix changed */
-  if (!adg_matrix_equal (&container->priv->paper_matrix, &matrix))
-    g_containerable_propagate_by_name ((GContainerable *) container,
-                                       "paper-matrix-changed", &matrix);
+  g_containerable_propagate_by_name ((GContainerable *) entity,
+				     "paper-matrix-changed", old_matrix);
 }
 
 static const AdgMatrix *
 get_model_matrix (AdgEntity *entity)
 {
-  return &((AdgContainer *) entity)->priv->model_matrix;
+  AdgContainer *container = (AdgContainer *) entity;
+  AdgMatrix    *matrix = &container->priv->model_matrix;
+
+  /* Update the model matrix, if needed */
+  if (adg_matrix_is_null (matrix))
+    {
+      AdgEntity *parent = (AdgEntity *) g_childable_get_parent ((GChildable *) entity);
+
+      if (parent == NULL)
+	{
+	  /* Root container (AdgCanvas) */
+	  adg_matrix_set (matrix, &container->priv->model_transformation);
+	}
+      else
+	{
+	  cairo_matrix_multiply (matrix,
+				 adg_entity_get_model_matrix (parent),
+				 &container->priv->model_transformation);
+	}
+    }
+
+  return matrix;
 }
 
 static const AdgMatrix *
 get_paper_matrix (AdgEntity *entity)
 {
-  return &((AdgContainer *) entity)->priv->paper_matrix;
+  AdgContainer *container = (AdgContainer *) entity;
+  AdgMatrix    *matrix = &container->priv->paper_matrix;
+
+  /* Update the paper matrix, if needed */
+  if (adg_matrix_is_null (matrix))
+    {
+      AdgEntity *parent = (AdgEntity *) g_childable_get_parent ((GChildable *) entity);
+
+      if (parent == NULL)
+	{
+	  /* Root container (AdgCanvas) */
+	  adg_matrix_set (matrix, &container->priv->paper_transformation);
+	}
+      else
+	{
+	  cairo_matrix_multiply (matrix,
+				 adg_entity_get_paper_matrix (parent),
+				 &container->priv->paper_transformation);
+	}
+    }
+
+  return matrix;
 }
 
 
@@ -333,7 +341,7 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  cairo_set_matrix (cr, &((AdgContainer *) entity)->priv->model_matrix);
+  cairo_set_matrix (cr, adg_entity_get_model_matrix (entity));
   g_containerable_foreach ((GContainerable *) entity,
 			   G_CALLBACK (adg_entity_render), cr);
 }
@@ -350,9 +358,17 @@ void
 adg_container_set_model_transformation (AdgContainer *container,
 					AdgMatrix    *transformation)
 {
+  AdgMatrix old_matrix;
+
   g_return_if_fail (ADG_IS_CONTAINER (container));
   g_return_if_fail (transformation != NULL);
   adg_matrix_set (&container->priv->model_transformation, transformation);
+
+  /* Invalidate the model matrix */
+  adg_matrix_set (&old_matrix, &container->priv->model_matrix);
+  adg_matrix_init_null (&container->priv->model_matrix);
+
+  adg_entity_model_matrix_changed ((AdgEntity *) container, &old_matrix);
 }
 
 const AdgMatrix *
@@ -366,7 +382,15 @@ void
 adg_container_set_paper_transformation (AdgContainer *container,
 					AdgMatrix    *transformation)
 {
+  AdgMatrix old_matrix;
+
   g_return_if_fail (ADG_IS_CONTAINER (container));
   g_return_if_fail (transformation != NULL);
   adg_matrix_set (&container->priv->paper_transformation, transformation);
+
+  /* Invalidate the paper matrix */
+  adg_matrix_set (&old_matrix, &container->priv->paper_matrix);
+  adg_matrix_init_null (&container->priv->paper_matrix);
+
+  adg_entity_paper_matrix_changed ((AdgEntity *) container, &old_matrix);
 }

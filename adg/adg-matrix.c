@@ -31,6 +31,10 @@
 #include <string.h>
 
 
+static AdgMatrix null_matrix = { 0., 0., 0., 0., 0., 0. };
+static AdgMatrix identity_matrix = { 1., 0., 0., 1., 0., 0. };
+
+
 GType
 adg_matrix_get_type (void)
 {
@@ -70,9 +74,7 @@ adg_matrix_dup (const AdgMatrix *matrix)
 const AdgMatrix *
 adg_matrix_get_fallback (void)
 {
-  static AdgMatrix fallback_matrix = { 1., 0., 0., 1., 0., 0. };
-
-  return &fallback_matrix;
+  return &identity_matrix;
 }
 
 /**
@@ -84,7 +86,7 @@ adg_matrix_get_fallback (void)
 void
 adg_matrix_init_null (AdgMatrix *matrix)
 {
-  cairo_matrix_init (matrix, 0., 0., 0., 0., 0., 0.);
+  memcpy (matrix, &null_matrix, sizeof (AdgMatrix));
 }
 
 /**
@@ -98,9 +100,7 @@ adg_matrix_init_null (AdgMatrix *matrix)
 gboolean
 adg_matrix_is_null (const AdgMatrix *matrix)
 {
-  return matrix->xx == 0. && matrix->yx == 0. &&
-    matrix->xy == 0. && matrix->yy == 0. &&
-    matrix->x0 == 0. && matrix->y0 == 0.;
+  return memcmp (matrix, &null_matrix, sizeof (AdgMatrix)) == 0;
 }
 
 /**
