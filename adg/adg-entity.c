@@ -139,7 +139,7 @@ adg_entity_class_init (AdgEntityClass *klass)
   /**
    * AdgEntity::model-matrix-changed:
    * @entity: an #AdgEntity
-   * @old_matrix: the old model matrix
+   * @parent_matrix: the parent model matrix
    *
    * Emitted after the current model matrix has changed.
    */
@@ -155,7 +155,7 @@ adg_entity_class_init (AdgEntityClass *klass)
   /**
    * AdgEntity::paper-matrix-changed:
    * @entity: an #AdgEntity
-   * @old_matrix: the old paper matrix
+   * @parent_matrix: the parent paper matrix
    *
    * Emitted after the current paper matrix has changed.
    */
@@ -359,7 +359,7 @@ adg_entity_get_paper_matrix (AdgEntity *entity)
 /**
  * adg_entity_model_matrix_changed:
  * @entity: an #AdgEntity
- * @old_matrix: the old #AdgMatrix
+ * @parent_matrix: the parent #AdgMatrix
  *
  * Emits the "model-matrix-changed" signal on @entity.
  *
@@ -367,17 +367,17 @@ adg_entity_get_paper_matrix (AdgEntity *entity)
  */
 void
 adg_entity_model_matrix_changed (AdgEntity       *entity,
-				 const AdgMatrix *old_matrix)
+				 const AdgMatrix *parent_matrix)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  g_signal_emit (entity, signals[MODEL_MATRIX_CHANGED], 0, old_matrix);
+  g_signal_emit (entity, signals[MODEL_MATRIX_CHANGED], 0, parent_matrix);
 }
 
 /**
  * adg_entity_paper_matrix_changed:
  * @entity: an #AdgEntity
- * @old_matrix: the old #AdgMatrix
+ * @parent_matrix: the parent #AdgMatrix
  *
  * Emits the "paper-matrix-changed" signal on @entity.
  *
@@ -385,11 +385,11 @@ adg_entity_model_matrix_changed (AdgEntity       *entity,
  */
 void
 adg_entity_paper_matrix_changed (AdgEntity       *entity,
-				 const AdgMatrix *old_matrix)
+				 const AdgMatrix *parent_matrix)
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  g_signal_emit (entity, signals[PAPER_MATRIX_CHANGED], 0, old_matrix);
+  g_signal_emit (entity, signals[PAPER_MATRIX_CHANGED], 0, parent_matrix);
 }
 
 

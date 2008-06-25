@@ -55,7 +55,7 @@ static void	set_property		(GObject	*object,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 static void	model_matrix_changed	(AdgEntity	*entity,
-					 AdgMatrix	*old_matrix);
+					 AdgMatrix	*parent_matrix);
 static void	update			(AdgEntity	*entity,
 					 gboolean	 recursive);
 static void	outdate			(AdgEntity	*entity,
@@ -180,19 +180,9 @@ set_property (GObject      *object,
 
 static void
 model_matrix_changed (AdgEntity *entity,
-		      AdgMatrix *old_matrix)
+		      AdgMatrix *parent_matrix)
 {
-  const AdgMatrix *matrix;
-
-  /* entity is yet outdated, no needs for further checks */
-  if (!adg_entity_is_uptodate (entity))
-    return;
-
-  matrix = adg_entity_get_model_matrix (entity);
-  g_return_if_fail (matrix != NULL);
-
-  if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
-    adg_entity_outdate (entity);
+  adg_entity_outdate (entity);
 }
 
 static void

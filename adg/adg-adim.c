@@ -45,8 +45,8 @@ enum
 
 
 static void	        finalize		(GObject        *object);
-static void             model_matrix_changed	(AdgEntity      *entity,
-                                                AdgMatrix      *old_matrix);
+static void             model_matrix_changed	(AdgEntity	*entity,
+						 AdgMatrix	*parent_matrix);
 static void             update			(AdgEntity      *entity,
 						 gboolean        recursive);
 static void             render			(AdgEntity      *entity,
@@ -126,18 +126,9 @@ finalize (GObject *object)
 
 static void
 model_matrix_changed (AdgEntity *entity,
-		      AdgMatrix *old_matrix)
+		      AdgMatrix *parent_matrix)
 {
-  const AdgMatrix *matrix;
-
-  /* entity is yet outdated, no needs for further checks */
-  if (!adg_entity_is_uptodate (entity))
-    return;
-
-  matrix = adg_entity_get_model_matrix (entity);
-
-  if (old_matrix == NULL || old_matrix->xx != matrix->xx || old_matrix->yy != matrix->yy)
-    adg_entity_outdate (entity);
+  adg_entity_outdate (entity);
 }
 
 static void

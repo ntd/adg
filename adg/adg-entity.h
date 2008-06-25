@@ -61,9 +61,9 @@ struct _AdgEntityClass
   void			(*uptodate_set)			(AdgEntity      *entity,
 							 gboolean        old_state);
   void			(*model_matrix_changed)		(AdgEntity      *entity,
-							 AdgMatrix      *old_matrix);
+							 AdgMatrix      *parent_matrix);
   void			(*paper_matrix_changed)		(AdgEntity      *entity,
-							 AdgMatrix      *old_matrix);
+							 AdgMatrix      *parent_matrix);
 
   /* Virtual Table */
   const AdgLineStyle *	(*get_line_style)		(AdgEntity      *entity);
@@ -103,9 +103,9 @@ AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
 const AdgMatrix *	adg_entity_get_model_matrix	(AdgEntity	*entity);
 const AdgMatrix *	adg_entity_get_paper_matrix	(AdgEntity	*entity);
 void			adg_entity_model_matrix_changed	(AdgEntity      *entity,
-							 const AdgMatrix*old_matrix);
+							 const AdgMatrix*parent_matrix);
 void			adg_entity_paper_matrix_changed	(AdgEntity      *entity,
-							 const AdgMatrix*old_matrix);
+							 const AdgMatrix*parent_matrix);
 
 const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
 void			adg_entity_set_line_style	(AdgEntity      *entity,
