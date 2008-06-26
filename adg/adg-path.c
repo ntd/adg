@@ -66,10 +66,6 @@ static const AdgLineStyle *
 		get_line_style		(AdgEntity	*entity);
 static void	set_line_style		(AdgEntity	*entity,
 					 AdgLineStyle	*line_style);
-static void	update			(AdgEntity	*entity,
-					 gboolean	 recursive);
-static void	outdate			(AdgEntity	*entity,
-					 gboolean	 recursive);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 static void	add_portion		(AdgPath	*path,
@@ -118,8 +114,6 @@ adg_path_class_init (AdgPathClass *klass)
 
   entity_class->get_line_style = get_line_style;
   entity_class->set_line_style = set_line_style;
-  entity_class->update = update;
-  entity_class->outdate = outdate;
   entity_class->render = render;
 
   param = g_param_spec_boxed ("line-style",
@@ -211,34 +205,19 @@ set_line_style (AdgEntity    *entity,
 }
 
 static void
-update (AdgEntity *entity,
-	gboolean   recursive)
-{
-  AdgPathPrivate *priv = ((AdgPath *) entity)->priv;
-
-  if (priv->create_func != NULL)
-    priv->create_func (entity, priv->user_data);
-
-  PARENT_CLASS->update (entity, recursive);
-}
-
-static void
-outdate (AdgEntity *entity,
-	 gboolean   recursive)
-{
-  adg_path_clear ((AdgPath *) entity);
-  PARENT_CLASS->outdate (entity, recursive);
-}
-
-static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  AdgPathPrivate *priv = ((AdgPath *) entity)->priv;
+  AdgPath *path = (AdgPath *) entity;
+
+  if (!adg_entity_model_applied (entity) && path->priv->create_func != NULL)
+    path->priv->create_func (entity, path->priv->user_data);
 
   adg_line_style_apply (adg_entity_get_line_style (entity), cr);
-  cairo_append_path (cr, &priv->cairo_path);
+  cairo_append_path (cr, &path->priv->cairo_path);
   cairo_stroke (cr);
+
+  PARENT_CLASS->render (entity, cr);
 }
 
 static void

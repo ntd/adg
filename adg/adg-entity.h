@@ -58,12 +58,12 @@ struct _AdgEntityClass
   GInitiallyUnownedClass parent_class;
 
   /* Signals */
-  void			(*uptodate_set)			(AdgEntity      *entity,
-							 gboolean        old_state);
   void			(*model_matrix_changed)		(AdgEntity      *entity,
 							 AdgMatrix      *parent_matrix);
   void			(*paper_matrix_changed)		(AdgEntity      *entity,
 							 AdgMatrix      *parent_matrix);
+  void			(*render)			(AdgEntity      *entity,
+							 cairo_t        *cr);
 
   /* Virtual Table */
   const AdgLineStyle *	(*get_line_style)		(AdgEntity      *entity);
@@ -80,12 +80,6 @@ struct _AdgEntityClass
 							 AdgDimStyle    *dim_style);
   const AdgMatrix *	(*get_model_matrix)		(AdgEntity      *entity);
   const AdgMatrix *	(*get_paper_matrix)		(AdgEntity      *entity);
-  void			(*update)			(AdgEntity      *entity,
-							 gboolean        recursive);
-  void			(*outdate)			(AdgEntity      *entity,
-							 gboolean        recursive);
-  void			(*render)			(AdgEntity      *entity,
-							 cairo_t        *cr);
 };
 
 
@@ -96,17 +90,13 @@ typedef void (*AdgCallback) (AdgEntity *entity, gpointer user_data);
 
 
 GType			adg_entity_get_type		(void) G_GNUC_CONST;
-
 AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
-
-
 const AdgMatrix *	adg_entity_get_model_matrix	(AdgEntity	*entity);
 const AdgMatrix *	adg_entity_get_paper_matrix	(AdgEntity	*entity);
 void			adg_entity_model_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
 void			adg_entity_paper_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
-
 const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
 void			adg_entity_set_line_style	(AdgEntity      *entity,
 							 AdgLineStyle   *line_style);
@@ -119,13 +109,9 @@ void			adg_entity_set_arrow_style	(AdgEntity      *entity,
 const AdgDimStyle *	adg_entity_get_dim_style	(AdgEntity      *entity);
 void			adg_entity_set_dim_style	(AdgEntity      *entity,
 							 AdgDimStyle    *dim_style);
-
-gboolean		adg_entity_is_uptodate		(AdgEntity      *entity);
-
-void			adg_entity_update		(AdgEntity      *entity);
-void			adg_entity_update_all		(AdgEntity      *entity);
-void			adg_entity_outdate		(AdgEntity      *entity);
-void			adg_entity_outdate_all		(AdgEntity      *entity);
+gboolean		adg_entity_model_matrix_applied	(AdgEntity	*entity);
+gboolean		adg_entity_paper_matrix_applied	(AdgEntity	*entity);
+gboolean		adg_entity_model_applied	(AdgEntity	*entity);
 void			adg_entity_render		(AdgEntity      *entity,
 							 cairo_t        *cr);
 

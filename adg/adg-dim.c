@@ -65,10 +65,6 @@ static const AdgDimStyle *
 		get_dim_style		(AdgEntity	*entity);
 static void	set_dim_style		(AdgEntity	*entity,
 					 AdgDimStyle	*dim_style);
-static void	update			(AdgEntity	*entity,
-					 gboolean	 recursive);
-static void	outdate			(AdgEntity	*entity,
-					 gboolean	 recursive);
 static gchar *	default_label		(AdgDim		*dim);
 static void	label_layout		(AdgDim		*dim,
 					 cairo_t	*cr);
@@ -95,8 +91,6 @@ adg_dim_class_init (AdgDimClass *klass)
 
   entity_class->get_dim_style = get_dim_style;
   entity_class->set_dim_style = set_dim_style;
-  entity_class->update = update;
-  entity_class->outdate = outdate;
 
   klass->default_label = default_label;
   klass->label_layout = label_layout;
@@ -344,31 +338,6 @@ set_dim_style (AdgEntity   *entity,
   ((AdgDim *) entity)->priv->dim_style = dim_style;
   g_object_notify (G_OBJECT (entity), "dim-style");
 }
-
-static void
-update (AdgEntity *entity,
-	gboolean   recursive)
-{
-  AdgDim *dim = (AdgDim *) entity;
- 
-  if (dim->priv->label == NULL)
-    {
-      dim->priv->label = ADG_DIM_GET_CLASS (dim)->default_label (dim);
-      invalidate_quote (dim);
-      g_object_notify ((GObject *) dim, "label");
-    }
-
-  PARENT_CLASS->update (entity, recursive);
-}
-
-static void
-outdate (AdgEntity *entity,
-	 gboolean   recursive)
-{
-  invalidate ((AdgDim *) entity);
-  PARENT_CLASS->outdate (entity, recursive);
-}
-
 
 static gchar *
 default_label (AdgDim *dim)
@@ -734,6 +703,13 @@ _adg_dim_render_quote (AdgDim  *dim,
   g_return_if_fail (dim->priv->dim_style != NULL);
   g_return_if_fail (!adg_isnan (dim->priv->quote_angle));
   g_return_if_fail (adg_pair_is_set (&dim->priv->quote_org));
+
+  if (dim->priv->label == NULL)
+    {
+      dim->priv->label = ADG_DIM_GET_CLASS (dim)->default_label (dim);
+      invalidate_quote (dim);
+      g_object_notify ((GObject *) dim, "label");
+    }
 
   if (!adg_pair_is_set (&dim->priv->quote_offset))
     ADG_DIM_GET_CLASS (dim)->label_layout (dim, cr);

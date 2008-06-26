@@ -54,12 +54,7 @@ static void	set_property		(GObject	*object,
 					 guint		 param_id,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
-static void	model_matrix_changed	(AdgEntity	*entity,
-					 AdgMatrix	*parent_matrix);
-static void	update			(AdgEntity	*entity,
-					 gboolean	 recursive);
-static void	outdate			(AdgEntity	*entity,
-					 gboolean	 recursive);
+static void	update			(AdgEntity	*entity);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 static gchar *	default_label		(AdgDim		*dim);
@@ -86,9 +81,6 @@ adg_ldim_class_init (AdgLDimClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  entity_class->model_matrix_changed = model_matrix_changed;
-  entity_class->update = update;
-  entity_class->outdate = outdate;
   entity_class->render = render;
 
   dim_class->default_label = default_label;
@@ -179,15 +171,7 @@ set_property (GObject      *object,
 
 
 static void
-model_matrix_changed (AdgEntity *entity,
-		      AdgMatrix *parent_matrix)
-{
-  adg_entity_outdate (entity);
-}
-
-static void
-update (AdgEntity *entity,
-	gboolean   recursive)
+update (AdgEntity *entity)
 {
   AdgDim            *dim;
   AdgLDim           *ldim;
@@ -309,15 +293,6 @@ update (AdgEntity *entity,
   path_data[2].header.length = 2;
   path_data[3].point.x = baseline2.x;
   path_data[3].point.y = baseline2.y;
-
-  ((AdgEntityClass *) PARENT_CLASS)->update (entity, recursive);
-}
-
-static void
-outdate (AdgEntity *entity,
-	 gboolean   recursive)
-{
-  ((AdgEntityClass *) PARENT_CLASS)->outdate (entity, recursive);
 }
 
 static void
@@ -332,6 +307,10 @@ render (AdgEntity *entity,
 
   g_return_if_fail (dim->priv->dim_style != NULL);
 
+  /* TODO: caching
+  if (!adg_entity_model_applied (entity)) */
+    update (entity);
+    
   cairo_save (cr);
   cairo_set_source (cr, dim->priv->dim_style->pattern);
 
@@ -351,6 +330,8 @@ render (AdgEntity *entity,
   _adg_dim_render_quote (dim, cr);
 
   cairo_restore (cr);
+
+  ((AdgEntityClass *) PARENT_CLASS)->render (entity, cr);
 }
 
 static gchar *

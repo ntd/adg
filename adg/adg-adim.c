@@ -47,8 +47,6 @@ enum
 static void	        finalize		(GObject        *object);
 static void             model_matrix_changed	(AdgEntity	*entity,
 						 AdgMatrix	*parent_matrix);
-static void             update			(AdgEntity      *entity,
-						 gboolean        recursive);
 static void             render			(AdgEntity      *entity,
 						 cairo_t        *cr);
 static gchar *          default_label		(AdgDim         *dim);
@@ -74,8 +72,6 @@ adg_adim_class_init (AdgADimClass *klass)
   gobject_class->finalize = finalize;
 
   entity_class->model_matrix_changed = model_matrix_changed;
-  entity_class->update = update;
-  entity_class->render = render;
 
   dim_class->default_label = default_label;
 
@@ -128,15 +124,9 @@ static void
 model_matrix_changed (AdgEntity *entity,
 		      AdgMatrix *parent_matrix)
 {
-  adg_entity_outdate (entity);
-}
+  ((AdgEntityClass *) PARENT_CLASS)->model_matrix_changed (entity, parent_matrix);
 
-static void
-update (AdgEntity *entity,
-	gboolean   recursive)
-{
   /* TODO */
-  ((AdgEntityClass *) PARENT_CLASS)->update (entity, recursive);
 }
 
 static void

@@ -46,9 +46,9 @@ enum
 
 enum
 {
-  UPTODATE_SET,
   MODEL_MATRIX_CHANGED,
   PAPER_MATRIX_CHANGED,
+  RENDER,
   LAST_SIGNAL
 };
 
@@ -68,10 +68,10 @@ static void	set_parent		(GChildable	*childable,
 					 GContainerable	*parent);
 static void	parent_set		(GChildable	*childable,
 					 GContainerable	*old_parent);
-static void	update			(AdgEntity	*entity,
-					 gboolean	 recursive);
-static void	outdate			(AdgEntity	*entity,
-					 gboolean	 recursive);
+static void	model_matrix_changed	(AdgEntity	*entity,
+					 AdgMatrix	*parent_matrix);
+static void	paper_matrix_changed	(AdgEntity	*entity,
+					 AdgMatrix	*parent_matrix);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 static const AdgMatrix *
@@ -103,9 +103,9 @@ adg_entity_class_init (AdgEntityClass *klass)
 
   g_object_class_override_property (gobject_class, PROP_PARENT, "parent");
 
-  klass->uptodate_set = NULL;
-  klass->model_matrix_changed = NULL;
+  klass->model_matrix_changed = model_matrix_changed;
   klass->paper_matrix_changed = NULL;
+  klass->render = render;
   klass->get_line_style = NULL;
   klass->set_line_style = NULL;
   klass->get_font_style = NULL;
@@ -116,9 +116,6 @@ adg_entity_class_init (AdgEntityClass *klass)
   klass->set_dim_style = NULL;
   klass->get_model_matrix = get_model_matrix;
   klass->get_paper_matrix = get_paper_matrix;
-  klass->update = update;
-  klass->outdate = outdate;
-  klass->render = render;
 
   /**
    * AdgEntity::uptodate-set:
@@ -127,11 +124,11 @@ adg_entity_class_init (AdgEntityClass *klass)
    *
    * The "uptodate" property value is changed.
    */
-  signals[UPTODATE_SET] =
-    g_signal_new ("uptodate-set",
+  signals[RENDER] =
+    g_signal_new ("render",
 		  G_OBJECT_CLASS_TYPE (gobject_class),
 		  G_SIGNAL_RUN_FIRST,
-		  G_STRUCT_OFFSET (AdgEntityClass, uptodate_set),
+		  G_STRUCT_OFFSET (AdgEntityClass, render),
 		  NULL, NULL,
                   g_cclosure_marshal_VOID__BOOLEAN,
 		  G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
@@ -263,27 +260,25 @@ parent_set (GChildable     *childable,
 
 
 static void
-update (AdgEntity *entity,
-	gboolean   recursive)
+model_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *parent_matrix)
 {
-  ADG_SET (entity->priv->flags, ADG_ENTITY_UPDATED);
-  g_signal_emit (entity, signals[UPTODATE_SET], 0, FALSE);
+  ADG_UNSET (entity->priv->flags, MODEL_MATRIX_APPLIED);
 }
 
 static void
-outdate (AdgEntity *entity,
-	 gboolean   recursive)
+paper_matrix_changed (AdgEntity *entity,
+		      AdgMatrix *parent_matrix)
 {
-  ADG_UNSET (entity->priv->flags, ADG_ENTITY_UPDATED);
-  g_signal_emit (entity, signals[UPTODATE_SET], 0, TRUE);
+  ADG_UNSET (entity->priv->flags, PAPER_MATRIX_APPLIED);
 }
+
 
 static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  g_warning ("AdgEntity::render not implemented for `%s'",
-             g_type_name (G_TYPE_FROM_INSTANCE (entity)));
+  ADG_SET (entity->priv->flags, MODEL_MATRIX_APPLIED|PAPER_MATRIX_APPLIED|MODEL_APPLIED);
 }
 
 static const AdgMatrix *
@@ -659,81 +654,42 @@ adg_entity_set_dim_style (AdgEntity   *entity,
 
 
 /**
- * adg_entity_is_uptodate:
+ * adg_entity_model_matrix_applied:
  * @entity: an #AdgEntity
  *
- * Return value: %TRUE if @entity was previously updated
+ * Return value: %TRUE if the model matrix didn't change from the last render
  */
 gboolean
-adg_entity_is_uptodate (AdgEntity *entity)
+adg_entity_model_matrix_applied (AdgEntity *entity)
 {
   g_return_val_if_fail (ADG_IS_ENTITY (entity), FALSE);
-  return ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED);
-}
-
-
-/**
- * adg_entity_update:
- * @entity: an #AdgEntity
- *
- * Updates @entity, that is regenerates the calculations needed by the
- * rendering process.
- */
-void
-adg_entity_update (AdgEntity *entity)
-{
-  g_return_if_fail (ADG_IS_ENTITY (entity));
-
-  if (ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
-    return;
-
-  ADG_ENTITY_GET_CLASS (entity)->update (entity, FALSE);
+  return ADG_ISSET (entity->priv->flags, MODEL_MATRIX_APPLIED);
 }
 
 /**
- * adg_entity_update_all:
+ * adg_entity_paper_matrix_applied:
  * @entity: an #AdgEntity
  *
- * Same as adg_entity_update(), but also applied to all its children.
+ * Return value: %TRUE if the paper matrix didn't change from the last render
  */
-void
-adg_entity_update_all (AdgEntity *entity)
+gboolean
+adg_entity_paper_matrix_applied (AdgEntity *entity)
 {
-  g_return_if_fail (ADG_IS_ENTITY (entity));
-
-  ADG_ENTITY_GET_CLASS (entity)->update (entity, TRUE);
+  g_return_val_if_fail (ADG_IS_ENTITY (entity), FALSE);
+  return ADG_ISSET (entity->priv->flags, PAPER_MATRIX_APPLIED);
 }
 
 /**
- * adg_entity_outdate:
+ * adg_entity_model_applied:
  * @entity: an #AdgEntity
  *
- * Outdates @entity, so its internal calculations will be regenerated before
- * the rendering process.
+ * Return value: %TRUE if the model didn't change from the last render
  */
-void
-adg_entity_outdate (AdgEntity *entity)
+gboolean
+adg_entity_model_applied (AdgEntity *entity)
 {
-  g_return_if_fail (ADG_IS_ENTITY (entity));
-
-  if (!ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
-    return;
-
-  ADG_ENTITY_GET_CLASS (entity)->outdate (entity, FALSE);
-}
-
-/**
- * adg_entity_outdate_all:
- * @entity: an #AdgEntity
- *
- * Same as adg_entity_outdate(), but also applied to all its children.
- */
-void
-adg_entity_outdate_all (AdgEntity *entity)
-{
-  g_return_if_fail (ADG_IS_ENTITY (entity));
-
-  ADG_ENTITY_GET_CLASS (entity)->outdate (entity, TRUE);
+  g_return_val_if_fail (ADG_IS_ENTITY (entity), FALSE);
+  return ADG_ISSET (entity->priv->flags, MODEL_APPLIED);
 }
 
 
@@ -742,23 +698,13 @@ adg_entity_outdate_all (AdgEntity *entity)
  * @entity: an #AdgEntity
  * @cr: a #cairo_t drawing context
  *
- * Renders @entity and all its children, if any, on specified drawing context.
- *
- * If @entity is not up to date, an update is performed before the rendering
- * process.
+ * Renders @entity and all its children, if any, on the @cr drawing context.
  */
 void
 adg_entity_render (AdgEntity *entity,
                    cairo_t   *cr)
 {
-  AdgEntityClass *entity_class;
-
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  entity_class = ADG_ENTITY_GET_CLASS (entity);
-
-  if (!ADG_ISSET (entity->priv->flags, ADG_ENTITY_UPDATED))
-      entity_class->update (entity, FALSE);
-
-  entity_class->render (entity, cr);
+  g_signal_emit (entity, signals[RENDER], 0, cr);
 }

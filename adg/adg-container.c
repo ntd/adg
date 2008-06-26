@@ -74,10 +74,6 @@ static gboolean	add			(GContainerable	*containerable,
 					 GChildable	*childable);
 static gboolean	remove			(GContainerable	*containerable,
 					 GChildable	*childable);
-static void	update			(AdgEntity	*entity,
-					 gboolean	 recursive);
-static void	outdate			(AdgEntity	*entity,
-					 gboolean	 recursive);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 
@@ -108,8 +104,6 @@ adg_container_class_init (AdgContainerClass *klass)
   entity_class->paper_matrix_changed = paper_matrix_changed;
   entity_class->get_model_matrix = get_model_matrix;
   entity_class->get_paper_matrix = get_paper_matrix;
-  entity_class->update = update;
-  entity_class->outdate = outdate;
   entity_class->render = render;
 
   g_object_class_override_property (gobject_class, PROP_CHILD, "child");
@@ -244,6 +238,8 @@ model_matrix_changed (AdgEntity *entity,
 {
   AdgContainer *container = (AdgContainer *) entity;
 
+  PARENT_CLASS->model_matrix_changed (entity, parent_matrix);
+
   if (parent_matrix)
     cairo_matrix_multiply (&container->priv->model_matrix, parent_matrix,
 			   &container->priv->model_transformation);
@@ -261,6 +257,8 @@ paper_matrix_changed (AdgEntity *entity,
 		      AdgMatrix *parent_matrix)
 {
   AdgContainer *container = (AdgContainer *) entity;
+
+  PARENT_CLASS->paper_matrix_changed (entity, parent_matrix);
 
   if (parent_matrix)
     cairo_matrix_multiply (&container->priv->paper_matrix, parent_matrix,
@@ -288,34 +286,11 @@ get_paper_matrix (AdgEntity *entity)
 
 
 static void
-update (AdgEntity *entity,
-	gboolean   recursive)
-{
-  if (recursive)
-    g_containerable_foreach ((GContainerable *) entity,
-                             G_CALLBACK (adg_entity_update_all), NULL);
-
-  PARENT_CLASS->update (entity, recursive);
-}
-
-static void
-outdate (AdgEntity *entity,
-	 gboolean   recursive)
-{
-  if (recursive)
-    g_containerable_foreach ((GContainerable *) entity,
-                             G_CALLBACK (adg_entity_outdate_all), NULL);
-
-  PARENT_CLASS->outdate (entity, recursive);
-}
-
-static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
   cairo_set_matrix (cr, adg_entity_get_model_matrix (entity));
-  g_containerable_foreach ((GContainerable *) entity,
-			   G_CALLBACK (adg_entity_render), cr);
+  g_containerable_propagate_by_name ((GContainerable *) entity, "render", cr);
 }
 
 
