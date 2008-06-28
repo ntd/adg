@@ -310,7 +310,7 @@ adg_entity_get_canvas (AdgEntity *entity)
 
   while (entity)
     {
-      if (ADG_IS_ENTITY (entity))
+      if (ADG_IS_CANVAS (entity))
         return (AdgCanvas *) entity;
 
       entity = (AdgEntity *) g_childable_get_parent ((GChildable *) entity);
