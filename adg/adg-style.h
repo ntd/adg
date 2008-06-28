@@ -32,6 +32,7 @@ G_BEGIN_DECLS
 
 /* Forward declarations */
 typedef struct _AdgLineStyle AdgLineStyle;
+typedef struct _AdgFontStyle AdgFontStyle;
 
 
 #define ADG_TYPE_STYLE             (adg_style_get_type ())
@@ -59,45 +60,6 @@ struct _AdgStyleClass
 };
 
 GType			 adg_style_get_type		(void) G_GNUC_CONST;
-
-#define ADG_TYPE_FONT_STYLE             (adg_font_style_get_type ())
-
-typedef struct _AdgFontStyle            AdgFontStyle;
-
-struct _AdgFontStyle
-{
-  char                  *family;
-  cairo_font_slant_t     slant;
-  cairo_font_weight_t    weight;
-  double                 size;
-  cairo_antialias_t      antialias;
-  cairo_subpixel_order_t subpixel_order;
-  cairo_hint_style_t     hint_style;
-  cairo_hint_metrics_t   hint_metrics;
-};
-
-/**
- * AdgFontStyleId:
- *
- * Numeric representation of font styles.
- * Some standard font styles are predefined.
- */
-typedef enum
-{
-  ADG_FONT_STYLE_TEXT,
-  ADG_FONT_STYLE_DIMLABEL,
-  ADG_FONT_STYLE_DIMTOLERANCE,
-  ADG_FONT_STYLE_DIMNOTE,
-  ADG_FONT_STYLE_LAST
-} AdgFontStyleId;
-
-GType           adg_font_style_get_type (void) G_GNUC_CONST;
-AdgFontStyle *  adg_font_style_from_id  (AdgFontStyleId          id);
-AdgFontStyleId  adg_font_style_register (AdgFontStyle           *new_style);
-void            adg_font_style_apply    (const AdgFontStyle     *style,
-                                         cairo_t                *cr);
-
-
 
 #define ADG_TYPE_ARROW_STYLE            (adg_arrow_style_get_type ())
 
@@ -176,9 +138,9 @@ struct _AdgDimStyle
 {
   cairo_pattern_t       *pattern;
 
-  AdgFontStyle          *label_style;
-  AdgFontStyle          *tolerance_style;
-  AdgFontStyle          *note_style;
+  AdgStyle		*label_style;
+  AdgStyle		*tolerance_style;
+  AdgStyle		*note_style;
   AdgStyle		*line_style;
   AdgArrowStyle         *arrow_style;
 

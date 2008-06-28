@@ -14,6 +14,7 @@ adg_h_sources =			adg.h \
 				adg-container.h \
 				adg-dim.h \
 				adg-entity.h \
+				adg-font-style.h \
 				adg-ldim.h \
 				adg-line-style.h \
 				adg-matrix.h \
@@ -29,6 +30,7 @@ adg_private_h_sources =		adg-adim-private.h \
 				adg-dim-private.h \
 				adg-entity-private.h \
 				adg-enums.h \
+				adg-font-style-private.h \
 				adg-intl.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
@@ -42,6 +44,7 @@ adg_c_sources =			adg-adim.c \
 				adg-container.c \
 				adg-dim.c \
 				adg-entity.c \
+				adg-font-style.c \
 				adg-ldim.c \
 				adg-line-style.c \
 				adg-matrix.c \

@@ -18,23 +18,29 @@
  */
 
 
-#ifndef __ADG_STYLE_PRIVATE_H__
-#define __ADG_STYLE_PRIVATE_H__
+#ifndef __ADG_FONT_STYLE_PRIVATE_H__
+#define __ADG_FONT_STYLE_PRIVATE_H__
+
+#include <adg/adg-font-style.h>
 
 
 G_BEGIN_DECLS
 
 
-struct _AdgStylePrivate
+struct _AdgFontStylePrivate
 {
-  double	r;
-  double	g;
-  double	b;
-  double	a;
+  char                  *family;
+  cairo_font_slant_t     slant;
+  cairo_font_weight_t    weight;
+  double                 size;
+  cairo_antialias_t      antialias;
+  cairo_subpixel_order_t subpixel_order;
+  cairo_hint_style_t     hint_style;
+  cairo_hint_metrics_t   hint_metrics;
 };
 
 
 G_END_DECLS
 
 
-#endif /* __ADG_STYLE_PRIVATE_H__ */
+#endif /* __ADG_FONT_STYLE_PRIVATE_H__ */

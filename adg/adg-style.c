@@ -29,6 +29,7 @@
 #include "adg-style.h"
 #include "adg-style-private.h"
 #include "adg-line-style.h"
+#include "adg-font-style.h"
 #include "adg-enums.h"
 #include "adg-util.h"
 #include "adg-intl.h"
@@ -172,159 +173,6 @@ set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-}
-
-static gpointer         adg_font_style_copy     (gpointer               src);
-static void             adg_font_style_options  (cairo_font_options_t **p_options);
-static void             adg_font_style_init     (void);
-
-static AdgFontStyle *   font_styles = NULL;
-static gint             n_font_styles = ADG_FONT_STYLE_LAST;
-
-GType
-adg_font_style_get_type (void)
-{
-  static int font_style_type = 0;
-  
-  if G_UNLIKELY (font_style_type == 0)
-    font_style_type = g_boxed_type_register_static ("AdgFontStyle",
-                                                    adg_font_style_copy,
-                                                    g_free);
-
-  return font_style_type;
-}
-
-static gpointer
-adg_font_style_copy (gpointer src)
-{
-  g_return_val_if_fail (src != NULL, NULL);
-  return g_memdup (src, sizeof (AdgFontStyle));
-}
-
-AdgFontStyle *
-adg_font_style_from_id (AdgFontStyleId id)
-{
-  g_return_val_if_fail (id < n_font_styles, NULL);
-
-  if G_UNLIKELY (font_styles == NULL)
-    adg_font_style_init ();
-
-  return font_styles + id;
-}
-
-static void
-adg_font_style_init (void)
-{
-  AdgFontStyle *style;
-
-  font_styles = g_new (AdgFontStyle, ADG_FONT_STYLE_LAST);
-
-  style = font_styles + ADG_FONT_STYLE_TEXT;
-  style->family = "Serif";
-  style->slant = CAIRO_FONT_SLANT_NORMAL;
-  style->weight = CAIRO_FONT_WEIGHT_NORMAL;
-  style->size = 16.0;
-  style->antialias = CAIRO_ANTIALIAS_DEFAULT;
-  style->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
-  style->hint_style = CAIRO_HINT_STYLE_DEFAULT;
-  style->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
-
-  style = font_styles + ADG_FONT_STYLE_DIMLABEL;
-  style->family = "Sans";
-  style->slant = CAIRO_FONT_SLANT_NORMAL;
-  style->weight = CAIRO_FONT_WEIGHT_BOLD;
-  style->size = 14.0;
-  style->antialias = CAIRO_ANTIALIAS_DEFAULT;
-  style->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
-  style->hint_style = CAIRO_HINT_STYLE_DEFAULT;
-  style->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
-
-  style = font_styles + ADG_FONT_STYLE_DIMTOLERANCE;
-  style->family = "Sans";
-  style->slant = CAIRO_FONT_SLANT_NORMAL;
-  style->weight = CAIRO_FONT_WEIGHT_NORMAL;
-  style->size = 8.0;
-  style->antialias = CAIRO_ANTIALIAS_DEFAULT;
-  style->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
-  style->hint_style = CAIRO_HINT_STYLE_DEFAULT;
-  style->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
-
-  style = font_styles + ADG_FONT_STYLE_DIMNOTE;
-  style->family = "Sans";
-  style->slant = CAIRO_FONT_SLANT_NORMAL;
-  style->weight = CAIRO_FONT_WEIGHT_NORMAL;
-  style->size = 12.0;
-  style->antialias = CAIRO_ANTIALIAS_DEFAULT;
-  style->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
-  style->hint_style = CAIRO_HINT_STYLE_DEFAULT;
-  style->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
-}
-
-AdgFontStyleId
-adg_font_style_register (AdgFontStyle *new_style)
-{
-  ADG_STUB ();
-  return 0;
-}
-
-void
-adg_font_style_apply (const AdgFontStyle *style,
-                      cairo_t            *cr)
-{
-  cairo_font_options_t *options;
-  double                font_size;
-
-  g_return_if_fail (style != NULL);
-  g_return_if_fail (cr != NULL);
-
-  font_size = style->size;
-
-  cairo_select_font_face (cr, style->family, style->slant, style->weight);
-  cairo_device_to_user_distance (cr, &font_size, &font_size);
-  cairo_set_font_size (cr, font_size);
-
-  options = NULL;
-
-  if (style->antialias != CAIRO_ANTIALIAS_DEFAULT)
-    {
-      adg_font_style_options (&options);
-      cairo_font_options_set_antialias (options, style->antialias);
-    }
-
-  if (style->subpixel_order != CAIRO_SUBPIXEL_ORDER_DEFAULT)
-    {
-      adg_font_style_options (&options);
-      cairo_font_options_set_subpixel_order (options, style->subpixel_order);
-    }
-
-  if (style->hint_style != CAIRO_HINT_STYLE_DEFAULT)
-    {
-      adg_font_style_options (&options);
-      cairo_font_options_set_hint_style (options, style->hint_style);
-    }
-
-  if (style->hint_metrics != CAIRO_HINT_METRICS_DEFAULT)
-    {
-      adg_font_style_options (&options);
-      cairo_font_options_set_hint_metrics (options, style->hint_metrics);
-    }
-
-  /* Check if any option was set */
-  if (options != NULL)
-    {
-      cairo_set_font_options (cr, options);
-      cairo_font_options_destroy (options);
-    }
-}
-
-static void
-adg_font_style_options (cairo_font_options_t **p_options)
-{
-  g_assert (p_options);
-
-  /* Check if the options container was never created */
-  if (*p_options == NULL)
-    *p_options = cairo_font_options_create ();
 }
 
 
@@ -689,9 +537,9 @@ adg_dim_style_init (void)
 
   style = dim_styles + ADG_DIM_STYLE_ISO;
   style->pattern = cairo_pattern_create_rgb (1.0, 0.0, 0.0);
-  style->label_style = adg_font_style_from_id (ADG_FONT_STYLE_DIMLABEL);
-  style->tolerance_style = adg_font_style_from_id (ADG_FONT_STYLE_DIMTOLERANCE);
-  style->note_style = adg_font_style_from_id (ADG_FONT_STYLE_DIMNOTE);
+  style->label_style = adg_font_style_from_id (ADG_FONT_STYLE_QUOTE);
+  style->tolerance_style = adg_font_style_from_id (ADG_FONT_STYLE_TOLERANCE);
+  style->note_style = adg_font_style_from_id (ADG_FONT_STYLE_NOTE);
   style->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DIM);
   style->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
   style->from_offset = 5.0;

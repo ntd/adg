@@ -21,7 +21,7 @@
 #ifndef __ADG_ENUMS_H__
 #define __ADG_ENUMS_H__
 
-#include <cairo.h>
+#include <glib-object.h>
 
 
 G_BEGIN_DECLS
@@ -48,6 +48,21 @@ typedef enum
   ADG_LINE_STYLE_DIM,
   ADG_LINE_STYLE_LAST
 } AdgLineStyleId;
+
+/**
+ * AdgFontStyleId:
+ *
+ * Numeric representation of font styles.
+ * Some standard font styles are predefined.
+ */
+typedef enum
+{
+  ADG_FONT_STYLE_TEXT,
+  ADG_FONT_STYLE_QUOTE,
+  ADG_FONT_STYLE_TOLERANCE,
+  ADG_FONT_STYLE_NOTE,
+  ADG_FONT_STYLE_LAST
+} AdgFontStyleId;
 
 
 G_END_DECLS

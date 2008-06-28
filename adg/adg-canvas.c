@@ -33,6 +33,7 @@
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
 #include "adg-line-style.h"
+#include "adg-font-style.h"
 #include "adg-intl.h"
 
 #define PARENT_CLASS ((AdgContainerClass *) adg_canvas_parent_class)
@@ -138,7 +139,7 @@ adg_canvas_init (AdgCanvas *canvas)
 							AdgCanvasPrivate);
 
   priv->line_style = (AdgLineStyle *) adg_line_style_from_id (ADG_LINE_STYLE_DRAW);
-  priv->font_style = adg_font_style_from_id (ADG_FONT_STYLE_TEXT);
+  priv->font_style = (AdgFontStyle *) adg_font_style_from_id (ADG_FONT_STYLE_TEXT);
   priv->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
   priv->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
 
