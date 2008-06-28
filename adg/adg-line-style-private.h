@@ -33,6 +33,7 @@ struct _AdgLineStylePrivate
   cairo_line_cap_t       cap;
   cairo_line_join_t      join;
   double                 miter_limit;
+  cairo_antialias_t	 antialias;
   double                *dashes;
   int                    num_dashes;
   double                 dash_offset;

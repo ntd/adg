@@ -42,6 +42,7 @@ enum
   PROP_CAP,
   PROP_JOIN,
   PROP_MITER_LIMIT,
+  PROP_ANTIALIAS,
   PROP_DASH
 };
 
@@ -100,6 +101,13 @@ adg_line_style_class_init (AdgLineStyleClass *klass)
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_MITER_LIMIT, param);
 
+  param = g_param_spec_int ("antialias",
+			    P_("Antialiasing Mode"),
+			    P_("Type of antialiasing to do when rendering lines"),
+			    G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
+			    G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_ANTIALIAS, param);
+
   /* TODO: PROP_DASH (PROP_DASHES, PROP_NUM_DASHES, PROP_DASH_OFFSET) */
 }
 
@@ -110,10 +118,10 @@ adg_line_style_init (AdgLineStyle *line_style)
 							   ADG_TYPE_LINE_STYLE,
 							   AdgLineStylePrivate);
 
-  priv->width = 2.;
+  priv->width = ADG_NAN;
   priv->cap = CAIRO_LINE_CAP_BUTT;
   priv->join = CAIRO_LINE_JOIN_MITER;
-  priv->miter_limit = 10.;
+  priv->miter_limit = ADG_NAN;
   priv->dashes = NULL;
   priv->num_dashes = 0;
   priv->dash_offset = 0.;
@@ -142,6 +150,9 @@ get_property (GObject    *object,
       break;
     case PROP_MITER_LIMIT:
       g_value_set_double (value, line_style->priv->miter_limit);
+      break;
+    case PROP_ANTIALIAS:
+      g_value_set_int (value, line_style->priv->antialias);
       break;
     case PROP_DASH:
       /* TODO */
@@ -173,6 +184,9 @@ set_property (GObject      *object,
       break;
     case PROP_MITER_LIMIT:
       line_style->priv->miter_limit = g_value_get_double (value);
+      break;
+    case PROP_ANTIALIAS:
+      line_style->priv->antialias = g_value_get_int (value);
       break;
     case PROP_DASH:
       /* TODO */
@@ -220,17 +234,23 @@ void
 adg_line_style_apply (const AdgLineStyle *line_style,
                       cairo_t            *cr)
 {
-  double device_width;
-
   g_return_if_fail (line_style != NULL);
   g_return_if_fail (cr != NULL);
 
-  device_width = line_style->priv->width;
+  if (!adg_is_nan (line_style->priv->width))
+    {
+      double device_width = line_style->priv->width;
+      cairo_device_to_user_distance (cr, &device_width, &device_width);
+      cairo_set_line_width (cr, device_width);
+    }
 
-  cairo_device_to_user_distance (cr, &device_width, &device_width);
-  cairo_set_line_width (cr, device_width);
   cairo_set_line_cap (cr, line_style->priv->cap);
   cairo_set_line_join (cr, line_style->priv->join);
+
+  if (!adg_is_nan (line_style->priv->miter_limit))
+    cairo_set_miter_limit (cr, line_style->priv->miter_limit);
+
+  cairo_set_antialias (cr, line_style->priv->antialias);
 
   if (line_style->priv->num_dashes > 0)
     {
