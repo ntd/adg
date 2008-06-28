@@ -32,7 +32,8 @@ struct _AdgLineStylePrivate
   double                 width;
   cairo_line_cap_t       cap;
   cairo_line_join_t      join;
-  double                *dashes;        /* Dash style */
+  double                 miter_limit;
+  double                *dashes;
   int                    num_dashes;
   double                 dash_offset;
 };

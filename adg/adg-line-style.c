@@ -41,6 +41,7 @@ enum
   PROP_WIDTH,
   PROP_CAP,
   PROP_JOIN,
+  PROP_MITER_LIMIT,
   PROP_DASH
 };
 
@@ -92,6 +93,13 @@ adg_line_style_class_init (AdgLineStyleClass *klass)
 			    G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_JOIN, param);
 
+  param = g_param_spec_double ("miter-limit",
+			       P_("Miter Limit"),
+			       P_("Whether the lines should be joined with a bevel instead of a miter"),
+			       0., G_MAXDOUBLE, 10.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_MITER_LIMIT, param);
+
   /* TODO: PROP_DASH (PROP_DASHES, PROP_NUM_DASHES, PROP_DASH_OFFSET) */
 }
 
@@ -105,6 +113,7 @@ adg_line_style_init (AdgLineStyle *line_style)
   priv->width = 2.;
   priv->cap = CAIRO_LINE_CAP_BUTT;
   priv->join = CAIRO_LINE_JOIN_MITER;
+  priv->miter_limit = 10.;
   priv->dashes = NULL;
   priv->num_dashes = 0;
   priv->dash_offset = 0.;
@@ -130,6 +139,9 @@ get_property (GObject    *object,
       break;
     case PROP_JOIN:
       g_value_set_int (value, line_style->priv->join);
+      break;
+    case PROP_MITER_LIMIT:
+      g_value_set_double (value, line_style->priv->miter_limit);
       break;
     case PROP_DASH:
       /* TODO */
@@ -158,6 +170,9 @@ set_property (GObject      *object,
       break;
     case PROP_JOIN:
       line_style->priv->join = g_value_get_int (value);
+      break;
+    case PROP_MITER_LIMIT:
+      line_style->priv->miter_limit = g_value_get_double (value);
       break;
     case PROP_DASH:
       /* TODO */
