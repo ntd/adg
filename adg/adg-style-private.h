@@ -18,22 +18,25 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_STYLE_PRIVATE_H__
+#define __ADG_STYLE_PRIVATE_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
 #include <adg/adg-style.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
 
-#endif /* __ADG_H__ */
+
+G_BEGIN_DECLS
+
+
+struct _AdgStylePrivate
+{
+  double	r;
+  double	g;
+  double	b;
+  double	a;
+};
+
+
+G_END_DECLS
+
+
+#endif /* __ADG_STYLE_PRIVATE_H__ */

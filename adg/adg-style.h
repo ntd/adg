@@ -29,49 +29,36 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_LINE_STYLE             (adg_line_style_get_type ())
 
-typedef struct _AdgLineStyle            AdgLineStyle;
+/* Forward declarations */
+typedef struct _AdgLineStyle AdgLineStyle;
 
-struct _AdgLineStyle
+
+#define ADG_TYPE_STYLE             (adg_style_get_type ())
+#define ADG_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_STYLE, AdgLineStyle))
+#define ADG_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_STYLE, AdgLineStyleClass))
+#define ADG_IS_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_STYLE))
+#define ADG_IS_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_STYLE))
+#define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_STYLE, AdgLineStyleClass))
+
+typedef struct _AdgStyle        AdgStyle;
+typedef struct _AdgStyleClass   AdgStyleClass;
+typedef struct _AdgStylePrivate AdgStylePrivate;
+
+struct _AdgStyle
 {
-  double                 width;
-  cairo_line_cap_t       cap;
-  cairo_line_join_t      join;
-  double                *dashes;        /* Dash style */
-  int                    num_dashes;
-  double                 dash_offset;
+  GObject		 object;
+
+  /*< private >*/
+  AdgStylePrivate	*priv;
 };
 
-/**
- * AdgLineStyleId:
- * @ADG_LINE_STYLE_DRAW: normal drawing
- * @ADG_LINE_STYLE_CENTER: axis and center-lines
- * @ADG_LINE_STYLE_HIDDEN: covered entities
- * @ADG_LINE_STYLE_XATCH: xatches
- * @ADG_LINE_STYLE_DIM: extension and base lines of dimension entities
- * @ADG_LINE_STYLE_LAST: start of user-defined styles
- *
- * Numeric representation of line styles.
- * Some standard line styles are predefined.
- */
-typedef enum
+struct _AdgStyleClass
 {
-  ADG_LINE_STYLE_DRAW,
-  ADG_LINE_STYLE_CENTER,
-  ADG_LINE_STYLE_HIDDEN,
-  ADG_LINE_STYLE_XATCH,
-  ADG_LINE_STYLE_DIM,
-  ADG_LINE_STYLE_LAST
-} AdgLineStyleId;
+  GObjectClass		 parent_class;
+};
 
-GType           adg_line_style_get_type (void) G_GNUC_CONST;
-AdgLineStyle *  adg_line_style_from_id  (AdgLineStyleId          id);
-AdgLineStyleId  adg_line_style_register (AdgLineStyle           *new_style);
-void            adg_line_style_apply    (const AdgLineStyle     *style,
-                                         cairo_t                *cr);
-
-
+GType			 adg_style_get_type		(void) G_GNUC_CONST;
 
 #define ADG_TYPE_FONT_STYLE             (adg_font_style_get_type ())
 
@@ -192,7 +179,7 @@ struct _AdgDimStyle
   AdgFontStyle          *label_style;
   AdgFontStyle          *tolerance_style;
   AdgFontStyle          *note_style;
-  AdgLineStyle          *line_style;
+  AdgStyle		*line_style;
   AdgArrowStyle         *arrow_style;
 
   double                 from_offset;

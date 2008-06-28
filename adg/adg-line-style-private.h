@@ -18,22 +18,27 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_LINE_STYLE_PRIVATE_H__
+#define __ADG_LINE_STYLE_PRIVATE_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
-#include <adg/adg-style.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
+#include <adg/adg-line-style.h>
 
-#endif /* __ADG_H__ */
+
+G_BEGIN_DECLS
+
+
+struct _AdgLineStylePrivate
+{
+  double                 width;
+  cairo_line_cap_t       cap;
+  cairo_line_join_t      join;
+  double                *dashes;        /* Dash style */
+  int                    num_dashes;
+  double                 dash_offset;
+};
+
+
+G_END_DECLS
+
+
+#endif /* __ADG_LINE_STYLE_PRIVATE_H__ */

@@ -30,6 +30,7 @@
 
 #include "adg-path.h"
 #include "adg-path-private.h"
+#include "adg-line-style.h"
 #include "adg-util.h"
 #include "adg-canvas.h"
 #include "adg-intl.h"

@@ -27,128 +27,152 @@
  */
 
 #include "adg-style.h"
+#include "adg-style-private.h"
+#include "adg-line-style.h"
+#include "adg-enums.h"
 #include "adg-util.h"
+#include "adg-intl.h"
 
 #include <string.h>
 #include <math.h>
 
+#define PARENT_CLASS ((GObjectClass *) adg_style_parent_class)
 
-static gpointer         adg_line_style_copy     (gpointer src);
-static void             adg_line_style_init     (void);
 
-static AdgLineStyle *   line_styles = NULL;
-static gint             n_line_styles = ADG_LINE_STYLE_LAST;
-
-GType
-adg_line_style_get_type (void)
+enum
 {
-  static int line_style_type = 0;
-  
-  if G_UNLIKELY (line_style_type == 0)
-    line_style_type = g_boxed_type_register_static ("AdgLineStyle",
-                                                    adg_line_style_copy,
-                                                    g_free);
+  PROP_0,
+  PROP_R,
+  PROP_G,
+  PROP_B,
+  PROP_A
+};
 
-  return line_style_type;
-}
 
-static gpointer
-adg_line_style_copy (gpointer src)
+static void	get_property		(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+
+
+G_DEFINE_ABSTRACT_TYPE (AdgStyle, adg_style, G_TYPE_OBJECT)
+
+
+static void
+adg_style_class_init (AdgStyleClass *klass)
 {
-  g_return_val_if_fail (src != NULL, NULL);
-  return g_memdup (src, sizeof (AdgLineStyle));
-}
+  GObjectClass *gobject_class;
+  GParamSpec   *param;
 
-AdgLineStyle *
-adg_line_style_from_id (AdgLineStyleId id)
-{
-  g_return_val_if_fail (id < n_line_styles, NULL);
+  gobject_class = (GObjectClass *) klass;
 
-  if G_UNLIKELY (line_styles == NULL)
-    adg_line_style_init ();
+  g_type_class_add_private (klass, sizeof (AdgStylePrivate));
 
-  return line_styles + id;
+  gobject_class->get_property = get_property;
+  gobject_class->set_property = set_property;
+
+  param = g_param_spec_double ("r",
+			       P_("Red"),
+			       P_("The red component of the color to be used, from 0 to 1"),
+			       0., 1., 0.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_R, param);
+
+  param = g_param_spec_double ("g",
+			       P_("Green"),
+			       P_("The green component of the color to be used, from 0 to 1"),
+			       0., 1., 0.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_G, param);
+
+  param = g_param_spec_double ("b",
+			       P_("Blue"),
+			       P_("The blue component of the color to be used, from 0 to 1"),
+			       0., 1., 0.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_B, param);
+
+  param = g_param_spec_double ("a",
+			       P_("Alpha Component"),
+			       P_("The alpha component (translucency) to be used, from 0 (totally transparent) to 1 (totally opaque)"),
+			       0., 1., 1.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_A, param);
 }
 
 static void
-adg_line_style_init (void)
+adg_style_init (AdgStyle *style)
 {
-  AdgLineStyle *style;
+  AdgStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (style, ADG_TYPE_STYLE,
+						       AdgStylePrivate);
 
-  line_styles = g_new (AdgLineStyle, ADG_LINE_STYLE_LAST);
+  priv->r = 0.;
+  priv->g = 0.;
+  priv->b = 0.;
+  priv->a = 1.;
 
-  style = line_styles + ADG_LINE_STYLE_DRAW;
-  style->width = 2.0;
-  style->cap = CAIRO_LINE_CAP_ROUND;
-  style->join = CAIRO_LINE_JOIN_ROUND;
-  style->dashes = NULL;
-  style->num_dashes = 0;
-  style->dash_offset = 0.0;
-
-  style = line_styles + ADG_LINE_STYLE_CENTER;
-  style->width = 0.75;
-  style->cap = CAIRO_LINE_CAP_ROUND;
-  style->join = CAIRO_LINE_JOIN_ROUND;
-  style->dashes = NULL;
-  style->num_dashes = 0;
-  style->dash_offset = 0.0;
-
-  style = line_styles + ADG_LINE_STYLE_HIDDEN;
-  style->width = 0.75;
-  style->cap = CAIRO_LINE_CAP_ROUND;
-  style->join = CAIRO_LINE_JOIN_ROUND;
-  style->dashes = NULL;
-  style->num_dashes = 0;
-  style->dash_offset = 0.0;
-
-  style = line_styles + ADG_LINE_STYLE_XATCH;
-  style->width = 1.5;
-  style->cap = CAIRO_LINE_CAP_ROUND;
-  style->join = CAIRO_LINE_JOIN_ROUND;
-  style->dashes = NULL;
-  style->num_dashes = 0;
-  style->dash_offset = 0.0;
-
-  style = line_styles + ADG_LINE_STYLE_DIM;
-  style->width = 0.75;
-  style->cap = CAIRO_LINE_CAP_ROUND;
-  style->join = CAIRO_LINE_JOIN_ROUND;
-  style->dashes = NULL;
-  style->num_dashes = 0;
-  style->dash_offset = 0.0;
+  style->priv = priv;
 }
 
-AdgLineStyleId
-adg_line_style_register (AdgLineStyle *new_style)
+static void
+get_property (GObject    *object,
+	      guint       prop_id,
+	      GValue     *value,
+	      GParamSpec *pspec)
 {
-  ADG_STUB ();
-  return 0;
-}
+  AdgStyle *style = (AdgStyle *) object;
 
-void
-adg_line_style_apply (const AdgLineStyle *style,
-                      cairo_t            *cr)
-{
-  double device_width;
-
-  g_return_if_fail (style != NULL);
-  g_return_if_fail (cr != NULL);
-
-  device_width = style->width;
-
-  cairo_device_to_user_distance (cr, &device_width, &device_width);
-  cairo_set_line_width (cr, device_width);
-  cairo_set_line_cap (cr, style->cap);
-  cairo_set_line_join (cr, style->join);
-
-  if (style->num_dashes > 0)
+  switch (prop_id)
     {
-      g_return_if_fail (style->dashes != NULL);
-
-      cairo_set_dash (cr, style->dashes, style->num_dashes, style->dash_offset);
+    case PROP_R:
+      g_value_set_double (value, style->priv->r);
+      break;
+    case PROP_G:
+      g_value_set_double (value, style->priv->g);
+      break;
+    case PROP_B:
+      g_value_set_double (value, style->priv->b);
+      break;
+    case PROP_A:
+      g_value_set_double (value, style->priv->a);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
     }
 }
 
+static void
+set_property (GObject      *object,
+	      guint         prop_id,
+	      const GValue *value,
+	      GParamSpec   *pspec)
+{
+  AdgStyle *style = (AdgStyle *) object;
+
+  switch (prop_id)
+    {
+    case PROP_R:
+      style->priv->r = g_value_get_double (value);
+      break;
+    case PROP_G:
+      style->priv->g = g_value_get_double (value);
+      break;
+    case PROP_B:
+      style->priv->b = g_value_get_double (value);
+      break;
+    case PROP_A:
+      style->priv->a = g_value_get_double (value);
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
 
 static gpointer         adg_font_style_copy     (gpointer               src);
 static void             adg_font_style_options  (cairo_font_options_t **p_options);

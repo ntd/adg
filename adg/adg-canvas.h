@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 #define ADG_IS_CANVAS_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_CANVAS))
 #define ADG_CANVAS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_CANVAS, AdgCanvasClass))
 
-/* AdgCanvas declared in adgentity.h */
+/* AdgCanvas declared in adg-entity.h */
 typedef struct _AdgCanvasClass   AdgCanvasClass;
 typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 

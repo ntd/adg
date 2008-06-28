@@ -18,22 +18,39 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_ENUMS_H__
+#define __ADG_ENUMS_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
-#include <adg/adg-style.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
+#include <cairo.h>
 
-#endif /* __ADG_H__ */
+
+G_BEGIN_DECLS
+
+
+/**
+ * AdgLineStyleId:
+ * @ADG_LINE_STYLE_DRAW: normal drawing
+ * @ADG_LINE_STYLE_CENTER: axis and center-lines
+ * @ADG_LINE_STYLE_HIDDEN: covered entities
+ * @ADG_LINE_STYLE_XATCH: xatches
+ * @ADG_LINE_STYLE_DIM: extension and base lines of dimension entities
+ * @ADG_LINE_STYLE_LAST: start of user-defined styles
+ *
+ * Numeric representation of line styles.
+ * Some standard line styles are predefined.
+ */
+typedef enum
+{
+  ADG_LINE_STYLE_DRAW,
+  ADG_LINE_STYLE_CENTER,
+  ADG_LINE_STYLE_HIDDEN,
+  ADG_LINE_STYLE_XATCH,
+  ADG_LINE_STYLE_DIM,
+  ADG_LINE_STYLE_LAST
+} AdgLineStyleId;
+
+
+G_END_DECLS
+
+
+#endif /* __ADG_ENUMS_H__ */
