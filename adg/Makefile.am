@@ -24,6 +24,7 @@ adg_h_sources =			adg.h \
 adg_built_h_sources =		adg-type-builtins.h
 adg_private_h_sources =		adg-adim-private.h \
 				adg-canvas-private.h \
+				adg-container-private.h \
 				adg-dim-private.h \
 				adg-entity-private.h \
 				adg-intl.h \
