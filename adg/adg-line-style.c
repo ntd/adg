@@ -31,6 +31,7 @@
 #include "adg-line-style-private.h"
 #include "adg-type-builtins.h"
 #include "adg-intl.h"
+#include "adg-util.h"
 
 #define PARENT_CLASS ((AdgStyleClass *) adg_line_style_parent_class)
 
@@ -237,7 +238,7 @@ adg_line_style_apply (const AdgLineStyle *line_style,
   g_return_if_fail (line_style != NULL);
   g_return_if_fail (cr != NULL);
 
-  if (!adg_is_nan (line_style->priv->width))
+  if (!adg_isnan (line_style->priv->width))
     {
       double device_width = line_style->priv->width;
       cairo_device_to_user_distance (cr, &device_width, &device_width);
@@ -247,7 +248,7 @@ adg_line_style_apply (const AdgLineStyle *line_style,
   cairo_set_line_cap (cr, line_style->priv->cap);
   cairo_set_line_join (cr, line_style->priv->join);
 
-  if (!adg_is_nan (line_style->priv->miter_limit))
+  if (!adg_isnan (line_style->priv->miter_limit))
     cairo_set_miter_limit (cr, line_style->priv->miter_limit);
 
   cairo_set_antialias (cr, line_style->priv->antialias);
