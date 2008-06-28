@@ -243,7 +243,7 @@ adg_font_style_from_id (AdgFontStyleId id)
 
       builtins[ADG_FONT_STYLE_TEXT] = g_object_new (ADG_TYPE_FONT_STYLE,
 						    "family", "Serif",
-						    "size", 16.,
+						    "size", 14.,
 						    NULL);
       builtins[ADG_FONT_STYLE_QUOTE] = g_object_new (ADG_TYPE_FONT_STYLE,
 						     "family", "Sans",
