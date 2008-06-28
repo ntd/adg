@@ -208,7 +208,9 @@ adg_line_style_from_id (AdgLineStyleId id)
     {
       builtins = g_new (AdgStyle *, ADG_LINE_STYLE_LAST);
 
-      builtins[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE, NULL);
+      builtins[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE,
+						    "width", 2.,
+						    NULL);
       builtins[ADG_LINE_STYLE_CENTER] = g_object_new (ADG_TYPE_LINE_STYLE,
 						      "g", 1.,
 						      "width", 0.75,
