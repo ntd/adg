@@ -33,7 +33,6 @@
 #include "adg-util.h"
 
 #include <math.h>
-#include <cpml.h>
 
 #define PARENT_CLASS ((AdgStyleClass *) adg_arrow_style_parent_class)
 
@@ -58,32 +57,28 @@ static void	set_property		(GObject	*object,
 					 GParamSpec	*pspec);
 static void	arrow_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	triangle_renderer	(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	dot_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	circle_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	block_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	square_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
 static void	tick_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 cairo_path_t	*path,
-					 double		 position);
+					 CpmlPrimitive	*primitive);
+static void	draw_triangle		(cairo_t	*cr,
+					 AdgArrowStyle	*arrow_style,
+					 CpmlPrimitive	*primitive);
 
 
 G_DEFINE_TYPE (AdgArrowStyle, adg_arrow_style, ADG_TYPE_STYLE)
@@ -105,21 +100,21 @@ adg_arrow_style_class_init (AdgArrowStyleClass *klass)
   param = g_param_spec_double ("size",
 			       P_("Arrow Size"),
 			       P_("The size of the arrow, a renderer dependent parameter"),
-			       G_MINDOUBLE, G_MAXDOUBLE, 14.,
+			       -G_MAXDOUBLE, G_MAXDOUBLE, 14.,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_SIZE, param);
 
   param = g_param_spec_double ("angle",
 			       P_("Arrow Angle"),
 			       P_("The angle of the arrow, a renderer dependent parameter"),
-			       G_MINDOUBLE, G_MAXDOUBLE, G_PI / 6.,
+			       -G_MAXDOUBLE, G_MAXDOUBLE, G_PI / 6.,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_ANGLE, param);
 
   param = g_param_spec_double ("margin",
 			       P_("Arrow Margin"),
 			       P_("The margin of the arrow, a renderer dependent parameter"),
-			       G_MINDOUBLE, G_MAXDOUBLE, 14.,
+			       -G_MAXDOUBLE, G_MAXDOUBLE, 14.,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_MARGIN, param);
 
@@ -238,7 +233,7 @@ adg_arrow_style_from_id (AdgArrowStyleId id)
       builtins[ADG_ARROW_STYLE_SQUARE] = g_object_new (ADG_TYPE_ARROW_STYLE,
 						       "size", 10.,
 						       "angle", 0.,
-						       "margin", 5.,
+						       "margin", -0.1,
 						       "renderer", square_renderer,
 						       NULL);
       builtins[ADG_ARROW_STYLE_TICK] = g_object_new (ADG_TYPE_ARROW_STYLE,
@@ -256,44 +251,41 @@ adg_arrow_style_from_id (AdgArrowStyleId id)
 void
 adg_arrow_style_render (AdgArrowStyle *arrow_style,
 			cairo_t       *cr,
-			cairo_path_t  *path,
-			double         position)
+			CpmlPrimitive *primitive)
 {
   g_return_if_fail (arrow_style != NULL);
   g_return_if_fail (cr != NULL);
-  g_return_if_fail (path != NULL);
-  g_return_if_fail (path->num_data > 0);
+  g_return_if_fail (primitive != NULL);
 
   /* NULL renderer */
   if (arrow_style->priv->renderer == NULL)
     return;
 
-  arrow_style->priv->renderer (arrow_style, cr, path, position);
+  arrow_style->priv->renderer (arrow_style, cr, primitive);
 }
 
 static void
 arrow_renderer (AdgArrowStyle *arrow_style,
 		cairo_t       *cr,
-		cairo_path_t  *path,
-		double         position)
+		CpmlPrimitive *primitive)
 {
-  ADG_STUB ();
+  draw_triangle (cr, arrow_style, primitive);
+  cairo_fill (cr);
 }
 
 static void
 triangle_renderer (AdgArrowStyle *arrow_style,
 		   cairo_t       *cr,
-		   cairo_path_t  *path,
-		   double         position)
+		   CpmlPrimitive *primitive)
 {
-  ADG_STUB ();
+  draw_triangle (cr, arrow_style, primitive);
+  cairo_stroke (cr);
 }
 
 static void
 dot_renderer (AdgArrowStyle *arrow_style,
 	      cairo_t       *cr,
-	      cairo_path_t  *path,
-	      double         position)
+	      CpmlPrimitive *primitive)
 {
   ADG_STUB ();
 }
@@ -301,8 +293,7 @@ dot_renderer (AdgArrowStyle *arrow_style,
 static void
 circle_renderer (AdgArrowStyle *arrow_style,
 		 cairo_t       *cr,
-		 cairo_path_t  *path,
-		 double         position)
+		 CpmlPrimitive *primitive)
 {
   ADG_STUB ();
 }
@@ -310,8 +301,7 @@ circle_renderer (AdgArrowStyle *arrow_style,
 static void
 block_renderer (AdgArrowStyle *arrow_style,
 		cairo_t       *cr,
-		cairo_path_t  *path,
-		double         position)
+		CpmlPrimitive *primitive)
 {
   ADG_STUB ();
 }
@@ -319,8 +309,7 @@ block_renderer (AdgArrowStyle *arrow_style,
 static void
 square_renderer (AdgArrowStyle *arrow_style,
 		 cairo_t       *cr,
-		 cairo_path_t  *path,
-		 double         position)
+		 CpmlPrimitive *primitive)
 {
   ADG_STUB ();
 }
@@ -328,8 +317,51 @@ square_renderer (AdgArrowStyle *arrow_style,
 static void
 tick_renderer (AdgArrowStyle *arrow_style,
 	       cairo_t       *cr,
-	       cairo_path_t  *path,
-	       double         position)
+	       CpmlPrimitive *primitive)
 {
   ADG_STUB ();
+}
+
+static void
+draw_triangle (cairo_t       *cr,
+	       AdgArrowStyle *arrow_style,
+	       CpmlPrimitive *primitive)
+{
+  double    length;
+  double    height_2;
+  AdgPair   tail;
+  AdgPair   tail1, tail2;
+  AdgVector vector;
+
+  length = arrow_style->priv->size;
+  height_2 = tan (arrow_style->priv->angle / 2.0) * length;
+
+  switch (primitive->type)
+    {
+    case CAIRO_PATH_LINE_TO:
+      adg_pair_set (&vector, &primitive->p[1]);
+      adg_pair_sub (&vector, &primitive->p[0]);
+      adg_vector_set_with_pair (&vector, &vector);
+
+      adg_pair_scale (adg_pair_set (&tail, &vector), length);
+      cairo_device_to_user_distance (cr, &tail.x, &tail.y);
+      adg_pair_add (&tail, &primitive->p[0]);
+
+      adg_pair_scale (adg_vector_normal (&vector), height_2);
+      cairo_device_to_user_distance (cr, &vector.x, &vector.y);
+      adg_pair_add (adg_pair_set (&tail1, &tail), &vector);
+      adg_pair_sub (adg_pair_set (&tail2, &tail), &vector);
+
+      cairo_move_to (cr, primitive->p[0].x, primitive->p[0].y);
+      cairo_line_to (cr, tail1.x, tail1.y);
+      cairo_line_to (cr, tail2.x, tail2.y);
+      cairo_close_path (cr);
+      
+      break;
+    case CAIRO_PATH_CURVE_TO:
+      ADG_STUB ();
+      break;
+    default:
+      g_assert_not_reached ();
+    }
 }

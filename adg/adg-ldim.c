@@ -304,6 +304,7 @@ render (AdgEntity *entity,
   AdgDim        *dim;
   AdgLDim       *ldim;
   AdgArrowStyle *arrow_style;
+  CpmlPrimitive  primitive;
 
   dim = (AdgDim *) entity;
   ldim = (AdgLDim *) entity;
@@ -320,8 +321,13 @@ render (AdgEntity *entity,
   cairo_set_source (cr, dim->priv->dim_style->pattern);
 
   /* Arrows */
-  adg_arrow_style_render (arrow_style, cr, &ldim->priv->arrow_path, 0.);
-  adg_arrow_style_render (arrow_style, cr, &ldim->priv->arrow_path, 1.);
+  if (cpml_primitive_set_from_segment (&primitive,
+				       &ldim->priv->arrow_path, CPML_FIRST))
+    {
+      adg_arrow_style_render (arrow_style, cr, &primitive);
+      if (cpml_primitive_invert (&primitive))
+	adg_arrow_style_render (arrow_style, cr, &primitive);
+    }
 
   /* Lines */
   adg_line_style_apply (dim->priv->dim_style->line_style, cr);

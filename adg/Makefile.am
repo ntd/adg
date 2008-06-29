@@ -23,7 +23,8 @@ adg_h_sources =			adg.h \
 				adg-pair.h \
 				adg-path.h \
 				adg-style.h \
-				adg-util.h
+				adg-util.h \
+				cpml.h
 adg_built_h_sources =		adg-type-builtins.h
 adg_private_h_sources =		adg-adim-private.h \
 				adg-arrow-style-private.h \
@@ -38,8 +39,7 @@ adg_private_h_sources =		adg-adim-private.h \
 				adg-line-style-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
-				adg-style-private.h \
-				cpml.h
+				adg-style-private.h
 adg_built_private_h_sources =
 
 adg_c_sources =			adg-adim.c \

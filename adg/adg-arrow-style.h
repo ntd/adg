@@ -23,6 +23,7 @@
 
 #include <adg/adg-style.h>
 #include <adg/adg-enums.h>
+#include <adg/cpml.h>
 
 
 G_BEGIN_DECLS
@@ -50,8 +51,7 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  */
 typedef void (*AdgArrowStyleRenderer)		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,
-						 cairo_path_t	*path,
-						 double		 position);
+						 CpmlPrimitive	*primitive);
 
 struct _AdgArrowStyle
 {
@@ -72,8 +72,7 @@ AdgStyle *	adg_arrow_style_new		(void);
 AdgStyle *	adg_arrow_style_from_id		(AdgArrowStyleId id);
 void            adg_arrow_style_render		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,
-						 cairo_path_t	*path,
-						 double		 position);
+						 CpmlPrimitive	*primitive);
 
 
 G_END_DECLS

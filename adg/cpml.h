@@ -30,17 +30,17 @@
 CAIRO_BEGIN_DECLS
 
 
-typedef struct _CpmlPoint	CpmlPoint;
+typedef struct _CpmlPair	CpmlPair;
 typedef struct _CpmlPrimitive	CpmlPrimitive;
 typedef cairo_path_t		CpmlSegment;
 
-struct _CpmlPoint {
-	double		x, y;
+struct _CpmlPair {
+	double			x, y;
 };
 
 struct _CpmlPrimitive {
 	cairo_path_data_type_t	type;
-	CpmlPoint		p[4];
+	CpmlPair		p[4];
 };
 
 
@@ -49,9 +49,11 @@ cpml_segment_set_from_path	(CpmlSegment		*segment,
 				 const cairo_path_t	*path,
 				 int			 which);
 cairo_bool_t
-cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
+cpml_primitive_set_from_segment	(CpmlPrimitive		*primitive,
 				 const CpmlSegment	*segment,
 				 int			 which);
+cairo_bool_t
+cpml_primitive_invert		(CpmlPrimitive		*primitive);
 
 
 CAIRO_END_DECLS

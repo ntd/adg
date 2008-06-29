@@ -85,12 +85,12 @@ cpml_segment_set_from_path(CpmlSegment		*segment,
 }
 
 cairo_bool_t
-cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
-				 const CpmlSegment	*segment,
-				 int			 which)
+cpml_primitive_set_from_segment(CpmlPrimitive		*primitive,
+				const CpmlSegment	*segment,
+				int			 which)
 {
 	int i, p, length;
-	CpmlPoint from;
+	CpmlPair from;
 
 	if (primitive == NULL || segment == NULL || segment->num_data <= 0)
 		return 0;
@@ -105,7 +105,7 @@ cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
 
 		length = segment->data[i].header.length;
 
-		for (p = 1; p <= length; ++p) {
+		for (p = 1; p < length; ++p) {
 			++i;
 			from.x = segment->data[i].point.x;
 			from.y = segment->data[i].point.y;
@@ -114,11 +114,47 @@ cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
 			primitive->p[p].y = from.y;
 		}
 
-		++i;
-
-		if (which != CPML_LAST && --which == 0)
+		if (primitive->type == CAIRO_PATH_MOVE_TO) {
+		    /* MOVE_TO is not considered as a primitive */
+		} else if (which != CPML_LAST && --which == 0) {
 			return 1;
+		}
 	}
 
 	return which == CPML_LAST;
+}
+
+cairo_bool_t
+cpml_primitive_invert(CpmlPrimitive *primitive)
+{
+	CpmlPair tmp;
+
+	switch (primitive->type) {
+	case CAIRO_PATH_LINE_TO:
+		tmp.x = primitive->p[1].x;
+		tmp.y = primitive->p[1].y;
+		primitive->p[1].x = primitive->p[0].x;
+		primitive->p[1].y = primitive->p[0].y;
+		primitive->p[0].x = tmp.x;
+		primitive->p[0].y = tmp.y;
+		break;
+	case CAIRO_PATH_CURVE_TO:
+		tmp.x = primitive->p[2].x;
+		tmp.y = primitive->p[2].y;
+		primitive->p[2].x = primitive->p[1].x;
+		primitive->p[2].y = primitive->p[1].y;
+		primitive->p[1].x = tmp.x;
+		primitive->p[1].y = tmp.y;
+		tmp.x = primitive->p[3].x;
+		tmp.y = primitive->p[3].y;
+		primitive->p[3].x = primitive->p[0].x;
+		primitive->p[3].y = primitive->p[0].y;
+		break;
+	default:
+		return 0;
+	}
+
+	primitive->p[0].x = tmp.x;
+	primitive->p[0].y = tmp.y;
+	return 1;
 }

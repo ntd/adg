@@ -22,6 +22,7 @@
 #define __ADG_PAIR_H__
 
 #include <adg/adg-matrix.h>
+#include <adg/cpml.h>
 
 
 G_BEGIN_DECLS
@@ -52,14 +53,8 @@ G_BEGIN_DECLS
   ((pair) != NULL && !adg_isnan ((pair)->x) && !adg_isnan ((pair)->y))
 
 
-typedef struct _AdgPair AdgPair;
-typedef struct _AdgPair AdgVector;
-
-struct _AdgPair
-{
-  double                x;
-  double                y;
-};
+typedef CpmlPair AdgPair;
+typedef CpmlPair AdgVector;
 
 
 GType                   adg_pair_get_type               (void) G_GNUC_CONST;

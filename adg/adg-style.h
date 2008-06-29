@@ -31,8 +31,8 @@ G_BEGIN_DECLS
 
 
 /* Forward declarations */
-typedef struct _AdgLineStyle AdgLineStyle;
-typedef struct _AdgFontStyle AdgFontStyle;
+typedef struct _AdgLineStyle  AdgLineStyle;
+typedef struct _AdgFontStyle  AdgFontStyle;
 typedef struct _AdgArrowStyle AdgArrowStyle;
 
 
