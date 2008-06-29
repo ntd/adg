@@ -21,7 +21,7 @@
 #ifndef __ADG_LINE_STYLE_PRIVATE_H__
 #define __ADG_LINE_STYLE_PRIVATE_H__
 
-#include <adg/adg-line-style.h>
+#include <cairo.h>
 
 
 G_BEGIN_DECLS

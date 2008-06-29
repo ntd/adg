@@ -29,7 +29,6 @@
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
-#include "adg-type-builtins.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 
