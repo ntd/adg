@@ -19,57 +19,106 @@
 
 #include "cpml.h"
 
+#include <stddef.h>
+
 
 cairo_bool_t
-cpml_segment_get_from_path(cairo_path_t		*segment,
+cpml_segment_set_from_path(CpmlSegment		*segment,
 			   const cairo_path_t	*path,
-			   int			 index)
+			   int			 which)
 {
-	cairo_path_data_t *path_data;
-	int i, start_data;
+	int i, segment_start;
 
-	path_data = path->data;
+	if (segment == NULL || path == NULL || path->num_data <= 0)
+		return 0;
+
 	i = 0;
+	segment->status = CAIRO_STATUS_INVALID_INDEX;
 
 	do {
-		if (path_data->header.type == CAIRO_PATH_MOVE_TO) {
-			/* Skip the leading MOVE_TO primitives */
-			do {
-				i += 2;
+		/* Skip the leading MOVE_TO primitives */
+		while (path->data[i].header.type == CAIRO_PATH_MOVE_TO) {
+			i += 2;
 
-				/* No more segments to analyze */
-				if (i >= path->num_data)
-					return 0;
-			} while (path_data[i].header.type == CAIRO_PATH_MOVE_TO);
-
-			/* Include the last MOVE_TO */
-			start_data = i - 2;
-		} else {
-			start_data = 0;
+			/* No more segments to analyze */
+			if (i >= path->num_data)
+				return segment->status == CAIRO_STATUS_SUCCESS;
 		}
 
+		/* Include the last MOVE_TO, if any */
+		segment_start = i > 0 ? i - 2 : 0;
+
+		/* Scan up to the end of the current segment */
 		for (; i < path->num_data; ++i) {
-			switch (path_data[i].header.type) {
+			switch (path->data[i].header.type) {
 			case CAIRO_PATH_MOVE_TO:
 				--i;
 				break;
 			case CAIRO_PATH_CLOSE_PATH:
 				break;
 			case CAIRO_PATH_LINE_TO:
-				i += 1;
+				++i;
 				continue;
 			case CAIRO_PATH_CURVE_TO:
 				i += 3;
 				continue;
 			default:
+				segment->status = CAIRO_STATUS_INVALID_PATH_DATA;
 				return 0;
 			}
 			break;
 		}
-	} while (-- index);
+
+		/* Force recycling on looking for the last segment */
+		if (which == CPML_LAST) {
+			segment->status = CAIRO_STATUS_SUCCESS;
+			segment->data = path->data + segment_start;
+			segment->num_data = i - segment_start;
+			continue;
+		}
+	} while (i < path->num_data && --which);
 
 	segment->status = CAIRO_STATUS_SUCCESS;
-	segment->data = path_data + start_data;
-	segment->num_data = i - start_data;
+	segment->data = path->data + segment_start;
+	segment->num_data = i - segment_start;
 	return 1;
+}
+
+cairo_bool_t
+cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
+				 const CpmlSegment	*segment,
+				 int			 which)
+{
+	int i, p, length;
+	CpmlPoint from;
+
+	if (primitive == NULL || segment == NULL || segment->num_data <= 0)
+		return 0;
+
+	from.x = 0.;
+	from.y = 0.;
+
+	for (i = 0; i < segment->num_data; ++i) {
+		primitive->type = segment->data[i].header.type;
+		primitive->p[0].x = from.x;
+		primitive->p[0].y = from.y;
+
+		length = segment->data[i].header.length;
+
+		for (p = 1; p <= length; ++p) {
+			++i;
+			from.x = segment->data[i].point.x;
+			from.y = segment->data[i].point.y;
+
+			primitive->p[p].x = from.x;
+			primitive->p[p].y = from.y;
+		}
+
+		++i;
+
+		if (which != CPML_LAST && --which == 0)
+			return 1;
+	}
+
+	return which == CPML_LAST;
 }

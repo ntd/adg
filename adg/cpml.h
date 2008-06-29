@@ -23,13 +23,35 @@
 
 #include <cairo.h>
 
+#define CPML_FIRST	1
+#define	CPML_LAST	0
+
 
 CAIRO_BEGIN_DECLS
 
 
-cairo_bool_t	cpml_segment_get_from_path	(cairo_path_t *		segment,
-						 const cairo_path_t *	path,
-						 int			index);
+typedef struct _CpmlPoint	CpmlPoint;
+typedef struct _CpmlPrimitive	CpmlPrimitive;
+typedef cairo_path_t		CpmlSegment;
+
+struct _CpmlPoint {
+	double		x, y;
+};
+
+struct _CpmlPrimitive {
+	cairo_path_data_type_t	type;
+	CpmlPoint		p[4];
+};
+
+
+cairo_bool_t
+cpml_segment_set_from_path	(CpmlSegment		*segment,
+				 const cairo_path_t	*path,
+				 int			 which);
+cairo_bool_t
+cpml_primitive_set_from_fragment(CpmlPrimitive		*primitive,
+				 const CpmlSegment	*segment,
+				 int			 which);
 
 
 CAIRO_END_DECLS
