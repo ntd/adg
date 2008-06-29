@@ -30,6 +30,7 @@
 #include "adg-ldim-private.h"
 #include "adg-dim-private.h"
 #include "adg-container.h"
+#include "adg-arrow-style.h"
 #include "adg-util.h"
 #include "adg-intl.h"
 
@@ -232,9 +233,10 @@ update (AdgEntity *entity)
   dim->priv->quote_angle = adg_pair_get_angle (&vector);
 
   /* Calculate baseline1 and baseline2 */
+  /* TODO
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
                                 dim->priv->dim_style->arrow_style->margin,
-                                &device2user);
+                                &device2user);*/
   adg_pair_add (adg_pair_set (&baseline1, &arrow1), &offset);
   adg_pair_sub (adg_pair_set (&baseline2, &arrow2), &offset);
 
@@ -299,13 +301,16 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  AdgDim  *dim;
-  AdgLDim *ldim;
+  AdgDim        *dim;
+  AdgLDim       *ldim;
+  AdgArrowStyle *arrow_style;
 
   dim = (AdgDim *) entity;
   ldim = (AdgLDim *) entity;
 
   g_return_if_fail (dim->priv->dim_style != NULL);
+
+  arrow_style = (AdgArrowStyle *) dim->priv->dim_style->arrow_style;
 
   /* TODO: caching
   if (!adg_entity_model_applied (entity)) */
@@ -315,8 +320,8 @@ render (AdgEntity *entity,
   cairo_set_source (cr, dim->priv->dim_style->pattern);
 
   /* Arrows */
-  adg_arrow_render (cr, dim->priv->dim_style->arrow_style, &ldim->priv->arrow_path, ADG_PATH_POINT_START);
-  adg_arrow_render (cr, dim->priv->dim_style->arrow_style, &ldim->priv->arrow_path, ADG_PATH_POINT_END);
+  adg_arrow_style_render (arrow_style, cr, &ldim->priv->arrow_path, 0.);
+  adg_arrow_style_render (arrow_style, cr, &ldim->priv->arrow_path, 1.);
 
   /* Lines */
   adg_line_style_apply (dim->priv->dim_style->line_style, cr);

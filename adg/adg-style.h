@@ -33,6 +33,7 @@ G_BEGIN_DECLS
 /* Forward declarations */
 typedef struct _AdgLineStyle AdgLineStyle;
 typedef struct _AdgFontStyle AdgFontStyle;
+typedef struct _AdgArrowStyle AdgArrowStyle;
 
 
 #define ADG_TYPE_STYLE             (adg_style_get_type ())
@@ -61,74 +62,6 @@ struct _AdgStyleClass
 
 GType			 adg_style_get_type		(void) G_GNUC_CONST;
 
-#define ADG_TYPE_ARROW_STYLE            (adg_arrow_style_get_type ())
-
-typedef struct _AdgArrowStyle           AdgArrowStyle;
-
-/**
- * AdgArrowRenderFunc:
- * @cr: a #cairo_t drawing context
- * @arrow_style: the #AdgArrowStyle structure
- * @poi: point of interest
- * @path_data: data of the path to follow
- *
- * Callback that renders the arrow with the specified @arrow_style following
- * the @path_data path.
- */
-typedef void (*AdgArrowRenderFunc)      (cairo_t           *cr,
-                                         AdgArrowStyle     *arrow_style,
-                                         AdgPair           *poi,
-                                         cairo_path_data_t *path_data);
-
-struct _AdgArrowStyle
-{
-  double                 size;
-  double                 angle;
-  double                 margin;
-  gboolean               need_path;
-  AdgArrowRenderFunc     render_func;
-};
-
-/**
- * AdgArrowStyleId:
- * @ADG_ARROW_STYLE_ARROW: the classic arrow to use in technical drawings
- * @ADG_ARROW_STYLE_TRIANGLE: same as above, but not filled
- * @ADG_ARROW_STYLE_DOT: a little size filled circle
- * @ADG_ARROW_STYLE_TICK: an architetural tick
- * @ADG_ARROW_STYLE_CIRCLE: a medium size empty circle
- * @ADG_ARROW_STYLE_SQUARE: a medium size empty square
- * @ADG_ARROW_STYLE_LAST: start of user-defined styles
- *
- * Numeric representation of arrow styles.
- * Some standard arrow styles are predefined.
- */
-typedef enum
-{
-  ADG_ARROW_STYLE_ARROW,
-  ADG_ARROW_STYLE_TRIANGLE,
-  ADG_ARROW_STYLE_DOT,
-  ADG_ARROW_STYLE_CIRCLE,
-  ADG_ARROW_STYLE_SQUARE,
-  ADG_ARROW_STYLE_TICK,
-  ADG_ARROW_STYLE_LAST
-} AdgArrowStyleId;
-
-typedef enum
-{
-  ADG_PATH_POINT_START,
-  ADG_PATH_POINT_MIDDLE,
-  ADG_PATH_POINT_END
-} AdgPathPoint;
-
-GType           adg_arrow_style_get_type(void) G_GNUC_CONST;
-AdgArrowStyle * adg_arrow_style_from_id (AdgArrowStyleId id);
-AdgArrowStyleId adg_arrow_style_register(AdgArrowStyle  *new_style);
-void            adg_arrow_render        (cairo_t        *cr,
-                                         AdgArrowStyle  *arrow_style,
-                                         cairo_path_t   *path,
-                                         AdgPathPoint    path_point);
-
-
 
 #define ADG_TYPE_DIM_STYLE              (adg_dim_style_get_type ())
 
@@ -142,7 +75,7 @@ struct _AdgDimStyle
   AdgStyle		*tolerance_style;
   AdgStyle		*note_style;
   AdgStyle		*line_style;
-  AdgArrowStyle         *arrow_style;
+  AdgStyle		*arrow_style;
 
   double                 from_offset;
   double                 to_offset;

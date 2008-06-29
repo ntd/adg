@@ -64,6 +64,31 @@ typedef enum
   ADG_FONT_STYLE_LAST
 } AdgFontStyleId;
 
+/**
+ * AdgArrowStyleId:
+ * @ADG_ARROW_STYLE_ARROW: the classic arrow to use in technical drawings
+ * @ADG_ARROW_STYLE_TRIANGLE: same as above, but not filled
+ * @ADG_ARROW_STYLE_DOT: a little size filled circle
+ * @ADG_ARROW_STYLE_TICK: an architetural tick
+ * @ADG_ARROW_STYLE_CIRCLE: a medium size empty circle
+ * @ADG_ARROW_STYLE_SQUARE: a medium size empty square
+ * @ADG_ARROW_STYLE_LAST: start of user-defined styles
+ *
+ * Numeric representation of arrow styles.
+ * Some standard arrow styles are predefined.
+ */
+typedef enum
+{
+  ADG_ARROW_STYLE_ARROW,
+  ADG_ARROW_STYLE_TRIANGLE,
+  ADG_ARROW_STYLE_DOT,
+  ADG_ARROW_STYLE_CIRCLE,
+  ADG_ARROW_STYLE_BLOCK,
+  ADG_ARROW_STYLE_SQUARE,
+  ADG_ARROW_STYLE_TICK,
+  ADG_ARROW_STYLE_LAST
+} AdgArrowStyleId;
+
 
 G_END_DECLS
 

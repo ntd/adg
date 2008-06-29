@@ -10,6 +10,7 @@ AM_LDFLAGS =			@GCONTAINER_LIBS@ \
 # file groups
 adg_h_sources =			adg.h \
 				adg-adim.h \
+				adg-arrow-style.h \
 				adg-canvas.h \
 				adg-container.h \
 				adg-dim.h \
@@ -25,6 +26,7 @@ adg_h_sources =			adg.h \
 				adg-util.h
 adg_built_h_sources =		adg-type-builtins.h
 adg_private_h_sources =		adg-adim-private.h \
+				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
 				adg-dim-private.h \
@@ -40,6 +42,7 @@ adg_private_h_sources =		adg-adim-private.h \
 adg_built_private_h_sources =
 
 adg_c_sources =			adg-adim.c \
+				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \
 				adg-dim.c \
