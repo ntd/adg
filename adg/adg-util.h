@@ -36,21 +36,11 @@ G_BEGIN_DECLS
 
 #define ADG_CHECKPOINT_WITH_MESSAGE(message) \
                                 g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
-                                       "file %s: line %d: %s", \
+                                       "file `%s' at line %d: %s", \
                                        __FILE__, __LINE__, #message)
 #define ADG_CHECKPOINT()        ADG_CHECKPOINT_WITH_MESSAGE ("check point")
 
-
-#ifdef __GNUC__
-
-#define ADG_STUB()              g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
-                                       "%s: stub", __PRETTY_FUNCTION__)
-
-#else /* !__GNUC__ */
-
 #define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
-
-#endif /* __GNUC__ */
 
 
 #ifdef NAN
