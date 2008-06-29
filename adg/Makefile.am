@@ -38,7 +38,8 @@ adg_private_h_sources =		adg-adim-private.h \
 				adg-line-style-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
-				adg-style-private.h
+				adg-style-private.h \
+				cpml.h
 adg_built_private_h_sources =
 
 adg_c_sources =			adg-adim.c \
@@ -56,7 +57,8 @@ adg_c_sources =			adg-adim.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-style.c \
-				adg-util.c
+				adg-util.c \
+				cpml.c
 adg_built_c_sources =		adg-type-builtins.c
 
 # targets
