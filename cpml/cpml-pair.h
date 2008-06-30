@@ -17,10 +17,31 @@
  * Boston, MA  02111-1307, USA.
  */
 
-#ifndef __CPML_H__
-#define __CPML_H__
+#ifndef __CPML_PAIR_H__
+#define __CPML_PAIR_H__
 
-#include <cpml/cpml-pair.h>
-#include <cpml/cpml-path.h>
+#include <cairo.h>
 
-#endif /* __CPML_H__ */
+
+CAIRO_BEGIN_DECLS
+
+/* Forward declarations */
+
+typedef struct _CpmlPair	CpmlPair;
+typedef CpmlPair		CpmlVector;
+
+struct _CpmlPair {
+	double			x, y;
+};
+
+
+
+cairo_bool_t
+cpml_pair_copy			(CpmlPair		*pair,
+				 const CpmlPair		*src);
+
+
+CAIRO_END_DECLS
+
+
+#endif /* __CPML_PAIR_H__ */

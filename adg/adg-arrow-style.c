@@ -57,28 +57,28 @@ static void	set_property		(GObject	*object,
 					 GParamSpec	*pspec);
 static void	arrow_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	triangle_renderer	(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	dot_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	circle_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	block_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	square_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	tick_renderer		(AdgArrowStyle	*arrow_style,
 					 cairo_t	*cr,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 static void	draw_triangle		(cairo_t	*cr,
 					 AdgArrowStyle	*arrow_style,
-					 CpmlPrimitive	*primitive);
+					 CpmlPath	*segment);
 
 
 G_DEFINE_TYPE (AdgArrowStyle, adg_arrow_style, ADG_TYPE_STYLE)
@@ -251,41 +251,41 @@ adg_arrow_style_from_id (AdgArrowStyleId id)
 void
 adg_arrow_style_render (AdgArrowStyle *arrow_style,
 			cairo_t       *cr,
-			CpmlPrimitive *primitive)
+			CpmlPath      *segment)
 {
   g_return_if_fail (arrow_style != NULL);
   g_return_if_fail (cr != NULL);
-  g_return_if_fail (primitive != NULL);
+  g_return_if_fail (segment != NULL);
 
   /* NULL renderer */
   if (arrow_style->priv->renderer == NULL)
     return;
 
-  arrow_style->priv->renderer (arrow_style, cr, primitive);
+  arrow_style->priv->renderer (arrow_style, cr, segment);
 }
 
 static void
 arrow_renderer (AdgArrowStyle *arrow_style,
 		cairo_t       *cr,
-		CpmlPrimitive *primitive)
+		CpmlPath      *segment)
 {
-  draw_triangle (cr, arrow_style, primitive);
+  draw_triangle (cr, arrow_style, segment);
   cairo_fill (cr);
 }
 
 static void
 triangle_renderer (AdgArrowStyle *arrow_style,
 		   cairo_t       *cr,
-		   CpmlPrimitive *primitive)
+		   CpmlPath      *segment)
 {
-  draw_triangle (cr, arrow_style, primitive);
+  draw_triangle (cr, arrow_style, segment);
   cairo_stroke (cr);
 }
 
 static void
 dot_renderer (AdgArrowStyle *arrow_style,
 	      cairo_t       *cr,
-	      CpmlPrimitive *primitive)
+	      CpmlPath      *segment)
 {
   ADG_STUB ();
 }
@@ -293,7 +293,7 @@ dot_renderer (AdgArrowStyle *arrow_style,
 static void
 circle_renderer (AdgArrowStyle *arrow_style,
 		 cairo_t       *cr,
-		 CpmlPrimitive *primitive)
+		 CpmlPath      *segment)
 {
   ADG_STUB ();
 }
@@ -301,7 +301,7 @@ circle_renderer (AdgArrowStyle *arrow_style,
 static void
 block_renderer (AdgArrowStyle *arrow_style,
 		cairo_t       *cr,
-		CpmlPrimitive *primitive)
+		CpmlPath      *segment)
 {
   ADG_STUB ();
 }
@@ -309,7 +309,7 @@ block_renderer (AdgArrowStyle *arrow_style,
 static void
 square_renderer (AdgArrowStyle *arrow_style,
 		 cairo_t       *cr,
-		 CpmlPrimitive *primitive)
+		 CpmlPath      *segment)
 {
   ADG_STUB ();
 }
@@ -317,7 +317,7 @@ square_renderer (AdgArrowStyle *arrow_style,
 static void
 tick_renderer (AdgArrowStyle *arrow_style,
 	       cairo_t       *cr,
-	       CpmlPrimitive *primitive)
+	       CpmlPath      *segment)
 {
   ADG_STUB ();
 }
@@ -325,34 +325,35 @@ tick_renderer (AdgArrowStyle *arrow_style,
 static void
 draw_triangle (cairo_t       *cr,
 	       AdgArrowStyle *arrow_style,
-	       CpmlPrimitive *primitive)
+	       CpmlPath      *segment)
 {
   double    length;
   double    height_2;
   AdgPair   tail;
   AdgPair   tail1, tail2;
-  AdgVector vector;
+  CpmlPair vector;
 
   length = arrow_style->priv->size;
   height_2 = tan (arrow_style->priv->angle / 2.0) * length;
 
-  switch (primitive->type)
+  switch (segment->cairo_path.data[0].header.type)
     {
     case CAIRO_PATH_LINE_TO:
-      adg_pair_set (&vector, &primitive->p[1]);
-      adg_pair_sub (&vector, &primitive->p[0]);
+      cpml_primitive_get_pair (segment, &vector, 1);
+      vector.x -= segment->org.x;
+      vector.y -= segment->org.y;
       adg_vector_set_with_pair (&vector, &vector);
 
       adg_pair_scale (adg_pair_set (&tail, &vector), length);
       cairo_device_to_user_distance (cr, &tail.x, &tail.y);
-      adg_pair_add (&tail, &primitive->p[0]);
+      adg_pair_add (&tail, &segment->org);
 
       adg_pair_scale (adg_vector_normal (&vector), height_2);
       cairo_device_to_user_distance (cr, &vector.x, &vector.y);
       adg_pair_add (adg_pair_set (&tail1, &tail), &vector);
       adg_pair_sub (adg_pair_set (&tail2, &tail), &vector);
 
-      cairo_move_to (cr, primitive->p[0].x, primitive->p[0].y);
+      cairo_move_to (cr, segment->org.x, segment->org.y);
       cairo_line_to (cr, tail1.x, tail1.y);
       cairo_line_to (cr, tail2.x, tail2.y);
       cairo_close_path (cr);
