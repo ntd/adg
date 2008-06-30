@@ -49,6 +49,7 @@ PKG_CHECK_MODULES([GCONTAINER],[gcontainer >= 1.99.2],,
 ##################################################
 
 AC_CONFIG_FILES([Makefile
+                 cpml/Makefile
                  adg/Makefile
 		 demo/Makefile
                  docs/Makefile

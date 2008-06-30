@@ -3,7 +3,7 @@
 ACLOCAL_AMFLAGS=	-I m4
 
 
-EXTRA_DIST =		ABOUT-NLS \
+EXTRA_DIST=		ABOUT-NLS \
 			AUTHORS \
 			config.rpath \
 			COPYING \
@@ -13,7 +13,8 @@ EXTRA_DIST =		ABOUT-NLS \
 			NEWS \
 			README
 
-SUBDIRS =		adg \
+SUBDIRS=		cpml \
+			adg \
 			demo \
 			docs \
 			po

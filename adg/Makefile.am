@@ -1,14 +1,13 @@
 ## Process this file with automake to produce Makefile.in
 
-AM_CFLAGS  =			@GCONTAINER_CFLAGS@ \
+AM_CFLAGS=			@GCONTAINER_CFLAGS@ \
 				@GTK2_CFLAGS@ \
 				-I$(top_srcdir)
-AM_LDFLAGS =			@GCONTAINER_LIBS@ \
+AM_LDFLAGS=			@GCONTAINER_LIBS@ \
 				@GTK2_LIBS@
 
-
 # file groups
-adg_h_sources =			adg.h \
+adg_h_sources=			adg.h \
 				adg-adim.h \
 				adg-arrow-style.h \
 				adg-canvas.h \
@@ -23,10 +22,9 @@ adg_h_sources =			adg.h \
 				adg-pair.h \
 				adg-path.h \
 				adg-style.h \
-				adg-util.h \
-				cpml.h
-adg_built_h_sources =		adg-type-builtins.h
-adg_private_h_sources =		adg-adim-private.h \
+				adg-util.h
+adg_built_h_sources=		adg-type-builtins.h
+adg_private_h_sources=		adg-adim-private.h \
 				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
@@ -40,9 +38,8 @@ adg_private_h_sources =		adg-adim-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-style-private.h
-adg_built_private_h_sources =
-
-adg_c_sources =			adg-adim.c \
+adg_built_private_h_sources= 
+adg_c_sources=			adg-adim.c \
 				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \
@@ -57,27 +54,28 @@ adg_c_sources =			adg-adim.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-style.c \
-				adg-util.c \
-				cpml.c
-adg_built_c_sources =		adg-type-builtins.c
+				adg-util.c
+adg_built_c_sources=		adg-type-builtins.c
 
 # targets
-BUILT_SOURCES =			$(adg_built_h_sources) \
+BUILT_SOURCES=			$(adg_built_h_sources) \
 				$(adg_built_private_h_sources) \
 				$(adg_built_c_sources)
 
-libadg_includedir =		$(includedir)/adg
-libadg_include_DATA =		$(adg_h_sources) \
+libadg_includedir=		$(includedir)/adg
+libadg_include_DATA=		$(adg_h_sources) \
 				$(adg_built_h_sources)
 
-lib_LTLIBRARIES = 		libadg.la
-libadg_la_LDFLAGS =		-release @PACKAGE_VERSION@
-libadg_la_SOURCES =		$(adg_h_sources) \
+lib_LTLIBRARIES= 		libadg.la
+libadg_la_LDFLAGS=		-release @PACKAGE_VERSION@
+libadg_la_SOURCES=		$(adg_h_sources) \
 				$(adg_built_h_sources) \
 				$(adg_private_h_sources) \
 				$(adg_built_private_h_sources) \
 				$(adg_c_sources) \
 				$(adg_built_c_sources)
+libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
+libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
 adg-type-builtins.h: adg-enums.h Makefile

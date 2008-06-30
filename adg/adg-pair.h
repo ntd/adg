@@ -22,7 +22,7 @@
 #define __ADG_PAIR_H__
 
 #include <adg/adg-matrix.h>
-#include <adg/cpml.h>
+#include <cpml/cpml.h>
 
 
 G_BEGIN_DECLS

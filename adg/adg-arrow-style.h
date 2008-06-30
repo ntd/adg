@@ -23,7 +23,7 @@
 
 #include <adg/adg-style.h>
 #include <adg/adg-enums.h>
-#include <adg/cpml.h>
+#include <cpml/cpml.h>
 
 
 G_BEGIN_DECLS
