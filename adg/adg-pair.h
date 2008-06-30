@@ -60,8 +60,6 @@ typedef CpmlPair AdgVector;
 GType                   adg_pair_get_type               (void) G_GNUC_CONST;
 
 AdgPair *               adg_pair_dup                    (const AdgPair  *pair);
-AdgPair *               adg_pair_set                    (AdgPair        *pair,
-                                                         const AdgPair  *src);
 AdgPair *               adg_pair_set_explicit           (AdgPair        *pair,
                                                          double          x,
                                                          double          y);

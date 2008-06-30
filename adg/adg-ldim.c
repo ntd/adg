@@ -202,34 +202,45 @@ update (AdgEntity *entity)
   adg_vector_set_with_angle (&vector, ldim->priv->direction);
 
   /* Calculate from1 and from2*/
-  adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
+  cpml_pair_copy (&offset, &vector);
+  adg_pair_scale_and_transform (&offset,
                                 dim->priv->dim_style->from_offset,
                                 &device2user);
   /* Checkpoint */
   g_return_if_fail (adg_pair_is_set (&offset));
-  adg_pair_add (adg_pair_set (&from1, &offset), &dim->priv->ref1);
-  adg_pair_add (adg_pair_set (&from2, &offset), &dim->priv->ref2);
+  cpml_pair_copy (&from1, &offset);
+  adg_pair_add (&from1, &dim->priv->ref1);
+  cpml_pair_copy (&from2, &offset);
+  adg_pair_add (&from2, &dim->priv->ref2);
 
   /* Calculate arrow1 and arrow2 */
-  adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
+  cpml_pair_copy (&offset, &vector);
+  adg_pair_scale_and_transform (&offset,
                                 dim->priv->level * dim->priv->dim_style->baseline_spacing,
                                 &device2user);
-  adg_pair_add (adg_pair_set (&arrow1, &dim->priv->pos1), &offset);
-  adg_pair_add (adg_pair_set (&arrow2, &dim->priv->pos2), &offset);
+  cpml_pair_copy (&arrow1, &dim->priv->pos1);
+  adg_pair_add (&arrow1, &offset);
+  cpml_pair_copy (&arrow2, &dim->priv->pos2);
+  adg_pair_add (&arrow2, &offset);
 
   /* Calculate to1 and to2 */
-  adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
+  cpml_pair_copy (&offset, &vector);
+  adg_pair_scale_and_transform (&offset,
                                 dim->priv->dim_style->to_offset,
                                 &device2user);
-  adg_pair_add (adg_pair_set (&to1, &arrow1), &offset);
-  adg_pair_add (adg_pair_set (&to2, &arrow2), &offset);
+  cpml_pair_copy (&to1, &arrow1);
+  adg_pair_add (&to1, &offset);
+  cpml_pair_copy (&to2, &arrow2);
+  adg_pair_add (&to2, &offset);
 
   /* Set vector to the director of the baseline */
-  adg_pair_sub (adg_pair_set (&offset, &arrow2), &arrow1);
+  cpml_pair_copy (&offset, &arrow2);
+  adg_pair_sub (&offset, &arrow1);
   adg_vector_set_with_pair (&vector, &offset);
 
   /* Update the AdgDim cache contents */
-  adg_pair_mid (adg_pair_set (&dim->priv->quote_org, &arrow1), &arrow2);
+  cpml_pair_copy (&dim->priv->quote_org, &arrow1);
+  adg_pair_mid (&dim->priv->quote_org, &arrow2);
   dim->priv->quote_angle = adg_pair_get_angle (&vector);
 
   /* Calculate baseline1 and baseline2 */
@@ -237,8 +248,10 @@ update (AdgEntity *entity)
   adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
                                 dim->priv->dim_style->arrow_style->margin,
                                 &device2user);*/
-  adg_pair_add (adg_pair_set (&baseline1, &arrow1), &offset);
-  adg_pair_sub (adg_pair_set (&baseline2, &arrow2), &offset);
+  cpml_pair_copy (&baseline1, &arrow1);
+  adg_pair_add (&baseline1, &offset);
+  cpml_pair_copy (&baseline2, &arrow2);
+  adg_pair_sub (&baseline2, &offset);
 
   /* Set extension1 */
   if (ldim->priv->extension1.data == NULL)
@@ -350,7 +363,8 @@ default_label (AdgDim *dim)
   AdgPair delta;
   double  measure;
 
-  measure = adg_pair_get_length (adg_pair_sub (adg_pair_set (&delta, &dim->priv->pos2), &dim->priv->pos1));
+  cpml_pair_copy (&delta, &dim->priv->pos2);
+  measure = adg_pair_get_length (adg_pair_sub (&delta, &dim->priv->pos1));
 
   return g_strdup_printf (dim->priv->dim_style->measure_format, measure);
 }
@@ -467,10 +481,11 @@ adg_ldim_set_pos (AdgLDim       *ldim,
   g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
   g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
 
-  adg_pair_set (&dim->priv->pos1, &dim->priv->ref1);
-  adg_pair_set (&dim->priv->pos2, &dim->priv->ref2);
+  cpml_pair_copy (&dim->priv->pos1, &dim->priv->ref1);
+  cpml_pair_copy (&dim->priv->pos2, &dim->priv->ref2);
   adg_vector_set_with_angle (&extension_vector, ldim->priv->direction);
-  adg_vector_normal (adg_pair_set (&baseline_vector, &extension_vector));
+  cpml_pair_copy (&baseline_vector, &extension_vector);
+  adg_vector_normal (&baseline_vector);
 
   adg_pair_intersection (&dim->priv->pos1, &extension_vector, pos, &baseline_vector);
   adg_pair_intersection (&dim->priv->pos2, &extension_vector, pos, &baseline_vector);

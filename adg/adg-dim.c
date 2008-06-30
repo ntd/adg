@@ -261,19 +261,19 @@ set_property (GObject      *object,
       invalidate (dim);
       break;
     case PROP_REF1:
-      adg_pair_set (&dim->priv->ref1, (AdgPair *) g_value_get_boxed (value));
+      cpml_pair_copy (&dim->priv->ref1, (AdgPair *) g_value_get_boxed (value));
       invalidate (dim);
       break;
     case PROP_REF2:
-      adg_pair_set (&dim->priv->ref2, (AdgPair *) g_value_get_boxed (value));
+      cpml_pair_copy (&dim->priv->ref2, (AdgPair *) g_value_get_boxed (value));
       invalidate (dim);
       break;
     case PROP_POS1:
-      adg_pair_set (&dim->priv->pos1, (AdgPair *) g_value_get_boxed (value));
+      cpml_pair_copy (&dim->priv->pos1, (AdgPair *) g_value_get_boxed (value));
       invalidate (dim);
       break;
     case PROP_POS2:
-      adg_pair_set (&dim->priv->pos2, (AdgPair *) g_value_get_boxed (value));
+      cpml_pair_copy (&dim->priv->pos2, (AdgPair *) g_value_get_boxed (value));
       invalidate (dim);
       break;
     case PROP_LEVEL:
@@ -371,7 +371,7 @@ label_layout (AdgDim  *dim,
 
       width = 0.0;
       midspacing = dim->priv->dim_style->tolerance_spacing / 2.0;
-      adg_pair_set (&offset, &dim->priv->dim_style->tolerance_offset);
+      cpml_pair_copy (&offset, &dim->priv->dim_style->tolerance_offset);
       cp.x += offset.x;
 
       if (dim->priv->tolerance_up != NULL)
@@ -403,7 +403,7 @@ label_layout (AdgDim  *dim,
     {
       adg_font_style_apply (dim->priv->dim_style->note_style, cr);
 
-      adg_pair_set (&offset, &dim->priv->dim_style->note_offset);
+      cpml_pair_copy (&offset, &dim->priv->dim_style->note_offset);
       cp.x += offset.x;
 
       cairo_text_extents (cr, dim->priv->note, &extents);
@@ -419,7 +419,7 @@ label_layout (AdgDim  *dim,
   offset.x = dim->priv->dim_style->quote_offset.x - cp.x / 2.0;
   offset.y = dim->priv->dim_style->quote_offset.y;
 
-  adg_pair_set (&dim->priv->quote_offset, &offset);
+  cpml_pair_copy (&dim->priv->quote_offset, &offset);
 
   if (adg_pair_is_set (&dim->priv->tolerance_up_offset))
     adg_pair_add (&dim->priv->tolerance_up_offset, &offset);
@@ -714,11 +714,11 @@ _adg_dim_render_quote (AdgDim  *dim,
   if (!adg_pair_is_set (&dim->priv->quote_offset))
     ADG_DIM_GET_CLASS (dim)->label_layout (dim, cr);
 
-  adg_pair_set (&quote_offset, &dim->priv->quote_offset);
+  cpml_pair_copy (&quote_offset, &dim->priv->quote_offset);
   cairo_device_to_user_distance (cr, &quote_offset.x, &quote_offset.y);
-  adg_pair_set (&tolerance_up_offset, &dim->priv->tolerance_up_offset);
+  cpml_pair_copy (&tolerance_up_offset, &dim->priv->tolerance_up_offset);
   cairo_device_to_user_distance (cr, &tolerance_up_offset.x, &tolerance_up_offset.y);
-  adg_pair_set (&tolerance_down_offset, &dim->priv->tolerance_down_offset);
+  cpml_pair_copy (&tolerance_down_offset, &dim->priv->tolerance_down_offset);
   cairo_device_to_user_distance (cr, &tolerance_down_offset.x, &tolerance_down_offset.y);
 
   cairo_save (cr);

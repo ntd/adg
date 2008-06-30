@@ -82,30 +82,6 @@ adg_pair_dup (const AdgPair *pair)
 }
 
 /**
- * adg_pair_set:
- * @pair: an #AdgPair structure
- * @src: the source #AdgPair structure
- *
- * Copies @src in @pair. At the end, the contents of @src and @pair will be equal.
- * If src is %NULL, @pair will be unset.
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_set (AdgPair       *pair,
-              const AdgPair *src)
-{
-  g_return_val_if_fail (pair != NULL, pair);
-
-  if (src == NULL)
-    adg_pair_unset (pair);
-  else
-    memcpy (pair, src, sizeof (AdgPair));
-
-  return pair;
-}
-
-/**
  * adg_pair_set_explicit:
  * @pair: an #AdgPair structure
  * @x: x component
@@ -437,7 +413,8 @@ adg_pair_projection (AdgPair         *pair,
 
   g_return_val_if_fail (adg_pair_is_set (vector2), pair);
 
-  adg_vector_normal (adg_pair_set (&vector, vector2));
+  cpml_pair_copy (&vector, vector2);
+  adg_vector_normal (&vector);
 
   return adg_pair_intersection (pair, &vector, pair2, vector2);
 }

@@ -344,14 +344,17 @@ draw_triangle (cairo_t       *cr,
       vector.y -= segment->org.y;
       adg_vector_set_with_pair (&vector, &vector);
 
-      adg_pair_scale (adg_pair_set (&tail, &vector), length);
+      cpml_pair_copy (&tail, &vector);
+      adg_pair_scale (&tail, length);
       cairo_device_to_user_distance (cr, &tail.x, &tail.y);
       adg_pair_add (&tail, &segment->org);
 
       adg_pair_scale (adg_vector_normal (&vector), height_2);
       cairo_device_to_user_distance (cr, &vector.x, &vector.y);
-      adg_pair_add (adg_pair_set (&tail1, &tail), &vector);
-      adg_pair_sub (adg_pair_set (&tail2, &tail), &vector);
+      cpml_pair_copy (&tail1, &tail);
+      adg_pair_add (&tail1, &vector);
+      cpml_pair_copy (&tail2, &tail);
+      adg_pair_sub (&tail2, &vector);
 
       cairo_move_to (cr, segment->org.x, segment->org.y);
       cairo_line_to (cr, tail1.x, tail1.y);
