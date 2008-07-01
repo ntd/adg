@@ -79,6 +79,9 @@ static void	tick_renderer		(AdgArrowStyle	*arrow_style,
 static void	draw_triangle		(cairo_t	*cr,
 					 AdgArrowStyle	*arrow_style,
 					 CpmlPath	*segment);
+static void	draw_circle		(cairo_t	*cr,
+					 AdgArrowStyle	*arrow_style,
+					 CpmlPath	*segment);
 
 
 G_DEFINE_TYPE (AdgArrowStyle, adg_arrow_style, ADG_TYPE_STYLE)
@@ -287,7 +290,8 @@ dot_renderer (AdgArrowStyle *arrow_style,
 	      cairo_t       *cr,
 	      CpmlPath      *segment)
 {
-  ADG_STUB ();
+  draw_circle (cr, arrow_style, segment);
+  cairo_fill (cr);
 }
 
 static void
@@ -295,7 +299,8 @@ circle_renderer (AdgArrowStyle *arrow_style,
 		 cairo_t       *cr,
 		 CpmlPath      *segment)
 {
-  ADG_STUB ();
+  draw_circle (cr, arrow_style, segment);
+  cairo_stroke (cr);
 }
 
 static void
@@ -368,4 +373,17 @@ draw_triangle (cairo_t       *cr,
     default:
       g_assert_not_reached ();
     }
+}
+
+static void
+draw_circle (cairo_t       *cr,
+	     AdgArrowStyle *arrow_style,
+	     CpmlPath      *segment)
+{
+  double radius = arrow_style->priv->size / 2.;
+  double dummy = 0.;
+
+  cairo_device_to_user_distance (cr, &radius, &dummy);
+  cairo_new_path (cr);
+  cairo_arc (cr, segment->org.x, segment->org.y, radius, 0., M_PI);
 }
