@@ -90,13 +90,6 @@ AdgPair *               adg_pair_projection             (AdgPair        *pair,
                                                          const AdgPair  *pair2,
                                                          const AdgVector*vector2);
 
-AdgVector *             adg_vector_set_with_pair        (AdgVector      *vector,
-                                                         const AdgPair  *pair);
-AdgVector *             adg_vector_set_with_angle       (AdgVector      *vector,
-                                                         double          angle);
-
-AdgVector *             adg_vector_normal               (AdgVector      *vector);
-
 G_END_DECLS
 
 

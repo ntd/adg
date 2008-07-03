@@ -21,6 +21,12 @@
 #define __CPML_PAIR_H__
 
 #include <cairo.h>
+#include <math.h>
+
+#define CPML_DIR_RIGHT   0.
+#define CPML_DIR_DOWN    (M_PI/2.)
+#define CPML_DIR_LEFT    M_PI
+#define CPML_DIR_UP      (M_PI*3./2.)
 
 
 CAIRO_BEGIN_DECLS
@@ -44,6 +50,12 @@ cairo_bool_t
 cpml_pair_square_distance	(const CpmlPair		*from,
 				 const CpmlPair		*to,
 				 double			*distance);
+cairo_bool_t
+cpml_vector_from_pair		(CpmlPair		*vector,
+				 const CpmlPair		*pair);
+cairo_bool_t
+cpml_vector_from_angle		(CpmlPair		*vector,
+				 double			 angle);
 
 
 CAIRO_END_DECLS

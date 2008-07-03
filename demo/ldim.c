@@ -25,10 +25,10 @@ main (gint argc, gchar **argv)
   g_containerable_add (G_CONTAINERABLE (canvas), G_CHILDABLE (entity));
 
   /* Add the north quotes */
-  entity = adg_ldim_new_full_explicit (2., -10., 8., -10., ADG_DIR_UP, 0.0, -10.);
+  entity = adg_ldim_new_full_explicit (2., -10., 8., -10., CPML_DIR_UP, 0.0, -10.);
   g_containerable_add (G_CONTAINERABLE (canvas), G_CHILDABLE (entity));
 
-  entity = adg_ldim_new_full_explicit (0., -5., 10., -5., ADG_DIR_UP, 0.0, -10.);
+  entity = adg_ldim_new_full_explicit (0., -5., 10., -5., CPML_DIR_UP, 0.0, -10.);
   adg_dim_set_level (ADG_DIM (entity), 2);
   g_containerable_add (G_CONTAINERABLE (canvas), G_CHILDABLE (entity));
 

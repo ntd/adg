@@ -78,7 +78,7 @@ adg_adim_class_init (AdgADimClass *klass)
   param = g_param_spec_double ("direction",
 			       P_("Direction"),
 			       P_("The inclination angle of the extension lines"),
-			       -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+			       -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
 			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
 

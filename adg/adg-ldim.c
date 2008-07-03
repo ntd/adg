@@ -89,7 +89,7 @@ adg_ldim_class_init (AdgLDimClass *klass)
   param = g_param_spec_double ("direction",
 			       P_("Direction"),
 			       P_("The inclination angle of the extension lines"),
-			       -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+			       -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
 			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
 }
@@ -100,7 +100,7 @@ adg_ldim_init (AdgLDim *ldim)
   AdgLDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (ldim, ADG_TYPE_LDIM,
 						      AdgLDimPrivate);
 
-  priv->direction = ADG_DIR_RIGHT;
+  priv->direction = CPML_DIR_RIGHT;
 
   priv->extension1.status = CAIRO_STATUS_SUCCESS;
   priv->extension1.data = NULL;
@@ -177,7 +177,7 @@ update (AdgEntity *entity)
   AdgDim            *dim;
   AdgLDim           *ldim;
   AdgMatrix          device2user;
-  AdgVector          vector;
+  CpmlPair           vector;
   AdgPair            offset;
   AdgPair            from1, to1;
   AdgPair            from2, to2;
@@ -199,7 +199,7 @@ update (AdgEntity *entity)
   g_return_if_fail (cairo_matrix_invert (&device2user) == CAIRO_STATUS_SUCCESS);
 
   /* Set vector to the direction where ldim will extend */
-  adg_vector_set_with_angle (&vector, ldim->priv->direction);
+  cpml_vector_from_angle (&vector, ldim->priv->direction);
 
   /* Calculate from1 and from2*/
   cpml_pair_copy (&offset, &vector);
@@ -236,7 +236,7 @@ update (AdgEntity *entity)
   /* Set vector to the director of the baseline */
   cpml_pair_copy (&offset, &arrow2);
   adg_pair_sub (&offset, &arrow1);
-  adg_vector_set_with_pair (&vector, &offset);
+  cpml_vector_from_pair (&vector, &offset);
 
   /* Update the AdgDim cache contents */
   cpml_pair_copy (&dim->priv->quote_org, &arrow1);
@@ -465,10 +465,10 @@ void
 adg_ldim_set_pos (AdgLDim       *ldim,
                   const AdgPair *pos)
 {
-  AdgDim   *dim;
-  GObject  *object;
-  AdgVector extension_vector;
-  AdgVector baseline_vector;
+  AdgDim  *dim;
+  GObject *object;
+  CpmlPair extension_vector;
+  CpmlPair baseline_vector;
 
   g_return_if_fail (ADG_IS_LDIM (ldim));
   g_return_if_fail (adg_pair_is_set (pos));
@@ -482,9 +482,10 @@ adg_ldim_set_pos (AdgLDim       *ldim,
 
   cpml_pair_copy (&dim->priv->pos1, &dim->priv->ref1);
   cpml_pair_copy (&dim->priv->pos2, &dim->priv->ref2);
-  adg_vector_set_with_angle (&extension_vector, ldim->priv->direction);
-  cpml_pair_copy (&baseline_vector, &extension_vector);
-  adg_vector_normal (&baseline_vector);
+  cpml_vector_from_angle (&extension_vector, ldim->priv->direction);
+
+  baseline_vector.x = -extension_vector.y;
+  baseline_vector.y = extension_vector.x;
 
   adg_pair_intersection (&dim->priv->pos1, &extension_vector, pos, &baseline_vector);
   adg_pair_intersection (&dim->priv->pos2, &extension_vector, pos, &baseline_vector);

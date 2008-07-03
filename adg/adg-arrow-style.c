@@ -332,34 +332,35 @@ draw_triangle (cairo_t       *cr,
 	       AdgArrowStyle *arrow_style,
 	       CpmlPath      *segment)
 {
-  double    length;
-  double    height_2;
-  AdgPair   tail;
-  AdgPair   tail1, tail2;
+  double   length, height_2;
+  double   tmp;
+  CpmlPair tail, tail1, tail2;
   CpmlPair vector;
 
   length = arrow_style->priv->size;
   height_2 = tan (arrow_style->priv->angle / 2.0) * length;
+  cairo_device_to_user_distance (cr, &length, &height_2);
 
   switch (segment->cairo_path.data[0].header.type)
     {
     case CAIRO_PATH_LINE_TO:
-      cpml_primitive_get_pair (segment, &vector, 1);
+      cpml_primitive_get_pair (segment, &vector, CPML_FIRST);
       vector.x -= segment->org.x;
       vector.y -= segment->org.y;
-      adg_vector_set_with_pair (&vector, &vector);
+      cpml_vector_from_pair (&vector, &vector);
 
-      cpml_pair_copy (&tail, &vector);
-      adg_pair_scale (&tail, length);
-      cairo_device_to_user_distance (cr, &tail.x, &tail.y);
-      adg_pair_add (&tail, &segment->org);
+      tail.x = vector.x*length + segment->org.x;
+      tail.y = vector.y*length + segment->org.y;
 
-      adg_pair_scale (adg_vector_normal (&vector), height_2);
-      cairo_device_to_user_distance (cr, &vector.x, &vector.y);
-      cpml_pair_copy (&tail1, &tail);
-      adg_pair_add (&tail1, &vector);
-      cpml_pair_copy (&tail2, &tail);
-      adg_pair_sub (&tail2, &vector);
+      tmp = vector.x;
+      vector.x = -vector.y*height_2;
+      vector.y = tmp*height_2;
+
+      tail1.x = tail.x+vector.x;
+      tail1.y = tail.y+vector.y;
+
+      tail2.x = tail.x-vector.x;
+      tail2.y = tail.y-vector.y;
 
       cairo_move_to (cr, segment->org.x, segment->org.y);
       cairo_line_to (cr, tail1.x, tail1.y);

@@ -57,12 +57,6 @@ gboolean                adg_isnan                       (double          value);
 #endif /* NAN */
 
 
-#define ADG_DIR_NONE    ADG_NAN
-#define ADG_DIR_RIGHT   0.0
-#define ADG_DIR_UP      (3.0 * G_PI_2)
-#define ADG_DIR_LEFT    G_PI
-#define ADG_DIR_DOWN    G_PI_2
-
 
 gboolean                adg_cairo_path_data_start_point (cairo_path_data_t
                                                                         *path_data,

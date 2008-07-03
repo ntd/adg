@@ -110,7 +110,7 @@ adg_pair_set_explicit (AdgPair *pair,
  * @pair: an #AdgPair or #AdgVector structure
  *
  * Gets the angle (in radians) of the line passing throught @pair and the
- * origin. If @pair is the origin, the function returns #ADG_DIR_RIGHT.
+ * origin. If @pair is the origin, the function returns #CPML_DIR_RIGHT.
  *
  * Return value: requested angle in radians (between 0 and 2pi)
  *               or #ADG_NAN on errors
@@ -129,9 +129,9 @@ adg_pair_get_angle (const AdgPair *pair)
     angle = cached_angle;
   /* Catch common cases */
   else if (pair->y == 0.0)
-    angle = pair->x >= 0.0 ? ADG_DIR_RIGHT : ADG_DIR_LEFT;
+    angle = pair->x >= 0.0 ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
   else if (pair->x == 0.0)
-    angle = pair->y > 0.0 ? ADG_DIR_UP : ADG_DIR_DOWN;
+    angle = pair->y > 0.0 ? CPML_DIR_UP : CPML_DIR_DOWN;
   else if (pair->x == pair->y)
     angle = pair->x > 0.0 ? G_PI_4 : 5.0 * G_PI_4;
   else if (pair->x == -pair->y)
@@ -370,124 +370,14 @@ adg_pair_projection (AdgPair         *pair,
                      const AdgPair   *pair2,
                      const AdgVector *vector2)
 {
-  AdgVector vector;
+  AdgVector      vector;
+  cairo_matrix_t matrix;
 
   g_return_val_if_fail (adg_pair_is_set (vector2), pair);
 
+  cairo_matrix_init_rotate (&matrix, M_PI/2.);
   cpml_pair_copy (&vector, vector2);
-  adg_vector_normal (&vector);
+  cairo_matrix_transform_distance (&matrix, &vector.x, &vector.y);
 
   return adg_pair_intersection (pair, &vector, pair2, vector2);
-}
-
-
-/**
- * adg_vector_set_with_pair:
- * @vector: an #AdgVector structure
- * @pair: an #AdgPair structure
- *
- * Unitizes @pair, that is given the line L passing throught the origin and
- * @pair, gets the coordinate of the point on this line far 1.0 from
- * the origin, and store the result in @vector.
- *
- * Return value: @vector
- */
-AdgVector *
-adg_vector_set_with_pair (AdgVector     *vector,
-                          const AdgPair *pair)
-{
-  double length;
-
-  g_return_val_if_fail (adg_pair_is_set (pair), vector);
-  g_return_val_if_fail (cpml_pair_distance (pair, NULL, &length), vector);
-  g_return_val_if_fail (length != 0.0, vector);
-
-  vector->x = pair->x / length;
-  vector->y = pair->y / length;
-
-  return vector;
-}
-
-/**
- * adg_vector_set_with_angle:
- * @vector: an #AdgVector structure
- * @angle: angle of direction, in radians
- *
- * Calculates the coordinates of the point far 1.0 from the origin in the
- * @angle direction. The result is stored in @vector.
- *
- * Return value: @vector
- */
-AdgVector *
-adg_vector_set_with_angle (AdgVector *vector,
-                           double     angle)
-{
-  static double  cached_angle = 0.0;
-  static AdgVector cached_vector = { 1.0, 0.0 };
-
-  g_return_val_if_fail (adg_pair_is_set (vector), vector);
-  g_return_val_if_fail (! adg_isnan (angle), vector);
-
-  /* Check for cached result */
-  if (angle == cached_angle)
-    {
-      vector->x = cached_vector.x;
-      vector->y = cached_vector.y;
-    }
-  /* Catch common cases */
-  else if (angle == ADG_DIR_RIGHT)
-    {
-      vector->x = +1.0;
-      vector->y =  0.0;
-    }
-  else if (angle == ADG_DIR_UP)
-    {
-      vector->x =  0.0;
-      vector->y = -1.0;
-    }
-  else if (angle == ADG_DIR_LEFT)
-    {
-      vector->x = -1.0;
-      vector->y =  0.0;
-    }
-  else if (angle == ADG_DIR_DOWN)
-    {
-      vector->x =  0.0;
-      vector->y = +1.0;
-    }
-  /* Grab other cases */
-  else
-    {
-      vector->x = cos (angle);
-      vector->y = sin (angle);
-
-      /* Cache registration */
-      cached_vector = *vector;
-      cached_angle = angle;
-    }
-
-  return vector;
-}
-
-
-/**
- * adg_vector_normal:
- * @vector: an #AdgVector structure
- *
- * Changes @vector to the normal vector of the original one.
- *
- * Return value: @vector
- */
-AdgVector *
-adg_vector_normal (AdgVector *vector)
-{
-  double tmp;
-
-  g_return_val_if_fail (adg_pair_is_set (vector), vector);
-
-  tmp = vector->x;
-  vector->x = -vector->y;
-  vector->y = tmp;
-
-  return vector;
 }

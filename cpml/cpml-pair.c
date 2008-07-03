@@ -50,7 +50,6 @@
 #include "cpml-pair.h"
 
 #include <stdlib.h>
-#include <math.h>
 
 
 static CpmlPair fallback_pair = {0., 0.};
@@ -114,8 +113,6 @@ cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
 {
 	double x, y;
 
-	if (distance == NULL)
-		return 0;
 	if (from == NULL)
 		from = &fallback_pair;
 	if (to == NULL)
@@ -124,5 +121,75 @@ cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
 	x = to->x - from->x;
 	y = to->y - from->y;
 	*distance = x*x + y*y;
+	return 1;
+}
+
+/**
+ * cpml_vector_from_pair:
+ * @vector: an allocated #CpmlPair struct
+ * @pair: the source pair
+ *
+ * Unitizes @pair, that is given the line L passing throught the origin and
+ * @pair, gets the coordinate of the point on this line far 1.0 from
+ * the origin, and store the result in @vector.
+ *
+ * @pair and @vector can be the same struct.
+ *
+ * Return value: 1 if @vector was properly set, 0 on errors
+ */
+cairo_bool_t
+cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair)
+{
+	double length;
+
+	if (!cpml_pair_distance(pair, NULL, &length) || length == 0.)
+		return 0;
+
+	vector->x = pair->x/length;
+	vector->y = pair->y/length;
+	return 1;
+}
+
+/**
+ * cpml_vector_from_angle:
+ * @vector: an allocated #CpmlPair struct
+ * @angle: angle of direction, in radians
+ *
+ * Calculates the coordinates of the point far 1.0 from the origin in the
+ * @angle direction. The result is stored in @vector.
+ *
+ * Return value: 1 if @vector was properly set, 0 on errors
+ */
+cairo_bool_t
+cpml_vector_from_angle(CpmlPair *vector, double angle)
+{
+	static double cached_angle = 0.;
+	static CpmlPair cached_vector = { 1., 0. };
+
+	/* Check for cached result */
+	if (angle == cached_angle) {
+		vector->x = cached_vector.x;
+		vector->y = cached_vector.y;
+	} else if (angle == CPML_DIR_RIGHT) {
+		vector->x = +1.;
+		vector->y =  0.;
+	} else if (angle == CPML_DIR_UP) {
+		vector->x =  0.;
+		vector->y = -1.;
+	} else if (angle == CPML_DIR_LEFT) {
+		vector->x = -1.;
+		vector->y =  0.;
+	} else if (angle == CPML_DIR_DOWN) {
+		vector->x =  0.;
+		vector->y = +1.;
+	} else {
+		vector->x = cos(angle);
+		vector->y = sin(angle);
+
+		/* Cache registration */
+		cached_vector = *vector;
+		cached_angle = angle;
+	}
+
 	return 1;
 }
