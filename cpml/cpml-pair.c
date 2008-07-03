@@ -26,7 +26,7 @@
  * The CpmlPair is a generic 2D structure. It can be used to represent points,
  * sizes, offsets or whatever have two components.
  *
- * The name comes from MetaPost.
+ * The name comes from MetaFont.
  */
 
 /**
@@ -49,6 +49,12 @@
 
 #include "cpml-pair.h"
 
+#include <stdlib.h>
+#include <math.h>
+
+
+static CpmlPair fallback_pair = {0., 0.};
+
 
 /**
  * cpml_pair_copy:
@@ -60,10 +66,63 @@
  * Return value: 1 if @pair was set, 0 on errors
  */
 cairo_bool_t
-cpml_pair_copy(CpmlPair       *pair,
-	       const CpmlPair *src)
+cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
 	pair->x = src->x;
 	pair->y = src->y;
+	return 1;
+}
+
+/**
+ * cpml_pair_distance:
+ * @from: the first #CpmlPair struct
+ * @to: the second #CpmlPair struct
+ * @distance: where to store the result
+ *
+ * Gets the distance between @from and @to, storing the result in @distance.
+ * If you need this value only for comparation purpose, you could use
+ * cpm_pair_squared_distance() instead that is a lot faster, since no square
+ * root operation is involved.
+ *
+ * Return value: 1 if @distance was properly set, 0 on errors
+ */
+cairo_bool_t
+cpml_pair_distance(const CpmlPair *from, const CpmlPair *to, double *distance)
+{
+	if (!cpml_pair_square_distance(from, to, distance))
+		return 0;
+
+	*distance = sqrt(*distance);
+	return 1;
+}
+
+/**
+ * cpml_pair_square_distance:
+ * @from: the first #CpmlPair struct
+ * @to: the second #CpmlPair struct
+ * @distance: where to store the result
+ *
+ * Gets the square distance between @from and @to, storing the result in
+ * @distance. This value is useful for comparation purpose: if you need to
+ * get the real distance, use cpml_pair_distance().
+ *
+ * Return value: 1 if @distance was properly set, 0 on errors
+ */
+cairo_bool_t
+cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
+			  double *distance)
+{
+	double x, y;
+
+	if (distance == NULL)
+		return 0;
+	if (from == NULL)
+		from = &fallback_pair;
+	if (to == NULL)
+		to = &fallback_pair;
+
+	x = to->x - from->x;
+	y = to->y - from->y;
+	*distance = x*x + y*y;
 	return 1;
 }

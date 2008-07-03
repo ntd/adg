@@ -106,45 +106,6 @@ adg_pair_set_explicit (AdgPair *pair,
 
 
 /**
- * adg_pair_get_squared_length:
- * @pair: an #AdgPair structure
- *
- * Returns the square distance between @pair and the origin. It is a lot
- * faster than compute the real length, because no square root operation
- * is performed. This function is useful if you need to compare lengths but
- * the result does not matter.
- *
- * To get the real length, use adg_pair_get_length().
- *
- * Return value: the square of the length of @pair or #ADG_NAN on errors
- */
-double
-adg_pair_get_squared_length (const AdgPair *pair)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), ADG_NAN);
-
-  return pair->x * pair->x + pair->y * pair->y;
-}
-
-/**
- * adg_pair_get_length:
- * @pair: an #AdgPair structure
- *
- * Gets the distance between @pair and the origin. If you need the length
- * only for comparation purpose, adg_pair_get_squared_length() is a lot faster,
- * since no square root operations are performed.
- *
- * Return value: the length of @pair or #ADG_NAN on errors
- */
-double
-adg_pair_get_length (const AdgPair *pair)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), ADG_NAN);
-
-  return sqrt (pair->x * pair->x + pair->y * pair->y);
-}
-
-/**
  * adg_pair_get_angle:
  * @pair: an #AdgPair or #AdgVector structure
  *
@@ -438,9 +399,7 @@ adg_vector_set_with_pair (AdgVector     *vector,
   double length;
 
   g_return_val_if_fail (adg_pair_is_set (pair), vector);
-  
-  length = adg_pair_get_length (pair);
-
+  g_return_val_if_fail (cpml_pair_distance (pair, NULL, &length), vector);
   g_return_val_if_fail (length != 0.0, vector);
 
   vector->x = pair->x / length;

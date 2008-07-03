@@ -64,9 +64,6 @@ AdgPair *               adg_pair_set_explicit           (AdgPair        *pair,
                                                          double          x,
                                                          double          y);
 
-double                  adg_pair_get_squared_length     (const AdgPair  *pair);
-double                  adg_pair_get_length             (const AdgPair  *pair);
-
 double                  adg_pair_get_angle              (const AdgPair  *pair);
 
 AdgPair *               adg_pair_add                    (AdgPair        *pair,

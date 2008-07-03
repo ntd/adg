@@ -25,20 +25,25 @@
 
 CAIRO_BEGIN_DECLS
 
-/* Forward declarations */
 
 typedef struct _CpmlPair	CpmlPair;
-typedef CpmlPair		CpmlVector;
 
 struct _CpmlPair {
 	double			x, y;
 };
 
 
-
 cairo_bool_t
 cpml_pair_copy			(CpmlPair		*pair,
 				 const CpmlPair		*src);
+cairo_bool_t
+cpml_pair_distance		(const CpmlPair		*from,
+				 const CpmlPair		*to,
+				 double			*distance);
+cairo_bool_t
+cpml_pair_square_distance	(const CpmlPair		*from,
+				 const CpmlPair		*to,
+				 double			*distance);
 
 
 CAIRO_END_DECLS

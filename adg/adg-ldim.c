@@ -360,11 +360,10 @@ render (AdgEntity *entity,
 static gchar *
 default_label (AdgDim *dim)
 {
-  AdgPair delta;
-  double  measure;
+  double measure;
 
-  cpml_pair_copy (&delta, &dim->priv->pos2);
-  measure = adg_pair_get_length (adg_pair_sub (&delta, &dim->priv->pos1));
+  if (!cpml_pair_distance(&dim->priv->pos2, &dim->priv->pos1, &measure))
+    return NULL;
 
   return g_strdup_printf (dim->priv->dim_style->measure_format, measure);
 }
