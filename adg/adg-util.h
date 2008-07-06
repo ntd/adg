@@ -43,17 +43,6 @@ G_BEGIN_DECLS
 #define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
 
 
-gboolean                adg_cairo_path_data_start_point (cairo_path_data_t
-                                                                        *path_data,
-                                                         double         *p_x,
-                                                         double         *p_y);
-gboolean                adg_cairo_path_data_end_point   (cairo_path_data_t
-                                                                        *path_data,
-                                                         double         *p_x,
-                                                         double         *p_y);
-cairo_path_data_t *     adg_cairo_path_tail             (cairo_path_t   *path);
-
-
 G_END_DECLS
 
 

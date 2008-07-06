@@ -52,8 +52,7 @@ adg_c_sources=			adg-adim.c \
 				adg-model.c \
 				adg-pair.c \
 				adg-path.c \
-				adg-style.c \
-				adg-util.c
+				adg-style.c
 adg_built_c_sources=		adg-type-builtins.c
 
 # targets
