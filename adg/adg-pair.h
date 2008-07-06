@@ -54,7 +54,6 @@ G_BEGIN_DECLS
 
 
 typedef CpmlPair AdgPair;
-typedef CpmlPair AdgVector;
 
 
 GType                   adg_pair_get_type               (void) G_GNUC_CONST;

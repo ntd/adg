@@ -37,16 +37,6 @@
  * A generic 2D structure.
  */
 
-/**
- * AdgVector:
- * @x: the x component of the vector
- * @y: the y component of the vector
- *
- * A subclass of an #AdgPair. A vector represents the coordinates of a point
- * distant 1 from the origin. The vectors are useful to define a direction
- * instead of angles and are better suited to simplify interpolations.
- */
-
 #include "adg-pair.h"
 #include "adg-util.h"
 
