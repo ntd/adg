@@ -359,7 +359,8 @@ label_layout (AdgDim  *dim,
 
   cairo_text_extents (cr, dim->priv->label, &extents);
   cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-  adg_pair_set_explicit (&cp, extents.width, -extents.height / 2.0);
+  cp.x = extents.width;
+  cp.y = -extents.height / 2.;
 
   /* Compute the tolerances */
   if (dim->priv->tolerance_up != NULL || dim->priv->tolerance_down != NULL)
@@ -378,9 +379,8 @@ label_layout (AdgDim  *dim,
         {
           cairo_text_extents (cr, dim->priv->tolerance_up, &extents);
           cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-          adg_pair_set_explicit (&dim->priv->tolerance_up_offset,
-                                 cp.x,
-                                 cp.y + offset.y - midspacing);
+	  dim->priv->tolerance_up_offset.x = cp.x;
+	  dim->priv->tolerance_up_offset.y = cp.y + offset.y - midspacing;
           width = extents.width;
         }
 
@@ -388,9 +388,9 @@ label_layout (AdgDim  *dim,
         {
           cairo_text_extents (cr, dim->priv->tolerance_down, &extents);
           cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-          adg_pair_set_explicit (&dim->priv->tolerance_down_offset,
-                                 cp.x,
-                                 cp.y + offset.y + midspacing + extents.height);
+	  dim->priv->tolerance_down_offset.x = cp.x;
+	  dim->priv->tolerance_down_offset.y = cp.y + offset.y + midspacing + extents.height;
+                                 
           if (extents.width > width)
             width = extents.width;
         }
@@ -408,9 +408,8 @@ label_layout (AdgDim  *dim,
 
       cairo_text_extents (cr, dim->priv->note, &extents);
       cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-      adg_pair_set_explicit (&dim->priv->note_offset,
-                             cp.x,
-                             cp.y + offset.y + extents.height / 2.0);
+      dim->priv->note_offset.x = cp.x;
+      dim->priv->note_offset.y = cp.y + offset.y + extents.height / 2.;
 
       cp.x += extents.width;
     }
@@ -422,13 +421,22 @@ label_layout (AdgDim  *dim,
   cpml_pair_copy (&dim->priv->quote_offset, &offset);
 
   if (adg_pair_is_set (&dim->priv->tolerance_up_offset))
-    adg_pair_add (&dim->priv->tolerance_up_offset, &offset);
+    {
+      dim->priv->tolerance_up_offset.x += offset.x;
+      dim->priv->tolerance_up_offset.y += offset.y;
+    }
 
   if (adg_pair_is_set (&dim->priv->tolerance_down_offset))
-    adg_pair_add (&dim->priv->tolerance_down_offset, &offset);
+    {
+      dim->priv->tolerance_down_offset.x += offset.x;
+      dim->priv->tolerance_down_offset.y += offset.y;
+    }
 
   if (adg_pair_is_set (&dim->priv->note_offset))
-    adg_pair_add (&dim->priv->note_offset, &offset);
+    {
+      dim->priv->note_offset.x += offset.x;
+      dim->priv->note_offset.y += offset.y;
+    }
 }
 
 

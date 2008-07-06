@@ -38,7 +38,7 @@ G_BEGIN_DECLS
  * Unsets @pair, so its content is no more valid. Use adg_pair_is_set() to
  * check if the pair is valid.
  */
-#define adg_pair_unset(pair)    adg_pair_set_explicit ((pair), ADG_NAN, ADG_NAN)
+#define adg_pair_unset(pair)    (pair)->x = (pair)->y = ADG_NAN
 
 /**
  * adg_pair_is_set:
@@ -58,30 +58,12 @@ typedef CpmlPair AdgVector;
 
 
 GType                   adg_pair_get_type               (void) G_GNUC_CONST;
-
 AdgPair *               adg_pair_dup                    (const AdgPair  *pair);
-AdgPair *               adg_pair_set_explicit           (AdgPair        *pair,
-                                                         double          x,
-                                                         double          y);
-
 double                  adg_pair_get_angle              (const AdgPair  *pair);
-
-AdgPair *               adg_pair_add                    (AdgPair        *pair,
-                                                         const AdgPair  *pair2);
-AdgPair *               adg_pair_sub                    (AdgPair        *pair,
-                                                         const AdgPair  *pair2);
-AdgPair *               adg_pair_mul                    (AdgPair        *pair,
-                                                         const AdgPair  *pair2);
-AdgPair *               adg_pair_scale                  (AdgPair        *pair,
-                                                         double          scale);
-AdgPair *               adg_pair_mid                    (AdgPair        *pair,
-                                                         const AdgPair  *pair2);
 AdgPair *               adg_pair_transform              (AdgPair        *pair,
                                                          const AdgMatrix*matrix);
-AdgPair *               adg_pair_scale_and_transform    (AdgPair        *pair,
-                                                         double          scale,
-                                                         const AdgMatrix*matrix);
-
+AdgPair *               adg_pair_mid                    (AdgPair        *pair,
+                                                         const AdgPair  *pair2);
 AdgPair *               adg_pair_intersection           (AdgPair        *pair,
                                                          const AdgVector*vector,
                                                          const AdgPair  *pair2,

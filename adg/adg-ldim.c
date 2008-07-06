@@ -198,60 +198,59 @@ update (AdgEntity *entity)
   adg_matrix_set (&device2user, adg_entity_get_model_matrix (entity));
   g_return_if_fail (cairo_matrix_invert (&device2user) == CAIRO_STATUS_SUCCESS);
 
-  /* Set vector to the direction where ldim will extend */
+  /* Set vector to the director of the extension lines */
   cpml_vector_from_angle (&vector, ldim->priv->direction);
 
-  /* Calculate from1 and from2*/
-  cpml_pair_copy (&offset, &vector);
-  adg_pair_scale_and_transform (&offset,
-                                dim->priv->dim_style->from_offset,
-                                &device2user);
-  /* Checkpoint */
-  g_return_if_fail (adg_pair_is_set (&offset));
-  cpml_pair_copy (&from1, &offset);
-  adg_pair_add (&from1, &dim->priv->ref1);
-  cpml_pair_copy (&from2, &offset);
-  adg_pair_add (&from2, &dim->priv->ref2);
+  /* Calculate from1 and from2 */
+  offset.x = vector.x * dim->priv->dim_style->from_offset;
+  offset.y = vector.y * dim->priv->dim_style->from_offset;
+  cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
+
+  from1.x = dim->priv->ref1.x + offset.x;
+  from1.y = dim->priv->ref1.y + offset.y;
+  from2.x = dim->priv->ref2.x + offset.x;
+  from2.y = dim->priv->ref2.y + offset.y;
 
   /* Calculate arrow1 and arrow2 */
-  cpml_pair_copy (&offset, &vector);
-  adg_pair_scale_and_transform (&offset,
-                                dim->priv->level * dim->priv->dim_style->baseline_spacing,
-                                &device2user);
-  cpml_pair_copy (&arrow1, &dim->priv->pos1);
-  adg_pair_add (&arrow1, &offset);
-  cpml_pair_copy (&arrow2, &dim->priv->pos2);
-  adg_pair_add (&arrow2, &offset);
+  offset.x = vector.x * dim->priv->dim_style->baseline_spacing * dim->priv->level;
+  offset.y = vector.y * dim->priv->dim_style->baseline_spacing * dim->priv->level;
+  cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
+
+  arrow1.x = dim->priv->pos1.x + offset.x;
+  arrow1.y = dim->priv->pos1.y + offset.y;
+  arrow2.x = dim->priv->pos2.x + offset.x;
+  arrow2.y = dim->priv->pos2.y + offset.y;
 
   /* Calculate to1 and to2 */
-  cpml_pair_copy (&offset, &vector);
-  adg_pair_scale_and_transform (&offset,
-                                dim->priv->dim_style->to_offset,
-                                &device2user);
-  cpml_pair_copy (&to1, &arrow1);
-  adg_pair_add (&to1, &offset);
-  cpml_pair_copy (&to2, &arrow2);
-  adg_pair_add (&to2, &offset);
+  offset.x = vector.x * dim->priv->dim_style->to_offset;
+  offset.y = vector.y * dim->priv->dim_style->to_offset;
+  cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
+
+  to1.x = arrow1.x + offset.x;
+  to1.y = arrow1.y + offset.y;
+  to2.x = arrow2.x + offset.x;
+  to2.y = arrow2.y + offset.y;
 
   /* Set vector to the director of the baseline */
-  cpml_pair_copy (&offset, &arrow2);
-  adg_pair_sub (&offset, &arrow1);
+  offset.x = arrow2.x - arrow1.x;
+  offset.y = arrow2.y - arrow1.y;
   cpml_vector_from_pair (&vector, &offset);
 
   /* Update the AdgDim cache contents */
-  cpml_pair_copy (&dim->priv->quote_org, &arrow1);
-  adg_pair_mid (&dim->priv->quote_org, &arrow2);
+  dim->priv->quote_org.x = (arrow1.x + arrow2.x) / 2.;
+  dim->priv->quote_org.y = (arrow1.y + arrow2.y) / 2.;
   dim->priv->quote_angle = adg_pair_get_angle (&vector);
 
   /* Calculate baseline1 and baseline2 */
-  /* TODO
-  adg_pair_scale_and_transform (adg_pair_set (&offset, &vector),
-                                dim->priv->dim_style->arrow_style->margin,
-                                &device2user);*/
-  cpml_pair_copy (&baseline1, &arrow1);
-  adg_pair_add (&baseline1, &offset);
-  cpml_pair_copy (&baseline2, &arrow2);
-  adg_pair_sub (&baseline2, &offset);
+  g_object_get (dim->priv->dim_style->arrow_style, "margin", &offset.y, NULL);
+  offset.x = vector.x * offset.y;
+  offset.y *= vector.y;
+  cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
+
+  baseline1.x = arrow1.x + offset.x;
+  baseline1.y = arrow1.y + offset.y;
+  baseline2.x = arrow2.x - offset.x;
+  baseline2.y = arrow2.y - offset.y;
 
   /* Set extension1 */
   if (ldim->priv->extension1.data == NULL)

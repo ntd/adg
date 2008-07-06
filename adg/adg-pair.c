@@ -82,30 +82,6 @@ adg_pair_dup (const AdgPair *pair)
 }
 
 /**
- * adg_pair_set_explicit:
- * @pair: an #AdgPair structure
- * @x: x component
- * @y: y component
- *
- * Sets the @pair content to (@x,@y).
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_set_explicit (AdgPair *pair,
-                       double   x,
-                       double   y)
-{
-  g_return_val_if_fail (pair != NULL, pair);
-
-  pair->x = x;
-  pair->y = y;
-
-  return pair;
-}
-
-
-/**
  * adg_pair_get_angle:
  * @pair: an #AdgPair or #AdgVector structure
  *
@@ -154,96 +130,6 @@ adg_pair_get_angle (const AdgPair *pair)
   return angle;
 }
 
-
-/**
- * adg_pair_add:
- * @pair: an #AdgPair structure
- * @pair2: the #AdgPair to add
- *
- * Adds @pair2 to @pair and store the result in @pair.
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_add (AdgPair       *pair,
-              const AdgPair *pair2)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (adg_pair_is_set (pair2), pair);
-
-  pair->x += pair2->x;
-  pair->y += pair2->y;
-
-  return pair;
-}
-
-/**
- * adg_pair_sub:
- * @pair: an #AdgPair structure
- * @pair2: the #AdgPair to subtract
- *
- * Subtracts @pair2 from @pair and store the result in @pair.
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_sub (AdgPair       *pair,
-              const AdgPair *pair2)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (adg_pair_is_set (pair2), pair);
-
-  pair->x -= pair2->x;
-  pair->y -= pair2->y;
-
-  return pair;
-}
-
-/**
- * adg_pair_mul:
- * @pair: an #AdgPair structure
- * @pair2: the #AdgPair factor
- *
- * Multiplies @pair per @pair2 and store the result in @pair.
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_mul (AdgPair       *pair,
-              const AdgPair *pair2)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (adg_pair_is_set (pair2), pair);
-
-  pair->x *= pair2->x;
-  pair->y *= pair2->y;
-
-  return pair;
-}
-
-/**
- * adg_pair_scale:
- * @pair: an #AdgPair structure
- * @scale: a scale factor
- *
- * Scales @pair per @scale and store the result in @pair. This is rougly equal
- * to multiply @pair per (@scale,@scale).
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_scale (AdgPair *pair,
-                double   scale)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (! adg_isnan (scale), pair);
-
-  pair->x *= scale;
-  pair->y *= scale;
-
-  return pair;
-}
-
 /**
  * adg_pair_mid:
  * @pair: an #AdgPair structure
@@ -287,34 +173,6 @@ adg_pair_transform (AdgPair         *pair,
 
   return pair;
 }
-
-/**
- * adg_pair_scale_and_transform:
- * @pair: an #AdgPair structure
- * @scale: a scale factor
- * @matrix: an #AdgMatrix matrix
- *
- * A collapsed form for an often used operation. This function is equivalent to
- * adg_pair_transform (adg_pair_scale (@pair, @scale), @matrix).
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_scale_and_transform (AdgPair         *pair,
-                              double           scale,
-                              const AdgMatrix *matrix)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (! adg_isnan (scale), pair);
-  g_return_val_if_fail (matrix != NULL, pair);
-
-  pair->x *= scale;
-  pair->y *= scale;
-  cairo_matrix_transform_distance (matrix, &pair->x, &pair->y);
-
-  return pair;
-}
-
 
 /**
  * adg_pair_intersection:
