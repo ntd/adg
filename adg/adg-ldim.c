@@ -468,6 +468,7 @@ adg_ldim_set_pos (AdgLDim       *ldim,
   GObject *object;
   CpmlPair extension_vector;
   CpmlPair baseline_vector;
+  gdouble  d, k;
 
   g_return_if_fail (ADG_IS_LDIM (ldim));
   g_return_if_fail (adg_pair_is_set (pos));
@@ -479,15 +480,24 @@ adg_ldim_set_pos (AdgLDim       *ldim,
   g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
   g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
 
-  cpml_pair_copy (&dim->priv->pos1, &dim->priv->ref1);
-  cpml_pair_copy (&dim->priv->pos2, &dim->priv->ref2);
   cpml_vector_from_angle (&extension_vector, ldim->priv->direction);
 
   baseline_vector.x = -extension_vector.y;
   baseline_vector.y = extension_vector.x;
 
-  adg_pair_intersection (&dim->priv->pos1, &extension_vector, pos, &baseline_vector);
-  adg_pair_intersection (&dim->priv->pos2, &extension_vector, pos, &baseline_vector);
+  d = extension_vector.y * baseline_vector.x -
+      extension_vector.x * baseline_vector.y;
+  g_return_if_fail (d != 0.);
+
+  k = ((pos->y - dim->priv->ref1.y) * baseline_vector.x -
+       (pos->x - dim->priv->ref1.x) * baseline_vector.y) / d;
+  dim->priv->pos1.x = dim->priv->ref1.x + k*extension_vector.x;
+  dim->priv->pos1.y = dim->priv->ref1.y + k*extension_vector.y;
+
+  k = ((pos->y - dim->priv->ref2.y) * baseline_vector.x -
+       (pos->x - dim->priv->ref2.x) * baseline_vector.y) / d;
+  dim->priv->pos2.x = dim->priv->ref2.x + k*extension_vector.x;
+  dim->priv->pos2.y = dim->priv->ref2.y + k*extension_vector.y;
 
   g_object_freeze_notify (object);
   g_object_notify (object, "pos1");
