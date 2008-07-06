@@ -135,8 +135,8 @@ adg_path_init (AdgPath *path)
   priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
   priv->cairo_path.data = NULL;
   priv->cairo_path.num_data = 0;
-  priv->cp.x = ADG_NAN;
-  priv->cp.y = ADG_NAN;
+  priv->cp.x = 0.;
+  priv->cp.y = 0.;
   priv->create_func = NULL;
   priv->user_data = NULL;
 
@@ -243,8 +243,8 @@ add_portion (AdgPath               *path,
     case CAIRO_PATH_CLOSE_PATH:
       portion.header.length = 1;
       priv->portions = g_array_append_val (priv->portions, portion);
-      portion.point.x = ADG_NAN;
-      portion.point.y = ADG_NAN;
+      portion.point.x = 0.;
+      portion.point.y = 0.;
       break;
 
     case CAIRO_PATH_MOVE_TO:
@@ -329,8 +329,8 @@ adg_path_clear (AdgPath *path)
   priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
   priv->cairo_path.data = NULL;
   priv->cairo_path.num_data = 0;
-  priv->cp.x = ADG_NAN;
-  priv->cp.y = ADG_NAN;
+  priv->cp.x = 0.;
+  priv->cp.y = 0.;
 }
 
 
@@ -463,9 +463,6 @@ adg_path_get_current_point (AdgPath *path,
   g_return_val_if_fail (ADG_IS_PATH (path), FALSE);
 
   priv = path->priv;
-
-  if (adg_isnan (priv->cp.x) || adg_isnan (priv->cp.y))
-    return FALSE;
 
   if (x != NULL)
     *x = priv->cp.x;

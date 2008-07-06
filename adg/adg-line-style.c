@@ -90,7 +90,7 @@ adg_line_style_class_init (AdgLineStyleClass *klass)
   param = g_param_spec_int ("join",
 			    P_("Line Join"),
 			    P_("The line join mode"),
-			    G_MININT, G_MAXINT, CAIRO_LINE_JOIN_ROUND,
+			    G_MININT, G_MAXINT, CAIRO_LINE_JOIN_MITER,
 			    G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_JOIN, param);
 
@@ -118,10 +118,10 @@ adg_line_style_init (AdgLineStyle *line_style)
 							   ADG_TYPE_LINE_STYLE,
 							   AdgLineStylePrivate);
 
-  priv->width = ADG_NAN;
-  priv->cap = CAIRO_LINE_CAP_BUTT;
+  priv->width = 2.;
+  priv->cap = CAIRO_LINE_CAP_ROUND;
   priv->join = CAIRO_LINE_JOIN_MITER;
-  priv->miter_limit = ADG_NAN;
+  priv->miter_limit = 10.;
   priv->dashes = NULL;
   priv->num_dashes = 0;
   priv->dash_offset = 0.;
@@ -236,22 +236,19 @@ void
 adg_line_style_apply (const AdgLineStyle *line_style,
                       cairo_t            *cr)
 {
+  double device_width;
+  double dummy = 0.;
+
   g_return_if_fail (line_style != NULL);
   g_return_if_fail (cr != NULL);
 
-  if (!adg_isnan (line_style->priv->width))
-    {
-      double device_width = line_style->priv->width;
-      cairo_device_to_user_distance (cr, &device_width, &device_width);
-      cairo_set_line_width (cr, device_width);
-    }
+  device_width = line_style->priv->width;
+  cairo_device_to_user_distance (cr, &device_width, &dummy);
+  cairo_set_line_width (cr, device_width);
 
   cairo_set_line_cap (cr, line_style->priv->cap);
   cairo_set_line_join (cr, line_style->priv->join);
-
-  if (!adg_isnan (line_style->priv->miter_limit))
-    cairo_set_miter_limit (cr, line_style->priv->miter_limit);
-
+  cairo_set_miter_limit (cr, line_style->priv->miter_limit);
   cairo_set_antialias (cr, line_style->priv->antialias);
 
   if (line_style->priv->num_dashes > 0)

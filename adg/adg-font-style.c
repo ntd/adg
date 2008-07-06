@@ -142,7 +142,7 @@ adg_font_style_init (AdgFontStyle *font_style)
   priv->family = NULL;
   priv->slant = CAIRO_FONT_SLANT_NORMAL;
   priv->weight = CAIRO_FONT_WEIGHT_NORMAL;
-  priv->size = ADG_NAN;
+  priv->size = 10.;
   priv->antialias = CAIRO_ANTIALIAS_DEFAULT;
   priv->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
   priv->hint_style = CAIRO_HINT_STYLE_DEFAULT;
@@ -269,20 +269,24 @@ adg_font_style_apply (const AdgFontStyle *font_style,
                       cairo_t            *cr)
 {
   cairo_font_options_t *options;
+  cairo_matrix_t        matrix;
+  double                size;
+  cairo_matrix_t        font_matrix;
 
   g_return_if_fail (font_style != NULL);
   g_return_if_fail (cr != NULL);
 
+  cairo_get_matrix (cr, &matrix);
+  size = font_style->priv->size;
+
   if (font_style->priv->family)
     cairo_select_font_face (cr, font_style->priv->family,
 			    font_style->priv->slant, font_style->priv->weight);
-  
-  if (!adg_isnan (font_style->priv->size))
-    {
-      double font_size = font_style->priv->size;
-      cairo_device_to_user_distance (cr, &font_size, &font_size);
-      cairo_set_font_size (cr, font_size);
-    }
+
+  cairo_matrix_init_scale (&font_matrix,
+			   size / (matrix.xx - matrix.yx),
+			   size / (matrix.yy + matrix.xy));
+  cairo_set_font_matrix (cr, &font_matrix);
 
   options = cairo_font_options_create ();
 

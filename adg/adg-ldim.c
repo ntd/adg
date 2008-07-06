@@ -467,7 +467,6 @@ adg_ldim_set_pos (AdgLDim       *ldim,
   gdouble  d, k;
 
   g_return_if_fail (ADG_IS_LDIM (ldim));
-  g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   dim = (AdgDim *) ldim;
   object = (GObject *) ldim;
@@ -524,12 +523,12 @@ adg_ldim_set_pos_explicit (AdgLDim *ldim,
  *
  * Gets the direction where @ldim will extend.
  *
- * Return value: the direction angle, in radians
+ * Return value: the direction angle in radians
  */
 double
 adg_ldim_get_direction (AdgLDim *ldim)
 {
-  g_return_val_if_fail (ADG_IS_LDIM (ldim), ADG_NAN);
+  g_return_val_if_fail (ADG_IS_LDIM (ldim), 0.);
 
   return ldim->priv->direction;
 }

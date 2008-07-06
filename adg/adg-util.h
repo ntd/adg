@@ -43,21 +43,6 @@ G_BEGIN_DECLS
 #define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
 
 
-#ifdef NAN
-
-#define ADG_NAN         NAN
-#define adg_isnan(n)    ((gboolean) (isnan (n) != 0))
-
-#else /* !NAN */
-
-#define ADG_NAN         (adg_nan ())
-double                  adg_nan                         (void) G_GNUC_CONST;
-gboolean                adg_isnan                       (double          value);
-
-#endif /* NAN */
-
-
-
 gboolean                adg_cairo_path_data_start_point (cairo_path_data_t
                                                                         *path_data,
                                                          double         *p_x,

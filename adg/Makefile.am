@@ -50,7 +50,6 @@ adg_c_sources=			adg-adim.c \
 				adg-line-style.c \
 				adg-matrix.c \
 				adg-model.c \
-				adg-nan.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-style.c \

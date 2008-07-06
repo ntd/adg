@@ -311,7 +311,7 @@ static void
 invalidate (AdgDim *dim)
 {
   dim->priv->quote_org.x = dim->priv->quote_org.y = 0.;
-  dim->priv->quote_angle = ADG_NAN;
+  dim->priv->quote_angle = 0.;
   invalidate_quote (dim);
 }
 
@@ -700,7 +700,6 @@ _adg_dim_render_quote (AdgDim  *dim,
 
   g_return_if_fail (ADG_IS_DIM (dim));
   g_return_if_fail (dim->priv->dim_style != NULL);
-  g_return_if_fail (!adg_isnan (dim->priv->quote_angle));
 
   if (dim->priv->label == NULL)
     {
