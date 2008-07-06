@@ -153,28 +153,6 @@ adg_pair_mid (AdgPair       *pair,
 }
 
 /**
- * adg_pair_transform:
- * @pair: an #AdgPair structure
- * @matrix: an #AdgMatrix matrix
- *
- * Transforms @pair using the specified matrix and store the result in @pair.
- * This is merely a wrapper that calls cairo_matrix_transform_distance().
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_transform (AdgPair         *pair,
-                    const AdgMatrix *matrix)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (matrix != NULL, pair);
-
-  cairo_matrix_transform_distance (matrix, &pair->x, &pair->y);
-
-  return pair;
-}
-
-/**
  * adg_pair_intersection:
  * @pair: an #AdgPair structure
  * @vector: an #AdgVector structure

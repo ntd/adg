@@ -60,8 +60,6 @@ typedef CpmlPair AdgVector;
 GType                   adg_pair_get_type               (void) G_GNUC_CONST;
 AdgPair *               adg_pair_dup                    (const AdgPair  *pair);
 double                  adg_pair_get_angle              (const AdgPair  *pair);
-AdgPair *               adg_pair_transform              (AdgPair        *pair,
-                                                         const AdgMatrix*matrix);
 AdgPair *               adg_pair_mid                    (AdgPair        *pair,
                                                          const AdgPair  *pair2);
 AdgPair *               adg_pair_intersection           (AdgPair        *pair,
