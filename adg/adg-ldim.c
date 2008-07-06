@@ -239,7 +239,7 @@ update (AdgEntity *entity)
   /* Update the AdgDim cache contents */
   dim->priv->quote_org.x = (arrow1.x + arrow2.x) / 2.;
   dim->priv->quote_org.y = (arrow1.y + arrow2.y) / 2.;
-  dim->priv->quote_angle = adg_pair_get_angle (&vector);
+  cpml_pair_angle (NULL, &vector, &dim->priv->quote_angle);
 
   /* Calculate baseline1 and baseline2 */
   g_object_get (dim->priv->dim_style->arrow_style, "margin", &offset.y, NULL);

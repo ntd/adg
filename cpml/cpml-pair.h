@@ -51,6 +51,10 @@ cpml_pair_square_distance	(const CpmlPair		*from,
 				 const CpmlPair		*to,
 				 double			*distance);
 cairo_bool_t
+cpml_pair_angle			(const CpmlPair		*from,
+				 const CpmlPair		*to,
+				 double			*angle);
+cairo_bool_t
 cpml_vector_from_pair		(CpmlPair		*vector,
 				 const CpmlPair		*pair);
 cairo_bool_t

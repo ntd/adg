@@ -82,55 +82,6 @@ adg_pair_dup (const AdgPair *pair)
 }
 
 /**
- * adg_pair_get_angle:
- * @pair: an #AdgPair or #AdgVector structure
- *
- * Gets the angle (in radians) of the line passing throught @pair and the
- * origin. If @pair is the origin, the function returns #CPML_DIR_RIGHT.
- *
- * Return value: requested angle in radians (between 0 and 2pi)
- *               or #ADG_NAN on errors
- */
-double
-adg_pair_get_angle (const AdgPair *pair)
-{
-  static AdgPair cached_pair = { 0.0, 0.0 };
-  static double  cached_angle = 0.0;
-  double         angle;
-
-  g_return_val_if_fail (adg_pair_is_set (pair), ADG_NAN);
-
-  /* Check for cached result */
-  if (pair->x == cached_pair.x && pair->y == cached_pair.y)
-    angle = cached_angle;
-  /* Catch common cases */
-  else if (pair->y == 0.0)
-    angle = pair->x >= 0.0 ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
-  else if (pair->x == 0.0)
-    angle = pair->y > 0.0 ? CPML_DIR_UP : CPML_DIR_DOWN;
-  else if (pair->x == pair->y)
-    angle = pair->x > 0.0 ? G_PI_4 : 5.0 * G_PI_4;
-  else if (pair->x == -pair->y)
-    angle = pair->x > 0.0 ? 7.0 * G_PI_4 : 3.0 * G_PI_4;
-  /* Grab other cases: pair->x is != 0.0 because of the previous checks */
-  else
-    {
-      angle = atan (pair->y / pair->x);
-
-      if (pair->x < 0.0)
-        angle += G_PI;
-      else if (pair->y < 0.0)
-        angle += 2.0 * G_PI;
-
-      /* Cache registration */
-      cached_pair = *pair;
-      cached_angle = angle;
-    }
-
-  return angle;
-}
-
-/**
  * adg_pair_intersection:
  * @pair: an #AdgPair structure
  * @vector: an #AdgVector structure

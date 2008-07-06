@@ -83,6 +83,9 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * cpm_pair_squared_distance() instead that is a lot faster, since no square
  * root operation is involved.
  *
+ * @from or @to could be %NULL, in which case the fallback (0, 0) pair
+ * will be used.
+ *
  * Return value: 1 if @distance was properly set, 0 on errors
  */
 cairo_bool_t
@@ -105,6 +108,9 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to, double *distance)
  * @distance. This value is useful for comparation purpose: if you need to
  * get the real distance, use cpml_pair_distance().
  *
+ * @from or @to could be %NULL, in which case the fallback (0, 0) pair
+ * will be used.
+ *
  * Return value: 1 if @distance was properly set, 0 on errors
  */
 cairo_bool_t
@@ -121,6 +127,61 @@ cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
 	x = to->x - from->x;
 	y = to->y - from->y;
 	*distance = x*x + y*y;
+	return 1;
+}
+
+/**
+ * cpml_pair_angle:
+ * @from: the first #CpmlPair struct
+ * @to: the second #CpmlPair struct
+ * @angle: where to store the result
+ *
+ * Gets the angle between @from and @to, storing the result in @angle.
+ *
+ * @from or @to could be %NULL, in which case the fallback (0, 0) pair
+ * will be used.
+ *
+ * Return value: 1 if @angle was properly set, 0 on errors
+ */
+cairo_bool_t
+cpml_pair_angle(const CpmlPair *from, const CpmlPair *to, double *angle)
+{
+	static CpmlPair cached_pair = { 1., 0. };
+	static double   cached_angle = 0.;
+	CpmlPair        pair;
+
+	if (from == NULL)
+		from = &fallback_pair;
+	if (to == NULL)
+		to = &fallback_pair;
+
+	pair.x = to->x - from->x;
+	pair.y = to->y - from->y;
+
+	/* Check for cached result */
+	if (pair.x == cached_pair.x && pair.y == cached_pair.y) {
+		*angle = cached_angle;
+	} else if (pair.y == 0.) {
+		*angle = pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
+	} else if (pair.x == 0.) {
+		*angle = pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
+	} else if (pair.x == pair.y) {
+		*angle = pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
+	} else if (pair.x == -pair.y) {
+		*angle = pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
+	} else {
+		*angle = atan(pair.y / pair.x);
+
+		if (pair.x < 0.0)
+			*angle += M_PI;
+		else if (pair.y < 0.0)
+			*angle += 2.0 * M_PI;
+
+		/* Cache registration */
+		cached_angle = *angle;
+		cpml_pair_copy(&cached_pair, &pair);
+	}
+
 	return 1;
 }
 
