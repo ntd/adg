@@ -187,8 +187,8 @@ cpml_vector_from_angle(CpmlPair *vector, double angle)
 		vector->y = sin(angle);
 
 		/* Cache registration */
-		cached_vector = *vector;
 		cached_angle = angle;
+		cpml_pair_copy(&cached_vector, vector);
 	}
 
 	return 1;
