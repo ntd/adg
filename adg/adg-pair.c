@@ -76,7 +76,5 @@ adg_pair_get_type (void)
 AdgPair *
 adg_pair_dup (const AdgPair *pair)
 {
-  g_return_val_if_fail (pair != NULL, NULL);
-
   return g_memdup (pair, sizeof (AdgPair));
 }
