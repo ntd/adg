@@ -131,28 +131,6 @@ adg_pair_get_angle (const AdgPair *pair)
 }
 
 /**
- * adg_pair_mid:
- * @pair: an #AdgPair structure
- * @pair2: the second #AdgPair point
- *
- * Gets the mid pair between @pair and @pair2 and store the result in @pair.
- *
- * Return value: @pair
- */
-AdgPair *
-adg_pair_mid (AdgPair       *pair,
-              const AdgPair *pair2)
-{
-  g_return_val_if_fail (adg_pair_is_set (pair), pair);
-  g_return_val_if_fail (adg_pair_is_set (pair2), pair);
-
-  pair->x = (pair->x + pair2->x) / 2.0;
-  pair->y = (pair->y + pair2->y) / 2.0;
-
-  return pair;
-}
-
-/**
  * adg_pair_intersection:
  * @pair: an #AdgPair structure
  * @vector: an #AdgVector structure
