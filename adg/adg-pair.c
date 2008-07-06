@@ -17,24 +17,12 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:adgpair
  * @title: AdgPair
- * @short_description: A generic (x,y) structure
+ * @short_description: CpmlPair wrapper
  *
- * The AdgPair is a generic 2D structure. It can be used to represent points,
- * sizes, offsets or whatever have %x and %y components.
- *
- * The name comes from MetaPost.
- */
-
-/**
- * AdgPair:
- * @x: the x component of the pair
- * @y: the y component of the pair
- *
- * Wrapper typedef in GType syntax for the CpmlPair struct.
+ * The AdgPair is a wrapper typedef in GType syntax of the CpmlPair struct.
  */
 
 #include "adg-pair.h"
