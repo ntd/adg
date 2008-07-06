@@ -189,10 +189,6 @@ update (AdgEntity *entity)
   ldim = (AdgLDim *) entity;
 
   g_return_if_fail (dim->priv->dim_style != NULL);
-  g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
-  g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
-  g_return_if_fail (adg_pair_is_set (&dim->priv->pos1));
-  g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   /* Get the inverted transformation matrix */
   adg_matrix_set (&device2user, adg_entity_get_model_matrix (entity));
@@ -471,14 +467,10 @@ adg_ldim_set_pos (AdgLDim       *ldim,
   gdouble  d, k;
 
   g_return_if_fail (ADG_IS_LDIM (ldim));
-  g_return_if_fail (adg_pair_is_set (pos));
   g_return_if_fail (!adg_isnan (ldim->priv->direction));
 
   dim = (AdgDim *) ldim;
   object = (GObject *) ldim;
-
-  g_return_if_fail (adg_pair_is_set (&dim->priv->ref1));
-  g_return_if_fail (adg_pair_is_set (&dim->priv->ref2));
 
   cpml_vector_from_angle (&extension_vector, ldim->priv->direction);
 

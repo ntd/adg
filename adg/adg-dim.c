@@ -174,11 +174,11 @@ adg_dim_init (AdgDim *dim)
 
   priv->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
 
-  adg_pair_unset (&priv->ref1);
-  adg_pair_unset (&priv->ref2);
-  adg_pair_unset (&priv->pos1);
-  adg_pair_unset (&priv->pos2);
-  priv->level = 1.0;
+  priv->ref1.x = priv->ref1.y = 0.;
+  priv->ref2.x = priv->ref2.y = 0.;
+  priv->pos1.x = priv->pos1.y = 0.;
+  priv->pos2.x = priv->pos2.y = 0.;
+  priv->level = 1.;
   priv->label = NULL;
   priv->tolerance_up = NULL;
   priv->tolerance_down = NULL;
@@ -310,7 +310,7 @@ set_property (GObject      *object,
 static void
 invalidate (AdgDim *dim)
 {
-  adg_pair_unset (&dim->priv->quote_org);
+  dim->priv->quote_org.x = dim->priv->quote_org.y = 0.;
   dim->priv->quote_angle = ADG_NAN;
   invalidate_quote (dim);
 }
@@ -318,10 +318,10 @@ invalidate (AdgDim *dim)
 static void
 invalidate_quote (AdgDim *dim)
 {
-  adg_pair_unset (&dim->priv->quote_offset);
-  adg_pair_unset (&dim->priv->tolerance_up_offset);
-  adg_pair_unset (&dim->priv->tolerance_down_offset);
-  adg_pair_unset (&dim->priv->note_offset);
+  dim->priv->quote_offset.x = dim->priv->quote_offset.y = 0.;
+  dim->priv->tolerance_up_offset.x = dim->priv->tolerance_up_offset.y = 0.;
+  dim->priv->tolerance_down_offset.x = dim->priv->tolerance_down_offset.y = 0.;
+  dim->priv->note_offset.x = dim->priv->note_offset.y = 0.;
 }
 
 
@@ -420,23 +420,14 @@ label_layout (AdgDim  *dim,
 
   cpml_pair_copy (&dim->priv->quote_offset, &offset);
 
-  if (adg_pair_is_set (&dim->priv->tolerance_up_offset))
-    {
-      dim->priv->tolerance_up_offset.x += offset.x;
-      dim->priv->tolerance_up_offset.y += offset.y;
-    }
+  dim->priv->tolerance_up_offset.x += offset.x;
+  dim->priv->tolerance_up_offset.y += offset.y;
 
-  if (adg_pair_is_set (&dim->priv->tolerance_down_offset))
-    {
-      dim->priv->tolerance_down_offset.x += offset.x;
-      dim->priv->tolerance_down_offset.y += offset.y;
-    }
+  dim->priv->tolerance_down_offset.x += offset.x;
+  dim->priv->tolerance_down_offset.y += offset.y;
 
-  if (adg_pair_is_set (&dim->priv->note_offset))
-    {
-      dim->priv->note_offset.x += offset.x;
-      dim->priv->note_offset.y += offset.y;
-    }
+  dim->priv->note_offset.x += offset.x;
+  dim->priv->note_offset.y += offset.y;
 }
 
 
@@ -710,7 +701,6 @@ _adg_dim_render_quote (AdgDim  *dim,
   g_return_if_fail (ADG_IS_DIM (dim));
   g_return_if_fail (dim->priv->dim_style != NULL);
   g_return_if_fail (!adg_isnan (dim->priv->quote_angle));
-  g_return_if_fail (adg_pair_is_set (&dim->priv->quote_org));
 
   if (dim->priv->label == NULL)
     {
@@ -719,8 +709,7 @@ _adg_dim_render_quote (AdgDim  *dim,
       g_object_notify ((GObject *) dim, "label");
     }
 
-  if (!adg_pair_is_set (&dim->priv->quote_offset))
-    ADG_DIM_GET_CLASS (dim)->label_layout (dim, cr);
+  ADG_DIM_GET_CLASS (dim)->label_layout (dim, cr);
 
   cpml_pair_copy (&quote_offset, &dim->priv->quote_offset);
   cairo_device_to_user_distance (cr, &quote_offset.x, &quote_offset.y);

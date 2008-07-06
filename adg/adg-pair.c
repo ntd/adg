@@ -34,13 +34,10 @@
  * @x: the x component of the pair
  * @y: the y component of the pair
  *
- * A generic 2D structure.
+ * Wrapper typedef in GType syntax for the CpmlPair struct.
  */
 
 #include "adg-pair.h"
-#include "adg-util.h"
-
-#include <string.h>
 
 
 GType

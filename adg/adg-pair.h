@@ -21,8 +21,8 @@
 #ifndef __ADG_PAIR_H__
 #define __ADG_PAIR_H__
 
-#include <adg/adg-matrix.h>
 #include <cpml/cpml.h>
+#include <glib-object.h>
 
 
 G_BEGIN_DECLS
@@ -31,33 +31,11 @@ G_BEGIN_DECLS
 #define ADG_TYPE_PAIR  (adg_pair_get_type ())
 
 
-/**
- * adg_pair_unset:
- * @pair: an #AdgPair structure
- *
- * Unsets @pair, so its content is no more valid. Use adg_pair_is_set() to
- * check if the pair is valid.
- */
-#define adg_pair_unset(pair)    (pair)->x = (pair)->y = ADG_NAN
-
-/**
- * adg_pair_is_set:
- * @pair: an #AdgPair
- *
- * Checks if @pair is a valid pair. A pair is invalid when one or both its xy
- * components are equal to #ADG_NAN.
- *
- * For performance reasons, this function is implemented as a macro.
- */
-#define adg_pair_is_set(pair)                 \
-  ((pair) != NULL && !adg_isnan ((pair)->x) && !adg_isnan ((pair)->y))
-
-
 typedef CpmlPair AdgPair;
 
 
-GType                   adg_pair_get_type               (void) G_GNUC_CONST;
-AdgPair *               adg_pair_dup                    (const AdgPair  *pair);
+GType		adg_pair_get_type	(void) G_GNUC_CONST;
+AdgPair *	adg_pair_dup		(const AdgPair	*pair);
 
 
 G_END_DECLS
