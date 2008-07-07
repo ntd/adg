@@ -19,9 +19,9 @@
 
 
 /**
- * SECTION:dimstyle
+ * SECTION:dim-style
  * @title: AdgDimStyle
- * @short_description: dimension style related stuff
+ * @short_description: Dimension style related stuff
  *
  * Contains parameters on how to build dimensions such as three font styles
  * (quote, tolerance and notes), line style, offsets of the various dimension

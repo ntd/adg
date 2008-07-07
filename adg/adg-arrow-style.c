@@ -19,9 +19,9 @@
 
 
 /**
- * SECTION:arrowstyle
+ * SECTION:arrow-style
  * @title: AdgArrowStyle
- * @short_description: arrow rendering related stuff
+ * @short_description: Arrow rendering related stuff
  *
  * Contains parameters on how to draw arrows, providing a way to register a
  * custom rendering callback.

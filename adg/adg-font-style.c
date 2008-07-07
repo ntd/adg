@@ -19,9 +19,9 @@
 
 
 /**
- * SECTION:fontstyle
+ * SECTION:font-style
  * @title: AdgFontStyle
- * @short_description: font style related stuff
+ * @short_description: Font style related stuff
  *
  * Contains parameters on how to draw texts such as font family, slanting,
  * weight, hinting and so on.

@@ -20,7 +20,8 @@ IGNORE_HFILES=		adg-adim-private.h \
 			adg-intl.h \
 			adg-ldim-private.h \
 			adg-model-private.h \
-			adg-path-private.h
+			adg-path-private.h \
+			adg-type-builtins.h
 HTML_IMAGES=
 CONTENT_FILES=
 EXPAND_CONTENT_FILES=

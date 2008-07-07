@@ -19,9 +19,9 @@
 
 
 /**
- * SECTION:linestyle
+ * SECTION:line-style
  * @title: AdgLineStyle
- * @short_description: line style related stuff
+ * @short_description: Line style related stuff
  *
  * Contains parameters on how to draw lines such as width, cap mode, join mode
  * and dash composition, if used.
