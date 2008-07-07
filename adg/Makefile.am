@@ -51,6 +51,7 @@ adg_c_sources=			adg-adim.c \
 				adg-dim.c \
 				adg-dim-style.c \
 				adg-entity.c \
+				adg-enums.c \
 				adg-font-style.c \
 				adg-ldim.c \
 				adg-line-style.c \
