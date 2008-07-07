@@ -12,6 +12,7 @@ adg_h_sources=			adg.h \
 				adg-arrow-style.h \
 				adg-canvas.h \
 				adg-container.h \
+				adg-context.h \
 				adg-dim.h \
 				adg-entity.h \
 				adg-font-style.h \
@@ -28,6 +29,7 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
+				adg-context-private.h \
 				adg-dim-private.h \
 				adg-entity-private.h \
 				adg-enums.h \
@@ -43,6 +45,7 @@ adg_c_sources=			adg-adim.c \
 				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \
+				adg-context.c \
 				adg-dim.c \
 				adg-entity.c \
 				adg-font-style.c \
@@ -52,7 +55,8 @@ adg_c_sources=			adg-adim.c \
 				adg-model.c \
 				adg-pair.c \
 				adg-path.c \
-				adg-style.c
+				adg-style.c \
+				adg-util.c
 adg_built_c_sources=		adg-type-builtins.c
 
 # targets
