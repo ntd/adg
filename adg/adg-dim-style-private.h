@@ -18,39 +18,35 @@
  */
 
 
-/**
- * SECTION:pair
- * @title: AdgPair
- * @short_description: A wrapper for the CpmlPair struct
- *
- * The AdgPair is a wrapper typedef in GType syntax of the CpmlPair struct.
- */
+#ifndef __ADG_DIM_STYLE_PRIVATE_H__
+#define __ADG_DIM_STYLE_PRIVATE_H__
 
-#include "adg-pair.h"
+#include <adg/adg-style.h>
 
 
-GType
-adg_pair_get_type (void)
+G_BEGIN_DECLS
+
+
+struct _AdgDimStylePrivate
 {
-  static int pair_type = 0;
-  
-  if G_UNLIKELY (pair_type == 0)
-    pair_type = g_boxed_type_register_static ("AdgPair", (GBoxedCopyFunc) adg_pair_dup, g_free);
+  AdgStyle	*label_style;
+  AdgStyle	*tolerance_style;
+  AdgStyle	*note_style;
+  AdgStyle	*line_style;
+  AdgStyle	*arrow_style;
+  double	 from_offset;
+  double	 to_offset;
+  double	 baseline_spacing;
+  AdgPair	 quote_offset;
+  AdgPair	 tolerance_offset;
+  double	 tolerance_spacing;
+  AdgPair	 note_offset;
+  gchar		*number_format;
+  gchar		*number_tag;
+};
 
-  return pair_type;
-}
 
-/**
- * adg_pair_dup:
- * @pair: an #AdgPair structure
- *
- * Duplicates @pair.
- *
- * Return value: the duplicate of @pair: must be freed with g_free()
- *               when no longer needed.
- */
-AdgPair *
-adg_pair_dup (const AdgPair *pair)
-{
-  return g_memdup (pair, sizeof (AdgPair));
-}
+G_END_DECLS
+
+
+#endif /* __ADG_DIM_STYLE_PRIVATE_H__ */

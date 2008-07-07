@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgmodel
+ * SECTION:model
  * @title: AdgModel
  * @short_description: The data model
  *

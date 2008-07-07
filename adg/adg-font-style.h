@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 #define ADG_IS_FONT_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_FONT_STYLE))
 #define ADG_FONT_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
 
-/* AdgFontStyle declared in adg-style.h */
+typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
 typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
 

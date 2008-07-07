@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgfontstyle
+ * SECTION:fontstyle
  * @title: AdgFontStyle
  * @short_description: font style related stuff
  *

@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgcanvas
+ * SECTION:canvas
  * @title: AdgCanvas
  * @short_description: The drawing container
  *
@@ -51,29 +51,29 @@ enum
 
 
 static void	get_property	(GObject	*object,
-				 guint		 prop_id,
-				 GValue		*value,
-				 GParamSpec	*pspec);
+			       guint		 prop_id,
+			       GValue		*value,
+			       GParamSpec	*pspec);
 static void	set_property	(GObject	*object,
-				 guint		 prop_id,
-				 const GValue	*value,
-				 GParamSpec	*pspec);
+			       guint		 prop_id,
+			       const GValue	*value,
+			       GParamSpec	*pspec);
 static const AdgLineStyle *
-		get_line_style	(AdgEntity	*entity);
+	      get_line_style	(AdgEntity	*entity);
 static void	set_line_style	(AdgEntity	*entity,
-				 AdgLineStyle	*line_style);
+			       AdgLineStyle	*line_style);
 static const AdgFontStyle *
-		get_font_style	(AdgEntity	*entity);
+	      get_font_style	(AdgEntity	*entity);
 static void	set_font_style	(AdgEntity	*entity,
-				 AdgFontStyle	*font_style);
+			       AdgFontStyle	*font_style);
 static const AdgArrowStyle *
-		get_arrow_style	(AdgEntity	*entity);
+	      get_arrow_style	(AdgEntity	*entity);
 static void	set_arrow_style	(AdgEntity	*entity,
-				 AdgArrowStyle	*arrow_style);
+			       AdgArrowStyle	*arrow_style);
 static const AdgDimStyle *
-		get_dim_style	(AdgEntity	*entity);
+	      get_dim_style	(AdgEntity	*entity);
 static void	set_dim_style	(AdgEntity	*entity,
-				 AdgDimStyle	*dim_style);
+			       AdgDimStyle	*dim_style);
 
 
 G_DEFINE_TYPE (AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
@@ -104,31 +104,31 @@ adg_canvas_class_init (AdgCanvasClass *klass)
   entity_class->set_dim_style = set_dim_style;
 
   param = g_param_spec_boxed ("line-style",
-                              P_("Line Style"),
-                              P_("Fallback line style of the canvas"),
-                              ADG_TYPE_LINE_STYLE,
-                              G_PARAM_READWRITE);
+			      P_("Line Style"),
+			      P_("Fallback line style of the canvas"),
+			      ADG_TYPE_LINE_STYLE,
+			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_LINE_STYLE, param);
 
   param = g_param_spec_boxed ("font-style",
-                              P_("Font Style"),
-                              P_("Fallback font style of the canvas"),
-                              ADG_TYPE_FONT_STYLE,
-                              G_PARAM_READWRITE);
+			      P_("Font Style"),
+			      P_("Fallback font style of the canvas"),
+			      ADG_TYPE_FONT_STYLE,
+			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_FONT_STYLE, param);
 
   param = g_param_spec_boxed ("arrow-style",
-                              P_("Arrow Style"),
-                              P_("Fallback arrow style of the canvas"),
-                              ADG_TYPE_ARROW_STYLE,
-                              G_PARAM_READWRITE);
+			      P_("Arrow Style"),
+			      P_("Fallback arrow style of the canvas"),
+			      ADG_TYPE_ARROW_STYLE,
+			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_ARROW_STYLE, param);
 
   param = g_param_spec_boxed ("dim-style",
-                              P_("Dimension Style"),
-                              P_("Fallback dimension style of the canvas"),
-                              ADG_TYPE_DIM_STYLE,
-                              G_PARAM_READWRITE);
+			      P_("Dimension Style"),
+			      P_("Fallback dimension style of the canvas"),
+			      ADG_TYPE_DIM_STYLE,
+			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_DIM_STYLE, param);
 }
 
@@ -142,7 +142,7 @@ adg_canvas_init (AdgCanvas *canvas)
   priv->line_style = (AdgLineStyle *) adg_line_style_from_id (ADG_LINE_STYLE_DRAW);
   priv->font_style = (AdgFontStyle *) adg_font_style_from_id (ADG_FONT_STYLE_TEXT);
   priv->arrow_style = (AdgArrowStyle *) adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
-  priv->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
+  priv->dim_style = (AdgDimStyle *) adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
 
   canvas->priv = priv;
 }

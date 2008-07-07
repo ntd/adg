@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgentity
+ * SECTION:entity
  * @title: AdgEntity
  * @short_description: The base class for renderable objects
  *

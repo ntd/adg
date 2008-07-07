@@ -22,7 +22,10 @@
 #define __ADG_ENTITY_H__
 
 #include <adg/adg-matrix.h>
-#include <adg/adg-style.h>
+#include <adg/adg-line-style.h>
+#include <adg/adg-font-style.h>
+#include <adg/adg-arrow-style.h>
+#include <adg/adg-dim-style.h>
 
 
 G_BEGIN_DECLS

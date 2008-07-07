@@ -89,6 +89,20 @@ typedef enum
   ADG_ARROW_STYLE_LAST
 } AdgArrowStyleId;
 
+/**
+ * AdgDimStyleId:
+ * @ADG_DIM_STYLE_ISO: ISO standard
+ * @ADG_DIM_STYLE_LAST: start of user-defined styles
+ *
+ * Numeric representation of dimension styles.
+ * Some standard dimension styles are predefined.
+ */
+typedef enum
+{
+  ADG_DIM_STYLE_ISO,
+  ADG_DIM_STYLE_LAST
+} AdgDimStyleId;
+
 
 G_END_DECLS
 

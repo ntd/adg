@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgarrowstyle
+ * SECTION:arrowstyle
  * @title: AdgArrowStyle
  * @short_description: arrow rendering related stuff
  *

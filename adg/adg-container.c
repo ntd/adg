@@ -19,10 +19,9 @@
 
 
 /**
- * SECTION:adgcontainer
+ * SECTION:container
  * @title: AdgContainer
- * @short_description: base class for entity that can contain
- *                     other entities
+ * @short_description: Base class for entity that can contain other entities
  *
  * The #AdgContainer is an entity that implements the #GContainerable interface.
  * Each AdgContainer has its paper matrix (#AdgContainer:paper_matrix) to be
@@ -81,7 +80,7 @@ static void	render			(AdgEntity	*entity,
 G_DEFINE_TYPE_EXTENDED (AdgContainer, adg_container,
                         ADG_TYPE_ENTITY, 0,
                         G_IMPLEMENT_INTERFACE (G_TYPE_CONTAINERABLE,
-                                               containerable_init));
+                                               containerable_init))
 
 
 static void

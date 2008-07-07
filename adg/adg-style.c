@@ -19,8 +19,7 @@
 
 
 /**
- * SECTION:adgstyle
- * @include:adg/adg.h
+ * SECTION:style
  * @title: Styles
  * @short_description: A collection of styles to use inside the drawings
  *
@@ -173,78 +172,4 @@ set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-}
-
-
-static gpointer         adg_dim_style_copy      (gpointer src);
-static void             adg_dim_style_init      (void);
-
-static AdgDimStyle *    dim_styles = NULL;
-static gint             n_dim_styles = ADG_DIM_STYLE_LAST;
-
-
-GType
-adg_dim_style_get_type (void)
-{
-  static int dim_style_type = 0;
-  
-  if G_UNLIKELY (dim_style_type == 0)
-    dim_style_type = g_boxed_type_register_static ("AdgDimStyle",
-                                                   adg_dim_style_copy,
-                                                   g_free);
-
-  return dim_style_type;
-}
-
-static gpointer
-adg_dim_style_copy (gpointer src)
-{
-  g_return_val_if_fail (src != NULL, NULL);
-  return g_memdup (src, sizeof (AdgDimStyle));
-}
-
-AdgDimStyle *
-adg_dim_style_from_id (AdgDimStyleId id)
-{
-  g_return_val_if_fail (id < n_dim_styles, NULL);
-
-  if G_UNLIKELY (dim_styles == NULL)
-    adg_dim_style_init ();
-
-  return dim_styles + id;
-}
-
-static void
-adg_dim_style_init (void)
-{
-  AdgDimStyle *style;
-
-  dim_styles = g_new (AdgDimStyle, ADG_DIM_STYLE_LAST);
-
-  style = dim_styles + ADG_DIM_STYLE_ISO;
-  style->pattern = cairo_pattern_create_rgb (1.0, 0.0, 0.0);
-  style->label_style = adg_font_style_from_id (ADG_FONT_STYLE_QUOTE);
-  style->tolerance_style = adg_font_style_from_id (ADG_FONT_STYLE_TOLERANCE);
-  style->note_style = adg_font_style_from_id (ADG_FONT_STYLE_NOTE);
-  style->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DIM);
-  style->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
-  style->from_offset = 5.0;
-  style->to_offset = 5.0;
-  style->baseline_spacing = 30.0;
-  style->quote_offset.x = 0.0;
-  style->quote_offset.y = -3.0;
-  style->tolerance_offset.x = +5.0;
-  style->tolerance_offset.y = -4.0;
-  style->tolerance_spacing = 2.0;
-  style->note_offset.x = +5.0;
-  style->note_offset.y =  0.0;
-  style->measure_format = g_strdup ("%-.7g");
-  style->measure_tag = g_strdup ("<>");
-}
-
-AdgDimStyleId
-adg_dim_style_register (AdgDimStyle *new_style)
-{
-  ADG_STUB ();
-  return 0;
 }

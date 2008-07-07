@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgdim
+ * SECTION:dim
  * @title: AdgDim
  * @short_description: Root abstract class for all dimension entities
  *
@@ -28,6 +28,8 @@
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
+#include "adg-dim-style.h"
+#include "adg-dim-style-private.h"
 #include "adg-util.h"
 #include "adg-intl.h"
 
@@ -172,7 +174,7 @@ adg_dim_init (AdgDim *dim)
   AdgDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (dim, ADG_TYPE_DIM,
 						     AdgDimPrivate);
 
-  priv->dim_style = adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
+  priv->dim_style = (AdgDimStyle *) adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
 
   priv->ref1.x = priv->ref1.y = 0.;
   priv->ref2.x = priv->ref2.y = 0.;
@@ -350,12 +352,15 @@ static void
 label_layout (AdgDim  *dim,
 	      cairo_t *cr)
 {
+  AdgDimStylePrivate  *style_data;
   AdgPair              offset;
   AdgPair              cp;
   cairo_text_extents_t extents;
 
+  style_data = dim->priv->dim_style->priv;
+
   /* Compute the label */
-  adg_font_style_apply (dim->priv->dim_style->label_style, cr);
+  adg_font_style_apply (ADG_FONT_STYLE (style_data->label_style), cr);
 
   cairo_text_extents (cr, dim->priv->label, &extents);
   cairo_user_to_device_distance (cr, &extents.width, &extents.height);
@@ -368,11 +373,11 @@ label_layout (AdgDim  *dim,
       double width;
       double midspacing;
 
-      adg_font_style_apply (dim->priv->dim_style->tolerance_style, cr);
+      adg_font_style_apply (ADG_FONT_STYLE (style_data->tolerance_style), cr);
 
       width = 0.0;
-      midspacing = dim->priv->dim_style->tolerance_spacing / 2.0;
-      cpml_pair_copy (&offset, &dim->priv->dim_style->tolerance_offset);
+      midspacing = style_data->tolerance_spacing / 2.0;
+      cpml_pair_copy (&offset, &style_data->tolerance_offset);
       cp.x += offset.x;
 
       if (dim->priv->tolerance_up != NULL)
@@ -401,9 +406,9 @@ label_layout (AdgDim  *dim,
   /* Compute the note */
   if (dim->priv->note != NULL)
     {
-      adg_font_style_apply (dim->priv->dim_style->note_style, cr);
+      adg_font_style_apply (ADG_FONT_STYLE (style_data->note_style), cr);
 
-      cpml_pair_copy (&offset, &dim->priv->dim_style->note_offset);
+      cpml_pair_copy (&offset, &style_data->note_offset);
       cp.x += offset.x;
 
       cairo_text_extents (cr, dim->priv->note, &extents);
@@ -415,8 +420,8 @@ label_layout (AdgDim  *dim,
     }
 
   /* Calculating the offsets */
-  offset.x = dim->priv->dim_style->quote_offset.x - cp.x / 2.0;
-  offset.y = dim->priv->dim_style->quote_offset.y;
+  offset.x = style_data->quote_offset.x - cp.x / 2.0;
+  offset.y = style_data->quote_offset.y;
 
   cpml_pair_copy (&dim->priv->quote_offset, &offset);
 
@@ -693,6 +698,7 @@ void
 _adg_dim_render_quote (AdgDim  *dim,
 		       cairo_t *cr)
 {
+  AdgDimStylePrivate  *style_data;
   AdgPair quote_offset;
   AdgPair tolerance_up_offset;
   AdgPair tolerance_down_offset;
@@ -700,6 +706,8 @@ _adg_dim_render_quote (AdgDim  *dim,
 
   g_return_if_fail (ADG_IS_DIM (dim));
   g_return_if_fail (dim->priv->dim_style != NULL);
+
+  style_data = dim->priv->dim_style->priv;
 
   if (dim->priv->label == NULL)
     {
@@ -722,14 +730,14 @@ _adg_dim_render_quote (AdgDim  *dim,
   cairo_rotate (cr, dim->priv->quote_angle);
 
   /* Rendering label */
-  adg_font_style_apply (dim->priv->dim_style->label_style, cr);
+  adg_font_style_apply (ADG_FONT_STYLE (style_data->label_style), cr);
   cairo_move_to (cr, quote_offset.x, quote_offset.y);
   cairo_show_text (cr, dim->priv->label);
 
   /* Rendering tolerances */
   if (dim->priv->tolerance_up != NULL || dim->priv->tolerance_down != NULL)
     {
-      adg_font_style_apply (dim->priv->dim_style->tolerance_style, cr);
+      adg_font_style_apply (ADG_FONT_STYLE (style_data->tolerance_style), cr);
 
       if (dim->priv->tolerance_up != NULL)
         {

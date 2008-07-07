@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 #define ADG_IS_LINE_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_LINE_STYLE))
 #define ADG_LINE_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
 
-/* AdgLineStyle declared in adg-style.h */
+typedef struct _AdgLineStyle        AdgLineStyle;
 typedef struct _AdgLineStyleClass   AdgLineStyleClass;
 typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
 

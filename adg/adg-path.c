@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adgpath
+ * SECTION:path
  * @title: AdgPath
  * @short_description: A stroked path entity
  *

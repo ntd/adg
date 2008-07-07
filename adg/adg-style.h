@@ -30,12 +30,6 @@
 G_BEGIN_DECLS
 
 
-/* Forward declarations */
-typedef struct _AdgLineStyle  AdgLineStyle;
-typedef struct _AdgFontStyle  AdgFontStyle;
-typedef struct _AdgArrowStyle AdgArrowStyle;
-
-
 #define ADG_TYPE_STYLE             (adg_style_get_type ())
 #define ADG_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_STYLE, AdgStyle))
 #define ADG_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_STYLE, AdgStyleClass))
@@ -60,52 +54,7 @@ struct _AdgStyleClass
   GObjectClass		 parent_class;
 };
 
-GType			 adg_style_get_type		(void) G_GNUC_CONST;
-
-
-#define ADG_TYPE_DIM_STYLE              (adg_dim_style_get_type ())
-
-typedef struct _AdgDimStyle        AdgDimStyle;
-
-struct _AdgDimStyle
-{
-  cairo_pattern_t       *pattern;
-
-  AdgStyle		*label_style;
-  AdgStyle		*tolerance_style;
-  AdgStyle		*note_style;
-  AdgStyle		*line_style;
-  AdgStyle		*arrow_style;
-
-  double                 from_offset;
-  double                 to_offset;
-  double                 baseline_spacing;
-  AdgPair                quote_offset;
-  AdgPair                tolerance_offset;
-  double                 tolerance_spacing;
-  AdgPair                note_offset;
-
-  gchar                 *measure_format;
-  gchar			*measure_tag;
-};
-
-/**
- * AdgDimStyleId:
- * @ADG_DIM_STYLE_ISO: ISO standard
- * @ADG_DIM_STYLE_LAST: start of user-defined styles
- *
- * Numeric representation of dimension styles.
- * Some standard dimension styles are predefined.
- */
-typedef enum
-{
-  ADG_DIM_STYLE_ISO,
-  ADG_DIM_STYLE_LAST
-} AdgDimStyleId;
-
-GType           adg_dim_style_get_type  (void) G_GNUC_CONST;
-AdgDimStyle *   adg_dim_style_from_id   (AdgDimStyleId   id);
-AdgDimStyleId   adg_dim_style_register  (AdgDimStyle    *new_style);
+GType			adg_style_get_type	(void) G_GNUC_CONST;
 
 
 G_END_DECLS

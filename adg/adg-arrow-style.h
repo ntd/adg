@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 #define ADG_IS_ARROW_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_ARROW_STYLE))
 #define ADG_ARROW_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
 
-/* AdgArrowStyle declared in adg-style.h */
+typedef struct _AdgArrowStyle        AdgArrowStyle;
 typedef struct _AdgArrowStyleClass   AdgArrowStyleClass;
 typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
 
