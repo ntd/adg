@@ -67,6 +67,17 @@ AdgLineStyle
 adg_line_style_new
 adg_line_style_from_id
 adg_line_style_apply
+<SUBSECTION>
+adg_line_style_get_width
+adg_line_style_set_width
+adg_line_style_get_antialias
+adg_line_style_set_antialias
+adg_line_style_get_cap
+adg_line_style_set_cap
+adg_line_style_get_join
+adg_line_style_set_join
+adg_line_style_get_miter_limit
+adg_line_style_set_miter_limit
 <SUBSECTION Standard>
 AdgLineStyleClass
 AdgLineStylePrivate
