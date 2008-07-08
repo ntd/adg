@@ -59,34 +59,35 @@ enum
 };
 
 
-static void	get_property			(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void	set_property			(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
-static void	real_set_quote_style		(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
-static void	real_set_tolerance_style	(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
-static void	real_set_note_style		(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
-static void	real_set_line_style		(AdgDimStyle	*dim_style,
-						 AdgLineStyle	*line_style);
-static void	real_set_arrow_style		(AdgDimStyle	*dim_style,
-						 AdgArrowStyle	*arrow_style);
-static void	real_set_quote_offset		(AdgDimStyle	*dim_style,
-						 const AdgPair	*offset);
-static void	real_set_tolerance_offset	(AdgDimStyle	*dim_style,
-						 const AdgPair	*offset);
-static void	real_set_note_offset		(AdgDimStyle	*dim_style,
-						 const AdgPair	*offset);
-static void	real_set_number_format		(AdgDimStyle	*dim_style,
-						 const gchar	*format);
-static void	real_set_number_tag		(AdgDimStyle	*dim_style,
-						 const gchar	*tag);
+static void	get_property		(GObject	*object,
+					 guint		 prop_id,
+					 GValue		*value,
+					 GParamSpec	*pspec);
+static void	set_property		(GObject	*object,
+					 guint		 prop_id,
+					 const GValue	*value,
+					 GParamSpec	*pspec);
+
+static void	set_quote_style		(AdgDimStyle	*dim_style,
+					 AdgFontStyle	*style);
+static void	set_tolerance_style	(AdgDimStyle	*dim_style,
+					 AdgFontStyle	*style);
+static void	set_note_style		(AdgDimStyle	*dim_style,
+					 AdgFontStyle	*style);
+static void	set_line_style		(AdgDimStyle	*dim_style,
+					 AdgLineStyle	*style);
+static void	set_arrow_style		(AdgDimStyle	*dim_style,
+					 AdgArrowStyle	*style);
+static void	set_quote_offset	(AdgDimStyle	*dim_style,
+					 const AdgPair	*offset);
+static void	set_tolerance_offset	(AdgDimStyle	*dim_style,
+					 const AdgPair	*offset);
+static void	set_note_offset		(AdgDimStyle	*dim_style,
+					 const AdgPair	*offset);
+static void	set_number_format	(AdgDimStyle	*dim_style,
+					 const gchar	*format);
+static void	set_number_tag		(AdgDimStyle	*dim_style,
+					 const gchar	*tag);
 
 
 G_DEFINE_TYPE (AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
@@ -156,7 +157,7 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_double ("baseline-spacing",
 			       P_("Baseline Spacing"),
-			       P_("Dinstance between two consecutive baselines while stacking dimensions"),
+			       P_("Distance between two consecutive baselines while stacking dimensions"),
 			       0., G_MAXDOUBLE, 30.,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_BASELINE_SPACING, param);
@@ -177,7 +178,7 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_double ("tolerance-spacing",
 			       P_("Tolerance Spacing"),
-			       P_("Dinstance between up and down tolerance text"),
+			       P_("Distance between up and down tolerance text"),
 			       0., G_MAXDOUBLE, 2.,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_TOLERANCE_SPACING, param);
@@ -301,19 +302,19 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_QUOTE_STYLE:
-      real_set_quote_style (dim_style, g_value_get_object (value));
+      set_quote_style (dim_style, g_value_get_object (value));
       break;
     case PROP_TOLERANCE_STYLE:
-      real_set_tolerance_style (dim_style, g_value_get_object (value));
+      set_tolerance_style (dim_style, g_value_get_object (value));
       break;
     case PROP_NOTE_STYLE:
-      real_set_note_style (dim_style, g_value_get_object (value));
+      set_note_style (dim_style, g_value_get_object (value));
       break;
     case PROP_LINE_STYLE:
-      real_set_line_style (dim_style, g_value_get_object (value));
+      set_line_style (dim_style, g_value_get_object (value));
       break;
     case PROP_ARROW_STYLE:
-      real_set_arrow_style (dim_style, g_value_get_object (value));
+      set_arrow_style (dim_style, g_value_get_object (value));
       break;
     case PROP_FROM_OFFSET:
       dim_style->priv->from_offset = g_value_get_double (value);
@@ -325,22 +326,22 @@ set_property (GObject      *object,
       dim_style->priv->baseline_spacing = g_value_get_double (value);
       break;
     case PROP_QUOTE_OFFSET:
-      real_set_quote_offset (dim_style, g_value_get_boxed (value));
+      set_quote_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_TOLERANCE_OFFSET:
-      real_set_tolerance_offset (dim_style, g_value_get_boxed (value));
+      set_tolerance_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_TOLERANCE_SPACING:
       dim_style->priv->tolerance_spacing = g_value_get_double (value);
       break;
     case PROP_NOTE_OFFSET:
-      real_set_note_offset (dim_style, g_value_get_boxed (value));
+      set_note_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_NUMBER_FORMAT:
-      real_set_number_format (dim_style, g_value_get_string (value));
+      set_number_format (dim_style, g_value_get_string (value));
       break;
     case PROP_NUMBER_TAG:
-      real_set_number_tag (dim_style, g_value_get_string (value));
+      set_number_tag (dim_style, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -349,6 +350,14 @@ set_property (GObject      *object,
 }
 
 
+/**
+ * adg_dim_style_from_id:
+ * @id: a dimension style identifier
+ *
+ * Gets a predefined style by an #AdgDimStyleId identifier.
+ *
+ * Return value: the requested style or %NULL if not found
+ **/
 AdgStyle *
 adg_dim_style_from_id (AdgDimStyleId id)
 {
@@ -366,94 +375,581 @@ adg_dim_style_from_id (AdgDimStyleId id)
   return builtins[id];
 }
 
+/**
+ * adg_dim_style_get_quote_style:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the quote style of @dim_style. No reference will be added to the
+ * returned style; it should not be unreferenced.
+ *
+ * Return value: the quote style or %NULL on errors
+ **/
+AdgStyle *
+adg_dim_style_get_quote_style (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->quote_style;
+}
+
+/**
+ * adg_dim_style_set_quote_style:
+ * @dim_style: an #AdgDimStyle object
+ * @style: the new quote style
+ *
+ * Sets a new quote style on @dim_style. The old quote style (if any) will be
+ * unreferenced while a new reference will be added to @style.
+ **/
+void
+adg_dim_style_set_quote_style (AdgDimStyle  *dim_style,
+			       AdgFontStyle *style)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+  g_return_if_fail (ADG_IS_FONT_STYLE (style));
+
+  set_quote_style (dim_style, style);
+  g_object_notify ((GObject *) dim_style, "quote-style");
+}
+
+/**
+ * adg_dim_style_get_tolerance_style:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the tolerance style of @dim_style. No reference will be added to the
+ * returned style; it should not be unreferenced.
+ *
+ * Return value: the tolerance style or %NULL on errors
+ **/
+AdgStyle *
+adg_dim_style_get_tolerance_style (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->tolerance_style;
+}
+
+/**
+ * adg_dim_style_set_tolerance_style:
+ * @dim_style: an #AdgDimStyle object
+ * @style: the new tolerance style
+ *
+ * Sets a new tolerance style on @dim_style. The old tolerance style (if any)
+ * will be unreferenced while a new reference will be added to @style.
+ **/
+void
+adg_dim_style_set_tolerance_style (AdgDimStyle  *dim_style,
+				   AdgFontStyle *style)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+  g_return_if_fail (ADG_IS_FONT_STYLE (style));
+
+  set_tolerance_style (dim_style, style);
+  g_object_notify ((GObject *) dim_style, "tolerance-style");
+}
+
+/**
+ * adg_dim_style_get_note_style:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the note style of @dim_style. No reference will be added to the
+ * returned style; it should not be unreferenced.
+ *
+ * Return value: the note style or %NULL on errors
+ **/
+AdgStyle *
+adg_dim_style_get_note_style (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->note_style;
+}
+
+/**
+ * adg_dim_style_set_note_style:
+ * @dim_style: an #AdgDimStyle object
+ * @style: the new note style
+ *
+ * Sets a new note style on @dim_style. The old note style (if any) will be
+ * unreferenced while a new reference will be added to @style.
+ **/
+void
+adg_dim_style_set_note_style (AdgDimStyle  *dim_style,
+			      AdgFontStyle *style)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+  g_return_if_fail (ADG_IS_FONT_STYLE (style));
+
+  set_note_style (dim_style, style);
+  g_object_notify ((GObject *) dim_style, "note-style");
+}
+
+/**
+ * adg_dim_style_get_line_style:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the line style of @dim_style. No reference will be added to the
+ * returned style; it should not be unreferenced.
+ *
+ * Return value: the line style or %NULL on errors
+ **/
+AdgStyle *
+adg_dim_style_get_line_style (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->line_style;
+}
+
+/**
+ * adg_dim_style_set_line_style:
+ * @dim_style: an #AdgDimStyle object
+ * @style: the new line style
+ *
+ * Sets a new line style on @dim_style. The old line style (if any) will be
+ * unreferenced while a new reference will be added to @style.
+ **/
+void
+adg_dim_style_set_line_style (AdgDimStyle  *dim_style,
+			      AdgLineStyle *style)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+  g_return_if_fail (ADG_IS_LINE_STYLE (style));
+
+  set_line_style (dim_style, style);
+  g_object_notify ((GObject *) dim_style, "line-style");
+}
+
+/**
+ * adg_dim_style_get_arrow_style:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the arrow style of @dim_style. No reference will be added to the
+ * returned style; it should not be unreferenced.
+ *
+ * Return value: the arrow style or %NULL on errors
+ **/
+AdgStyle *
+adg_dim_style_get_arrow_style (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->arrow_style;
+}
+
+/**
+ * adg_dim_style_set_arrow_style:
+ * @dim_style: an #AdgDimStyle object
+ * @style: the new arrow style
+ *
+ * Sets a new arrow style on @dim_style. The old arrow style (if any) will be
+ * unreferenced while a new reference will be added to @style.
+ **/
+void
+adg_dim_style_set_arrow_style (AdgDimStyle  *dim_style,
+			       AdgArrowStyle *style)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+  g_return_if_fail (ADG_IS_ARROW_STYLE (style));
+
+  set_arrow_style (dim_style, style);
+  g_object_notify ((GObject *) dim_style, "arrow-style");
+}
+
+/**
+ * adg_dim_style_get_from_offset:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the distance (in paper space) the extension lines must keep from the
+ * sensed points.
+ *
+ * Return value: the requested distance
+ **/
+gdouble
+adg_dim_style_get_from_offset (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
+
+  return dim_style->priv->from_offset;
+}
+
+/**
+ * adg_dim_style_set_from_offset:
+ * @dim_style: an #AdgDimStyle object
+ * @offset: the new offset
+ *
+ * Sets a new "from-offset" value.
+ **/
+void
+adg_dim_style_set_from_offset (AdgDimStyle *dim_style,
+			       gdouble      offset)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  dim_style->priv->from_offset = offset;
+  g_object_notify ((GObject *) dim_style, "from-offset");
+}
+
+/**
+ * adg_dim_style_get_to_offset:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets how much (in paper space) the extension lines must extend after
+ * crossing the baseline.
+ *
+ * Return value: the requested distance
+ **/
+gdouble
+adg_dim_style_get_to_offset (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
+
+  return dim_style->priv->to_offset;
+}
+
+/**
+ * adg_dim_style_set_to_offset:
+ * @dim_style: an #AdgDimStyle object
+ * @offset: the new offset
+ *
+ * Sets a new "to-offset" value.
+ **/
+void
+adg_dim_style_set_to_offset (AdgDimStyle *dim_style,
+			     gdouble      offset)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  dim_style->priv->to_offset = offset;
+  g_object_notify ((GObject *) dim_style, "to-offset");
+}
+
+/**
+ * adg_dim_style_get_baseline_spacing:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the distance between two consecutive baselines
+ * while stacking dimensions.
+ *
+ * Return value: the requested spacing
+ **/
+gdouble
+adg_dim_style_get_baseline_spacing (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
+
+  return dim_style->priv->baseline_spacing;
+}
+
+/**
+ * adg_dim_style_set_baseline_spacing:
+ * @dim_style: an #AdgDimStyle object
+ * @spacing: the new spacing
+ *
+ * Sets a new "baseline-spacing" value.
+ **/
+void
+adg_dim_style_set_baseline_spacing (AdgDimStyle *dim_style,
+				    gdouble      spacing)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  dim_style->priv->baseline_spacing = spacing;
+  g_object_notify ((GObject *) dim_style, "baseline-spacing");
+}
+
+/**
+ * adg_dim_style_get_quote_offset:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the smooth displacement of the quote text. The returned pointer
+ * refers to an internal allocated struct and must not be modified or freed.
+ *
+ * Return value: the requested offset
+ **/
+const AdgPair *
+adg_dim_style_get_quote_offset (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return &dim_style->priv->quote_offset;
+}
+
+/**
+ * adg_dim_style_set_quote_offset:
+ * @dim_style: an #AdgDimStyle object
+ * @shift: the new displacement
+ *
+ * Sets a new "quote-offset" value.
+ **/
+void
+adg_dim_style_set_quote_offset (AdgDimStyle   *dim_style,
+				const AdgPair *shift)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  set_quote_offset (dim_style, shift);
+  g_object_notify ((GObject *) dim_style, "quote-offset");
+}
+
+/**
+ * adg_dim_style_get_tolerance_offset:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the smooth displacement of the tolerance text. The returned pointer
+ * refers to an internal allocated struct and must not be modified or freed.
+ *
+ * Return value: the requested offset
+ **/
+const AdgPair *
+adg_dim_style_get_tolerance_offset (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return &dim_style->priv->tolerance_offset;
+}
+
+/**
+ * adg_dim_style_set_tolerance_offset:
+ * @dim_style: an #AdgDimStyle object
+ * @shift: the new displacement
+ *
+ * Sets a new "tolerance-offset" value.
+ **/
+void
+adg_dim_style_set_tolerance_offset (AdgDimStyle   *dim_style,
+				    const AdgPair *shift)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  set_tolerance_offset (dim_style, shift);
+  g_object_notify ((GObject *) dim_style, "tolerance-offset");
+}
+
+/**
+ * adg_dim_style_get_tolerance_spacing:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the distance (in paper space) between up and down tolerances.
+ *
+ * Return value: the requested spacing
+ **/
+gdouble
+adg_dim_style_get_tolerance_spacing (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
+
+  return dim_style->priv->tolerance_spacing;
+}
+
+/**
+ * adg_dim_style_set_tolerance_spacing:
+ * @dim_style: an #AdgDimStyle object
+ * @spacing: the new spacing
+ *
+ * Sets a new "tolerance-spacing" value.
+ **/
+void
+adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
+				     gdouble      spacing)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  dim_style->priv->tolerance_spacing = spacing;
+  g_object_notify ((GObject *) dim_style, "tolerance-spacing");
+}
+
+/**
+ * adg_dim_style_get_note_offset:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the smooth displacement of the note text. The returned pointer
+ * refers to an internal allocated struct and must not be modified or freed.
+ *
+ * Return value: the requested offset
+ **/
+const AdgPair *
+adg_dim_style_get_note_offset (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return &dim_style->priv->note_offset;
+}
+
+/**
+ * adg_dim_style_set_note_offset:
+ * @dim_style: an #AdgDimStyle object
+ * @shift: the new displacement
+ *
+ * Sets a new "note-offset" value.
+ **/
+void
+adg_dim_style_set_note_offset (AdgDimStyle   *dim_style,
+				    const AdgPair *shift)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  set_note_offset (dim_style, shift);
+  g_object_notify ((GObject *) dim_style, "note-offset");
+}
+
+/**
+ * adg_dim_style_get_number_format:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the number format (in printf style) of this quoting style. The
+ * returned pointer refers to internally managed text that must not be
+ * modified or freed.
+ *
+ * Return value: the requested format
+ **/
+const gchar *
+adg_dim_style_get_number_format (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->number_format;
+}
+
+/**
+ * adg_dim_style_set_number_format:
+ * @dim_style: an #AdgDimStyle object
+ * @format: the new format to adopt
+ *
+ * Sets a new "number-format" value.
+ **/
+void
+adg_dim_style_set_number_format (AdgDimStyle *dim_style,
+				 const gchar *format)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  set_number_format (dim_style, format);
+  g_object_notify ((GObject *) dim_style, "number-format");
+}
+
+/**
+ * adg_dim_style_get_number_tag:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the number tag to substitute while building the quote text. The
+ * returned pointer refers to internally managed text that must not be
+ * modified or freed.
+ *
+ * Return value: the requested tag
+ **/
+const gchar *
+adg_dim_style_get_number_tag (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
+
+  return dim_style->priv->number_tag;
+}
+
+/**
+ * adg_dim_style_set_number_tag:
+ * @dim_style: an #AdgDimStyle object
+ * @tag: the new tag
+ *
+ * Sets a new "number-tag" value.
+ **/
+void
+adg_dim_style_set_number_tag (AdgDimStyle *dim_style,
+			      const gchar *tag)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  set_number_tag (dim_style, tag);
+  g_object_notify ((GObject *) dim_style, "number-tag");
+}
+
 
 static void
-real_set_quote_style (AdgDimStyle  *dim_style,
-		      AdgFontStyle *font_style)
+set_quote_style (AdgDimStyle  *dim_style,
+		 AdgFontStyle *style)
 {
   if (dim_style->priv->quote_style)
     g_object_unref (dim_style->priv->quote_style);
 
-  g_object_ref (font_style);
-  dim_style->priv->quote_style = (AdgStyle *) font_style;
+  g_object_ref (style);
+  dim_style->priv->quote_style = (AdgStyle *) style;
 }
 
 static void
-real_set_tolerance_style (AdgDimStyle  *dim_style,
-			  AdgFontStyle *font_style)
+set_tolerance_style (AdgDimStyle  *dim_style,
+		     AdgFontStyle *style)
 {
   if (dim_style->priv->tolerance_style)
     g_object_unref (dim_style->priv->tolerance_style);
 
-  g_object_ref (font_style);
-  dim_style->priv->tolerance_style = (AdgStyle *) font_style;
+  g_object_ref (style);
+  dim_style->priv->tolerance_style = (AdgStyle *) style;
 }
 
 static void
-real_set_note_style (AdgDimStyle  *dim_style,
-		     AdgFontStyle *font_style)
+set_note_style (AdgDimStyle  *dim_style,
+		AdgFontStyle *style)
 {
   if (dim_style->priv->note_style)
     g_object_unref (dim_style->priv->note_style);
 
-  g_object_ref (font_style);
-  dim_style->priv->note_style = (AdgStyle *) font_style;
+  g_object_ref (style);
+  dim_style->priv->note_style = (AdgStyle *) style;
 }
 
 static void
-real_set_line_style (AdgDimStyle  *dim_style,
-		     AdgLineStyle *line_style)
+set_line_style (AdgDimStyle  *dim_style,
+		AdgLineStyle *style)
 {
   if (dim_style->priv->line_style)
     g_object_unref (dim_style->priv->line_style);
 
-  g_object_ref (line_style);
-  dim_style->priv->line_style = (AdgStyle *) line_style;
+  g_object_ref (style);
+  dim_style->priv->line_style = (AdgStyle *) style;
 }
 
 static void
-real_set_arrow_style (AdgDimStyle  *dim_style,
-		      AdgArrowStyle *arrow_style)
+set_arrow_style (AdgDimStyle  *dim_style,
+		 AdgArrowStyle *style)
 {
   if (dim_style->priv->arrow_style)
     g_object_unref (dim_style->priv->arrow_style);
 
-  g_object_ref (arrow_style);
-  dim_style->priv->arrow_style = (AdgStyle *) arrow_style;
+  g_object_ref (style);
+  dim_style->priv->arrow_style = (AdgStyle *) style;
 }
 
 static void
-real_set_quote_offset (AdgDimStyle   *dim_style,
-		       const AdgPair *offset)
+set_quote_offset (AdgDimStyle   *dim_style,
+		  const AdgPair *offset)
 {
   cpml_pair_copy (&dim_style->priv->quote_offset, offset);
 }
 
 static void
-real_set_tolerance_offset (AdgDimStyle   *dim_style,
-			   const AdgPair *offset)
+set_tolerance_offset (AdgDimStyle   *dim_style,
+		      const AdgPair *offset)
 {
   cpml_pair_copy (&dim_style->priv->tolerance_offset, offset);
 }
 
 static void
-real_set_note_offset (AdgDimStyle   *dim_style,
-		      const AdgPair *offset)
+set_note_offset (AdgDimStyle   *dim_style,
+		 const AdgPair *offset)
 {
   cpml_pair_copy (&dim_style->priv->note_offset, offset);
 }
 
 static void
-real_set_number_format (AdgDimStyle *dim_style,
-			const gchar *format)
+set_number_format (AdgDimStyle *dim_style,
+		   const gchar *format)
 {
   g_free (dim_style->priv->number_format);
   dim_style->priv->number_format = g_strdup (format);
 }
 
 static void
-real_set_number_tag (AdgDimStyle *dim_style,
-		     const gchar *tag)
+set_number_tag (AdgDimStyle *dim_style,
+		const gchar *tag)
 {
   g_free (dim_style->priv->number_tag);
   dim_style->priv->number_tag = g_strdup (tag);

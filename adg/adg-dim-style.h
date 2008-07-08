@@ -22,6 +22,9 @@
 #define __ADG_DIM_STYLE_H__
 
 #include <adg/adg-style.h>
+#include <adg/adg-font-style.h>
+#include <adg/adg-line-style.h>
+#include <adg/adg-arrow-style.h>
 #include <adg/adg-enums.h>
 
 
@@ -56,6 +59,57 @@ struct _AdgDimStyleClass
 GType		adg_dim_style_get_type	(void) G_GNUC_CONST;
 AdgStyle *	adg_dim_style_new	(void);
 AdgStyle *	adg_dim_style_from_id	(AdgDimStyleId		 id);
+
+AdgStyle *	adg_dim_style_get_quote_style	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_quote_style	(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+AdgStyle *	adg_dim_style_get_tolerance_style
+						(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_tolerance_style
+						(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+AdgStyle *	adg_dim_style_get_note_style	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_note_style	(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+AdgStyle *	adg_dim_style_get_line_style	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_line_style	(AdgDimStyle	*dim_style,
+						 AdgLineStyle	*line_style);
+AdgStyle *	adg_dim_style_get_arrow_style	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_arrow_style	(AdgDimStyle	*dim_style,
+						 AdgArrowStyle	*arrow_style);
+gdouble		adg_dim_style_get_from_offset	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_from_offset	(AdgDimStyle	*dim_style,
+						 gdouble	 offset);
+gdouble		adg_dim_style_get_to_offset	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_to_offset	(AdgDimStyle	*dim_style,
+						 gdouble	 offset);
+gdouble		adg_dim_style_get_baseline_spacing
+						(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_baseline_spacing
+						(AdgDimStyle	*dim_style,
+						 gdouble	 spacing);
+const AdgPair *	adg_dim_style_get_quote_offset	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_quote_offset	(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+const AdgPair *	adg_dim_style_get_tolerance_offset
+						(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_tolerance_offset
+						(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+gdouble		adg_dim_style_get_tolerance_spacing
+						(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_tolerance_spacing
+						(AdgDimStyle	*dim_style,
+						 gdouble	 spacing);
+const AdgPair *	adg_dim_style_get_note_offset	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_note_offset	(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+const gchar *	adg_dim_style_get_number_format	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_number_format	(AdgDimStyle	*dim_style,
+						 const gchar	*format);
+const gchar *	adg_dim_style_get_number_tag	(AdgDimStyle	*dim_style);
+void		adg_dim_style_set_number_tag	(AdgDimStyle	*dim_style,
+						 const gchar	*tag);
 
 
 G_END_DECLS
