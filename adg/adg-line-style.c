@@ -122,6 +122,7 @@ adg_line_style_init (AdgLineStyle *line_style)
   priv->cap = CAIRO_LINE_CAP_ROUND;
   priv->join = CAIRO_LINE_JOIN_MITER;
   priv->miter_limit = 10.;
+  priv->antialias = CAIRO_ANTIALIAS_DEFAULT;
   priv->dashes = NULL;
   priv->num_dashes = 0;
   priv->dash_offset = 0.;
