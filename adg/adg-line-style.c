@@ -199,6 +199,14 @@ set_property (GObject      *object,
 }
 
 
+/**
+ * adg_line_style_from_id:
+ * @id: a line style identifier
+ *
+ * Gets a predefined style from an #AdgLineStyleId identifier.
+ *
+ * Return value: the requested style or %NULL if not found
+ **/
 AdgStyle *
 adg_line_style_from_id (AdgLineStyleId id)
 {
@@ -233,6 +241,13 @@ adg_line_style_from_id (AdgLineStyleId id)
   return builtins[id];
 }
 
+/**
+ * adg_line_style_apply:
+ * @line_style: an #AdgLineStyle style
+ * @cr: the cairo context
+ *
+ * Applies @line_style to @cr so the next lines will have this style.
+ **/
 void
 adg_line_style_apply (const AdgLineStyle *line_style,
                       cairo_t            *cr)
@@ -259,4 +274,170 @@ adg_line_style_apply (const AdgLineStyle *line_style,
       cairo_set_dash (cr, line_style->priv->dashes, line_style->priv->num_dashes,
 		      line_style->priv->dash_offset);
     }
+}
+
+/**
+ * adg_line_style_get_width:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the line thickness value (in paper units).
+ *
+ * Return value: the requested width
+ **/
+gdouble
+adg_line_style_get_width (AdgLineStyle *line_style)
+{
+  g_return_val_if_fail (ADG_IS_LINE_STYLE (line_style), 0.);
+
+  return line_style->priv->width;
+}
+
+/**
+ * adg_line_style_set_width:
+ * @line_style: an #AdgLineStyle object
+ * @width: the new width
+ *
+ * Sets a new line thickness value.
+ **/
+void
+adg_line_style_set_width (AdgLineStyle *line_style,
+			  gdouble       width)
+{
+  g_return_if_fail (ADG_IS_LINE_STYLE (line_style));
+
+  line_style->priv->width = width;
+  g_object_notify ((GObject *) line_style, "width");
+}
+
+/**
+ * adg_line_style_get_cap:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the line cap mode.
+ *
+ * Return value: the requested line cap mode
+ **/
+cairo_line_cap_t
+adg_line_style_get_cap (AdgLineStyle *line_style)
+{
+  g_return_val_if_fail (ADG_IS_LINE_STYLE (line_style), CAIRO_LINE_CAP_BUTT);
+
+  return line_style->priv->cap;
+}
+
+/**
+ * adg_line_style_set_cap:
+ * @line_style: an #AdgLineStyle object
+ * @cap: the new cap mode
+ *
+ * Sets a new line cap mode.
+ **/
+void
+adg_line_style_set_cap (AdgLineStyle    *line_style,
+			cairo_line_cap_t cap)
+{
+  g_return_if_fail (ADG_IS_LINE_STYLE (line_style));
+
+  line_style->priv->cap = cap;
+  g_object_notify ((GObject *) line_style, "cap");
+}
+
+/**
+ * adg_line_style_get_join:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the line join mode.
+ *
+ * Return value: the requested line join mode
+ **/
+cairo_line_join_t
+adg_line_style_get_join (AdgLineStyle *line_style)
+{
+  g_return_val_if_fail (ADG_IS_LINE_STYLE (line_style), CAIRO_LINE_JOIN_MITER);
+
+  return line_style->priv->join;
+}
+
+/**
+ * adg_line_style_set_join:
+ * @line_style: an #AdgLineStyle object
+ * @join: the new join mode
+ *
+ * Sets a new line join mode.
+ **/
+void
+adg_line_style_set_join (AdgLineStyle     *line_style,
+			 cairo_line_join_t join)
+{
+  g_return_if_fail (ADG_IS_LINE_STYLE (line_style));
+
+  line_style->priv->join = join;
+  g_object_notify ((GObject *) line_style, "join");
+}
+
+/**
+ * adg_line_style_get_miter_limit:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the line miter limit value. The miter limit is used to determine
+ * whether the lines should be joined with a bevel instead of a miter.
+ *
+ * Return value: the requested miter limit
+ **/
+gdouble
+adg_line_style_get_miter_limit (AdgLineStyle *line_style)
+{
+  g_return_val_if_fail (ADG_IS_LINE_STYLE (line_style), 0.);
+
+  return line_style->priv->miter_limit;
+}
+
+/**
+ * adg_line_style_set_miter_limit:
+ * @line_style: an #AdgLineStyle object
+ * @miter_limit: the new miter limit
+ *
+ * Sets a new miter limit value.
+ **/
+void
+adg_line_style_set_miter_limit (AdgLineStyle *line_style,
+				gdouble       miter_limit)
+{
+  g_return_if_fail (ADG_IS_LINE_STYLE (line_style));
+
+  line_style->priv->miter_limit = miter_limit;
+  g_object_notify ((GObject *) line_style, "miter-limit");
+}
+
+/**
+ * adg_line_style_get_antialias:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the antialias mode used.
+ *
+ * Return value: the requested antialias mode
+ **/
+cairo_antialias_t
+adg_line_style_get_antialias (AdgLineStyle *line_style)
+{
+  g_return_val_if_fail (ADG_IS_LINE_STYLE (line_style), CAIRO_ANTIALIAS_DEFAULT);
+
+  return line_style->priv->antialias;
+}
+
+/**
+ * adg_line_style_set_antialias:
+ * @line_style: an #AdgLineStyle object
+ * @antialias: the new antialias mode
+ *
+ * Sets a new antialias mode.
+ **/
+void
+adg_line_style_set_antialias (AdgLineStyle     *line_style,
+			      cairo_antialias_t antialias)
+{
+  g_return_if_fail (ADG_IS_LINE_STYLE (line_style));
+
+  line_style->priv->antialias = antialias;
+  g_object_notify ((GObject *) line_style, "antialias");
 }

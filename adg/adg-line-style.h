@@ -53,11 +53,30 @@ struct _AdgLineStyleClass
 };
 
 
-GType		adg_line_style_get_type	(void) G_GNUC_CONST;
-AdgStyle *	adg_line_style_new	(void);
-AdgStyle *	adg_line_style_from_id	(AdgLineStyleId		 id);
-void		adg_line_style_apply	(const AdgLineStyle	*line_style,
-					 cairo_t		*cr);
+GType		adg_line_style_get_type		(void) G_GNUC_CONST;
+AdgStyle *	adg_line_style_new		(void);
+AdgStyle *	adg_line_style_from_id		(AdgLineStyleId	 id);
+void		adg_line_style_apply		(const AdgLineStyle *line_style,
+						 cairo_t	*cr);
+
+gdouble		adg_line_style_get_width	(AdgLineStyle	*line_style);
+void		adg_line_style_set_width	(AdgLineStyle	*line_style,
+						 gdouble	 width);
+cairo_line_cap_t
+		adg_line_style_get_cap		(AdgLineStyle	*line_style);
+void		adg_line_style_set_cap		(AdgLineStyle	*line_style,
+						 cairo_line_cap_t cap);
+cairo_line_join_t
+		adg_line_style_get_join		(AdgLineStyle	*line_style);
+void		adg_line_style_set_join		(AdgLineStyle	*line_style,
+						 cairo_line_join_t join);
+gdouble		adg_line_style_get_miter_limit	(AdgLineStyle	*line_style);
+void		adg_line_style_set_miter_limit	(AdgLineStyle	*line_style,
+						 gdouble	 miter_limit);
+cairo_antialias_t
+		adg_line_style_get_antialias	(AdgLineStyle	*line_style);
+void		adg_line_style_set_antialias	(AdgLineStyle	*line_style,
+						 cairo_antialias_t antialias);
 
 
 G_END_DECLS

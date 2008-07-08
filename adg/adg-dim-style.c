@@ -354,7 +354,7 @@ set_property (GObject      *object,
  * adg_dim_style_from_id:
  * @id: a dimension style identifier
  *
- * Gets a predefined style by an #AdgDimStyleId identifier.
+ * Gets a predefined style from an #AdgDimStyleId identifier.
  *
  * Return value: the requested style or %NULL if not found
  **/
