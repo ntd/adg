@@ -23,9 +23,9 @@
  * @title: AdgDimStyle
  * @short_description: Dimension style related stuff
  *
- * Contains parameters on how to build dimensions such as three font styles
- * (quote, tolerance and notes), line style, offsets of the various dimension
- * components etc...
+ * Contains parameters on how to build dimensions such as the different font
+ * styles (for quote, tolerance and note), line style, offsets of the various
+ * dimension components etc...
  */
 
 #include "adg-dim-style.h"
@@ -59,14 +59,34 @@ enum
 };
 
 
-static void	get_property		(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
+static void	get_property			(GObject	*object,
+						 guint		 prop_id,
+						 GValue		*value,
+						 GParamSpec	*pspec);
+static void	set_property			(GObject	*object,
+						 guint		 prop_id,
+						 const GValue	*value,
+						 GParamSpec	*pspec);
+static void	real_set_quote_style		(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+static void	real_set_tolerance_style	(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+static void	real_set_note_style		(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*font_style);
+static void	real_set_line_style		(AdgDimStyle	*dim_style,
+						 AdgLineStyle	*line_style);
+static void	real_set_arrow_style		(AdgDimStyle	*dim_style,
+						 AdgArrowStyle	*arrow_style);
+static void	real_set_quote_offset		(AdgDimStyle	*dim_style,
+						 const AdgPair	*offset);
+static void	real_set_tolerance_offset	(AdgDimStyle	*dim_style,
+						 const AdgPair	*offset);
+static void	real_set_note_offset		(AdgDimStyle	*dim_style,
+						 const AdgPair	*offset);
+static void	real_set_number_format		(AdgDimStyle	*dim_style,
+						 const gchar	*format);
+static void	real_set_number_tag		(AdgDimStyle	*dim_style,
+						 const gchar	*tag);
 
 
 G_DEFINE_TYPE (AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
@@ -178,7 +198,7 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_string ("number-tag",
 			       P_("Number Tag"),
-			       P_("The tag to substitute in pattern quote"),
+			       P_("The tag to substitute inside the quote pattern"),
 			       "<>",
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NUMBER_TAG, param);
@@ -281,19 +301,19 @@ set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_QUOTE_STYLE:
-      dim_style->priv->quote_style = g_value_get_object (value);
+      real_set_quote_style (dim_style, g_value_get_object (value));
       break;
     case PROP_TOLERANCE_STYLE:
-      dim_style->priv->tolerance_style = g_value_get_object (value);
+      real_set_tolerance_style (dim_style, g_value_get_object (value));
       break;
     case PROP_NOTE_STYLE:
-      dim_style->priv->note_style = g_value_get_object (value);
+      real_set_note_style (dim_style, g_value_get_object (value));
       break;
     case PROP_LINE_STYLE:
-      dim_style->priv->line_style = g_value_get_object (value);
+      real_set_line_style (dim_style, g_value_get_object (value));
       break;
     case PROP_ARROW_STYLE:
-      dim_style->priv->arrow_style = g_value_get_object (value);
+      real_set_arrow_style (dim_style, g_value_get_object (value));
       break;
     case PROP_FROM_OFFSET:
       dim_style->priv->from_offset = g_value_get_double (value);
@@ -305,27 +325,22 @@ set_property (GObject      *object,
       dim_style->priv->baseline_spacing = g_value_get_double (value);
       break;
     case PROP_QUOTE_OFFSET:
-      cpml_pair_copy (&dim_style->priv->quote_offset,
-		      g_value_get_boxed (value));
+      real_set_quote_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_TOLERANCE_OFFSET:
-      cpml_pair_copy (&dim_style->priv->tolerance_offset,
-		      g_value_get_boxed (value));
+      real_set_tolerance_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_TOLERANCE_SPACING:
       dim_style->priv->tolerance_spacing = g_value_get_double (value);
       break;
     case PROP_NOTE_OFFSET:
-      cpml_pair_copy (&dim_style->priv->note_offset,
-		      g_value_get_boxed (value));
+      real_set_note_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_NUMBER_FORMAT:
-      g_free (dim_style->priv->number_format);
-      dim_style->priv->number_format = g_value_dup_string (value);
+      real_set_number_format (dim_style, g_value_get_string (value));
       break;
     case PROP_NUMBER_TAG:
-      g_free (dim_style->priv->number_tag);
-      dim_style->priv->number_tag = g_value_dup_string (value);
+      real_set_number_tag (dim_style, g_value_get_string (value));
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -349,4 +364,97 @@ adg_dim_style_from_id (AdgDimStyleId id)
 
   g_return_val_if_fail (id < ADG_DIM_STYLE_LAST, NULL);
   return builtins[id];
+}
+
+
+static void
+real_set_quote_style (AdgDimStyle  *dim_style,
+		      AdgFontStyle *font_style)
+{
+  if (dim_style->priv->quote_style)
+    g_object_unref (dim_style->priv->quote_style);
+
+  g_object_ref (font_style);
+  dim_style->priv->quote_style = (AdgStyle *) font_style;
+}
+
+static void
+real_set_tolerance_style (AdgDimStyle  *dim_style,
+			  AdgFontStyle *font_style)
+{
+  if (dim_style->priv->tolerance_style)
+    g_object_unref (dim_style->priv->tolerance_style);
+
+  g_object_ref (font_style);
+  dim_style->priv->tolerance_style = (AdgStyle *) font_style;
+}
+
+static void
+real_set_note_style (AdgDimStyle  *dim_style,
+		     AdgFontStyle *font_style)
+{
+  if (dim_style->priv->note_style)
+    g_object_unref (dim_style->priv->note_style);
+
+  g_object_ref (font_style);
+  dim_style->priv->note_style = (AdgStyle *) font_style;
+}
+
+static void
+real_set_line_style (AdgDimStyle  *dim_style,
+		     AdgLineStyle *line_style)
+{
+  if (dim_style->priv->line_style)
+    g_object_unref (dim_style->priv->line_style);
+
+  g_object_ref (line_style);
+  dim_style->priv->line_style = (AdgStyle *) line_style;
+}
+
+static void
+real_set_arrow_style (AdgDimStyle  *dim_style,
+		      AdgArrowStyle *arrow_style)
+{
+  if (dim_style->priv->arrow_style)
+    g_object_unref (dim_style->priv->arrow_style);
+
+  g_object_ref (arrow_style);
+  dim_style->priv->arrow_style = (AdgStyle *) arrow_style;
+}
+
+static void
+real_set_quote_offset (AdgDimStyle   *dim_style,
+		       const AdgPair *offset)
+{
+  cpml_pair_copy (&dim_style->priv->quote_offset, offset);
+}
+
+static void
+real_set_tolerance_offset (AdgDimStyle   *dim_style,
+			   const AdgPair *offset)
+{
+  cpml_pair_copy (&dim_style->priv->tolerance_offset, offset);
+}
+
+static void
+real_set_note_offset (AdgDimStyle   *dim_style,
+		      const AdgPair *offset)
+{
+  cpml_pair_copy (&dim_style->priv->note_offset, offset);
+}
+
+static void
+real_set_number_format (AdgDimStyle *dim_style,
+			const gchar *format)
+{
+  g_free (dim_style->priv->number_format);
+  dim_style->priv->number_format = g_strdup (format);
+}
+
+static void
+real_set_number_tag (AdgDimStyle *dim_style,
+		     const gchar *tag)
+{
+  g_free (dim_style->priv->number_tag);
+  dim_style->priv->number_tag = g_strdup (tag);
 }
