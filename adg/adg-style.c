@@ -20,9 +20,8 @@
 
 /**
  * SECTION:style
- * @title: Styles
- * @short_description: A collection of styles to use inside the drawings
- *
+ * @title: AdgStyle
+ * @short_description: The base class of all styling objects.
  */
 
 #include "adg-style.h"
