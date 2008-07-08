@@ -119,6 +119,24 @@ AdgFontStyle
 adg_font_style_new
 adg_font_style_from_id
 adg_font_style_apply
+<SUBSECTION>
+adg_font_style_get_family
+adg_font_style_set_family
+adg_font_style_get_slant
+adg_font_style_set_slant
+adg_font_style_get_weight
+adg_font_style_set_weight
+adg_font_style_get_size
+adg_font_style_set_size
+<SUBSECTION>
+adg_font_style_get_antialias
+adg_font_style_set_antialias
+adg_font_style_get_subpixel_order
+adg_font_style_set_subpixel_order
+adg_font_style_get_hint_style
+adg_font_style_set_hint_style
+adg_font_style_get_hint_metrics
+adg_font_style_set_hint_metrics
 <SUBSECTION Standard>
 AdgFontStyleClass
 AdgFontStylePrivate

@@ -53,11 +53,44 @@ struct _AdgFontStyleClass
 };
 
 
-GType		adg_font_style_get_type	(void) G_GNUC_CONST;
-AdgStyle *	adg_font_style_new	(void);
-AdgStyle *	adg_font_style_from_id	(AdgFontStyleId		 id);
-void		adg_font_style_apply	(const AdgFontStyle	*font_style,
-					 cairo_t		*cr);
+GType		adg_font_style_get_type		(void) G_GNUC_CONST;
+AdgStyle *	adg_font_style_new		(void);
+AdgStyle *	adg_font_style_from_id		(AdgFontStyleId	 id);
+void		adg_font_style_apply		(const AdgFontStyle *font_style,
+						 cairo_t	*cr);
+
+const gchar *	adg_font_style_get_family	(AdgFontStyle	*font_style);
+void		adg_font_style_set_family	(AdgFontStyle	*font_style,
+						 const gchar	*family);
+cairo_font_slant_t
+		adg_font_style_get_slant	(AdgFontStyle	*font_style);
+void		adg_font_style_set_slant	(AdgFontStyle	*font_style,
+						 cairo_font_slant_t slant);
+cairo_font_weight_t
+		adg_font_style_get_weight	(AdgFontStyle	*font_style);
+void		adg_font_style_set_weight	(AdgFontStyle	*font_style,
+						 cairo_font_weight_t weight);
+gdouble		adg_font_style_get_size		(AdgFontStyle	*font_style);
+void		adg_font_style_set_size		(AdgFontStyle	*font_style,
+						 gdouble	 size);
+cairo_antialias_t
+		adg_font_style_get_antialias	(AdgFontStyle	*font_style);
+void		adg_font_style_set_antialias	(AdgFontStyle	*font_style,
+						 cairo_antialias_t antialias);
+cairo_subpixel_order_t
+		adg_font_style_get_subpixel_order
+						(AdgFontStyle	*font_style);
+void		adg_font_style_set_subpixel_order
+						(AdgFontStyle	*font_style,
+						 cairo_subpixel_order_t subpixel_order);
+cairo_hint_style_t
+		adg_font_style_get_hint_style	(AdgFontStyle	*font_style);
+void		adg_font_style_set_hint_style	(AdgFontStyle	*font_style,
+						 cairo_hint_style_t hint_style);
+cairo_hint_metrics_t
+		adg_font_style_get_hint_metrics	(AdgFontStyle	*font_style);
+void		adg_font_style_set_hint_metrics	(AdgFontStyle	*font_style,
+						 cairo_hint_metrics_t hint_metrics);
 
 
 G_END_DECLS
