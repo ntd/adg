@@ -29,10 +29,10 @@ G_BEGIN_DECLS
 
 struct _AdgArrowStylePrivate
 {
-  double		 size;
-  double		 angle;
-  double		 margin;
-  AdgArrowStyleRenderer	 renderer;
+  gdouble	   size;
+  gdouble	   angle;
+  gdouble	   margin;
+  AdgArrowRenderer renderer;
 };
 
 

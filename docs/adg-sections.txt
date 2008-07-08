@@ -94,11 +94,20 @@ ADG_LINE_STYLE_GET_CLASS
 <FILE>arrow-style</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgArrowStyle
-AdgArrowStyleRenderer
+AdgArrowRenderer
 <SUBSECTION>
 adg_arrow_style_new
 adg_arrow_style_from_id
 adg_arrow_style_render
+<SUBSECTION>
+adg_arrow_style_get_size
+adg_arrow_style_set_size
+adg_arrow_style_get_angle
+adg_arrow_style_set_angle
+adg_arrow_style_get_margin
+adg_arrow_style_set_margin
+adg_arrow_style_get_renderer
+adg_arrow_style_set_renderer
 <SUBSECTION Standard>
 AdgArrowStyleClass
 AdgArrowStylePrivate

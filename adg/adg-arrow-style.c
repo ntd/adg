@@ -267,6 +267,140 @@ adg_arrow_style_render (AdgArrowStyle *arrow_style,
   arrow_style->priv->renderer (arrow_style, cr, segment);
 }
 
+/**
+ * adg_arrow_style_get_size:
+ * @arrow_style: an #AdgArrowStyle object
+ *
+ * Gets the size (in paper units) of the arrow (renderer dependent value).
+ *
+ * Return value: the size value
+ **/
+gdouble
+adg_arrow_style_get_size (AdgArrowStyle *arrow_style)
+{
+  g_return_val_if_fail (ADG_IS_ARROW_STYLE (arrow_style), 0.);
+
+  return arrow_style->priv->size;
+}
+
+/**
+ * adg_arrow_style_set_size:
+ * @arrow_style: an #AdgArrowStyle object
+ * @size: the new size
+ *
+ * Sets a new size.
+ **/
+void
+adg_arrow_style_set_size (AdgArrowStyle *arrow_style,
+			  gdouble        size)
+{
+  g_return_if_fail (ADG_IS_ARROW_STYLE (arrow_style));
+
+  arrow_style->priv->size = size;
+  g_object_notify ((GObject *) arrow_style, "size");
+}
+
+/**
+ * adg_arrow_style_get_angle:
+ * @arrow_style: an #AdgArrowStyle object
+ *
+ * Gets the angle (in degree) of the arrow (renderer dependent value).
+ *
+ * Return value: the angle value
+ **/
+gdouble
+adg_arrow_style_get_angle (AdgArrowStyle *arrow_style)
+{
+  g_return_val_if_fail (ADG_IS_ARROW_STYLE (arrow_style), 0.);
+
+  return arrow_style->priv->angle;
+}
+
+/**
+ * adg_arrow_style_set_angle:
+ * @arrow_style: an #AdgArrowStyle object
+ * @angle: the new angle
+ *
+ * Sets a new angle.
+ **/
+void
+adg_arrow_style_set_angle (AdgArrowStyle *arrow_style,
+			   gdouble        angle)
+{
+  g_return_if_fail (ADG_IS_ARROW_STYLE (arrow_style));
+
+  arrow_style->priv->angle = angle;
+  g_object_notify ((GObject *) arrow_style, "angle");
+}
+
+/**
+ * adg_arrow_style_get_margin:
+ * @arrow_style: an #AdgArrowStyle object
+ *
+ * Gets the margin (in paper units) of this arrow (renderer dependent value).
+ * The margin is also used to trim the baseline of this amount.
+ *
+ * Return value: the margin value
+ **/
+gdouble
+adg_arrow_style_get_margin (AdgArrowStyle *arrow_style)
+{
+  g_return_val_if_fail (ADG_IS_ARROW_STYLE (arrow_style), 0.);
+
+  return arrow_style->priv->margin;
+}
+
+/**
+ * adg_arrow_style_set_margin:
+ * @arrow_style: an #AdgArrowStyle object
+ * @margin: the new margin
+ *
+ * Sets a new margin.
+ **/
+void
+adg_arrow_style_set_margin (AdgArrowStyle *arrow_style,
+			    gdouble        margin)
+{
+  g_return_if_fail (ADG_IS_ARROW_STYLE (arrow_style));
+
+  arrow_style->priv->margin = margin;
+  g_object_notify ((GObject *) arrow_style, "margin");
+}
+
+/**
+ * adg_arrow_style_get_renderer:
+ * @arrow_style: an #AdgArrowStyle object
+ *
+ * Gets the renderer of @arrow_style.
+ *
+ * Return value: the renderer value
+ **/
+const AdgArrowRenderer
+adg_arrow_style_get_renderer (AdgArrowStyle *arrow_style)
+{
+  g_return_val_if_fail (ADG_IS_ARROW_STYLE (arrow_style), NULL);
+
+  return arrow_style->priv->renderer;
+}
+
+/**
+ * adg_arrow_style_set_renderer:
+ * @arrow_style: an #AdgArrowStyle object
+ * @renderer: the new renderer
+ *
+ * Sets a new renderer.
+ **/
+void
+adg_arrow_style_set_renderer (AdgArrowStyle   *arrow_style,
+			      AdgArrowRenderer renderer)
+{
+  g_return_if_fail (ADG_IS_ARROW_STYLE (arrow_style));
+
+  arrow_style->priv->renderer = renderer;
+  g_object_notify ((GObject *) arrow_style, "renderer");
+}
+
+
 static void
 arrow_renderer (AdgArrowStyle *arrow_style,
 		cairo_t       *cr,
