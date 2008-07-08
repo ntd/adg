@@ -50,9 +50,9 @@ enum
   PROP_FROM_OFFSET,
   PROP_TO_OFFSET,
   PROP_BASELINE_SPACING,
+  PROP_TOLERANCE_SPACING,
   PROP_QUOTE_OFFSET,
   PROP_TOLERANCE_OFFSET,
-  PROP_TOLERANCE_SPACING,
   PROP_NOTE_OFFSET,
   PROP_NUMBER_FORMAT,
   PROP_NUMBER_TAG
@@ -162,6 +162,13 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_BASELINE_SPACING, param);
 
+  param = g_param_spec_double ("tolerance-spacing",
+			       P_("Tolerance Spacing"),
+			       P_("Distance between up and down tolerance text"),
+			       0., G_MAXDOUBLE, 2.,
+			       G_PARAM_READWRITE);
+  g_object_class_install_property (gobject_class, PROP_TOLERANCE_SPACING, param);
+
   param = g_param_spec_boxed ("quote-offset",
 			      P_("Quote Offset"),
 			      P_("Used to specify a smooth position for the quote text (in paper space units) taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
@@ -175,13 +182,6 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_TOLERANCE_OFFSET, param);
-
-  param = g_param_spec_double ("tolerance-spacing",
-			       P_("Tolerance Spacing"),
-			       P_("Distance between up and down tolerance text"),
-			       0., G_MAXDOUBLE, 2.,
-			       G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_TOLERANCE_SPACING, param);
 
   param = g_param_spec_boxed ("note-offset",
 			      P_("Note Offset"),
@@ -220,11 +220,11 @@ adg_dim_style_init (AdgDimStyle *dim_style)
   priv->from_offset = 5.;
   priv->to_offset = 5.;
   priv->baseline_spacing = 30.;
+  priv->tolerance_spacing = 2.;
   priv->quote_offset.x = 0.;
   priv->quote_offset.y = -3.;
   priv->tolerance_offset.x = +5.;
   priv->tolerance_offset.y = -4.;
-  priv->tolerance_spacing = 2.;
   priv->note_offset.x = +5.;
   priv->note_offset.y =  0.;
   priv->number_format = g_strdup ("%-.7g");
@@ -267,14 +267,14 @@ get_property (GObject    *object,
     case PROP_BASELINE_SPACING:
       g_value_set_double (value, dim_style->priv->baseline_spacing);
       break;
+    case PROP_TOLERANCE_SPACING:
+      g_value_set_double (value, dim_style->priv->tolerance_spacing);
+      break;
     case PROP_QUOTE_OFFSET:
       g_value_set_boxed (value, &dim_style->priv->quote_offset);
       break;
     case PROP_TOLERANCE_OFFSET:
       g_value_set_boxed (value, &dim_style->priv->tolerance_offset);
-      break;
-    case PROP_TOLERANCE_SPACING:
-      g_value_set_double (value, dim_style->priv->tolerance_spacing);
       break;
     case PROP_NOTE_OFFSET:
       g_value_set_boxed (value, &dim_style->priv->note_offset);
@@ -325,14 +325,14 @@ set_property (GObject      *object,
     case PROP_BASELINE_SPACING:
       dim_style->priv->baseline_spacing = g_value_get_double (value);
       break;
+    case PROP_TOLERANCE_SPACING:
+      dim_style->priv->tolerance_spacing = g_value_get_double (value);
+      break;
     case PROP_QUOTE_OFFSET:
       set_quote_offset (dim_style, g_value_get_boxed (value));
       break;
     case PROP_TOLERANCE_OFFSET:
       set_tolerance_offset (dim_style, g_value_get_boxed (value));
-      break;
-    case PROP_TOLERANCE_SPACING:
-      dim_style->priv->tolerance_spacing = g_value_get_double (value);
       break;
     case PROP_NOTE_OFFSET:
       set_note_offset (dim_style, g_value_get_boxed (value));
@@ -658,6 +658,39 @@ adg_dim_style_set_baseline_spacing (AdgDimStyle *dim_style,
 }
 
 /**
+ * adg_dim_style_get_tolerance_spacing:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the distance (in paper space) between up and down tolerances.
+ *
+ * Return value: the requested spacing
+ **/
+gdouble
+adg_dim_style_get_tolerance_spacing (AdgDimStyle *dim_style)
+{
+  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
+
+  return dim_style->priv->tolerance_spacing;
+}
+
+/**
+ * adg_dim_style_set_tolerance_spacing:
+ * @dim_style: an #AdgDimStyle object
+ * @spacing: the new spacing
+ *
+ * Sets a new "tolerance-spacing" value.
+ **/
+void
+adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
+				     gdouble      spacing)
+{
+  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
+
+  dim_style->priv->tolerance_spacing = spacing;
+  g_object_notify ((GObject *) dim_style, "tolerance-spacing");
+}
+
+/**
  * adg_dim_style_get_quote_offset:
  * @dim_style: an #AdgDimStyle object
  *
@@ -723,39 +756,6 @@ adg_dim_style_set_tolerance_offset (AdgDimStyle   *dim_style,
 
   set_tolerance_offset (dim_style, shift);
   g_object_notify ((GObject *) dim_style, "tolerance-offset");
-}
-
-/**
- * adg_dim_style_get_tolerance_spacing:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets the distance (in paper space) between up and down tolerances.
- *
- * Return value: the requested spacing
- **/
-gdouble
-adg_dim_style_get_tolerance_spacing (AdgDimStyle *dim_style)
-{
-  g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), 0.);
-
-  return dim_style->priv->tolerance_spacing;
-}
-
-/**
- * adg_dim_style_set_tolerance_spacing:
- * @dim_style: an #AdgDimStyle object
- * @spacing: the new spacing
- *
- * Sets a new "tolerance-spacing" value.
- **/
-void
-adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
-				     gdouble      spacing)
-{
-  g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
-
-  dim_style->priv->tolerance_spacing = spacing;
-  g_object_notify ((GObject *) dim_style, "tolerance-spacing");
 }
 
 /**
