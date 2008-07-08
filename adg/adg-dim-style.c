@@ -42,7 +42,7 @@
 enum
 {
   PROP_0,
-  PROP_LABEL_STYLE,
+  PROP_QUOTE_STYLE,
   PROP_TOLERANCE_STYLE,
   PROP_NOTE_STYLE,
   PROP_LINE_STYLE,
@@ -85,12 +85,12 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  param = g_param_spec_object ("label-style",
-			       P_("Label Style"),
-			       P_("Font style for the label"),
+  param = g_param_spec_object ("quote-style",
+			       P_("Quote Style"),
+			       P_("Font style for the quote"),
 			       ADG_TYPE_STYLE,
 			       G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_LABEL_STYLE, param);
+  g_object_class_install_property (gobject_class, PROP_QUOTE_STYLE, param);
 
   param = g_param_spec_object ("tolerance-style",
 			       P_("Tolerance Style"),
@@ -101,7 +101,7 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_object ("note-style",
 			       P_("Note Style"),
-			       P_("Font style for the note (the text after or under the label)"),
+			       P_("Font style for the note (the text after or under the quote)"),
 			       ADG_TYPE_STYLE,
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NOTE_STYLE, param);
@@ -171,14 +171,14 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_string ("number-format",
 			       P_("Number Format"),
-			       P_("The format (in printf style) of the numeric component of the label"),
+			       P_("The format (in printf style) of the numeric component of the quote"),
 			       "%-.7g",
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NUMBER_FORMAT, param);
 
   param = g_param_spec_string ("number-tag",
 			       P_("Number Tag"),
-			       P_("The tag to substitute in pattern label"),
+			       P_("The tag to substitute in pattern quote"),
 			       "<>",
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NUMBER_TAG, param);
@@ -191,7 +191,7 @@ adg_dim_style_init (AdgDimStyle *dim_style)
 							  ADG_TYPE_DIM_STYLE,
 							  AdgDimStylePrivate);
 
-  priv->label_style = adg_font_style_from_id (ADG_FONT_STYLE_QUOTE);
+  priv->quote_style = adg_font_style_from_id (ADG_FONT_STYLE_QUOTE);
   priv->tolerance_style = adg_font_style_from_id (ADG_FONT_STYLE_TOLERANCE);
   priv->note_style = adg_font_style_from_id (ADG_FONT_STYLE_NOTE);
   priv->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DIM);
@@ -222,8 +222,8 @@ get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_LABEL_STYLE:
-      g_value_set_object (value, dim_style->priv->label_style);
+    case PROP_QUOTE_STYLE:
+      g_value_set_object (value, dim_style->priv->quote_style);
       break;
     case PROP_TOLERANCE_STYLE:
       g_value_set_object (value, dim_style->priv->tolerance_style);
@@ -280,8 +280,8 @@ set_property (GObject      *object,
 
   switch (prop_id)
     {
-    case PROP_LABEL_STYLE:
-      dim_style->priv->label_style = g_value_get_object (value);
+    case PROP_QUOTE_STYLE:
+      dim_style->priv->quote_style = g_value_get_object (value);
       break;
     case PROP_TOLERANCE_STYLE:
       dim_style->priv->tolerance_style = g_value_get_object (value);

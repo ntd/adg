@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 struct _AdgDimStylePrivate
 {
-  AdgStyle	*label_style;
+  AdgStyle	*quote_style;
   AdgStyle	*tolerance_style;
   AdgStyle	*note_style;
   AdgStyle	*line_style;
