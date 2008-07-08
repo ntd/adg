@@ -60,7 +60,7 @@ static void	set_property		(GObject	*object,
 static void	update			(AdgEntity	*entity);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
-static gchar *	default_label		(AdgDim		*dim);
+static gchar *	default_quote		(AdgDim		*dim);
 
 
 G_DEFINE_TYPE (AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -86,7 +86,7 @@ adg_ldim_class_init (AdgLDimClass *klass)
 
   entity_class->render = render;
 
-  dim_class->default_label = default_label;
+  dim_class->default_quote = default_quote;
 
   param = g_param_spec_double ("direction",
 			       P_("Direction"),
@@ -358,7 +358,7 @@ render (AdgEntity *entity,
 }
 
 static gchar *
-default_label (AdgDim *dim)
+default_quote (AdgDim *dim)
 {
   double number;
 

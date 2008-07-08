@@ -49,7 +49,7 @@ static void             model_matrix_changed	(AdgEntity	*entity,
 						 AdgMatrix	*parent_matrix);
 static void             render			(AdgEntity      *entity,
 						 cairo_t        *cr);
-static gchar *          default_label		(AdgDim         *dim);
+static gchar *          default_quote		(AdgDim         *dim);
 
 
 G_DEFINE_TYPE (AdgADim, adg_adim, ADG_TYPE_DIM);
@@ -73,7 +73,7 @@ adg_adim_class_init (AdgADimClass *klass)
 
   entity_class->model_matrix_changed = model_matrix_changed;
 
-  dim_class->default_label = default_label;
+  dim_class->default_quote = default_quote;
 
   param = g_param_spec_double ("direction",
 			       P_("Direction"),
@@ -137,7 +137,7 @@ render (AdgEntity *entity,
 }
 
 static gchar *
-default_label (AdgDim *dim)
+default_quote (AdgDim *dim)
 {
   /* TODO */
   return g_strdup ("TODO");

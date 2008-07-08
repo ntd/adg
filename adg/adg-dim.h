@@ -53,8 +53,8 @@ struct _AdgDimClass
 
 
   /* Virtual Table */
-  gchar *               (*default_label)                (AdgDim         *dim);
-  void                  (*label_layout)                 (AdgDim         *dim,
+  gchar *               (*default_quote)                (AdgDim         *dim);
+  void                  (*quote_layout)                 (AdgDim         *dim,
                                                          cairo_t        *cr);
 };
 
@@ -84,9 +84,9 @@ void                     adg_dim_set_pos_explicit       (AdgDim         *dim,
 double                   adg_dim_get_level              (AdgDim         *dim);
 void                     adg_dim_set_level              (AdgDim         *dim,
                                                          double          level);
-const gchar *            adg_dim_get_label              (AdgDim         *dim);
-void                     adg_dim_set_label              (AdgDim         *dim,
-                                                         const gchar    *label);
+const gchar *            adg_dim_get_quote              (AdgDim         *dim);
+void                     adg_dim_set_quote              (AdgDim         *dim,
+                                                         const gchar    *quote);
 const gchar *            adg_dim_get_tolerance_up       (AdgDim         *dim);
 void                     adg_dim_set_tolerance_up       (AdgDim         *dim,
                                                          const gchar    *tolerance_up);

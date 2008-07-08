@@ -45,7 +45,7 @@ enum
   PROP_POS1,
   PROP_POS2,
   PROP_LEVEL,
-  PROP_LABEL,
+  PROP_QUOTE,
   PROP_TOLERANCE_UP,
   PROP_TOLERANCE_DOWN,
   PROP_NOTE
@@ -67,8 +67,8 @@ static const AdgDimStyle *
 		get_dim_style		(AdgEntity	*entity);
 static void	set_dim_style		(AdgEntity	*entity,
 					 AdgDimStyle	*dim_style);
-static gchar *	default_label		(AdgDim		*dim);
-static void	label_layout		(AdgDim		*dim,
+static gchar *	default_quote		(AdgDim		*dim);
+static void	quote_layout		(AdgDim		*dim,
 					 cairo_t	*cr);
 
 
@@ -94,8 +94,8 @@ adg_dim_class_init (AdgDimClass *klass)
   entity_class->get_dim_style = get_dim_style;
   entity_class->set_dim_style = set_dim_style;
 
-  klass->default_label = default_label;
-  klass->label_layout = label_layout;
+  klass->default_quote = default_quote;
+  klass->quote_layout = quote_layout;
 
   param = g_param_spec_boxed ("dim-style",
                               P_("Dimension Style"),
@@ -139,12 +139,12 @@ adg_dim_class_init (AdgDimClass *klass)
 			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_LEVEL, param);
 
-  param = g_param_spec_string ("label",
-                               P_("Label"),
-                               P_("The label to display: set to NULL to get the default quote"),
+  param = g_param_spec_string ("quote",
+                               P_("Quote"),
+                               P_("The quote to display: set to NULL to get the default quote"),
                                NULL,
                                G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_LABEL, param);
+  g_object_class_install_property (gobject_class, PROP_QUOTE, param);
 
   param = g_param_spec_string ("tolerance-up",
                                P_("Up Tolerance"),
@@ -162,7 +162,7 @@ adg_dim_class_init (AdgDimClass *klass)
 
   param = g_param_spec_string ("note",
                                P_("Note"),
-                               P_("A custom note appended to the dimension label"),
+                               P_("A custom note appended to the dimension quote"),
                                NULL,
                                G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_NOTE, param);
@@ -181,7 +181,7 @@ adg_dim_init (AdgDim *dim)
   priv->pos1.x = priv->pos1.y = 0.;
   priv->pos2.x = priv->pos2.y = 0.;
   priv->level = 1.;
-  priv->label = NULL;
+  priv->quote = NULL;
   priv->tolerance_up = NULL;
   priv->tolerance_down = NULL;
   priv->note = NULL;
@@ -195,7 +195,7 @@ finalize (GObject *object)
 {
   AdgDimPrivate *priv = ((AdgDim *) object)->priv;
 
-  g_free (priv->label);
+  g_free (priv->quote);
   g_free (priv->tolerance_up);
   g_free (priv->tolerance_down);
 
@@ -230,8 +230,8 @@ get_property (GObject    *object,
     case PROP_LEVEL:
       g_value_set_double (value, dim->priv->level);
       break;
-    case PROP_LABEL:
-      g_value_set_string (value, dim->priv->label);
+    case PROP_QUOTE:
+      g_value_set_string (value, dim->priv->quote);
       break;
     case PROP_TOLERANCE_UP:
       g_value_set_string (value, dim->priv->tolerance_up);
@@ -282,9 +282,9 @@ set_property (GObject      *object,
       dim->priv->level = g_value_get_double (value);
       invalidate (dim);
       break;
-    case PROP_LABEL:
-      g_free (dim->priv->label);
-      dim->priv->label = g_value_dup_string (value);
+    case PROP_QUOTE:
+      g_free (dim->priv->quote);
+      dim->priv->quote = g_value_dup_string (value);
       invalidate_quote (dim);
       break;
     case PROP_TOLERANCE_UP:
@@ -342,14 +342,14 @@ set_dim_style (AdgEntity   *entity,
 }
 
 static gchar *
-default_label (AdgDim *dim)
+default_quote (AdgDim *dim)
 {
-  g_warning ("AdgDim::default_label not implemented for `%s'", g_type_name (G_TYPE_FROM_INSTANCE (dim)));
+  g_warning ("AdgDim::default_quote not implemented for `%s'", g_type_name (G_TYPE_FROM_INSTANCE (dim)));
   return g_strdup ("undef");
 }
 
 static void
-label_layout (AdgDim  *dim,
+quote_layout (AdgDim  *dim,
 	      cairo_t *cr)
 {
   AdgDimStylePrivate  *style_data;
@@ -359,10 +359,10 @@ label_layout (AdgDim  *dim,
 
   style_data = dim->priv->dim_style->priv;
 
-  /* Compute the label */
-  adg_font_style_apply (ADG_FONT_STYLE (style_data->label_style), cr);
+  /* Compute the quote */
+  adg_font_style_apply (ADG_FONT_STYLE (style_data->quote_style), cr);
 
-  cairo_text_extents (cr, dim->priv->label, &extents);
+  cairo_text_extents (cr, dim->priv->quote, &extents);
   cairo_user_to_device_distance (cr, &extents.width, &extents.height);
   cp.x = extents.width;
   cp.y = -extents.height / 2.;
@@ -575,24 +575,24 @@ adg_dim_set_level (AdgDim *dim,
 }
 
 const gchar *
-adg_dim_get_label (AdgDim *dim)
+adg_dim_get_quote (AdgDim *dim)
 {
   g_return_val_if_fail (ADG_IS_DIM (dim), NULL);
 
-  return dim->priv->label;
+  return dim->priv->quote;
 }
 
 void
-adg_dim_set_label (AdgDim      *dim,
-                   const gchar *label)
+adg_dim_set_quote (AdgDim      *dim,
+                   const gchar *quote)
 {
   g_return_if_fail (ADG_IS_DIM (dim));
 
-  g_free (dim->priv->label);
-  dim->priv->label = g_strdup (label);
+  g_free (dim->priv->quote);
+  dim->priv->quote = g_strdup (quote);
   invalidate_quote (dim);
 
-  g_object_notify ((GObject *) dim, "label");
+  g_object_notify ((GObject *) dim, "quote");
 }
 
 const gchar *
@@ -709,14 +709,14 @@ _adg_dim_render_quote (AdgDim  *dim,
 
   style_data = dim->priv->dim_style->priv;
 
-  if (dim->priv->label == NULL)
+  if (dim->priv->quote == NULL)
     {
-      dim->priv->label = ADG_DIM_GET_CLASS (dim)->default_label (dim);
+      dim->priv->quote = ADG_DIM_GET_CLASS (dim)->default_quote (dim);
       invalidate_quote (dim);
-      g_object_notify ((GObject *) dim, "label");
+      g_object_notify ((GObject *) dim, "quote");
     }
 
-  ADG_DIM_GET_CLASS (dim)->label_layout (dim, cr);
+  ADG_DIM_GET_CLASS (dim)->quote_layout (dim, cr);
 
   cpml_pair_copy (&quote_offset, &dim->priv->quote_offset);
   cairo_device_to_user_distance (cr, &quote_offset.x, &quote_offset.y);
@@ -729,10 +729,10 @@ _adg_dim_render_quote (AdgDim  *dim,
   cairo_translate (cr, dim->priv->quote_org.x, dim->priv->quote_org.y);
   cairo_rotate (cr, dim->priv->quote_angle);
 
-  /* Rendering label */
-  adg_font_style_apply (ADG_FONT_STYLE (style_data->label_style), cr);
+  /* Rendering quote */
+  adg_font_style_apply (ADG_FONT_STYLE (style_data->quote_style), cr);
   cairo_move_to (cr, quote_offset.x, quote_offset.y);
-  cairo_show_text (cr, dim->priv->label);
+  cairo_show_text (cr, dim->priv->quote);
 
   /* Rendering tolerances */
   if (dim->priv->tolerance_up != NULL || dim->priv->tolerance_down != NULL)

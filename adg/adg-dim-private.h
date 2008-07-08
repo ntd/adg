@@ -36,7 +36,7 @@ struct _AdgDimPrivate
   AdgPair		 pos1;
   AdgPair		 pos2;
   double		 level;
-  gchar			*label;
+  gchar			*quote;
   gchar			*tolerance_up;
   gchar			*tolerance_down;
   gchar			*note;
