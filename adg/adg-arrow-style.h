@@ -44,10 +44,11 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  * AdgArrowStyleRenderer:
  * @arrow_style: an #AdgArrowStyle object
  * @cr: a #cairo_t drawing context
- * @path: the path where rendering the arrow
- * @position: position on @path (0 = start; 1 = end) where to render
+ * @segment: the CpmlPath segment where rendering the arrow
  *
- * Callback that renders a custom arrow at @position in @path.
+ * Callback that renders a custom arrow at the start position in @segment.
+ * If you need an ending arrow, you should reverse the segment and recall
+ * this function.
  */
 typedef void (*AdgArrowStyleRenderer)		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,

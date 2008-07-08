@@ -545,7 +545,7 @@ adg_dim_style_get_arrow_style (AdgDimStyle *dim_style)
  * unreferenced while a new reference will be added to @style.
  **/
 void
-adg_dim_style_set_arrow_style (AdgDimStyle  *dim_style,
+adg_dim_style_set_arrow_style (AdgDimStyle   *dim_style,
 			       AdgArrowStyle *style)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
@@ -716,7 +716,7 @@ adg_dim_style_get_quote_shift (AdgDimStyle *dim_style)
  **/
 void
 adg_dim_style_set_quote_shift (AdgDimStyle   *dim_style,
-				const AdgPair *shift)
+			       const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
@@ -750,7 +750,7 @@ adg_dim_style_get_tolerance_shift (AdgDimStyle *dim_style)
  **/
 void
 adg_dim_style_set_tolerance_shift (AdgDimStyle   *dim_style,
-				    const AdgPair *shift)
+				   const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
@@ -784,7 +784,7 @@ adg_dim_style_get_note_shift (AdgDimStyle *dim_style)
  **/
 void
 adg_dim_style_set_note_shift (AdgDimStyle   *dim_style,
-				    const AdgPair *shift)
+			      const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 

@@ -25,7 +25,7 @@
     <chapter id="Compiling">
       <title>Compiling the ADG library</title>
 
-      <section>
+      <section id="Requirements">
         <title>Requirements</title>
         <para>
         The ADG library is strongly based on the GObject framework (included inside

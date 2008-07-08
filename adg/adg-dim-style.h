@@ -62,21 +62,21 @@ AdgStyle *	adg_dim_style_from_id	(AdgDimStyleId		 id);
 
 AdgStyle *	adg_dim_style_get_quote_style	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_quote_style	(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
+						 AdgFontStyle	*style);
 AdgStyle *	adg_dim_style_get_tolerance_style
 						(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_tolerance_style
 						(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
+						 AdgFontStyle	*style);
 AdgStyle *	adg_dim_style_get_note_style	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_note_style	(AdgDimStyle	*dim_style,
-						 AdgFontStyle	*font_style);
+						 AdgFontStyle	*style);
 AdgStyle *	adg_dim_style_get_line_style	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_line_style	(AdgDimStyle	*dim_style,
-						 AdgLineStyle	*line_style);
+						 AdgLineStyle	*style);
 AdgStyle *	adg_dim_style_get_arrow_style	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_arrow_style	(AdgDimStyle	*dim_style,
-						 AdgArrowStyle	*arrow_style);
+						 AdgArrowStyle	*style);
 gdouble		adg_dim_style_get_from_offset	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_from_offset	(AdgDimStyle	*dim_style,
 						 gdouble	 offset);
