@@ -44,12 +44,10 @@ struct _AdgDimPrivate
   /* Cached data */
   AdgPair		 quote_org;
   gdouble		 quote_angle;
-
-  /* Cached data (quote related) */
-  AdgPair		 quote_offset;
-  AdgPair		 tolerance_up_offset;
-  AdgPair		 tolerance_down_offset;
-  AdgPair 		 note_offset;
+  AdgPair		 quote_shift;
+  AdgPair		 tolerance_up_shift;
+  AdgPair		 tolerance_down_shift;
+  AdgPair 		 note_shift;
 };
 
 

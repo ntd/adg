@@ -37,10 +37,10 @@ struct _AdgDimStylePrivate
   double	 from_offset;
   double	 to_offset;
   double	 baseline_spacing;
-  AdgPair	 quote_offset;
-  AdgPair	 tolerance_offset;
   double	 tolerance_spacing;
-  AdgPair	 note_offset;
+  AdgPair	 quote_shift;
+  AdgPair	 tolerance_shift;
+  AdgPair	 note_shift;
   gchar		*number_format;
   gchar		*number_tag;
 };

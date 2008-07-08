@@ -320,10 +320,10 @@ invalidate (AdgDim *dim)
 static void
 invalidate_quote (AdgDim *dim)
 {
-  dim->priv->quote_offset.x = dim->priv->quote_offset.y = 0.;
-  dim->priv->tolerance_up_offset.x = dim->priv->tolerance_up_offset.y = 0.;
-  dim->priv->tolerance_down_offset.x = dim->priv->tolerance_down_offset.y = 0.;
-  dim->priv->note_offset.x = dim->priv->note_offset.y = 0.;
+  dim->priv->quote_shift.x = dim->priv->quote_shift.y = 0.;
+  dim->priv->tolerance_up_shift.x = dim->priv->tolerance_up_shift.y = 0.;
+  dim->priv->tolerance_down_shift.x = dim->priv->tolerance_down_shift.y = 0.;
+  dim->priv->note_shift.x = dim->priv->note_shift.y = 0.;
 }
 
 
@@ -377,15 +377,15 @@ quote_layout (AdgDim  *dim,
 
       width = 0.0;
       midspacing = style_data->tolerance_spacing / 2.0;
-      cpml_pair_copy (&offset, &style_data->tolerance_offset);
+      cpml_pair_copy (&offset, &style_data->tolerance_shift);
       cp.x += offset.x;
 
       if (dim->priv->tolerance_up != NULL)
         {
           cairo_text_extents (cr, dim->priv->tolerance_up, &extents);
           cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-	  dim->priv->tolerance_up_offset.x = cp.x;
-	  dim->priv->tolerance_up_offset.y = cp.y + offset.y - midspacing;
+	  dim->priv->tolerance_up_shift.x = cp.x;
+	  dim->priv->tolerance_up_shift.y = cp.y + offset.y - midspacing;
           width = extents.width;
         }
 
@@ -393,8 +393,8 @@ quote_layout (AdgDim  *dim,
         {
           cairo_text_extents (cr, dim->priv->tolerance_down, &extents);
           cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-	  dim->priv->tolerance_down_offset.x = cp.x;
-	  dim->priv->tolerance_down_offset.y = cp.y + offset.y + midspacing + extents.height;
+	  dim->priv->tolerance_down_shift.x = cp.x;
+	  dim->priv->tolerance_down_shift.y = cp.y + offset.y + midspacing + extents.height;
                                  
           if (extents.width > width)
             width = extents.width;
@@ -408,31 +408,31 @@ quote_layout (AdgDim  *dim,
     {
       adg_font_style_apply (ADG_FONT_STYLE (style_data->note_style), cr);
 
-      cpml_pair_copy (&offset, &style_data->note_offset);
+      cpml_pair_copy (&offset, &style_data->note_shift);
       cp.x += offset.x;
 
       cairo_text_extents (cr, dim->priv->note, &extents);
       cairo_user_to_device_distance (cr, &extents.width, &extents.height);
-      dim->priv->note_offset.x = cp.x;
-      dim->priv->note_offset.y = cp.y + offset.y + extents.height / 2.;
+      dim->priv->note_shift.x = cp.x;
+      dim->priv->note_shift.y = cp.y + offset.y + extents.height / 2.;
 
       cp.x += extents.width;
     }
 
   /* Calculating the offsets */
-  offset.x = style_data->quote_offset.x - cp.x / 2.0;
-  offset.y = style_data->quote_offset.y;
+  offset.x = style_data->quote_shift.x - cp.x / 2.0;
+  offset.y = style_data->quote_shift.y;
 
-  cpml_pair_copy (&dim->priv->quote_offset, &offset);
+  cpml_pair_copy (&dim->priv->quote_shift, &offset);
 
-  dim->priv->tolerance_up_offset.x += offset.x;
-  dim->priv->tolerance_up_offset.y += offset.y;
+  dim->priv->tolerance_up_shift.x += offset.x;
+  dim->priv->tolerance_up_shift.y += offset.y;
 
-  dim->priv->tolerance_down_offset.x += offset.x;
-  dim->priv->tolerance_down_offset.y += offset.y;
+  dim->priv->tolerance_down_shift.x += offset.x;
+  dim->priv->tolerance_down_shift.y += offset.y;
 
-  dim->priv->note_offset.x += offset.x;
-  dim->priv->note_offset.y += offset.y;
+  dim->priv->note_shift.x += offset.x;
+  dim->priv->note_shift.y += offset.y;
 }
 
 
@@ -699,10 +699,10 @@ _adg_dim_render_quote (AdgDim  *dim,
 		       cairo_t *cr)
 {
   AdgDimStylePrivate  *style_data;
-  AdgPair quote_offset;
-  AdgPair tolerance_up_offset;
-  AdgPair tolerance_down_offset;
-  AdgPair note_offset;
+  AdgPair quote_shift;
+  AdgPair tolerance_up_shift;
+  AdgPair tolerance_down_shift;
+  AdgPair note_shift;
 
   g_return_if_fail (ADG_IS_DIM (dim));
   g_return_if_fail (dim->priv->dim_style != NULL);
@@ -718,12 +718,12 @@ _adg_dim_render_quote (AdgDim  *dim,
 
   ADG_DIM_GET_CLASS (dim)->quote_layout (dim, cr);
 
-  cpml_pair_copy (&quote_offset, &dim->priv->quote_offset);
-  cairo_device_to_user_distance (cr, &quote_offset.x, &quote_offset.y);
-  cpml_pair_copy (&tolerance_up_offset, &dim->priv->tolerance_up_offset);
-  cairo_device_to_user_distance (cr, &tolerance_up_offset.x, &tolerance_up_offset.y);
-  cpml_pair_copy (&tolerance_down_offset, &dim->priv->tolerance_down_offset);
-  cairo_device_to_user_distance (cr, &tolerance_down_offset.x, &tolerance_down_offset.y);
+  cpml_pair_copy (&quote_shift, &dim->priv->quote_shift);
+  cairo_device_to_user_distance (cr, &quote_shift.x, &quote_shift.y);
+  cpml_pair_copy (&tolerance_up_shift, &dim->priv->tolerance_up_shift);
+  cairo_device_to_user_distance (cr, &tolerance_up_shift.x, &tolerance_up_shift.y);
+  cpml_pair_copy (&tolerance_down_shift, &dim->priv->tolerance_down_shift);
+  cairo_device_to_user_distance (cr, &tolerance_down_shift.x, &tolerance_down_shift.y);
 
   cairo_save (cr);
   cairo_translate (cr, dim->priv->quote_org.x, dim->priv->quote_org.y);
@@ -731,7 +731,7 @@ _adg_dim_render_quote (AdgDim  *dim,
 
   /* Rendering quote */
   adg_font_style_apply (ADG_FONT_STYLE (style_data->quote_style), cr);
-  cairo_move_to (cr, quote_offset.x, quote_offset.y);
+  cairo_move_to (cr, quote_shift.x, quote_shift.y);
   cairo_show_text (cr, dim->priv->quote);
 
   /* Rendering tolerances */
@@ -741,12 +741,12 @@ _adg_dim_render_quote (AdgDim  *dim,
 
       if (dim->priv->tolerance_up != NULL)
         {
-          cairo_move_to (cr, tolerance_up_offset.x, tolerance_up_offset.y);
+          cairo_move_to (cr, tolerance_up_shift.x, tolerance_up_shift.y);
           cairo_show_text (cr, dim->priv->tolerance_up);
         }
       if (dim->priv->tolerance_down != NULL)
         {
-          cairo_move_to (cr, tolerance_down_offset.x, tolerance_down_offset.y);
+          cairo_move_to (cr, tolerance_down_shift.x, tolerance_down_shift.y);
           cairo_show_text (cr, dim->priv->tolerance_down);
         }
     }
@@ -754,7 +754,7 @@ _adg_dim_render_quote (AdgDim  *dim,
   /* Rendering note */
   if (dim->priv->note != NULL)
     {
-      cairo_move_to (cr, note_offset.x, note_offset.y);
+      cairo_move_to (cr, note_shift.x, note_shift.y);
       cairo_show_text (cr, dim->priv->note);
     }
 

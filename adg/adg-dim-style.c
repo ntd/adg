@@ -51,9 +51,9 @@ enum
   PROP_TO_OFFSET,
   PROP_BASELINE_SPACING,
   PROP_TOLERANCE_SPACING,
-  PROP_QUOTE_OFFSET,
-  PROP_TOLERANCE_OFFSET,
-  PROP_NOTE_OFFSET,
+  PROP_QUOTE_SHIFT,
+  PROP_TOLERANCE_SHIFT,
+  PROP_NOTE_SHIFT,
   PROP_NUMBER_FORMAT,
   PROP_NUMBER_TAG
 };
@@ -78,11 +78,11 @@ static void	set_line_style		(AdgDimStyle	*dim_style,
 					 AdgLineStyle	*style);
 static void	set_arrow_style		(AdgDimStyle	*dim_style,
 					 AdgArrowStyle	*style);
-static void	set_quote_offset	(AdgDimStyle	*dim_style,
+static void	set_quote_shift		(AdgDimStyle	*dim_style,
 					 const AdgPair	*offset);
-static void	set_tolerance_offset	(AdgDimStyle	*dim_style,
+static void	set_tolerance_shift	(AdgDimStyle	*dim_style,
 					 const AdgPair	*offset);
-static void	set_note_offset		(AdgDimStyle	*dim_style,
+static void	set_note_shift		(AdgDimStyle	*dim_style,
 					 const AdgPair	*offset);
 static void	set_number_format	(AdgDimStyle	*dim_style,
 					 const gchar	*format);
@@ -171,24 +171,24 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 
   param = g_param_spec_boxed ("quote-offset",
 			      P_("Quote Offset"),
-			      P_("Used to specify a smooth position for the quote text (in paper space units) taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
+			      P_("Used to specify a smooth displacement (in paper units) for the quote text by taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_QUOTE_OFFSET, param);
+  g_object_class_install_property (gobject_class, PROP_QUOTE_SHIFT, param);
 
   param = g_param_spec_boxed ("tolerance-offset",
 			      P_("Tolerance Offset"),
-			      P_("Used to specify a smooth position for the tolerance text (in paper space units) taking as reference the perfect compact position"),
+			      P_("Used to specify a smooth displacement (in paper units) for the tolerance text by taking as reference the perfect compact position"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_TOLERANCE_OFFSET, param);
+  g_object_class_install_property (gobject_class, PROP_TOLERANCE_SHIFT, param);
 
   param = g_param_spec_boxed ("note-offset",
 			      P_("Note Offset"),
-			      P_("Used to specify a smooth position for the note text (in paper space units) taking as reference the perfect compact position"),
+			      P_("Used to specify a smooth displacement (in paper units) for the note text by taking as reference the perfect compact position"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_NOTE_OFFSET, param);
+  g_object_class_install_property (gobject_class, PROP_NOTE_SHIFT, param);
 
   param = g_param_spec_string ("number-format",
 			       P_("Number Format"),
@@ -221,12 +221,12 @@ adg_dim_style_init (AdgDimStyle *dim_style)
   priv->to_offset = 5.;
   priv->baseline_spacing = 30.;
   priv->tolerance_spacing = 2.;
-  priv->quote_offset.x = 0.;
-  priv->quote_offset.y = -3.;
-  priv->tolerance_offset.x = +5.;
-  priv->tolerance_offset.y = -4.;
-  priv->note_offset.x = +5.;
-  priv->note_offset.y =  0.;
+  priv->quote_shift.x = 0.;
+  priv->quote_shift.y = -3.;
+  priv->tolerance_shift.x = +5.;
+  priv->tolerance_shift.y = -4.;
+  priv->note_shift.x = +5.;
+  priv->note_shift.y =  0.;
   priv->number_format = g_strdup ("%-.7g");
   priv->number_tag = g_strdup ("<>");
 
@@ -270,14 +270,14 @@ get_property (GObject    *object,
     case PROP_TOLERANCE_SPACING:
       g_value_set_double (value, dim_style->priv->tolerance_spacing);
       break;
-    case PROP_QUOTE_OFFSET:
-      g_value_set_boxed (value, &dim_style->priv->quote_offset);
+    case PROP_QUOTE_SHIFT:
+      g_value_set_boxed (value, &dim_style->priv->quote_shift);
       break;
-    case PROP_TOLERANCE_OFFSET:
-      g_value_set_boxed (value, &dim_style->priv->tolerance_offset);
+    case PROP_TOLERANCE_SHIFT:
+      g_value_set_boxed (value, &dim_style->priv->tolerance_shift);
       break;
-    case PROP_NOTE_OFFSET:
-      g_value_set_boxed (value, &dim_style->priv->note_offset);
+    case PROP_NOTE_SHIFT:
+      g_value_set_boxed (value, &dim_style->priv->note_shift);
       break;
     case PROP_NUMBER_FORMAT:
       g_value_set_string (value, dim_style->priv->number_format);
@@ -328,14 +328,14 @@ set_property (GObject      *object,
     case PROP_TOLERANCE_SPACING:
       dim_style->priv->tolerance_spacing = g_value_get_double (value);
       break;
-    case PROP_QUOTE_OFFSET:
-      set_quote_offset (dim_style, g_value_get_boxed (value));
+    case PROP_QUOTE_SHIFT:
+      set_quote_shift (dim_style, g_value_get_boxed (value));
       break;
-    case PROP_TOLERANCE_OFFSET:
-      set_tolerance_offset (dim_style, g_value_get_boxed (value));
+    case PROP_TOLERANCE_SHIFT:
+      set_tolerance_shift (dim_style, g_value_get_boxed (value));
       break;
-    case PROP_NOTE_OFFSET:
-      set_note_offset (dim_style, g_value_get_boxed (value));
+    case PROP_NOTE_SHIFT:
+      set_note_shift (dim_style, g_value_get_boxed (value));
       break;
     case PROP_NUMBER_FORMAT:
       set_number_format (dim_style, g_value_get_string (value));
@@ -691,7 +691,7 @@ adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
 }
 
 /**
- * adg_dim_style_get_quote_offset:
+ * adg_dim_style_get_quote_shift:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the smooth displacement of the quote text. The returned pointer
@@ -700,32 +700,32 @@ adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
  * Return value: the requested offset
  **/
 const AdgPair *
-adg_dim_style_get_quote_offset (AdgDimStyle *dim_style)
+adg_dim_style_get_quote_shift (AdgDimStyle *dim_style)
 {
   g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
 
-  return &dim_style->priv->quote_offset;
+  return &dim_style->priv->quote_shift;
 }
 
 /**
- * adg_dim_style_set_quote_offset:
+ * adg_dim_style_set_quote_shift:
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
  * Sets a new "quote-offset" value.
  **/
 void
-adg_dim_style_set_quote_offset (AdgDimStyle   *dim_style,
+adg_dim_style_set_quote_shift (AdgDimStyle   *dim_style,
 				const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
-  set_quote_offset (dim_style, shift);
+  set_quote_shift (dim_style, shift);
   g_object_notify ((GObject *) dim_style, "quote-offset");
 }
 
 /**
- * adg_dim_style_get_tolerance_offset:
+ * adg_dim_style_get_tolerance_shift:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the smooth displacement of the tolerance text. The returned pointer
@@ -734,32 +734,32 @@ adg_dim_style_set_quote_offset (AdgDimStyle   *dim_style,
  * Return value: the requested offset
  **/
 const AdgPair *
-adg_dim_style_get_tolerance_offset (AdgDimStyle *dim_style)
+adg_dim_style_get_tolerance_shift (AdgDimStyle *dim_style)
 {
   g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
 
-  return &dim_style->priv->tolerance_offset;
+  return &dim_style->priv->tolerance_shift;
 }
 
 /**
- * adg_dim_style_set_tolerance_offset:
+ * adg_dim_style_set_tolerance_shift:
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
  * Sets a new "tolerance-offset" value.
  **/
 void
-adg_dim_style_set_tolerance_offset (AdgDimStyle   *dim_style,
+adg_dim_style_set_tolerance_shift (AdgDimStyle   *dim_style,
 				    const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
-  set_tolerance_offset (dim_style, shift);
+  set_tolerance_shift (dim_style, shift);
   g_object_notify ((GObject *) dim_style, "tolerance-offset");
 }
 
 /**
- * adg_dim_style_get_note_offset:
+ * adg_dim_style_get_note_shift:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the smooth displacement of the note text. The returned pointer
@@ -768,27 +768,27 @@ adg_dim_style_set_tolerance_offset (AdgDimStyle   *dim_style,
  * Return value: the requested offset
  **/
 const AdgPair *
-adg_dim_style_get_note_offset (AdgDimStyle *dim_style)
+adg_dim_style_get_note_shift (AdgDimStyle *dim_style)
 {
   g_return_val_if_fail (ADG_IS_DIM_STYLE (dim_style), NULL);
 
-  return &dim_style->priv->note_offset;
+  return &dim_style->priv->note_shift;
 }
 
 /**
- * adg_dim_style_set_note_offset:
+ * adg_dim_style_set_note_shift:
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
  * Sets a new "note-offset" value.
  **/
 void
-adg_dim_style_set_note_offset (AdgDimStyle   *dim_style,
+adg_dim_style_set_note_shift (AdgDimStyle   *dim_style,
 				    const AdgPair *shift)
 {
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
-  set_note_offset (dim_style, shift);
+  set_note_shift (dim_style, shift);
   g_object_notify ((GObject *) dim_style, "note-offset");
 }
 
@@ -919,24 +919,24 @@ set_arrow_style (AdgDimStyle  *dim_style,
 }
 
 static void
-set_quote_offset (AdgDimStyle   *dim_style,
+set_quote_shift (AdgDimStyle   *dim_style,
 		  const AdgPair *offset)
 {
-  cpml_pair_copy (&dim_style->priv->quote_offset, offset);
+  cpml_pair_copy (&dim_style->priv->quote_shift, offset);
 }
 
 static void
-set_tolerance_offset (AdgDimStyle   *dim_style,
+set_tolerance_shift (AdgDimStyle   *dim_style,
 		      const AdgPair *offset)
 {
-  cpml_pair_copy (&dim_style->priv->tolerance_offset, offset);
+  cpml_pair_copy (&dim_style->priv->tolerance_shift, offset);
 }
 
 static void
-set_note_offset (AdgDimStyle   *dim_style,
+set_note_shift (AdgDimStyle   *dim_style,
 		 const AdgPair *offset)
 {
-  cpml_pair_copy (&dim_style->priv->note_offset, offset);
+  cpml_pair_copy (&dim_style->priv->note_shift, offset);
 }
 
 static void
