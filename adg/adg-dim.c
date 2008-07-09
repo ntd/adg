@@ -360,7 +360,7 @@ quote_layout (AdgDim  *dim,
   style_data = dim->priv->dim_style->priv;
 
   /* Compute the quote */
-  adg_font_style_apply (ADG_FONT_STYLE (style_data->quote_style), cr);
+  adg_style_apply (style_data->quote_style, cr);
 
   cairo_text_extents (cr, dim->priv->quote, &extents);
   cairo_user_to_device_distance (cr, &extents.width, &extents.height);
@@ -373,7 +373,7 @@ quote_layout (AdgDim  *dim,
       double width;
       double midspacing;
 
-      adg_font_style_apply (ADG_FONT_STYLE (style_data->tolerance_style), cr);
+      adg_style_apply (style_data->tolerance_style, cr);
 
       width = 0.0;
       midspacing = style_data->tolerance_spacing / 2.0;
@@ -406,7 +406,7 @@ quote_layout (AdgDim  *dim,
   /* Compute the note */
   if (dim->priv->note != NULL)
     {
-      adg_font_style_apply (ADG_FONT_STYLE (style_data->note_style), cr);
+      adg_style_apply (style_data->note_style, cr);
 
       cpml_pair_copy (&offset, &style_data->note_shift);
       cp.x += offset.x;
@@ -730,14 +730,14 @@ _adg_dim_render_quote (AdgDim  *dim,
   cairo_rotate (cr, dim->priv->quote_angle);
 
   /* Rendering quote */
-  adg_font_style_apply (ADG_FONT_STYLE (style_data->quote_style), cr);
+  adg_style_apply (style_data->quote_style, cr);
   cairo_move_to (cr, quote_shift.x, quote_shift.y);
   cairo_show_text (cr, dim->priv->quote);
 
   /* Rendering tolerances */
   if (dim->priv->tolerance_up != NULL || dim->priv->tolerance_down != NULL)
     {
-      adg_font_style_apply (ADG_FONT_STYLE (style_data->tolerance_style), cr);
+      adg_style_apply (style_data->tolerance_style, cr);
 
       if (dim->priv->tolerance_up != NULL)
         {

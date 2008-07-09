@@ -58,6 +58,8 @@ static void	set_property		(GObject	*object,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
+static void	apply			(AdgStyle	*style,
+					 cairo_t	*cr);
 static void	set_family		(AdgFontStyle	*font_style,
 					 const gchar	*family);
 
@@ -68,15 +70,19 @@ G_DEFINE_TYPE (AdgFontStyle, adg_font_style, ADG_TYPE_STYLE)
 static void
 adg_font_style_class_init (AdgFontStyleClass *klass)
 {
-  GObjectClass *gobject_class;
-  GParamSpec   *param;
+  GObjectClass  *gobject_class;
+  AdgStyleClass *style_class;
+  GParamSpec    *param;
 
   gobject_class = (GObjectClass *) klass;
+  style_class = (AdgStyleClass *) klass;
 
   g_type_class_add_private (klass, sizeof (AdgFontStylePrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
+
+  style_class->apply = apply;
 
   param = g_param_spec_string ("family",
 			       P_("Font Family"),
@@ -273,48 +279,6 @@ adg_font_style_from_id (AdgFontStyleId id)
 
   g_return_val_if_fail (id < ADG_FONT_STYLE_LAST, NULL);
   return builtins[id];
-}
-
-/**
- * adg_font_style_apply:
- * @font_style: an #AdgFontStyle style
- * @cr: the cairo context
- *
- * Applies @font_style to @cr so the next text will have this style.
- **/
-void
-adg_font_style_apply (const AdgFontStyle *font_style,
-                      cairo_t            *cr)
-{
-  cairo_font_options_t *options;
-  cairo_matrix_t        matrix;
-  double                size;
-  cairo_matrix_t        font_matrix;
-
-  g_return_if_fail (font_style != NULL);
-  g_return_if_fail (cr != NULL);
-
-  cairo_get_matrix (cr, &matrix);
-  size = font_style->priv->size;
-
-  if (font_style->priv->family)
-    cairo_select_font_face (cr, font_style->priv->family,
-			    font_style->priv->slant, font_style->priv->weight);
-
-  cairo_matrix_init_scale (&font_matrix,
-			   size / (matrix.xx - matrix.yx),
-			   size / (matrix.yy + matrix.xy));
-  cairo_set_font_matrix (cr, &font_matrix);
-
-  options = cairo_font_options_create ();
-
-  cairo_font_options_set_antialias (options, font_style->priv->antialias);
-  cairo_font_options_set_subpixel_order (options, font_style->priv->subpixel_order);
-  cairo_font_options_set_hint_style (options, font_style->priv->hint_style);
-  cairo_font_options_set_hint_metrics (options, font_style->priv->hint_metrics);
-
-  cairo_set_font_options (cr, options);
-  cairo_font_options_destroy (options);
 }
 
 /**
@@ -585,6 +549,42 @@ adg_font_style_set_hint_metrics (AdgFontStyle        *font_style,
   g_object_notify ((GObject *) font_style, "hint-metrics");
 }
 
+
+static void
+apply (AdgStyle *style,
+       cairo_t  *cr)
+{
+  AdgFontStyle         *font_style;
+  cairo_font_options_t *options;
+  cairo_matrix_t        matrix;
+  double                size;
+  cairo_matrix_t        font_matrix;
+
+  font_style = (AdgFontStyle *) style;
+  cairo_get_matrix (cr, &matrix);
+  size = font_style->priv->size;
+
+  PARENT_CLASS->apply (style, cr);
+
+  if (font_style->priv->family)
+    cairo_select_font_face (cr, font_style->priv->family,
+			    font_style->priv->slant, font_style->priv->weight);
+
+  cairo_matrix_init_scale (&font_matrix,
+			   size / (matrix.xx - matrix.yx),
+			   size / (matrix.yy + matrix.xy));
+  cairo_set_font_matrix (cr, &font_matrix);
+
+  options = cairo_font_options_create ();
+
+  cairo_font_options_set_antialias (options, font_style->priv->antialias);
+  cairo_font_options_set_subpixel_order (options, font_style->priv->subpixel_order);
+  cairo_font_options_set_hint_style (options, font_style->priv->hint_style);
+  cairo_font_options_set_hint_metrics (options, font_style->priv->hint_metrics);
+
+  cairo_set_font_options (cr, options);
+  cairo_font_options_destroy (options);
+}
 
 static void
 set_family (AdgFontStyle *font_style,
