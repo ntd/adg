@@ -25,6 +25,7 @@
 #include <adg/adg-font-style.h>
 #include <adg/adg-line-style.h>
 #include <adg/adg-arrow-style.h>
+#include <adg/adg-pair.h>
 #include <adg/adg-enums.h>
 
 

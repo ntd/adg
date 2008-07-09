@@ -27,10 +27,7 @@ G_BEGIN_DECLS
 
 struct _AdgStylePrivate
 {
-  double	r;
-  double	g;
-  double	b;
-  double	a;
+  AdgPattern	*pattern;
 };
 
 

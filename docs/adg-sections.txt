@@ -56,6 +56,10 @@ ADG_CONTEXT_GET_CLASS
 <INCLUDE>adg/adg.h</INCLUDE>
 <SUBSECTION>
 AdgStyle
+<SUBSECTION>
+adg_style_apply
+adg_style_get_pattern
+adg_style_set_pattern
 <SUBSECTION Standard>
 AdgStyleClass
 AdgStylePrivate

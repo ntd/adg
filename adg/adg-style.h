@@ -21,10 +21,7 @@
 #ifndef __ADG_STYLE_H__
 #define __ADG_STYLE_H__
 
-#include <glib-object.h>
-#include <cairo.h>
-
-#include <adg/adg-pair.h>
+#include <adg/adg-pattern.h>
 
 
 G_BEGIN_DECLS
@@ -52,9 +49,19 @@ struct _AdgStyle
 struct _AdgStyleClass
 {
   GObjectClass		 parent_class;
+
+  /* Virtual table */
+  void			(*apply)		(AdgStyle	*style,
+						 cairo_t	*cr);
 };
 
 GType			adg_style_get_type	(void) G_GNUC_CONST;
+
+void			adg_style_apply		(AdgStyle	*style,
+						 cairo_t	*cr);
+const AdgPattern *	adg_style_get_pattern	(AdgStyle	*style);
+void			adg_style_set_pattern	(AdgStyle	*style,
+						 AdgPattern	*pattern);
 
 
 G_END_DECLS

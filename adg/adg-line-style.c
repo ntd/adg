@@ -214,27 +214,41 @@ adg_line_style_from_id (AdgLineStyleId id)
 
   if G_UNLIKELY (builtins == NULL)
     {
+      cairo_pattern_t *pattern;
+
       builtins = g_new (AdgStyle *, ADG_LINE_STYLE_LAST);
 
       builtins[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE,
 						    "width", 2.,
 						    NULL);
+
+      pattern = cairo_pattern_create_rgb (0., 1., 0.);
       builtins[ADG_LINE_STYLE_CENTER] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "g", 1.,
+						      "pattern", pattern,
 						      "width", 0.75,
 						      NULL);
+      cairo_pattern_destroy (pattern);
+
+      pattern = cairo_pattern_create_rgba (0., 0., 0., 0.5);
       builtins[ADG_LINE_STYLE_HIDDEN] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "a", 0.5,
+						      "pattern", pattern,
 						      "width", 0.75,
 						      NULL);
+      cairo_pattern_destroy (pattern);
+
+      pattern = cairo_pattern_create_rgb (0., 0., 1.);
       builtins[ADG_LINE_STYLE_XATCH] = g_object_new (ADG_TYPE_LINE_STYLE,
-						     "b", 1.,
+						     "pattern", pattern,
 						     "width", 1.25,
 						     NULL);
+      cairo_pattern_destroy (pattern);
+
+      pattern = cairo_pattern_create_rgb (1., 0., 0.);
       builtins[ADG_LINE_STYLE_DIM] = g_object_new (ADG_TYPE_LINE_STYLE,
-						   "r", 1.,
+						   "pattern", pattern,
 						   "width", 0.75,
 						   NULL);
+      cairo_pattern_destroy (pattern);
     }
 
   g_return_val_if_fail (id < ADG_LINE_STYLE_LAST, NULL);
