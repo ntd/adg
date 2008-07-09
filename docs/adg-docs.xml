@@ -65,8 +65,13 @@
     <xi:include href="xml/tree_index.sgml"/>
     <xi:include href="xml/pair.xml"/>
     <xi:include href="xml/matrix.xml"/>
+    <xi:include href="xml/pattern.xml"/>
     <xi:include href="xml/enums.xml"/>
     <xi:include href="xml/util.xml"/>
+    <chapter id="Hierarchy">
+      <title>Object Hierarchy</title>
+       <xi:include href="xml/tree_index.sgml"/>
+    </chapter>
   </part>
 
   <part id="Defining">

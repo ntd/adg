@@ -27,6 +27,15 @@ adg_matrix_get_type
 </SECTION>
 
 <SECTION>
+<FILE>pattern</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgPattern
+<SUBSECTION Standard>
+ADG_TYPE_PATTERN
+adg_pattern_get_type
+</SECTION>
+
+<SECTION>
 <FILE>context</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContext
