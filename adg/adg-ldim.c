@@ -332,6 +332,7 @@ render (AdgEntity *entity,
     update (entity);
     
   cairo_save (cr);
+  adg_style_apply (dim->priv->dim_style, cr);
 
   /* Arrows */
   if (cpml_path_from_cairo (&primitive, &ldim->priv->arrow_path, NULL))

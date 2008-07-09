@@ -250,12 +250,9 @@ adg_line_style_from_id (AdgLineStyleId id)
 						     NULL);
       cairo_pattern_destroy (pattern);
 
-      pattern = cairo_pattern_create_rgb (1., 0., 0.);
       builtins[ADG_LINE_STYLE_DIM] = g_object_new (ADG_TYPE_LINE_STYLE,
-						   "pattern", pattern,
 						   "width", 0.75,
 						   NULL);
-      cairo_pattern_destroy (pattern);
     }
 
   g_return_val_if_fail (id < ADG_LINE_STYLE_LAST, NULL);

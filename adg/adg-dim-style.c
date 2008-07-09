@@ -79,11 +79,11 @@ static void	set_line_style		(AdgDimStyle	*dim_style,
 static void	set_arrow_style		(AdgDimStyle	*dim_style,
 					 AdgArrowStyle	*style);
 static void	set_quote_shift		(AdgDimStyle	*dim_style,
-					 const AdgPair	*offset);
+					 const AdgPair	*shift);
 static void	set_tolerance_shift	(AdgDimStyle	*dim_style,
-					 const AdgPair	*offset);
+					 const AdgPair	*shift);
 static void	set_note_shift		(AdgDimStyle	*dim_style,
-					 const AdgPair	*offset);
+					 const AdgPair	*shift);
 static void	set_number_format	(AdgDimStyle	*dim_style,
 					 const gchar	*format);
 static void	set_number_tag		(AdgDimStyle	*dim_style,
@@ -169,22 +169,22 @@ adg_dim_style_class_init (AdgDimStyleClass *klass)
 			       G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_TOLERANCE_SPACING, param);
 
-  param = g_param_spec_boxed ("quote-offset",
-			      P_("Quote Offset"),
+  param = g_param_spec_boxed ("quote-shift",
+			      P_("Quote Shift"),
 			      P_("Used to specify a smooth displacement (in paper units) for the quote text by taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_QUOTE_SHIFT, param);
 
-  param = g_param_spec_boxed ("tolerance-offset",
-			      P_("Tolerance Offset"),
+  param = g_param_spec_boxed ("tolerance-shift",
+			      P_("Tolerance Shift"),
 			      P_("Used to specify a smooth displacement (in paper units) for the tolerance text by taking as reference the perfect compact position"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
   g_object_class_install_property (gobject_class, PROP_TOLERANCE_SHIFT, param);
 
-  param = g_param_spec_boxed ("note-offset",
-			      P_("Note Offset"),
+  param = g_param_spec_boxed ("note-shift",
+			      P_("Note Shift"),
 			      P_("Used to specify a smooth displacement (in paper units) for the note text by taking as reference the perfect compact position"),
 			      ADG_TYPE_PAIR,
 			      G_PARAM_READWRITE);
@@ -365,10 +365,16 @@ adg_dim_style_from_id (AdgDimStyleId id)
 
   if G_UNLIKELY (builtins == NULL)
     {
+      cairo_pattern_t *pattern;
+
       builtins = g_new (AdgStyle *, ADG_DIM_STYLE_LAST);
 
-      /* The default is yet the ISO style */
-      builtins[ADG_DIM_STYLE_ISO] = g_object_new (ADG_TYPE_DIM_STYLE, NULL);
+      /* No need to specify further params: the default is already ISO */
+      pattern = cairo_pattern_create_rgb (1., 0., 0.);
+      builtins[ADG_DIM_STYLE_ISO] = g_object_new (ADG_TYPE_DIM_STYLE,
+						  "pattern", pattern,
+						  NULL);
+      cairo_pattern_destroy (pattern);
     }
 
   g_return_val_if_fail (id < ADG_DIM_STYLE_LAST, NULL);
@@ -697,7 +703,7 @@ adg_dim_style_set_tolerance_spacing (AdgDimStyle *dim_style,
  * Gets the smooth displacement of the quote text. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested offset
+ * Return value: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_quote_shift (AdgDimStyle *dim_style)
@@ -712,7 +718,7 @@ adg_dim_style_get_quote_shift (AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
- * Sets a new "quote-offset" value.
+ * Sets a new "quote-shift" value.
  **/
 void
 adg_dim_style_set_quote_shift (AdgDimStyle   *dim_style,
@@ -721,7 +727,7 @@ adg_dim_style_set_quote_shift (AdgDimStyle   *dim_style,
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
   set_quote_shift (dim_style, shift);
-  g_object_notify ((GObject *) dim_style, "quote-offset");
+  g_object_notify ((GObject *) dim_style, "quote-shift");
 }
 
 /**
@@ -731,7 +737,7 @@ adg_dim_style_set_quote_shift (AdgDimStyle   *dim_style,
  * Gets the smooth displacement of the tolerance text. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested offset
+ * Return value: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_tolerance_shift (AdgDimStyle *dim_style)
@@ -746,7 +752,7 @@ adg_dim_style_get_tolerance_shift (AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
- * Sets a new "tolerance-offset" value.
+ * Sets a new "tolerance-shift" value.
  **/
 void
 adg_dim_style_set_tolerance_shift (AdgDimStyle   *dim_style,
@@ -755,7 +761,7 @@ adg_dim_style_set_tolerance_shift (AdgDimStyle   *dim_style,
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
   set_tolerance_shift (dim_style, shift);
-  g_object_notify ((GObject *) dim_style, "tolerance-offset");
+  g_object_notify ((GObject *) dim_style, "tolerance-shift");
 }
 
 /**
@@ -765,7 +771,7 @@ adg_dim_style_set_tolerance_shift (AdgDimStyle   *dim_style,
  * Gets the smooth displacement of the note text. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested offset
+ * Return value: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_note_shift (AdgDimStyle *dim_style)
@@ -780,7 +786,7 @@ adg_dim_style_get_note_shift (AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
- * Sets a new "note-offset" value.
+ * Sets a new "note-shift" value.
  **/
 void
 adg_dim_style_set_note_shift (AdgDimStyle   *dim_style,
@@ -789,7 +795,7 @@ adg_dim_style_set_note_shift (AdgDimStyle   *dim_style,
   g_return_if_fail (ADG_IS_DIM_STYLE (dim_style));
 
   set_note_shift (dim_style, shift);
-  g_object_notify ((GObject *) dim_style, "note-offset");
+  g_object_notify ((GObject *) dim_style, "note-shift");
 }
 
 /**
@@ -920,23 +926,23 @@ set_arrow_style (AdgDimStyle  *dim_style,
 
 static void
 set_quote_shift (AdgDimStyle   *dim_style,
-		  const AdgPair *offset)
+		 const AdgPair *shift)
 {
-  cpml_pair_copy (&dim_style->priv->quote_shift, offset);
+  cpml_pair_copy (&dim_style->priv->quote_shift, shift);
 }
 
 static void
 set_tolerance_shift (AdgDimStyle   *dim_style,
-		      const AdgPair *offset)
+		     const AdgPair *shift)
 {
-  cpml_pair_copy (&dim_style->priv->tolerance_shift, offset);
+  cpml_pair_copy (&dim_style->priv->tolerance_shift, shift);
 }
 
 static void
 set_note_shift (AdgDimStyle   *dim_style,
-		 const AdgPair *offset)
+		const AdgPair *shift)
 {
-  cpml_pair_copy (&dim_style->priv->note_shift, offset);
+  cpml_pair_copy (&dim_style->priv->note_shift, shift);
 }
 
 static void

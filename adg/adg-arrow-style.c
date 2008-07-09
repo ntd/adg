@@ -264,6 +264,7 @@ adg_arrow_style_render (AdgArrowStyle *arrow_style,
   if (arrow_style->priv->renderer == NULL)
     return;
 
+  PARENT_CLASS->apply ((AdgStyle *) arrow_style, cr);
   arrow_style->priv->renderer (arrow_style, cr, segment);
 }
 
