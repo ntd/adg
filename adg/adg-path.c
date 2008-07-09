@@ -214,7 +214,7 @@ render (AdgEntity *entity,
   if (!adg_entity_model_applied (entity) && path->priv->create_func != NULL)
     path->priv->create_func (entity, path->priv->user_data);
 
-  adg_line_style_apply (adg_entity_get_line_style (entity), cr);
+  adg_style_apply (adg_entity_get_line_style (entity), cr);
   cairo_append_path (cr, &path->priv->cairo_path);
   cairo_stroke (cr);
 

@@ -56,6 +56,9 @@ static void	set_property		(GObject	*object,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
+static void	apply			(AdgStyle	*style,
+					 cairo_t	*cr);
+
 
 G_DEFINE_TYPE (AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
@@ -63,15 +66,19 @@ G_DEFINE_TYPE (AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 static void
 adg_line_style_class_init (AdgLineStyleClass *klass)
 {
-  GObjectClass *gobject_class;
-  GParamSpec   *param;
+  GObjectClass  *gobject_class;
+  AdgStyleClass *style_class;
+  GParamSpec    *param;
 
   gobject_class = (GObjectClass *) klass;
+  style_class = (AdgStyleClass *) klass;
 
   g_type_class_add_private (klass, sizeof (AdgLineStylePrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
+
+  style_class->apply = apply;
 
   param = g_param_spec_double ("width",
 			       P_("Line Width"),
@@ -256,41 +263,6 @@ adg_line_style_from_id (AdgLineStyleId id)
 }
 
 /**
- * adg_line_style_apply:
- * @line_style: an #AdgLineStyle style
- * @cr: the cairo context
- *
- * Applies @line_style to @cr so the next lines will have this style.
- **/
-void
-adg_line_style_apply (const AdgLineStyle *line_style,
-                      cairo_t            *cr)
-{
-  double device_width;
-  double dummy = 0.;
-
-  g_return_if_fail (line_style != NULL);
-  g_return_if_fail (cr != NULL);
-
-  device_width = line_style->priv->width;
-  cairo_device_to_user_distance (cr, &device_width, &dummy);
-  cairo_set_line_width (cr, device_width);
-
-  cairo_set_line_cap (cr, line_style->priv->cap);
-  cairo_set_line_join (cr, line_style->priv->join);
-  cairo_set_miter_limit (cr, line_style->priv->miter_limit);
-  cairo_set_antialias (cr, line_style->priv->antialias);
-
-  if (line_style->priv->num_dashes > 0)
-    {
-      g_return_if_fail (line_style->priv->dashes != NULL);
-
-      cairo_set_dash (cr, line_style->priv->dashes, line_style->priv->num_dashes,
-		      line_style->priv->dash_offset);
-    }
-}
-
-/**
  * adg_line_style_get_width:
  * @line_style: an #AdgLineStyle object
  *
@@ -454,4 +426,35 @@ adg_line_style_set_antialias (AdgLineStyle     *line_style,
 
   line_style->priv->antialias = antialias;
   g_object_notify ((GObject *) line_style, "antialias");
+}
+
+
+static void
+apply (AdgStyle *style,
+       cairo_t  *cr)
+{
+  AdgLineStyle *line_style;
+  gdouble       device_width;
+  gdouble       dummy = 0.;
+
+  line_style = (AdgLineStyle *) style;
+
+  PARENT_CLASS->apply (style, cr);
+
+  device_width = line_style->priv->width;
+  cairo_device_to_user_distance (cr, &device_width, &dummy);
+  cairo_set_line_width (cr, device_width);
+
+  cairo_set_line_cap (cr, line_style->priv->cap);
+  cairo_set_line_join (cr, line_style->priv->join);
+  cairo_set_miter_limit (cr, line_style->priv->miter_limit);
+  cairo_set_antialias (cr, line_style->priv->antialias);
+
+  if (line_style->priv->num_dashes > 0)
+    {
+      g_return_if_fail (line_style->priv->dashes != NULL);
+
+      cairo_set_dash (cr, line_style->priv->dashes, line_style->priv->num_dashes,
+		      line_style->priv->dash_offset);
+    }
 }

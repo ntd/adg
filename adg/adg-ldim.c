@@ -342,7 +342,7 @@ render (AdgEntity *entity,
     }
 
   /* Lines */
-  adg_line_style_apply (ADG_LINE_STYLE (style_data->line_style), cr);
+  adg_style_apply (style_data->line_style, cr);
 
   cairo_append_path (cr, &ldim->priv->extension1);
   cairo_append_path (cr, &ldim->priv->extension2);

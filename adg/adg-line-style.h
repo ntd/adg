@@ -56,8 +56,6 @@ struct _AdgLineStyleClass
 GType		adg_line_style_get_type		(void) G_GNUC_CONST;
 AdgStyle *	adg_line_style_new		(void);
 AdgStyle *	adg_line_style_from_id		(AdgLineStyleId	 id);
-void		adg_line_style_apply		(const AdgLineStyle *line_style,
-						 cairo_t	*cr);
 
 gdouble		adg_line_style_get_width	(AdgLineStyle	*line_style);
 void		adg_line_style_set_width	(AdgLineStyle	*line_style,

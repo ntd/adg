@@ -79,7 +79,6 @@ AdgLineStyle
 <SUBSECTION>
 adg_line_style_new
 adg_line_style_from_id
-adg_line_style_apply
 <SUBSECTION>
 adg_line_style_get_width
 adg_line_style_set_width
