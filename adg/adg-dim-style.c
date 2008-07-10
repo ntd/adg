@@ -351,6 +351,19 @@ set_property (GObject      *object,
 
 
 /**
+ * adg_dim_style_new:
+ *
+ * Constructs a new dimension style initialized with default params.
+ *
+ * Return value: a new dimension style
+ **/
+AdgStyle *
+adg_dim_style_new (void)
+{
+  return g_object_new (ADG_TYPE_DIM_STYLE, NULL);
+}
+
+/**
  * adg_dim_style_from_id:
  * @id: a dimension style identifier
  *
