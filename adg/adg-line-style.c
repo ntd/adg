@@ -207,6 +207,19 @@ set_property (GObject      *object,
 
 
 /**
+ * adg_line_style_new:
+ *
+ * Constructs a new line style initialized with default params.
+ *
+ * Return value: a new line style
+ **/
+AdgStyle *
+adg_line_style_new (void)
+{
+  return g_object_new (ADG_TYPE_LINE_STYLE, NULL);
+}
+
+/**
  * adg_line_style_from_id:
  * @id: a line style identifier
  *
