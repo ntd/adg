@@ -200,6 +200,27 @@ set_property (GObject      *object,
 }
 
 
+/**
+ * adg_arrow_style_new:
+ *
+ * Constructs a new arrow style initialized with default params.
+ *
+ * Return value: a new arrow style
+ **/
+AdgStyle *
+adg_arrow_style_new (void)
+{
+  return g_object_new (ADG_TYPE_ARROW_STYLE, NULL);
+}
+
+/**
+ * adg_arrow_style_from_id:
+ * @id: an arrow style identifier
+ *
+ * Gets a predefined style from an #AdgArrowStyleId identifier.
+ *
+ * Return value: the requested style or %NULL if not found
+ **/
 AdgStyle *
 adg_arrow_style_from_id (AdgArrowStyleId id)
 {
