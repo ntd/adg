@@ -215,7 +215,7 @@ adg_dim_style_init (AdgDimStyle *dim_style)
   priv->quote_style = adg_font_style_from_id (ADG_FONT_STYLE_QUOTE);
   priv->tolerance_style = adg_font_style_from_id (ADG_FONT_STYLE_TOLERANCE);
   priv->note_style = adg_font_style_from_id (ADG_FONT_STYLE_NOTE);
-  priv->line_style = adg_line_style_from_id (ADG_LINE_STYLE_DIM);
+  priv->line_style = adg_style_from_id (ADG_TYPE_LINE_STYLE, ADG_LINE_STYLE_DIM);
   priv->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
   priv->from_offset = 5.;
   priv->to_offset = 5.;

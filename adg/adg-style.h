@@ -51,11 +51,14 @@ struct _AdgStyleClass
   GObjectClass		 parent_class;
 
   /* Virtual table */
+  AdgStyle *		(*from_id)		(gint		 id);
   void			(*apply)		(AdgStyle	*style,
 						 cairo_t	*cr);
 };
 
 GType			adg_style_get_type	(void) G_GNUC_CONST;
+AdgStyle *		adg_style_from_id	(GType		 style_type,
+						 gint		 id);
 
 void			adg_style_apply		(AdgStyle	*style,
 						 cairo_t	*cr);

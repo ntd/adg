@@ -54,6 +54,7 @@ static void	set_property		(GObject	*object,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
+static AdgStyle*from_id			(gint		 id);
 static void	apply			(AdgStyle	*style,
 					 cairo_t	*cr);
 static void	set_pattern		(AdgStyle	*style,
@@ -76,6 +77,7 @@ adg_style_class_init (AdgStyleClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
+  klass->from_id = from_id;
   klass->apply = apply;
 
   param = g_param_spec_boxed ("pattern",
@@ -137,6 +139,26 @@ set_property (GObject      *object,
 
 
 /**
+ * adg_style_from_id:
+ * @style_type: the type id from which obtain the style
+ * @id: the id to get
+ *
+ * Gets the preregistered style identified by @id of @style_type family.
+ *
+ * Return value: the requested style or %NULL on errors
+ **/
+AdgStyle *
+adg_style_from_id (GType style_type,
+		   gint  id)
+{
+  AdgStyleClass *klass = g_type_class_ref (style_type);
+
+  g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), NULL);
+
+  return klass->from_id (id);
+}
+
+/**
  * adg_style_apply:
  * @style: an #AdgStyle derived object
  * @cr: the cairo context
@@ -194,6 +216,13 @@ adg_style_set_pattern (AdgStyle   *style,
   g_object_notify ((GObject *) style, "pattern");
 }
 
+
+static AdgStyle *
+from_id (gint id)
+{
+  g_warning ("Uninmplemented from_id()");
+  return NULL;
+}
 
 static void
 apply (AdgStyle *style,
