@@ -57,7 +57,9 @@ ADG_CONTEXT_GET_CLASS
 <SUBSECTION>
 AdgStyle
 <SUBSECTION>
+adg_style_from_id
 adg_style_apply
+<SUBSECTION>
 adg_style_get_pattern
 adg_style_set_pattern
 <SUBSECTION Standard>
@@ -78,7 +80,6 @@ ADG_STYLE_GET_CLASS
 AdgLineStyle
 <SUBSECTION>
 adg_line_style_new
-adg_line_style_from_id
 <SUBSECTION>
 adg_line_style_get_width
 adg_line_style_set_width

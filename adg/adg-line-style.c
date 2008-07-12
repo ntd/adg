@@ -222,59 +222,6 @@ adg_line_style_new (void)
 }
 
 /**
- * adg_line_style_from_id:
- * @id: a line style identifier
- *
- * Gets a predefined style from an #AdgLineStyleId identifier.
- *
- * Return value: the requested style or %NULL if not found
- **/
-AdgStyle *
-adg_line_style_from_id (AdgLineStyleId id)
-{
-  static AdgStyle **builtins = NULL;
-
-  if G_UNLIKELY (builtins == NULL)
-    {
-      cairo_pattern_t *pattern;
-
-      builtins = g_new (AdgStyle *, ADG_LINE_STYLE_LAST);
-
-      builtins[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE,
-						    "width", 2.,
-						    NULL);
-
-      pattern = cairo_pattern_create_rgb (0., 1., 0.);
-      builtins[ADG_LINE_STYLE_CENTER] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "pattern", pattern,
-						      "width", 0.75,
-						      NULL);
-      cairo_pattern_destroy (pattern);
-
-      pattern = cairo_pattern_create_rgba (0., 0., 0., 0.5);
-      builtins[ADG_LINE_STYLE_HIDDEN] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "pattern", pattern,
-						      "width", 0.75,
-						      NULL);
-      cairo_pattern_destroy (pattern);
-
-      pattern = cairo_pattern_create_rgb (0., 0., 1.);
-      builtins[ADG_LINE_STYLE_XATCH] = g_object_new (ADG_TYPE_LINE_STYLE,
-						     "pattern", pattern,
-						     "width", 1.25,
-						     NULL);
-      cairo_pattern_destroy (pattern);
-
-      builtins[ADG_LINE_STYLE_DIM] = g_object_new (ADG_TYPE_LINE_STYLE,
-						   "width", 0.75,
-						   NULL);
-    }
-
-  g_return_val_if_fail (id < ADG_LINE_STYLE_LAST, NULL);
-  return builtins[id];
-}
-
-/**
  * adg_line_style_get_width:
  * @line_style: an #AdgLineStyle object
  *
