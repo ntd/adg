@@ -57,6 +57,7 @@ ADG_CONTEXT_GET_CLASS
 <SUBSECTION>
 AdgStyle
 <SUBSECTION>
+adg_style_register
 adg_style_from_id
 adg_style_apply
 <SUBSECTION>
@@ -139,7 +140,6 @@ ADG_ARROW_STYLE_GET_CLASS
 AdgFontStyle
 <SUBSECTION>
 adg_font_style_new
-adg_font_style_from_id
 <SUBSECTION>
 adg_font_style_get_family
 adg_font_style_set_family

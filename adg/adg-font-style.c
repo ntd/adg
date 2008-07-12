@@ -49,18 +49,19 @@ enum
 };
 
 
-static void	get_property		(GObject	*object,
+static void		get_property	(GObject	*object,
 					 guint		 prop_id,
 					 GValue		*value,
 					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
+static void		set_property	(GObject	*object,
 					 guint		 prop_id,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
-static void	apply			(AdgStyle	*style,
+static GPtrArray *	get_pool	(void);
+static void		apply		(AdgStyle	*style,
 					 cairo_t	*cr);
-static void	set_family		(AdgFontStyle	*font_style,
+static void		set_family	(AdgFontStyle	*font_style,
 					 const gchar	*family);
 
 
@@ -82,6 +83,7 @@ adg_font_style_class_init (AdgFontStyleClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
+  style_class->get_pool = get_pool;
   style_class->apply = apply;
 
   param = g_param_spec_string ("family",
@@ -252,46 +254,6 @@ AdgStyle *
 adg_font_style_new (void)
 {
   return g_object_new (ADG_TYPE_FONT_STYLE, NULL);
-}
-
-/**
- * adg_font_style_from_id:
- * @id: a font style identifier
- *
- * Gets a predefined style from an #AdgFontStyleId identifier.
- *
- * Return value: the requested style or %NULL if not found
- **/
-AdgStyle *
-adg_font_style_from_id (AdgFontStyleId id)
-{
-  static AdgStyle **builtins = NULL;
-
-  if G_UNLIKELY (builtins == NULL)
-    {
-      builtins = g_new (AdgStyle *, ADG_FONT_STYLE_LAST);
-
-      builtins[ADG_FONT_STYLE_TEXT] = g_object_new (ADG_TYPE_FONT_STYLE,
-						    "family", "Serif",
-						    "size", 14.,
-						    NULL);
-      builtins[ADG_FONT_STYLE_QUOTE] = g_object_new (ADG_TYPE_FONT_STYLE,
-						     "family", "Sans",
-						     "size", 12.,
-						     "weight", CAIRO_FONT_WEIGHT_BOLD,
-						     NULL);
-      builtins[ADG_FONT_STYLE_TOLERANCE] = g_object_new (ADG_TYPE_FONT_STYLE,
-							 "family", "Sans",
-							 "size", 8.,
-							 NULL);
-      builtins[ADG_FONT_STYLE_NOTE] = g_object_new (ADG_TYPE_FONT_STYLE,
-						    "family", "Sans",
-						    "size", 12.,
-						    NULL);
-    }
-
-  g_return_val_if_fail (id < ADG_FONT_STYLE_LAST, NULL);
-  return builtins[id];
 }
 
 /**
@@ -562,6 +524,39 @@ adg_font_style_set_hint_metrics (AdgFontStyle        *font_style,
   g_object_notify ((GObject *) font_style, "hint-metrics");
 }
 
+
+static GPtrArray *
+get_pool (void)
+{
+  static GPtrArray *pool = NULL;
+
+  if G_UNLIKELY (pool == NULL)
+    {
+      pool = g_ptr_array_sized_new (ADG_FONT_STYLE_LAST);
+
+      pool->pdata[ADG_FONT_STYLE_TEXT] = g_object_new (ADG_TYPE_FONT_STYLE,
+						       "family", "Serif",
+						       "size", 14.,
+						       NULL);
+      pool->pdata[ADG_FONT_STYLE_QUOTE] = g_object_new (ADG_TYPE_FONT_STYLE,
+							"family", "Sans",
+							"size", 12.,
+							"weight", CAIRO_FONT_WEIGHT_BOLD,
+							NULL);
+      pool->pdata[ADG_FONT_STYLE_TOLERANCE] = g_object_new (ADG_TYPE_FONT_STYLE,
+							    "family", "Sans",
+							    "size", 8.,
+							    NULL);
+      pool->pdata[ADG_FONT_STYLE_NOTE] = g_object_new (ADG_TYPE_FONT_STYLE,
+						       "family", "Sans",
+						       "size", 12.,
+						       NULL);
+
+      pool->len = ADG_FONT_STYLE_LAST;
+    }
+
+  return pool;
+}
 
 static void
 apply (AdgStyle *style,

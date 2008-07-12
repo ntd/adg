@@ -55,7 +55,6 @@ struct _AdgFontStyleClass
 
 GType		adg_font_style_get_type		(void) G_GNUC_CONST;
 AdgStyle *	adg_font_style_new		(void);
-AdgStyle *	adg_font_style_from_id		(AdgFontStyleId	 id);
 
 const gchar *	adg_font_style_get_family	(AdgFontStyle	*font_style);
 void		adg_font_style_set_family	(AdgFontStyle	*font_style,
