@@ -59,7 +59,6 @@ struct _AdgDimStyleClass
 
 GType		adg_dim_style_get_type	(void) G_GNUC_CONST;
 AdgStyle *	adg_dim_style_new	(void);
-AdgStyle *	adg_dim_style_from_id	(AdgDimStyleId		 id);
 
 AdgStyle *	adg_dim_style_get_quote_style	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_quote_style	(AdgDimStyle	*dim_style,

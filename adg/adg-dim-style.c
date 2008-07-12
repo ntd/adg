@@ -59,35 +59,36 @@ enum
 };
 
 
-static void	get_property		(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
+static void		get_property		(GObject	*object,
+						 guint		 prop_id,
+						 GValue		*value,
+						 GParamSpec	*pspec);
+static void		set_property		(GObject	*object,
+						 guint		 prop_id,
+						 const GValue	*value,
+						 GParamSpec	*pspec);
 
-static void	set_quote_style		(AdgDimStyle	*dim_style,
-					 AdgFontStyle	*style);
-static void	set_tolerance_style	(AdgDimStyle	*dim_style,
-					 AdgFontStyle	*style);
-static void	set_note_style		(AdgDimStyle	*dim_style,
-					 AdgFontStyle	*style);
-static void	set_line_style		(AdgDimStyle	*dim_style,
-					 AdgLineStyle	*style);
-static void	set_arrow_style		(AdgDimStyle	*dim_style,
-					 AdgArrowStyle	*style);
-static void	set_quote_shift		(AdgDimStyle	*dim_style,
-					 const AdgPair	*shift);
-static void	set_tolerance_shift	(AdgDimStyle	*dim_style,
-					 const AdgPair	*shift);
-static void	set_note_shift		(AdgDimStyle	*dim_style,
-					 const AdgPair	*shift);
-static void	set_number_format	(AdgDimStyle	*dim_style,
-					 const gchar	*format);
-static void	set_number_tag		(AdgDimStyle	*dim_style,
-					 const gchar	*tag);
+static GPtrArray *	get_pool		(void);
+static void		set_quote_style		(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*style);
+static void		set_tolerance_style	(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*style);
+static void		set_note_style		(AdgDimStyle	*dim_style,
+						 AdgFontStyle	*style);
+static void		set_line_style		(AdgDimStyle	*dim_style,
+						 AdgLineStyle	*style);
+static void		set_arrow_style		(AdgDimStyle	*dim_style,
+						 AdgArrowStyle	*style);
+static void		set_quote_shift		(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+static void		set_tolerance_shift	(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+static void		set_note_shift		(AdgDimStyle	*dim_style,
+						 const AdgPair	*shift);
+static void		set_number_format	(AdgDimStyle	*dim_style,
+						 const gchar	*format);
+static void		set_number_tag		(AdgDimStyle	*dim_style,
+						 const gchar	*tag);
 
 
 G_DEFINE_TYPE (AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
@@ -96,15 +97,19 @@ G_DEFINE_TYPE (AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
 static void
 adg_dim_style_class_init (AdgDimStyleClass *klass)
 {
-  GObjectClass *gobject_class;
-  GParamSpec   *param;
+  GObjectClass  *gobject_class;
+  AdgStyleClass *style_class;
+  GParamSpec    *param;
 
   gobject_class = (GObjectClass *) klass;
+  style_class = (AdgStyleClass *) klass;
 
   g_type_class_add_private (klass, sizeof (AdgDimStylePrivate));
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
+
+  style_class->get_pool = get_pool;
 
   param = g_param_spec_object ("quote-style",
 			       P_("Quote Style"),
@@ -366,37 +371,6 @@ AdgStyle *
 adg_dim_style_new (void)
 {
   return g_object_new (ADG_TYPE_DIM_STYLE, NULL);
-}
-
-/**
- * adg_dim_style_from_id:
- * @id: a dimension style identifier
- *
- * Gets a predefined style from an #AdgDimStyleId identifier.
- *
- * Return value: the requested style or %NULL if not found
- **/
-AdgStyle *
-adg_dim_style_from_id (AdgDimStyleId id)
-{
-  static AdgStyle **builtins = NULL;
-
-  if G_UNLIKELY (builtins == NULL)
-    {
-      cairo_pattern_t *pattern;
-
-      builtins = g_new (AdgStyle *, ADG_DIM_STYLE_LAST);
-
-      /* No need to specify further params: the default is already ISO */
-      pattern = cairo_pattern_create_rgb (1., 0., 0.);
-      builtins[ADG_DIM_STYLE_ISO] = g_object_new (ADG_TYPE_DIM_STYLE,
-						  "pattern", pattern,
-						  NULL);
-      cairo_pattern_destroy (pattern);
-    }
-
-  g_return_val_if_fail (id < ADG_DIM_STYLE_LAST, NULL);
-  return builtins[id];
 }
 
 /**
@@ -886,6 +860,30 @@ adg_dim_style_set_number_tag (AdgDimStyle *dim_style,
   g_object_notify ((GObject *) dim_style, "number-tag");
 }
 
+
+static GPtrArray *
+get_pool (void)
+{
+  static GPtrArray *pool = NULL;
+
+  if G_UNLIKELY (pool == NULL)
+    {
+      cairo_pattern_t *pattern;
+
+      pool = g_ptr_array_sized_new (ADG_DIM_STYLE_LAST);
+
+      /* No need to specify further params: the default is already ISO */
+      pattern = cairo_pattern_create_rgb (1., 0., 0.);
+      pool->pdata[ADG_DIM_STYLE_ISO] = g_object_new (ADG_TYPE_DIM_STYLE,
+						     "pattern", pattern,
+						     NULL);
+      cairo_pattern_destroy (pattern);
+
+      pool->len = ADG_DIM_STYLE_LAST;
+    }
+
+  return pool;
+}
 
 static void
 set_quote_style (AdgDimStyle  *dim_style,

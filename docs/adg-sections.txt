@@ -175,7 +175,6 @@ ADG_FONT_STYLE_GET_CLASS
 AdgDimStyle
 <SUBSECTION>
 adg_dim_style_new
-adg_dim_style_from_id
 <SUBSECTION>
 adg_dim_style_get_quote_style
 adg_dim_style_set_quote_style

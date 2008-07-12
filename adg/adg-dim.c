@@ -174,7 +174,8 @@ adg_dim_init (AdgDim *dim)
   AdgDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (dim, ADG_TYPE_DIM,
 						     AdgDimPrivate);
 
-  priv->dim_style = (AdgDimStyle *) adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
+  priv->dim_style = (AdgDimStyle *) adg_style_from_id (ADG_TYPE_DIM_STYLE,
+						       ADG_DIM_STYLE_ISO);
 
   priv->ref1.x = priv->ref1.y = 0.;
   priv->ref2.x = priv->ref2.y = 0.;
