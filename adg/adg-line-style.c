@@ -47,20 +47,18 @@ enum
 };
 
 
-static void	get_property		(GObject	*object,
+static void		get_property	(GObject	*object,
 					 guint		 prop_id,
 					 GValue		*value,
 					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
+static void		set_property	(GObject	*object,
 					 guint		 prop_id,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
-static AdgStyle*from_id			(gint		 id);
-static void	apply			(AdgStyle	*style,
+static GPtrArray *	get_pool	(void);
+static void		apply		(AdgStyle	*style,
 					 cairo_t	*cr);
-
-static GPtrArray *pool = NULL;
 
 
 G_DEFINE_TYPE (AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
@@ -81,7 +79,7 @@ adg_line_style_class_init (AdgLineStyleClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  style_class->from_id = from_id;
+  style_class->get_pool = get_pool;
   style_class->apply = apply;
 
   param = g_param_spec_double ("width",
@@ -390,9 +388,11 @@ adg_line_style_set_antialias (AdgLineStyle     *line_style,
 }
 
 
-static AdgStyle *
-from_id (gint id)
+static GPtrArray *
+get_pool (void)
 {
+  static GPtrArray *pool = NULL;
+
   if G_UNLIKELY (pool == NULL)
     {
       cairo_pattern_t *pattern;
@@ -431,8 +431,7 @@ from_id (gint id)
       pool->len = ADG_LINE_STYLE_LAST;
     }
 
-  g_return_val_if_fail (id < pool->len, NULL);
-  return (AdgStyle *) g_ptr_array_index (pool, id);
+  return pool;
 }
 
 static void

@@ -45,19 +45,19 @@ enum
 };
 
 
-static void	get_property		(GObject	*object,
+static void		get_property	(GObject	*object,
 					 guint		 prop_id,
 					 GValue		*value,
 					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
+static void		set_property	(GObject	*object,
 					 guint		 prop_id,
 					 const GValue	*value,
 					 GParamSpec	*pspec);
 
-static AdgStyle*from_id			(gint		 id);
-static void	apply			(AdgStyle	*style,
+static GPtrArray *	get_pool	(void);
+static void		apply		(AdgStyle	*style,
 					 cairo_t	*cr);
-static void	set_pattern		(AdgStyle	*style,
+static void		set_pattern	(AdgStyle	*style,
 					 AdgPattern	*pattern);
 
 
@@ -77,7 +77,7 @@ adg_style_class_init (AdgStyleClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  klass->from_id = from_id;
+  klass->get_pool = get_pool;
   klass->apply = apply;
 
   param = g_param_spec_boxed ("pattern",
@@ -139,6 +139,29 @@ set_property (GObject      *object,
 
 
 /**
+ * adg_style_register:
+ * @style: an #AdgStyle derived instance
+ *
+ * Registers a new style in the internal register.
+ *
+ * Return value: the new id associated to this style or %0 on errors
+ **/
+gint
+adg_style_register (AdgStyle *style)
+{
+  GPtrArray *pool;
+
+  g_return_val_if_fail (ADG_IS_STYLE (style), 0);
+
+  pool = ADG_STYLE_GET_CLASS (style)->get_pool ();
+  g_return_val_if_fail (pool != NULL, 0);
+
+  g_ptr_array_add (pool, style);
+
+  return pool->len - 1;
+}
+
+/**
  * adg_style_from_id:
  * @style: the style type id
  * @id: the id to get
@@ -152,16 +175,19 @@ adg_style_from_id (GType style,
 		   gint  id)
 {
   AdgStyleClass *klass;
-  AdgStyle      *instance;
+  GPtrArray     *pool;
 
   klass = g_type_class_ref (style);
   g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), NULL);
-  instance = klass->from_id (id);
+  pool = klass->get_pool ();
 
-  /* If @id is valid, @klass will be referenced by @instance */
+  /* If @style is valid, @klass will be referenced by the pool items */
   g_type_class_unref (klass);
 
-  return instance;
+  if (id > pool->len)
+    return NULL;
+
+  return (AdgStyle *) g_ptr_array_index (pool, id);
 }
 
 /**
@@ -223,10 +249,10 @@ adg_style_set_pattern (AdgStyle   *style,
 }
 
 
-static AdgStyle *
-from_id (gint id)
+static GPtrArray *
+get_pool (void)
 {
-  g_warning ("Uninmplemented from_id()");
+  g_warning ("Uninmplemented get_pool()");
   return NULL;
 }
 
