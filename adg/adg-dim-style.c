@@ -218,8 +218,10 @@ adg_dim_style_init (AdgDimStyle *dim_style)
 					     ADG_FONT_STYLE_TOLERANCE);
   priv->note_style = adg_style_from_id (ADG_TYPE_FONT_STYLE,
 					ADG_FONT_STYLE_NOTE);
-  priv->line_style = adg_style_from_id (ADG_TYPE_LINE_STYLE, ADG_LINE_STYLE_DIM);
-  priv->arrow_style = adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
+  priv->line_style = adg_style_from_id (ADG_TYPE_LINE_STYLE,
+					ADG_LINE_STYLE_DIM);
+  priv->arrow_style = adg_style_from_id (ADG_TYPE_ARROW_STYLE,
+					 ADG_ARROW_STYLE_ARROW);
   priv->from_offset = 5.;
   priv->to_offset = 5.;
   priv->baseline_spacing = 30.;

@@ -70,7 +70,6 @@ struct _AdgArrowStyleClass
 
 GType		adg_arrow_style_get_type	(void) G_GNUC_CONST;
 AdgStyle *	adg_arrow_style_new		(void);
-AdgStyle *	adg_arrow_style_from_id		(AdgArrowStyleId id);
 void            adg_arrow_style_render		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,
 						 CpmlPath	*segment);

@@ -143,7 +143,8 @@ adg_canvas_init (AdgCanvas *canvas)
 							 ADG_LINE_STYLE_DRAW);
   priv->font_style = (AdgFontStyle *) adg_style_from_id (ADG_TYPE_FONT_STYLE,
 							 ADG_FONT_STYLE_TEXT);
-  priv->arrow_style = (AdgArrowStyle *) adg_arrow_style_from_id (ADG_ARROW_STYLE_ARROW);
+  priv->arrow_style = (AdgArrowStyle *) adg_style_from_id (ADG_TYPE_ARROW_STYLE,
+							   ADG_ARROW_STYLE_ARROW);
   priv->dim_style = (AdgDimStyle *) adg_dim_style_from_id (ADG_DIM_STYLE_ISO);
 
   canvas->priv = priv;

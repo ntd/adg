@@ -111,7 +111,6 @@ AdgArrowStyle
 AdgArrowRenderer
 <SUBSECTION>
 adg_arrow_style_new
-adg_arrow_style_from_id
 adg_arrow_style_render
 <SUBSECTION>
 adg_arrow_style_get_size
