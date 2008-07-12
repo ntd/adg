@@ -60,6 +60,8 @@ static AdgStyle*from_id			(gint		 id);
 static void	apply			(AdgStyle	*style,
 					 cairo_t	*cr);
 
+static GPtrArray *pool = NULL;
+
 
 G_DEFINE_TYPE (AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
@@ -391,46 +393,46 @@ adg_line_style_set_antialias (AdgLineStyle     *line_style,
 static AdgStyle *
 from_id (gint id)
 {
-  static AdgStyle **builtins = NULL;
-
-  if G_UNLIKELY (builtins == NULL)
+  if G_UNLIKELY (pool == NULL)
     {
       cairo_pattern_t *pattern;
 
-      builtins = g_new (AdgStyle *, ADG_LINE_STYLE_LAST);
+      pool = g_ptr_array_sized_new (ADG_LINE_STYLE_LAST);
 
-      builtins[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE,
-						    "width", 2.,
-						    NULL);
+      pool->pdata[ADG_LINE_STYLE_DRAW] = g_object_new (ADG_TYPE_LINE_STYLE,
+						       "width", 2.,
+						       NULL);
 
       pattern = cairo_pattern_create_rgb (0., 1., 0.);
-      builtins[ADG_LINE_STYLE_CENTER] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "pattern", pattern,
-						      "width", 0.75,
-						      NULL);
+      pool->pdata[ADG_LINE_STYLE_CENTER] = g_object_new (ADG_TYPE_LINE_STYLE,
+							 "pattern", pattern,
+							 "width", 0.75,
+							 NULL);
       cairo_pattern_destroy (pattern);
 
       pattern = cairo_pattern_create_rgba (0., 0., 0., 0.5);
-      builtins[ADG_LINE_STYLE_HIDDEN] = g_object_new (ADG_TYPE_LINE_STYLE,
-						      "pattern", pattern,
-						      "width", 0.75,
-						      NULL);
+      pool->pdata[ADG_LINE_STYLE_HIDDEN] = g_object_new (ADG_TYPE_LINE_STYLE,
+							 "pattern", pattern,
+							 "width", 0.75,
+							 NULL);
       cairo_pattern_destroy (pattern);
 
       pattern = cairo_pattern_create_rgb (0., 0., 1.);
-      builtins[ADG_LINE_STYLE_XATCH] = g_object_new (ADG_TYPE_LINE_STYLE,
-						     "pattern", pattern,
-						     "width", 1.25,
-						     NULL);
+      pool->pdata[ADG_LINE_STYLE_XATCH] = g_object_new (ADG_TYPE_LINE_STYLE,
+							"pattern", pattern,
+							"width", 1.25,
+							NULL);
       cairo_pattern_destroy (pattern);
 
-      builtins[ADG_LINE_STYLE_DIM] = g_object_new (ADG_TYPE_LINE_STYLE,
-						   "width", 0.75,
-						   NULL);
+      pool->pdata[ADG_LINE_STYLE_DIM] = g_object_new (ADG_TYPE_LINE_STYLE,
+						      "width", 0.75,
+						      NULL);
+
+      pool->len = ADG_LINE_STYLE_LAST;
     }
 
-  g_return_val_if_fail (id < ADG_LINE_STYLE_LAST, NULL);
-  return builtins[id];
+  g_return_val_if_fail (id < pool->len, NULL);
+  return (AdgStyle *) g_ptr_array_index (pool, id);
 }
 
 static void
