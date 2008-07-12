@@ -57,7 +57,7 @@ struct _AdgStyleClass
 };
 
 GType			adg_style_get_type	(void) G_GNUC_CONST;
-AdgStyle *		adg_style_from_id	(GType		 style_type,
+AdgStyle *		adg_style_from_id	(GType		 style,
 						 gint		 id);
 
 void			adg_style_apply		(AdgStyle	*style,

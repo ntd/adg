@@ -140,22 +140,28 @@ set_property (GObject      *object,
 
 /**
  * adg_style_from_id:
- * @style_type: the type id from which obtain the style
+ * @style: the style type id
  * @id: the id to get
  *
- * Gets the preregistered style identified by @id of @style_type family.
+ * Gets the preregistered style identified by @id of @style family.
  *
  * Return value: the requested style or %NULL on errors
  **/
 AdgStyle *
-adg_style_from_id (GType style_type,
+adg_style_from_id (GType style,
 		   gint  id)
 {
-  AdgStyleClass *klass = g_type_class_ref (style_type);
+  AdgStyleClass *klass;
+  AdgStyle      *instance;
 
+  klass = g_type_class_ref (style);
   g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), NULL);
+  instance = klass->from_id (id);
 
-  return klass->from_id (id);
+  /* If @id is valid, @klass will be referenced by @instance */
+  g_type_class_unref (klass);
+
+  return instance;
 }
 
 /**
