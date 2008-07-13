@@ -38,6 +38,7 @@ typedef struct _AdgStyle        AdgStyle;
 typedef struct _AdgStyleClass   AdgStyleClass;
 typedef struct _AdgStylePrivate AdgStylePrivate;
 typedef gint                    AdgStyleId;
+typedef gint                    AdgStyleSlot;
 
 struct _AdgStyle
 {
@@ -61,6 +62,7 @@ GType			adg_style_get_type	(void) G_GNUC_CONST;
 AdgStyleId		adg_style_register_id	(AdgStyle	*style);
 AdgStyle *		adg_style_from_id	(GType		 type,
 						 AdgStyleId	 id);
+AdgStyle *		adg_style_get_default	(AdgStyleClass	*klass);
 
 void			adg_style_apply		(AdgStyle	*style,
 						 cairo_t	*cr);

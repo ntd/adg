@@ -54,6 +54,13 @@ struct _AdgContextClass
 
 
 GType		adg_context_get_type		(void) G_GNUC_CONST;
+AdgStyleSlot	adg_context_get_slot		(GType		 type);
+
+AdgContext *	adg_context_new			(void);
+AdgStyle *	adg_context_get_style		(AdgContext	*context,
+						 AdgStyleSlot	 slot);
+void		adg_context_set_style		(AdgContext	*context,
+						 AdgStyle	*style);
 
 
 G_END_DECLS

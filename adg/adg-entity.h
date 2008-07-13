@@ -21,6 +21,7 @@
 #ifndef __ADG_ENTITY_H__
 #define __ADG_ENTITY_H__
 
+#include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-line-style.h>
 #include <adg/adg-font-style.h>
@@ -94,12 +95,19 @@ typedef void (*AdgCallback) (AdgEntity *entity, gpointer user_data);
 
 GType			adg_entity_get_type		(void) G_GNUC_CONST;
 AdgCanvas *		adg_entity_get_canvas		(AdgEntity      *entity);
+
+AdgContext *		adg_entity_get_context		(AdgEntity	*entity);
+void			adg_entity_set_context		(AdgEntity	*entity,
+							 AdgContext	*context);
 const AdgMatrix *	adg_entity_get_model_matrix	(AdgEntity	*entity);
 const AdgMatrix *	adg_entity_get_paper_matrix	(AdgEntity	*entity);
 void			adg_entity_model_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
 void			adg_entity_paper_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
+void			adg_entity_apply		(AdgEntity	*entity,
+							 AdgStyleSlot	 style_slot,
+							 cairo_t	*cr);
 const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
 void			adg_entity_set_line_style	(AdgEntity      *entity,
 							 AdgLineStyle   *line_style);

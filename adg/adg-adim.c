@@ -81,7 +81,6 @@ adg_adim_class_init (AdgADimClass *klass)
 			       -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
 			       G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
   g_object_class_install_property (gobject_class, PROP_DIRECTION, param);
-
 }
 
 static void

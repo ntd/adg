@@ -190,6 +190,17 @@ adg_style_from_id (GType      type,
   return (AdgStyle *) g_ptr_array_index (pool, id);
 }
 
+AdgStyle *
+adg_style_get_default (AdgStyleClass *klass)
+{
+  GPtrArray *pool;
+
+  g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), NULL);
+
+  pool = klass->get_pool ();
+  return (AdgStyle *) g_ptr_array_index (pool, 0);
+}
+
 /**
  * adg_style_apply:
  * @style: an #AdgStyle derived object

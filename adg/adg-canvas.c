@@ -148,6 +148,8 @@ adg_canvas_init (AdgCanvas *canvas)
   priv->dim_style = (AdgDimStyle *) adg_style_from_id (ADG_TYPE_DIM_STYLE,
 						       ADG_DIM_STYLE_ISO);
 
+  adg_entity_set_context ((AdgEntity *) canvas, adg_context_new ());
+
   canvas->priv = priv;
 }
 

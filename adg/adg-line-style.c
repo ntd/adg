@@ -29,6 +29,7 @@
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
+#include "adg-context.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 
@@ -207,6 +208,17 @@ set_property (GObject      *object,
     }
 }
 
+
+AdgStyleSlot
+adg_line_style_get_slot (void)
+{
+  static AdgStyleSlot slot = -1;
+
+  if G_UNLIKELY (slot < 0)
+    slot = adg_context_get_slot (ADG_TYPE_LINE_STYLE);
+
+  return slot;
+}
 
 /**
  * adg_line_style_new:
