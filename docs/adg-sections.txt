@@ -120,6 +120,7 @@ ADG_LINE_STYLE_GET_CLASS
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgArrowStyle
 AdgArrowRenderer
+ADG_SLOT_ARROW_STYLE
 <SUBSECTION>
 adg_arrow_style_new
 adg_arrow_style_render
@@ -136,6 +137,7 @@ adg_arrow_style_set_renderer
 AdgArrowStyleClass
 AdgArrowStylePrivate
 adg_arrow_style_get_type
+adg_arrow_style_get_slot
 ADG_ARROW_STYLE
 ADG_IS_ARROW_STYLE
 ADG_TYPE_ARROW_STYLE
@@ -148,6 +150,7 @@ ADG_ARROW_STYLE_GET_CLASS
 <FILE>font-style</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgFontStyle
+ADG_SLOT_FONT_STYLE
 <SUBSECTION>
 adg_font_style_new
 <SUBSECTION>
@@ -172,6 +175,7 @@ adg_font_style_set_hint_metrics
 AdgFontStyleClass
 AdgFontStylePrivate
 adg_font_style_get_type
+adg_font_style_get_slot
 ADG_FONT_STYLE
 ADG_IS_FONT_STYLE
 ADG_TYPE_FONT_STYLE
@@ -184,6 +188,7 @@ ADG_FONT_STYLE_GET_CLASS
 <FILE>dim-style</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgDimStyle
+ADG_SLOT_DIM_STYLE
 <SUBSECTION>
 adg_dim_style_new
 <SUBSECTION>
@@ -223,6 +228,7 @@ adg_dim_style_set_number_tag
 AdgDimStyleClass
 AdgDimStylePrivate
 adg_dim_style_get_type
+adg_dim_style_get_slot
 ADG_DIM_STYLE
 ADG_IS_DIM_STYLE
 ADG_TYPE_DIM_STYLE
