@@ -34,10 +34,10 @@ struct _AdgDimStylePrivate
   AdgStyle	*note_style;
   AdgStyle	*line_style;
   AdgStyle	*arrow_style;
-  double	 from_offset;
-  double	 to_offset;
-  double	 baseline_spacing;
-  double	 tolerance_spacing;
+  gdouble	 from_offset;
+  gdouble	 to_offset;
+  gdouble	 baseline_spacing;
+  gdouble	 tolerance_spacing;
   AdgPair	 quote_shift;
   AdgPair	 tolerance_shift;
   AdgPair	 note_shift;

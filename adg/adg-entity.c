@@ -379,6 +379,24 @@ adg_entity_paper_matrix_changed (AdgEntity       *entity,
 }
 
 /**
+ * adg_entity_get_style:
+ * @entity: an #AdgEntity
+ * @style_slot: the slot of the style to get
+ *
+ * Shortcut to get a style from this entity context.
+ *
+ * Return value: the requested style
+ **/
+AdgStyle *
+adg_entity_get_style (AdgEntity   *entity,
+		      AdgStyleSlot style_slot)
+{
+  g_return_if_fail (ADG_IS_ENTITY (entity));
+
+  return adg_context_get_style (adg_entity_get_context (entity), style_slot);
+}
+
+/**
  * adg_entity_apply:
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to apply
@@ -391,15 +409,10 @@ adg_entity_apply (AdgEntity   *entity,
 		  AdgStyleSlot style_slot,
 		  cairo_t     *cr)
 {
-  AdgContext *context;
-  AdgStyle   *style;
+  AdgStyle *style = adg_entity_get_style (entity, style_slot);
 
-  g_return_if_fail (ADG_IS_ENTITY (entity));
-
-  context = adg_entity_get_context (entity);
-  style = adg_context_get_style (context, style_slot);
-
-  adg_style_apply (style, cr);
+  if (style)
+    adg_style_apply (style, cr);
 }
 
 /**

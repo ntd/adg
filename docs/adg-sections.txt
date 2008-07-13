@@ -273,6 +273,7 @@ adg_entity_get_model_matrix
 adg_entity_get_paper_matrix
 adg_entity_get_context
 adg_entity_set_context
+adg_entity_get_style
 adg_entity_apply
 adg_entity_get_line_style
 adg_entity_set_line_style

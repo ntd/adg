@@ -30,12 +30,11 @@ G_BEGIN_DECLS
 
 struct _AdgDimPrivate
 {
-  AdgDimStyle		*dim_style;
   AdgPair		 ref1;
   AdgPair		 ref2;
   AdgPair		 pos1;
   AdgPair		 pos2;
-  double		 level;
+  gdouble		 level;
   gchar			*quote;
   gchar			*tolerance_up;
   gchar			*tolerance_down;

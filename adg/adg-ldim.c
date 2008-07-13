@@ -29,10 +29,7 @@
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
 #include "adg-dim-private.h"
-#include "adg-dim-style.h"
-#include "adg-dim-style-private.h"
 #include "adg-container.h"
-#include "adg-arrow-style.h"
 #include "adg-util.h"
 #include "adg-intl.h"
 
@@ -178,7 +175,8 @@ update (AdgEntity *entity)
 {
   AdgDim             *dim;
   AdgLDim            *ldim;
-  AdgDimStylePrivate *style_data;
+  AdgDimStyle        *dim_style;
+  AdgArrowStyle      *arrow_style;
   AdgMatrix           device2user;
   CpmlPair            vector;
   AdgPair             offset;
@@ -188,11 +186,10 @@ update (AdgEntity *entity)
   AdgPair             baseline1, baseline2;
   cairo_path_data_t  *path_data;
 
-  g_return_if_fail (((AdgDim *) entity)->priv->dim_style != NULL);
-
   dim = (AdgDim *) entity;
   ldim = (AdgLDim *) entity;
-  style_data = dim->priv->dim_style->priv;
+  dim_style = (AdgDimStyle *) adg_entity_get_style (entity, ADG_SLOT_DIM_STYLE);
+  arrow_style = (AdgArrowStyle *) adg_dim_style_get_arrow_style (dim_style);
 
   /* Get the inverted transformation matrix */
   adg_matrix_set (&device2user, adg_entity_get_model_matrix (entity));
@@ -202,8 +199,8 @@ update (AdgEntity *entity)
   cpml_vector_from_angle (&vector, ldim->priv->direction);
 
   /* Calculate from1 and from2 */
-  offset.x = vector.x * style_data->from_offset;
-  offset.y = vector.y * style_data->from_offset;
+  offset.x = vector.x * adg_dim_style_get_from_offset (dim_style);
+  offset.y = vector.y * adg_dim_style_get_from_offset (dim_style);
   cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
 
   from1.x = dim->priv->ref1.x + offset.x;
@@ -212,8 +209,8 @@ update (AdgEntity *entity)
   from2.y = dim->priv->ref2.y + offset.y;
 
   /* Calculate arrow1 and arrow2 */
-  offset.x = vector.x * style_data->baseline_spacing * dim->priv->level;
-  offset.y = vector.y * style_data->baseline_spacing * dim->priv->level;
+  offset.x = vector.x * adg_dim_style_get_baseline_spacing (dim_style) * dim->priv->level;
+  offset.y = vector.y * adg_dim_style_get_baseline_spacing (dim_style) * dim->priv->level;
   cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
 
   arrow1.x = dim->priv->pos1.x + offset.x;
@@ -222,8 +219,8 @@ update (AdgEntity *entity)
   arrow2.y = dim->priv->pos2.y + offset.y;
 
   /* Calculate to1 and to2 */
-  offset.x = vector.x * style_data->to_offset;
-  offset.y = vector.y * style_data->to_offset;
+  offset.x = vector.x * adg_dim_style_get_to_offset (dim_style);
+  offset.y = vector.y * adg_dim_style_get_to_offset (dim_style);
   cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
 
   to1.x = arrow1.x + offset.x;
@@ -242,7 +239,7 @@ update (AdgEntity *entity)
   cpml_pair_angle (NULL, &vector, &dim->priv->quote_angle);
 
   /* Calculate baseline1 and baseline2 */
-  g_object_get (style_data->arrow_style, "margin", &offset.y, NULL);
+  offset.y = adg_arrow_style_get_margin (arrow_style);
   offset.x = vector.x * offset.y;
   offset.y *= vector.y;
   cairo_matrix_transform_distance (&device2user, &offset.x, &offset.y);
@@ -313,26 +310,25 @@ static void
 render (AdgEntity *entity,
 	cairo_t   *cr)
 {
-  AdgDim             *dim;
-  AdgLDim            *ldim;
-  AdgDimStylePrivate *style_data;
-  AdgArrowStyle      *arrow_style;
-  CpmlPath            primitive;
-
-  g_return_if_fail (((AdgDim *) entity)->priv->dim_style != NULL);
+  AdgDim        *dim;
+  AdgLDim       *ldim;
+  AdgDimStyle   *dim_style;
+  AdgStyle      *line_style;
+  AdgArrowStyle *arrow_style;
+  CpmlPath       primitive;
 
   dim = (AdgDim *) entity;
   ldim = (AdgLDim *) entity;
-  style_data = dim->priv->dim_style->priv;
-
-  arrow_style = (AdgArrowStyle *) style_data->arrow_style;
+  dim_style = (AdgDimStyle *) adg_entity_get_style (entity, ADG_SLOT_DIM_STYLE);
+  line_style = adg_dim_style_get_line_style (dim_style);
+  arrow_style = (AdgArrowStyle *) adg_dim_style_get_arrow_style (dim_style);
 
   /* TODO: caching
   if (!adg_entity_model_applied (entity)) */
     update (entity);
     
   cairo_save (cr);
-  adg_style_apply (dim->priv->dim_style, cr);
+  adg_entity_apply (entity, ADG_SLOT_DIM_STYLE, cr);
 
   /* Arrows */
   if (cpml_path_from_cairo (&primitive, &ldim->priv->arrow_path, NULL))
@@ -343,7 +339,7 @@ render (AdgEntity *entity,
     }
 
   /* Lines */
-  adg_style_apply (style_data->line_style, cr);
+  adg_style_apply (line_style, cr);
 
   cairo_append_path (cr, &ldim->priv->extension1);
   cairo_append_path (cr, &ldim->priv->extension2);
@@ -361,12 +357,15 @@ render (AdgEntity *entity,
 static gchar *
 default_quote (AdgDim *dim)
 {
-  double number;
+  AdgDimStyle *dim_style;
+  gdouble      number;
 
   if (!cpml_pair_distance(&dim->priv->pos2, &dim->priv->pos1, &number))
     return NULL;
 
-  return g_strdup_printf (dim->priv->dim_style->priv->number_format, number);
+  dim_style = (AdgDimStyle *) adg_entity_get_style ((AdgEntity *) dim,
+						    ADG_SLOT_DIM_STYLE);
+  return g_strdup_printf (adg_dim_style_get_number_format (dim_style), number);
 }
 
 

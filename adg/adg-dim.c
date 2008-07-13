@@ -28,8 +28,6 @@
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
-#include "adg-dim-style.h"
-#include "adg-dim-style-private.h"
 #include "adg-util.h"
 #include "adg-intl.h"
 
@@ -39,7 +37,6 @@
 enum
 {
   PROP_0,
-  PROP_DIM_STYLE,
   PROP_REF1,
   PROP_REF2,
   PROP_POS1,
@@ -63,10 +60,6 @@ static void	set_property		(GObject	*object,
 					 GParamSpec	*pspec);
 static void	invalidate		(AdgDim		*dim);
 static void	invalidate_quote	(AdgDim		*dim);
-static const AdgDimStyle *
-		get_dim_style		(AdgEntity	*entity);
-static void	set_dim_style		(AdgEntity	*entity,
-					 AdgDimStyle	*dim_style);
 static gchar *	default_quote		(AdgDim		*dim);
 static void	quote_layout		(AdgDim		*dim,
 					 cairo_t	*cr);
@@ -91,18 +84,8 @@ adg_dim_class_init (AdgDimClass *klass)
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
 
-  entity_class->get_dim_style = get_dim_style;
-  entity_class->set_dim_style = set_dim_style;
-
   klass->default_quote = default_quote;
   klass->quote_layout = quote_layout;
-
-  param = g_param_spec_boxed ("dim-style",
-                              P_("Dimension Style"),
-                              P_("Dimension style to use while rendering"),
-                              ADG_TYPE_DIM_STYLE,
-                              G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_DIM_STYLE, param);
 
   param = g_param_spec_boxed ("ref1",
                               P_("Reference 1"),
@@ -174,9 +157,6 @@ adg_dim_init (AdgDim *dim)
   AdgDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (dim, ADG_TYPE_DIM,
 						     AdgDimPrivate);
 
-  priv->dim_style = (AdgDimStyle *) adg_style_from_id (ADG_TYPE_DIM_STYLE,
-						       ADG_DIM_STYLE_ISO);
-
   priv->ref1.x = priv->ref1.y = 0.;
   priv->ref2.x = priv->ref2.y = 0.;
   priv->pos1.x = priv->pos1.y = 0.;
@@ -213,9 +193,6 @@ get_property (GObject    *object,
 
   switch (prop_id)
     {
-    case PROP_DIM_STYLE:
-      g_value_set_boxed (value, dim->priv->dim_style);
-      break;
     case PROP_REF1:
       g_value_set_boxed (value, &dim->priv->ref1);
       break;
@@ -259,10 +236,6 @@ set_property (GObject      *object,
   
   switch (prop_id)
     {
-    case PROP_DIM_STYLE:
-      dim->priv->dim_style = g_value_get_boxed (value);
-      invalidate (dim);
-      break;
     case PROP_REF1:
       cpml_pair_copy (&dim->priv->ref1, (AdgPair *) g_value_get_boxed (value));
       invalidate (dim);
@@ -328,20 +301,6 @@ invalidate_quote (AdgDim *dim)
 }
 
 
-static const AdgDimStyle *
-get_dim_style (AdgEntity *entity)
-{
-  return ((AdgDim *) entity)->priv->dim_style;
-}
-
-static void
-set_dim_style (AdgEntity   *entity,
-	       AdgDimStyle *dim_style)
-{
-  ((AdgDim *) entity)->priv->dim_style = dim_style;
-  g_object_notify (G_OBJECT (entity), "dim-style");
-}
-
 static gchar *
 default_quote (AdgDim *dim)
 {
@@ -353,15 +312,16 @@ static void
 quote_layout (AdgDim  *dim,
 	      cairo_t *cr)
 {
-  AdgDimStylePrivate  *style_data;
+  AdgDimStyle         *dim_style;
   AdgPair              offset;
   AdgPair              cp;
   cairo_text_extents_t extents;
 
-  style_data = dim->priv->dim_style->priv;
+  dim_style = (AdgDimStyle *) adg_entity_get_style ((AdgEntity *) dim,
+						    ADG_SLOT_DIM_STYLE);
 
   /* Compute the quote */
-  adg_style_apply (style_data->quote_style, cr);
+  adg_style_apply (adg_dim_style_get_quote_style (dim_style), cr);
 
   cairo_text_extents (cr, dim->priv->quote, &extents);
   cairo_user_to_device_distance (cr, &extents.width, &extents.height);
@@ -374,11 +334,11 @@ quote_layout (AdgDim  *dim,
       double width;
       double midspacing;
 
-      adg_style_apply (style_data->tolerance_style, cr);
+      adg_style_apply (adg_dim_style_get_tolerance_style (dim_style), cr);
 
       width = 0.0;
-      midspacing = style_data->tolerance_spacing / 2.0;
-      cpml_pair_copy (&offset, &style_data->tolerance_shift);
+      midspacing = adg_dim_style_get_tolerance_spacing (dim_style) / 2.;
+      cpml_pair_copy (&offset, adg_dim_style_get_tolerance_shift (dim_style));
       cp.x += offset.x;
 
       if (dim->priv->tolerance_up != NULL)
@@ -407,9 +367,9 @@ quote_layout (AdgDim  *dim,
   /* Compute the note */
   if (dim->priv->note != NULL)
     {
-      adg_style_apply (style_data->note_style, cr);
+      adg_style_apply (adg_dim_style_get_note_style (dim_style), cr);
 
-      cpml_pair_copy (&offset, &style_data->note_shift);
+      cpml_pair_copy (&offset, adg_dim_style_get_note_shift (dim_style));
       cp.x += offset.x;
 
       cairo_text_extents (cr, dim->priv->note, &extents);
@@ -421,8 +381,8 @@ quote_layout (AdgDim  *dim,
     }
 
   /* Calculating the offsets */
-  offset.x = style_data->quote_shift.x - cp.x / 2.0;
-  offset.y = style_data->quote_shift.y;
+  cpml_pair_copy (&offset, adg_dim_style_get_quote_shift (dim_style));
+  offset.x -= cp.x / 2.;
 
   cpml_pair_copy (&dim->priv->quote_shift, &offset);
 
@@ -699,16 +659,16 @@ void
 _adg_dim_render_quote (AdgDim  *dim,
 		       cairo_t *cr)
 {
-  AdgDimStylePrivate  *style_data;
-  AdgPair quote_shift;
-  AdgPair tolerance_up_shift;
-  AdgPair tolerance_down_shift;
-  AdgPair note_shift;
+  AdgDimStyle *dim_style;
+  AdgPair      quote_shift;
+  AdgPair      tolerance_up_shift;
+  AdgPair      tolerance_down_shift;
+  AdgPair      note_shift;
 
   g_return_if_fail (ADG_IS_DIM (dim));
-  g_return_if_fail (dim->priv->dim_style != NULL);
 
-  style_data = dim->priv->dim_style->priv;
+  dim_style = (AdgDimStyle *) adg_entity_get_style ((AdgEntity *) dim,
+						    ADG_SLOT_DIM_STYLE);
 
   if (dim->priv->quote == NULL)
     {
@@ -731,14 +691,14 @@ _adg_dim_render_quote (AdgDim  *dim,
   cairo_rotate (cr, dim->priv->quote_angle);
 
   /* Rendering quote */
-  adg_style_apply (style_data->quote_style, cr);
+  adg_style_apply (adg_dim_style_get_quote_style (dim_style), cr);
   cairo_move_to (cr, quote_shift.x, quote_shift.y);
   cairo_show_text (cr, dim->priv->quote);
 
   /* Rendering tolerances */
   if (dim->priv->tolerance_up != NULL || dim->priv->tolerance_down != NULL)
     {
-      adg_style_apply (style_data->tolerance_style, cr);
+      adg_style_apply (adg_dim_style_get_tolerance_style (dim_style), cr);
 
       if (dim->priv->tolerance_up != NULL)
         {

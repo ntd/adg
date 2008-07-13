@@ -105,6 +105,8 @@ void			adg_entity_model_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
 void			adg_entity_paper_matrix_changed	(AdgEntity      *entity,
 							 const AdgMatrix*parent_matrix);
+AdgStyle *		adg_entity_get_style		(AdgEntity	*entity,
+							 AdgStyleSlot	 style_slot);
 void			adg_entity_apply		(AdgEntity	*entity,
 							 AdgStyleSlot	 style_slot,
 							 cairo_t	*cr);
