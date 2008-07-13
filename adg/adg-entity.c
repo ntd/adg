@@ -378,6 +378,14 @@ adg_entity_paper_matrix_changed (AdgEntity       *entity,
   g_signal_emit (entity, signals[PAPER_MATRIX_CHANGED], 0, parent_matrix);
 }
 
+/**
+ * adg_entity_apply:
+ * @entity: an #AdgEntity
+ * @style_slot: the slot of the style to apply
+ * @cr: a cairo context
+ *
+ * Applies the specified style to the @cr cairo context.
+ **/
 void
 adg_entity_apply (AdgEntity   *entity,
 		  AdgStyleSlot style_slot,

@@ -22,6 +22,19 @@
  * SECTION:context
  * @title: AdgContext
  * @short_description: Base class for styling the rendering process
+ *
+ * The context is a collection of styles, one for each #AdgStyle derived
+ * class. To achieve this result, there is a common register where all
+ * the style derived class are stored and every #AdgContext instance keeps
+ * its own register of style instances (one instance per class).
+ *
+ * Although this could be implemented by accessing the underlying registers
+ * using GType id, to be able to access efficiently, that is O(1) magnitude,
+ * the concept of slot was introduced.
+ *
+ * The slot serves the same purpose than a GType, that is identify a type
+ * class, but the slots are a strict sequence starting from 0, useful to be
+ * used as an array index.
  */
 
 #include "adg-context.h"

@@ -39,6 +39,12 @@ adg_pattern_get_type
 <FILE>context</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContext
+<SUBSECTION>
+adg_context_get_slot
+adg_context_new
+<SUBSECTION>
+adg_context_get_style
+adg_context_set_style
 <SUBSECTION Standard>
 AdgContextClass
 AdgContextPrivate
@@ -56,9 +62,12 @@ ADG_CONTEXT_GET_CLASS
 <INCLUDE>adg/adg.h</INCLUDE>
 <SUBSECTION>
 AdgStyle
+AdgStyleId
+AdgStyleSlot
 <SUBSECTION>
 adg_style_register_id
 adg_style_from_id
+adg_style_get_default
 adg_style_apply
 <SUBSECTION>
 adg_style_get_pattern
@@ -79,6 +88,7 @@ ADG_STYLE_GET_CLASS
 <FILE>line-style</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgLineStyle
+ADG_SLOT_LINE_STYLE
 <SUBSECTION>
 adg_line_style_new
 <SUBSECTION>
@@ -96,6 +106,7 @@ adg_line_style_set_miter_limit
 AdgLineStyleClass
 AdgLineStylePrivate
 adg_line_style_get_type
+adg_line_style_get_slot
 ADG_LINE_STYLE
 ADG_IS_LINE_STYLE
 ADG_TYPE_LINE_STYLE
@@ -254,6 +265,9 @@ ADG_CALLBACK
 adg_entity_get_canvas
 adg_entity_get_model_matrix
 adg_entity_get_paper_matrix
+adg_entity_get_context
+adg_entity_set_context
+adg_entity_apply
 adg_entity_get_line_style
 adg_entity_set_line_style
 adg_entity_set_font_style
