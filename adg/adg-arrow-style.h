@@ -30,6 +30,7 @@ G_BEGIN_DECLS
 
 
 #define ADG_TYPE_ARROW_STYLE             (adg_arrow_style_get_type ())
+#define ADG_SLOT_ARROW_STYLE             (adg_arrow_style_get_slot ())
 #define ADG_ARROW_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyle))
 #define ADG_ARROW_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
 #define ADG_IS_ARROW_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_ARROW_STYLE))
@@ -69,7 +70,9 @@ struct _AdgArrowStyleClass
 
 
 GType		adg_arrow_style_get_type	(void) G_GNUC_CONST;
+AdgStyleSlot	adg_line_style_get_slot		(void) G_GNUC_CONST;
 AdgStyle *	adg_arrow_style_new		(void);
+
 void            adg_arrow_style_render		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,
 						 CpmlPath	*segment);
