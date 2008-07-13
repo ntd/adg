@@ -139,15 +139,15 @@ set_property (GObject      *object,
 
 
 /**
- * adg_style_register:
+ * adg_style_register_id:
  * @style: an #AdgStyle derived instance
  *
  * Registers a new style in the internal register.
  *
  * Return value: the new id associated to this style or %0 on errors
  **/
-gint
-adg_style_register (AdgStyle *style)
+AdgStyleId
+adg_style_register_id (AdgStyle *style)
 {
   GPtrArray *pool;
 
@@ -163,7 +163,7 @@ adg_style_register (AdgStyle *style)
 
 /**
  * adg_style_from_id:
- * @style: the style type id
+ * @type: the style type id
  * @id: the id to get
  *
  * Gets the preregistered style identified by @id of @style family.
@@ -171,17 +171,17 @@ adg_style_register (AdgStyle *style)
  * Return value: the requested style or %NULL on errors
  **/
 AdgStyle *
-adg_style_from_id (GType style,
-		   gint  id)
+adg_style_from_id (GType      type,
+		   AdgStyleId id)
 {
   AdgStyleClass *klass;
   GPtrArray     *pool;
 
-  klass = g_type_class_ref (style);
+  klass = g_type_class_ref (type);
   g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), NULL);
   pool = klass->get_pool ();
 
-  /* If @style is valid, @klass will be referenced by the pool items */
+  /* If @type is valid, @klass will be referenced by the pool items */
   g_type_class_unref (klass);
 
   if (id > pool->len)

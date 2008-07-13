@@ -57,7 +57,7 @@ ADG_CONTEXT_GET_CLASS
 <SUBSECTION>
 AdgStyle
 <SUBSECTION>
-adg_style_register
+adg_style_register_id
 adg_style_from_id
 adg_style_apply
 <SUBSECTION>
