@@ -70,7 +70,7 @@ struct _AdgArrowStyleClass
 
 
 GType		adg_arrow_style_get_type	(void) G_GNUC_CONST;
-AdgStyleSlot	adg_line_style_get_slot		(void) G_GNUC_CONST;
+AdgStyleSlot	adg_arrow_style_get_slot	(void) G_GNUC_CONST;
 AdgStyle *	adg_arrow_style_new		(void);
 
 void            adg_arrow_style_render		(AdgArrowStyle	*arrow_style,
