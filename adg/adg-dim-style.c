@@ -361,6 +361,24 @@ set_property (GObject      *object,
 
 
 /**
+ * adg_dim_style_get_slot:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the slot
+ **/
+AdgStyleSlot
+adg_dim_style_get_slot (void)
+{
+  static AdgStyleSlot slot = -1;
+
+  if G_UNLIKELY (slot < 0)
+    slot = adg_context_get_slot (ADG_TYPE_DIM_STYLE);
+
+  return slot;
+}
+
+/**
  * adg_dim_style_new:
  *
  * Constructs a new dimension style initialized with default params.
