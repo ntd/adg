@@ -209,6 +209,13 @@ set_property (GObject      *object,
 }
 
 
+/**
+ * adg_line_style_get_slot:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the slot
+ **/
 AdgStyleSlot
 adg_line_style_get_slot (void)
 {
