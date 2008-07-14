@@ -70,18 +70,6 @@ struct _AdgEntityClass
 							 cairo_t        *cr);
 
   /* Virtual Table */
-  const AdgLineStyle *	(*get_line_style)		(AdgEntity      *entity);
-  void			(*set_line_style)		(AdgEntity      *entity,
-							 AdgLineStyle   *line_style);
-  const AdgFontStyle *	(*get_font_style)		(AdgEntity      *entity);
-  void			(*set_font_style)		(AdgEntity      *entity,
-							 AdgFontStyle   *font_style);
-  const AdgArrowStyle *	(*get_arrow_style)		(AdgEntity      *entity);
-  void			(*set_arrow_style)		(AdgEntity      *entity,
-							 AdgArrowStyle  *arrow_style);
-  const AdgDimStyle *	(*get_dim_style)		(AdgEntity      *entity);
-  void			(*set_dim_style)		(AdgEntity      *entity,
-							 AdgDimStyle    *dim_style);
   const AdgMatrix *	(*get_model_matrix)		(AdgEntity      *entity);
   const AdgMatrix *	(*get_paper_matrix)		(AdgEntity      *entity);
 };
@@ -110,18 +98,6 @@ AdgStyle *		adg_entity_get_style		(AdgEntity	*entity,
 void			adg_entity_apply		(AdgEntity	*entity,
 							 AdgStyleSlot	 style_slot,
 							 cairo_t	*cr);
-const AdgLineStyle *	adg_entity_get_line_style	(AdgEntity      *entity);
-void			adg_entity_set_line_style	(AdgEntity      *entity,
-							 AdgLineStyle   *line_style);
-const AdgFontStyle *	adg_entity_get_font_style	(AdgEntity      *entity);
-void			adg_entity_set_font_style	(AdgEntity      *entity,
-							 AdgFontStyle   *font_style);
-const AdgArrowStyle *	adg_entity_get_arrow_style	(AdgEntity      *entity);
-void			adg_entity_set_arrow_style	(AdgEntity      *entity,
-							 AdgArrowStyle  *arrow_style);
-const AdgDimStyle *	adg_entity_get_dim_style	(AdgEntity      *entity);
-void			adg_entity_set_dim_style	(AdgEntity      *entity,
-							 AdgDimStyle    *dim_style);
 gboolean		adg_entity_model_matrix_applied	(AdgEntity	*entity);
 gboolean		adg_entity_paper_matrix_applied	(AdgEntity	*entity);
 gboolean		adg_entity_model_applied	(AdgEntity	*entity);

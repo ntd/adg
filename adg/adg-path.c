@@ -40,12 +40,6 @@
 #define ARC_TOLERANCE   0.1
 
 
-enum
-{
-  PROP_0,
-  PROP_LINE_STYLE
-};
-
 typedef enum _Direction Direction;
 enum _Direction
 {
@@ -54,19 +48,7 @@ enum _Direction
 };
 
 
-static void	get_property		(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
 static void	finalize		(GObject	*object);
-static const AdgLineStyle *
-		get_line_style		(AdgEntity	*entity);
-static void	set_line_style		(AdgEntity	*entity,
-					 AdgLineStyle	*line_style);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 static void	add_portion		(AdgPath	*path,
@@ -102,27 +84,15 @@ adg_path_class_init (AdgPathClass *klass)
 {
   GObjectClass   *gobject_class;
   AdgEntityClass *entity_class;
-  GParamSpec     *param;
 
   gobject_class = (GObjectClass *) klass;
   entity_class = (AdgEntityClass *) klass;
 
   g_type_class_add_private (klass, sizeof (AdgPathPrivate));
 
-  gobject_class->get_property = get_property;
-  gobject_class->set_property = set_property;
   gobject_class->finalize = finalize;
 
-  entity_class->get_line_style = get_line_style;
-  entity_class->set_line_style = set_line_style;
   entity_class->render = render;
-
-  param = g_param_spec_boxed ("line-style",
-                              P_("Line Style"),
-                              P_("Line style to use while rendering the path"),
-                              ADG_TYPE_LINE_STYLE,
-                              G_PARAM_READWRITE);
-  g_object_class_install_property (gobject_class, PROP_LINE_STYLE, param);
 }
 
 static void
@@ -131,7 +101,6 @@ adg_path_init (AdgPath *path)
   AdgPathPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (path, ADG_TYPE_PATH,
 						      AdgPathPrivate);
 
-  priv->line_style = NULL;
   priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
   priv->cairo_path.data = NULL;
   priv->cairo_path.num_data = 0;
@@ -144,65 +113,11 @@ adg_path_init (AdgPath *path)
 }
 
 static void
-get_property (GObject    *object,
-	      guint       prop_id,
-	      GValue     *value,
-	      GParamSpec *pspec)
-{
-  AdgPathPrivate *priv = ((AdgPath *) object)->priv;
-
-  switch (prop_id)
-    {
-    case PROP_LINE_STYLE:
-      g_value_set_boxed (value, priv->line_style);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
-}
-
-static void
-set_property (GObject      *object,
-	      guint         prop_id,
-	      const GValue *value,
-	      GParamSpec   *pspec)
-{
-  AdgPath *path = (AdgPath *) object;
-
-  switch (prop_id)
-    {
-    case PROP_LINE_STYLE:
-      path->priv->line_style = g_value_get_boxed (value);
-      break;
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
-}
-
-
-static void
 finalize (GObject *object)
 {
   adg_path_clear ((AdgPath *) object);
 
   ((GObjectClass *) PARENT_CLASS)->finalize (object);
-}
-
-
-static const AdgLineStyle *
-get_line_style (AdgEntity *entity)
-{
-  return ((AdgPath *) entity)->priv->line_style;
-}
-
-static void
-set_line_style (AdgEntity    *entity,
-		AdgLineStyle *line_style)
-{
-  ((AdgPath *) entity)->priv->line_style = line_style;
-  g_object_notify (G_OBJECT (entity), "line-style");
 }
 
 static void

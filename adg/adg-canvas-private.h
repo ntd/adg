@@ -29,11 +29,6 @@ G_BEGIN_DECLS
 
 struct _AdgCanvasPrivate
 {
-  /* Fallback styles */
-  AdgLineStyle          *line_style;
-  AdgFontStyle          *font_style;
-  AdgArrowStyle         *arrow_style;
-  AdgDimStyle           *dim_style;
 };
 
 

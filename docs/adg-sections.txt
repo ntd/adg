@@ -275,14 +275,6 @@ adg_entity_get_context
 adg_entity_set_context
 adg_entity_get_style
 adg_entity_apply
-adg_entity_get_line_style
-adg_entity_set_line_style
-adg_entity_set_font_style
-adg_entity_get_font_style
-adg_entity_get_arrow_style
-adg_entity_set_arrow_style
-adg_entity_get_dim_style
-adg_entity_set_dim_style
 <SUBSECTION>
 adg_entity_model_applied
 adg_entity_model_matrix_applied

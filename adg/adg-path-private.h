@@ -32,7 +32,6 @@ G_BEGIN_DECLS
 
 struct _AdgPathPrivate
 {
-  AdgLineStyle		*line_style;
   cairo_path_t		 cairo_path;
   GArray		*portions;
   AdgPair		 cp;
