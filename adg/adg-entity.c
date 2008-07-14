@@ -375,7 +375,9 @@ adg_entity_paper_matrix_changed (AdgEntity       *entity,
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to get
  *
- * Shortcut to get a style from this entity context.
+ * Gets a style from this entity. If the entity has no context associated
+ * or the style in undefined within this context, gets the style from its
+ * parent container.
  *
  * Return value: the requested style
  **/
@@ -385,7 +387,18 @@ adg_entity_get_style (AdgEntity   *entity,
 {
   g_return_if_fail (ADG_IS_ENTITY (entity));
 
-  return adg_context_get_style (adg_entity_get_context (entity), style_slot);
+  if (entity->priv->context)
+    {
+      AdgStyle *style = adg_context_get_style (entity->priv->context,
+					       style_slot);
+      if (style)
+	return style;
+    }
+
+  if (entity->priv->parent)
+    return adg_entity_get_style (entity->priv->parent, style_slot);
+
+  return NULL;
 }
 
 /**
