@@ -39,6 +39,7 @@ adg_pattern_get_type
 <FILE>context</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContext
+AdgContextFiller
 <SUBSECTION>
 adg_context_get_slot
 adg_context_new

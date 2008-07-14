@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 typedef struct _AdgContext        AdgContext;
 typedef struct _AdgContextClass   AdgContextClass;
 typedef struct _AdgContextPrivate AdgContextPrivate;
+typedef AdgStyle * (*AdgContextFiller) (AdgStyleClass *style_class, gpointer user_data);
 
 struct _AdgContext
 {
@@ -56,7 +57,8 @@ struct _AdgContextClass
 GType		adg_context_get_type		(void) G_GNUC_CONST;
 AdgStyleSlot	adg_context_get_slot		(GType		 type);
 
-AdgContext *	adg_context_new			(void);
+AdgContext *	adg_context_new			(AdgContextFiller context_filler,
+						 gpointer	 user_data);
 AdgStyle *	adg_context_get_style		(AdgContext	*context,
 						 AdgStyleSlot	 slot);
 void		adg_context_set_style		(AdgContext	*context,

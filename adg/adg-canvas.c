@@ -40,6 +40,10 @@
 #define PARENT_CLASS ((AdgContainerClass *) adg_canvas_parent_class)
 
 
+static AdgStyle *	context_filler		(AdgStyleClass	*style_class,
+						 gpointer	 user_data);
+
+
 G_DEFINE_TYPE (AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
 
 
@@ -52,12 +56,15 @@ adg_canvas_class_init (AdgCanvasClass *klass)
 static void
 adg_canvas_init (AdgCanvas *canvas)
 {
-  AdgCanvasPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (canvas,
-							ADG_TYPE_CANVAS,
+  AdgContext       *context;
+  AdgCanvasPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (canvas, ADG_TYPE_CANVAS,
 							AdgCanvasPrivate);
+
   canvas->priv = priv;
 
-  adg_entity_set_context ((AdgEntity *) canvas, adg_context_new ());
+  context = adg_context_new (context_filler, NULL);
+  adg_entity_set_context ((AdgEntity *) canvas, context);
+  g_object_unref (context);
 }
 
 
@@ -72,4 +79,12 @@ AdgCanvas *
 adg_canvas_new (void)
 {
   return g_object_new (ADG_TYPE_CANVAS, NULL);
+}
+
+
+static AdgStyle *
+context_filler (AdgStyleClass *style_class,
+		gpointer       user_data)
+{
+  return adg_style_get_default (style_class);
 }
