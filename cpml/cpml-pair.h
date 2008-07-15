@@ -39,27 +39,21 @@ struct _CpmlPair {
 };
 
 
-cairo_bool_t
-cpml_pair_copy			(CpmlPair		*pair,
-				 const CpmlPair		*src);
-cairo_bool_t
-cpml_pair_distance		(const CpmlPair		*from,
-				 const CpmlPair		*to,
-				 double			*distance);
-cairo_bool_t
-cpml_pair_square_distance	(const CpmlPair		*from,
-				 const CpmlPair		*to,
-				 double			*distance);
-cairo_bool_t
-cpml_pair_angle			(const CpmlPair		*from,
-				 const CpmlPair		*to,
-				 double			*angle);
-cairo_bool_t
-cpml_vector_from_pair		(CpmlPair		*vector,
-				 const CpmlPair		*pair);
-cairo_bool_t
-cpml_vector_from_angle		(CpmlPair		*vector,
-				 double			 angle);
+cairo_bool_t	cpml_pair_copy			(CpmlPair *pair,
+						 const CpmlPair *src);
+cairo_bool_t	cpml_pair_distance		(const CpmlPair *from,
+						 const CpmlPair *to,
+						 double *distance);
+cairo_bool_t	cpml_pair_square_distance	(const CpmlPair *from,
+						 const CpmlPair *to,
+						 double *distance);
+cairo_bool_t	cpml_pair_angle			(const CpmlPair *from,
+						 const CpmlPair *to,
+						 double *angle);
+cairo_bool_t	cpml_vector_from_pair		(CpmlPair *vector,
+						 const CpmlPair *pair);
+cairo_bool_t	cpml_vector_from_angle		(CpmlPair *vector,
+						 double angle);
 
 
 CAIRO_END_DECLS

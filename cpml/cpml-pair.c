@@ -52,7 +52,7 @@
 #include <stdlib.h>
 
 
-static CpmlPair fallback_pair = {0., 0.};
+static CpmlPair fallback_pair = { 0., 0. };
 
 
 /**
@@ -67,9 +67,9 @@ static CpmlPair fallback_pair = {0., 0.};
 cairo_bool_t
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
-	pair->x = src->x;
-	pair->y = src->y;
-	return 1;
+    pair->x = src->x;
+    pair->y = src->y;
+    return 1;
 }
 
 /**
@@ -89,13 +89,14 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * Return value: 1 if @distance was properly set, 0 on errors
  */
 cairo_bool_t
-cpml_pair_distance(const CpmlPair *from, const CpmlPair *to, double *distance)
+cpml_pair_distance(const CpmlPair *from, const CpmlPair *to,
+		   double *distance)
 {
-	if (!cpml_pair_square_distance(from, to, distance))
-		return 0;
+    if (!cpml_pair_square_distance(from, to, distance))
+	return 0;
 
-	*distance = sqrt(*distance);
-	return 1;
+    *distance = sqrt(*distance);
+    return 1;
 }
 
 /**
@@ -117,17 +118,17 @@ cairo_bool_t
 cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
 			  double *distance)
 {
-	double x, y;
+    double x, y;
 
-	if (from == NULL)
-		from = &fallback_pair;
-	if (to == NULL)
-		to = &fallback_pair;
+    if (from == NULL)
+	from = &fallback_pair;
+    if (to == NULL)
+	to = &fallback_pair;
 
-	x = to->x - from->x;
-	y = to->y - from->y;
-	*distance = x*x + y*y;
-	return 1;
+    x = to->x - from->x;
+    y = to->y - from->y;
+    *distance = x * x + y * y;
+    return 1;
 }
 
 /**
@@ -146,43 +147,43 @@ cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
 cairo_bool_t
 cpml_pair_angle(const CpmlPair *from, const CpmlPair *to, double *angle)
 {
-	static CpmlPair cached_pair = { 1., 0. };
-	static double   cached_angle = 0.;
-	CpmlPair        pair;
+    static CpmlPair cached_pair = { 1., 0. };
+    static double cached_angle = 0.;
+    CpmlPair pair;
 
-	if (from == NULL)
-		from = &fallback_pair;
-	if (to == NULL)
-		to = &fallback_pair;
+    if (from == NULL)
+	from = &fallback_pair;
+    if (to == NULL)
+	to = &fallback_pair;
 
-	pair.x = to->x - from->x;
-	pair.y = to->y - from->y;
+    pair.x = to->x - from->x;
+    pair.y = to->y - from->y;
 
-	/* Check for cached result */
-	if (pair.x == cached_pair.x && pair.y == cached_pair.y) {
-		*angle = cached_angle;
-	} else if (pair.y == 0.) {
-		*angle = pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
-	} else if (pair.x == 0.) {
-		*angle = pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
-	} else if (pair.x == pair.y) {
-		*angle = pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
-	} else if (pair.x == -pair.y) {
-		*angle = pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
-	} else {
-		*angle = atan(pair.y / pair.x);
+    /* Check for cached result */
+    if (pair.x == cached_pair.x && pair.y == cached_pair.y) {
+	*angle = cached_angle;
+    } else if (pair.y == 0.) {
+	*angle = pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
+    } else if (pair.x == 0.) {
+	*angle = pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
+    } else if (pair.x == pair.y) {
+	*angle = pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
+    } else if (pair.x == -pair.y) {
+	*angle = pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
+    } else {
+	*angle = atan(pair.y / pair.x);
 
-		if (pair.x < 0.0)
-			*angle += M_PI;
-		else if (pair.y < 0.0)
-			*angle += 2.0 * M_PI;
+	if (pair.x < 0.0)
+	    *angle += M_PI;
+	else if (pair.y < 0.0)
+	    *angle += 2.0 * M_PI;
 
-		/* Cache registration */
-		cached_angle = *angle;
-		cpml_pair_copy(&cached_pair, &pair);
-	}
+	/* Cache registration */
+	cached_angle = *angle;
+	cpml_pair_copy(&cached_pair, &pair);
+    }
 
-	return 1;
+    return 1;
 }
 
 /**
@@ -201,14 +202,14 @@ cpml_pair_angle(const CpmlPair *from, const CpmlPair *to, double *angle)
 cairo_bool_t
 cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair)
 {
-	double length;
+    double length;
 
-	if (!cpml_pair_distance(pair, NULL, &length) || length == 0.)
-		return 0;
+    if (!cpml_pair_distance(pair, NULL, &length) || length == 0.)
+	return 0;
 
-	vector->x = pair->x/length;
-	vector->y = pair->y/length;
-	return 1;
+    vector->x = pair->x / length;
+    vector->y = pair->y / length;
+    return 1;
 }
 
 /**
@@ -224,33 +225,33 @@ cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair)
 cairo_bool_t
 cpml_vector_from_angle(CpmlPair *vector, double angle)
 {
-	static double cached_angle = 0.;
-	static CpmlPair cached_vector = { 1., 0. };
+    static double cached_angle = 0.;
+    static CpmlPair cached_vector = { 1., 0. };
 
-	/* Check for cached result */
-	if (angle == cached_angle) {
-		vector->x = cached_vector.x;
-		vector->y = cached_vector.y;
-	} else if (angle == CPML_DIR_RIGHT) {
-		vector->x = +1.;
-		vector->y =  0.;
-	} else if (angle == CPML_DIR_UP) {
-		vector->x =  0.;
-		vector->y = -1.;
-	} else if (angle == CPML_DIR_LEFT) {
-		vector->x = -1.;
-		vector->y =  0.;
-	} else if (angle == CPML_DIR_DOWN) {
-		vector->x =  0.;
-		vector->y = +1.;
-	} else {
-		vector->x = cos(angle);
-		vector->y = sin(angle);
+    /* Check for cached result */
+    if (angle == cached_angle) {
+	vector->x = cached_vector.x;
+	vector->y = cached_vector.y;
+    } else if (angle == CPML_DIR_RIGHT) {
+	vector->x = +1.;
+	vector->y = 0.;
+    } else if (angle == CPML_DIR_UP) {
+	vector->x = 0.;
+	vector->y = -1.;
+    } else if (angle == CPML_DIR_LEFT) {
+	vector->x = -1.;
+	vector->y = 0.;
+    } else if (angle == CPML_DIR_DOWN) {
+	vector->x = 0.;
+	vector->y = +1.;
+    } else {
+	vector->x = cos(angle);
+	vector->y = sin(angle);
 
-		/* Cache registration */
-		cached_angle = angle;
-		cpml_pair_copy(&cached_vector, vector);
-	}
+	/* Cache registration */
+	cached_angle = angle;
+	cpml_pair_copy(&cached_vector, vector);
+    }
 
-	return 1;
+    return 1;
 }
