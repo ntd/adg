@@ -88,9 +88,9 @@ libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 adg-type-builtins.h: adg-enums.h Makefile
 	glib-mkenums \
-	--fhead "#ifndef __ADG_TYPE_BUILTINS_H__\n#define __ADG_TYPE_BUILTINS_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n" \
-	--fprod "/* enumerations from \"@filename@\" */\n" \
-	--vhead "GType @enum_name@_get_type (void) G_GNUC_CONST;\n#define ADG_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n" \
+	--fhead "#ifndef __ADG_TYPE_BUILTINS_H__\n#define __ADG_TYPE_BUILTINS_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n\n" \
+	--fprod "\n/* enumerations from \"@filename@\" */\n" \
+	--vhead "#define ADG_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\nGType @enum_name@_get_type(void) G_GNUC_CONST;\n\n" \
 	--ftail "G_END_DECLS\n\n#endif /* __ADG_TYPE_BUILTINS_H__ */" \
 	adg-enums.h > $@
 
@@ -98,7 +98,7 @@ adg-type-builtins.c: adg-enums.h Makefile
 	glib-mkenums \
 	--fhead "#include \"adg-enums.h\"\n\n" \
 	--fprod "\n/* enumerations from \"@filename@\" */" \
-	--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if G_UNLIKELY (etype == 0)\n    {\n      static const G@Type@Value values[] =\n        {" \
-	--vprod "          { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
-	--vtail "          { 0, NULL, NULL }\n        };\n      etype = g_@type@_register_static (\"@EnumName@\", values);\n    }\n  return etype;\n}\n" \
+	--vhead "\nGType\n@enum_name@_get_type(void)\n{\n    static GType etype = 0;\n    if (G_UNLIKELY(etype == 0)) {\n        static const G@Type@Value values[] = {" \
+	--vprod "            { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
+	--vtail "            { 0, NULL, NULL }\n        };\n        etype = g_@type@_register_static(\"@EnumName@\", values);\n    }\n    return etype;\n}\n" \
 	adg-enums.h > $@
