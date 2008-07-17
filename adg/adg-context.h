@@ -26,7 +26,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_CONTEXT             (adg_context_get_type ())
 #define ADG_CONTEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_CONTEXT, AdgContext))
 #define ADG_CONTEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_CONTEXT, AdgContextClass))
@@ -40,17 +39,14 @@ typedef struct _AdgContextClass   AdgContextClass;
 typedef struct _AdgContextPrivate AdgContextPrivate;
 typedef AdgStyle * (*AdgContextFiller) (AdgStyleClass *style_class, gpointer user_data);
 
-struct _AdgContext
-{
-  GObject		 object;
-
-  /*< private >*/
-  AdgContextPrivate	*priv;
+struct _AdgContext {
+    GObject		 object;
+    /*< private >*/
+    AdgContextPrivate	*priv;
 };
 
-struct _AdgContextClass
-{
-  GObjectClass	 object_class;
+struct _AdgContextClass {
+    GObjectClass	 object_class;
 };
 
 

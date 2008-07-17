@@ -17,7 +17,6 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:context
  * @title: AdgContext
@@ -35,7 +34,7 @@
  * The slot serves the same purpose than a GType, that is identify a type
  * class, but the slots are a strict sequence starting from 0, useful to be
  * used as an array index.
- */
+ **/
 
 /**
  * AdgContextFiller:
@@ -60,29 +59,31 @@ static AdgStyle *	context_filler		(AdgStyleClass	*style_class,
 static void		fill_style_slots	(AdgContext	*context,
 						 guint		 last_slot);
 
-static GPtrArray	*class_slots = NULL;
+static GPtrArray *class_slots = NULL;
 
 
-G_DEFINE_TYPE (AdgContext, adg_context, G_TYPE_OBJECT)
+G_DEFINE_TYPE(AdgContext, adg_context, G_TYPE_OBJECT)
 
 
 static void
-adg_context_class_init (AdgContextClass *klass)
+adg_context_class_init(AdgContextClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (AdgContextPrivate));
+    g_type_class_add_private(klass, sizeof(AdgContextPrivate));
 }
 
 static void
-adg_context_init (AdgContext *context)
+adg_context_init(AdgContext *context)
 {
-  AdgContextPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (context,
-							 ADG_TYPE_CONTEXT,
-							 AdgContextPrivate);
-  priv->style_slots = g_ptr_array_sized_new (class_slots ? class_slots->len : 10);
-  priv->context_filler = context_filler;
-  priv->user_data = NULL;
+    AdgContextPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(context,
+							  ADG_TYPE_CONTEXT,
+							  AdgContextPrivate);
 
-  context->priv = priv;
+    priv->style_slots = g_ptr_array_sized_new(class_slots ?
+					      class_slots->len : 10);
+    priv->context_filler = context_filler;
+    priv->user_data = NULL;
+
+    context->priv = priv;
 }
 
 
@@ -97,26 +98,23 @@ adg_context_init (AdgContext *context)
  * Return value: the requested slot id
  **/
 AdgStyleSlot
-adg_context_get_slot (GType type)
+adg_context_get_slot(GType type)
 {
-  AdgStyleClass *klass = g_type_class_ref (type);
+    AdgStyleClass *klass = g_type_class_ref(type);
 
-  g_return_val_if_fail (ADG_IS_STYLE_CLASS (klass), -1);
+    g_return_val_if_fail(ADG_IS_STYLE_CLASS(klass), -1);
 
-  if G_UNLIKELY (class_slots == NULL)
-    {
-      class_slots = g_ptr_array_sized_new (10);
-    }
-  else
-    {
-      guint n;
-      for (n = 0; n < class_slots->len; ++ n)
-	if (class_slots->pdata[n] == klass)
-	  return n;
+    if (G_UNLIKELY(class_slots == NULL)) {
+	class_slots = g_ptr_array_sized_new(10);
+    } else {
+	guint n;
+	for (n = 0; n < class_slots->len; ++n)
+	    if (class_slots->pdata[n] == klass)
+		return n;
     }
 
-  g_ptr_array_add (class_slots, klass);
-  return class_slots->len - 1;
+    g_ptr_array_add(class_slots, klass);
+    return class_slots->len - 1;
 }
 
 /**
@@ -130,18 +128,16 @@ adg_context_get_slot (GType type)
  * Return value: a new context
  **/
 AdgContext *
-adg_context_new (AdgContextFiller context_filler,
-		 gpointer         user_data)
+adg_context_new(AdgContextFiller context_filler, gpointer user_data)
 {
-  AdgContext *context = g_object_new (ADG_TYPE_CONTEXT, NULL);
+    AdgContext *context = g_object_new(ADG_TYPE_CONTEXT, NULL);
 
-  if (context_filler)
-    {
-      context->priv->context_filler = context_filler;
-      context->priv->user_data = user_data;
+    if (context_filler) {
+	context->priv->context_filler = context_filler;
+	context->priv->user_data = user_data;
     }
 
-  return context;
+    return context;
 }
 
 /**
@@ -154,20 +150,19 @@ adg_context_new (AdgContextFiller context_filler,
  * Return value: the style instance
  **/
 AdgStyle *
-adg_context_get_style (AdgContext  *context,
-		       AdgStyleSlot slot)
+adg_context_get_style(AdgContext *context, AdgStyleSlot slot)
 {
-  GPtrArray *style_slots;
+    GPtrArray *style_slots;
 
-  g_return_val_if_fail (ADG_IS_CONTEXT (context), NULL);
-  g_return_val_if_fail (slot >= 0 && slot < class_slots->len, NULL);
+    g_return_val_if_fail(ADG_IS_CONTEXT(context), NULL);
+    g_return_val_if_fail(slot >= 0 && slot < class_slots->len, NULL);
 
-  style_slots = context->priv->style_slots;
+    style_slots = context->priv->style_slots;
 
-  if G_UNLIKELY (slot >= style_slots->len)
-    fill_style_slots (context, slot);
+    if (G_UNLIKELY(slot >= style_slots->len))
+	fill_style_slots(context, slot);
 
-  return (AdgStyle *) g_ptr_array_index (style_slots, slot);
+    return (AdgStyle *) g_ptr_array_index(style_slots, slot);
 }
 
 /**
@@ -179,56 +174,50 @@ adg_context_get_style (AdgContext  *context,
  * will be unreferenced while a new reference will be added to @style.
  **/
 void
-adg_context_set_style (AdgContext *context,
-		       AdgStyle   *style)
+adg_context_set_style(AdgContext *context, AdgStyle *style)
 {
-  AdgStyleSlot slot;
-  GPtrArray   *style_slots;
+    AdgStyleSlot slot;
+    GPtrArray *style_slots;
 
-  g_return_if_fail (ADG_IS_CONTEXT (context));
-  g_return_if_fail (ADG_IS_STYLE (style));
+    g_return_if_fail(ADG_IS_CONTEXT(context));
+    g_return_if_fail(ADG_IS_STYLE(style));
 
-  slot = adg_context_get_slot (G_TYPE_FROM_INSTANCE (style));
-  style_slots = context->priv->style_slots;
+    slot = adg_context_get_slot(G_TYPE_FROM_INSTANCE(style));
+    style_slots = context->priv->style_slots;
 
-  g_object_ref (style);
+    g_object_ref(style);
 
-  if G_LIKELY (slot < style_slots->len)
-    {
-      g_object_unref (style_slots->pdata[slot]);
-      style_slots->pdata[slot] = style;
-    }
-  else
-    {
-      fill_style_slots (context, slot-1);
-      g_ptr_array_add (style_slots, style);
+    if (G_LIKELY(slot < style_slots->len)) {
+	g_object_unref(style_slots->pdata[slot]);
+	style_slots->pdata[slot] = style;
+    } else {
+	fill_style_slots(context, slot - 1);
+	g_ptr_array_add(style_slots, style);
     }
 }
 
 
 static AdgStyle *
-context_filler (AdgStyleClass *style_class,
-		gpointer       user_data)
+context_filler(AdgStyleClass *style_class, gpointer user_data)
 {
-  return NULL;
+    return NULL;
 }
 
 static void
-fill_style_slots (AdgContext *context,
-		  guint       last_slot)
+fill_style_slots(AdgContext *context, guint last_slot)
 {
-  GPtrArray     *style_slots;
-  AdgStyleClass *klass;
-  AdgStyle      *style;
-  guint          n;
+    GPtrArray *style_slots;
+    AdgStyleClass *klass;
+    AdgStyle *style;
+    guint n;
 
-  style_slots = context->priv->style_slots;
+    style_slots = context->priv->style_slots;
 
-  for (n = style_slots->len; n <= last_slot; ++ n)
-    {
-      klass = (AdgStyleClass *) g_ptr_array_index (class_slots, n);
-      style = context->priv->context_filler (klass, context->priv->user_data);
-      g_object_ref ((GObject *) style);
-      g_ptr_array_add (style_slots, style);
+    for (n = style_slots->len; n <= last_slot; ++n) {
+	klass = (AdgStyleClass *) g_ptr_array_index(class_slots, n);
+	style =
+	    context->priv->context_filler(klass, context->priv->user_data);
+	g_object_ref((GObject *) style);
+	g_ptr_array_add(style_slots, style);
     }
 }

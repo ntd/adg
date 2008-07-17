@@ -27,7 +27,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_FONT_STYLE             (adg_font_style_get_type ())
 #define ADG_SLOT_FONT_STYLE             (adg_font_style_get_slot ())
 #define ADG_FONT_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_FONT_STYLE, AdgFontStyle))
@@ -40,17 +39,14 @@ typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
 typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
 
-struct _AdgFontStyle
-{
-  AdgStyle		 style;
-
-  /*< private >*/
-  AdgFontStylePrivate	*priv;
+struct _AdgFontStyle {
+    AdgStyle		 style;
+    /*< private >*/
+    AdgFontStylePrivate	*priv;
 };
 
-struct _AdgFontStyleClass
-{
-  AdgStyleClass		 parent_class;
+struct _AdgFontStyleClass {
+    AdgStyleClass	 parent_class;
 };
 
 
@@ -90,7 +86,6 @@ cairo_hint_metrics_t
 		adg_font_style_get_hint_metrics	(AdgFontStyle	*font_style);
 void		adg_font_style_set_hint_metrics	(AdgFontStyle	*font_style,
 						 cairo_hint_metrics_t hint_metrics);
-
 
 G_END_DECLS
 

@@ -38,17 +38,14 @@ typedef struct _AdgLDim        AdgLDim;
 typedef struct _AdgLDimClass   AdgLDimClass;
 typedef struct _AdgLDimPrivate AdgLDimPrivate;
 
-struct _AdgLDim
-{
-  AdgDim		 dim;
-
-  /*< private >*/
-  AdgLDimPrivate	*priv;
+struct _AdgLDim {
+    AdgDim		 dim;
+    /*< private >*/
+    AdgLDimPrivate	*priv;
 };
 
-struct _AdgLDimClass
-{
-  AdgDimClass            parent_class;
+struct _AdgLDimClass {
+    AdgDimClass		 parent_class;
 };
 
 

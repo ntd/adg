@@ -37,17 +37,14 @@ typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
 typedef struct _AdgModelPrivate AdgModelPrivate;
 
-struct _AdgModel
-{
-  GObject		 object;
-
-  /*< private >*/
-  AdgModelPrivate	*priv;
+struct _AdgModel {
+    GObject		 object;
+    /*< private >*/
+    AdgModelPrivate	*priv;
 };
 
-struct _AdgModelClass
-{
-  GObjectClass	         parent_class;
+struct _AdgModelClass {
+    GObjectClass	 parent_class;
 };
 
 

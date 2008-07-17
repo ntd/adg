@@ -37,17 +37,14 @@ typedef struct _AdgPath        AdgPath;
 typedef struct _AdgPathClass   AdgPathClass;
 typedef struct _AdgPathPrivate AdgPathPrivate;
 
-struct _AdgPath
-{
-  AdgEntity              entity;
-
-  /*< private >*/
-  AdgPathPrivate	*priv;
+struct _AdgPath {
+    AdgEntity		 entity;
+    /*< private >*/
+    AdgPathPrivate	*priv;
 };
 
-struct _AdgPathClass
-{
-  AdgEntityClass         parent_class;
+struct _AdgPathClass {
+    AdgEntityClass	 parent_class;
 };
 
 

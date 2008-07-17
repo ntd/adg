@@ -26,18 +26,14 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgLDimPrivate
-{
-  double                 direction;
-
-  /* Cached data */
-  cairo_path_t           extension1;
-  cairo_path_t           extension2;
-  cairo_path_t           arrow_path;
-  cairo_path_t           baseline;
+struct _AdgLDimPrivate {
+    double		direction;
+    /* Cached data */
+    cairo_path_t	extension1;
+    cairo_path_t	extension2;
+    cairo_path_t	arrow_path;
+    cairo_path_t	baseline;
 };
-
 
 G_END_DECLS
 

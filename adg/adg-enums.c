@@ -17,9 +17,11 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:enums
  * @title: Standard enumerations
  * @short_description: Public enumerated types used throughout ADG
+ *
+ * All the enumerations listed are available also in GType notation, thanks
+ * to the %glib-mkenums tool.
  */

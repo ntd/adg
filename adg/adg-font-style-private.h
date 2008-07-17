@@ -26,19 +26,16 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgFontStylePrivate
-{
-  gchar			*family;
-  cairo_font_slant_t	 slant;
-  cairo_font_weight_t	 weight;
-  gdouble		 size;
-  cairo_antialias_t	 antialias;
-  cairo_subpixel_order_t subpixel_order;
-  cairo_hint_style_t	 hint_style;
-  cairo_hint_metrics_t	 hint_metrics;
+struct _AdgFontStylePrivate {
+    gchar			*family;
+    cairo_font_slant_t		 slant;
+    cairo_font_weight_t		 weight;
+    gdouble			 size;
+    cairo_antialias_t		 antialias;
+    cairo_subpixel_order_t	 subpixel_order;
+    cairo_hint_style_t		 hint_style;
+    cairo_hint_metrics_t	 hint_metrics;
 };
-
 
 G_END_DECLS
 

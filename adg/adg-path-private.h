@@ -29,16 +29,13 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgPathPrivate
-{
-  cairo_path_t		 cairo_path;
-  GArray		*portions;
-  AdgPair		 cp;
-  AdgCallback		 create_func;
-  gpointer		 user_data;
+struct _AdgPathPrivate {
+    cairo_path_t	 cairo_path;
+    GArray		*portions;
+    AdgPair		 cp;
+    AdgCallback		 create_func;
+    gpointer		 user_data;
 };
-
 
 G_END_DECLS
 

@@ -17,7 +17,6 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:matrix
  * @title: AdgMatrix
@@ -27,7 +26,6 @@
  */
 
 #include "adg-matrix.h"
-
 #include <string.h>
 
 
@@ -36,14 +34,16 @@ static AdgMatrix identity_matrix = { 1., 0., 0., 1., 0., 0. };
 
 
 GType
-adg_matrix_get_type (void)
+adg_matrix_get_type(void)
 {
-  static int matrix_type = 0;
-  
-  if G_UNLIKELY (matrix_type == 0)
-    matrix_type = g_boxed_type_register_static ("AdgMatrix", (GBoxedCopyFunc) adg_matrix_dup, g_free);
+    static int matrix_type = 0;
 
-  return matrix_type;
+    if (G_UNLIKELY(matrix_type == 0))
+	matrix_type = g_boxed_type_register_static("AdgMatrix",
+						   (GBoxedCopyFunc) adg_matrix_dup,
+						   g_free);
+
+    return matrix_type;
 }
 
 /**
@@ -56,11 +56,11 @@ adg_matrix_get_type (void)
  *               when no longer needed.
  */
 AdgMatrix *
-adg_matrix_dup (const AdgMatrix *matrix)
+adg_matrix_dup(const AdgMatrix * matrix)
 {
-  g_return_val_if_fail (matrix != NULL, NULL);
+    g_return_val_if_fail(matrix != NULL, NULL);
 
-  return g_memdup (matrix, sizeof (AdgMatrix));
+    return g_memdup(matrix, sizeof(AdgMatrix));
 }
 
 /**
@@ -72,9 +72,9 @@ adg_matrix_dup (const AdgMatrix *matrix)
  * Return value: the fallback matrix
  */
 const AdgMatrix *
-adg_matrix_get_fallback (void)
+adg_matrix_get_fallback(void)
 {
-  return &identity_matrix;
+    return &identity_matrix;
 }
 
 /**
@@ -84,9 +84,9 @@ adg_matrix_get_fallback (void)
  * Nullifies a matrix, setting all its components to 0.
  */
 void
-adg_matrix_init_null (AdgMatrix *matrix)
+adg_matrix_init_null(AdgMatrix * matrix)
 {
-  memcpy (matrix, &null_matrix, sizeof (AdgMatrix));
+    memcpy(matrix, &null_matrix, sizeof(AdgMatrix));
 }
 
 /**
@@ -98,9 +98,9 @@ adg_matrix_init_null (AdgMatrix *matrix)
  * Return value: %TRUE if the matrix is a null matrix, %FALSE otherwise
  */
 gboolean
-adg_matrix_is_null (const AdgMatrix *matrix)
+adg_matrix_is_null(const AdgMatrix * matrix)
 {
-  return memcmp (matrix, &null_matrix, sizeof (AdgMatrix)) == 0;
+    return memcmp(matrix, &null_matrix, sizeof(AdgMatrix)) == 0;
 }
 
 /**
@@ -113,15 +113,14 @@ adg_matrix_is_null (const AdgMatrix *matrix)
  * Return value: @matrix
  */
 AdgMatrix *
-adg_matrix_set (AdgMatrix       *matrix,
-                const AdgMatrix *src)
+adg_matrix_set(AdgMatrix * matrix, const AdgMatrix * src)
 {
-  g_return_val_if_fail (matrix != NULL, matrix);
-  g_return_val_if_fail (src != NULL, matrix);
+    g_return_val_if_fail(matrix != NULL, matrix);
+    g_return_val_if_fail(src != NULL, matrix);
 
-  memcpy (matrix, src, sizeof (AdgMatrix));
+    memcpy(matrix, src, sizeof(AdgMatrix));
 
-  return matrix;
+    return matrix;
 }
 
 /**
@@ -134,11 +133,10 @@ adg_matrix_set (AdgMatrix       *matrix,
  * Return value: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
  */
 gboolean
-adg_matrix_equal (const AdgMatrix *matrix1,
-                  const AdgMatrix *matrix2)
+adg_matrix_equal(const AdgMatrix * matrix1, const AdgMatrix * matrix2)
 {
-  g_return_val_if_fail (matrix1 != NULL, FALSE);
-  g_return_val_if_fail (matrix2 != NULL, FALSE);
+    g_return_val_if_fail(matrix1 != NULL, FALSE);
+    g_return_val_if_fail(matrix2 != NULL, FALSE);
 
-  return memcmp (matrix1, matrix2, sizeof (AdgMatrix)) == 0;
+    return memcmp(matrix1, matrix2, sizeof(AdgMatrix)) == 0;
 }

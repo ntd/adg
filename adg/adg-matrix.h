@@ -27,7 +27,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_MATRIX  (adg_matrix_get_type ())
 
 
@@ -43,7 +42,6 @@ void			adg_matrix_init_null	(AdgMatrix	 *matrix);
 gboolean		adg_matrix_is_null	(const AdgMatrix *matrix);
 gboolean                adg_matrix_equal	(const AdgMatrix *matrix1,
 						 const AdgMatrix *matrix2);
-
 
 G_END_DECLS
 

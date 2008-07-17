@@ -26,7 +26,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_CONTAINER             (adg_container_get_type ())
 #define ADG_CONTAINER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_CONTAINER, AdgContainer))
 #define ADG_CONTAINER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_CONTAINER, AdgContainerClass))
@@ -39,17 +38,14 @@ typedef struct _AdgContainer        AdgContainer;
 typedef struct _AdgContainerClass   AdgContainerClass;
 typedef struct _AdgContainerPrivate AdgContainerPrivate;
 
-struct _AdgContainer
-{
-  AdgEntity		 entity;
-
-  /*< private >*/
-  AdgContainerPrivate	*priv;
+struct _AdgContainer {
+    AdgEntity		 entity;
+    /*< private >*/
+    AdgContainerPrivate	*priv;
 };
 
-struct _AdgContainerClass
-{
-  AdgEntityClass parent_class;
+struct _AdgContainerClass {
+    AdgEntityClass	 parent_class;
 };
 
 

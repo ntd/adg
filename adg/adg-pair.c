@@ -17,7 +17,6 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:pair
  * @title: AdgPair
@@ -30,14 +29,16 @@
 
 
 GType
-adg_pair_get_type (void)
+adg_pair_get_type(void)
 {
-  static int pair_type = 0;
-  
-  if G_UNLIKELY (pair_type == 0)
-    pair_type = g_boxed_type_register_static ("AdgPair", (GBoxedCopyFunc) adg_pair_dup, g_free);
+    static int pair_type = 0;
 
-  return pair_type;
+    if (G_UNLIKELY(pair_type == 0))
+	pair_type = g_boxed_type_register_static("AdgPair",
+						 (GBoxedCopyFunc) adg_pair_dup,
+						 g_free);
+
+    return pair_type;
 }
 
 /**
@@ -50,7 +51,7 @@ adg_pair_get_type (void)
  *               when no longer needed.
  */
 AdgPair *
-adg_pair_dup (const AdgPair *pair)
+adg_pair_dup(const AdgPair * pair)
 {
-  return g_memdup (pair, sizeof (AdgPair));
+    return g_memdup(pair, sizeof(AdgPair));
 }

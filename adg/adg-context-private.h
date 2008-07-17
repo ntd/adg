@@ -30,11 +30,10 @@
 G_BEGIN_DECLS
 
 
-struct _AdgContextPrivate
-{
-  GPtrArray		*style_slots;
-  AdgContextFiller	 context_filler;
-  gpointer		 user_data;
+struct _AdgContextPrivate {
+    GPtrArray		*style_slots;
+    AdgContextFiller	 context_filler;
+    gpointer		 user_data;
 };
 
 

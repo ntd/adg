@@ -25,10 +25,6 @@
 #include <cairo.h>
 #include <math.h>
 
-
-G_BEGIN_DECLS
-
-
 #define ADG_ISSET(flags,mask)	(((flags) & (mask)) != 0 ? TRUE : FALSE)
 #define ADG_SET(flags,mask)	G_STMT_START{ (flags) |= (mask); }G_STMT_END
 #define ADG_UNSET(flags,mask)	G_STMT_START{ (flags) &= ~(mask); }G_STMT_END
@@ -41,9 +37,5 @@ G_BEGIN_DECLS
 #define ADG_CHECKPOINT()        ADG_CHECKPOINT_WITH_MESSAGE ("check point")
 
 #define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
-
-
-G_END_DECLS
-
 
 #endif /* __ADG_UTIL_H__ */

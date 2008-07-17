@@ -27,7 +27,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_LINE_STYLE             (adg_line_style_get_type ())
 #define ADG_SLOT_LINE_STYLE             (adg_line_style_get_slot ())
 #define ADG_LINE_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_LINE_STYLE, AdgLineStyle))
@@ -40,17 +39,14 @@ typedef struct _AdgLineStyle        AdgLineStyle;
 typedef struct _AdgLineStyleClass   AdgLineStyleClass;
 typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
 
-struct _AdgLineStyle
-{
-  AdgStyle		 style;
-
-  /*< private >*/
-  AdgLineStylePrivate	*priv;
+struct _AdgLineStyle {
+    AdgStyle		 style;
+    /*< private >*/
+    AdgLineStylePrivate	*priv;
 };
 
-struct _AdgLineStyleClass
-{
-  AdgStyleClass		 parent_class;
+struct _AdgLineStyleClass {
+    AdgStyleClass	 parent_class;
 };
 
 

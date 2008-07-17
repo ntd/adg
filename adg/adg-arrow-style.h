@@ -28,7 +28,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_ARROW_STYLE             (adg_arrow_style_get_type ())
 #define ADG_SLOT_ARROW_STYLE             (adg_arrow_style_get_slot ())
 #define ADG_ARROW_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyle))
@@ -50,22 +49,19 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  * Callback that renders a custom arrow at the start position in @segment.
  * If you need an ending arrow, you should reverse the segment and recall
  * this function.
- */
+ **/
 typedef void (*AdgArrowRenderer)		(AdgArrowStyle	*arrow_style,
 						 cairo_t	*cr,
 						 CpmlPath	*segment);
 
-struct _AdgArrowStyle
-{
-  AdgStyle		 style;
-
-  /*< private >*/
-  AdgArrowStylePrivate	*priv;
+struct _AdgArrowStyle {
+    AdgStyle		  style;
+    /*< private >*/
+    AdgArrowStylePrivate *priv;
 };
 
-struct _AdgArrowStyleClass
-{
-  AdgStyleClass		 parent_class;
+struct _AdgArrowStyleClass {
+    AdgStyleClass	  parent_class;
 };
 
 
@@ -90,7 +86,6 @@ const AdgArrowRenderer
 		adg_arrow_style_get_renderer	(AdgArrowStyle	*arrow_style);
 void		adg_arrow_style_set_renderer	(AdgArrowStyle	*arrow_style,
 						 AdgArrowRenderer renderer);
-
 
 G_END_DECLS
 

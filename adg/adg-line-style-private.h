@@ -26,19 +26,16 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgLineStylePrivate
-{
-  double                 width;
-  cairo_line_cap_t       cap;
-  cairo_line_join_t      join;
-  double                 miter_limit;
-  cairo_antialias_t	 antialias;
-  double                *dashes;
-  int                    num_dashes;
-  double                 dash_offset;
+struct _AdgLineStylePrivate {
+    double               width;
+    cairo_line_cap_t     cap;
+    cairo_line_join_t    join;
+    double               miter_limit;
+    cairo_antialias_t	 antialias;
+    double              *dashes;
+    int                  num_dashes;
+    double               dash_offset;
 };
-
 
 G_END_DECLS
 

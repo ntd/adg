@@ -22,4 +22,6 @@
  * SECTION:util
  * @title: Utilities
  * @short_description: Assorted macros and utilities
+ *
+ * A collection of macros and functions that do not fit inside any other topic.
  */

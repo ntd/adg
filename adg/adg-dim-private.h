@@ -27,26 +27,23 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgDimPrivate
-{
-  AdgPair		 ref1;
-  AdgPair		 ref2;
-  AdgPair		 pos1;
-  AdgPair		 pos2;
-  gdouble		 level;
-  gchar			*quote;
-  gchar			*tolerance_up;
-  gchar			*tolerance_down;
-  gchar			*note;
-
-  /* Cached data */
-  AdgPair		 quote_org;
-  gdouble		 quote_angle;
-  AdgPair		 quote_shift;
-  AdgPair		 tolerance_up_shift;
-  AdgPair		 tolerance_down_shift;
-  AdgPair 		 note_shift;
+struct _AdgDimPrivate {
+    AdgPair		 ref1;
+    AdgPair		 ref2;
+    AdgPair		 pos1;
+    AdgPair		 pos2;
+    gdouble		 level;
+    gchar		*quote;
+    gchar		*tolerance_up;
+    gchar		*tolerance_down;
+    gchar		*note;
+    /* Cached data */
+    AdgPair		 quote_org;
+    gdouble		 quote_angle;
+    AdgPair		 quote_shift;
+    AdgPair		 tolerance_up_shift;
+    AdgPair		 tolerance_down_shift;
+    AdgPair 		 note_shift;
 };
 
 

@@ -31,7 +31,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_DIM_STYLE             (adg_dim_style_get_type ())
 #define ADG_SLOT_DIM_STYLE             (adg_dim_style_get_slot ())
 #define ADG_DIM_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_DIM_STYLE, AdgDimStyle))
@@ -44,17 +43,14 @@ typedef struct _AdgDimStyle        AdgDimStyle;
 typedef struct _AdgDimStyleClass   AdgDimStyleClass;
 typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
 
-struct _AdgDimStyle
-{
-  AdgStyle		 style;
-
-  /*< private >*/
-  AdgDimStylePrivate	*priv;
+struct _AdgDimStyle {
+    AdgStyle		 style;
+    /*< private >*/
+    AdgDimStylePrivate	*priv;
 };
 
-struct _AdgDimStyleClass
-{
-  AdgStyleClass		 parent_class;
+struct _AdgDimStyleClass {
+    AdgStyleClass	 parent_class;
 };
 
 
@@ -112,7 +108,6 @@ void		adg_dim_style_set_number_format	(AdgDimStyle	*dim_style,
 const gchar *	adg_dim_style_get_number_tag	(AdgDimStyle	*dim_style);
 void		adg_dim_style_set_number_tag	(AdgDimStyle	*dim_style,
 						 const gchar	*tag);
-
 
 G_END_DECLS
 

@@ -26,11 +26,8 @@
 
 G_BEGIN_DECLS
 
-
-struct _AdgCanvasPrivate
-{
+struct _AdgCanvasPrivate {
 };
-
 
 G_END_DECLS
 

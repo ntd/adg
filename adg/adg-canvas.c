@@ -17,7 +17,6 @@
  * Boston, MA  02111-1307, USA.
  */
 
-
 /**
  * SECTION:canvas
  * @title: AdgCanvas
@@ -40,31 +39,32 @@
 #define PARENT_CLASS ((AdgContainerClass *) adg_canvas_parent_class)
 
 
-static AdgStyle *	context_filler		(AdgStyleClass	*style_class,
-						 gpointer	 user_data);
+static AdgStyle *	context_filler	(AdgStyleClass	*style_class,
+					 gpointer	 user_data);
 
 
-G_DEFINE_TYPE (AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
+G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
 
 
 static void
-adg_canvas_class_init (AdgCanvasClass *klass)
+adg_canvas_class_init(AdgCanvasClass *klass)
 {
-  g_type_class_add_private (klass, sizeof (AdgCanvasPrivate));
+    g_type_class_add_private(klass, sizeof(AdgCanvasPrivate));
 }
 
 static void
-adg_canvas_init (AdgCanvas *canvas)
+adg_canvas_init(AdgCanvas *canvas)
 {
-  AdgContext       *context;
-  AdgCanvasPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE (canvas, ADG_TYPE_CANVAS,
-							AdgCanvasPrivate);
+    AdgContext *context;
+    AdgCanvasPrivate *priv =
+	G_TYPE_INSTANCE_GET_PRIVATE(canvas, ADG_TYPE_CANVAS,
+				    AdgCanvasPrivate);
 
-  canvas->priv = priv;
+    canvas->priv = priv;
 
-  context = adg_context_new (context_filler, NULL);
-  adg_entity_set_context ((AdgEntity *) canvas, context);
-  g_object_unref (context);
+    context = adg_context_new(context_filler, NULL);
+    adg_entity_set_context((AdgEntity *) canvas, context);
+    g_object_unref(context);
 }
 
 
@@ -76,15 +76,14 @@ adg_canvas_init (AdgCanvas *canvas)
  * Return value: the canvas
  **/
 AdgCanvas *
-adg_canvas_new (void)
+adg_canvas_new(void)
 {
-  return g_object_new (ADG_TYPE_CANVAS, NULL);
+    return g_object_new(ADG_TYPE_CANVAS, NULL);
 }
 
 
 static AdgStyle *
-context_filler (AdgStyleClass *style_class,
-		gpointer       user_data)
+context_filler(AdgStyleClass *style_class, gpointer user_data)
 {
-  return adg_style_get_default (style_class);
+    return adg_style_get_default(style_class);
 }

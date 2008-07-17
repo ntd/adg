@@ -27,7 +27,6 @@
 
 G_BEGIN_DECLS
 
-
 #define ADG_TYPE_DIM             (adg_dim_get_type ())
 #define ADG_DIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_DIM, AdgDim))
 #define ADG_DIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_DIM, AdgDimClass))
@@ -39,23 +38,18 @@ typedef struct _AdgDim        AdgDim;
 typedef struct _AdgDimClass   AdgDimClass;
 typedef struct _AdgDimPrivate AdgDimPrivate;
 
-struct _AdgDim
-{
-  AdgEntity		 entity;
-
-  /*< private >*/
-  AdgDimPrivate		*priv;
+struct _AdgDim {
+    AdgEntity		 entity;
+    /*< private >*/
+    AdgDimPrivate	*priv;
 };
 
-struct _AdgDimClass
-{
-  AdgEntityClass         parent_class;
-
-
-  /* Virtual Table */
-  gchar *               (*default_quote)                (AdgDim         *dim);
-  void                  (*quote_layout)                 (AdgDim         *dim,
-                                                         cairo_t        *cr);
+struct _AdgDimClass {
+    AdgEntityClass	 parent_class;
+    /* Virtual Table */
+    gchar *		(*default_quote)	(AdgDim		*dim);
+    void		(*quote_layout)		(AdgDim		*dim,
+						 cairo_t	*cr);
 };
 
 
@@ -99,7 +93,6 @@ void                     adg_dim_set_tolerances         (AdgDim         *dim,
 const gchar *            adg_dim_get_note               (AdgDim         *dim);
 void                     adg_dim_set_note               (AdgDim         *dim,
                                                          const gchar    *note);
-
 
 G_END_DECLS
 

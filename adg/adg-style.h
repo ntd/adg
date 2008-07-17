@@ -40,21 +40,17 @@ typedef struct _AdgStylePrivate AdgStylePrivate;
 typedef gint                    AdgStyleId;
 typedef gint                    AdgStyleSlot;
 
-struct _AdgStyle
-{
-  GObject		 object;
-
-  /*< private >*/
-  AdgStylePrivate	*priv;
+struct _AdgStyle {
+    GObject		 object;
+    /*< private >*/
+    AdgStylePrivate	*priv;
 };
 
-struct _AdgStyleClass
-{
-  GObjectClass		 parent_class;
-
-  /* Virtual table */
-  GPtrArray *		(*get_pool)		(void);
-  void			(*apply)		(AdgStyle	*style,
+struct _AdgStyleClass {
+    GObjectClass	 parent_class;
+    /* Virtual table */
+    GPtrArray *		(*get_pool)		(void);
+    void		(*apply)		(AdgStyle	*style,
 						 cairo_t	*cr);
 };
 

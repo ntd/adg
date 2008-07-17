@@ -26,22 +26,18 @@
 
 G_BEGIN_DECLS
 
-
-typedef enum
-{
-  MODEL_MATRIX_APPLIED = 1 << 1,
-  PAPER_MATRIX_APPLIED = 1 << 2,
-  MODEL_APPLIED        = 1 << 3
+typedef enum {
+    MODEL_MATRIX_APPLIED = 1 << 1,
+    PAPER_MATRIX_APPLIED = 1 << 2,
+    MODEL_APPLIED        = 1 << 3
 } AdgEntityFlags;
 
 
-struct _AdgEntityPrivate
-{
-  AdgEntity		*parent;
-  AdgEntityFlags	 flags;
-  AdgContext		*context;
+struct _AdgEntityPrivate {
+    AdgEntity		*parent;
+    AdgEntityFlags	 flags;
+    AdgContext		*context;
 };
-
 
 G_END_DECLS
 
