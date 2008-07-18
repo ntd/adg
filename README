@@ -22,24 +22,17 @@ o Can be easily connected to a database
 o The drawings are generated on-fly: this feature can be used, for instance,
   in a dynamic site throught a web-based application
 
+For technical details, visit the ADG home page:
+http://www.entidi.it/adg/ 
+
 Installation
 ============
 
 The ADG library has the following dependencies:
 
 o glib-2.10.1 or later (http://www.gtk.org)
-o gcontainer v.1.99.2 or later (http://sourceforge.net/projects/gcontainer)
-o cairo-1.6 or later (http://cairographics.org)
-o gtk+ v.2.8 or later (http://www.gtk.org, for the demo program)
+o gcontainer-1.99.2 or later (http://sourceforge.net/projects/gcontainer)
+o cairo-1.6.0 or later (http://cairographics.org)
+o gtk+-2.8.0 or later (http://www.gtk.org, for the demo program)
 
 See the file 'INSTALL' for further details.
-
-Design
-======
-
-In one side there are the "entities", AdgEntity derived objects that define
-WHAT to put in the drawing. These can be though as the widgets in Gtk+. The
-entities can be grouped (using AdgContainer) in a hierarchy.
-
-In the other side you have "contexts", one or more AdgContext instances that
-specify HOW the entities must be rendered.
