@@ -1,3 +1,14 @@
+ADG 0.3.0
+=========
+
+Reworked styles and implemented AdgContext, a clean and well defined
+approach to manage rendering customization. 
+ 
+Moved all the geometrical stuff in Cairo Path Manipulation Library (CPML),
+an internal library depending only on cairo. 
+  
+Greatly improved documentation.
+
 ADG 0.2.2
 =========
 
