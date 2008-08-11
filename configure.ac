@@ -7,7 +7,6 @@ AC_CONFIG_SRCDIR(README)
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
-AC_DISABLE_STATIC
 
 
 ##################################################
@@ -15,6 +14,7 @@ AC_DISABLE_STATIC
 ##################################################
 
 AC_PROG_CC
+AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
 
