@@ -1,0 +1,36 @@
+# ./autogen.sh
+/configure
+/ABOUT-NLS
+/INSTALL
+/aclocal.m4
+/m4/
+/autom4te.cache/
+/config.guess
+/config.rpath
+/config.sub
+/missing
+/depcomp
+/gtk-doc.make
+/install-sh
+/ltmain.sh
+Makefile.in
+
+# ./configure
+/config.log
+/config.status
+/libtool
+/stamp-h*
+/config.h
+.deps/
+Makefile
+
+# make
+/adg/adg-type-builtins.c
+/adg/adg-type-builtins.h
+/demo/adg-demo
+/demo/ldim
+.libs/
+*.o
+*.lo
+*.la
+*.stamp

@@ -1,0 +1,16 @@
+# ./autogen.sh
+/Makefile.in.in
+/Makevars.template
+/Rules-quot
+/boldquot.sed
+/en@boldquot.header
+/en@quot.header
+/insert-header.sin
+/quot.sed
+/remove-potcdate.sin
+
+# ./configure
+/POTFILES
+
+# make
+/remove-potcdate.sed

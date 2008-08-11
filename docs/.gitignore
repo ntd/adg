@@ -1,0 +1,17 @@
+# ./configure
+/version.xml
+
+# make
+/adg-decl-list.txt
+/adg-decl.txt
+/adg-undeclared.txt
+/adg-undocumented.txt
+/adg-unused.txt
+/adg.args
+/adg.hierarchy
+/adg.interfaces
+/adg.prerequisites
+/adg.signals
+/html/
+/tmpl/
+/xml/
