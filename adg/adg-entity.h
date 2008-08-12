@@ -77,28 +77,29 @@ struct _AdgEntityClass {
 typedef void (*AdgCallback) (AdgEntity *entity, gpointer user_data);
 
 
-GType		adg_entity_get_type		(void) G_GNUC_CONST;
-AdgCanvas *	adg_entity_get_canvas		(AdgEntity      *entity);
+GType           adg_entity_get_type             (void) G_GNUC_CONST;
+AdgCanvas *     adg_entity_get_canvas           (AdgEntity      *entity);
 
-AdgContext *	adg_entity_get_context		(AdgEntity	*entity);
-void		adg_entity_set_context		(AdgEntity	*entity,
-						 AdgContext	*context);
-const AdgMatrix*adg_entity_get_model_matrix	(AdgEntity	*entity);
-const AdgMatrix*adg_entity_get_paper_matrix	(AdgEntity	*entity);
-void		adg_entity_model_matrix_changed	(AdgEntity      *entity,
-						 const AdgMatrix*parent_matrix);
-void		adg_entity_paper_matrix_changed	(AdgEntity      *entity,
-						 const AdgMatrix*parent_matrix);
-AdgStyle *	adg_entity_get_style		(AdgEntity	*entity,
-						 AdgStyleSlot	 style_slot);
-void		adg_entity_apply		(AdgEntity	*entity,
-						 AdgStyleSlot	 style_slot,
-						 cairo_t	*cr);
-gboolean	adg_entity_model_matrix_applied	(AdgEntity	*entity);
-gboolean	adg_entity_paper_matrix_applied	(AdgEntity	*entity);
-gboolean	adg_entity_model_applied	(AdgEntity	*entity);
-void		adg_entity_render		(AdgEntity      *entity,
-						 cairo_t        *cr);
+AdgContext *    adg_entity_get_context          (AdgEntity	*entity);
+void            adg_entity_set_context          (AdgEntity	*entity,
+                                                 AdgContext	*context);
+const AdgMatrix*adg_entity_get_model_matrix     (AdgEntity	*entity);
+const AdgMatrix*adg_entity_get_paper_matrix     (AdgEntity	*entity);
+void            adg_entity_model_matrix_changed (AdgEntity      *entity,
+                                                 const AdgMatrix*parent_matrix);
+void            adg_entity_paper_matrix_changed (AdgEntity      *entity,
+                                                 const AdgMatrix*parent_matrix);
+AdgStyle *      adg_entity_get_style            (AdgEntity	*entity,
+                                                 AdgStyleSlot	 style_slot);
+void            adg_entity_apply                (AdgEntity	*entity,
+                                                 AdgStyleSlot	 style_slot,
+                                                 cairo_t	*cr);
+gboolean        adg_entity_model_matrix_applied (AdgEntity	*entity);
+gboolean        adg_entity_paper_matrix_applied (AdgEntity	*entity);
+gboolean        adg_entity_model_applied        (AdgEntity	*entity);
+void            adg_entity_invalidate           (AdgEntity      *entity);
+void            adg_entity_render               (AdgEntity      *entity,
+                                                 cairo_t        *cr);
 
 G_END_DECLS
 
