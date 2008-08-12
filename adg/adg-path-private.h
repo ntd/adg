@@ -22,19 +22,16 @@
 #define __ADG_PATH_PRIVATE_H__
 
 #include <cairo.h>
-#include <adg/adg-style.h>
-#include <adg/adg-pair.h>
+#include <cpml/cpml.h>
 #include <adg/adg-entity.h>
 
 
 G_BEGIN_DECLS
 
 struct _AdgPathPrivate {
-    cairo_path_t	 cairo_path;
-    GArray		*portions;
-    AdgPair		 cp;
-    AdgCallback		 create_func;
-    gpointer		 user_data;
+    CpmlPair		 cp;
+    cairo_path_t	*cairo_path;
+    AdgCallback		 callback;
 };
 
 G_END_DECLS

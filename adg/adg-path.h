@@ -45,12 +45,13 @@ struct _AdgPath {
 
 struct _AdgPathClass {
     AdgEntityClass	 parent_class;
+
+    void		(*clear)		(AdgPath        *path);
 };
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
-AdgEntity *     adg_path_new                    (AdgCallback     create_func,
-                                                 gpointer        user_data);
+AdgEntity *     adg_path_new                    (AdgCallback     callback);
 void            adg_path_clear                  (AdgPath        *path);
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
