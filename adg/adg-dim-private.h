@@ -48,10 +48,6 @@ struct _AdgDimPrivate {
     CpmlPair 		 note_shift;
 };
 
-
-void		_adg_dim_render_quote		(AdgDim		*dim,
-						 cairo_t	*cr);
-
 G_END_DECLS
 
 

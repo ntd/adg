@@ -620,16 +620,15 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
 
 
 /**
- * _adg_dim_render_quote:
+ * adg_dim_render_quote:
  * @dim: an #AdgDim object
  * @cr: a #cairo_t drawing context
  *
- * Renders the quote of @dim at the @org position.
- *
- * This function is only useful in new dimension implementations.
+ * Renders the quote of @dim at the @org position. This function
+ * is only useful in new dimension implementations.
  */
 void
-_adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
+adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgDimStyle *dim_style;
     AdgPair quote_shift;
