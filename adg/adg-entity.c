@@ -133,9 +133,9 @@ adg_entity_class_init(AdgEntityClass *klass)
   /**
    * AdgEntity::render:
    * @entity: an #AdgEntity
-   * @cr: the destination cairo context of the rendering
+   * @cr: the destination cairo context
    *
-   * The "render" signal causes the rendering of any entity.
+   * Causes the rendering of @entity on @cr.
    */
     signals[RENDER] =
 	g_signal_new("render",
