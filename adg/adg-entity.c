@@ -46,6 +46,7 @@ enum {
 enum {
     MODEL_MATRIX_CHANGED,
     PAPER_MATRIX_CHANGED,
+    INVALIDATE,
     RENDER,
     LAST_SIGNAL
 };
@@ -101,6 +102,7 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     klass->model_matrix_changed = model_matrix_changed;
     klass->paper_matrix_changed = NULL;
+    klass->invalidate = NULL;
     klass->render = render;
     klass->get_model_matrix = get_model_matrix;
     klass->get_paper_matrix = get_paper_matrix;
@@ -114,11 +116,26 @@ adg_entity_class_init(AdgEntityClass *klass)
     g_object_class_install_property(gobject_class, PROP_CONTEXT, param);
 
   /**
-   * AdgEntity::uptodate-set:
+   * AdgEntity::invalidate:
    * @entity: an #AdgEntity
-   * @old_state: the old state of the "uptodate" flag
    *
-   * The "uptodate" property value is changed.
+   * Clears the cached data of @entity.
+   */
+    signals[INVALIDATE] =
+	g_signal_new("invalidate",
+		     G_OBJECT_CLASS_TYPE(gobject_class),
+		     G_SIGNAL_RUN_FIRST,
+		     G_STRUCT_OFFSET(AdgEntityClass, invalidate),
+		     NULL, NULL,
+		     g_cclosure_marshal_VOID__BOOLEAN,
+		     G_TYPE_NONE, 0);
+
+  /**
+   * AdgEntity::render:
+   * @entity: an #AdgEntity
+   * @cr: the destination cairo context of the rendering
+   *
+   * The "render" signal causes the rendering of any entity.
    */
     signals[RENDER] =
 	g_signal_new("render",
@@ -126,8 +143,8 @@ adg_entity_class_init(AdgEntityClass *klass)
 		     G_SIGNAL_RUN_FIRST,
 		     G_STRUCT_OFFSET(AdgEntityClass, render),
 		     NULL, NULL,
-		     g_cclosure_marshal_VOID__BOOLEAN,
-		     G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
+		     g_cclosure_marshal_VOID__POINTER,
+		     G_TYPE_NONE, 1, G_TYPE_POINTER);
 
   /**
    * AdgEntity::model-matrix-changed:
@@ -443,11 +460,27 @@ adg_entity_model_applied(AdgEntity *entity)
 }
 
 /**
+ * adg_entity_invalidate:
+ * @entity: an #AdgEntity
+ *
+ * Emits the "invalidate" signal on @entity and all its children, if any,
+ * so subsequent rendering will need a global recomputation.
+ */
+void
+adg_entity_invalidate(AdgEntity *entity)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    g_signal_emit(entity, signals[INVALIDATE], 0, NULL);
+}
+
+/**
  * adg_entity_render:
  * @entity: an #AdgEntity
  * @cr: a #cairo_t drawing context
  *
- * Renders @entity and all its children, if any, on the @cr drawing context.
+ * Emits the "render" signal on @entity and all its children, if any,
+ * causing the rendering operation the @cr cairo context.
  */
 void
 adg_entity_render(AdgEntity *entity, cairo_t *cr)

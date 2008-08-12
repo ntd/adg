@@ -62,6 +62,7 @@ struct _AdgEntityClass {
 						 AdgMatrix      *parent_matrix);
     void		(*paper_matrix_changed)	(AdgEntity      *entity,
 						 AdgMatrix      *parent_matrix);
+    void		(*invalidate)		(AdgEntity      *entity);
     void		(*render)		(AdgEntity      *entity,
 						 cairo_t        *cr);
     /* Virtual Table */
