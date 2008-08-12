@@ -47,20 +47,25 @@ enum {
 };
 
 
-static void     finalize                (GObject        *object);
-static void     get_property            (GObject        *object,
-                                         guint           param_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
-                                         guint           param_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void     invalidate              (AdgDim         *dim);
-static void     invalidate_quote        (AdgDim         *dim);
-static gchar *  default_quote           (AdgDim         *dim);
-static void     quote_layout            (AdgDim         *dim,
-                                         cairo_t        *cr);
+static void     finalize                        (GObject        *object);
+static void     get_property                    (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void     set_property                    (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void     model_matrix_changed            (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
+static void     invalidate                      (AdgEntity      *entity);
+static void     invalidate_quote                (AdgDim         *dim);
+static void     invalidate_tolerance_up         (AdgDim         *dim);
+static void     invalidate_tolerance_down       (AdgDim         *dim);
+static void     invalidate_note                 (AdgDim         *dim);
+static gchar *  default_quote                   (AdgDim         *dim);
+static void     quote_layout                    (AdgDim         *dim,
+                                                 cairo_t        *cr);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -81,6 +86,9 @@ adg_dim_class_init(AdgDimClass *klass)
     gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
+
+    entity_class->model_matrix_changed = model_matrix_changed;
+    entity_class->invalidate = invalidate;
 
     klass->default_quote = default_quote;
     klass->quote_layout = quote_layout;
@@ -128,15 +136,13 @@ adg_dim_class_init(AdgDimClass *klass)
                                 P_("Up Tolerance"),
                                 P_("The up tolerance of the quote: set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_UP,
-                                    param);
+    g_object_class_install_property(gobject_class, PROP_TOLERANCE_UP, param);
 
     param = g_param_spec_string("tolerance-down",
                                 P_("Down Tolerance"),
                                 P_("The down tolerance of the quote: set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_DOWN,
-                                    param);
+    g_object_class_install_property(gobject_class, PROP_TOLERANCE_DOWN, param);
 
     param = g_param_spec_string("note",
                                 P_("Note"),
@@ -161,18 +167,30 @@ adg_dim_init(AdgDim *dim)
     priv->tolerance_down = NULL;
     priv->note = NULL;
 
+    priv->quote_org.x = priv->quote_org.y = 0.;
+    priv->quote_angle = 0.;
+    priv->quote_num_glyphs = 0;
+    priv->quote_glyphs = NULL;
+    priv->tolerance_up_num_glyphs = 0;
+    priv->tolerance_up_glyphs = NULL;
+    priv->tolerance_down_num_glyphs = 0;
+    priv->tolerance_down_glyphs = NULL;
+    priv->note_num_glyphs = 0;
+    priv->note_glyphs = NULL;
+
     dim->priv = priv;
-    invalidate(dim);
 }
 
 static void
 finalize(GObject *object)
 {
-    AdgDimPrivate *priv = ((AdgDim *) object)->priv;
+    AdgDim *dim = (AdgDim *) object;
 
-    g_free(priv->quote);
-    g_free(priv->tolerance_up);
-    g_free(priv->tolerance_down);
+    g_free(dim->priv->quote);
+    g_free(dim->priv->tolerance_up);
+    g_free(dim->priv->tolerance_down);
+
+    invalidate((AdgEntity *) dim);
 
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
@@ -217,35 +235,35 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+set_property(GObject *object, guint prop_id,
+             const GValue *value, GParamSpec *pspec)
 {
-    AdgDim *dim = (AdgDim *) object;
+    AdgEntity *entity;
+    AdgDim    *dim;
+
+    entity = (AdgEntity *) object;
+    dim = (AdgDim *) object;
 
     switch (prop_id) {
     case PROP_REF1:
-        cpml_pair_copy(&dim->priv->ref1,
-                       (AdgPair *) g_value_get_boxed(value));
-        invalidate(dim);
+        cpml_pair_copy(&dim->priv->ref1, (AdgPair *) g_value_get_boxed(value));
+        invalidate(entity);
         break;
     case PROP_REF2:
-        cpml_pair_copy(&dim->priv->ref2,
-                       (AdgPair *) g_value_get_boxed(value));
-        invalidate(dim);
+        cpml_pair_copy(&dim->priv->ref2, (AdgPair *) g_value_get_boxed(value));
+        invalidate(entity);
         break;
     case PROP_POS1:
-        cpml_pair_copy(&dim->priv->pos1,
-                       (AdgPair *) g_value_get_boxed(value));
-        invalidate(dim);
+        cpml_pair_copy(&dim->priv->pos1, (AdgPair *) g_value_get_boxed(value));
+        invalidate(entity);
         break;
     case PROP_POS2:
-        cpml_pair_copy(&dim->priv->pos2,
-                       (AdgPair *) g_value_get_boxed(value));
-        invalidate(dim);
+        cpml_pair_copy(&dim->priv->pos2, (AdgPair *) g_value_get_boxed(value));
+        invalidate(entity);
         break;
     case PROP_LEVEL:
         dim->priv->level = g_value_get_double(value);
-        invalidate(dim);
+        invalidate(entity);
         break;
     case PROP_QUOTE:
         g_free(dim->priv->quote);
@@ -255,17 +273,17 @@ set_property(GObject *object,
     case PROP_TOLERANCE_UP:
         g_free(dim->priv->tolerance_up);
         dim->priv->tolerance_up = g_value_dup_string(value);
-        invalidate_quote(dim);
+        invalidate_tolerance_up(dim);
         break;
     case PROP_TOLERANCE_DOWN:
         g_free(dim->priv->tolerance_down);
         dim->priv->tolerance_down = g_value_dup_string(value);
-        invalidate_quote(dim);
+        invalidate_tolerance_down(dim);
         break;
     case PROP_NOTE:
         g_free(dim->priv->note);
         dim->priv->note = g_value_dup_string(value);
-        invalidate_quote(dim);
+        invalidate_note(dim);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -275,21 +293,69 @@ set_property(GObject *object,
 
 
 static void
-invalidate(AdgDim *dim)
+model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    dim->priv->quote_org.x = dim->priv->quote_org.y = 0.;
+    invalidate(entity);
+    PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
+}
+
+static void
+invalidate(AdgEntity *entity)
+{
+    AdgDim *dim = (AdgDim *) entity;
+
     dim->priv->quote_angle = 0.;
+    dim->priv->quote_org.x = 0.;
+    dim->priv->quote_org.y = 0.;
+
     invalidate_quote(dim);
+    invalidate_tolerance_up(dim);
+    invalidate_tolerance_down(dim);
+    invalidate_note(dim);
 }
 
 static void
 invalidate_quote(AdgDim *dim)
 {
-    dim->priv->quote_shift.x = dim->priv->quote_shift.y = 0.;
-    dim->priv->tolerance_up_shift.x = dim->priv->tolerance_up_shift.y = 0.;
-    dim->priv->tolerance_down_shift.x = dim->priv->tolerance_down_shift.y =
-        0.;
-    dim->priv->note_shift.x = dim->priv->note_shift.y = 0.;
+    if (dim->priv->quote_glyphs) {
+        cairo_glyph_free(dim->priv->quote_glyphs);
+        dim->priv->quote_glyphs = NULL;
+    }
+
+    dim->priv->quote_num_glyphs = 0;
+}
+
+static void
+invalidate_tolerance_up(AdgDim *dim)
+{
+    if (dim->priv->tolerance_up_glyphs) {
+        cairo_glyph_free(dim->priv->tolerance_up_glyphs);
+        dim->priv->tolerance_up_glyphs = NULL;
+    }
+
+    dim->priv->tolerance_up_num_glyphs = 0;
+}
+
+static void
+invalidate_tolerance_down(AdgDim *dim)
+{
+    if (dim->priv->tolerance_down_glyphs) {
+        cairo_glyph_free(dim->priv->tolerance_down_glyphs);
+        dim->priv->tolerance_down_glyphs = NULL;
+    }
+
+    dim->priv->tolerance_down_num_glyphs = 0;
+}
+
+static void
+invalidate_note(AdgDim *dim)
+{
+    if (dim->priv->note_glyphs) {
+        cairo_glyph_free(dim->priv->note_glyphs);
+        dim->priv->note_glyphs = NULL;
+    }
+
+    dim->priv->note_num_glyphs = 0;
 }
 
 
@@ -301,55 +367,97 @@ default_quote(AdgDim *dim)
     return g_strdup("undef");
 }
 
+void
+glyphs_translate(cairo_glyph_t *glyphs, int num_glyphs, const CpmlPair *shift)
+{
+    cairo_glyph_t *glyph;
+
+    for (glyph = glyphs; num_glyphs --; ++ glyph) {
+        glyph->x += shift->x;
+        glyph->y += shift->y;
+    }
+}
+
 static void
 quote_layout(AdgDim *dim, cairo_t *cr)
 {
+    AdgDimPrivate *priv;
     AdgDimStyle *dim_style;
-    AdgPair offset;
-    AdgPair cp;
+    AdgPair shift;
+    CpmlPair cp, org;
+    CpmlPair quote_org, tolerance_up_org, tolerance_down_org, note_org;
     cairo_text_extents_t extents;
 
+    priv = dim->priv;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
 
     /* Compute the quote */
     adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
+    quote_org.x = 0.;
+    quote_org.y = 0.;
 
-    cairo_text_extents(cr, dim->priv->quote, &extents);
+    if (!priv->quote_glyphs)
+        cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
+                                         quote_org.x, quote_org.y,
+                                         priv->quote, -1,
+                                         &priv->quote_glyphs,
+                                         &priv->quote_num_glyphs,
+                                         NULL, NULL, NULL);
+
+    cairo_glyph_extents(cr, priv->quote_glyphs, priv->quote_num_glyphs,
+                        &extents);
     cairo_user_to_device_distance(cr, &extents.width, &extents.height);
+
     cp.x = extents.width;
-    cp.y = -extents.height / 2.;
+    cp.y = extents.height / -2.;
 
     /* Compute the tolerances */
-    if (dim->priv->tolerance_up != NULL
-        || dim->priv->tolerance_down != NULL) {
+    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
         double width;
         double midspacing;
 
         adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
 
-        width = 0.0;
+        width = 0.;
         midspacing = adg_dim_style_get_tolerance_spacing(dim_style) / 2.;
-        cpml_pair_copy(&offset,
-                       adg_dim_style_get_tolerance_shift(dim_style));
-        cp.x += offset.x;
+        cpml_pair_copy(&shift, adg_dim_style_get_tolerance_shift(dim_style));
+        cp.x += shift.x;
 
-        if (dim->priv->tolerance_up != NULL) {
-            cairo_text_extents(cr, dim->priv->tolerance_up, &extents);
-            cairo_user_to_device_distance(cr, &extents.width,
-                                          &extents.height);
-            dim->priv->tolerance_up_shift.x = cp.x;
-            dim->priv->tolerance_up_shift.y = cp.y + offset.y - midspacing;
+        if (priv->tolerance_up) {
+            if (!priv->tolerance_up_glyphs)
+                cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
+                                                 0., 0.,
+                                                 priv->tolerance_up, -1,
+                                                 &priv->tolerance_up_glyphs,
+                                                 &priv->tolerance_up_num_glyphs,
+                                                 NULL, NULL, NULL);
+
+            cairo_glyph_extents(cr, priv->tolerance_up_glyphs,
+                                priv->tolerance_up_num_glyphs, &extents);
+            cairo_user_to_device_distance(cr, &extents.width, &extents.height);
+
+            tolerance_up_org.x = cp.x;
+            tolerance_up_org.y = cp.y + shift.y - midspacing;
+
             width = extents.width;
         }
 
-        if (dim->priv->tolerance_down != NULL) {
-            cairo_text_extents(cr, dim->priv->tolerance_down, &extents);
-            cairo_user_to_device_distance(cr, &extents.width,
-                                          &extents.height);
-            dim->priv->tolerance_down_shift.x = cp.x;
-            dim->priv->tolerance_down_shift.y =
-                cp.y + offset.y + midspacing + extents.height;
+        if (priv->tolerance_down) {
+            if (!priv->tolerance_down_glyphs)
+                cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
+                                                 0., 0.,
+                                                 priv->tolerance_down, -1,
+                                                 &priv->tolerance_down_glyphs,
+                                                 &priv->tolerance_down_num_glyphs,
+                                                 NULL, NULL, NULL);
+
+            cairo_glyph_extents(cr, priv->tolerance_down_glyphs,
+                                priv->tolerance_down_num_glyphs, &extents);
+            cairo_user_to_device_distance(cr, &extents.width, &extents.height);
+
+            tolerance_down_org.x = cp.x;
+            tolerance_down_org.y = cp.y + shift.y + midspacing + extents.height;
 
             if (extents.width > width)
                 width = extents.width;
@@ -359,34 +467,70 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     }
 
     /* Compute the note */
-    if (dim->priv->note != NULL) {
+    if (priv->note != NULL) {
         adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
 
-        cpml_pair_copy(&offset, adg_dim_style_get_note_shift(dim_style));
-        cp.x += offset.x;
+        cpml_pair_copy(&shift, adg_dim_style_get_note_shift(dim_style));
+        cp.x += shift.x;
 
-        cairo_text_extents(cr, dim->priv->note, &extents);
+        if (!priv->note_glyphs)
+            cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
+                                             0., 0.,
+                                             priv->note, -1,
+                                             &priv->note_glyphs,
+                                             &priv->note_num_glyphs,
+                                             NULL, NULL, NULL);
+
+        cairo_glyph_extents(cr, priv->note_glyphs, priv->note_num_glyphs,
+                            &extents);
         cairo_user_to_device_distance(cr, &extents.width, &extents.height);
-        dim->priv->note_shift.x = cp.x;
-        dim->priv->note_shift.y = cp.y + offset.y + extents.height / 2.;
+
+        note_org.x = cp.x;
+        note_org.y = cp.y + shift.y + extents.height / 2.;
 
         cp.x += extents.width;
     }
 
-    /* Calculating the offsets */
-    cpml_pair_copy(&offset, adg_dim_style_get_quote_shift(dim_style));
-    offset.x -= cp.x / 2.;
+    /* Centering and shifting the whole group */
+    cpml_pair_copy(&shift, adg_dim_style_get_quote_shift(dim_style));
+    shift.x -= cp.x / 2.;
 
-    cpml_pair_copy(&dim->priv->quote_shift, &offset);
+    if (priv->quote_glyphs) {
+        quote_org.x += shift.x;
+        quote_org.y += shift.y;
+        cairo_device_to_user_distance(cr, &quote_org.x, &quote_org.y);
+        glyphs_translate(priv->quote_glyphs,
+                         priv->quote_num_glyphs,
+                         &quote_org);
+    }
 
-    dim->priv->tolerance_up_shift.x += offset.x;
-    dim->priv->tolerance_up_shift.y += offset.y;
+    if (priv->tolerance_up_glyphs) {
+        tolerance_up_org.x += shift.x;
+        tolerance_up_org.y += shift.y;
+        cairo_device_to_user_distance(cr, &tolerance_up_org.x,
+                                      &tolerance_up_org.y);
+        glyphs_translate(priv->tolerance_up_glyphs,
+                         priv->tolerance_up_num_glyphs,
+                         &tolerance_up_org);
+    }
 
-    dim->priv->tolerance_down_shift.x += offset.x;
-    dim->priv->tolerance_down_shift.y += offset.y;
+    if (priv->tolerance_down_glyphs) {
+        tolerance_down_org.x += shift.x;
+        tolerance_down_org.y += shift.y;
+        cairo_device_to_user_distance(cr, &tolerance_down_org.x,
+                                      &tolerance_down_org.y);
+        glyphs_translate(priv->tolerance_down_glyphs,
+                         priv->tolerance_down_num_glyphs,
+                         &tolerance_down_org);
+    }
 
-    dim->priv->note_shift.x += offset.x;
-    dim->priv->note_shift.y += offset.y;
+    if (priv->note_glyphs) {
+        note_org.x += shift.x;
+        note_org.y += shift.y;
+        cairo_device_to_user_distance(cr, &note_org.x, &note_org.y);
+        glyphs_translate(priv->note_glyphs, priv->note_num_glyphs,
+                         &note_org);
+    }
 }
 
 
@@ -409,20 +553,25 @@ adg_dim_get_ref2(AdgDim *dim)
 void
 adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
 {
-    GObject *object;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    object = G_OBJECT(dim);
+    if (ref1 != NULL || ref2 != NULL) {
+        GObject *object = (GObject *) dim;
 
-    if (ref1 != NULL) {
-        dim->priv->ref1 = *ref1;
-        g_object_notify(object, "ref1");
-    }
+        g_object_freeze_notify(object);
 
-    if (ref2 != NULL) {
-        dim->priv->ref2 = *ref2;
-        g_object_notify(object, "ref2");
+        if (ref1 != NULL) {
+            dim->priv->ref1 = *ref1;
+            g_object_notify(object, "ref1");
+        }
+
+        if (ref2 != NULL) {
+            dim->priv->ref2 = *ref2;
+            g_object_notify(object, "ref2");
+        }
+
+        g_object_thaw_notify(object);
+        invalidate((AdgEntity *) dim);
     }
 }
 
@@ -460,25 +609,25 @@ adg_dim_get_pos2(AdgDim *dim)
 void
 adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
 {
-    GObject *object;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    object = G_OBJECT(dim);
+    if (pos1 != NULL || pos2 != NULL) {
+        GObject *object = (GObject *) dim;
 
-    g_object_freeze_notify(object);
+        g_object_freeze_notify(object);
 
-    if (pos1 != NULL) {
-        dim->priv->pos1 = *pos1;
-        g_object_notify(object, "pos1");
+        if (pos1 != NULL) {
+            dim->priv->pos1 = *pos1;
+            g_object_notify(object, "pos1");
+        }
+        if (pos2 != NULL) {
+            dim->priv->pos2 = *pos2;
+            g_object_notify(object, "pos2");
+        }
+
+        g_object_thaw_notify(object);
+        invalidate((AdgEntity *) dim);
     }
-
-    if (pos2 != NULL) {
-        dim->priv->pos2 = *pos2;
-        g_object_notify(object, "pos2");
-    }
-
-    g_object_thaw_notify(object);
 }
 
 void
@@ -528,9 +677,9 @@ adg_dim_set_quote(AdgDim *dim, const gchar *quote)
 
     g_free(dim->priv->quote);
     dim->priv->quote = g_strdup(quote);
-    invalidate_quote(dim);
-
     g_object_notify((GObject *) dim, "quote");
+
+    invalidate_quote(dim);
 }
 
 const gchar *
@@ -547,10 +696,10 @@ adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
     g_return_if_fail(ADG_IS_DIM(dim));
 
     g_free(dim->priv->tolerance_up);
-    dim->priv->tolerance_down = g_strdup(tolerance_up);
-    invalidate_quote(dim);
-
+    dim->priv->tolerance_up = g_strdup(tolerance_up);
     g_object_notify((GObject *) dim, "tolerance-up");
+
+    invalidate_tolerance_up(dim);
 }
 
 const gchar *
@@ -568,34 +717,21 @@ adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
 
     g_free(dim->priv->tolerance_down);
     dim->priv->tolerance_down = g_strdup(tolerance_down);
-    invalidate_quote(dim);
-
     g_object_notify((GObject *) dim, "tolerance-down");
+
+    invalidate_tolerance_down(dim);
 }
 
 void
 adg_dim_set_tolerances(AdgDim *dim,
                        const gchar *tolerance_up, const gchar *tolerance_down)
 {
-    GObject *object;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    object = G_OBJECT(dim);
-
-    g_object_freeze_notify(object);
-
-    g_free(dim->priv->tolerance_up);
-    dim->priv->tolerance_up = g_strdup(tolerance_up);
-    g_object_notify(object, "tolerance-up");
-
-    g_free(dim->priv->tolerance_down);
-    dim->priv->tolerance_down = g_strdup(tolerance_down);
-    g_object_notify(object, "tolerance-down");
-
-    invalidate_quote(dim);
-
-    g_object_thaw_notify(object);
+    g_object_freeze_notify((GObject *) dim);
+    adg_dim_set_tolerance_up(dim, tolerance_up);
+    adg_dim_set_tolerance_down(dim, tolerance_down);
+    g_object_thaw_notify((GObject *) dim);
 }
 
 const gchar *
@@ -613,9 +749,9 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
 
     g_free(dim->priv->note);
     dim->priv->note = g_strdup(note);
-    invalidate_quote(dim);
-
     g_object_notify((GObject *) dim, "note");
+
+    invalidate_note(dim);
 }
 
 
@@ -630,64 +766,45 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
 void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
+    AdgDimPrivate *priv;
     AdgDimStyle *dim_style;
-    AdgPair quote_shift;
-    AdgPair tolerance_up_shift;
-    AdgPair tolerance_down_shift;
-    AdgPair note_shift;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
+    priv = dim->priv;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
 
-    if (dim->priv->quote == NULL) {
-        dim->priv->quote = ADG_DIM_GET_CLASS(dim)->default_quote(dim);
-        invalidate_quote(dim);
-        g_object_notify((GObject *) dim, "quote");
-    }
+    if (priv->quote == NULL)
+        adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
 
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
 
-    cpml_pair_copy(&quote_shift, &dim->priv->quote_shift);
-    cairo_device_to_user_distance(cr, &quote_shift.x, &quote_shift.y);
-    cpml_pair_copy(&tolerance_up_shift, &dim->priv->tolerance_up_shift);
-    cairo_device_to_user_distance(cr, &tolerance_up_shift.x,
-                                  &tolerance_up_shift.y);
-    cpml_pair_copy(&tolerance_down_shift,
-                   &dim->priv->tolerance_down_shift);
-    cairo_device_to_user_distance(cr, &tolerance_down_shift.x,
-                                  &tolerance_down_shift.y);
-
     cairo_save(cr);
-    cairo_translate(cr, dim->priv->quote_org.x, dim->priv->quote_org.y);
-    cairo_rotate(cr, dim->priv->quote_angle);
+    cairo_translate(cr, priv->quote_org.x, priv->quote_org.y);
+    cairo_rotate(cr, priv->quote_angle);
 
     /* Rendering quote */
     adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
-    cairo_move_to(cr, quote_shift.x, quote_shift.y);
-    cairo_show_text(cr, dim->priv->quote);
+    cairo_show_glyphs(cr, priv->quote_glyphs, priv->quote_num_glyphs);
 
     /* Rendering tolerances */
-    if (dim->priv->tolerance_up != NULL
-        || dim->priv->tolerance_down != NULL) {
+    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
         adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
 
-        if (dim->priv->tolerance_up != NULL) {
-            cairo_move_to(cr, tolerance_up_shift.x, tolerance_up_shift.y);
-            cairo_show_text(cr, dim->priv->tolerance_up);
-        }
-        if (dim->priv->tolerance_down != NULL) {
-            cairo_move_to(cr, tolerance_down_shift.x,
-                          tolerance_down_shift.y);
-            cairo_show_text(cr, dim->priv->tolerance_down);
-        }
+        if (priv->tolerance_up != NULL)
+            cairo_show_glyphs(cr, priv->tolerance_up_glyphs,
+                              priv->tolerance_up_num_glyphs);
+
+        if (priv->tolerance_down != NULL)
+            cairo_show_glyphs(cr, priv->tolerance_down_glyphs,
+                              priv->tolerance_down_num_glyphs);
     }
 
-    /* Rendering note */
-    if (dim->priv->note != NULL) {
-        cairo_move_to(cr, note_shift.x, note_shift.y);
-        cairo_show_text(cr, dim->priv->note);
+    /* Rendering the note */
+    if (priv->note != NULL) {
+        adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
+        cairo_show_glyphs(cr, priv->note_glyphs, priv->note_num_glyphs);
     }
 
     cairo_restore(cr);

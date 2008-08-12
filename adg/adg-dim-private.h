@@ -29,23 +29,27 @@ G_BEGIN_DECLS
 
 struct _AdgDimPrivate {
     /* Properties */
-    AdgPair      ref1;
-    AdgPair      ref2;
-    AdgPair      pos1;
-    AdgPair      pos2;
-    gdouble      level;
-    gchar       *quote;
-    gchar       *tolerance_up;
-    gchar       *tolerance_down;
-    gchar       *note;
+    AdgPair              ref1;
+    AdgPair              ref2;
+    AdgPair              pos1;
+    AdgPair              pos2;
+    gdouble              level;
+    gchar               *quote;
+    gchar               *tolerance_up;
+    gchar               *tolerance_down;
+    gchar               *note;
 
     /* Cache */
-    CpmlPair     quote_org;
-    gdouble      quote_angle;
-    CpmlPair     quote_shift;
-    CpmlPair     tolerance_up_shift;
-    CpmlPair     tolerance_down_shift;
-    CpmlPair     note_shift;
+    CpmlPair             quote_org;
+    gdouble              quote_angle;
+    int                  quote_num_glyphs;
+    cairo_glyph_t       *quote_glyphs;
+    int                  tolerance_up_num_glyphs;
+    cairo_glyph_t       *tolerance_up_glyphs;
+    int                  tolerance_down_num_glyphs;
+    cairo_glyph_t       *tolerance_down_glyphs;
+    int                  note_num_glyphs;
+    cairo_glyph_t       *note_glyphs;
 };
 
 G_END_DECLS
