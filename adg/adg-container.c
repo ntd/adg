@@ -290,6 +290,7 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
     g_containerable_propagate_by_name((GContainerable *) entity,
                                       "render", cr);
+    PARENT_CLASS->render(entity, cr);
 }
 
 
