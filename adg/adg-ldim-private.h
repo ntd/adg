@@ -27,8 +27,10 @@
 G_BEGIN_DECLS
 
 struct _AdgLDimPrivate {
+    /* Properties */
     double		direction;
-    /* Cached data */
+
+    /* Cache */
     cairo_path_t	extension1;
     cairo_path_t	extension2;
     cairo_path_t	arrow_path;

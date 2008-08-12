@@ -27,7 +27,7 @@
 G_BEGIN_DECLS
 
 struct _AdgADimPrivate {
-    /* Cached data */
+    /* Cache */
     cairo_path_t	extension1;
     cairo_path_t	extension2;
     cairo_path_t	arrow_path;
