@@ -50,28 +50,29 @@ enum {
 };
 
 
-static void		containerable_init	(GContainerableIface *iface);
-static void		get_property		(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void		set_property		(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
+static void             containerable_init	(GContainerableIface *iface);
+static void             get_property		(GObject	*object,
+                                                 guint		 prop_id,
+                                                 GValue		*value,
+                                                 GParamSpec	*pspec);
+static void             set_property		(GObject	*object,
+                                                 guint		 prop_id,
+                                                 const GValue	*value,
+                                                 GParamSpec	*pspec);
 static const AdgMatrix *get_model_matrix	(AdgEntity	*entity);
 static const AdgMatrix *get_paper_matrix	(AdgEntity	*entity);
-static void		model_matrix_changed	(AdgEntity	*entity,
-						 AdgMatrix	*parent_matrix);
-static void		paper_matrix_changed	(AdgEntity	*entity,
-						 AdgMatrix	*parent_matrix);
-static GSList *		get_children		(GContainerable	*containerable);
-static gboolean		add			(GContainerable	*containerable,
-						 GChildable	*childable);
-static gboolean		remove			(GContainerable	*containerable,
-						 GChildable	*childable);
-static void		render			(AdgEntity	*entity,
-						 cairo_t	*cr);
+static void             model_matrix_changed	(AdgEntity	*entity,
+                                                 AdgMatrix	*parent_matrix);
+static void             paper_matrix_changed	(AdgEntity	*entity,
+                                                 AdgMatrix	*parent_matrix);
+static GSList *         get_children		(GContainerable	*containerable);
+static gboolean         add			(GContainerable	*containerable,
+                                                 GChildable	*childable);
+static gboolean         remove			(GContainerable	*containerable,
+                                                 GChildable	*childable);
+static void             invalidate		(AdgEntity	*entity);
+static void             render			(AdgEntity	*entity,
+                                                 cairo_t	*cr);
 
 
 G_DEFINE_TYPE_EXTENDED(AdgContainer, adg_container,
@@ -100,6 +101,7 @@ adg_container_class_init(AdgContainerClass *klass)
     entity_class->paper_matrix_changed = paper_matrix_changed;
     entity_class->get_model_matrix = get_model_matrix;
     entity_class->get_paper_matrix = get_paper_matrix;
+    entity_class->invalidate = invalidate;
     entity_class->render = render;
 
     g_object_class_override_property(gobject_class, PROP_CHILD, "child");
@@ -276,11 +278,18 @@ get_paper_matrix(AdgEntity *entity)
 
 
 static void
+invalidate(AdgEntity *entity)
+{
+    g_containerable_propagate_by_name((GContainerable *) entity,
+                                      "invalidate", NULL);
+}
+
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
-    g_containerable_propagate_by_name((GContainerable *) entity, "render",
-				      cr);
+    g_containerable_propagate_by_name((GContainerable *) entity,
+                                      "render", cr);
 }
 
 
