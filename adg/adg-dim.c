@@ -64,6 +64,9 @@ static void     invalidate_tolerance_up         (AdgDim         *dim);
 static void     invalidate_tolerance_down       (AdgDim         *dim);
 static void     invalidate_note                 (AdgDim         *dim);
 static gchar *  default_quote                   (AdgDim         *dim);
+static void     glyphs_translate                (cairo_glyph_t *glyphs,
+                                                 int             num_glyphs,
+                                                 const CpmlPair *shift);
 static void     quote_layout                    (AdgDim         *dim,
                                                  cairo_t        *cr);
 
@@ -367,7 +370,7 @@ default_quote(AdgDim *dim)
     return g_strdup("undef");
 }
 
-void
+static void
 glyphs_translate(cairo_glyph_t *glyphs, int num_glyphs, const CpmlPair *shift)
 {
     cairo_glyph_t *glyph;
