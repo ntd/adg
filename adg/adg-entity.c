@@ -52,38 +52,38 @@ enum {
 };
 
 
-static void		childable_init		(GChildableIface*iface);
-static void		get_property		(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void		set_property		(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
-static GContainerable *	get_parent		(GChildable	*childable);
-static void		set_parent		(GChildable	*childable,
-						 GContainerable	*parent);
-static void		parent_set		(GChildable	*childable,
-						 GContainerable	*old_parent);
-static void		set_context		(AdgEntity	*entity,
-						 AdgContext	*context);
-static void		model_matrix_changed	(AdgEntity	*entity,
-						 AdgMatrix	*parent_matrix);
-static void		paper_matrix_changed	(AdgEntity	*entity,
-						 AdgMatrix	*parent_matrix);
-static void		render			(AdgEntity	*entity,
-						 cairo_t	*cr);
-static const AdgMatrix *get_model_matrix	(AdgEntity	*entity);
-static const AdgMatrix *get_paper_matrix	(AdgEntity	*entity);
+static void             childable_init          (GChildableIface*iface);
+static void             get_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static GContainerable * get_parent              (GChildable     *childable);
+static void             set_parent              (GChildable     *childable,
+                                                 GContainerable *parent);
+static void             parent_set              (GChildable     *childable,
+                                                 GContainerable *old_parent);
+static void             set_context             (AdgEntity      *entity,
+                                                 AdgContext     *context);
+static void             model_matrix_changed    (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
+static void             paper_matrix_changed    (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
+static void             render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static const AdgMatrix *get_model_matrix        (AdgEntity      *entity);
+static const AdgMatrix *get_paper_matrix        (AdgEntity      *entity);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE_EXTENDED(AdgEntity, adg_entity,
-		       G_TYPE_INITIALLY_UNOWNED, G_TYPE_FLAG_ABSTRACT,
-		       G_IMPLEMENT_INTERFACE(G_TYPE_CHILDABLE,
-					     childable_init));
+                       G_TYPE_INITIALLY_UNOWNED, G_TYPE_FLAG_ABSTRACT,
+                       G_IMPLEMENT_INTERFACE(G_TYPE_CHILDABLE,
+                                             childable_init));
 
 
 static void
@@ -110,9 +110,9 @@ adg_entity_class_init(AdgEntityClass *klass)
     g_object_class_override_property(gobject_class, PROP_PARENT, "parent");
 
     param = g_param_spec_object("context",
-				P_("Context"),
-				P_("The context associated to this entity or NULL to inherit the parent context"),
-				ADG_TYPE_CONTEXT, G_PARAM_READWRITE);
+                                P_("Context"),
+                                P_("The context associated to this entity or NULL to inherit the parent context"),
+                                ADG_TYPE_CONTEXT, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CONTEXT, param);
 
   /**
@@ -122,13 +122,13 @@ adg_entity_class_init(AdgEntityClass *klass)
    * Clears the cached data of @entity.
    */
     signals[INVALIDATE] =
-	g_signal_new("invalidate",
-		     G_OBJECT_CLASS_TYPE(gobject_class),
-		     G_SIGNAL_RUN_FIRST,
-		     G_STRUCT_OFFSET(AdgEntityClass, invalidate),
-		     NULL, NULL,
-		     g_cclosure_marshal_VOID__BOOLEAN,
-		     G_TYPE_NONE, 0);
+        g_signal_new("invalidate",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, invalidate),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__BOOLEAN,
+                     G_TYPE_NONE, 0);
 
   /**
    * AdgEntity::render:
@@ -138,13 +138,13 @@ adg_entity_class_init(AdgEntityClass *klass)
    * Causes the rendering of @entity on @cr.
    */
     signals[RENDER] =
-	g_signal_new("render",
-		     G_OBJECT_CLASS_TYPE(gobject_class),
-		     G_SIGNAL_RUN_FIRST,
-		     G_STRUCT_OFFSET(AdgEntityClass, render),
-		     NULL, NULL,
-		     g_cclosure_marshal_VOID__POINTER,
-		     G_TYPE_NONE, 1, G_TYPE_POINTER);
+        g_signal_new("render",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, render),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__POINTER,
+                     G_TYPE_NONE, 1, G_TYPE_POINTER);
 
   /**
    * AdgEntity::model-matrix-changed:
@@ -154,14 +154,14 @@ adg_entity_class_init(AdgEntityClass *klass)
    * Emitted after the current model matrix has changed.
    */
     signals[MODEL_MATRIX_CHANGED] =
-	g_signal_new("model-matrix-changed",
-		     G_OBJECT_CLASS_TYPE(gobject_class),
-		     G_SIGNAL_RUN_FIRST,
-		     G_STRUCT_OFFSET(AdgEntityClass, model_matrix_changed),
-		     NULL, NULL,
-		     g_cclosure_marshal_VOID__BOXED,
-		     G_TYPE_NONE, 1,
-		     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
+        g_signal_new("model-matrix-changed",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, model_matrix_changed),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__BOXED,
+                     G_TYPE_NONE, 1,
+                     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
 
   /**
    * AdgEntity::paper-matrix-changed:
@@ -171,14 +171,14 @@ adg_entity_class_init(AdgEntityClass *klass)
    * Emitted after the current paper matrix has changed.
    */
     signals[PAPER_MATRIX_CHANGED] =
-	g_signal_new("paper-matrix-changed",
-		     G_OBJECT_CLASS_TYPE(gobject_class),
-		     G_SIGNAL_RUN_FIRST,
-		     G_STRUCT_OFFSET(AdgEntityClass, paper_matrix_changed),
-		     NULL, NULL,
-		     g_cclosure_marshal_VOID__BOXED,
-		     G_TYPE_NONE, 1,
-		     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
+        g_signal_new("paper-matrix-changed",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, paper_matrix_changed),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__BOXED,
+                     G_TYPE_NONE, 1,
+                     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
 }
 
 static void
@@ -193,8 +193,8 @@ static void
 adg_entity_init(AdgEntity *entity)
 {
     AdgEntityPrivate *priv =
-	G_TYPE_INSTANCE_GET_PRIVATE(entity, ADG_TYPE_ENTITY,
-				    AdgEntityPrivate);
+        G_TYPE_INSTANCE_GET_PRIVATE(entity, ADG_TYPE_ENTITY,
+                                    AdgEntityPrivate);
 
     priv->parent = NULL;
     priv->flags = 0;
@@ -210,33 +210,33 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_PARENT:
-	g_value_set_object(value, entity->priv->parent);
-	break;
+        g_value_set_object(value, entity->priv->parent);
+        break;
     case PROP_CONTEXT:
-	g_value_set_object(value, entity->priv->context);
-	break;
+        g_value_set_object(value, entity->priv->context);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgEntity *entity = (AdgEntity *) object;
 
     switch (prop_id) {
     case PROP_PARENT:
-	entity->priv->parent = (AdgEntity *) g_value_get_object(value);
-	break;
+        entity->priv->parent = (AdgEntity *) g_value_get_object(value);
+        break;
     case PROP_CONTEXT:
-	set_context(entity, g_value_get_object(value));
-	break;
+        set_context(entity, g_value_get_object(value));
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
@@ -256,10 +256,10 @@ adg_entity_get_context(AdgEntity *entity)
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     if (entity->priv->context)
-	return entity->priv->context;
+        return entity->priv->context;
 
     if (entity->priv->parent)
-	return adg_entity_get_context(entity->priv->parent);
+        return adg_entity_get_context(entity->priv->parent);
 
     return NULL;
 }
@@ -298,11 +298,11 @@ adg_entity_get_canvas(AdgEntity *entity)
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     while (entity) {
-	if (ADG_IS_CANVAS(entity))
-	    return (AdgCanvas *) entity;
+        if (ADG_IS_CANVAS(entity))
+            return (AdgCanvas *) entity;
 
-	entity =
-	    (AdgEntity *) g_childable_get_parent((GChildable *) entity);
+        entity =
+            (AdgEntity *) g_childable_get_parent((GChildable *) entity);
     }
 
     return NULL;
@@ -349,7 +349,7 @@ adg_entity_get_paper_matrix(AdgEntity *entity)
  */
 void
 adg_entity_model_matrix_changed(AdgEntity *entity,
-				const AdgMatrix *parent_matrix)
+                                const AdgMatrix *parent_matrix)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
@@ -367,7 +367,7 @@ adg_entity_model_matrix_changed(AdgEntity *entity,
  */
 void
 adg_entity_paper_matrix_changed(AdgEntity *entity,
-				const AdgMatrix *parent_matrix)
+                                const AdgMatrix *parent_matrix)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
@@ -391,14 +391,14 @@ adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
     if (entity->priv->context) {
-	AdgStyle *style = adg_context_get_style(entity->priv->context,
-						style_slot);
-	if (style)
-	    return style;
+        AdgStyle *style = adg_context_get_style(entity->priv->context,
+                                                style_slot);
+        if (style)
+            return style;
     }
 
     if (entity->priv->parent)
-	return adg_entity_get_style(entity->priv->parent, style_slot);
+        return adg_entity_get_style(entity->priv->parent, style_slot);
 
     return NULL;
 }
@@ -417,7 +417,7 @@ adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
     AdgStyle *style = adg_entity_get_style(entity, style_slot);
 
     if (style)
-	adg_style_apply(style, cr);
+        adg_style_apply(style, cr);
 }
 
 /**
@@ -508,16 +508,16 @@ static void
 parent_set(GChildable *childable, GContainerable *old_parent)
 {
     if (ADG_IS_CONTAINER(old_parent)) {
-	AdgEntity *entity;
-	const AdgMatrix *old_model;
-	const AdgMatrix *old_paper;
+        AdgEntity *entity;
+        const AdgMatrix *old_model;
+        const AdgMatrix *old_paper;
 
-	entity = (AdgEntity *) childable;
-	old_model = adg_entity_get_model_matrix((AdgEntity *) old_parent);
-	old_paper = adg_entity_get_paper_matrix((AdgEntity *) old_parent);
+        entity = (AdgEntity *) childable;
+        old_model = adg_entity_get_model_matrix((AdgEntity *) old_parent);
+        old_paper = adg_entity_get_paper_matrix((AdgEntity *) old_parent);
 
-	adg_entity_model_matrix_changed(entity, old_model);
-	adg_entity_paper_matrix_changed(entity, old_paper);
+        adg_entity_model_matrix_changed(entity, old_model);
+        adg_entity_paper_matrix_changed(entity, old_paper);
     }
 }
 
@@ -525,7 +525,7 @@ static void
 set_context(AdgEntity *entity, AdgContext *context)
 {
     if (entity->priv->context)
-	g_object_unref((GObject *) entity->priv->context);
+        g_object_unref((GObject *) entity->priv->context);
 
     g_object_ref((GObject *) context);
     entity->priv->context = context;
@@ -547,7 +547,7 @@ static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     ADG_SET(entity->priv->flags,
-	    MODEL_MATRIX_APPLIED | PAPER_MATRIX_APPLIED | MODEL_APPLIED);
+            MODEL_MATRIX_APPLIED | PAPER_MATRIX_APPLIED | MODEL_APPLIED);
 }
 
 static const AdgMatrix *

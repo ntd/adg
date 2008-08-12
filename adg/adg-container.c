@@ -50,35 +50,35 @@ enum {
 };
 
 
-static void             containerable_init	(GContainerableIface *iface);
-static void             get_property		(GObject	*object,
-                                                 guint		 prop_id,
-                                                 GValue		*value,
-                                                 GParamSpec	*pspec);
-static void             set_property		(GObject	*object,
-                                                 guint		 prop_id,
-                                                 const GValue	*value,
-                                                 GParamSpec	*pspec);
-static const AdgMatrix *get_model_matrix	(AdgEntity	*entity);
-static const AdgMatrix *get_paper_matrix	(AdgEntity	*entity);
-static void             model_matrix_changed	(AdgEntity	*entity,
-                                                 AdgMatrix	*parent_matrix);
-static void             paper_matrix_changed	(AdgEntity	*entity,
-                                                 AdgMatrix	*parent_matrix);
-static GSList *         get_children		(GContainerable	*containerable);
-static gboolean         add			(GContainerable	*containerable,
-                                                 GChildable	*childable);
-static gboolean         remove			(GContainerable	*containerable,
-                                                 GChildable	*childable);
-static void             invalidate		(AdgEntity	*entity);
-static void             render			(AdgEntity	*entity,
-                                                 cairo_t	*cr);
+static void             containerable_init      (GContainerableIface *iface);
+static void             get_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static const AdgMatrix *get_model_matrix        (AdgEntity      *entity);
+static const AdgMatrix *get_paper_matrix        (AdgEntity      *entity);
+static void             model_matrix_changed    (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
+static void             paper_matrix_changed    (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
+static GSList *         get_children            (GContainerable *containerable);
+static gboolean         add                     (GContainerable *containerable,
+                                                 GChildable     *childable);
+static gboolean         remove                  (GContainerable *containerable,
+                                                 GChildable     *childable);
+static void             invalidate              (AdgEntity      *entity);
+static void             render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
 
 
 G_DEFINE_TYPE_EXTENDED(AdgContainer, adg_container,
-		       ADG_TYPE_ENTITY, 0,
-		       G_IMPLEMENT_INTERFACE(G_TYPE_CONTAINERABLE,
-					     containerable_init))
+                       ADG_TYPE_ENTITY, 0,
+                       G_IMPLEMENT_INTERFACE(G_TYPE_CONTAINERABLE,
+                                             containerable_init))
 
 
 static void
@@ -107,18 +107,18 @@ adg_container_class_init(AdgContainerClass *klass)
     g_object_class_override_property(gobject_class, PROP_CHILD, "child");
 
     param = g_param_spec_boxed("model-transformation",
-			       P_("The model transformation"),
-			       P_("The model transformation to be applied to this container and its children entities"),
-			       ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+                               P_("The model transformation"),
+                               P_("The model transformation to be applied to this container and its children entities"),
+                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class,
-				    PROP_MODEL_TRANSFORMATION, param);
+                                    PROP_MODEL_TRANSFORMATION, param);
 
     param = g_param_spec_boxed("paper-transformation",
-			       P_("The paper transformation"),
-			       P_("The paper transformation to be applied to this container and its children entities"),
-			       ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+                               P_("The paper transformation"),
+                               P_("The paper transformation to be applied to this container and its children entities"),
+                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class,
-				    PROP_PAPER_TRANSFORMATION, param);
+                                    PROP_PAPER_TRANSFORMATION, param);
 }
 
 static void
@@ -133,8 +133,8 @@ static void
 adg_container_init(AdgContainer *container)
 {
     AdgContainerPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(container,
-							    ADG_TYPE_CONTAINER,
-							    AdgContainerPrivate);
+                                                            ADG_TYPE_CONTAINER,
+                                                            AdgContainerPrivate);
 
     priv->children = NULL;
     cairo_matrix_init_identity(&priv->model_transformation);
@@ -152,38 +152,38 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_MODEL_TRANSFORMATION:
-	g_value_set_boxed(value, &container->priv->model_transformation);
-	break;
+        g_value_set_boxed(value, &container->priv->model_transformation);
+        break;
     case PROP_PAPER_TRANSFORMATION:
-	g_value_set_boxed(value, &container->priv->paper_transformation);
-	break;
+        g_value_set_boxed(value, &container->priv->paper_transformation);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgContainer *container = (AdgContainer *) object;
 
     switch (prop_id) {
     case PROP_CHILD:
-	g_containerable_add((GContainerable *) container,
-			    g_value_get_object(value));
-	break;
+        g_containerable_add((GContainerable *) container,
+                            g_value_get_object(value));
+        break;
     case PROP_MODEL_TRANSFORMATION:
-	adg_matrix_set(&container->priv->model_transformation,
-		       g_value_get_boxed(value));
-	break;
+        adg_matrix_set(&container->priv->model_transformation,
+                       g_value_get_boxed(value));
+        break;
     case PROP_PAPER_TRANSFORMATION:
-	adg_matrix_set(&container->priv->paper_transformation,
-		       g_value_get_boxed(value));
-	break;
+        adg_matrix_set(&container->priv->paper_transformation,
+                       g_value_get_boxed(value));
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
 }
 
@@ -202,7 +202,7 @@ add(GContainerable *containerable, GChildable *childable)
     AdgContainer *container = (AdgContainer *) containerable;
 
     container->priv->children =
-	g_slist_append(container->priv->children, childable);
+        g_slist_append(container->priv->children, childable);
     return TRUE;
 }
 
@@ -216,10 +216,10 @@ remove(GContainerable *containerable, GChildable *childable)
     node = g_slist_find(container->priv->children, childable);
 
     if (!node)
-	return FALSE;
+        return FALSE;
 
     container->priv->children =
-	g_slist_delete_link(container->priv->children, node);
+        g_slist_delete_link(container->priv->children, node);
     return TRUE;
 }
 
@@ -232,16 +232,16 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
     PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
-	cairo_matrix_multiply(&container->priv->model_matrix,
-			      parent_matrix,
-			      &container->priv->model_transformation);
+        cairo_matrix_multiply(&container->priv->model_matrix,
+                              parent_matrix,
+                              &container->priv->model_transformation);
     else
-	adg_matrix_set(&container->priv->model_matrix,
-		       &container->priv->model_transformation);
+        adg_matrix_set(&container->priv->model_matrix,
+                       &container->priv->model_transformation);
 
     g_containerable_propagate_by_name((GContainerable *) entity,
-				      "model-matrix-changed",
-				      &container->priv->model_matrix);
+                                      "model-matrix-changed",
+                                      &container->priv->model_matrix);
 }
 
 static void
@@ -252,16 +252,16 @@ paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
     PARENT_CLASS->paper_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
-	cairo_matrix_multiply(&container->priv->paper_matrix,
-			      parent_matrix,
-			      &container->priv->paper_transformation);
+        cairo_matrix_multiply(&container->priv->paper_matrix,
+                              parent_matrix,
+                              &container->priv->paper_transformation);
     else
-	adg_matrix_set(&container->priv->paper_matrix,
-		       &container->priv->paper_transformation);
+        adg_matrix_set(&container->priv->paper_matrix,
+                       &container->priv->paper_transformation);
 
     g_containerable_propagate_by_name((GContainerable *) entity,
-				      "paper-matrix-changed",
-				      &container->priv->paper_matrix);
+                                      "paper-matrix-changed",
+                                      &container->priv->paper_matrix);
 }
 
 static const AdgMatrix *
@@ -303,7 +303,7 @@ adg_container_get_model_transformation(AdgContainer *container)
 
 void
 adg_container_set_model_transformation(AdgContainer *container,
-				       AdgMatrix *transformation)
+                                       AdgMatrix *transformation)
 {
     AdgEntity *entity;
     AdgEntity *parent;
@@ -329,7 +329,7 @@ adg_container_get_paper_transformation(AdgContainer *container)
 
 void
 adg_container_set_paper_transformation(AdgContainer *container,
-				       AdgMatrix *transformation)
+                                       AdgMatrix *transformation)
 {
     AdgEntity *entity;
     AdgEntity *parent;

@@ -28,10 +28,10 @@ G_BEGIN_DECLS
 
 struct _AdgADimPrivate {
     /* Cache */
-    cairo_path_t	extension1;
-    cairo_path_t	extension2;
-    cairo_path_t	arrow_path;
-    cairo_path_t	baseline;
+    cairo_path_t        extension1;
+    cairo_path_t        extension2;
+    cairo_path_t        arrow_path;
+    cairo_path_t        baseline;
 };
 
 G_END_DECLS

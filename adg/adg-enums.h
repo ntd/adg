@@ -103,4 +103,4 @@ typedef enum {
 G_END_DECLS
 
 
-#endif				/* __ADG_ENUMS_H__ */
+#endif                          /* __ADG_ENUMS_H__ */

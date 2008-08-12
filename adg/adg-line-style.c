@@ -46,17 +46,17 @@ enum {
 };
 
 
-static void		get_property	(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void		set_property	(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
-static GPtrArray *	get_pool	(void);
-static void		apply		(AdgStyle	*style,
-					 cairo_t	*cr);
+static void             get_property    (GObject        *object,
+                                         guint           prop_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void             set_property    (GObject        *object,
+                                         guint           prop_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
+static GPtrArray *      get_pool        (void);
+static void             apply           (AdgStyle       *style,
+                                         cairo_t        *cr);
 
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
@@ -81,39 +81,39 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
     style_class->apply = apply;
 
     param = g_param_spec_double("width",
-				P_("Line Width"),
-				P_("The line thickness in device unit"),
-				0., G_MAXDOUBLE, 2., G_PARAM_READWRITE);
+                                P_("Line Width"),
+                                P_("The line thickness in device unit"),
+                                0., G_MAXDOUBLE, 2., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_WIDTH, param);
 
     param = g_param_spec_int("cap",
-			     P_("Line Cap"),
-			     P_("The line cap mode"),
-			     G_MININT, G_MAXINT, CAIRO_LINE_CAP_ROUND,
-			     G_PARAM_READWRITE);
+                             P_("Line Cap"),
+                             P_("The line cap mode"),
+                             G_MININT, G_MAXINT, CAIRO_LINE_CAP_ROUND,
+                             G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CAP, param);
 
     param = g_param_spec_int("join",
-			     P_("Line Join"),
-			     P_("The line join mode"),
-			     G_MININT, G_MAXINT, CAIRO_LINE_JOIN_MITER,
-			     G_PARAM_READWRITE);
+                             P_("Line Join"),
+                             P_("The line join mode"),
+                             G_MININT, G_MAXINT, CAIRO_LINE_JOIN_MITER,
+                             G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_JOIN, param);
 
     param = g_param_spec_double("miter-limit",
-				P_("Miter Limit"),
-				P_
-				("Whether the lines should be joined with a bevel instead of a miter"),
-				0., G_MAXDOUBLE, 10., G_PARAM_READWRITE);
+                                P_("Miter Limit"),
+                                P_
+                                ("Whether the lines should be joined with a bevel instead of a miter"),
+                                0., G_MAXDOUBLE, 10., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MITER_LIMIT,
-				    param);
+                                    param);
 
     param = g_param_spec_int("antialias",
-			     P_("Antialiasing Mode"),
-			     P_
-			     ("Type of antialiasing to do when rendering lines"),
-			     G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
-			     G_PARAM_READWRITE);
+                             P_("Antialiasing Mode"),
+                             P_
+                             ("Type of antialiasing to do when rendering lines"),
+                             G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
+                             G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANTIALIAS, param);
 
     /* TODO: PROP_DASH (PROP_DASHES, PROP_NUM_DASHES, PROP_DASH_OFFSET) */
@@ -123,8 +123,8 @@ static void
 adg_line_style_init(AdgLineStyle *line_style)
 {
     AdgLineStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(line_style,
-							    ADG_TYPE_LINE_STYLE,
-							    AdgLineStylePrivate);
+                                                            ADG_TYPE_LINE_STYLE,
+                                                            AdgLineStylePrivate);
 
     priv->width = 2.;
     priv->cap = CAIRO_LINE_CAP_ROUND;
@@ -140,63 +140,63 @@ adg_line_style_init(AdgLineStyle *line_style)
 
 static void
 get_property(GObject *object,
-	     guint prop_id, GValue *value, GParamSpec *pspec)
+             guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgLineStyle *line_style = (AdgLineStyle *) object;
 
     switch (prop_id) {
     case PROP_WIDTH:
-	g_value_set_double(value, line_style->priv->width);
-	break;
+        g_value_set_double(value, line_style->priv->width);
+        break;
     case PROP_CAP:
-	g_value_set_int(value, line_style->priv->cap);
-	break;
+        g_value_set_int(value, line_style->priv->cap);
+        break;
     case PROP_JOIN:
-	g_value_set_int(value, line_style->priv->join);
-	break;
+        g_value_set_int(value, line_style->priv->join);
+        break;
     case PROP_MITER_LIMIT:
-	g_value_set_double(value, line_style->priv->miter_limit);
-	break;
+        g_value_set_double(value, line_style->priv->miter_limit);
+        break;
     case PROP_ANTIALIAS:
-	g_value_set_int(value, line_style->priv->antialias);
-	break;
+        g_value_set_int(value, line_style->priv->antialias);
+        break;
     case PROP_DASH:
-	/* TODO */
-	break;
+        /* TODO */
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgLineStyle *line_style = (AdgLineStyle *) object;
 
     switch (prop_id) {
     case PROP_WIDTH:
-	line_style->priv->width = g_value_get_double(value);
-	break;
+        line_style->priv->width = g_value_get_double(value);
+        break;
     case PROP_CAP:
-	line_style->priv->cap = g_value_get_int(value);
-	break;
+        line_style->priv->cap = g_value_get_int(value);
+        break;
     case PROP_JOIN:
-	line_style->priv->join = g_value_get_int(value);
-	break;
+        line_style->priv->join = g_value_get_int(value);
+        break;
     case PROP_MITER_LIMIT:
-	line_style->priv->miter_limit = g_value_get_double(value);
-	break;
+        line_style->priv->miter_limit = g_value_get_double(value);
+        break;
     case PROP_ANTIALIAS:
-	line_style->priv->antialias = g_value_get_int(value);
-	break;
+        line_style->priv->antialias = g_value_get_int(value);
+        break;
     case PROP_DASH:
-	/* TODO */
-	break;
+        /* TODO */
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
@@ -214,7 +214,7 @@ adg_line_style_get_slot(void)
     static AdgStyleSlot slot = -1;
 
     if (G_UNLIKELY(slot < 0))
-	slot = adg_context_get_slot(ADG_TYPE_LINE_STYLE);
+        slot = adg_context_get_slot(ADG_TYPE_LINE_STYLE);
 
     return slot;
 }
@@ -276,7 +276,7 @@ cairo_line_cap_t
 adg_line_style_get_cap(AdgLineStyle *line_style)
 {
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
-			 CAIRO_LINE_CAP_BUTT);
+                         CAIRO_LINE_CAP_BUTT);
 
     return line_style->priv->cap;
 }
@@ -309,7 +309,7 @@ cairo_line_join_t
 adg_line_style_get_join(AdgLineStyle *line_style)
 {
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
-			 CAIRO_LINE_JOIN_MITER);
+                         CAIRO_LINE_JOIN_MITER);
 
     return line_style->priv->join;
 }
@@ -356,7 +356,7 @@ adg_line_style_get_miter_limit(AdgLineStyle *line_style)
  **/
 void
 adg_line_style_set_miter_limit(AdgLineStyle *line_style,
-			       gdouble miter_limit)
+                               gdouble miter_limit)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
@@ -376,7 +376,7 @@ cairo_antialias_t
 adg_line_style_get_antialias(AdgLineStyle *line_style)
 {
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
-			 CAIRO_ANTIALIAS_DEFAULT);
+                         CAIRO_ANTIALIAS_DEFAULT);
 
     return line_style->priv->antialias;
 }
@@ -390,7 +390,7 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
  **/
 void
 adg_line_style_set_antialias(AdgLineStyle *line_style,
-			     cairo_antialias_t antialias)
+                             cairo_antialias_t antialias)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
@@ -405,37 +405,37 @@ get_pool(void)
     static GPtrArray *pool = NULL;
 
     if (G_UNLIKELY(pool == NULL)) {
-	cairo_pattern_t *pattern;
+        cairo_pattern_t *pattern;
 
-	pool = g_ptr_array_sized_new(ADG_LINE_STYLE_LAST);
+        pool = g_ptr_array_sized_new(ADG_LINE_STYLE_LAST);
 
-	pool->pdata[ADG_LINE_STYLE_DRAW] =
-	    g_object_new(ADG_TYPE_LINE_STYLE, "width", 2., NULL);
+        pool->pdata[ADG_LINE_STYLE_DRAW] =
+            g_object_new(ADG_TYPE_LINE_STYLE, "width", 2., NULL);
 
-	pattern = cairo_pattern_create_rgb(0., 1., 0.);
-	pool->pdata[ADG_LINE_STYLE_CENTER] =
-	    g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-			 0.75, NULL);
-	cairo_pattern_destroy(pattern);
+        pattern = cairo_pattern_create_rgb(0., 1., 0.);
+        pool->pdata[ADG_LINE_STYLE_CENTER] =
+            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
+                         0.75, NULL);
+        cairo_pattern_destroy(pattern);
 
-	pattern = cairo_pattern_create_rgba(0., 0., 0., 0.5);
-	pool->pdata[ADG_LINE_STYLE_HIDDEN] =
-	    g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-			 0.75, NULL);
-	cairo_pattern_destroy(pattern);
+        pattern = cairo_pattern_create_rgba(0., 0., 0., 0.5);
+        pool->pdata[ADG_LINE_STYLE_HIDDEN] =
+            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
+                         0.75, NULL);
+        cairo_pattern_destroy(pattern);
 
-	pattern = cairo_pattern_create_rgb(0., 0., 1.);
-	pool->pdata[ADG_LINE_STYLE_XATCH] =
-	    g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-			 1.25, NULL);
-	cairo_pattern_destroy(pattern);
+        pattern = cairo_pattern_create_rgb(0., 0., 1.);
+        pool->pdata[ADG_LINE_STYLE_XATCH] =
+            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
+                         1.25, NULL);
+        cairo_pattern_destroy(pattern);
 
-	pool->pdata[ADG_LINE_STYLE_DIM] = g_object_new(ADG_TYPE_LINE_STYLE,
-						       "width", 0.75,
-						       NULL);
+        pool->pdata[ADG_LINE_STYLE_DIM] = g_object_new(ADG_TYPE_LINE_STYLE,
+                                                       "width", 0.75,
+                                                       NULL);
 
-	pool->len = ADG_LINE_STYLE_LAST;
-	}
+        pool->len = ADG_LINE_STYLE_LAST;
+        }
 
     return pool;
 }
@@ -461,10 +461,10 @@ apply(AdgStyle *style, cairo_t *cr)
     cairo_set_antialias(cr, line_style->priv->antialias);
 
     if (line_style->priv->num_dashes > 0) {
-	g_return_if_fail(line_style->priv->dashes != NULL);
+        g_return_if_fail(line_style->priv->dashes != NULL);
 
-	cairo_set_dash(cr, line_style->priv->dashes,
-		       line_style->priv->num_dashes,
-		       line_style->priv->dash_offset);
+        cairo_set_dash(cr, line_style->priv->dashes,
+                       line_style->priv->num_dashes,
+                       line_style->priv->dash_offset);
     }
 }

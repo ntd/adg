@@ -33,8 +33,8 @@ G_BEGIN_DECLS
 typedef CpmlPair AdgPair;
 
 
-GType		adg_pair_get_type	(void) G_GNUC_CONST;
-AdgPair *	adg_pair_dup		(const AdgPair	*pair);
+GType           adg_pair_get_type       (void) G_GNUC_CONST;
+AdgPair *       adg_pair_dup            (const AdgPair  *pair);
 
 G_END_DECLS
 

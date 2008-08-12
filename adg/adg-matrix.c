@@ -39,9 +39,9 @@ adg_matrix_get_type(void)
     static int matrix_type = 0;
 
     if (G_UNLIKELY(matrix_type == 0))
-	matrix_type = g_boxed_type_register_static("AdgMatrix",
-						   (GBoxedCopyFunc) adg_matrix_dup,
-						   g_free);
+        matrix_type = g_boxed_type_register_static("AdgMatrix",
+                                                   (GBoxedCopyFunc) adg_matrix_dup,
+                                                   g_free);
 
     return matrix_type;
 }

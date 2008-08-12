@@ -35,9 +35,9 @@ adg_pattern_get_type(void)
     static int pattern_type = 0;
 
     if (G_UNLIKELY(pattern_type == 0))
-	pattern_type = g_boxed_type_register_static("AdgPattern",
-						    (GBoxedCopyFunc) cairo_pattern_reference,
-						    (GBoxedFreeFunc) cairo_pattern_destroy);
+        pattern_type = g_boxed_type_register_static("AdgPattern",
+                                                    (GBoxedCopyFunc) cairo_pattern_reference,
+                                                    (GBoxedFreeFunc) cairo_pattern_destroy);
 
     return pattern_type;
 }

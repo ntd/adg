@@ -27,9 +27,9 @@
 G_BEGIN_DECLS
 
 struct _AdgModelPrivate {
-    gchar	*name;
-    gchar	*material;
-    gchar	*treatment;
+    gchar       *name;
+    gchar       *material;
+    gchar       *treatment;
 };
 
 G_END_DECLS

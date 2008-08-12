@@ -25,7 +25,7 @@
 G_BEGIN_DECLS
 
 struct _AdgStylePrivate {
-    AdgPattern	*pattern;
+    AdgPattern  *pattern;
 };
 
 G_END_DECLS

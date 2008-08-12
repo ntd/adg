@@ -39,23 +39,23 @@ typedef struct _AdgContainerClass   AdgContainerClass;
 typedef struct _AdgContainerPrivate AdgContainerPrivate;
 
 struct _AdgContainer {
-    AdgEntity		 entity;
+    AdgEntity            entity;
     /*< private >*/
-    AdgContainerPrivate	*priv;
+    AdgContainerPrivate *priv;
 };
 
 struct _AdgContainerClass {
-    AdgEntityClass	 parent_class;
+    AdgEntityClass       parent_class;
 };
 
 
-GType		 adg_container_get_type			(void) G_GNUC_CONST;
-const AdgMatrix *adg_container_get_model_transformation	(AdgContainer	*container);
-void		 adg_container_set_model_transformation	(AdgContainer	*container,
-							 AdgMatrix	*transformation);
-const AdgMatrix *adg_container_get_paper_transformation	(AdgContainer	*container);
-void		 adg_container_set_paper_transformation	(AdgContainer	*container,
-							 AdgMatrix	*transformation);
+GType            adg_container_get_type                 (void) G_GNUC_CONST;
+const AdgMatrix *adg_container_get_model_transformation (AdgContainer   *container);
+void             adg_container_set_model_transformation (AdgContainer   *container,
+                                                         AdgMatrix      *transformation);
+const AdgMatrix *adg_container_get_paper_transformation (AdgContainer   *container);
+void             adg_container_set_paper_transformation (AdgContainer   *container,
+                                                         AdgMatrix      *transformation);
 
 G_END_DECLS
 

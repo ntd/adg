@@ -42,12 +42,12 @@ enum {
 };
 
 
-static void	finalize		(GObject	*object);
-static void	model_matrix_changed	(AdgEntity	*entity,
-					 AdgMatrix	*parent_matrix);
-static void	render			(AdgEntity	*entity,
-					 cairo_t	*cr);
-static gchar *	default_quote		(AdgDim		*dim);
+static void     finalize                (GObject        *object);
+static void     model_matrix_changed    (AdgEntity      *entity,
+                                         AdgMatrix      *parent_matrix);
+static void     render                  (AdgEntity      *entity,
+                                         cairo_t        *cr);
+static gchar *  default_quote           (AdgDim         *dim);
 
 
 G_DEFINE_TYPE(AdgADim, adg_adim, ADG_TYPE_DIM);
@@ -74,10 +74,10 @@ adg_adim_class_init(AdgADimClass *klass)
     dim_class->default_quote = default_quote;
 
     param = g_param_spec_double("direction",
-				P_("Direction"),
-				P_("The inclination angle of the extension lines"),
-				-G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                P_("Direction"),
+                                P_("The inclination angle of the extension lines"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
 }
 
@@ -85,7 +85,7 @@ static void
 adg_adim_init(AdgADim *adim)
 {
     AdgADimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM,
-						       AdgADimPrivate);
+                                                       AdgADimPrivate);
 
     priv->extension1.status = CAIRO_STATUS_SUCCESS;
     priv->extension1.data = NULL;
@@ -121,7 +121,7 @@ static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
     ((AdgEntityClass *) PARENT_CLASS)->model_matrix_changed(entity,
-							    parent_matrix);
+                                                            parent_matrix);
 
     /* TODO */
 }

@@ -40,52 +40,52 @@ typedef struct _AdgFontStyleClass   AdgFontStyleClass;
 typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
 
 struct _AdgFontStyle {
-    AdgStyle		 style;
+    AdgStyle             style;
     /*< private >*/
-    AdgFontStylePrivate	*priv;
+    AdgFontStylePrivate *priv;
 };
 
 struct _AdgFontStyleClass {
-    AdgStyleClass	 parent_class;
+    AdgStyleClass        parent_class;
 };
 
 
-GType		adg_font_style_get_type		(void) G_GNUC_CONST;
-AdgStyleSlot	adg_font_style_get_slot		(void) G_GNUC_CONST;
-AdgStyle *	adg_font_style_new		(void);
+GType           adg_font_style_get_type         (void) G_GNUC_CONST;
+AdgStyleSlot    adg_font_style_get_slot         (void) G_GNUC_CONST;
+AdgStyle *      adg_font_style_new              (void);
 
-const gchar *	adg_font_style_get_family	(AdgFontStyle	*font_style);
-void		adg_font_style_set_family	(AdgFontStyle	*font_style,
-						 const gchar	*family);
+const gchar *   adg_font_style_get_family       (AdgFontStyle   *font_style);
+void            adg_font_style_set_family       (AdgFontStyle   *font_style,
+                                                 const gchar    *family);
 cairo_font_slant_t
-		adg_font_style_get_slant	(AdgFontStyle	*font_style);
-void		adg_font_style_set_slant	(AdgFontStyle	*font_style,
-						 cairo_font_slant_t slant);
+                adg_font_style_get_slant        (AdgFontStyle   *font_style);
+void            adg_font_style_set_slant        (AdgFontStyle   *font_style,
+                                                 cairo_font_slant_t slant);
 cairo_font_weight_t
-		adg_font_style_get_weight	(AdgFontStyle	*font_style);
-void		adg_font_style_set_weight	(AdgFontStyle	*font_style,
-						 cairo_font_weight_t weight);
-gdouble		adg_font_style_get_size		(AdgFontStyle	*font_style);
-void		adg_font_style_set_size		(AdgFontStyle	*font_style,
-						 gdouble	 size);
+                adg_font_style_get_weight       (AdgFontStyle   *font_style);
+void            adg_font_style_set_weight       (AdgFontStyle   *font_style,
+                                                 cairo_font_weight_t weight);
+gdouble         adg_font_style_get_size         (AdgFontStyle   *font_style);
+void            adg_font_style_set_size         (AdgFontStyle   *font_style,
+                                                 gdouble         size);
 cairo_antialias_t
-		adg_font_style_get_antialias	(AdgFontStyle	*font_style);
-void		adg_font_style_set_antialias	(AdgFontStyle	*font_style,
-						 cairo_antialias_t antialias);
+                adg_font_style_get_antialias    (AdgFontStyle   *font_style);
+void            adg_font_style_set_antialias    (AdgFontStyle   *font_style,
+                                                 cairo_antialias_t antialias);
 cairo_subpixel_order_t
-		adg_font_style_get_subpixel_order
-						(AdgFontStyle	*font_style);
-void		adg_font_style_set_subpixel_order
-						(AdgFontStyle	*font_style,
-						 cairo_subpixel_order_t subpixel_order);
+                adg_font_style_get_subpixel_order
+                                                (AdgFontStyle   *font_style);
+void            adg_font_style_set_subpixel_order
+                                                (AdgFontStyle   *font_style,
+                                                 cairo_subpixel_order_t subpixel_order);
 cairo_hint_style_t
-		adg_font_style_get_hint_style	(AdgFontStyle	*font_style);
-void		adg_font_style_set_hint_style	(AdgFontStyle	*font_style,
-						 cairo_hint_style_t hint_style);
+                adg_font_style_get_hint_style   (AdgFontStyle   *font_style);
+void            adg_font_style_set_hint_style   (AdgFontStyle   *font_style,
+                                                 cairo_hint_style_t hint_style);
 cairo_hint_metrics_t
-		adg_font_style_get_hint_metrics	(AdgFontStyle	*font_style);
-void		adg_font_style_set_hint_metrics	(AdgFontStyle	*font_style,
-						 cairo_hint_metrics_t hint_metrics);
+                adg_font_style_get_hint_metrics (AdgFontStyle   *font_style);
+void            adg_font_style_set_hint_metrics (AdgFontStyle   *font_style,
+                                                 cairo_hint_metrics_t hint_metrics);
 
 G_END_DECLS
 

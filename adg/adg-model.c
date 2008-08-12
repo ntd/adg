@@ -50,21 +50,21 @@ enum {
 };
 
 
-static void	finalize		(GObject	*object);
-static void	get_property		(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
-static void	set_name		(AdgModel	*model,
-					 const gchar	*name);
-static void	set_material		(AdgModel	*model,
-					 const gchar	*material);
-static void	set_treatment		(AdgModel	*model,
-					 const gchar	*treatment);
+static void     finalize                (GObject        *object);
+static void     get_property            (GObject        *object,
+                                         guint           prop_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void     set_property            (GObject        *object,
+                                         guint           prop_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
+static void     set_name                (AdgModel       *model,
+                                         const gchar    *name);
+static void     set_material            (AdgModel       *model,
+                                         const gchar    *material);
+static void     set_treatment           (AdgModel       *model,
+                                         const gchar    *treatment);
 
 static guint model_signals[LAST_SIGNAL] = { 0 };
 
@@ -87,21 +87,21 @@ adg_model_class_init(AdgModelClass *klass)
     gobject_class->finalize = finalize;
 
     param = g_param_spec_string("name",
-				P_("Part Name"),
-				P_("Descriptive name of this part"),
-				NULL, G_PARAM_READWRITE);
+                                P_("Part Name"),
+                                P_("Descriptive name of this part"),
+                                NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NAME, param);
 
     param = g_param_spec_string("material",
-				P_("Material"),
-				P_("Material this part is done with"),
-				NULL, G_PARAM_READWRITE);
+                                P_("Material"),
+                                P_("Material this part is done with"),
+                                NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MATERIAL, param);
 
     param = g_param_spec_string("treatment",
-				P_("Treatment"),
-				P_("Treatment this part must receive"),
-				NULL, G_PARAM_READWRITE);
+                                P_("Treatment"),
+                                P_("Treatment this part must receive"),
+                                NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TREATMENT, param);
 }
 
@@ -109,8 +109,8 @@ static void
 adg_model_init(AdgModel *model)
 {
     AdgModelPrivate *priv =
-	G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
-				    AdgModelPrivate);
+        G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
+                                    AdgModelPrivate);
     priv->name = NULL;
     priv->material = NULL;
     priv->treatment = NULL;
@@ -133,45 +133,45 @@ finalize(GObject *object)
 
 static void
 get_property(GObject *object,
-	     guint prop_id, GValue *value, GParamSpec *pspec)
+             guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgModelPrivate *priv = ((AdgModel *) object)->priv;
 
     switch (prop_id) {
     case PROP_NAME:
-	g_value_set_string(value, priv->name);
-	break;
+        g_value_set_string(value, priv->name);
+        break;
     case PROP_MATERIAL:
-	g_value_set_string(value, priv->material);
-	break;
+        g_value_set_string(value, priv->material);
+        break;
     case PROP_TREATMENT:
-	g_value_set_string(value, priv->treatment);
-	break;
+        g_value_set_string(value, priv->treatment);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgModel *model = ADG_MODEL(object);
 
     switch (prop_id) {
     case PROP_NAME:
-	set_name(model, g_value_get_string(value));
-	break;
+        set_name(model, g_value_get_string(value));
+        break;
     case PROP_MATERIAL:
-	set_material(model, g_value_get_string(value));
-	break;
+        set_material(model, g_value_get_string(value));
+        break;
     case PROP_TREATMENT:
-	set_treatment(model, g_value_get_string(value));
-	break;
+        set_treatment(model, g_value_get_string(value));
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 

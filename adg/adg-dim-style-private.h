@@ -27,20 +27,20 @@
 G_BEGIN_DECLS
 
 struct _AdgDimStylePrivate {
-    AdgStyle	*quote_style;
-    AdgStyle	*tolerance_style;
-    AdgStyle	*note_style;
-    AdgStyle	*line_style;
-    AdgStyle	*arrow_style;
-    gdouble	 from_offset;
-    gdouble	 to_offset;
-    gdouble	 baseline_spacing;
-    gdouble	 tolerance_spacing;
-    AdgPair	 quote_shift;
-    AdgPair	 tolerance_shift;
-    AdgPair	 note_shift;
-    gchar	*number_format;
-    gchar	*number_tag;
+    AdgStyle    *quote_style;
+    AdgStyle    *tolerance_style;
+    AdgStyle    *note_style;
+    AdgStyle    *line_style;
+    AdgStyle    *arrow_style;
+    gdouble      from_offset;
+    gdouble      to_offset;
+    gdouble      baseline_spacing;
+    gdouble      tolerance_spacing;
+    AdgPair      quote_shift;
+    AdgPair      tolerance_shift;
+    AdgPair      note_shift;
+    gchar       *number_format;
+    gchar       *number_tag;
 };
 
 G_END_DECLS

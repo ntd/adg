@@ -44,42 +44,42 @@ enum {
 };
 
 
-static void		get_property		(GObject	*object,
-						 guint		 prop_id,
-						 GValue		*value,
-						 GParamSpec	*pspec);
-static void		set_property		(GObject	*object,
-						 guint		 prop_id,
-						 const GValue	*value,
-						 GParamSpec	*pspec);
-static GPtrArray *	get_pool		(void);
-static void		arrow_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		triangle_renderer	(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		dot_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		circle_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		block_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		square_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		tick_renderer		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
-static void		draw_triangle		(cairo_t	*cr,
-						 AdgArrowStyle	*arrow_style,
-						 CpmlPath	*segment);
-static void		draw_circle		(cairo_t	*cr,
-						 AdgArrowStyle	*arrow_style,
-						 CpmlPath	*segment);
+static void             get_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static GPtrArray *      get_pool                (void);
+static void             arrow_renderer          (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             triangle_renderer       (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             dot_renderer            (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             circle_renderer         (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             block_renderer          (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             square_renderer         (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             tick_renderer           (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
+static void             draw_triangle           (cairo_t        *cr,
+                                                 AdgArrowStyle  *arrow_style,
+                                                 CpmlPath       *segment);
+static void             draw_circle             (cairo_t        *cr,
+                                                 AdgArrowStyle  *arrow_style,
+                                                 CpmlPath       *segment);
 
 
 G_DEFINE_TYPE(AdgArrowStyle, adg_arrow_style, ADG_TYPE_STYLE)
@@ -103,34 +103,34 @@ adg_arrow_style_class_init(AdgArrowStyleClass *klass)
     style_class->get_pool = get_pool;
 
     param = g_param_spec_double("size",
-				P_("Arrow Size"),
-				P_
-				("The size of the arrow, a renderer dependent parameter"),
-				-G_MAXDOUBLE, G_MAXDOUBLE, 14.,
-				G_PARAM_READWRITE);
+                                P_("Arrow Size"),
+                                P_
+                                ("The size of the arrow, a renderer dependent parameter"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 14.,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
 
     param = g_param_spec_double("angle",
-				P_("Arrow Angle"),
-				P_
-				("The angle of the arrow, a renderer dependent parameter"),
-				-G_MAXDOUBLE, G_MAXDOUBLE, G_PI / 6.,
-				G_PARAM_READWRITE);
+                                P_("Arrow Angle"),
+                                P_
+                                ("The angle of the arrow, a renderer dependent parameter"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, G_PI / 6.,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE, param);
 
     param = g_param_spec_double("margin",
-				P_("Arrow Margin"),
-				P_
-				("The margin of the arrow, a renderer dependent parameter"),
-				-G_MAXDOUBLE, G_MAXDOUBLE, 14.,
-				G_PARAM_READWRITE);
+                                P_("Arrow Margin"),
+                                P_
+                                ("The margin of the arrow, a renderer dependent parameter"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 14.,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MARGIN, param);
 
     param = g_param_spec_pointer("renderer",
-				 P_("Renderer Callback"),
-				 P_
-				 ("The callback to call to renderer this arrow type"),
-				 G_PARAM_READWRITE);
+                                 P_("Renderer Callback"),
+                                 P_
+                                 ("The callback to call to renderer this arrow type"),
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RENDERER, param);
 }
 
@@ -138,8 +138,8 @@ static void
 adg_arrow_style_init(AdgArrowStyle *arrow_style)
 {
     AdgArrowStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(arrow_style,
-							     ADG_TYPE_ARROW_STYLE,
-							     AdgArrowStylePrivate);
+                                                             ADG_TYPE_ARROW_STYLE,
+                                                             AdgArrowStylePrivate);
 
     priv->size = 14.;
     priv->angle = G_PI / 6.;
@@ -156,45 +156,45 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_SIZE:
-	g_value_set_double(value, arrow_style->priv->size);
-	break;
+        g_value_set_double(value, arrow_style->priv->size);
+        break;
     case PROP_ANGLE:
-	g_value_set_double(value, arrow_style->priv->angle);
-	break;
+        g_value_set_double(value, arrow_style->priv->angle);
+        break;
     case PROP_MARGIN:
-	g_value_set_double(value, arrow_style->priv->margin);
-	break;
+        g_value_set_double(value, arrow_style->priv->margin);
+        break;
     case PROP_RENDERER:
-	g_value_set_pointer(value, arrow_style->priv->renderer);
-	break;
+        g_value_set_pointer(value, arrow_style->priv->renderer);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgArrowStyle *arrow_style = (AdgArrowStyle *) object;
 
     switch (prop_id) {
     case PROP_SIZE:
-	arrow_style->priv->size = g_value_get_double(value);
-	break;
+        arrow_style->priv->size = g_value_get_double(value);
+        break;
     case PROP_ANGLE:
-	arrow_style->priv->angle = g_value_get_double(value);
-	break;
+        arrow_style->priv->angle = g_value_get_double(value);
+        break;
     case PROP_MARGIN:
-	arrow_style->priv->margin = g_value_get_double(value);
-	break;
+        arrow_style->priv->margin = g_value_get_double(value);
+        break;
     case PROP_RENDERER:
-	arrow_style->priv->renderer = g_value_get_pointer(value);
-	break;
+        arrow_style->priv->renderer = g_value_get_pointer(value);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
@@ -212,7 +212,7 @@ adg_arrow_style_get_slot(void)
     static AdgStyleSlot slot = -1;
 
     if (G_UNLIKELY(slot < 0))
-	slot = adg_context_get_slot(ADG_TYPE_ARROW_STYLE);
+        slot = adg_context_get_slot(ADG_TYPE_ARROW_STYLE);
 
     return slot;
 }
@@ -241,7 +241,7 @@ adg_arrow_style_new(void)
  **/
 void
 adg_arrow_style_render(AdgArrowStyle *arrow_style,
-		       cairo_t *cr, CpmlPath *segment)
+                       cairo_t *cr, CpmlPath *segment)
 {
     g_return_if_fail(arrow_style != NULL);
     g_return_if_fail(cr != NULL);
@@ -249,7 +249,7 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
 
     /* NULL renderer */
     if (arrow_style->priv->renderer == NULL)
-	return;
+        return;
 
     PARENT_CLASS->apply((AdgStyle *) arrow_style, cr);
     arrow_style->priv->renderer(arrow_style, cr, segment);
@@ -377,7 +377,7 @@ adg_arrow_style_get_renderer(AdgArrowStyle *arrow_style)
  **/
 void
 adg_arrow_style_set_renderer(AdgArrowStyle *arrow_style,
-			     AdgArrowRenderer renderer)
+                             AdgArrowRenderer renderer)
 {
     g_return_if_fail(ADG_IS_ARROW_STYLE(arrow_style));
 
@@ -392,34 +392,34 @@ get_pool(void)
     static GPtrArray *pool = NULL;
 
     if (G_UNLIKELY(pool == NULL)) {
-	pool = g_ptr_array_sized_new(ADG_ARROW_STYLE_LAST);
+        pool = g_ptr_array_sized_new(ADG_ARROW_STYLE_LAST);
 
-	pool->pdata[ADG_ARROW_STYLE_ARROW] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "renderer", arrow_renderer,
-			 NULL);
-	pool->pdata[ADG_ARROW_STYLE_TRIANGLE] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "renderer",
-			 triangle_renderer, NULL);
-	pool->pdata[ADG_ARROW_STYLE_DOT] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "size", 5., "angle", 0.,
-			 "margin", 2.5, "renderer", dot_renderer, NULL);
-	pool->pdata[ADG_ARROW_STYLE_CIRCLE] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
-			 "margin", 5., "renderer", circle_renderer, NULL);
-	pool->pdata[ADG_ARROW_STYLE_BLOCK] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
-			 "margin", 5., "renderer", block_renderer, NULL);
-	pool->pdata[ADG_ARROW_STYLE_SQUARE] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
-			 "margin", -0.1, "renderer", square_renderer,
-			 NULL);
-	pool->pdata[ADG_ARROW_STYLE_TICK] =
-	    g_object_new(ADG_TYPE_ARROW_STYLE, "size", 20., "angle",
-			 G_PI / 3., "margin", 0., "renderer",
-			 tick_renderer, NULL);
+        pool->pdata[ADG_ARROW_STYLE_ARROW] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "renderer", arrow_renderer,
+                         NULL);
+        pool->pdata[ADG_ARROW_STYLE_TRIANGLE] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "renderer",
+                         triangle_renderer, NULL);
+        pool->pdata[ADG_ARROW_STYLE_DOT] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "size", 5., "angle", 0.,
+                         "margin", 2.5, "renderer", dot_renderer, NULL);
+        pool->pdata[ADG_ARROW_STYLE_CIRCLE] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
+                         "margin", 5., "renderer", circle_renderer, NULL);
+        pool->pdata[ADG_ARROW_STYLE_BLOCK] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
+                         "margin", 5., "renderer", block_renderer, NULL);
+        pool->pdata[ADG_ARROW_STYLE_SQUARE] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "size", 10., "angle", 0.,
+                         "margin", -0.1, "renderer", square_renderer,
+                         NULL);
+        pool->pdata[ADG_ARROW_STYLE_TICK] =
+            g_object_new(ADG_TYPE_ARROW_STYLE, "size", 20., "angle",
+                         G_PI / 3., "margin", 0., "renderer",
+                         tick_renderer, NULL);
 
-	pool->len = ADG_ARROW_STYLE_LAST;
-	}
+        pool->len = ADG_ARROW_STYLE_LAST;
+        }
 
     return pool;
 }
@@ -484,35 +484,35 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
 
     switch (segment->cairo_path.data[0].header.type) {
     case CAIRO_PATH_LINE_TO:
-	cpml_primitive_get_pair(segment, &vector, CPML_FIRST);
-	vector.x -= segment->org.x;
-	vector.y -= segment->org.y;
-	cpml_vector_from_pair(&vector, &vector);
+        cpml_primitive_get_pair(segment, &vector, CPML_FIRST);
+        vector.x -= segment->org.x;
+        vector.y -= segment->org.y;
+        cpml_vector_from_pair(&vector, &vector);
 
-	tail.x = vector.x * length + segment->org.x;
-	tail.y = vector.y * length + segment->org.y;
+        tail.x = vector.x * length + segment->org.x;
+        tail.y = vector.y * length + segment->org.y;
 
-	tmp = vector.x;
-	vector.x = -vector.y * height_2;
-	vector.y = tmp * height_2;
+        tmp = vector.x;
+        vector.x = -vector.y * height_2;
+        vector.y = tmp * height_2;
 
-	tail1.x = tail.x + vector.x;
-	tail1.y = tail.y + vector.y;
+        tail1.x = tail.x + vector.x;
+        tail1.y = tail.y + vector.y;
 
-	tail2.x = tail.x - vector.x;
-	tail2.y = tail.y - vector.y;
+        tail2.x = tail.x - vector.x;
+        tail2.y = tail.y - vector.y;
 
-	cairo_move_to(cr, segment->org.x, segment->org.y);
-	cairo_line_to(cr, tail1.x, tail1.y);
-	cairo_line_to(cr, tail2.x, tail2.y);
-	cairo_close_path(cr);
+        cairo_move_to(cr, segment->org.x, segment->org.y);
+        cairo_line_to(cr, tail1.x, tail1.y);
+        cairo_line_to(cr, tail2.x, tail2.y);
+        cairo_close_path(cr);
 
-	break;
+        break;
     case CAIRO_PATH_CURVE_TO:
-	ADG_STUB();
-	break;
+        ADG_STUB();
+        break;
     default:
-	g_assert_not_reached();
+        g_assert_not_reached();
     }
 }
 

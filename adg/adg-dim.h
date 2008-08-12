@@ -39,17 +39,17 @@ typedef struct _AdgDimClass   AdgDimClass;
 typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDim {
-    AdgEntity		 entity;
+    AdgEntity            entity;
     /*< private >*/
-    AdgDimPrivate	*priv;
+    AdgDimPrivate       *priv;
 };
 
 struct _AdgDimClass {
-    AdgEntityClass	 parent_class;
+    AdgEntityClass       parent_class;
     /* Virtual Table */
-    gchar *		(*default_quote)	(AdgDim		*dim);
-    void		(*quote_layout)		(AdgDim		*dim,
-						 cairo_t	*cr);
+    gchar *             (*default_quote)        (AdgDim         *dim);
+    void                (*quote_layout)         (AdgDim         *dim,
+                                                 cairo_t        *cr);
 };
 
 
@@ -92,7 +92,7 @@ void            adg_dim_set_tolerances          (AdgDim         *dim,
 const gchar *   adg_dim_get_note                (AdgDim         *dim);
 void            adg_dim_set_note                (AdgDim         *dim,
                                                  const gchar    *note);
-void            adg_dim_render_quote            (AdgDim		*dim,
+void            adg_dim_render_quote            (AdgDim         *dim,
                                                  cairo_t        *cr);
 
 G_END_DECLS

@@ -42,7 +42,7 @@ main(gint argc, gchar ** argv)
 
     widget = gtk_drawing_area_new();
     g_signal_connect(widget, "expose-event", G_CALLBACK(drawing_expose),
-		     canvas);
+                     canvas);
     gtk_container_add(GTK_CONTAINER(window), widget);
 
     gtk_widget_show_all(window);
@@ -79,7 +79,7 @@ drawing_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
     scale = (double) (width - 10.) / 10.;
 
     cairo_matrix_init(&matrix, scale, 0., 0., scale, 5.,
-		      75. + 10. * scale);
+                      75. + 10. * scale);
     adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
 
     /* Rendering process */

@@ -40,25 +40,25 @@ typedef struct _AdgContextPrivate AdgContextPrivate;
 typedef AdgStyle * (*AdgContextFiller) (AdgStyleClass *style_class, gpointer user_data);
 
 struct _AdgContext {
-    GObject		 object;
+    GObject              object;
     /*< private >*/
-    AdgContextPrivate	*priv;
+    AdgContextPrivate   *priv;
 };
 
 struct _AdgContextClass {
-    GObjectClass	 object_class;
+    GObjectClass         object_class;
 };
 
 
-GType		adg_context_get_type		(void) G_GNUC_CONST;
-AdgStyleSlot	adg_context_get_slot		(GType		 type);
+GType           adg_context_get_type            (void) G_GNUC_CONST;
+AdgStyleSlot    adg_context_get_slot            (GType           type);
 
-AdgContext *	adg_context_new			(AdgContextFiller context_filler,
-						 gpointer	 user_data);
-AdgStyle *	adg_context_get_style		(AdgContext	*context,
-						 AdgStyleSlot	 slot);
-void		adg_context_set_style		(AdgContext	*context,
-						 AdgStyle	*style);
+AdgContext *    adg_context_new                 (AdgContextFiller context_filler,
+                                                 gpointer        user_data);
+AdgStyle *      adg_context_get_style           (AdgContext     *context,
+                                                 AdgStyleSlot    slot);
+void            adg_context_set_style           (AdgContext     *context,
+                                                 AdgStyle       *style);
 
 
 G_END_DECLS

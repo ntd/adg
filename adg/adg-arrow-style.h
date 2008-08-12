@@ -50,42 +50,42 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  * If you need an ending arrow, you should reverse the segment and recall
  * this function.
  **/
-typedef void (*AdgArrowRenderer)		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
+typedef void (*AdgArrowRenderer)                (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
 
 struct _AdgArrowStyle {
-    AdgStyle		  style;
+    AdgStyle              style;
     /*< private >*/
     AdgArrowStylePrivate *priv;
 };
 
 struct _AdgArrowStyleClass {
-    AdgStyleClass	  parent_class;
+    AdgStyleClass         parent_class;
 };
 
 
-GType		adg_arrow_style_get_type	(void) G_GNUC_CONST;
-AdgStyleSlot	adg_arrow_style_get_slot	(void) G_GNUC_CONST;
-AdgStyle *	adg_arrow_style_new		(void);
+GType           adg_arrow_style_get_type        (void) G_GNUC_CONST;
+AdgStyleSlot    adg_arrow_style_get_slot        (void) G_GNUC_CONST;
+AdgStyle *      adg_arrow_style_new             (void);
 
-void            adg_arrow_style_render		(AdgArrowStyle	*arrow_style,
-						 cairo_t	*cr,
-						 CpmlPath	*segment);
+void            adg_arrow_style_render          (AdgArrowStyle  *arrow_style,
+                                                 cairo_t        *cr,
+                                                 CpmlPath       *segment);
 
-gdouble		adg_arrow_style_get_size	(AdgArrowStyle	*arrow_style);
-void		adg_arrow_style_set_size	(AdgArrowStyle	*arrow_style,
-						 gdouble	 size);
-gdouble		adg_arrow_style_get_angle	(AdgArrowStyle	*arrow_style);
-void		adg_arrow_style_set_angle	(AdgArrowStyle	*arrow_style,
-						 gdouble	 angle);
-gdouble		adg_arrow_style_get_margin	(AdgArrowStyle	*arrow_style);
-void		adg_arrow_style_set_margin	(AdgArrowStyle	*arrow_style,
-						 gdouble	 margin);
+gdouble         adg_arrow_style_get_size        (AdgArrowStyle  *arrow_style);
+void            adg_arrow_style_set_size        (AdgArrowStyle  *arrow_style,
+                                                 gdouble         size);
+gdouble         adg_arrow_style_get_angle       (AdgArrowStyle  *arrow_style);
+void            adg_arrow_style_set_angle       (AdgArrowStyle  *arrow_style,
+                                                 gdouble         angle);
+gdouble         adg_arrow_style_get_margin      (AdgArrowStyle  *arrow_style);
+void            adg_arrow_style_set_margin      (AdgArrowStyle  *arrow_style,
+                                                 gdouble         margin);
 const AdgArrowRenderer
-		adg_arrow_style_get_renderer	(AdgArrowStyle	*arrow_style);
-void		adg_arrow_style_set_renderer	(AdgArrowStyle	*arrow_style,
-						 AdgArrowRenderer renderer);
+                adg_arrow_style_get_renderer    (AdgArrowStyle  *arrow_style);
+void            adg_arrow_style_set_renderer    (AdgArrowStyle  *arrow_style,
+                                                 AdgArrowRenderer renderer);
 
 G_END_DECLS
 

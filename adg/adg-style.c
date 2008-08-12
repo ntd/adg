@@ -46,19 +46,19 @@ enum {
 };
 
 
-static void		get_property	(GObject	*object,
-					 guint		 prop_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void		set_property	(GObject	*object,
-					 guint		 prop_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
-static GPtrArray *	get_pool	(void);
-static void		apply		(AdgStyle	*style,
-					 cairo_t	*cr);
-static void		set_pattern	(AdgStyle	*style,
-					 AdgPattern	*pattern);
+static void             get_property    (GObject        *object,
+                                         guint           prop_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void             set_property    (GObject        *object,
+                                         guint           prop_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
+static GPtrArray *      get_pool        (void);
+static void             apply           (AdgStyle       *style,
+                                         cairo_t        *cr);
+static void             set_pattern     (AdgStyle       *style,
+                                         AdgPattern     *pattern);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT)
@@ -81,9 +81,9 @@ adg_style_class_init(AdgStyleClass *klass)
     klass->apply = apply;
 
     param = g_param_spec_boxed("pattern",
-			       P_("Pattern"),
-			       P_("The pattern associated to this style"),
-			       ADG_TYPE_PATTERN, G_PARAM_READWRITE);
+                               P_("Pattern"),
+                               P_("The pattern associated to this style"),
+                               ADG_TYPE_PATTERN, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_PATTERN, param);
 }
 
@@ -91,8 +91,8 @@ static void
 adg_style_init(AdgStyle *style)
 {
     AdgStylePrivate *priv =
-	G_TYPE_INSTANCE_GET_PRIVATE(style, ADG_TYPE_STYLE,
-				    AdgStylePrivate);
+        G_TYPE_INSTANCE_GET_PRIVATE(style, ADG_TYPE_STYLE,
+                                    AdgStylePrivate);
 
     priv->pattern = NULL;
 
@@ -101,33 +101,33 @@ adg_style_init(AdgStyle *style)
 
 static void
 get_property(GObject *object,
-	     guint prop_id, GValue *value, GParamSpec *pspec)
+             guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgStyle *style = (AdgStyle *) object;
 
     switch (prop_id) {
     case PROP_PATTERN:
-	g_value_set_boxed(value, style->priv->pattern);
-	break;
+        g_value_set_boxed(value, style->priv->pattern);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgStyle *style = (AdgStyle *) object;
 
     switch (prop_id) {
     case PROP_PATTERN:
-	set_pattern(style, g_value_get_boxed(value));
-	break;
+        set_pattern(style, g_value_get_boxed(value));
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
@@ -178,7 +178,7 @@ adg_style_from_id(GType type, AdgStyleId id)
     g_type_class_unref(klass);
 
     if (id > pool->len)
-	return NULL;
+        return NULL;
 
     return (AdgStyle *) g_ptr_array_index(pool, id);
 }
@@ -262,17 +262,17 @@ static void
 apply(AdgStyle *style, cairo_t *cr)
 {
     if (style->priv->pattern != NULL)
-	cairo_set_source(cr, style->priv->pattern);
+        cairo_set_source(cr, style->priv->pattern);
 }
 
 static void
 set_pattern(AdgStyle *style, AdgPattern *pattern)
 {
     if (style->priv->pattern != NULL)
-	cairo_pattern_destroy(style->priv->pattern);
+        cairo_pattern_destroy(style->priv->pattern);
 
     if (pattern != NULL)
-	cairo_pattern_reference(pattern);
+        cairo_pattern_reference(pattern);
 
     style->priv->pattern = pattern;
 }

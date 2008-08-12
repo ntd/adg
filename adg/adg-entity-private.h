@@ -34,9 +34,9 @@ typedef enum {
 
 
 struct _AdgEntityPrivate {
-    AdgEntity		*parent;
-    AdgEntityFlags	 flags;
-    AdgContext		*context;
+    AdgEntity           *parent;
+    AdgEntityFlags       flags;
+    AdgContext          *context;
 };
 
 G_END_DECLS

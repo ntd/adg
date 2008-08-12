@@ -40,13 +40,13 @@ typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 
 struct _AdgCanvas {
-    AdgContainer	 container;
+    AdgContainer         container;
     /*< private >*/
-    AdgCanvasPrivate	*priv;
+    AdgCanvasPrivate    *priv;
 };
 
 struct _AdgCanvasClass {
-    AdgContainerClass	 parent_class;
+    AdgContainerClass    parent_class;
 };
 
 

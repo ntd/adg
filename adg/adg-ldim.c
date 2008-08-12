@@ -42,19 +42,19 @@ enum {
 };
 
 
-static void	finalize		(GObject	*object);
-static void	get_property		(GObject	*object,
-					 guint		 param_id,
-					 GValue		*value,
-					 GParamSpec	*pspec);
-static void	set_property		(GObject	*object,
-					 guint		 param_id,
-					 const GValue	*value,
-					 GParamSpec	*pspec);
-static void	update			(AdgEntity	*entity);
-static void	render			(AdgEntity	*entity,
-					 cairo_t	*cr);
-static gchar *	default_quote		(AdgDim		*dim);
+static void     finalize                (GObject        *object);
+static void     get_property            (GObject        *object,
+                                         guint           param_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void     set_property            (GObject        *object,
+                                         guint           param_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
+static void     update                  (AdgEntity      *entity);
+static void     render                  (AdgEntity      *entity,
+                                         cairo_t        *cr);
+static gchar *  default_quote           (AdgDim         *dim);
 
 
 G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -83,10 +83,10 @@ adg_ldim_class_init(AdgLDimClass *klass)
     dim_class->default_quote = default_quote;
 
     param = g_param_spec_double("direction",
-				P_("Direction"),
-				P_("The inclination angle of the extension lines"),
-				-G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
-				G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                P_("Direction"),
+                                P_("The inclination angle of the extension lines"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
 }
 
@@ -94,7 +94,7 @@ static void
 adg_ldim_init(AdgLDim *ldim)
 {
     AdgLDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(ldim, ADG_TYPE_LDIM,
-						       AdgLDimPrivate);
+                                                       AdgLDimPrivate);
 
     priv->direction = CPML_DIR_RIGHT;
 
@@ -130,33 +130,33 @@ finalize(GObject *object)
 
 static void
 get_property(GObject *object,
-	     guint prop_id, GValue *value, GParamSpec *pspec)
+             guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgLDim *ldim = ADG_LDIM(object);
 
     switch (prop_id) {
     case PROP_DIRECTION:
-	g_value_set_double(value, ldim->priv->direction);
-	break;
+        g_value_set_double(value, ldim->priv->direction);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
 static void
 set_property(GObject *object,
-	     guint prop_id, const GValue *value, GParamSpec *pspec)
+             guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgLDim *ldim = ADG_LDIM(object);
 
     switch (prop_id) {
     case PROP_DIRECTION:
-	ldim->priv->direction = g_value_get_double(value);
-	break;
+        ldim->priv->direction = g_value_get_double(value);
+        break;
     default:
-	G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-	break;
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
     }
 }
 
@@ -180,14 +180,14 @@ update(AdgEntity *entity)
     dim = (AdgDim *) entity;
     ldim = (AdgLDim *) entity;
     dim_style =
-	(AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+        (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
     arrow_style =
-	(AdgArrowStyle *) adg_dim_style_get_arrow_style(dim_style);
+        (AdgArrowStyle *) adg_dim_style_get_arrow_style(dim_style);
 
     /* Get the inverted transformation matrix */
     adg_matrix_set(&device2user, adg_entity_get_model_matrix(entity));
     g_return_if_fail(cairo_matrix_invert(&device2user) ==
-		     CAIRO_STATUS_SUCCESS);
+                     CAIRO_STATUS_SUCCESS);
 
     /* Set vector to the director of the extension lines */
     cpml_vector_from_angle(&vector, ldim->priv->direction);
@@ -204,11 +204,11 @@ update(AdgEntity *entity)
 
     /* Calculate arrow1 and arrow2 */
     offset.x =
-	vector.x * adg_dim_style_get_baseline_spacing(dim_style) *
-	dim->priv->level;
+        vector.x * adg_dim_style_get_baseline_spacing(dim_style) *
+        dim->priv->level;
     offset.y =
-	vector.y * adg_dim_style_get_baseline_spacing(dim_style) *
-	dim->priv->level;
+        vector.y * adg_dim_style_get_baseline_spacing(dim_style) *
+        dim->priv->level;
     cairo_matrix_transform_distance(&device2user, &offset.x, &offset.y);
 
     arrow1.x = dim->priv->pos1.x + offset.x;
@@ -249,7 +249,7 @@ update(AdgEntity *entity)
 
     /* Set extension1 */
     if (ldim->priv->extension1.data == NULL)
-	ldim->priv->extension1.data = g_new(cairo_path_data_t, 4);
+        ldim->priv->extension1.data = g_new(cairo_path_data_t, 4);
 
     path_data = ldim->priv->extension1.data;
     path_data[0].header.type = CAIRO_PATH_MOVE_TO;
@@ -263,7 +263,7 @@ update(AdgEntity *entity)
 
     /* Set extension2 */
     if (ldim->priv->extension2.data == NULL)
-	ldim->priv->extension2.data = g_new(cairo_path_data_t, 4);
+        ldim->priv->extension2.data = g_new(cairo_path_data_t, 4);
 
     path_data = ldim->priv->extension2.data;
     path_data[0].header.type = CAIRO_PATH_MOVE_TO;
@@ -277,7 +277,7 @@ update(AdgEntity *entity)
 
     /* Set arrow_path */
     if (ldim->priv->arrow_path.data == NULL)
-	ldim->priv->arrow_path.data = g_new(cairo_path_data_t, 4);
+        ldim->priv->arrow_path.data = g_new(cairo_path_data_t, 4);
 
     path_data = ldim->priv->arrow_path.data;
     path_data[0].header.type = CAIRO_PATH_MOVE_TO;
@@ -291,7 +291,7 @@ update(AdgEntity *entity)
 
     /* Set baseline */
     if (ldim->priv->baseline.data == NULL)
-	ldim->priv->baseline.data = g_new(cairo_path_data_t, 4);
+        ldim->priv->baseline.data = g_new(cairo_path_data_t, 4);
 
     path_data = ldim->priv->baseline.data;
     path_data[0].header.type = CAIRO_PATH_MOVE_TO;
@@ -317,10 +317,10 @@ render(AdgEntity *entity, cairo_t *cr)
     dim = (AdgDim *) entity;
     ldim = (AdgLDim *) entity;
     dim_style =
-	(AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+        (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
     line_style = adg_dim_style_get_line_style(dim_style);
     arrow_style =
-	(AdgArrowStyle *) adg_dim_style_get_arrow_style(dim_style);
+        (AdgArrowStyle *) adg_dim_style_get_arrow_style(dim_style);
 
     /* TODO: caching
        if (!adg_entity_model_applied (entity)) */
@@ -331,9 +331,9 @@ render(AdgEntity *entity, cairo_t *cr)
 
     /* Arrows */
     if (cpml_path_from_cairo(&primitive, &ldim->priv->arrow_path, NULL)) {
-	adg_arrow_style_render(arrow_style, cr, &primitive);
-	if (cpml_primitive_reverse(&primitive))
-	    adg_arrow_style_render(arrow_style, cr, &primitive);
+        adg_arrow_style_render(arrow_style, cr, &primitive);
+        if (cpml_primitive_reverse(&primitive))
+            adg_arrow_style_render(arrow_style, cr, &primitive);
     }
 
     /* Lines */
@@ -359,12 +359,12 @@ default_quote(AdgDim *dim)
     gdouble number;
 
     if (!cpml_pair_distance(&dim->priv->pos2, &dim->priv->pos1, &number))
-	return NULL;
+        return NULL;
 
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
-						     ADG_SLOT_DIM_STYLE);
+                                                     ADG_SLOT_DIM_STYLE);
     return g_strdup_printf(adg_dim_style_get_number_format(dim_style),
-			   number);
+                           number);
 }
 
 
@@ -398,13 +398,13 @@ adg_ldim_new(void)
  */
 AdgEntity *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
-		  double direction, const AdgPair *pos)
+                  double direction, const AdgPair *pos)
 {
     AdgEntity *entity = (AdgEntity *) g_object_new(ADG_TYPE_LDIM,
-						   "ref1", ref1,
-						   "ref2", ref2,
-						   "direction", direction,
-						   NULL);
+                                                   "ref1", ref1,
+                                                   "ref2", ref2,
+                                                   "direction", direction,
+                                                   NULL);
     adg_ldim_set_pos((AdgLDim *) entity, pos);
     return entity;
 }
@@ -425,10 +425,10 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  */
 AdgEntity *
 adg_ldim_new_full_explicit(double ref1_x,
-			   double ref1_y,
-			   double ref2_x,
-			   double ref2_y,
-			   double direction, double pos_x, double pos_y)
+                           double ref1_y,
+                           double ref2_x,
+                           double ref2_y,
+                           double direction, double pos_x, double pos_y)
 {
     AdgPair ref1;
     AdgPair ref2;
@@ -476,16 +476,16 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
     baseline_vector.y = extension_vector.x;
 
     d = extension_vector.y * baseline_vector.x -
-	extension_vector.x * baseline_vector.y;
+        extension_vector.x * baseline_vector.y;
     g_return_if_fail(d != 0.);
 
     k = ((pos->y - dim->priv->ref1.y) * baseline_vector.x -
-	 (pos->x - dim->priv->ref1.x) * baseline_vector.y) / d;
+         (pos->x - dim->priv->ref1.x) * baseline_vector.y) / d;
     dim->priv->pos1.x = dim->priv->ref1.x + k * extension_vector.x;
     dim->priv->pos1.y = dim->priv->ref1.y + k * extension_vector.y;
 
     k = ((pos->y - dim->priv->ref2.y) * baseline_vector.x -
-	 (pos->x - dim->priv->ref2.x) * baseline_vector.y) / d;
+         (pos->x - dim->priv->ref2.x) * baseline_vector.y) / d;
     dim->priv->pos2.x = dim->priv->ref2.x + k * extension_vector.x;
     dim->priv->pos2.y = dim->priv->ref2.y + k * extension_vector.y;
 

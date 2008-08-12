@@ -38,17 +38,17 @@ typedef struct _AdgModelClass   AdgModelClass;
 typedef struct _AdgModelPrivate AdgModelPrivate;
 
 struct _AdgModel {
-    GObject		 object;
+    GObject              object;
     /*< private >*/
-    AdgModelPrivate	*priv;
+    AdgModelPrivate     *priv;
 };
 
 struct _AdgModelClass {
-    GObjectClass	 parent_class;
+    GObjectClass         parent_class;
 };
 
 
-GType			adg_model_get_type	(void) G_GNUC_CONST;
+GType                   adg_model_get_type      (void) G_GNUC_CONST;
 
 gchar *                 adg_model_get_name      (AdgModel        *model);
 void                    adg_model_set_name      (AdgModel        *model,

@@ -28,12 +28,12 @@
 G_BEGIN_DECLS
 
 struct _AdgContainerPrivate {
-    GSList	*children;
-    AdgMatrix	 model_transformation;
-    AdgMatrix	 paper_transformation;
+    GSList      *children;
+    AdgMatrix    model_transformation;
+    AdgMatrix    paper_transformation;
     /* Cached data */
-    AdgMatrix	 model_matrix;
-    AdgMatrix	 paper_matrix;
+    AdgMatrix    model_matrix;
+    AdgMatrix    paper_matrix;
 };
 
 G_END_DECLS

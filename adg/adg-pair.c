@@ -34,9 +34,9 @@ adg_pair_get_type(void)
     static int pair_type = 0;
 
     if (G_UNLIKELY(pair_type == 0))
-	pair_type = g_boxed_type_register_static("AdgPair",
-						 (GBoxedCopyFunc) adg_pair_dup,
-						 g_free);
+        pair_type = g_boxed_type_register_static("AdgPair",
+                                                 (GBoxedCopyFunc) adg_pair_dup,
+                                                 g_free);
 
     return pair_type;
 }

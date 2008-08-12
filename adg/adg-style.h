@@ -41,30 +41,30 @@ typedef gint                    AdgStyleId;
 typedef gint                    AdgStyleSlot;
 
 struct _AdgStyle {
-    GObject		 object;
+    GObject              object;
     /*< private >*/
-    AdgStylePrivate	*priv;
+    AdgStylePrivate     *priv;
 };
 
 struct _AdgStyleClass {
-    GObjectClass	 parent_class;
+    GObjectClass         parent_class;
     /* Virtual table */
-    GPtrArray *		(*get_pool)		(void);
-    void		(*apply)		(AdgStyle	*style,
-						 cairo_t	*cr);
+    GPtrArray *         (*get_pool)             (void);
+    void                (*apply)                (AdgStyle       *style,
+                                                 cairo_t        *cr);
 };
 
-GType			adg_style_get_type	(void) G_GNUC_CONST;
-AdgStyleId		adg_style_register_id	(AdgStyle	*style);
-AdgStyle *		adg_style_from_id	(GType		 type,
-						 AdgStyleId	 id);
-AdgStyle *		adg_style_get_default	(AdgStyleClass	*klass);
+GType                   adg_style_get_type      (void) G_GNUC_CONST;
+AdgStyleId              adg_style_register_id   (AdgStyle       *style);
+AdgStyle *              adg_style_from_id       (GType           type,
+                                                 AdgStyleId      id);
+AdgStyle *              adg_style_get_default   (AdgStyleClass  *klass);
 
-void			adg_style_apply		(AdgStyle	*style,
-						 cairo_t	*cr);
-const AdgPattern *	adg_style_get_pattern	(AdgStyle	*style);
-void			adg_style_set_pattern	(AdgStyle	*style,
-						 AdgPattern	*pattern);
+void                    adg_style_apply         (AdgStyle       *style,
+                                                 cairo_t        *cr);
+const AdgPattern *      adg_style_get_pattern   (AdgStyle       *style);
+void                    adg_style_set_pattern   (AdgStyle       *style,
+                                                 AdgPattern     *pattern);
 
 
 G_END_DECLS
