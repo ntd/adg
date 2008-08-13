@@ -295,6 +295,451 @@ set_property(GObject *object, guint prop_id,
 }
 
 
+/**
+ * adg_dim_get_ref1:
+ * @dim: an #AdgDim
+ *
+ * Gets the ref1 coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
+ *
+ * Return value: the ref1 coordinates
+ **/
+const AdgPair *
+adg_dim_get_ref1(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return &dim->priv->ref1;
+}
+
+/**
+ * adg_dim_get_ref2:
+ * @dim: an #AdgDim
+ *
+ * Gets the ref2 coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
+ *
+ * Return value: the ref2 coordinates
+ **/
+const AdgPair *
+adg_dim_get_ref2(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return &dim->priv->ref2;
+}
+
+/**
+ * adg_dim_set_ref:
+ * @dim: an #AdgDim
+ * @ref1: the ref1 coordinates
+ * @ref2: the ref2 coordinates
+ *
+ * Shortcut to set ref1 and ref2 points at once.
+ **/
+void
+adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (ref1 != NULL || ref2 != NULL) {
+        GObject *object = (GObject *) dim;
+
+        g_object_freeze_notify(object);
+
+        if (ref1 != NULL) {
+            dim->priv->ref1 = *ref1;
+            g_object_notify(object, "ref1");
+        }
+
+        if (ref2 != NULL) {
+            dim->priv->ref2 = *ref2;
+            g_object_notify(object, "ref2");
+        }
+
+        g_object_thaw_notify(object);
+        invalidate((AdgEntity *) dim);
+    }
+}
+
+/**
+ * adg_dim_set_ref_explicit:
+ * @dim: an #AdgDim
+ * @ref1_x: x component of pos1
+ * @ref1_y: y component of pos1
+ * @ref2_x: x component of pos2
+ * @ref2_y: y component of pos2
+ *
+ * Shortcut to set ref1 and ref2 points at once,
+ * using explicit coordinates.
+ **/
+void
+adg_dim_set_ref_explicit(AdgDim *dim, double ref1_x, double ref1_y,
+                         double ref2_x, double ref2_y)
+{
+    AdgPair ref1;
+    AdgPair ref2;
+
+    ref1.x = ref1_x;
+    ref1.y = ref1_y;
+    ref2.x = ref2_x;
+    ref2.y = ref2_y;
+
+    adg_dim_set_ref(dim, &ref1, &ref2);
+}
+
+/**
+ * adg_dim_get_pos1:
+ * @dim: an #AdgDim
+ *
+ * Gets the pos1 coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
+ *
+ * Return value: the pos1 coordinates
+ **/
+const AdgPair *
+adg_dim_get_pos1(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return &dim->priv->pos1;
+}
+
+/**
+ * adg_dim_get_pos2:
+ * @dim: an #AdgDim
+ *
+ * Gets the pos2 coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
+ *
+ * Return value: the pos2 coordinates
+ **/
+const AdgPair *
+adg_dim_get_pos2(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return &dim->priv->pos2;
+}
+
+/**
+ * adg_dim_set_pos:
+ * @dim: an #AdgDim
+ * @pos1: the pos1 coordinates
+ * @pos2: the pos2 coordinates
+ *
+ * Shortcut to set pos1 and pos2 points at once.
+ **/
+void
+adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (pos1 != NULL || pos2 != NULL) {
+        GObject *object = (GObject *) dim;
+
+        g_object_freeze_notify(object);
+
+        if (pos1 != NULL) {
+            dim->priv->pos1 = *pos1;
+            g_object_notify(object, "pos1");
+        }
+        if (pos2 != NULL) {
+            dim->priv->pos2 = *pos2;
+            g_object_notify(object, "pos2");
+        }
+
+        g_object_thaw_notify(object);
+        invalidate((AdgEntity *) dim);
+    }
+}
+
+/**
+ * adg_dim_set_pos_explicit:
+ * @dim: an #AdgDim
+ * @pos1_x: x component of pos1
+ * @pos1_y: y component of pos1
+ * @pos2_x: x component of pos2
+ * @pos2_y: y component of pos2
+ *
+ * Shortcut to set pos1 and pos2 points at once,
+ * using explicit coordinates.
+ **/
+void
+adg_dim_set_pos_explicit(AdgDim *dim, double pos1_x, double pos1_y,
+                         double pos2_x, double pos2_y)
+{
+    AdgPair pos1;
+    AdgPair pos2;
+
+    pos1.x = pos1_x;
+    pos1.y = pos1_y;
+    pos2.x = pos2_x;
+    pos2.y = pos2_y;
+
+    adg_dim_set_pos(dim, &pos1, &pos2);
+}
+
+/**
+ * adg_dim_get_level:
+ * @dim: an #AdgDim
+ *
+ * Gets the level of this dimension.
+ *
+ * Return value: the level value
+ **/
+double
+adg_dim_get_level(AdgDim  *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0.0);
+
+    return dim->priv->level;
+}
+
+/**
+ * adg_dim_set_level:
+ * @dim: an #AdgDim
+ * @level: the new level
+ *
+ * Sets a new level for this dimension. The level is used to
+ * stack the quotes using a spacing value from dim_style
+ * (specified in paper space).
+ **/
+void
+adg_dim_set_level(AdgDim *dim, double level)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    dim->priv->level = level;
+    g_object_notify((GObject *) dim, "level");
+    invalidate((AdgEntity *) dim);
+}
+
+/**
+ * adg_dim_get_quote:
+ * @dim: an #AdgDim
+ *
+ * Gets the quote text. The string is internally owned and
+ * must not be freed or modified.
+ *
+ * Return value: the quote text
+ **/
+const gchar *
+adg_dim_get_quote(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return dim->priv->quote;
+}
+
+/**
+ * adg_dim_set_quote:
+ * @dim: an #AdgDim
+ * @quote: the quote text
+ *
+ * Explicitely sets the text to use as quote. If @quote is %NULL or
+ * was never set, an automatic text is calculated using the format as
+ * specified by the dim_style associated to this entity and getting
+ * the number from the construction points (ref1, ref2, pos1 and pos2).
+ **/
+void
+adg_dim_set_quote(AdgDim *dim, const gchar *quote)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    g_free(dim->priv->quote);
+    dim->priv->quote = g_strdup(quote);
+    g_object_notify((GObject *) dim, "quote");
+
+    text_cache_invalidate(&dim->priv->quote_cache);
+}
+
+/**
+ * adg_dim_get_tolerance_up:
+ * @dim: an #AdgDim
+ *
+ * Gets the upper tolerance text or %NULL on upper tolerance disabled.
+ * The string is internally owned and must not be freed or modified.
+ *
+ * Return value: the tolerance text
+ **/
+const gchar *
+adg_dim_get_tolerance_up(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return dim->priv->tolerance_up;
+}
+
+/**
+ * adg_dim_set_tolerance_up:
+ * @dim: an #AdgDim
+ * @tolerance_up: the upper tolerance
+ *
+ * Sets the upper tolerance. Use %NULL as @tolerance_up to disable it.
+ **/
+void
+adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    g_free(dim->priv->tolerance_up);
+    dim->priv->tolerance_up = g_strdup(tolerance_up);
+    g_object_notify((GObject *) dim, "tolerance-up");
+
+    text_cache_invalidate(&dim->priv->tolerance_up_cache);
+}
+
+/**
+ * adg_dim_get_tolerance_down:
+ * @dim: an #AdgDim
+ *
+ * Gets the lower tolerance text or %NULL on lower tolerance disabled.
+ * The string is internally owned and must not be freed or modified.
+ *
+ * Return value: the tolerance text
+ **/
+const gchar *
+adg_dim_get_tolerance_down(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return dim->priv->tolerance_down;
+}
+
+/**
+ * adg_dim_set_tolerance_down:
+ * @dim: an #AdgDim
+ * @tolerance_down: the lower tolerance
+ *
+ * Sets the lower tolerance. Use %NULL as @tolerance_down to disable it.
+ **/
+void
+adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    g_free(dim->priv->tolerance_down);
+    dim->priv->tolerance_down = g_strdup(tolerance_down);
+    g_object_notify((GObject *) dim, "tolerance-down");
+
+    text_cache_invalidate(&dim->priv->tolerance_down_cache);
+}
+
+/**
+ * adg_dim_set_tolerances:
+ * @dim: an #AdgDim
+ * @tolerance_up: the upper tolerance text
+ * @tolerance_down: the lower tolerance text
+ *
+ * Shortcut to set both the tolerance at once.
+ **/
+void
+adg_dim_set_tolerances(AdgDim *dim, const gchar *tolerance_up,
+                       const gchar *tolerance_down)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    g_object_freeze_notify((GObject *) dim);
+    adg_dim_set_tolerance_up(dim, tolerance_up);
+    adg_dim_set_tolerance_down(dim, tolerance_down);
+    g_object_thaw_notify((GObject *) dim);
+}
+
+/**
+ * adg_dim_get_note:
+ * @dim: and #AdgDim
+ *
+ * Gets the note text or %NULL if the note is not used. The string is
+ * internally owned and must not be freed or modified.
+ *
+ * Return value: the note text
+ **/
+const gchar *
+adg_dim_get_note(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return dim->priv->note;
+}
+
+/**
+ * adg_dim_set_note:
+ * @dim: an #AdgDim
+ * @note: the new note
+ *
+ * Sets a new note text, usually appended at the end of the dimension text.
+ **/
+void
+adg_dim_set_note(AdgDim *dim, const gchar *note)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    g_free(dim->priv->note);
+    dim->priv->note = g_strdup(note);
+    g_object_notify((GObject *) dim, "note");
+
+    text_cache_invalidate(&dim->priv->note_cache);
+}
+
+/**
+ * adg_dim_render_quote:
+ * @dim: an #AdgDim object
+ * @cr: a #cairo_t drawing context
+ *
+ * Renders the quote of @dim at the @org position. This function
+ * is only useful in new dimension implementations.
+ */
+void
+adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
+{
+    AdgDimPrivate *priv;
+    AdgDimStyle *dim_style;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    priv = dim->priv;
+    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
+                                                     ADG_SLOT_DIM_STYLE);
+
+    if (priv->quote == NULL)
+        adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
+
+    cairo_save(cr);
+
+    cairo_set_matrix(cr, adg_entity_get_paper_matrix((AdgEntity *) dim));
+    ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
+    cairo_set_matrix(cr, adg_entity_get_model_matrix((AdgEntity *) dim));
+
+    cairo_translate(cr, priv->quote_org.x, priv->quote_org.y);
+    adg_entity_scale_to_paper((AdgEntity *) dim, cr);
+    cairo_rotate(cr, priv->quote_angle);
+
+    /* Rendering quote */
+    adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
+    text_cache_render(&priv->quote_cache, cr);
+
+    /* Rendering tolerances */
+    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
+        adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
+
+        if (priv->tolerance_up != NULL)
+            text_cache_render(&priv->tolerance_up_cache, cr);
+
+        if (priv->tolerance_down != NULL)
+            text_cache_render(&priv->tolerance_down_cache, cr);
+    }
+
+    /* Rendering the note */
+    if (priv->note != NULL) {
+        adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
+        text_cache_render(&priv->note_cache, cr);
+    }
+
+    cairo_restore(cr);
+}
+
+
 static void
 invalidate(AdgEntity *entity)
 {
@@ -334,8 +779,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
                                                      ADG_SLOT_DIM_STYLE);
 
     /* Compute the quote */
-    quote_org.x = 0.;
-    quote_org.y = 0.;
     if (text_cache_update(&priv->quote_cache, priv->quote, cr,
                           adg_dim_style_get_quote_style(dim_style))) {
         cp.x = priv->quote_cache.extents.width;
@@ -395,9 +838,7 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     shift.x -= cp.x / 2.;
 
     if (priv->quote_cache.glyphs) {
-        quote_org.x += shift.x;
-        quote_org.y += shift.y;
-        text_cache_move_to(&priv->quote_cache, &quote_org);
+        text_cache_move_to(&priv->quote_cache, &shift);
     }
 
     if (priv->tolerance_up_cache.glyphs) {
@@ -418,287 +859,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
         text_cache_move_to(&priv->note_cache, &note_org);
     }
 }
-
-
-const AdgPair *
-adg_dim_get_ref1(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return &dim->priv->ref1;
-}
-
-const AdgPair *
-adg_dim_get_ref2(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return &dim->priv->ref2;
-}
-
-void
-adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (ref1 != NULL || ref2 != NULL) {
-        GObject *object = (GObject *) dim;
-
-        g_object_freeze_notify(object);
-
-        if (ref1 != NULL) {
-            dim->priv->ref1 = *ref1;
-            g_object_notify(object, "ref1");
-        }
-
-        if (ref2 != NULL) {
-            dim->priv->ref2 = *ref2;
-            g_object_notify(object, "ref2");
-        }
-
-        g_object_thaw_notify(object);
-        invalidate((AdgEntity *) dim);
-    }
-}
-
-void
-adg_dim_set_ref_explicit(AdgDim *dim, double ref1_x, double ref1_y,
-                         double ref2_x, double ref2_y)
-{
-    AdgPair ref1;
-    AdgPair ref2;
-
-    ref1.x = ref1_x;
-    ref1.y = ref1_y;
-    ref2.x = ref2_x;
-    ref2.y = ref2_y;
-
-    adg_dim_set_ref(dim, &ref1, &ref2);
-}
-
-const AdgPair *
-adg_dim_get_pos1(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return &dim->priv->pos1;
-}
-
-const AdgPair *
-adg_dim_get_pos2(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return &dim->priv->pos2;
-}
-
-void
-adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (pos1 != NULL || pos2 != NULL) {
-        GObject *object = (GObject *) dim;
-
-        g_object_freeze_notify(object);
-
-        if (pos1 != NULL) {
-            dim->priv->pos1 = *pos1;
-            g_object_notify(object, "pos1");
-        }
-        if (pos2 != NULL) {
-            dim->priv->pos2 = *pos2;
-            g_object_notify(object, "pos2");
-        }
-
-        g_object_thaw_notify(object);
-        invalidate((AdgEntity *) dim);
-    }
-}
-
-void
-adg_dim_set_pos_explicit(AdgDim *dim, double pos1_x, double pos1_y,
-                         double pos2_x, double pos2_y)
-{
-    AdgPair pos1;
-    AdgPair pos2;
-
-    pos1.x = pos1_x;
-    pos1.y = pos1_y;
-    pos2.x = pos2_x;
-    pos2.y = pos2_y;
-
-    adg_dim_set_pos(dim, &pos1, &pos2);
-}
-
-double
-adg_dim_get_level(AdgDim  *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0.0);
-
-    return dim->priv->level;
-}
-
-void
-adg_dim_set_level(AdgDim *dim, double level)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    dim->priv->level = level;
-    g_object_notify((GObject *) dim, "level");
-    invalidate((AdgEntity *) dim);
-}
-
-const gchar *
-adg_dim_get_quote(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return dim->priv->quote;
-}
-
-void
-adg_dim_set_quote(AdgDim *dim, const gchar *quote)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_free(dim->priv->quote);
-    dim->priv->quote = g_strdup(quote);
-    g_object_notify((GObject *) dim, "quote");
-
-    text_cache_invalidate(&dim->priv->quote_cache);
-}
-
-const gchar *
-adg_dim_get_tolerance_up(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return dim->priv->tolerance_up;
-}
-
-void
-adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_free(dim->priv->tolerance_up);
-    dim->priv->tolerance_up = g_strdup(tolerance_up);
-    g_object_notify((GObject *) dim, "tolerance-up");
-
-    text_cache_invalidate(&dim->priv->tolerance_up_cache);
-}
-
-const gchar *
-adg_dim_get_tolerance_down(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return dim->priv->tolerance_down;
-}
-
-void
-adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_free(dim->priv->tolerance_down);
-    dim->priv->tolerance_down = g_strdup(tolerance_down);
-    g_object_notify((GObject *) dim, "tolerance-down");
-
-    text_cache_invalidate(&dim->priv->tolerance_down_cache);
-}
-
-void
-adg_dim_set_tolerances(AdgDim *dim,
-                       const gchar *tolerance_up, const gchar *tolerance_down)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_object_freeze_notify((GObject *) dim);
-    adg_dim_set_tolerance_up(dim, tolerance_up);
-    adg_dim_set_tolerance_down(dim, tolerance_down);
-    g_object_thaw_notify((GObject *) dim);
-}
-
-const gchar *
-adg_dim_get_note(AdgDim *dim)
-{
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    return dim->priv->note;
-}
-
-void
-adg_dim_set_note(AdgDim *dim, const gchar *note)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_free(dim->priv->note);
-    dim->priv->note = g_strdup(note);
-    g_object_notify((GObject *) dim, "note");
-
-    text_cache_invalidate(&dim->priv->note_cache);
-}
-
-
-/**
- * adg_dim_render_quote:
- * @dim: an #AdgDim object
- * @cr: a #cairo_t drawing context
- *
- * Renders the quote of @dim at the @org position. This function
- * is only useful in new dimension implementations.
- */
-void
-adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
-{
-    AdgDimPrivate *priv;
-    AdgDimStyle *dim_style;
-
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    priv = dim->priv;
-    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
-                                                     ADG_SLOT_DIM_STYLE);
-
-    if (priv->quote == NULL)
-        adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
-
-    cairo_save(cr);
-
-    cairo_set_matrix(cr, adg_entity_get_paper_matrix((AdgEntity *) dim));
-    ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
-    cairo_set_matrix(cr, adg_entity_get_model_matrix((AdgEntity *) dim));
-
-    cairo_translate(cr, priv->quote_org.x, priv->quote_org.y);
-    adg_entity_scale_to_paper((AdgEntity *) dim, cr);
-    cairo_rotate(cr, priv->quote_angle);
-
-    /* Rendering quote */
-    adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
-    text_cache_render(&priv->quote_cache, cr);
-
-    /* Rendering tolerances */
-    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
-        adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
-
-        if (priv->tolerance_up != NULL)
-            text_cache_render(&priv->tolerance_up_cache, cr);
-
-        if (priv->tolerance_down != NULL)
-            text_cache_render(&priv->tolerance_down_cache, cr);
-    }
-
-    /* Rendering the note */
-    if (priv->note != NULL) {
-        adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
-        text_cache_render(&priv->note_cache, cr);
-    }
-
-    cairo_restore(cr);
-}
-
 
 static gboolean
 text_cache_update(AdgTextCache *text_cache, const gchar *text,
