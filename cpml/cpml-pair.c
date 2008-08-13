@@ -89,10 +89,9 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * Return value: 1 if @distance was properly set, 0 on errors
  */
 cairo_bool_t
-cpml_pair_distance(const CpmlPair *from, const CpmlPair *to,
-                   double *distance)
+cpml_pair_distance(double *distance, const CpmlPair *from, const CpmlPair *to)
 {
-    if (!cpml_pair_square_distance(from, to, distance))
+    if (!cpml_pair_square_distance(distance, from, to))
         return 0;
 
     *distance = sqrt(*distance);
@@ -115,8 +114,8 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to,
  * Return value: 1 if @distance was properly set, 0 on errors
  */
 cairo_bool_t
-cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
-                          double *distance)
+cpml_pair_square_distance(double *distance,
+                          const CpmlPair *from, const CpmlPair *to)
 {
     double x, y;
 
@@ -145,7 +144,7 @@ cpml_pair_square_distance(const CpmlPair *from, const CpmlPair *to,
  * Return value: 1 if @angle was properly set, 0 on errors
  */
 cairo_bool_t
-cpml_pair_angle(const CpmlPair *from, const CpmlPair *to, double *angle)
+cpml_pair_angle(double *angle, const CpmlPair *from, const CpmlPair *to)
 {
     static CpmlPair cached_pair = { 1., 0. };
     static double cached_angle = 0.;
@@ -204,7 +203,7 @@ cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair)
 {
     double length;
 
-    if (!cpml_pair_distance(pair, NULL, &length) || length == 0.)
+    if (!cpml_pair_distance(&length, pair, NULL) || length == 0.)
         return 0;
 
     vector->x = pair->x / length;
