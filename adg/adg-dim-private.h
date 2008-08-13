@@ -27,6 +27,14 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgTextCache AdgTextCache;
+
+struct _AdgTextCache {
+    int                  num_glyphs;
+    cairo_glyph_t       *glyphs;
+    cairo_text_extents_t extents;
+};
+
 struct _AdgDimPrivate {
     /* Properties */
     AdgPair              ref1;
@@ -42,14 +50,10 @@ struct _AdgDimPrivate {
     /* Cache */
     CpmlPair             quote_org;
     gdouble              quote_angle;
-    int                  quote_num_glyphs;
-    cairo_glyph_t       *quote_glyphs;
-    int                  tolerance_up_num_glyphs;
-    cairo_glyph_t       *tolerance_up_glyphs;
-    int                  tolerance_down_num_glyphs;
-    cairo_glyph_t       *tolerance_down_glyphs;
-    int                  note_num_glyphs;
-    cairo_glyph_t       *note_glyphs;
+    AdgTextCache         quote_cache;
+    AdgTextCache         tolerance_up_cache;
+    AdgTextCache         tolerance_down_cache;
+    AdgTextCache         note_cache;
 };
 
 G_END_DECLS
