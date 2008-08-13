@@ -387,6 +387,66 @@ adg_entity_scale_to_paper(AdgEntity *entity, cairo_t *cr)
 }
 
 /**
+ * adg_entity_build_paper2model:
+ * @entity: an #AdgEntity
+ * @matrix: the destination matrix
+ *
+ * Builds a matrix to translate from paper to model space and
+ * put the result in @matrix.
+ *
+ * Return value: %TRUE on success, %FALSE on errors
+ **/
+gboolean
+adg_entity_build_paper2model(AdgEntity *entity, AdgMatrix *matrix)
+{
+    cairo_status_t status;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
+    g_return_val_if_fail(matrix != NULL, FALSE);
+
+    adg_matrix_set(matrix, adg_entity_get_model_matrix(entity));
+    status = cairo_matrix_invert(matrix);
+    if (status != CAIRO_STATUS_SUCCESS) {
+        g_error("Unable to invert model matrix (cairo message: %s)",
+                cairo_status_to_string(status));
+        return FALSE;
+    }
+
+    cairo_matrix_multiply(matrix, matrix, adg_entity_get_paper_matrix(entity));
+    return TRUE;
+}
+
+/**
+ * adg_entity_build_model2paper:
+ * @entity: an #AdgEntity
+ * @matrix: the destination matrix
+ *
+ * Builds a matrix to translate from model to paper space and
+ * put the result in @matrix.
+ *
+ * Return value: %TRUE on success, %FALSE on errors
+ **/
+gboolean
+adg_entity_build_model2paper(AdgEntity *entity, AdgMatrix *matrix)
+{
+    cairo_status_t status;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
+    g_return_val_if_fail(matrix != NULL, FALSE);
+
+    adg_matrix_set(matrix, adg_entity_get_paper_matrix(entity));
+    status = cairo_matrix_invert(matrix);
+    if (status != CAIRO_STATUS_SUCCESS) {
+        g_error("Unable to invert paper matrix (cairo message: %s)",
+                cairo_status_to_string(status));
+        return FALSE;
+    }
+
+    cairo_matrix_multiply(matrix, matrix, adg_entity_get_model_matrix(entity));
+    return TRUE;
+}
+
+/**
  * adg_entity_model_matrix_changed:
  * @entity: an #AdgEntity
  * @parent_matrix: the parent #AdgMatrix
