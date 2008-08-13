@@ -711,11 +711,20 @@ text_cache_update(AdgTextCache *text_cache, const gchar *text,
         adg_style_apply(style, cr);
 
     if (!text_cache->glyphs) {
-        cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
-                                         0., 0., text, -1,
-                                         &text_cache->glyphs,
-                                         &text_cache->num_glyphs,
-                                         NULL, NULL, NULL);
+        cairo_status_t status;
+
+        status = cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
+                                                  0., 0., text, -1,
+                                                  &text_cache->glyphs,
+                                                  &text_cache->num_glyphs,
+                                                  NULL, NULL, NULL);
+
+        if (status != CAIRO_STATUS_SUCCESS) {
+            g_error("Unable to build glyphs (cairo message: %s)",
+                    cairo_status_to_string(status));
+            return FALSE;
+        }
+
         cairo_glyph_extents(cr, text_cache->glyphs, text_cache->num_glyphs,
                             &text_cache->extents);
     }
