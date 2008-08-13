@@ -280,8 +280,13 @@ adg_entity_apply
 adg_entity_model_applied
 adg_entity_model_matrix_applied
 adg_entity_paper_matrix_applied
+adg_entity_build_model2paper
+adg_entity_build_paper2model
+adg_entity_scale_to_model
+adg_entity_scale_to_paper
 adg_entity_render
 <SUBSECTION>
+adg_entity_invalidate
 adg_entity_paper_matrix_changed
 adg_entity_model_matrix_changed
 <SUBSECTION Standard>
@@ -397,6 +402,13 @@ adg_dim_set_tolerance_down
 adg_dim_set_tolerances
 adg_dim_get_note
 adg_dim_set_note
+<SUBSECTION>
+adg_dim_get_org
+adg_dim_set_org
+adg_dim_set_org_explicit
+adg_dim_get_angle
+adg_dim_set_angle
+adg_dim_render_quote
 <SUBSECTION Standard>
 AdgDimClass
 AdgDimPrivate
