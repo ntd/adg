@@ -60,6 +60,7 @@ static void     set_property            (GObject        *object,
 static void     paper_matrix_changed    (AdgEntity      *entity,
                                          AdgMatrix      *parent_matrix);
 static void     invalidate              (AdgEntity      *entity);
+static void     clear                   (AdgDim         *entity);
 static gchar *  default_quote           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
@@ -67,7 +68,7 @@ static gboolean text_cache_update       (AdgTextCache   *text_cache,
                                          const gchar    *text,
                                          cairo_t        *cr,
                                          AdgStyle       *style);
-static void     text_cache_invalidate   (AdgTextCache   *text_cache);
+static void     text_cache_clear        (AdgTextCache   *text_cache);
 static void     text_cache_move_to      (AdgTextCache   *text_cache,
                                          const CpmlPair *to);
 static void     text_cache_render       (AdgTextCache   *text_cache,
@@ -196,7 +197,7 @@ finalize(GObject *object)
     g_free(dim->priv->tolerance_up);
     g_free(dim->priv->tolerance_down);
 
-    invalidate((AdgEntity *) dim);
+    clear(dim);
 
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
@@ -253,43 +254,43 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_REF1:
         cpml_pair_copy(&dim->priv->ref1, (AdgPair *) g_value_get_boxed(value));
-        invalidate(entity);
+        clear(dim);
         break;
     case PROP_REF2:
         cpml_pair_copy(&dim->priv->ref2, (AdgPair *) g_value_get_boxed(value));
-        invalidate(entity);
+        clear(dim);
         break;
     case PROP_POS1:
         cpml_pair_copy(&dim->priv->pos1, (AdgPair *) g_value_get_boxed(value));
-        invalidate(entity);
+        clear(dim);
         break;
     case PROP_POS2:
         cpml_pair_copy(&dim->priv->pos2, (AdgPair *) g_value_get_boxed(value));
-        invalidate(entity);
+        clear(dim);
         break;
     case PROP_LEVEL:
         dim->priv->level = g_value_get_double(value);
-        invalidate(entity);
+        clear(dim);
         break;
     case PROP_QUOTE:
         g_free(dim->priv->quote);
         dim->priv->quote = g_value_dup_string(value);
-        text_cache_invalidate(&dim->priv->quote_cache);
+        text_cache_clear(&dim->priv->quote_cache);
         break;
     case PROP_TOLERANCE_UP:
         g_free(dim->priv->tolerance_up);
         dim->priv->tolerance_up = g_value_dup_string(value);
-        text_cache_invalidate(&dim->priv->tolerance_up_cache);
+        text_cache_clear(&dim->priv->tolerance_up_cache);
         break;
     case PROP_TOLERANCE_DOWN:
         g_free(dim->priv->tolerance_down);
         dim->priv->tolerance_down = g_value_dup_string(value);
-        text_cache_invalidate(&dim->priv->tolerance_down_cache);
+        text_cache_clear(&dim->priv->tolerance_down_cache);
         break;
     case PROP_NOTE:
         g_free(dim->priv->note);
         dim->priv->note = g_value_dup_string(value);
-        text_cache_invalidate(&dim->priv->note_cache);
+        text_cache_clear(&dim->priv->note_cache);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -361,7 +362,7 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
         }
 
         g_object_thaw_notify(object);
-        invalidate((AdgEntity *) dim);
+        clear(dim);
     }
 }
 
@@ -453,7 +454,7 @@ adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
         }
 
         g_object_thaw_notify(object);
-        invalidate((AdgEntity *) dim);
+        clear(dim);
     }
 }
 
@@ -515,7 +516,7 @@ adg_dim_set_level(AdgDim *dim, double level)
 
     dim->priv->level = level;
     g_object_notify((GObject *) dim, "level");
-    invalidate((AdgEntity *) dim);
+    clear(dim);
 }
 
 /**
@@ -554,7 +555,7 @@ adg_dim_set_quote(AdgDim *dim, const gchar *quote)
     dim->priv->quote = g_strdup(quote);
     g_object_notify((GObject *) dim, "quote");
 
-    text_cache_invalidate(&dim->priv->quote_cache);
+    text_cache_clear(&dim->priv->quote_cache);
 }
 
 /**
@@ -590,7 +591,7 @@ adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
     dim->priv->tolerance_up = g_strdup(tolerance_up);
     g_object_notify((GObject *) dim, "tolerance-up");
 
-    text_cache_invalidate(&dim->priv->tolerance_up_cache);
+    text_cache_clear(&dim->priv->tolerance_up_cache);
 }
 
 /**
@@ -626,7 +627,7 @@ adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
     dim->priv->tolerance_down = g_strdup(tolerance_down);
     g_object_notify((GObject *) dim, "tolerance-down");
 
-    text_cache_invalidate(&dim->priv->tolerance_down_cache);
+    text_cache_clear(&dim->priv->tolerance_down_cache);
 }
 
 /**
@@ -682,7 +683,7 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
     dim->priv->note = g_strdup(note);
     g_object_notify((GObject *) dim, "note");
 
-    text_cache_invalidate(&dim->priv->note_cache);
+    text_cache_clear(&dim->priv->note_cache);
 }
 
 /**
@@ -746,31 +747,25 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 static void
 paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    AdgDim *dim = (AdgDim *) entity;
-
-    text_cache_invalidate(&dim->priv->quote_cache);
-    text_cache_invalidate(&dim->priv->tolerance_up_cache);
-    text_cache_invalidate(&dim->priv->tolerance_down_cache);
-    text_cache_invalidate(&dim->priv->note_cache);
-
+    clear((AdgDim *) entity);
     PARENT_CLASS->paper_matrix_changed(entity, parent_matrix);
 }
 
 static void
 invalidate(AdgEntity *entity)
 {
-    AdgDim *dim = (AdgDim *) entity;
-
-    dim->priv->quote_angle = 0.;
-    dim->priv->quote_org.x = 0.;
-    dim->priv->quote_org.y = 0.;
-
-    text_cache_invalidate(&dim->priv->quote_cache);
-    text_cache_invalidate(&dim->priv->tolerance_up_cache);
-    text_cache_invalidate(&dim->priv->tolerance_down_cache);
-    text_cache_invalidate(&dim->priv->note_cache);
+    clear((AdgDim *) entity);
+    PARENT_CLASS->invalidate(entity);
 }
 
+static void
+clear(AdgDim *dim)
+{
+    text_cache_clear(&dim->priv->quote_cache);
+    text_cache_clear(&dim->priv->tolerance_up_cache);
+    text_cache_clear(&dim->priv->tolerance_down_cache);
+    text_cache_clear(&dim->priv->note_cache);
+}
 
 static gchar *
 default_quote(AdgDim *dim)
@@ -909,7 +904,7 @@ text_cache_update(AdgTextCache *text_cache, const gchar *text,
 }
 
 static void
-text_cache_invalidate(AdgTextCache *text_cache)
+text_cache_clear(AdgTextCache *text_cache)
 {
     if (text_cache->glyphs) {
         cairo_glyph_free(text_cache->glyphs);
