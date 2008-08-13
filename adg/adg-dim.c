@@ -57,6 +57,8 @@ static void     set_property                    (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void     paper_matrix_changed            (AdgEntity      *entity,
+                                                 AdgMatrix      *parent_matrix);
 static void     invalidate                      (AdgEntity      *entity);
 static gchar *  default_quote                   (AdgDim         *dim);
 static void     quote_layout                    (AdgDim         *dim,
@@ -90,7 +92,8 @@ adg_dim_class_init(AdgDimClass *klass)
     gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
-
+ 
+    entity_class->paper_matrix_changed = paper_matrix_changed;
     entity_class->invalidate = invalidate;
 
     klass->default_quote = default_quote;
@@ -739,6 +742,19 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     cairo_restore(cr);
 }
 
+
+static void
+paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
+{
+    AdgDim *dim = (AdgDim *) entity;
+
+    text_cache_invalidate(&dim->priv->quote_cache);
+    text_cache_invalidate(&dim->priv->tolerance_up_cache);
+    text_cache_invalidate(&dim->priv->tolerance_down_cache);
+    text_cache_invalidate(&dim->priv->note_cache);
+
+    PARENT_CLASS->paper_matrix_changed(entity, parent_matrix);
+}
 
 static void
 invalidate(AdgEntity *entity)
