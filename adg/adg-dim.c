@@ -48,30 +48,30 @@ enum {
 };
 
 
-static void     finalize                        (GObject        *object);
-static void     get_property                    (GObject        *object,
-                                                 guint           param_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-static void     set_property                    (GObject        *object,
-                                                 guint           param_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
-static void     paper_matrix_changed            (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
-static void     invalidate                      (AdgEntity      *entity);
-static gchar *  default_quote                   (AdgDim         *dim);
-static void     quote_layout                    (AdgDim         *dim,
-                                                 cairo_t        *cr);
-static gboolean text_cache_update               (AdgTextCache   *text_cache,
-                                                 const gchar    *text,
-                                                 cairo_t        *cr,
-                                                 AdgStyle       *style);
-static void     text_cache_invalidate           (AdgTextCache   *text_cache);
-static void     text_cache_move_to              (AdgTextCache   *text_cache,
-                                                 const CpmlPair *to);
-static void     text_cache_render               (AdgTextCache   *text_cache,
-                                                 cairo_t        *cr);
+static void     finalize                (GObject        *object);
+static void     get_property            (GObject        *object,
+                                         guint           param_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void     set_property            (GObject        *object,
+                                         guint           param_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
+static void     paper_matrix_changed    (AdgEntity      *entity,
+                                         AdgMatrix      *parent_matrix);
+static void     invalidate              (AdgEntity      *entity);
+static gchar *  default_quote           (AdgDim         *dim);
+static void     quote_layout            (AdgDim         *dim,
+                                         cairo_t        *cr);
+static gboolean text_cache_update       (AdgTextCache   *text_cache,
+                                         const gchar    *text,
+                                         cairo_t        *cr,
+                                         AdgStyle       *style);
+static void     text_cache_invalidate   (AdgTextCache   *text_cache);
+static void     text_cache_move_to      (AdgTextCache   *text_cache,
+                                         const CpmlPair *to);
+static void     text_cache_render       (AdgTextCache   *text_cache,
+                                         cairo_t        *cr);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
