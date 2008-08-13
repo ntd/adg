@@ -174,8 +174,8 @@ adg_dim_init(AdgDim *dim)
     priv->tolerance_down = NULL;
     priv->note = NULL;
 
-    priv->quote_org.x = priv->quote_org.y = 0.;
-    priv->quote_angle = 0.;
+    priv->org.x = priv->org.y = 0.;
+    priv->angle = 0.;
     priv->quote_cache.num_glyphs = 0;
     priv->quote_cache.glyphs = NULL;
     priv->tolerance_up_cache.num_glyphs = 0;
@@ -300,6 +300,92 @@ set_property(GObject *object, guint prop_id,
 
 
 /**
+ * adg_dim_get_org:
+ * @dim: an #AdgDim
+ *
+ * Gets the origin (org) coordinates. The returned pair is internally
+ * owned and must not be freed or modified. This function is only
+ * useful in new dimension implementations.
+ *
+ * Return value: the org coordinates
+ **/
+const AdgPair *
+adg_dim_get_org(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    return &dim->priv->org;
+}
+
+/**
+ * adg_dim_set_org:
+ * @dim: an #AdgDim
+ * @org: the org coordinates
+ *
+ * Sets new org coordinates. This function is only useful
+ * in new dimension implementations.
+ **/
+void
+adg_dim_set_org(AdgDim *dim, const AdgPair *org)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_if_fail(org != NULL);
+
+    dim->priv->org = *org;
+}
+
+/**
+ * adg_dim_set_org_explicit:
+ * @dim: an #AdgDim
+ * @org_x: x component of org
+ * @org_y: y component of org
+ *
+ * Explicitely sets new org coordinates. This function is only useful
+ * in new dimension implementations.
+ **/
+void
+adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    dim->priv->org.x = org_x;
+    dim->priv->org.y = org_y;
+}
+
+/**
+ * adg_dim_get_angle:
+ * @dim: an #AdgDim
+ *
+ * Gets the dimension angle. This function is only useful
+ * in new dimension implementations.
+ *
+ * Return value: the angle (in radians)
+ **/
+gdouble
+adg_dim_get_angle(AdgDim *dim)
+{
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0.);
+
+    return dim->priv->angle;
+}
+
+/**
+ * adg_dim_set_angle:
+ * @dim: an #AdgDim
+ * @angle: the new angle (in radians)
+ *
+ * Sets a new dimension angle. This function is only useful
+ * in new dimension implementations.
+ **/
+void
+adg_dim_set_angle(AdgDim *dim, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    dim->priv->angle = angle;
+}
+
+/**
  * adg_dim_get_ref1:
  * @dim: an #AdgDim
  *
@@ -378,8 +464,8 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
  * using explicit coordinates.
  **/
 void
-adg_dim_set_ref_explicit(AdgDim *dim, double ref1_x, double ref1_y,
-                         double ref2_x, double ref2_y)
+adg_dim_set_ref_explicit(AdgDim *dim, gdouble ref1_x, gdouble ref1_y,
+                         gdouble ref2_x, gdouble ref2_y)
 {
     AdgPair ref1;
     AdgPair ref2;
@@ -470,8 +556,8 @@ adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
  * using explicit coordinates.
  **/
 void
-adg_dim_set_pos_explicit(AdgDim *dim, double pos1_x, double pos1_y,
-                         double pos2_x, double pos2_y)
+adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
+                         gdouble pos2_x, gdouble pos2_y)
 {
     AdgPair pos1;
     AdgPair pos2;
@@ -492,7 +578,7 @@ adg_dim_set_pos_explicit(AdgDim *dim, double pos1_x, double pos1_y,
  *
  * Return value: the level value
  **/
-double
+gdouble
 adg_dim_get_level(AdgDim  *dim)
 {
     g_return_val_if_fail(ADG_IS_DIM(dim), 0.0);
@@ -510,7 +596,7 @@ adg_dim_get_level(AdgDim  *dim)
  * (specified in paper space).
  **/
 void
-adg_dim_set_level(AdgDim *dim, double level)
+adg_dim_set_level(AdgDim *dim, gdouble level)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
@@ -715,9 +801,9 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
     cairo_set_matrix(cr, adg_entity_get_model_matrix((AdgEntity *) dim));
 
-    cairo_translate(cr, priv->quote_org.x, priv->quote_org.y);
+    cairo_translate(cr, priv->org.x, priv->org.y);
     adg_entity_scale_to_paper((AdgEntity *) dim, cr);
-    cairo_rotate(cr, priv->quote_angle);
+    cairo_rotate(cr, priv->angle);
 
     /* Rendering quote */
     adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
@@ -782,7 +868,7 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     AdgDimStyle *dim_style;
     AdgPair shift;
     CpmlPair cp, org;
-    CpmlPair quote_org, tolerance_up_org, tolerance_down_org, note_org;
+    CpmlPair tolerance_up_org, tolerance_down_org, note_org;
     cairo_text_extents_t extents;
 
     priv = dim->priv;
@@ -801,8 +887,8 @@ quote_layout(AdgDim *dim, cairo_t *cr)
 
     /* Compute the tolerances */
     if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
-        double width;
-        double midspacing;
+        gdouble width;
+        gdouble midspacing;
 
         adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
 
@@ -919,7 +1005,7 @@ text_cache_move_to(AdgTextCache *text_cache, const CpmlPair *to)
 {
     cairo_glyph_t *glyph;
     int cnt;
-    double x, y;
+    gdouble x, y;
 
     glyph = text_cache->glyphs;
     cnt = text_cache->num_glyphs;

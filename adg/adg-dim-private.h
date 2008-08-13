@@ -48,8 +48,8 @@ struct _AdgDimPrivate {
     gchar               *note;
 
     /* Cache */
-    CpmlPair             quote_org;
-    gdouble              quote_angle;
+    AdgPair              org;
+    gdouble              angle;
     AdgTextCache         quote_cache;
     AdgTextCache         tolerance_up_cache;
     AdgTextCache         tolerance_down_cache;

@@ -54,29 +54,38 @@ struct _AdgDimClass {
 
 
 GType           adg_dim_get_type                (void) G_GNUC_CONST;
+const AdgPair * adg_dim_get_org                 (AdgDim         *dim);
+void            adg_dim_set_org                 (AdgDim         *dim,
+                                                 const AdgPair  *org);
+void            adg_dim_set_org_explicit        (AdgDim         *dim,
+                                                 gdouble         org_x,
+                                                 gdouble         org_y);
+gdouble         adg_dim_get_angle               (AdgDim         *dim);
+void            adg_dim_set_angle               (AdgDim         *dim,
+                                                 gdouble         angle);
 const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
 const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
 void            adg_dim_set_ref                 (AdgDim         *dim,
                                                  const AdgPair  *ref1,
                                                  const AdgPair  *ref2);
 void            adg_dim_set_ref_explicit        (AdgDim         *dim,
-                                                 double          ref1_x,
-                                                 double          ref1_y,
-                                                 double          ref2_x,
-                                                 double          ref2_y);
+                                                 gdouble         ref1_x,
+                                                 gdouble         ref1_y,
+                                                 gdouble         ref2_x,
+                                                 gdouble         ref2_y);
 const AdgPair * adg_dim_get_pos1                (AdgDim         *dim);
 const AdgPair * adg_dim_get_pos2                (AdgDim         *dim);
 void            adg_dim_set_pos                 (AdgDim         *dim,
                                                  AdgPair        *pos1,
                                                  AdgPair        *pos2);
 void            adg_dim_set_pos_explicit        (AdgDim         *dim,
-                                                 double          pos1_x,
-                                                 double          pos1_y,
-                                                 double          pos2_x,
-                                                 double          pos2_y);
-double          adg_dim_get_level               (AdgDim         *dim);
+                                                 gdouble         pos1_x,
+                                                 gdouble         pos1_y,
+                                                 gdouble         pos2_x,
+                                                 gdouble         pos2_y);
+gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
-                                                 double          level);
+                                                 gdouble         level);
 const gchar *   adg_dim_get_quote               (AdgDim         *dim);
 void            adg_dim_set_quote               (AdgDim         *dim,
                                                  const gchar    *quote);
