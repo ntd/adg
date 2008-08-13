@@ -60,8 +60,7 @@ static void     model_matrix_changed            (AdgEntity      *entity,
                                                  AdgMatrix      *parent_matrix);
 static void     invalidate                      (AdgEntity      *entity);
 static void     invalidate_quote                (AdgDim         *dim);
-static void     invalidate_tolerance_up         (AdgDim         *dim);
-static void     invalidate_tolerance_down       (AdgDim         *dim);
+static void     invalidate_tolerances           (AdgDim         *dim);
 static void     invalidate_note                 (AdgDim         *dim);
 static gchar *  default_quote                   (AdgDim         *dim);
 static void     glyphs_translate                (cairo_glyph_t *glyphs,
@@ -276,12 +275,12 @@ set_property(GObject *object, guint prop_id,
     case PROP_TOLERANCE_UP:
         g_free(dim->priv->tolerance_up);
         dim->priv->tolerance_up = g_value_dup_string(value);
-        invalidate_tolerance_up(dim);
+        invalidate_tolerances(dim);
         break;
     case PROP_TOLERANCE_DOWN:
         g_free(dim->priv->tolerance_down);
         dim->priv->tolerance_down = g_value_dup_string(value);
-        invalidate_tolerance_down(dim);
+        invalidate_tolerances(dim);
         break;
     case PROP_NOTE:
         g_free(dim->priv->note);
@@ -312,8 +311,7 @@ invalidate(AdgEntity *entity)
     dim->priv->quote_org.y = 0.;
 
     invalidate_quote(dim);
-    invalidate_tolerance_up(dim);
-    invalidate_tolerance_down(dim);
+    invalidate_tolerances(dim);
     invalidate_note(dim);
 }
 
@@ -324,29 +322,22 @@ invalidate_quote(AdgDim *dim)
         cairo_glyph_free(dim->priv->quote_glyphs);
         dim->priv->quote_glyphs = NULL;
     }
-
     dim->priv->quote_num_glyphs = 0;
 }
 
 static void
-invalidate_tolerance_up(AdgDim *dim)
+invalidate_tolerances(AdgDim *dim)
 {
     if (dim->priv->tolerance_up_glyphs) {
         cairo_glyph_free(dim->priv->tolerance_up_glyphs);
         dim->priv->tolerance_up_glyphs = NULL;
     }
-
     dim->priv->tolerance_up_num_glyphs = 0;
-}
 
-static void
-invalidate_tolerance_down(AdgDim *dim)
-{
     if (dim->priv->tolerance_down_glyphs) {
         cairo_glyph_free(dim->priv->tolerance_down_glyphs);
         dim->priv->tolerance_down_glyphs = NULL;
     }
-
     dim->priv->tolerance_down_num_glyphs = 0;
 }
 
@@ -702,7 +693,7 @@ adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
     dim->priv->tolerance_up = g_strdup(tolerance_up);
     g_object_notify((GObject *) dim, "tolerance-up");
 
-    invalidate_tolerance_up(dim);
+    invalidate_tolerances(dim);
 }
 
 const gchar *
@@ -722,7 +713,7 @@ adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
     dim->priv->tolerance_down = g_strdup(tolerance_down);
     g_object_notify((GObject *) dim, "tolerance-down");
 
-    invalidate_tolerance_down(dim);
+    invalidate_tolerances(dim);
 }
 
 void
