@@ -546,6 +546,7 @@ adg_dim_set_level(AdgDim *dim, double level)
 
     dim->priv->level = level;
     g_object_notify((GObject *) dim, "level");
+    invalidate((AdgEntity *) dim);
 }
 
 const gchar *
