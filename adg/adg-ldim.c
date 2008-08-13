@@ -309,18 +309,16 @@ render(AdgEntity *entity, cairo_t *cr)
 {
     AdgDim *dim;
     AdgLDim *ldim;
-    AdgDimStyle *dim_style;
+    AdgStyle *dim_style;
     AdgStyle *line_style;
-    AdgArrowStyle *arrow_style;
+    AdgStyle *arrow_style;
     CpmlPath primitive;
 
     dim = (AdgDim *) entity;
     ldim = (AdgLDim *) entity;
-    dim_style =
-        (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    line_style = adg_dim_style_get_line_style(dim_style);
-    arrow_style =
-        (AdgArrowStyle *) adg_dim_style_get_arrow_style(dim_style);
+    dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+    line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
+    arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
 
     /* TODO: caching
        if (!adg_entity_model_applied (entity)) */
@@ -331,9 +329,12 @@ render(AdgEntity *entity, cairo_t *cr)
 
     /* Arrows */
     if (cpml_path_from_cairo(&primitive, &ldim->priv->arrow_path, NULL)) {
-        adg_arrow_style_render(arrow_style, cr, &primitive);
-        if (cpml_primitive_reverse(&primitive))
-            adg_arrow_style_render(arrow_style, cr, &primitive);
+        adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &primitive);
+        if (!cpml_primitive_reverse(&primitive)) {
+            g_error("Unable to revert the baseline");
+            return;
+        }
+        adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &primitive);
     }
 
     /* Lines */
@@ -355,16 +356,17 @@ render(AdgEntity *entity, cairo_t *cr)
 static gchar *
 default_quote(AdgDim *dim)
 {
-    AdgDimStyle *dim_style;
-    gdouble number;
+    AdgStyle *dim_style;
+    gdouble distance;
+    const gchar *format;
 
-    if (!cpml_pair_distance(&dim->priv->pos2, &dim->priv->pos1, &number))
+    if (!cpml_pair_distance(&dim->priv->pos2, &dim->priv->pos1, &distance))
         return NULL;
 
-    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
-                                                     ADG_SLOT_DIM_STYLE);
-    return g_strdup_printf(adg_dim_style_get_number_format(dim_style),
-                           number);
+    dim_style = adg_entity_get_style((AdgEntity *) dim, ADG_SLOT_DIM_STYLE);
+    format = adg_dim_style_get_number_format((AdgDimStyle *) dim_style);
+
+    return g_strdup_printf(format, distance);
 }
 
 
@@ -459,16 +461,15 @@ adg_ldim_new_full_explicit(double ref1_x,
 void
 adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
 {
-    AdgDim *dim;
-    GObject *object;
-    CpmlPair extension_vector;
-    CpmlPair baseline_vector;
+    const AdgPair *ref1, *ref2;
+    AdgPair pos1, pos2;
+    CpmlPair baseline_vector, extension_vector;
     gdouble d, k;
 
     g_return_if_fail(ADG_IS_LDIM(ldim));
 
-    dim = (AdgDim *) ldim;
-    object = (GObject *) ldim;
+    ref1 = adg_dim_get_ref1((AdgDim *) ldim);
+    ref2 = adg_dim_get_ref2((AdgDim *) ldim);
 
     cpml_vector_from_angle(&extension_vector, ldim->priv->direction);
 
@@ -479,20 +480,17 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
         extension_vector.x * baseline_vector.y;
     g_return_if_fail(d != 0.);
 
-    k = ((pos->y - dim->priv->ref1.y) * baseline_vector.x -
-         (pos->x - dim->priv->ref1.x) * baseline_vector.y) / d;
-    dim->priv->pos1.x = dim->priv->ref1.x + k * extension_vector.x;
-    dim->priv->pos1.y = dim->priv->ref1.y + k * extension_vector.y;
+    k = ((pos->y - ref1->y) * baseline_vector.x -
+         (pos->x - ref1->x) * baseline_vector.y) / d;
+    pos1.x = ref1->x + k * extension_vector.x;
+    pos1.y = ref1->y + k * extension_vector.y;
 
-    k = ((pos->y - dim->priv->ref2.y) * baseline_vector.x -
-         (pos->x - dim->priv->ref2.x) * baseline_vector.y) / d;
-    dim->priv->pos2.x = dim->priv->ref2.x + k * extension_vector.x;
-    dim->priv->pos2.y = dim->priv->ref2.y + k * extension_vector.y;
+    k = ((pos->y - ref2->y) * baseline_vector.x -
+         (pos->x - ref2->x) * baseline_vector.y) / d;
+    pos2.x = ref2->x + k * extension_vector.x;
+    pos2.y = ref2->y + k * extension_vector.y;
 
-    g_object_freeze_notify(object);
-    g_object_notify(object, "pos1");
-    g_object_notify(object, "pos2");
-    g_object_thaw_notify(object);
+    adg_dim_set_pos((AdgDim *) ldim, &pos1, &pos2);
 }
 
 /**
