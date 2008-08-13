@@ -1,3 +1,18 @@
+ADG 0.3.1
+=========
+
+Implemented the "invalidate" signal to force the cache recomputation
+on a new rendering operation.
+
+The new cairo "toy" API has been used to do text management in AdgDim.
+This allows the caching of the intermediate glyphs for improved
+performances (no profiling yet done). The cairo dependency raised to
+version 0.7.4 or more.
+
+The AdgLDim entity has been rewrote to full implement the new cache
+design. Also other entities has been improved to allow a paper matrix
+other than the default identity matrix.
+
 ADG 0.3.0
 =========
 
