@@ -40,8 +40,6 @@ GTK_DOC_CHECK(1.4)
 
 PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= 2.8.0])
 PKG_CHECK_MODULES([CAIRO],[cairo >= 1.7.4])
-PKG_CHECK_MODULES([GCONTAINER],[gcontainer >= 1.99.2],,
-                  AC_MSG_ERROR([gcontainer 1.99.2 or above not found: you can download the latest version from http://sourceforge.net/projects/gcontainer/]))
 
 
 ##################################################
