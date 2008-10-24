@@ -26,10 +26,8 @@ HTML_IMAGES=
 CONTENT_FILES=
 EXPAND_CONTENT_FILES=
 INCLUDES=		-I$(top_srcdir) \
-			@GCONTAINER_CFLAGS@ \
 			@GTK2_CFLAGS@
 GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
-			@GCONTAINER_LIBS@ \
 			@GTK2_LIBS@
 
 include $(top_srcdir)/gtk-doc.make
