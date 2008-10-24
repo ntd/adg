@@ -31,6 +31,7 @@ Makefile
 /demo/ldim
 .libs/
 *.o
+*.loT
 *.lo
 *.la
 *.stamp
