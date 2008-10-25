@@ -269,6 +269,11 @@ AdgCallback
 <SUBSECTION>
 ADG_CALLBACK
 <SUBSECTION>
+adg_entity_get_parent
+adg_entity_set_parent
+adg_entity_reparent
+adg_entity_unparent
+<SUBSECTION>
 adg_entity_get_canvas
 adg_entity_get_model_matrix
 adg_entity_get_paper_matrix
@@ -307,6 +312,14 @@ ADG_TYPE_ENTITY_FLAGS
 <FILE>container</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContainer
+<SUBSECTION>
+adg_container_add
+adg_container_remove
+adg_container_get_children
+adg_container_foreach
+adg_container_propagate
+adg_container_propagate_by_name
+adg_container_propagate_valist
 <SUBSECTION>
 adg_container_get_model_transformation
 adg_container_set_model_transformation
