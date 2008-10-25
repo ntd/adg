@@ -28,8 +28,7 @@ Installation
 The ADG library has the following dependencies:
 
 o glib-2.10.1 or later (http://www.gtk.org)
-o gcontainer-1.99.2 or later (http://sourceforge.net/projects/gcontainer)
-o cairo-1.6.0 or later (http://cairographics.org)
+o cairo-1.7.4 or later (http://cairographics.org)
 o gtk+-2.8.0 or later (http://www.gtk.org, for the demo program)
 
 See the file 'INSTALL' for further details.
