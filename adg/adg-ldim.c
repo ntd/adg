@@ -30,7 +30,6 @@
 #include "adg-container.h"
 #include "adg-util.h"
 #include "adg-intl.h"
-#include <gcontainer/gcontainer.h>
 
 #define PARENT_CLASS ((AdgDimClass *) adg_ldim_parent_class)
 #define ENTITY_CLASS ((AdgEntityClass *) adg_ldim_parent_class)

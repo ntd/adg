@@ -32,7 +32,6 @@
 #include "adg-context.h"
 #include "adg-util.h"
 #include "adg-intl.h"
-#include <gcontainer/gcontainer.h>
 
 #define PARENT_CLASS ((GInitiallyUnownedClass *) adg_entity_parent_class)
 

@@ -1,5 +1,4 @@
 #include <adg/adg.h>
-#include <gcontainer/gcontainer.h>
 #include <gtk/gtk.h>
 
 

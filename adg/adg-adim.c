@@ -31,8 +31,6 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
-#include <gcontainer/gcontainer.h>
-
 #define PARENT_CLASS ((AdgDimClass *) adg_adim_parent_class)
 
 

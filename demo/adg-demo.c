@@ -1,5 +1,4 @@
 #include <adg/adg.h>
-#include <gcontainer/gcontainer.h>
 #include <gtk/gtk.h>
 #include <math.h>
 #include <cairo-ps.h>

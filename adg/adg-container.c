@@ -37,8 +37,6 @@
 #include "adg-container-private.h"
 #include "adg-intl.h"
 
-#include <gcontainer/gcontainer.h>
-
 #define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
 
 
