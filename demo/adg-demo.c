@@ -120,7 +120,7 @@ static void add_piston_path(AdgCanvas *canvas, Piston *piston)
 
     entity = adg_path_new(ADG_CALLBACK(piston_path_extern), piston);
 
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 }
 
 static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
@@ -158,14 +158,14 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
         adg_ldim_new_full_explicit(A - B - LD2, -D1 / 2.0, A - B,
                                    -D3 / 2.0 + CHAMFER, CPML_DIR_UP, 0.0,
                                    -D3 / 2.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* LD3 */
     entity =
         adg_ldim_new_full_explicit(A - B, -D3 / 2.0 + CHAMFER, A - B + LD3,
                                    -D3 / 2.0 + CHAMFER, CPML_DIR_UP, 0.0,
                                    -D3 / 2.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
 
     /* South */
@@ -175,7 +175,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
         adg_ldim_new_full_explicit(A - B, D3 / 2.0 - CHAMFER, A, D7 / 2.0,
                                    CPML_DIR_DOWN, 0.0, D3 / 2.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "+0.1", NULL);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* A */
     entity =
@@ -183,7 +183,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
                                    CPML_DIR_DOWN, 0.0, D3 / 2.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "+0.05", "-0.05");
     adg_dim_set_level(ADG_DIM(entity), 2.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
 
     /* East */
@@ -195,7 +195,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
                                    CPML_DIR_RIGHT, A, 0.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(entity), 5.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* D6 */
     x = A - C + LD6;
@@ -204,7 +204,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
                                    CPML_DIR_RIGHT, A, 0.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(entity), 4.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* D4 */
     x = A - C - LD5;
@@ -212,7 +212,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
         adg_ldim_new_full_explicit(x, -D4 / 2.0, x, D4 / 2.0,
                                    CPML_DIR_RIGHT, A, 0.0);
     adg_dim_set_level(ADG_DIM(entity), 3.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* D5 */
     x = A - C;
@@ -221,13 +221,13 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
                                    CPML_DIR_RIGHT, A, 0.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(entity), 2.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* D7 */
     entity =
         adg_ldim_new_full_explicit(A, -D7 / 2.0, A, D7 / 2.0,
                                    CPML_DIR_RIGHT, A, 0.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
 
     /* West */
@@ -238,7 +238,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
                                    CPML_DIR_LEFT, 0.0, 0.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "+0.05", "-0.05");
     adg_dim_set_level(ADG_DIM(entity), 2.0);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* D2 */
     y = (D1 - D2) / 2.0;
@@ -247,7 +247,7 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
         adg_ldim_new_full_explicit(x, -D2 / 2.0, x, D2 / 2.0,
                                    CPML_DIR_LEFT, 0.0, 0.0);
     adg_dim_set_tolerances(ADG_DIM(entity), "-0.1", NULL);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 }
 
 

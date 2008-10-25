@@ -24,17 +24,17 @@ main(gint argc, gchar ** argv)
 
     /* Add the shape to quote */
     entity = adg_path_new(ADG_CALLBACK(draw_shape), NULL);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* Add the north quotes */
     entity = adg_ldim_new_full_explicit(2., -10., 8., -10., CPML_DIR_UP,
                                         0.0, -10.);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     entity = adg_ldim_new_full_explicit(0., -5., 10., -5., CPML_DIR_UP,
                                         0.0, -10.);
     adg_dim_set_level(ADG_DIM(entity), 2);
-    g_containerable_add(G_CONTAINERABLE(canvas), G_CHILDABLE(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* User interface stuff */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
