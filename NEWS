@@ -1,3 +1,14 @@
+ADG 0.3.2
+=========
+
+The dependency on libgcontainer has been dropped: now the adg canvas
+requires only cairo and Gtk+2 (will be optional). This allows to try
+the demo program (demo/adg-demo) on any decent GNU/Linux distribution
+without installing anything.
+
+The container logic has been included in AdgEntity (the GChildable
+portion) and AdgContainer (the GContainerable part).
+
 ADG 0.3.1
 =========
 
