@@ -21,8 +21,6 @@
 #ifndef __ADG_ENTITY_PRIVATE_H__
 #define __ADG_ENTITY_PRIVATE_H__
 
-#include <adg/adg-context.h>
-
 
 G_BEGIN_DECLS
 
@@ -34,7 +32,7 @@ typedef enum {
 
 
 struct _AdgEntityPrivate {
-    AdgEntity           *parent;
+    AdgContainer        *parent;
     AdgEntityFlags       flags;
     AdgContext          *context;
 };
