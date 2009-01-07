@@ -22,6 +22,7 @@ adg_h_sources=			adg.h \
 				adg-pair.h \
 				adg-path.h \
 				adg-pattern.h \
+				adg-point.h \
 				adg-style.h \
 				adg-util.h
 adg_built_h_sources=		adg-type-builtins.h
@@ -59,6 +60,7 @@ adg_c_sources=			adg-adim.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-pattern.c \
+				adg-point.c \
 				adg-style.c \
 				adg-util.c
 adg_built_c_sources=		adg-type-builtins.c

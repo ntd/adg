@@ -10,6 +10,18 @@ adg_pair_get_type
 </SECTION>
 
 <SECTION>
+<FILE>point</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgPoint
+<SUBSECTION>
+adg_point_dup
+adg_point_set
+<SUBSECTION Standard>
+ADG_TYPE_POINT
+adg_point_get_type
+</SECTION>
+
+<SECTION>
 <FILE>matrix</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgMatrix
@@ -304,8 +316,6 @@ ADG_TYPE_ENTITY
 ADG_ENTITY_CLASS
 ADG_IS_ENTITY_CLASS
 ADG_ENTITY_GET_CLASS
-adg_entity_flags_get_type
-ADG_TYPE_ENTITY_FLAGS
 </SECTION>
 
 <SECTION>
