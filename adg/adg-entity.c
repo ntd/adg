@@ -458,6 +458,7 @@ adg_entity_get_paper_matrix(AdgEntity *entity)
 /**
  * adg_entity_scale_to_model:
  * @entity: an #AdgEntity object
+ * @cr: the #cairo_t drawing context
  *
  * Sets the model matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
