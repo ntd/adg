@@ -189,7 +189,7 @@ adg_entity_class_init(AdgEntityClass *klass)
   /**
    * AdgEntity::render:
    * @entity: an #AdgEntity
-   * @cr: the destination cairo context
+   * @cr: the #cairo_t drawing context
    *
    * Causes the rendering of @entity on @cr.
    */
@@ -482,6 +482,7 @@ adg_entity_scale_to_model(AdgEntity *entity, cairo_t *cr)
 /**
  * adg_entity_scale_to_paper:
  * @entity: an #AdgEntity object
+ * @cr: the #cairo_t drawing context
  *
  * Sets the paper matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
@@ -633,7 +634,7 @@ adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
  * adg_entity_apply:
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to apply
- * @cr: a cairo context
+ * @cr: the #cairo_t drawing context
  *
  * Applies the specified style to the @cr cairo context.
  **/
@@ -703,7 +704,7 @@ adg_entity_invalidate(AdgEntity *entity)
 /**
  * adg_entity_render:
  * @entity: an #AdgEntity
- * @cr: a #cairo_t drawing context
+ * @cr: the #cairo_t drawing context
  *
  * Emits the "render" signal on @entity and all its children, if any,
  * causing the rendering operation the @cr cairo context.
