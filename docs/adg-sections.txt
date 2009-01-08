@@ -4,6 +4,7 @@
 AdgPair
 <SUBSECTION>
 adg_pair_dup
+adg_pair_copy
 <SUBSECTION Standard>
 ADG_TYPE_PAIR
 adg_pair_get_type
@@ -17,6 +18,7 @@ AdgPoint
 adg_point_dup
 adg_point_copy
 adg_point_set
+adg_point_unset
 <SUBSECTION Standard>
 ADG_TYPE_POINT
 adg_point_get_type
@@ -302,6 +304,7 @@ adg_entity_build_model2paper
 adg_entity_build_paper2model
 adg_entity_scale_to_model
 adg_entity_scale_to_paper
+adg_entity_point_to_pair
 adg_entity_render
 <SUBSECTION>
 adg_entity_invalidate
