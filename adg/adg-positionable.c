@@ -156,8 +156,8 @@ adg_positionable_set_org(AdgPositionable *positionable, const AdgPoint *org)
 
     current_org = ADG_POSITIONABLE_GET_IFACE(positionable)->org(positionable);
 
-    adg_point_copy(current_org, &old_org);
-    adg_point_copy(org, current_org);
+    adg_point_copy(&old_org, current_org);
+    adg_point_copy(current_org, org);
     g_signal_emit(positionable, signals[ORG_MOVED], 0, &old_org);
 }
 

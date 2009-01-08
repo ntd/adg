@@ -39,8 +39,8 @@ struct _AdgPoint {
 
 GType           adg_point_get_type      (void) G_GNUC_CONST;
 AdgPoint *      adg_point_dup           (const AdgPoint *point);
-void            adg_point_copy          (const AdgPoint *point,
-                                         AdgPoint       *dest);
+void            adg_point_copy          (AdgPoint       *point,
+                                         const AdgPoint *source);
 void            adg_point_set           (AdgPoint       *point,
                                          const AdgPair  *model,
                                          const AdgPair  *paper);
