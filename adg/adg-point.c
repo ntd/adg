@@ -88,6 +88,22 @@ adg_point_copy(const AdgPoint *point, AdgPoint *dest)
 void
 adg_point_set(AdgPoint *point, const AdgPair *model, const AdgPair *paper)
 {
-    memcpy(&point->model, model, sizeof(AdgPair));
-    memcpy(&point->paper, paper, sizeof(AdgPair));
+    if (model) {
+        memcpy(&point->model, model, sizeof(AdgPair));
+    }
+    if (paper) {
+        memcpy(&point->paper, paper, sizeof(AdgPair));
+    }
+}
+
+/**
+ * adg_point_unset:
+ * @point: an #AdgPoint structure
+ *
+ * Fills the AdgPoint struct with 0.
+ **/
+void
+adg_point_unset(AdgPoint *point)
+{
+    memset(point, 0, sizeof(AdgPoint));
 }
