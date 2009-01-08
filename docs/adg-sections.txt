@@ -15,6 +15,7 @@ adg_pair_get_type
 AdgPoint
 <SUBSECTION>
 adg_point_dup
+adg_point_copy
 adg_point_set
 <SUBSECTION Standard>
 ADG_TYPE_POINT
@@ -316,6 +317,22 @@ ADG_TYPE_ENTITY
 ADG_ENTITY_CLASS
 ADG_IS_ENTITY_CLASS
 ADG_ENTITY_GET_CLASS
+</SECTION>
+
+<SECTION>
+<FILE>positionable</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgPositionableIface
+<SUBSECTION>
+adg_positionable_get_org
+adg_positionable_set_org
+<SUBSECTION Standard>
+AdgPositionable
+adg_positionable_get_type
+ADG_POSITIONABLE
+ADG_IS_POSITIONABLE
+ADG_TYPE_POSITIONABLE
+ADG_POSITIONABLE_GET_IFACE
 </SECTION>
 
 <SECTION>

@@ -88,6 +88,10 @@
       <xi:include href="xml/container.xml"/>
       <xi:include href="xml/dim.xml"/>
     </chapter>
+    <chapter id="Populating-interface">
+      <title>Shared interfaces</title>
+      <xi:include href="xml/positionable.xml"/>
+    </chapter>
     <xi:include href="xml/canvas.xml"/>
     <xi:include href="xml/path.xml"/>
     <chapter id="Quoting">
