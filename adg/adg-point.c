@@ -65,6 +65,19 @@ adg_point_dup(const AdgPoint *point)
 }
 
 /**
+ * adg_point_copy:
+ * @point: an #AdgPoint structure
+ * @dest: the destination
+ *
+ * Shortcut to copy @point to @dest.
+ **/
+void
+adg_point_copy(const AdgPoint *point, AdgPoint *dest)
+{
+    memcpy(dest, point, sizeof(AdgPoint));
+}
+
+/**
  * adg_point_set:
  * @point: an #AdgPoint structure
  * @model: the model component
