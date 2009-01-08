@@ -326,6 +326,7 @@ AdgPositionableIface
 <SUBSECTION>
 adg_positionable_get_org
 adg_positionable_set_org
+adg_positionable_set_org_explicit
 <SUBSECTION Standard>
 AdgPositionable
 adg_positionable_get_type

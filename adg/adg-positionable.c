@@ -149,14 +149,40 @@ adg_positionable_get_org(AdgPositionable *positionable)
 void
 adg_positionable_set_org(AdgPositionable *positionable, const AdgPoint *org)
 {
-    AdgPoint *present;
+    AdgPoint *current_org;
     AdgPoint old_org;
 
     g_return_if_fail(ADG_IS_POSITIONABLE(positionable));
 
-    present = ADG_POSITIONABLE_GET_IFACE(positionable)->org(positionable);
+    current_org = ADG_POSITIONABLE_GET_IFACE(positionable)->org(positionable);
 
-    adg_point_copy(present, &old_org);
-    adg_point_copy(org, present);
+    adg_point_copy(current_org, &old_org);
+    adg_point_copy(org, current_org);
     g_signal_emit(positionable, signals[ORG_MOVED], 0, &old_org);
+}
+
+/**
+ * adg_positionable_set_org_explicit:
+ * @positionable: an entity implementing AdgPositionable
+ * @model_x: the new x position in model space
+ * @model_y: the new y position in model space
+ * @paper_x: the new x position in paper space
+ * @paper_y: the new y position in paper space
+ *
+ * Sets the origin of @positionable to the new coordinates. It calls
+ * adg_positionable_set_org() internally.
+ **/
+void
+adg_positionable_set_org_explicit(AdgPositionable *positionable,
+                                  gdouble model_x, gdouble model_y,
+                                  gdouble paper_x, gdouble paper_y)
+{
+    AdgPoint org;
+
+    org.model.x = model_x;
+    org.model.y = model_y;
+    org.paper.x = paper_x;
+    org.paper.y = paper_y;
+
+    adg_positionable_set_org(positionable, &org);
 }

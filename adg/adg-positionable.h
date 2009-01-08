@@ -48,6 +48,12 @@ GType           adg_positionable_get_type       (void) G_GNUC_CONST;
 const AdgPoint *adg_positionable_get_org        (AdgPositionable *positionable);
 void            adg_positionable_set_org        (AdgPositionable *positionable,
                                                  const AdgPoint  *org);
+void            adg_positionable_set_org_explicit
+                                                (AdgPositionable *positionable,
+                                                 gdouble          model_x,
+                                                 gdouble          model_y,
+                                                 gdouble          paper_x,
+                                                 gdouble          paper_y);
 
 G_END_DECLS
 
