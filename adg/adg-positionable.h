@@ -34,12 +34,11 @@ G_BEGIN_DECLS
 typedef struct _AdgPositionable       AdgPositionable; /* Dummy typedef */
 typedef struct _AdgPositionableIface  AdgPositionableIface;
 
-struct _AdgPositionableIface
-{
-  GTypeInterface base_iface;
+struct _AdgPositionableIface {
+    GTypeInterface base_iface;
 
-  /* Virtual Table */
-  AdgPoint *            (*org)                  (AdgPositionable *positionable);
+    /* Virtual Table */
+    AdgPoint *  (*org)                          (AdgPositionable *positionable);
 };
 
 
