@@ -23,6 +23,7 @@
 
 #include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
+#include <adg/adg-point.h>
 #include <adg/adg-line-style.h>
 #include <adg/adg-font-style.h>
 #include <adg/adg-arrow-style.h>
@@ -116,6 +117,9 @@ AdgStyle *      adg_entity_get_style            (AdgEntity      *entity,
 void            adg_entity_apply                (AdgEntity      *entity,
                                                  AdgStyleSlot    style_slot,
                                                  cairo_t        *cr);
+void            adg_entity_point_to_pair        (AdgEntity      *entity,
+                                                 const AdgPoint *point,
+                                                 AdgPair        *pair);
 gboolean        adg_entity_model_matrix_applied (AdgEntity      *entity);
 gboolean        adg_entity_paper_matrix_applied (AdgEntity      *entity);
 gboolean        adg_entity_model_applied        (AdgEntity      *entity);

@@ -649,6 +649,39 @@ adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
 }
 
 /**
+ * adg_entity_point_to_pair:
+ * @entity: an #AdgEntity
+ * @point: the source #AdgPoint
+ * @pair: the destination #AdgPair
+ *
+ * Converts @point to @pair using the model and paper matrix of @entity.
+ **/
+void
+adg_entity_point_to_pair(AdgEntity *entity,
+                         const AdgPoint *point, AdgPair *pair)
+{
+    const AdgMatrix *model_matrix;
+    const AdgMatrix *paper_matrix;
+    AdgPair model_pair, paper_pair;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(point != NULL);
+    g_return_if_fail(pair != NULL);
+
+    model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
+    paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
+
+    adg_pair_copy(&model_pair, &point->model);
+    cpml_pair_transform(&model_pair, model_matrix);
+    
+    adg_pair_copy(&paper_pair, &point->paper);
+    cpml_pair_transform(&paper_pair, paper_matrix);
+
+    pair->x = model_pair.x + paper_pair.x;
+    pair->y = model_pair.y + paper_pair.y;
+}
+
+/**
  * adg_entity_model_matrix_applied:
  * @entity: an #AdgEntity
  *
