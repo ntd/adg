@@ -73,6 +73,22 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 }
 
 /**
+ * cpml_pair_transform:
+ * @pair: the destination #CpmlPair struct
+ * @matrix: the transformation matrix
+ *
+ * Shortcut to apply a specific transformation matrix to @pair.
+ *
+ * Return value: 1 if @pair was transformed, 0 on errors
+ **/
+cairo_bool_t
+cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
+{
+    cairo_matrix_transform_point(matrix, &pair->x, &pair->y);
+    return 1;
+}
+
+/**
  * cpml_pair_distance:
  * @from: the first #CpmlPair struct
  * @to: the second #CpmlPair struct

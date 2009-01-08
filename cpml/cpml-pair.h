@@ -41,6 +41,8 @@ struct _CpmlPair {
 
 cairo_bool_t    cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
+cairo_bool_t    cpml_pair_transform             (CpmlPair       *pair,
+                                                 const cairo_matrix_t *matrix);
 cairo_bool_t    cpml_pair_distance              (double         *distance,
                                                  const CpmlPair *from,
                                                  const CpmlPair *to);
