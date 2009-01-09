@@ -260,9 +260,9 @@ add_sample_stuff(AdgCanvas *canvas)
     AdgEntity *toy_text;
 
     toy_text = adg_toy_text_new("Test script near the piston");
-    adg_positionable_set_org_explicit(ADG_POSITIONABLE(toy_text),
-                                      0., -4.65,
-                                      -2., -5.);
+    adg_positionable_set_origin_explicit(ADG_POSITIONABLE(toy_text),
+                                         0., -4.65,
+                                         -2., -5.);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 }
 

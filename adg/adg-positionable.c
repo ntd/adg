@@ -29,11 +29,12 @@
 
 /**
  * AdgPositionableIface:
- * @base_iface:		the base interface
- * @org:		the origin point accessor
+ * @base_iface: the base interface
+ * @get_origin: returns the current origin
+ * @set_origin: sets a new origin
  *
- * The virtual methods @org must be defined by all the types which
- * implement this interface.
+ * The virtual methods @get_origin and @set_origin must be defined
+ * by all the types which implement this interface.
  **/
 
 #include "adg-positionable.h"
@@ -41,14 +42,16 @@
 
 
 enum {
-    ORG_MOVED,
+    ORIGIN_MOVED,
     LAST_SIGNAL
 };
 
-static void      iface_base	(AdgPositionableIface   *iface);
-static void      iface_init	(AdgPositionableIface   *iface);
-static AdgPoint *org    	(AdgPositionable        *positionable);
-
+static void     iface_base      (AdgPositionableIface   *iface);
+static void     iface_init      (AdgPositionableIface   *iface);
+static void     get_origin    	(AdgPositionable        *positionable,
+                                 AdgPoint               *dest);
+static void     set_origin      (AdgPositionable        *positionable,
+                                 const AdgPoint         *origin);
 
 static guint    signals[LAST_SIGNAL] = { 0 };
 
@@ -87,82 +90,95 @@ iface_base(AdgPositionableIface *iface)
     }
     initialized = TRUE;
 
-    param = g_param_spec_object("org",
-                                P_("Org"),
+    param = g_param_spec_object("origin",
+                                P_("Origin"),
                                 P_("Origin point"),
                                 ADG_TYPE_POINT,
                                 G_PARAM_READWRITE);
     g_object_interface_install_property(iface, param);
 
     /**
-     * AdgPositionable::org-moved:
+     * AdgPositionable::origin-moved:
      * @positionable: an entity implementing #AdgPositionable
      *
      * Emitted whenever the origin has changed.
      **/
     param_types[0] = ADG_TYPE_POINT;
-    signals[ORG_MOVED] = g_signal_newv("org-moved", ADG_TYPE_POSITIONABLE,
-                                       G_SIGNAL_RUN_FIRST,
-                                       NULL, NULL, NULL,
-                                       g_cclosure_marshal_VOID__OBJECT,
-                                       G_TYPE_NONE, 1, param_types);
+    signals[ORIGIN_MOVED] = g_signal_newv("origin-moved",
+                                          ADG_TYPE_POSITIONABLE,
+                                          G_SIGNAL_RUN_FIRST,
+                                          NULL, NULL, NULL,
+                                          g_cclosure_marshal_VOID__OBJECT,
+                                          G_TYPE_NONE, 1, param_types);
 }
 
 static void
 iface_init (AdgPositionableIface *iface)
 {
-    iface->org = org;
+    iface->get_origin = get_origin;
+    iface->set_origin = set_origin;
 }
 
 
-static AdgPoint *
-org(AdgPositionable *positionable)
+static void
+get_origin(AdgPositionable *positionable, AdgPoint *dest)
 {
-    g_warning("AdgPositionable::org not implemented for `%s'",
+    g_warning("AdgPositionable::get_origin not implemented for `%s'",
               g_type_name(G_TYPE_FROM_INSTANCE(positionable)));
-    return NULL;
+}
+
+static void
+set_origin(AdgPositionable *positionable, const AdgPoint *point)
+{
+    g_warning("AdgPositionable::set_origin not implemented for `%s'",
+              g_type_name(G_TYPE_FROM_INSTANCE(positionable)));
 }
 
 /**
- * adg_positionable_get_org:
+ * adg_positionable_get_origin:
  * @positionable: an entity implementing AdgPositionable
  *
  * Gets the origin point of @positionable.
  *
  * Return value: A pointer to the internal origin point
  **/
-const AdgPoint *
-adg_positionable_get_org(AdgPositionable *positionable)
+void
+adg_positionable_get_origin(AdgPositionable *positionable, AdgPoint *dest)
 {
-    g_return_val_if_fail(ADG_IS_POSITIONABLE(positionable), NULL);
+    g_return_if_fail(ADG_IS_POSITIONABLE(positionable));
+    g_return_if_fail(dest != NULL);
 
-    return ADG_POSITIONABLE_GET_IFACE(positionable)->org(positionable);
+    ADG_POSITIONABLE_GET_IFACE(positionable)->get_origin(positionable, dest);
 }
 
 /**
- * adg_positionable_set_org:
+ * adg_positionable_set_origin:
  * @positionable: an entity implementing AdgPositionable
- * @org: the new origin
+ * @origin: the new origin
  *
- * Sets the origin of @positionable to @org. An "org-moved" signal is emitted.
+ * Sets the origin of @positionable to @origin.
+ * An "origin-moved" signal is emitted.
  **/
 void
-adg_positionable_set_org(AdgPositionable *positionable, const AdgPoint *org)
+adg_positionable_set_origin(AdgPositionable *positionable,
+                            const AdgPoint *origin)
 {
-    AdgPoint *current_org;
-    AdgPoint old_org;
+    AdgPositionableIface *iface;
+    AdgPoint old_origin;
 
     g_return_if_fail(ADG_IS_POSITIONABLE(positionable));
+    g_return_if_fail(origin != NULL);
 
-    current_org = ADG_POSITIONABLE_GET_IFACE(positionable)->org(positionable);
+    iface = ADG_POSITIONABLE_GET_IFACE(positionable);
 
-    adg_point_copy(&old_org, current_org);
-    adg_point_copy(current_org, org);
-    g_signal_emit(positionable, signals[ORG_MOVED], 0, &old_org);
+    iface->get_origin(positionable, &old_origin);
+    iface->set_origin(positionable, origin);
+
+    g_signal_emit(positionable, signals[ORIGIN_MOVED], 0, &old_origin);
 }
 
 /**
- * adg_positionable_set_org_explicit:
+ * adg_positionable_set_origin_explicit:
  * @positionable: an entity implementing AdgPositionable
  * @model_x: the new x position in model space
  * @model_y: the new y position in model space
@@ -170,19 +186,19 @@ adg_positionable_set_org(AdgPositionable *positionable, const AdgPoint *org)
  * @paper_y: the new y position in paper space
  *
  * Sets the origin of @positionable to the new coordinates. It calls
- * adg_positionable_set_org() internally.
+ * adg_positionable_set_origin() internally.
  **/
 void
-adg_positionable_set_org_explicit(AdgPositionable *positionable,
-                                  gdouble model_x, gdouble model_y,
-                                  gdouble paper_x, gdouble paper_y)
+adg_positionable_set_origin_explicit(AdgPositionable *positionable,
+                                     gdouble model_x, gdouble model_y,
+                                     gdouble paper_x, gdouble paper_y)
 {
-    AdgPoint org;
+    AdgPoint origin;
 
-    org.model.x = model_x;
-    org.model.y = model_y;
-    org.paper.x = paper_x;
-    org.paper.y = paper_y;
+    origin.model.x = model_x;
+    origin.model.y = model_y;
+    origin.paper.x = paper_x;
+    origin.paper.y = paper_y;
 
-    adg_positionable_set_org(positionable, &org);
+    adg_positionable_set_origin(positionable, &origin);
 }

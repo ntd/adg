@@ -37,12 +37,15 @@
 
 enum {
     PROP_0,
-    PROP_ORG,
+    PROP_ORIGIN,
     PROP_LABEL
 };
 
 static void     positionable_init       (AdgPositionableIface *iface);
-static AdgPoint*org                     (AdgPositionable*positionable);
+static void     get_origin              (AdgPositionable*positionable,
+                                         AdgPoint       *dest);
+static void     set_origin              (AdgPositionable*positionable,
+                                         const AdgPoint *origin);
 
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
@@ -58,7 +61,7 @@ static void     model_matrix_changed    (AdgEntity      *entity,
 static void     invalidate              (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gboolean update_org_cache        (AdgToyText     *toy_text);
+static gboolean update_origin_cache     (AdgToyText     *toy_text);
 static gboolean update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
@@ -69,6 +72,28 @@ static void     move_label_cache        (AdgToyText     *toy_text,
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
                         G_IMPLEMENT_INTERFACE(ADG_TYPE_POSITIONABLE,
                                               positionable_init))
+
+
+static void
+positionable_init(AdgPositionableIface *iface)
+{
+    iface->get_origin = get_origin;
+    iface->set_origin = set_origin;
+}
+
+static void
+get_origin(AdgPositionable *positionable, AdgPoint *dest)
+{
+    AdgToyText *toy_text = (AdgToyText *) positionable;
+    adg_point_copy(dest, &toy_text->priv->origin);
+}
+
+static void
+set_origin(AdgPositionable *positionable, const AdgPoint *origin)
+{
+    AdgToyText *toy_text = (AdgToyText *) positionable;
+    adg_point_copy(&toy_text->priv->origin, origin);
+}
 
 
 static void
@@ -91,7 +116,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
-    g_object_class_override_property(gobject_class, PROP_ORG, "org");
+    g_object_class_override_property(gobject_class, PROP_ORIGIN, "origin");
 
     param = g_param_spec_string("label",
                                 P_("Label"),
@@ -108,24 +133,12 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           AdgToyTextPrivate);
 
     priv->label = NULL;
-    adg_point_unset(&priv->org);
-    priv->org_pair.x = priv->org_pair.y = 0.;
+    adg_point_unset(&priv->origin);
+    priv->origin_pair.x = priv->origin_pair.y = 0.;
     priv->num_glyphs = 0;
     priv->glyphs = NULL;
 
     toy_text->priv = priv;
-}
-
-static void
-positionable_init(AdgPositionableIface *iface)
-{
-    iface->org = org;
-}
-
-static AdgPoint *
-org(AdgPositionable *positionable)
-{
-    return & ((AdgToyText *) positionable)->priv->org;
 }
 
 static void
@@ -145,8 +158,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgToyText *toy_text = (AdgToyText *) toy_text;
 
     switch (prop_id) {
-    case PROP_ORG:
-        g_value_set_boxed(value, &toy_text->priv->org);
+    case PROP_ORIGIN:
+        g_value_set_boxed(value, &toy_text->priv->origin);
         break;
     case PROP_LABEL:
         g_value_set_string(value, toy_text->priv->label);
@@ -165,9 +178,9 @@ set_property(GObject *object, guint prop_id,
     AdgToyTextPrivate *priv = toy_text->priv;
 
     switch (prop_id) {
-    case PROP_ORG:
-        adg_point_copy(&priv->org, (AdgPoint *) g_value_get_boxed(value));
-        update_org_cache(toy_text);
+    case PROP_ORIGIN:
+        adg_point_copy(&priv->origin, (AdgPoint *) g_value_get_boxed(value));
+        update_origin_cache(toy_text);
         break;
     case PROP_LABEL:
         g_free(priv->label);
@@ -245,7 +258,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
         if (!priv->glyphs) {
             update_label_cache(toy_text, cr);
-            update_org_cache(toy_text);
+            update_origin_cache(toy_text);
         }
 
         cairo_show_glyphs(cr, priv->glyphs, priv->num_glyphs);
@@ -257,7 +270,7 @@ render(AdgEntity *entity, cairo_t *cr)
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    update_org_cache((AdgToyText *) entity);
+    update_origin_cache((AdgToyText *) entity);
     PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
 }
 
@@ -269,17 +282,17 @@ invalidate(AdgEntity *entity)
 }
 
 static gboolean
-update_org_cache(AdgToyText *toy_text)
+update_origin_cache(AdgToyText *toy_text)
 {
     AdgToyTextPrivate *priv = toy_text->priv;
-    AdgPoint *org = &toy_text->priv->org;
-    AdgPair *org_pair = &toy_text->priv->org_pair;
+    AdgPoint *origin = &toy_text->priv->origin;
+    AdgPair *origin_pair = &toy_text->priv->origin_pair;
     cairo_glyph_t *glyph;
     double x, y;
     int cnt;
 
-    org = &priv->org;
-    org_pair = &priv->org_pair;
+    origin = &priv->origin;
+    origin_pair = &priv->origin_pair;
     glyph = priv->glyphs;
     cnt = priv->num_glyphs;
 
@@ -288,14 +301,14 @@ update_org_cache(AdgToyText *toy_text)
         return TRUE;
     }
 
-    adg_entity_point_to_paper_pair((AdgEntity *) toy_text, org, org_pair);
-    if (org_pair->x == glyph->x && org_pair->y == glyph->y) {
+    adg_entity_point_to_paper_pair((AdgEntity *) toy_text, origin, origin_pair);
+    if (origin_pair->x == glyph->x && origin_pair->y == glyph->y) {
         /* The label is yet properly positioned */
         return TRUE;
     }
 
-    x = org_pair->x - glyph->x;
-    y = org_pair->y - glyph->y;
+    x = origin_pair->x - glyph->x;
+    y = origin_pair->y - glyph->y;
 
     while (cnt --) {
         glyph->x += x;

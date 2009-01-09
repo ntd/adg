@@ -38,16 +38,20 @@ struct _AdgPositionableIface {
     GTypeInterface base_iface;
 
     /* Virtual Table */
-    AdgPoint *  (*org)                          (AdgPositionable *positionable);
+    void        (*get_origin)                   (AdgPositionable *positionable,
+                                                 AdgPoint        *dest);
+    void        (*set_origin)                   (AdgPositionable *positionable,
+                                                 const AdgPoint  *origin);
 };
 
 
 GType           adg_positionable_get_type       (void) G_GNUC_CONST;
 
-const AdgPoint *adg_positionable_get_org        (AdgPositionable *positionable);
-void            adg_positionable_set_org        (AdgPositionable *positionable,
-                                                 const AdgPoint  *org);
-void            adg_positionable_set_org_explicit
+void            adg_positionable_get_origin     (AdgPositionable *positionable,
+                                                 AdgPoint        *dest);
+void            adg_positionable_set_origin     (AdgPositionable *positionable,
+                                                 const AdgPoint  *origin);
+void            adg_positionable_set_origin_explicit
                                                 (AdgPositionable *positionable,
                                                  gdouble          model_x,
                                                  gdouble          model_y,

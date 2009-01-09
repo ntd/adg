@@ -28,11 +28,11 @@ G_BEGIN_DECLS
 
 struct _AdgToyTextPrivate {
     /* Properties */
-    AdgPoint             org;
+    AdgPoint             origin;
     gchar               *label;
 
     /* Cache */
-    AdgPair              org_pair;
+    AdgPair              origin_pair;
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;
     cairo_text_extents_t extents;

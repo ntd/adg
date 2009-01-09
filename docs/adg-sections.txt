@@ -329,9 +329,9 @@ ADG_ENTITY_GET_CLASS
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgPositionableIface
 <SUBSECTION>
-adg_positionable_get_org
-adg_positionable_set_org
-adg_positionable_set_org_explicit
+adg_positionable_get_origin
+adg_positionable_set_origin
+adg_positionable_set_origin_explicit
 <SUBSECTION Standard>
 AdgPositionable
 adg_positionable_get_type
