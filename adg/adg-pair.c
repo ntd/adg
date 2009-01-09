@@ -61,12 +61,7 @@ adg_pair_dup(const AdgPair * pair)
 /**
  * adg_pair_copy:
  * @pair: an #AdgPair structure
- * @source: the source pair
+ * @src: the source pair
  *
- * Shortcut to copy @source to @point.
+ * Shortcut to copy @src to @point, the same as cpml_pair_copy().
  **/
-void
-adg_pair_copy(AdgPair *pair, const AdgPair *source)
-{
-    memcpy(pair, source, sizeof(AdgPair));
-}

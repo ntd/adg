@@ -27,7 +27,8 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_PAIR  (adg_pair_get_type ())
+#define ADG_TYPE_PAIR           (adg_pair_get_type())
+#define adg_pair_copy(pair,src) (cpml_pair_copy((pair), (src)))
 
 
 typedef CpmlPair AdgPair;
@@ -35,8 +36,6 @@ typedef CpmlPair AdgPair;
 
 GType           adg_pair_get_type       (void) G_GNUC_CONST;
 AdgPair *       adg_pair_dup            (const AdgPair  *pair);
-void            adg_pair_copy           (AdgPair        *pair,
-                                         const AdgPair  *source);
 
 G_END_DECLS
 
