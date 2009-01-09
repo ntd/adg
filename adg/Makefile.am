@@ -25,6 +25,7 @@ adg_h_sources=			adg.h \
 				adg-point.h \
 				adg-positionable.h \
 				adg-style.h \
+				adg-toy-text.h \
 				adg-util.h
 adg_built_h_sources=		adg-type-builtins.h
 adg_private_h_sources=		adg-adim-private.h \
@@ -42,7 +43,8 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-line-style-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
-				adg-style-private.h
+				adg-style-private.h \
+				adg-toy-text-private.h
 adg_built_private_h_sources= 
 adg_c_sources=			adg-adim.c \
 				adg-arrow-style.c \
@@ -64,6 +66,7 @@ adg_c_sources=			adg-adim.c \
 				adg-point.c \
 				adg-positionable.c \
 				adg-style.c \
+				adg-toy-text.c \
 				adg-util.c
 adg_built_c_sources=		adg-type-builtins.c
 

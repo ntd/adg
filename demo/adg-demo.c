@@ -26,6 +26,7 @@ static void     add_piston_path         (AdgCanvas      *canvas,
                                          Piston         *piston);
 static void     add_piston_dimensions   (AdgCanvas      *canvas,
                                          Piston         *piston);
+static void     add_sample_stuff        (AdgCanvas      *canvas);
 static void     piston_path_extern      (AdgEntity      *entity,
                                          Piston         *piston);
 static void     piston_expose           (GtkWidget      *widget,
@@ -53,6 +54,7 @@ main(gint argc, gchar **argv)
     canvas = adg_canvas_new();
     add_piston_path(canvas, &model);
     add_piston_dimensions(canvas, &model);
+    add_sample_stuff(canvas);
 
     /* User interface stuff */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -93,7 +95,8 @@ main(gint argc, gchar **argv)
 }
 
 
-static void fill_piston_model(Piston *piston)
+static void
+fill_piston_model(Piston *piston)
 {
     piston->A = 62.3;
     piston->B = 20.6;
@@ -113,7 +116,8 @@ static void fill_piston_model(Piston *piston)
     piston->LD7 = 0.5;
 }
 
-static void add_piston_path(AdgCanvas *canvas, Piston *piston)
+static void
+add_piston_path(AdgCanvas *canvas, Piston *piston)
 {
     AdgEntity *entity;
 
@@ -122,7 +126,8 @@ static void add_piston_path(AdgCanvas *canvas, Piston *piston)
     adg_container_add(ADG_CONTAINER(canvas), entity);
 }
 
-static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
+static void
+add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
 {
     double A, B, C;
     double D1, D2, D3, D4, D5, D6, D7;
@@ -249,8 +254,20 @@ static void add_piston_dimensions(AdgCanvas *canvas, Piston *piston)
     adg_container_add(ADG_CONTAINER(canvas), entity);
 }
 
+static void
+add_sample_stuff(AdgCanvas *canvas)
+{
+    AdgEntity *toy_text;
 
-static void piston_path_extern(AdgEntity *entity, Piston *piston)
+    toy_text = adg_toy_text_new("Test script near the piston");
+    adg_positionable_set_org_explicit(ADG_POSITIONABLE(toy_text),
+                                      0., -4.65,
+                                      -2., -5.);
+    adg_container_add(ADG_CONTAINER(canvas), toy_text);
+}
+
+static void
+piston_path_extern(AdgEntity *entity, Piston *piston)
 {
     double A, B, C;
     double D1, D2, D3, D4, D5, D6, D7;
@@ -308,8 +325,7 @@ static void piston_path_extern(AdgEntity *entity, Piston *piston)
 }
 
 static void
-piston_expose(GtkWidget *widget,
-              GdkEventExpose *event, AdgCanvas *canvas)
+piston_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
 {
     cairo_t *cr;
     gint width, height;
@@ -331,7 +347,8 @@ piston_expose(GtkWidget *widget,
     cairo_destroy(cr);
 }
 
-static void piston_to_ps(AdgCanvas *canvas)
+static void
+piston_to_ps(AdgCanvas *canvas)
 {
     cairo_surface_t *surface;
     cairo_t *cr;

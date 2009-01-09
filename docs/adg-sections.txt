@@ -389,6 +389,27 @@ ADG_CANVAS_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>toytext</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgToyText
+<SUBSECTION>
+adg_toy_text_new
+<SUBSECTION>
+adg_toy_text_get_label
+adg_toy_text_set_label
+<SUBSECTION Standard>
+AdgToyTextClass
+AdgToyTextPrivate
+adg_toy_text_get_type
+ADG_TOY_TEXT
+ADG_IS_TOY_TEXT
+ADG_TYPE_TOY_TEXT
+ADG_TOY_TEXT_CLASS
+ADG_IS_TOY_TEXT_CLASS
+ADG_TOY_TEXT_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>path</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgPath
