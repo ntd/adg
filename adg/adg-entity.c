@@ -703,6 +703,9 @@ adg_entity_point_to_model_pair(AdgEntity *entity,
     paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
     adg_pair_copy(pair, &point->paper);
     cpml_pair_transform(pair, paper_matrix);
+
+    pair->x += point->model.x;
+    pair->y += point->model.y;
 }
 
 /**
@@ -726,6 +729,9 @@ adg_entity_point_to_paper_pair(AdgEntity *entity,
     model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
     adg_pair_copy(pair, &point->model);
     cpml_pair_transform(pair, model_matrix);
+
+    pair->x += point->paper.x;
+    pair->y += point->paper.y;
 }
 
 /**
