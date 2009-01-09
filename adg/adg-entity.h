@@ -120,6 +120,12 @@ void            adg_entity_apply                (AdgEntity      *entity,
 void            adg_entity_point_to_pair        (AdgEntity      *entity,
                                                  const AdgPoint *point,
                                                  AdgPair        *pair);
+void            adg_entity_point_to_model_pair  (AdgEntity      *entity,
+                                                 const AdgPoint *point,
+                                                 AdgPair        *pair);
+void            adg_entity_point_to_paper_pair  (AdgEntity      *entity,
+                                                 const AdgPoint *point,
+                                                 AdgPair        *pair);
 gboolean        adg_entity_model_matrix_applied (AdgEntity      *entity);
 gboolean        adg_entity_paper_matrix_applied (AdgEntity      *entity);
 gboolean        adg_entity_model_applied        (AdgEntity      *entity);

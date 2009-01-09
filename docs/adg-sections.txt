@@ -305,6 +305,8 @@ adg_entity_build_paper2model
 adg_entity_scale_to_model
 adg_entity_scale_to_paper
 adg_entity_point_to_pair
+adg_entity_point_to_model_pair
+adg_entity_point_to_paper_pair
 adg_entity_render
 <SUBSECTION>
 adg_entity_invalidate
