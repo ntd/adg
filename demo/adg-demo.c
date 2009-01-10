@@ -1,7 +1,6 @@
 #include <adg/adg.h>
 #include <gtk/gtk.h>
 #include <math.h>
-#include <cairo-ps.h>
 
 
 #ifndef G_SQRT3
@@ -32,7 +31,16 @@ static void     piston_path_extern      (AdgEntity      *entity,
 static void     piston_expose           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          AdgCanvas      *canvas);
-static void     piston_to_ps            (AdgCanvas      *canvas);
+static void     to_pdf                  (AdgCanvas      *canvas,
+                                         GtkWidget      *caller);
+static void     to_png                  (AdgCanvas      *canvas,
+                                         GtkWidget      *caller);
+static void     to_ps                   (AdgCanvas      *canvas,
+                                         GtkWidget      *caller);
+static void     missing_feature         (GtkWidget      *caller,
+                                         const gchar    *feature);
+static void     file_generated          (GtkWidget      *caller,
+                                         const gchar    *file);
 
 
 int
@@ -74,12 +82,16 @@ main(gint argc, gchar **argv)
     gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
     gtk_box_pack_end(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
 
-    widget = gtk_button_new_from_stock(GTK_STOCK_SAVE);
+    widget = gtk_button_new_with_mnemonic("P_NG image");
+    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_png), canvas);
     gtk_container_add(GTK_CONTAINER(button_box), widget);
 
-    widget = gtk_button_new_from_stock(GTK_STOCK_PRINT);
-    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(piston_to_ps),
-                             canvas);
+    widget = gtk_button_new_with_mnemonic("P_DF file");
+    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_pdf), canvas);
+    gtk_container_add(GTK_CONTAINER(button_box), widget);
+
+    widget = gtk_button_new_with_mnemonic("_PostScript");
+    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_ps), canvas);
     gtk_container_add(GTK_CONTAINER(button_box), widget);
 
     widget = gtk_button_new_from_stock(GTK_STOCK_QUIT);
@@ -354,16 +366,85 @@ piston_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
     cairo_destroy(cr);
 }
 
+
+#ifdef CAIRO_HAS_PNG_FUNCTIONS
+
 static void
-piston_to_ps(AdgCanvas *canvas)
+to_png(AdgCanvas *canvas, GtkWidget *caller)
 {
     cairo_surface_t *surface;
     cairo_t *cr;
-    AdgMatrix matrix;
-    double scale;
+
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
+    cr = cairo_create(surface);
+    cairo_surface_destroy(surface);
+
+    /* Rendering process */
+    adg_entity_render(ADG_ENTITY(canvas), cr);
+
+    cairo_show_page(cr);
+    cairo_surface_write_to_png(surface, "test.png");
+    cairo_destroy(cr);
+
+    file_generated(caller, "test.png");
+}
+
+#else
+
+static void
+to_png(AdgCanvas *canvas, GtkWidget *caller)
+{
+    missing_feature(caller, "PNG");
+}
+
+#endif
+
+
+#ifdef CAIRO_HAS_PDF_SURFACE
+
+#include <cairo-pdf.h>
+
+static void
+to_pdf(AdgCanvas *canvas, GtkWidget *caller)
+{
+    cairo_surface_t *surface;
+    cairo_t *cr;
+
+    surface = cairo_pdf_surface_create("test.pdf", 841, 595);
+    cr = cairo_create(surface);
+    cairo_surface_destroy(surface);
+
+    adg_entity_render(ADG_ENTITY(canvas), cr);
+
+    cairo_show_page(cr);
+    cairo_destroy(cr);
+
+    file_generated(caller, "test.pdf");
+}
+
+#else
+
+static void
+to_pdf(AdgCanvas *canvas, GtkWidget *caller)
+{
+    missing_feature(caller, "PDF");
+}
+
+#endif
+
+
+#ifdef CAIRO_HAS_PS_SURFACE
+
+#include <cairo-ps.h>
+
+static void
+to_ps(AdgCanvas *canvas, GtkWidget *caller)
+{
+    cairo_surface_t *surface;
+    cairo_t *cr;
 
     /* Surface creation: A4 size */
-    surface = cairo_ps_surface_create("test.ps", 595, 842);
+    surface = cairo_ps_surface_create("test.ps", 841, 595);
     cairo_ps_surface_dsc_comment(surface,
                                  "%%Title: Automatic Drawing Generation (Adg) demo");
     cairo_ps_surface_dsc_comment(surface,
@@ -379,15 +460,57 @@ piston_to_ps(AdgCanvas *canvas)
     cr = cairo_create(surface);
     cairo_surface_destroy(surface);
 
-    scale = 9.0;
-    cairo_matrix_init(&matrix, scale, 0.0, 0.0, scale, 100.0,
-                      4.5 * scale + 100.0);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
-    cairo_scale(cr, 70.0, 70.0);
-
-    /* Rendering process */
     adg_entity_render(ADG_ENTITY(canvas), cr);
 
     cairo_show_page(cr);
     cairo_destroy(cr);
+
+    file_generated(caller, "test.ps");
+}
+
+#else
+
+static void
+to_ps(AdgCanvas *canvas, GtkWidget *caller)
+{
+    missing_feature(caller, "PostScript");
+}
+
+#endif
+
+
+static void
+missing_feature(GtkWidget *caller, const gchar *feature)
+{
+    GtkWindow *window;
+    GtkWidget *dialog;
+
+    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
+    dialog = gtk_message_dialog_new(window, GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_WARNING,
+                                    GTK_BUTTONS_OK,
+                                    "The provided cairo library\n"
+                                    "was compiled with no %s support!",
+                                    feature);
+    gtk_window_set_title(GTK_WINDOW(dialog), "Missing feature");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+static void
+file_generated(GtkWidget *caller, const gchar *file)
+{
+    GtkWindow *window;
+    GtkWidget *dialog;
+
+    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
+    dialog = gtk_message_dialog_new_with_markup(window, GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_INFO,
+                                                GTK_BUTTONS_CLOSE,
+                                                "The requested operation generated\n"
+                                                "<b>%s</b> in the current directory.",
+                                                file);
+    gtk_window_set_title(GTK_WINDOW(dialog), "Operation completed");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
