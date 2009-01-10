@@ -432,23 +432,8 @@ AdgPath
 <SUBSECTION>
 adg_path_new
 <SUBSECTION>
-adg_path_clear
 adg_path_get_cairo_path
 adg_path_dump
-<SUBSECTION>
-adg_path_move_to
-adg_path_line_to
-adg_path_curve_to
-adg_path_arc
-adg_path_arc_negative
-adg_path_rectangle
-adg_path_close
-adg_path_rel_move_to
-adg_path_rel_line_to
-adg_path_rel_curve_to
-adg_path_get_current_point
-<SUBSECTION>
-adg_path_chain_ymirror
 <SUBSECTION Standard>
 AdgPathClass
 AdgPathPrivate

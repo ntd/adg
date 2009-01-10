@@ -36,23 +36,16 @@
 #include <math.h>
 
 #define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
-#define ARC_TOLERANCE   0.1
-
-
-typedef enum _Direction Direction;
-enum _Direction {
-    DIRECTION_FORWARD,
-    DIRECTION_REVERSE
-};
 
 
 static void	finalize		(GObject	*object);
+static void     invalidate              (AdgEntity      *entity);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
-static void     clear                   (AdgPath        *path);
+static void     clear_path_cache        (AdgPath        *path);
 
 
-G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_ENTITY)
 
 
 static void
@@ -68,9 +61,8 @@ adg_path_class_init(AdgPathClass *klass)
 
     gobject_class->finalize = finalize;
 
+    entity_class->invalidate = invalidate;
     entity_class->render = render;
-
-    klass->clear = clear;
 }
 
 static void
@@ -90,7 +82,8 @@ adg_path_init(AdgPath *path)
 static void
 finalize(GObject *object)
 {
-    ADG_PATH_GET_CLASS(object)->clear((AdgPath *) object);
+    clear_path_cache((AdgPath *) object);
+
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
 
@@ -103,7 +96,7 @@ finalize(GObject *object)
  * the cairo context after the @callback call.
  *
  * Return value: the new entity
- */
+ **/
 AdgEntity *
 adg_path_new(AdgCallback callback)
 {
@@ -114,14 +107,6 @@ adg_path_new(AdgCallback callback)
 
     return entity;
 }
-
-void
-adg_path_clear(AdgPath *path)
-{
-    g_return_if_fail(ADG_IS_PATH(path));
-    ADG_PATH_GET_CLASS(path)->clear(path);
-}
-
 
 const cairo_path_t *
 adg_path_get_cairo_path(AdgPath *path)
@@ -174,6 +159,14 @@ adg_path_dump(AdgPath *path)
 
 
 static void
+invalidate(AdgEntity *entity)
+{
+    clear_path_cache((AdgPath *) entity);
+
+    PARENT_CLASS->invalidate(entity);
+}
+
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgPath *path = (AdgPath *) entity;
@@ -199,13 +192,14 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static void
-clear(AdgPath *path)
+clear_path_cache(AdgPath *path)
 {
-    if (path->priv->cairo_path != NULL) {
-        cairo_path_destroy(path->priv->cairo_path);
-        path->priv->cairo_path = NULL;
+    AdgPathPrivate *priv = path->priv;
+
+    if (priv->cairo_path != NULL) {
+        cairo_path_destroy(priv->cairo_path);
+        priv->cairo_path = NULL;
     }
 
-    path->priv->cp.x = 0.;
-    path->priv->cp.y = 0.;
+    priv->cp.x = priv->cp.y = 0.;
 }
