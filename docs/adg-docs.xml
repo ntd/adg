@@ -111,7 +111,6 @@
     <xi:include href="xml/line-style.xml"/>
     <xi:include href="xml/arrow-style.xml"/>
     <xi:include href="xml/font-style.xml"/>
-    <xi:include href="xml/xatch-style.xml"/>
     <xi:include href="xml/dim-style.xml"/>
   </part>
 
