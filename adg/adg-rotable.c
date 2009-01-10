@@ -91,7 +91,7 @@ iface_base(AdgRotableIface *iface)
 
     param = g_param_spec_object("angle",
                                 P_("Rotation Angle"),
-                                P_("The angle (in degree) the entity should rotate around the origin point"),
+                                P_("The angle (in radians) the entity should rotate around the origin point"),
                                 G_TYPE_DOUBLE,
                                 G_PARAM_READWRITE);
     g_object_interface_install_property(iface, param);
@@ -140,7 +140,7 @@ set_angle(AdgRotable *rotable, gdouble angle)
  *
  * Gets the rotation angle of @rotable.
  *
- * Return value: The rotation angle (in degree)
+ * Return value: The rotation angle (in radians)
  **/
 gdouble
 adg_rotable_get_angle(AdgRotable *rotable)
