@@ -29,6 +29,7 @@
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
 #include "adg-positionable.h"
+#include "adg-rotable.h"
 #include "adg-font-style.h"
 #include "adg-intl.h"
 
@@ -38,6 +39,7 @@
 enum {
     PROP_0,
     PROP_ORIGIN,
+    PROP_ANGLE,
     PROP_LABEL
 };
 
@@ -46,6 +48,11 @@ static void     get_origin              (AdgPositionable*positionable,
                                          AdgPoint       *dest);
 static void     set_origin              (AdgPositionable*positionable,
                                          const AdgPoint *origin);
+
+static void     rotable_init            (AdgRotableIface*iface);
+static gdouble  get_angle               (AdgRotable     *rotable);
+static void     set_angle               (AdgRotable     *rotable,
+                                         gdouble         angle);
 
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
@@ -61,17 +68,20 @@ static void     model_matrix_changed    (AdgEntity      *entity,
 static void     invalidate              (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gboolean update_origin_cache     (AdgToyText     *toy_text);
+static gboolean update_origin_cache     (AdgToyText     *toy_text,
+                                         cairo_t        *cr);
 static gboolean update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
+static void     clear_origin_cache      (AdgToyText     *toy_text);
 static void     move_label_cache        (AdgToyText     *toy_text,
                                          const AdgPair  *to);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
                         G_IMPLEMENT_INTERFACE(ADG_TYPE_POSITIONABLE,
-                                              positionable_init))
+                                              positionable_init)
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_ROTABLE, rotable_init))
 
 
 static void
@@ -97,6 +107,28 @@ set_origin(AdgPositionable *positionable, const AdgPoint *origin)
 
 
 static void
+rotable_init(AdgRotableIface *iface)
+{
+    iface->get_angle = get_angle;
+    iface->set_angle = set_angle;
+}
+
+static gdouble
+get_angle(AdgRotable *rotable)
+{
+    AdgToyText *toy_text = (AdgToyText *) rotable;
+    return toy_text->priv->angle;
+}
+
+static void
+set_angle(AdgRotable *rotable, gdouble angle)
+{
+    AdgToyText *toy_text = (AdgToyText *) rotable;
+    toy_text->priv->angle = angle;
+}
+
+
+static void
 adg_toy_text_class_init(AdgToyTextClass *klass)
 {
     GObjectClass *gobject_class;
@@ -117,6 +149,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->render = render;
 
     g_object_class_override_property(gobject_class, PROP_ORIGIN, "origin");
+    g_object_class_override_property(gobject_class, PROP_ANGLE, "angle");
 
     param = g_param_spec_string("label",
                                 P_("Label"),
@@ -134,8 +167,8 @@ adg_toy_text_init(AdgToyText *toy_text)
 
     priv->label = NULL;
     adg_point_unset(&priv->origin);
-    priv->origin_pair.x = priv->origin_pair.y = 0.;
-    priv->num_glyphs = 0;
+
+    priv->origin_cached = FALSE;
     priv->glyphs = NULL;
 
     toy_text->priv = priv;
@@ -148,6 +181,7 @@ finalize(GObject *object)
 
     g_free(toy_text->priv->label);
     clear_label_cache(toy_text);
+    clear_origin_cache(toy_text);
 
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
@@ -160,6 +194,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     switch (prop_id) {
     case PROP_ORIGIN:
         g_value_set_boxed(value, &toy_text->priv->origin);
+        break;
+    case PROP_ANGLE:
+        g_value_set_double(value, toy_text->priv->angle);
         break;
     case PROP_LABEL:
         g_value_set_string(value, toy_text->priv->label);
@@ -175,16 +212,20 @@ set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
     AdgToyText *toy_text = (AdgToyText *) object;
-    AdgToyTextPrivate *priv = toy_text->priv;
 
     switch (prop_id) {
     case PROP_ORIGIN:
-        adg_point_copy(&priv->origin, (AdgPoint *) g_value_get_boxed(value));
-        update_origin_cache(toy_text);
+        adg_point_copy(&toy_text->priv->origin,
+                       (AdgPoint *) g_value_get_boxed(value));
+        clear_origin_cache(toy_text);
+        break;
+    case PROP_ANGLE:
+        toy_text->priv->angle = g_value_get_double(value);
+        clear_origin_cache(toy_text);
         break;
     case PROP_LABEL:
-        g_free(priv->label);
-        priv->label = g_value_dup_string(value);
+        g_free(toy_text->priv->label);
+        toy_text->priv->label = g_value_dup_string(value);
         clear_label_cache(toy_text);
         break;
     default:
@@ -252,16 +293,22 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgToyTextPrivate *priv = toy_text->priv;
 
     if (priv->label) {
-        AdgStyle *font_style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
+        AdgStyle *font_style;
+
+        font_style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
+
+        cairo_save(cr);
         cairo_set_matrix(cr, adg_entity_get_paper_matrix(entity));
         adg_style_apply(font_style, cr);
+        cairo_rotate(cr, priv->angle);
 
-        if (!priv->glyphs) {
+        if (!priv->glyphs)
             update_label_cache(toy_text, cr);
-            update_origin_cache(toy_text);
-        }
+        if (!priv->origin_cached)
+            update_origin_cache(toy_text, cr);
 
         cairo_show_glyphs(cr, priv->glyphs, priv->num_glyphs);
+        cairo_restore(cr);
     }
 
     PARENT_CLASS->render(entity, cr);
@@ -270,45 +317,58 @@ render(AdgEntity *entity, cairo_t *cr)
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    update_origin_cache((AdgToyText *) entity);
+    clear_origin_cache((AdgToyText *) entity);
     PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
 invalidate(AdgEntity *entity)
 {
-    clear_label_cache((AdgToyText *) entity);
+    AdgToyText *toy_text = (AdgToyText *) entity;
+
+    clear_label_cache(toy_text);
+    clear_origin_cache(toy_text);
+
     PARENT_CLASS->invalidate(entity);
 }
 
 static gboolean
-update_origin_cache(AdgToyText *toy_text)
+update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 {
-    AdgToyTextPrivate *priv = toy_text->priv;
-    AdgPoint *origin = &toy_text->priv->origin;
-    AdgPair *origin_pair = &toy_text->priv->origin_pair;
+    AdgToyTextPrivate *priv;
+    AdgPoint point;
+    AdgPair *pair;
     cairo_glyph_t *glyph;
     double x, y;
     int cnt;
 
-    origin = &priv->origin;
-    origin_pair = &priv->origin_pair;
+    priv = toy_text->priv;
+    adg_point_copy(&point, &priv->origin);
+    pair = &priv->origin_pair;
     glyph = priv->glyphs;
     cnt = priv->num_glyphs;
 
-    if (glyph == NULL || cnt <= 0) {
-        /* No label cache to update: return */
-        return TRUE;
+    /* On undefined label return error */
+    if (glyph == NULL || cnt <= 0)
+        return FALSE;
+
+    if (priv->angle != 0.) {
+        /* Following the less surprise rule, also the paper component
+         * of the origin point should rotate with the provided angle */
+        cairo_matrix_t rotation;
+        cairo_matrix_init_rotate(&rotation, priv->angle);
+        cpml_pair_transform(&point.paper, &rotation);
     }
 
-    adg_entity_point_to_paper_pair((AdgEntity *) toy_text, origin, origin_pair);
-    if (origin_pair->x == glyph->x && origin_pair->y == glyph->y) {
-        /* The label is yet properly positioned */
-        return TRUE;
-    }
+    adg_entity_point_to_pair((AdgEntity *) toy_text, &point, pair, cr);
+    priv->origin_cached = TRUE;
 
-    x = origin_pair->x - glyph->x;
-    y = origin_pair->y - glyph->y;
+    /* Check if the origin is still the same */
+    if (pair->x == glyph->x && pair->y == glyph->y)
+        return TRUE;
+
+    x = pair->x - glyph->x;
+    y = pair->y - glyph->y;
 
     while (cnt --) {
         glyph->x += x;
@@ -337,7 +397,14 @@ update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 
     cairo_glyph_extents(cr, priv->glyphs, priv->num_glyphs, &priv->extents);
 
+    clear_origin_cache(toy_text);
     return TRUE;
+}
+
+static void
+clear_origin_cache(AdgToyText *toy_text)
+{
+    toy_text->priv->origin_cached = FALSE;
 }
 
 static void
@@ -349,6 +416,7 @@ clear_label_cache(AdgToyText *toy_text)
         cairo_glyph_free(priv->glyphs);
         priv->glyphs = NULL;
     }
+
     priv->num_glyphs = 0;
     memset(&priv->extents, 0, sizeof(priv->extents));
 }
