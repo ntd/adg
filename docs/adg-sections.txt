@@ -342,6 +342,22 @@ ADG_POSITIONABLE_GET_IFACE
 </SECTION>
 
 <SECTION>
+<FILE>rotable</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgRotableIface
+<SUBSECTION>
+adg_rotable_get_angle
+adg_rotable_set_angle
+<SUBSECTION Standard>
+AdgRotable
+adg_rotable_get_type
+ADG_ROTABLE
+ADG_IS_ROTABLE
+ADG_TYPE_ROTABLE
+ADG_ROTABLE_GET_IFACE
+</SECTION>
+
+<SECTION>
 <FILE>container</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContainer

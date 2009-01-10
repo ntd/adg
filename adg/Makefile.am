@@ -24,6 +24,7 @@ adg_h_sources=			adg.h \
 				adg-pattern.h \
 				adg-point.h \
 				adg-positionable.h \
+				adg-rotable.h \
 				adg-style.h \
 				adg-toy-text.h \
 				adg-util.h
@@ -65,6 +66,7 @@ adg_c_sources=			adg-adim.c \
 				adg-pattern.c \
 				adg-point.c \
 				adg-positionable.c \
+				adg-rotable.c \
 				adg-style.c \
 				adg-toy-text.c \
 				adg-util.c

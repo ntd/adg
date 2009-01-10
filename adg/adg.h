@@ -33,6 +33,7 @@
 #include <adg/adg-pair.h>
 #include <adg/adg-path.h>
 #include <adg/adg-positionable.h>
+#include <adg/adg-rotable.h>
 #include <adg/adg-style.h>
 #include <adg/adg-toy-text.h>
 #include <adg/adg-type-builtins.h>

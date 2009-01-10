@@ -61,9 +61,7 @@
   </part>
 
   <part id="Core">
-    <title>ADG core reference</title>
-    <xi:include href="xml/tree_index.sgml"/>
-    <xi:include href="xml/pair.xml"/>
+    <title>ADG core reference</title> <xi:include href="xml/tree_index.sgml"/> <xi:include href="xml/pair.xml"/>
     <xi:include href="xml/point.xml"/>
     <xi:include href="xml/matrix.xml"/>
     <xi:include href="xml/pattern.xml"/>
@@ -91,6 +89,7 @@
     <chapter id="Populating-interface">
       <title>Shared interfaces</title>
       <xi:include href="xml/positionable.xml"/>
+      <xi:include href="xml/rotable.xml"/>
     </chapter>
     <xi:include href="xml/canvas.xml"/>
     <xi:include href="xml/toytext.xml"/>
