@@ -104,16 +104,16 @@ adg_matrix_is_null(const AdgMatrix * matrix)
 }
 
 /**
- * adg_matrix_set:
+ * adg_matrix_copy:
  * @matrix: the destination #AdgMatrix
  * @src: the source #AdgMatrix
  *
  * Copies @matrix to @dst.
  *
  * Return value: @matrix
- */
+ **/
 AdgMatrix *
-adg_matrix_set(AdgMatrix * matrix, const AdgMatrix * src)
+adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
 {
     g_return_val_if_fail(matrix != NULL, matrix);
     g_return_val_if_fail(src != NULL, matrix);

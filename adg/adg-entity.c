@@ -523,7 +523,7 @@ adg_entity_build_paper2model(AdgEntity *entity, AdgMatrix *matrix)
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
     g_return_val_if_fail(matrix != NULL, FALSE);
 
-    adg_matrix_set(matrix, adg_entity_get_model_matrix(entity));
+    adg_matrix_copy(matrix, adg_entity_get_model_matrix(entity));
     status = cairo_matrix_invert(matrix);
     if (status != CAIRO_STATUS_SUCCESS) {
         g_error("Unable to invert model matrix (cairo message: %s)",
@@ -553,7 +553,7 @@ adg_entity_build_model2paper(AdgEntity *entity, AdgMatrix *matrix)
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
     g_return_val_if_fail(matrix != NULL, FALSE);
 
-    adg_matrix_set(matrix, adg_entity_get_paper_matrix(entity));
+    adg_matrix_copy(matrix, adg_entity_get_paper_matrix(entity));
     status = cairo_matrix_invert(matrix);
     if (status != CAIRO_STATUS_SUCCESS) {
         g_error("Unable to invert paper matrix (cairo message: %s)",

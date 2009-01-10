@@ -34,7 +34,7 @@ adg_matrix_is_null
 adg_matrix_get_fallback
 <SUBSECTION>
 adg_matrix_dup
-adg_matrix_set
+adg_matrix_copy
 adg_matrix_equal
 <SUBSECTION Standard>
 ADG_TYPE_MATRIX

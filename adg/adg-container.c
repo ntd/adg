@@ -213,12 +213,12 @@ set_property(GObject *object,
         adg_container_add(container, g_value_get_object(value));
         break;
     case PROP_MODEL_TRANSFORMATION:
-        adg_matrix_set(&container->priv->model_transformation,
-                       g_value_get_boxed(value));
+        adg_matrix_copy(&container->priv->model_transformation,
+                        g_value_get_boxed(value));
         break;
     case PROP_PAPER_TRANSFORMATION:
-        adg_matrix_set(&container->priv->paper_transformation,
-                       g_value_get_boxed(value));
+        adg_matrix_copy(&container->priv->paper_transformation,
+                        g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -312,8 +312,8 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
                               parent_matrix,
                               &container->priv->model_transformation);
     else
-        adg_matrix_set(&container->priv->model_matrix,
-                       &container->priv->model_transformation);
+        adg_matrix_copy(&container->priv->model_matrix,
+                        &container->priv->model_transformation);
 
     adg_container_propagate_by_name(container, "model-matrix-changed",
                                     &container->priv->model_matrix);
@@ -331,8 +331,8 @@ paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
                               parent_matrix,
                               &container->priv->paper_transformation);
     else
-        adg_matrix_set(&container->priv->paper_matrix,
-                       &container->priv->paper_transformation);
+        adg_matrix_copy(&container->priv->paper_matrix,
+                        &container->priv->paper_transformation);
 
     adg_container_propagate_by_name(container, "paper-matrix-changed",
                                     &container->priv->paper_matrix);
@@ -593,7 +593,7 @@ adg_container_set_model_transformation(AdgContainer *container,
     parent = (AdgEntity *) adg_entity_get_parent(entity);
     parent_matrix = parent ? adg_entity_get_model_matrix(parent) : NULL;
 
-    adg_matrix_set(&container->priv->model_transformation, transformation);
+    adg_matrix_copy(&container->priv->model_transformation, transformation);
     adg_entity_model_matrix_changed(entity, parent_matrix);
 }
 
@@ -635,6 +635,6 @@ adg_container_set_paper_transformation(AdgContainer *container,
     parent = (AdgEntity *) adg_entity_get_parent(entity);
     parent_matrix = parent ? adg_entity_get_paper_matrix(parent) : NULL;
 
-    adg_matrix_set(&container->priv->paper_transformation, transformation);
+    adg_matrix_copy(&container->priv->paper_transformation, transformation);
     adg_entity_paper_matrix_changed(entity, parent_matrix);
 }
