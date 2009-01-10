@@ -18,3 +18,13 @@ SUBDIRS=		cpml \
 			demo \
 			docs \
 			po
+
+# Creating ChangeLog files from git log:
+# idea stolen from cairo/build/Makefile.am.changelog
+ChangeLog:
+	@echo Updating $@
+	@if test -d "$(srcdir)/.git"; then \
+	  (cd "$(srcdir)" && git log --stat > $@); \
+	else \
+	  echo A git checkout is required to generate $@ >&2; \
+	fi
