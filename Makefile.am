@@ -8,6 +8,7 @@ EXTRA_DIST=		ABOUT-NLS \
 			config.rpath \
 			COPYING \
 			ChangeLog \
+			ChangeLog-0.2.1 \
 			INSTALL \
 			m4/ChangeLog \
 			NEWS \
