@@ -137,10 +137,9 @@ set_origin(AdgPositionable *positionable, const AdgPoint *point)
 /**
  * adg_positionable_get_origin:
  * @positionable: an entity implementing AdgPositionable
+ * @dest: the destination #AdgPoint struct
  *
  * Gets the origin point of @positionable.
- *
- * Return value: A pointer to the internal origin point
  **/
 void
 adg_positionable_get_origin(AdgPositionable *positionable, AdgPoint *dest)
