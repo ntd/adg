@@ -100,12 +100,12 @@ iface_base(AdgPositionableIface *iface)
     /**
      * AdgPositionable::origin-moved:
      * @positionable: an entity implementing #AdgPositionable
+     * @old_origin: an #AdgPoint with the previous origin
      *
      * Emitted whenever the origin has changed.
      **/
     param_types[0] = ADG_TYPE_POINT;
-    signals[ORIGIN_MOVED] = g_signal_newv("origin-moved",
-                                          ADG_TYPE_POSITIONABLE,
+    signals[ORIGIN_MOVED] = g_signal_newv("origin-moved", ADG_TYPE_POSITIONABLE,
                                           G_SIGNAL_RUN_FIRST,
                                           NULL, NULL, NULL,
                                           g_cclosure_marshal_VOID__OBJECT,
