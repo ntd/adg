@@ -67,14 +67,14 @@ adg_point_dup(const AdgPoint *point)
 /**
  * adg_point_copy:
  * @point: an #AdgPoint structure
- * @source: the source point
+ * @src: the source point
  *
- * Shortcut to copy @source to @point.
+ * Shortcut to copy @src to @point.
  **/
 void
-adg_point_copy(AdgPoint *point, const AdgPoint *source)
+adg_point_copy(AdgPoint *point, const AdgPoint *src)
 {
-    memcpy(point, source, sizeof(AdgPoint));
+    memcpy(point, src, sizeof(AdgPoint));
 }
 
 /**
