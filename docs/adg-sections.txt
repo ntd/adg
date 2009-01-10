@@ -327,13 +327,13 @@ ADG_ENTITY_GET_CLASS
 <SECTION>
 <FILE>positionable</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
+AdgPositionable
 AdgPositionableIface
 <SUBSECTION>
 adg_positionable_get_origin
 adg_positionable_set_origin
 adg_positionable_set_origin_explicit
 <SUBSECTION Standard>
-AdgPositionable
 adg_positionable_get_type
 ADG_POSITIONABLE
 ADG_IS_POSITIONABLE
@@ -344,12 +344,12 @@ ADG_POSITIONABLE_GET_IFACE
 <SECTION>
 <FILE>rotable</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
+AdgRotable
 AdgRotableIface
 <SUBSECTION>
 adg_rotable_get_angle
 adg_rotable_set_angle
 <SUBSECTION Standard>
-AdgRotable
 adg_rotable_get_type
 ADG_ROTABLE
 ADG_IS_ROTABLE
