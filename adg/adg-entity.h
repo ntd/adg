@@ -119,7 +119,8 @@ void            adg_entity_apply                (AdgEntity      *entity,
                                                  cairo_t        *cr);
 void            adg_entity_point_to_pair        (AdgEntity      *entity,
                                                  const AdgPoint *point,
-                                                 AdgPair        *pair);
+                                                 AdgPair        *pair,
+                                                 cairo_t        *cr);
 void            adg_entity_point_to_model_pair  (AdgEntity      *entity,
                                                  const AdgPoint *point,
                                                  AdgPair        *pair);

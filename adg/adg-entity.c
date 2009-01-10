@@ -189,7 +189,7 @@ adg_entity_class_init(AdgEntityClass *klass)
   /**
    * AdgEntity::render:
    * @entity: an #AdgEntity
-   * @cr: the #cairo_t drawing context
+   * @cr: a #cairo_t drawing context
    *
    * Causes the rendering of @entity on @cr.
    */
@@ -458,7 +458,7 @@ adg_entity_get_paper_matrix(AdgEntity *entity)
 /**
  * adg_entity_scale_to_model:
  * @entity: an #AdgEntity object
- * @cr: the #cairo_t drawing context
+ * @cr: a #cairo_t drawing context
  *
  * Sets the model matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
@@ -483,7 +483,7 @@ adg_entity_scale_to_model(AdgEntity *entity, cairo_t *cr)
 /**
  * adg_entity_scale_to_paper:
  * @entity: an #AdgEntity object
- * @cr: the #cairo_t drawing context
+ * @cr: a #cairo_t drawing context
  *
  * Sets the paper matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
@@ -635,7 +635,7 @@ adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
  * adg_entity_apply:
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to apply
- * @cr: the #cairo_t drawing context
+ * @cr: a #cairo_t drawing context
  *
  * Applies the specified style to the @cr cairo context.
  **/
@@ -653,14 +653,16 @@ adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
  * @entity: an #AdgEntity
  * @point: the source #AdgPoint
  * @pair: the destination #AdgPair
+ * @cr: a #cairo_t drawing context
  *
  * Converts @point to @pair using the model and paper matrix of @entity,
  * as if the current matrix is an identity matrix.
  **/
 void
-adg_entity_point_to_pair(AdgEntity *entity,
-                         const AdgPoint *point, AdgPair *pair)
+adg_entity_point_to_pair(AdgEntity *entity, const AdgPoint *point,
+                         AdgPair *pair, cairo_t *cr)
 {
+    AdgMatrix inverted_ctm;
     const AdgMatrix *model_matrix;
     const AdgMatrix *paper_matrix;
     AdgPair model_pair, paper_pair;
@@ -669,6 +671,8 @@ adg_entity_point_to_pair(AdgEntity *entity,
     g_return_if_fail(point != NULL);
     g_return_if_fail(pair != NULL);
 
+    cairo_get_matrix(cr, &inverted_ctm);
+    cairo_matrix_invert(&inverted_ctm);
     model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
     paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
 
@@ -680,6 +684,8 @@ adg_entity_point_to_pair(AdgEntity *entity,
 
     pair->x = model_pair.x + paper_pair.x;
     pair->y = model_pair.y + paper_pair.y;
+
+    cpml_pair_transform(pair, &inverted_ctm);
 }
 
 /**
@@ -732,6 +738,7 @@ adg_entity_point_to_paper_pair(AdgEntity *entity,
 
     pair->x += point->paper.x;
     pair->y += point->paper.y;
+    g_print("Pair (%lf, %lf)\n", pair->x, pair->y);
 }
 
 /**
@@ -791,7 +798,7 @@ adg_entity_invalidate(AdgEntity *entity)
 /**
  * adg_entity_render:
  * @entity: an #AdgEntity
- * @cr: the #cairo_t drawing context
+ * @cr: a #cairo_t drawing context
  *
  * Emits the "render" signal on @entity and all its children, if any,
  * causing the rendering operation the @cr cairo context.
