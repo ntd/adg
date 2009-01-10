@@ -2,7 +2,8 @@
 #include <gtk/gtk.h>
 
 
-static void     draw_shape              (AdgPath        *path);
+static void     draw_shape              (AdgEntity      *entity,
+                                         cairo_t        *cr);
 static void     drawing_expose          (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          AdgCanvas      *canvas);
@@ -22,7 +23,7 @@ main(gint argc, gchar ** argv)
     canvas = adg_canvas_new();
 
     /* Add the shape to quote */
-    entity = adg_path_new(ADG_CALLBACK(draw_shape), NULL);
+    entity = adg_path_new(ADG_CALLBACK(draw_shape));
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* Add the north quotes */
@@ -51,17 +52,17 @@ main(gint argc, gchar ** argv)
 }
 
 static void
-draw_shape(AdgPath *path)
+draw_shape(AdgEntity *entity, cairo_t *cr)
 {
-    adg_path_move_to(path, 0., 0.);
-    adg_path_line_to(path, 0., -5.);
-    adg_path_line_to(path, 2., -5.);
-    adg_path_line_to(path, 2., -10.);
-    adg_path_line_to(path, 8., -10.);
-    adg_path_line_to(path, 8., -5.);
-    adg_path_line_to(path, 10., -5.);
-    adg_path_line_to(path, 10., 0.);
-    adg_path_close(path);
+    cairo_move_to(cr, 0., 0.);
+    cairo_line_to(cr, 0., -5.);
+    cairo_line_to(cr, 2., -5.);
+    cairo_line_to(cr, 2., -10.);
+    cairo_line_to(cr, 8., -10.);
+    cairo_line_to(cr, 8., -5.);
+    cairo_line_to(cr, 10., -5.);
+    cairo_line_to(cr, 10., 0.);
+    cairo_close_path(cr);
 }
 
 static void

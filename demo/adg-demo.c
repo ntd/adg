@@ -27,7 +27,7 @@ static void     add_piston_dimensions   (AdgCanvas      *canvas,
                                          Piston         *piston);
 static void     add_sample_stuff        (AdgCanvas      *canvas);
 static void     piston_path_extern      (AdgEntity      *entity,
-                                         Piston         *piston);
+                                         cairo_t        *cr);
 static void     piston_expose           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          AdgCanvas      *canvas);
@@ -42,6 +42,8 @@ static void     missing_feature         (GtkWidget      *caller,
 static void     file_generated          (GtkWidget      *caller,
                                          const gchar    *file);
 
+static Piston   model;
+
 
 int
 main(gint argc, gchar **argv)
@@ -51,7 +53,6 @@ main(gint argc, gchar **argv)
     GtkWidget *button_box;
     GtkWidget *widget;
     AdgCanvas *canvas;
-    Piston     model;
 
     gtk_init(&argc, &argv);
 
@@ -131,9 +132,7 @@ fill_piston_model(Piston *piston)
 static void
 add_piston_path(AdgCanvas *canvas, Piston *piston)
 {
-    AdgEntity *entity;
-
-    entity = adg_path_new(ADG_CALLBACK(piston_path_extern), piston);
+    AdgEntity *entity = adg_path_new(piston_path_extern);
 
     adg_container_add(ADG_CONTAINER(canvas), entity);
 }
@@ -286,14 +285,16 @@ add_sample_stuff(AdgCanvas *canvas)
 }
 
 static void
-piston_path_extern(AdgEntity *entity, Piston *piston)
+piston_path_extern(AdgEntity *entity, cairo_t *cr)
 {
+    Piston *piston;
     double A, B, C;
     double D1, D2, D3, D4, D5, D6, D7;
     double LD2, LD3, LD5, LD6, LD7;
     double RD34, RD56;
-    AdgPath *path;
     double x, y;
+
+    piston = &model;
 
     A = piston->A;
     B = piston->B;
@@ -313,34 +314,33 @@ piston_path_extern(AdgEntity *entity, Piston *piston)
     RD34 = piston->RD34;
     RD56 = piston->RD56;
 
-    path = ADG_PATH(entity);
-
-    adg_path_move_to(path, 0, D1 / 2.0);
-    adg_path_line_to(path, A - B - LD2, D1 / 2.0);
+    cairo_move_to(cr, 0, D1 / 2.0);
+    cairo_line_to(cr, A - B - LD2, D1 / 2.0);
     y = (D1 - D2) / 2.0;
-    adg_path_line_to(path, A - B - LD2 + y * G_SQRT3, D1 / 2.0 - y);
-    adg_path_line_to(path, A - B, D2 / 2.0);
-    adg_path_line_to(path, A - B, D3 / 2.0 - CHAMFER);
-    adg_path_line_to(path, A - B + CHAMFER, D3 / 2.0);
-    adg_path_line_to(path, A - B + LD3 - CHAMFER, D3 / 2.0);
-    adg_path_line_to(path, A - B + LD3, D3 / 2.0 - CHAMFER);
+    cairo_line_to(cr, A - B - LD2 + y * G_SQRT3, D1 / 2.0 - y);
+    cairo_line_to(cr, A - B, D2 / 2.0);
+    cairo_line_to(cr, A - B, D3 / 2.0 - CHAMFER);
+    cairo_line_to(cr, A - B + CHAMFER, D3 / 2.0);
+    cairo_line_to(cr, A - B + LD3 - CHAMFER, D3 / 2.0);
+    cairo_line_to(cr, A - B + LD3, D3 / 2.0 - CHAMFER);
     x = A - B + LD3 + RD34;
     y = D4 / 2.0 + RD34;
-    adg_path_arc(path, x, y, RD34, G_PI, 3.0 * G_PI_2);
-    adg_path_line_to(path, A - C - LD5, D4 / 2.0);
+    cairo_arc(cr, x, y, RD34, G_PI, 3.0 * G_PI_2);
+    cairo_line_to(cr, A - C - LD5, D4 / 2.0);
     y = (D4 - D5) / 2.0;
-    adg_path_line_to(path, A - C - LD5 + y, D4 / 2.0 - y);
-    adg_path_line_to(path, A - C, D5 / 2.0);
-    adg_path_line_to(path, A - C, D6 / 2.0);
-    adg_path_line_to(path, A - C + LD6, D6 / 2.0);
+    cairo_line_to(cr, A - C - LD5 + y, D4 / 2.0 - y);
+    cairo_line_to(cr, A - C, D5 / 2.0);
+    cairo_line_to(cr, A - C, D6 / 2.0);
+    cairo_line_to(cr, A - C + LD6, D6 / 2.0);
     x = C - LD7 - LD6;
     y = x / G_SQRT3;
-    adg_path_line_to(path, A - C + LD6 + x, D6 / 2.0 - y);
-    adg_path_line_to(path, A - LD7, D7 / 2.0);
-    adg_path_line_to(path, A, D7 / 2.0);
+    cairo_line_to(cr, A - C + LD6 + x, D6 / 2.0 - y);
+    cairo_line_to(cr, A - LD7, D7 / 2.0);
+    cairo_line_to(cr, A, D7 / 2.0);
 
-    adg_path_chain_ymirror(path);
-    adg_path_close(path);
+    /* TODO: mirror the path on the y=0 axis, chain-up to the reversed path
+     * to the current path and close the shape. Waiting for the
+     * implementation of the above functions in CPML... */
 }
 
 static void
