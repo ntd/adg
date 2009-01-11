@@ -4,18 +4,19 @@ XSLTPROC=		`which xsltproc`
 
 ACLOCAL_AMFLAGS=	-I m4
 
+BUILT_SOURCES=		ChangeLog \
+			README \
+			NEWS \
+			TODO
 
 EXTRA_DIST=		ABOUT-NLS \
 			AUTHORS \
 			config.rpath \
 			COPYING \
-			ChangeLog \
 			ChangeLog-0.2.1 \
 			INSTALL \
 			m4/ChangeLog \
-			README \
-			NEWS \
-			TODO
+			$(BUILT_SOURCES)
 
 SUBDIRS=		cpml \
 			adg \
