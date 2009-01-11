@@ -20,6 +20,7 @@
 
 #include "cpml-path.h"
 
+#include <stdio.h>
 #include <string.h>
 
 static cairo_bool_t     strip_leadings          (CpmlPath *path);
@@ -43,7 +44,7 @@ static cairo_bool_t     path_to_primitive       (CpmlPath *primitive,
  * @path and @src can be the same object (a #CpmlPath structure).
  *
  * Return value: 1 on success, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_path_from_cairo(CpmlPath *path, const cairo_path_t *src, cairo_t *cr)
 {
@@ -69,12 +70,12 @@ cpml_path_from_cairo(CpmlPath *path, const cairo_path_t *src, cairo_t *cr)
  * is left untouched.
  *
  * Return value: 1 on success, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_path_from_cairo_explicit(CpmlPath *path, const cairo_path_t *src,
                               const CpmlPair *org)
 {
-    if (src->status != CAIRO_STATUS_SUCCESS)
+    if (path == NULL || src == NULL || org == NULL)
         return 0;
 
     if (path != (CpmlPath *) src)
@@ -102,13 +103,67 @@ cpml_path_from_cairo_explicit(CpmlPath *path, const cairo_path_t *src,
  * structure accordling. Also the path org is update.
  *
  * Return value: @path or %NULL on errors
- */
-CpmlPath *cpml_path_copy(CpmlPath *path, const CpmlPath *src)
+ **/
+CpmlPath *
+cpml_path_copy(CpmlPath *path, const CpmlPath *src)
 {
     if (path == NULL || src == NULL)
         return NULL;
 
     return memcpy(path, src, sizeof(CpmlPath));
+}
+
+/**
+ * cpml_path_dump:
+ * @path: an allocated #CpmlPath
+ *
+ * Dumps the specified @path to stdout. Useful for debug purposes.
+ *
+ * Return value: 1 on success, 0 on errors
+ **/
+cairo_bool_t
+cpml_path_dump(CpmlPath *path)
+{
+    cairo_path_t *cairo_path;
+    cairo_path_data_t *data;
+    int n_data, n_point;
+
+    if (path == NULL)
+        return 0;
+
+    printf("Origin in (%lf, %lf)\n", path->org.x, path->org.y);
+
+    cairo_path = &path->cairo_path;
+    for (n_data = 0; n_data < cairo_path->num_data; ++n_data) {
+	data = cairo_path->data + n_data;
+
+	switch (data->header.type) {
+	case CAIRO_PATH_MOVE_TO:
+	    printf("Move to ");
+	    break;
+	case CAIRO_PATH_LINE_TO:
+	    printf("Line to ");
+	    break;
+	case CAIRO_PATH_CURVE_TO:
+	    printf("Curve to ");
+	    break;
+	case CAIRO_PATH_CLOSE_PATH:
+	    printf("Path close");
+	    break;
+	default:
+	    printf("Unknown entity (%d)", data->header.type);
+	    break;
+	}
+
+	for (n_point = 1; n_point < data->header.length; ++n_point)
+	    printf("(%lf, %lf) ", data[n_point].point.x,
+                   data[n_point].point.y);
+
+	n_data += n_point - 1;
+	printf("\n");
+    }
+
+    return 1;
 }
 
 /**
@@ -121,7 +176,7 @@ CpmlPath *cpml_path_copy(CpmlPath *path, const CpmlPath *src)
  * Gets a specific segment from a path.
  *
  * Return value: 1 if a valid segment was found, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_segment_from_path(CpmlPath *segment, const CpmlPath *path, int index)
 {
@@ -161,7 +216,7 @@ cpml_segment_from_path(CpmlPath *segment, const CpmlPath *path, int index)
  * Gets a specific primitive from a path.
  *
  * Return value: 1 if a valid primitive was found, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_primitive_from_path(CpmlPath *primitive, const CpmlPath *path, int index)
 {
@@ -200,7 +255,7 @@ cpml_primitive_from_path(CpmlPath *primitive, const CpmlPath *path, int index)
  * Shortcut to get a pair from a primitive.
  *
  * Return value: 1 on success, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_primitive_get_pair(const CpmlPath *primitive, CpmlPair *pair, int index)
 {
@@ -223,7 +278,7 @@ cpml_primitive_get_pair(const CpmlPath *primitive, CpmlPair *pair, int index)
  * Shortcut to set a pair on a primitive.
  *
  * Return value: 1 on success, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_primitive_set_pair(CpmlPath *primitive, const CpmlPair *pair, int index)
 {
@@ -246,7 +301,7 @@ cpml_primitive_set_pair(CpmlPath *primitive, const CpmlPair *pair, int index)
  * Gets a point lying on @primitive at a specific percentual position.
  *
  * Return value: 1 on success, 0 on errors
- */
+ **/
 cairo_bool_t
 cpml_primitive_get_point(const CpmlPath *primitive, CpmlPair *point, double pos)
 {
@@ -275,8 +330,9 @@ cpml_primitive_get_point(const CpmlPath *primitive, CpmlPair *point, double pos)
  * Reverses a primitive.
  *
  * Return value: 1 on success, 0 on errors
- */
-cairo_bool_t cpml_primitive_reverse(CpmlPath *primitive)
+ **/
+cairo_bool_t
+cpml_primitive_reverse(CpmlPath *primitive)
 {
     CpmlPair tmp;
 
@@ -314,8 +370,9 @@ cairo_bool_t cpml_primitive_reverse(CpmlPath *primitive)
  *
  * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
  *               (check for path->cairo_path.status == CAIRO_STATUS_SUCCESS)
- */
-static cairo_bool_t strip_leadings(CpmlPath *path)
+ **/
+static cairo_bool_t
+strip_leadings(CpmlPath *path)
 {
     if (path->cairo_path.data[0].header.type != CAIRO_PATH_MOVE_TO)
         return 0;
@@ -343,7 +400,7 @@ static cairo_bool_t strip_leadings(CpmlPath *path)
  * Converts a path to a segment. @segment and @path can be the same struct.
  *
  * Return value: 1 if a valid segment is found, 0 on errors
- */
+ **/
 static cairo_bool_t
 path_to_segment(CpmlPath *segment, const CpmlPath *path)
 {
@@ -383,7 +440,7 @@ path_to_segment(CpmlPath *segment, const CpmlPath *path)
  * Converts a path to a primitive. @primitive and @path can be the same struct.
  *
  * Return value: 1 if a valid primitive is found, 0 on errors
- */
+ **/
 static cairo_bool_t
 path_to_primitive(CpmlPath *primitive, const CpmlPath *path)
 {
