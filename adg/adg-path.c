@@ -22,18 +22,14 @@
  * @title: AdgPath
  * @short_description: A stroked path entity
  *
- * The #AdgPath object is peraphs the simplest entity.
- *
- * It contains a pointer to the desired #cairo_path_t structure.
- */
+ * The #AdgPath object is probably the simplest entity: it represents a path
+ * (as intended by the #cairo_path_t structure) in model space.
+ **/
 
 #include "adg-path.h"
 #include "adg-path-private.h"
 #include "adg-line-style.h"
-#include "adg-util.h"
-#include "adg-canvas.h"
 #include "adg-intl.h"
-#include <math.h>
 
 #define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
 
@@ -71,8 +67,7 @@ adg_path_init(AdgPath *path)
     AdgPathPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(path, ADG_TYPE_PATH,
 						       AdgPathPrivate);
 
-    priv->cp.x = 0.;
-    priv->cp.y = 0.;
+    priv->cp.x = priv->cp.y = 0.;
     priv->cairo_path = NULL;
     priv->callback = NULL;
 
@@ -108,6 +103,15 @@ adg_path_new(AdgCallback callback)
     return entity;
 }
 
+/**
+ * adg_path_get_cairo_path:
+ * @path: an #AdgPath
+ *
+ * Gets a pointer to the cairo path structure of @path. The return value
+ * is owned by @path and must be considered read-only.
+ *
+ * Return value: a pointer to the internal #cairo_path_t structure
+ **/
 const cairo_path_t *
 adg_path_get_cairo_path(AdgPath *path)
 {
@@ -116,6 +120,12 @@ adg_path_get_cairo_path(AdgPath *path)
     return path->priv->cairo_path;
 }
 
+/**
+ * adg_path_dump:
+ * @path: an #AdgPath
+ *
+ * Dumps the data content of @path to stdout in a human readable format.
+ **/
 void
 adg_path_dump(AdgPath *path)
 {
