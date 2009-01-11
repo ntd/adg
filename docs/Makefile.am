@@ -3,7 +3,7 @@
 AUTOMAKE_OPTIONS=	1.6
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		../adg
+DOC_SOURCE_DIR=		$(top_srcdir)/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=
 MKDB_OPTIONS=		--sgml-mode --output-format=xml
@@ -32,4 +32,5 @@ GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
 
 include $(top_srcdir)/gtk-doc.make
 
-EXTRA_DIST += 
+EXTRA_DIST +=		gnu/docbook2txt.xsl \
+			gnu/README.xml

@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<refentry id="README">
+
+<refmeta>
+<refentrytitle role="top_of_page" id="README.top_of_page">ADG overview</refentrytitle>
+<refmiscinfo>ADG Library</refmiscinfo>
+</refmeta>
+
+<refnamediv>
+<refname>README</refname>
+<refpurpose>Project purpose and installation instruction</refpurpose>
+</refnamediv>
+
+<refsect1 id="README.general" role="desc">
+<title role="desc.title">General information</title>
+
+<para>Automatic Drawing Generation is GObject-based library that provides a
+non-interactive cairo canvas specifically designed for generating
+technical drawings.</para>
+
+<para>If you want to develop an application that needs to show and print drawings
+where some data change but the overall design is always the same, the ADG
+library comes in handy. In production factories, this is often a good
+choice and could help to greatly improve the production of technical offices.</para>
+
+<para>You can reach similar targets using parametric CADs but a custom application
+provides the following benefits:</para>
+
+<itemizedlist>
+  <listitem>More customizable</listitem>
+  <listitem>Quicker and not so bloated as a parametric CAD</listitem>
+  <listitem>Can be easily connected to a database</listitem>
+  <listitem>The drawings are generated on-fly: this feature can be used by
+  web-based application</listitem>
+</itemizedlist>
+
+<para>For technical details, visit the <ulink url="http://www.entidi.it/adg/">ADG home page</ulink>.</para>
+
+</refsect1>
+
+<refsect1 id="README.installation" role="desc">
+<title role="desc.title">Installation</title>
+
+<para>The ADG library has the following dependencies:</para>
+
+<itemizedlist>
+  <listitem><ulink url="http://www.gtk.org/">glib</ulink> 2.10.1 or later</listitem>
+  <listitem><ulink url="http://cairographics.org/">cairo</ulink> 1.7.4 or later</listitem>
+  <listitem><ulink url="http://www.gtk.org/">gtk+</ulink> 2.8.0 or later, needed by the demo program</listitem>
+</itemizedlist>
+
+<para>The ADG package uses the standard GNU autotools. See the file 'INSTALL'
+for further details.</para>
+
+</refsect1>
+
+</refentry>

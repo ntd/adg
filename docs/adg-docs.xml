@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                       "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-<!ENTITY README SYSTEM "../README">
 <!ENTITY version SYSTEM "version.xml">
 ]>
 <book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
@@ -10,58 +9,15 @@
     <releaseinfo>for ADG &version;</releaseinfo>
   </bookinfo>
 
-  <part id="Overview">
-    <title>ADG Overview</title>
-    <chapter id="Introduction">
-      <title>Introduction</title>
-
-      <para>
-      The overall description of what it is the ADG library is well reported in the
-      README file.
-      </para>
-
-      <synopsis>&README;</synopsis>
-    </chapter>
-    <chapter id="Compiling">
-      <title>Compiling the ADG library</title>
-
-      <section id="Requirements">
-        <title>Requirements</title>
-        <para>
-        The ADG library is strongly based on the GObject framework (included inside
-        the GLib abstraction layer) and uses Cairo as rendering engine. Both the
-        libraries are required.
-        </para>
-
-        <variablelist>
-
-        <varlistentry>
-        <term><ulink url="http://www.gtk.org/">GLib</ulink></term>
-        <listitem><para>[required] 2.10.1 or later</para></listitem>
-        </varlistentry>
-
-        <varlistentry>
-	<term><ulink url="http://sourceforge.net/projects/gcontainer/">GContainer</ulink></term>
-        <listitem><para>[required] 1.99.2 or later</para></listitem>
-        </varlistentry>
-
-        <varlistentry>
-        <term><ulink url="http://cairographics.org/">Cairo</ulink></term>
-        <listitem><para>[required] 1.6.0 or later</para></listitem>
-        </varlistentry>
-
-        <varlistentry>
-        <term><ulink url="http://www.gtk.org/">Gtk+2</ulink></term>
-        <listitem><para>[optional] 2.8.0 or later, in order to compile the demonstration programs</para></listitem>
-        </varlistentry>
-
-        </variablelist>
-      </section>
-    </chapter>
+  <part id="Introduction">
+    <title>Introduction</title>
+    <xi:include href="gnu/README.xml"/>
   </part>
 
   <part id="Core">
-    <title>ADG core reference</title> <xi:include href="xml/tree_index.sgml"/> <xi:include href="xml/pair.xml"/>
+    <title>ADG core reference</title>
+    <xi:include href="xml/tree_index.sgml"/>
+    <xi:include href="xml/pair.xml"/>
     <xi:include href="xml/point.xml"/>
     <xi:include href="xml/matrix.xml"/>
     <xi:include href="xml/pattern.xml"/>

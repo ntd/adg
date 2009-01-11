@@ -1,5 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
+XSLTPROC=		`which xsltproc`
+
 ACLOCAL_AMFLAGS=	-I m4
 
 
@@ -28,4 +30,13 @@ ChangeLog:
 	  (cd "$(srcdir)" && git log --stat > $@); \
 	else \
 	  echo A git checkout is required to generate $@ >&2; \
+	fi
+
+# Update the README from the xml version
+README: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/README.xml
+	@echo Updating $@
+	@if test -x $(XSLTPROC); then \
+	  $(XSLTPROC) -o $@ $^; \
+	else \
+	  echo libxslt-1.0.19 or later is required in order to generate the README; \
 	fi
