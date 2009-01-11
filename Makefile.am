@@ -38,5 +38,14 @@ README: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/README.xml
 	@if test -x $(XSLTPROC); then \
 	  $(XSLTPROC) -o $@ $^; \
 	else \
-	  echo libxslt-1.0.19 or later is required in order to generate the README; \
+	  echo libxslt-1.0.19 or later is required in order to generate $@; \
+	fi
+
+# Update the NEWS from the xml version
+NEWS: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/NEWS.xml
+	@echo Updating $@
+	@if test -x $(XSLTPROC); then \
+	  $(XSLTPROC) -o $@ $^; \
+	else \
+	  echo libxslt-1.0.19 or later is required in order to generate $@; \
 	fi

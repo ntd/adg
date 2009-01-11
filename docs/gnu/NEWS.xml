@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<chapter id="NEWS">
+<title>News archive</title>
+<subtitle>Summary of changes between releases</subtitle>
+
+<simplesect id="NEWS.0.3.2">
+<title>ADG 0.3.2</title>
+
+<para>The dependency on libgcontainer has been dropped: now the adg canvas
+requires only cairo and Gtk+2 (will be optional). This allows to try
+the demo program (demo/adg-demo) on any decent GNU/Linux distribution
+without installing anything.</para>
+
+<para>The container logic has been included in AdgEntity (the GChildable
+portion) and AdgContainer (the GContainerable part).</para>
+
+</simplesect>
+
+<simplesect id="NEWS.0.3.1">
+<title>ADG 0.3.1</title>
+
+<para>Implemented the "invalidate" signal to force the cache recomputation
+on a new rendering operation.</para>
+
+<para>The new cairo "toy" API has been used to do text management in AdgDim.
+This allows caching of the intermediate glyphs for improved
+performances (no profiling yet done). The cairo dependency has been
+raised to version 0.7.4 or more.</para>
+
+<para>The AdgLDim entity has been rewritten to full implement the new cache
+design. Other entities have been improved to allow a paper matrix
+other than the default identity matrix.</para>
+
+</simplesect>
+
+<simplesect id="NEWS.0.3.0">
+<title>ADG 0.3.0</title>
+
+<para>Reworked styles and implemented AdgContext, a clean and well defined
+approach to manage rendering customization.</para>
+ 
+<para>Moved all the geometrical stuff in Cairo Path Manipulation Library (CPML),
+an internal library depending only on cairo.</para>
+  
+<para>Greatly improved documentation.</para>
+
+</simplesect>
+
+<simplesect id="NEWS.0.2.2">
+<title>ADG 0.2.2</title>
+
+<para>Strongly separated model and paper matrix concepts and updated their
+management using nested transformations.</para>
+ 
+<para>Reworked the rendering process in a cleaner way by propagating the
+"render" signal and using internal entity states to let the application
+know what changed from the previous rendering.</para>
+
+</simplesect>
+
+<simplesect id="NEWS.0.2.1">
+<title>ADG 0.2.1</title>
+
+<para>Reworked the sources tree in a cleaner way (to help future development)
+and used private structs instead of populating the instance structure.</para>
+ 
+</simplesect>
+
+<simplesect id="NEWS.0.2.0">
+<title>ADG 0.2.0</title>
+ 
+<para>This is the first public release of the ADG library. It is in a early stage of
+developement, but the goal is quite ambitious!</para>
+
+</simplesect>
+
+</chapter>

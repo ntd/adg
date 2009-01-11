@@ -33,4 +33,5 @@ GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
 include $(top_srcdir)/gtk-doc.make
 
 EXTRA_DIST +=		gnu/docbook2txt.xsl \
-			gnu/README.xml
+			gnu/README.xml \
+			gnu/NEWS.xml

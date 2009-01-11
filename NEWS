@@ -9,6 +9,7 @@ without installing anything.
 The container logic has been included in AdgEntity (the GChildable
 portion) and AdgContainer (the GContainerable part).
 
+
 ADG 0.3.1
 =========
 
@@ -24,41 +25,41 @@ The AdgLDim entity has been rewritten to full implement the new cache
 design. Other entities have been improved to allow a paper matrix
 other than the default identity matrix.
 
+
 ADG 0.3.0
 =========
 
 Reworked styles and implemented AdgContext, a clean and well defined
-approach to manage rendering customization. 
- 
+approach to manage rendering customization.
+
 Moved all the geometrical stuff in Cairo Path Manipulation Library (CPML),
-an internal library depending only on cairo. 
-  
+an internal library depending only on cairo.
+
 Greatly improved documentation.
+
 
 ADG 0.2.2
 =========
 
 Strongly separated model and paper matrix concepts and updated their
-management using nested transformations. 
- 
+management using nested transformations.
+
 Reworked the rendering process in a cleaner way by propagating the
 "render" signal and using internal entity states to let the application
-know what changed from the previous rendering. 
+know what changed from the previous rendering.
+
 
 ADG 0.2.1
 =========
 
 Reworked the sources tree in a cleaner way (to help future development)
 and used private structs instead of populating the instance structure.
- 
+
+
 ADG 0.2.0
 =========
- 
+
 This is the first public release of the ADG library. It is in a early stage of
 developement, but the goal is quite ambitious!
-  
-The ADG library is based on cairo (http://cairographics.org) and glib-2.0
-(http://www.gtk.org), found in any decent linux system.  Furthermore, I based
-the container/child relationship on my little gcontainer library
-(http://sourceforge.net/projects/gcontainer/): you must download and install
-it first.
+
+
