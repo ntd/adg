@@ -36,10 +36,12 @@ static cairo_bool_t     path_to_primitive       (CpmlPath *primitive,
  * @cr: a cairo context
  *
  * Builds a CpmlPath from a cairo_path_t structure. This operations involves
- * stripping the leading MOVE_TO data and setting @path->org
+ * stripping the leading %MOVE_TO primitives and setting the @path->org
+ * coordinates. If not needed, @cr could be %NULL.
  *
- * @cr is used to get the current point (if needed): it can be %NULL,
- * in which case (0,0) will be used.
+ * The origin is got from the prepending %MOVE_TO coordinates on @src.
+ * If not found, the @cr current point is used. If @cr is %NULL, the 
+ * (0,0) fallback pair is used.
  *
  * @path and @src can be the same object (a #CpmlPath structure).
  *
@@ -63,11 +65,10 @@ cpml_path_from_cairo(CpmlPath *path, const cairo_path_t *src, cairo_t *cr)
  * @org: a specific origin
  *
  * Similar to cpml_path_from_cairo() but using an explicit origin.
- *
  * @path and @src can be the same object (a #CpmlPath structure).
  *
- * @org can be %NULL, in which case the original path->org pair
- * is left untouched.
+ * @org must be defined. If not needed consider using cpml_path_from_cairo()
+ * with a %NULL cr argument.
  *
  * Return value: 1 on success, 0 on errors
  **/
