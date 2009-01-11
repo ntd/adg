@@ -7,7 +7,7 @@
 <xsl:output method="text" omit-xml-declaration="yes" indent="no" encoding="utf-8"/>
 <xsl:strip-space elements="*"/>
 
-<xsl:template match="refmeta|refnamediv">
+<xsl:template match="/chapter/title|subtitle">
 </xsl:template>
 
 <xsl:template match="refsect1">

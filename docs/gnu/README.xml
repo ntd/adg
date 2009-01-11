@@ -1,21 +1,13 @@
 <?xml version="1.0"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-                          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
 
-<refentry id="README">
+<chapter id="README">
+<title>ADG overview</title>
+<subtitle>How to get start with ADG</subtitle>
 
-<refmeta>
-<refentrytitle role="top_of_page" id="README.top_of_page">ADG overview</refentrytitle>
-<refmiscinfo>ADG Library</refmiscinfo>
-</refmeta>
-
-<refnamediv>
-<refname>README</refname>
-<refpurpose>Project purpose and installation instruction</refpurpose>
-</refnamediv>
-
-<refsect1 id="README.general" role="desc">
-<title role="desc.title">General information</title>
+<simplesect id="README.general">
+<title>General information</title>
 
 <para>Automatic Drawing Generation is GObject-based library that provides a
 non-interactive cairo canvas specifically designed for generating
@@ -39,10 +31,10 @@ provides the following benefits:</para>
 
 <para>For technical details, visit the <ulink url="http://www.entidi.it/adg/">ADG home page</ulink>.</para>
 
-</refsect1>
+</simplesect>
 
-<refsect1 id="README.installation" role="desc">
-<title role="desc.title">Installation</title>
+<simplesect id="README.installation">
+<title>Installation</title>
 
 <para>The ADG library has the following dependencies:</para>
 
@@ -55,6 +47,6 @@ provides the following benefits:</para>
 <para>The ADG package uses the standard GNU autotools. See the file 'INSTALL'
 for further details.</para>
 
-</refsect1>
+</simplesect>
 
-</refentry>
+</chapter>
