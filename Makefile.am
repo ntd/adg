@@ -13,8 +13,9 @@ EXTRA_DIST=		ABOUT-NLS \
 			ChangeLog-0.2.1 \
 			INSTALL \
 			m4/ChangeLog \
+			README \
 			NEWS \
-			README
+			TODO
 
 SUBDIRS=		cpml \
 			adg \
@@ -43,6 +44,15 @@ README: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/README.xml
 
 # Update the NEWS from the xml version
 NEWS: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/NEWS.xml
+	@echo Updating $@
+	@if test -x $(XSLTPROC); then \
+	  $(XSLTPROC) -o $@ $^; \
+	else \
+	  echo libxslt-1.0.19 or later is required in order to generate $@; \
+	fi
+
+# Update the TODO from the xml version
+TODO: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/TODO.xml
 	@echo Updating $@
 	@if test -x $(XSLTPROC); then \
 	  $(XSLTPROC) -o $@ $^; \

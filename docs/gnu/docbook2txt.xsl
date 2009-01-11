@@ -35,13 +35,49 @@
 
 <xsl:template match="ulink"><xsl:value-of select="."/> (<xsl:value-of select="@url"/>)</xsl:template>
 
+<xsl:template match="itemizedlist[@mark='circle']">
+<xsl:call-template name="list"> 
+  <xsl:with-param name="symbol">o </xsl:with-param>
+</xsl:call-template>
+</xsl:template>
+
 <xsl:template match="itemizedlist">
-<xsl:apply-templates select="listitem"/> 
+<xsl:call-template name="list"> 
+  <xsl:with-param name="symbol">* </xsl:with-param>
+</xsl:call-template>
+</xsl:template>
+
+<xsl:template name="list">
+<xsl:param name="symbol"/>
+<xsl:apply-templates select="listitem"> 
+  <xsl:with-param name="symbol"><xsl:value-of select="$symbol"/></xsl:with-param>
+</xsl:apply-templates>
 <xsl:text>
 </xsl:text>
 </xsl:template>
 
-<xsl:template match="listitem">* <xsl:apply-templates/><xsl:text>
+<xsl:template match="listitem[@override='disc']">
+<xsl:call-template name="item"> 
+  <xsl:with-param name="symbol">* </xsl:with-param>
+</xsl:call-template>
+</xsl:template>
+
+<xsl:template match="listitem[@override='circle']">
+<xsl:call-template name="item"> 
+  <xsl:with-param name="symbol">o </xsl:with-param>
+</xsl:call-template>
+</xsl:template>
+
+<xsl:template match="listitem">
+<xsl:param name="symbol"/>
+<xsl:call-template name="item">
+  <xsl:with-param name="symbol"><xsl:value-of select="$symbol"/></xsl:with-param>
+</xsl:call-template>
+</xsl:template>
+
+<xsl:template name="item">
+<xsl:param name="symbol"/>
+<xsl:value-of select="$symbol"/><xsl:apply-templates/><xsl:text>
 </xsl:text>
 </xsl:template>
 

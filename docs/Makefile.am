@@ -34,4 +34,5 @@ include $(top_srcdir)/gtk-doc.make
 
 EXTRA_DIST +=		gnu/docbook2txt.xsl \
 			gnu/README.xml \
-			gnu/NEWS.xml
+			gnu/NEWS.xml \
+			gnu/TODO.xml

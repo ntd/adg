@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<chapter id="TODO">
+<title>Planned features</title>
+<subtitle>A very rough roadmap of ADG features implementation</subtitle>
+
+<para>The following list is roughly in implementation order. All the improvements
+must be reflected in the demo programs, where applicable.</para>
+
+<simplesect id="TODO.0.4.0">
+<title>Road to adg-0.4.0</title>
+
+<itemizedlist mark="circle">
+  <listitem>Implement a basic AdgXatchStyle, derived from AdgLineStyle.</listitem>
+  <listitem>Check if the flag management in AdgEntity is implemented properly.</listitem>
+  <listitem override="disc">Try to avoid wrapping of cairo APIs in AdgPath.</listitem>
+  <listitem>Optimize the implemented entities applying the 0.3 ADG infractrusture
+  and enable caching where applicable.</listitem>
+  <listitem>Add a "beyond" property to AdgDim, to be used in extending the baseline
+  on outside arrows requested. If not specified, it must default to
+  3 x arrow size.</listitem>
+  <listitem>Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
+  ADG_THREE_STATE_ON and ADG_THREE_STATE_DEFAULT.</listitem>
+  <listitem>Add the three-state "outside" property to allow forcing an outside quote.
+  In the default state, the outside must be decided by the space between
+  the extension lines: if greather than 3 x arrow size => inside arrows.</listitem>
+  <listitem>Implement the outside arrows in AdgLDim.</listitem>
+  <listitem>Add AdgADim, the angular dimension.</listitem>
+  <listitem>Add AdgXatch deriving AdgPath.</listitem>
+</itemizedlist>
+
+</simplesect>
+
+<simplesect id="TODO.0.5.0">
+<title>Road to adg-0.5.0</title>
+
+<itemizedlist mark="circle">
+  <listitem>Change building scripts to get the Gtk+ dependency optional.</listitem>
+  <listitem>Add AdgLayout, a GtkLayout derived class that could accept an AdgCanvas.</listitem>
+  <listitem>Add AdgTitleBlock, a complex entity in paper space used to frame the
+  sheet and show the general drawing data (title, scale, date and so on).</listitem>
+</itemizedlist>
+
+</simplesect>
+
+<simplesect id="TODO.unknown">
+<title>Road to unknown</title>
+
+<itemizedlist mark="circle">
+  <listitem>Implement AdgModel and the model-view interaction.</listitem>
+  <listitem>Implement AdgText, a generic text management, using pango.</listitem>
+</itemizedlist>
+
+</simplesect>
+
+</chapter>

@@ -13,6 +13,7 @@
     <title>Introduction</title>
     <xi:include href="gnu/README.xml"/>
     <xi:include href="gnu/NEWS.xml"/>
+    <xi:include href="gnu/TODO.xml"/>
   </part>
 
   <part id="Core">
