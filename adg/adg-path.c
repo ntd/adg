@@ -119,44 +119,16 @@ adg_path_get_cairo_path(AdgPath *path)
 void
 adg_path_dump(AdgPath *path)
 {
-    cairo_path_data_t *data;
-    gint n_data, n_point;
+    CpmlPath cpml_path;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (path->priv->cairo_path->data == NULL)
-        return;
-
-    for (n_data = 0; n_data < path->priv->cairo_path->num_data; ++n_data) {
-	data = path->priv->cairo_path->data + n_data;
-
-	switch (data->header.type) {
-	case CAIRO_PATH_MOVE_TO:
-	    g_print("Move to ");
-	    break;
-	case CAIRO_PATH_LINE_TO:
-	    g_print("Line to ");
-	    break;
-	case CAIRO_PATH_CURVE_TO:
-	    g_print("Curve to ");
-	    break;
-	case CAIRO_PATH_CLOSE_PATH:
-	    g_print("Path close");
-	    break;
-	default:
-	    g_print("Unknown entity (%d)", data->header.type);
-	    break;
-	}
-
-	for (n_point = 1; n_point < data->header.length; ++n_point)
-	    g_print("(%lf, %lf) ", data[n_point].point.x,
-		    data[n_point].point.y);
-
-	n_data += n_point - 1;
-	g_print("\n");
+    if (!cpml_path_from_cairo(&cpml_path, path->priv->cairo_path, NULL)) {
+        g_print("No path data to dump!\n");
+    } else if (!cpml_path_dump(&cpml_path)) {
+        g_print("Invalid path data!\n");
     }
 }
-
 
 static void
 invalidate(AdgEntity *entity)

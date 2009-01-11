@@ -21,8 +21,6 @@ struct _Piston {
 
 
 static void     fill_piston_model       (Piston         *piston);
-static void     add_piston_path         (AdgCanvas      *canvas,
-                                         Piston         *piston);
 static void     add_piston_dimensions   (AdgCanvas      *canvas,
                                          Piston         *piston);
 static void     add_sample_stuff        (AdgCanvas      *canvas);
@@ -53,6 +51,7 @@ main(gint argc, gchar **argv)
     GtkWidget *button_box;
     GtkWidget *widget;
     AdgCanvas *canvas;
+    AdgEntity *path;
 
     gtk_init(&argc, &argv);
 
@@ -61,7 +60,10 @@ main(gint argc, gchar **argv)
 
     /* Create the canvas and populate it */
     canvas = adg_canvas_new();
-    add_piston_path(canvas, &model);
+
+    path = adg_path_new(piston_path_extern);
+    adg_container_add(ADG_CONTAINER(canvas), path);
+
     add_piston_dimensions(canvas, &model);
     add_sample_stuff(canvas);
 
@@ -104,6 +106,8 @@ main(gint argc, gchar **argv)
 
     gtk_main();
 
+    adg_path_dump(ADG_PATH(path));
+
     return 0;
 }
 
@@ -127,14 +131,6 @@ fill_piston_model(Piston *piston)
     piston->LD5 = 5.0;
     piston->LD6 = 1.0;
     piston->LD7 = 0.5;
-}
-
-static void
-add_piston_path(AdgCanvas *canvas, Piston *piston)
-{
-    AdgEntity *entity = adg_path_new(piston_path_extern);
-
-    adg_container_add(ADG_CONTAINER(canvas), entity);
 }
 
 static void
