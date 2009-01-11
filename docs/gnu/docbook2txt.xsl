@@ -10,7 +10,7 @@
 <xsl:template match="/chapter/title|subtitle">
 </xsl:template>
 
-<xsl:template match="refsect1">
+<xsl:template match="simplesect">
 <xsl:apply-templates/>
 <xsl:text>
 </xsl:text>
