@@ -4,7 +4,7 @@ AC_INIT([adg], [0.4.0],
         [ntd at entidi.it],
         [adg])
 AC_CONFIG_SRCDIR(README)
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 

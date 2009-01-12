@@ -25,7 +25,7 @@ IGNORE_HFILES=		adg-adim-private.h \
 HTML_IMAGES=
 CONTENT_FILES=
 EXPAND_CONTENT_FILES=
-INCLUDES=		-I$(top_srcdir) \
+AM_CPPFLAGS=		-I$(top_srcdir) \
 			@GTK2_CFLAGS@
 GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
 			@GTK2_LIBS@
