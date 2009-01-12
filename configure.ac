@@ -9,9 +9,7 @@ AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 
 
-##################################################
-# Check for programs.
-##################################################
+# Check for programs
 
 AC_PROG_CC
 AC_DISABLE_STATIC
@@ -19,32 +17,31 @@ AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
 
 
-##################################################
-# I18n.
-##################################################
+# Check for functions
+
+dnl Alloca is required by cpml, so it should be removed
+dnl in case the adg and cpml libraries will be splitted
+AC_FUNC_ALLOCA
+
+
+# I18n
 
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.15])
 
 
-##################################################
-# Check for gtk-doc.
-##################################################
+# Check for gtk-doc
 
 GTK_DOC_CHECK(1.4)
 
 
-##################################################
-# Check for packages.
-##################################################
+# Check for packages
 
 PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= 2.8.0])
 PKG_CHECK_MODULES([CAIRO],[cairo >= 1.7.4])
 
 
-##################################################
-# Final step.
-##################################################
+# Final step
 
 AC_CONFIG_FILES([Makefile
                  cpml/Makefile
