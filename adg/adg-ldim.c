@@ -121,11 +121,15 @@ adg_ldim_init(AdgLDim *ldim)
     priv->path_data[10].header.type = CAIRO_PATH_LINE_TO;
     priv->path_data[10].header.length = 2;
 
-    priv->director.cairo_path.status = CAIRO_STATUS_SUCCESS;
-    priv->director.cairo_path.data = priv->director_data;
-    priv->director.cairo_path.num_data = 2;
-    priv->director_data[0].header.type = CAIRO_PATH_LINE_TO;
+    priv->director.path.status = CAIRO_STATUS_SUCCESS;
+    priv->director.path.data = priv->director_data;
+    priv->director.path.num_data = 4;
+    priv->director.original = &priv->director.path;
+
+    priv->director_data[0].header.type = CAIRO_PATH_MOVE_TO;
     priv->director_data[0].header.length = 2;
+    priv->director_data[2].header.type = CAIRO_PATH_LINE_TO;
+    priv->director_data[2].header.length = 2;
 
     ldim->priv = priv;
 }
@@ -376,12 +380,9 @@ render(AdgEntity *entity, cairo_t *cr)
     adg_entity_apply(entity, ADG_SLOT_DIM_STYLE, cr);
 
     adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &priv->director);
-    if (!cpml_primitive_reverse(&priv->director)) {
-        g_error("Unable to revert director");
-        return;
-    }
+    cpml_segment_reverse(&priv->director);
     adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &priv->director);
-    cpml_primitive_reverse(&priv->director);
+    cpml_segment_reverse(&priv->director);
 
     adg_style_apply(line_style, cr);
 
@@ -426,8 +427,7 @@ update(AdgLDim *ldim)
     gdouble baseline_spacing, from_offset;
     cairo_path_data_t *baseline1, *baseline2;
     cairo_path_data_t *from1, *to1, *from2, *to2;
-    CpmlPair *arrow1;
-    cairo_path_data_t *arrow2;
+    cairo_path_data_t *arrow1, *arrow2;
     AdgMatrix paper2model;
     CpmlPair vector;
     AdgPair offset;
@@ -455,8 +455,8 @@ update(AdgLDim *ldim)
     to1 = priv->path_data + 7;
     from2 = priv->path_data + 9;
     to2 = priv->path_data + 11;
-    arrow1 = &priv->director.org;
-    arrow2 = priv->director_data + 1;
+    arrow1 = priv->director_data + 1;
+    arrow2 = priv->director_data + 3;
 
     /* Get the inverted transformation matrix */
     if (!adg_entity_build_paper2model((AdgEntity *) ldim, &paper2model))
@@ -480,8 +480,8 @@ update(AdgLDim *ldim)
     offset.y = vector.y * baseline_spacing * level;
     cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
 
-    arrow1->x = pos1->x + offset.x;
-    arrow1->y = pos1->y + offset.y;
+    arrow1->point.x = pos1->x + offset.x;
+    arrow1->point.y = pos1->y + offset.y;
     arrow2->point.x = pos2->x + offset.x;
     arrow2->point.y = pos2->y + offset.y;
 
@@ -490,20 +490,20 @@ update(AdgLDim *ldim)
     offset.y = vector.y * adg_dim_style_get_to_offset((AdgDimStyle *) dim_style);
     cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
 
-    to1->point.x = arrow1->x + offset.x;
-    to1->point.y = arrow1->y + offset.y;
+    to1->point.x = arrow1->point.x + offset.x;
+    to1->point.y = arrow1->point.y + offset.y;
     to2->point.x = arrow2->point.x + offset.x;
     to2->point.y = arrow2->point.y + offset.y;
 
     /* Set vector to the director of the baseline */
-    offset.x = arrow2->point.x - arrow1->x;
-    offset.y = arrow2->point.y - arrow1->y;
+    offset.x = arrow2->point.x - arrow1->point.x;
+    offset.y = arrow2->point.y - arrow1->point.y;
     cpml_vector_from_pair(&vector, &offset);
 
     /* Update the AdgDim cache contents */
     adg_dim_set_org_explicit((AdgDim *) ldim,
-                             (arrow1->x + arrow2->point.x) / 2.,
-                             (arrow1->y + arrow2->point.y) / 2.);
+                             (arrow1->point.x + arrow2->point.x) / 2.,
+                             (arrow1->point.y + arrow2->point.y) / 2.);
     cpml_pair_angle(&angle, NULL, &vector);
     adg_dim_set_angle((AdgDim *) ldim, angle);
 
@@ -513,8 +513,8 @@ update(AdgLDim *ldim)
     offset.y *= vector.y;
     cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
 
-    baseline1->point.x = arrow1->x + offset.x;
-    baseline1->point.y = arrow1->y + offset.y;
+    baseline1->point.x = arrow1->point.x + offset.x;
+    baseline1->point.y = arrow1->point.y + offset.y;
     baseline2->point.x = arrow2->point.x - offset.x;
     baseline2->point.y = arrow2->point.y - offset.y;
 

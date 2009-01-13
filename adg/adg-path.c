@@ -129,14 +129,16 @@ adg_path_get_cairo_path(AdgPath *path)
 void
 adg_path_dump(AdgPath *path)
 {
-    CpmlPath cpml_path;
+    CpmlSegment segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!cpml_path_from_cairo(&cpml_path, path->priv->cairo_path, NULL)) {
-        g_print("No path data to dump!\n");
-    } else if (!cpml_path_dump(&cpml_path)) {
-        g_print("Invalid path data!\n");
+    if (!cpml_segment_init(&segment, path->priv->cairo_path)) {
+        g_print("Invalid path data to dump!\n");
+    } else {
+        do {
+            cpml_segment_dump(&segment);
+        } while (cpml_segment_next(&segment));
     }
 }
 

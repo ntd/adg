@@ -44,7 +44,7 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  * AdgArrowRenderer:
  * @arrow_style: an #AdgArrowStyle object
  * @cr: a #cairo_t drawing context
- * @segment: the CpmlPath segment where rendering the arrow
+ * @segment: the #CpmlSegment where rendering the arrow
  *
  * Callback that renders a custom arrow at the start position in @segment.
  * If you need an ending arrow, you should reverse the segment and recall
@@ -52,7 +52,7 @@ typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
  **/
 typedef void (*AdgArrowRenderer)                (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 
 struct _AdgArrowStyle {
     AdgStyle              style;
@@ -71,7 +71,7 @@ AdgStyle *      adg_arrow_style_new             (void);
 
 void            adg_arrow_style_render          (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 
 gdouble         adg_arrow_style_get_size        (AdgArrowStyle  *arrow_style);
 void            adg_arrow_style_set_size        (AdgArrowStyle  *arrow_style,

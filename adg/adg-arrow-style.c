@@ -55,31 +55,31 @@ static void             set_property            (GObject        *object,
 static GPtrArray *      get_pool                (void);
 static void             arrow_renderer          (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             triangle_renderer       (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             dot_renderer            (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             circle_renderer         (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             block_renderer          (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             square_renderer         (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             tick_renderer           (AdgArrowStyle  *arrow_style,
                                                  cairo_t        *cr,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             draw_triangle           (cairo_t        *cr,
                                                  AdgArrowStyle  *arrow_style,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 static void             draw_circle             (cairo_t        *cr,
                                                  AdgArrowStyle  *arrow_style,
-                                                 CpmlPath       *segment);
+                                                 CpmlSegment    *segment);
 
 
 G_DEFINE_TYPE(AdgArrowStyle, adg_arrow_style, ADG_TYPE_STYLE)
@@ -234,14 +234,14 @@ adg_arrow_style_new(void)
  * adg_arrow_style_render:
  * @arrow_style: an #AdgArrowStyle instance
  * @cr: the cairo context to use
- * @segment: the #CpmlPath where the arrow must be rendered
+ * @segment: the #CpmlSegment where the arrow must be rendered
  *
  * Renders an arrow on @cr at the beginning of @segment in the way
  * specified by @arrow_style.
  **/
 void
 adg_arrow_style_render(AdgArrowStyle *arrow_style,
-                       cairo_t *cr, CpmlPath *segment)
+                       cairo_t *cr, CpmlSegment *segment)
 {
     g_return_if_fail(arrow_style != NULL);
     g_return_if_fail(cr != NULL);
@@ -425,55 +425,56 @@ get_pool(void)
 }
 
 static void
-arrow_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+arrow_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     draw_triangle(cr, arrow_style, segment);
     cairo_fill(cr);
 }
 
 static void
-triangle_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+triangle_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     draw_triangle(cr, arrow_style, segment);
     cairo_stroke(cr);
 }
 
 static void
-dot_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+dot_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     draw_circle(cr, arrow_style, segment);
     cairo_fill(cr);
 }
 
 static void
-circle_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+circle_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     draw_circle(cr, arrow_style, segment);
     cairo_stroke(cr);
 }
 
 static void
-block_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+block_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     ADG_STUB();
 }
 
 static void
-square_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+square_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     ADG_STUB();
 }
 
 static void
-tick_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlPath *segment)
+tick_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 {
     ADG_STUB();
 }
 
 static void
-draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
+draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
 {
     double length, height_2;
+    double org_x, org_y;
     double tmp;
     CpmlPair tail, tail1, tail2;
     CpmlPair vector;
@@ -481,16 +482,17 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
     length = arrow_style->priv->size;
     height_2 = tan(arrow_style->priv->angle / 2.0) * length;
     cairo_device_to_user_distance(cr, &length, &height_2);
+    org_x = segment->path.data[1].point.x;
+    org_y = segment->path.data[1].point.y;
 
-    switch (segment->cairo_path.data[0].header.type) {
+    switch (segment->path.data[2].header.type) {
     case CAIRO_PATH_LINE_TO:
-        cpml_primitive_get_pair(segment, &vector, CPML_FIRST);
-        vector.x -= segment->org.x;
-        vector.y -= segment->org.y;
+        vector.x = segment->path.data[3].point.x - org_x;
+        vector.y = segment->path.data[3].point.y - org_y;
         cpml_vector_from_pair(&vector, &vector);
 
-        tail.x = vector.x * length + segment->org.x;
-        tail.y = vector.y * length + segment->org.y;
+        tail.x = vector.x * length + org_x;
+        tail.y = vector.y * length + org_y;
 
         tmp = vector.x;
         vector.x = -vector.y * height_2;
@@ -502,7 +504,7 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
         tail2.x = tail.x - vector.x;
         tail2.y = tail.y - vector.y;
 
-        cairo_move_to(cr, segment->org.x, segment->org.y);
+        cairo_move_to(cr, org_x, org_y);
         cairo_line_to(cr, tail1.x, tail1.y);
         cairo_line_to(cr, tail2.x, tail2.y);
         cairo_close_path(cr);
@@ -517,12 +519,14 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
 }
 
 static void
-draw_circle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlPath *segment)
+draw_circle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
 {
     double radius = arrow_style->priv->size / 2.;
     double dummy = 0.;
 
     cairo_device_to_user_distance(cr, &radius, &dummy);
     cairo_new_path(cr);
-    cairo_arc(cr, segment->org.x, segment->org.y, radius, 0., M_PI);
+    cairo_arc(cr,
+              segment->path.data[1].point.x, segment->path.data[1].point.y,
+              radius, 0., M_PI);
 }

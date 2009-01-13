@@ -41,10 +41,10 @@ G_BEGIN_DECLS
  * [11] = second extension line end
  *
  * The director_data cache is as following:
- * [0]  = LINE_TO
- * [1]  = end of arrow director
- * In this case, the start of the arrow director is kept in the
- * org field of director.
+ * [0]  = MOVE_TO
+ * [1]  = start of arrow director
+ * [2]  = LINE_TO
+ * [3]  = end of arrow director
  */
 
 struct _AdgLDimPrivate {
@@ -54,8 +54,8 @@ struct _AdgLDimPrivate {
     /* Cache */
     cairo_path_t        path;
     cairo_path_data_t   path_data[12];
-    CpmlPath            director;
-    cairo_path_data_t   director_data[2];
+    CpmlSegment         director;
+    cairo_path_data_t   director_data[4];
 };
 
 G_END_DECLS
