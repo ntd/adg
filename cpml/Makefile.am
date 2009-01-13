@@ -8,12 +8,12 @@ AM_LDFLAGS=			@CAIRO_LIBS@
 # file groups
 cpml_h_sources=			cpml.h \
 				cpml-pair.h \
-				cpml-path.h
+				cpml-segment.h
 cpml_built_h_sources=
 cpml_private_h_sources=		cpml-alloca.h
 cpml_built_private_h_sources=
 cpml_c_sources=			cpml-pair.c \
-				cpml-path.c
+				cpml-segment.c
 cpml_built_c_sources=
 
 # targets
