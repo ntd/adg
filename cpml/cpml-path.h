@@ -43,6 +43,8 @@ cairo_bool_t    cpml_path_from_cairo            (CpmlPath           *path,
 cairo_bool_t    cpml_path_from_cairo_explicit   (CpmlPath           *path,
                                                  const cairo_path_t *src,
                                                  const CpmlPair     *org);
+void            cpml_path_to_cairo              (const CpmlPath     *path,
+                                                 cairo_t            *cr);
 CpmlPath *      cpml_path_copy                  (CpmlPath           *path,
                                                  const CpmlPath     *src);
 cairo_bool_t    cpml_path_dump                  (CpmlPath           *path);

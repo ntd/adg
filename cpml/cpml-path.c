@@ -97,6 +97,20 @@ cpml_path_from_cairo_explicit(CpmlPath *path, const cairo_path_t *src,
 }
 
 /**
+ * cpml_path_to_cairo:
+ * @path: a #CpmlPath
+ * @cr: a cairo context
+ *
+ * Appends @path to the specified cairo context.
+ **/
+void
+cpml_path_to_cairo(const CpmlPath *path, cairo_t *cr)
+{
+    cairo_move_to(cr, path->org.x, path->org.y);
+    cairo_append_path(cr, (cairo_path_t *) path);
+}
+
+/**
  * cpml_path_copy:
  * @path: an allocated #CpmlPath
  * @src: the source path to copy
