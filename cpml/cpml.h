@@ -21,6 +21,6 @@
 #define __CPML_H__
 
 #include <cpml/cpml-pair.h>
-#include <cpml/cpml-path.h>
+#include <cpml/cpml-segment.h>
 
 #endif /* __CPML_H__ */
