@@ -19,6 +19,7 @@
 
 
 #include "cpml-path.h"
+#include "cpml-alloca.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -31,7 +32,7 @@ static cairo_bool_t     path_to_primitive       (CpmlPath *primitive,
 
 /**
  * cpml_path_from_cairo:
- * @path: an allocated #CpmlPath structure
+ * @path: the destination #CpmlPath structure
  * @src: the source cairo_path_t
  * @cr: a cairo context
  *
@@ -76,11 +77,11 @@ cairo_bool_t
 cpml_path_from_cairo_explicit(CpmlPath *path, const cairo_path_t *src,
                               const CpmlPair *org)
 {
-    if (path == NULL || src == NULL || org == NULL)
+    if (path == NULL || src == NULL || org == NULL || src->data == NULL)
         return 0;
 
     if (path != (CpmlPath *) src)
-        memcpy(path, src, sizeof(cairo_path_t));
+        memcpy(&path->cairo_path, src, sizeof(cairo_path_t));
 
     if (strip_leadings(path)) {
         /* org taken from leadings MOVE_TO */
@@ -204,6 +205,55 @@ cpml_segment_from_path(CpmlPath *segment, const CpmlPath *path, int index)
     } while (i < index);
 
     cpml_path_copy(segment, &result);
+    return 1;
+}
+
+/**
+ * cpml_segment_reverse:
+ * @segment: a #CpmlPath
+ * @src: the source segment
+ *
+ * Reverses @src and stores the result in @segment. @src and @segment
+ * can be the same structure.
+ *
+ * Return value: 1 on success, 0 on errors
+ **/
+cairo_bool_t
+cpml_segment_reverse(CpmlPath *segment, const CpmlPath *src)
+{
+    cairo_path_data_t *data, *dst_data;
+    size_t data_size;
+    CpmlPair end;
+    int num_data, n_data;
+    int num_points, n_point;
+    const cairo_path_data_t *src_data;
+
+    num_data = src->cairo_path.num_data;
+    data_size = sizeof(cairo_path_data_t) * num_data;
+    data = cpml_alloca(data_size);
+    cpml_pair_copy(&end, &src->org);
+
+    for (n_data = 0; n_data < num_data; ++n_data) {
+        src_data = src->cairo_path.data + n_data;
+	num_points = src_data->header.length;
+
+        dst_data = data + num_data - n_data - num_points;
+        dst_data->header.type = src_data->header.type;
+        dst_data->header.length = num_points;
+
+	for (n_point = 1; n_point < num_points; ++n_point) {
+            dst_data[num_points - n_point].point.x = end.x;
+            dst_data[num_points - n_point].point.y = end.y;
+            end.x = src_data[n_point].point.x;
+            end.y = src_data[n_point].point.y;
+        }
+
+	n_data += n_point - 1;
+    }
+
+    cpml_pair_copy(&segment->org, &end);
+    memcpy(segment->cairo_path.data, data, data_size);
+
     return 1;
 }
 

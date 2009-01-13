@@ -49,6 +49,8 @@ cairo_bool_t    cpml_path_dump                  (CpmlPath           *path);
 cairo_bool_t    cpml_segment_from_path          (CpmlPath           *segment,
                                                  const CpmlPath     *path,
                                                  int                 index);
+cairo_bool_t    cpml_segment_reverse            (CpmlPath           *path,
+                                                 const CpmlPath     *src);
 cairo_bool_t    cpml_primitive_from_path        (CpmlPath           *primitive,
                                                  const CpmlPath     *path,
                                                  int                 index);
