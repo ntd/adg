@@ -17,57 +17,32 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPML_PATH_H__
-#define __CPML_PATH_H__
+#ifndef __CPML_SEGMENT_H__
+#define __CPML_SEGMENT_H__
 
-#include <cpml/cpml-pair.h>
-
-#define CPML_LAST       0
-#define CPML_FIRST      1
+#include <cairo.h>
 
 
 CAIRO_BEGIN_DECLS
 
+typedef struct _CpmlSegment CpmlSegment;
 
-typedef struct _CpmlPath CpmlPath;
-
-struct _CpmlPath {
-        cairo_path_t     cairo_path;
-        CpmlPair         org;
+struct _CpmlSegment {
+        cairo_path_t     path;
+        cairo_path_t    *original;
 };
 
 
-cairo_bool_t    cpml_path_from_cairo            (CpmlPath           *path,
-                                                 const cairo_path_t *src,
-                                                 cairo_t            *cr);
-cairo_bool_t    cpml_path_from_cairo_explicit   (CpmlPath           *path,
-                                                 const cairo_path_t *src,
-                                                 const CpmlPair     *org);
-void            cpml_path_to_cairo              (const CpmlPath     *path,
-                                                 cairo_t            *cr);
-CpmlPath *      cpml_path_copy                  (CpmlPath           *path,
-                                                 const CpmlPath     *src);
-cairo_bool_t    cpml_path_dump                  (CpmlPath           *path);
-cairo_bool_t    cpml_segment_from_path          (CpmlPath           *segment,
-                                                 const CpmlPath     *path,
-                                                 int                 index);
-cairo_bool_t    cpml_segment_reverse            (CpmlPath           *path,
-                                                 const CpmlPath     *src);
-cairo_bool_t    cpml_primitive_from_path        (CpmlPath           *primitive,
-                                                 const CpmlPath     *path,
-                                                 int                 index);
-cairo_bool_t    cpml_primitive_get_pair         (const CpmlPath     *primitive,
-                                                 CpmlPair           *pair,
-                                                 int                 index);
-cairo_bool_t    cpml_primitive_set_pair         (CpmlPath           *primitive,
-                                                 const CpmlPair     *pair,
-                                                 int                 index);
-cairo_bool_t    cpml_primitive_get_point        (const CpmlPath     *primitive,
-                                                 CpmlPair           *point,
-                                                 double              pos);
-cairo_bool_t    cpml_primitive_reverse          (CpmlPath           *primitive);
+cairo_bool_t    cpml_segment_init               (CpmlSegment        *segment,
+                                                 cairo_path_t       *src);
+CpmlSegment *   cpml_segment_copy               (CpmlSegment        *segment,
+                                                 const CpmlSegment  *src);
+void            cpml_segment_dump               (const CpmlSegment  *segment);
+void            cpml_segment_reset              (CpmlSegment        *segment);
+cairo_bool_t    cpml_segment_next               (CpmlSegment        *segment);
+void            cpml_segment_reverse            (CpmlSegment        *segment);
 
 CAIRO_END_DECLS
 
 
-#endif /* __CPML_PATH_H__ */
+#endif /* __CPML_SEGMENT_H__ */

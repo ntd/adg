@@ -24,134 +24,74 @@
 #include <stdio.h>
 #include <string.h>
 
-static cairo_bool_t     strip_leadings          (CpmlPath *path);
-static cairo_bool_t     path_to_segment         (CpmlPath *segment,
-                                                 const CpmlPath *path);
-static cairo_bool_t     path_to_primitive       (CpmlPath *primitive,
-                                                 const CpmlPath *path);
+static cairo_bool_t     normalize_segment       (CpmlSegment       *segment);
+
 
 /**
- * cpml_path_from_cairo:
- * @path: the destination #CpmlPath structure
+ * cpml_segment_init:
+ * @segment: the destination #CpmlSegment structure
  * @src: the source cairo_path_t
- * @cr: a cairo context
  *
- * Builds a CpmlPath from a cairo_path_t structure. This operations involves
- * stripping the leading %MOVE_TO primitives and setting the @path->org
- * coordinates. If not needed, @cr could be %NULL.
- *
- * The origin is got from the prepending %MOVE_TO coordinates on @src.
- * If not found, the @cr current point is used. If @cr is %NULL, the 
- * (0,0) fallback pair is used.
- *
- * @path and @src can be the same object (a #CpmlPath structure).
+ * Builds a CpmlSegment from a cairo_path_t structure. This operation
+ * involves stripping the leading %MOVE_TO primitives and setting the
+ * internal segment structure accordling. A pointer to the source
+ * path segment is kept.
  *
  * Return value: 1 on success, 0 on errors
  **/
 cairo_bool_t
-cpml_path_from_cairo(CpmlPath *path, const cairo_path_t *src, cairo_t *cr)
+cpml_segment_init(CpmlSegment *segment, cairo_path_t *src)
 {
-    CpmlPair org = { 0., 0. };
-
-    if (cr && cairo_has_current_point(cr))
-        cairo_get_current_point(cr, &org.x, &org.y);
-
-    return cpml_path_from_cairo_explicit(path, src, &org);
-}
-
-/**
- * cpml_path_from_cairo_explicit:
- * @path: an allocated #CpmlPath structure
- * @src: the source cairo_path_t
- * @org: a specific origin
- *
- * Similar to cpml_path_from_cairo() but using an explicit origin.
- * @path and @src can be the same object (a #CpmlPath structure).
- *
- * @org must be defined. If not needed consider using cpml_path_from_cairo()
- * with a %NULL cr argument.
- *
- * Return value: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_path_from_cairo_explicit(CpmlPath *path, const cairo_path_t *src,
-                              const CpmlPair *org)
-{
-    if (path == NULL || src == NULL || org == NULL || src->data == NULL)
+    /* The cairo path should be defined and in perfect state */
+    if (src == NULL || src->num_data == 0 ||
+        src->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
-    if (path != (CpmlPath *) src)
-        memcpy(&path->cairo_path, src, sizeof(cairo_path_t));
+    segment->original = src;
+    memcpy(&segment->path, src, sizeof(cairo_path_t));
 
-    if (strip_leadings(path)) {
-        /* org taken from leadings MOVE_TO */
-    } else if (path->cairo_path.status != CAIRO_STATUS_SUCCESS) {
-        /* Error: probably an empty path provided */
-        return 0;
-    } else if (org) {
-        /* Use the provided org */
-        cpml_pair_copy(&path->org, org);
-    }
-
-    return 1;
+    return normalize_segment(segment);
 }
 
 /**
- * cpml_path_to_cairo:
- * @path: a #CpmlPath
- * @cr: a cairo context
+ * cpml_segment_copy:
+ * @segment: the destination #CpmlSegment structure
+ * @src: the source segment to copy
  *
- * Appends @path to the specified cairo context.
+ * Makes a shallow copy of @src into @segment.
+ *
+ * Return value: @segment or %NULL on errors
  **/
-void
-cpml_path_to_cairo(const CpmlPath *path, cairo_t *cr)
+CpmlSegment *
+cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 {
-    cairo_move_to(cr, path->org.x, path->org.y);
-    cairo_append_path(cr, (cairo_path_t *) path);
-}
-
-/**
- * cpml_path_copy:
- * @path: an allocated #CpmlPath
- * @src: the source path to copy
- *
- * Strips the leading CAIRO_PATH_MOVE_TO primitives, updating the CpmlPath
- * structure accordling. Also the path org is update.
- *
- * Return value: @path or %NULL on errors
- **/
-CpmlPath *
-cpml_path_copy(CpmlPath *path, const CpmlPath *src)
-{
-    if (path == NULL || src == NULL)
+    if (segment == NULL || src == NULL)
         return NULL;
 
-    return memcpy(path, src, sizeof(CpmlPath));
+    return memcpy(segment, src, sizeof(CpmlSegment));
 }
 
 /**
- * cpml_path_dump:
- * @path: an allocated #CpmlPath
+ * cpml_segment_dump:
+ * @segment: the destination #CpmlSegment structure
  *
- * Dumps the specified @path to stdout. Useful for debug purposes.
- *
- * Return value: 1 on success, 0 on errors
+ * Dumps the specified @segment to stdout. Useful for debugging purposes.
  **/
-cairo_bool_t
-cpml_path_dump(CpmlPath *path)
+void
+cpml_segment_dump(const CpmlSegment *segment)
 {
-    cairo_path_t *cairo_path;
+    const cairo_path_t *path;
     cairo_path_data_t *data;
     int n_data, n_point;
 
-    if (path == NULL)
-        return 0;
+    if (segment == NULL) {
+        printf("Trying to dump a NULL segment!\n");
+        return;
+    }
 
-    printf("Origin in (%lf, %lf)\n", path->org.x, path->org.y);
-
-    cairo_path = &path->cairo_path;
-    for (n_data = 0; n_data < cairo_path->num_data; ++n_data) {
-	data = cairo_path->data + n_data;
+    path = &segment->path;
+    for (n_data = 0; n_data < path->num_data; ++n_data) {
+	data = path->data + n_data;
 
 	switch (data->header.type) {
 	case CAIRO_PATH_MOVE_TO:
@@ -178,346 +118,120 @@ cpml_path_dump(CpmlPath *path)
 	n_data += n_point - 1;
 	printf("\n");
     }
-
-    return 1;
 }
 
 /**
- * cpml_segment_from_path:
- * @segment: an allocated #CpmlPath struct
- * @path: the source path
- * @index: the segment to retrieve (starting from 1);
- *         %CPML_FIRST or %CPML_LAST can be used
+ * cpml_segment_reset:
+ * @segment: the destination #CpmlSegment structure
  *
- * Gets a specific segment from a path.
+ * Modifies @segment to point to the first segment of the original path.
+ **/
+void
+cpml_segment_reset(CpmlSegment *segment)
+{
+    memcpy(&segment->path, segment->original, sizeof(cairo_path_t));
+    normalize_segment(segment);
+}
+
+/**
+ * cpml_segment_next:
+ * @segment: the destination #CpmlSegment structure
  *
- * Return value: 1 if a valid segment was found, 0 on errors
+ * Modifies @segment to point to the next segment of the original path.
+ *
+ * Return value: 1 on success, 0 if no next segment found or errors
  **/
 cairo_bool_t
-cpml_segment_from_path(CpmlPath *segment, const CpmlPath *path, int index)
+cpml_segment_next(CpmlSegment *segment)
 {
-    CpmlPath residue, result;
-    int i;
+    int num_data = segment->path.num_data;
+    int offset = segment->path.data - segment->original->data;
 
-    if (!cpml_path_copy(&residue, path))
-        return 0;
+    segment->path.num_data = segment->original->num_data - num_data - offset;
+    segment->path.data += num_data;
 
-    i = 0;
-
-    do {
-        if (!path_to_segment(&result, &residue))
-            return index == CPML_LAST && i > 0;
-
-        residue.cairo_path.data += result.cairo_path.num_data;
-        residue.cairo_path.num_data -= result.cairo_path.num_data;
-        ++i;
-
-        if (index == CPML_LAST) {
-            cpml_path_copy(segment, &result);
-            continue;
-        }
-    } while (i < index);
-
-    cpml_path_copy(segment, &result);
-    return 1;
+    return normalize_segment(segment);
 }
 
 /**
  * cpml_segment_reverse:
- * @segment: a #CpmlPath
- * @src: the source segment
+ * @segment: a #CpmlSegment
  *
- * Reverses @src and stores the result in @segment. @src and @segment
- * can be the same structure.
- *
- * Return value: 1 on success, 0 on errors
+ * Reverses @segment in-place. The resulting rendering will be the same,
+ * but with the primitives generated in reverse order.
  **/
-cairo_bool_t
-cpml_segment_reverse(CpmlPath *segment, const CpmlPath *src)
+void
+cpml_segment_reverse(CpmlSegment *segment)
 {
     cairo_path_data_t *data, *dst_data;
     size_t data_size;
-    CpmlPair end;
+    double end_x, end_y;
     int num_data, n_data;
     int num_points, n_point;
     const cairo_path_data_t *src_data;
 
-    num_data = src->cairo_path.num_data;
+    num_data = segment->path.num_data;
     data_size = sizeof(cairo_path_data_t) * num_data;
     data = cpml_alloca(data_size);
-    cpml_pair_copy(&end, &src->org);
+    end_x = segment->path.data[1].point.x;
+    end_y = segment->path.data[1].point.y;
 
-    for (n_data = 0; n_data < num_data; ++n_data) {
-        src_data = src->cairo_path.data + n_data;
+    for (n_data = 2; n_data < num_data; ++n_data) {
+        src_data = segment->path.data + n_data;
 	num_points = src_data->header.length;
 
-        dst_data = data + num_data - n_data - num_points;
+        dst_data = data + num_data - n_data - num_points + 2;
         dst_data->header.type = src_data->header.type;
         dst_data->header.length = num_points;
 
 	for (n_point = 1; n_point < num_points; ++n_point) {
-            dst_data[num_points - n_point].point.x = end.x;
-            dst_data[num_points - n_point].point.y = end.y;
-            end.x = src_data[n_point].point.x;
-            end.y = src_data[n_point].point.y;
+            dst_data[num_points - n_point].point.x = end_x;
+            dst_data[num_points - n_point].point.y = end_y;
+            end_x = src_data[n_point].point.x;
+            end_y = src_data[n_point].point.y;
         }
 
 	n_data += n_point - 1;
     }
 
-    cpml_pair_copy(&segment->org, &end);
-    memcpy(segment->cairo_path.data, data, data_size);
-
-    return 1;
+    data[0].header.type = CAIRO_PATH_MOVE_TO;
+    data[0].header.length = 2;
+    data[1].point.x = end_x;
+    data[1].point.y = end_y;
+    memcpy(segment->path.data, data, data_size);
 }
 
 /**
- * cpml_primitive_from_path:
- * @primitive: an allocated #CpmlPath struct
- * @path: the source path
- * @index: the primitive to retrieve (starting from 1);
- *         %CPML_FIRST or %CPML_LAST can be used
+ * normalize_segment:
+ * @segment: a #CpmlSegment
  *
- * Gets a specific primitive from a path.
- *
- * Return value: 1 if a valid primitive was found, 0 on errors
- **/
-cairo_bool_t
-cpml_primitive_from_path(CpmlPath *primitive, const CpmlPath *path, int index)
-{
-    CpmlPath residue, result;
-    int i;
-
-    if (!cpml_path_copy(&residue, path))
-        return 0;
-
-    i = 0;
-
-    do {
-        if (!path_to_primitive(&result, &residue))
-            return index == CPML_LAST && i > 0;
-
-        residue.cairo_path.data += result.cairo_path.num_data;
-        residue.cairo_path.num_data -= result.cairo_path.num_data;
-        ++i;
-
-        if (index == CPML_LAST) {
-            cpml_path_copy(primitive, &result);
-            continue;
-        }
-    } while (i < index);
-
-    cpml_path_copy(primitive, &result);
-    return 1;
-}
-
-/**
- * cpml_primitive_get_pair:
- * @primitive: the source primitive
- * @pair: the allocated CpmlPair destination
- * @index: index of the pair to retrieve, starting from 1
- *
- * Shortcut to get a pair from a primitive.
- *
- * Return value: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_primitive_get_pair(const CpmlPath *primitive, CpmlPair *pair, int index)
-{
-    cairo_path_data_t *data = primitive->cairo_path.data;
-
-    if (index == 0 || index > data[0].header.length)
-        return 0;
-
-    pair->x = data[index].point.x;
-    pair->y = data[index].point.y;
-    return 1;
-}
-
-/**
- * cpml_primitive_set_pair:
- * @primitive: an allocated CpmlPath primitive
- * @pair: the source pair
- * @index: index of the pair to change, starting from 1
- *
- * Shortcut to set a pair on a primitive.
- *
- * Return value: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_primitive_set_pair(CpmlPath *primitive, const CpmlPair *pair, int index)
-{
-    cairo_path_data_t *data = primitive->cairo_path.data;
-
-    if (index == 0 || index > data[0].header.length)
-        return 0;
-
-    data[index].point.x = pair->x;
-    data[index].point.y = pair->y;
-    return 1;
-}
-
-/**
- * cpml_primitive_get_point:
- * @primitive: the source primitive
- * @point: the allocated CpmlPair destination
- * @pos: the position factor, being 0 the starting and 1 the ending point
- *
- * Gets a point lying on @primitive at a specific percentual position.
- *
- * Return value: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_primitive_get_point(const CpmlPath *primitive, CpmlPair *point, double pos)
-{
-    int type = primitive->cairo_path.data[0].header.type;
-
-    if (type != CAIRO_PATH_CLOSE_PATH && type != CAIRO_PATH_LINE_TO &&
-        type != CAIRO_PATH_CURVE_TO)
-        return 0;
-
-    /* Common cases */
-    if (type == CAIRO_PATH_CLOSE_PATH || pos == 0.) {
-        return cpml_pair_copy(point, &primitive->org);
-    } else if (pos == 1.0) {
-        int n = type == CAIRO_PATH_LINE_TO ? 1 : 3;
-        return cpml_primitive_get_pair(primitive, point, n);
-    }
-
-    /* TODO */
-    return 0;
-}
-
-/**
- * cpml_primitive_reverse:
- * @primitive: an allocated #CpmlPath struct
- *
- * Reverses a primitive.
- *
- * Return value: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_primitive_reverse(CpmlPath *primitive)
-{
-    CpmlPair tmp;
-
-    switch (primitive->cairo_path.data[0].header.type) {
-    case CAIRO_PATH_LINE_TO:
-        cpml_pair_copy(&tmp, &primitive->org);
-        cpml_primitive_get_pair(primitive, &primitive->org, 1);
-        cpml_primitive_set_pair(primitive, &tmp, 1);
-        break;
-    case CAIRO_PATH_CURVE_TO:
-        cpml_pair_copy(&tmp, &primitive->org);
-        cpml_primitive_get_pair(primitive, &primitive->org, 3);
-        cpml_primitive_set_pair(primitive, &tmp, 3);
-
-        cpml_primitive_get_pair(primitive, &tmp, 2);
-        primitive->cairo_path.data[2].point.x =
-            primitive->cairo_path.data[3].point.x;
-        primitive->cairo_path.data[2].point.y =
-            primitive->cairo_path.data[3].point.y;
-        cpml_primitive_set_pair(primitive, &tmp, 3);
-        break;
-    default:
-        return 0;
-    }
-
-    return 1;
-}
-
-/**
- * strip_leadings:
- * @path: a #CpmlPath
- *
- * Strips the leading CAIRO_PATH_MOVE_TO primitives, updating the CpmlPath
- * structure accordling. Also the path org is update.
+ * Strips the leading CAIRO_PATH_MOVE_TO primitives, updating the CpmlSegment
+ * structure accordling. One, and only once, MOVE_TO primitive is left.
  *
  * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
- *               (check for path->cairo_path.status == CAIRO_STATUS_SUCCESS)
  **/
 static cairo_bool_t
-strip_leadings(CpmlPath *path)
+normalize_segment(CpmlSegment *segment)
 {
-    if (path->cairo_path.data[0].header.type != CAIRO_PATH_MOVE_TO)
+    cairo_path_data_t *data;
+
+    if (segment == NULL || segment->path.num_data <= 0)
         return 0;
 
-    do {
-        ++path->cairo_path.data;
-        path->org.x = path->cairo_path.data->point.x;
-        path->org.y = path->cairo_path.data->point.y;
-        ++path->cairo_path.data;
-        path->cairo_path.num_data -= 2;
-        if (path->cairo_path.num_data <= 0) {
-            path->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-            return 0;
-        }
-    } while (path->cairo_path.data->header.type == CAIRO_PATH_MOVE_TO);
-
-    return 1;
-}
-
-/**
- * path_to_segment:
- * @segment: an allocated #CpmlPath struct
- * @path: the source path
- *
- * Converts a path to a segment. @segment and @path can be the same struct.
- *
- * Return value: 1 if a valid segment is found, 0 on errors
- **/
-static cairo_bool_t
-path_to_segment(CpmlPath *segment, const CpmlPath *path)
-{
-    cairo_path_data_t *path_data;
-    int i;
-
-    if (segment != path)
-        cpml_path_copy(segment, path);
-
-    if (!strip_leadings(segment) &&
-        segment->cairo_path.status != CAIRO_STATUS_SUCCESS)
+    data = segment->path.data;
+    if (data->header.type != CAIRO_PATH_MOVE_TO) {
+        segment->path.status = CAIRO_STATUS_INVALID_PATH_DATA;
         return 0;
+    }
 
-    path_data = segment->cairo_path.data;
-    i = 0;
+    while (segment->path.num_data >= 0) {
+        data += 2;
+        if (data->header.type != CAIRO_PATH_MOVE_TO)
+            return 1;
 
-    do {
-        if (path_data->header.type == CAIRO_PATH_MOVE_TO) {
-            --i;
-            break;
-        } else if (path_data->header.type == CAIRO_PATH_CLOSE_PATH) {
-            break;
-        }
-        i += path_data->header.length;
-        path_data += path_data->header.length;
-    } while (i < segment->cairo_path.num_data);
+        segment->path.data = data;
+        segment->path.num_data -= 2;
+    }
 
-    segment->cairo_path.num_data = i;
-    return 1;
-}
-
-/**
- * path_to_primitive:
- * @primitive: an allocated #CpmlPath struct
- * @path: the source path
- *
- * Converts a path to a primitive. @primitive and @path can be the same struct.
- *
- * Return value: 1 if a valid primitive is found, 0 on errors
- **/
-static cairo_bool_t
-path_to_primitive(CpmlPath *primitive, const CpmlPath *path)
-{
-    cairo_path_data_t *path_data;
-
-    if (primitive != path)
-        cpml_path_copy(primitive, path);
-
-    if (!strip_leadings(primitive) &&
-        primitive->cairo_path.status != CAIRO_STATUS_SUCCESS)
-        return 0;
-
-    primitive->cairo_path.num_data = 1;
-    return 1;
+    return 0;
 }
