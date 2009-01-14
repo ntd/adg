@@ -105,8 +105,6 @@ main(gint argc, gchar **argv)
 
     gtk_main();
 
-    adg_path_dump(ADG_PATH(path));
-
     return 0;
 }
 
@@ -271,7 +269,7 @@ add_sample_stuff(AdgCanvas *canvas)
                                          0., -5.);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
-    toy_text = adg_toy_text_new("Rotated toy_text");
+    toy_text = adg_toy_text_new("toy_text");
     adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
                                          0., 4.65,
                                          0., -5.);
