@@ -19,16 +19,16 @@
 
 
 /**
- * SECTION:positionable
- * @title: AdgPositionable
- * @short_description: Interface for positionable entities
+ * SECTION:translatable
+ * @title: AdgTranslatable
+ * @short_description: Interface for translatable entities
  *
- * The #AdgPositionableIface interface gives a common way to manage entities
+ * The #AdgTranslatableIface interface gives a common way to manage entities
  * with an origin point.
  **/
 
 /**
- * AdgPositionableIface:
+ * AdgTranslatableIface:
  * @base_iface: the base interface
  * @get_origin: returns the current origin
  * @set_origin: sets a new origin
@@ -37,7 +37,7 @@
  * by all the types which implement this interface.
  **/
 
-#include "adg-positionable.h"
+#include "adg-translatable.h"
 #include "adg-intl.h"
 
 
@@ -46,40 +46,40 @@ enum {
     LAST_SIGNAL
 };
 
-static void     iface_base      (AdgPositionableIface   *iface);
-static void     iface_init      (AdgPositionableIface   *iface);
-static void     get_origin    	(AdgPositionable        *positionable,
+static void     iface_base      (AdgTranslatableIface   *iface);
+static void     iface_init      (AdgTranslatableIface   *iface);
+static void     get_origin    	(AdgTranslatable        *translatable,
                                  AdgPoint               *dest);
-static void     set_origin      (AdgPositionable        *positionable,
+static void     set_origin      (AdgTranslatable        *translatable,
                                  const AdgPoint         *origin);
 
 static guint    signals[LAST_SIGNAL] = { 0 };
 
 
 GType
-adg_positionable_get_type(void)
+adg_translatable_get_type(void)
 {
-    static GType positionable_type = 0;
+    static GType translatable_type = 0;
 
-    if (G_UNLIKELY(positionable_type == 0)) {
-        static const GTypeInfo positionable_info = {
-            sizeof(AdgPositionableIface),
+    if (G_UNLIKELY(translatable_type == 0)) {
+        static const GTypeInfo translatable_info = {
+            sizeof(AdgTranslatableIface),
             (GBaseInitFunc) iface_base,
             NULL,
             (GClassInitFunc) iface_init,
             NULL,
         };
 
-        positionable_type = g_type_register_static(G_TYPE_INTERFACE,
-                                                   "AdgPositionable",
-                                                   &positionable_info, 0);
+        translatable_type = g_type_register_static(G_TYPE_INTERFACE,
+                                                   "AdgTranslatable",
+                                                   &translatable_info, 0);
     }
 
-    return positionable_type;
+    return translatable_type;
 }
 
 static void
-iface_base(AdgPositionableIface *iface)
+iface_base(AdgTranslatableIface *iface)
 {
     static gboolean initialized = FALSE;
     GParamSpec *param;
@@ -98,14 +98,14 @@ iface_base(AdgPositionableIface *iface)
     g_object_interface_install_property(iface, param);
 
     /**
-     * AdgPositionable::origin-moved:
-     * @positionable: an entity implementing #AdgPositionable
+     * AdgTranslatable::origin-moved:
+     * @translatable: an entity implementing #AdgTranslatable
      * @old_origin: an #AdgPoint with the previous origin
      *
      * Emitted whenever the origin has changed.
      **/
     param_types[0] = ADG_TYPE_POINT;
-    signals[ORIGIN_MOVED] = g_signal_newv("origin-moved", ADG_TYPE_POSITIONABLE,
+    signals[ORIGIN_MOVED] = g_signal_newv("origin-moved", ADG_TYPE_TRANSLATABLE,
                                           G_SIGNAL_RUN_FIRST,
                                           NULL, NULL, NULL,
                                           g_cclosure_marshal_VOID__OBJECT,
@@ -113,7 +113,7 @@ iface_base(AdgPositionableIface *iface)
 }
 
 static void
-iface_init (AdgPositionableIface *iface)
+iface_init (AdgTranslatableIface *iface)
 {
     iface->get_origin = get_origin;
     iface->set_origin = set_origin;
@@ -121,74 +121,74 @@ iface_init (AdgPositionableIface *iface)
 
 
 static void
-get_origin(AdgPositionable *positionable, AdgPoint *dest)
+get_origin(AdgTranslatable *translatable, AdgPoint *dest)
 {
-    g_warning("AdgPositionable::get_origin not implemented for `%s'",
-              g_type_name(G_TYPE_FROM_INSTANCE(positionable)));
+    g_warning("AdgTranslatable::get_origin not implemented for `%s'",
+              g_type_name(G_TYPE_FROM_INSTANCE(translatable)));
 }
 
 static void
-set_origin(AdgPositionable *positionable, const AdgPoint *point)
+set_origin(AdgTranslatable *translatable, const AdgPoint *point)
 {
-    g_warning("AdgPositionable::set_origin not implemented for `%s'",
-              g_type_name(G_TYPE_FROM_INSTANCE(positionable)));
+    g_warning("AdgTranslatable::set_origin not implemented for `%s'",
+              g_type_name(G_TYPE_FROM_INSTANCE(translatable)));
 }
 
 /**
- * adg_positionable_get_origin:
- * @positionable: an entity implementing AdgPositionable
+ * adg_translatable_get_origin:
+ * @translatable: an entity implementing AdgTranslatable
  * @dest: the destination #AdgPoint struct
  *
- * Gets the origin point of @positionable.
+ * Gets the origin point of @translatable.
  **/
 void
-adg_positionable_get_origin(AdgPositionable *positionable, AdgPoint *dest)
+adg_translatable_get_origin(AdgTranslatable *translatable, AdgPoint *dest)
 {
-    g_return_if_fail(ADG_IS_POSITIONABLE(positionable));
+    g_return_if_fail(ADG_IS_TRANSLATABLE(translatable));
     g_return_if_fail(dest != NULL);
 
-    ADG_POSITIONABLE_GET_IFACE(positionable)->get_origin(positionable, dest);
+    ADG_TRANSLATABLE_GET_IFACE(translatable)->get_origin(translatable, dest);
 }
 
 /**
- * adg_positionable_set_origin:
- * @positionable: an entity implementing AdgPositionable
+ * adg_translatable_set_origin:
+ * @translatable: an entity implementing AdgTranslatable
  * @origin: the new origin
  *
- * Sets the origin of @positionable to @origin.
+ * Sets the origin of @translatable to @origin.
  * An "origin-moved" signal is emitted.
  **/
 void
-adg_positionable_set_origin(AdgPositionable *positionable,
+adg_translatable_set_origin(AdgTranslatable *translatable,
                             const AdgPoint *origin)
 {
-    AdgPositionableIface *iface;
+    AdgTranslatableIface *iface;
     AdgPoint old_origin;
 
-    g_return_if_fail(ADG_IS_POSITIONABLE(positionable));
+    g_return_if_fail(ADG_IS_TRANSLATABLE(translatable));
     g_return_if_fail(origin != NULL);
 
-    iface = ADG_POSITIONABLE_GET_IFACE(positionable);
+    iface = ADG_TRANSLATABLE_GET_IFACE(translatable);
 
-    iface->get_origin(positionable, &old_origin);
-    iface->set_origin(positionable, origin);
+    iface->get_origin(translatable, &old_origin);
+    iface->set_origin(translatable, origin);
 
-    g_signal_emit(positionable, signals[ORIGIN_MOVED], 0, &old_origin);
+    g_signal_emit(translatable, signals[ORIGIN_MOVED], 0, &old_origin);
 }
 
 /**
- * adg_positionable_set_origin_explicit:
- * @positionable: an entity implementing AdgPositionable
+ * adg_translatable_set_origin_explicit:
+ * @translatable: an entity implementing AdgTranslatable
  * @model_x: the new x position in model space
  * @model_y: the new y position in model space
  * @paper_x: the new x position in paper space
  * @paper_y: the new y position in paper space
  *
- * Sets the origin of @positionable to the new coordinates. It calls
- * adg_positionable_set_origin() internally.
+ * Sets the origin of @translatable to the new coordinates. It calls
+ * adg_translatable_set_origin() internally.
  **/
 void
-adg_positionable_set_origin_explicit(AdgPositionable *positionable,
+adg_translatable_set_origin_explicit(AdgTranslatable *translatable,
                                      gdouble model_x, gdouble model_y,
                                      gdouble paper_x, gdouble paper_y)
 {
@@ -199,5 +199,5 @@ adg_positionable_set_origin_explicit(AdgPositionable *positionable,
     origin.paper.x = paper_x;
     origin.paper.y = paper_y;
 
-    adg_positionable_set_origin(positionable, &origin);
+    adg_translatable_set_origin(translatable, &origin);
 }

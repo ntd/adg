@@ -36,6 +36,8 @@ adg_matrix_get_fallback
 adg_matrix_dup
 adg_matrix_copy
 adg_matrix_equal
+<SUBSECTION>
+adg_matrix_init_reflection
 <SUBSECTION Standard>
 ADG_TYPE_MATRIX
 adg_matrix_get_type
@@ -325,20 +327,20 @@ ADG_ENTITY_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>positionable</FILE>
+<FILE>translatable</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
-AdgPositionable
-AdgPositionableIface
+AdgTranslatable
+AdgTranslatableIface
 <SUBSECTION>
-adg_positionable_get_origin
-adg_positionable_set_origin
-adg_positionable_set_origin_explicit
+adg_translatable_get_origin
+adg_translatable_set_origin
+adg_translatable_set_origin_explicit
 <SUBSECTION Standard>
-adg_positionable_get_type
-ADG_POSITIONABLE
-ADG_IS_POSITIONABLE
-ADG_TYPE_POSITIONABLE
-ADG_POSITIONABLE_GET_IFACE
+adg_translatable_get_type
+ADG_TRANSLATABLE
+ADG_IS_TRANSLATABLE
+ADG_TYPE_TRANSLATABLE
+ADG_TRANSLATABLE_GET_IFACE
 </SECTION>
 
 <SECTION>

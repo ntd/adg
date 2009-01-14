@@ -46,7 +46,7 @@
     </chapter>
     <chapter id="Populating-interface">
       <title>Shared interfaces</title>
-      <xi:include href="xml/positionable.xml"/>
+      <xi:include href="xml/translatable.xml"/>
       <xi:include href="xml/rotable.xml"/>
     </chapter>
     <xi:include href="xml/canvas.xml"/>

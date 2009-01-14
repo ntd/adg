@@ -18,41 +18,41 @@
  */
 
 
-#ifndef __ADG_POSITIONABLE_H__
-#define __ADG_POSITIONABLE_H__
+#ifndef __ADG_TRANSLATABLE_H__
+#define __ADG_TRANSLATABLE_H__
 
 #include <adg/adg-point.h>
 
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_POSITIONABLE            (adg_positionable_get_type())
-#define ADG_POSITIONABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_POSITIONABLE, AdgPositionable))
-#define ADG_IS_POSITIONABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_POSITIONABLE))
-#define ADG_POSITIONABLE_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE((obj), ADG_TYPE_POSITIONABLE, AdgPositionableIface))
+#define ADG_TYPE_TRANSLATABLE            (adg_translatable_get_type())
+#define ADG_TRANSLATABLE(obj)            (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_TRANSLATABLE, AdgTranslatable))
+#define ADG_IS_TRANSLATABLE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_TRANSLATABLE))
+#define ADG_TRANSLATABLE_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE((obj), ADG_TYPE_TRANSLATABLE, AdgTranslatableIface))
 
-typedef struct _AdgPositionable       AdgPositionable; /* Dummy typedef */
-typedef struct _AdgPositionableIface  AdgPositionableIface;
+typedef struct _AdgTranslatable       AdgTranslatable; /* Dummy typedef */
+typedef struct _AdgTranslatableIface  AdgTranslatableIface;
 
-struct _AdgPositionableIface {
+struct _AdgTranslatableIface {
     GTypeInterface base_iface;
 
     /* Virtual Table */
-    void        (*get_origin)                   (AdgPositionable *positionable,
+    void        (*get_origin)                   (AdgTranslatable *translatable,
                                                  AdgPoint        *dest);
-    void        (*set_origin)                   (AdgPositionable *positionable,
+    void        (*set_origin)                   (AdgTranslatable *translatable,
                                                  const AdgPoint  *origin);
 };
 
 
-GType           adg_positionable_get_type       (void) G_GNUC_CONST;
+GType           adg_translatable_get_type       (void) G_GNUC_CONST;
 
-void            adg_positionable_get_origin     (AdgPositionable *positionable,
+void            adg_translatable_get_origin     (AdgTranslatable *translatable,
                                                  AdgPoint        *dest);
-void            adg_positionable_set_origin     (AdgPositionable *positionable,
+void            adg_translatable_set_origin     (AdgTranslatable *translatable,
                                                  const AdgPoint  *origin);
-void            adg_positionable_set_origin_explicit
-                                                (AdgPositionable *positionable,
+void            adg_translatable_set_origin_explicit
+                                                (AdgTranslatable *translatable,
                                                  gdouble          model_x,
                                                  gdouble          model_y,
                                                  gdouble          paper_x,
@@ -61,4 +61,4 @@ void            adg_positionable_set_origin_explicit
 G_END_DECLS
 
 
-#endif /* __ADG_POSITIONABLE_H__ */
+#endif /* __ADG_TRANSLATABLE_H__ */

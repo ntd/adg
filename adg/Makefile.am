@@ -23,10 +23,10 @@ adg_h_sources=			adg.h \
 				adg-path.h \
 				adg-pattern.h \
 				adg-point.h \
-				adg-positionable.h \
 				adg-rotable.h \
 				adg-style.h \
 				adg-toy-text.h \
+				adg-translatable.h \
 				adg-util.h
 adg_built_h_sources=		adg-type-builtins.h
 adg_private_h_sources=		adg-adim-private.h \
@@ -65,10 +65,10 @@ adg_c_sources=			adg-adim.c \
 				adg-path.c \
 				adg-pattern.c \
 				adg-point.c \
-				adg-positionable.c \
 				adg-rotable.c \
 				adg-style.c \
 				adg-toy-text.c \
+				adg-translatable.c \
 				adg-util.c
 adg_built_c_sources=		adg-type-builtins.c
 

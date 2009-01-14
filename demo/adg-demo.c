@@ -266,13 +266,13 @@ add_sample_stuff(AdgCanvas *canvas)
     AdgEntity *toy_text;
 
     toy_text = adg_toy_text_new("Horizontal toy_text above the piston");
-    adg_positionable_set_origin_explicit(ADG_POSITIONABLE(toy_text),
+    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
                                          0., -4.65,
                                          0., -5.);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
     toy_text = adg_toy_text_new("Rotated toy_text");
-    adg_positionable_set_origin_explicit(ADG_POSITIONABLE(toy_text),
+    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
                                          0., 4.65,
                                          0., -5.);
     adg_rotable_set_angle(ADG_ROTABLE(toy_text), M_PI * 3./2.);

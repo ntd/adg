@@ -15,6 +15,6 @@ adg_model_get_type
 adg_pair_get_type
 adg_path_get_type
 adg_point_get_type
-adg_positionable_get_type
+adg_translatable_get_type
 adg_rotable_get_type
 adg_toy_text_get_type

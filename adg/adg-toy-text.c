@@ -28,7 +28,7 @@
 
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
-#include "adg-positionable.h"
+#include "adg-translatable.h"
 #include "adg-rotable.h"
 #include "adg-font-style.h"
 #include "adg-intl.h"
@@ -43,10 +43,10 @@ enum {
     PROP_LABEL
 };
 
-static void     positionable_init       (AdgPositionableIface *iface);
-static void     get_origin              (AdgPositionable*positionable,
+static void     translatable_init       (AdgTranslatableIface *iface);
+static void     get_origin              (AdgTranslatable*translatable,
                                          AdgPoint       *dest);
-static void     set_origin              (AdgPositionable*positionable,
+static void     set_origin              (AdgTranslatable*translatable,
                                          const AdgPoint *origin);
 
 static void     rotable_init            (AdgRotableIface*iface);
@@ -79,29 +79,29 @@ static void     move_label_cache        (AdgToyText     *toy_text,
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_POSITIONABLE,
-                                              positionable_init)
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TRANSLATABLE,
+                                              translatable_init)
                         G_IMPLEMENT_INTERFACE(ADG_TYPE_ROTABLE, rotable_init))
 
 
 static void
-positionable_init(AdgPositionableIface *iface)
+translatable_init(AdgTranslatableIface *iface)
 {
     iface->get_origin = get_origin;
     iface->set_origin = set_origin;
 }
 
 static void
-get_origin(AdgPositionable *positionable, AdgPoint *dest)
+get_origin(AdgTranslatable *translatable, AdgPoint *dest)
 {
-    AdgToyText *toy_text = (AdgToyText *) positionable;
+    AdgToyText *toy_text = (AdgToyText *) translatable;
     adg_point_copy(dest, &toy_text->priv->origin);
 }
 
 static void
-set_origin(AdgPositionable *positionable, const AdgPoint *origin)
+set_origin(AdgTranslatable *translatable, const AdgPoint *origin)
 {
-    AdgToyText *toy_text = (AdgToyText *) positionable;
+    AdgToyText *toy_text = (AdgToyText *) translatable;
     adg_point_copy(&toy_text->priv->origin, origin);
 }
 
