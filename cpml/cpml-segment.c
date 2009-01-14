@@ -29,7 +29,7 @@ static cairo_bool_t     normalize_segment       (CpmlSegment       *segment);
 
 /**
  * cpml_segment_init:
- * @segment: the destination #CpmlSegment structure
+ * @segment: a #CpmlSegment
  * @src: the source cairo_path_t
  *
  * Builds a CpmlSegment from a cairo_path_t structure. This operation
@@ -55,7 +55,7 @@ cpml_segment_init(CpmlSegment *segment, cairo_path_t *src)
 
 /**
  * cpml_segment_copy:
- * @segment: the destination #CpmlSegment structure
+ * @segment: a #CpmlSegment
  * @src: the source segment to copy
  *
  * Makes a shallow copy of @src into @segment.
@@ -73,7 +73,7 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 
 /**
  * cpml_segment_dump:
- * @segment: the destination #CpmlSegment structure
+ * @segment: a #CpmlSegment
  *
  * Dumps the specified @segment to stdout. Useful for debugging purposes.
  **/
@@ -122,7 +122,7 @@ cpml_segment_dump(const CpmlSegment *segment)
 
 /**
  * cpml_segment_reset:
- * @segment: the destination #CpmlSegment structure
+ * @segment: a #CpmlSegment
  *
  * Modifies @segment to point to the first segment of the original path.
  **/
@@ -135,7 +135,7 @@ cpml_segment_reset(CpmlSegment *segment)
 
 /**
  * cpml_segment_next:
- * @segment: the destination #CpmlSegment structure
+ * @segment: a #CpmlSegment
  *
  * Modifies @segment to point to the next segment of the original path.
  *
@@ -199,6 +199,33 @@ cpml_segment_reverse(CpmlSegment *segment)
     data[1].point.x = end_x;
     data[1].point.y = end_y;
     memcpy(segment->path.data, data, data_size);
+}
+
+/**
+ * cpml_segment_transform:
+ * @segment: a #CpmlSegment
+ * @matrix: the matrix to be applied
+ *
+ * Applies @matrix on all the points of @segment.
+ **/
+void
+cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
+{
+    cairo_path_data_t *data;
+    int n_data, num_data;
+    int n_point, num_points;
+
+    data = segment->path.data;
+    num_data = segment->path.num_data;
+
+    for (n_data = 0; n_data < num_data; n_data += num_points) {
+        num_points = data->header.length;
+        ++data;
+        for (n_point = 1; n_point < num_points; ++n_point) {
+            cairo_matrix_transform_point(matrix, &data->point.x, &data->point.y);
+            ++data;
+        }
+    }
 }
 
 /**
