@@ -26,7 +26,9 @@
  */
 
 #include "adg-matrix.h"
+
 #include <string.h>
+#include <math.h>
 
 
 static AdgMatrix null_matrix = { 0., 0., 0., 0., 0., 0. };
@@ -56,7 +58,7 @@ adg_matrix_get_type(void)
  *               when no longer needed.
  */
 AdgMatrix *
-adg_matrix_dup(const AdgMatrix * matrix)
+adg_matrix_dup(const AdgMatrix *matrix)
 {
     g_return_val_if_fail(matrix != NULL, NULL);
 
@@ -84,7 +86,7 @@ adg_matrix_get_fallback(void)
  * Nullifies a matrix, setting all its components to 0.
  */
 void
-adg_matrix_init_null(AdgMatrix * matrix)
+adg_matrix_init_null(AdgMatrix *matrix)
 {
     memcpy(matrix, &null_matrix, sizeof(AdgMatrix));
 }
@@ -98,7 +100,7 @@ adg_matrix_init_null(AdgMatrix * matrix)
  * Return value: %TRUE if the matrix is a null matrix, %FALSE otherwise
  */
 gboolean
-adg_matrix_is_null(const AdgMatrix * matrix)
+adg_matrix_is_null(const AdgMatrix *matrix)
 {
     return memcmp(matrix, &null_matrix, sizeof(AdgMatrix)) == 0;
 }
@@ -133,10 +135,27 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  * Return value: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
  */
 gboolean
-adg_matrix_equal(const AdgMatrix * matrix1, const AdgMatrix * matrix2)
+adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 {
     g_return_val_if_fail(matrix1 != NULL, FALSE);
     g_return_val_if_fail(matrix2 != NULL, FALSE);
 
     return memcmp(matrix1, matrix2, sizeof(AdgMatrix)) == 0;
+}
+
+/**
+ * adg_matrix_init_reflection:
+ * @matrix: the destination #AdgMatrix
+ * @radians: angle of the mirroring axis, in radians
+ *
+ * Initialized @matrix to a transformation that reflects arond an axis
+ * rotated by @radians and passing throught the origin (0, 0).
+ **/
+void
+adg_matrix_init_reflection(AdgMatrix *matrix, double radians)
+{
+    double s2 = sin(2*radians);
+    double c2 = cos(2*radians);
+
+    cairo_matrix_init(matrix, c2, s2, s2, -c2, 0, 0);
 }
