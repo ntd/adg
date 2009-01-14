@@ -32,7 +32,7 @@ redundancy is removed and the maintainability improved. The originals
 are kept in docbook format, allowing to use them also in html version.</para>
 
 <para>The adg-demo program now allows to save the sample drawing in png, pdf
-and poscript. Two useless toy text entities has been added.</para>
+and postscript. Two useless toy text entities has been added.</para>
 
 </simplesect>
 
