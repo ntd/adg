@@ -9,7 +9,6 @@
 
 #define CHAMFER 0.3
 
-
 typedef struct _Piston Piston;
 
 struct _Piston {
@@ -289,6 +288,9 @@ piston_path_extern(AdgEntity *entity, cairo_t *cr)
     double LD2, LD3, LD5, LD6, LD7;
     double RD34, RD56;
     double x, y;
+    cairo_path_t *path;
+    CpmlSegment segment;
+    AdgMatrix matrix;
 
     piston = &model;
 
@@ -334,9 +336,17 @@ piston_path_extern(AdgEntity *entity, cairo_t *cr)
     cairo_line_to(cr, A - LD7, D7 / 2.0);
     cairo_line_to(cr, A, D7 / 2.0);
 
-    /* TODO: mirror the path on the y=0 axis, chain-up to the reversed path
-     * to the current path and close the shape. Waiting for the
-     * implementation of the above functions in CPML... */
+    /* Build the shape by reflecting the current path, reversing the order
+     * and joining the result to the current path */
+    path = cairo_copy_path(cr);
+    cpml_segment_init(&segment, path);
+    cpml_segment_reverse(&segment);
+    adg_matrix_init_reflection(&matrix, 0);
+    cpml_segment_transform(&segment, &matrix);
+    path->data[0].header.type = CAIRO_PATH_LINE_TO;
+    cairo_append_path(cr, path);
+    cairo_path_destroy(path);
+    cairo_close_path(cr);
 }
 
 static void
