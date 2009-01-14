@@ -6,6 +6,36 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.4.0">
+<title>ADG 0.4.0</title>
+
+<para>The useless wrappers in AdgPath have been removed: now the standard
+cairo path API could be used in the path constructor callback.</para>
+
+<para>AdgPoint has been added. This new core struct can be used to represent
+a coordinate system with different model and space component.</para>
+
+<para>The new AdgToyText entity can be used to show arbitrary text using the
+cairo "toy" text API.</para>
+
+<para>Two interfaces, AdgTranslatable and AdgRotable, have been implemented
+to allow arbitrary positioning (using the new AdgPoint struct) and
+rotation of entities where this is applicable (e.g. AdgToyText).</para>
+
+<para>The CPML API has been almost rewrote from scratch: removed a lot of
+duplicated stuff, dropped CpmlPath (by using the original cairo_path_t)
+and implemented new functions, such as segment browsing (always in forward
+direction), reversing and transformation.</para>
+
+<para>README, NEWS, TODO and ChangeLog are now automatically generated, so
+redundancy is removed and the maintainability improved. The originals
+are kept in docbook format, allowing to use them also in html version.</para>
+
+<para>The adg-demo program now allows to save the sample drawing in png, pdf
+and poscript. Two useless toy text entities has been added.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.3.2">
 <title>ADG 0.3.2</title>
 
