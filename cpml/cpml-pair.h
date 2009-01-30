@@ -24,9 +24,9 @@
 #include <math.h>
 
 #define CPML_DIR_RIGHT   0.
-#define CPML_DIR_DOWN    (M_PI/2.)
+#define CPML_DIR_DOWN    (M_PI/2)
 #define CPML_DIR_LEFT    M_PI
-#define CPML_DIR_UP      (M_PI*3./2.)
+#define CPML_DIR_UP      (M_PI*3/2)
 
 
 CAIRO_BEGIN_DECLS
@@ -43,19 +43,19 @@ cairo_bool_t    cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
 cairo_bool_t    cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t *matrix);
-cairo_bool_t    cpml_pair_distance              (double         *distance,
-                                                 const CpmlPair *from,
+double          cpml_pair_squared_distance      (const CpmlPair *from,
                                                  const CpmlPair *to);
-cairo_bool_t    cpml_pair_square_distance       (double         *distance,
-                                                 const CpmlPair *from,
+double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
 cairo_bool_t    cpml_pair_angle                 (double         *angle,
                                                  const CpmlPair *from,
                                                  const CpmlPair *to);
-cairo_bool_t    cpml_vector_from_pair           (CpmlPair       *vector,
-                                                 const CpmlPair *pair);
-cairo_bool_t    cpml_vector_from_angle          (CpmlPair       *vector,
-                                                 double          angle);
+void            cpml_vector_from_pair           (CpmlPair       *vector,
+                                                 const CpmlPair *pair,
+                                                 double          length);
+void            cpml_vector_from_angle          (CpmlPair       *vector,
+                                                 double          angle,
+                                                 double          length);
 
 
 CAIRO_END_DECLS
