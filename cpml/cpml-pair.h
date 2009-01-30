@@ -24,9 +24,9 @@
 #include <math.h>
 
 #define CPML_DIR_RIGHT   0.
-#define CPML_DIR_DOWN    (M_PI/2)
+#define CPML_DIR_DOWN    M_PI_2
 #define CPML_DIR_LEFT    M_PI
-#define CPML_DIR_UP      (M_PI*3/2)
+#define CPML_DIR_UP      (3.*M_PI_2)
 
 
 CAIRO_BEGIN_DECLS
@@ -39,16 +39,15 @@ struct _CpmlPair {
 };
 
 
-cairo_bool_t    cpml_pair_copy                  (CpmlPair       *pair,
+CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
-cairo_bool_t    cpml_pair_transform             (CpmlPair       *pair,
+void            cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t *matrix);
 double          cpml_pair_squared_distance      (const CpmlPair *from,
                                                  const CpmlPair *to);
 double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
-cairo_bool_t    cpml_pair_angle                 (double         *angle,
-                                                 const CpmlPair *from,
+double          cpml_pair_angle                 (const CpmlPair *from,
                                                  const CpmlPair *to);
 void            cpml_vector_from_pair           (CpmlPair       *vector,
                                                  const CpmlPair *pair,

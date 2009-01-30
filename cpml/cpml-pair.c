@@ -50,6 +50,7 @@
 #include "cpml-pair.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 
 static CpmlPair fallback_pair = { 0., 0. };
@@ -62,14 +63,12 @@ static CpmlPair fallback_pair = { 0., 0. };
  *
  * Assign @src to @pair.
  *
- * Return value: 1 if @pair was set, 0 on errors
- */
-cairo_bool_t
+ * Return value: the destination pair
+ **/
+CpmlPair *
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
-    pair->x = src->x;
-    pair->y = src->y;
-    return 1;
+    return memcpy(pair, src, sizeof(CpmlPair));
 }
 
 /**
@@ -78,14 +77,11 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * @matrix: the transformation matrix
  *
  * Shortcut to apply a specific transformation matrix to @pair.
- *
- * Return value: 1 if @pair was transformed, 0 on errors
  **/
-cairo_bool_t
+void
 cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
 {
     cairo_matrix_transform_point(matrix, &pair->x, &pair->y);
-    return 1;
 }
 
 
@@ -102,7 +98,7 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
  * will be used.
  *
  * Return value: the squared distance
- */
+ **/
 double
 cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
 {
@@ -138,8 +134,8 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * IBM Journal of Research and Development 27 (6): 577–581
  * http://www.research.ibm.com/journal/rd/276/ibmrd2706P.pdf
  *
- * Return value: 1 if @distance was properly set, 0 on errors
- */
+ * Return value: the distance
+ **/
 double
 cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 {
@@ -189,15 +185,15 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
  * @to: the second #CpmlPair struct
  * @angle: where to store the result
  *
- * Gets the angle between @from and @to, storing the result in @angle.
+ * Returns the angle between @from and @to, in radians.
  *
  * @from or @to could be %NULL, in which case the fallback (0, 0) pair
  * will be used.
  *
- * Return value: 1 if @angle was properly set, 0 on errors
- */
-cairo_bool_t
-cpml_pair_angle(double *angle, const CpmlPair *from, const CpmlPair *to)
+ * Return value: the angle in radians
+ **/
+double
+cpml_pair_angle(const CpmlPair *from, const CpmlPair *to)
 {
     static CpmlPair cached_pair = { 1., 0. };
     static double cached_angle = 0.;
@@ -212,30 +208,22 @@ cpml_pair_angle(double *angle, const CpmlPair *from, const CpmlPair *to)
     pair.y = to->y - from->y;
 
     /* Check for cached result */
-    if (pair.x == cached_pair.x && pair.y == cached_pair.y) {
-        *angle = cached_angle;
-    } else if (pair.y == 0.) {
-        *angle = pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
-    } else if (pair.x == 0.) {
-        *angle = pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
-    } else if (pair.x == pair.y) {
-        *angle = pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
-    } else if (pair.x == -pair.y) {
-        *angle = pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
-    } else {
-        *angle = atan(pair.y / pair.x);
+    if (pair.x == cached_pair.x && pair.y == cached_pair.y)
+        return cached_angle;
+    if (pair.y == 0.)
+        return pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
+    if (pair.x == 0.)
+        return pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
+    if (pair.x == pair.y)
+        return pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
+    if (pair.x == -pair.y)
+        return pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
 
-        if (pair.x < 0.0)
-            *angle += M_PI;
-        else if (pair.y < 0.0)
-            *angle += 2.0 * M_PI;
+    /* Cache registration */
+    cached_angle = atan(pair.y / pair.x);
+    cpml_pair_copy(&cached_pair, &pair);
 
-        /* Cache registration */
-        cached_angle = *angle;
-        cpml_pair_copy(&cached_pair, &pair);
-    }
-
-    return 1;
+    return cached_angle;
 }
 
 /**

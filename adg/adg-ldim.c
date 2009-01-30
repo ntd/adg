@@ -501,7 +501,7 @@ update(AdgLDim *ldim)
     adg_dim_set_org_explicit((AdgDim *) ldim,
                              (arrow1->point.x + arrow2->point.x) / 2.,
                              (arrow1->point.y + arrow2->point.y) / 2.);
-    cpml_pair_angle(&angle, NULL, &vector);
+    angle = cpml_pair_angle(NULL, &vector);
     adg_dim_set_angle((AdgDim *) ldim, angle);
 
     /* Calculate baseline1 and baseline2 */
