@@ -32,10 +32,11 @@
 CAIRO_BEGIN_DECLS
 
 
-typedef struct _CpmlPair        CpmlPair;
+typedef struct _CpmlPair CpmlPair;
+typedef struct _CpmlPair CpmlVector;
 
 struct _CpmlPair {
-        double                  x, y;
+        double  x, y;
 };
 
 
@@ -49,12 +50,14 @@ double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
 double          cpml_pair_angle                 (const CpmlPair *from,
                                                  const CpmlPair *to);
-void            cpml_vector_from_pair           (CpmlPair       *vector,
+void            cpml_vector_from_pair           (CpmlVector     *vector,
                                                  const CpmlPair *pair,
                                                  double          length);
-void            cpml_vector_from_angle          (CpmlPair       *vector,
+void            cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);
+void            cpml_vector_normal              (CpmlVector     *vector,
+                                                 const CpmlVector *src);
 
 
 CAIRO_END_DECLS

@@ -35,17 +35,20 @@
  * @y: the y component of the pair
  *
  * A generic 2D structure.
- */
+ **/
 
 /**
  * CpmlVector:
  * @x: the x component of the vector
  * @y: the y component of the vector
  *
- * A subclass of a #CpmlPair. A vector represents the coordinates of a point
- * distant 1 from the origin (0, 0). The vectors are useful to define a
- * direction and are better suited than angles for simplifying interpolations.
- */
+ * Another name for #CpmlPair. It is used to clarify when a function expects
+ * a pair or a vector.
+ *
+ * A vector represents a line starting from the origin (0,0) and ending
+ * to the given coordinates pair. Vectors are useful to define directions
+ * and length at once.
+ **/
 
 #include "cpml-pair.h"
 
@@ -185,10 +188,8 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
  * @to: the second #CpmlPair struct
  * @angle: where to store the result
  *
- * Returns the angle between @from and @to, in radians.
- *
- * @from or @to could be %NULL, in which case the fallback (0, 0) pair
- * will be used.
+ * Returns the angle between @from and @to, in radians. @from or @to
+ * could be %NULL, in which case the fallback (0, 0) pair will be used.
  *
  * Return value: the angle in radians
  **/
@@ -228,7 +229,7 @@ cpml_pair_angle(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_vector_from_pair:
- * @vector: an allocated #CpmlPair struct
+ * @vector: the destination vector
  * @pair: the source pair
  * @length: the final vector length
  *
@@ -240,7 +241,7 @@ cpml_pair_angle(const CpmlPair *from, const CpmlPair *to)
  * @pair and @vector can be the same struct.
  **/
 void
-cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair, double length)
+cpml_vector_from_pair(CpmlVector *vector, const CpmlPair *pair, double length)
 {
     double distance, factor;
 
@@ -253,7 +254,7 @@ cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair, double length)
 
 /**
  * cpml_vector_from_angle:
- * @vector: an allocated #CpmlPair struct
+ * @vector: the destination vector
  * @angle: angle of direction, in radians
  * @length: the final vector length
  *
@@ -261,7 +262,7 @@ cpml_vector_from_pair(CpmlPair *vector, const CpmlPair *pair, double length)
  * in the @angle direction. The result is stored in @vector.
  **/
 void
-cpml_vector_from_angle(CpmlPair *vector, double angle, double length)
+cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
 {
     static double cached_angle = 0.;
     static CpmlPair cached_vector = { 1., 0. };
@@ -281,4 +282,24 @@ cpml_vector_from_angle(CpmlPair *vector, double angle, double length)
 
     vector->x *= length;
     vector->y *= length;
+}
+
+/**
+ * cpml_vector_normal:
+ * @vector: the destination vector
+ * @src: the source vector
+ *
+ * Stores in @vector a vector normal to @src with the same length.
+ * @vector and @src can be the same struct.
+ **/
+void
+cpml_vector_normal(CpmlVector *vector, const CpmlVector *src)
+{
+    double x, y;
+
+    x = src->x;
+    y = src->y;
+
+    vector->x = -y;
+    vector->y = x;
 }
