@@ -489,7 +489,7 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
     case CAIRO_PATH_LINE_TO:
         vector.x = segment->path.data[3].point.x - org_x;
         vector.y = segment->path.data[3].point.y - org_y;
-        cpml_vector_from_pair(&vector, &vector, 1.);
+        cpml_vector_from_pair(&vector, &vector, 1);
 
         tail.x = vector.x * length + org_x;
         tail.y = vector.y * length + org_y;
