@@ -64,6 +64,7 @@ static void     clear                   (AdgDim         *entity);
 static gchar *  default_quote           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
+static void     text_cache_init         (AdgTextCache   *text_cache);
 static gboolean text_cache_update       (AdgTextCache   *text_cache,
                                          const gchar    *text,
                                          cairo_t        *cr,
@@ -164,26 +165,22 @@ adg_dim_init(AdgDim *dim)
     AdgDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
-    priv->ref1.x = priv->ref1.y = 0.;
-    priv->ref2.x = priv->ref2.y = 0.;
-    priv->pos1.x = priv->pos1.y = 0.;
-    priv->pos2.x = priv->pos2.y = 0.;
+    priv->ref1.x = priv->ref1.y = 0;
+    priv->ref2.x = priv->ref2.y = 0;
+    priv->pos1.x = priv->pos1.y = 0;
+    priv->pos2.x = priv->pos2.y = 0;
     priv->level = 1.;
     priv->quote = NULL;
     priv->tolerance_up = NULL;
     priv->tolerance_down = NULL;
     priv->note = NULL;
 
-    priv->org.x = priv->org.y = 0.;
-    priv->angle = 0.;
-    priv->quote_cache.num_glyphs = 0;
-    priv->quote_cache.glyphs = NULL;
-    priv->tolerance_up_cache.num_glyphs = 0;
-    priv->tolerance_up_cache.glyphs = NULL;
-    priv->tolerance_down_cache.num_glyphs = 0;
-    priv->tolerance_down_cache.glyphs = NULL;
-    priv->note_cache.num_glyphs = 0;
-    priv->note_cache.glyphs = NULL;
+    priv->org.x = priv->org.y = 0;
+    priv->angle = 0;
+    text_cache_init(&priv->quote_cache);
+    text_cache_init(&priv->tolerance_up_cache);
+    text_cache_init(&priv->tolerance_down_cache);
+    text_cache_init(&priv->note_cache);
 
     dim->priv = priv;
 }
@@ -364,7 +361,7 @@ adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
 gdouble
 adg_dim_get_angle(AdgDim *dim)
 {
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0.);
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
     return dim->priv->angle;
 }
@@ -581,7 +578,7 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
 gdouble
 adg_dim_get_level(AdgDim  *dim)
 {
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0.0);
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
     return dim->priv->level;
 }
@@ -803,7 +800,7 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 
     cairo_translate(cr, priv->org.x, priv->org.y);
     adg_entity_scale_to_paper((AdgEntity *) dim, cr);
-    cairo_rotate(cr, priv->angle);
+    cairo_rotate(cr, -priv->angle);
 
     /* Rendering quote */
     adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
@@ -881,8 +878,8 @@ quote_layout(AdgDim *dim, cairo_t *cr)
         cp.x = priv->quote_cache.extents.width;
         cp.y = priv->quote_cache.extents.height / -2.;
     } else {
-        cp.x = 0.;
-        cp.y = 0.;
+        cp.x = 0;
+        cp.y = 0;
     }
 
     /* Compute the tolerances */
@@ -892,7 +889,7 @@ quote_layout(AdgDim *dim, cairo_t *cr)
 
         adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
 
-        width = 0.;
+        width = 0;
         midspacing = adg_dim_style_get_tolerance_spacing(dim_style) / 2.;
         cpml_pair_copy(&shift, adg_dim_style_get_tolerance_shift(dim_style));
         cp.x += shift.x;
@@ -957,12 +954,28 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     }
 }
 
+static void
+text_cache_init(AdgTextCache *text_cache)
+{
+    text_cache->utf8 = NULL;
+    text_cache->utf8_len = -1;
+    text_cache->glyphs = NULL;
+    text_cache->num_glyphs = 0;
+    text_cache->clusters = NULL;
+    text_cache->num_clusters = 0;
+    text_cache->cluster_flags = 0;
+    memset(&text_cache->extents, 0, sizeof(text_cache->extents));
+}
+
 static gboolean
 text_cache_update(AdgTextCache *text_cache, const gchar *text,
                   cairo_t *cr, AdgStyle *style)
 {
     if (!text)
         return FALSE;
+
+    text_cache->utf8 = text;
+    text_cache->utf8_len = g_utf8_strlen(text, -1);
 
     if (style)
         adg_style_apply(style, cr);
@@ -971,10 +984,14 @@ text_cache_update(AdgTextCache *text_cache, const gchar *text,
         cairo_status_t status;
 
         status = cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
-                                                  0., 0., text, -1,
+                                                  0, 0,
+                                                  text_cache->utf8,
+                                                  text_cache->utf8_len,
                                                   &text_cache->glyphs,
                                                   &text_cache->num_glyphs,
-                                                  NULL, NULL, NULL);
+                                                  &text_cache->clusters,
+                                                  &text_cache->num_clusters,
+                                                  &text_cache->cluster_flags);
 
         if (status != CAIRO_STATUS_SUCCESS) {
             g_error("Unable to build glyphs (cairo message: %s)",
@@ -992,11 +1009,20 @@ text_cache_update(AdgTextCache *text_cache, const gchar *text,
 static void
 text_cache_clear(AdgTextCache *text_cache)
 {
+    text_cache->utf8 = NULL;
+    text_cache->utf8_len = -1;
+
     if (text_cache->glyphs) {
         cairo_glyph_free(text_cache->glyphs);
         text_cache->glyphs = NULL;
+        text_cache->num_glyphs = 0;
     }
-    text_cache->num_glyphs = 0;
+    if (text_cache->clusters) {
+        cairo_text_cluster_free(text_cache->clusters);
+        text_cache->clusters = NULL;
+        text_cache->num_clusters = 0;
+        text_cache->cluster_flags = 0;
+    }
     memset(&text_cache->extents, 0, sizeof(text_cache->extents));
 }
 
@@ -1022,5 +1048,8 @@ text_cache_move_to(AdgTextCache *text_cache, const CpmlPair *to)
 static void
 text_cache_render(AdgTextCache *text_cache, cairo_t *cr)
 {
-    cairo_show_glyphs(cr, text_cache->glyphs, text_cache->num_glyphs);
+    cairo_show_text_glyphs(cr, text_cache->utf8, text_cache->utf8_len,
+                           text_cache->glyphs, text_cache->num_glyphs,
+                           text_cache->clusters, text_cache->num_clusters,
+                           text_cache->cluster_flags);
 }

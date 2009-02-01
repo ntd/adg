@@ -30,9 +30,14 @@ G_BEGIN_DECLS
 typedef struct _AdgTextCache AdgTextCache;
 
 struct _AdgTextCache {
-    int                  num_glyphs;
-    cairo_glyph_t       *glyphs;
-    cairo_text_extents_t extents;
+    const char                  *utf8;
+    int                          utf8_len;
+    cairo_glyph_t               *glyphs;
+    int                          num_glyphs;
+    cairo_text_cluster_t        *clusters;
+    int                          num_clusters;
+    cairo_text_cluster_flags_t   cluster_flags;
+    cairo_text_extents_t         extents;
 };
 
 struct _AdgDimPrivate {
