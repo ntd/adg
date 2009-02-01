@@ -264,14 +264,14 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
     ref1 = adg_dim_get_ref1((AdgDim *) ldim);
     ref2 = adg_dim_get_ref2((AdgDim *) ldim);
 
-    cpml_vector_from_angle(&extension_vector, ldim->priv->direction, 1.);
+    cpml_vector_from_angle(&extension_vector, ldim->priv->direction, 1);
 
     baseline_vector.x = -extension_vector.y;
     baseline_vector.y = extension_vector.x;
 
     d = extension_vector.y * baseline_vector.x -
         extension_vector.x * baseline_vector.y;
-    g_return_if_fail(d != 0.);
+    g_return_if_fail(d != 0);
 
     k = ((pos->y - ref1->y) * baseline_vector.x -
          (pos->x - ref1->x) * baseline_vector.y) / d;
@@ -316,7 +316,7 @@ adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble pos_x, gdouble pos_y)
 gdouble
 adg_ldim_get_direction(AdgLDim *ldim)
 {
-    g_return_val_if_fail(ADG_IS_LDIM(ldim), 0.);
+    g_return_val_if_fail(ADG_IS_LDIM(ldim), 0);
 
     return ldim->priv->direction;
 }
@@ -460,7 +460,7 @@ update(AdgLDim *ldim)
         return;
 
     /* Set vector to the director of the extension lines */
-    cpml_vector_from_angle(&vector, priv->direction, 1.);
+    cpml_vector_from_angle(&vector, priv->direction, 1);
 
     /* Calculate from1 and from2 */
     offset.x = vector.x * from_offset;
@@ -495,13 +495,13 @@ update(AdgLDim *ldim)
     /* Set vector to the director of the baseline */
     offset.x = arrow2->point.x - arrow1->point.x;
     offset.y = arrow2->point.y - arrow1->point.y;
-    cpml_vector_from_pair(&vector, &offset, 1.);
+    cpml_vector_from_pair(&vector, &offset, 1);
 
     /* Update the AdgDim cache contents */
     adg_dim_set_org_explicit((AdgDim *) ldim,
                              (arrow1->point.x + arrow2->point.x) / 2.,
                              (arrow1->point.y + arrow2->point.y) / 2.);
-    angle = cpml_pair_angle(NULL, &vector);
+    angle = cpml_vector_angle(&vector);
     adg_dim_set_angle((AdgDim *) ldim, angle);
 
     /* Calculate baseline1 and baseline2 */
