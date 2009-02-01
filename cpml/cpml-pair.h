@@ -21,16 +21,9 @@
 #define __CPML_PAIR_H__
 
 #include <cairo.h>
-#include <math.h>
-
-#define CPML_DIR_RIGHT   0.
-#define CPML_DIR_DOWN    M_PI_2
-#define CPML_DIR_LEFT    M_PI
-#define CPML_DIR_UP      (3.*M_PI_2)
 
 
 CAIRO_BEGIN_DECLS
-
 
 typedef struct _CpmlPair CpmlPair;
 typedef struct _CpmlPair CpmlVector;
@@ -42,22 +35,34 @@ struct _CpmlPair {
 
 CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
+
+void            cpml_pair_negate                (CpmlPair       *pair);
+cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);
+void            cpml_pair_add                   (CpmlPair       *pair,
+                                                 const CpmlPair *src);
+void            cpml_pair_sub                   (CpmlPair       *pair,
+                                                 const CpmlPair *src);
+void            cpml_pair_mul                   (CpmlPair       *pair,
+                                                 const CpmlPair *src);
+cairo_bool_t    cpml_pair_div                   (CpmlPair       *pair,
+                                                 const CpmlPair *src);
 void            cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t *matrix);
 double          cpml_pair_squared_distance      (const CpmlPair *from,
                                                  const CpmlPair *to);
 double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
-double          cpml_pair_angle                 (const CpmlPair *from,
-                                                 const CpmlPair *to);
-void            cpml_vector_from_pair           (CpmlVector     *vector,
+
+CpmlVector *    cpml_vector_from_pair           (CpmlVector     *vector,
                                                  const CpmlPair *pair,
                                                  double          length);
-void            cpml_vector_from_angle          (CpmlVector     *vector,
+CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);
-void            cpml_vector_normal              (CpmlVector     *vector,
-                                                 const CpmlVector *src);
+double          cpml_vector_angle               (const CpmlVector *vector);
+void            cpml_vector_set_length          (CpmlVector     *vector,
+                                                 double          length);
+void            cpml_vector_normal              (CpmlVector     *vector);
 
 
 CAIRO_END_DECLS

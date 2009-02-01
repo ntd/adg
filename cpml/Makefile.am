@@ -7,6 +7,7 @@ AM_LDFLAGS=			@CAIRO_LIBS@
 
 # file groups
 cpml_h_sources=			cpml.h \
+				cpml-macros.h \
 				cpml-pair.h \
 				cpml-segment.h
 cpml_built_h_sources=

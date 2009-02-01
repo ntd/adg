@@ -51,27 +51,78 @@
  **/
 
 #include "cpml-pair.h"
+#include "cpml-macros.h"
 
 #include <stdlib.h>
 #include <string.h>
 
 
-static CpmlPair fallback_pair = { 0., 0. };
+static CpmlPair fallback_pair = { 0, 0 };
 
 
-/**
- * cpml_pair_copy:
- * @pair: the destination #CpmlPair struct
- * @src: the source #CpmlPair struct
- *
- * Assign @src to @pair.
- *
- * Return value: the destination pair
- **/
 CpmlPair *
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
     return memcpy(pair, src, sizeof(CpmlPair));
+}
+
+CpmlPair *
+cpml_pair_from_value(CpmlPair *pair, double value)
+{
+    pair->x = value;
+    pair->y = value;
+
+    return pair;
+}
+
+void
+cpml_pair_negate(CpmlPair *pair)
+{
+    pair->x = - pair->x;
+    pair->y = - pair->y;
+}
+
+cairo_bool_t
+cpml_pair_invert(CpmlPair *pair)
+{
+    if (pair->x == 0 || pair->y == 0)
+        return 0;
+
+    pair->x = 1. / pair->x;
+    pair->y = 1. / pair->y;
+    return 1;
+}
+
+void
+cpml_pair_add(CpmlPair *pair, const CpmlPair *src)
+{
+    pair->x += src->x;
+    pair->y += src->y;
+}
+
+void
+cpml_pair_sub(CpmlPair *pair, const CpmlPair *src)
+{
+    pair->x -= src->x;
+    pair->y -= src->y;
+}
+
+void
+cpml_pair_mul(CpmlPair *pair, const CpmlPair *src)
+{
+    pair->x *= src->x;
+    pair->y *= src->y;
+}
+
+cairo_bool_t
+cpml_pair_div(CpmlPair *pair, const CpmlPair *src)
+{
+    if (src->x == 0 || src->y == 0)
+        return 0;
+
+    pair->x /= src->x;
+    pair->y /= src->y;
+    return 1;
 }
 
 /**
@@ -183,123 +234,139 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 }
 
 /**
- * cpml_pair_angle:
- * @from: the first #CpmlPair struct
- * @to: the second #CpmlPair struct
- * @angle: where to store the result
+ * cpml_vector_from_pair:
+ * @vector: the destination vector
+ * @pair: the source pair
+ * @length: the length of the vector
  *
- * Returns the angle between @from and @to, in radians. @from or @to
- * could be %NULL, in which case the fallback (0, 0) pair will be used.
+ * Given the line L passing throught the origin and @pair, gets the
+ * coordinate of the point on this line far @length from the origin
+ * and store the result in @vector. If @pair itsself is the origin,
+ * (0, 0) is returned.
+ *
+ * @pair and @vector can be the same struct.
+ *
+ * Return value: @vector
+ **/
+CpmlVector *
+cpml_vector_from_pair(CpmlVector *vector, const CpmlPair *pair, double length)
+{
+    double distance = cpml_pair_distance(NULL, pair);
+
+    if (distance == 0) {
+        vector->x = 0;
+        vector->y = 0;
+    } else {
+        distance /= length;
+        vector->x = pair->x / distance;
+        vector->y = pair->y / distance;
+    }
+
+    return vector;
+}
+
+/**
+ * cpml_vector_from_angle:
+ * @vector: the destination #CpmlVector
+ * @angle: angle of direction, in radians
+ * @length: the length of the vector
+ *
+ * Calculates the coordinates of the point far @length from the origin
+ * in the @angle direction. The result is stored in @vector.
+ *
+ * Return value: @vector
+ **/
+CpmlVector *
+cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
+{
+    static double cached_angle = 0;
+    static CpmlPair cached_vector = { 1, 0 };
+
+    /* Check for cached result */
+    if (angle == cached_angle)
+        return cpml_pair_copy(vector, &cached_vector);
+
+    /* Check for common conditions */
+    if (angle == CPML_DIR_UP) {
+        vector->x = 0;
+        vector->y = -1;
+        return vector;
+    }
+    if (angle == CPML_DIR_DOWN) {
+        vector->x = 0;
+        vector->y = +1;
+        return vector;
+    }
+    if (angle == CPML_DIR_LEFT) {
+        vector->x = -1;
+        vector->y = 0;
+        return vector;
+    }
+    if (angle == CPML_DIR_RIGHT) {
+        vector->x = +1;
+        vector->y = 0;
+        return vector;
+    }
+
+    /* Computation and cache registration */
+    vector->x = cos(angle);
+    vector->y = -sin(angle);
+    cached_angle = angle;
+    cpml_pair_copy(&cached_vector, vector);
+
+    return vector;
+}
+
+/**
+ * cpml_vector_angle:
+ * @vector: the source #CpmlVector
+ *
+ * Gets the angle of @vector, in radians. If @vector is (0, 0),
+ * %CPML_DIR_RIGHT is returned.
  *
  * Return value: the angle in radians
  **/
 double
-cpml_pair_angle(const CpmlPair *from, const CpmlPair *to)
+cpml_vector_angle(const CpmlVector *vector)
 {
-    static CpmlPair cached_pair = { 1., 0. };
+    static CpmlPair cached_vector = { 1., 0. };
     static double cached_angle = 0.;
-    CpmlPair pair;
-
-    if (from == NULL)
-        from = &fallback_pair;
-    if (to == NULL)
-        to = &fallback_pair;
-
-    pair.x = to->x - from->x;
-    pair.y = to->y - from->y;
 
     /* Check for cached result */
-    if (pair.x == cached_pair.x && pair.y == cached_pair.y)
+    if (vector->x == cached_vector.x && vector->y == cached_vector.y)
         return cached_angle;
-    if (pair.y == 0.)
-        return pair.x >= 0. ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
-    if (pair.x == 0.)
-        return pair.y > 0. ? CPML_DIR_UP : CPML_DIR_DOWN;
-    if (pair.x == pair.y)
-        return pair.x > 0. ? M_PI / 4. : 5. * M_PI / 4.;
-    if (pair.x == -pair.y)
-        return pair.x > 0. ? 7. * M_PI / 4. : 3. * M_PI / 4.;
 
-    /* Cache registration */
-    cached_angle = atan(pair.y / pair.x);
-    cpml_pair_copy(&cached_pair, &pair);
+    /* Check for common conditions */
+    if (vector->y == 0)
+        return vector->x >= 0 ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
+    if (vector->x == 0)
+        return vector->y > 0 ? CPML_DIR_DOWN : CPML_DIR_UP;
+    if (vector->x == vector->y)
+        return vector->x > 0 ? M_PI_4 * 7 : M_PI_4 * 3;
+    if (vector->x == -vector->y)
+        return vector->x > 0 ? M_PI_4 : M_PI_4 * 5;
+
+    /* Computation and cache registration */
+    cached_angle = atan(-vector->y / vector->x);
+    cpml_pair_copy(&cached_vector, vector);
 
     return cached_angle;
 }
 
 /**
- * cpml_vector_from_pair:
- * @vector: the destination vector
- * @pair: the source pair
- * @length: the final vector length
- *
- * Unitizes @pair, that is given the line L passing throught the origin and
- * @pair, gets the coordinate of the point on this line far @length from
- * the origin, and store the result in @vector. If @pair itsself is the origin,
- * (0, 0) is returned.
- *
- * @pair and @vector can be the same struct.
- **/
-void
-cpml_vector_from_pair(CpmlVector *vector, const CpmlPair *pair, double length)
-{
-    double distance, factor;
-
-    distance = cpml_pair_distance(NULL, pair);
-    factor = length / distance;
-
-    vector->x = pair->x * factor;
-    vector->y = pair->y * factor;
-}
-
-/**
- * cpml_vector_from_angle:
- * @vector: the destination vector
- * @angle: angle of direction, in radians
- * @length: the final vector length
- *
- * Calculates the coordinates of the point far @length from the origin
- * in the @angle direction. The result is stored in @vector.
- **/
-void
-cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
-{
-    static double cached_angle = 0.;
-    static CpmlPair cached_vector = { 1., 0. };
-
-    /* Check for cached result */
-    if (angle == cached_angle) {
-        vector->x = cached_vector.x;
-        vector->y = cached_vector.y;
-    } else {
-        vector->x = cos(angle);
-        vector->y = sin(angle);
-
-        /* Cache registration */
-        cached_angle = angle;
-        cpml_pair_copy(&cached_vector, vector);
-    }
-
-    vector->x *= length;
-    vector->y *= length;
-}
-
-/**
  * cpml_vector_normal:
- * @vector: the destination vector
- * @src: the source vector
+ * @vector: the subject #CpmlVector
  *
- * Stores in @vector a vector normal to @src with the same length.
- * @vector and @src can be the same struct.
+ * Stores in @vector a vector normal to the original @vector.
+ * The length is retained.
+ *
+ * The algorithm is really quick because no trigonometry is involved.
  **/
 void
-cpml_vector_normal(CpmlVector *vector, const CpmlVector *src)
+cpml_vector_normal(CpmlVector *vector)
 {
-    double x, y;
+    double tmp = vector->x;
 
-    x = src->x;
-    y = src->y;
-
-    vector->x = -y;
-    vector->y = x;
+    vector->x = vector->y;
+    vector->y = tmp;
 }

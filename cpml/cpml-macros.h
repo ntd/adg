@@ -17,11 +17,16 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPML_H__
-#define __CPML_H__
+#ifndef __CPML_MACROS_H__
+#define __CPML_MACROS_H__
 
-#include <cpml/cpml-macros.h>
-#include <cpml/cpml-pair.h>
-#include <cpml/cpml-segment.h>
+#include <math.h>
 
-#endif /* __CPML_H__ */
+
+#define CPML_DIR_RIGHT   ((double) 0)
+#define CPML_DIR_DOWN    M_PI_2
+#define CPML_DIR_LEFT    M_PI
+#define CPML_DIR_UP      (M_PI_2 * 3)
+
+
+#endif /* __CPML_MACROS_H__ */
