@@ -35,6 +35,11 @@ struct _CpmlPair {
 
 CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
+CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
+                                                 const CpmlPair *p1,
+                                                 const CpmlVector *v1,
+                                                 const CpmlPair *p2,
+                                                 const CpmlVector *v2);
 
 void            cpml_pair_negate                (CpmlPair       *pair);
 cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);
@@ -60,8 +65,6 @@ CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);
 double          cpml_vector_angle               (const CpmlVector *vector);
-void            cpml_vector_set_length          (CpmlVector     *vector,
-                                                 double          length);
 void            cpml_vector_normal              (CpmlVector     *vector);
 
 
