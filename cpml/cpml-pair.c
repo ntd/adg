@@ -147,36 +147,23 @@ cpml_pair_at_line(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
  * at time @t. Time values on Bézier curves are not evenly distributed, so
  * 0.5 is not necessarily the midpoint.
  *
- * This functions uses the fast Bézier method by Jim Fitzsimmons:
- * http://www.tinaja.com/glib/fastbez.pdf
- *
  * Return value: @pair
  **/
 CpmlPair *
 cpml_pair_at_curve(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
                    const CpmlPair *p3, const CpmlPair *p4, double t)
 {
-    CpmlPair d12, d23, d34;
-    CpmlPair d123, d234;
-    CpmlPair d1234;
-    double b, c, e, f;
+    double t1, t1_2, t1_3;
+    double t_2, t_3;
 
-    cpml_pair_sub(cpml_pair_copy(&d12, p2), p1);
-    cpml_pair_sub(cpml_pair_copy(&d23, p3), p2);
-    cpml_pair_sub(cpml_pair_copy(&d34, p4), p3);
+    t1 = 1-t;
+    t1_2 = t1*t1;
+    t1_3 = t1_2*t1;
+    t_2 = t*t;
+    t_3 = t_2*t;
 
-    cpml_pair_sub(cpml_pair_copy(&d123, &d23), &d12);
-    cpml_pair_sub(cpml_pair_copy(&d234, &d34), &d23);
-
-    cpml_pair_sub(cpml_pair_copy(&d1234, &d234), &d123);
-
-    b = d123.x + d123.x + d123.x;
-    c = d12.x + d12.x + d12.x;
-    e = d123.y + d123.y + d123.y;
-    f = d12.y + d12.y + d12.y;
-
-    pair->x = ((d1234.x * t + b) * t + c) * t + p1->x;
-    pair->y = ((d1234.y * t + e) * t + f) * t + p1->y;
+    pair->x = t1_3*p1->x + 3*t1_2*t*p2->x + 3*t1*t_2*p3->x + t_3*p4->x;
+    pair->y = t1_3*p1->y + 3*t1_2*t*p2->y + 3*t1*t_2*p3->y + t_3*p4->y;
 
     return pair;
 }
