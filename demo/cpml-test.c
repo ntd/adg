@@ -83,6 +83,7 @@ path_constructor(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     cairo_path_t *path;
     CpmlSegment segment;
     CpmlPair pair;
+    CpmlVector vector;
     double t;
 
     n = GPOINTER_TO_INT(user_data);
@@ -103,12 +104,18 @@ path_constructor(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     cairo_append_path(cr, path);
     cairo_path_destroy(path);
 
-    /* Checking cpml_pair_at_curve */
+    /* Checking cpml_pair_at_curve and cpml_vector_at_curve */
     for (t = 0; t < 1; t += 0.1) {
         cpml_pair_at_curve(&pair, &bezier->p1, &bezier->p2,
                            &bezier->p3, &bezier->p4, t);
+        cpml_vector_at_curve(&vector, &bezier->p1, &bezier->p2,
+                             &bezier->p3, &bezier->p4, t, 20);
+        cpml_vector_normal(&vector);
+
         cairo_new_sub_path(cr);
-        cairo_arc(cr, pair.x, pair.y, 5, 0, M_PI*2);
+        cairo_arc(cr, pair.x, pair.y, 2.5, 0, M_PI*2);
+        cairo_move_to(cr, pair.x, pair.y);
+        cairo_line_to(cr, pair.x + vector.x, pair.y + vector.y);
     }
 }
 
