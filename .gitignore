@@ -29,6 +29,7 @@ Makefile
 /adg/adg-type-builtins.h
 /demo/adg-demo
 /demo/ldim
+/demo/cpml-test
 .libs/
 *.o
 *.loT
