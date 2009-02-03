@@ -24,7 +24,8 @@ static void     add_piston_dimensions   (AdgCanvas      *canvas,
                                          Piston         *piston);
 static void     add_sample_stuff        (AdgCanvas      *canvas);
 static void     piston_path_extern      (AdgEntity      *entity,
-                                         cairo_t        *cr);
+                                         cairo_t        *cr,
+                                         gpointer        user_data);
 static void     piston_expose           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          AdgCanvas      *canvas);
@@ -60,7 +61,7 @@ main(gint argc, gchar **argv)
     /* Create the canvas and populate it */
     canvas = adg_canvas_new();
 
-    path = adg_path_new(piston_path_extern);
+    path = adg_path_new(piston_path_extern, NULL);
     adg_container_add(ADG_CONTAINER(canvas), path);
 
     add_piston_dimensions(canvas, &model);
@@ -278,7 +279,7 @@ add_sample_stuff(AdgCanvas *canvas)
 }
 
 static void
-piston_path_extern(AdgEntity *entity, cairo_t *cr)
+piston_path_extern(AdgEntity *entity, cairo_t *cr, gpointer user_data)
 {
     Piston *piston;
     double A, B, C;
