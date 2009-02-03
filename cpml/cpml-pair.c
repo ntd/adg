@@ -345,14 +345,14 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 CpmlVector *
 cpml_vector_from_pair(CpmlVector *vector, const CpmlPair *pair, double length)
 {
-    double distance = cpml_pair_distance(NULL, pair);
+    double divisor = cpml_pair_distance(NULL, pair);
 
-    if (distance <= 0)
+    if (divisor <= 0)
         return NULL;
 
-    distance /= length;
-    vector->x = pair->x / distance;
-    vector->y = pair->y / distance;
+    divisor /= length;
+    vector->x = pair->x / divisor;
+    vector->y = pair->y / divisor;
 
     return vector;
 }
@@ -407,6 +407,42 @@ cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
     cpml_pair_copy(&cached_vector, vector);
 
     return vector;
+}
+
+/**
+ * cpml_vector_at_curve:
+ * @vector: the destination #CpmlVector
+ * @p1: start point
+ * @p2: first control point
+ * @p3: second control point
+ * @p4: end point
+ * @t: the mediation value
+ *
+ * Given the time value @t, returns the slope on the specified Bézier curve
+ * at time @t. The slope is returned as a vector of arbitrary magnitude.
+ *
+ * Return value: @vector
+ **/
+CpmlVector *
+cpml_vector_at_curve(CpmlVector *vector,
+                     const CpmlPair *p1, const CpmlPair *p2,
+                     const CpmlPair *p3, const CpmlPair *p4,
+                     double t, double length)
+{
+    CpmlPair p21, p32, p43;
+    double t1, t1_2, t_2;
+
+    cpml_pair_sub(cpml_pair_copy(&p21, p2), p1);
+    cpml_pair_sub(cpml_pair_copy(&p32, p3), p2);
+    cpml_pair_sub(cpml_pair_copy(&p43, p4), p3);
+    t1 = 1-t;
+    t1_2 = t1*t1;
+    t_2 = t*t;
+
+    vector->x = 3*t1_2*p21.x + 6*t1*t*p32.x + 3*t_2*p43.x;
+    vector->y = 3*t1_2*p21.y + 6*t1*t*p32.y + 3*t_2*p43.y;
+
+    return cpml_vector_from_pair(vector, vector, length);
 }
 
 /**
