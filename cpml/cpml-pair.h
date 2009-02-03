@@ -37,9 +37,21 @@ CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
 CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
                                                  const CpmlPair *p1,
-                                                 const CpmlVector *v1,
+                                                 const CpmlVector
+                                                                *v1,
                                                  const CpmlPair *p2,
-                                                 const CpmlVector *v2);
+                                                 const CpmlVector
+                                                                *v2);
+CpmlPair *      cpml_pair_at_line               (CpmlPair       *pair,
+                                                 const CpmlPair *p1,
+                                                 const CpmlPair *p2,
+                                                 double          t);
+CpmlPair *      cpml_pair_at_curve              (CpmlPair       *pair,
+                                                 const CpmlPair *p1,
+                                                 const CpmlPair *p2,
+                                                 const CpmlPair *p3,
+                                                 const CpmlPair *p4,
+                                                 double          t);
 
 void            cpml_pair_negate                (CpmlPair       *pair);
 cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);
@@ -52,7 +64,8 @@ void            cpml_pair_mul                   (CpmlPair       *pair,
 cairo_bool_t    cpml_pair_div                   (CpmlPair       *pair,
                                                  const CpmlPair *src);
 void            cpml_pair_transform             (CpmlPair       *pair,
-                                                 const cairo_matrix_t *matrix);
+                                                 const cairo_matrix_t
+                                                                *matrix);
 double          cpml_pair_squared_distance      (const CpmlPair *from,
                                                  const CpmlPair *to);
 double          cpml_pair_distance              (const CpmlPair *from,
@@ -64,7 +77,8 @@ CpmlVector *    cpml_vector_from_pair           (CpmlVector     *vector,
 CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);
-double          cpml_vector_angle               (const CpmlVector *vector);
+double          cpml_vector_angle               (const CpmlVector
+                                                                *vector);
 void            cpml_vector_normal              (CpmlVector     *vector);
 
 

@@ -107,6 +107,80 @@ cpml_pair_intersection_pv_pv(CpmlPair *pair,
     return pair;
 }
 
+/**
+ * cpml_pair_at_line:
+ * @pair: the destination #CpmlPair
+ * @p1: first point of the line
+ * @p2: second point of the line
+ * @t: the mediation value
+ *
+ * Given the mediation value @t, where 0 means the start point and
+ * 1 the end point (0.5 the midpoint and so on), calculates the coordinates
+ * of the point at @t of the way from @p1 and @p2.
+ *
+ * Return value: @pair
+ **/
+CpmlPair *
+cpml_pair_at_line(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
+                  double t)
+{
+    CpmlPair delta;
+
+    delta.x = (p2->x - p1->x) * t;
+    delta.y = (p2->y - p1->y) * t;
+
+    cpml_pair_add(cpml_pair_copy(pair, p1), &delta);
+
+    return pair;
+}
+
+/**
+ * cpml_pair_at_curve:
+ * @pair: the destination #CpmlPair
+ * @p1: start point
+ * @p2: first control point
+ * @p3: second control point
+ * @p4: end point
+ * @t: the mediation value
+ *
+ * Given the time value @t, returns the point on the specified Bézier curve
+ * at time @t. Time values on Bézier curves are not evenly distributed, so
+ * 0.5 is not necessarily the midpoint.
+ *
+ * This functions uses the fast Bézier method by Jim Fitzsimmons:
+ * http://www.tinaja.com/glib/fastbez.pdf
+ *
+ * Return value: @pair
+ **/
+CpmlPair *
+cpml_pair_at_curve(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
+                   const CpmlPair *p3, const CpmlPair *p4, double t)
+{
+    CpmlPair d12, d23, d34;
+    CpmlPair d123, d234;
+    CpmlPair d1234;
+    double b, c, e, f;
+
+    cpml_pair_sub(cpml_pair_copy(&d12, p2), p1);
+    cpml_pair_sub(cpml_pair_copy(&d23, p3), p2);
+    cpml_pair_sub(cpml_pair_copy(&d34, p4), p3);
+
+    cpml_pair_sub(cpml_pair_copy(&d123, &d23), &d12);
+    cpml_pair_sub(cpml_pair_copy(&d234, &d34), &d23);
+
+    cpml_pair_sub(cpml_pair_copy(&d1234, &d234), &d123);
+
+    b = d123.x + d123.x + d123.x;
+    c = d12.x + d12.x + d12.x;
+    e = d123.y + d123.y + d123.y;
+    f = d12.y + d12.y + d12.y;
+
+    pair->x = ((d1234.x * t + b) * t + c) * t + p1->x;
+    pair->y = ((d1234.y * t + e) * t + f) * t + p1->y;
+
+    return pair;
+}
+
 
 void
 cpml_pair_negate(CpmlPair *pair)
