@@ -31,6 +31,7 @@ struct _AdgPathPrivate {
     AdgPair       cp;
     cairo_path_t *cairo_path;
     AdgCallback   callback;
+    gpointer      user_data;
 };
 
 G_END_DECLS

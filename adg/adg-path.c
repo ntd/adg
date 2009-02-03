@@ -85,6 +85,7 @@ finalize(GObject *object)
 /**
  * adg_path_new:
  * @callback: an #AdgCallback callback
+ * @user_data: user provided pointer to pass to the callback
  *
  * Creates a new path entity. The path must be constructed in the @callback
  * function: AdgPath will cache and reuse the cairo_copy_path() returned by
@@ -93,14 +94,15 @@ finalize(GObject *object)
  * Return value: the new entity
  **/
 AdgEntity *
-adg_path_new(AdgCallback callback)
+adg_path_new(AdgCallback callback, gpointer user_data)
 {
-    AdgEntity *entity;
+    AdgPath *path;
 
-    entity = (AdgEntity *) g_object_new(ADG_TYPE_PATH, NULL);
-    ((AdgPath *) entity)->priv->callback = callback;
+    path = (AdgPath *) g_object_new(ADG_TYPE_PATH, NULL);
+    path->priv->callback = callback;
+    path->priv->user_data = user_data;
 
-    return entity;
+    return (AdgEntity *) path;
 }
 
 /**
@@ -164,7 +166,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_get_current_point(cr, &path->priv->cp.x, &path->priv->cp.y);
 
         if (path->priv->callback)
-            path->priv->callback(entity, cr);
+            path->priv->callback(entity, cr, path->priv->user_data);
 
         path->priv->cairo_path = cairo_copy_path(cr);
     }

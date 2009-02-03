@@ -53,7 +53,8 @@ struct _AdgPathClass {
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
-AdgEntity *     adg_path_new                    (AdgCallback     callback);
+AdgEntity *     adg_path_new                    (AdgCallback     callback,
+                                                 gpointer        user_data);
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
 void            adg_path_dump                   (AdgPath        *path);

@@ -83,7 +83,7 @@ struct _AdgEntityClass {
 #define ADG_CALLBACK(f)             ((AdgCallback) (f))
 
 
-typedef void (*AdgCallback) (AdgEntity *entity, cairo_t *cr);
+typedef void (*AdgCallback)(AdgEntity *entity, cairo_t *cr, gpointer user_data);
 
 
 GType           adg_entity_get_type             (void) G_GNUC_CONST;
