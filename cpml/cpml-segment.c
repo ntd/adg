@@ -19,12 +19,24 @@
 
 
 #include "cpml-segment.h"
+#include "cpml-pair.h"
+#include "cpml-macros.h"
 #include "cpml-alloca.h"
 
 #include <stdio.h>
 #include <string.h>
 
 static cairo_bool_t     normalize_segment       (CpmlSegment       *segment);
+static void             offset_line             (CpmlPair          *p,
+                                                 CpmlVector        *vector,
+                                                 double             offset);
+static void             offset_curve            (CpmlPair          *p,
+                                                 CpmlVector        *vector,
+                                                 double             offset);
+static void             join_primitives         (cairo_path_data_t *last_data,
+                                                 const CpmlVector  *last_vector,
+                                                 const CpmlPair    *new_point,
+                                                 const CpmlVector  *new_vector);
 
 
 /**
@@ -229,6 +241,85 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 }
 
 /**
+ * cpml_segment_offset:
+ * @segment: a #CpmlSegment
+ * @offset: the offset distance
+ *
+ * Offsets a segment of the specified amount, that is builds a "parallel"
+ * segment at the @offset distance from the original one and returns the
+ * result by replacing the original @segment.
+ *
+ * Return value: 1 on success, 0 on errors
+ *
+ * @todo: closed path are not yet managed; the solution is not so obvious.
+ **/
+cairo_bool_t
+cpml_segment_offset(CpmlSegment *segment, double offset)
+{
+    int num_data, n_data;
+    int num_points, n_point;
+    cairo_path_data_t *data;
+    cairo_path_data_t *last_data;
+    CpmlVector v_old, v_new;
+    CpmlPair p_old;
+    CpmlPair p[4];
+
+    num_data = segment->path.num_data;
+    last_data = NULL;
+    p_old.x = 0;
+    p_old.y = 0;
+
+    for (n_data = 0; n_data < num_data; n_data += data->header.length) {
+        data = segment->path.data + n_data;
+        num_points = data->header.length - 1;
+
+        /* Fill the p[] vector */
+        cpml_pair_copy(&p[0], &p_old);
+        for (n_point = 1; n_point <= num_points; ++ n_point) {
+            p[n_point].x = data[n_point].point.x;
+            p[n_point].y = data[n_point].point.y;
+        }
+
+        /* Save the last direction vector in v_old */
+        cpml_pair_copy(&v_old, &v_new);
+
+        switch (data->header.type) {
+
+        case CAIRO_PATH_MOVE_TO:
+            v_new.x = 0;
+            v_new.y = 0;
+            break;
+
+        case CAIRO_PATH_LINE_TO:
+            offset_line(p, &v_new, offset);
+            break;
+
+        case CAIRO_PATH_CURVE_TO:
+            offset_curve(p, &v_new, offset);
+            break;
+
+        case CAIRO_PATH_CLOSE_PATH:
+            return 1;
+        }
+
+        join_primitives(last_data, &v_old, &p[0], &v_new);
+
+        /* Save the end point of the original primitive in p_old */
+        last_data = data + num_points;
+        p_old.x = last_data->point.x;
+        p_old.y = last_data->point.y;
+
+        /* Store the results got from the p[] vector in the cairo path */
+        for (n_point = 1; n_point <= num_points; ++ n_point) {
+            data[n_point].point.x = p[n_point].x;
+            data[n_point].point.y = p[n_point].y;
+        }
+    }
+
+    return 1;
+}
+
+/**
  * normalize_segment:
  * @segment: a #CpmlSegment
  *
@@ -261,4 +352,123 @@ normalize_segment(CpmlSegment *segment)
     }
 
     return 0;
+}
+
+/**
+ * offset_line:
+ * @p: an array of two #CpmlPair structs
+ * @vector: the ending direction vector of the resulting primitive
+ * @offset: distance for the computed parallel line
+ *
+ * Given a line segment starting from @p[0] and ending in @p[1],
+ * computes the parallel line distant @offset from the original one
+ * and returns the result in the @p array.
+ *
+ * The direction vector of the new line segment is saved in @vector
+ * with a somewhat arbitrary magnitude.
+ **/
+static void
+offset_line(CpmlPair *p, CpmlVector *vector, double offset)
+{
+    CpmlVector normal;
+
+    cpml_pair_sub(cpml_pair_copy(vector, &p[1]), &p[0]);
+
+    cpml_vector_from_pair(&normal, vector, offset);
+    cpml_vector_normal(&normal);
+
+    cpml_pair_add(&p[0], &normal);
+    cpml_pair_add(&p[1], &normal);
+}
+
+/**
+ * offset_curve:
+ * @p: an array of four #CpmlPair structs
+ * @vector: the ending direction vector of the resulting primitive
+ * @offset: distance for the computed parallel line
+ *
+ * Given a cubic Bézier segment starting from @p[0] and ending
+ * in p[3], with control points in @p[1] and @p[2], this function
+ * finds the approximated Bézier curve parallel to the given one
+ * at distance @offset (an offset curve).
+ *
+ * The four points needed to build the new curve are returned
+ * in the @p vector. The angular coefficient of the new curve
+ * in @p[3] is returned as @vector with an arbitrary magnitude.
+ **/
+static void
+offset_curve(CpmlPair *p, CpmlVector *vector, double offset)
+{
+    CpmlVector v10, v32;
+    CpmlVector n10, n32;
+
+    cpml_pair_sub(cpml_pair_copy(&v10, &p[1]), &p[0]);
+    cpml_vector_from_pair(&n10, &v10, offset);
+    cpml_vector_normal(&n10);
+
+    cpml_pair_sub(cpml_pair_copy(&v32, &p[3]), &p[2]);
+    cpml_vector_from_pair(&n32, &v32, offset);
+    cpml_vector_normal(&n32);
+
+    cpml_pair_add(&p[0], &n10);
+    cpml_pair_add(&p[3], &n32);
+    cpml_pair_copy(vector, &v32);
+
+    /*
+vardef interpolate(expr p, d, tp, tr) =
+    pair A[], B[];
+    path r;
+
+    A1234 = point tp of p;
+
+    B1 := A1 + d * (unitvector(A2-A1) rotated 90);
+    B4 := A4 + d * (unitvector(A3-A4) rotated -90);
+    B1234 := A1234 + d * (unitvector(direction tp of p) rotated 90);
+
+    B2 = B1 + whatever*(A1-A2);
+    B3 = B4 + whatever*(A4-A3);
+    B12 = tr [B1, B2];
+    B23 = tr [B2, B3];
+    B34 = tr [B3, B4];
+    B123 = tr [B12, B23];
+    B234 = tr [B23, B34];
+    B1234 = tr [B123, B234];
+
+    r := B1 .. controls B2 and B3 .. B4 ;
+    */
+}
+
+/**
+ * join_primitives:
+ * @last_data: the previous primitive end data point (if any)
+ * @last_vector: @last_data direction vector
+ * @new_point: the new primitive starting point
+ * @new_vector: @new_point direction vector
+ *
+ * Joins two primitive modifying the end point of the first one (stored
+ * as cairo path data in @last_data).
+ *
+ * @todo: this approach is quite naive when curves are involved.
+ **/
+static void
+join_primitives(cairo_path_data_t *last_data, const CpmlVector *last_vector,
+                const CpmlPair *new_point, const CpmlVector *new_vector)
+{
+    CpmlPair last_point;
+
+    if (last_data == NULL)
+        return;
+
+    last_point.x = last_data->point.x;
+    last_point.y = last_data->point.y;
+
+    if (cpml_pair_intersection_pv_pv(&last_point,
+                                     &last_point, last_vector,
+                                     new_point, new_vector)) {
+        last_data->point.x = last_point.x;
+        last_data->point.y = last_point.y;
+    } else {
+        last_data->point.x = new_point->x;
+        last_data->point.y = new_point->y;
+    }
 }

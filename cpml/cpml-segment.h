@@ -43,6 +43,8 @@ cairo_bool_t    cpml_segment_next               (CpmlSegment        *segment);
 void            cpml_segment_reverse            (CpmlSegment        *segment);
 void            cpml_segment_transform          (CpmlSegment        *segment,
                                                  const cairo_matrix_t *matrix);
+cairo_bool_t    cpml_segment_offset             (CpmlSegment        *segment,
+                                                 double              offset);
 
 CAIRO_END_DECLS
 
