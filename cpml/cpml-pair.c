@@ -417,6 +417,7 @@ cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
  * @p3: second control point
  * @p4: end point
  * @t: the mediation value
+ * @length: vector length
  *
  * Given the time value @t, returns the slope on the specified Bézier curve
  * at time @t. The slope is returned as a vector of arbitrary magnitude.
