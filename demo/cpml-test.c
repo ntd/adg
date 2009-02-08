@@ -18,6 +18,7 @@ typedef struct {
 } Bezier;
 
 static Bezier bezier_samples[] = {
+    { { 0, 0 }, { 0, 120 }, { 120, 120 }, { 120, 0 } },         /* Simmetric */
     { { 0, 0 }, { 40, 120 }, { 80, 120 }, { 120, 0 } },         /* Balanced */
     { { 0, 0 }, { 40, 120 }, { 120, 120 }, { 60, 80 } }         /* Unbalanced */
 };
