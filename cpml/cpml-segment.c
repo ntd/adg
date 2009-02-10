@@ -26,13 +26,21 @@
 #include <stdio.h>
 #include <string.h>
 
-static cairo_bool_t     normalize_segment       (CpmlSegment       *segment);
-static void             offset_line             (CpmlPair          *p,
+static cairo_bool_t     segment_normalize       (CpmlSegment       *segment);
+static void             line_offset             (CpmlPair          *p,
                                                  CpmlVector        *vector,
                                                  double             offset);
-static void             offset_curve            (CpmlPair          *p,
+static void             curve_offset            (CpmlPair          *p,
                                                  CpmlVector        *vector,
                                                  double             offset);
+static void             curve_interpolate_vvp   (CpmlPair          *p0,
+                                                 CpmlPair          *p1,
+                                                 CpmlPair          *p2,
+                                                 CpmlPair          *p3,
+                                                 CpmlVector        *v0,
+                                                 CpmlVector        *v3,
+                                                 double             m,
+                                                 CpmlPair          *pm);
 static void             join_primitives         (cairo_path_data_t *last_data,
                                                  const CpmlVector  *last_vector,
                                                  const CpmlPair    *new_point,
@@ -62,7 +70,7 @@ cpml_segment_init(CpmlSegment *segment, cairo_path_t *src)
     segment->original = src;
     memcpy(&segment->path, src, sizeof(cairo_path_t));
 
-    return normalize_segment(segment);
+    return segment_normalize(segment);
 }
 
 /**
@@ -142,7 +150,7 @@ void
 cpml_segment_reset(CpmlSegment *segment)
 {
     memcpy(&segment->path, segment->original, sizeof(cairo_path_t));
-    normalize_segment(segment);
+    segment_normalize(segment);
 }
 
 /**
@@ -162,7 +170,7 @@ cpml_segment_next(CpmlSegment *segment)
     segment->path.num_data = segment->original->num_data - num_data - offset;
     segment->path.data += num_data;
 
-    return normalize_segment(segment);
+    return segment_normalize(segment);
 }
 
 /**
@@ -291,11 +299,11 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
             break;
 
         case CAIRO_PATH_LINE_TO:
-            offset_line(p, &v_new, offset);
+            line_offset(p, &v_new, offset);
             break;
 
         case CAIRO_PATH_CURVE_TO:
-            offset_curve(p, &v_new, offset);
+            curve_offset(p, &v_new, offset);
             break;
 
         case CAIRO_PATH_CLOSE_PATH:
@@ -320,7 +328,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
 }
 
 /**
- * normalize_segment:
+ * segment_normalize:
  * @segment: a #CpmlSegment
  *
  * Strips the leading CAIRO_PATH_MOVE_TO primitives, updating the CpmlSegment
@@ -329,7 +337,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
  **/
 static cairo_bool_t
-normalize_segment(CpmlSegment *segment)
+segment_normalize(CpmlSegment *segment)
 {
     cairo_path_data_t *data;
 
@@ -355,7 +363,7 @@ normalize_segment(CpmlSegment *segment)
 }
 
 /**
- * offset_line:
+ * line_offset:
  * @p: an array of two #CpmlPair structs
  * @vector: the ending direction vector of the resulting primitive
  * @offset: distance for the computed parallel line
@@ -368,7 +376,7 @@ normalize_segment(CpmlSegment *segment)
  * with a somewhat arbitrary magnitude.
  **/
 static void
-offset_line(CpmlPair *p, CpmlVector *vector, double offset)
+line_offset(CpmlPair *p, CpmlVector *vector, double offset)
 {
     CpmlVector normal;
 
@@ -382,10 +390,10 @@ offset_line(CpmlPair *p, CpmlVector *vector, double offset)
 }
 
 /**
- * offset_curve:
- * @p: an array of four #CpmlPair structs
- * @vector: the ending direction vector of the resulting primitive
- * @offset: distance for the computed parallel line
+ * curve_offset:
+ * @p:      (inout): an array of four #CpmlPair structs
+ * @vector: (out):   the ending direction vector of the resulting primitive
+ * @offset: (in):    distance for the computed parallel line
  *
  * Given a cubic Bézier segment starting from @p[0] and ending
  * in p[3], with control points in @p[1] and @p[2], this function
@@ -394,48 +402,199 @@ offset_line(CpmlPair *p, CpmlVector *vector, double offset)
  *
  * The four points needed to build the new curve are returned
  * in the @p vector. The angular coefficient of the new curve
- * in @p[3] is returned as @vector with an arbitrary magnitude.
+ * in @p[3] is returned as @vector with @offset magnitude.
  **/
 static void
-offset_curve(CpmlPair *p, CpmlVector *vector, double offset)
+curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
 {
-    CpmlVector v10, v32;
-    CpmlVector n10, n32;
+    double m;
+    CpmlVector d10, d32;
+    CpmlPair p0, p1, p2, p3, pm;
 
-    cpml_pair_sub(cpml_pair_copy(&v10, &p[1]), &p[0]);
-    cpml_vector_from_pair(&n10, &v10, offset);
-    cpml_vector_normal(&n10);
+    /* d10 := vector p[1]-p[0] of @offset magnitude */
+    cpml_pair_sub(cpml_pair_copy(&d10, &p[1]), &p[0]);
+    cpml_vector_from_pair(&d10, &d10, offset);
 
-    cpml_pair_sub(cpml_pair_copy(&v32, &p[3]), &p[2]);
-    cpml_vector_from_pair(&n32, &v32, offset);
-    cpml_vector_normal(&n32);
+    /* d32 := vector p[3]-p[2] of @offset magnitude */
+    cpml_pair_sub(cpml_pair_copy(&d32, &p[3]), &p[2]);
+    cpml_vector_from_pair(&d32, &d32, offset);
 
-    cpml_pair_add(&p[0], &n10);
-    cpml_pair_add(&p[3], &n32);
-    cpml_pair_copy(vector, &v32);
+    /* p0 := p[0] + normal of d10 (exact final value of p0) */
+    cpml_vector_normal(cpml_pair_copy(&p0, &d10));
+    cpml_pair_add(&p0, &p[0]);
 
-    /*
-vardef interpolate(expr p, d, tp, tr) =
-    pair A[], B[];
-    path r;
+    /* p3 := p[3] + normal of d32 (exact final value of p3) */
+    cpml_vector_normal(cpml_pair_copy(&p3, &d32));
+    cpml_pair_add(&p3, &p[3]);
 
-    A1234 = point tp of p;
+    /* By default, interpolate the new curve by offseting the mid point.
+     * @todo: use a better candidate. */
+    m = 0.5;
 
-    B1 := A1 + d * (unitvector(A2-A1) rotated 90);
-    B4 := A4 + d * (unitvector(A3-A4) rotated -90);
-    B1234 := A1234 + d * (unitvector(direction tp of p) rotated 90);
+    /* pm := point in C(m) offseted the requested @offset distance
+     * p1 is used as temporary storage pair of the normal vector*/
+    cpml_vector_at_curve(&p1, &p[0], &p[1], &p[2], &p[3], m, offset);
+    cpml_vector_normal(&p1);
+    cpml_pair_at_curve(&pm, &p[0], &p[1], &p[2], &p[3], m);
+    cpml_pair_add(&pm, &p1);
 
-    B2 = B1 + whatever*(A1-A2);
-    B3 = B4 + whatever*(A4-A3);
-    B12 = tr [B1, B2];
-    B23 = tr [B2, B3];
-    B34 = tr [B3, B4];
-    B123 = tr [B12, B23];
-    B234 = tr [B23, B34];
-    B1234 = tr [B123, B234];
+    curve_interpolate_vvp(&p0, &p1, &p2, &p3, &d10, &d32, m, &pm);
 
-    r := B1 .. controls B2 and B3 .. B4 ;
-    */
+    g_print("(%lf, %lf) - (%lf, %lf) - (%lf, %lf) - (%lf, %lf)\n",
+            p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
+
+    /* Return the new curve in the original array */
+    cpml_pair_copy(&p[0], &p0);
+    cpml_pair_copy(&p[1], &p1);
+    cpml_pair_copy(&p[2], &p2);
+    cpml_pair_copy(&p[3], &p3);
+
+    /* Return the ending vector */
+    cpml_pair_copy(vector, &d32);
+}
+
+/**
+ * curve_interpolate_vvp:
+ * @p0: (in):  starting point of the curve
+ * @p1: (out): first control point
+ * @p2: (out): second control point
+ * @p3: (in):  end point
+ * @v0: (in):  slope the curve must have in @p0
+ * @v3: (in):  slope the curve must have in @p3
+ * @m:  (in):  time value
+ * @pm: (in):  point at @m time the curve must pass throught
+ *
+ * Interpolates a cubic Bézier curve that starts from @p0 and ends
+ * in @p3, with @v0 slope in @p0 and @v3 slope in @p3, that passes
+ * throught @pm when "time" is @m.
+ *
+ * The control points needed to build this new curve are returned
+ * in @p1 and @p2.
+ *
+ * The cubic Bézier function is:
+ *
+ * C(t) = (1-t)³p0 + 3t(1-t)²p1 + 3t²(1-t)p2 + t³p3.
+ *
+ * Now I interpolate the curve by forcing it to pass throught pm 
+ * when "time" is m, where 0 < m < 1:
+ *
+ * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3.
+ *
+ * Either p0 and p3 of the curve are known, so I can get rid of
+ * the constant part:
+ *
+ * pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m));
+ * (1-m) p1 + m p2 = pk.
+ *
+ * Now I want the curve to have the specified slopes at the start
+ * and end point. Forcing the same slope at the start point means:
+ *
+ * p1 = p0 + k1 v0.
+ *
+ * where k1 is an arbitrary factor. Doing the same for the end point gives:
+ *
+ * p2 = p3 + k2 v3.
+ *
+ * So the final system is:
+ *
+ * (1-m) p1 + m p2 = pk;
+ * p1 = p0 + k1 v0;
+ * p2 = p3 + k2 v3.
+ *
+ * Now the hard part: solving this system is a nightmare because of
+ * divisions by 0 concerns. I had to manage every case separately!
+ * After a lot of tedious calculations, it came out when the
+ * v3->x*v0->y == v0->x*v3->y condition is met this algorithm is not valid,
+ * so this condition should be checked before anything else.
+ *
+ * Given the above system, I get the following pool of equations:
+ *
+ * p1->x = (pk.x - m p2->x)/(1-m);
+ * p1->y = (pk.y - m p2->y)/(1-m).
+ *
+ * p2->x = (pk.x - (1-m) p1->x)/m;
+ * p2->y = (pk.y - (1-m) p1->y)/m.
+ *
+ * p1->x = p0->x + (p1->y-p0->y) v0->x/v0->y;
+ * p1->y = p0->y + (p1->x-p0->x) v0->y/v0->x.
+ *
+ * p2->x = p3->x + (p2->y-p3->y) v3->x/v3->y;
+ * p2->y = p3->y + (p2->x-p3->x) v3->y/v3->x.
+ *
+ * The algorithm takes from this pool what is needed in any specific case.
+ **/
+static void
+curve_interpolate_vvp(CpmlPair *p0, CpmlPair *p1, CpmlPair *p2, CpmlPair *p3,
+                      CpmlVector *v0, CpmlVector *v3, double m, CpmlPair *pm)
+{
+    CpmlPair pk;
+
+    if (v3->x*v0->y == v0->x*v3->y) {
+        /* Unhandled cases: parallel slopes
+         * TODO: provide a solution */
+        return;
+    }
+
+    pk.x = (pm->x - (1-m)*(1-m)*(1-m)*p0->x - m*m*m*p3->x) / (m*3*(1-m));
+    pk.y = (pm->y - (1-m)*(1-m)*(1-m)*p0->y - m*m*m*p3->y) / (m*3*(1-m));
+
+    if (v0->x == 0) {
+        p1->x = p0->x;
+        p2->x = (pk.x - (1-m)*p1->x)/m;
+        p2->y = p3->y;
+        if (v3->y != 0)
+            p2->y += (p2->x-p3->x)*v3->y/v3->x; 
+        p1->y = (pk.y - m*p2->y)/(1-m);
+    } else if (v0->y == 0) {
+        p1->y = p0->y;
+        p2->y = (pk.y - (1-m)*p1->y)/m;
+        p2->x = p3->x;
+        if (v3->x != 0)
+            p2->x += (p2->y-p3->y)*v3->x/v3->y; 
+        p1->x = (pk.x - m*p2->x)/(1-m);
+    } else if (v3->x == 0) {
+        p2->x = p3->x;
+        p1->x = (pk.x - m*p2->x)/(1-m);
+        p1->y = p0->y + (p1->x-p0->x)*v0->y/v0->x;
+        p2->y = (pk.y - (1-m)*p1->y)/m;
+    } else if (v3->y == 0) {
+        p2->y = p3->y;
+        p1->y = (pk.y - m*p2->y)/(1-m);
+        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
+        p2->x = (pk.x - (1-m)*p1->x)/m;
+    } else {
+        /* Here no vector components are 0, so any division is allowed.
+         * Taking some equation from the pool I built the following system:
+         *
+         * p1->x = (pk.x - m p2->x)/(1-m);
+         * p2->y = (pk.y - (1-m) p1->y)/m;
+         * p1->x = p0->x + (p1->y-p0->y) v0->x/v0->y;
+         * p2->x = p3->x + (p2->y-p3->y) v3->x/v3->y.
+         *
+         * And now I resolve it to get the p1->y value:
+         *
+         * (pk.x - m p2->x)/(1-m) = p0->x + (p1->y-p0->y) v0->x/v0->y;
+         * p2->x = p3->x + ((pk.y - (1-m) p1->y)/m - p3->y) v3->x/v3->y.
+         *
+         * p2->x = pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
+         *        - (1-m)/m v0->x/v0->y p1->y;
+         * p2->x = p3->x + (pk.y/m - p3->y) v3->x/v3->y
+         *        - (1-m)/m v3->x/v3->y p1->y.
+         *
+         * pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
+         * - (1-m)/m v0->x/v0->y p1->y =
+         *     p3->x + (pk.y/m - p3->y) v3->x/v3->y
+         *     - (1-m)/m v3->x/v3->y p1->y.
+         *
+         * p1->y = m/(1-m) v0->y (v3->y (p3->x-pk.x/m) + (pk.y/m-p3->y) v3->x)
+         *          / (v3->x v0->y - v0->x v3->y);
+         */
+        p1->y = m/(1-m)*v0->y*(v3->y*(p3->x-pk.x/m) + (pk.y/m-p3->y)*v3->x)
+            / (v3->x*v0->y - v0->x*v3->y);
+        p2->y = (pk.y - (1-m)*p1->y)/m;
+        p2->x = p3->x + (p2->y-p3->y)*v3->x/v3->y; 
+        p1->x = (pk.x - m*p2->x)/(1-m);
+    }
 }
 
 /**

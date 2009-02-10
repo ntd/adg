@@ -29,7 +29,7 @@ typedef struct _CpmlPair CpmlPair;
 typedef struct _CpmlPair CpmlVector;
 
 struct _CpmlPair {
-        double  x, y;
+    double  x, y;
 };
 
 
