@@ -33,7 +33,7 @@ static void             line_offset             (CpmlPair          *p,
 static void             curve_offset            (CpmlPair          *p,
                                                  CpmlVector        *vector,
                                                  double             offset);
-static void             curve_interpolate_vvp   (CpmlPair          *p0,
+static cairo_bool_t     curve_interpolate_vvp   (CpmlPair          *p0,
                                                  CpmlPair          *p1,
                                                  CpmlPair          *p2,
                                                  CpmlPair          *p3,
@@ -478,7 +478,8 @@ curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * Now I interpolate the curve by forcing it to pass throught pm 
  * when "time" is m, where 0 < m < 1:
  *
- * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3.
+ * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3
+ * (1-m) p1 + m p2 = (pm - (1-m)³p0 - m³p3) / (3m (1-m)).
  *
  * Either p0 and p3 of the curve are known, so I can get rid of
  * the constant part:
@@ -491,21 +492,25 @@ curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
  *
  * p1 = p0 + k1 v0.
  *
- * where k1 is an arbitrary factor. Doing the same for the end point gives:
+ * where k1 is an arbitrary factor. Decomposing for x and y components and
+ * getting rid of k1:
  *
+ * p1->x - p0->x = k1 v0->x;
+ * p1->y - p0->y = k1 v0->y.
+ *
+ * (p1->x - p0->x) v0->y = (p1->y - p0->y) v0->x.
+ *
+ * Doing the same for the end point gives:
  * p2 = p3 + k2 v3.
+ *
+ * (p2->x - p3->x) v3->y = (p2->y - p3->y) v3->x.
  *
  * So the final system is:
  *
- * (1-m) p1 + m p2 = pk;
- * p1 = p0 + k1 v0;
- * p2 = p3 + k2 v3.
- *
- * Now the hard part: solving this system is a nightmare because of
- * divisions by 0 concerns. I had to manage every case separately!
- * After a lot of tedious calculations, it came out when the
- * v3->x*v0->y == v0->x*v3->y condition is met this algorithm is not valid,
- * so this condition should be checked before anything else.
+ * (1-m) p1->x + m p2->x = pk->x;
+ * (1-m) p1->y + m p2->y = pk->y;
+ * (p1->x - p0->x) v0->y = (p1->y - p0->y) v0->x.
+ * (p2->x - p3->x) v3->y = (p2->y - p3->y) v3->x.
  *
  * Given the above system, I get the following pool of equations:
  *
@@ -522,79 +527,106 @@ curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * p2->y = p3->y + (p2->x-p3->x) v3->y/v3->x.
  *
  * The algorithm takes from this pool what is needed in any specific case.
+ *
+ * Now the hard part: solving this system is a nightmare because of
+ * divisions by 0 exceptions. I had to manage every case separately!
+ * After a lot of tedious calculations, it came out when the
+ * v3->x*v0->y == v0->x*v3->y condition is met this algorithm is not valid,
+ * so this condition should be checked before anything else.
+ *
+ * Return value: 1 on success, 0 on errors
  **/
-static void
+static cairo_bool_t
 curve_interpolate_vvp(CpmlPair *p0, CpmlPair *p1, CpmlPair *p2, CpmlPair *p3,
                       CpmlVector *v0, CpmlVector *v3, double m, CpmlPair *pm)
 {
+    double mm;
     CpmlPair pk;
 
     if (v3->x*v0->y == v0->x*v3->y) {
-        /* Unhandled cases: parallel slopes
-         * TODO: provide a solution */
-        return;
+        /* Unhandled cases: parallel slopes */
+        return 0;
     }
 
-    pk.x = (pm->x - (1-m)*(1-m)*(1-m)*p0->x - m*m*m*p3->x) / (m*3*(1-m));
-    pk.y = (pm->y - (1-m)*(1-m)*(1-m)*p0->y - m*m*m*p3->y) / (m*3*(1-m));
+    mm = 1.-m;
+
+    /* Let pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m)) */
+    pk.x = (pm->x - mm*mm*mm*p0->x - m*m*m*p3->x) / (m*3*mm);
+    pk.y = (pm->y - mm*mm*mm*p0->y - m*m*m*p3->y) / (m*3*mm);
 
     if (v0->x == 0) {
+        g_print("v0->x == 0\n");
         p1->x = p0->x;
-        p2->x = (pk.x - (1-m)*p1->x)/m;
+        p1->y = p0->y + (p1->x-p0->x)*v0->y/v0->x;
+        p2->x = (pk.x - mm*p1->x)/m;
         p2->y = p3->y;
         if (v3->y != 0)
             p2->y += (p2->x-p3->x)*v3->y/v3->x; 
-        p1->y = (pk.y - m*p2->y)/(1-m);
     } else if (v0->y == 0) {
+        g_print("v0->y == 0\n");
         p1->y = p0->y;
-        p2->y = (pk.y - (1-m)*p1->y)/m;
+        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
+        p2->y = (pk.y - mm*p1->y)/m;
         p2->x = p3->x;
         if (v3->x != 0)
             p2->x += (p2->y-p3->y)*v3->x/v3->y; 
-        p1->x = (pk.x - m*p2->x)/(1-m);
     } else if (v3->x == 0) {
+        g_print("v3->x == 0\n");
         p2->x = p3->x;
-        p1->x = (pk.x - m*p2->x)/(1-m);
+        p2->y = p3->y + (p2->x-p3->x)*v3->y/v3->x;
+        p1->x = (pk.x - m*p2->x)/mm;
         p1->y = p0->y + (p1->x-p0->x)*v0->y/v0->x;
-        p2->y = (pk.y - (1-m)*p1->y)/m;
     } else if (v3->y == 0) {
+        g_print("v3->y == 0\n");
         p2->y = p3->y;
+        p2->x = p3->x + (p2->y-p3->y)*v3->x/v3->y; 
         p1->y = (pk.y - m*p2->y)/(1-m);
         p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
-        p2->x = (pk.x - (1-m)*p1->x)/m;
     } else {
+        g_print("general\n");
         /* Here no vector components are 0, so any division is allowed.
          * Taking some equation from the pool I built the following system:
          *
          * p1->x = (pk.x - m p2->x)/(1-m);
-         * p2->y = (pk.y - (1-m) p1->y)/m;
          * p1->x = p0->x + (p1->y-p0->y) v0->x/v0->y;
          * p2->x = p3->x + (p2->y-p3->y) v3->x/v3->y.
+         * p2->y = (pk.y - (1-m) p1->y)/m;
          *
-         * And now I resolve it to get the p1->y value:
+         * And now I resolve to get the p1->y value:
          *
          * (pk.x - m p2->x)/(1-m) = p0->x + (p1->y-p0->y) v0->x/v0->y;
          * p2->x = p3->x + ((pk.y - (1-m) p1->y)/m - p3->y) v3->x/v3->y.
          *
          * p2->x = pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
-         *        - (1-m)/m v0->x/v0->y p1->y;
+         *        - p1->y (1-m)/m v0->x/v0->y;
          * p2->x = p3->x + (pk.y/m - p3->y) v3->x/v3->y
-         *        - (1-m)/m v3->x/v3->y p1->y.
+         *        - p1->y (1-m)/m v3->x/v3->y.
          *
          * pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
-         * - (1-m)/m v0->x/v0->y p1->y =
+         * - p1->y (1-m)/m v0->x/v0->y =
          *     p3->x + (pk.y/m - p3->y) v3->x/v3->y
-         *     - (1-m)/m v3->x/v3->y p1->y.
+         *     - p1->y (1-m)/m v3->x/v3->y.
          *
-         * p1->y = m/(1-m) v0->y (v3->y (p3->x-pk.x/m) + (pk.y/m-p3->y) v3->x)
-         *          / (v3->x v0->y - v0->x v3->y);
+         * pk.x/m - (1-m)/m (p0->x - p0->y v0->x/v0->y)
+         * - p1->y (1-m)/m v0->x/v0->y =
+         *     p3->x + (pk.y/m - p3->y) v3->x/v3->y
+         *     - p1->y (1-m)/m v3->x/v3->y.
+         *
+         * p1->y (v3->x/v3->y - v0->x/v0->y) = (p0->x - p0->y v0->x/v0->y)
+         *     + (m (p3->x + (pk.y/m - p3->y) v3->x/v3->y) - pk.x) / (1-m).
+         *
+         * p1->y = ((p0->x - p0->y v0->x/v0->y)
+         *     + (m (p3->x + (pk.y/m - p3->y) v3->x/v3->y) - pk.x) / (1-m))
+         *     / (v3->x/v3->y - v0->x/v0->y).
          */
-        p1->y = m/(1-m)*v0->y*(v3->y*(p3->x-pk.x/m) + (pk.y/m-p3->y)*v3->x)
+        p1->y = m/mm*v0->y*(v3->y*(p3->x-pk.x/m) + (pk.y/m-p3->y)*v3->x)
             / (v3->x*v0->y - v0->x*v3->y);
-        p2->y = (pk.y - (1-m)*p1->y)/m;
+        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
+        p2->y = (pk.y - mm*p1->y)/m;
         p2->x = p3->x + (p2->y-p3->y)*v3->x/v3->y; 
-        p1->x = (pk.x - m*p2->x)/(1-m);
     }
+
+    return 1;
 }
 
 /**
