@@ -33,14 +33,6 @@ static void             line_offset             (CpmlPair          *p,
 static void             curve_offset            (CpmlPair          *p,
                                                  CpmlVector        *vector,
                                                  double             offset);
-static cairo_bool_t     curve_interpolate_vvp   (CpmlPair          *p0,
-                                                 CpmlPair          *p1,
-                                                 CpmlPair          *p2,
-                                                 CpmlPair          *p3,
-                                                 CpmlVector        *v0,
-                                                 CpmlVector        *v3,
-                                                 double             m,
-                                                 CpmlPair          *pm);
 static void             join_primitives         (cairo_path_data_t *last_data,
                                                  const CpmlVector  *last_vector,
                                                  const CpmlPair    *new_point,
@@ -403,89 +395,19 @@ line_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * The four points needed to build the new curve are returned
  * in the @p vector. The angular coefficient of the new curve
  * in @p[3] is returned as @vector with @offset magnitude.
- **/
-static void
-curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
-{
-    double m;
-    CpmlVector d10, d32;
-    CpmlPair p0, p1, p2, p3, pm;
-
-    /* d10 := vector p[1]-p[0] of @offset magnitude */
-    cpml_pair_sub(cpml_pair_copy(&d10, &p[1]), &p[0]);
-    cpml_vector_from_pair(&d10, &d10, offset);
-
-    /* d32 := vector p[3]-p[2] of @offset magnitude */
-    cpml_pair_sub(cpml_pair_copy(&d32, &p[3]), &p[2]);
-    cpml_vector_from_pair(&d32, &d32, offset);
-
-    /* p0 := p[0] + normal of d10 (exact final value of p0) */
-    cpml_vector_normal(cpml_pair_copy(&p0, &d10));
-    cpml_pair_add(&p0, &p[0]);
-
-    /* p3 := p[3] + normal of d32 (exact final value of p3) */
-    cpml_vector_normal(cpml_pair_copy(&p3, &d32));
-    cpml_pair_add(&p3, &p[3]);
-
-    /* By default, interpolate the new curve by offseting the mid point.
-     * @todo: use a better candidate. */
-    m = 0.5;
-
-    /* pm := point in C(m) offseted the requested @offset distance
-     * p1 is used as temporary storage pair of the normal vector*/
-    cpml_vector_at_curve(&p1, &p[0], &p[1], &p[2], &p[3], m, offset);
-    cpml_vector_normal(&p1);
-    cpml_pair_at_curve(&pm, &p[0], &p[1], &p[2], &p[3], m);
-    cpml_pair_add(&pm, &p1);
-
-    curve_interpolate_vvp(&p0, &p1, &p2, &p3, &d10, &d32, m, &pm);
-
-    g_print("(%lf, %lf) - (%lf, %lf) - (%lf, %lf) - (%lf, %lf)\n",
-            p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
-
-    /* Return the new curve in the original array */
-    cpml_pair_copy(&p[0], &p0);
-    cpml_pair_copy(&p[1], &p1);
-    cpml_pair_copy(&p[2], &p2);
-    cpml_pair_copy(&p[3], &p3);
-
-    /* Return the ending vector */
-    cpml_pair_copy(vector, &d32);
-}
-
-/**
- * curve_interpolate_vvp:
- * @p0: (in):  starting point of the curve
- * @p1: (out): first control point
- * @p2: (out): second control point
- * @p3: (in):  end point
- * @v0: (in):  slope the curve must have in @p0
- * @v3: (in):  slope the curve must have in @p3
- * @m:  (in):  time value
- * @pm: (in):  point at @m time the curve must pass throught
  *
- * Interpolates a cubic Bézier curve that starts from @p0 and ends
- * in @p3, with @v0 slope in @p0 and @v3 slope in @p3, that passes
- * throught @pm when "time" is @m.
+ * To solve the offset problem, a custom algorithm is used. First, the
+ * resulting curve MUST have the same slope at the start and end point.
+ * These constraints are not sufficient to resolve the system, so I let
+ * the curve pass thought a given point (pm, known and got from the
+ * original curve) at a given time (m, now hardcoded to 0.5).
  *
- * The control points needed to build this new curve are returned
- * in @p1 and @p2.
+ * Firstly, I define some useful variables:
  *
- * The cubic Bézier function is:
- *
- * C(t) = (1-t)³p0 + 3t(1-t)²p1 + 3t²(1-t)p2 + t³p3.
- *
- * Now I interpolate the curve by forcing it to pass throught pm 
- * when "time" is m, where 0 < m < 1:
- *
- * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3
- * (1-m) p1 + m p2 = (pm - (1-m)³p0 - m³p3) / (3m (1-m)).
- *
- * Either p0 and p3 of the curve are known, so I can get rid of
- * the constant part:
- *
- * pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m));
- * (1-m) p1 + m p2 = pk.
+ * v0 = unitvector(p[1]-p[0]) * offset;
+ * v3 = unitvector(p[3]-p[2]) * offset;
+ * p0 = p[0] + normal v0;
+ * p3 = p[3] + normal v3.
  *
  * Now I want the curve to have the specified slopes at the start
  * and end point. Forcing the same slope at the start point means:
@@ -495,138 +417,215 @@ curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * where k1 is an arbitrary factor. Decomposing for x and y components and
  * getting rid of k1:
  *
- * p1->x - p0->x = k1 v0->x;
- * p1->y - p0->y = k1 v0->y.
+ * p1.x - p0.x = k1 v0.x;
+ * p1.y - p0.y = k1 v0.y.
  *
- * (p1->x - p0->x) v0->y = (p1->y - p0->y) v0->x.
+ * (p1.x - p0.x) v0.y = (p1.y - p0.y) v0.x.
  *
  * Doing the same for the end point gives:
  * p2 = p3 + k2 v3.
  *
- * (p2->x - p3->x) v3->y = (p2->y - p3->y) v3->x.
+ * (p3.x - p2.x) v3.y = (p3.y - p2.y) v3.x.
+ *
+ * Now I interpolate the curve by forcing it to pass throught pm
+ * when "time" is m, where 0 < m < 1. The cubic Bézier function is:
+ *
+ * C(t) = (1-t)³p0 + 3t(1-t)²p1 + 3t²(1-t)p2 + t³p3.
+ *
+ * and forcing t=m and C(t) = pm:
+ *
+ * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3.
+ * (1-m) p1 + m p2 = (pm - (1-m)³p0 - m³p3) / (3m (1-m)).
+ *
+ * Either p0 and p3 of the curve are known, so I can get rid of
+ * the constant part:
+ *
+ * pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m));
+ * (1-m) p1 + m p2 = pk.
  *
  * So the final system is:
  *
- * (1-m) p1->x + m p2->x = pk->x;
- * (1-m) p1->y + m p2->y = pk->y;
- * (p1->x - p0->x) v0->y = (p1->y - p0->y) v0->x.
- * (p2->x - p3->x) v3->y = (p2->y - p3->y) v3->x.
+ * (1-m) p1.x + m p2.x = pk->x;
+ * (1-m) p1.y + m p2.y = pk->y;
+ * (p1.x - p0.x) v0.y = (p1.y - p0.y) v0.x.
+ * (p3.x - p2.x) v3.y = (p3.y - p2.y) v3.x.
  *
  * Given the above system, I get the following pool of equations:
  *
- * p1->x = (pk.x - m p2->x)/(1-m);
- * p1->y = (pk.y - m p2->y)/(1-m).
+ * p1.x = (pk.x - m p2.x)/(1-m);
+ * p1.y = (pk.y - m p2.y)/(1-m).
  *
- * p2->x = (pk.x - (1-m) p1->x)/m;
- * p2->y = (pk.y - (1-m) p1->y)/m.
+ * p2.x = (pk.x - (1-m) p1.x)/m;
+ * p2.y = (pk.y - (1-m) p1.y)/m.
  *
- * p1->x = p0->x + (p1->y-p0->y) v0->x/v0->y;
- * p1->y = p0->y + (p1->x-p0->x) v0->y/v0->x.
+ * p1.x = p0.x + (p1.y - p0.y) v0.x/v0.y;
+ * p1.y = p0.y + (p1.x - p0.x) v0.y/v0.x.
  *
- * p2->x = p3->x + (p2->y-p3->y) v3->x/v3->y;
- * p2->y = p3->y + (p2->x-p3->x) v3->y/v3->x.
+ * p2.x = p3.x - (p3.y - p2.y) v3.x/v3.y;
+ * p2.y = p3.y - (p3.x - p2.x) v3.y/v3.x.
  *
  * The algorithm takes from this pool what is needed in any specific case.
  *
- * Now the hard part: solving this system is a nightmare because of
- * divisions by 0 exceptions. I had to manage every case separately!
- * After a lot of tedious calculations, it came out when the
- * v3->x*v0->y == v0->x*v3->y condition is met this algorithm is not valid,
- * so this condition should be checked before anything else.
+ * Now the hard part: finding the first solution. Solving this system
+ * is a nightmare because of divisions by 0 exceptions.
  *
- * Return value: 1 on success, 0 on errors
+ * After a lot of tedious calculations, it came out when the
+ * v3.x*v0.y == v0.x*v3.y condition is met, that is when v0 and v1
+ * are parallel and in the same direction, this algorithm is not valid:
+ * this condition should be checked before anything else.
+ *
+ * If v3.x*v0.y == v0.x*v3.y, an alternative approach is provided:
+ * the control points are found by offseting the control poligon
+ * (as done by Tiller and Hanson) but using a 4/3 factor on the p1-p2
+ * line to compensate the distance between the curve and the p1-p2 line
+ * (the top of the curve is at exactly 3/4 of the poligon height
+ * when v1 and v2 are parallel and in the same direction).
+ *
+ * So if v3.x*v0.y == v0.x*v3.y and if m is 0.5 (the mid point of the
+ * curve) so that vm is the vector of @offset magnitude at m, I have:
+ *
+ * p1 = p0 + (p[1]-p[0]) + 4/3 vm;
+ * p2 = p3 + (p[2]-p[3]) - 4/3 vm.
+ *
+ * In the other cases, I get the first coordinate by looking for a
+ * 0 vector component. If no vector component is 0 any division is allowed
+ * so, taking some equation from the pool, the following system is used:
+ *
+ * p1.x = (pk.x - m p2.x)/(1-m);
+ * p1.x = p0.x + (p1.y-p0.y) v0.x/v0.y;
+ * p2.x = p3.x - (p3.y - p2.y) v3.x/v3.y;
+ * p2.y = (pk.y - (1-m) p1.y)/m.
+ *
+ * And now I resolve to get the p1.y value:
+ *
+ * (pk.x - m p2.x)/(1-m) = p0.x + (p1.y-p0.y) v0.x/v0.y;
+ * p2.x = p3.x + ((pk.y - (1-m) p1.y)/m - p3.y) v3.x/v3.y.
+ *
+ * p2.x = pk.x/m - (1-m)/m (p0.x - v0.x/v0.y p0.y)
+ *        - p1.y (1-m)/m v0.x/v0.y;
+ * p2.x = p3.x + (pk.y/m - p3.y) v3.x/v3.y
+ *        - p1.y (1-m)/m v3.x/v3.y.
+ *
+ * pk.x/m - (1-m)/m (p0.x - v0.x/v0.y p0.y)
+ * - p1.y (1-m)/m v0.x/v0.y =
+ *     p3.x + (pk.y/m - p3.y) v3.x/v3.y
+ *     - p1.y (1-m)/m v3.x/v3.y.
+ *
+ * pk.x/m - (1-m)/m (p0.x - p0.y v0.x/v0.y)
+ * - p1.y (1-m)/m v0.x/v0.y =
+ *     p3.x + (pk.y/m - p3.y) v3.x/v3.y
+ *     - p1.y (1-m)/m v3.x/v3.y.
+ *
+ * p1.y (v3.x/v3.y - v0.x/v0.y) = (p0.x - p0.y v0.x/v0.y)
+ *     + (m (p3.x + (pk.y/m - p3.y) v3.x/v3.y) - pk.x) / (1-m).
+ *
+ * And this is the final equation:
+ *
+ * p1.y = ((p0.x - p0.y v0.x/v0.y)
+ *        + (m (p3.x + (pk.y/m - p3.y) v3.x/v3.y) - pk.x) / (1-m))
+ *        / (v3.x/v3.y - v0.x/v0.y).
  **/
-static cairo_bool_t
-curve_interpolate_vvp(CpmlPair *p0, CpmlPair *p1, CpmlPair *p2, CpmlPair *p3,
-                      CpmlVector *v0, CpmlVector *v3, double m, CpmlPair *pm)
+static void
+curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
 {
-    double mm;
-    CpmlPair pk;
+    double m, mm;
+    CpmlVector v0, v3, vm;
+    CpmlPair p0, p1, p2, p3, pm, pk;
 
-    if (v3->x*v0->y == v0->x*v3->y) {
-        /* Unhandled cases: parallel slopes */
-        return 0;
-    }
+    /* v0 = vector p[1]-p[0] of @offset magnitude */
+    cpml_pair_sub(cpml_pair_copy(&v0, &p[1]), &p[0]);
+    cpml_vector_from_pair(&v0, &v0, offset);
 
+    /* v3 = vector p[3]-p[2] of @offset magnitude */
+    cpml_pair_sub(cpml_pair_copy(&v3, &p[3]), &p[2]);
+    cpml_vector_from_pair(&v3, &v3, offset);
+
+    /* p0 = p[0] + normal of v0 (exact final value of p0) */
+    cpml_vector_normal(cpml_pair_copy(&p0, &v0));
+    cpml_pair_add(&p0, &p[0]);
+
+    /* p3 = p[3] + normal of v3 (exact final value of p3) */
+    cpml_vector_normal(cpml_pair_copy(&p3, &v3));
+    cpml_pair_add(&p3, &p[3]);
+
+    /* By default, interpolate the new curve by offseting the mid point.
+     * @todo: use a better candidate. */
+    m = 0.5;
     mm = 1.-m;
 
-    /* Let pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m)) */
-    pk.x = (pm->x - mm*mm*mm*p0->x - m*m*m*p3->x) / (m*3*mm);
-    pk.y = (pm->y - mm*mm*mm*p0->y - m*m*m*p3->y) / (m*3*mm);
+    /* pm = point in C(m) offseted the requested @offset distance */
+    cpml_vector_at_curve(&vm, &p[0], &p[1], &p[2], &p[3], m, offset);
+    cpml_vector_normal(&vm);
+    cpml_pair_at_curve(&pm, &p[0], &p[1], &p[2], &p[3], m);
+    cpml_pair_add(&pm, &vm);
 
-    if (v0->x == 0) {
-        g_print("v0->x == 0\n");
-        p1->x = p0->x;
-        p1->y = p0->y + (p1->x-p0->x)*v0->y/v0->x;
-        p2->x = (pk.x - mm*p1->x)/m;
-        p2->y = p3->y;
-        if (v3->y != 0)
-            p2->y += (p2->x-p3->x)*v3->y/v3->x; 
-    } else if (v0->y == 0) {
-        g_print("v0->y == 0\n");
-        p1->y = p0->y;
-        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
-        p2->y = (pk.y - mm*p1->y)/m;
-        p2->x = p3->x;
-        if (v3->x != 0)
-            p2->x += (p2->y-p3->y)*v3->x/v3->y; 
-    } else if (v3->x == 0) {
-        g_print("v3->x == 0\n");
-        p2->x = p3->x;
-        p2->y = p3->y + (p2->x-p3->x)*v3->y/v3->x;
-        p1->x = (pk.x - m*p2->x)/mm;
-        p1->y = p0->y + (p1->x-p0->x)*v0->y/v0->x;
-    } else if (v3->y == 0) {
-        g_print("v3->y == 0\n");
-        p2->y = p3->y;
-        p2->x = p3->x + (p2->y-p3->y)*v3->x/v3->y; 
-        p1->y = (pk.y - m*p2->y)/(1-m);
-        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
+    /* pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m)) */
+    pk.x = (pm.x - mm*mm*mm*p0.x - m*m*m*p3.x) / (m*3*mm);
+    pk.y = (pm.y - mm*mm*mm*p0.y - m*m*m*p3.y) / (m*3*mm);
+
+    if (v3.x*v0.y == v0.x*v3.y) {
+        /* Same slope at the start and end point (parallel p0-p1 and p3-p2) */
+        p1.x = p0.x + (p[1].x - p[0].x) + vm.x * 4/3;
+        p1.y = p0.y + (p[1].y - p[0].y) + vm.y * 4/3;
+        p2.x = p3.x + (p[2].x - p[3].x) + vm.x * 4/3;
+        p2.y = p3.y + (p[2].y - p[3].y) + vm.y * 4/3;
+
+    /* Probably the following can be condensed */
+    } else if (v0.x == 0) {
+        p1.x = p0.x;
+        p2.x = (pk.x - mm*p1.x)/m;
+        if (v3.x == 0)
+            p2.y = p3.y + (pm.y - p3.y) * 4/3;
+        else if (v3.y == 0)
+            p2.y = p3.y;
+        else
+            p2.y = p3.y - (p3.x - p2.x) * v3.y/v3.x; 
+        p1.y = (pk.y - m*p2.y)/mm;
+    } else if (v0.y == 0) {
+        p1.y = p0.y;
+        p2.y = (pk.y - mm*p1.y)/m;
+        if (v3.y == 0)
+            p2.x = p3.x + (pm.x - p3.x) * 4/3;
+        else if (v3.x == 0)
+            p2.x = p3.x;
+        else
+            p2.x = p3.x - (p3.y - p2.y) * v3.x/v3.y; 
+        p1.x = (pk.x - m*p2.x)/mm;
+    } else if (v3.x == 0) {
+        p2.x = p3.x;
+        p1.x = (pk.x - m*p2.x)/mm;
+        p1.y = p0.y;
+        if (v0.y != 0 && v0.x != 0)
+            p1.y += (p1.x - p0.x) * v0.y/v0.x;
+        p2.y = (pk.y - mm*p1.y)/m;
+    } else if (v3.y == 0) {
+        p2.y = p3.y;
+        p1.y = (pk.y - m*p2.y)/mm;
+        p1.x = p0.x;
+        if (v0.x != 0 && v0.y != 0)
+            p1.x += (p1.y - p0.y) * v0.x/v0.y;
+        p2.x = (pk.x - mm*p1.x)/m;
+    } else if (v3.x*v0.y == v0.x*v3.y) {
+        p1.x = p1.x + (pm.x - p1.x) * 4/3;
+        p1.y = p1.y + (pm.y - p1.y) * 4/3;
+        p2.x = p3.x + (pm.x - p3.x) * 4/3;
+        p2.y = p3.y + (pm.y - p3.y) * 4/3;
     } else {
-        g_print("general\n");
-        /* Here no vector components are 0, so any division is allowed.
-         * Taking some equation from the pool I built the following system:
-         *
-         * p1->x = (pk.x - m p2->x)/(1-m);
-         * p1->x = p0->x + (p1->y-p0->y) v0->x/v0->y;
-         * p2->x = p3->x + (p2->y-p3->y) v3->x/v3->y.
-         * p2->y = (pk.y - (1-m) p1->y)/m;
-         *
-         * And now I resolve to get the p1->y value:
-         *
-         * (pk.x - m p2->x)/(1-m) = p0->x + (p1->y-p0->y) v0->x/v0->y;
-         * p2->x = p3->x + ((pk.y - (1-m) p1->y)/m - p3->y) v3->x/v3->y.
-         *
-         * p2->x = pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
-         *        - p1->y (1-m)/m v0->x/v0->y;
-         * p2->x = p3->x + (pk.y/m - p3->y) v3->x/v3->y
-         *        - p1->y (1-m)/m v3->x/v3->y.
-         *
-         * pk.x/m - (1-m)/m (p0->x - v0->x/v0->y p0->y)
-         * - p1->y (1-m)/m v0->x/v0->y =
-         *     p3->x + (pk.y/m - p3->y) v3->x/v3->y
-         *     - p1->y (1-m)/m v3->x/v3->y.
-         *
-         * pk.x/m - (1-m)/m (p0->x - p0->y v0->x/v0->y)
-         * - p1->y (1-m)/m v0->x/v0->y =
-         *     p3->x + (pk.y/m - p3->y) v3->x/v3->y
-         *     - p1->y (1-m)/m v3->x/v3->y.
-         *
-         * p1->y (v3->x/v3->y - v0->x/v0->y) = (p0->x - p0->y v0->x/v0->y)
-         *     + (m (p3->x + (pk.y/m - p3->y) v3->x/v3->y) - pk.x) / (1-m).
-         *
-         * p1->y = ((p0->x - p0->y v0->x/v0->y)
-         *     + (m (p3->x + (pk.y/m - p3->y) v3->x/v3->y) - pk.x) / (1-m))
-         *     / (v3->x/v3->y - v0->x/v0->y).
-         */
-        p1->y = m/mm*v0->y*(v3->y*(p3->x-pk.x/m) + (pk.y/m-p3->y)*v3->x)
-            / (v3->x*v0->y - v0->x*v3->y);
-        p1->x = p0->x + (p1->y-p0->y)*v0->x/v0->y;
-        p2->y = (pk.y - mm*p1->y)/m;
-        p2->x = p3->x + (p2->y-p3->y)*v3->x/v3->y; 
+        p1.y = m/mm*v0.y*(v3.y*(p3.x-pk.x/m) + (pk.y/m-p3.y)*v3.x)
+            / (v3.x*v0.y - v0.x*v3.y);
+        p1.x = p0.x + (p1.y - p0.y) * v0.x/v0.y;
+        p2.y = (pk.y - mm*p1.y)/m;
+        p2.x = p3.x - (p3.y - p2.y) * v3.x/v3.y; 
     }
 
-    return 1;
+    /* Return the new curve in the original array */
+    cpml_pair_copy(&p[0], &p0);
+    cpml_pair_copy(&p[1], &p1);
+    cpml_pair_copy(&p[2], &p2);
+    cpml_pair_copy(&p[3], &p3);
+
+    /* Return the ending vector */
+    cpml_pair_copy(vector, &v3);
 }
 
 /**

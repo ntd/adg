@@ -18,9 +18,31 @@ typedef struct {
 } Bezier;
 
 static Bezier bezier_samples[] = {
-    { { 0, 0 }, { 0, 120 }, { 120, 120 }, { 120, 0 } },         /* Simmetric */
-    { { 0, 0 }, { 40, 120 }, { 80, 120 }, { 120, 0 } },         /* Balanced */
-    { { 0, 0 }, { 40, 120 }, { 120, 120 }, { 60, 80 } }         /* Unbalanced */
+    { { 0, 0 }, { 0, 40 }, { 120, 40 }, { 120, 0 } },   /* Simmetric low */
+    { { 40, 0 }, { 40, 160 }, { 80, 160 }, { 80, 0 } }, /* Simmetric high */
+    { { 0, 0 }, { 33.1371, 33.1371 }, { 86.8629, 33.1371 }, { 120, 0 } },
+                                                        /* Arc approximation */
+    { { 0, 0 }, { 70, 120 }, { 50, 120 }, { 120, 0 } }, /* Twisted controls */
+
+    { { 0, 0 }, { 0, 120 }, { 60, 120 }, { 120, 0 } },  /* Vertical p1-p2 */
+    { { 0, 0 }, { 60, 120 }, { 120, 120 }, { 120, 0 } },/* Vertical p3-p4 */
+    { { 0, 120 }, { 120, 120 }, { 120, 60 }, { 0, 0 } },/* Horizontal p1-p2 */
+    { { 0, 120 }, { 120, 60 }, { 120, 0 }, { 0, 0 } },  /* Horizontal p3-p4 */
+
+    { { 0, 0 }, { 0, 120 }, { 120, 120 }, { 120, 0 } }, /* Down */
+    { { 0, 120 }, { 120, 120 }, { 120, 0 }, { 0, 0 } }, /* Right */
+    { { 0, 120 }, { 0, 0 }, { 120, 0 }, { 120, 120 } }, /* Up */
+    { { 120, 120 }, { 0, 120 }, { 0, 0 }, { 120, 0 } }, /* Left */
+
+    { { 0, 60 }, { 60, 120 }, { 120, 60 }, { 60, 0 } }, /* Down-right */
+    { { 60, 120 }, { 120, 60 }, { 60, 0 }, { 0, 60 } }, /* Up-right */
+    { { 120, 60 }, { 60, 0 }, { 0, 60 }, { 60, 120 } }, /* Up-left */
+    { { 60, 0 }, { 0, 60 }, { 60, 120 }, { 120, 60 } }, /* Down-left*/
+
+    { { 0, 0 }, { 60, 0 }, { 60, 120 }, { 120, 120 } }, /* Step left */
+    { { 120, 0 }, { 60, 0 }, { 60, 120 }, { 0, 120 } }, /* Step right */
+    { { 0, 0 }, { 60, 90 }, { 90, 120 }, { 120, 90 } }, /* Unbalanced opened */
+    { { 0, 0 }, { 40, 120 }, { 120, 120 }, { 60, 80 } } /* Unbalanced closed */
 };
 
 
@@ -53,7 +75,7 @@ main(gint argc, gchar **argv)
     vbox = gtk_vbox_new(FALSE, 0);
 
     widget = gtk_drawing_area_new();
-    gtk_widget_set_size_request(widget, 790, 240);
+    gtk_widget_set_size_request(widget, 800, 800);
     g_signal_connect(widget, "expose-event", G_CALLBACK(path_expose), canvas);
     gtk_container_add(GTK_CONTAINER(vbox), widget);
 
@@ -90,8 +112,13 @@ path_constructor(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     n = GPOINTER_TO_INT(user_data);
     bezier = bezier_samples + n;
 
-    /* The samples are arranged in a 4x? matrix of 150x150 cells */
-    cairo_translate(cr, (n % 4) * 150. + 25, (n / 4) * 150. + 25);
+    /* The samples are arranged in a 4x? matrix of 200x150 cells */
+    if (n == 0)
+        cairo_translate(cr, 25., 25.);
+    else if (n % 4 == 0)
+        cairo_translate(cr, -600., 150.);
+    else
+        cairo_translate(cr, 200., 0.);
 
     /* Draw the Bézier curve */
     cairo_move_to(cr, bezier->p1.x, bezier->p1.y);
