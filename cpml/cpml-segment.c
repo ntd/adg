@@ -412,20 +412,17 @@ line_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * Now I want the curve to have the specified slopes at the start
  * and end point. Forcing the same slope at the start point means:
  *
- * p1 = p0 + k1 v0.
+ * p1 = p0 + k0 v0.
  *
- * where k1 is an arbitrary factor. Decomposing for x and y components and
- * getting rid of k1:
+ * where k0 is an arbitrary factor. Decomposing for x and y components:
  *
- * p1.x - p0.x = k1 v0.x;
- * p1.y - p0.y = k1 v0.y.
- *
- * (p1.x - p0.x) v0.y = (p1.y - p0.y) v0.x.
+ * p1.x = p0.x + k0 v0.x;
+ * p1.y = p0.y + k0 v0.y.
  *
  * Doing the same for the end point gives:
- * p2 = p3 + k2 v3.
  *
- * (p3.x - p2.x) v3.y = (p3.y - p2.y) v3.x.
+ * p2.x = p3.x + k3 v3.x;
+ * p2.y = p3.y + k3 v3.y.
  *
  * Now I interpolate the curve by forcing it to pass throught pm
  * when "time" is m, where 0 < m < 1. The cubic Bézier function is:
@@ -435,123 +432,94 @@ line_offset(CpmlPair *p, CpmlVector *vector, double offset)
  * and forcing t=m and C(t) = pm:
  *
  * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3.
+ *
  * (1-m) p1 + m p2 = (pm - (1-m)³p0 - m³p3) / (3m (1-m)).
- *
- * Either p0 and p3 of the curve are known, so I can get rid of
- * the constant part:
- *
- * pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m));
- * (1-m) p1 + m p2 = pk.
  *
  * So the final system is:
  *
- * (1-m) p1.x + m p2.x = pk->x;
- * (1-m) p1.y + m p2.y = pk->y;
- * (p1.x - p0.x) v0.y = (p1.y - p0.y) v0.x.
- * (p3.x - p2.x) v3.y = (p3.y - p2.y) v3.x.
+ * p1.x = p0.x + k0 v0.x;
+ * p1.y = p0.y + k0 v0.y;
+ * p2.x = p3.x + k3 v3.x;
+ * p2.y = p3.y + k3 v3.y;
+ * (1-m) p1.x + m p2.x = (pm.x - (1-m)³p0.x - m³p3.x) / (3m (1-m));
+ * (1-m) p1.y + m p2.y = (pm.y - (1-m)³p0.y - m³p3.y) / (3m (1-m)).
  *
- * Given the above system, I get the following pool of equations:
+ * Substituting and resolving for k0 and k3:
  *
- * p1.x = (pk.x - m p2.x)/(1-m);
- * p1.y = (pk.y - m p2.y)/(1-m).
+ * (1-m) k0 v0.x + m k3 v3.x =
+ *     (pm.x - (1-m)³p0.x - m³p3.x) / (3m (1-m)) - (1-m) p0.x - m p3.x;
+ * (1-m) k0 v0.y + m k3 v3.y =
+ *     (pm.y - (1-m)³p0.y - m³p3.y) / (3m (1-m)) - (1-m) p0.y - m p3.y.
  *
- * p2.x = (pk.x - (1-m) p1.x)/m;
- * p2.y = (pk.y - (1-m) p1.y)/m.
+ * (1-m) k0 v0.x + m k3 v3.x =
+ *     (pm.x - (1-m)²(1+2m) p0.x - m²(3-2m) p3.x) / (3m (1-m));
+ * (1-m) k0 v0.y + m k3 v3.y =
+ *     (pm.y - (1-m)²(1+2m) p0.y - m²(3-2m) p3.y) / (3m (1-m)).
  *
- * p1.x = p0.x + (p1.y - p0.y) v0.x/v0.y;
- * p1.y = p0.y + (p1.x - p0.x) v0.y/v0.x.
+ * Let:
  *
- * p2.x = p3.x - (p3.y - p2.y) v3.x/v3.y;
- * p2.y = p3.y - (p3.x - p2.x) v3.y/v3.x.
+ * pk = (pm - (1-m)²(1+2m) p0 - m²(3-2m) p3) / (3m (1-m)).
  *
- * The algorithm takes from this pool what is needed in any specific case.
+ * gives the following system:
+ *     
+ * (1-m) k0 v0.x + m k3 v3.x = pk.x;
+ * (1-m) k0 v0.y + m k3 v3.y = pk.y.
  *
- * Now the hard part: finding the first solution. Solving this system
- * is a nightmare because of divisions by 0 exceptions.
+ * Now I should avoid division by 0 troubles. If either v0.x and v3.x
+ * are 0, the first equation will be inconsistent. More in general the
+ * v0.x*v3.y = v3.x*v3.y condition should be avoided. This is the first
+ * case to check, in which case an alternative approach is used. In the
+ * other cases the above system can be used.
  *
- * After a lot of tedious calculations, it came out when the
- * v3.x*v0.y == v0.x*v3.y condition is met, that is when v0 and v1
- * are parallel and in the same direction, this algorithm is not valid:
- * this condition should be checked before anything else.
+ * If v0.x != 0 I can resolve for k0 and then find k3:
  *
- * If v3.x*v0.y == v0.x*v3.y, an alternative approach is provided:
- * the control points are found by offseting the control poligon
- * (as done by Tiller and Hanson) but using a 4/3 factor on the p1-p2
- * line to compensate the distance between the curve and the p1-p2 line
- * (the top of the curve is at exactly 3/4 of the poligon height
- * when v1 and v2 are parallel and in the same direction).
+ * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x);
+ * (pk.x - m k3 v3.x) v0.y / v0.x + m k3 v3.y = pk.y.
  *
- * So if v3.x*v0.y == v0.x*v3.y and if m is 0.5 (the mid point of the
- * curve) so that vm is the vector of @offset magnitude at m, I have:
+ * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x);
+ * k3 m (v3.y - v3.x v0.y / v0.x) = pk.y - pk.x v0.y / v0.x.
  *
- * p1 = p0 + (p[1]-p[0]) + 4/3 vm;
- * p2 = p3 + (p[2]-p[3]) - 4/3 vm.
+ * k3 = (pk.y - pk.x v0.y / v0.x) / (m (v3.y - v3.x v0.y / v0.x));
+ * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x).
  *
- * In the other cases, I get the first coordinate by looking for a
- * 0 vector component. If no vector component is 0 any division is allowed
- * so, taking some equation from the pool, the following system is used:
+ * If v3.x != 0 I can resolve for k3 and then find k0:
  *
- * p1.x = (pk.x - m p2.x)/(1-m);
- * p1.x = p0.x + (p1.y-p0.y) v0.x/v0.y;
- * p2.x = p3.x - (p3.y - p2.y) v3.x/v3.y;
- * p2.y = (pk.y - (1-m) p1.y)/m.
+ * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x);
+ * (1-m) k0 v0.y + (pk.x - (1-m) k0 v0.x) v3.y / v3.x = pk.y.
  *
- * And now I resolve to get the p1.y value:
+ * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x);
+ * k0 (1-m) (v0.y - k0 v0.x v3.y / v3.x) = pk.y - pk.x v3.y / v3.x.
  *
- * (pk.x - m p2.x)/(1-m) = p0.x + (p1.y-p0.y) v0.x/v0.y;
- * p2.x = p3.x + ((pk.y - (1-m) p1.y)/m - p3.y) v3.x/v3.y.
- *
- * p2.x = pk.x/m - (1-m)/m (p0.x - v0.x/v0.y p0.y)
- *        - p1.y (1-m)/m v0.x/v0.y;
- * p2.x = p3.x + (pk.y/m - p3.y) v3.x/v3.y
- *        - p1.y (1-m)/m v3.x/v3.y.
- *
- * pk.x/m - (1-m)/m (p0.x - v0.x/v0.y p0.y)
- * - p1.y (1-m)/m v0.x/v0.y =
- *     p3.x + (pk.y/m - p3.y) v3.x/v3.y
- *     - p1.y (1-m)/m v3.x/v3.y.
- *
- * pk.x/m - (1-m)/m (p0.x - p0.y v0.x/v0.y)
- * - p1.y (1-m)/m v0.x/v0.y =
- *     p3.x + (pk.y/m - p3.y) v3.x/v3.y
- *     - p1.y (1-m)/m v3.x/v3.y.
- *
- * p1.y (v3.x/v3.y - v0.x/v0.y) = (p0.x - p0.y v0.x/v0.y)
- *     + (m (p3.x + (pk.y/m - p3.y) v3.x/v3.y) - pk.x) / (1-m).
- *
- * And this is the final equation:
- *
- * p1.y = ((p0.x - p0.y v0.x/v0.y)
- *        + (m (p3.x + (pk.y/m - p3.y) v3.x/v3.y) - pk.x) / (1-m))
- *        / (v3.x/v3.y - v0.x/v0.y).
+ * k0 = (pk.y - pk.x v3.y / v3.x) / ((1-m) (v0.y - v0.x v3.y / v3.x));
+ * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x).
  **/
 static void
 curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
 {
     double m, mm;
     CpmlVector v0, v3, vm;
-    CpmlPair p0, p1, p2, p3, pm, pk;
+    CpmlPair p0, p1, p2, p3, pm;
 
-    /* v0 = vector p[1]-p[0] of @offset magnitude */
+    /* v0 = p[1]-p[0] */
     cpml_pair_sub(cpml_pair_copy(&v0, &p[1]), &p[0]);
-    cpml_vector_from_pair(&v0, &v0, offset);
 
-    /* v3 = vector p[3]-p[2] of @offset magnitude */
+    /* v3 = p[3]-p[2] */
     cpml_pair_sub(cpml_pair_copy(&v3, &p[3]), &p[2]);
-    cpml_vector_from_pair(&v3, &v3, offset);
 
-    /* p0 = p[0] + normal of v0 (exact final value of p0) */
-    cpml_vector_normal(cpml_pair_copy(&p0, &v0));
+    /* p0 = p[0] + normal of v0 of @offset magnitude (the final value of p0) */
+    cpml_vector_normal(cpml_vector_from_pair(&p0, &v0, offset));
     cpml_pair_add(&p0, &p[0]);
 
-    /* p3 = p[3] + normal of v3 (exact final value of p3) */
-    cpml_vector_normal(cpml_pair_copy(&p3, &v3));
+    /* p3 = p[3] + normal of v3 of @offset magnitude (the final value of p3) */
+    cpml_vector_normal(cpml_vector_from_pair(&p3, &v3, offset));
     cpml_pair_add(&p3, &p[3]);
 
     /* By default, interpolate the new curve by offseting the mid point.
      * @todo: use a better candidate. */
     m = 0.5;
-    mm = 1.-m;
+
+    /* Let be, for simplicity, mm = 1-m */
+    mm = 1-m;
 
     /* pm = point in C(m) offseted the requested @offset distance */
     cpml_vector_at_curve(&vm, &p[0], &p[1], &p[2], &p[3], m, offset);
@@ -559,63 +527,33 @@ curve_offset(CpmlPair *p, CpmlVector *vector, double offset)
     cpml_pair_at_curve(&pm, &p[0], &p[1], &p[2], &p[3], m);
     cpml_pair_add(&pm, &vm);
 
-    /* pk = (pm - (1-m)³p0 - m³p3) / (3m (1-m)) */
-    pk.x = (pm.x - mm*mm*mm*p0.x - m*m*m*p3.x) / (m*3*mm);
-    pk.y = (pm.y - mm*mm*mm*p0.y - m*m*m*p3.y) / (m*3*mm);
-
-    if (v3.x*v0.y == v0.x*v3.y) {
-        /* Same slope at the start and end point (parallel p0-p1 and p3-p2) */
-        p1.x = p0.x + (p[1].x - p[0].x) + vm.x * 4/3;
-        p1.y = p0.y + (p[1].y - p[0].y) + vm.y * 4/3;
-        p2.x = p3.x + (p[2].x - p[3].x) + vm.x * 4/3;
-        p2.y = p3.y + (p[2].y - p[3].y) + vm.y * 4/3;
-
-    /* Probably the following can be condensed */
-    } else if (v0.x == 0) {
-        p1.x = p0.x;
-        p2.x = (pk.x - mm*p1.x)/m;
-        if (v3.x == 0)
-            p2.y = p3.y + (pm.y - p3.y) * 4/3;
-        else if (v3.y == 0)
-            p2.y = p3.y;
-        else
-            p2.y = p3.y - (p3.x - p2.x) * v3.y/v3.x; 
-        p1.y = (pk.y - m*p2.y)/mm;
-    } else if (v0.y == 0) {
-        p1.y = p0.y;
-        p2.y = (pk.y - mm*p1.y)/m;
-        if (v3.y == 0)
-            p2.x = p3.x + (pm.x - p3.x) * 4/3;
-        else if (v3.x == 0)
-            p2.x = p3.x;
-        else
-            p2.x = p3.x - (p3.y - p2.y) * v3.x/v3.y; 
-        p1.x = (pk.x - m*p2.x)/mm;
-    } else if (v3.x == 0) {
-        p2.x = p3.x;
-        p1.x = (pk.x - m*p2.x)/mm;
-        p1.y = p0.y;
-        if (v0.y != 0 && v0.x != 0)
-            p1.y += (p1.x - p0.x) * v0.y/v0.x;
-        p2.y = (pk.y - mm*p1.y)/m;
-    } else if (v3.y == 0) {
-        p2.y = p3.y;
-        p1.y = (pk.y - m*p2.y)/mm;
-        p1.x = p0.x;
-        if (v0.x != 0 && v0.y != 0)
-            p1.x += (p1.y - p0.y) * v0.x/v0.y;
-        p2.x = (pk.x - mm*p1.x)/m;
-    } else if (v3.x*v0.y == v0.x*v3.y) {
-        p1.x = p1.x + (pm.x - p1.x) * 4/3;
-        p1.y = p1.y + (pm.y - p1.y) * 4/3;
-        p2.x = p3.x + (pm.x - p3.x) * 4/3;
-        p2.y = p3.y + (pm.y - p3.y) * 4/3;
+    if (v0.x*v3.y == v3.x*v0.y) {
+        /* Inconsistent equations: use the alternative approach.
+         * @todo: this algorithm performs bad if v0 and v3 are opposite
+         *        or if are staggered! */
+        p1.x = p0.x + v0.x + vm.x * 4/3;
+        p1.y = p0.y + v0.y + vm.y * 4/3;
+        p2.x = p3.x - v3.x + vm.x * 4/3;
+        p2.y = p3.y - v3.y + vm.y * 4/3;
     } else {
-        p1.y = m/mm*v0.y*(v3.y*(p3.x-pk.x/m) + (pk.y/m-p3.y)*v3.x)
-            / (v3.x*v0.y - v0.x*v3.y);
-        p1.x = p0.x + (p1.y - p0.y) * v0.x/v0.y;
-        p2.y = (pk.y - mm*p1.y)/m;
-        p2.x = p3.x - (p3.y - p2.y) * v3.x/v3.y; 
+        CpmlPair pk;
+        double k0, k3;
+
+        pk.x = (pm.x - mm*mm*(1+m+m)*p0.x - m*m*(1+mm+mm)*p3.x) / (3*m*(1-m));
+        pk.y = (pm.y - mm*mm*(1+m+m)*p0.y - m*m*(1+mm+mm)*p3.y) / (3*m*(1-m));
+
+        if (v0.x != 0) {
+            k3 = (pk.y - pk.x*v0.y / v0.x) / (m*(v3.y - v3.x*v0.y / v0.x));
+            k0 = (pk.x - m*k3*v3.x) / (mm*v0.x);
+        } else {
+            k0 = (pk.y - pk.x*v3.y / v3.x) / (mm*(v0.y - v0.x*v3.y / v3.x));
+            k3 = (pk.x - mm*k0*v0.x) / (m*v3.x);
+        }
+
+        p1.x = p0.x + k0*v0.x;
+        p1.y = p0.y + k0*v0.y;
+        p2.x = p3.x + k3*v3.x;
+        p2.y = p3.y + k3*v3.y;
     }
 
     /* Return the new curve in the original array */
