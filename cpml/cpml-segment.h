@@ -29,7 +29,7 @@ typedef struct _CpmlSegment CpmlSegment;
 
 struct _CpmlSegment {
         cairo_path_t     path;
-        cairo_path_t    *original;
+        cairo_path_t    *source;
 };
 
 

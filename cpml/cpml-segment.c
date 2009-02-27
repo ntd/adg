@@ -59,7 +59,7 @@ cpml_segment_init(CpmlSegment *segment, cairo_path_t *src)
         src->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
-    segment->original = src;
+    segment->source = src;
     memcpy(&segment->path, src, sizeof(cairo_path_t));
 
     return segment_normalize(segment);
@@ -136,12 +136,12 @@ cpml_segment_dump(const CpmlSegment *segment)
  * cpml_segment_reset:
  * @segment: a #CpmlSegment
  *
- * Modifies @segment to point to the first segment of the original path.
+ * Modifies @segment to point to the first segment of the source path.
  **/
 void
 cpml_segment_reset(CpmlSegment *segment)
 {
-    memcpy(&segment->path, segment->original, sizeof(cairo_path_t));
+    memcpy(&segment->path, segment->source, sizeof(cairo_path_t));
     segment_normalize(segment);
 }
 
@@ -149,7 +149,7 @@ cpml_segment_reset(CpmlSegment *segment)
  * cpml_segment_next:
  * @segment: a #CpmlSegment
  *
- * Modifies @segment to point to the next segment of the original path.
+ * Modifies @segment to point to the next segment of the source path.
  *
  * Return value: 1 on success, 0 if no next segment found or errors
  **/
@@ -157,9 +157,9 @@ cairo_bool_t
 cpml_segment_next(CpmlSegment *segment)
 {
     int num_data = segment->path.num_data;
-    int offset = segment->path.data - segment->original->data;
+    int offset = segment->path.data - segment->source->data;
 
-    segment->path.num_data = segment->original->num_data - num_data - offset;
+    segment->path.num_data = segment->source->num_data - num_data - offset;
     segment->path.data += num_data;
 
     return segment_normalize(segment);
