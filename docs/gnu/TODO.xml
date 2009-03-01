@@ -60,7 +60,17 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.6.0</title>
 
 <itemizedlist mark="circle">
+   <listitem>Rename Arrow to Marker: the latter is more generic (that is, better).</listitem>
+   <listitem>Rename StyleId to StyleType: the latter is more clear.</listitem>
+   <listitem>Implement AdgMarker as a customizable entity able to render (at least)
+   the styles defined in AdgMarkerStyleType. Also, the ARROW and TRIANGLE
+   styles should follow the director path that could be a curve. Use the
+   METAPOST solution suggested by John Hobby I don't know where, that is,
+   given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the path by half <parameter>angle</parameter> in both directions,
+   look for intersection with a circle at the end of the director path
+   with radius <parameter>size</parameter>, close the resulting path and fill the arrow.</listitem>
    <listitem>Rework styles by using GObject and properties.</listitem>
+   <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
    <listitem>Implement a basic AdgXatchStyle, derived from AdgLineStyle.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
