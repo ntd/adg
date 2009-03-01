@@ -12,6 +12,6 @@ test -z "$srcdir" && srcdir=.
 }
 
 pushd $srcdir
-gtkdocize
-autoreconf -is
+autoreconf -isf
+gtkdocize --flavour no-tmpl || exit 1
 popd

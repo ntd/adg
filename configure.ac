@@ -5,6 +5,7 @@ AC_INIT([adg], [0.4.0],
         [adg])
 AC_CONFIG_SRCDIR(README)
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR(m4)
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 
@@ -32,7 +33,7 @@ AM_GNU_GETTEXT_VERSION([0.15])
 
 # Check for gtk-doc
 
-GTK_DOC_CHECK(1.4)
+GTK_DOC_CHECK(1.9)
 
 
 # Check for packages
