@@ -23,7 +23,9 @@ IGNORE_HFILES=		adg-adim-private.h \
 			adg-path-private.h \
 			adg-type-builtins.h
 HTML_IMAGES=
-CONTENT_FILES=
+CONTENT_FILES=		$(top_srcdir)/docs/gnu/README.xml \
+			$(top_srcdir)/docs/gnu/NEWS.xml \
+			$(top_srcdir)/docs/gnu/TODO.xml
 EXPAND_CONTENT_FILES=
 AM_CPPFLAGS=		-I$(top_srcdir) \
 			@GTK2_CFLAGS@
