@@ -4,7 +4,7 @@
 # make
 /adg-decl-list.txt
 /adg-decl.txt
-/adg.overrides.txt
+/adg-overrides.txt
 /adg-undeclared.txt
 /adg-undocumented.txt
 /adg-unused.txt
