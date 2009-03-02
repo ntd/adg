@@ -12,6 +12,6 @@ test -z "$srcdir" && srcdir=.
 }
 
 pushd $srcdir
-autoreconf -isf
 gtkdocize --flavour no-tmpl || exit 1
+autoreconf -isf
 popd
