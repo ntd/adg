@@ -3,7 +3,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT([adg], [0.4.0],
         [ntd at entidi.it],
         [adg])
-AC_CONFIG_SRCDIR(README)
+AC_CONFIG_SRCDIR([adg/adg.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR(m4)
 AM_INIT_AUTOMAKE
