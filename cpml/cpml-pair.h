@@ -35,6 +35,9 @@ struct _CpmlPair {
 
 CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
+CpmlPair *      cpml_pair_from_cairo            (CpmlPair       *pair,
+                                                 const cairo_path_data_t
+                                                                *path_data);
 CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
                                                  const CpmlPair *p1,
                                                  const CpmlVector
@@ -88,6 +91,9 @@ CpmlVector *    cpml_vector_at_curve            (CpmlVector     *vector,
 double          cpml_vector_angle               (const CpmlVector
                                                                 *vector);
 void            cpml_vector_normal              (CpmlVector     *vector);
+void            cpml_pair_to_cairo              (const CpmlPair *pair,
+                                                 cairo_path_data_t
+                                                                *path_data);
 
 
 CAIRO_END_DECLS

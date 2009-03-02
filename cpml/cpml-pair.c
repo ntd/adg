@@ -76,6 +76,24 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 }
 
 /**
+ * cpml_pair_from_cairo:
+ * @pair: the destination #CpmlPair
+ * @path_data: the original path data point
+ *
+ * Gets @pair from a #cairo_path_data_t struct. @path_data should contains
+ * a point data: it is up to the caller to be sure @path_data is valid.
+ *
+ * Return value: @pair
+ **/
+CpmlPair *
+cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
+{
+    pair->x = path_data->point.x;
+    pair->y = path_data->point.y;
+    return pair;
+}
+
+/**
  * cpml_pair_intersection_pv_pv:
  * @pair: the destination #CpmlPair
  * @p1: the start point of the first line
@@ -498,4 +516,19 @@ cpml_vector_normal(CpmlVector *vector)
 
     vector->x = -vector->y;
     vector->y = tmp;
+}
+
+/**
+ * cpml_pair_to_cairo:
+ * @pair: the destination #CpmlPair
+ * @path_data: the original path data point
+ *
+ * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
+ * operation of cpml_pair_from_cairo().
+ **/
+void
+cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
+{
+    path_data->point.x = pair->x;
+    path_data->point.y = pair->y;
 }
