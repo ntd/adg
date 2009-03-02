@@ -1,0 +1,18 @@
+# ./configure
+/version.xml
+
+# make
+/cpml-decl-list.txt
+/cpml-decl.txt
+/cpml-overrides.txt
+/cpml-undeclared.txt
+/cpml-undocumented.txt
+/cpml-unused.txt
+/cpml.args
+/cpml.hierarchy
+/cpml.interfaces
+/cpml.prerequisites
+/cpml.signals
+/html/
+/xml/
+*.bak

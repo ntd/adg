@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                      "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>CPML Reference Manual</title>
+    <releaseinfo>for CPML &version;</releaseinfo>
+  </bookinfo>
+
+  <part id="Core">
+    <title>CPML core reference</title>
+    <xi:include href="xml/macros.xml"/>
+    <xi:include href="xml/pair.xml"/>
+  </part>
+
+  <part id="Manipulating">
+    <title>Path Manipulation</title>
+    <xi:include href="xml/segment.xml"/>
+    <xi:include href="xml/primitive.xml"/>
+    <xi:include href="xml/curve.xml"/>
+  </part>
+
+  <index id="Index">
+    <title>Index</title>
+  </index>
+    
+</book>

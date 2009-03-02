@@ -1,6 +1,7 @@
 ## Process this file with automake to produce Makefile.in.
 
-SUBDIRS=		adg
+SUBDIRS=		adg \
+			cpml
 
 EXTRA_DIST=		gnu/docbook2txt.xsl \
 			gnu/README.xml \

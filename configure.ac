@@ -51,5 +51,7 @@ AC_CONFIG_FILES([Makefile
                  docs/Makefile
                  docs/adg/Makefile
                  docs/adg/version.xml
+                 docs/cpml/Makefile
+                 docs/cpml/version.xml
                  po/Makefile.in])
 AC_OUTPUT
