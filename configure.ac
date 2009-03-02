@@ -49,6 +49,7 @@ AC_CONFIG_FILES([Makefile
                  adg/Makefile
 		 demo/Makefile
                  docs/Makefile
-                 docs/version.xml
+                 docs/adg/Makefile
+                 docs/adg/version.xml
                  po/Makefile.in])
 AC_OUTPUT
