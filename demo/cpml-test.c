@@ -127,7 +127,7 @@ path_constructor(AdgEntity *entity, cairo_t *cr, gpointer user_data)
 
     /* Checking cpml_segment_offset */
     path = cairo_copy_path(cr);
-    cpml_segment_init(&segment, path);
+    cpml_segment_from_cairo(&segment, path);
     cpml_segment_offset(&segment, 20);
     cairo_append_path(cr, path);
     cairo_path_destroy(path);

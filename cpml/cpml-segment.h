@@ -33,7 +33,7 @@ struct _CpmlSegment {
 };
 
 
-cairo_bool_t    cpml_segment_init               (CpmlSegment        *segment,
+cairo_bool_t    cpml_segment_from_cairo         (CpmlSegment        *segment,
                                                  cairo_path_t       *src);
 CpmlSegment *   cpml_segment_copy               (CpmlSegment        *segment,
                                                  const CpmlSegment  *src);

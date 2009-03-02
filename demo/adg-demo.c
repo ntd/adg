@@ -338,7 +338,7 @@ piston_path_extern(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     /* Build the shape by reflecting the current path, reversing the order
      * and joining the result to the current path */
     path = cairo_copy_path(cr);
-    cpml_segment_init(&segment, path);
+    cpml_segment_from_cairo(&segment, path);
     cpml_segment_reverse(&segment);
     adg_matrix_init_reflection(&matrix, 0);
     cpml_segment_transform(&segment, &matrix);

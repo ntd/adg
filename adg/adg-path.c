@@ -135,7 +135,7 @@ adg_path_dump(AdgPath *path)
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!cpml_segment_init(&segment, path->priv->cairo_path)) {
+    if (!cpml_segment_from_cairo(&segment, path->priv->cairo_path)) {
         g_print("Invalid path data to dump!\n");
     } else {
         do {

@@ -40,7 +40,7 @@ static void             join_primitives         (cairo_path_data_t *last_data,
 
 
 /**
- * cpml_segment_init:
+ * cpml_segment_from_cairo:
  * @segment: a #CpmlSegment
  * @src: the source cairo_path_t
  *
@@ -52,7 +52,7 @@ static void             join_primitives         (cairo_path_data_t *last_data,
  * Return value: 1 on success, 0 on errors
  **/
 cairo_bool_t
-cpml_segment_init(CpmlSegment *segment, cairo_path_t *src)
+cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *src)
 {
     /* The cairo path should be defined and in perfect state */
     if (src == NULL || src->num_data == 0 ||
