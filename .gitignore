@@ -10,7 +10,6 @@
 /config.sub
 /missing
 /depcomp
-/gtk-doc.make
 /install-sh
 /ltmain.sh
 Makefile.in
