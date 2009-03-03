@@ -20,9 +20,9 @@
 /**
  * SECTION:pair
  * @title: AdgPair
- * @short_description: A wrapper for the CpmlPair struct
+ * @short_description: A wrapper for the #CpmlPair struct
  *
- * The AdgPair is a wrapper typedef in GType syntax of the CpmlPair struct.
+ * The AdgPair is a wrapper typedef in GType syntax of the #CpmlPair struct.
  **/
 
 #include "adg-pair.h"
