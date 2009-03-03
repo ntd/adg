@@ -17,6 +17,20 @@
  * Boston, MA  02110-1301, USA.
  */
 
+/**
+ * SECTION:segment
+ * @title: CpmlSegment
+ * @short_description: Contiguous lines
+ *
+ * A segment is a single contiguous line got from a cairo path.
+ *
+ * Every #cairo_path_t struct can contain more than one segment: the CPML
+ * library provides iteration APIs to browse these segments. Use
+ * cpml_segment_reset() to reset the iterator at the start of the cairo
+ * path (at the first segment) and cpml_segment_next() to get the next
+ * segment. Getting the previous segment is not provided, as the underlying
+ * struct is not accessible in reverse order.
+ **/
 
 #include "cpml-segment.h"
 #include "cpml-pair.h"

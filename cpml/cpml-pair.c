@@ -17,17 +17,16 @@
  * Boston, MA  02110-1301, USA.
  */
 
-
 /**
- * SECTION:cpmlpair
+ * SECTION:pair
  * @title: CpmlPair
  * @short_description: A structure holding a couple of values
  *
- * The CpmlPair is a generic 2D structure. It can be used to represent points,
- * sizes, offsets or whatever have two components.
+ * The CpmlPair is a generic 2D structure. It can be used to represent
+ * coordinates, sizes, offsets or whatever have two components.
  *
  * The name comes from MetaFont.
- */
+ **/
 
 /**
  * CpmlPair:
