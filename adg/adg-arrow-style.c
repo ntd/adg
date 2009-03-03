@@ -482,13 +482,13 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
     length = arrow_style->priv->size;
     height_2 = tan(arrow_style->priv->angle / 2.0) * length;
     cairo_device_to_user_distance(cr, &length, &height_2);
-    org_x = segment->path.data[1].point.x;
-    org_y = segment->path.data[1].point.y;
+    org_x = segment->data[1].point.x;
+    org_y = segment->data[1].point.y;
 
-    switch (segment->path.data[2].header.type) {
+    switch (segment->data[2].header.type) {
     case CAIRO_PATH_LINE_TO:
-        vector.x = segment->path.data[3].point.x - org_x;
-        vector.y = segment->path.data[3].point.y - org_y;
+        vector.x = segment->data[3].point.x - org_x;
+        vector.y = segment->data[3].point.y - org_y;
         cpml_vector_from_pair(&vector, &vector, 1);
 
         tail.x = vector.x * length + org_x;
@@ -527,6 +527,6 @@ draw_circle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
     cairo_device_to_user_distance(cr, &radius, &dummy);
     cairo_new_path(cr);
     cairo_arc(cr,
-              segment->path.data[1].point.x, segment->path.data[1].point.y,
+              segment->data[1].point.x, segment->data[1].point.y,
               radius, 0., M_PI);
 }

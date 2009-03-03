@@ -121,10 +121,9 @@ adg_ldim_init(AdgLDim *ldim)
     priv->path_data[10].header.type = CAIRO_PATH_LINE_TO;
     priv->path_data[10].header.length = 2;
 
-    priv->director.path.status = CAIRO_STATUS_SUCCESS;
-    priv->director.path.data = priv->director_data;
-    priv->director.path.num_data = 4;
-    priv->director.source = &priv->director.path;
+    priv->director.data = priv->director_data;
+    priv->director.num_data = 4;
+    priv->director.source = NULL;
 
     priv->director_data[0].header.type = CAIRO_PATH_MOVE_TO;
     priv->director_data[0].header.length = 2;

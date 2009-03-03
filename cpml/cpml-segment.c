@@ -24,12 +24,28 @@
  *
  * A segment is a single contiguous line got from a cairo path.
  *
- * Every #cairo_path_t struct can contain more than one segment: the CPML
- * library provides iteration APIs to browse these segments. Use
- * cpml_segment_reset() to reset the iterator at the start of the cairo
+ * Every #cairo_path_t struct can contain more than one segment:
+ * the CPML library provides iteration APIs to browse these segments.
+ * The CpmlSegment struct internally keeps a reference to the source
+ * cairo path so it can be used both for getting segment data and
+ * browsing the segments (that is, it is used also as an iterator).
+ *
+ * Use cpml_segment_reset() to reset the iterator at the start of the cairo
  * path (at the first segment) and cpml_segment_next() to get the next
  * segment. Getting the previous segment is not provided, as the underlying
  * struct is not accessible in reverse order.
+ **/
+
+/**
+ * CpmlSegment:
+ * @source: the source #cairo_path_t struct
+ * @data: the segment data
+ * @num_data: size of @data
+ *
+ * This is an unobtrusive struct to identify a segment inside a
+ * cairo path. Unobtrusive means that the real coordinates are
+ * still stored in @source: CpmlSegment only provides a way to
+ * access the underlying cairo path.
  **/
 
 #include "cpml-segment.h"
@@ -56,25 +72,31 @@ static void             join_primitives         (cairo_path_data_t *last_data,
 /**
  * cpml_segment_from_cairo:
  * @segment: a #CpmlSegment
- * @src: the source cairo_path_t
+ * @cairo_path: the source cairo_path_t
  *
  * Builds a CpmlSegment from a cairo_path_t structure. This operation
- * involves stripping the leading %MOVE_TO primitives and setting the
- * internal segment structure accordling. A pointer to the source
- * path segment is kept.
+ * involves stripping the leading %CAIRO_PATH_MOVE_TO primitives and
+ * setting the internal segment structure accordling. A pointer to the
+ * source cairo path is kept.
+ *
+ * This function will fail if @cairo_path is null, empty or if its
+ * %status member is not %CAIRO_STATUS_SUCCESS. Also, the first
+ * primitive must be a CAIRO_PATH_MOVE_TO, so no dependency on the
+ * cairo context is needed.
  *
  * Return value: 1 on success, 0 on errors
  **/
 cairo_bool_t
-cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *src)
+cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *cairo_path)
 {
     /* The cairo path should be defined and in perfect state */
-    if (src == NULL || src->num_data == 0 ||
-        src->status != CAIRO_STATUS_SUCCESS)
+    if (cairo_path == NULL || cairo_path->num_data == 0 ||
+        cairo_path->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
-    segment->source = src;
-    memcpy(&segment->path, src, sizeof(cairo_path_t));
+    segment->source = cairo_path;
+    segment->data = cairo_path->data;
+    segment->num_data = cairo_path->num_data;
 
     return segment_normalize(segment);
 }
@@ -106,18 +128,11 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 void
 cpml_segment_dump(const CpmlSegment *segment)
 {
-    const cairo_path_t *path;
     cairo_path_data_t *data;
-    int n_data, n_point;
+    int n, n_point;
 
-    if (segment == NULL) {
-        printf("Trying to dump a NULL segment!\n");
-        return;
-    }
-
-    path = &segment->path;
-    for (n_data = 0; n_data < path->num_data; ++n_data) {
-	data = path->data + n_data;
+    for (n = 0; n < segment->num_data; ++n) {
+	data = segment->data + n;
 
 	switch (data->header.type) {
 	case CAIRO_PATH_MOVE_TO:
@@ -141,7 +156,7 @@ cpml_segment_dump(const CpmlSegment *segment)
 	    printf("(%lf, %lf) ", data[n_point].point.x,
                    data[n_point].point.y);
 
-	n_data += n_point - 1;
+	n += n_point - 1;
 	printf("\n");
     }
 }
@@ -155,7 +170,8 @@ cpml_segment_dump(const CpmlSegment *segment)
 void
 cpml_segment_reset(CpmlSegment *segment)
 {
-    memcpy(&segment->path, segment->source, sizeof(cairo_path_t));
+    segment->data = segment->source->data;
+    segment->num_data = segment->source->num_data;
     segment_normalize(segment);
 }
 
@@ -170,11 +186,14 @@ cpml_segment_reset(CpmlSegment *segment)
 cairo_bool_t
 cpml_segment_next(CpmlSegment *segment)
 {
-    int num_data = segment->path.num_data;
-    int offset = segment->path.data - segment->source->data;
+    int rest = segment->source->num_data - segment->num_data +
+        segment->source->data - segment->data;
 
-    segment->path.num_data = segment->source->num_data - num_data - offset;
-    segment->path.data += num_data;
+    if (rest <= 0)
+        return 0;
+
+    segment->data += segment->num_data;
+    segment->num_data = rest;
 
     return segment_normalize(segment);
 }
@@ -192,21 +211,19 @@ cpml_segment_reverse(CpmlSegment *segment)
     cairo_path_data_t *data, *dst_data;
     size_t data_size;
     double end_x, end_y;
-    int num_data, n_data;
-    int num_points, n_point;
+    int n, num_points, n_point;
     const cairo_path_data_t *src_data;
 
-    num_data = segment->path.num_data;
-    data_size = sizeof(cairo_path_data_t) * num_data;
+    data_size = sizeof(cairo_path_data_t) * segment->num_data;
     data = cpml_alloca(data_size);
-    end_x = segment->path.data[1].point.x;
-    end_y = segment->path.data[1].point.y;
+    end_x = segment->data[1].point.x;
+    end_y = segment->data[1].point.y;
 
-    for (n_data = 2; n_data < num_data; ++n_data) {
-        src_data = segment->path.data + n_data;
+    for (n = 2; n < segment->num_data; ++n) {
+        src_data = segment->data + n;
 	num_points = src_data->header.length;
 
-        dst_data = data + num_data - n_data - num_points + 2;
+        dst_data = data + segment->num_data - n - num_points + 2;
         dst_data->header.type = src_data->header.type;
         dst_data->header.length = num_points;
 
@@ -217,14 +234,14 @@ cpml_segment_reverse(CpmlSegment *segment)
             end_y = src_data[n_point].point.y;
         }
 
-	n_data += n_point - 1;
+	n += n_point - 1;
     }
 
     data[0].header.type = CAIRO_PATH_MOVE_TO;
     data[0].header.length = 2;
     data[1].point.x = end_x;
     data[1].point.y = end_y;
-    memcpy(segment->path.data, data, data_size);
+    memcpy(segment->data, data, data_size);
 }
 
 /**
@@ -238,13 +255,11 @@ void
 cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 {
     cairo_path_data_t *data;
-    int n_data, num_data;
-    int n_point, num_points;
+    int n, n_point, num_points;
 
-    data = segment->path.data;
-    num_data = segment->path.num_data;
+    data = segment->data;
 
-    for (n_data = 0; n_data < num_data; n_data += num_points) {
+    for (n = 0; n < segment->num_data; n += num_points) {
         num_points = data->header.length;
         ++data;
         for (n_point = 1; n_point < num_points; ++n_point) {
@@ -270,21 +285,19 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 cairo_bool_t
 cpml_segment_offset(CpmlSegment *segment, double offset)
 {
-    int num_data, n_data;
-    int num_points, n_point;
+    int n, num_points, n_point;
     cairo_path_data_t *data;
     cairo_path_data_t *last_data;
     CpmlVector v_old, v_new;
     CpmlPair p_old;
     CpmlPair p[4];
 
-    num_data = segment->path.num_data;
     last_data = NULL;
     p_old.x = 0;
     p_old.y = 0;
 
-    for (n_data = 0; n_data < num_data; n_data += data->header.length) {
-        data = segment->path.data + n_data;
+    for (n = 0; n < segment->num_data; n += data->header.length) {
+        data = segment->data + n;
         num_points = data->header.length - 1;
 
         /* Fill the p[] vector */
@@ -347,22 +360,19 @@ segment_normalize(CpmlSegment *segment)
 {
     cairo_path_data_t *data;
 
-    if (segment == NULL || segment->path.num_data <= 0)
-        return 0;
-
-    data = segment->path.data;
-    if (data->header.type != CAIRO_PATH_MOVE_TO) {
-        segment->path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    if (segment->source->data->header.type != CAIRO_PATH_MOVE_TO) {
         return 0;
     }
 
-    while (segment->path.num_data >= 0) {
+    data = segment->data;
+
+    while (segment->num_data >= 0) {
         data += 2;
         if (data->header.type != CAIRO_PATH_MOVE_TO)
             return 1;
 
-        segment->path.data = data;
-        segment->path.num_data -= 2;
+        segment->data = data;
+        segment->num_data -= 2;
     }
 
     return 0;

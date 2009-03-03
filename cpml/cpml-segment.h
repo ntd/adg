@@ -28,23 +28,25 @@ CAIRO_BEGIN_DECLS
 typedef struct _CpmlSegment CpmlSegment;
 
 struct _CpmlSegment {
-        cairo_path_t     path;
-        cairo_path_t    *source;
+        cairo_path_t      *source;
+        cairo_path_data_t *data;
+        int                num_data;
+
 };
 
 
-cairo_bool_t    cpml_segment_from_cairo         (CpmlSegment        *segment,
-                                                 cairo_path_t       *src);
-CpmlSegment *   cpml_segment_copy               (CpmlSegment        *segment,
-                                                 const CpmlSegment  *src);
-void            cpml_segment_dump               (const CpmlSegment  *segment);
-void            cpml_segment_reset              (CpmlSegment        *segment);
-cairo_bool_t    cpml_segment_next               (CpmlSegment        *segment);
-void            cpml_segment_reverse            (CpmlSegment        *segment);
-void            cpml_segment_transform          (CpmlSegment        *segment,
-                                                 const cairo_matrix_t *matrix);
-cairo_bool_t    cpml_segment_offset             (CpmlSegment        *segment,
-                                                 double              offset);
+cairo_bool_t    cpml_segment_from_cairo (CpmlSegment        *segment,
+                                         cairo_path_t       *cairo_path);
+CpmlSegment *   cpml_segment_copy       (CpmlSegment        *segment,
+                                         const CpmlSegment  *src);
+void            cpml_segment_dump       (const CpmlSegment  *segment);
+void            cpml_segment_reset      (CpmlSegment        *segment);
+cairo_bool_t    cpml_segment_next       (CpmlSegment        *segment);
+void            cpml_segment_reverse    (CpmlSegment        *segment);
+void            cpml_segment_transform  (CpmlSegment        *segment,
+                                         const cairo_matrix_t *matrix);
+cairo_bool_t    cpml_segment_offset     (CpmlSegment        *segment,
+                                         double              offset);
 
 CAIRO_END_DECLS
 
