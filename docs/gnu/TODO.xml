@@ -13,7 +13,7 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.4.0</title>
 
 <itemizedlist mark="circle">
-   <listitem override="disc">Split mathematic stuff in its own library. It will be called cpml,
+   <listitem override="disc">Split mathematic stuff in its own library. It will be called CPML,
    that is Cairo Path Manipulation Library.</listitem>
    <listitem override="disc">Avoid wrapping of cairo APIs in AdgPath.</listitem>
    <listitem override="disc">Implement AdgToyText, a basic text entity using the cairo "toy" text API.</listitem>
@@ -28,13 +28,14 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.5.0</title>
 
 <itemizedlist mark="circle">
-   <listitem override="disc">Provide cpml APIs for accessing cairo paths and browsing
+   <listitem override="disc">Provide CPML APIs for accessing cairo paths and browsing
    their segments (a continuous line).</listitem>
-   <listitem>Provide cpml APIs for accessing segments and browsing their primitives
+   <listitem>Provide CPML APIs for accessing segments and browsing their primitives
    (a single line / curve / close path).</listitem>
-   <listitem override="disc">cpml APIs to offset cairo paths: specifically, a decent
+   <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
    approximation for Bézier curves must be implemented.</listitem>
-   <listitem>Provide basic cpml APIs to find intersection between cairo paths.</listitem>
+   <listitem>Provide basic CPML APIs to find intersection between cairo paths.</listitem>
+   <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem>Add a fillet operation.</listitem>
    <listitem>Add a chamfer operation.</listitem>
    <listitem>Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
