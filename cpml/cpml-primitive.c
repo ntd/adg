@@ -33,7 +33,7 @@
  * CpmlPrimitive:
  * @source: the source #CpmlSegment
  * @org: a pointer to the first point of the primitive
- * @data: a pointer to the path data, including the header
+ * @data: the array of the path data, prepended by the header
  *
  * As for #CpmlSegment, also the primitive is unobtrusive. This
  * means CpmlPrimitive does not include any coordinates but instead
@@ -43,7 +43,7 @@
 
 #include "cpml-primitive.h"
 
-#include <stdio.h>
+#include <stdlib.h>
 
 /**
  * cpml_primitive_from_segment:
@@ -103,50 +103,80 @@ cpml_primitive_next(CpmlPrimitive *primitive)
         return 0;
     }
 
-    primitive->org = cpml_primitive_get_endpoint(primitive);
+    primitive->org = cpml_primitive_get_point(primitive, -1);
     primitive->data = new_data;
 }
 
 /**
- * cpml_primitive_get_startpoint:
+ * cpml_primitive_get_npoints:
  * @primitive: a #CpmlPrimitive
  *
- * Gets the start point of a primitive.
+ * Gets the number of points required to identify the underlying primitive.
  *
- * Return value: a pointer to the start point (in cairo format)
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ *
+ * Return value: the number of points or -1 on errors
  **/
-cairo_path_data_t *
-cpml_primitive_get_startpoint(CpmlPrimitive *primitive)
+int
+cpml_primitive_get_npoints(CpmlPrimitive *primitive)
 {
-    return primitive->org;
+    switch (primitive->data->header.type) {
+    case CAIRO_PATH_LINE_TO:
+        return 1;
+    case CAIRO_PATH_CURVE_TO:
+        return 2;
+    case CAIRO_PATH_CLOSE_PATH:
+        return 0;
+    }
+
+    return -1;
 }
 
 /**
- * cpml_primitive_get_endpoint:
+ * cpml_primitive_get_point:
  * @primitive: a #CpmlPrimitive
+ * @npoint: the index of the point to retrieve
  *
- * Gets the end point of a primitive.
+ * Gets the specified @npoint from @primitive. The index starts
+ * at 0: if @npoint is 0, the start point (the origin) is
+ * returned, 1 for the second point and so on. As a special case,
+ * @npoint less than 0 means the end point.
  *
- * Return value: a pointer to the end point (in cairo format)
+ * If it is requested the end point on a primitive that does not
+ * owns any point, this function cycles the source #CpmlSegment and
+ * returns the first point. This case must be handled this way
+ * because requesting the end point of a %CAIRO_PATH_CLOSE_PATH
+ * (that does not have any point) is a valid operation.
+ *
+ * Return value: a pointer to the requested point (in cairo format)
+ *               or %NULL if the point is outside the valid range
  **/
 cairo_path_data_t *
-cpml_primitive_get_endpoint(CpmlPrimitive *primitive)
+cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
 {
-    cairo_path_data_t *data = primitive->data;
+    int npoints;
+    
+    /* For a start point request, simply return the origin */
+    if (npoint == 0)
+        return primitive->org;
 
-    switch (data->header.type) {
-    case CAIRO_PATH_LINE_TO:
-        return &data[1];
-        break;
-    case CAIRO_PATH_CURVE_TO:
-        return &data[3];
-        break;
-    case CAIRO_PATH_CLOSE_PATH:
-        /* For close path, the end point is the start of the segment */
+    npoints = cpml_primitive_get_npoints(primitive);
+    if (npoints < 0)
+        return NULL;
+
+    /* Check for an end point request and modify npoint accordling */
+    if (npoint < 0)
+        npoint = npoints;
+
+    /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
+    if (npoint == 0)
         return &primitive->source->data[1];
-        break;
-    }
 
-    printf("Unhandled entity (%d)", data->header.type);
-    return NULL;
+    if (npoint > npoints)
+        return NULL;
+
+    return &primitive->data[npoint];
 }

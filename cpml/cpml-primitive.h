@@ -38,10 +38,10 @@ void            cpml_primitive_from_segment     (CpmlPrimitive  *primitive,
                                                  CpmlSegment    *segment);
 void            cpml_primitive_reset            (CpmlPrimitive  *primitive);
 cairo_bool_t    cpml_primitive_next             (CpmlPrimitive  *primitive);
+int             cpml_primitive_get_npoints      (CpmlPrimitive  *primitive);
 cairo_path_data_t *
-                cpml_primitive_get_startpoint   (CpmlPrimitive  *primitive);
-cairo_path_data_t *
-                cpml_primitive_get_endpoint     (CpmlPrimitive  *primitive);
+                cpml_primitive_get_point        (CpmlPrimitive  *primitive,
+                                                 int             npoint);
 
 CAIRO_END_DECLS
 
