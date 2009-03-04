@@ -59,9 +59,12 @@ cpml_segment_dump
 <FILE>primitive</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 CpmlPrimitive
-CpmlPrimitiveType
 <SUBSECTION>
 cpml_primitive_from_segment
+<SUBSECTION>
+cpml_primitive_reset
+cpml_primitive_next
+cpml_primitive_get_endpoint
 </SECTION>
 
 <SECTION>

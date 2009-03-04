@@ -20,29 +20,26 @@
 #ifndef __CPML_PRIMITIVE_H__
 #define __CPML_PRIMITIVE_H__
 
-#include <cpml-segment.h>
+#include <cpml/cpml-segment.h>
 
 
 CAIRO_BEGIN_DECLS
 
 typedef struct _CpmlPrimitive CpmlPrimitive;
-typedef enum _CpmlPrimitiveType CpmlPrimitiveType;
-
-enum _CpmlPrimitiveType {
-    CPML_PRIMITIVE_LINE,
-    CPML_PRIMITIVE_CURVE,
-    CPML_PRIMITIVE_CLOSE_PATH
-};
 
 struct _CpmlPrimitive {
         CpmlSegment       *source;
         cairo_path_data_t *org;
-        cairo_path_data_t *path_data;
+        cairo_path_data_t *data;
 };
 
 
-cairo_bool_t    cpml_primitive_from_segment     (CpmlPrimitive  *primitive,
+void            cpml_primitive_from_segment     (CpmlPrimitive  *primitive,
                                                  CpmlSegment    *segment);
+void            cpml_primitive_reset            (CpmlPrimitive  *primitive);
+cairo_bool_t    cpml_primitive_next             (CpmlPrimitive  *primitive);
+cairo_path_data_t *
+                cpml_primitive_get_endpoint     (CpmlPrimitive  *primitive);
 
 CAIRO_END_DECLS
 

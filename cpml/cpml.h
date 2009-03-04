@@ -22,6 +22,7 @@
 
 #include <cpml/cpml-macros.h>
 #include <cpml/cpml-pair.h>
+#include <cpml/cpml-primitive.h>
 #include <cpml/cpml-segment.h>
 
 #endif /* __CPML_H__ */
