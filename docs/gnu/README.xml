@@ -34,6 +34,31 @@ application provides the following benefits:</para>
 
 </simplesect>
 
+<simplesect id="README.design">
+<title>Design overview</title>
+
+<para>The project grew up arond the <ulink url="http://www.gtk.org/">GObject</ulink> library: the
+ADG canvas is developed in plain C using the object-oriented approach
+supplied by GObject.</para>
+
+<para>The mathematical and geometrical algorithms, together with some useful
+function to manipulate cairo paths, are kept in a separated library.
+Although the CPML library (Cairo Path Manipulation Library) is scattered
+across the ADG tree, it can be easily splitted on its own in future, if
+requested.</para>
+
+<para>The rendering is based on the <ulink url="http://cairographics.org/">cairo engine</ulink>,
+so the ADG project fully shares strong and weak points of the underlying
+cairo library.</para>
+
+<para>For the optional database connectivity, my suggestion is to take a look
+to the <ulink url="http://www.gnome-db.org/">libgda</ulink> project, partly because it is a
+good and actively maintained project and partly because it uses the ADG
+technologies (object-oriented C code using GObject), so can be easily
+integrated in a single application.</para>
+</simplesect>
+
+
 <simplesect id="README.dependencies">
 <title>External dependencies</title>
 
@@ -50,8 +75,8 @@ They can be found on nearly every decent Unix-like system, although the
 required versions could be quite recent. The ADG is mainly developed on
 GNU/Linux systems but its dependecies are known to be platform independent,
 so a porting to other systems should be quite easy (if not automatic).</para>
-
 </simplesect>
+
 
 <simplesect id="README.installation">
 <title>Installation</title>
@@ -63,7 +88,8 @@ for managing free software projects.</para>
    <listitem>Download the ADG tarball and put it somewhere in your file system,
    where you have write access (your home directory is a good candidate).
    You can browse the old releases or get the latest tarball from
-   <ulink url="http://sourceforge.net/project/showfiles.php?group_id=185095">sourceforge</ulink>.</listitem>
+   <ulink url="http://sourceforge.net/project/showfiles.php?group_id=185095">sourceforge</ulink>.
+   </listitem>
    <listitem>Unpack the tarball: use the version you downloaded in the previous step
    instead of 0.3.2:
 <programlisting>tar -xjvf adg-0.3.2.tar.bz2</programlisting></listitem>
@@ -91,7 +117,6 @@ for managing free software projects.</para>
    from inside the ADG build directory. Just be sure to have the same
    privileges you had while installing it.</listitem>
 </orderedlist>
-
 </simplesect>
 
 </chapter>
