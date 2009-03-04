@@ -65,12 +65,12 @@ cpml_primitive_from_segment
 cpml_primitive_reset
 cpml_primitive_next
 <SUBSECTION>
-cpml_primitive_get_startpoint
-cpml_primitive_get_endpoint
+cpml_primitive_get_npoints
+cpml_primitive_get_point
 </SECTION>
 
 <SECTION>
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
-CpmlCurve
+cpml_curve_offset
 </SECTION>

@@ -20,19 +20,12 @@
 #ifndef __CPML_CURVE_H__
 #define __CPML_CURVE_H__
 
-#include <cpml-pair.h>
+#include <cpml/cpml-primitive.h>
 
 
 CAIRO_BEGIN_DECLS
 
-typedef struct _CpmlCurve CpmlCurve;
-
-struct _CpmlCurve {
-    CpmlPair    p0, p1, p2, p3;
-};
-
-
-static void     cpml_curve_offset               (CpmlCurve      *curve,
+void            cpml_curve_offset               (CpmlPrimitive  *curve,
                                                  double          offset);
 
 CAIRO_END_DECLS
