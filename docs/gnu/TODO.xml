@@ -78,6 +78,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>AdgPath should be an abstract class from which derive AdgPolyline,
    the basic stroked path entity.</listitem>
    <listitem>Add AdgXatch deriving AdgPath.</listitem>
+   <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in paper space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
 </itemizedlist>
@@ -90,6 +91,7 @@ must be reflected in the demo programs, where applicable.</para>
 <itemizedlist mark="circle">
    <listitem>Implement AdgModel and the model-view interaction.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
+   <listitem>Add self-intersection API for CPML segments.</listitem>
 </itemizedlist>
 
 </simplesect>
