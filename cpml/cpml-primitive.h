@@ -39,6 +39,8 @@ void            cpml_primitive_from_segment     (CpmlPrimitive  *primitive,
 void            cpml_primitive_reset            (CpmlPrimitive  *primitive);
 cairo_bool_t    cpml_primitive_next             (CpmlPrimitive  *primitive);
 cairo_path_data_t *
+                cpml_primitive_get_startpoint   (CpmlPrimitive  *primitive);
+cairo_path_data_t *
                 cpml_primitive_get_endpoint     (CpmlPrimitive  *primitive);
 
 CAIRO_END_DECLS

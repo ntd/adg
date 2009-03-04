@@ -64,6 +64,8 @@ cpml_primitive_from_segment
 <SUBSECTION>
 cpml_primitive_reset
 cpml_primitive_next
+<SUBSECTION>
+cpml_primitive_get_startpoint
 cpml_primitive_get_endpoint
 </SECTION>
 

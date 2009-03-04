@@ -108,11 +108,26 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 }
 
 /**
+ * cpml_primitive_get_startpoint:
+ * @primitive: a #CpmlPrimitive
+ *
+ * Gets the start point of a primitive.
+ *
+ * Return value: a pointer to the start point (in cairo format)
+ **/
+cairo_path_data_t *
+cpml_primitive_get_startpoint(CpmlPrimitive *primitive)
+{
+    return primitive->org;
+}
+
+/**
  * cpml_primitive_get_endpoint:
  * @primitive: a #CpmlPrimitive
- * @pair: the destination for the end point pair
  *
  * Gets the end point of a primitive.
+ *
+ * Return value: a pointer to the end point (in cairo format)
  **/
 cairo_path_data_t *
 cpml_primitive_get_endpoint(CpmlPrimitive *primitive)
