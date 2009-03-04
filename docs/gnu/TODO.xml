@@ -33,7 +33,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Provide CPML APIs for accessing segments and browsing their primitives
    (a single line / curve / close path).</listitem>
    <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
-   approximation for Bézier curves must be implemented.</listitem>
+   approximation for single Bézier curves must be implemented.</listitem>
    <listitem>Provide basic CPML APIs to find intersection between cairo paths.</listitem>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem>Add a fillet operation.</listitem>
@@ -92,6 +92,9 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Implement AdgModel and the model-view interaction.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
+   <listitem>Implement shape tolerances.</listitem>
+   <listitem>Improve Bézier offset approximation enabling the choice of approximate
+   a single curve with multiple offset curves.</listitem>
 </itemizedlist>
 
 </simplesect>
