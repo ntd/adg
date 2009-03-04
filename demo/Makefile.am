@@ -5,6 +5,6 @@ AM_CFLAGS =		@GTK2_CFLAGS@ \
 AM_LDFLAGS =		@GTK2_LIBS@
 LDADD =			$(top_builddir)/adg/libadg.la
 
-bin_PROGRAMS =		adg-demo
-noinst_PROGRAMS =	ldim \
-			cpml-test
+bin_PROGRAMS =		adg-demo \
+			cpml-demo
+noinst_PROGRAMS =	ldim
