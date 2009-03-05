@@ -360,6 +360,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
             break;
 
         case CAIRO_PATH_CLOSE_PATH:
+            /* TODO: use cpml_close_offset() when implemented */
             return 1;
         }
 

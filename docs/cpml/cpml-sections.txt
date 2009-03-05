@@ -80,3 +80,9 @@ cpml_line_offset
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_curve_offset
 </SECTION>
+
+<SECTION>
+<FILE>close</FILE>
+<INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_close_offset
+</SECTION>
