@@ -19,12 +19,12 @@
 
 /**
  * SECTION:curve
- * @title: CpmlCurve
+ * @title: Bézier curves
  * @short_description: Bézier cubic curve primitive management
  *
  * The following functions manipulate %CAIRO_PATH_CURVE_TO #CpmlPrimitive.
  * No check is made on the primitive struct, so be sure the CpmlPrimitive
- * is effectively a Bézier curve before calling this APIs.
+ * is effectively a Bézier curve before calling these APIs.
  **/
 
 #include "cpml-curve.h"
@@ -33,7 +33,7 @@
 /**
  * cpml_curve_offset:
  * @curve:  the #CpmlPrimitive curve data
- * @offset: distance for the computed parallel line
+ * @offset: distance for the computed parallel curve
  *
  * Given a cubic Bézier primitive in @curve, this function finds
  * the approximated Bézier curve parallel to @curve at distance
