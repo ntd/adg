@@ -19,6 +19,7 @@
     <title>Path Manipulation</title>
     <xi:include href="xml/segment.xml"/>
     <xi:include href="xml/primitive.xml"/>
+    <xi:include href="xml/line.xml"/>
     <xi:include href="xml/curve.xml"/>
   </part>
 

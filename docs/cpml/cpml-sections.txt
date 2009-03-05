@@ -70,6 +70,12 @@ cpml_primitive_get_point
 </SECTION>
 
 <SECTION>
+<FILE>line</FILE>
+<INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_line_offset
+</SECTION>
+
+<SECTION>
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_curve_offset

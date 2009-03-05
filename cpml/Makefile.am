@@ -8,6 +8,7 @@ AM_LDFLAGS=			@CAIRO_LIBS@
 # file groups
 cpml_h_sources=			cpml.h \
 				cpml-curve.h \
+				cpml-line.h \
 				cpml-macros.h \
 				cpml-pair.h \
 				cpml-primitive.h \
@@ -16,6 +17,7 @@ cpml_built_h_sources=
 cpml_private_h_sources=		cpml-alloca.h
 cpml_built_private_h_sources=
 cpml_c_sources=			cpml-curve.c \
+				cpml-line.c \
 				cpml-pair.c \
 				cpml-primitive.c \
 				cpml-segment.c

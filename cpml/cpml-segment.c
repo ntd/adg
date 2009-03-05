@@ -50,6 +50,8 @@
 
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-line.h"
+#include "cpml-curve.h"
 #include "cpml-pair.h"
 #include "cpml-alloca.h"
 
@@ -57,9 +59,6 @@
 #include <string.h>
 
 static cairo_bool_t     segment_normalize       (CpmlSegment       *segment);
-static void             line_offset             (CpmlPair          *p,
-                                                 CpmlVector        *vector,
-                                                 double             offset);
 static void             join_primitives         (cairo_path_data_t *last_data,
                                                  const CpmlVector  *last_vector,
                                                  const CpmlPair    *new_point,
@@ -315,7 +314,24 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
             break;
 
         case CAIRO_PATH_LINE_TO:
-            line_offset(p, &v_new, offset);
+            {
+                CpmlPrimitive line;
+                cairo_path_data_t dummy[3];
+
+                cpml_pair_to_cairo(&p[0], &dummy[0]);
+                dummy[1].header.type = CAIRO_PATH_LINE_TO;
+                dummy[1].header.length = 2;
+                cpml_pair_to_cairo(&p[1], &dummy[2]);
+
+                line.source = NULL;
+                line.org = &dummy[0];
+                line.data = &dummy[1];
+
+                cpml_line_offset(&line, offset);
+
+                cpml_pair_from_cairo(&p[0], &dummy[0]);
+                cpml_pair_from_cairo(&p[1], &dummy[2]);
+            }
             break;
 
         case CAIRO_PATH_CURVE_TO:
@@ -394,33 +410,6 @@ segment_normalize(CpmlSegment *segment)
     }
 
     return 0;
-}
-
-/**
- * line_offset:
- * @p: an array of two #CpmlPair structs
- * @vector: the ending direction vector of the resulting primitive
- * @offset: distance for the computed parallel line
- *
- * Given a line segment starting from @p[0] and ending in @p[1],
- * computes the parallel line distant @offset from the original one
- * and returns the result in the @p array.
- *
- * The direction vector of the new line segment is saved in @vector
- * with a somewhat arbitrary magnitude.
- **/
-static void
-line_offset(CpmlPair *p, CpmlVector *vector, double offset)
-{
-    CpmlVector normal;
-
-    cpml_pair_sub(cpml_pair_copy(vector, &p[1]), &p[0]);
-
-    cpml_vector_from_pair(&normal, vector, offset);
-    cpml_vector_normal(&normal);
-
-    cpml_pair_add(&p[0], &normal);
-    cpml_pair_add(&p[1], &normal);
 }
 
 /**
