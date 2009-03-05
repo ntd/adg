@@ -1,23 +1,12 @@
-#include <adg/adg.h>
+#include <cpml/cpml.h>
 #include <gtk/gtk.h>
 
 
-static void     path_constructor        (AdgEntity      *entity,
-                                         cairo_t        *cr,
-                                         gpointer        user_data);
-static void     path_expose             (GtkWidget      *widget,
+static void     curve_offset            (GtkWidget      *widget,
                                          GdkEventExpose *event,
-                                         AdgCanvas      *canvas);
+                                         gpointer        data);
 
-
-typedef struct {
-    AdgPair p1;
-    AdgPair p2;
-    AdgPair p3;
-    AdgPair p4;
-} Bezier;
-
-static Bezier bezier_samples[] = {
+static CpmlPair bezier_samples[][4] = {
     { { 0, 0 }, { 0, 40 }, { 120, 40 }, { 120, 0 } },   /* Simmetric low */
     { { 40, 0 }, { 40, 160 }, { 80, 160 }, { 80, 0 } }, /* Simmetric high */
     { { 0, 0 }, { 33.1371, 33.1371 }, { 86.8629, 33.1371 }, { 120, 0 } },
@@ -53,22 +42,9 @@ main(gint argc, gchar **argv)
     GtkWidget *vbox;
     GtkWidget *button_box;
     GtkWidget *widget;
-    AdgCanvas *canvas;
-    AdgEntity *entity;
-    gint n;
 
     gtk_init(&argc, &argv);
 
-    /* Create the canvas and populate it */
-    canvas = adg_canvas_new();
-
-    /* Add the Bézier curve samples */
-    for (n = 0; n < G_N_ELEMENTS(bezier_samples); ++n) {
-        entity = adg_path_new(path_constructor, GINT_TO_POINTER(n));
-        adg_container_add(ADG_CONTAINER(canvas), entity);
-    }
-
-    /* User interface stuff */
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -76,7 +52,7 @@ main(gint argc, gchar **argv)
 
     widget = gtk_drawing_area_new();
     gtk_widget_set_size_request(widget, 800, 800);
-    g_signal_connect(widget, "expose-event", G_CALLBACK(path_expose), canvas);
+    g_signal_connect(widget, "expose-event", G_CALLBACK(curve_offset), NULL);
     gtk_container_add(GTK_CONTAINER(vbox), widget);
 
     button_box = gtk_hbutton_box_new();
@@ -99,60 +75,69 @@ main(gint argc, gchar **argv)
 
 
 static void
-path_constructor(AdgEntity *entity, cairo_t *cr, gpointer user_data)
+curve_offset(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+    cairo_t *cr;
     gint n;
-    Bezier *bezier;
+    CpmlPair *bezier;
     cairo_path_t *path;
     CpmlSegment segment;
     CpmlPair pair;
     CpmlVector vector;
     double t;
 
-    n = GPOINTER_TO_INT(user_data);
-    bezier = bezier_samples + n;
+    cr = gdk_cairo_create(widget->window);
 
-    /* The samples are arranged in a 4x? matrix of 200x150 cells */
-    if (n == 0)
-        cairo_translate(cr, 25., 25.);
-    else if (n % 4 == 0)
-        cairo_translate(cr, -600., 150.);
-    else
-        cairo_translate(cr, 200., 0.);
+    /* Add the Bézier curve samples */
+    for (n = 0; n < G_N_ELEMENTS(bezier_samples); ++n) {
+        bezier = &bezier_samples[n][0];
 
-    /* Draw the Bézier curve */
-    cairo_move_to(cr, bezier->p1.x, bezier->p1.y);
-    cairo_curve_to(cr, bezier->p2.x, bezier->p2.y,
-                   bezier->p3.x, bezier->p3.y, bezier->p4.x, bezier->p4.y);
+        /* The samples are arranged in a 4x? matrix of 200x150 cells */
+        if (n == 0)
+            cairo_translate(cr, 25., 25.);
+        else if (n % 4 == 0)
+            cairo_translate(cr, -600., 150.);
+        else
+            cairo_translate(cr, 200., 0.);
 
-    /* Checking cpml_segment_offset */
-    path = cairo_copy_path(cr);
-    cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 20);
-    cairo_append_path(cr, path);
-    cairo_path_destroy(path);
+        /* Draw the Bézier curve */
+        cairo_move_to(cr, bezier[0].x, bezier[0].y);
+        cairo_curve_to(cr, bezier[1].x, bezier[1].y,
+                       bezier[2].x, bezier[2].y, bezier[3].x, bezier[3].y);
 
-    /* Checking cpml_pair_at_curve and cpml_vector_at_curve */
-    for (t = 0; t < 1; t += 0.1) {
-        cpml_pair_at_curve(&pair, &bezier->p1, &bezier->p2,
-                           &bezier->p3, &bezier->p4, t);
-        cpml_vector_at_curve(&vector, &bezier->p1, &bezier->p2,
-                             &bezier->p3, &bezier->p4, t, 20);
-        cpml_vector_normal(&vector);
+        /* Keep a copy of the Bézier curve */
+        path = cairo_copy_path(cr);
 
-        cairo_new_sub_path(cr);
-        cairo_arc(cr, pair.x, pair.y, 2.5, 0, M_PI*2);
-        cairo_move_to(cr, pair.x, pair.y);
-        cairo_line_to(cr, pair.x + vector.x, pair.y + vector.y);
+        cairo_set_line_width(cr, 2.);
+        cairo_stroke(cr);
+
+        /* Checking cpml_segment_offset */
+        cpml_segment_from_cairo(&segment, path);
+        cpml_segment_offset(&segment, 20);
+        cairo_append_path(cr, path);
+        cairo_path_destroy(path);
+
+        cairo_set_line_width(cr, 1.);
+        cairo_stroke(cr);
+
+        /* Checking cpml_pair_at_curve and cpml_vector_at_curve */
+        cairo_set_line_width(cr, 1.);
+        for (t = 0; t < 1; t += 0.1) {
+            cpml_pair_at_curve(&pair, &bezier[0], &bezier[1],
+                               &bezier[2], &bezier[3], t);
+            cpml_vector_at_curve(&vector, &bezier[0], &bezier[1],
+                                 &bezier[2], &bezier[3], t, 20);
+            cpml_vector_normal(&vector);
+
+            cairo_new_sub_path(cr);
+            cairo_arc(cr, pair.x, pair.y, 2.5, 0, M_PI*2);
+            cairo_fill(cr);
+
+            cairo_move_to(cr, pair.x, pair.y);
+            cairo_line_to(cr, pair.x + vector.x, pair.y + vector.y);
+            cairo_stroke(cr);
+        }
     }
-}
-
-static void
-path_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
-{
-    cairo_t *cr = gdk_cairo_create(widget->window);
-
-    adg_entity_render(ADG_ENTITY(canvas), cr);
 
     cairo_destroy(cr);
 }
