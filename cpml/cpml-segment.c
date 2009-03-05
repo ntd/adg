@@ -288,6 +288,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
     CpmlPair p_old;
     CpmlPair p[4];
 
+    data = segment->data;
     last_data = NULL;
     p_old.x = 0;
     p_old.y = 0;
