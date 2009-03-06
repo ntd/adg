@@ -44,6 +44,8 @@ cairo_path_data_t *
 
 /* To be implemented by the primitives */
 int             cpml_primitive_get_npoints      (CpmlPrimitive  *primitive);
+void            cpml_primitive_offset           (CpmlPrimitive  *primitive,
+                                                 double          offset);
 
 CAIRO_END_DECLS
 

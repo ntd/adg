@@ -108,34 +108,6 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 }
 
 /**
- * cpml_primitive_get_npoints:
- * @primitive: a #CpmlPrimitive
- *
- * Gets the number of points required to identify the underlying primitive.
- *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
- *
- * Return value: the number of points or -1 on errors
- **/
-int
-cpml_primitive_get_npoints(CpmlPrimitive *primitive)
-{
-    switch (primitive->data->header.type) {
-    case CAIRO_PATH_LINE_TO:
-        return cpml_line_get_npoints();
-    case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_get_npoints();
-    case CAIRO_PATH_CLOSE_PATH:
-        return cpml_close_get_npoints();
-    }
-
-    return -1;
-}
-
-/**
  * cpml_primitive_get_point:
  * @primitive: a #CpmlPrimitive
  * @npoint: the index of the point to retrieve
@@ -180,4 +152,59 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
         npoint = npoints-1;
 
     return &primitive->data[npoint];
+}
+
+/**
+ * cpml_primitive_get_npoints:
+ * @primitive: a #CpmlPrimitive
+ *
+ * Gets the number of points required to identify the underlying primitive.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ *
+ * Return value: the number of points or -1 on errors
+ **/
+int
+cpml_primitive_get_npoints(CpmlPrimitive *primitive)
+{
+    switch (primitive->data->header.type) {
+    case CAIRO_PATH_LINE_TO:
+        return cpml_line_get_npoints();
+    case CAIRO_PATH_CURVE_TO:
+        return cpml_curve_get_npoints();
+    case CAIRO_PATH_CLOSE_PATH:
+        return cpml_close_get_npoints();
+    }
+
+    return -1;
+}
+
+/**
+ * cpml_primitive_offset:
+ * @primitive: a #CpmlPrimitive
+ * @offset: distance for the computed offset primitive
+ *
+ * Given a primitive, computes the same (or approximated) parallel
+ * primitive distant @offset from the original one and returns
+ * the result by changing @primitive.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ **/
+void
+cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
+{
+    switch (primitive->data->header.type) {
+    case CAIRO_PATH_LINE_TO:
+        cpml_line_offset(primitive, offset);
+    case CAIRO_PATH_CURVE_TO:
+        cpml_curve_offset(primitive, offset);
+    case CAIRO_PATH_CLOSE_PATH:
+        cpml_close_offset(primitive, offset);
+    }
 }
