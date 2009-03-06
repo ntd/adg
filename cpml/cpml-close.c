@@ -31,6 +31,19 @@
 #include "cpml-pair.h"
 
 /**
+ * cpml_close_get_npoints:
+ *
+ * Returns the number of points needed to properly specify a close primitive.
+ *
+ * Return value: 0
+ **/
+int
+cpml_close_get_npoints(void)
+{
+    return 0;
+}
+
+/**
  * cpml_close_offset:
  * @close:   the #CpmlPrimitive close data
  * @offset: distance for the computed parallel close

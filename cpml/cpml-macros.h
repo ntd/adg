@@ -36,7 +36,7 @@
  * To be appended at the end of a function to notice the compiler (gcc)
  * that the return value is constant.
  *
- * The coded is an adaptation of the G_GNUC_CONST macro found
+ * The coded is an adaptation of the #G_GNUC_CONST macro found
  * in gmacros.h of glib-2.18.3.
  **/
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)

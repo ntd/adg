@@ -1,6 +1,7 @@
 <SECTION>
 <FILE>macros</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
+CPML_GNUC_CONST
 CPML_DIR_RIGHT
 CPML_DIR_DOWN
 CPML_DIR_LEFT
@@ -72,17 +73,20 @@ cpml_primitive_get_point
 <SECTION>
 <FILE>line</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_line_get_npoints
 cpml_line_offset
 </SECTION>
 
 <SECTION>
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_curve_get_npoints
 cpml_curve_offset
 </SECTION>
 
 <SECTION>
 <FILE>close</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_close_get_npoints
 cpml_close_offset
 </SECTION>

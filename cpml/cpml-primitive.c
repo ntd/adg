@@ -125,11 +125,11 @@ cpml_primitive_get_npoints(CpmlPrimitive *primitive)
 {
     switch (primitive->data->header.type) {
     case CAIRO_PATH_LINE_TO:
-        return 1;
+        return cpml_line_get_npoints();
     case CAIRO_PATH_CURVE_TO:
-        return 2;
+        return cpml_curve_get_npoints();
     case CAIRO_PATH_CLOSE_PATH:
-        return 0;
+        return cpml_close_get_npoints();
     }
 
     return -1;
@@ -167,16 +167,17 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
     if (npoints < 0)
         return NULL;
 
-    /* Check for an end point request and modify npoint accordling */
-    if (npoint < 0)
-        npoint = npoints;
-
     /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
-    if (npoint == 0)
+    if (npoints == 0)
         return &primitive->source->data[1];
 
-    if (npoint > npoints)
+    /* Out of range condition */
+    if (npoint >= npoints)
         return NULL;
+
+    /* Check for an end point request and modify npoint accordling */
+    if (npoint < 0)
+        npoint = npoints-1;
 
     return &primitive->data[npoint];
 }

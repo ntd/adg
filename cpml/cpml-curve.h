@@ -21,10 +21,12 @@
 #define __CPML_CURVE_H__
 
 #include <cpml/cpml-primitive.h>
+#include <cpml/cpml-macros.h>
 
 
 CAIRO_BEGIN_DECLS
 
+int             cpml_curve_get_npoints          (void) CPML_GNUC_CONST;
 void            cpml_curve_offset               (CpmlPrimitive  *curve,
                                                  double          offset);
 

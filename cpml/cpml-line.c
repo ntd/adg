@@ -31,6 +31,19 @@
 #include "cpml-pair.h"
 
 /**
+ * cpml_line_get_npoints:
+ *
+ * Returns the number of point needed to properly specify a line primitive.
+ *
+ * Return value: 2
+ **/
+int
+cpml_line_get_npoints(void)
+{
+    return 2;
+}
+
+/**
  * cpml_line_offset:
  * @line:   the #CpmlPrimitive line data
  * @offset: distance for the computed parallel line
@@ -40,19 +53,19 @@
  * and returns the result by changing @line.
  **/
 void
-cpml_line_offset(CpmlPrimitive *primitive, double offset)
+cpml_line_offset(CpmlPrimitive *line, double offset)
 {
     CpmlVector normal;
 
-    normal.x = primitive->data[1].point.x - primitive->org->point.x;
-    normal.y = primitive->data[1].point.y - primitive->org->point.y;
+    normal.x = line->data[1].point.x - line->org->point.x;
+    normal.y = line->data[1].point.y - line->org->point.y;
 
     cpml_vector_from_pair(&normal, &normal, offset);
     cpml_vector_normal(&normal);
 
-    primitive->org->point.x += normal.x;
-    primitive->org->point.y += normal.y;
+    line->org->point.x += normal.x;
+    line->org->point.y += normal.y;
 
-    primitive->data[1].point.x += normal.x;
-    primitive->data[1].point.y += normal.y;
+    line->data[1].point.x += normal.x;
+    line->data[1].point.y += normal.y;
 }
