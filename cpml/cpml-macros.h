@@ -30,6 +30,20 @@
 
 #include <math.h>
 
+/**
+ * CPML_GNUC_CONST:
+ *
+ * To be appended at the end of a function to notice the compiler (gcc)
+ * that the return value is constant.
+ *
+ * The coded is an adaptation of the G_GNUC_CONST macro found
+ * in gmacros.h of glib-2.18.3.
+ **/
+#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
+#define CPML_GNUC_CONST    __attribute__((__const__))
+#else
+#define CPML_GNUC_CONST
+#endif
 
 #define CPML_DIR_RIGHT   ((double) 0)
 #define CPML_DIR_DOWN    M_PI_2
