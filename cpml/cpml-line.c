@@ -76,7 +76,10 @@ cpml_line_pair_at(CpmlPrimitive *line, CpmlPair *pair, double pos)
  *
  * Gets the slope on @line at the position @pos. Being the
  * line a straight segment, the vector is always the same, so
- * @pos is not used.
+ * @pos is not used. Mathematically speaking, the equation
+ * performed is:
+ *
+ * @vector = end point - start point.
  **/
 void
 cpml_line_vector_at(CpmlPrimitive *line, CpmlVector *vector, double pos)
@@ -102,17 +105,18 @@ cpml_line_vector_at(CpmlPrimitive *line, CpmlVector *vector, double pos)
 void
 cpml_line_offset(CpmlPrimitive *line, double offset)
 {
+    cairo_path_data_t *p1, *p2;
     CpmlVector normal;
 
-    normal.x = line->data[1].point.x - line->org->point.x;
-    normal.y = line->data[1].point.y - line->org->point.y;
+    p1 = cpml_primitive_get_point(line, 0);
+    p2 = cpml_primitive_get_point(line, 1);
 
-    cpml_vector_from_pair(&normal, &normal, offset);
+    cpml_line_vector_at(line, &normal, 0.);
     cpml_vector_normal(&normal);
+    cpml_vector_set_length(&normal, offset);
 
-    line->org->point.x += normal.x;
-    line->org->point.y += normal.y;
-
-    line->data[1].point.x += normal.x;
-    line->data[1].point.y += normal.y;
+    p1->point.x += normal.x;
+    p1->point.y += normal.y;
+    p2->point.x += normal.x;
+    p2->point.y += normal.y;
 }
