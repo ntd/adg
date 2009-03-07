@@ -64,9 +64,6 @@ double          cpml_pair_squared_distance      (const CpmlPair *from,
 double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
 
-CpmlVector *    cpml_vector_from_pair           (CpmlVector     *vector,
-                                                 const CpmlPair *pair,
-                                                 double          length);
 CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);

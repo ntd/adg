@@ -327,11 +327,13 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_add(&pm, &vm);
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
-    cpml_vector_normal(cpml_vector_from_pair(&vtmp, &v0, offset));
+    cpml_vector_set_length(cpml_pair_copy(&vtmp, &v0), offset);
+    cpml_vector_normal(&vtmp);
     cpml_pair_add(&p0, &vtmp);
 
     /* p3 = p3 + normal of v3 of @offset magnitude, as done for p0 */
-    cpml_vector_normal(cpml_vector_from_pair(&vtmp, &v3, offset));
+    cpml_vector_set_length(cpml_pair_copy(&vtmp, &v3), offset);
+    cpml_vector_normal(&vtmp);
     cpml_pair_add(&p3, &vtmp);
 
     if (v0.x*v3.y == v3.x*v0.y) {

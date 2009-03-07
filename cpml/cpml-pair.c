@@ -284,36 +284,6 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 }
 
 /**
- * cpml_vector_from_pair:
- * @vector: the destination vector
- * @pair: the source pair
- * @length: the length of the vector
- *
- * Given the line L passing throught the origin and @pair, gets the
- * coordinate of the point on this line far @length from the origin
- * and store the result in @vector. If @pair itsself is the origin,
- * NULL is returned.
- *
- * @pair and @vector can be the same struct.
- *
- * Return value: @vector
- **/
-CpmlVector *
-cpml_vector_from_pair(CpmlVector *vector, const CpmlPair *pair, double length)
-{
-    double divisor = cpml_pair_distance(NULL, pair);
-
-    if (divisor <= 0)
-        return NULL;
-
-    divisor /= length;
-    vector->x = pair->x / divisor;
-    vector->y = pair->y / divisor;
-
-    return vector;
-}
-
-/**
  * cpml_vector_from_angle:
  * @vector: the destination #CpmlVector
  * @angle: angle of direction, in radians

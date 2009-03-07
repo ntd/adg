@@ -494,7 +494,7 @@ update(AdgLDim *ldim)
     /* Set vector to the director of the baseline */
     offset.x = arrow2->point.x - arrow1->point.x;
     offset.y = arrow2->point.y - arrow1->point.y;
-    cpml_vector_from_pair(&vector, &offset, 1);
+    cpml_vector_set_length(cpml_pair_copy(&vector, &offset), 1);
 
     /* Update the AdgDim cache contents */
     adg_dim_set_org_explicit((AdgDim *) ldim,

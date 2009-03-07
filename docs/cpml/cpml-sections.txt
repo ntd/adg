@@ -17,7 +17,6 @@ CpmlVector
 cpml_pair_copy
 cpml_pair_from_cairo
 cpml_pair_intersection_pv_pv
-cpml_vector_from_pair
 cpml_vector_from_angle
 <SUBSECTION>
 cpml_pair_add
