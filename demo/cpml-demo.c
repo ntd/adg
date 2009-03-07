@@ -163,12 +163,12 @@ offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
         cpml_segment_from_cairo(&segment, path_copy);
         cpml_primitive_from_segment(&primitive, &segment);
 
-        /* Checking cpml_curve_pair_at_time and cpml_vector_at_curve */
+        /* Checking cpml_curve_pair_at_time and cpml_curve_vector_at_time */
         cairo_set_line_width(cr, 1.);
         for (t = 0; t < 1; t += 0.1) {
             cpml_curve_pair_at_time(&primitive, &pair, t);
-            cpml_vector_at_curve(&vector, &bezier[0], &bezier[1],
-                                 &bezier[2], &bezier[3], t, 20);
+            cpml_curve_vector_at_time(&primitive, &vector, t);
+            cpml_vector_set_length(&vector, 20.);
             cpml_vector_normal(&vector);
 
             cairo_new_sub_path(cr);

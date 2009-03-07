@@ -34,6 +34,12 @@ void            cpml_curve_pair_at_time         (CpmlPrimitive  *curve,
 void            cpml_curve_pair_at              (CpmlPrimitive  *curve,
                                                  CpmlPair       *pair,
                                                  double          pos);
+void            cpml_curve_vector_at_time       (CpmlPrimitive  *curve,
+                                                 CpmlVector     *vector,
+                                                 double          t);
+void            cpml_curve_vector_at            (CpmlPrimitive  *curve,
+                                                 CpmlVector     *vector,
+                                                 double          pos);
 void            cpml_curve_offset               (CpmlPrimitive  *curve,
                                                  double          offset);
 

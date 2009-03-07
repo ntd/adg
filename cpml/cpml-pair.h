@@ -70,13 +70,6 @@ CpmlVector *    cpml_vector_from_pair           (CpmlVector     *vector,
 CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle,
                                                  double          length);
-CpmlVector *    cpml_vector_at_curve            (CpmlVector     *vector,
-                                                 const CpmlPair *p1,
-                                                 const CpmlPair *p2,
-                                                 const CpmlPair *p3,
-                                                 const CpmlPair *p4,
-                                                 double          t,
-                                                 double          length);
 
 void            cpml_vector_set_length          (CpmlVector     *vector,
                                                  double          length);

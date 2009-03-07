@@ -45,14 +45,14 @@ cpml_curve_get_npoints(void)
 
 /**
  * cpml_curve_pair_at_time:
- * @line: the #CpmlPrimitive line data
- * @pair: the destination pair
- * @t: the "time" value
+ * @curve: the #CpmlPrimitive curve data
+ * @pair:  the destination pair
+ * @t:     the "time" value
  *
  * Given the @curve Bézier cubic, finds the coordinates at time @t
- * (where 0 is the start and 1 is the end) end stores the result
+ * (where 0 is the start and 1 is the end) and stores the result
  * in @pair. Keep in mind @t is not homogeneous, so 0.5 does not
- * necessarily means the midpoint.
+ * necessarily means the mid point.
  *
  * @t must be inside the range 0 .. 1, as interpolating is not
  * allowed.
@@ -82,12 +82,12 @@ cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
 
 /**
  * cpml_curve_pair_at:
- * @line: the #CpmlPrimitive line data
- * @pair: the destination pair
- * @pos:  the position value
+ * @curve: the #CpmlPrimitive curve data
+ * @pair:  the destination pair
+ * @pos:   the position value
  *
  * Given the @curve Bézier cubic, finds the coordinates at position
- * @pos (where 0 is the start and 1 is the end) end stores the result
+ * @pos (where 0 is the start and 1 is the end) and stores the result
  * in @pair. It is similar to cpml_curve_pair_at_time() but the @pos
  * value is evenly distribuited, that is 0.5 is exactly the mid point.
  * If you do not need this feature, use cpml_curve_pair_at_time()
@@ -98,6 +98,69 @@ cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
  **/
 void
 cpml_curve_pair_at(CpmlPrimitive *curve, CpmlPair *pair, double pos)
+{
+    /* TODO: to be implemented */
+}
+
+/**
+ * cpml_curve_vector_at_time:
+ * @curve:  the #CpmlPrimitive curve data
+ * @vector: the destination vector
+ * @t:      the "time" value
+ *
+ * Given the @curve Bézier cubic, finds the slope at time @t
+ * (where 0 is the start and 1 is the end) and stores the result
+ * in @vector. Keep in mind @t is not homogeneous, so 0.5
+ * does not necessarily means the mid point.
+ *
+ * @t must be inside the range 0 .. 1, as interpolating is not
+ * allowed.
+ **/
+void
+cpml_curve_vector_at_time(CpmlPrimitive *curve, CpmlVector *vector, double t)
+{
+    cairo_path_data_t *p1, *p2, *p3, *p4;
+    CpmlPair p21, p32, p43;
+    double t1, t1_2, t_2;
+
+    p1 = cpml_primitive_get_point(curve, 0);
+    p2 = cpml_primitive_get_point(curve, 1);
+    p3 = cpml_primitive_get_point(curve, 2);
+    p4 = cpml_primitive_get_point(curve, 3);
+
+    p21.x = p2->point.x - p1->point.x;
+    p21.y = p2->point.y - p1->point.y;
+    p32.x = p3->point.x - p2->point.x;
+    p32.y = p3->point.y - p2->point.y;
+    p43.x = p4->point.x - p3->point.x;
+    p43.y = p4->point.y - p3->point.y;
+
+    t1 = 1 - t;
+    t1_2 = t1 * t1;
+    t_2 = t * t;
+
+    vector->x = 3 * t1_2 * p21.x + 6 * t1 * t * p32.x + 3 * t_2 * p43.x;
+    vector->y = 3 * t1_2 * p21.y + 6 * t1 * t * p32.y + 3 * t_2 * p43.y;
+}
+
+/**
+ * cpml_curve_vector_at:
+ * @curve:  the #CpmlPrimitive curve data
+ * @vector: the destination vector
+ * @pos:    the position value
+ *
+ * Given the @curve Bézier cubic, finds the slope at position @pos
+ * (where 0 is the start and 1 is the end) and stores the result
+ * in @vector. It is similar to cpml_curve_vector_at_time() but the
+ * @pos value is evenly distribuited, that is 0.5 is exactly the
+ * mid point. If you do not need this feature, use
+ * cpml_curve_vector_at_time() as it is considerable faster.
+ *
+ * @pos must be inside the range 0 .. 1, as interpolating is not
+ * allowed.
+ **/
+void
+cpml_curve_vector_at(CpmlPrimitive *curve, CpmlVector *vector, double pos)
 {
     /* TODO: to be implemented */
 }
@@ -237,7 +300,8 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_sub(cpml_pair_copy(&v3, &p3), &p2);
 
     /* pm = point in C(m) offseted the requested @offset distance */
-    cpml_vector_at_curve(&vm, &p0, &p1, &p2, &p3, m, offset);
+    cpml_curve_vector_at_time(curve, &vm, m);
+    cpml_vector_set_length(&vm, offset);
     cpml_vector_normal(&vm);
     cpml_curve_pair_at_time(curve, &pm, m);
     cpml_pair_add(&pm, &vm);
