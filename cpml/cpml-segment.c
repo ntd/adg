@@ -26,19 +26,24 @@
  *
  * Every #cairo_path_t struct can contain more than one segment:
  * the CPML library provides iteration APIs to browse these segments.
- * The CpmlSegment struct internally keeps a reference to the source
- * cairo path so it can be used both for getting segment data and
- * browsing the segments (that is, it is used also as an iterator).
+ * The <structname>CpmlSegment</structname> struct internally keeps
+ * a reference to the source #cairo_path_t so it can be used both
+ * for getting segment data and browsing the segments (that is,
+ * it is used also as an iterator).
  *
- * Use cpml_segment_reset() to reset the iterator at the start of the cairo
- * path (at the first segment) and cpml_segment_next() to get the next
- * segment. Getting the previous segment is not provided, as the underlying
- * struct is not accessible in reverse order.
+ * Use cpml_segment_reset() to reset the iterator at the start of the
+ * cairo path (will point the first segment) and cpml_segment_next()
+ * to get the next segment. When initialized,
+ * <structname>CpmlSegment</structname> yet refers to the first
+ * segment, so the initial reset is useless.
+ *
+ * Getting the previous segment is not provided, as the underlying
+ * cairo struct is not accessible in reverse order.
  **/
 
 /**
  * CpmlSegment:
- * @source: the source #cairo_path_t struct
+ * @cairo_path: the source #cairo_path_t struct
  * @data: the segment data
  * @num_data: size of @data
  *
@@ -68,7 +73,7 @@ static void             join_primitives         (cairo_path_data_t *last_data,
 /**
  * cpml_segment_from_cairo:
  * @segment: a #CpmlSegment
- * @cairo_path: the source cairo_path_t
+ * @cairo_path: the source #cairo_path_t
  *
  * Builds a CpmlSegment from a cairo_path_t structure. This operation
  * involves stripping the leading %CAIRO_PATH_MOVE_TO primitives and
@@ -76,9 +81,9 @@ static void             join_primitives         (cairo_path_data_t *last_data,
  * source cairo path is kept.
  *
  * This function will fail if @cairo_path is null, empty or if its
- * %status member is not %CAIRO_STATUS_SUCCESS. Also, the first
- * primitive must be a %CAIRO_PATH_MOVE_TO, so no dependency on the
- * cairo context is needed.
+ * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
+ * Also, the first primitive must be a %CAIRO_PATH_MOVE_TO, so no
+ * dependency on the cairo context is needed.
  *
  * Return value: 1 on success, 0 on errors
  **/
@@ -90,7 +95,7 @@ cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *cairo_path)
         cairo_path->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
-    segment->source = cairo_path;
+    segment->cairo_path = cairo_path;
     segment->data = cairo_path->data;
     segment->num_data = cairo_path->num_data;
 
@@ -161,13 +166,13 @@ cpml_segment_dump(const CpmlSegment *segment)
  * cpml_segment_reset:
  * @segment: a #CpmlSegment
  *
- * Modifies @segment to point to the first segment of the source path.
+ * Modifies @segment to point to the first segment of the source cairo path.
  **/
 void
 cpml_segment_reset(CpmlSegment *segment)
 {
-    segment->data = segment->source->data;
-    segment->num_data = segment->source->num_data;
+    segment->data = segment->cairo_path->data;
+    segment->num_data = segment->cairo_path->num_data;
     segment_normalize(segment);
 }
 
@@ -175,15 +180,15 @@ cpml_segment_reset(CpmlSegment *segment)
  * cpml_segment_next:
  * @segment: a #CpmlSegment
  *
- * Modifies @segment to point to the next segment of the source path.
+ * Modifies @segment to point to the next segment of the source cairo path.
  *
  * Return value: 1 on success, 0 if no next segment found or errors
  **/
 cairo_bool_t
 cpml_segment_next(CpmlSegment *segment)
 {
-    int rest = segment->source->num_data - segment->num_data +
-        segment->source->data - segment->data;
+    int rest = segment->cairo_path->num_data - segment->num_data +
+        segment->cairo_path->data - segment->data;
 
     if (rest <= 0)
         return 0;
@@ -332,7 +337,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
                 dummy[1].header.length = 2;
                 cpml_pair_to_cairo(&p[1], &dummy[2]);
 
-                line.source = NULL;
+                line.segment = NULL;
                 line.org = &dummy[0];
                 line.data = &dummy[1];
 
@@ -357,7 +362,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
                 cpml_pair_to_cairo(&p[2], &dummy[3]);
                 cpml_pair_to_cairo(&p[3], &dummy[4]);
 
-                curve.source = NULL;
+                curve.segment = NULL;
                 curve.org = &dummy[0];
                 curve.data = &dummy[1];
 
@@ -408,7 +413,7 @@ segment_normalize(CpmlSegment *segment)
 {
     cairo_path_data_t *data;
 
-    if (segment->source->data->header.type != CAIRO_PATH_MOVE_TO) {
+    if (segment->cairo_path->data->header.type != CAIRO_PATH_MOVE_TO) {
         return 0;
     }
 

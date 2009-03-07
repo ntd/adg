@@ -28,7 +28,7 @@ CAIRO_BEGIN_DECLS
 typedef struct _CpmlSegment CpmlSegment;
 
 struct _CpmlSegment {
-        cairo_path_t      *source;
+        cairo_path_t      *cairo_path;
         cairo_path_data_t *data;
         int                num_data;
 
