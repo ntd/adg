@@ -31,6 +31,9 @@ int             cpml_line_get_npoints           (void) CPML_GNUC_CONST;
 void            cpml_line_pair_at               (CpmlPrimitive  *line,
                                                  CpmlPair       *pair,
                                                  double          pos);
+void            cpml_line_vector_at             (CpmlPrimitive  *line,
+                                                 CpmlVector     *vector,
+                                                 double          pos);
 void            cpml_line_offset                (CpmlPrimitive  *line,
                                                  double          offset);
 

@@ -73,6 +73,7 @@ cpml_primitive_get_point
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_line_get_npoints
 cpml_line_pair_at
+cpml_line_vector_at
 cpml_line_offset
 </SECTION>
 
