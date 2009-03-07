@@ -99,12 +99,12 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 
     new_data = primitive->data + primitive->data->header.length;
 
-    if (new_data - primitive->segment->data >= primitive->segment->data->header.length) {
+    if (new_data - primitive->segment->data >= primitive->segment->num_data)
         return 0;
-    }
 
     primitive->org = cpml_primitive_get_point(primitive, -1);
     primitive->data = new_data;
+    return 1;
 }
 
 /**
