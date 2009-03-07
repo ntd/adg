@@ -245,7 +245,8 @@ append_piston(cairo_t *cr)
     cairo_line_to(cr, 45.,    3.25);
     cairo_line_to(cr, 46.,    2.25);
     cairo_line_to(cr, 50.,    2.25);
-    cairo_arc_negative(cr,     50.2,   3.4,   0.2, G_PI, G_PI_2);
+    cairo_arc_negative(cr,
+                      50.2,   3.4,   0.2, G_PI, G_PI_2);
     cairo_line_to(cr, 51.,    3.6);
     cairo_line_to(cr, 52.,    3.);
     cairo_line_to(cr, 52.2,   1.25);
