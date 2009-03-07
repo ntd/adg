@@ -117,11 +117,11 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  * returned, 1 for the second point and so on. As a special case,
  * @npoint less than 0 means the end point.
  *
- * If it is requested the end point on a primitive that does not
- * owns any point, this function cycles the source #CpmlSegment and
+ * If it is requested the end point on a primitive that owns a
+ * single point, this function cycles the source #CpmlSegment and
  * returns the first point. This case must be handled this way
  * because requesting the end point of a %CAIRO_PATH_CLOSE_PATH
- * (that does not have any point) is a valid operation.
+ * is a valid operation and must returns the start of the segment.
  *
  * Return value: a pointer to the requested point (in cairo format)
  *               or %NULL if the point is outside the valid range
@@ -139,13 +139,13 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
     if (npoints < 0)
         return NULL;
 
-    /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
-    if (npoints == 0)
-        return &primitive->segment->data[1];
-
     /* Out of range condition */
     if (npoint >= npoints)
         return NULL;
+
+    /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
+    if (npoints == 1 && npoint < 0)
+        return &primitive->segment->data[1];
 
     /* Check for an end point request and modify npoint accordling */
     if (npoint < 0)
