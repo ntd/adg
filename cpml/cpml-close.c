@@ -39,12 +39,12 @@
  *
  * Returns the number of points needed to properly specify a close primitive.
  *
- * Return value: 0
+ * Return value: 1
  **/
 int
 cpml_close_get_npoints(void)
 {
-    return 0;
+    return 1;
 }
 
 /**
