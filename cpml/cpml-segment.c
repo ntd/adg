@@ -279,6 +279,8 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * <itemizedlist>
  * <listitem>Closed path are not yet managed: an elegant solution is not
  *           so obvious: use cpml_close_offset() when available.</listitem>
+ * <listitem>Degenerated primitives, such as lines of length 0, are not
+ *           managed properly.</listitem>
  * </itemizedlist>
  * </important>
  *
@@ -338,6 +340,8 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
 
                 cpml_pair_from_cairo(&p[0], &dummy[0]);
                 cpml_pair_from_cairo(&p[1], &dummy[2]);
+
+                cpml_line_vector_at(&line, &v_new, 1.);
             }
             break;
 
@@ -363,6 +367,8 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
                 cpml_pair_from_cairo(&p[1], &dummy[2]);
                 cpml_pair_from_cairo(&p[2], &dummy[3]);
                 cpml_pair_from_cairo(&p[3], &dummy[4]);
+
+                cpml_curve_vector_at_time(&curve, &v_new, 1.);
             }
             break;
 
