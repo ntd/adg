@@ -31,7 +31,7 @@
 
 /**
  * CpmlPrimitive:
- * @source: the source #CpmlSegment
+ * @segment: the source #CpmlSegment
  * @org: a pointer to the first point of the primitive
  * @data: the array of the path data, prepended by the header
  *
@@ -55,7 +55,7 @@
 void
 cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
-    primitive->source = segment;
+    primitive->segment = segment;
 
     /* The first element of a CpmlSegment is always a CAIRO_MOVE_TO,
      * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
@@ -77,8 +77,8 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 void
 cpml_primitive_reset(CpmlPrimitive *primitive)
 {
-    primitive->org = &primitive->source->data[1];
-    primitive->data = primitive->source->data + 2;
+    primitive->org = &primitive->segment->data[1];
+    primitive->data = primitive->segment->data + 2;
 }
 
 /**
@@ -99,7 +99,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 
     new_data = primitive->data + primitive->data->header.length;
 
-    if (new_data - primitive->source->data >= primitive->source->data->header.length) {
+    if (new_data - primitive->segment->data >= primitive->segment->data->header.length) {
         return 0;
     }
 
@@ -141,7 +141,7 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
 
     /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
     if (npoints == 0)
-        return &primitive->source->data[1];
+        return &primitive->segment->data[1];
 
     /* Out of range condition */
     if (npoint >= npoints)

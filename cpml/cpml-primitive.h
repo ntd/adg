@@ -29,7 +29,7 @@ CAIRO_BEGIN_DECLS
 typedef struct _CpmlPrimitive CpmlPrimitive;
 
 struct _CpmlPrimitive {
-        CpmlSegment       *source;
+        CpmlSegment       *segment;
         cairo_path_data_t *org;
         cairo_path_data_t *data;
 };
