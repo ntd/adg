@@ -78,6 +78,8 @@ CpmlVector *    cpml_vector_at_curve            (CpmlVector     *vector,
                                                  double          t,
                                                  double          length);
 
+void            cpml_vector_set_length          (CpmlVector     *vector,
+                                                 double          length);
 double          cpml_vector_angle               (const CpmlVector
                                                                 *vector);
 void            cpml_vector_normal              (CpmlVector     *vector);

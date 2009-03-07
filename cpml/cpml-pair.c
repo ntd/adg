@@ -403,6 +403,28 @@ cpml_vector_at_curve(CpmlVector *vector,
 }
 
 /**
+ * cpml_vector_set_length:
+ * @vector: a #CpmlVector
+ * @length: the new length
+ *
+ * Imposes the specified @length to @vector. If the old length is 0
+ * (and so the direction is not known), nothing happens.
+ **/
+void
+cpml_vector_set_length(CpmlVector *vector, double length)
+{
+    double divisor = cpml_pair_distance(NULL, vector);
+
+    /* Check for valid length (anything other than 0) */
+    if (divisor <= 0)
+        return;
+
+    divisor /= length;
+    vector->x /= divisor;
+    vector->y /= divisor;
+}
+
+/**
  * cpml_vector_angle:
  * @vector: the source #CpmlVector
  *
