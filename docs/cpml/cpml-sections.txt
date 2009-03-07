@@ -92,5 +92,7 @@ cpml_curve_offset
 <FILE>close</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_close_get_npoints
+cpml_close_pair_at
+cpml_close_vector_at
 cpml_close_offset
 </SECTION>
