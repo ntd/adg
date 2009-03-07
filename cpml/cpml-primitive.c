@@ -171,15 +171,97 @@ int
 cpml_primitive_get_npoints(CpmlPrimitive *primitive)
 {
     switch (primitive->data->header.type) {
+
     case CAIRO_PATH_LINE_TO:
         return cpml_line_get_npoints();
+
     case CAIRO_PATH_CURVE_TO:
         return cpml_curve_get_npoints();
+
     case CAIRO_PATH_CLOSE_PATH:
         return cpml_close_get_npoints();
     }
 
     return -1;
+}
+
+/**
+ * cpml_primitive_pair_at:
+ * @primitive: a #CpmlPrimitive
+ * @pair:      the destination #CpmlPair
+ * @pos:       the position value
+ *
+ * Abstracts the pair_at() family functions by providing a common
+ * way to access the underlying primitive-specific implementation.
+ *
+ * It gets the coordinates of the point lying on @primitive
+ * at position @pos. @pos is an homogeneous factor where 0 is the
+ * start point, 1 the end point, 0.5 the mid point and so on.
+ * The relation 0 < @pos < 1 should be satisfied, although some
+ * primitives accept value outside this range.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ **/
+void
+cpml_primitive_pair_at(CpmlPrimitive *primitive, CpmlPair *pair, double pos)
+{
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_LINE_TO:
+        cpml_line_pair_at(primitive, pair, pos);
+        break;
+
+    case CAIRO_PATH_CURVE_TO:
+        cpml_curve_pair_at(primitive, pair, pos);
+        break;
+
+    case CAIRO_PATH_CLOSE_PATH:
+        cpml_close_pair_at(primitive, pair, pos);
+        break;
+    }
+}
+
+/**
+ * cpml_primitive_vector_at:
+ * @primitive: a #CpmlPrimitive
+ * @vector:    the destination #CpmlVector
+ * @pos:       the position value
+ *
+ * Abstracts the vector_at() family functions by providing a common
+ * way to access the underlying primitive-specific implementation.
+ *
+ * It gets the steepness of the point at position @pos on @primitive.
+ * @pos is an homogeneous factor where 0 is the start point, 1 the
+ * end point, 0.5 the mid point and so on.
+ * The relation 0 < @pos < 1 should be satisfied, although some
+ * primitives accept value outside this range.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ **/
+void
+cpml_primitive_vector_at(CpmlPrimitive *primitive,
+                         CpmlVector *vector, double pos)
+{
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_LINE_TO:
+        cpml_line_vector_at(primitive, vector, pos);
+        break;
+
+    case CAIRO_PATH_CURVE_TO:
+        cpml_curve_vector_at(primitive, vector, pos);
+        break;
+
+    case CAIRO_PATH_CLOSE_PATH:
+        cpml_close_vector_at(primitive, vector, pos);
+        break;
+    }
 }
 
 /**
@@ -200,11 +282,17 @@ void
 cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
 {
     switch (primitive->data->header.type) {
+
     case CAIRO_PATH_LINE_TO:
         cpml_line_offset(primitive, offset);
+        break;
+
     case CAIRO_PATH_CURVE_TO:
         cpml_curve_offset(primitive, offset);
+        break;
+
     case CAIRO_PATH_CLOSE_PATH:
         cpml_close_offset(primitive, offset);
+        break;
     }
 }

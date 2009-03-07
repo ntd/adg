@@ -21,6 +21,7 @@
 #define __CPML_PRIMITIVE_H__
 
 #include <cpml/cpml-segment.h>
+#include <cpml/cpml-pair.h>
 
 
 CAIRO_BEGIN_DECLS
@@ -44,6 +45,12 @@ cairo_path_data_t *
 
 /* To be implemented by the primitives */
 int             cpml_primitive_get_npoints      (CpmlPrimitive  *primitive);
+void            cpml_primitive_pair_at          (CpmlPrimitive  *primitive,
+                                                 CpmlPair       *pair,
+                                                 double          pos);
+void            cpml_primitive_vector_at        (CpmlPrimitive  *primitive,
+                                                 CpmlVector     *vector,
+                                                 double          pos);
 void            cpml_primitive_offset           (CpmlPrimitive  *primitive,
                                                  double          offset);
 

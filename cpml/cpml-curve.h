@@ -21,7 +21,6 @@
 #define __CPML_CURVE_H__
 
 #include <cpml/cpml-primitive.h>
-#include <cpml/cpml-pair.h>
 #include <cpml/cpml-macros.h>
 
 
