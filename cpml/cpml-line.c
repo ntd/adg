@@ -50,7 +50,7 @@ cpml_line_get_npoints(void)
  * @pos:  the position value
  *
  * Given the @line line, finds the coordinates at position @pos
- * (where 0 is the start and 1 is the end) end stores the result
+ * (where 0 is the start and 1 is the end) and stores the result
  * in @pair.
  *
  * @pos can be less than 0 or greater than 1, in which case the
