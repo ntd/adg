@@ -17,7 +17,6 @@ CpmlVector
 cpml_pair_copy
 cpml_pair_from_cairo
 cpml_pair_intersection_pv_pv
-cpml_pair_at_line
 cpml_pair_at_curve
 cpml_vector_from_pair
 cpml_vector_from_angle
@@ -74,6 +73,7 @@ cpml_primitive_get_point
 <FILE>line</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_line_get_npoints
+cpml_line_pair_at
 cpml_line_offset
 </SECTION>
 

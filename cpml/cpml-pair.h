@@ -45,10 +45,6 @@ CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
                                                  const CpmlPair *p2,
                                                  const CpmlVector
                                                                 *v2);
-CpmlPair *      cpml_pair_at_line               (CpmlPair       *pair,
-                                                 const CpmlPair *p1,
-                                                 const CpmlPair *p2,
-                                                 double          t);
 CpmlPair *      cpml_pair_at_curve              (CpmlPair       *pair,
                                                  const CpmlPair *p1,
                                                  const CpmlPair *p2,

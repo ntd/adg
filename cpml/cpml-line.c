@@ -44,6 +44,31 @@ cpml_line_get_npoints(void)
 }
 
 /**
+ * cpml_line_pair_at:
+ * @line: the #CpmlPrimitive line data
+ * @pair: the destination pair
+ * @pos:  the position value
+ *
+ * Given the @line line, finds the coordinates at position @pos
+ * (where 0 is the start and 1 is the end) end stores the result
+ * in @pair.
+ *
+ * @pos can be less than 0 or greater than 1, in which case the
+ * coordinates are interpolated.
+ **/
+void
+cpml_line_pair_at(CpmlPrimitive *line, CpmlPair *pair, double pos)
+{
+    cairo_path_data_t *p1, *p2;
+
+    p1 = cpml_primitive_get_point(line, 0);
+    p2 = cpml_primitive_get_point(line, 1);
+
+    pair->x = p1->point.x + (p1->point.x - p1->point.x) * pos;
+    pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
+}
+
+/**
  * cpml_line_offset:
  * @line:   the #CpmlPrimitive line data
  * @offset: distance for the computed parallel line

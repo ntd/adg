@@ -125,33 +125,6 @@ cpml_pair_intersection_pv_pv(CpmlPair *pair,
 }
 
 /**
- * cpml_pair_at_line:
- * @pair: the destination #CpmlPair
- * @p1: first point of the line
- * @p2: second point of the line
- * @t: the mediation value
- *
- * Given the mediation value @t, where 0 means the start point and
- * 1 the end point (0.5 the midpoint and so on), calculates the coordinates
- * of the point at @t of the way from @p1 and @p2.
- *
- * Return value: @pair
- **/
-CpmlPair *
-cpml_pair_at_line(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
-                  double t)
-{
-    CpmlPair delta;
-
-    delta.x = (p2->x - p1->x) * t;
-    delta.y = (p2->y - p1->y) * t;
-
-    cpml_pair_add(cpml_pair_copy(pair, p1), &delta);
-
-    return pair;
-}
-
-/**
  * cpml_pair_at_curve:
  * @pair: the destination #CpmlPair
  * @p1: start point
