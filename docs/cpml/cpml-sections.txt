@@ -17,7 +17,6 @@ CpmlVector
 cpml_pair_copy
 cpml_pair_from_cairo
 cpml_pair_intersection_pv_pv
-cpml_pair_at_curve
 cpml_vector_from_pair
 cpml_vector_from_angle
 cpml_vector_at_curve
@@ -81,6 +80,8 @@ cpml_line_offset
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_curve_get_npoints
+cpml_curve_pair_at_time
+cpml_curve_pair_at
 cpml_curve_offset
 </SECTION>
 

@@ -44,6 +44,65 @@ cpml_curve_get_npoints(void)
 }
 
 /**
+ * cpml_curve_pair_at_time:
+ * @line: the #CpmlPrimitive line data
+ * @pair: the destination pair
+ * @t: the "time" value
+ *
+ * Given the @curve Bézier cubic, finds the coordinates at time @t
+ * (where 0 is the start and 1 is the end) end stores the result
+ * in @pair. Keep in mind @t is not homogeneous, so 0.5 does not
+ * necessarily means the midpoint.
+ *
+ * @t must be inside the range 0 .. 1, as interpolating is not
+ * allowed.
+ **/
+void
+cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
+{
+    cairo_path_data_t *p1, *p2, *p3, *p4;
+    double t_2, t_3, t1, t1_2, t1_3;
+
+    p1 = cpml_primitive_get_point(curve, 0);
+    p2 = cpml_primitive_get_point(curve, 1);
+    p3 = cpml_primitive_get_point(curve, 2);
+    p4 = cpml_primitive_get_point(curve, 3);
+
+    t_2 = t * t;
+    t_3 = t_2 * t;
+    t1 = 1 - t;
+    t1_2 = t1 * t1;
+    t1_3 = t1_2 * t1;
+
+    pair->x = t1_3 * p1->point.x + 3 * t1_2 * t * p2->point.x
+              + 3 * t1 * t_2 * p3->point.x + t_3 * p4->point.x;
+    pair->y = t1_3 * p1->point.y + 3 * t1_2 * t * p2->point.y
+              + 3 * t1 * t_2 * p3->point.y + t_3 * p4->point.y;
+}
+
+/**
+ * cpml_curve_pair_at:
+ * @line: the #CpmlPrimitive line data
+ * @pair: the destination pair
+ * @pos:  the position value
+ *
+ * Given the @curve Bézier cubic, finds the coordinates at position
+ * @pos (where 0 is the start and 1 is the end) end stores the result
+ * in @pair. It is similar to cpml_curve_pair_at_time() but the @pos
+ * value is evenly distribuited, that is 0.5 is exactly the mid point.
+ * If you do not need this feature, use cpml_curve_pair_at_time()
+ * as it is considerable faster.
+ *
+ * @pos must be inside the range 0 .. 1, as interpolating is not
+ * allowed.
+ **/
+void
+cpml_curve_pair_at(CpmlPrimitive *curve, CpmlPair *pair, double pos)
+{
+    /* TODO: to be implemented */
+}
+
+/**
  * cpml_curve_offset:
  * @curve:  the #CpmlPrimitive curve data
  * @offset: distance for the computed parallel curve
@@ -180,7 +239,7 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     /* pm = point in C(m) offseted the requested @offset distance */
     cpml_vector_at_curve(&vm, &p0, &p1, &p2, &p3, m, offset);
     cpml_vector_normal(&vm);
-    cpml_pair_at_curve(&pm, &p0, &p1, &p2, &p3, m);
+    cpml_curve_pair_at_time(curve, &pm, m);
     cpml_pair_add(&pm, &vm);
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */

@@ -126,8 +126,9 @@ offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
     cairo_t *cr;
     gint n;
     CpmlPair *bezier;
-    cairo_path_t *path;
+    cairo_path_t *path, *path_copy;
     CpmlSegment segment;
+    CpmlPrimitive primitive;
     CpmlPair pair;
     CpmlVector vector;
     double t;
@@ -151,16 +152,21 @@ offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
         cairo_curve_to(cr, bezier[1].x, bezier[1].y,
                        bezier[2].x, bezier[2].y, bezier[3].x, bezier[3].y);
 
+        /* Create a copy, to be used after */
+        path_copy = cairo_copy_path(cr);
+
         path = duplicate_and_stroke(cr);
         cpml_segment_from_cairo(&segment, path);
         cpml_segment_offset(&segment, 20.);
         stroke_and_destroy(cr, path);
 
-        /* Checking cpml_pair_at_curve and cpml_vector_at_curve */
+        cpml_segment_from_cairo(&segment, path_copy);
+        cpml_primitive_from_segment(&primitive, &segment);
+
+        /* Checking cpml_curve_pair_at_time and cpml_vector_at_curve */
         cairo_set_line_width(cr, 1.);
         for (t = 0; t < 1; t += 0.1) {
-            cpml_pair_at_curve(&pair, &bezier[0], &bezier[1],
-                               &bezier[2], &bezier[3], t);
+            cpml_curve_pair_at_time(&primitive, &pair, t);
             cpml_vector_at_curve(&vector, &bezier[0], &bezier[1],
                                  &bezier[2], &bezier[3], t, 20);
             cpml_vector_normal(&vector);
@@ -173,6 +179,8 @@ offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
             cairo_line_to(cr, pair.x + vector.x, pair.y + vector.y);
             cairo_stroke(cr);
         }
+
+        cairo_path_destroy(path_copy);
     }
 
     cairo_destroy(cr);

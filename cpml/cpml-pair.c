@@ -124,40 +124,6 @@ cpml_pair_intersection_pv_pv(CpmlPair *pair,
     return pair;
 }
 
-/**
- * cpml_pair_at_curve:
- * @pair: the destination #CpmlPair
- * @p1: start point
- * @p2: first control point
- * @p3: second control point
- * @p4: end point
- * @t: the mediation value
- *
- * Given the time value @t, returns the point on the specified Bézier curve
- * at time @t. Time values on Bézier curves are not evenly distributed, so
- * 0.5 is not necessarily the midpoint.
- *
- * Return value: @pair
- **/
-CpmlPair *
-cpml_pair_at_curve(CpmlPair *pair, const CpmlPair *p1, const CpmlPair *p2,
-                   const CpmlPair *p3, const CpmlPair *p4, double t)
-{
-    double t1, t1_2, t1_3;
-    double t_2, t_3;
-
-    t1 = 1-t;
-    t1_2 = t1*t1;
-    t1_3 = t1_2*t1;
-    t_2 = t*t;
-    t_3 = t_2*t;
-
-    pair->x = t1_3*p1->x + 3*t1_2*t*p2->x + 3*t1*t_2*p3->x + t_3*p4->x;
-    pair->y = t1_3*p1->y + 3*t1_2*t*p2->y + 3*t1*t_2*p3->y + t_3*p4->y;
-
-    return pair;
-}
-
 
 void
 cpml_pair_negate(CpmlPair *pair)

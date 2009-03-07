@@ -45,12 +45,6 @@ CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
                                                  const CpmlPair *p2,
                                                  const CpmlVector
                                                                 *v2);
-CpmlPair *      cpml_pair_at_curve              (CpmlPair       *pair,
-                                                 const CpmlPair *p1,
-                                                 const CpmlPair *p2,
-                                                 const CpmlPair *p3,
-                                                 const CpmlPair *p4,
-                                                 double          t);
 
 void            cpml_pair_negate                (CpmlPair       *pair);
 cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);
