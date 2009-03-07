@@ -77,7 +77,7 @@ static void             join_primitives         (cairo_path_data_t *last_data,
  *
  * This function will fail if @cairo_path is null, empty or if its
  * %status member is not %CAIRO_STATUS_SUCCESS. Also, the first
- * primitive must be a CAIRO_PATH_MOVE_TO, so no dependency on the
+ * primitive must be a %CAIRO_PATH_MOVE_TO, so no dependency on the
  * cairo context is needed.
  *
  * Return value: 1 on success, 0 on errors
@@ -274,9 +274,15 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * segment at the @offset distance from the original one and returns the
  * result by replacing the original @segment.
  *
- * Return value: 1 on success, 0 on errors
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>Closed path are not yet managed: an elegant solution is not
+ *           so obvious: use cpml_close_offset() when available.</listitem>
+ * </itemizedlist>
+ * </important>
  *
- * @todo: closed path are not yet managed; the solution is not so obvious.
+ * Return value: 1 on success, 0 on errors
  **/
 cairo_bool_t
 cpml_segment_offset(CpmlSegment *segment, double offset)
@@ -361,7 +367,6 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
             break;
 
         case CAIRO_PATH_CLOSE_PATH:
-            /* TODO: use cpml_close_offset() when implemented */
             return 1;
         }
 
@@ -386,8 +391,9 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * segment_normalize:
  * @segment: a #CpmlSegment
  *
- * Strips the leading CAIRO_PATH_MOVE_TO primitives, updating the CpmlSegment
- * structure accordling. One, and only once, MOVE_TO primitive is left.
+ * Strips the leading %CAIRO_PATH_MOVE_TO primitives, updating
+ * the CpmlSegment structure accordling. One, and only one,
+ * %CAIRO_PATH_MOVE_TO primitive is left.
  *
  * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
  **/
@@ -424,7 +430,12 @@ segment_normalize(CpmlSegment *segment)
  * Joins two primitive modifying the end point of the first one (stored
  * as cairo path data in @last_data).
  *
- * @todo: this approach is quite naive when curves are involved.
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>This approach is quite naive when curves are involved.</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 static void
 join_primitives(cairo_path_data_t *last_data, const CpmlVector *last_vector,

@@ -23,8 +23,9 @@
  * @short_description: Bézier cubic curve primitive management
  *
  * The following functions manipulate %CAIRO_PATH_CURVE_TO #CpmlPrimitive.
- * No check is made on the primitive struct, so be sure the CpmlPrimitive
- * is effectively a Bézier curve before calling these APIs.
+ * No check is made on the primitive struct, so be sure
+ * <structname>CpmlPrimitive</structname> is effectively a Bézier curve
+ * before calling these APIs.
  **/
 
 #include "cpml-curve.h"
@@ -54,8 +55,8 @@ cpml_curve_get_npoints(void)
  * in @pair. Keep in mind @t is not homogeneous, so 0.5 does not
  * necessarily means the mid point.
  *
- * @t must be inside the range 0 .. 1, as interpolating is not
- * allowed.
+ * The relation 0 < @t < 1 must be satisfied, as interpolating on
+ * cubic curves is not allowed.
  **/
 void
 cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
@@ -83,7 +84,7 @@ cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
 /**
  * cpml_curve_pair_at:
  * @curve: the #CpmlPrimitive curve data
- * @pair:  the destination pair
+ * @pair:  the destination #AdgPair
  * @pos:   the position value
  *
  * Given the @curve Bézier cubic, finds the coordinates at position
@@ -93,13 +94,19 @@ cpml_curve_pair_at_time(CpmlPrimitive *curve, CpmlPair *pair, double t)
  * If you do not need this feature, use cpml_curve_pair_at_time()
  * as it is considerable faster.
  *
- * @pos must be inside the range 0 .. 1, as interpolating is not
- * allowed.
+ * The relation 0 < @pos < 1 must be satisfied, as interpolating on
+ * cubic curves is not allowed.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 void
 cpml_curve_pair_at(CpmlPrimitive *curve, CpmlPair *pair, double pos)
 {
-    /* TODO: to be implemented */
 }
 
 /**
@@ -158,11 +165,17 @@ cpml_curve_vector_at_time(CpmlPrimitive *curve, CpmlVector *vector, double t)
  *
  * @pos must be inside the range 0 .. 1, as interpolating is not
  * allowed.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 void
 cpml_curve_vector_at(CpmlPrimitive *curve, CpmlVector *vector, double pos)
 {
-    /* TODO: to be implemented */
 }
 
 /**
@@ -271,6 +284,17 @@ cpml_curve_vector_at(CpmlPrimitive *curve, CpmlVector *vector, double pos)
  *
  * k0 = (pk.y - pk.x v3.y / v3.x) / ((1-m) (v0.y - v0.x v3.y / v3.x));
  * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x).
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>By default, interpolation of the new curve is made by offseting
+ *           the mid point: use a better candidate.</listitem>
+ * <listitem>When the equations are inconsistent, the alternative approach
+ *           performs very bad if <varname>v0</varname> and
+ *           <varname>v3</varname> are opposite or staggered.</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 void
 cpml_curve_offset(CpmlPrimitive *curve, double offset)
@@ -279,11 +303,7 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     CpmlVector v0, v3, vm, vtmp;
     CpmlPair p0, p1, p2, p3, pm;
 
-    /* By default, interpolate the new curve by offseting the mid point.
-     * TODO: use a better candidate. */
     m = 0.5;
-
-    /* Let be, for simplicity, mm = 1-m */
     mm = 1-m;
 
     /* Firstly, convert the curve points from cairo format to cpml format
@@ -315,9 +335,7 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_add(&p3, &vtmp);
 
     if (v0.x*v3.y == v3.x*v0.y) {
-        /* Inconsistent equations: use the alternative approach.
-         * TODO: this algorithm performs bad if v0 and v3 are opposite
-         *       or if are staggered! */
+        /* Inconsistent equations: use the alternative approach */
         p1.x = p0.x + v0.x + vm.x * 4/3;
         p1.y = p0.y + v0.y + vm.y * 4/3;
         p2.x = p3.x - v3.x + vm.x * 4/3;

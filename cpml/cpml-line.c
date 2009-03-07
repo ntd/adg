@@ -23,8 +23,9 @@
  * @short_description: Line primitive management
  *
  * The following functions manipulate %CAIRO_PATH_LINE_TO #CpmlPrimitive.
- * No check is made on the primitive struct, so be sure the CpmlPrimitive
- * is effectively a line before calling these APIs.
+ * No check is made on the primitive struct, so be sure the
+ * <structname>CpmlPrimitive</structname> is effectively a line before
+ * calling these APIs.
  **/
 
 #include "cpml-line.h"
@@ -79,7 +80,7 @@ cpml_line_pair_at(CpmlPrimitive *line, CpmlPair *pair, double pos)
  * @pos is not used. Mathematically speaking, the equation
  * performed is:
  *
- * @vector = end point - start point.
+ * @vector = endpoint(@line) - startpoint(@line).
  **/
 void
 cpml_line_vector_at(CpmlPrimitive *line, CpmlVector *vector, double pos)

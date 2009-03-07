@@ -24,8 +24,8 @@
  *
  * The following functions manipulate %CAIRO_PATH_CLOSE_PATH
  * #CpmlPrimitive. No check is made on the primitive struct, so be
- * sure the CpmlPrimitive is effectively a close operation before
- * calling these APIs.
+ * sure the <structname>CpmlPrimitive</structname> is effectively
+ * a close operation before calling these APIs.
  *
  * This primitive management is almost identical to straight lines,
  * but taking properly start and end points.
@@ -79,7 +79,7 @@ cpml_close_pair_at(CpmlPrimitive *close, CpmlPair *pair, double pos)
  * @pos:    the position value
  *
  * Gets the slope on @close at the position @pos. Being the
- * close a straight segment, the vector is always the same, so
+ * close a straight line, the vector is always the same, so
  * @pos is not used.
  **/
 void
@@ -96,7 +96,7 @@ cpml_close_vector_at(CpmlPrimitive *close, CpmlVector *vector, double pos)
 
 /**
  * cpml_close_offset:
- * @close:   the #CpmlPrimitive close data
+ * @close:  the #CpmlPrimitive close data
  * @offset: distance for the computed parallel close
  *
  * Given a close segment specified by the @close primitive data,
@@ -104,7 +104,7 @@ cpml_close_vector_at(CpmlPrimitive *close, CpmlVector *vector, double pos)
  * and returns the result by changing @close.
  *
  * The algorithm is practically the same as the one used for
- * cpml_line_offset() and using the proper start and end coordinates.
+ * cpml_line_offset() but using the proper start and end coordinates.
  **/
 void
 cpml_close_offset(CpmlPrimitive *close, double offset)
