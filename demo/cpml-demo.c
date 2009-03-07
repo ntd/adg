@@ -233,27 +233,29 @@ append_piston(cairo_t *cr)
     cairo_matrix_t matrix;
     CpmlSegment segment;
 
-    cairo_move_to(cr, 0., 4.65);
-    cairo_line_to(cr, 26., 4.65);
-    cairo_line_to(cr, 27.25, 3.5);
-    cairo_line_to(cr, 32, 3.5);
-    cairo_line_to(cr, 32, 11.8 / 2.0 - 0.3);
-    cairo_line_to(cr, 32 + 0.3, 5.9);
-    cairo_line_to(cr, 35.2, 5.9);
-    cairo_line_to(cr, 35.5, 5.6);
-    cairo_arc(cr, 37.5, 5.25, 2., G_PI, 3.0 * G_PI_2);
-    cairo_line_to(cr, 52. - 2. - 5., 6.5 / 2.0);
-    cairo_line_to(cr, 52. - 2. - 5. + 1., 6.5 / 2.0 - 1.);
-    cairo_line_to(cr, 52. - 2., 4.5 / 2.0);
-    cairo_line_to(cr, 52. - 2., 7.2 / 2.0);
-    cairo_line_to(cr, 52. - 2. + 1., 7.2 / 2.0);
-    cairo_line_to(cr, 52., 2.);
-    cairo_line_to(cr, 52., 2.5 / 2.0);
-    cairo_line_to(cr, 52., 2.5 / 2.0);
+    cairo_move_to(cr,  0.,    4.65);
+    cairo_line_to(cr, 26.,    4.65);
+    cairo_line_to(cr, 27.25,  3.5);
+    cairo_line_to(cr, 32,     3.5);
+    cairo_line_to(cr, 32,     5.6);
+    cairo_line_to(cr, 32.3,   5.9);
+    cairo_line_to(cr, 35.2,   5.9);
+    cairo_line_to(cr, 35.5,   5.6);
+    cairo_arc(cr,     37.5,   5.25,  2., G_PI, 3. * G_PI_2);
+    cairo_line_to(cr, 45.,    3.25);
+    cairo_line_to(cr, 46.,    2.25);
+    cairo_line_to(cr, 50.,    2.25);
+    cairo_arc_negative(cr,     50.2,   3.4,   0.2, G_PI, G_PI_2);
+    cairo_line_to(cr, 51.,    3.6);
+    cairo_line_to(cr, 52.,    3.);
+    cairo_line_to(cr, 52.2,   1.25);
 
     /* Mirror a reversed copy of the current path on the y = 0 axis */
     path = cairo_copy_path(cr);
     cpml_segment_from_cairo(&segment, path);
+
+    cpml_segment_dump(&segment);
+
     cpml_segment_reverse(&segment);
     cairo_matrix_init_scale(&matrix, 1., -1.);
     cpml_segment_transform(&segment, &matrix);
