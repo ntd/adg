@@ -24,7 +24,7 @@
  *
  * A primitive is an atomic geometric element found inside #CpmlSegment.
  * The available primitives are defined in the #cairo_path_data_type_t
- * enum, excluding #CAIRO_PATH_MOVE_TO, as it is not considered a valid
+ * enum, excluding %CAIRO_PATH_MOVE_TO, as it is not considered a valid
  * primitive and it is managed in different way (the moveto primitives
  * are used to set the origin of the first primitive in a segment).
  **/
@@ -44,6 +44,10 @@
 #include "cpml-primitive.h"
 
 #include <stdlib.h>
+#include <stdio.h>
+
+static void     dump_cairo_point        (const cairo_path_data_t *path_data);
+
 
 /**
  * cpml_primitive_from_segment:
@@ -57,13 +61,13 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
     primitive->segment = segment;
 
-    /* The first element of a CpmlSegment is always a CAIRO_MOVE_TO,
+    /* The first element of a CpmlSegment is always a CAIRO_PATH_MOVE_TO,
      * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
      * so the origin is in the second data item */
     primitive->org = &segment->data[1];
 
     /* Also, the segment APIs ensure that @segment is prepended by
-     * only one CAIRO_MOVE_TO */
+     * only one CAIRO_PATH_MOVE_TO */
     primitive->data = segment->data + 2;
 }
 
@@ -127,7 +131,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  *               or %NULL if the point is outside the valid range
  **/
 cairo_path_data_t *
-cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
+cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
 {
     int npoints;
     
@@ -155,6 +159,59 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
 }
 
 /**
+ * cpml_primitive_dump:
+ * @primitive: a #CpmlPrimitive
+ * @org_also:  whether to output also the origin coordinates
+ *
+ * Dumps info on the specified @primitive to stdout: useful for
+ * debugging purposes. If @org_also is 1, a %CAIRO_PATH_MOVE_TO
+ * to the origin is prepended to the data otherwise the
+ * <structfield>org</structfield> field is not used.
+ **/
+void
+cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
+{
+    const cairo_path_data_t *data;
+    int type, n, npoints;
+
+    data = primitive->data;
+    type = data->header.type;
+    npoints = cpml_primitive_get_npoints(primitive);
+    if (npoints < 0) {
+        printf("Unhandled primitive type (%d)\n", type);
+        return;
+    }
+
+    /* Dump the origin movement, if requested */
+    if (org_also) {
+        printf("Move to ");
+        dump_cairo_point(primitive->org);
+        printf("\n");
+    }
+
+    switch (type) {
+
+    case CAIRO_PATH_LINE_TO:
+        printf("Line to ");
+        break;
+
+    case CAIRO_PATH_CURVE_TO:
+        printf("Curve to ");
+        break;
+
+    case CAIRO_PATH_CLOSE_PATH:
+        printf("Path close");
+        break;
+    }
+
+    for (n = 1; n < npoints; ++n)
+        dump_cairo_point(cpml_primitive_get_point(primitive, n));
+
+    printf("\n");
+}
+
+
+/**
  * cpml_primitive_get_npoints:
  * @primitive: a #CpmlPrimitive
  *
@@ -168,7 +225,7 @@ cpml_primitive_get_point(CpmlPrimitive *primitive, int npoint)
  * Return value: the number of points or -1 on errors
  **/
 int
-cpml_primitive_get_npoints(CpmlPrimitive *primitive)
+cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
 {
     switch (primitive->data->header.type) {
 
@@ -206,7 +263,8 @@ cpml_primitive_get_npoints(CpmlPrimitive *primitive)
  * </para></note>
  **/
 void
-cpml_primitive_pair_at(CpmlPrimitive *primitive, CpmlPair *pair, double pos)
+cpml_primitive_pair_at(const CpmlPrimitive *primitive,
+                       CpmlPair *pair, double pos)
 {
     switch (primitive->data->header.type) {
 
@@ -245,7 +303,7 @@ cpml_primitive_pair_at(CpmlPrimitive *primitive, CpmlPair *pair, double pos)
  * </para></note>
  **/
 void
-cpml_primitive_vector_at(CpmlPrimitive *primitive,
+cpml_primitive_vector_at(const CpmlPrimitive *primitive,
                          CpmlVector *vector, double pos)
 {
     switch (primitive->data->header.type) {
@@ -295,4 +353,10 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
         cpml_close_offset(primitive, offset);
         break;
     }
+}
+
+static void
+dump_cairo_point(const cairo_path_data_t *path_data)
+{
+    printf("(%lf, %lf) ", path_data->point.x, path_data->point.y);
 }

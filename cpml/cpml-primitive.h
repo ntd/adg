@@ -35,24 +35,27 @@ struct _CpmlPrimitive {
 };
 
 
-void            cpml_primitive_from_segment     (CpmlPrimitive  *primitive,
-                                                 CpmlSegment    *segment);
-void            cpml_primitive_reset            (CpmlPrimitive  *primitive);
-cairo_bool_t    cpml_primitive_next             (CpmlPrimitive  *primitive);
+void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
+                                            CpmlSegment         *segment);
+void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
+cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
+
 cairo_path_data_t *
-                cpml_primitive_get_point        (CpmlPrimitive  *primitive,
-                                                 int             npoint);
+                cpml_primitive_get_point   (const CpmlPrimitive *primitive,
+                                            int                  npoint);
+void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
+                                            cairo_bool_t         org_also);
 
 /* To be implemented by the primitives */
-int             cpml_primitive_get_npoints      (CpmlPrimitive  *primitive);
-void            cpml_primitive_pair_at          (CpmlPrimitive  *primitive,
-                                                 CpmlPair       *pair,
-                                                 double          pos);
-void            cpml_primitive_vector_at        (CpmlPrimitive  *primitive,
-                                                 CpmlVector     *vector,
-                                                 double          pos);
-void            cpml_primitive_offset           (CpmlPrimitive  *primitive,
-                                                 double          offset);
+int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
+void            cpml_primitive_pair_at     (const CpmlPrimitive *primitive,
+                                            CpmlPair            *pair,
+                                            double               pos);
+void            cpml_primitive_vector_at   (const CpmlPrimitive *primitive,
+                                            CpmlVector          *vector,
+                                            double               pos);
+void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
+                                            double               offset);
 
 CAIRO_END_DECLS
 
