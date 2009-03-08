@@ -40,6 +40,7 @@ void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
 cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
 
+int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
 cairo_path_data_t *
                 cpml_primitive_get_point   (const CpmlPrimitive *primitive,
                                             int                  npoint);
@@ -47,7 +48,7 @@ void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
                                             cairo_bool_t         org_also);
 
 /* To be implemented by the primitives */
-int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
+int             cpml_primitive_type_get_npoints(cairo_path_data_type_t type);
 void            cpml_primitive_pair_at     (const CpmlPrimitive *primitive,
                                             CpmlPair            *pair,
                                             double               pos);

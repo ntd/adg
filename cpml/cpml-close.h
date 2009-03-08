@@ -26,7 +26,7 @@
 
 CAIRO_BEGIN_DECLS
 
-int             cpml_close_get_npoints          (void) CPML_GNUC_CONST;
+int             cpml_close_type_get_npoints     (void) CPML_GNUC_CONST;
 void            cpml_close_pair_at              (CpmlPrimitive  *close,
                                                  CpmlPair       *pair,
                                                  double          pos);

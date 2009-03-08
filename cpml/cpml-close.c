@@ -35,14 +35,14 @@
 #include "cpml-pair.h"
 
 /**
- * cpml_close_get_npoints:
+ * cpml_close_type_get_npoints:
  *
  * Returns the number of points needed to properly specify a close primitive.
  *
  * Return value: 1
  **/
 int
-cpml_close_get_npoints(void)
+cpml_close_type_get_npoints(void)
 {
     return 1;
 }

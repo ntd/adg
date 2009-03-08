@@ -26,7 +26,7 @@
 
 CAIRO_BEGIN_DECLS
 
-int             cpml_curve_get_npoints          (void) CPML_GNUC_CONST;
+int             cpml_curve_type_get_npoints     (void) CPML_GNUC_CONST;
 void            cpml_curve_pair_at_time         (CpmlPrimitive  *curve,
                                                  CpmlPair       *pair,
                                                  double          time);

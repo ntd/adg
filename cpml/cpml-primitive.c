@@ -112,6 +112,22 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 }
 
 /**
+ * cpml_primitive_get_npoints:
+ * @primitive: a #CpmlPrimitive
+ *
+ * Gets the number of points required to identify @primitive.
+ * It is similar to cpml_primitive_type_get_npoints() but using
+ * a @primitive instance instead of a type.
+ *
+ * Return value: the number of points or -1 on errors
+ **/
+int
+cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
+{
+    return cpml_primitive_type_get_npoints(primitive->data->header.type);
+}
+
+/**
  * cpml_primitive_get_point:
  * @primitive: a #CpmlPrimitive
  * @npoint: the index of the point to retrieve
@@ -212,10 +228,10 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 
 
 /**
- * cpml_primitive_get_npoints:
- * @primitive: a #CpmlPrimitive
+ * cpml_primitive_type_get_npoints:
+ * @type: a primitive type
  *
- * Gets the number of points required to identify the underlying primitive.
+ * Gets the number of points required to identify the @type primitive.
  *
  * <note><para>
  * This function is primitive dependent, that is every primitive has
@@ -225,18 +241,18 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
  * Return value: the number of points or -1 on errors
  **/
 int
-cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
+cpml_primitive_type_get_npoints(cairo_path_data_type_t type)
 {
-    switch (primitive->data->header.type) {
+    switch (type) {
 
     case CAIRO_PATH_LINE_TO:
-        return cpml_line_get_npoints();
+        return cpml_line_type_get_npoints();
 
     case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_get_npoints();
+        return cpml_curve_type_get_npoints();
 
     case CAIRO_PATH_CLOSE_PATH:
-        return cpml_close_get_npoints();
+        return cpml_close_type_get_npoints();
     }
 
     return -1;

@@ -32,14 +32,14 @@
 #include "cpml-pair.h"
 
 /**
- * cpml_curve_get_npoints:
+ * cpml_curve_type_get_npoints:
  *
  * Returns the number of point needed to properly specify a curve primitive.
  *
  * Return value: 4
  **/
 int
-cpml_curve_get_npoints(void)
+cpml_curve_type_get_npoints(void)
 {
     return 4;
 }

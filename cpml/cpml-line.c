@@ -32,14 +32,14 @@
 #include "cpml-pair.h"
 
 /**
- * cpml_line_get_npoints:
+ * cpml_line_type_get_npoints:
  *
  * Returns the number of point needed to properly specify a line primitive.
  *
  * Return value: 2
  **/
 int
-cpml_line_get_npoints(void)
+cpml_line_type_get_npoints(void)
 {
     return 2;
 }
