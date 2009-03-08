@@ -102,12 +102,12 @@ cpml_primitive_next(CpmlPrimitive *primitive)
     cairo_path_data_t *new_data;
 
     new_data = primitive->data + primitive->data->header.length;
-
     if (new_data - primitive->segment->data >= primitive->segment->num_data)
         return 0;
 
     primitive->org = cpml_primitive_get_point(primitive, -1);
     primitive->data = new_data;
+
     return 1;
 }
 
@@ -374,5 +374,5 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
 static void
 dump_cairo_point(const cairo_path_data_t *path_data)
 {
-    printf("(%lf, %lf) ", path_data->point.x, path_data->point.y);
+    printf("(%g %g) ", path_data->point.x, path_data->point.y);
 }
