@@ -63,8 +63,10 @@ cpml_primitive_from_segment
 cpml_primitive_reset
 cpml_primitive_next
 <SUBSECTION>
-cpml_primitive_get_npoints
 cpml_primitive_get_point
+cpml_primitive_dump
+<SUBSECTION>
+cpml_primitive_get_npoints
 cpml_primitive_pair_at
 cpml_primitive_vector_at
 cpml_primitive_offset
