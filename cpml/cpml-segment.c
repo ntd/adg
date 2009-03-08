@@ -60,7 +60,6 @@
 #include "cpml-pair.h"
 #include "cpml-alloca.h"
 
-#include <stdio.h>
 #include <string.h>
 
 static cairo_bool_t     segment_normalize       (CpmlSegment       *segment);
@@ -129,37 +128,15 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 void
 cpml_segment_dump(const CpmlSegment *segment)
 {
-    cairo_path_data_t *data;
-    int n, n_point;
+    CpmlPrimitive primitive;
+    cairo_bool_t first_call = 1;
 
-    for (n = 0; n < segment->num_data; ++n) {
-	data = segment->data + n;
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
-	switch (data->header.type) {
-	case CAIRO_PATH_MOVE_TO:
-	    printf("Move to ");
-	    break;
-	case CAIRO_PATH_LINE_TO:
-	    printf("Line to ");
-	    break;
-	case CAIRO_PATH_CURVE_TO:
-	    printf("Curve to ");
-	    break;
-	case CAIRO_PATH_CLOSE_PATH:
-	    printf("Path close");
-	    break;
-	default:
-	    printf("Unknown entity (%d)", data->header.type);
-	    break;
-	}
-
-	for (n_point = 1; n_point < data->header.length; ++n_point)
-	    printf("(%lf, %lf) ", data[n_point].point.x,
-                   data[n_point].point.y);
-
-	n += n_point - 1;
-	printf("\n");
-    }
+    do {
+        cpml_primitive_dump(&primitive, first_call);
+        first_call = 0;
+    } while (cpml_primitive_next(&primitive));
 }
 
 /**
