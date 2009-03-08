@@ -60,9 +60,12 @@
 #include "cpml-pair.h"
 #include "cpml-alloca.h"
 
+#include <stdio.h>
 #include <string.h>
 
-static cairo_bool_t     segment_normalize       (CpmlSegment       *segment);
+static cairo_bool_t     normalize               (CpmlSegment       *segment);
+static cairo_bool_t     ensure_one_move_to      (CpmlSegment       *segment);
+static void             reshape                 (CpmlSegment       *segment);
 static void             join_primitives         (cairo_path_data_t *last_data,
                                                  const CpmlVector  *last_vector,
                                                  const CpmlPair    *new_point,
@@ -98,7 +101,7 @@ cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *cairo_path)
     segment->data = cairo_path->data;
     segment->num_data = cairo_path->num_data;
 
-    return segment_normalize(segment);
+    return normalize(segment);
 }
 
 /**
@@ -150,7 +153,7 @@ cpml_segment_reset(CpmlSegment *segment)
 {
     segment->data = segment->cairo_path->data;
     segment->num_data = segment->cairo_path->num_data;
-    segment_normalize(segment);
+    normalize(segment);
 }
 
 /**
@@ -173,7 +176,7 @@ cpml_segment_next(CpmlSegment *segment)
     segment->data += segment->num_data;
     segment->num_data = rest;
 
-    return segment_normalize(segment);
+    return normalize(segment);
 }
 
 /**
@@ -376,7 +379,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
 }
 
 /**
- * segment_normalize:
+ * normalize:
  * @segment: a #CpmlSegment
  *
  * Strips the leading %CAIRO_PATH_MOVE_TO primitives, updating
@@ -386,26 +389,93 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
  **/
 static cairo_bool_t
-segment_normalize(CpmlSegment *segment)
+normalize(CpmlSegment *segment)
+{
+    if (!ensure_one_move_to(segment))
+        return 0;
+
+    reshape(segment);
+    return 1;
+}
+
+/**
+ * ensure_one_move_to:
+ * @segment: a #CpmlSegment
+ *
+ * Strips the leading %CAIRO_PATH_MOVE_TO primitives, updating
+ * the <structname>CpmlSegment</structname> structure accordling.
+ * One, and only one, %CAIRO_PATH_MOVE_TO primitive is left.
+ *
+ * Return value: 1 on success, 0 on no leading MOVE_TOs or on empty path
+ **/
+static cairo_bool_t
+ensure_one_move_to(CpmlSegment *segment)
+{
+    cairo_path_data_t *new_data;
+    int new_num_data, length;
+
+    new_data = segment->data;
+
+    /* Check for at least one move to */
+    if (new_data->header.type != CAIRO_PATH_MOVE_TO)
+        return 0;
+
+    new_num_data = segment->num_data;
+    length = 0;
+
+    /* Strip the leading CAIRO_PATH_MOVE_TO, leaving only the last one */
+    do {
+        new_data += length;
+        new_num_data -= length;
+        length = new_data->header.length;
+
+        /* Check for end of cairo path data */
+        if (length >= new_num_data)
+            return 0;
+    } while (new_data[length].header.type == CAIRO_PATH_MOVE_TO);
+
+    segment->data = new_data;
+    segment->num_data = new_num_data;
+
+    return 1;
+}
+
+/**
+ * reshape:
+ * @segment: a #CpmlSegment
+ *
+ * Looks for the segment termination and modify the
+ * <structfield>num_data</structfield> field of @segment accordling.
+ * @segment must have only one leading %CAIRO_PATH_MOVE_TO and
+ * it is supposed to be non-empty, conditions yet imposed by the
+ * ensure_one_move_to() function.
+ **/
+static void
+reshape(CpmlSegment *segment)
 {
     cairo_path_data_t *data;
+    int num_data, new_num_data, length;
 
-    if (segment->cairo_path->data->header.type != CAIRO_PATH_MOVE_TO) {
-        return 0;
+    /* Skip the leading move to */
+    new_num_data = 2;
+    data = segment->data + new_num_data;
+
+    /* Calculate the remaining data in the cairo path */
+    num_data = segment->cairo_path->num_data -
+               (segment->data - segment->cairo_path->data);
+
+    while (new_num_data < num_data) {
+        /* A primitive is considered valid if it has implemented
+         * its own type_get_npoints() */
+        if (cpml_primitive_type_get_npoints(data->header.type) < 0)
+            break;
+
+        length = data->header.length;
+        data += length;
+        new_num_data += length;
     }
 
-    data = segment->data;
-
-    while (segment->num_data >= 0) {
-        data += 2;
-        if (data->header.type != CAIRO_PATH_MOVE_TO)
-            return 1;
-
-        segment->data = data;
-        segment->num_data -= 2;
-    }
-
-    return 0;
+    segment->num_data = new_num_data;
 }
 
 /**

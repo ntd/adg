@@ -255,8 +255,6 @@ append_piston(cairo_t *cr)
     path = cairo_copy_path(cr);
     cpml_segment_from_cairo(&segment, path);
 
-    cpml_segment_dump(&segment);
-
     cpml_segment_reverse(&segment);
     cairo_matrix_init_scale(&matrix, 1., -1.);
     cpml_segment_transform(&segment, &matrix);
