@@ -63,10 +63,11 @@ cpml_primitive_from_segment
 cpml_primitive_reset
 cpml_primitive_next
 <SUBSECTION>
+cpml_primitive_get_npoints
 cpml_primitive_get_point
 cpml_primitive_dump
 <SUBSECTION>
-cpml_primitive_get_npoints
+cpml_primitive_type_get_npoints
 cpml_primitive_pair_at
 cpml_primitive_vector_at
 cpml_primitive_offset
@@ -75,7 +76,7 @@ cpml_primitive_offset
 <SECTION>
 <FILE>line</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
-cpml_line_get_npoints
+cpml_line_type_get_npoints
 cpml_line_pair_at
 cpml_line_vector_at
 cpml_line_offset
@@ -84,7 +85,7 @@ cpml_line_offset
 <SECTION>
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
-cpml_curve_get_npoints
+cpml_curve_type_get_npoints
 cpml_curve_pair_at_time
 cpml_curve_pair_at
 cpml_curve_vector_at_time
@@ -95,7 +96,7 @@ cpml_curve_offset
 <SECTION>
 <FILE>close</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
-cpml_close_get_npoints
+cpml_close_type_get_npoints
 cpml_close_pair_at
 cpml_close_vector_at
 cpml_close_offset
