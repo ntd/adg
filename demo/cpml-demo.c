@@ -378,10 +378,14 @@ circle_callback(cairo_t *cr)
 static void
 piston_callback(cairo_t *cr)
 {
-    cairo_path_t *path;
+    cairo_path_t *old_path, *path;
     cairo_matrix_t matrix;
     CpmlSegment segment;
 
+    /* Save the previous path, if any */
+    old_path = cairo_copy_path(cr);
+
+    cairo_new_path(cr);
     cairo_move_to(cr,  0.,   46.5);
     cairo_line_to(cr, 210.,   46.5);
     cairo_line_to(cr, 222.5,  35.);
@@ -415,6 +419,16 @@ piston_callback(cairo_t *cr)
 
     /* ...and close the shape */
     cairo_close_path(cr);
+
+    /* Save the resulting path and clear the path memory */
+    path = cairo_copy_path(cr);
+    cairo_new_path(cr);
+
+    /* Restore the previous path and reappend the new path */
+    cairo_append_path(cr, old_path);
+    cairo_path_destroy(old_path);
+    cairo_append_path(cr, path);
+    cairo_path_destroy(path);
 }
 
 static void
