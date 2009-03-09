@@ -16,6 +16,7 @@ static void     offset_segments         (GtkWidget      *widget,
 
 static void     append_circle           (cairo_t        *cr);
 static void     append_piston           (cairo_t        *cr);
+static void     append_complex_curve    (cairo_t        *cr);
 
 static CpmlPair bezier_samples[][4] = {
     { { 0, 0 }, { 0, 40 }, { 120, 40 }, { 120, 0 } },   /* Simmetric low */
@@ -200,19 +201,31 @@ offset_segments(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 
     path = duplicate_and_stroke(cr);
     cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 20.);
+    cpml_segment_offset(&segment, 15.);
     stroke_and_destroy(cr, path);
 
-    /* Offset a more complex path */
+    /* Offset a piston path, a common path in technical drawing */
     cairo_save(cr);
-    cairo_translate(cr, 240.5, 120.5);
+    cairo_translate(cr, 220.5, 120.5);
     cairo_scale(cr, 10., 10.);
     append_piston(cr);
     cairo_restore(cr);
 
     path = duplicate_and_stroke(cr);
     cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 10.);
+    cpml_segment_offset(&segment, 15.);
+    stroke_and_destroy(cr, path);
+
+    /* Offset a complex curve, quite uncommon in technical drawing*/
+    cairo_save(cr);
+    cairo_translate(cr, 40., 340.);
+    cairo_scale(cr, 10., 10.);
+    append_complex_curve(cr);
+    cairo_restore(cr);
+
+    path = duplicate_and_stroke(cr);
+    cpml_segment_from_cairo(&segment, path);
+    cpml_segment_offset(&segment, 15.);
     stroke_and_destroy(cr, path);
 
     cairo_destroy(cr);
@@ -233,7 +246,7 @@ append_piston(cairo_t *cr)
     cairo_matrix_t matrix;
     CpmlSegment segment;
 
-    cairo_move_to(cr,  0.,    4.65);
+    cairo_move_to(cr,  5.,    4.65);
     cairo_line_to(cr, 26.,    4.65);
     cairo_line_to(cr, 27.25,  3.5);
     cairo_line_to(cr, 32,     3.5);
@@ -246,7 +259,7 @@ append_piston(cairo_t *cr)
     cairo_line_to(cr, 46.,    2.25);
     cairo_line_to(cr, 50.,    2.25);
     cairo_arc_negative(cr,
-                      50.2,   3.4,   0.2, G_PI, G_PI_2);
+                      50.2,   3.4, 0.2,  G_PI,      G_PI_2);
     cairo_line_to(cr, 51.,    3.6);
     cairo_line_to(cr, 52.,    3.);
     cairo_line_to(cr, 52.2,   1.25);
@@ -266,4 +279,14 @@ append_piston(cairo_t *cr)
 
     /* ...and close the shape */
     cairo_close_path(cr);
+}
+
+static void
+append_complex_curve(cairo_t *cr)
+{
+    cairo_move_to(cr,    0.,  0.);
+    cairo_curve_to(cr,  12., 12.,  13., 10.,  13.,  2.);
+    cairo_curve_to(cr,  13., -2.,   5.,  4.,  15.,  4.);
+    cairo_curve_to(cr,  25.,  4.,  25., -6.,  15., -6.);
+    cairo_curve_to(cr,   5., -6.,  10., -2.,   8., -9.);
 }
