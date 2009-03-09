@@ -44,11 +44,14 @@ int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
 cairo_path_data_t *
                 cpml_primitive_get_point   (const CpmlPrimitive *primitive,
                                             int                  npoint);
+void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
+                                            cairo_t             *cr);
 void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
                                             cairo_bool_t         org_also);
 
 /* To be implemented by the primitives */
-int             cpml_primitive_type_get_npoints(cairo_path_data_type_t type);
+int             cpml_primitive_type_get_npoints
+                                           (cairo_path_data_type_t type);
 void            cpml_primitive_pair_at     (const CpmlPrimitive *primitive,
                                             CpmlPair            *pair,
                                             double               pos);

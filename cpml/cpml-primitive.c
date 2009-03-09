@@ -175,6 +175,26 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
 }
 
 /**
+ * cpml_primitive_to_cairo:
+ * @primitive: a #CpmlPrimitive
+ * @cr: the destination cairo context
+ *
+ * Appends the path of @primitive to @cr using cairo_append_path().
+ **/
+void
+cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
+{
+    cairo_path_t path;
+
+    path.status = CAIRO_STATUS_SUCCESS;
+    path.data = primitive->data;
+    path.num_data = primitive->data->header.length;
+
+    cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
+    cairo_append_path(cr, &path);
+}
+
+/**
  * cpml_primitive_dump:
  * @primitive: a #CpmlPrimitive
  * @org_also:  whether to output also the origin coordinates
