@@ -1,6 +1,7 @@
 #include <config.h>
 #include <cpml/cpml.h>
 #include <gtk/gtk.h>
+#include <math.h>
 
 static gchar *  find_data_file          (const gchar    *file);
 

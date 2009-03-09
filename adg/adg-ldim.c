@@ -91,7 +91,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     param = g_param_spec_double("direction",
                                 P_("Direction"),
                                 P_("The inclination angle of the extension lines"),
-                                -G_MAXDOUBLE, G_MAXDOUBLE, CPML_DIR_RIGHT,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
 }
@@ -102,7 +102,7 @@ adg_ldim_init(AdgLDim *ldim)
     AdgLDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(ldim, ADG_TYPE_LDIM,
                                                        AdgLDimPrivate);
 
-    priv->direction = CPML_DIR_RIGHT;
+    priv->direction = ADG_DIR_RIGHT;
 
     priv->path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     priv->path.data = priv->path_data;

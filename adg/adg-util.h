@@ -25,6 +25,11 @@
 #include <cairo.h>
 #include <math.h>
 
+#define ADG_DIR_RIGHT           0.
+#define ADG_DIR_DOWN            M_PI_2
+#define ADG_DIR_LEFT            M_PI
+#define ADG_DIR_UP              (M_PI_2 * 3.)
+
 #define ADG_ISSET(flags,mask)   (((flags) & (mask)) != 0 ? TRUE : FALSE)
 #define ADG_SET(flags,mask)     G_STMT_START{ (flags) |= (mask); }G_STMT_END
 #define ADG_UNSET(flags,mask)   G_STMT_START{ (flags) &= ~(mask); }G_STMT_END

@@ -28,11 +28,11 @@ main(gint argc, gchar ** argv)
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* Add the north quotes */
-    entity = adg_ldim_new_full_explicit(2., -10., 8., -10., CPML_DIR_UP,
+    entity = adg_ldim_new_full_explicit(2., -10., 8., -10., ADG_DIR_UP,
                                         0.0, -10.);
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
-    entity = adg_ldim_new_full_explicit(0., -5., 10., -5., CPML_DIR_UP,
+    entity = adg_ldim_new_full_explicit(0., -5., 10., -5., ADG_DIR_UP,
                                         0.0, -10.);
     adg_dim_set_level(ADG_DIM(entity), 2);
     adg_container_add(ADG_CONTAINER(canvas), entity);
