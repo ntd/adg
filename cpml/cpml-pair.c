@@ -125,6 +125,12 @@ cpml_pair_intersection_pv_pv(CpmlPair *pair,
 }
 
 
+/**
+ * cpml_pair_negate:
+ * @pair: a #CpmlPair
+ *
+ * Negates the coordinates of @pair.
+ **/
 void
 cpml_pair_negate(CpmlPair *pair)
 {
@@ -132,6 +138,16 @@ cpml_pair_negate(CpmlPair *pair)
     pair->y = - pair->y;
 }
 
+/**
+ * cpml_pair_invert:
+ * @pair: a #CpmlPair
+ *
+ * Inverts (1/x) the coordinates of @pair. If @pair cannot be inverted
+ * because one coordinate is 0, 0 is returned and no transformation is
+ * performed.
+ *
+ * Return value: 1 on success, 0 on errors
+ **/
 cairo_bool_t
 cpml_pair_invert(CpmlPair *pair)
 {
@@ -143,6 +159,14 @@ cpml_pair_invert(CpmlPair *pair)
     return 1;
 }
 
+/**
+ * cpml_pair_add:
+ * @pair: the destination #CpmlPair
+ * @src:  the source pair to add
+ *
+ * Adds @src to @pair and stores the result in @pair. In other words,
+ * @pair = @pair + @src.
+ **/
 void
 cpml_pair_add(CpmlPair *pair, const CpmlPair *src)
 {
@@ -150,6 +174,14 @@ cpml_pair_add(CpmlPair *pair, const CpmlPair *src)
     pair->y += src->y;
 }
 
+/**
+ * cpml_pair_sub:
+ * @pair: the destination #CpmlPair
+ * @src:  the source pair to subtract
+ *
+ * Subtracts @src from @pair and stores the result in @pair. In other words,
+ * @pair = @pair - @src.
+ **/
 void
 cpml_pair_sub(CpmlPair *pair, const CpmlPair *src)
 {
@@ -157,6 +189,14 @@ cpml_pair_sub(CpmlPair *pair, const CpmlPair *src)
     pair->y -= src->y;
 }
 
+/**
+ * cpml_pair_mul:
+ * @pair: the destination #CpmlPair
+ * @src:  the source pair factor
+ *
+ * Multiplies the x coordinate of @pair by the @src x factor and the
+ * y coordinate by the @src y factor.
+ **/
 void
 cpml_pair_mul(CpmlPair *pair, const CpmlPair *src)
 {
@@ -164,6 +204,18 @@ cpml_pair_mul(CpmlPair *pair, const CpmlPair *src)
     pair->y *= src->y;
 }
 
+/**
+ * cpml_pair_div:
+ * @pair: the destination #CpmlPair
+ * @src:  the source pair divisor
+ *
+ * Divides the x coordinate of @pair by the @src x divisor and the
+ * y coordinate by the @src y divisor. If @pair cannot be divided
+ * because of a division by 0, 0 is returned and no transformation
+ * is performed.
+ *
+ * Return value: 1 on success, 0 on errors
+ **/
 cairo_bool_t
 cpml_pair_div(CpmlPair *pair, const CpmlPair *src)
 {
