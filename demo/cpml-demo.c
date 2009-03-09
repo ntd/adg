@@ -12,6 +12,15 @@ static void     stroke_and_destroy      (cairo_t        *cr,
 static void     browsing                (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
+static void     browsing_segment        (GtkToggleButton*togglebutton,
+                                         gpointer        user_data);
+static void     browsing_primitive      (GtkToggleButton*togglebutton,
+                                         gpointer        user_data);
+static void     browsing_reset          (GtkButton      *button,
+                                         gpointer        user_data);
+static void     browsing_next           (GtkButton      *button,
+                                         gpointer        user_data);
+
 static void     offset_curves           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
@@ -22,6 +31,16 @@ static void     offset_segments         (GtkWidget      *widget,
 static void     circle_callback         (cairo_t        *cr);
 static void     piston_callback         (cairo_t        *cr);
 static void     curve1_callback         (cairo_t        *cr);
+
+static struct {
+    GtkWidget           *area;
+    cairo_path_t        *cairo_path;
+    gboolean             use_segment;
+    CpmlSegment          segment;
+    CpmlPrimitive        primitive;
+} browsing_data = {
+    NULL, 
+};
 
 static CpmlPair bezier_samples[][4] = {
     { { 0, 0 }, { 0, 40 }, { 120, 40 }, { 120, 0 } },   /* Simmetric low */
@@ -89,6 +108,14 @@ main(gint argc, gchar **argv)
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
                      "expose-event", G_CALLBACK(browsing), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "optBrowsingSegment"),
+                     "toggled", G_CALLBACK(browsing_segment), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "optBrowsingPrimitive"),
+                     "toggled", G_CALLBACK(browsing_primitive), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingReset"),
+                     "clicked", G_CALLBACK(browsing_reset), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingNext"),
+                     "clicked", G_CALLBACK(browsing_next), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetCurves"),
                      "expose-event", G_CALLBACK(offset_curves), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetSegments"),
@@ -150,19 +177,95 @@ static void
 browsing(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
     cairo_t *cr;
-    cairo_path_t *path;
-    CpmlSegment segment;
     int n;
 
     cr = gdk_cairo_create(widget->window);
 
-    /* Append all the path samples to the cairo context */
-    for (n = 0; n < G_N_ELEMENTS(path_samples); ++n) {
-        (path_samples[n]) (cr);
+    if (browsing_data.area == NULL) {
+        /* Initialize browsing_data */
+        browsing_data.area = widget;
+        browsing_data.use_segment = TRUE;
+
+        /* Append all the path samples to the cairo context */
+        cairo_save(cr);
+        cairo_translate(cr, 270.5, -120.5);
+        for (n = 0; n < G_N_ELEMENTS(path_samples); ++n) {
+            if ((n & 1) == 0) {
+                cairo_translate(cr, -270., 240.);
+            } else {
+                cairo_translate(cr, 270., 0.);
+            }
+
+            (path_samples[n]) (cr);
+        }
+
+        cairo_restore(cr);
+        browsing_data.cairo_path = cairo_copy_path(cr);
+        cpml_segment_from_cairo(&browsing_data.segment,
+                                browsing_data.cairo_path);
+        cpml_primitive_from_segment(&browsing_data.primitive,
+                                    &browsing_data.segment);
+    } else {
+        cairo_append_path(cr, browsing_data.cairo_path);
     }
 
+    cairo_set_line_width(cr, 2.);
+    cairo_stroke(cr);
+
+    cairo_set_source_rgb(cr, 1., 0.4, 0.);
+    cairo_set_line_width(cr, 5.);
+
+    if (browsing_data.use_segment)
+        cpml_segment_to_cairo(&browsing_data.segment, cr);
+    else
+        cpml_primitive_to_cairo(&browsing_data.primitive, cr);
+
+    cairo_stroke(cr);
     cairo_destroy(cr);
 }
+
+static void
+browsing_segment(GtkToggleButton *togglebutton, gpointer user_data)
+{
+    if (!gtk_toggle_button_get_active(togglebutton))
+        return;
+
+    browsing_data.use_segment = TRUE;
+    gtk_widget_queue_draw(browsing_data.area);
+}
+
+static void
+browsing_primitive(GtkToggleButton*togglebutton, gpointer user_data)
+{
+    if (!gtk_toggle_button_get_active(togglebutton))
+        return;
+
+    browsing_data.use_segment = FALSE;
+    gtk_widget_queue_draw(browsing_data.area);
+}
+
+static void
+browsing_reset(GtkButton *button, gpointer user_data)
+{
+    if (browsing_data.use_segment)
+        cpml_segment_reset(&browsing_data.segment);
+    else
+        cpml_primitive_reset(&browsing_data.primitive);
+
+    gtk_widget_queue_draw(browsing_data.area);
+}
+
+static void
+browsing_next(GtkButton *button, gpointer user_data)
+{
+    if (browsing_data.use_segment)
+        cpml_segment_next(&browsing_data.segment);
+    else
+        cpml_primitive_next(&browsing_data.primitive);
+
+    gtk_widget_queue_draw(browsing_data.area);
+}
+
 
 static void
 offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
