@@ -8,6 +8,9 @@ static cairo_path_t *
 static void     stroke_and_destroy      (cairo_t        *cr,
                                          cairo_path_t   *path);
 
+static void     browsing                (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        data);
 static void     offset_curves           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
@@ -75,6 +78,12 @@ main(gint argc, gchar **argv)
     gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_LEFT);
     gtk_container_add(GTK_CONTAINER(vbox), notebook);
 
+    label = gtk_label_new("Browsing");
+    widget = gtk_drawing_area_new();
+    gtk_widget_set_size_request(widget, 800, 800);
+    g_signal_connect(widget, "expose-event", G_CALLBACK(browsing), NULL);
+    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, label);
+
     label = gtk_label_new("Offset curves");
     widget = gtk_drawing_area_new();
     gtk_widget_set_size_request(widget, 800, 800);
@@ -83,7 +92,6 @@ main(gint argc, gchar **argv)
 
     label = gtk_label_new("Offset segments");
     widget = gtk_drawing_area_new();
-    gtk_widget_set_size_request(widget, 800, 800);
     g_signal_connect(widget, "expose-event", G_CALLBACK(offset_segments), NULL);
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, label);
 
@@ -127,6 +135,24 @@ stroke_and_destroy(cairo_t *cr, cairo_path_t *path)
     cairo_stroke(cr);
 }
 
+
+static void
+browsing(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+    cairo_t *cr;
+    cairo_path_t *path;
+    CpmlSegment segment;
+    int n;
+
+    cr = gdk_cairo_create(widget->window);
+
+    /* Append all the path samples to the cairo context */
+    for (n = 0; n < G_N_ELEMENTS(path_samples); ++n) {
+        (path_samples[n]) (cr);
+    }
+
+    cairo_destroy(cr);
+}
 
 static void
 offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
