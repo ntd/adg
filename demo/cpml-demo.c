@@ -1,6 +1,7 @@
 #include <cpml/cpml.h>
 #include <gtk/gtk.h>
 
+typedef void (*PathCallback) (cairo_t *cr);
 
 static cairo_path_t *
                 duplicate_and_stroke    (cairo_t        *cr);
@@ -14,9 +15,9 @@ static void     offset_segments         (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
 
-static void     append_circle           (cairo_t        *cr);
-static void     append_piston           (cairo_t        *cr);
-static void     append_complex_curve    (cairo_t        *cr);
+static void     circle_callback         (cairo_t        *cr);
+static void     piston_callback         (cairo_t        *cr);
+static void     curve1_callback         (cairo_t        *cr);
 
 static CpmlPair bezier_samples[][4] = {
     { { 0, 0 }, { 0, 40 }, { 120, 40 }, { 120, 0 } },   /* Simmetric low */
@@ -44,6 +45,12 @@ static CpmlPair bezier_samples[][4] = {
     { { 120, 0 }, { 60, 0 }, { 60, 120 }, { 0, 120 } }, /* Step right */
     { { 0, 0 }, { 60, 90 }, { 90, 120 }, { 120, 90 } }, /* Unbalanced opened */
     { { 0, 0 }, { 40, 120 }, { 120, 120 }, { 60, 80 } } /* Unbalanced closed */
+};
+
+static PathCallback path_samples[] = {
+    circle_callback,
+    piston_callback,
+    curve1_callback
 };
 
 
@@ -193,76 +200,63 @@ offset_segments(GtkWidget *widget, GdkEventExpose *event, gpointer data)
     cairo_t *cr;
     cairo_path_t *path;
     CpmlSegment segment;
+    int n;
 
     cr = gdk_cairo_create(widget->window);
+    cairo_translate(cr, 270.5, -120.5);
 
-    /* Offset a circle approximation */
-    append_circle(cr);
+    /* Offset the path samples */
+    for (n = 0; n < G_N_ELEMENTS(path_samples); ++n) {
+        if ((n & 1) == 0) {
+            cairo_translate(cr, -270., 240.);
+        } else {
+            cairo_translate(cr, 270., 0.);
+        }
 
-    path = duplicate_and_stroke(cr);
-    cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 15.);
-    stroke_and_destroy(cr, path);
+        /* Call the path callback */
+        (path_samples[n]) (cr);
 
-    /* Offset a piston path, a common path in technical drawing */
-    cairo_save(cr);
-    cairo_translate(cr, 220.5, 120.5);
-    cairo_scale(cr, 10., 10.);
-    append_piston(cr);
-    cairo_restore(cr);
-
-    path = duplicate_and_stroke(cr);
-    cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 15.);
-    stroke_and_destroy(cr, path);
-
-    /* Offset a complex curve, quite uncommon in technical drawing*/
-    cairo_save(cr);
-    cairo_translate(cr, 40., 340.);
-    cairo_scale(cr, 10., 10.);
-    append_complex_curve(cr);
-    cairo_restore(cr);
-
-    path = duplicate_and_stroke(cr);
-    cpml_segment_from_cairo(&segment, path);
-    cpml_segment_offset(&segment, 15.);
-    stroke_and_destroy(cr, path);
+        path = duplicate_and_stroke(cr);
+        cpml_segment_from_cairo(&segment, path);
+        cpml_segment_offset(&segment, 15.);
+        stroke_and_destroy(cr, path);
+    }
 
     cairo_destroy(cr);
 }
 
 
 static void
-append_circle(cairo_t *cr)
+circle_callback(cairo_t *cr)
 {
     cairo_new_sub_path(cr);
-    cairo_arc(cr, 120.5, 120.5, 100, 0, M_PI*2);
+    cairo_arc(cr, 120., 0., 100., 0., M_PI*2);
 }
 
 static void
-append_piston(cairo_t *cr)
+piston_callback(cairo_t *cr)
 {
     cairo_path_t *path;
     cairo_matrix_t matrix;
     CpmlSegment segment;
 
-    cairo_move_to(cr,  5.,    4.65);
-    cairo_line_to(cr, 26.,    4.65);
-    cairo_line_to(cr, 27.25,  3.5);
-    cairo_line_to(cr, 32,     3.5);
-    cairo_line_to(cr, 32,     5.6);
-    cairo_line_to(cr, 32.3,   5.9);
-    cairo_line_to(cr, 35.2,   5.9);
-    cairo_line_to(cr, 35.5,   5.6);
-    cairo_arc(cr,     37.5,   5.25,  2., G_PI, 3. * G_PI_2);
-    cairo_line_to(cr, 45.,    3.25);
-    cairo_line_to(cr, 46.,    2.25);
-    cairo_line_to(cr, 50.,    2.25);
+    cairo_move_to(cr,  0.,   46.5);
+    cairo_line_to(cr, 210.,   46.5);
+    cairo_line_to(cr, 222.5,  35.);
+    cairo_line_to(cr, 270.,   35.);
+    cairo_line_to(cr, 270.,   56.);
+    cairo_line_to(cr, 273.,   59.);
+    cairo_line_to(cr, 302.,   59.);
+    cairo_line_to(cr, 305.,   56.);
+    cairo_arc(cr,     325.,   52.5,  20., G_PI, 3. * G_PI_2);
+    cairo_line_to(cr, 400.,   32.5);
+    cairo_line_to(cr, 410.,   22.5);
+    cairo_line_to(cr, 450.,   22.5);
     cairo_arc_negative(cr,
-                      50.2,   3.4, 0.2,  G_PI,      G_PI_2);
-    cairo_line_to(cr, 51.,    3.6);
-    cairo_line_to(cr, 52.,    3.);
-    cairo_line_to(cr, 52.2,   1.25);
+                      452.,   34.,    2., G_PI,      G_PI_2);
+    cairo_line_to(cr, 460.,   36.);
+    cairo_line_to(cr, 470.,   30.);
+    cairo_line_to(cr, 472.,   12.5);
 
     /* Mirror a reversed copy of the current path on the y = 0 axis */
     path = cairo_copy_path(cr);
@@ -282,11 +276,11 @@ append_piston(cairo_t *cr)
 }
 
 static void
-append_complex_curve(cairo_t *cr)
+curve1_callback(cairo_t *cr)
 {
-    cairo_move_to(cr,    0.,  0.);
-    cairo_curve_to(cr,  12., 12.,  13., 10.,  13.,  2.);
-    cairo_curve_to(cr,  13., -2.,   5.,  4.,  15.,  4.);
-    cairo_curve_to(cr,  25.,  4.,  25., -6.,  15., -6.);
-    cairo_curve_to(cr,   5., -6.,  10., -2.,   8., -9.);
+    cairo_move_to(cr,    30.,   0.);
+    cairo_curve_to(cr,  120., 120.,  180., 100.,  180.,  20.);
+    cairo_curve_to(cr,  180., -20.,   50.,  40.,  150.,  40.);
+    cairo_curve_to(cr,  220.,  40.,  190., -60.,  150., -60.);
+    cairo_curve_to(cr,  100., -60.,   80., -40.,   60., -60.);
 }
