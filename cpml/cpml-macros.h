@@ -28,8 +28,6 @@
 #ifndef __CPML_MACROS_H__
 #define __CPML_MACROS_H__
 
-#include <math.h>
-
 /**
  * CPML_GNUC_CONST:
  *
@@ -44,11 +42,5 @@
 #else
 #define CPML_GNUC_CONST
 #endif
-
-#define CPML_DIR_RIGHT   ((double) 0)
-#define CPML_DIR_DOWN    M_PI_2
-#define CPML_DIR_LEFT    M_PI
-#define CPML_DIR_UP      (M_PI_2 * 3)
-
 
 #endif /* __CPML_MACROS_H__ */
