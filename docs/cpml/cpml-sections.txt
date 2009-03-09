@@ -47,10 +47,12 @@ cpml_segment_copy
 cpml_segment_reset
 cpml_segment_next
 <SUBSECTION>
+cpml_segment_to_cairo
+cpml_segment_dump
+<SUBSECTION>
 cpml_segment_reverse
 cpml_segment_transform
 cpml_segment_offset
-cpml_segment_dump
 </SECTION>
 
 <SECTION>
@@ -65,6 +67,7 @@ cpml_primitive_next
 <SUBSECTION>
 cpml_primitive_get_npoints
 cpml_primitive_get_point
+cpml_primitive_to_cairo
 cpml_primitive_dump
 <SUBSECTION>
 cpml_primitive_type_get_npoints

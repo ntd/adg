@@ -122,25 +122,6 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
     return memcpy(segment, src, sizeof(CpmlSegment));
 }
 
-/**
- * cpml_segment_dump:
- * @segment: a #CpmlSegment
- *
- * Dumps the specified @segment to stdout. Useful for debugging purposes.
- **/
-void
-cpml_segment_dump(const CpmlSegment *segment)
-{
-    CpmlPrimitive primitive;
-    cairo_bool_t first_call = 1;
-
-    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
-
-    do {
-        cpml_primitive_dump(&primitive, first_call);
-        first_call = 0;
-    } while (cpml_primitive_next(&primitive));
-}
 
 /**
  * cpml_segment_reset:
@@ -178,6 +159,47 @@ cpml_segment_next(CpmlSegment *segment)
 
     return normalize(segment);
 }
+
+
+/**
+ * cpml_segment_to_cairo:
+ * @segment: a #CpmlSegment
+ * @cr: the destination cairo context
+ *
+ * Appends the path of @segment to @cr using cairo_append_path().
+ **/
+void
+cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
+{
+    cairo_path_t path;
+
+    path.status = CAIRO_STATUS_SUCCESS;
+    path.data = segment->data;
+    path.num_data = segment->num_data;
+
+    cairo_append_path(cr, &path);
+}
+
+/**
+ * cpml_segment_dump:
+ * @segment: a #CpmlSegment
+ *
+ * Dumps the specified @segment to stdout. Useful for debugging purposes.
+ **/
+void
+cpml_segment_dump(const CpmlSegment *segment)
+{
+    CpmlPrimitive primitive;
+    cairo_bool_t first_call = 1;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+
+    do {
+        cpml_primitive_dump(&primitive, first_call);
+        first_call = 0;
+    } while (cpml_primitive_next(&primitive));
+}
+
 
 /**
  * cpml_segment_reverse:

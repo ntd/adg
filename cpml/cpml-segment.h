@@ -39,9 +39,13 @@ cairo_bool_t    cpml_segment_from_cairo (CpmlSegment        *segment,
                                          cairo_path_t       *cairo_path);
 CpmlSegment *   cpml_segment_copy       (CpmlSegment        *segment,
                                          const CpmlSegment  *src);
+void            cpml_segment_to_cairo   (const CpmlSegment  *segment,
+                                         cairo_t            *cr);
 void            cpml_segment_dump       (const CpmlSegment  *segment);
+
 void            cpml_segment_reset      (CpmlSegment        *segment);
 cairo_bool_t    cpml_segment_next       (CpmlSegment        *segment);
+
 void            cpml_segment_reverse    (CpmlSegment        *segment);
 void            cpml_segment_transform  (CpmlSegment        *segment,
                                          const cairo_matrix_t *matrix);
