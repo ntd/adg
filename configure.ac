@@ -38,7 +38,7 @@ GTK_DOC_CHECK(1.9)
 
 # Check for packages
 
-PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= 2.8.0])
+PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= 2.12.0])
 PKG_CHECK_MODULES([CAIRO],[cairo >= 1.7.4])
 
 

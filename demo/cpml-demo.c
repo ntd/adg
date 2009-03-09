@@ -1,7 +1,8 @@
+#include <config.h>
 #include <cpml/cpml.h>
 #include <gtk/gtk.h>
 
-typedef void (*PathCallback) (cairo_t *cr);
+static gchar *  find_data_file          (const gchar    *file);
 
 static cairo_path_t *
                 duplicate_and_stroke    (cairo_t        *cr);
@@ -50,7 +51,7 @@ static CpmlPair bezier_samples[][4] = {
     { { 0, 0 }, { 40, 120 }, { 120, 120 }, { 60, 80 } } /* Unbalanced closed */
 };
 
-static PathCallback path_samples[] = {
+static void (*path_samples[]) (cairo_t *cr) = {
     circle_callback,
     piston_callback,
     curve1_callback
@@ -60,57 +61,66 @@ static PathCallback path_samples[] = {
 int
 main(gint argc, gchar **argv)
 {
+    gchar *path;
+    GtkBuilder *builder;
+    GError *error;
     GtkWidget *window;
-    GtkWidget *vbox;
-    GtkWidget *notebook;
-    GtkWidget *label;
-    GtkWidget *widget;
-    GtkWidget *button_box;
 
     gtk_init(&argc, &argv);
 
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    path = find_data_file("cpml-demo.ui");
+    if (path == NULL) {
+        g_print("cpml-demo.ui not found!\n");
+        return 1;
+    }
+
+    builder = gtk_builder_new();
+    error = NULL;
+
+    gtk_builder_add_from_file(builder, path, &error);
+    if (error != NULL) {
+        g_print("%s\n", error->message);
+        return 2;
+    }
+
+    window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
+
+    /* Connect signals */
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
+                     "expose-event", G_CALLBACK(browsing), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaOffsetCurves"),
+                     "expose-event", G_CALLBACK(offset_curves), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaOffsetSegments"),
+                     "expose-event", G_CALLBACK(offset_segments), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
+                     "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    g_object_unref(builder);
 
-    notebook = gtk_notebook_new();
-    gtk_notebook_set_tab_pos(GTK_NOTEBOOK(notebook), GTK_POS_LEFT);
-    gtk_container_add(GTK_CONTAINER(vbox), notebook);
-
-    label = gtk_label_new("Browsing");
-    widget = gtk_drawing_area_new();
-    gtk_widget_set_size_request(widget, 800, 800);
-    g_signal_connect(widget, "expose-event", G_CALLBACK(browsing), NULL);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, label);
-
-    label = gtk_label_new("Offset curves");
-    widget = gtk_drawing_area_new();
-    gtk_widget_set_size_request(widget, 800, 800);
-    g_signal_connect(widget, "expose-event", G_CALLBACK(offset_curves), NULL);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, label);
-
-    label = gtk_label_new("Offset segments");
-    widget = gtk_drawing_area_new();
-    g_signal_connect(widget, "expose-event", G_CALLBACK(offset_segments), NULL);
-    gtk_notebook_append_page(GTK_NOTEBOOK(notebook), widget, label);
-
-    button_box = gtk_hbutton_box_new();
-    gtk_container_set_border_width(GTK_CONTAINER(button_box), 5);
-    gtk_box_set_spacing(GTK_BOX(button_box), 5);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
-    gtk_box_pack_end(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
-
-    widget = gtk_button_new_from_stock(GTK_STOCK_QUIT);
-    g_signal_connect(widget, "clicked", G_CALLBACK(gtk_main_quit), NULL);
-    gtk_container_add(GTK_CONTAINER(button_box), widget);
-
-    gtk_container_add(GTK_CONTAINER(window), vbox);
     gtk_widget_show_all(window);
-
     gtk_main();
 
     return 0;
+}
+
+
+static gchar *
+find_data_file(const gchar *file)
+{
+    gchar *path;
+
+    path = g_build_filename(SOURCEDIR, file, NULL);
+    if (g_file_test(path, G_FILE_TEST_EXISTS))
+        return path;
+
+    g_free(path);
+    path = g_build_filename(PKGDATADIR, PACKAGE_NAME, file, NULL);
+    if (g_file_test(path, G_FILE_TEST_EXISTS))
+        return path;
+
+    g_free(path);
+    return NULL;
 }
 
 
