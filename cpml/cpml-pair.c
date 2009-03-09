@@ -54,6 +54,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 static CpmlPair fallback_pair = { 0, 0 };
@@ -357,22 +358,22 @@ cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
         return cpml_pair_copy(vector, &cached_vector);
 
     /* Check for common conditions */
-    if (angle == CPML_DIR_UP) {
+    if (angle == M_PI_2 * 3.) {
         vector->x = 0;
         vector->y = -1;
         return vector;
     }
-    if (angle == CPML_DIR_DOWN) {
+    if (angle == M_PI_2) {
         vector->x = 0;
         vector->y = +1;
         return vector;
     }
-    if (angle == CPML_DIR_LEFT) {
+    if (angle == M_PI) {
         vector->x = -1;
         vector->y = 0;
         return vector;
     }
-    if (angle == CPML_DIR_RIGHT) {
+    if (angle == 0.) {
         vector->x = +1;
         vector->y = 0;
         return vector;
@@ -414,7 +415,7 @@ cpml_vector_set_length(CpmlVector *vector, double length)
  * @vector: the source #CpmlVector
  *
  * Gets the angle of @vector, in radians. If @vector is (0, 0),
- * %CPML_DIR_RIGHT is returned.
+ * 0 is returned.
  *
  * Return value: the angle in radians
  **/
@@ -430,9 +431,9 @@ cpml_vector_angle(const CpmlVector *vector)
 
     /* Check for common conditions */
     if (vector->y == 0)
-        return vector->x >= 0 ? CPML_DIR_RIGHT : CPML_DIR_LEFT;
+        return vector->x >= 0 ? 0. : M_PI;
     if (vector->x == 0)
-        return vector->y > 0 ? CPML_DIR_DOWN : CPML_DIR_UP;
+        return vector->y > 0 ? M_PI_2 : M_PI_2 * 3.;
     if (vector->x == vector->y)
         return vector->x > 0 ? M_PI_4 * 7 : M_PI_4 * 3;
     if (vector->x == -vector->y)
