@@ -180,18 +180,27 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
  * @cr: the destination cairo context
  *
  * Appends the path of @primitive to @cr using cairo_append_path().
+ * As a special case, if the primitive is a #CAIRO_PATH_CLOSE_PATH,
+ * an equivalent line is rendered, because a close path left alone
+ * is not renderable.
  **/
 void
 cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
 {
     cairo_path_t path;
-
-    path.status = CAIRO_STATUS_SUCCESS;
-    path.data = primitive->data;
-    path.num_data = primitive->data->header.length;
+    cairo_path_data_t *path_data;
 
     cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
-    cairo_append_path(cr, &path);
+
+    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH) {
+        path_data = cpml_primitive_get_point(primitive, -1);
+        cairo_line_to(cr, path_data->point.x, path_data->point.y);
+    } else {
+        path.status = CAIRO_STATUS_SUCCESS;
+        path.data = primitive->data;
+        path.num_data = primitive->data->header.length;
+        cairo_append_path(cr, &path);
+    }
 }
 
 /**
