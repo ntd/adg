@@ -23,10 +23,10 @@ IGNORE_HFILES=		adg-adim-private.h \
 			adg-path-private.h \
 			adg-type-builtins.h
 HTML_IMAGES=
-CONTENT_FILES=		$(top_srcdir)/docs/gnu/README.xml \
+content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/NEWS.xml \
 			$(top_srcdir)/docs/gnu/TODO.xml
-EXPAND_CONTENT_FILES=
+expand_content_files=
 AM_CPPFLAGS=		-I$(top_srcdir) \
 			@GTK2_CFLAGS@
 GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
