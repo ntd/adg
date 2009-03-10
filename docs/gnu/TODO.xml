@@ -38,7 +38,9 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem>Add a fillet operation.</listitem>
    <listitem>Add a chamfer operation.</listitem>
+   <listitem>Change the matrix entity API, using a cleaner approach.</listitem>
    <listitem>Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
+   <listitem>Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
    <listitem>Change building scripts to get the Gtk+ dependency optional.</listitem>
    <listitem>Add AdgLayout, a GtkLayout derived class that could accept an AdgCanvas.</listitem>
    <listitem>Optimize the implemented entities applying the 0.3 ADG infractrusture
@@ -48,11 +50,10 @@ must be reflected in the demo programs, where applicable.</para>
    baseline beyond the extension lines. If not specified, it must default to
    3 x arrow size.</listitem>
    <listitem>Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
-   ADG_THREE_STATE_ON and ADG_THREE_STATE_DEFAULT.</listitem>
+   ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
    <listitem>Add the three-state "outside" property to allow forcing an outside quote.
    In the default state, the outside must be decided by the space between
    the extension lines: if greather than 3 x arrow size => inside arrows.</listitem>
-   <listitem>Implement the outside arrows in AdgLDim.</listitem>
 </itemizedlist>
 
 </simplesect>
@@ -61,6 +62,7 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.6.0</title>
 
 <itemizedlist mark="circle">
+   <listitem>Implement the outside arrows in AdgLDim.</listitem>
    <listitem>Rename Arrow to Marker: the latter is more generic (that is, better).</listitem>
    <listitem>Rename StyleId to StyleType: the latter is more clear.</listitem>
    <listitem>Implement AdgMarker as a customizable entity able to render (at least)
