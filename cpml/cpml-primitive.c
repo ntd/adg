@@ -44,10 +44,26 @@
 #include "cpml-primitive.h"
 
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 
+
+/**
+ * cpml_primitive_copy:
+ * @primitive: the destination #CpmlPrimitive
+ * @src: the source #CpmlPrimitive
+ *
+ * Copies @src in @primitive.
+ *
+ * Return value: @primitive
+ **/
+CpmlPrimitive *
+cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
+{
+    return memcpy(primitive, src, sizeof(CpmlPrimitive));
+}
 
 /**
  * cpml_primitive_from_segment:
@@ -55,8 +71,10 @@ static void     dump_cairo_point        (const cairo_path_data_t *path_data);
  * @segment: the source segment
  *
  * Initializes @primitive to the first primitive of @segment.
+ *
+ * Return value: @primitive
  **/
-void
+CpmlPrimitive *
 cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
     primitive->segment = segment;
@@ -69,6 +87,8 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
     /* Also, the segment APIs ensure that @segment is prepended by
      * only one CAIRO_PATH_MOVE_TO */
     primitive->data = segment->data + 2;
+
+    return primitive;
 }
 
 /**

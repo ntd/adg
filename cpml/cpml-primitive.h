@@ -35,7 +35,9 @@ struct _CpmlPrimitive {
 };
 
 
-void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
+CpmlPrimitive * cpml_primitive_copy        (CpmlPrimitive       *primitive,
+                                            const CpmlPrimitive *src);
+CpmlPrimitive * cpml_primitive_from_segment(CpmlPrimitive       *primitive,
                                             CpmlSegment         *segment);
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
 cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
