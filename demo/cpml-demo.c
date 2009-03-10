@@ -248,10 +248,13 @@ browsing_primitive(GtkToggleButton*togglebutton, gpointer user_data)
 static void
 browsing_reset(GtkButton *button, gpointer user_data)
 {
-    if (browsing_data.use_segment)
+    if (browsing_data.use_segment) {
         cpml_segment_reset(&browsing_data.segment);
-    else
+        cpml_primitive_from_segment(&browsing_data.primitive,
+                                    &browsing_data.segment);
+    } else {
         cpml_primitive_reset(&browsing_data.primitive);
+    }
 
     gtk_widget_queue_draw(browsing_data.area);
 }
