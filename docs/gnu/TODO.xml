@@ -28,9 +28,9 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.5.0</title>
 
 <itemizedlist mark="circle">
-   <listitem override="disc">Provide CPML APIs for accessing cairo paths and browsing
-   their segments (a continuous line).</listitem>
-   <listitem>Provide CPML APIs for accessing segments and browsing their primitives
+   <listitem override="disc">Provide CPML APIs for accessing cairo paths and browse their segments
+   (a contiguous line segment).</listitem>
+   <listitem override="disc">Provide CPML APIs for accessing segments and browse their primitives
    (a single line / curve / close path).</listitem>
    <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
    approximation for single Bézier curves must be implemented.</listitem>
