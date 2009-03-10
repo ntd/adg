@@ -195,6 +195,52 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
 }
 
 /**
+ * cpml_primitive_join:
+ * @primitive: the first #CpmlPrimitive
+ * @to: the second #CpmlPrimitive
+ *
+ * Joins two primitive modifying the end point of @primitive and the
+ * start point of @to so that, when terminated, the points will overlap.
+ * 
+ * This is done by extending the end vector of @primitive and the
+ * start vector of @to and interpolating the intersection.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>This approach is quite naive when curves are involved.</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: 1 on success, 0 if the end vector of @primitive
+ *               and the start vector of @to are parallel
+ **/
+cairo_bool_t
+cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *to)
+{
+    cairo_path_data_t *endcairopoint, *startcairopoint;
+    CpmlPair endpoint, startpoint;
+    CpmlVector endvector, startvector;
+    CpmlPair joint;
+
+    endcairopoint = cpml_primitive_get_point(primitive, -1);
+    startcairopoint = cpml_primitive_get_point(to, 0);
+    cpml_pair_from_cairo(&endpoint, endcairopoint);
+    cpml_pair_from_cairo(&startpoint, startcairopoint);
+    cpml_primitive_vector_at(primitive, &endvector, 1.0);
+    cpml_primitive_vector_at(to, &startvector, 0.);
+
+    if (!cpml_pair_intersection_pv_pv(&joint, &endpoint, &endvector,
+                                      &startpoint, &startvector))
+        return 0;
+
+    cpml_pair_to_cairo(&joint, endcairopoint);
+    cpml_pair_to_cairo(&joint, startcairopoint);
+
+    return 1;
+}
+
+/**
  * cpml_primitive_to_cairo:
  * @primitive: a #CpmlPrimitive
  * @cr: the destination cairo context

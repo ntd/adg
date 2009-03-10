@@ -64,6 +64,7 @@ cpml_primitive_next
 <SUBSECTION>
 cpml_primitive_get_npoints
 cpml_primitive_get_point
+cpml_primitive_join
 cpml_primitive_to_cairo
 cpml_primitive_dump
 <SUBSECTION>
