@@ -66,10 +66,6 @@
 static cairo_bool_t     normalize               (CpmlSegment       *segment);
 static cairo_bool_t     ensure_one_move_to      (CpmlSegment       *segment);
 static void             reshape                 (CpmlSegment       *segment);
-static void             join_primitives         (cairo_path_data_t *last_data,
-                                                 const CpmlVector  *last_vector,
-                                                 const CpmlPair    *new_point,
-                                                 const CpmlVector  *new_vector);
 
 
 /**
@@ -290,114 +286,35 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  *           managed properly.</listitem>
  * </itemizedlist>
  * </important>
- *
- * Return value: 1 on success, 0 on errors
  **/
-cairo_bool_t
+void
 cpml_segment_offset(CpmlSegment *segment, double offset)
 {
-    int n, num_points, n_point;
-    cairo_path_data_t *data;
-    cairo_path_data_t *last_data;
-    CpmlVector v_old, v_new;
-    CpmlPair p_old;
-    CpmlPair p[4];
+    CpmlPrimitive primitive;
+    CpmlPrimitive last_primitive;
+    cairo_path_data_t org, old_end;
+    cairo_bool_t first_cycle;
 
-    data = segment->data;
-    last_data = NULL;
-    p_old.x = 0;
-    p_old.y = 0;
+    cpml_primitive_from_segment(&primitive, segment);
+    first_cycle = 1;
 
-    for (n = 0; n < segment->num_data; n += data->header.length) {
-        data = segment->data + n;
-        num_points = data->header.length - 1;
-
-        /* Fill the p[] vector */
-        cpml_pair_copy(&p[0], &p_old);
-        for (n_point = 1; n_point <= num_points; ++ n_point) {
-            p[n_point].x = data[n_point].point.x;
-            p[n_point].y = data[n_point].point.y;
+    do {
+        if (!first_cycle) {
+            org = old_end;
+            primitive.org = &org;
         }
 
-        /* Save the last direction vector in v_old */
-        cpml_pair_copy(&v_old, &v_new);
+        old_end = *cpml_primitive_get_point(&primitive, -1);
+        cpml_primitive_offset(&primitive, offset);
 
-        switch (data->header.type) {
-
-        case CAIRO_PATH_MOVE_TO:
-            v_new.x = 0;
-            v_new.y = 0;
-            break;
-
-        case CAIRO_PATH_LINE_TO:
-            {
-                CpmlPrimitive line;
-                cairo_path_data_t dummy[3];
-
-                cpml_pair_to_cairo(&p[0], &dummy[0]);
-                dummy[1].header.type = CAIRO_PATH_LINE_TO;
-                dummy[1].header.length = 2;
-                cpml_pair_to_cairo(&p[1], &dummy[2]);
-
-                line.segment = NULL;
-                line.org = &dummy[0];
-                line.data = &dummy[1];
-
-                cpml_line_offset(&line, offset);
-
-                cpml_pair_from_cairo(&p[0], &dummy[0]);
-                cpml_pair_from_cairo(&p[1], &dummy[2]);
-
-                cpml_line_vector_at(&line, &v_new, 1.);
-            }
-            break;
-
-        case CAIRO_PATH_CURVE_TO:
-            {
-                CpmlPrimitive curve;
-                cairo_path_data_t dummy[5];
-
-                cpml_pair_to_cairo(&p[0], &dummy[0]);
-                dummy[1].header.type = CAIRO_PATH_CURVE_TO;
-                dummy[1].header.length = 4;
-                cpml_pair_to_cairo(&p[1], &dummy[2]);
-                cpml_pair_to_cairo(&p[2], &dummy[3]);
-                cpml_pair_to_cairo(&p[3], &dummy[4]);
-
-                curve.segment = NULL;
-                curve.org = &dummy[0];
-                curve.data = &dummy[1];
-
-                cpml_curve_offset(&curve, offset);
-
-                cpml_pair_from_cairo(&p[0], &dummy[0]);
-                cpml_pair_from_cairo(&p[1], &dummy[2]);
-                cpml_pair_from_cairo(&p[2], &dummy[3]);
-                cpml_pair_from_cairo(&p[3], &dummy[4]);
-
-                cpml_curve_vector_at_time(&curve, &v_new, 1.);
-            }
-            break;
-
-        case CAIRO_PATH_CLOSE_PATH:
-            return 1;
+        if (!first_cycle) {
+            cpml_primitive_join(&last_primitive, &primitive);
+            primitive.org = cpml_primitive_get_point(&last_primitive, -1);
         }
 
-        join_primitives(last_data, &v_old, &p[0], &v_new);
-
-        /* Save the end point of the original primitive in p_old */
-        last_data = data + num_points;
-        p_old.x = last_data->point.x;
-        p_old.y = last_data->point.y;
-
-        /* Store the results got from the p[] vector in the cairo path */
-        for (n_point = 1; n_point <= num_points; ++ n_point) {
-            data[n_point].point.x = p[n_point].x;
-            data[n_point].point.y = p[n_point].y;
-        }
-    }
-
-    return 1;
+        cpml_primitive_copy(&last_primitive, &primitive);
+        first_cycle = 0;
+    } while (cpml_primitive_next(&primitive));
 }
 
 /**
@@ -498,44 +415,4 @@ reshape(CpmlSegment *segment)
     }
 
     segment->num_data = new_num_data;
-}
-
-/**
- * join_primitives:
- * @last_data: the previous primitive end data point (if any)
- * @last_vector: @last_data direction vector
- * @new_point: the new primitive starting point
- * @new_vector: @new_point direction vector
- *
- * Joins two primitive modifying the end point of the first one (stored
- * as cairo path data in @last_data).
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>This approach is quite naive when curves are involved.</listitem>
- * </itemizedlist>
- * </important>
- **/
-static void
-join_primitives(cairo_path_data_t *last_data, const CpmlVector *last_vector,
-                const CpmlPair *new_point, const CpmlVector *new_vector)
-{
-    CpmlPair last_point;
-
-    if (last_data == NULL)
-        return;
-
-    last_point.x = last_data->point.x;
-    last_point.y = last_data->point.y;
-
-    if (cpml_pair_intersection_pv_pv(&last_point,
-                                     &last_point, last_vector,
-                                     new_point, new_vector)) {
-        last_data->point.x = last_point.x;
-        last_data->point.y = last_point.y;
-    } else {
-        last_data->point.x = new_point->x;
-        last_data->point.y = new_point->y;
-    }
 }
