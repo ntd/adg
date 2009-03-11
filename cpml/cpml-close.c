@@ -38,13 +38,18 @@
  * cpml_close_type_get_npoints:
  *
  * Returns the number of points needed to properly specify a close primitive.
+ * This is a bit tricky: the close path primitive can be specified with
+ * a single point but it has an implicit second point, the start point
+ * of the source segment. This means retrieving a second point from a
+ * cairo path is a valid operation and must return the start point of
+ * the source segment.
  *
- * Return value: 1
+ * Return value: 2
  **/
 int
 cpml_close_type_get_npoints(void)
 {
-    return 1;
+    return 2;
 }
 
 /**
