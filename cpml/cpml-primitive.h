@@ -46,8 +46,6 @@ int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
 cairo_path_data_t *
                 cpml_primitive_get_point   (const CpmlPrimitive *primitive,
                                             int                  npoint);
-cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
-                                            CpmlPrimitive       *to);
 void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
                                             cairo_t             *cr);
 void            cpml_primitive_dump        (const CpmlPrimitive *primitive,

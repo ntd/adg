@@ -17,15 +17,18 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPML_H__
-#define __CPML_H__
+#ifndef __CPML_ACTION_H__
+#define __CPML_ACTION_H__
 
-#include <cpml/cpml-action.h>
-#include <cpml/cpml-curve.h>
-#include <cpml/cpml-line.h>
-#include <cpml/cpml-macros.h>
-#include <cpml/cpml-pair.h>
 #include <cpml/cpml-primitive.h>
-#include <cpml/cpml-segment.h>
 
-#endif /* __CPML_H__ */
+
+CAIRO_BEGIN_DECLS
+
+cairo_bool_t    cpml_join_primitives       (CpmlPrimitive       *from,
+                                            CpmlPrimitive       *to);
+
+CAIRO_END_DECLS
+
+
+#endif /* __CPML_ACTION_H__ */

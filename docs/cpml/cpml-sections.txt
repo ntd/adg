@@ -64,7 +64,6 @@ cpml_primitive_next
 <SUBSECTION>
 cpml_primitive_get_npoints
 cpml_primitive_get_point
-cpml_primitive_join
 cpml_primitive_to_cairo
 cpml_primitive_dump
 <SUBSECTION>
@@ -101,4 +100,10 @@ cpml_close_type_get_npoints
 cpml_close_pair_at
 cpml_close_vector_at
 cpml_close_offset
+</SECTION>
+
+<SECTION>
+<FILE>action</FILE>
+<INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_join_primitives
 </SECTION>

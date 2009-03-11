@@ -15,13 +15,18 @@
     <xi:include href="xml/pair.xml"/>
   </part>
 
-  <part id="Manipulating">
-    <title>Path Manipulation</title>
+  <part id="Objects">
+    <title>CPML objects</title>
     <xi:include href="xml/segment.xml"/>
     <xi:include href="xml/primitive.xml"/>
     <xi:include href="xml/line.xml"/>
     <xi:include href="xml/curve.xml"/>
     <xi:include href="xml/close.xml"/>
+  </part>
+
+  <part id="Manipulating">
+    <title>Objects manipulation</title>
+    <xi:include href="xml/action.xml"/>
   </part>
 
   <index id="Index">
