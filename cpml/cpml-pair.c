@@ -93,38 +93,6 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
     return pair;
 }
 
-/**
- * cpml_pair_intersection_pv_pv:
- * @pair: the destination #CpmlPair
- * @p1: the start point of the first line
- * @v1: the director of the first line
- * @p2: the start point of the second line
- * @v2: the director of the second line
- *
- * Given two lines (by specifying start point and director), gets
- * their intersection point and store it in @pair.
- *
- * Return value: @pair or %NULL on no intersection
- **/
-CpmlPair *
-cpml_pair_intersection_pv_pv(CpmlPair *pair,
-                             const CpmlPair *p1, const CpmlVector *v1,
-                             const CpmlPair *p2, const CpmlVector *v2)
-{
-    double divisor, factor;
-
-    divisor = v1->x*v2->y - v1->y*v2->x;
-    if (divisor == 0)
-        return NULL;
-
-    factor = ((p1->y - p2->y)*v2->x - (p1->x - p2->x)*v2->y) / divisor;
-
-    pair->x = p1->x + v1->x * factor;
-    pair->y = p1->y + v1->y * factor;
-
-    return pair;
-}
-
 
 /**
  * cpml_pair_negate:

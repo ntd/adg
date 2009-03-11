@@ -52,24 +52,33 @@
 cairo_bool_t
 cpml_join_primitives(CpmlPrimitive *from, CpmlPrimitive *to)
 {
-    cairo_path_data_t *endcairopoint, *startcairopoint;
-    CpmlPair endpoint, startpoint;
-    CpmlVector endvector, startvector;
+    cairo_path_data_t *end1, *start2;
+    CpmlPrimitive line1, line2;
+    cairo_path_data_t data1[2], data2[2];
     CpmlPair joint;
 
-    endcairopoint = cpml_primitive_get_point(from, -1);
-    startcairopoint = cpml_primitive_get_point(to, 0);
-    cpml_pair_from_cairo(&endpoint, endcairopoint);
-    cpml_pair_from_cairo(&startpoint, startcairopoint);
-    cpml_primitive_vector_at(from, &endvector, 1.0);
-    cpml_primitive_vector_at(to, &startvector, 0.);
+    end1 = cpml_primitive_get_point(from, -1);
+    start2 = cpml_primitive_get_point(to, 0);
 
-    if (!cpml_pair_intersection_pv_pv(&joint, &endpoint, &endvector,
-                                      &startpoint, &startvector))
+    /* Check if the primitives are yet connected */
+    if (end1->point.x == start2->point.x && end1->point.y == start2->point.y)
+        return 1;
+
+    line1.org = cpml_primitive_get_point(from, -2);
+    line1.data = data1;
+    data1[0].header.type = CAIRO_PATH_LINE_TO;
+    data1[1] = *end1;
+
+    line2.org = start2;
+    line2.data = data2;
+    data2[0].header.type = CAIRO_PATH_LINE_TO;
+    data2[1] = *cpml_primitive_get_point(to, 1);
+
+    if (!cpml_intersection(&line1, &line2, &joint))
         return 0;
 
-    cpml_pair_to_cairo(&joint, endcairopoint);
-    cpml_pair_to_cairo(&joint, startcairopoint);
+    cpml_pair_to_cairo(&joint, end1);
+    cpml_pair_to_cairo(&joint, start2);
 
     return 1;
 }

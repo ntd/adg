@@ -38,13 +38,6 @@ CpmlPair *      cpml_pair_copy                  (CpmlPair       *pair,
 CpmlPair *      cpml_pair_from_cairo            (CpmlPair       *pair,
                                                  const cairo_path_data_t
                                                                 *path_data);
-CpmlPair *      cpml_pair_intersection_pv_pv    (CpmlPair       *pair,
-                                                 const CpmlPair *p1,
-                                                 const CpmlVector
-                                                                *v1,
-                                                 const CpmlPair *p2,
-                                                 const CpmlVector
-                                                                *v2);
 
 void            cpml_pair_negate                (CpmlPair       *pair);
 cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);

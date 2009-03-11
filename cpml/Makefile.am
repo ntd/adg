@@ -19,6 +19,7 @@ cpml_built_h_sources=
 cpml_private_h_sources=		cpml-alloca.h
 cpml_built_private_h_sources=
 cpml_c_sources=			cpml-action.c \
+				cpml-action-intersection.c \
 				cpml-close.c \
 				cpml-curve.c \
 				cpml-line.c \

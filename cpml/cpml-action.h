@@ -25,8 +25,11 @@
 
 CAIRO_BEGIN_DECLS
 
-cairo_bool_t    cpml_join_primitives       (CpmlPrimitive       *from,
-                                            CpmlPrimitive       *to);
+cairo_bool_t    cpml_join_primitives    (CpmlPrimitive          *from,
+                                         CpmlPrimitive          *to);
+int             cpml_intersection       (const CpmlPrimitive    *primitive1,
+                                         const CpmlPrimitive    *primitive2,
+                                         CpmlPair               *dest);
 
 CAIRO_END_DECLS
 

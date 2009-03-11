@@ -22,9 +22,14 @@ static void     browsing_reset          (GtkButton      *button,
 static void     browsing_next           (GtkButton      *button,
                                          gpointer        user_data);
 
+static void     intersections           (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        data);
+
 static void     offset_curves           (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
+
 static void     offset_segments         (GtkWidget      *widget,
                                          GdkEventExpose *event,
                                          gpointer        data);
@@ -32,6 +37,7 @@ static void     offset_segments         (GtkWidget      *widget,
 static void     circle_callback         (cairo_t        *cr);
 static void     piston_callback         (cairo_t        *cr);
 static void     curve1_callback         (cairo_t        *cr);
+static void     line1_callback          (cairo_t        *cr);
 
 static struct {
     GtkWidget           *area;
@@ -74,7 +80,8 @@ static CpmlPair bezier_samples[][4] = {
 static void (*path_samples[]) (cairo_t *cr) = {
     circle_callback,
     piston_callback,
-    curve1_callback
+    curve1_callback,
+    line1_callback,
 };
 
 
@@ -117,6 +124,8 @@ main(gint argc, gchar **argv)
                      "clicked", G_CALLBACK(browsing_reset), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingNext"),
                      "clicked", G_CALLBACK(browsing_next), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaIntersections"),
+                     "expose-event", G_CALLBACK(intersections), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetCurves"),
                      "expose-event", G_CALLBACK(offset_curves), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetSegments"),
@@ -275,6 +284,45 @@ browsing_next(GtkButton *button, gpointer user_data)
 
 
 static void
+intersections(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+    cairo_t *cr;
+    cairo_path_t *path;
+    CpmlSegment segment1, segment2;
+    CpmlPrimitive primitive1, primitive2;
+    CpmlPair intersection;
+
+    cr = gdk_cairo_create(widget->window);
+    cairo_translate(cr, 10.5, 120.5);
+
+    line1_callback(cr);
+
+    path = cairo_copy_path(cr);
+
+    cairo_set_line_width(cr, 1.);
+    cairo_stroke(cr);
+
+    cpml_segment_from_cairo(&segment1, path);
+    cpml_segment_from_cairo(&segment2, path);
+
+    while (cpml_segment_next(&segment2)) {
+        cpml_primitive_from_segment(&primitive1, &segment1);
+        cpml_primitive_from_segment(&primitive2, &segment2);
+
+        cpml_intersection(&primitive1, &primitive2, &intersection);
+
+        cairo_arc(cr, intersection.x, intersection.y, 2.5, 0, 2 * M_PI);
+        cairo_fill(cr);
+
+        cpml_segment_next(&segment1);
+    }
+
+    cairo_path_destroy(path);
+    cairo_destroy(cr);
+}
+
+
+static void
 offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
     cairo_t *cr;
@@ -339,6 +387,7 @@ offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 
     cairo_destroy(cr);
 }
+
 
 static void
 offset_segments(GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -443,4 +492,38 @@ curve1_callback(cairo_t *cr)
     cairo_curve_to(cr,  180., -20.,   50.,  40.,  150.,  40.);
     cairo_curve_to(cr,  220.,  40.,  190., -60.,  150., -60.);
     cairo_curve_to(cr,  100., -60.,   80., -40.,   60., -60.);
+}
+
+static void
+line1_callback(cairo_t *cr)
+{
+    cairo_move_to(cr, 0, -50);
+    cairo_line_to(cr, 100, 50);
+
+    cairo_move_to(cr, 100, -50);
+    cairo_line_to(cr, 0, 50);
+
+    cairo_move_to(cr, 120, -50);
+    cairo_line_to(cr, 200, -10);
+
+    cairo_move_to(cr, 120, 50);
+    cairo_line_to(cr, 200, 10);
+
+    cairo_move_to(cr, 220, 0);
+    cairo_line_to(cr, 280, 0);
+
+    cairo_move_to(cr, 270, -40);
+    cairo_line_to(cr, 270, 20);
+
+    cairo_move_to(cr, 320, 60);
+    cairo_line_to(cr, 380, 60);
+
+    cairo_move_to(cr, 300, -40);
+    cairo_line_to(cr, 340, 0);
+
+    cairo_move_to(cr, 480, 10);
+    cairo_line_to(cr, 400, 40);
+
+    cairo_move_to(cr, 400, 40);
+    cairo_line_to(cr, 450, -40);
 }

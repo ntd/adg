@@ -193,10 +193,10 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
         npoint = npoints + npoint;
 
     /* Out of range condition */
-    if (npoints < 0 || npoint >= npoints)
+    if (npoint < 0 || npoint >= npoints)
         return NULL;
 
-    return &primitive->data[npoint];
+    return npoint == 0 ? primitive->org : &primitive->data[npoint];
 }
 
 /**
