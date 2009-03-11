@@ -104,5 +104,6 @@ cpml_close_offset
 <SECTION>
 <FILE>action</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
-cpml_join_primitives
+cpml_join
+cpml_intersection
 </SECTION>

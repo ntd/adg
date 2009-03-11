@@ -308,7 +308,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
         cpml_primitive_offset(&primitive, offset);
 
         if (!first_cycle) {
-            cpml_join_primitives(&last_primitive, &primitive);
+            cpml_join(&last_primitive, &primitive);
             primitive.org = cpml_primitive_get_point(&last_primitive, -1);
         }
 
