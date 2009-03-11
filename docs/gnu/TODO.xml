@@ -34,10 +34,11 @@ must be reflected in the demo programs, where applicable.</para>
    (a single line / curve / close path).</listitem>
    <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
    approximation for single Bézier curves must be implemented.</listitem>
-   <listitem override="disc">Provide CPML APIs to get intersection points between different primitive types.</listitem>
-   <listitem>Provide an abstract API (cpml_segment_intersections?) to get intersection points
-   between two segments. To be evaluated the way to return the results (maybe using
-   an argument to specify the maximum number of intersections to return).</listitem>
+   <listitem override="disc">Implement APIs to get intersection points between different primitives.</listitem>
+   <listitem>Provide an abstract API (cpml_segment_intersection?) to compute the
+   intersection points between two segments. To be evaluated the way to
+   return the results (maybe using an argument to specify the maximum
+   number of intersections to return).</listitem>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem>Add a fillet operation.</listitem>
    <listitem>Add a chamfer operation.</listitem>
