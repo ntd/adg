@@ -154,14 +154,17 @@ cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
  *
  * Gets the specified @npoint from @primitive. The index starts
  * at 0: if @npoint is 0, the start point (the origin) is
- * returned, 1 for the second point and so on. As a special case,
- * @npoint less than 0 means the end point.
+ * returned, 1 for the second point and so on. If @npoint is
+ * negative, it is considered as a negative index from the end,
+ * so that -1 is the end point, -2 the point before the end point
+ * and so on.
  *
- * If it is requested the end point on a primitive that owns a
- * single point, this function cycles the source #CpmlSegment and
- * returns the first point. This case must be handled this way
- * because requesting the end point of a %CAIRO_PATH_CLOSE_PATH
- * is a valid operation and must returns the start of the segment.
+ * %CAIRO_PATH_CLOSE_PATH is managed in a special way: if @npoint
+ * is -1 or 1 and @primitive is a close-path, this function cycles
+ * the source #CpmlSegment and returns the first point. This is
+ * needed because requesting the end point (or the second point)
+ * of a close path is a valid operation and must returns the start
+ * of the segment.
  *
  * Return value: a pointer to the requested point (in cairo format)
  *               or %NULL if the point is outside the valid range
@@ -171,25 +174,27 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
 {
     int npoints;
     
-    /* For a start point request, simply return the origin */
+    /* For a start point request, simply return the origin
+     * without further checking */
     if (npoint == 0)
         return primitive->org;
+
+    /* The CAIRO_PATH_CLOSE_PATH special case */
+    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH &&
+        (npoint == 1 || npoint == -1))
+        return &primitive->segment->data[1];
 
     npoints = cpml_primitive_get_npoints(primitive);
     if (npoints < 0)
         return NULL;
 
-    /* Out of range condition */
-    if (npoint >= npoints)
-        return NULL;
-
-    /* The CAIRO_PATH_CLOSE_PATH special case: cycle the segment */
-    if (npoints == 1 && npoint < 0)
-        return &primitive->segment->data[1];
-
-    /* Check for an end point request and modify npoint accordling */
+    /* If npoint is negative, consider it as a negative index from the end */
     if (npoint < 0)
-        npoint = npoints-1;
+        npoint = npoints + npoint;
+
+    /* Out of range condition */
+    if (npoints < 0 || npoint >= npoints)
+        return NULL;
 
     return &primitive->data[npoint];
 }
