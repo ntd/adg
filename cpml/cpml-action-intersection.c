@@ -40,6 +40,14 @@ static int      curve_curve     (const CpmlPrimitive    *curve1,
  * be an array of at least 4 #CpmlPair, because this can lead to
  * 4 intersection points.
  *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>The line_curve() intersection algorithm is not yet implemented.</listitem>
+ * <listitem>The curve_curve() intersection algorithm is not yet implemented.</listitem>
+ * </itemizedlist>
+ * </important>
+ *
  * Return value: the number of intersection points found
  **/
 int
