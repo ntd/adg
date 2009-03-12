@@ -15,7 +15,6 @@ adg_demo_SOURCES =	adg-demo.c \
 cpml_demo_SOURCES =	cpml-demo.c \
 			demo.c \
 			demo.h
-noinst_PROGRAMS =	ldim
 
 dist_pkgdata_DATA =	adg-demo.ui \
 			cpml-demo.ui

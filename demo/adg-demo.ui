@@ -32,8 +32,8 @@
                 <property name="visible">True</property>
                 <child>
                   <object class="GtkDrawingArea" id="areaDrawing">
-                    <property name="width_request">800</property>
-                    <property name="height_request">600</property>
+                    <property name="width_request">640</property>
+                    <property name="height_request">480</property>
                     <property name="visible">True</property>
                   </object>
                   <packing>
