@@ -36,7 +36,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
    approximation for single Bézier curves must be implemented.</listitem>
    <listitem override="disc">Implement APIs to get intersection points between different primitives.</listitem>
-   <listitem>Provide an abstract API (cpml_segment_intersection?) to compute the
+   <listitem override="disc">Provide an abstract API (cpml_segment_intersection?) to compute the
    intersection points between two segments. To be evaluated the way to
    return the results (maybe using an argument to specify the maximum
    number of intersections to return).</listitem>
@@ -102,6 +102,9 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Implement shape tolerances.</listitem>
+   <listitem>Add a CpmlArc primitive and some API to CpmlCurve to be able
+   to check if a curve is an arc approximation. This gives additional
+   information to do some operation, such as a proper arc offseting.</listitem>
    <listitem>Improve Bézier offset approximation enabling the choice of approximate
    a single curve with multiple offset curves.</listitem>
 </itemizedlist>
