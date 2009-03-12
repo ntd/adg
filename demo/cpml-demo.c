@@ -1,9 +1,9 @@
-#include <config.h>
 #include <cpml/cpml.h>
 #include <gtk/gtk.h>
 #include <math.h>
 
-static gchar *  find_data_file          (const gchar    *file);
+#include "demo.h"
+
 
 static cairo_path_t *
                 duplicate_and_stroke    (cairo_t        *cr);
@@ -95,7 +95,7 @@ main(gint argc, gchar **argv)
 
     gtk_init(&argc, &argv);
 
-    path = find_data_file("cpml-demo.ui");
+    path = demo_find_data_file("cpml-demo.ui");
     if (path == NULL) {
         g_print("cpml-demo.ui not found!\n");
         return 1;
@@ -139,25 +139,6 @@ main(gint argc, gchar **argv)
     gtk_main();
 
     return 0;
-}
-
-
-static gchar *
-find_data_file(const gchar *file)
-{
-    gchar *path;
-
-    path = g_build_filename(SOURCEDIR, file, NULL);
-    if (g_file_test(path, G_FILE_TEST_EXISTS))
-        return path;
-
-    g_free(path);
-    path = g_build_filename(PKGDATADIR, PACKAGE_NAME, file, NULL);
-    if (g_file_test(path, G_FILE_TEST_EXISTS))
-        return path;
-
-    g_free(path);
-    return NULL;
 }
 
 

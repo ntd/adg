@@ -9,6 +9,11 @@ LDADD =			$(top_builddir)/adg/libadg.la
 
 bin_PROGRAMS =		adg-demo \
 			cpml-demo
+adg_demo_SOURCES =	adg-demo.c \
+			demo.c
+cpml_demo_SOURCES =	cpml-demo.c \
+			demo.c
 noinst_PROGRAMS =	ldim
 
-dist_pkgdata_DATA =	cpml-demo.ui
+dist_pkgdata_DATA =	adg-demo.ui \
+			cpml-demo.ui

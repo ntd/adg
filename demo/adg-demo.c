@@ -1,6 +1,7 @@
 #include <adg/adg.h>
-#include <gtk/gtk.h>
 #include <math.h>
+
+#include "demo.h"
 
 
 #ifndef G_SQRT3
@@ -46,12 +47,12 @@ static Piston   model;
 int
 main(gint argc, gchar **argv)
 {
-    GtkWidget *window;
-    GtkWidget *vbox;
-    GtkWidget *button_box;
-    GtkWidget *widget;
+    gchar *path;
+    GtkBuilder *builder;
+    GError *error;
+    GtkWidget *wnd_main;
+    GtkWidget *area_drawing;
     AdgCanvas *canvas;
-    AdgEntity *path;
 
     gtk_init(&argc, &argv);
 
@@ -61,49 +62,47 @@ main(gint argc, gchar **argv)
     /* Create the canvas and populate it */
     canvas = adg_canvas_new();
 
-    path = adg_path_new(piston_path_extern, NULL);
-    adg_container_add(ADG_CONTAINER(canvas), path);
-
+    adg_container_add(ADG_CONTAINER(canvas),
+                      adg_path_new(piston_path_extern, NULL));
     add_piston_dimensions(canvas, &model);
     add_sample_stuff(canvas);
 
     /* User interface stuff */
-    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+    path = demo_find_data_file("adg-demo.ui");
+    if (path == NULL) {
+        g_print("adg-demo.ui not found!\n");
+        return 1;
+    }
 
-    vbox = gtk_vbox_new(FALSE, 0);
+    builder = gtk_builder_new();
+    error = NULL;
 
-    widget = gtk_drawing_area_new();
-    gtk_widget_set_size_request(widget, 790, 240);
-    g_signal_connect(widget, "expose-event", G_CALLBACK(piston_expose),
-                     canvas);
-    gtk_container_add(GTK_CONTAINER(vbox), widget);
+    gtk_builder_add_from_file(builder, path, &error);
+    if (error != NULL) {
+        g_print("%s\n", error->message);
+        return 2;
+    }
 
-    button_box = gtk_hbutton_box_new();
-    gtk_container_set_border_width(GTK_CONTAINER(button_box), 5);
-    gtk_box_set_spacing(GTK_BOX(button_box), 5);
-    gtk_button_box_set_layout(GTK_BUTTON_BOX(button_box), GTK_BUTTONBOX_END);
-    gtk_box_pack_end(GTK_BOX(vbox), button_box, FALSE, TRUE, 0);
+    wnd_main = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
+    area_drawing = (GtkWidget *) gtk_builder_get_object(builder, "areaDrawing");
 
-    widget = gtk_button_new_with_mnemonic("P_NG image");
-    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_png), canvas);
-    gtk_container_add(GTK_CONTAINER(button_box), widget);
+    /* Connect signals */
+    g_signal_connect(wnd_main, "delete-event",
+                     G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(area_drawing, "expose-event",
+                     G_CALLBACK(piston_expose), canvas);
+    g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPng"),
+                             "clicked", G_CALLBACK(to_png), canvas);
+    g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPdf"),
+                             "clicked", G_CALLBACK(to_pdf), canvas);
+    g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPs"),
+                             "clicked", G_CALLBACK(to_ps), canvas);
+    g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
+                     "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
-    widget = gtk_button_new_with_mnemonic("P_DF file");
-    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_pdf), canvas);
-    gtk_container_add(GTK_CONTAINER(button_box), widget);
+    g_object_unref(builder);
 
-    widget = gtk_button_new_with_mnemonic("_PostScript");
-    g_signal_connect_swapped(widget, "clicked", G_CALLBACK(to_ps), canvas);
-    gtk_container_add(GTK_CONTAINER(button_box), widget);
-
-    widget = gtk_button_new_from_stock(GTK_STOCK_QUIT);
-    g_signal_connect(widget, "clicked", G_CALLBACK(gtk_main_quit), NULL);
-    gtk_container_add(GTK_CONTAINER(button_box), widget);
-
-    gtk_container_add(GTK_CONTAINER(window), vbox);
-    gtk_widget_show_all(window);
-
+    gtk_widget_show_all(wnd_main);
     gtk_main();
 
     return 0;
@@ -113,7 +112,7 @@ main(gint argc, gchar **argv)
 static void
 fill_piston_model(Piston *piston)
 {
-    piston->A = 62.3;
+    piston->A = 52.3;
     piston->B = 20.6;
     piston->C = 2;
     piston->D1 = 9.3;
@@ -359,10 +358,13 @@ piston_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
     cr = gdk_cairo_create(widget->window);
     width = widget->allocation.width;
     height = widget->allocation.height;
-    scale = (double) (width - 80.0) / 80.0;
 
-    cairo_matrix_init(&matrix, scale, 0.0, 0.0, scale, scale + 71.0,
-                      12.0 * scale);
+    /* Hardcoding sizes is a really ugly way to scale a drawing but... */
+    scale = (double) (width - 100 - 180) / 52.3;
+
+    cairo_matrix_init_translate(&matrix, 100, 70);
+    cairo_matrix_scale(&matrix, scale, scale);
+    cairo_matrix_translate(&matrix, 0, 6);
     adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
 
     /* Rendering process */
