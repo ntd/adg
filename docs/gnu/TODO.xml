@@ -28,6 +28,7 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.5.0</title>
 
 <itemizedlist mark="circle">
+   <listitem override="disc">Develop a basic demo CPML program to visually check the results.</listitem>
    <listitem override="disc">Provide CPML APIs for accessing cairo paths and browse their segments
    (a contiguous line segment).</listitem>
    <listitem override="disc">Provide CPML APIs for accessing segments and browse their primitives
@@ -40,6 +41,8 @@ must be reflected in the demo programs, where applicable.</para>
    return the results (maybe using an argument to specify the maximum
    number of intersections to return).</listitem>
    <listitem override="disc">Generate documentation for CPML.</listitem>
+   <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
+   interface on GtkBuilder.</listitem>
    <listitem>Add a fillet operation.</listitem>
    <listitem>Add a chamfer operation.</listitem>
    <listitem>Change the matrix entity API, using a cleaner approach.</listitem>
