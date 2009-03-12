@@ -280,6 +280,48 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
     printf("\n");
 }
 
+/**
+ * cpml_primitive_intersection_with_segment:
+ * @primitive: a #CpmlPrimitive
+ * @segment:   a #CpmlSegment
+ * @dest:      the destination vector of #CpmlPair
+ * @max:       maximum number of intersections to return
+ *
+ * Computes the intersections between @segment and @primitive by
+ * sequentially scanning the primitives in @segment and looking
+ * for intersections with @primitive.
+ * If the intersections are more than @max, only the first @max pairs
+ * are stored in @dest.
+ *
+ * Return value: the number of intersections found
+ **/
+int
+cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
+                                         const CpmlSegment *segment,
+                                         CpmlPair *dest, int max)
+{
+    CpmlPrimitive portion;
+    int partial, total;
+    CpmlPair tmp_pairs[4];
+
+    cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
+    total = 0;
+
+    do {
+        partial = cpml_primitive_intersection(&portion, primitive, tmp_pairs);
+        if (total + partial > max)
+            partial = max - total;
+
+        if (partial > 0) {
+            memcpy(dest + total, tmp_pairs, partial * sizeof(CpmlPair));
+            total += partial;
+        }
+    } while (total < max && cpml_primitive_next(&portion));
+
+    return total;
+}
+
+
 
 /**
  * cpml_primitive_type_get_npoints:
