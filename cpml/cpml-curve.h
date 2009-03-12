@@ -26,21 +26,28 @@
 
 CAIRO_BEGIN_DECLS
 
-int             cpml_curve_type_get_npoints     (void) CPML_GNUC_CONST;
-void            cpml_curve_pair_at_time         (CpmlPrimitive  *curve,
-                                                 CpmlPair       *pair,
-                                                 double          time);
-void            cpml_curve_pair_at              (CpmlPrimitive  *curve,
-                                                 CpmlPair       *pair,
-                                                 double          pos);
-void            cpml_curve_vector_at_time       (CpmlPrimitive  *curve,
-                                                 CpmlVector     *vector,
-                                                 double          t);
-void            cpml_curve_vector_at            (CpmlPrimitive  *curve,
-                                                 CpmlVector     *vector,
-                                                 double          pos);
-void            cpml_curve_offset               (CpmlPrimitive  *curve,
-                                                 double          offset);
+int     cpml_curve_type_get_npoints     (void) CPML_GNUC_CONST;
+void    cpml_curve_pair_at_time         (const CpmlPrimitive    *curve,
+                                         CpmlPair               *pair,
+                                         double                  time);
+void    cpml_curve_pair_at              (const CpmlPrimitive    *curve,
+                                         CpmlPair               *pair,
+                                         double                  pos);
+void    cpml_curve_vector_at_time       (const CpmlPrimitive    *curve,
+                                         CpmlVector             *vector,
+                                         double                  t);
+void    cpml_curve_vector_at            (const CpmlPrimitive    *curve,
+                                         CpmlVector             *vector,
+                                         double                  pos);
+int     cpml_curve_intersection         (const CpmlPrimitive    *curve,
+                                         const CpmlPrimitive    *curve2,
+                                         CpmlPair               *dest);
+int     cpml_curve_intersection_with_line
+                                        (const CpmlPrimitive    *curve,
+                                         const CpmlPrimitive    *line,
+                                         CpmlPair               *dest);
+void    cpml_curve_offset               (CpmlPrimitive          *curve,
+                                         double                  offset);
 
 CAIRO_END_DECLS
 

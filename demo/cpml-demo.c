@@ -309,7 +309,7 @@ intersections(GtkWidget *widget, GdkEventExpose *event, gpointer data)
         cpml_primitive_from_segment(&primitive1, &segment1);
         cpml_primitive_from_segment(&primitive2, &segment2);
 
-        cpml_intersection(&primitive1, &primitive2, &intersection);
+        cpml_primitive_intersection(&primitive1, &primitive2, &intersection);
 
         cairo_arc(cr, intersection.x, intersection.y, 2.5, 0, 2 * M_PI);
         cairo_fill(cr);

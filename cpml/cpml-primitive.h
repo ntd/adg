@@ -35,33 +35,41 @@ struct _CpmlPrimitive {
 };
 
 
-CpmlPrimitive * cpml_primitive_copy        (CpmlPrimitive       *primitive,
-                                            const CpmlPrimitive *src);
-CpmlPrimitive * cpml_primitive_from_segment(CpmlPrimitive       *primitive,
-                                            CpmlSegment         *segment);
-void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
-cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
+CpmlPrimitive *
+        cpml_primitive_copy             (CpmlPrimitive       *primitive,
+                                         const CpmlPrimitive *src);
+CpmlPrimitive *
+        cpml_primitive_from_segment     (CpmlPrimitive       *primitive,
+                                         CpmlSegment         *segment);
+void    cpml_primitive_reset            (CpmlPrimitive       *primitive);
+cairo_bool_t
+        cpml_primitive_next             (CpmlPrimitive       *primitive);
 
-int             cpml_primitive_get_npoints (const CpmlPrimitive *primitive);
+int     cpml_primitive_get_npoints      (const CpmlPrimitive *primitive);
 cairo_path_data_t *
-                cpml_primitive_get_point   (const CpmlPrimitive *primitive,
-                                            int                  npoint);
-void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
-                                            cairo_t             *cr);
-void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
-                                            cairo_bool_t         org_also);
+        cpml_primitive_get_point        (const CpmlPrimitive *primitive,
+                                         int                  npoint);
+void    cpml_primitive_to_cairo         (const CpmlPrimitive *primitive,
+                                                 cairo_t             *cr);
+void    cpml_primitive_dump             (const CpmlPrimitive *primitive,
+                                                 cairo_bool_t         org_also);
 
 /* To be implemented by the primitives */
-int             cpml_primitive_type_get_npoints
-                                           (cairo_path_data_type_t type);
-void            cpml_primitive_pair_at     (const CpmlPrimitive *primitive,
-                                            CpmlPair            *pair,
-                                            double               pos);
-void            cpml_primitive_vector_at   (const CpmlPrimitive *primitive,
-                                            CpmlVector          *vector,
-                                            double               pos);
-void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
-                                            double               offset);
+int     cpml_primitive_type_get_npoints (cairo_path_data_type_t type);
+void    cpml_primitive_pair_at          (const CpmlPrimitive *primitive,
+                                         CpmlPair            *pair,
+                                         double               pos);
+void    cpml_primitive_vector_at        (const CpmlPrimitive *primitive,
+                                         CpmlVector          *vector,
+                                         double               pos);
+cairo_bool_t
+        cpml_primitive_join             (CpmlPrimitive       *primitive,
+                                         CpmlPrimitive       *primitive2);
+int     cpml_primitive_intersection     (const CpmlPrimitive *primitive,
+                                         const CpmlPrimitive *primitive2,
+                                         CpmlPair            *dest);
+void    cpml_primitive_offset           (CpmlPrimitive       *primitive,
+                                         double               offset);
 
 CAIRO_END_DECLS
 

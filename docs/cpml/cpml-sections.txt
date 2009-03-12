@@ -69,6 +69,8 @@ cpml_primitive_dump
 cpml_primitive_type_get_npoints
 cpml_primitive_pair_at
 cpml_primitive_vector_at
+cpml_primitive_join
+cpml_primitive_intersection
 cpml_primitive_offset
 </SECTION>
 
@@ -78,6 +80,7 @@ cpml_primitive_offset
 cpml_line_type_get_npoints
 cpml_line_pair_at
 cpml_line_vector_at
+cpml_line_intersection
 cpml_line_offset
 </SECTION>
 
@@ -89,6 +92,8 @@ cpml_curve_pair_at_time
 cpml_curve_pair_at
 cpml_curve_vector_at_time
 cpml_curve_vector_at
+cpml_curve_intersection
+cpml_curve_intersection_with_line
 cpml_curve_offset
 </SECTION>
 
@@ -99,11 +104,4 @@ cpml_close_type_get_npoints
 cpml_close_pair_at
 cpml_close_vector_at
 cpml_close_offset
-</SECTION>
-
-<SECTION>
-<FILE>action</FILE>
-<INCLUDE>cpml/cpml.h</INCLUDE>
-cpml_join
-cpml_intersection
 </SECTION>

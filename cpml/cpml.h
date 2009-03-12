@@ -20,7 +20,6 @@
 #ifndef __CPML_H__
 #define __CPML_H__
 
-#include <cpml/cpml-action.h>
 #include <cpml/cpml-curve.h>
 #include <cpml/cpml-line.h>
 #include <cpml/cpml-macros.h>

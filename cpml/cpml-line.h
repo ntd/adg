@@ -26,15 +26,18 @@
 
 CAIRO_BEGIN_DECLS
 
-int             cpml_line_type_get_npoints      (void) CPML_GNUC_CONST;
-void            cpml_line_pair_at               (CpmlPrimitive  *line,
-                                                 CpmlPair       *pair,
-                                                 double          pos);
-void            cpml_line_vector_at             (CpmlPrimitive  *line,
-                                                 CpmlVector     *vector,
-                                                 double          pos);
-void            cpml_line_offset                (CpmlPrimitive  *line,
-                                                 double          offset);
+int     cpml_line_type_get_npoints      (void) CPML_GNUC_CONST;
+void    cpml_line_pair_at               (const CpmlPrimitive    *line,
+                                         CpmlPair               *pair,
+                                         double                  pos);
+void    cpml_line_vector_at             (const CpmlPrimitive    *line,
+                                         CpmlVector             *vector,
+                                         double                  pos);
+int     cpml_line_intersection          (const CpmlPrimitive    *line,
+                                         const CpmlPrimitive    *line2,
+                                         CpmlPair               *dest);
+void    cpml_line_offset                (CpmlPrimitive          *line,
+                                         double                  offset);
 
 CAIRO_END_DECLS
 

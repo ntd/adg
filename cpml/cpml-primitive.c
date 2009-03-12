@@ -393,6 +393,113 @@ cpml_primitive_vector_at(const CpmlPrimitive *primitive,
 }
 
 /**
+ * cpml_primitive_join:
+ * @primitive: the first #CpmlPrimitive
+ * @primitive2: the second #CpmlPrimitive
+ *
+ * Joins two primitive modifying the end point of @primitive and the
+ * start point of @primitive2 so that the resulting points will overlap.
+ * 
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>Actually, the join is done by extending the end vector
+ *           of @primitive and the start vector of @primitive2 and
+ *           interpolating the intersection: this means no primitive
+ *           dependent code is needed. Anyway, it is likely to change
+ *           in the future because this approach is quite naive when
+ *           curves are involved.</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: 1 on success, 0 if the end vector of @primitive
+ *               and the start vector of @primitive2 are parallel
+ **/
+cairo_bool_t
+cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
+{
+    cairo_path_data_t *end1, *start2;
+    CpmlPrimitive line1, line2;
+    cairo_path_data_t data1[2], data2[2];
+    CpmlPair joint;
+
+    end1 = cpml_primitive_get_point(primitive, -1);
+    start2 = cpml_primitive_get_point(primitive2, 0);
+
+    /* Check if the primitives are yet connected */
+    if (end1->point.x == start2->point.x && end1->point.y == start2->point.y)
+        return 1;
+
+    line1.org = cpml_primitive_get_point(primitive, -2);
+    line1.data = data1;
+    data1[0].header.type = CAIRO_PATH_LINE_TO;
+    data1[1] = *end1;
+
+    line2.org = start2;
+    line2.data = data2;
+    data2[0].header.type = CAIRO_PATH_LINE_TO;
+    data2[1] = *cpml_primitive_get_point(primitive2, 1);
+
+    if (!cpml_line_intersection(&line1, &line2, &joint))
+        return 0;
+
+    cpml_pair_to_cairo(&joint, end1);
+    cpml_pair_to_cairo(&joint, start2);
+
+    return 1;
+}
+
+/**
+ * cpml_primitive_intersection:
+ * @primitive:  the first #CpmlPrimitive
+ * @primitive2: the second #CpmlPrimitive
+ * @dest:       the destination #CpmlPair (or a vector of #CpmlPair)
+ *
+ * Finds the intersection points between the given primitives and
+ * returns the result in @dest. If curves are involved, @dest MUST
+ * be an array of at least 4 #CpmlPair, because this can lead to
+ * 4 intersection points.
+ *
+ * <note><para>
+ * This function is primitive dependent: every new primitive must
+ * expose API to get intersections with the any other primitive type
+ * (excluding %CAIRO_PATH_CLOSE_PATH, as it is converted to a line
+ * primitive).
+ * </para></note>
+ *
+ * Return value: the number of intersection points found
+ **/
+int
+cpml_primitive_intersection(const CpmlPrimitive *primitive,
+                            const CpmlPrimitive *primitive2,
+                            CpmlPair *dest)
+{
+    cairo_path_data_type_t type1, type2;
+
+    type1 = primitive->data->header.type;
+    type2 = primitive->data->header.type;
+
+    /* Close path primitives are treated as line-to */
+    if (type1 == CAIRO_PATH_CLOSE_PATH)
+        type1 = CAIRO_PATH_LINE_TO;
+    if (type2 == CAIRO_PATH_CLOSE_PATH)
+        type2 = CAIRO_PATH_LINE_TO;
+
+    /* Dispatcher: probably there's a smarter way to do this */
+    if (type1 == CAIRO_PATH_LINE_TO && type2 == CAIRO_PATH_LINE_TO)
+        return cpml_line_intersection(primitive, primitive2, dest);
+    else if (type1 == CAIRO_PATH_CURVE_TO && type2 == CAIRO_PATH_CURVE_TO)
+        return cpml_curve_intersection(primitive, primitive2, dest);
+    else if (type1 == CAIRO_PATH_LINE_TO && type2 == CAIRO_PATH_CURVE_TO)
+        return cpml_curve_intersection_with_line(primitive2, primitive, dest);
+    else if (type1 == CAIRO_PATH_CURVE_TO && type2 == CAIRO_PATH_LINE_TO)
+        return cpml_curve_intersection_with_line(primitive, primitive2, dest);
+
+    /* Primitive combination not found */
+    return 0;
+}
+
+/**
  * cpml_primitive_offset:
  * @primitive: a #CpmlPrimitive
  * @offset: distance for the computed offset primitive

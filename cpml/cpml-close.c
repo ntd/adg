@@ -66,7 +66,7 @@ cpml_close_type_get_npoints(void)
  * coordinates are interpolated.
  **/
 void
-cpml_close_pair_at(CpmlPrimitive *close, CpmlPair *pair, double pos)
+cpml_close_pair_at(const CpmlPrimitive *close, CpmlPair *pair, double pos)
 {
     cairo_path_data_t *p1, *p2;
 
@@ -88,7 +88,8 @@ cpml_close_pair_at(CpmlPrimitive *close, CpmlPair *pair, double pos)
  * @pos is not used.
  **/
 void
-cpml_close_vector_at(CpmlPrimitive *close, CpmlVector *vector, double pos)
+cpml_close_vector_at(const CpmlPrimitive *close,
+                     CpmlVector *vector, double pos)
 {
     cairo_path_data_t *p1, *p2;
 

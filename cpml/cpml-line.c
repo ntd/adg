@@ -58,7 +58,7 @@ cpml_line_type_get_npoints(void)
  * coordinates are interpolated.
  **/
 void
-cpml_line_pair_at(CpmlPrimitive *line, CpmlPair *pair, double pos)
+cpml_line_pair_at(const CpmlPrimitive *line, CpmlPair *pair, double pos)
 {
     cairo_path_data_t *p1, *p2;
 
@@ -83,7 +83,7 @@ cpml_line_pair_at(CpmlPrimitive *line, CpmlPair *pair, double pos)
  * @vector = endpoint(@line) - startpoint(@line).
  **/
 void
-cpml_line_vector_at(CpmlPrimitive *line, CpmlVector *vector, double pos)
+cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
 {
     cairo_path_data_t *p1, *p2;
 
@@ -92,6 +92,50 @@ cpml_line_vector_at(CpmlPrimitive *line, CpmlVector *vector, double pos)
 
     vector->x = p2->point.x - p1->point.x;
     vector->y = p2->point.y - p1->point.y;
+}
+
+/**
+ * cpml_line_intersection:
+ * @line:  the first line
+ * @line2: the second line
+ * @dest:  the destination #CpmlPair
+ *
+ * Given two lines (@line and @line2), gets their intersection point
+ * and store the result in @dest.
+ *
+ * Return value: 1 on success, 0 on no intersections
+ **/
+int
+cpml_line_intersection(const CpmlPrimitive *line,
+                       const CpmlPrimitive *line2, CpmlPair *dest)
+{
+    const cairo_path_data_t *p1a, *p2a, *p1b, *p2b;
+    CpmlVector va, vb;
+    double factor;
+
+    p1a = cpml_primitive_get_point(line, 0);
+    p2a = cpml_primitive_get_point(line, 1);
+    p1b = cpml_primitive_get_point(line2, 0);
+    p2b = cpml_primitive_get_point(line2, 1);
+
+    va.x = p2a->point.x - p1a->point.x;
+    va.y = p2a->point.y - p1a->point.y;
+    vb.x = p2b->point.x - p1b->point.x;
+    vb.y = p2b->point.y - p1b->point.y;
+
+    factor = va.x * vb.y - va.y * vb.x;
+
+    /* Check if the lines are parallel */
+    if (factor == 0)
+        return 0;
+
+    factor = ((p1a->point.y - p1b->point.y) * vb.x -
+              (p1a->point.x - p1b->point.x) * vb.y) / factor;
+
+    dest->x = p1a->point.x + va.x * factor;
+    dest->y = p1a->point.y + va.y * factor;
+
+    return 1;
 }
 
 /**
