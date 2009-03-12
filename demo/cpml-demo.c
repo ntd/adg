@@ -270,7 +270,6 @@ intersections(GtkWidget *widget, GdkEventExpose *event, gpointer data)
     cairo_t *cr;
     cairo_path_t *path;
     CpmlSegment segment1, segment2;
-    CpmlPrimitive primitive1, primitive2;
     CpmlPair intersection;
 
     cr = gdk_cairo_create(widget->window);
@@ -287,10 +286,7 @@ intersections(GtkWidget *widget, GdkEventExpose *event, gpointer data)
     cpml_segment_from_cairo(&segment2, path);
 
     while (cpml_segment_next(&segment2)) {
-        cpml_primitive_from_segment(&primitive1, &segment1);
-        cpml_primitive_from_segment(&primitive2, &segment2);
-
-        cpml_primitive_intersection(&primitive1, &primitive2, &intersection);
+        cpml_segment_intersection(&segment1, &segment2, &intersection, 1);
 
         cairo_arc(cr, intersection.x, intersection.y, 2.5, 0, 2 * M_PI);
         cairo_fill(cr);

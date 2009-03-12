@@ -269,6 +269,45 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 }
 
 /**
+ * cpml_segment_intersection:
+ * @segment:  the first #CpmlSegment
+ * @segment2: the second #CpmlSegment
+ * @dest:     the destination vector of #CpmlPair
+ * @max:      maximum number of intersections to return
+ *
+ * Computes the intersections between @segment and @segment2 and
+ * returns the found points in @dest. If the intersections are more
+ * than @max, only the first @max pairs are stored in @dest.
+ *
+ * To get the job done, the primitives of @segment are sequentially
+ * scanned for intersections with any primitive in @segment2. This
+ * means @segment has a higher precedence over @segment2.
+ *
+ * Return value: the number of intersections found
+ **/
+int
+cpml_segment_intersection(const CpmlSegment *segment,
+                          const CpmlSegment *segment2,
+                          CpmlPair *dest, int max)
+{
+    CpmlPrimitive portion;
+    int partial, total;
+
+    cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
+    total = 0;
+
+    do {
+        partial = cpml_primitive_intersection_with_segment(&portion,
+                                                           segment2,
+                                                           dest + total,
+                                                           max - total);
+        total += partial;
+    } while (total < max && cpml_primitive_next(&portion));
+
+    return total;
+}
+
+/**
  * cpml_segment_offset:
  * @segment: a #CpmlSegment
  * @offset: the offset distance

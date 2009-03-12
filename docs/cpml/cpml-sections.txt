@@ -47,6 +47,7 @@ cpml_segment_dump
 <SUBSECTION>
 cpml_segment_reverse
 cpml_segment_transform
+cpml_segment_intersection
 cpml_segment_offset
 </SECTION>
 
@@ -71,6 +72,7 @@ cpml_primitive_pair_at
 cpml_primitive_vector_at
 cpml_primitive_join
 cpml_primitive_intersection
+cpml_primitive_intersection_with_segment
 cpml_primitive_offset
 </SECTION>
 

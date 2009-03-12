@@ -21,6 +21,7 @@
 #define __CPML_SEGMENT_H__
 
 #include <cairo.h>
+#include <cpml/cpml-pair.h>
 
 
 CAIRO_BEGIN_DECLS
@@ -35,22 +36,30 @@ struct _CpmlSegment {
 };
 
 
-cairo_bool_t    cpml_segment_from_cairo (CpmlSegment        *segment,
-                                         cairo_path_t       *cairo_path);
-CpmlSegment *   cpml_segment_copy       (CpmlSegment        *segment,
-                                         const CpmlSegment  *src);
-void            cpml_segment_to_cairo   (const CpmlSegment  *segment,
-                                         cairo_t            *cr);
-void            cpml_segment_dump       (const CpmlSegment  *segment);
+cairo_bool_t
+        cpml_segment_from_cairo         (CpmlSegment            *segment,
+                                         cairo_path_t           *cairo_path);
+CpmlSegment *
+        cpml_segment_copy               (CpmlSegment            *segment,
+                                         const CpmlSegment      *src);
 
-void            cpml_segment_reset      (CpmlSegment        *segment);
-cairo_bool_t    cpml_segment_next       (CpmlSegment        *segment);
+void    cpml_segment_to_cairo           (const CpmlSegment      *segment,
+                                         cairo_t                *cr);
+void    cpml_segment_dump               (const CpmlSegment      *segment);
 
-void            cpml_segment_reverse    (CpmlSegment        *segment);
-void            cpml_segment_transform  (CpmlSegment        *segment,
-                                         const cairo_matrix_t *matrix);
-void            cpml_segment_offset     (CpmlSegment        *segment,
-                                         double              offset);
+void    cpml_segment_reset              (CpmlSegment            *segment);
+cairo_bool_t
+        cpml_segment_next               (CpmlSegment            *segment);
+
+void    cpml_segment_reverse            (CpmlSegment            *segment);
+void    cpml_segment_transform          (CpmlSegment            *segment,
+                                         const cairo_matrix_t   *matrix);
+int     cpml_segment_intersection       (const CpmlSegment      *segment,
+                                         const CpmlSegment      *segment2,
+                                         CpmlPair               *dest,
+                                         int                     max);
+void    cpml_segment_offset             (CpmlSegment            *segment,
+                                         double                  offset);
 
 CAIRO_END_DECLS
 
