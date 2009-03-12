@@ -6,6 +6,23 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.4.1">
+<title>ADG 0.4.1</title>
+
+<para>The CPML library has been boosted with additional APIs to browse
+segments/primitives and to compute intersections between different
+constructs. Now it has its own demo program (cpml-demo), showing
+some of the implemented feature. Although some function is still
+a stub, the overall infrastructure is likely to be definitive.</para>
+
+<para>All the CPML APIs are now properly documented.</para>
+
+<para>The ldim demo has been merged into the more complex adg-demo.
+Now the demo programs use the GtkBuilder feature, so the Gtk+
+dependency has been raised to 2.12.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.4.0">
 <title>ADG 0.4.0</title>
 
