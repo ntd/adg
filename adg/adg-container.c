@@ -27,7 +27,7 @@
  * Each AdgContainer has its paper matrix (#AdgContainer:paper_matrix) to be
  * used on paper-dependent references (such as font and arrow sizes, line
  * thickness etc...) and a model matrix usually applied to the model view. See
- * http://www.entidi.it/adg/tutorial/view/3 for details on this topic.
+ * http://adg.entidi.com/tutorial/view/3 for details on this topic.
  *
  * This means an AdgContainer can be thought as a group of entities with the
  * same geometrical identity (same scale, reference point ecc...).
