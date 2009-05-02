@@ -16,6 +16,7 @@ EXTRA_DIST=		ABOUT-NLS \
 			ChangeLog-0.2.1 \
 			INSTALL \
 			m4/ChangeLog \
+			adg.doap \
 			$(BUILT_SOURCES)
 
 SUBDIRS=		cpml \

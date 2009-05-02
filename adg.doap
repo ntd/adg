@@ -1,0 +1,44 @@
+<Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/"
+         xmlns="http://usefulinc.com/ns/doap#">
+
+  <name>adg</name>
+
+  <shortdesc xml:lang="en">
+  Automatic Drawing Generation (ADG for short) is a non-interactive canvas
+  for generating technical drawings.
+  </shortdesc>
+
+  <description xml:lang="en">
+  Automatic Drawing Generation is GObject-based library that provides
+  a non-interactive cairo canvas specifically designed for generating
+  technical drawings.
+
+  If you want to develop an application that needs to show and print
+  drawings where some data changes but the overall design is always the
+  same, the ADG library can be quite useful. A typical example would
+  be the technical office of a manufacturing industry.
+  </description>
+
+  <homepage rdf:resource="http://adg.entidi.com/"/>
+  <license rdf:resource="http://www.gnu.org/licenses/lgpl-2.1.html"/>
+  <screenshots rdf:resource="http://sourceforge.net/project/screenshots.php?group_id=185095"/>
+  <download-page rdf:resource="http://sourceforge.net/project/showfiles.php?group_id=185095"/>
+  <bug-database rdf:resource="http://sourceforge.net/tracker/?atid=911897&amp;group_id=185095"/>
+
+  <repository>
+    <Repository>
+      <location rdf:resource="http://sourceforge.net/scm/?type=git&amp;group_id=185095"/>
+      <anon-root rdf:resource="git://adg.git.sourceforge.net/gitroot/adg"/>
+      <browse rdf:resource="http://adg.git.sourceforge.net/git/gitweb.cgi?p=adg"/>
+    </Repository>
+  </repository>
+
+  <maintainer>
+    <foaf:Person>
+      <foaf:name>Nicola Fontana</foaf:name>
+      <rdfs:seeAlso rdf:resource="http://www.entidi.com/data/foaf.rdf"/>
+    </foaf:Person>
+  </maintainer>
+</Project>
