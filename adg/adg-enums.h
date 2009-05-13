@@ -31,7 +31,7 @@ G_BEGIN_DECLS
  * @ADG_LINE_STYLE_DRAW: normal drawing
  * @ADG_LINE_STYLE_CENTER: axis and center-lines
  * @ADG_LINE_STYLE_HIDDEN: covered entities
- * @ADG_LINE_STYLE_XATCH: xatches
+ * @ADG_LINE_STYLE_HATCH: hatches
  * @ADG_LINE_STYLE_DIM: extension and base lines of dimension entities
  * @ADG_LINE_STYLE_LAST: start of user-defined styles
  *
@@ -41,7 +41,7 @@ typedef enum {
     ADG_LINE_STYLE_DRAW,
     ADG_LINE_STYLE_CENTER,
     ADG_LINE_STYLE_HIDDEN,
-    ADG_LINE_STYLE_XATCH,
+    ADG_LINE_STYLE_HATCH,
     ADG_LINE_STYLE_DIM,
     ADG_LINE_STYLE_LAST
 } AdgLineStyleId;

@@ -425,7 +425,7 @@ get_pool(void)
         cairo_pattern_destroy(pattern);
 
         pattern = cairo_pattern_create_rgb(0., 0., 1.);
-        pool->pdata[ADG_LINE_STYLE_XATCH] =
+        pool->pdata[ADG_LINE_STYLE_HATCH] =
             g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
                          1.25, NULL);
         cairo_pattern_destroy(pattern);

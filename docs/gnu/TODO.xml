@@ -81,12 +81,12 @@ must be reflected in the demo programs, where applicable.</para>
    with radius <parameter>size</parameter>, close the resulting path and fill the arrow.</listitem>
    <listitem>Rework styles by using GObject and properties.</listitem>
    <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
-   <listitem>Implement a basic AdgXatchStyle, derived from AdgLineStyle.</listitem>
+   <listitem>Implement a basic AdgHatchStyle, derived from AdgLineStyle.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
    <listitem>AdgPath should be an abstract class from which derive AdgPolyline,
    the basic stroked path entity.</listitem>
-   <listitem>Add AdgXatch deriving AdgPath.</listitem>
+   <listitem>Add AdgHatch deriving AdgPath.</listitem>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in paper space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
