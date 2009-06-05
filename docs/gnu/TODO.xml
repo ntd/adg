@@ -43,8 +43,15 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
    interface on GtkBuilder.</listitem>
-   <listitem>Add a fillet operation.</listitem>
-   <listitem>Add a chamfer operation.</listitem>
+   <listitem>Implement AdgModel as a bare empty class. Move the actual stuff in AdgTitleBlock.</listitem>
+   <listitem>Rename AdgPath to AdgStroke, being the latter a stroke representation of the path.</listitem>
+   <listitem>Implement AdgPath as an AdgModel derived class of an abstract path. Any AdgPath
+   instance could be referenced by one or more entities.</listitem>
+   <listitem>Add to AdgPath the basic functionality to build a path: basically a bunch of
+   methods emulating the cairo path API but without the need of a yet
+   instantiated cairo context.</listitem>
+   <listitem>Add a chamfer operation to AdgPath.</listitem>
+   <listitem>Add a fillet operation to AdgPath.</listitem>
    <listitem>Change the matrix entity API, using a cleaner approach.</listitem>
    <listitem>Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
    <listitem>Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
@@ -86,7 +93,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
    <listitem>AdgPath should be an abstract class from which derive AdgPolyline,
    the basic stroked path entity.</listitem>
-   <listitem>Add AdgHatch deriving AdgPath.</listitem>
+   <listitem>Add AdgHatch, an entity very similar to AdgStroke.</listitem>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in paper space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
@@ -98,7 +105,11 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to unknown</title>
 
 <itemizedlist mark="circle">
-   <listitem>Implement AdgModel and the model-view interaction.</listitem>
+   <listitem>Add connectivity feature to AdgModel: this means to enable dependencies
+   of models on external data: use libgda as the offial sample data provider.</listitem> 
+   <listitem>Add model-view interaction by providing signal propagation from AdgModel
+   to the dependent entities, so when a data changes the entities will be
+   automatically updated.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Implement shape tolerances.</listitem>
