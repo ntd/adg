@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:toytext
+ * SECTION:toy-text
  * @title: AdgToyText
  * @short_description: Simple text entity that use the cairo "toy" text API
  *

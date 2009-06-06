@@ -407,7 +407,7 @@ ADG_CANVAS_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>toytext</FILE>
+<FILE>toy-text</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgToyText
 <SUBSECTION>

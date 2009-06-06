@@ -50,7 +50,7 @@
       <xi:include href="xml/rotable.xml"/>
     </chapter>
     <xi:include href="xml/canvas.xml"/>
-    <xi:include href="xml/toytext.xml"/>
+    <xi:include href="xml/toy-text.xml"/>
     <xi:include href="xml/path.xml"/>
     <chapter id="Quoting">
       <title>Quoting</title>
