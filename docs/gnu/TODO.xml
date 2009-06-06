@@ -45,7 +45,7 @@ must be reflected in the demo programs, where applicable.</para>
    interface on GtkBuilder.</listitem>
    <listitem override="disc">Implement AdgModel as a bare empty class. Move the actual stuff in
    AdgTitleBlock.</listitem>
-   <listitem>Rename AdgPath to AdgStroke, being the latter a stroke representation
+   <listitem override="disc">Rename AdgPath to AdgStroke, being the latter a stroke representation
    of a single AdgPath.</listitem>
    <listitem>Implement AdgPath as an AdgModel derived class of an abstract path.
    Any AdgPath instance could be referenced by one or more entities.</listitem>
