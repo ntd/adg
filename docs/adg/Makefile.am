@@ -11,18 +11,7 @@ MKTMPL_OPTIONS=
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/adg/*.c
-IGNORE_HFILES=		adg-adim-private.h \
-			adg-canvas-private.h \
-			adg-container-private.h \
-			adg-context-private.h \
-			adg-dim-private.h \
-			adg-entity-private.h \
-			adg-intl.h \
-			adg-ldim-private.h \
-			adg-model-private.h \
-			adg-stroke-private.h \
-			adg-title-block-private.h \
-			adg-type-builtins.h
+IGNORE_HFILES=
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/NEWS.xml \
