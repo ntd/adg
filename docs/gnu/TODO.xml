@@ -43,7 +43,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
    interface on GtkBuilder.</listitem>
-   <listitem>Implement AdgModel as a bare empty class. Move the actual stuff in
+   <listitem override="disc">Implement AdgModel as a bare empty class. Move the actual stuff in
    AdgTitleBlock.</listitem>
    <listitem>Rename AdgPath to AdgStroke, being the latter a stroke representation
    of a single AdgPath.</listitem>
