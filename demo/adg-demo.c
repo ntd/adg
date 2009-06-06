@@ -70,7 +70,7 @@ main(gint argc, gchar **argv)
     /* LDim demo */
     ldim_canvas = adg_canvas_new();
 
-    entity = adg_path_new(ldim_path, NULL);
+    entity = adg_stroke_new(ldim_path, NULL);
     adg_container_add(ADG_CONTAINER(ldim_canvas), entity);
 
     entity = adg_ldim_new_full_explicit(2, -10, 8, -10, ADG_DIR_UP, 0, -10);
@@ -86,7 +86,7 @@ main(gint argc, gchar **argv)
 
     drawing_fill_model(&model);
 
-    entity = adg_path_new(drawing_path, NULL);
+    entity = adg_stroke_new(drawing_path, NULL);
     adg_container_add(ADG_CONTAINER(drawing_canvas), entity);
 
     drawing_add_dimensions(drawing_canvas, &model);

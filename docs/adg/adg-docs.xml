@@ -51,7 +51,7 @@
     </chapter>
     <xi:include href="xml/canvas.xml"/>
     <xi:include href="xml/toy-text.xml"/>
-    <xi:include href="xml/path.xml"/>
+    <xi:include href="xml/stroke.xml"/>
     <chapter id="Quoting">
       <title>Quoting</title>
       <xi:include href="xml/ldim.xml"/>

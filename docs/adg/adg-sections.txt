@@ -421,24 +421,24 @@ ADG_TOY_TEXT_GET_CLASS
 </SECTION>
 
 <SECTION>
-<FILE>path</FILE>
+<FILE>stroke</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
-AdgPath
+AdgStroke
 <SUBSECTION>
-adg_path_new
+adg_stroke_new
 <SUBSECTION>
-adg_path_get_cairo_path
-adg_path_dump
+adg_stroke_get_cairo_path
+adg_stroke_dump
 <SUBSECTION Standard>
-AdgPathClass
-AdgPathPrivate
-adg_path_get_type
-ADG_PATH
-ADG_IS_PATH
-ADG_TYPE_PATH
-ADG_PATH_CLASS
-ADG_IS_PATH_CLASS
-ADG_PATH_GET_CLASS
+AdgStrokeClass
+AdgStrokePrivate
+adg_stroke_get_type
+ADG_STROKE
+ADG_IS_STROKE
+ADG_TYPE_STROKE
+ADG_STROKE_CLASS
+ADG_IS_STROKE_CLASS
+ADG_STROKE_GET_CLASS
 </SECTION>
 
 <SECTION>

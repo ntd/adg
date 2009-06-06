@@ -19,34 +19,34 @@
 
 
 /**
- * SECTION:path
- * @title: AdgPath
- * @short_description: A stroked path entity
+ * SECTION:stroke
+ * @title: AdgStroke
+ * @short_description: A stroked entity
  *
- * The #AdgPath object is probably the simplest entity: it represents a path
- * (as intended by the #cairo_path_t structure) in model space.
+ * The #AdgStroke object is a generic stroked entity: in the simplest
+ * case, it is a stroked #cairo_path_t structure in model space.
  **/
 
-#include "adg-path.h"
-#include "adg-path-private.h"
+#include "adg-stroke.h"
+#include "adg-stroke-private.h"
 #include "adg-line-style.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_path_parent_class)
+#define PARENT_CLASS ((AdgEntityClass *) adg_stroke_parent_class)
 
 
 static void	finalize		(GObject	*object);
 static void     invalidate              (AdgEntity      *entity);
 static void	render			(AdgEntity	*entity,
 					 cairo_t	*cr);
-static void     clear_path_cache        (AdgPath        *path);
+static void     clear_stroke_cache      (AdgStroke      *stroke);
 
 
-G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
 
 
 static void
-adg_path_class_init(AdgPathClass *klass)
+adg_stroke_class_init(AdgStrokeClass *klass)
 {
     GObjectClass *gobject_class;
     AdgEntityClass *entity_class;
@@ -54,7 +54,7 @@ adg_path_class_init(AdgPathClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgPathPrivate));
+    g_type_class_add_private(klass, sizeof(AdgStrokePrivate));
 
     gobject_class->finalize = finalize;
 
@@ -63,81 +63,82 @@ adg_path_class_init(AdgPathClass *klass)
 }
 
 static void
-adg_path_init(AdgPath *path)
+adg_stroke_init(AdgStroke *stroke)
 {
-    AdgPathPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(path, ADG_TYPE_PATH,
-						       AdgPathPrivate);
+    AdgStrokePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(stroke,
+                                                         ADG_TYPE_STROKE,
+                                                         AdgStrokePrivate);
 
     priv->cp.x = priv->cp.y = 0.;
     priv->cairo_path = NULL;
     priv->callback = NULL;
 
-    path->priv = priv;
+    stroke->priv = priv;
 }
 
 static void
 finalize(GObject *object)
 {
-    clear_path_cache((AdgPath *) object);
+    clear_stroke_cache((AdgStroke *) object);
 
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
 
 /**
- * adg_path_new:
+ * adg_stroke_new:
  * @callback: an #AdgCallback callback
  * @user_data: user provided pointer to pass to the callback
  *
- * Creates a new path entity. The path must be constructed in the @callback
- * function: AdgPath will cache and reuse the cairo_copy_path() returned by
+ * Creates a new stroke entity. The stroke must be constructed in the @callback
+ * function: AdgStroke will cache and reuse the cairo_copy_path() returned by
  * the cairo context after the @callback call.
  *
  * Return value: the new entity
  **/
 AdgEntity *
-adg_path_new(AdgCallback callback, gpointer user_data)
+adg_stroke_new(AdgCallback callback, gpointer user_data)
 {
-    AdgPath *path;
+    AdgStroke *stroke;
 
-    path = (AdgPath *) g_object_new(ADG_TYPE_PATH, NULL);
-    path->priv->callback = callback;
-    path->priv->user_data = user_data;
+    stroke = (AdgStroke *) g_object_new(ADG_TYPE_STROKE, NULL);
+    stroke->priv->callback = callback;
+    stroke->priv->user_data = user_data;
 
-    return (AdgEntity *) path;
+    return (AdgEntity *) stroke;
 }
 
 /**
- * adg_path_get_cairo_path:
- * @path: an #AdgPath
+ * adg_stroke_get_cairo_path:
+ * @stroke: an #AdgStroke
  *
- * Gets a pointer to the cairo path structure of @path. The return value
- * is owned by @path and must be considered read-only.
+ * Gets a pointer to the cairo path structure of @stroke. The return value
+ * is owned by @stroke and must be considered read-only.
  *
  * Return value: a pointer to the internal #cairo_path_t structure
  **/
 const cairo_path_t *
-adg_path_get_cairo_path(AdgPath *path)
+adg_stroke_get_cairo_path(AdgStroke *stroke)
 {
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+    g_return_val_if_fail(ADG_IS_STROKE(stroke), NULL);
 
-    return path->priv->cairo_path;
+    return stroke->priv->cairo_path;
 }
 
 /**
- * adg_path_dump:
- * @path: an #AdgPath
+ * adg_stroke_dump:
+ * @stroke: an #AdgStroke
  *
- * Dumps the data content of @path to stdout in a human readable format.
+ * Dumps the data content of @stroke to stdout in a human readable format.
  **/
 void
-adg_path_dump(AdgPath *path)
+adg_stroke_dump(AdgStroke *stroke)
 {
     CpmlSegment segment;
 
-    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(ADG_IS_STROKE(stroke));
 
-    if (!cpml_segment_from_cairo(&segment, path->priv->cairo_path)) {
-        g_print("Invalid path data to dump!\n");
+    if (!cpml_segment_from_cairo(&segment, stroke->priv->cairo_path)) {
+        g_print("Invalid stroke data to dump!\n");
     } else {
         do {
             cpml_segment_dump(&segment);
@@ -148,7 +149,7 @@ adg_path_dump(AdgPath *path)
 static void
 invalidate(AdgEntity *entity)
 {
-    clear_path_cache((AdgPath *) entity);
+    clear_stroke_cache((AdgStroke *) entity);
 
     PARENT_CLASS->invalidate(entity);
 }
@@ -156,20 +157,20 @@ invalidate(AdgEntity *entity)
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgPath *path = (AdgPath *) entity;
+    AdgStroke *stroke = (AdgStroke *) entity;
 
-    if (path->priv->cairo_path) {
+    if (stroke->priv->cairo_path) {
         /* Use cached data */
-        cairo_move_to(cr, path->priv->cp.x, path->priv->cp.y);
-        cairo_append_path(cr, path->priv->cairo_path);
+        cairo_move_to(cr, stroke->priv->cp.x, stroke->priv->cp.y);
+        cairo_append_path(cr, stroke->priv->cairo_path);
     } else {
         /* Construct and store the cache */
-        cairo_get_current_point(cr, &path->priv->cp.x, &path->priv->cp.y);
+        cairo_get_current_point(cr, &stroke->priv->cp.x, &stroke->priv->cp.y);
 
-        if (path->priv->callback)
-            path->priv->callback(entity, cr, path->priv->user_data);
+        if (stroke->priv->callback)
+            stroke->priv->callback(entity, cr, stroke->priv->user_data);
 
-        path->priv->cairo_path = cairo_copy_path(cr);
+        stroke->priv->cairo_path = cairo_copy_path(cr);
     }
 
     adg_entity_apply(entity, ADG_SLOT_LINE_STYLE, cr);
@@ -179,9 +180,9 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static void
-clear_path_cache(AdgPath *path)
+clear_stroke_cache(AdgStroke *stroke)
 {
-    AdgPathPrivate *priv = path->priv;
+    AdgStrokePrivate *priv = stroke->priv;
 
     if (priv->cairo_path != NULL) {
         cairo_path_destroy(priv->cairo_path);

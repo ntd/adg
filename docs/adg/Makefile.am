@@ -20,7 +20,8 @@ IGNORE_HFILES=		adg-adim-private.h \
 			adg-intl.h \
 			adg-ldim-private.h \
 			adg-model-private.h \
-			adg-path-private.h \
+			adg-stroke-private.h \
+			adg-title-block-private.h \
 			adg-type-builtins.h
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
