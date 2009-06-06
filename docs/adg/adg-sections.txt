@@ -259,13 +259,6 @@ ADG_DIM_STYLE_GET_CLASS
 <FILE>model</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgModel
-<SUBSECTION>
-adg_model_get_name
-adg_model_set_name
-adg_model_get_material
-adg_model_set_material
-adg_model_get_treatment
-adg_model_set_treatment
 <SUBSECTION Standard>
 AdgModelClass
 AdgModelPrivate
