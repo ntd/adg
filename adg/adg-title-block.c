@@ -54,11 +54,6 @@ enum {
     PROP_TREATMENT
 };
 
-enum {
-    MODIFIED,
-    LAST_SIGNAL
-};
-
 
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
@@ -69,8 +64,6 @@ static void     set_property            (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-
-static guint title_block_signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_ENTITY);
