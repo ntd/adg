@@ -38,8 +38,8 @@ typedef struct _AdgModelClass   AdgModelClass;
 typedef struct _AdgModelPrivate AdgModelPrivate;
 
 struct _AdgModel {
-    GObject              object;
     /*< private >*/
+    GObject              object;
     AdgModelPrivate     *priv;
 };
 
@@ -49,16 +49,6 @@ struct _AdgModelClass {
 
 
 GType                   adg_model_get_type      (void) G_GNUC_CONST;
-
-gchar *                 adg_model_get_name      (AdgModel        *model);
-void                    adg_model_set_name      (AdgModel        *model,
-                                                 const gchar    *name);
-gchar *                 adg_model_get_material  (AdgModel        *model);
-void                    adg_model_set_material  (AdgModel        *model,
-                                                 const gchar    *material);
-gchar *                 adg_model_get_treatment (AdgModel        *model);
-void                    adg_model_set_treatment (AdgModel        *model,
-                                                 const gchar    *treatment);
 
 G_END_DECLS
 

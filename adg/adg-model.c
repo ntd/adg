@@ -21,14 +21,25 @@
 /**
  * SECTION:model
  * @title: AdgModel
- * @short_description: The data model
+ * @short_description: The base class of the ADG model infrastructure
  *
- * Every drawing is a representation of a part: the #AdgModel contains all the
- * data needed by the drawing (overall, quotes).
+ * A model is a conceptual representation of something. From an ADG
+ * user point of view, it is a collection of data and rules that
+ * defines how an object should be represented on a drawing.
  *
- * Because the #AdgModel instances are only a data collection, they are not
- * renderable, so the class is not derived from #AdgEntity.
- */
+ * Because #AdgModel instances are only a conceptual idea, they are
+ * not renderable (that is, #AdgModel is not derived from #AdgEntity).
+ * Instead, it must be passed as subject to entities such as AdgStroke
+ * or AdgHatch.
+ **/
+
+/**
+ * AdgModel:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-model.h"
 #include "adg-model-private.h"
@@ -38,14 +49,11 @@
 
 
 enum {
-    PROP_0,
-    PROP_NAME,
-    PROP_MATERIAL,
-    PROP_TREATMENT
+    PROP_0
 };
 
 enum {
-    MODIFIED,
+    CHANGED,
     LAST_SIGNAL
 };
 
@@ -59,50 +67,34 @@ static void     set_property            (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     set_name                (AdgModel       *model,
-                                         const gchar    *name);
-static void     set_material            (AdgModel       *model,
-                                         const gchar    *material);
-static void     set_treatment           (AdgModel       *model,
-                                         const gchar    *treatment);
 
-static guint model_signals[LAST_SIGNAL] = { 0 };
+static guint signals[LAST_SIGNAL] = { 0 };
 
 
-G_DEFINE_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
 
 
 static void
 adg_model_class_init(AdgModelClass *klass)
 {
     GObjectClass *gobject_class;
-    GParamSpec *param;
 
     gobject_class = (GObjectClass *) klass;
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
-    gobject_class->set_property = set_property;
-    gobject_class->get_property = get_property;
-    gobject_class->finalize = finalize;
-
-    param = g_param_spec_string("name",
-                                P_("Part Name"),
-                                P_("Descriptive name of this part"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NAME, param);
-
-    param = g_param_spec_string("material",
-                                P_("Material"),
-                                P_("Material this part is done with"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_MATERIAL, param);
-
-    param = g_param_spec_string("treatment",
-                                P_("Treatment"),
-                                P_("Treatment this part must receive"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TREATMENT, param);
+    /**
+     * AdgModel::changed:
+     * @model: an #AdgModel
+     *
+     * Notificates that something in the model has changed.
+     **/
+    signals[CHANGED] = g_signal_newv("changed",
+                                     G_TYPE_FROM_CLASS(gobject_class),
+                                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                                     NULL, NULL, NULL,
+                                     g_cclosure_marshal_VOID__VOID,
+                                     G_TYPE_NONE, 0, NULL);
 }
 
 static void
@@ -111,10 +103,6 @@ adg_model_init(AdgModel *model)
     AdgModelPrivate *priv =
         G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
                                     AdgModelPrivate);
-    priv->name = NULL;
-    priv->material = NULL;
-    priv->treatment = NULL;
-
     model->priv = priv;
 }
 
@@ -122,10 +110,6 @@ static void
 finalize(GObject *object)
 {
     AdgModel *model = (AdgModel *) object;
-
-    g_free(model->priv->name);
-    g_free(model->priv->material);
-    g_free(model->priv->treatment);
 
     PARENT_CLASS->finalize(object);
 }
@@ -138,15 +122,6 @@ get_property(GObject *object,
     AdgModelPrivate *priv = ((AdgModel *) object)->priv;
 
     switch (prop_id) {
-    case PROP_NAME:
-        g_value_set_string(value, priv->name);
-        break;
-    case PROP_MATERIAL:
-        g_value_set_string(value, priv->material);
-        break;
-    case PROP_TREATMENT:
-        g_value_set_string(value, priv->treatment);
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -160,92 +135,8 @@ set_property(GObject *object,
     AdgModel *model = ADG_MODEL(object);
 
     switch (prop_id) {
-    case PROP_NAME:
-        set_name(model, g_value_get_string(value));
-        break;
-    case PROP_MATERIAL:
-        set_material(model, g_value_get_string(value));
-        break;
-    case PROP_TREATMENT:
-        set_treatment(model, g_value_get_string(value));
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
-}
-
-
-gchar *
-adg_model_get_name(AdgModel *model)
-{
-    g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
-
-    return g_strdup(model->priv->name);
-}
-
-void
-adg_model_set_name(AdgModel *model, const gchar *name)
-{
-    g_return_if_fail(ADG_IS_MODEL(model));
-
-    set_name(model, name);
-    g_object_notify((GObject *) model, "name");
-}
-
-
-gchar *
-adg_model_get_material(AdgModel *model)
-{
-    g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
-
-    return g_strdup(model->priv->material);
-}
-
-void
-adg_model_set_material(AdgModel *model, const gchar *material)
-{
-    g_return_if_fail(ADG_IS_MODEL(model));
-
-    set_material(model, material);
-    g_object_notify((GObject *) model, "material");
-}
-
-
-gchar *
-adg_model_get_treatment(AdgModel *model)
-{
-    g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
-
-    return g_strdup(model->priv->treatment);
-}
-
-void
-adg_model_set_treatment(AdgModel *model, const gchar *treatment)
-{
-    g_return_if_fail(ADG_IS_MODEL(model));
-
-    set_treatment(model, treatment);
-    g_object_notify((GObject *) model, "treatment");
-}
-
-static void
-set_name(AdgModel *model, const gchar *name)
-{
-    g_free(model->priv->name);
-    model->priv->name = g_strdup(name);
-}
-
-static void
-set_material(AdgModel *model, const gchar *material)
-{
-    g_free(model->priv->material);
-    model->priv->material = g_strdup(material);
-}
-
-static void
-set_treatment(AdgModel *model, const gchar *treatment)
-{
-    g_free(model->priv->treatment);
-    model->priv->treatment = g_strdup(treatment);
 }
