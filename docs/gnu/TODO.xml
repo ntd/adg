@@ -43,13 +43,15 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Generate documentation for CPML.</listitem>
    <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
    interface on GtkBuilder.</listitem>
-   <listitem>Implement AdgModel as a bare empty class. Move the actual stuff in AdgTitleBlock.</listitem>
-   <listitem>Rename AdgPath to AdgStroke, being the latter a stroke representation of the path.</listitem>
-   <listitem>Implement AdgPath as an AdgModel derived class of an abstract path. Any AdgPath
-   instance could be referenced by one or more entities.</listitem>
-   <listitem>Add to AdgPath the basic functionality to build a path: basically a bunch of
-   methods emulating the cairo path API but without the need of a yet
-   instantiated cairo context.</listitem>
+   <listitem>Implement AdgModel as a bare empty class. Move the actual stuff in
+   AdgTitleBlock.</listitem>
+   <listitem>Rename AdgPath to AdgStroke, being the latter a stroke representation
+   of a single AdgPath.</listitem>
+   <listitem>Implement AdgPath as an AdgModel derived class of an abstract path.
+   Any AdgPath instance could be referenced by one or more entities.</listitem>
+   <listitem>Add to AdgPath the basic functionality to build a path: basically a
+   bunch of methods emulating the cairo path API but without the need of
+   a yet instantiated cairo context.</listitem>
    <listitem>Add a chamfer operation to AdgPath.</listitem>
    <listitem>Add a fillet operation to AdgPath.</listitem>
    <listitem>Change the matrix entity API, using a cleaner approach.</listitem>
@@ -61,8 +63,8 @@ must be reflected in the demo programs, where applicable.</para>
    and enable caching where applicable.</listitem>
    <listitem>Use AdgToyText to draw dimenstion quote where applicable.</listitem>
    <listitem>Add a "beyond" property to AdgDimStyle to be used when extending the
-   baseline beyond the extension lines. If not specified, it must default to
-   3 x arrow size.</listitem>
+   baseline beyond the extension lines. If not specified, it must default
+   to 3 x arrow size.</listitem>
    <listitem>Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
    ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
    <listitem>Add the three-state "outside" property to allow forcing an outside quote.
