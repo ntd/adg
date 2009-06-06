@@ -535,6 +535,29 @@ ADG_ADIM_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>title-block</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgTitleBlock
+<SUBSECTION>
+adg_title_block_get_name
+adg_title_block_set_name
+adg_title_block_get_material
+adg_title_block_set_material
+adg_title_block_get_treatment
+adg_title_block_set_treatment
+<SUBSECTION Standard>
+AdgTitleBlockClass
+AdgTitleBlockPrivate
+adg_title_block_get_type
+ADG_TITLE_BLOCK
+ADG_IS_TITLE_BLOCK
+ADG_TYPE_TITLE_BLOCK
+ADG_TITLE_BLOCK_CLASS
+ADG_IS_TITLE_BLOCK_CLASS
+ADG_TITLE_BLOCK_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>util</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 ADG_DIR_RIGHT

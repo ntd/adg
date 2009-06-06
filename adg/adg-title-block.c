@@ -19,14 +19,26 @@
 
 
 /**
- * SECTION:title_block
+ * SECTION:title-block
  * @title: AdgTitleBlock
  * @short_description: A title block entity
  *
- * Title blocks are commonly used in technical drawing to include additional
- * information not strictly related to physical dimensions, such as title,
- * material of the represented part, special treatments, date and so on.
- */
+ * Title blocks are commonly used in technical drawings to include
+ * additional information not strictly related to physical dimensions,
+ * such as title, material of the represented part, special treatments,
+ * date and scale etc.
+ *
+ * Actually this entity is only a place-holder: it will be implemented
+ * properly in a 0.6.x release, after having AdgToyTable in place.
+ **/
+
+/**
+ * AdgTitleBlock:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-title-block.h"
 #include "adg-title-block-private.h"
@@ -171,6 +183,17 @@ set_property(GObject *object,
 }
 
 
+/**
+ * adg_title_block_get_name:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the descriptive name associated to this title block.
+ * The title block name usually represents what is commonly
+ * referred as "title of the drawing".
+ *
+ * Return value: a copy of the title block name: it must be freed
+ *               with g_free() when no longer needed
+ **/
 gchar *
 adg_title_block_get_name(AdgTitleBlock *title_block)
 {
@@ -179,6 +202,13 @@ adg_title_block_get_name(AdgTitleBlock *title_block)
     return g_strdup(title_block->priv->name);
 }
 
+/**
+ * adg_title_block_set_name:
+ * @title_block: an #AdgTitleBlock entity
+ * @name: the new name
+ *
+ * Sets a new name on the title block.
+ **/
 void
 adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
 {
@@ -190,6 +220,18 @@ adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
 }
 
 
+/**
+ * adg_title_block_get_material:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the material (a descriptive name) associated to this title
+ * block. This property is not always significative: on drawings
+ * representing more than one part (such as assemblies) the material
+ * item has no meaning.
+ *
+ * Return value: a copy of the material name: it must be freed
+ *               with g_free() when no longer needed
+ **/
 gchar *
 adg_title_block_get_material(AdgTitleBlock *title_block)
 {
@@ -198,6 +240,13 @@ adg_title_block_get_material(AdgTitleBlock *title_block)
     return g_strdup(title_block->priv->material);
 }
 
+/**
+ * adg_title_block_set_material:
+ * @title_block: an #AdgTitleBlock entity
+ * @name: the new material
+ *
+ * Sets a new material on the title block.
+ **/
 void
 adg_title_block_set_material(AdgTitleBlock *title_block,
                              const gchar *material)
@@ -210,6 +259,17 @@ adg_title_block_set_material(AdgTitleBlock *title_block,
 }
 
 
+/**
+ * adg_title_block_get_treatment:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the treatment (a descriptive name) associated to this title
+ * block. As for :material property, also the treatment
+ * should be set only when applicable.
+ *
+ * Return value: a copy of the treatment description: it must be freed
+ *               with g_free() when no longer needed
+ **/
 gchar *
 adg_title_block_get_treatment(AdgTitleBlock *title_block)
 {
@@ -218,8 +278,16 @@ adg_title_block_get_treatment(AdgTitleBlock *title_block)
     return g_strdup(title_block->priv->treatment);
 }
 
+/**
+ * adg_title_block_set_treatment:
+ * @title_block: an #AdgTitleBlock entity
+ * @name: the new treatment
+ *
+ * Sets a new treatment on the title block.
+ **/
 void
-adg_title_block_set_treatment(AdgTitleBlock *title_block, const gchar *treatment)
+adg_title_block_set_treatment(AdgTitleBlock *title_block,
+                              const gchar *treatment)
 {
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 

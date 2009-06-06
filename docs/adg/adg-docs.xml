@@ -57,6 +57,7 @@
       <xi:include href="xml/ldim.xml"/>
       <xi:include href="xml/adim.xml"/>
     </chapter>
+    <xi:include href="xml/title-block.xml"/>
   </part>
 
   <part id="Rendering">

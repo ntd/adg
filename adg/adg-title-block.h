@@ -38,13 +38,13 @@ typedef struct _AdgTitleBlockClass   AdgTitleBlockClass;
 typedef struct _AdgTitleBlockPrivate AdgTitleBlockPrivate;
 
 struct _AdgTitleBlock {
-    GObject              object;
     /*< private >*/
-    AdgTitleBlockPrivate     *priv;
+    AdgEntity             entity;
+    AdgTitleBlockPrivate *priv;
 };
 
 struct _AdgTitleBlockClass {
-    GObjectClass         parent_class;
+    AdgEntityClass        parent_class;
 };
 
 
