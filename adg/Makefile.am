@@ -25,6 +25,7 @@ adg_h_sources=			adg.h \
 				adg-point.h \
 				adg-rotable.h \
 				adg-style.h \
+				adg-title-block.h \
 				adg-toy-text.h \
 				adg-translatable.h \
 				adg-util.h
@@ -45,6 +46,7 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-style-private.h \
+				adg-title-block-private.h
 				adg-toy-text-private.h
 adg_built_private_h_sources= 
 adg_c_sources=			adg-adim.c \
@@ -67,6 +69,7 @@ adg_c_sources=			adg-adim.c \
 				adg-point.c \
 				adg-rotable.c \
 				adg-style.c \
+				adg-title-block.c \
 				adg-toy-text.c \
 				adg-translatable.c \
 				adg-util.c
