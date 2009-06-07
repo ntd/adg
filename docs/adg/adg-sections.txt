@@ -272,6 +272,27 @@ ADG_MODEL_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>path</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgPath
+<SUBSECTION>
+adg_path_new
+<SUBSECTION>
+adg_path_get_cairo_path
+adg_path_dump
+<SUBSECTION Standard>
+AdgPathClass
+AdgPathPrivate
+adg_path_get_type
+ADG_PATH
+ADG_IS_PATH
+ADG_TYPE_PATH
+ADG_PATH_CLASS
+ADG_IS_PATH_CLASS
+ADG_PATH_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>entity</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgEntity

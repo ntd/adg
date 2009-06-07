@@ -21,15 +21,14 @@
 /**
  * SECTION:path
  * @title: AdgPath
- * @short_description: A path model
+ * @short_description: The basic model representing a generic path
  *
- * The #AdgPath object is a virtual path: in the simplest
- * case, it is a stroked #cairo_path_t structure in model space.
+ * The #AdgPath model is a virtual path: in a few words, it is a
+ * simple #cairo_path_t struct lying in a single space.
  **/
 
 #include "adg-path.h"
 #include "adg-path-private.h"
-#include "adg-line-style.h"
 #include "adg-intl.h"
 
 #define PARENT_CLASS ((AdgModelClass *) adg_path_parent_class)

@@ -13,6 +13,7 @@ adg_line_style_get_type
 adg_matrix_get_type
 adg_model_get_type
 adg_pair_get_type
+adg_path_get_type
 adg_point_get_type
 adg_rotable_get_type
 adg_stroke_get_type
