@@ -20,6 +20,7 @@ adg_h_sources=			adg.h \
 				adg-matrix.h \
 				adg-model.h \
 				adg-pair.h \
+				adg-path.h \
 				adg-pattern.h \
 				adg-point.h \
 				adg-rotable.h \
@@ -44,6 +45,7 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
 				adg-model-private.h \
+				adg-path-private.h \
 				adg-stroke-private.h \
 				adg-style-private.h \
 				adg-title-block-private.h
@@ -64,6 +66,7 @@ adg_c_sources=			adg-adim.c \
 				adg-matrix.c \
 				adg-model.c \
 				adg-pair.c \
+				adg-path.c \
 				adg-pattern.c \
 				adg-point.c \
 				adg-rotable.c \

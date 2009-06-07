@@ -31,6 +31,7 @@
 #include <adg/adg-matrix.h>
 #include <adg/adg-model.h>
 #include <adg/adg-pair.h>
+#include <adg/adg-path.h>
 #include <adg/adg-rotable.h>
 #include <adg/adg-stroke.h>
 #include <adg/adg-style.h>

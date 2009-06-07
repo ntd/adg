@@ -83,26 +83,28 @@ adg_model_class_init(AdgModelClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
+    klass->changed = NULL;
+
     /**
      * AdgModel::changed:
      * @model: an #AdgModel
      *
-     * Notificates that something in the model has changed.
+     * Notificates that the model has changed. By default, the model
+     * cache is invalidated.
      **/
-    signals[CHANGED] = g_signal_newv("changed",
-                                     G_TYPE_FROM_CLASS(gobject_class),
+    signals[CHANGED] = g_signal_new("changed", ADG_TYPE_MODEL,
                                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                     NULL, NULL, NULL,
+                                     G_STRUCT_OFFSET(AdgModelClass, changed),
+                                     NULL, NULL,
                                      g_cclosure_marshal_VOID__VOID,
-                                     G_TYPE_NONE, 0, NULL);
+                                     G_TYPE_NONE, 0);
 }
 
 static void
 adg_model_init(AdgModel *model)
 {
-    AdgModelPrivate *priv =
-        G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
-                                    AdgModelPrivate);
+    AdgModelPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
+                                                        AdgModelPrivate);
     model->priv = priv;
 }
 
@@ -139,4 +141,21 @@ set_property(GObject *object,
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
+}
+
+
+/**
+ * adg_model_changed:
+ * @model: an #AdgModel
+ *
+ * Emits the "changed" signal on @model.
+ *
+ * This function is only useful in model implementations.
+ */
+void
+adg_model_changed(AdgModel *model)
+{
+    g_return_if_fail(ADG_IS_MODEL(model));
+
+    g_signal_emit(model, signals[CHANGED], 0);
 }

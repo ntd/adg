@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_MODEL             (adg_model_get_type ())
-#define ADG_MODEL(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_MODEL, AdgModel))
-#define ADG_MODEL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_MODEL, AdgModel))
-#define ADG_IS_MODEL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_MODEL))
-#define ADG_IS_MODEL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_MODEL))
-#define ADG_MODEL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_MODEL, AdgModel))
+#define ADG_TYPE_MODEL             (adg_model_get_type())
+#define ADG_MODEL(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_MODEL, AdgModel))
+#define ADG_MODEL_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_MODEL, AdgModel))
+#define ADG_IS_MODEL(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_MODEL))
+#define ADG_IS_MODEL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_MODEL))
+#define ADG_MODEL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_MODEL, AdgModelClass))
 
 typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
@@ -45,10 +45,14 @@ struct _AdgModel {
 
 struct _AdgModelClass {
     GObjectClass         parent_class;
+
+    /* Virtual Table */
+    void                (*changed)              (AdgModel       *model);
 };
 
 
 GType                   adg_model_get_type      (void) G_GNUC_CONST;
+void                    adg_model_changed       (AdgModel       *model);
 
 G_END_DECLS
 
