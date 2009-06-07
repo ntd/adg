@@ -67,6 +67,7 @@ static void     set_property            (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
+static void     changed                 (AdgModel       *model);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -83,7 +84,7 @@ adg_model_class_init(AdgModelClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
-    klass->changed = NULL;
+    klass->changed = changed;
 
     /**
      * AdgModel::changed:
@@ -158,4 +159,10 @@ adg_model_changed(AdgModel *model)
     g_return_if_fail(ADG_IS_MODEL(model));
 
     g_signal_emit(model, signals[CHANGED], 0);
+}
+
+
+static void
+changed(AdgModel *model)
+{
 }
