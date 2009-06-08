@@ -13,6 +13,7 @@
 /adg.interfaces
 /adg.prerequisites
 /adg.signals
+/adg.types
 /html/
 /xml/
 *.bak
