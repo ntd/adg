@@ -46,17 +46,33 @@ struct _AdgPath {
 
 struct _AdgPathClass {
     AdgModelClass	 parent_class;
-
-    /* Virtual table */
-    void		(*clear)		(AdgPath        *path);
 };
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
 AdgModel *      adg_path_new                    (void);
 
+void            adg_path_move_to                (AdgPath        *path,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_path_line_to                (AdgPath        *path,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_path_curve_to               (AdgPath        *path,
+                                                 gdouble         x1,
+                                                 gdouble         y1,
+                                                 gdouble         x2,
+                                                 gdouble         y2,
+                                                 gdouble         x3,
+                                                 gdouble         y3);
+void            adg_path_close                  (AdgPath        *path);
+
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
+void            adg_path_get_current_point      (AdgPath        *path,
+                                                 double         *x,
+                                                 double         *y);
+gboolean        adg_path_has_current_point      (AdgPath        *path);
 void            adg_path_dump                   (AdgPath        *path);
 
 G_END_DECLS
