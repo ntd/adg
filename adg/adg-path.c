@@ -51,9 +51,9 @@
 #define PARENT_CLASS ((AdgModelClass *) adg_path_parent_class)
 
 
-static void	finalize		        (GObject	*object);
-static void     changed                         (AdgModel       *model);
-static void     append_item                     (AdgPath        *path,
+static void             finalize                (GObject        *object);
+static void             changed                 (AdgModel       *model);
+static void             append_item             (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  int             length,
                                                  ...);
@@ -351,7 +351,7 @@ append_item(AdgPath *path, cairo_path_data_type_t type, int length, ...)
     }
 }
 
-cairo_path_t *
+static cairo_path_t *
 get_cairo_path(AdgPath *path)
 {
     AdgPathPrivate *priv = path->priv;
