@@ -24,7 +24,24 @@
  * @short_description: The basic model representing a generic path
  *
  * The #AdgPath model is a virtual path: in a few words, it is a
- * simple #cairo_path_t struct lying in a single space.
+ * simple conceptual #cairo_path_t struct. This class implements
+ * methods to manipulate the underlying cairo path.
+ *
+ * Although some of the provided methods are clearly based on the
+ * original cairo path manipulation API, their behavior could be
+ * sligthly different. This is intentional, because the ADG provides
+ * additional path manipulation algorithms, sometime quite complex,
+ * and a more restrictive filter on the path quality is required.
+ * Also, the ADG is designed to be used by technicians while cairo
+ * targets a broader range of developers.
+ *
+ * As an example, following the rule of the less surprise, some
+ * cairo functions guess the current point when it is not defined,
+ * while the #AdgPath methods trigger a warning without other effect.
+ * Furthermore, after a cairo_path_close_path() call a MOVE_TO
+ * primitive to the starting point of the segment is automatically
+ * added by cairo while in the ADG, after an adg_path_close(), the
+ * current point is simply unset.
  **/
 
 #include "adg-path.h"
@@ -34,12 +51,13 @@
 #define PARENT_CLASS ((AdgModelClass *) adg_path_parent_class)
 
 
-static void	finalize		(GObject	*object);
-static void     changed                 (AdgModel       *model);
-static void     append_item             (AdgPath        *path,
-                                         cairo_path_data_type_t type,
-                                         int             length,
-                                         ...);
+static void	finalize		        (GObject	*object);
+static void     changed                         (AdgModel       *model);
+static void     append_item                     (AdgPath        *path,
+                                                 cairo_path_data_type_t type,
+                                                 int             length,
+                                                 ...);
+static cairo_path_t *   get_cairo_path          (AdgPath        *path);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -126,18 +144,16 @@ adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
  * Adds a line to @path from the current point to position (@x, @y).
  * After this call the current point will be (@x, @y).
  *
- * If @path has no current point before the call, this method
- * will behave exactly as adg_path_move_to().
+ * If @path has no current point before this call, this function will
+ * trigger a warning without other effect. 
  **/
 void
 adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
 {
     g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(path->priv->cp_is_valid);
 
-    if (!path->priv->cp_is_valid)
-        append_item(path, CAIRO_PATH_MOVE_TO, 2, x, y);
-    else
-        append_item(path, CAIRO_PATH_LINE_TO, 2, x, y);
+    append_item(path, CAIRO_PATH_LINE_TO, 2, x, y);
 }
 
 /**
@@ -155,16 +171,14 @@ adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
  * control points. After this call the current point will be (@x3, @y3).
  *
  * If @path has no current point before this call, this function will
- * behave as if preceded by a call to adg_path_move_to() on (@x1, @y1).
+ * trigger a warning without other effect. 
  **/
 void
 adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
                   gdouble x2, gdouble y2, gdouble x3, gdouble y3)
 {
     g_return_if_fail(ADG_IS_PATH(path));
-
-    if (!path->priv->cp_is_valid)
-        append_item(path, CAIRO_PATH_MOVE_TO, 1, x1, y1);
+    g_return_if_fail(path->priv->cp_is_valid);
 
     append_item(path, CAIRO_PATH_CURVE_TO, 4, x1, y1, x2, y2, x3, y3);
 }
@@ -185,15 +199,15 @@ adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
  * primitive of the segment.
  *
  * If @path has no current point before this call, this function will
- * have no effect. 
+ * trigger a warning without other effect. 
  **/
 void
 adg_path_close(AdgPath *path)
 {
     g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(path->priv->cp_is_valid);
 
-    if (path->priv->cp_is_valid)
-        append_item(path, CAIRO_PATH_CLOSE_PATH, 1);
+    append_item(path, CAIRO_PATH_CLOSE_PATH, 1);
 }
 
 
@@ -205,21 +219,14 @@ adg_path_close(AdgPath *path)
  * is owned by @path and must be considered read-only.
  *
  * Return value: a pointer to the internal #cairo_path_t structure
+ *               or %NULL on errors
  **/
 const cairo_path_t *
 adg_path_get_cairo_path(AdgPath *path)
 {
-    AdgPathPrivate *priv;
-
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
-    priv = path->priv;
-
-    priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
-    priv->cairo_path.data = (cairo_path_data_t *) priv->path->data;
-    priv->cairo_path.num_data = priv->path->len;
-
-    return &priv->cairo_path;
+    return get_cairo_path(path);
 }
 
 /**
@@ -231,27 +238,25 @@ adg_path_get_cairo_path(AdgPath *path)
  * Gets the current point of @path, which is conceptually the
  * final point reached by the path so far.
  *
- * If there is no defined current point, @x and @y will both be set to 0.
- * It is possible to check this in advance with adg_path_has_current_point().
+ * If there is no defined current point, @x and @y will both be set
+ * to 0 and a warning will be triggered. It is possible to check this
+ * in advance with adg_path_has_current_point().
  *
- * Most #AdgPath methods alter the current point: see their description
- * for further details.
+ * Most #AdgPath methods alter the current point and most of them
+ * expect a current point to be defined otherwise will fail triggering
+ * a warning. Check the description of every method for specific details.
  **/
 void
 adg_path_get_current_point(AdgPath *path, double *x, double *y)
 {
-    AdgPathPrivate *priv;
-
     g_return_if_fail(ADG_IS_PATH(path));
 
-    priv = path->priv;
-
-    if (priv->cp_is_valid) {
-        *x = priv->cp.x;
-        *y = priv->cp.y;
+    if (path->priv->cp_is_valid) {
+        *x = path->priv->cp.x;
+        *y = path->priv->cp.y;
     } else {
-        *x = 0.;
-        *y = 0.;
+        *x = *y = 0.;
+        g_return_if_reached();
     }
 }
 
@@ -284,7 +289,10 @@ adg_path_dump(AdgPath *path)
     CpmlSegment segment;
     cairo_path_t *cairo_path;
 
-    cairo_path = (cairo_path_t *) adg_path_get_cairo_path(path);
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    cairo_path = get_cairo_path(path);
+
     g_return_if_fail(cairo_path != NULL);
 
     if (!cpml_segment_from_cairo(&segment, cairo_path)) {
@@ -341,4 +349,14 @@ append_item(AdgPath *path, cairo_path_data_type_t type, int length, ...)
         priv->cp.x = item.point.x;
         priv->cp.y = item.point.y;
     }
+}
+
+cairo_path_t *
+get_cairo_path(AdgPath *path)
+{
+    AdgPathPrivate *priv = path->priv;
+
+    priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
+    priv->cairo_path.data = (cairo_path_data_t *) priv->path->data;
+    priv->cairo_path.num_data = priv->path->len;
 }
