@@ -103,7 +103,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     klass->parent_set = parent_set;
     klass->get_context = get_context;
     klass->model_matrix_changed = model_matrix_changed;
-    klass->paper_matrix_changed = NULL;
+    klass->paper_matrix_changed = paper_matrix_changed;
     klass->invalidate = NULL;
     klass->render = render;
     klass->get_model_matrix = get_model_matrix;
@@ -610,12 +610,12 @@ adg_entity_paper_matrix_changed(AdgEntity *entity,
  * or the style in undefined within this context, gets the style from its
  * parent container.
  *
- * Return value: the requested style
+ * Return value: the requested style or %NULL on errors
  **/
 AdgStyle *
 adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
 {
-    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     if (entity->priv->context) {
         AdgStyle *style = adg_context_get_style(entity->priv->context,
