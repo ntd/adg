@@ -235,6 +235,33 @@ cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
 }
 
 /**
+ * cpml_curve_intersection_with_arc:
+ * @curve: a curve
+ * @arc:   an arc
+ * @dest:  a vector of at least 4 #CpmlPair
+ *
+ * Given a Bézier cubic @curve and an @arc, gets their intersection
+ * points and store the result in @dest. Because an arc and a cubic
+ * curve can have up to 4 intersections, @dest MUST be at least an
+ * array of 4 #CpmlPair.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: the number of intersections (max 4)
+ **/
+int
+cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
+                                 const CpmlPrimitive *arc, CpmlPair *dest)
+{
+    return 0;
+}
+
+/**
  * cpml_curve_offset:
  * @curve:  the #CpmlPrimitive curve data
  * @offset: distance for the computed parallel curve

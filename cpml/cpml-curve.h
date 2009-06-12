@@ -46,6 +46,9 @@ int     cpml_curve_intersection_with_line
                                         (const CpmlPrimitive    *curve,
                                          const CpmlPrimitive    *line,
                                          CpmlPair               *dest);
+int     cpml_curve_intersection_with_arc(const CpmlPrimitive    *curve,
+                                         const CpmlPrimitive    *arc,
+                                         CpmlPair               *dest);
 void    cpml_curve_offset               (CpmlPrimitive          *curve,
                                          double                  offset);
 
