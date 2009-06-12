@@ -416,6 +416,8 @@ get_cairo_path(AdgPath *path)
     priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
     priv->cairo_path.data = (cairo_path_data_t *) priv->path->data;
     priv->cairo_path.num_data = priv->path->len;
+    
+    return &priv->cairo_path;
 }
 
 static void
