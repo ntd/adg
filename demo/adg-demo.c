@@ -46,10 +46,6 @@ static void     to_png                  (AdgCanvas      *canvas,
                                          GtkWidget      *caller);
 static void     to_ps                   (AdgCanvas      *canvas,
                                          GtkWidget      *caller);
-static void     missing_feature         (GtkWidget      *caller,
-                                         const gchar    *feature);
-static void     file_generated          (GtkWidget      *caller,
-                                         const gchar    *file);
 
 static Piston   model;
 
@@ -440,6 +436,53 @@ drawing_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
 }
 
 
+#if defined(CAIRO_HAS_PNG_FUNCTIONS) || defined(CAIRO_HAS_PDF_SURFACE) || defined(CAIRO_HAS_PS_SURFACE)
+
+/* Only needed if there is at least one supported surface */
+static void
+file_generated(GtkWidget *caller, const gchar *file)
+{
+    GtkWindow *window;
+    GtkWidget *dialog;
+
+    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
+    dialog = gtk_message_dialog_new_with_markup(window, GTK_DIALOG_MODAL,
+                                                GTK_MESSAGE_INFO,
+                                                GTK_BUTTONS_CLOSE,
+                                                "The requested operation generated\n"
+                                                "<b>%s</b> in the current directory.",
+                                                file);
+    gtk_window_set_title(GTK_WINDOW(dialog), "Operation completed");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+#endif
+
+#if !defined(CAIRO_HAS_PNG_FUNCTIONS) || !defined(CAIRO_HAS_PDF_SURFACE) || !defined(CAIRO_HAS_PS_SURFACE)
+
+/* Only needed if there is a missing surface */
+static void
+missing_feature(GtkWidget *caller, const gchar *feature)
+{
+    GtkWindow *window;
+    GtkWidget *dialog;
+
+    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
+    dialog = gtk_message_dialog_new(window, GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_WARNING,
+                                    GTK_BUTTONS_OK,
+                                    "The provided cairo library\n"
+                                    "was compiled with no %s support!",
+                                    feature);
+    gtk_window_set_title(GTK_WINDOW(dialog), "Missing feature");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+#endif
+
+
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
 
 static void
@@ -472,7 +515,6 @@ to_png(AdgCanvas *canvas, GtkWidget *caller)
 
 #endif
 
-
 #ifdef CAIRO_HAS_PDF_SURFACE
 
 #include <cairo-pdf.h>
@@ -504,7 +546,6 @@ to_pdf(AdgCanvas *canvas, GtkWidget *caller)
 }
 
 #endif
-
 
 #ifdef CAIRO_HAS_PS_SURFACE
 
@@ -550,40 +591,3 @@ to_ps(AdgCanvas *canvas, GtkWidget *caller)
 }
 
 #endif
-
-
-static void
-missing_feature(GtkWidget *caller, const gchar *feature)
-{
-    GtkWindow *window;
-    GtkWidget *dialog;
-
-    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
-    dialog = gtk_message_dialog_new(window, GTK_DIALOG_MODAL,
-                                    GTK_MESSAGE_WARNING,
-                                    GTK_BUTTONS_OK,
-                                    "The provided cairo library\n"
-                                    "was compiled with no %s support!",
-                                    feature);
-    gtk_window_set_title(GTK_WINDOW(dialog), "Missing feature");
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
-
-static void
-file_generated(GtkWidget *caller, const gchar *file)
-{
-    GtkWindow *window;
-    GtkWidget *dialog;
-
-    window = (GtkWindow *) gtk_widget_get_toplevel(caller);
-    dialog = gtk_message_dialog_new_with_markup(window, GTK_DIALOG_MODAL,
-                                                GTK_MESSAGE_INFO,
-                                                GTK_BUTTONS_CLOSE,
-                                                "The requested operation generated\n"
-                                                "<b>%s</b> in the current directory.",
-                                                file);
-    gtk_window_set_title(GTK_WINDOW(dialog), "Operation completed");
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);
-}
