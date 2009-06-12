@@ -22,7 +22,7 @@
 #define __ADG_PATH_H__
 
 #include <adg/adg-model.h>
-#include <cairo.h>
+#include <cpml/cpml.h>
 
 
 G_BEGIN_DECLS
@@ -52,12 +52,24 @@ struct _AdgPathClass {
 GType           adg_path_get_type               (void) G_GNUC_CONST;
 AdgModel *      adg_path_new                    (void);
 
+const cairo_path_t *
+                adg_path_get_cairo_path         (AdgPath        *path);
+void            adg_path_get_current_point      (AdgPath        *path,
+                                                 gdouble        *x,
+                                                 gdouble        *y);
+gboolean        adg_path_has_current_point      (AdgPath        *path);
+
 void            adg_path_move_to                (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_line_to                (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
+void            adg_path_arc_to                 (AdgPath        *path,
+                                                 gdouble         x1,
+                                                 gdouble         y1,
+                                                 gdouble         x2,
+                                                 gdouble         y2);
 void            adg_path_curve_to               (AdgPath        *path,
                                                  gdouble         x1,
                                                  gdouble         y1,
@@ -67,12 +79,19 @@ void            adg_path_curve_to               (AdgPath        *path,
                                                  gdouble         y3);
 void            adg_path_close                  (AdgPath        *path);
 
-const cairo_path_t *
-                adg_path_get_cairo_path         (AdgPath        *path);
-void            adg_path_get_current_point      (AdgPath        *path,
-                                                 double         *x,
-                                                 double         *y);
-gboolean        adg_path_has_current_point      (AdgPath        *path);
+void            adg_path_arc                    (AdgPath        *path,
+                                                 gdouble         xc,
+                                                 gdouble         yc,
+                                                 gdouble         r,
+                                                 gdouble         angle1,
+                                                 gdouble         angle2);
+void            adg_path_arc_negative           (AdgPath        *path,
+                                                 gdouble         xc,
+                                                 gdouble         yc,
+                                                 gdouble         r,
+                                                 gdouble         angle1,
+                                                 gdouble         angle2);
+
 void            adg_path_dump                   (AdgPath        *path);
 
 G_END_DECLS
