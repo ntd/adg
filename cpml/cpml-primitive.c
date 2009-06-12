@@ -42,6 +42,10 @@
  **/
 
 #include "cpml-primitive.h"
+#include "cpml-line.h"
+#include "cpml-arc.h"
+#include "cpml-curve.h"
+#include "cpml-close.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -265,12 +269,20 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
         printf("Line to ");
         break;
 
+    case CAIRO_PATH_ARC_TO:
+        printf("Arc to ");
+        break;
+
     case CAIRO_PATH_CURVE_TO:
         printf("Curve to ");
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
         printf("Path close");
+        break;
+
+    default:
+        printf("Unknown primitive (type = %d)", type);
         break;
     }
 
@@ -344,11 +356,17 @@ cpml_primitive_type_get_npoints(cairo_path_data_type_t type)
     case CAIRO_PATH_LINE_TO:
         return cpml_line_type_get_npoints();
 
+    case CAIRO_PATH_ARC_TO:
+        return cpml_arc_type_get_npoints();
+
     case CAIRO_PATH_CURVE_TO:
         return cpml_curve_type_get_npoints();
 
     case CAIRO_PATH_CLOSE_PATH:
         return cpml_close_type_get_npoints();
+
+    default:
+        break;
     }
 
     return -1;
@@ -384,12 +402,19 @@ cpml_primitive_pair_at(const CpmlPrimitive *primitive,
         cpml_line_pair_at(primitive, pair, pos);
         break;
 
+    case CAIRO_PATH_ARC_TO:
+        cpml_arc_pair_at(primitive, pair, pos);
+        break;
+
     case CAIRO_PATH_CURVE_TO:
         cpml_curve_pair_at(primitive, pair, pos);
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
         cpml_close_pair_at(primitive, pair, pos);
+        break;
+
+    default:
         break;
     }
 }
@@ -424,12 +449,19 @@ cpml_primitive_vector_at(const CpmlPrimitive *primitive,
         cpml_line_vector_at(primitive, vector, pos);
         break;
 
+    case CAIRO_PATH_ARC_TO:
+        cpml_arc_vector_at(primitive, vector, pos);
+        break;
+
     case CAIRO_PATH_CURVE_TO:
         cpml_curve_vector_at(primitive, vector, pos);
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
         cpml_close_vector_at(primitive, vector, pos);
+        break;
+
+    default:
         break;
     }
 }
@@ -498,15 +530,29 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * @dest:       the destination #CpmlPair (or a vector of #CpmlPair)
  *
  * Finds the intersection points between the given primitives and
- * returns the result in @dest. If curves are involved, @dest MUST
- * be an array of at least 4 #CpmlPair, because this can lead to
- * 4 intersection points.
+ * returns the result in @dest. The size of @dest is dependent
+ * from the type of the most complex primitive involved in the
+ * operation. If there are curves involved, @dest MUST be an array
+ * of at least 4 #CpmlPair. If an arc is the most complex primitive
+ * involved, @dest MUST be sized to 2 #CpmlPair. In the simplest
+ * case, that is intersection between two lines, only 1 #CpmlPair
+ * is required.
+ *
+ * If the primitive types are not known in advance, simply suppose
+ * the worst case and leave room for 4 #CpmlPair in @dest.
  *
  * <note><para>
  * This function is primitive dependent: every new primitive must
- * expose API to get intersections with the any other primitive type
+ * expose API to get intersections with any other primitive type
  * (excluding %CAIRO_PATH_CLOSE_PATH, as it is converted to a line
- * primitive).
+ * primitive).</para>
+ * <para>The convention used by CPML is that a primitive should
+ * expose only APIs dealing with lower complexity primitives.
+ * This is required to avoid double functions: you will have
+ * only a cpml_curve_intersection_with_line() function not a
+ * cpml_line_intersection_with_curve(), as the latter is
+ * easily reproduced by calling the former with @primitive2
+ * and @primitive switched.
  * </para></note>
  *
  * Return value: the number of intersection points found
@@ -527,15 +573,49 @@ cpml_primitive_intersection(const CpmlPrimitive *primitive,
     if (type2 == CAIRO_PATH_CLOSE_PATH)
         type2 = CAIRO_PATH_LINE_TO;
 
+    /* Order the two primitives in ascending complexity, to facilitate
+     * the dispatcher logic */
+    if (cpml_primitive_type_get_npoints(type1) > cpml_primitive_type_get_npoints(type2)) {
+        const CpmlPrimitive *tmp_primitive;
+        cairo_path_data_type_t tmp_type;
+
+        tmp_type = type1;
+        tmp_primitive = primitive;
+
+        type1 = type2;
+        primitive = primitive2;
+
+        type2 = tmp_type;
+        primitive2 = tmp_primitive;
+    }
+
     /* Dispatcher: probably there's a smarter way to do this */
-    if (type1 == CAIRO_PATH_LINE_TO && type2 == CAIRO_PATH_LINE_TO)
-        return cpml_line_intersection(primitive, primitive2, dest);
-    else if (type1 == CAIRO_PATH_CURVE_TO && type2 == CAIRO_PATH_CURVE_TO)
-        return cpml_curve_intersection(primitive, primitive2, dest);
-    else if (type1 == CAIRO_PATH_LINE_TO && type2 == CAIRO_PATH_CURVE_TO)
-        return cpml_curve_intersection_with_line(primitive2, primitive, dest);
-    else if (type1 == CAIRO_PATH_CURVE_TO && type2 == CAIRO_PATH_LINE_TO)
-        return cpml_curve_intersection_with_line(primitive, primitive2, dest);
+    switch (type1) {
+
+    case CAIRO_PATH_LINE_TO:
+        if (type2 == CAIRO_PATH_LINE_TO)
+            return cpml_line_intersection(primitive2, primitive, dest);
+        else if (type2 == CAIRO_PATH_ARC_TO)
+            return cpml_arc_intersection_with_line(primitive2, primitive, dest);
+        else if (type2 == CAIRO_PATH_CURVE_TO)
+            return cpml_curve_intersection_with_line(primitive2, primitive, dest);
+        break;
+
+    case CAIRO_PATH_ARC_TO:
+        if (type2 == CAIRO_PATH_ARC_TO)
+            return cpml_arc_intersection(primitive2, primitive, dest);
+        else if (type2 == CAIRO_PATH_CURVE_TO)
+            return cpml_curve_intersection_with_arc(primitive2, primitive, dest);
+        break;
+
+    case CAIRO_PATH_CURVE_TO:
+        if (type2 == CAIRO_PATH_CURVE_TO)
+            return cpml_curve_intersection(primitive2, primitive, dest);
+        break;
+
+    default:
+        break;
+    }
 
     /* Primitive combination not found */
     return 0;
@@ -564,12 +644,19 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
         cpml_line_offset(primitive, offset);
         break;
 
+    case CAIRO_PATH_ARC_TO:
+        cpml_arc_offset(primitive, offset);
+        break;
+
     case CAIRO_PATH_CURVE_TO:
         cpml_curve_offset(primitive, offset);
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
         cpml_close_offset(primitive, offset);
+        break;
+
+    default:
         break;
     }
 }
