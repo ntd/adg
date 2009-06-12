@@ -84,6 +84,10 @@ adg_model_class_init(AdgModelClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
+    gobject_class->finalize = finalize;
+    gobject_class->get_property = get_property;
+    gobject_class->set_property = set_property;
+
     klass->changed = changed;
 
     /**
@@ -112,7 +116,7 @@ adg_model_init(AdgModel *model)
 static void
 finalize(GObject *object)
 {
-    AdgModel *model = (AdgModel *) object;
+    /* TODO: this is only a placeholder */
 
     PARENT_CLASS->finalize(object);
 }
@@ -122,7 +126,7 @@ static void
 get_property(GObject *object,
              guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgModelPrivate *priv = ((AdgModel *) object)->priv;
+    /* TODO: this is only a placeholder */
 
     switch (prop_id) {
     default:
@@ -135,7 +139,7 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgModel *model = ADG_MODEL(object);
+    /* TODO: this is only a placeholder */
 
     switch (prop_id) {
     default:
