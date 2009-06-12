@@ -864,9 +864,8 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     AdgDimPrivate *priv;
     AdgDimStyle *dim_style;
     AdgPair shift;
-    CpmlPair cp, org;
+    CpmlPair cp;
     CpmlPair tolerance_up_org, tolerance_down_org, note_org;
-    cairo_text_extents_t extents;
 
     priv = dim->priv;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
@@ -908,7 +907,7 @@ quote_layout(AdgDim *dim, cairo_t *cr)
             tolerance_down_org.y = cp.y + shift.y + midspacing +
                 priv->tolerance_down_cache.extents.height;
 
-            if (extents.width > width)
+            if (priv->tolerance_down_cache.extents.width > width)
                 width = priv->tolerance_down_cache.extents.width;
         }
 
