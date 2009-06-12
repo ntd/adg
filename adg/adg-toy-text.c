@@ -74,8 +74,6 @@ static gboolean update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
 static void     clear_origin_cache      (AdgToyText     *toy_text);
-static void     move_label_cache        (AdgToyText     *toy_text,
-                                         const AdgPair  *to);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
@@ -375,6 +373,8 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
         glyph->y += y;
         ++ glyph;
     }
+
+    return TRUE;
 }
 
 static gboolean
