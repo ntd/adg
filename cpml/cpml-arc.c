@@ -50,7 +50,7 @@ cpml_arc_type_get_npoints(void)
  * @pair: the destination #CpmlPair
  *
  * Given an @arc, this function computes its center and
- * returns the coordinates in the @pair struct.
+ * writes the coordinates in the @pair struct.
  **/
 void
 cpml_arc_center(const CpmlPrimitive *arc, CpmlPair *pair)
