@@ -82,7 +82,7 @@ void            adg_arrow_style_set_angle       (AdgArrowStyle  *arrow_style,
 gdouble         adg_arrow_style_get_margin      (AdgArrowStyle  *arrow_style);
 void            adg_arrow_style_set_margin      (AdgArrowStyle  *arrow_style,
                                                  gdouble         margin);
-const AdgArrowRenderer
+AdgArrowRenderer
                 adg_arrow_style_get_renderer    (AdgArrowStyle  *arrow_style);
 void            adg_arrow_style_set_renderer    (AdgArrowStyle  *arrow_style,
                                                  AdgArrowRenderer renderer);

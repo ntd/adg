@@ -28,6 +28,7 @@
 
 #include "adg-arrow-style.h"
 #include "adg-arrow-style-private.h"
+#include "adg-context.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 #include <math.h>
@@ -360,7 +361,7 @@ adg_arrow_style_set_margin(AdgArrowStyle *arrow_style, gdouble margin)
  *
  * Return value: the renderer value
  **/
-const AdgArrowRenderer
+AdgArrowRenderer
 adg_arrow_style_get_renderer(AdgArrowStyle *arrow_style)
 {
     g_return_val_if_fail(ADG_IS_ARROW_STYLE(arrow_style), NULL);
