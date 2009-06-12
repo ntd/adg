@@ -28,6 +28,7 @@
 
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
+#include "adg-context.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 
