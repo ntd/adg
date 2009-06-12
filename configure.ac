@@ -7,7 +7,6 @@ AC_CONFIG_SRCDIR([adg/adg.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR(m4)
 AM_INIT_AUTOMAKE
-AM_MAINTAINER_MODE
 
 
 # Check for programs
