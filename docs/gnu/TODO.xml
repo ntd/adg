@@ -49,7 +49,7 @@ must be reflected in the demo programs, where applicable.</para>
    of a single AdgPath.</listitem>
    <listitem override="disc">Implement AdgPath as an AdgModel derived class of a conceptual path.
    Any AdgPath instance could be referenced by one or more entities.</listitem>
-   <listitem>Add to AdgPath the basic functionality to build a path: basically a
+   <listitem override="disc">Add to AdgPath the basic functionality to build a path: basically a
    bunch of methods emulating the cairo path API but without the need of
    a yet instantiated cairo context.</listitem>
    <listitem>Add a chamfer operation to AdgPath.</listitem>
