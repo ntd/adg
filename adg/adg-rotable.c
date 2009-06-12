@@ -145,7 +145,7 @@ set_angle(AdgRotable *rotable, gdouble angle)
 gdouble
 adg_rotable_get_angle(AdgRotable *rotable)
 {
-    g_return_if_fail(ADG_IS_ROTABLE(rotable));
+    g_return_val_if_fail(ADG_IS_ROTABLE(rotable), 0.);
 
     return ADG_ROTABLE_GET_IFACE(rotable)->get_angle(rotable);
 }
