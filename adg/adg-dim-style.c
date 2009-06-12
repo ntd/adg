@@ -33,6 +33,7 @@
 #include "adg-font-style.h"
 #include "adg-line-style.h"
 #include "adg-arrow-style.h"
+#include "adg-context.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 
