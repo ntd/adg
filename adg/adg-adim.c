@@ -69,6 +69,7 @@ adg_adim_class_init(AdgADimClass *klass)
     gobject_class->finalize = finalize;
 
     entity_class->model_matrix_changed = model_matrix_changed;
+    entity_class->render = render;
 
     dim_class->default_quote = default_quote;
 
