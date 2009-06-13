@@ -167,13 +167,13 @@ cpml_segment_next(CpmlSegment *segment)
 void
 cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
 {
-    cairo_path_t path;
+    CpmlPrimitive primitive;
 
-    path.status = CAIRO_STATUS_SUCCESS;
-    path.data = segment->data;
-    path.num_data = segment->num_data;
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
-    cairo_append_path(cr, &path);
+    do {
+        cpml_primitive_to_cairo(&primitive, cr);
+    } while (cpml_primitive_next(&primitive));
 }
 
 /**
