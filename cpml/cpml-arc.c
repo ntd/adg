@@ -143,46 +143,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
 }
 
 /**
- * cpml_arc_to_cairo:
- * @arc: the #CpmlPrimitive arc data
- * @cr:  the destination cairo context
- *
- * Renders @arc to the @cr cairo context. As cairo does not support
- * arcs natively, it is approximated using one or more Bézier curves.
- *
- * The number of curves used is dependent from the angle of the arc.
- * Anyway, this function uses internally the hardcoded %M_PI_2 value
- * as threshold value. This means the maximum arc approximated by a
- * single curve will be a quarter of a circle and, consequently, a
- * whole circle will be approximated by 4 Bézier curves.
- **/
-void
-cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
-{
-    CpmlPair center;
-    double r, start, end;
-    int segments;
-    double step, angle;
-    CpmlPrimitive curve;
-    cairo_path_data_t data[4];
-
-    if (!cpml_arc_info(arc, &center, &r, &start, &end))
-        return;
-
-    segments = ceil(fabs(end-start) / ARC_MAX_ANGLE);
-    step = (end-start) / (double) segments;
-    curve.data = data;
-
-    for (angle = start; segments--; angle += step) {
-        arc_to_curve(&curve, &center, r, angle, angle+step);
-        cairo_curve_to(cr,
-                       curve.data[1].point.x, curve.data[1].point.y,
-                       curve.data[2].point.x, curve.data[2].point.y,
-                       curve.data[3].point.x, curve.data[3].point.y);
-    }
-}
-
-/**
  * cpml_arc_pair_at:
  * @arc:  the #CpmlPrimitive arc data
  * @pair: the destination #CpmlPair
@@ -191,16 +151,28 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
  * Given an @arc, finds the coordinates at position @pos (where 0 is
  * the start and 1 is the end) and stores the result in @pair.
  *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
+ * @pos can also be outside the 0..1 limit, as interpolating on an
+ * arc is quite trivial.
  **/
 void
 cpml_arc_pair_at(const CpmlPrimitive *arc, CpmlPair *pair, double pos)
 {
+    if (pos == 0.) {
+        cpml_pair_from_cairo(pair, arc->org);
+    } else if (pos == 1.) {
+        cpml_pair_from_cairo(pair, &arc->data[2]);
+    } else {
+        CpmlPair center;
+        double r, start, end;
+        double angle;
+
+        if (!cpml_arc_info(arc, &center, &r, &start, &end))
+            return;
+
+        angle = (end-start)*pos + start;
+        cpml_vector_from_angle(pair, angle, r);
+        cpml_pair_add(pair, &center);
+    }
 }
 
 /**
@@ -319,6 +291,46 @@ cpml_arc_offset(CpmlPrimitive *arc, double offset)
     cpml_pair_to_cairo(&p[0], arc->org);
     cpml_pair_to_cairo(&p[1], &arc->data[1]);
     cpml_pair_to_cairo(&p[2], &arc->data[2]);
+}
+
+/**
+ * cpml_arc_to_cairo:
+ * @arc: the #CpmlPrimitive arc data
+ * @cr:  the destination cairo context
+ *
+ * Renders @arc to the @cr cairo context. As cairo does not support
+ * arcs natively, it is approximated using one or more Bézier curves.
+ *
+ * The number of curves used is dependent from the angle of the arc.
+ * Anyway, this function uses internally the hardcoded %M_PI_2 value
+ * as threshold value. This means the maximum arc approximated by a
+ * single curve will be a quarter of a circle and, consequently, a
+ * whole circle will be approximated by 4 Bézier curves.
+ **/
+void
+cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
+{
+    CpmlPair center;
+    double r, start, end;
+    int segments;
+    double step, angle;
+    CpmlPrimitive curve;
+    cairo_path_data_t data[4];
+
+    if (!cpml_arc_info(arc, &center, &r, &start, &end))
+        return;
+
+    segments = ceil(fabs(end-start) / ARC_MAX_ANGLE);
+    step = (end-start) / (double) segments;
+    curve.data = data;
+
+    for (angle = start; segments--; angle += step) {
+        arc_to_curve(&curve, &center, r, angle, angle+step);
+        cairo_curve_to(cr,
+                       curve.data[1].point.x, curve.data[1].point.y,
+                       curve.data[2].point.x, curve.data[2].point.y,
+                       curve.data[3].point.x, curve.data[3].point.y);
+    }
 }
 
 
