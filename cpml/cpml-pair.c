@@ -318,13 +318,6 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 CpmlVector *
 cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
 {
-    static double cached_angle = 0;
-    static CpmlPair cached_vector = { 1, 0 };
-
-    /* Check for cached result */
-    if (angle == cached_angle)
-        return cpml_pair_copy(vector, &cached_vector);
-
     /* Check for common conditions */
     if (angle == M_PI_2 * 3.) {
         vector->x = 0;
@@ -347,11 +340,8 @@ cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
         return vector;
     }
 
-    /* Computation and cache registration */
     vector->x = cos(angle);
     vector->y = -sin(angle);
-    cached_angle = angle;
-    cpml_pair_copy(&cached_vector, vector);
 
     return vector;
 }
@@ -390,13 +380,6 @@ cpml_vector_set_length(CpmlVector *vector, double length)
 double
 cpml_vector_angle(const CpmlVector *vector)
 {
-    static CpmlPair cached_vector = { 1., 0. };
-    static double cached_angle = 0.;
-
-    /* Check for cached result */
-    if (vector->x == cached_vector.x && vector->y == cached_vector.y)
-        return cached_angle;
-
     /* Check for common conditions */
     if (vector->y == 0)
         return vector->x >= 0 ? 0. : M_PI;
@@ -407,11 +390,7 @@ cpml_vector_angle(const CpmlVector *vector)
     if (vector->x == -vector->y)
         return vector->x > 0 ? M_PI_4 : M_PI_4 * 5;
 
-    /* Computation and cache registration */
-    cached_angle = atan(-vector->y / vector->x);
-    cpml_pair_copy(&cached_vector, vector);
-
-    return cached_angle;
+    return atan(-vector->y / vector->x);
 }
 
 /**
