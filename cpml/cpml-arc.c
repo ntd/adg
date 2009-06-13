@@ -163,8 +163,7 @@ cpml_arc_pair_at(const CpmlPrimitive *arc, CpmlPair *pair, double pos)
         cpml_pair_from_cairo(pair, &arc->data[2]);
     } else {
         CpmlPair center;
-        double r, start, end;
-        double angle;
+        double r, start, end, angle;
 
         if (!cpml_arc_info(arc, &center, &r, &start, &end))
             return;
@@ -184,16 +183,20 @@ cpml_arc_pair_at(const CpmlPrimitive *arc, CpmlPair *pair, double pos)
  * Given an @arc, finds the slope at position @pos (where 0 is
  * the start and 1 is the end) and stores the result in @vector.
  *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
+ * @pos can also be outside the 0..1 limit, as interpolating on an
+ * arc is quite trivial.
  **/
 void
 cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
 {
+    double start, end, angle;
+
+    if (!cpml_arc_info(arc, NULL, NULL, &start, &end))
+        return;
+
+    angle = (end-start)*pos + start;
+    cpml_vector_from_angle(vector, angle, 1.);
+    cpml_vector_normal(vector);
 }
 
 /**
