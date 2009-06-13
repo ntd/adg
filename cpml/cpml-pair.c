@@ -319,7 +319,7 @@ CpmlVector *
 cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
 {
     /* Check for common conditions */
-    if (angle == M_PI_2 * 3.) {
+    if (angle == -M_PI_2) {
         vector->x = 0;
         vector->y = -1;
         return vector;
@@ -329,19 +329,19 @@ cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
         vector->y = +1;
         return vector;
     }
-    if (angle == M_PI) {
+    if (angle == M_PI || angle == -M_PI) {
         vector->x = -1;
         vector->y = 0;
         return vector;
     }
-    if (angle == 0.) {
+    if (angle == 0) {
         vector->x = +1;
         vector->y = 0;
         return vector;
     }
 
     vector->x = cos(angle);
-    vector->y = -sin(angle);
+    vector->y = sin(angle);
 
     return vector;
 }
@@ -375,22 +375,22 @@ cpml_vector_set_length(CpmlVector *vector, double length)
  * Gets the angle of @vector, in radians. If @vector is (0, 0),
  * 0 is returned.
  *
- * Return value: the angle in radians
+ * Return value: the angle in radians, a value between -M_PI and M_PI
  **/
 double
 cpml_vector_angle(const CpmlVector *vector)
 {
     /* Check for common conditions */
     if (vector->y == 0)
-        return vector->x >= 0 ? 0. : M_PI;
+        return vector->x >= 0 ? 0 : M_PI;
     if (vector->x == 0)
-        return vector->y > 0 ? M_PI_2 : M_PI_2 * 3.;
+        return vector->y > 0 ? M_PI_2 : -M_PI_2;
     if (vector->x == vector->y)
-        return vector->x > 0 ? M_PI_4 * 7 : M_PI_4 * 3;
+        return vector->x > 0 ? M_PI_4 : -M_PI_4 * 3;
     if (vector->x == -vector->y)
-        return vector->x > 0 ? M_PI_4 : M_PI_4 * 5;
+        return vector->x > 0 ? -M_PI_4 : M_PI_4 * 3;
 
-    return atan(-vector->y / vector->x);
+    return atan2(-vector->y, vector->x);
 }
 
 /**
