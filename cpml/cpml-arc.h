@@ -56,6 +56,9 @@ void    cpml_arc_offset                 (CpmlPrimitive          *arc,
                                          double                  offset);
 void    cpml_arc_to_cairo               (const CpmlPrimitive    *arc,
                                          cairo_t                *cr);
+void    cpml_arc_to_curves              (const CpmlPrimitive    *arc,
+                                         CpmlSegment            *segment,
+                                         int                     n_curves);
 
 CAIRO_END_DECLS
 

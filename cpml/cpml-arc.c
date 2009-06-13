@@ -27,8 +27,6 @@
  * <structname>CpmlPrimitive</structname> is effectively an arc
  * before calling these APIs.
  *
- * An arc is not a native cairo primitive and should be treated specially.
- *
  * The arc primitive is defined by 3 points: the first one is the usual
  * implicit point got from the previous primitive, the second point is
  * an arbitrary intermediate point laying on the arc and the third point
@@ -38,7 +36,27 @@
  *
  * As a special case, when the first point is coincident with the end
  * point, the primitive is considered a circle with diameter defined
- * as the segment between the first point and the intermediate point.
+ * by the segment between the first and the intermediate point.
+ *
+ * <important>
+ * <para>
+ * An arc is not a native cairo primitive and should be treated specially.
+ * </para>
+ * </important>
+ *
+ * Using the CPML APIs you are free to use %CAIRO_PATH_ARC_TO whenever
+ * you want. But if you are directly accessing the struct fields you
+ * are responsible of converting arcs to curves before passing them
+ * to cairo. In other words, do not feed cairo_path_t struct using arcs
+ * to cairo (throught cairo_append_path() for example) or at least
+ * do not expect it will work.
+ *
+ * The conversion is provided by two APIs: cpml_arc_to_cairo() and
+ * cpml_arc_to_curves(). The former directly renders to a cairo context
+ * and is internally used by all the ..._to_cairo() functions when an
+ * arc is met. The latter provided a more powerful (and more complex)
+ * approach as it allows to specify the number of curves to use and do
+ * not need a cairo context.
  **/
 
 #include "cpml-arc.h"
@@ -315,7 +333,7 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
 {
     CpmlPair center;
     double r, start, end;
-    int segments;
+    int n_curves;
     double step, angle;
     CpmlPrimitive curve;
     cairo_path_data_t data[4];
@@ -323,16 +341,57 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
     if (!cpml_arc_info(arc, &center, &r, &start, &end))
         return;
 
-    segments = ceil(fabs(end-start) / ARC_MAX_ANGLE);
-    step = (end-start) / (double) segments;
+    n_curves = ceil(fabs(end-start) / ARC_MAX_ANGLE);
+    step = (end-start) / (double) n_curves;
     curve.data = data;
 
-    for (angle = start; segments--; angle += step) {
+    for (angle = start; n_curves--; angle += step) {
         arc_to_curve(&curve, &center, r, angle, angle+step);
         cairo_curve_to(cr,
                        curve.data[1].point.x, curve.data[1].point.y,
                        curve.data[2].point.x, curve.data[2].point.y,
                        curve.data[3].point.x, curve.data[3].point.y);
+    }
+}
+
+/**
+ * cpml_arc_to_curves:
+ * @arc:      the #CpmlPrimitive arc data
+ * @segment:  the destination #CpmlSegment
+ * @n_curves: number of Bézier to use
+ *
+ * Converts @arc to a serie of @n_curves Bézier curves and puts them
+ * inside @segment. Obviously, @segment must have enough space to
+ * contain at least @n_curves curves.
+ *
+ * This function works in a similar way as cpml_arc_to_cairo() but
+ * has two important differences: it does not need a cairo context
+ * and the number of curves to be generated is explicitely defined.
+ * The latter difference allows a more specific error control from
+ * the application: in the file src/cairo-arc.c, found in the cairo
+ * tarball (at least in cairo-1.9.1), there is a table showing the
+ * magnitude of error of this curve approximation algorithm.
+ **/
+void
+cpml_arc_to_curves(const CpmlPrimitive *arc, CpmlSegment *segment,
+                   int n_curves)
+{
+    CpmlPair center;
+    double r, start, end;
+    double step, angle;
+    CpmlPrimitive curve;
+
+    if (!cpml_arc_info(arc, &center, &r, &start, &end))
+        return;
+
+    step = (end-start) / (double) n_curves;
+    segment->num_data = n_curves*4;
+    curve.segment = segment;
+    curve.data = segment->data;
+
+    for (angle = start; n_curves--; angle += step) {
+        arc_to_curve(&curve, &center, r, angle, angle+step);
+        curve.data += 4;
     }
 }
 
