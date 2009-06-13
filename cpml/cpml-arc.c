@@ -48,7 +48,7 @@
 #include <math.h>
 
 
-/* Hardcoded max angle to be approximated by a Bézier curve:
+/* Hardcoded max angle of the arc to be approximated by a Bézier curve:
  * this influence the arc quality (the default value is got from cairo) */
 #define ARC_MAX_ANGLE   (M_PI / 2.)
 
@@ -74,7 +74,7 @@ cpml_arc_type_get_npoints(void)
 }
 
 /**
- * cpml_arc_get_info:
+ * cpml_arc_info:
  * @arc:    the #CpmlPrimitive arc data
  * @center: where to store the center coordinates (can be %NULL)
  * @r:      where to store the radius (can be %NULL)
@@ -105,8 +105,8 @@ cpml_arc_type_get_npoints(void)
  * Return value: 1 if the function worked succesfully, 0 on errors
  **/
 cairo_bool_t
-cpml_arc_get_info(const CpmlPrimitive *arc, CpmlPair *center,
-                  double *r, double *start, double *end)
+cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
+              double *r, double *start, double *end)
 {
     CpmlPair p[3], l_center;
 
