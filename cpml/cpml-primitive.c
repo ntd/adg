@@ -208,10 +208,13 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
  * @primitive: a #CpmlPrimitive
  * @cr: the destination cairo context
  *
- * Appends the path of @primitive to @cr using cairo_append_path().
+ * Renders a single @primitive to the @cr cairo context.
  * As a special case, if the primitive is a #CAIRO_PATH_CLOSE_PATH,
  * an equivalent line is rendered, because a close path left alone
  * is not renderable.
+ *
+ * Also a #CAIRO_PATH_ARC_TO primitive is treated specially, as it
+ * is not natively supported by cairo and has its own rendering API.
  **/
 void
 cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
@@ -224,6 +227,9 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
     if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH) {
         path_data = cpml_primitive_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
+    } else if (primitive->data->header.type == CAIRO_PATH_ARC_TO) {
+        cairo_move_to(cr, &path->org.x, &path->org.y);
+        cpml_arc_to_cairo(primitive, cr);
     } else {
         path.status = CAIRO_STATUS_SUCCESS;
         path.data = primitive->data;
@@ -332,7 +338,6 @@ cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
 
     return total;
 }
-
 
 
 /**
