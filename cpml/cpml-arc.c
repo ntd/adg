@@ -50,7 +50,7 @@
 
 /* Hardcoded max angle of the arc to be approximated by a Bézier curve:
  * this influence the arc quality (the default value is got from cairo) */
-#define ARC_MAX_ANGLE   (M_PI / 2.)
+#define ARC_MAX_ANGLE   M_PI_2
 
 
 static cairo_bool_t     get_center      (const CpmlPair *p,
@@ -58,6 +58,11 @@ static cairo_bool_t     get_center      (const CpmlPair *p,
 static void             get_angles      (const CpmlPair *p,
                                          const CpmlPair *center,
                                          CpmlPair       *angles);
+static void             arc_to_curve    (CpmlPrimitive  *curve,
+                                         const CpmlPair *center,
+                                         double          r,
+                                         double          start,
+                                         double          end);
 
 
 /**
@@ -139,21 +144,42 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
 
 /**
  * cpml_arc_to_cairo:
- * @arc:  the #CpmlPrimitive arc data
- * @cr: the destination cairo context
+ * @arc: the #CpmlPrimitive arc data
+ * @cr:  the destination cairo context
  *
- * Appends the path of @primitive to @cr using cairo_append_path().
- * As a special case, if the primitive is a #CAIRO_PATH_CLOSE_PATH,
- * an equivalent line is rendered, because a close path left alone
- * is not renderable.
- * @pair: the destination #CpmlPair
+ * Renders @arc to the @cr cairo context. As cairo does not support
+ * arcs natively, it is approximated using one or more Bézier curves.
  *
- * Given an @arc, this function renders it to the @cr cairo context
- * approximating it using only Bézier curves.
+ * The number of curves used is dependent from the angle of the arc.
+ * Anyway, this function uses internally the hardcoded %M_PI_2 value
+ * as threshold value. This means the maximum arc approximated by a
+ * single curve will be a quarter of a circle and, consequently, a
+ * whole circle will be approximated by 4 Bézier curves.
  **/
 void
 cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
 {
+    CpmlPair center;
+    double r, start, end;
+    int segments;
+    double step, angle;
+    CpmlPrimitive curve;
+    cairo_path_data_t data[4];
+
+    if (!cpml_arc_info(arc, &center, &r, &start, &end))
+        return;
+
+    segments = ceil(fabs(end-start) / ARC_MAX_ANGLE);
+    step = (end-start) / (double) segments;
+    curve.data = data;
+
+    for (angle = start; segments--; angle += step) {
+        arc_to_curve(&curve, &center, r, angle, angle+step);
+        cairo_curve_to(cr,
+                       curve.data[1].point.x, curve.data[1].point.y,
+                       curve.data[2].point.x, curve.data[2].point.y,
+                       curve.data[3].point.x, curve.data[3].point.y);
+    }
 }
 
 /**
@@ -368,4 +394,29 @@ get_angles(const CpmlPair *p, const CpmlPair *center, CpmlPair *angles)
 
     angles->x = start;
     angles->y = end;
+}
+
+static void
+arc_to_curve(CpmlPrimitive *curve, const CpmlPair *center,
+             double r, double start, double end)
+{
+    double r_sin1, r_cos1;
+    double r_sin2, r_cos2;
+    double h;
+
+    r_sin1 = r*sin(start);
+    r_cos1 = r*cos(start);
+    r_sin2 = r*sin(end);
+    r_cos2 = r*cos(end);
+
+    h = 4./3. * tan((end-start) / 4.);
+
+    curve->data[0].header.type = CAIRO_PATH_CURVE_TO;
+    curve->data[0].header.length = 4;
+    curve->data[1].point.x = center->x + r_cos1 - h*r_sin1;
+    curve->data[1].point.y = center->y + r_sin1 + h*r_cos1;
+    curve->data[2].point.x = center->x + r_cos2 + h*r_sin2;
+    curve->data[2].point.y = center->y + r_sin2 - h*r_cos2;
+    curve->data[3].point.x = center->x + r_cos2;
+    curve->data[3].point.y = center->y + r_sin2;
 }

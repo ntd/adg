@@ -54,6 +54,8 @@ int     cpml_arc_intersection_with_line (const CpmlPrimitive    *arc,
                                          CpmlPair               *dest);
 void    cpml_arc_offset                 (CpmlPrimitive          *arc,
                                          double                  offset);
+void    cpml_arc_to_cairo               (const CpmlPrimitive    *arc,
+                                         cairo_t                *cr);
 
 CAIRO_END_DECLS
 
