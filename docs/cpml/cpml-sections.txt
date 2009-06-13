@@ -96,6 +96,8 @@ cpml_arc_vector_at
 cpml_arc_intersection
 cpml_arc_intersection_with_line
 cpml_arc_offset
+cpml_arc_to_cairo
+cpml_arc_to_curves
 </SECTION>
 
 <SECTION>
