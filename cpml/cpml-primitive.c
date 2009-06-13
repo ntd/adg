@@ -228,7 +228,6 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
         path_data = cpml_primitive_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
     } else if (primitive->data->header.type == CAIRO_PATH_ARC_TO) {
-        cairo_move_to(cr, &path->org.x, &path->org.y);
         cpml_arc_to_cairo(primitive, cr);
     } else {
         path.status = CAIRO_STATUS_SUCCESS;
