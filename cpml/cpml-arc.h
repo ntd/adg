@@ -34,8 +34,12 @@
 CAIRO_BEGIN_DECLS
 
 int     cpml_arc_type_get_npoints       (void) CPML_GNUC_CONST;
-void    cpml_arc_center                 (const CpmlPrimitive    *arc,
-                                         CpmlPair               *pair);
+cairo_bool_t
+        cpml_arc_get_info               (const CpmlPrimitive    *arc,
+                                         CpmlPair               *center,
+                                         double                 *r,
+                                         double                 *start,
+                                         double                 *end);
 void    cpml_arc_pair_at                (const CpmlPrimitive    *arc,
                                          CpmlPair               *pair,
                                          double                  pos);
