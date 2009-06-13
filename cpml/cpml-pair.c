@@ -49,7 +49,7 @@
  * and length at once. Keep in mind the cairo default coordinates system
  * is not problably what you expect: the x axis increases at right
  * (as usual) but the y axis increases at down (the reverse of a usual
- * carthesian plan). An angle of 0 is at V=(1; 0) (middle right).
+ * cartesian plan). An angle of 0 is at V=(1; 0) (middle right).
  **/
 
 #include "cpml-pair.h"
