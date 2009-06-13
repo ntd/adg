@@ -208,33 +208,6 @@ cpml_curve_intersection(const CpmlPrimitive *curve,
 }
 
 /**
- * cpml_curve_intersection_with_line:
- * @curve: a curve
- * @line:  a line
- * @dest:  a vector of at least 4 #CpmlPair
- *
- * Given a Bézier cubic @curve and a @line, gets their intersection
- * points and store the result in @dest. Because a line and a cubic
- * curve can have up to 4 intersections, @dest MUST be at least an
- * array of 4 #CpmlPair.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Return value: the number of intersections (max 4)
- **/
-int
-cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
-                                  const CpmlPrimitive *line, CpmlPair *dest)
-{
-    return 0;
-}
-
-/**
  * cpml_curve_intersection_with_arc:
  * @curve: a curve
  * @arc:   an arc
@@ -257,6 +230,33 @@ cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
 int
 cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
                                  const CpmlPrimitive *arc, CpmlPair *dest)
+{
+    return 0;
+}
+
+/**
+ * cpml_curve_intersection_with_line:
+ * @curve: a curve
+ * @line:  a line
+ * @dest:  a vector of at least 4 #CpmlPair
+ *
+ * Given a Bézier cubic @curve and a @line, gets their intersection
+ * points and store the result in @dest. Because a line and a cubic
+ * curve can have up to 4 intersections, @dest MUST be at least an
+ * array of 4 #CpmlPair.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: the number of intersections (max 4)
+ **/
+int
+cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
+                                  const CpmlPrimitive *line, CpmlPair *dest)
 {
     return 0;
 }
