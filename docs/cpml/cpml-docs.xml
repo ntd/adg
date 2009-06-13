@@ -22,6 +22,7 @@
     <chapter id="Constructs-primitives">
       <title>Primitive types</title>
       <xi:include href="xml/line.xml"/>
+      <xi:include href="xml/arc.xml"/>
       <xi:include href="xml/curve.xml"/>
       <xi:include href="xml/close.xml"/>
     </chapter>

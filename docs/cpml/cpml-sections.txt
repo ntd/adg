@@ -87,6 +87,18 @@ cpml_line_offset
 </SECTION>
 
 <SECTION>
+<FILE>arc</FILE>
+<INCLUDE>cpml/cpml.h</INCLUDE>
+cpml_arc_type_get_npoints
+cpml_arc_info
+cpml_arc_pair_at
+cpml_arc_vector_at
+cpml_arc_intersection
+cpml_arc_intersection_with_line
+cpml_arc_offset
+</SECTION>
+
+<SECTION>
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_curve_type_get_npoints
@@ -95,6 +107,7 @@ cpml_curve_pair_at
 cpml_curve_vector_at_time
 cpml_curve_vector_at
 cpml_curve_intersection
+cpml_curve_intersection_with_arc
 cpml_curve_intersection_with_line
 cpml_curve_offset
 </SECTION>
