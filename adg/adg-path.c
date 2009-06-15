@@ -56,10 +56,10 @@
 static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
 static cairo_path_t *   get_cairo_path          (AdgPath        *path);
-static void             append_item             (AdgPath        *path,
+static void             append_valist           (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  int             length,
-                                                 ...);
+                                                 va_list         var_args);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -189,6 +189,83 @@ adg_path_has_current_point(AdgPath *path)
 
 
 /**
+ * adg_path_append:
+ * @path: an #AdgPath
+ * @type: a #cairo_data_type_t value
+ * @...: point data, specified as #AdgPair pointers
+ *
+ * Generic method to append a primitive to @path. The number of #AdgPair
+ * structs depends on @type: there is no way with this function to
+ * reserve more cairo_path_data_t structs than what is needed by the
+ * primitive.
+ *
+ * This function accepts also the special %CAIRO_PATH_ARC_TO primitive.
+ *
+ * If @path has no current point while the requested primitive needs it,
+ * a warning message will be triggered without other effect. 
+ **/
+void
+adg_path_append(AdgPath *path, cairo_path_data_type_t type, ...)
+{
+    va_list var_args;
+
+    va_start(var_args, type);
+    adg_path_append_valist(path, type, var_args);
+    va_end(var_args);
+}
+
+/**
+ * adg_path_append_valist:
+ * @path:     an #AdgPath
+ * @type:     a #cairo_data_type_t value
+ * @var_args: point data, specified as #AdgPair pointers
+ *
+ * va_list version of adg_path_append().
+ **/
+void
+adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
+                       va_list var_args)
+{
+    gint length;
+
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    switch (type) {
+
+    case CAIRO_PATH_CLOSE_PATH:
+        g_return_if_fail(path->priv->cp_is_valid);
+        length = 1;
+        break;
+
+    case CAIRO_PATH_MOVE_TO:
+        length = 2;
+        break;
+
+    case CAIRO_PATH_LINE_TO:
+        g_return_if_fail(path->priv->cp_is_valid);
+        length = 2;
+        break;
+
+    case CAIRO_PATH_ARC_TO:
+        g_return_if_fail(path->priv->cp_is_valid);
+        length = 3;
+        break;
+
+    case CAIRO_PATH_CURVE_TO:
+        g_return_if_fail(path->priv->cp_is_valid);
+        length = 4;
+        break;
+
+    default:
+        g_assert_not_reached();
+        return;
+    }
+
+    append_valist(path, type, length, var_args);
+}
+
+
+/**
  * adg_path_move_to:
  * @path: an #AdgPath
  * @x: the new x coordinate
@@ -199,9 +276,12 @@ adg_path_has_current_point(AdgPath *path)
 void
 adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
 {
-    g_return_if_fail(ADG_IS_PATH(path));
+    AdgPair p;
 
-    append_item(path, CAIRO_PATH_MOVE_TO, 2, x, y);
+    p.x = x;
+    p.y = y;
+
+    adg_path_append(path, CAIRO_PATH_MOVE_TO, &p);
 }
 
 /**
@@ -219,10 +299,12 @@ adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
 void
 adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
 {
-    g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(path->priv->cp_is_valid);
+    AdgPair p;
 
-    append_item(path, CAIRO_PATH_LINE_TO, 2, x, y);
+    p.x = x;
+    p.y = y;
+
+    adg_path_append(path, CAIRO_PATH_LINE_TO, &p);
 }
 
 /**
@@ -243,10 +325,14 @@ adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
 void
 adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 {
-    g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(path->priv->cp_is_valid);
+    AdgPair p[2];
 
-    append_item(path, CAIRO_PATH_ARC_TO, 3, x1, y1, x2, y2);
+    p[0].x = x1;
+    p[0].y = y1;
+    p[1].x = x2;
+    p[1].y = y2;
+
+    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[0], &p[1]);
 }
 
 /**
@@ -270,10 +356,16 @@ void
 adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
                   gdouble x2, gdouble y2, gdouble x3, gdouble y3)
 {
-    g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(path->priv->cp_is_valid);
+    AdgPair p[3];
 
-    append_item(path, CAIRO_PATH_CURVE_TO, 4, x1, y1, x2, y2, x3, y3);
+    p[0].x = x1;
+    p[0].y = y1;
+    p[1].x = x2;
+    p[1].y = y2;
+    p[2].x = x3;
+    p[2].y = y3;
+
+    adg_path_append(path, CAIRO_PATH_CURVE_TO, &p[0], &p[1], &p[2]);
 }
 
 /**
@@ -286,7 +378,7 @@ adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
  * After this call the current point will be unset.
  *
  * The behavior of adg_path_close() is distinct from simply calling
- * cairo_line_to() with the coordinates of the segment starting point.
+ * adg_line_to() with the coordinates of the segment starting point.
  * When a closed segment is stroked, there are no caps on the ends.
  * Instead, there is a line join connecting the final and initial
  * primitive of the segment.
@@ -297,10 +389,7 @@ adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
 void
 adg_path_close(AdgPath *path)
 {
-    g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(path->priv->cp_is_valid);
-
-    append_item(path, CAIRO_PATH_CLOSE_PATH, 1);
+    adg_path_append(path, CAIRO_PATH_CLOSE_PATH);
 }
 
 /**
@@ -390,36 +479,28 @@ get_cairo_path(AdgPath *path)
 }
 
 static void
-append_item(AdgPath *path, cairo_path_data_type_t type, int length, ...)
+append_valist(AdgPath *path, cairo_path_data_type_t type,
+              int length, va_list var_args)
 {
     AdgPathPrivate *priv;
     cairo_path_data_t item;
-    va_list var_args;
-    gint n;
 
     priv = path->priv;
-    n = length;
 
     /* Append the header item */
     item.header.type = type;
     item.header.length = length;
     priv->path = g_array_append_val(priv->path, item);
+    priv->cp_is_valid = FALSE;
 
-    va_start(var_args, length);
-
-    /* Append the data items (that is, the points) */
-    while (-- n) {
-        item.point.x = va_arg(var_args, gdouble);
-        item.point.y = va_arg(var_args, gdouble);
+    /* Append the data items (that is, the AdgPair points) */
+    while (--length) {
+        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), &item);
         priv->path = g_array_append_val(priv->path, item);
+        priv->cp_is_valid = TRUE;
     }
 
-    va_end(var_args);
-
-    priv->cp_is_valid = length > 1;
-    if (priv->cp_is_valid) {
-        /* Save the last point as the current point */
-        priv->cp.x = item.point.x;
-        priv->cp.y = item.point.y;
-    }
+    /* Save the last point as the current point */
+    if (priv->cp_is_valid)
+        cpml_pair_from_cairo(&priv->cp, &item);
 }
