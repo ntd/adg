@@ -27,8 +27,8 @@
 G_BEGIN_DECLS
 
 struct _AdgPathPrivate {
-    AdgPair      cp;
     gboolean     cp_is_valid;
+    AdgPair      cp;
     GArray      *path;
     cairo_path_t cairo_path;
 };

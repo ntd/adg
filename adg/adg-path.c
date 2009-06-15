@@ -55,7 +55,10 @@
 
 static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
+static void             clear_cairo_path        (AdgPath        *path);
 static cairo_path_t *   get_cairo_path          (AdgPath        *path);
+static GArray *         arc_to_curves           (GArray         *array,
+                                                 const cairo_path_data_t *src);
 static void             append_valist           (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  int             length,
@@ -90,6 +93,8 @@ adg_path_init(AdgPath *path)
     priv->cp_is_valid = FALSE;
     priv->path = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
     priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    priv->cairo_path.data = NULL;
+    priv->cairo_path.num_data = 0;
 
     path->priv = priv;
 }
@@ -100,6 +105,7 @@ finalize(GObject *object)
     AdgPath *path = (AdgPath *) object;
 
     g_array_free(path->priv->path, TRUE);
+    clear_cairo_path(path);
 
     ((GObjectClass *) PARENT_CLASS)->finalize(object);
 }
@@ -127,6 +133,22 @@ adg_path_new(void)
  *
  * Gets a pointer to the cairo path structure of @path. The return value
  * is owned by @path and must be considered read-only.
+ *
+ * This function also converts %CAIRO_PATH_ARC_TO primitives, not
+ * recognized by cairo, into approximated Bézier curves. The conversion
+ * is cached so any furter request is O(1). This cache is cleared
+ * whenever @path is modified (by adding a new primitive or by calling
+ * adg_path_clear()).
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>Actually, the arcs are approximated to Bézier using the
+ *           hardcoded max angle of PI/2. This should be customizable
+ *           by adding, for instance, a property to the #AdgPath class
+ *           with a default value of PI/2.</listitem>
+ * </itemizedlist>
+ * </important>
  *
  * Return value: a pointer to the internal #cairo_path_t structure
  *               or %NULL on errors
@@ -200,11 +222,7 @@ adg_path_clear(AdgPath *path)
     g_return_if_fail(ADG_IS_PATH(path));
 
     g_array_set_size(path->priv->path, 0);
-    g_free(path->priv->cairo_path.data);
-
-    path->priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    path->priv->cairo_path.data = NULL;
-    path->priv->cairo_path.num_data = 0;
+    clear_cairo_path(path);
 }
 
 
@@ -500,16 +518,83 @@ changed(AdgModel *model)
     PARENT_CLASS->changed(model);
 }
 
+static void
+clear_cairo_path(AdgPath *path)
+{
+    cairo_path_t *cairo_path = &path->priv->cairo_path;
+
+    if (cairo_path->data == NULL)
+        return;
+
+    g_free(cairo_path->data);
+
+    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
+    cairo_path->data = NULL;
+    cairo_path->num_data = 0;
+}
+
 static cairo_path_t *
 get_cairo_path(AdgPath *path)
 {
-    AdgPathPrivate *priv = path->priv;
+    cairo_path_t *cairo_path;
+    const GArray *src;
+    GArray *dst;
+    const cairo_path_data_t *p_src;
+    int i;
 
-    priv->cairo_path.status = CAIRO_STATUS_SUCCESS;
-    priv->cairo_path.data = (cairo_path_data_t *) priv->path->data;
-    priv->cairo_path.num_data = priv->path->len;
+    /* Check for cached result */
+    cairo_path = &path->priv->cairo_path;
+    if (cairo_path->data != NULL)
+        return cairo_path;
+
+    src = path->priv->path;
+    dst = g_array_sized_new(FALSE, FALSE, sizeof(cairo_path_data_t), src->len);
+
+    /* Cycle the path and convert arcs to Bézier curves */
+    for (i = 0; i < src->len; i += p_src->header.length) {
+        p_src = (const cairo_path_data_t *) src->data + i;
+
+        if (p_src->header.type == CAIRO_PATH_ARC_TO)
+            dst = arc_to_curves(dst, p_src);
+        else
+            dst = g_array_append_vals(dst, p_src, p_src->header.length);
+    }
+
+    cairo_path->status = CAIRO_STATUS_SUCCESS;
+    cairo_path->num_data = dst->len;
+    cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
     
-    return &priv->cairo_path;
+    return cairo_path;
+}
+
+static GArray *
+arc_to_curves(GArray *array, const cairo_path_data_t *src)
+{
+    CpmlPrimitive arc;
+    double start, end;
+
+    /* Build the arc primitive: the arc origin is supposed to be the previous
+     * point (src-1): this means a primitive must exist before the arc */
+    arc.segment = NULL;
+    arc.org = (cairo_path_data_t *) (src-1);
+    arc.data = (cairo_path_data_t *) src;
+
+    if (cpml_arc_info(&arc, NULL, NULL, &start, &end)) {
+        CpmlSegment segment;
+        int n_curves;
+        cairo_path_data_t *curves;
+
+        n_curves = ceil(fabs(end-start) / M_PI_2);
+        curves = g_new(cairo_path_data_t, n_curves * 4);
+        segment.data = curves;
+        cpml_arc_to_curves(&arc, &segment, n_curves);
+
+        array = g_array_append_vals(array, curves, n_curves * 4);
+
+        g_free(curves);
+    }
+
+    return array;
 }
 
 static void
@@ -537,4 +622,7 @@ append_valist(AdgPath *path, cairo_path_data_type_t type,
     /* Save the last point as the current point */
     if (priv->cp_is_valid)
         cpml_pair_from_cairo(&priv->cp, &item);
+
+    /* Invalidate cairo_path: should be recomputed */
+    clear_cairo_path(path);
 }
