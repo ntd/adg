@@ -187,6 +187,26 @@ adg_path_has_current_point(AdgPath *path)
     return path->priv->cp_is_valid;
 }
 
+/**
+ * adg_path_clear:
+ * @path: an #AdgPath
+ *
+ * Releases the internal memory hold by @path and resets its status,
+ * so that after this call @path contains an empty path.
+ **/
+void
+adg_path_clear(AdgPath *path)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    g_array_set_size(path->priv->path, 0);
+    g_free(path->priv->cairo_path.data);
+
+    path->priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    path->priv->cairo_path.data = NULL;
+    path->priv->cairo_path.num_data = 0;
+}
+
 
 /**
  * adg_path_append:
@@ -475,10 +495,7 @@ adg_path_dump(AdgPath *path)
 static void
 changed(AdgModel *model)
 {
-    AdgPath *path = (AdgPath *) model;
-
-    g_array_set_size(path->priv->path, 0);
-    path->priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    adg_path_clear((AdgPath *) model);
 
     PARENT_CLASS->changed(model);
 }
