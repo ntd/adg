@@ -85,12 +85,6 @@ void            adg_path_arc                    (AdgPath        *path,
                                                  gdouble         r,
                                                  gdouble         angle1,
                                                  gdouble         angle2);
-void            adg_path_arc_negative           (AdgPath        *path,
-                                                 gdouble         xc,
-                                                 gdouble         yc,
-                                                 gdouble         r,
-                                                 gdouble         angle1,
-                                                 gdouble         angle2);
 
 void            adg_path_dump                   (AdgPath        *path);
 

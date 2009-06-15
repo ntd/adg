@@ -51,7 +51,6 @@
 #include <math.h>
 
 #define PARENT_CLASS    ((AdgModelClass *) adg_path_parent_class)
-#define ARC_MAX_ANGLE   (M_PI / 2.)
 
 
 static void             finalize                (GObject        *object);
@@ -61,13 +60,6 @@ static void             append_item             (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  int             length,
                                                  ...);
-static void             arc                     (AdgPath        *path,
-                                                 gdouble         xc,
-                                                 gdouble         yc,
-                                                 gdouble         r,
-                                                 gdouble         angle1,
-                                                 gdouble         angle2,
-                                                 gboolean        reverse);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -313,10 +305,10 @@ adg_path_close(AdgPath *path)
 
 /**
  * adg_path_arc
- * @path: an #AdgPath
- * @xc: x position of the center of the arc
- * @yc: y position of the center of the arc
- * @r: the radius of the arc
+ * @path:   an #AdgPath
+ * @xc:     x position of the center of the arc
+ * @yc:     y position of the center of the arc
+ * @r:      the radius of the arc
  * @angle1: the start angle, in radians
  * @angle2: the end angle, in radians
  *
@@ -329,6 +321,13 @@ adg_path_close(AdgPath *path)
  * to the start point of the arc will be automatically prepended
  * to the arc. Instead, if the start point of the arc is different
  * from the current point, a %CAIRO_PATH_LINE_TO will be prepended.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 void
 adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
@@ -336,36 +335,6 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    arc(path, xc, yc, r, angle1, angle2, FALSE);
-}
-
-/**
- * adg_path_arc_negative:
- * @path: an #AdgPath
- * @xc: X position of the center of the arc
- * @yc: Y position of the center of the arc
- * @r: the r of the arc
- * @angle1: the start angle, in radians
- * @angle2: the end angle, in radians
- *
- * Adds an arc to @path by explicitely specify start and end angle
- * (@angle1 and @angle2) and the radius (@r). After this call
- * the current point will be the computed end point of the arc.
- * This function is similar to adg_path_arc(): the only difference
- * is the angle is computed in counter-clockwise direction.
- *
- * If @path has no current point before this call, a %CAIRO_PATH_MOVE_TO
- * to the start point of the arc will be automatically prepended
- * to the arc. Instead, if the start point of the arc is different
- * from the current point, a %CAIRO_PATH_LINE_TO will be prepended.
- **/
-void
-adg_path_arc_negative (AdgPath *path, gdouble xc, gdouble yc, gdouble r,
-                       gdouble angle1, gdouble angle2)
-{
-    g_return_if_fail(ADG_IS_PATH(path));
-
-    arc(path, xc, yc, r, angle2, angle1, TRUE);
 }
 
 
@@ -453,36 +422,4 @@ append_item(AdgPath *path, cairo_path_data_type_t type, int length, ...)
         priv->cp.x = item.point.x;
         priv->cp.y = item.point.y;
     }
-}
-
-static void
-arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
-    gdouble angle1, gdouble angle2, gboolean reverse)
-{
-    gdouble angle12;
-    CpmlPair center, p0, p1, p2;
-
-    if (r <= 0. || angle1 == angle2)
-	return;
-
-    center.x = xc;
-    center.y = yc;
-    angle12 = (angle1 + angle2) / 2.;
-    if (reverse)
-        angle12 += M_PI;
-
-    cpml_vector_from_angle(&p0, angle1, r);
-    cpml_vector_from_angle(&p1, angle12, r);
-    cpml_vector_from_angle(&p2, angle2, r);
-
-    cpml_pair_add(&p0, &center);
-    cpml_pair_add(&p1, &center);
-    cpml_pair_add(&p2, &center);
-
-    if (!path->priv->cp_is_valid)
-        adg_path_move_to(path, p0.x, p0.y);
-    else if (path->priv->cp.x != p0.x || path->priv->cp.y != p0.y)
-        adg_path_line_to(path, p0.x, p0.y);
-
-    adg_path_arc_to(path, p1.x, p1.y, p2.x, p2.y);
 }
