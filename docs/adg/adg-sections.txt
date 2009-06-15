@@ -296,6 +296,8 @@ adg_path_get_cairo_path
 adg_path_get_current_point
 adg_path_has_current_point
 <SUBSECTION>
+adg_path_append
+adg_path_append_valist
 adg_path_move_to
 adg_path_line_to
 adg_path_arc_to
@@ -303,7 +305,6 @@ adg_path_curve_to
 adg_path_close
 <SUBSECTION>
 adg_path_arc
-adg_path_arc_negative
 <SUBSECTION>
 adg_path_dump
 <SUBSECTION Standard>
