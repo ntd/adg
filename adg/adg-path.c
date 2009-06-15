@@ -449,8 +449,8 @@ adg_path_close(AdgPath *path)
  *
  * By explicitely setting the whole arc data, the start point could be
  * different from the current point. In this case, if @path has no
- * current point before this call, a %CAIRO_PATH_MOVE_TO to the start
- * point of the arc will be automatically prepended to @path.
+ * current point before the call a %CAIRO_PATH_MOVE_TO to the start
+ * point of the arc will be automatically prepended to the arc.
  * If @path has a current point, a %CAIRO_PATH_LINE_TO to the start
  * point of the arc will be used instead of the moveto.
  **/
