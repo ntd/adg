@@ -33,14 +33,17 @@
 
   <part id="Defining">
     <title>Defining the model</title>
-    <xi:include href="xml/model.xml"/>
+    <chapter id="Defining-abstract">
+      <title>Abstract classes</title>
+      <xi:include href="xml/model.xml"/>
+    </chapter>
     <xi:include href="xml/path.xml"/>
   </part>
 
   <part id="Populating">
     <title>Populating the canvas</title>
     <chapter id="Populating-abstract">
-      <title>Abstract base classes</title>
+      <title>Abstract classes</title>
       <xi:include href="xml/entity.xml"/>
       <xi:include href="xml/container.xml"/>
       <xi:include href="xml/dim.xml"/>
@@ -64,7 +67,7 @@
   <part id="Rendering">
     <title>The rendering process</title>
     <chapter id="Rendering-abstract">
-      <title>Abstract base classes</title>
+      <title>Abstract classes</title>
       <xi:include href="xml/style.xml"/>
     </chapter>
     <xi:include href="xml/context.xml"/>
