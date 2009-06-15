@@ -142,8 +142,8 @@ adg_path_get_cairo_path(AdgPath *path)
 /**
  * adg_path_get_current_point:
  * @path: an #AdgPath
- * @x: return value for x coordinate of the current point
- * @y: return value for y coordinate of the current point
+ * @x:    return value for x coordinate of the current point
+ * @y:    return value for y coordinate of the current point
  *
  * Gets the current point of @path, which is conceptually the
  * final point reached by the path so far.
@@ -192,7 +192,7 @@ adg_path_has_current_point(AdgPath *path)
  * adg_path_append:
  * @path: an #AdgPath
  * @type: a #cairo_data_type_t value
- * @...: point data, specified as #AdgPair pointers
+ * @...:  point data, specified as #AdgPair pointers
  *
  * Generic method to append a primitive to @path. The number of #AdgPair
  * structs depends on @type: there is no way with this function to
@@ -268,8 +268,8 @@ adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
 /**
  * adg_path_move_to:
  * @path: an #AdgPath
- * @x: the new x coordinate
- * @y: the new y coordinate
+ * @x:    the new x coordinate
+ * @y:    the new y coordinate
  *
  * Begins a new segment. After this call the current point will be (@x, @y).
  **/
@@ -287,8 +287,8 @@ adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
 /**
  * adg_path_line_to:
  * @path: an #AdgPath
- * @x: the new x coordinate
- * @y: the new y coordinate
+ * @x:    the new x coordinate
+ * @y:    the new y coordinate
  *
  * Adds a line to @path from the current point to position (@x, @y).
  * After this call the current point will be (@x, @y).
@@ -310,10 +310,10 @@ adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
 /**
  * adg_path_arc_to:
  * @path: an #AdgPath
- * @x1: the x coordinate of an intermediate point
- * @y1: the y coordinate of an intermediate point
- * @x2: the x coordinate of the end of the arc
- * @y2: the y coordinate of the end of the arc
+ * @x1:   the x coordinate of an intermediate point
+ * @y1:   the y coordinate of an intermediate point
+ * @x2:   the x coordinate of the end of the arc
+ * @y2:   the y coordinate of the end of the arc
  *
  * Adds an arc to the path from the current point to (@x2, @y2),
  * passing throught (@x1, @y1). After this call the current point
@@ -338,12 +338,12 @@ adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 /**
  * adg_path_curve_to:
  * @path: an #AdgPath
- * @x1: the x coordinate of the first control point
- * @y1: the y coordinate of the first control point
- * @x2: the x coordinate of the second control point
- * @y2: the y coordinate of the second control point
- * @x3: the x coordinate of the end of the curve
- * @y3: the y coordinate of the end of the curve
+ * @x1:   the x coordinate of the first control point
+ * @y1:   the y coordinate of the first control point
+ * @x2:   the x coordinate of the second control point
+ * @y2:   the y coordinate of the second control point
+ * @x3:   the x coordinate of the end of the curve
+ * @y3:   the y coordinate of the end of the curve
  *
  * Adds a cubic Bézier curve to the path from the current point to
  * position (@x3, @y3), using (@x1, @y1) and (@x2, @y2) as the
@@ -394,36 +394,53 @@ adg_path_close(AdgPath *path)
 
 /**
  * adg_path_arc
- * @path:   an #AdgPath
- * @xc:     x position of the center of the arc
- * @yc:     y position of the center of the arc
- * @r:      the radius of the arc
- * @angle1: the start angle, in radians
- * @angle2: the end angle, in radians
+ * @path:  an #AdgPath
+ * @xc:    x position of the center of the arc
+ * @yc:    y position of the center of the arc
+ * @r:     the radius of the arc
+ * @start: the start angle, in radians
+ * @end:   the end angle, in radians
  *
- * Adds an arc to @path by explicitely specify start and end angle
- * (@angle1 and @angle2) and the radius (@r). After this call
- * the current point will be the computed end point of the arc.
- * The arc is computed in clockwise direction from @angle1.
+ * A more usual way to add an arc to @path. After this call, the current
+ * point will be the computed end point of the arc. The arc will be
+ * rendered in increasing angle, accordling to @start and @end. This means
+ * if @start is less than @end, the arc will be rendered in clockwise
+ * direction (accordling to the default cairo coordinate system) while if
+ * @start is greather than @end, the arc will be rendered in couterclockwise
+ * direction.
  *
- * If @path has no current point before this call, a %CAIRO_PATH_MOVE_TO
- * to the start point of the arc will be automatically prepended
- * to the arc. Instead, if the start point of the arc is different
- * from the current point, a %CAIRO_PATH_LINE_TO will be prepended.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
+ * By explicitely setting the whole arc data, the start point could be
+ * different from the current point. In this case, if @path has no
+ * current point before this call, a %CAIRO_PATH_MOVE_TO to the start
+ * point of the arc will be automatically prepended to @path.
+ * If @path has a current point, a %CAIRO_PATH_LINE_TO to the start
+ * point of the arc will be used instead of the moveto.
  **/
 void
 adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
-             gdouble angle1, gdouble angle2)
+             gdouble start, gdouble end)
 {
+    AdgPair center, p[3];
+
     g_return_if_fail(ADG_IS_PATH(path));
 
+    center.x = xc;
+    center.y = yc;
+
+    cpml_vector_from_angle(&p[0], start, r);
+    cpml_vector_from_angle(&p[1], (end-start) / 2, r);
+    cpml_vector_from_angle(&p[2], end, r);
+
+    cpml_pair_add(&p[0], &center);
+    cpml_pair_add(&p[1], &center);
+    cpml_pair_add(&p[2], &center);
+
+    if (!path->priv->cp_is_valid)
+        adg_path_append(path, CAIRO_PATH_MOVE_TO, &p[0]);
+    else if (p[0].x != path->priv->cp.x || p[0].y != path->priv->cp.y)
+        adg_path_append(path, CAIRO_PATH_LINE_TO, &p[0]);
+
+    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
 }
 
 
