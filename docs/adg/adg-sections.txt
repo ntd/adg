@@ -477,8 +477,8 @@ AdgStroke
 <SUBSECTION>
 adg_stroke_new
 <SUBSECTION>
-adg_stroke_get_cairo_path
-adg_stroke_dump
+adg_stroke_get_path
+adg_stroke_set_path
 <SUBSECTION Standard>
 AdgStrokeClass
 AdgStrokePrivate
