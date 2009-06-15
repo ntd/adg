@@ -21,17 +21,13 @@
 #ifndef __ADG_STROKE_PRIVATE_H__
 #define __ADG_STROKE_PRIVATE_H__
 
-#include <adg/adg-entity.h>
+#include <adg/adg-path.h>
 
 
 G_BEGIN_DECLS
 
 struct _AdgStrokePrivate {
-    /* Cache */
-    AdgPair       cp;
-    cairo_path_t *cairo_path;
-    AdgCallback   callback;
-    gpointer      user_data;
+    AdgPath     *path;
 };
 
 G_END_DECLS

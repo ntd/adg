@@ -22,6 +22,7 @@
 #define __ADG_STROKE_H__
 
 #include <adg/adg-entity.h>
+#include <adg/adg-path.h>
 
 
 G_BEGIN_DECLS
@@ -45,18 +46,16 @@ struct _AdgStroke {
 
 struct _AdgStrokeClass {
     AdgEntityClass	 parent_class;
-
-    /* Virtual table */
-    void		(*clear)		(AdgStroke      *stroke);
 };
 
 
 GType           adg_stroke_get_type             (void) G_GNUC_CONST;
-AdgEntity *     adg_stroke_new                  (AdgCallback     callback,
-                                                 gpointer        user_data);
-const cairo_path_t *
-                adg_stroke_get_cairo_path       (AdgStroke      *stroke);
-void            adg_stroke_dump                 (AdgStroke      *stroke);
+
+AdgEntity *     adg_stroke_new                  (AdgPath        *path);
+
+AdgPath *       adg_stroke_get_path             (AdgStroke      *stroke);
+void            adg_stroke_set_path             (AdgStroke      *stroke,
+                                                 AdgPath        *path);
 
 G_END_DECLS
 
