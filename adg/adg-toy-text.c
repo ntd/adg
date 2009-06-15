@@ -187,7 +187,7 @@ finalize(GObject *object)
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text = (AdgToyText *) toy_text;
+    AdgToyText *toy_text = (AdgToyText *) object;
 
     switch (prop_id) {
     case PROP_ORIGIN:
