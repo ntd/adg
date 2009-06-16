@@ -293,12 +293,15 @@ AdgPath
 adg_path_new
 <SUBSECTION>
 adg_path_get_cairo_path
+adg_path_get_cpml_path
+adg_path_dup_cpml_path
 adg_path_get_current_point
 adg_path_has_current_point
 adg_path_clear
 <SUBSECTION>
 adg_path_append
 adg_path_append_valist
+adg_path_append_cairo_path
 adg_path_move_to
 adg_path_line_to
 adg_path_arc_to
