@@ -150,8 +150,7 @@ adg_path_new(void)
  * </itemizedlist>
  * </important>
  *
- * Return value: a pointer to the internal #cairo_path_t structure
- *               or %NULL on errors
+ * Return value: a pointer to the internal cairo path or %NULL on errors
  **/
 const cairo_path_t *
 adg_path_get_cairo_path(AdgPath *path)
@@ -159,6 +158,43 @@ adg_path_get_cairo_path(AdgPath *path)
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
     return get_cairo_path(path);
+}
+
+/**
+ * adg_path_get_cpml_path:
+ * @path: an #AdgPath
+ *
+ * Gets a pointer to the cairo path structure of @path. The return
+ * value is owned by @path and must not be freed.
+ *
+ * This function is similar to adg_path_get_cairo_path() but has
+ * two important differences: firstly the arc primitives are not
+ * expanded to Bézier curves so the returned path is effectively
+ * the path stored internally in @path. Secondly, the returned
+ * path is not read-only.
+ *
+ * The returned path is allowed to be modified as long as its size
+ * is retained and it keeps a valid path. Also, after modifying
+ * @path the returned path has no meaning and is likely to contain
+ * plain garbage.
+ *
+ * Return value: a pointer to the internal cpml path or %NULL on errors
+ **/
+cairo_path_t *
+adg_path_get_cpml_path(AdgPath *path)
+{
+    cairo_path_t *cpml_path;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    clear_cairo_path(path);
+
+    cpml_path = &path->priv->cpml_path;
+    cpml_path->status = CAIRO_STATUS_SUCCESS;
+    cpml_path->data = (cairo_path_data_t *) path->priv->path->data;
+    cpml_path->num_data = path->priv->path->len;
+
+    return cpml_path;
 }
 
 /**
