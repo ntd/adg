@@ -55,7 +55,7 @@ must be reflected in the demo programs, where applicable.</para>
    bunch of methods emulating the cairo path API but without the need of
    a yet instantiated cairo context.</listitem>
    <listitem override="disc">Add support for the CPML arc feature in AdgPath.</listitem>
-   <listitem>Update the demo using the newly implemented AdgPath to deeply test the
+   <listitem override="disc">Update the demo using the newly implemented AdgPath to deeply test the
    model/entity interaction.</listitem>
    <listitem>Add a chamfer operation to AdgPath.</listitem>
    <listitem>Add a fillet operation to AdgPath.</listitem>
