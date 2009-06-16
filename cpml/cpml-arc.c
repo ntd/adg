@@ -399,8 +399,8 @@ cpml_arc_to_curves(const CpmlPrimitive *arc, CpmlSegment *segment,
 static cairo_bool_t
 get_center(const CpmlPair *p, CpmlPair *dest)
 {
-    CpmlPair div;
-    double p2[3];
+    CpmlPair b, c;
+    double d, b2, c2;
 
     /* When p[0] == p[2], p[0]..p[1] is considered the diameter of a circle */
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
@@ -409,29 +409,21 @@ get_center(const CpmlPair *p, CpmlPair *dest)
         return 1;
     }
 
-    div.x = (p[0].x*(p[2].y-p[1].y) +
-             p[1].x*(p[0].y-p[2].y) +
-             p[1].x*(p[1].y-p[0].y)) * 2;
-    div.y = (p[0].y*(p[2].x-p[1].x) +
-             p[1].y*(p[0].x-p[2].x) +
-             p[2].y*(p[1].x-p[0].x)) * 2;
+    /* Translate the 3 points of -p0, to simplify the formula */ 
+    cpml_pair_sub(cpml_pair_copy(&b, &p[1]), &p[0]);
+    cpml_pair_sub(cpml_pair_copy(&c, &p[2]), &p[0]);
 
     /* Check for division by 0, that is the case where the 3 given points
-     * are laying on a straight line) */
-    if (div.x == 0. || div.y == 0.)
+     * are laying on a straight line and there is no fitting circle */
+    d = (b.x*c.y - b.y*c.x) * 2;
+    if (d == 0.)
         return 0;
 
-    p2[0] = p[0].x*p[0].x + p[0].y*p[0].y;
-    p2[1] = p[1].x*p[1].x + p[1].y*p[1].y;
-    p2[2] = p[2].x*p[2].x + p[2].y*p[2].y;
+    b2 = b.x*b.x + b.y*b.y;
+    c2 = c.x*c.x + c.y*c.y;
 
-    /* Compute the center of the arc */
-    dest->x = (p2[0] * (p[2].y - p[1].y) +
-               p2[1] * (p[0].y - p[2].y) +
-               p2[2] * (p[1].y - p[0].y)) / div.x;
-    dest->y = (p2[0] * (p[2].x - p[1].x) +
-               p2[1] * (p[0].x - p[2].x) +
-               p2[2] * (p[1].x - p[0].x)) / div.y;
+    dest->x = (c.y*b2 - b.y*c2) / d + p[0].x;
+    dest->y = (b.x*c2 - c.x*b2) / d + p[0].y;
 
     return 1;
 }
