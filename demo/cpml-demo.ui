@@ -100,11 +100,30 @@
               </packing>
             </child>
             <child>
-              <object class="GtkDrawingArea" id="areaIntersections">
+              <object class="GtkDrawingArea" id="areaArcs">
                 <property name="visible">True</property>
               </object>
               <packing>
                 <property name="position">1</property>
+              </packing>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="lblArcs">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Arcs</property>
+              </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkDrawingArea" id="areaIntersections">
+                <property name="visible">True</property>
+              </object>
+              <packing>
+                <property name="position">2</property>
               </packing>
             </child>
             <child type="tab">
@@ -114,7 +133,7 @@
                 <property name="label" translatable="yes">Intersections</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -125,7 +144,7 @@
                 <property name="visible">True</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child type="tab">
@@ -135,7 +154,7 @@
                 <property name="label" translatable="yes">Offset curves</property>
               </object>
               <packing>
-                <property name="position">2</property>
+                <property name="position">3</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
@@ -144,7 +163,7 @@
                 <property name="visible">True</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child type="tab">
@@ -154,7 +173,7 @@
                 <property name="label" translatable="yes">Offset segments</property>
               </object>
               <packing>
-                <property name="position">3</property>
+                <property name="position">4</property>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
