@@ -6,6 +6,26 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.4.2">
+<title>ADG 0.4.2</title>
+
+<para>The work on model-view separation has been started: the AdgModel
+abstract class is now in place. Above this class, the new AdgPath
+model is derived, providing a full set of APIs to construct paths
+from scratch. Also, AdgPath gives full access the model throught
+CPML, allowing to modify and manipulate the path data.</para> 
+
+<para>The CPML library now natively supports arcs. Although cairo does
+not recognize arcs, a lot of work has been done to hide the
+complexity needed to provide an API that does the necessary
+trasformations transparently.</para>
+
+<para>The old AdgPath entity has been rewrote to AdgStroke. This is a
+stroked view of an AdgPath model. Its implementation is trivial
+as all the path complexity has moved to AdgPath.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.4.1">
 <title>ADG 0.4.1</title>
 
