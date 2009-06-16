@@ -48,7 +48,7 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-path-private.h \
 				adg-stroke-private.h \
 				adg-style-private.h \
-				adg-title-block-private.h
+				adg-title-block-private.h \
 				adg-toy-text-private.h
 adg_built_private_h_sources= 
 adg_c_sources=			adg-adim.c \
