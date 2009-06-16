@@ -68,6 +68,8 @@ void            adg_path_append                 (AdgPath        *path,
 void            adg_path_append_valist          (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  va_list var_args);
+void            adg_path_append_cairo_path      (AdgPath        *path,
+                                                 const cairo_path_t *cairo_path);
 void            adg_path_move_to                (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);

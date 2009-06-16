@@ -371,6 +371,24 @@ adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
     append_valist(path, type, length, var_args);
 }
 
+/**
+ * adg_path_append_cairo_path:
+ * @path:       an #AdgPath
+ * @cairo_path: the #cairo_path_t path to append
+ *
+ * Appends a whole cairo path to @path.
+ **/
+void
+adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    clear_cairo_path(path);
+    path->priv->path = g_array_append_vals(path->priv->path,
+                                           cairo_path->data,
+                                           cairo_path->num_data);
+}
+
 
 /**
  * adg_path_move_to:
