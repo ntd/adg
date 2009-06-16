@@ -385,15 +385,15 @@ cpml_vector_angle(const CpmlVector *vector)
 {
     /* Check for common conditions */
     if (vector->y == 0)
-        return vector->x >= 0 ? 0 : M_PI;
+        return vector->x >= 0 ?      0 :  M_PI;
     if (vector->x == 0)
-        return vector->y > 0 ? M_PI_2 : -M_PI_2;
+        return vector->y > 0 ?  M_PI_2 : -M_PI_2;
     if (vector->x == vector->y)
-        return vector->x > 0 ? M_PI_4 : -M_PI_4 * 3;
+        return vector->x > 0 ?  M_PI_4 : -M_PI_4 * 3;
     if (vector->x == -vector->y)
-        return vector->x > 0 ? -M_PI_4 : M_PI_4 * 3;
+        return vector->x > 0 ? -M_PI_4 :  M_PI_4 * 3;
 
-    return atan2(-vector->y, vector->x);
+    return atan2(vector->y, vector->x);
 }
 
 /**
