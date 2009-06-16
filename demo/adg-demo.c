@@ -251,6 +251,9 @@ drawing_path(const DrawingData *data)
 {
     AdgPath *path;
     double x, y;
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    cairo_matrix_t matrix;
 
     path = (AdgPath *) adg_path_new();
 
@@ -278,20 +281,21 @@ drawing_path(const DrawingData *data)
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
     adg_path_line_to(path, data->A, data->D7 / 2);
 
-#if 0
     /* Build the shape by reflecting the current path, reversing the order
      * and joining the result to the current path */
-    path = cairo_copy_path(cr);
-    cpml_segment_from_cairo(&segment, path);
+    cairo_path = adg_path_dup_cpml_path(path);
+
+    cpml_segment_from_cairo(&segment, cairo_path);
     cpml_segment_reverse(&segment);
     adg_matrix_init_reflection(&matrix, 0);
     cpml_segment_transform(&segment, &matrix);
-    path->data[0].header.type = CAIRO_PATH_LINE_TO;
-    cairo_append_path(cr, path);
-    cairo_path_destroy(path);
-    cairo_close_path(cr);
-#endif
+    cairo_path->data[0].header.type = CAIRO_PATH_LINE_TO;
 
+    adg_path_append_cairo_path(path, cairo_path);
+
+    g_free(cairo_path);
+
+    adg_path_close(path);
     return path;
 }
 
