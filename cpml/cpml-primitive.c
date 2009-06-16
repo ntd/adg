@@ -224,16 +224,23 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
 
     cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
 
-    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH) {
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_CLOSE_PATH:
         path_data = cpml_primitive_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
-    } else if (primitive->data->header.type == CAIRO_PATH_ARC_TO) {
+        break;
+
+    case CAIRO_PATH_ARC_TO:
         cpml_arc_to_cairo(primitive, cr);
-    } else {
+        break;
+
+    default:
         path.status = CAIRO_STATUS_SUCCESS;
         path.data = primitive->data;
         path.num_data = primitive->data->header.length;
         cairo_append_path(cr, &path);
+        break;
     }
 }
 
