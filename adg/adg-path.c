@@ -57,6 +57,7 @@ static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
 static void             clear_cairo_path        (AdgPath        *path);
 static cairo_path_t *   get_cairo_path          (AdgPath        *path);
+static cairo_path_t *   get_cpml_path           (AdgPath        *path);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t *src);
 static void             append_valist           (AdgPath        *path,
@@ -167,32 +168,64 @@ adg_path_get_cairo_path(AdgPath *path)
  * Gets a pointer to the cairo path structure of @path. The return
  * value is owned by @path and must not be freed.
  *
- * This function is similar to adg_path_get_cairo_path() but has
+ * This function is similar to adg_path_get_cairo_path() but with
  * two important differences: firstly the arc primitives are not
- * expanded to Bézier curves so the returned path is effectively
- * the path stored internally in @path. Secondly, the returned
- * path is not read-only.
+ * expanded to Bézier curves and secondly the returned path is
+ * not read-only. This means it is allowed to modify the returned
+ * path as long as its size is retained and its data contains a
+ * valid path.
  *
- * The returned path is allowed to be modified as long as its size
- * is retained and it keeps a valid path. Also, after modifying
- * @path the returned path has no meaning and is likely to contain
- * plain garbage.
+ * Keep in mind any changes to @path makes the value returned by
+ * this function useless, as it is likely to contain plain garbage.
  *
  * Return value: a pointer to the internal cpml path or %NULL on errors
  **/
 cairo_path_t *
 adg_path_get_cpml_path(AdgPath *path)
 {
-    cairo_path_t *cpml_path;
-
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
     clear_cairo_path(path);
 
-    cpml_path = &path->priv->cpml_path;
+    return get_cpml_path(path);
+}
+
+/**
+ * adg_path_dup_cpml_path:
+ * @path: an #AdgPath
+ *
+ * Gets a duplicate of the cairo path structure of @path. The return
+ * value should be freed with g_free(). The returned #cairo_path_t
+ * struct also contains the #cairo_path_data_t array in the same
+ * chunk of memory, so a g_free() to the returned pointer also frees
+ * the data array.
+ *
+ * Although quite similar to adg_path_get_cpml_path(), the use case
+ * of this method is different: being a duplicate, modifying the
+ * returned path does not modify @path itsself.
+ *
+ * Return value: a newly allocated #cairo_path_t pointer to be freed
+ *               with g_free() or %NULL on errors
+ **/
+cairo_path_t *
+adg_path_dup_cpml_path(AdgPath *path)
+{
+    cairo_path_t *cpml_path;
+    gsize head_size, data_size;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    head_size = sizeof(cairo_path_t);
+    data_size = sizeof(cairo_path_data_t) * path->priv->path->len;
+
+    /* Both the cairo_path_t struct and the cairo_path_data_t array
+     * are stored in the same chunk of memory, so only a single
+     * g_free() is needed */
+    cpml_path = g_malloc(head_size + data_size);
     cpml_path->status = CAIRO_STATUS_SUCCESS;
-    cpml_path->data = (cairo_path_data_t *) path->priv->path->data;
+    cpml_path->data = (cairo_path_data_t *) ((gchar *) cpml_path + head_size);
     cpml_path->num_data = path->priv->path->len;
+    memcpy(cpml_path->data, path->priv->path->data, data_size);
 
     return cpml_path;
 }
@@ -601,6 +634,18 @@ get_cairo_path(AdgPath *path)
     cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
     
     return cairo_path;
+}
+
+static cairo_path_t *
+get_cpml_path(AdgPath *path)
+{
+    cairo_path_t *cpml_path = &path->priv->cpml_path;
+
+    cpml_path->status = CAIRO_STATUS_SUCCESS;
+    cpml_path->data = (cairo_path_data_t *) path->priv->path->data;
+    cpml_path->num_data = path->priv->path->len;
+
+    return cpml_path;
 }
 
 static GArray *
