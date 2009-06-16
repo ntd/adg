@@ -265,7 +265,7 @@ drawing_path(const DrawingData *data)
     adg_path_line_to(path, data->A - data->B + data->LD3, data->D3 / 2 - CHAMFER);
     x = data->A - data->B + data->LD3 + data->RD34;
     y = data->D4 / 2 + data->RD34;
-    adg_path_arc(path, x, y, data->RD34, G_PI, G_PI_2*3);
+    adg_path_arc(path, x, y, data->RD34, G_PI, -G_PI_2);
     adg_path_line_to(path, data->A - data->C - data->LD5, data->D4 / 2);
     y = (data->D4 - data->D5) / 2;
     adg_path_line_to(path, data->A - data->C - data->LD5 + y, data->D4 / 2 - y);
