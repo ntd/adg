@@ -75,7 +75,8 @@ static cairo_bool_t     get_center      (const CpmlPair *p,
                                          CpmlPair       *dest);
 static void             get_angles      (const CpmlPair *p,
                                          const CpmlPair *center,
-                                         CpmlPair       *angles);
+                                         double         *start,
+                                         double         *end);
 static void             arc_to_curve    (CpmlPrimitive  *curve,
                                          const CpmlPair *center,
                                          double          r,
@@ -147,14 +148,14 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
         *r = cpml_pair_distance(&p[0], &l_center);
 
     if (start != NULL || end != NULL) {
-        CpmlPair angles;
+        double l_start, l_end;
 
-        get_angles(p, &l_center, &angles);
+        get_angles(p, &l_center, &l_start, &l_end);
 
         if (start != NULL)
-            *start = angles.x;
+            *start = l_start;
         if (end != NULL)
-            *end = angles.y;
+            *end = l_end;
     }
 
     return 1;
@@ -429,37 +430,35 @@ get_center(const CpmlPair *p, CpmlPair *dest)
 }
 
 static void
-get_angles(const CpmlPair *p, const CpmlPair *center, CpmlPair *angles)
+get_angles(const CpmlPair *p, const CpmlPair *center,
+           double *start, double *end)
 {
     CpmlVector vector;
-    double start, mid, end;
+    double mid;
 
     /* Calculate the starting angle */
     cpml_pair_sub(cpml_pair_copy(&vector, &p[0]), center);
-    start = cpml_vector_angle(&vector);
+    *start = cpml_vector_angle(&vector);
 
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
         /* When p[0] and p[2] are cohincidents, p[0]..p[1] is the diameter
          * of a circle: return by convention start=start end=start+2PI */
-        end = start + M_PI*2;
+        *end = *start + M_PI*2;
     } else {
         /* Calculate the mid and end angle */
         cpml_pair_sub(cpml_pair_copy(&vector, &p[1]), center);
         mid = cpml_vector_angle(&vector);
         cpml_pair_sub(cpml_pair_copy(&vector, &p[2]), center);
-        end = cpml_vector_angle(&vector);
+        *end = cpml_vector_angle(&vector);
 
-        if (end > start) {
-            if (mid > end || mid < start)
-                start += M_PI*2;
+        if (*end > *start) {
+            if (mid > *end || mid < *start)
+                *start += M_PI*2;
         } else {
-            if (mid < end || mid > start)
-                end += M_PI*2;
+            if (mid < *end || mid > *start)
+                *end += M_PI*2;
         }
     }
-
-    angles->x = start;
-    angles->y = end;
 }
 
 static void
