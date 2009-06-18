@@ -29,7 +29,8 @@ adg_h_sources=			adg.h \
 				adg-title-block.h \
 				adg-toy-text.h \
 				adg-translatable.h \
-				adg-util.h
+				adg-util.h \
+				adg-widget.h
 adg_built_h_sources=		adg-type-builtins.h
 adg_private_h_sources=		adg-adim-private.h \
 				adg-arrow-style-private.h \
@@ -49,7 +50,8 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-stroke-private.h \
 				adg-style-private.h \
 				adg-title-block-private.h \
-				adg-toy-text-private.h
+				adg-toy-text-private.h \
+				adg-widget-private.h
 adg_built_private_h_sources= 
 adg_c_sources=			adg-adim.c \
 				adg-arrow-style.c \
@@ -75,7 +77,8 @@ adg_c_sources=			adg-adim.c \
 				adg-title-block.c \
 				adg-toy-text.c \
 				adg-translatable.c \
-				adg-util.c
+				adg-util.c \
+				adg-widget.c
 adg_built_c_sources=		adg-type-builtins.c
 
 # targets
