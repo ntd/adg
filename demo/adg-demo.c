@@ -5,18 +5,18 @@
 
 
 static AdgCanvas *      ldim_canvas             (void);
-static void             ldim_expose             (GtkWidget      *widget,
-                                                 GdkEventExpose *event,
-                                                 AdgCanvas      *canvas);
+gboolean                ldim_configure_event    (GtkWidget      *widget,
+                                                 GdkEventConfigure *event,
+                                                 gpointer        user_data);
 static AdgCanvas *      drawing_canvas          (void);
-static void             drawing_expose          (GtkWidget      *widget,
-                                                 GdkEventExpose *event,
-                                                 AdgCanvas      *canvas);
-static void             to_pdf                  (AdgCanvas      *canvas,
+gboolean                drawing_configure_event (GtkWidget      *widget,
+                                                 GdkEventConfigure *event,
+                                                 gpointer        user_data);
+static void             to_pdf                  (AdgWidget      *widget,
                                                  GtkWidget      *caller);
-static void             to_png                  (AdgCanvas      *canvas,
+static void             to_png                  (AdgWidget      *widget,
                                                  GtkWidget      *caller);
-static void             to_ps                   (AdgCanvas      *canvas,
+static void             to_ps                   (AdgWidget      *widget,
                                                  GtkWidget      *caller);
 
 
@@ -26,16 +26,10 @@ main(gint argc, gchar **argv)
     gchar *path;
     GtkBuilder *builder;
     GError *error;
-    GtkWidget *window;
-    AdgCanvas *ldim, *drawing;
+    GtkWidget *window, *ldim, *drawing;
 
     gtk_init(&argc, &argv);
 
-    /* Get the canvas populated by the examples */
-    ldim = ldim_canvas();
-    drawing = drawing_canvas();
-
-    /* User interface stuff */
     path = demo_find_data_file("adg-demo.ui");
     if (path == NULL) {
         g_print("adg-demo.ui not found!\n");
@@ -53,17 +47,21 @@ main(gint argc, gchar **argv)
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
 
+    ldim = (GtkWidget *) gtk_builder_get_object(builder, "areaLDim");
+    adg_widget_set_canvas(ADG_WIDGET(ldim), ldim_canvas());
+    g_signal_connect(ldim, "configure-event",
+                     G_CALLBACK(ldim_configure_event), NULL);
+
+    drawing = (GtkWidget *) gtk_builder_get_object(builder, "areaDrawing");
+    adg_widget_set_canvas(ADG_WIDGET(drawing), drawing_canvas());
+    g_signal_connect(drawing, "configure-event",
+                     G_CALLBACK(drawing_configure_event), NULL);
+
     /* Connect signals */
     g_signal_connect(window, "delete-event",
                      G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
                      "clicked", G_CALLBACK(gtk_main_quit), NULL);
-
-    g_signal_connect(gtk_builder_get_object(builder, "areaLDim"),
-                     "expose-event", G_CALLBACK(ldim_expose), ldim);
-
-    g_signal_connect(gtk_builder_get_object(builder, "areaDrawing"),
-                     "expose-event", G_CALLBACK(drawing_expose), drawing);
     g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPng"),
                              "clicked", G_CALLBACK(to_png), drawing);
     g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPdf"),
@@ -120,37 +118,29 @@ ldim_canvas(void)
     return canvas;
 }
 
-static void
-ldim_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
+gboolean
+ldim_configure_event(GtkWidget *widget, GdkEventConfigure *event,
+                     gpointer user_data)
 {
-    cairo_t *cr;
-    gint width, height;
-    double xscale, yscale, scale;
-    AdgMatrix matrix;
+    AdgCanvas *canvas = adg_widget_get_canvas(ADG_WIDGET(widget));
 
-    cr = gdk_cairo_create(widget->window);
-    width = widget->allocation.width;
-    height = widget->allocation.height;
+    if (canvas != NULL) {
+        double xscale, yscale, scale;
+        AdgMatrix matrix;
 
-    /* Fit ldim in horizontal or vertical space keeping the aspect ratio:
-     * the lesser scale factor will be used */
-    xscale = (double) (width - 20) / 10;
-    yscale = (double) (height - 90) / 10;
+        /* Fit ldim in horizontal or vertical space keeping the aspect ratio:
+         * the lesser scale factor will be used */
+        xscale = (double) (event->width - 20) / 10;
+        yscale = (double) (event->height - 90) / 10;
+        scale = xscale < yscale ? xscale : yscale;
 
-    if (xscale < yscale)
-        scale = xscale;
-    else
-        scale = yscale;
+        cairo_matrix_init_translate(&matrix, 10, 80);
+        cairo_matrix_scale(&matrix, scale, scale);
+        cairo_matrix_translate(&matrix, 0, 10);
+        adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
+    }
 
-    cairo_matrix_init_translate(&matrix, 10, 80);
-    cairo_matrix_scale(&matrix, scale, scale);
-    cairo_matrix_translate(&matrix, 0, 10);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
-
-    /* Rendering process */
-    adg_entity_render(ADG_ENTITY(canvas), cr);
-
-    cairo_destroy(cr);
+    return TRUE;
 }
 
 
@@ -199,30 +189,26 @@ drawing_canvas(void)
     return canvas;
 }
 
-static void
-drawing_expose(GtkWidget *widget, GdkEventExpose *event, AdgCanvas *canvas)
+gboolean
+drawing_configure_event(GtkWidget *widget, GdkEventConfigure *event,
+                        gpointer user_data)
 {
-    cairo_t *cr;
-    gint width, height;
-    double scale;
-    AdgMatrix matrix;
+    AdgCanvas *canvas = adg_widget_get_canvas(ADG_WIDGET(widget));
 
-    cr = gdk_cairo_create(widget->window);
-    width = widget->allocation.width;
-    height = widget->allocation.height;
+    if (canvas != NULL) {
+        double scale;
+        AdgMatrix matrix;
 
-    /* Hardcoding sizes is a really ugly way to scale a drawing but... */
-    scale = (double) (width - 100 - 180) / 52.3;
+        /* Hardcoding sizes is a really ugly way to scale a drawing but... */
+        scale = (double) (event->width - 100 - 180) / 52.3;
 
-    cairo_matrix_init_translate(&matrix, 100, 70);
-    cairo_matrix_scale(&matrix, scale, scale);
-    cairo_matrix_translate(&matrix, 0, 6);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
+        cairo_matrix_init_translate(&matrix, 100, 70);
+        cairo_matrix_scale(&matrix, scale, scale);
+        cairo_matrix_translate(&matrix, 0, 10);
+        adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
+    }
 
-    /* Rendering process */
-    adg_entity_render(ADG_ENTITY(canvas), cr);
-
-    cairo_destroy(cr);
+    return TRUE;
 }
 
 static void
@@ -460,7 +446,7 @@ missing_feature(GtkWidget *caller, const gchar *feature)
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
 
 static void
-to_png(AdgCanvas *canvas, GtkWidget *caller)
+to_png(AdgWidget *widget, GtkWidget *caller)
 {
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -470,7 +456,7 @@ to_png(AdgCanvas *canvas, GtkWidget *caller)
     cairo_surface_destroy(surface);
 
     /* Rendering process */
-    adg_entity_render(ADG_ENTITY(canvas), cr);
+    adg_entity_render(ADG_ENTITY(adg_widget_get_canvas(widget)), cr);
 
     cairo_show_page(cr);
     cairo_surface_write_to_png(surface, "test.png");
@@ -482,7 +468,7 @@ to_png(AdgCanvas *canvas, GtkWidget *caller)
 #else
 
 static void
-to_png(AdgCanvas *canvas, GtkWidget *caller)
+to_png(AdgWidget *widget, GtkWidget *caller)
 {
     missing_feature(caller, "PNG");
 }
@@ -494,7 +480,7 @@ to_png(AdgCanvas *canvas, GtkWidget *caller)
 #include <cairo-pdf.h>
 
 static void
-to_pdf(AdgCanvas *canvas, GtkWidget *caller)
+to_pdf(AdgWidget *widget, GtkWidget *caller)
 {
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -503,7 +489,7 @@ to_pdf(AdgCanvas *canvas, GtkWidget *caller)
     cr = cairo_create(surface);
     cairo_surface_destroy(surface);
 
-    adg_entity_render(ADG_ENTITY(canvas), cr);
+    adg_entity_render(ADG_ENTITY(adg_widget_get_canvas(widget)), cr);
 
     cairo_show_page(cr);
     cairo_destroy(cr);
@@ -514,7 +500,7 @@ to_pdf(AdgCanvas *canvas, GtkWidget *caller)
 #else
 
 static void
-to_pdf(AdgCanvas *canvas, GtkWidget *caller)
+to_pdf(AdgWidget *widget, GtkWidget *caller)
 {
     missing_feature(caller, "PDF");
 }
@@ -526,7 +512,7 @@ to_pdf(AdgCanvas *canvas, GtkWidget *caller)
 #include <cairo-ps.h>
 
 static void
-to_ps(AdgCanvas *canvas, GtkWidget *caller)
+to_ps(AdgWidget *widget, GtkWidget *caller)
 {
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -548,7 +534,7 @@ to_ps(AdgCanvas *canvas, GtkWidget *caller)
     cr = cairo_create(surface);
     cairo_surface_destroy(surface);
 
-    adg_entity_render(ADG_ENTITY(canvas), cr);
+    adg_entity_render(ADG_ENTITY(adg_widget_get_canvas(widget)), cr);
 
     cairo_show_page(cr);
     cairo_destroy(cr);
@@ -559,7 +545,7 @@ to_ps(AdgCanvas *canvas, GtkWidget *caller)
 #else
 
 static void
-to_ps(AdgCanvas *canvas, GtkWidget *caller)
+to_ps(AdgWidget *widget, GtkWidget *caller)
 {
     missing_feature(caller, "PostScript");
 }
