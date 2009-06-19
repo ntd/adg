@@ -164,6 +164,23 @@ set_property(GObject *object,
 
 
 /**
+ * adg_widget_new:
+ * @path: the #AdgPath to stroke
+ *
+ * Creates a new #AdgWidget.
+ *
+ * Return value: the newly created widget
+ **/
+GtkWidget *
+adg_widget_new(AdgCanvas *canvas)
+{
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
+
+    return (GtkWidget *) g_object_new(ADG_TYPE_WIDGET, "canvas", canvas, NULL);
+}
+
+
+/**
  * adg_widget_get_canvas:
  * @widget: an #AdgWidget
  *
@@ -201,32 +218,17 @@ adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 static gboolean
 expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
+    AdgWidget *adg_widget;
     AdgCanvas *canvas;
-    cairo_t *cr;
-    gint width, height;
-    double scale;
-    AdgMatrix matrix;
 
-    canvas = ADG_WIDGET(widget)->priv->canvas;
-    if (canvas == NULL)
-        return FALSE;
+    adg_widget = (AdgWidget *) widget;
+    canvas = adg_widget->priv->canvas;
 
-    cr = gdk_cairo_create(widget->window);
-    width = widget->allocation.width;
-    height = widget->allocation.height;
-
-    /* Hardcoding sizes is a really ugly way to scale a drawing but... */
-    scale = (double) (width - 100 - 180) / 52.3;
-
-    cairo_matrix_init_translate(&matrix, 100, 70);
-    cairo_matrix_scale(&matrix, scale, scale);
-    cairo_matrix_translate(&matrix, 0, 6);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
-
-    /* Rendering process */
-    adg_entity_render(ADG_ENTITY(canvas), cr);
-
-    cairo_destroy(cr);
+    if (canvas != NULL) {
+        cairo_t *cr = gdk_cairo_create(widget->window);
+        adg_entity_render(ADG_ENTITY(canvas), cr);
+        cairo_destroy(cr);
+    }
 
     return TRUE;
 }
@@ -238,6 +240,9 @@ set_canvas(AdgWidget *widget, AdgCanvas *canvas)
         g_object_unref(widget->priv->canvas);
 
     widget->priv->canvas = canvas;
+
+    if (canvas != NULL)
+        g_object_ref(widget->priv->canvas);
 
     g_signal_emit(widget, signals[CANVAS_CHANGED], 0);
 }

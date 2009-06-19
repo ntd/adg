@@ -40,5 +40,6 @@
 #include <adg/adg-translatable.h>
 #include <adg/adg-type-builtins.h>
 #include <adg/adg-util.h>
+#include <adg/adg-widget.h>
 
 #endif /* __ADG_H__ */
