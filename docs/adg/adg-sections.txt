@@ -76,6 +76,27 @@ ADG_CONTEXT_GET_CLASS
 </SECTION>
 
 <SECTION>
+<FILE>widget</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgWidget
+<SUBSECTION>
+adg_widget_new
+<SUBSECTION>
+adg_widget_get_canvas
+adg_widget_set_canvas
+<SUBSECTION Standard>
+AdgWidgetClass
+AdgWidgetPrivate
+adg_widget_get_type
+ADG_WIDGET
+ADG_IS_WIDGET
+ADG_TYPE_WIDGET
+ADG_WIDGET_CLASS
+ADG_IS_WIDGET_CLASS
+ADG_WIDGET_GET_CLASS
+</SECTION>
+
+<SECTION>
 <FILE>style</FILE>
 <INCLUDE>adg/adg.h</INCLUDE>
 <SUBSECTION>
