@@ -29,8 +29,6 @@
 #include "adg-widget-private.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((GObjectClass *) adg_widget_parent_class)
-
 
 enum {
     PROP_0,
@@ -52,10 +50,21 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static gboolean         expose_event            (GtkWidget      *widget,
-                                                 GdkEventExpose *event);
 static void             set_canvas              (AdgWidget      *widget,
                                                  AdgCanvas      *canvas);
+static gboolean         expose_event            (GtkWidget      *widget,
+                                                 GdkEventExpose *event);
+static gboolean         scroll_event            (GtkWidget      *widget,
+                                                 GdkEventScroll *event);
+static gboolean         button_press_event      (GtkWidget      *widget,
+                                                 GdkEventButton *event);
+static gboolean         motion_notify_event     (GtkWidget      *widget,
+                                                 GdkEventMotion *event);
+static gboolean         get_transformation      (GtkWidget      *widget,
+                                                 AdgMatrix      *model,
+                                                 AdgMatrix      *inverted);
+static void             set_transformation      (GtkWidget      *widget,
+                                                 const AdgMatrix *model);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -80,6 +89,9 @@ adg_widget_class_init(AdgWidgetClass *klass)
     gobject_class->set_property = set_property;
 
     widget_class->expose_event = expose_event;
+    widget_class->scroll_event = scroll_event;
+    widget_class->button_press_event = button_press_event;
+    widget_class->motion_notify_event = motion_notify_event;
 
     param = g_param_spec_object("canvas",
                                 P_("Canvas"),
@@ -110,21 +122,27 @@ adg_widget_init(AdgWidget *widget)
                                                          AdgWidgetPrivate);
 
     priv->canvas = NULL;
+    priv->x_event = 0;
+    priv->y_event = 0;
 
     widget->priv = priv;
+
+    /* Enable GDK events to catch wheel rotation and drag */
+    gtk_widget_add_events((GtkWidget *) widget,
+                          GDK_BUTTON2_MOTION_MASK|GDK_SCROLL_MASK);
 }
 
 static void
 dispose(GObject *object)
 {
-    AdgWidget *widget = (AdgWidget *) object;
+    AdgWidgetPrivate *priv = ((AdgWidget *) object)->priv;
 
-    if (widget->priv->canvas != NULL) {
-        g_object_unref(widget->priv->canvas);
-        widget->priv->canvas = NULL;
+    if (priv->canvas != NULL) {
+        g_object_unref(priv->canvas);
+        priv->canvas = NULL;
     }
 
-    PARENT_CLASS->dispose(object);
+    G_OBJECT_CLASS(adg_widget_parent_class)->dispose(object);
 }
 
 static void
@@ -215,24 +233,6 @@ adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 }
 
 
-static gboolean
-expose_event(GtkWidget *widget, GdkEventExpose *event)
-{
-    AdgWidget *adg_widget;
-    AdgCanvas *canvas;
-
-    adg_widget = (AdgWidget *) widget;
-    canvas = adg_widget->priv->canvas;
-
-    if (canvas != NULL) {
-        cairo_t *cr = gdk_cairo_create(widget->window);
-        adg_entity_render(ADG_ENTITY(canvas), cr);
-        cairo_destroy(cr);
-    }
-
-    return TRUE;
-}
-
 static void
 set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 {
@@ -245,4 +245,144 @@ set_canvas(AdgWidget *widget, AdgCanvas *canvas)
         g_object_ref(widget->priv->canvas);
 
     g_signal_emit(widget, signals[CANVAS_CHANGED], 0);
+}
+
+static gboolean
+expose_event(GtkWidget *widget, GdkEventExpose *event)
+{
+    AdgCanvas *canvas;
+    GtkWidgetClass *parent_class;
+
+    canvas = ((AdgWidget *) widget)->priv->canvas;
+    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
+
+    if (canvas != NULL) {
+        cairo_t *cr = gdk_cairo_create(widget->window);
+        adg_entity_render((AdgEntity *) canvas, cr);
+        cairo_destroy(cr);
+    }
+
+    if (parent_class->expose_event == NULL)
+        return FALSE;
+
+    return parent_class->expose_event(widget, event);
+}
+
+static gboolean
+scroll_event(GtkWidget *widget, GdkEventScroll *event)
+{
+    GtkWidgetClass *parent_class;
+    AdgWidgetPrivate *priv;
+    AdgMatrix model, inverted;
+
+    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
+    priv = ((AdgWidget *) widget)->priv;
+
+    if ((event->direction == GDK_SCROLL_UP ||
+         event->direction == GDK_SCROLL_DOWN) &&
+        get_transformation(widget, &model, &inverted)) {
+        double factor, x, y;
+
+        if (event->direction == GDK_SCROLL_UP) {
+            factor = 1.05;
+        } else {
+            factor = 1. / 1.05;
+        }
+
+        x = event->x;
+        y = event->y;
+
+        cairo_matrix_transform_point(&inverted, &x, &y);
+
+        cairo_matrix_scale(&model, factor, factor);
+        cairo_matrix_translate(&model, x/factor - x, y/factor - y);
+
+        set_transformation(widget, &model);
+
+        gtk_widget_queue_draw(widget);
+    }
+
+    if (parent_class->scroll_event == NULL)
+        return FALSE;
+
+    return parent_class->scroll_event(widget, event);
+}
+
+static gboolean
+button_press_event(GtkWidget *widget, GdkEventButton *event)
+{
+    GtkWidgetClass *parent_class;
+    AdgWidgetPrivate *priv;
+
+    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
+    priv = ((AdgWidget *) widget)->priv;
+
+    if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
+        priv->x_event = event->x;
+        priv->y_event = event->y;
+    }
+
+    if (parent_class->button_press_event == NULL)
+        return FALSE;
+
+    return parent_class->button_press_event(widget, event);
+}
+
+static gboolean
+motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
+{
+    GtkWidgetClass *parent_class;
+    AdgWidgetPrivate *priv;
+    AdgMatrix model, inverted;
+
+    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
+    priv = ((AdgWidget *) widget)->priv;
+
+    if ((event->state & GDK_BUTTON2_MASK) > 0 &&
+        get_transformation(widget, &model, &inverted)) {
+        double x, y;
+
+        x = event->x - priv->x_event;
+        y = event->y - priv->y_event;
+
+        cairo_matrix_transform_distance(&inverted, &x, &y);
+        cairo_matrix_translate(&model, x, y);
+        priv->x_event = event->x;
+        priv->y_event = event->y;
+
+        set_transformation(widget, &model);
+
+        gtk_widget_queue_draw(widget);
+    }
+
+    if (parent_class->motion_notify_event == NULL)
+        return FALSE;
+
+    return parent_class->motion_notify_event(widget, event);
+}
+
+static gboolean
+get_transformation(GtkWidget *widget, AdgMatrix *model, AdgMatrix *inverted)
+{
+    AdgCanvas *canvas;
+    const AdgMatrix *src;
+
+    canvas = ((AdgWidget *) widget)->priv->canvas;
+    if (canvas == NULL)
+        return FALSE;
+
+    src = adg_container_get_model_transformation((AdgContainer *) canvas);
+
+    adg_matrix_copy(model, src);
+    adg_matrix_copy(inverted, src);
+    return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;
+}
+
+static void
+set_transformation(GtkWidget *widget, const AdgMatrix *model)
+{
+    AdgCanvas *canvas = ((AdgWidget *) widget)->priv->canvas;
+
+    if (canvas != NULL)
+        adg_container_set_model_transformation((AdgContainer *) canvas, model);
 }

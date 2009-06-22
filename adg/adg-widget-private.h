@@ -28,6 +28,8 @@ G_BEGIN_DECLS
 
 struct _AdgWidgetPrivate {
     AdgCanvas   *canvas;
+    gdouble      x_event;
+    gdouble      y_event;
 };
 
 G_END_DECLS
