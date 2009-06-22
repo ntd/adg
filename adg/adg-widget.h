@@ -59,6 +59,9 @@ GtkWidget *             adg_widget_new          (AdgCanvas      *canvas);
 AdgCanvas *             adg_widget_get_canvas   (AdgWidget      *widget);
 void                    adg_widget_set_canvas   (AdgWidget      *widget,
                                                  AdgCanvas      *canvas);
+gdouble                 adg_widget_get_factor   (AdgWidget      *widget);
+void                    adg_widget_set_factor   (AdgWidget      *widget,
+                                                 gdouble         factor);
 
 G_END_DECLS
 

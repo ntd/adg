@@ -32,7 +32,8 @@
 
 enum {
     PROP_0,
-    PROP_CANVAS
+    PROP_CANVAS,
+    PROP_FACTOR
 };
 
 enum {
@@ -100,6 +101,13 @@ adg_widget_class_init(AdgWidgetClass *klass)
                                 G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CANVAS, param);
 
+    param = g_param_spec_double("factor",
+                                P_("Factor"),
+                                P_("The factor used in zooming in and out"),
+                                1., G_MAXDOUBLE, 1.05,
+                                G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FACTOR, param);
+
     /**
      * AdgWidget::canvas-changed:
      * @widget: an #AdgWidget
@@ -122,6 +130,7 @@ adg_widget_init(AdgWidget *widget)
                                                          AdgWidgetPrivate);
 
     priv->canvas = NULL;
+    priv->factor = 1.05;
     priv->x_event = 0;
     priv->y_event = 0;
 
@@ -156,6 +165,10 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         g_value_set_object(value, widget->priv->canvas);
         break;
 
+    case PROP_FACTOR:
+        g_value_set_double(value, widget->priv->factor);
+        break;
+
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -172,6 +185,10 @@ set_property(GObject *object,
 
     case PROP_CANVAS:
         set_canvas(widget, g_value_get_object(value));
+        break;
+
+    case PROP_FACTOR:
+        widget->priv->factor = g_value_get_double(value);
         break;
 
     default:
@@ -205,7 +222,7 @@ adg_widget_new(AdgCanvas *canvas)
  * Gets the canvas associated to @widget.
  *
  * Return value: the requested #AdgCanvas object or %NULL on errors
- */
+ **/
 AdgCanvas *
 adg_widget_get_canvas(AdgWidget *widget)
 {
@@ -221,7 +238,7 @@ adg_widget_get_canvas(AdgWidget *widget)
  *
  * Sets a new canvas on @widget. The old canvas, if presents, is
  * unreferenced.
- */
+ **/
 void
 adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 {
@@ -230,6 +247,43 @@ adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
     set_canvas(widget, canvas);
 
     g_object_notify((GObject *) widget, "canvas");
+}
+
+/**
+ * adg_widget_get_factor:
+ * @widget: an #AdgWidget
+ *
+ * Gets the zoom factor associated to @widget. The zoom factor is
+ * directly used to zoom in (that is, the default zoom factor of
+ * 1.05 will zoom of 5% every iteration) and it is reversed while
+ * zooming out (that is, the default factor will use 1/1.05).
+ *
+ * Return value: the requested zoom factor or 0 on error
+ **/
+gdouble
+adg_widget_get_factor(AdgWidget *widget)
+{
+    g_return_val_if_fail(ADG_IS_WIDGET(widget), 0.);
+
+    return widget->priv->factor;
+}
+
+/**
+ * adg_widget_set_factor:
+ * @widget: an #AdgWidget
+ * @factor: the new zoom factor
+ *
+ * Sets a new zoom factor to @widget. If the factor is less than
+ * 1, it will be clamped to 1.
+ **/
+void
+adg_widget_set_factor(AdgWidget *widget, gdouble factor)
+{
+    g_return_if_fail(ADG_IS_WIDGET(widget));
+
+    widget->priv->factor = CLAMP(factor, 1., G_MAXDOUBLE);
+
+    g_object_notify((GObject *) widget, "factor");
 }
 
 
@@ -284,9 +338,9 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
         double factor, x, y;
 
         if (event->direction == GDK_SCROLL_UP) {
-            factor = 1.05;
+            factor = priv->factor;
         } else {
-            factor = 1. / 1.05;
+            factor = 1. / priv->factor;
         }
 
         x = event->x;
