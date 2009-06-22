@@ -580,7 +580,7 @@ adg_container_get_model_transformation(AdgContainer *container)
  **/
 void
 adg_container_set_model_transformation(AdgContainer *container,
-                                       AdgMatrix *transformation)
+                                       const AdgMatrix *transformation)
 {
     AdgEntity *entity;
     AdgEntity *parent;
@@ -622,7 +622,7 @@ adg_container_get_paper_transformation(AdgContainer *container)
  **/
 void
 adg_container_set_paper_transformation(AdgContainer *container,
-                                       AdgMatrix *transformation)
+                                       const AdgMatrix *transformation)
 {
     AdgEntity *entity;
     AdgEntity *parent;
