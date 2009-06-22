@@ -5,13 +5,7 @@
 
 
 static AdgCanvas *      ldim_canvas             (void);
-gboolean                ldim_configure_event    (GtkWidget      *widget,
-                                                 GdkEventConfigure *event,
-                                                 gpointer        user_data);
 static AdgCanvas *      drawing_canvas          (void);
-gboolean                drawing_configure_event (GtkWidget      *widget,
-                                                 GdkEventConfigure *event,
-                                                 gpointer        user_data);
 static void             to_pdf                  (AdgWidget      *widget,
                                                  GtkWidget      *caller);
 static void             to_png                  (AdgWidget      *widget,
@@ -49,13 +43,9 @@ main(gint argc, gchar **argv)
 
     ldim = (GtkWidget *) gtk_builder_get_object(builder, "areaLDim");
     adg_widget_set_canvas(ADG_WIDGET(ldim), ldim_canvas());
-    g_signal_connect(ldim, "configure-event",
-                     G_CALLBACK(ldim_configure_event), NULL);
 
     drawing = (GtkWidget *) gtk_builder_get_object(builder, "areaDrawing");
     adg_widget_set_canvas(ADG_WIDGET(drawing), drawing_canvas());
-    g_signal_connect(drawing, "configure-event",
-                     G_CALLBACK(drawing_configure_event), NULL);
 
     /* Connect signals */
     g_signal_connect(window, "delete-event",
@@ -85,9 +75,11 @@ main(gint argc, gchar **argv)
 static AdgCanvas *
 ldim_canvas(void)
 {
-    AdgPath   *path;
+    AdgPath *path;
     AdgCanvas *canvas;
+    AdgContainer *container;
     AdgEntity *entity;
+    AdgMatrix transformation;
 
     /* Build the path model */
     path = (AdgPath *) adg_path_new();
@@ -104,43 +96,25 @@ ldim_canvas(void)
 
     /* Populate the canvas */
     canvas = adg_canvas_new();
+    container = (AdgContainer *) canvas;
 
     entity = adg_stroke_new(path);
-    adg_container_add(ADG_CONTAINER(canvas), entity);
+    adg_container_add(container, entity);
 
     entity = adg_ldim_new_full_explicit(2, -10, 8, -10, ADG_DIR_UP, 0, -10);
-    adg_container_add(ADG_CONTAINER(canvas), entity);
+    adg_container_add(container, entity);
 
     entity = adg_ldim_new_full_explicit(0, -5, 10, -5, ADG_DIR_UP, 0, -10);
     adg_dim_set_level(ADG_DIM(entity), 2);
-    adg_container_add(ADG_CONTAINER(canvas), entity);
+    adg_container_add(container, entity);
+
+    /* Set a decent starting pan position and zoom */
+    cairo_matrix_init_translate(&transformation, 10, 80);
+    cairo_matrix_scale(&transformation, 39, 39);
+    cairo_matrix_translate(&transformation, 0, 10);
+    adg_container_set_model_transformation(container, &transformation);
 
     return canvas;
-}
-
-gboolean
-ldim_configure_event(GtkWidget *widget, GdkEventConfigure *event,
-                     gpointer user_data)
-{
-    AdgCanvas *canvas = adg_widget_get_canvas(ADG_WIDGET(widget));
-
-    if (canvas != NULL) {
-        double xscale, yscale, scale;
-        AdgMatrix matrix;
-
-        /* Fit ldim in horizontal or vertical space keeping the aspect ratio:
-         * the lesser scale factor will be used */
-        xscale = (double) (event->width - 20) / 10;
-        yscale = (double) (event->height - 90) / 10;
-        scale = xscale < yscale ? xscale : yscale;
-
-        cairo_matrix_init_translate(&matrix, 10, 80);
-        cairo_matrix_scale(&matrix, scale, scale);
-        cairo_matrix_translate(&matrix, 0, 10);
-        adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
-    }
-
-    return TRUE;
 }
 
 
@@ -172,43 +146,29 @@ static AdgCanvas *
 drawing_canvas(void)
 {
     DrawingData data;
-    AdgPath    *path;
-    AdgCanvas  *canvas;
-    AdgEntity  *entity;
+    AdgPath *path;
+    AdgCanvas *canvas;
+    AdgContainer *container;
+    AdgEntity *entity;
+    AdgMatrix transformation;
 
     drawing_get(&data);
     path = drawing_path(&data);
     canvas = adg_canvas_new();
+    container = (AdgContainer *) canvas;
 
     entity = adg_stroke_new(path);
-    adg_container_add(ADG_CONTAINER(canvas), entity);
+    adg_container_add(container, entity);
 
     drawing_add_dimensions(canvas, &data);
     drawing_add_stuff(canvas, &data);
 
+    cairo_matrix_init_translate(&transformation, 100, 70);
+    cairo_matrix_scale(&transformation, 6.883, 6.883);
+    cairo_matrix_translate(&transformation, 0, 10);
+    adg_container_set_model_transformation(container, &transformation);
+
     return canvas;
-}
-
-gboolean
-drawing_configure_event(GtkWidget *widget, GdkEventConfigure *event,
-                        gpointer user_data)
-{
-    AdgCanvas *canvas = adg_widget_get_canvas(ADG_WIDGET(widget));
-
-    if (canvas != NULL) {
-        double scale;
-        AdgMatrix matrix;
-
-        /* Hardcoding sizes is a really ugly way to scale a drawing but... */
-        scale = (double) (event->width - 100 - 180) / 52.3;
-
-        cairo_matrix_init_translate(&matrix, 100, 70);
-        cairo_matrix_scale(&matrix, scale, scale);
-        cairo_matrix_translate(&matrix, 0, 10);
-        adg_container_set_model_transformation(ADG_CONTAINER(canvas), &matrix);
-    }
-
-    return TRUE;
 }
 
 static void
