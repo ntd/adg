@@ -84,6 +84,8 @@ adg_widget_new
 <SUBSECTION>
 adg_widget_get_canvas
 adg_widget_set_canvas
+adg_widget_get_factor
+adg_widget_set_factor
 <SUBSECTION Standard>
 AdgWidgetClass
 AdgWidgetPrivate
