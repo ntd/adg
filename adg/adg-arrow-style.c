@@ -33,8 +33,6 @@
 #include "adg-util.h"
 #include <math.h>
 
-#define PARENT_CLASS ((AdgStyleClass *) adg_arrow_style_parent_class)
-
 
 enum {
     PROP_0,
@@ -244,6 +242,8 @@ void
 adg_arrow_style_render(AdgArrowStyle *arrow_style,
                        cairo_t *cr, CpmlSegment *segment)
 {
+    AdgStyleClass *style_class;
+
     g_return_if_fail(arrow_style != NULL);
     g_return_if_fail(cr != NULL);
     g_return_if_fail(segment != NULL);
@@ -252,7 +252,11 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
     if (arrow_style->priv->renderer == NULL)
         return;
 
-    PARENT_CLASS->apply((AdgStyle *) arrow_style, cr);
+    style_class = (AdgStyleClass *) adg_arrow_style_parent_class;
+
+    if (style_class->apply != NULL)
+        style_class->apply((AdgStyle *) arrow_style, cr);
+
     arrow_style->priv->renderer(arrow_style, cr, segment);
 }
 
