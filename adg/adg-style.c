@@ -38,8 +38,6 @@
 
 #include <string.h>
 
-#define PARENT_CLASS ((GObjectClass *) adg_style_parent_class)
-
 
 enum {
     PROP_0,
