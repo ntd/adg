@@ -32,8 +32,6 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgDimClass *) adg_adim_parent_class)
-
 
 enum {
     PROP_0,
@@ -120,10 +118,12 @@ finalize(GObject *object)
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    ((AdgEntityClass *) PARENT_CLASS)->model_matrix_changed(entity,
-                                                            parent_matrix);
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_adim_parent_class;
 
     /* TODO */
+
+    if (entity_class->model_matrix_changed != NULL)
+        entity_class->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
