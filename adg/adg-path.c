@@ -50,8 +50,6 @@
 
 #include <math.h>
 
-#define PARENT_CLASS    ((AdgModelClass *) adg_path_parent_class)
-
 
 static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
@@ -103,12 +101,17 @@ adg_path_init(AdgPath *path)
 static void
 finalize(GObject *object)
 {
-    AdgPath *path = (AdgPath *) object;
+    AdgPath *path;
+    GObjectClass *object_class;
+
+    path = (AdgPath *) object;
+    object_class = (GObjectClass *) adg_path_parent_class;
 
     g_array_free(path->priv->path, TRUE);
     clear_cairo_path(path);
 
-    ((GObjectClass *) PARENT_CLASS)->finalize(object);
+    if (object_class->finalize != NULL)
+        object_class->finalize(object);
 }
 
 
@@ -600,9 +603,12 @@ adg_path_dump(AdgPath *path)
 static void
 changed(AdgModel *model)
 {
+    AdgModelClass *model_class = (AdgModelClass *) adg_path_parent_class;
+
     adg_path_clear((AdgPath *) model);
 
-    PARENT_CLASS->changed(model);
+    if (model_class->changed != NULL)
+        model_class->changed(model);
 }
 
 static void
