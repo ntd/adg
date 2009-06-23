@@ -51,8 +51,6 @@
 #include "adg-context-private.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_context_parent_class)
-
 
 static AdgStyle *       context_filler          (AdgStyleClass  *style_class,
                                                  gpointer        user_data);
