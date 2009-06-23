@@ -33,8 +33,6 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((GInitiallyUnownedClass *) adg_entity_parent_class)
-
 
 enum {
     PROP_0,
@@ -257,13 +255,16 @@ static void
 dispose(GObject *object)
 {
     AdgEntity *entity;
+    GObjectClass *object_class;
 
     entity = (AdgEntity *) object;
+    object_class = (GObjectClass *) adg_entity_parent_class;
 
     if (entity->priv->parent)
         adg_container_remove(entity->priv->parent, entity);
 
-    PARENT_CLASS->dispose(object);
+    if (object_class->dispose != NULL)
+        object_class->dispose(object);
 }
 
 
