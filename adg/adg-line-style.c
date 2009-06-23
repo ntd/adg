@@ -32,8 +32,6 @@
 #include "adg-intl.h"
 #include "adg-util.h"
 
-#define PARENT_CLASS ((AdgStyleClass *) adg_line_style_parent_class)
-
 
 enum {
     PROP_0,
@@ -444,12 +442,15 @@ static void
 apply(AdgStyle *style, cairo_t *cr)
 {
     AdgLineStyle *line_style;
+    AdgStyleClass *style_class;
     gdouble device_width;
     gdouble dummy = 0.;
 
     line_style = (AdgLineStyle *) style;
+    style_class = (AdgStyleClass *) adg_line_style_parent_class;
 
-    PARENT_CLASS->apply(style, cr);
+    if (style_class->apply != NULL)
+        style_class->apply(style, cr);
 
     device_width = line_style->priv->width;
     cairo_device_to_user_distance(cr, &device_width, &dummy);
