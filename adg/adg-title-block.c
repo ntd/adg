@@ -44,8 +44,6 @@
 #include "adg-title-block-private.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((GObjectClass *) adg_title_block_parent_class)
-
 
 enum {
     PROP_0,
@@ -118,13 +116,18 @@ adg_title_block_init(AdgTitleBlock *title_block)
 static void
 finalize(GObject *object)
 {
-    AdgTitleBlock *title_block = (AdgTitleBlock *) object;
+    AdgTitleBlock *title_block;
+    GObjectClass *object_class;
+
+    title_block = (AdgTitleBlock *) object;
+    object_class = (GObjectClass *) adg_title_block_parent_class;
 
     g_free(title_block->priv->name);
     g_free(title_block->priv->material);
     g_free(title_block->priv->treatment);
 
-    PARENT_CLASS->finalize(object);
+    if (object_class->finalize != NULL)
+        object_class->finalize(object);
 }
 
 
