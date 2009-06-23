@@ -37,8 +37,6 @@
 #include "adg-container-private.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_container_parent_class)
-
 
 enum {
     PROP_0,
@@ -228,11 +226,13 @@ set_property(GObject *object,
 static void
 dispose(GObject *object)
 {
-    AdgContainer *container = (AdgContainer *) object;
+    GObjectClass *object_class = (GObjectClass *) adg_container_parent_class;
 
-    adg_container_foreach(container, G_CALLBACK(adg_entity_unparent), NULL);
+    adg_container_foreach((AdgContainer *) object,
+                          G_CALLBACK(adg_entity_unparent), NULL);
 
-    ((GObjectClass *) PARENT_CLASS)->dispose(object);
+    if (object_class->dispose != NULL)
+        object_class->dispose(object);
 }
 
 
@@ -303,9 +303,14 @@ real_remove(AdgContainer *container, AdgEntity *entity, gpointer user_data)
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    AdgContainer *container = (AdgContainer *) entity;
+    AdgContainer *container;
+    AdgEntityClass *entity_class;
 
-    PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
+    container = (AdgContainer *) entity;
+    entity_class = (AdgEntityClass *) adg_container_parent_class;
+
+    if (entity_class->model_matrix_changed != NULL)
+        entity_class->model_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
         cairo_matrix_multiply(&container->priv->model_matrix,
@@ -322,9 +327,14 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 static void
 paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    AdgContainer *container = (AdgContainer *) entity;
+    AdgContainer *container;
+    AdgEntityClass *entity_class;
 
-    PARENT_CLASS->paper_matrix_changed(entity, parent_matrix);
+    container = (AdgContainer *) entity;
+    entity_class = (AdgEntityClass *) adg_container_parent_class;
+
+    if (entity_class->paper_matrix_changed != NULL)
+        entity_class->paper_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
         cairo_matrix_multiply(&container->priv->paper_matrix,
@@ -358,16 +368,24 @@ get_paper_matrix(AdgEntity *entity)
 static void
 invalidate(AdgEntity *entity)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_container_parent_class;
+
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
-    PARENT_CLASS->invalidate(entity);
+
+    if (entity_class->invalidate)
+        entity_class->invalidate(entity);
 }
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_container_parent_class;
+
     cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
-    PARENT_CLASS->render(entity, cr);
+
+    if (entity_class->render)
+        entity_class->render(entity, cr);
 }
 
 
