@@ -32,8 +32,6 @@
 #include "adg-intl.h"
 #include "adg-util.h"
 
-#define PARENT_CLASS ((AdgStyleClass *) adg_font_style_parent_class)
-
 
 enum {
     PROP_0,
@@ -578,16 +576,19 @@ static void
 apply(AdgStyle *style, cairo_t *cr)
 {
     AdgFontStyle *font_style;
+    AdgStyleClass *style_class;
+    double size;
     cairo_font_options_t *options;
     cairo_matrix_t matrix;
-    double size;
     cairo_matrix_t font_matrix;
 
     font_style = (AdgFontStyle *) style;
+    style_class = (AdgStyleClass *) adg_font_style_parent_class;
     cairo_get_matrix(cr, &matrix);
     size = font_style->priv->size;
 
-    PARENT_CLASS->apply(style, cr);
+    if (style_class->apply != NULL)
+        style_class->apply(style, cr);
 
     if (font_style->priv->family)
         cairo_select_font_face(cr, font_style->priv->family,
