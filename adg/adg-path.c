@@ -94,6 +94,7 @@ adg_path_init(AdgPath *path)
     priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     priv->cairo_path.data = NULL;
     priv->cairo_path.num_data = 0;
+    priv->operator = ADG_OPERATOR_NONE;
 
     path->priv = priv;
 }
@@ -569,6 +570,34 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
         adg_path_append(path, CAIRO_PATH_LINE_TO, &p[0]);
 
     adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
+}
+
+/**
+ * adg_path_chamfer
+ * @path:   an #AdgPath
+ * @delta1: the distance from the intersection point of the current primitive
+ * @delta2: the distance from the intersection point of the next primitive
+ *
+ * A binary operator that generates a chamfer between two primitives.
+ * The first primitive involved is the current primitive, the second will
+ * be the next primitive appended to @path after this call. The second
+ * primitive is required: if the chamfer operation is not properly
+ * terminated not providing the second primitive, any API accessing the
+ * path in reading mode will fail.
+ **/
+void
+adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    if (!path->priv->cp_is_valid) {
+        g_warning("Requested a chamfer operation without a current primitive");
+        return;
+    }
+
+    path->priv->operator = ADG_OPERATOR_CHAMFER;
+    path->priv->operator_data.chamfer.delta1 = delta1;
+    path->priv->operator_data.chamfer.delta2 = delta2;
 }
 
 

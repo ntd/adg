@@ -26,12 +26,30 @@
 
 G_BEGIN_DECLS
 
+typedef enum {
+    ADG_OPERATOR_NONE,
+    ADG_OPERATOR_CHAMFER,
+    ADG_OPERATOR_FILLET
+} AdgOperator;
+
+typedef union {
+    struct {
+        gdouble  delta1;
+        gdouble  delta2;
+    } chamfer;
+    struct {
+        gdouble  radius;
+    } fillet;
+} AdgOperatorData;
+
 struct _AdgPathPrivate {
-    gboolean     cp_is_valid;
-    AdgPair      cp;
-    GArray      *path;
-    cairo_path_t cpml_path;
-    cairo_path_t cairo_path;
+    gboolean             cp_is_valid;
+    AdgPair              cp;
+    GArray              *path;
+    cairo_path_t         cpml_path;
+    cairo_path_t         cairo_path;
+    AdgOperator          operator;
+    AdgOperatorData      operator_data;
 };
 
 G_END_DECLS

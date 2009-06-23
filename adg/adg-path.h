@@ -96,6 +96,9 @@ void            adg_path_arc                    (AdgPath        *path,
                                                  gdouble         r,
                                                  gdouble         start,
                                                  gdouble         end);
+void            adg_path_chamfer                (AdgPath        *path,
+                                                 gdouble         delta1,
+                                                 gdouble         delta2);
 
 void            adg_path_dump                   (AdgPath        *path);
 
