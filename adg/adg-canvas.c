@@ -36,8 +36,6 @@
 #include "adg-arrow-style.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgContainerClass *) adg_canvas_parent_class)
-
 
 static AdgStyle *       context_filler  (AdgStyleClass  *style_class,
                                          gpointer        user_data);
