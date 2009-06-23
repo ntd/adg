@@ -31,9 +31,6 @@
 #include "adg-util.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgDimClass *) adg_ldim_parent_class)
-#define ENTITY_CLASS ((AdgEntityClass *) adg_ldim_parent_class)
-
 
 enum {
     PROP_0,
@@ -340,22 +337,34 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
+
     clear((AdgLDim *) entity);
-    ENTITY_CLASS->model_matrix_changed(entity, parent_matrix);
+
+    if (entity_class->model_matrix_changed != NULL)
+        entity_class->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
 paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
+
     clear((AdgLDim *) entity);
-    ENTITY_CLASS->paper_matrix_changed(entity, parent_matrix);
+
+    if (entity_class->paper_matrix_changed != NULL)
+        entity_class->paper_matrix_changed(entity, parent_matrix);
 }
 
 static void
 invalidate(AdgEntity *entity)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
+
     clear((AdgLDim *) entity);
-    ENTITY_CLASS->invalidate(entity);
+
+    if (entity_class->invalidate != NULL)
+        entity_class->invalidate(entity);
 }
 
 static void
@@ -363,12 +372,14 @@ render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *priv;
+    AdgEntityClass *entity_class;
     AdgStyle *dim_style;
     AdgStyle *line_style;
     AdgStyle *arrow_style;
 
     ldim = (AdgLDim *) entity;
     priv = ldim->priv;
+    entity_class = (AdgEntityClass *) adg_ldim_parent_class;
     dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
     line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
     arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
@@ -392,7 +403,8 @@ render(AdgEntity *entity, cairo_t *cr)
 
     cairo_restore(cr);
 
-    ENTITY_CLASS->render(entity, cr);
+    if (entity_class->render != NULL)
+        entity_class->render(entity, cr);
 }
 
 static gchar *
