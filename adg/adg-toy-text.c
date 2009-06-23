@@ -33,8 +33,6 @@
 #include "adg-font-style.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_toy_text_parent_class)
-
 
 enum {
     PROP_0,
@@ -175,13 +173,18 @@ adg_toy_text_init(AdgToyText *toy_text)
 static void
 finalize(GObject *object)
 {
-    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyText *toy_text;
+    GObjectClass *object_class;
+
+    toy_text = (AdgToyText *) object;
+    object_class = (GObjectClass *) adg_toy_text_parent_class;
 
     g_free(toy_text->priv->label);
     clear_label_cache(toy_text);
     clear_origin_cache(toy_text);
 
-    ((GObjectClass *) PARENT_CLASS)->finalize(object);
+    if (object_class->finalize != NULL)
+        object_class->finalize(object);
 }
 
 static void
@@ -287,8 +290,13 @@ adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgToyText *toy_text = (AdgToyText *) entity;
-    AdgToyTextPrivate *priv = toy_text->priv;
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *priv;
+    AdgEntityClass *entity_class;
+
+    toy_text = (AdgToyText *) entity;
+    priv = toy_text->priv;
+    entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
     if (priv->label) {
         AdgStyle *font_style;
@@ -309,25 +317,35 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_restore(cr);
     }
 
-    PARENT_CLASS->render(entity, cr);
+    if (entity_class->render != NULL)
+        entity_class->render(entity, cr);
 }
 
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
+
     clear_origin_cache((AdgToyText *) entity);
-    PARENT_CLASS->model_matrix_changed(entity, parent_matrix);
+
+    if (entity_class->model_matrix_changed != NULL)
+        entity_class->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
 invalidate(AdgEntity *entity)
 {
-    AdgToyText *toy_text = (AdgToyText *) entity;
+    AdgToyText *toy_text;
+    AdgEntityClass *entity_class;
+
+    toy_text = (AdgToyText *) entity;
+    entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
     clear_label_cache(toy_text);
     clear_origin_cache(toy_text);
 
-    PARENT_CLASS->invalidate(entity);
+    if (entity_class->invalidate != NULL)
+        entity_class->invalidate(entity);
 }
 
 static gboolean
