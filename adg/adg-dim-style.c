@@ -37,8 +37,6 @@
 #include "adg-intl.h"
 #include "adg-util.h"
 
-#define PARENT_CLASS ((AdgStyleClass *) adg_dim_style_parent_class)
-
 
 enum {
     PROP_0,
