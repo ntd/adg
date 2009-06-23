@@ -31,8 +31,6 @@
 #include "adg-intl.h"
 #include <string.h>
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_dim_parent_class)
-
 
 enum {
     PROP_0,
@@ -188,7 +186,11 @@ adg_dim_init(AdgDim *dim)
 static void
 finalize(GObject *object)
 {
-    AdgDim *dim = (AdgDim *) object;
+    AdgDim *dim;
+    GObjectClass *object_class;
+
+    dim = (AdgDim *) object;
+    object_class = (GObjectClass *) adg_dim_parent_class;
 
     g_free(dim->priv->quote);
     g_free(dim->priv->tolerance_up);
@@ -196,7 +198,8 @@ finalize(GObject *object)
 
     clear(dim);
 
-    ((GObjectClass *) PARENT_CLASS)->finalize(object);
+    if (object_class->finalize != NULL)
+        object_class->finalize(object);
 }
 
 static void
@@ -830,15 +833,23 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 static void
 paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_dim_parent_class;
+
     clear((AdgDim *) entity);
-    PARENT_CLASS->paper_matrix_changed(entity, parent_matrix);
+
+    if (entity_class->paper_matrix_changed != NULL)
+        entity_class->paper_matrix_changed(entity, parent_matrix);
 }
 
 static void
 invalidate(AdgEntity *entity)
 {
+    AdgEntityClass *entity_class = (AdgEntityClass *) adg_dim_parent_class;
+
     clear((AdgDim *) entity);
-    PARENT_CLASS->invalidate(entity);
+
+    if (entity_class->invalidate != NULL)
+        entity_class->invalidate(entity);
 }
 
 static void
