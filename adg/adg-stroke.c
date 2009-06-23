@@ -39,8 +39,6 @@
 #include "adg-line-style.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((AdgEntityClass *) adg_stroke_parent_class)
-
 
 enum {
     PROP_0,
@@ -204,9 +202,11 @@ static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgStroke *stroke;
+    AdgEntityClass *entity_class;
     const cairo_path_t *cairo_path;
 
     stroke = (AdgStroke *) entity;
+    entity_class = (AdgEntityClass *) adg_stroke_parent_class;
     cairo_path = adg_path_get_cairo_path(stroke->priv->path);
 
     if (cairo_path != NULL) {
@@ -215,5 +215,6 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_stroke(cr);
     }
 
-    PARENT_CLASS->render(entity, cr);
+    if (entity_class->render != NULL)
+        entity_class->render(entity, cr);
 }
