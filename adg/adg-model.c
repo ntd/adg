@@ -45,8 +45,6 @@
 #include "adg-model-private.h"
 #include "adg-intl.h"
 
-#define PARENT_CLASS ((GObjectClass *) adg_model_parent_class)
-
 
 enum {
     PROP_0
@@ -58,7 +56,6 @@ enum {
 };
 
 
-static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
                                          guint           prop_id,
                                          GValue         *value,
@@ -84,7 +81,6 @@ adg_model_class_init(AdgModelClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
-    gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
@@ -112,15 +108,6 @@ adg_model_init(AdgModel *model)
                                                         AdgModelPrivate);
     model->priv = priv;
 }
-
-static void
-finalize(GObject *object)
-{
-    /* TODO: this is only a placeholder */
-
-    PARENT_CLASS->finalize(object);
-}
-
 
 static void
 get_property(GObject *object,
