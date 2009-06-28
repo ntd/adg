@@ -36,6 +36,7 @@ cpml_vector_normal
 <SECTION>
 <FILE>segment</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
+CpmlPath
 CpmlSegment
 <SUBSECTION>
 cpml_segment_from_cairo
