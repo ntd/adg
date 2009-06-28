@@ -208,10 +208,10 @@ drawing_path(const DrawingData *data)
     y = (data->D1 - data->D2) / 2;
     adg_path_line_to(path, data->A - data->B - data->LD2 + y * SQRT3, data->D1 / 2 - y);
     adg_path_line_to(path, data->A - data->B, data->D2 / 2);
-    adg_path_line_to(path, data->A - data->B, data->D3 / 2 - CHAMFER);
-    adg_path_line_to(path, data->A - data->B + CHAMFER, data->D3 / 2);
-    adg_path_line_to(path, data->A - data->B + data->LD3 - CHAMFER, data->D3 / 2);
-    adg_path_line_to(path, data->A - data->B + data->LD3, data->D3 / 2 - CHAMFER);
+    adg_path_line_to(path, data->A - data->B, data->D3 / 2);
+    adg_path_chamfer(path, CHAMFER, CHAMFER);
+    adg_path_line_to(path, data->A - data->B + data->LD3, data->D3 / 2);
+    adg_path_chamfer(path, CHAMFER, CHAMFER);
     x = data->A - data->B + data->LD3 + data->RD34;
     y = data->D4 / 2 + data->RD34;
     adg_path_arc(path, x, y, data->RD34, G_PI, -G_PI_2);
