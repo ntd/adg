@@ -74,6 +74,8 @@ static void             do_operation            (AdgPath        *path,
                                                  cairo_path_data_t *data);
 static void             do_chamfer              (AdgPath        *path,
                                                  CpmlPrimitive  *current);
+static void             do_fillet               (AdgPath        *path,
+                                                 CpmlPrimitive  *current);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -596,8 +598,8 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * The first primitive involved is the current primitive, the second will
  * be the next primitive appended to @path after this call. The second
  * primitive is required: if the chamfer operation is not properly
- * terminated not providing the second primitive, any API accessing the
- * path in reading mode will raise a warning.
+ * terminated (by not providing the second primitive), any API accessing
+ * the path in reading mode will raise a warning.
  *
  * The chamfer operation requires two lengths: @delta1 specifies the
  * "quantity" to trim on the first primitive while @delta2 is the same
@@ -611,6 +613,28 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
     g_return_if_fail(ADG_IS_PATH(path));
 
     if (!append_operation(path, ADG_OPERATOR_CHAMFER, delta1, delta2))
+        return;
+}
+
+/**
+ * adg_path_fillet:
+ * @path:   an #AdgPath
+ * @radius: the radius of the fillet
+ *
+ *
+ * A binary operator that joins to primitives with an arc.
+ * The first primitive involved is the current primitive, the second will
+ * be the next primitive appended to @path after this call. The second
+ * primitive is required: if the fillet operation is not properly
+ * terminated (by not providing the second primitive), any API accessing
+ * the path in reading mode will raise a warning.
+ **/
+void
+adg_path_fillet(AdgPath *path, gdouble radius)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    if (!append_operation(path, ADG_OPERATOR_FILLET, radius))
         return;
 }
 
@@ -886,6 +910,10 @@ do_operation(AdgPath *path, cairo_path_data_t *data)
         do_chamfer(path, &current);
         break;
 
+    case ADG_OPERATOR_FILLET:
+        do_fillet(path, &current);
+        break;
+
     default:
         g_warning("Operation not implemented (operator `%d')", operator);
         return;
@@ -937,6 +965,18 @@ do_chamfer(AdgPath *path, CpmlPrimitive *current)
     line[1].point.x = pair.x;
     line[1].point.y = pair.y;
     priv->path = g_array_append_vals(priv->path, line, 2);
+
+    priv->operation.operator = ADG_OPERATOR_NONE;
+}
+
+static void
+do_fillet(AdgPath *path, CpmlPrimitive *current)
+{
+    AdgPathPrivate *priv;
+
+    priv = path->priv;
+
+    /* TODO */
 
     priv->operation.operator = ADG_OPERATOR_NONE;
 }
