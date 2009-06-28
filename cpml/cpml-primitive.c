@@ -38,7 +38,7 @@
  * As for #CpmlSegment, also the primitive is unobtrusive. This
  * means CpmlPrimitive does not include any coordinates but instead
  * keeps pointers to the original segment (and, by transition, to
- * the underlying #cairo_path_t struct).
+ * the underlying #CpmlPath struct).
  **/
 
 #include "cpml-primitive.h"
