@@ -332,6 +332,7 @@ adg_path_curve_to
 adg_path_close
 <SUBSECTION>
 adg_path_arc
+adg_path_chamfer
 <SUBSECTION>
 adg_path_dump
 <SUBSECTION Standard>
