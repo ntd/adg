@@ -45,6 +45,28 @@ cpml_curve_type_get_npoints(void)
 }
 
 /**
+ * cpml_curve_length:
+ * @curve: the #CpmlPrimitive curve data
+ *
+ * Given the @curve primitive, returns the approximated length of
+ * the Bézier curve.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: the requested length
+ **/
+double
+cpml_curve_length(const CpmlPrimitive *curve)
+{
+    return 0.;
+}
+
+/**
  * cpml_curve_pair_at_time:
  * @curve: the #CpmlPrimitive curve data
  * @pair:  the destination pair
