@@ -45,6 +45,26 @@ cpml_line_type_get_npoints(void)
 }
 
 /**
+ * cpml_line_length:
+ * @line: the #CpmlPrimitive line data
+ *
+ * Given the @line primitive, returns the distance between its
+ * start and end points.
+ *
+ * Return value: the requested distance, that is the @line length
+ **/
+double
+cpml_line_length(const CpmlPrimitive *line)
+{
+    CpmlPair p1, p2;
+
+    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
+
+    return cpml_pair_distance(&p1, &p2);
+}
+
+/**
  * cpml_line_pair_at:
  * @line: the #CpmlPrimitive line data
  * @pair: the destination pair
@@ -63,9 +83,9 @@ cpml_line_pair_at(const CpmlPrimitive *line, CpmlPair *pair, double pos)
     cairo_path_data_t *p1, *p2;
 
     p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, 1);
+    p2 = cpml_primitive_get_point(line, -1);
 
-    pair->x = p1->point.x + (p1->point.x - p1->point.x) * pos;
+    pair->x = p1->point.x + (p2->point.x - p1->point.x) * pos;
     pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
 }
 

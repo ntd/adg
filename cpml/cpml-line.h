@@ -27,6 +27,7 @@
 CAIRO_BEGIN_DECLS
 
 int     cpml_line_type_get_npoints      (void) CPML_GNUC_CONST;
+double  cpml_line_length                (const CpmlPrimitive    *line);
 void    cpml_line_pair_at               (const CpmlPrimitive    *line,
                                          CpmlPair               *pair,
                                          double                  pos);
