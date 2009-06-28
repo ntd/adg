@@ -108,7 +108,7 @@ cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
     cairo_path_data_t *p1, *p2;
 
     p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, 1);
+    p2 = cpml_primitive_get_point(line, -1);
 
     vector->x = p2->point.x - p1->point.x;
     vector->y = p2->point.y - p1->point.y;
