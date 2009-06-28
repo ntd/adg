@@ -47,9 +47,9 @@
  * Using the CPML APIs you are free to use %CAIRO_PATH_ARC_TO whenever
  * you want. But if you are directly accessing the struct fields you
  * are responsible of converting arcs to curves before passing them
- * to cairo. In other words, do not feed cairo_path_t struct using arcs
- * to cairo (throught cairo_append_path() for example) or at least
- * do not expect it will work.
+ * to cairo. In other words, do not directly feed #CpmlPath struct to
+ * cairo (throught cairo_append_path() for example) or at least do not
+ * expect it will work.
  *
  * The conversion is provided by two APIs: cpml_arc_to_cairo() and
  * cpml_arc_to_curves(). The former directly renders to a cairo context
