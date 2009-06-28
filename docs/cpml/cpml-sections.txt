@@ -2,6 +2,8 @@
 <FILE>macros</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 CPML_GNUC_CONST
+CAIRO_HAS_ARC_SUPPORT
+CAIRO_PATH_ARC_TO
 </SECTION>
 
 <SECTION>
@@ -64,6 +66,7 @@ cpml_primitive_next
 <SUBSECTION>
 cpml_primitive_get_npoints
 cpml_primitive_get_point
+cpml_primitive_length
 cpml_primitive_to_cairo
 cpml_primitive_dump
 <SUBSECTION>
@@ -80,6 +83,7 @@ cpml_primitive_offset
 <FILE>line</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_line_type_get_npoints
+cpml_line_length
 cpml_line_pair_at
 cpml_line_vector_at
 cpml_line_intersection
@@ -91,6 +95,7 @@ cpml_line_offset
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_arc_type_get_npoints
 cpml_arc_info
+cpml_arc_length
 cpml_arc_pair_at
 cpml_arc_vector_at
 cpml_arc_intersection
@@ -104,6 +109,7 @@ cpml_arc_to_curves
 <FILE>curve</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 cpml_curve_type_get_npoints
+cpml_curve_length
 cpml_curve_pair_at_time
 cpml_curve_pair_at
 cpml_curve_vector_at_time
