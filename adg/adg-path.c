@@ -58,10 +58,22 @@ static cairo_path_t *   get_cairo_path          (AdgPath        *path);
 static cairo_path_t *   get_cpml_path           (AdgPath        *path);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t *src);
-static void             append_valist           (AdgPath        *path,
+static void             append_primitive_valist (AdgPath        *path,
                                                  cairo_path_data_type_t type,
                                                  int             length,
                                                  va_list         var_args);
+static cairo_path_data_t *
+                        create_nodes_valist     (cairo_path_data_type_t type,
+                                                 int             length,
+                                                 va_list         var_args);
+static void             clear_operation         (AdgPath        *path);
+static gboolean         append_operation        (AdgPath        *path,
+                                                 AdgOperator     operator,
+                                                 ...);
+static void             do_operation            (AdgPath        *path,
+                                                 cairo_path_data_t *data);
+static void             do_chamfer              (AdgPath        *path,
+                                                 CpmlPrimitive  *current);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -94,7 +106,7 @@ adg_path_init(AdgPath *path)
     priv->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     priv->cairo_path.data = NULL;
     priv->cairo_path.num_data = 0;
-    priv->operator = ADG_OPERATOR_NONE;
+    priv->operation.operator = ADG_OPERATOR_NONE;
 
     path->priv = priv;
 }
@@ -110,6 +122,7 @@ finalize(GObject *object)
 
     g_array_free(path->priv->path, TRUE);
     clear_cairo_path(path);
+    clear_operation(path);
 
     if (object_class->finalize != NULL)
         object_class->finalize(object);
@@ -296,6 +309,7 @@ adg_path_clear(AdgPath *path)
 
     g_array_set_size(path->priv->path, 0);
     clear_cairo_path(path);
+    clear_operation(path);
 }
 
 
@@ -372,7 +386,7 @@ adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
         return;
     }
 
-    append_valist(path, type, length, var_args);
+    append_primitive_valist(path, type, length, var_args);
 }
 
 /**
@@ -583,21 +597,15 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * be the next primitive appended to @path after this call. The second
  * primitive is required: if the chamfer operation is not properly
  * terminated not providing the second primitive, any API accessing the
- * path in reading mode will fail.
+ * path in reading mode will raise a warning.
  **/
 void
 adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!path->priv->cp_is_valid) {
-        g_warning("Requested a chamfer operation without a current primitive");
+    if (!append_operation(path, ADG_OPERATOR_CHAMFER, delta1, delta2))
         return;
-    }
-
-    path->priv->operator = ADG_OPERATOR_CHAMFER;
-    path->priv->operator_data.chamfer.delta1 = delta1;
-    path->priv->operator_data.chamfer.delta2 = delta2;
 }
 
 
@@ -620,7 +628,7 @@ adg_path_dump(AdgPath *path)
     g_return_if_fail(cairo_path != NULL);
 
     if (!cpml_segment_from_cairo(&segment, cairo_path)) {
-        g_print("Invalid path data to dump!\n");
+        g_warning("Invalid path data to dump!\n");
     } else {
         do {
             cpml_segment_dump(&segment);
@@ -732,31 +740,197 @@ arc_to_curves(GArray *array, const cairo_path_data_t *src)
 }
 
 static void
-append_valist(AdgPath *path, cairo_path_data_type_t type,
-              int length, va_list var_args)
+append_primitive_valist(AdgPath *path, cairo_path_data_type_t type,
+                        int length, va_list var_args)
 {
     AdgPathPrivate *priv;
-    cairo_path_data_t item;
+    cairo_path_data_t *nodes;
 
     priv = path->priv;
+    nodes = create_nodes_valist(type, length, var_args);
 
-    /* Append the header item */
-    item.header.type = type;
-    item.header.length = length;
-    priv->path = g_array_append_val(priv->path, item);
-    priv->cp_is_valid = FALSE;
+    /* Execute any pending operation */
+    do_operation(path, nodes);
 
-    /* Append the data items (that is, the AdgPair points) */
-    while (--length) {
-        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), &item);
-        priv->path = g_array_append_val(priv->path, item);
-        priv->cp_is_valid = TRUE;
-    }
+    /* Append the nodes to the internal path array */
+    priv->path = g_array_append_vals(priv->path, nodes, length);
+    g_free(nodes);
+    nodes = (cairo_path_data_t *) priv->path->data + priv->path->len - length;
 
-    /* Save the last point as the current point */
-    if (priv->cp_is_valid)
-        cpml_pair_from_cairo(&priv->cp, &item);
+    /* Set the last primitive for subsequent binary operations */
+    priv->last.org = priv->cp_is_valid ? nodes - 1 : NULL;
+    priv->last.segment = NULL;
+    priv->last.data = nodes;
+
+    /* Save the last point as the current point, if applicable */
+    priv->cp_is_valid = length > 1;
+    if (length > 1)
+        cpml_pair_from_cairo(&priv->cp, &nodes[length-1]);
 
     /* Invalidate cairo_path: should be recomputed */
     clear_cairo_path(path);
+}
+
+static cairo_path_data_t *
+create_nodes_valist(cairo_path_data_type_t type, int length, va_list var_args)
+{
+    cairo_path_data_t *node, *nodes;
+
+    node = nodes = g_new(cairo_path_data_t, length);
+
+    /* Append the header item */
+    node->header.type = type;
+    node->header.length = length;
+
+    /* Append the data items (that is, the AdgPair points) */
+    while (--length) {
+        ++ node;
+        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), node);
+    }
+
+    return nodes;
+}
+
+static void
+clear_operation(AdgPath *path)
+{
+    AdgOperation *operation = &path->priv->operation; 
+
+    if (operation->operator == ADG_OPERATOR_NONE)
+        return;
+
+    g_warning("An operation is still active while clearing the path "
+              "(operator `%d')", operation->operator);
+    operation->operator = ADG_OPERATOR_NONE;
+}
+
+static gboolean
+append_operation(AdgPath *path, AdgOperator operator, ...)
+{
+    AdgOperation *operation;
+    va_list var_args;
+
+    if (!path->priv->cp_is_valid) {
+        g_warning("Operation requested but path has no current primitive "
+                  "(operator `%d')", operator);
+        return FALSE;
+    }
+
+    operation = &path->priv->operation; 
+    va_start(var_args, operator);
+
+    if (operation->operator != ADG_OPERATOR_NONE) {
+        /* TODO: this is a rude semplification, as a lot of operators can
+         * and may cohexist. As an example, a fillet followed by a
+         * polar chamfer is not difficult to compute */
+        g_warning("Operation requested but another operation is yet active"
+                  "(operators: new `%d', old `%d')",
+                  operator, operation->operator);
+        return FALSE;
+    }
+
+    switch (operator) {
+
+    case ADG_OPERATOR_CHAMFER:
+        operation->data.chamfer.delta1 = va_arg(var_args, double);
+        operation->data.chamfer.delta2 = va_arg(var_args, double);
+        break;
+
+    case ADG_OPERATOR_FILLET:
+        operation->data.fillet.radius = va_arg(var_args, double);
+        break;
+
+    case ADG_OPERATOR_NONE:
+        va_end(var_args);
+        return TRUE;
+
+    default:
+        g_warning("Operation not recognized (operator `%d')", operator);
+        va_end(var_args);
+        return FALSE;
+    }
+
+    operation->operator = operator;
+    va_end(var_args);
+
+    return TRUE;
+}
+
+static void
+do_operation(AdgPath *path, cairo_path_data_t *data)
+{
+    AdgPathPrivate *priv;
+    AdgOperator operator;
+    CpmlPrimitive current;
+    cairo_path_data_t current_org;
+
+    priv = path->priv;
+    operator = priv->operation.operator;
+    current.segment = NULL;
+    current.org = &current_org;
+    current.data = data;
+    cpml_pair_to_cairo(&priv->cp, &current_org);
+
+    switch (operator) {
+
+    case ADG_OPERATOR_NONE:
+        return;
+
+    case ADG_OPERATOR_CHAMFER:
+        do_chamfer(path, &current);
+        break;
+
+    default:
+        g_warning("Operation not implemented (operator `%d')", operator);
+        return;
+    }
+
+}
+
+static void
+do_chamfer(AdgPath *path, CpmlPrimitive *current)
+{
+    AdgPathPrivate *priv;
+    CpmlPrimitive *last;
+    gdouble delta1, delta2;
+    gdouble len1, len2;
+    CpmlPair pair;
+    cairo_path_data_t line[2];
+
+    priv = path->priv;
+    last = &priv->last;
+    delta1 = priv->operation.data.chamfer.delta1;
+    len1 = cpml_primitive_length(last);
+
+    if (delta1 >= len1) {
+        g_warning("Chamfer too big for the last primitive (%lf >= %lf)",
+                  delta1, len1);
+        return;
+    }
+
+    delta2 = priv->operation.data.chamfer.delta2;
+    len2 = cpml_primitive_length(current);
+
+    if (delta2 >= len2) {
+        g_warning("Chamfer too big for the current primitive (%lf >= %lf)",
+                  delta2, len2);
+        return;
+    }
+
+    /* Change the end point of the last primitive */
+    cpml_primitive_pair_at(last, &pair, 1. - delta1 / len1);
+    cpml_pair_to_cairo(&pair, cpml_primitive_get_point(last, -1));
+
+    /* Change the start point of the current primitive */
+    cpml_primitive_pair_at(current, &pair, delta2 / len2);
+    cpml_pair_to_cairo(&pair, cpml_primitive_get_point(current, 0));
+
+    /* Add the chamfer line */
+    line[0].header.type = CAIRO_PATH_LINE_TO;
+    line[0].header.length = 2;
+    line[1].point.x = pair.x;
+    line[1].point.y = pair.y;
+    priv->path = g_array_append_vals(priv->path, line, 2);
+
+    priv->operation.operator = ADG_OPERATOR_NONE;
 }

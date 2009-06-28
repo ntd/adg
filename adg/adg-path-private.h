@@ -32,15 +32,19 @@ typedef enum {
     ADG_OPERATOR_FILLET
 } AdgOperator;
 
-typedef union {
-    struct {
-        gdouble  delta1;
-        gdouble  delta2;
-    } chamfer;
-    struct {
-        gdouble  radius;
-    } fillet;
-} AdgOperatorData;
+typedef struct {
+    AdgOperator operator;
+
+    union {
+        struct {
+            gdouble delta1, delta2;
+        } chamfer;
+        struct {
+            gdouble radius;
+        } fillet;
+    } data;
+
+} AdgOperation;
 
 struct _AdgPathPrivate {
     gboolean             cp_is_valid;
@@ -48,8 +52,8 @@ struct _AdgPathPrivate {
     GArray              *path;
     cairo_path_t         cpml_path;
     cairo_path_t         cairo_path;
-    AdgOperator          operator;
-    AdgOperatorData      operator_data;
+    CpmlPrimitive        last;
+    AdgOperation         operation;
 };
 
 G_END_DECLS
