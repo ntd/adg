@@ -174,8 +174,8 @@ cpml_segment_next(CpmlSegment *segment)
  * @cr: the destination cairo context
  *
  * Appends the path of @segment to @cr. The segment is "flattened",
- * that is the %CAIRO_PATH_ARC_TO primitive are approximated by one
- * or more %CAIRO_PATH_CURVE_TO throught cpml_arc_to_cairo(). Check
+ * that is %CAIRO_PATH_ARC_TO primitives are approximated by one
+ * or more %CAIRO_PATH_CURVE_TO using cpml_arc_to_cairo(). Check
  * its documentation for further details.
  **/
 void
