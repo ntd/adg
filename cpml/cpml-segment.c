@@ -24,12 +24,12 @@
  *
  * A segment is a single contiguous line got from a cairo path.
  *
- * Every #cairo_path_t struct can contain more than one segment:
+ * Every #CpmlPath struct can contain more than one segment:
  * the CPML library provides iteration APIs to browse these segments.
  * The <structname>CpmlSegment</structname> struct internally keeps
- * a reference to the source #cairo_path_t so it can be used both
- * for getting segment data and browsing the segments (that is,
- * it is used also as an iterator).
+ * a reference to the source #CpmlPath so it can be used both
+ * for getting data from the current segment, browsing the next and
+ * reset to the first (it is used also as a forward iterator).
  *
  * Use cpml_segment_reset() to reset the iterator at the start of the
  * cairo path (will point the first segment) and cpml_segment_next()
@@ -42,9 +42,20 @@
  **/
 
 /**
+ * CpmlPath:
+ *
+ * This is another name for the #cairo_path_t type. Although phisically
+ * they are the same struct, #CpmlPath conceptually embodies an important
+ * difference: it is a cairo path that can embed %CAIRO_PATH_ARC_TO
+ * primitives. This is not a native cairo primitive and having two
+ * different data types is a good way to make clear when a function
+ * expect or not embedded arc-to primitives.
+ **/
+
+/**
  * CpmlSegment:
- * @cairo_path: the source #cairo_path_t struct
- * @data: the segment data
+ * @path:     the source #CpmlPath struct
+ * @data:     the segment data
  * @num_data: size of @data
  *
  * This is an unobtrusive struct to identify a segment inside a
@@ -71,14 +82,14 @@ static void             reshape                 (CpmlSegment       *segment);
 /**
  * cpml_segment_from_cairo:
  * @segment: a #CpmlSegment
- * @cairo_path: the source #cairo_path_t
+ * @path: the source #CpmlPath
  *
- * Builds a CpmlSegment from a cairo_path_t structure. This operation
+ * Builds a CpmlSegment from a #CpmlPath structure. This operation
  * involves stripping the leading %CAIRO_PATH_MOVE_TO primitives and
  * setting the internal segment structure accordling. A pointer to the
  * source cairo path is kept.
  *
- * This function will fail if @cairo_path is null, empty or if its
+ * This function will fail if @path is null, empty or if its
  * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
  * Also, the first primitive must be a %CAIRO_PATH_MOVE_TO, so no
  * dependency on the cairo context is needed.
@@ -86,16 +97,16 @@ static void             reshape                 (CpmlSegment       *segment);
  * Return value: 1 on success, 0 on errors
  **/
 cairo_bool_t
-cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *cairo_path)
+cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
 {
-    /* The cairo path should be defined and in perfect state */
-    if (cairo_path == NULL || cairo_path->num_data == 0 ||
-        cairo_path->status != CAIRO_STATUS_SUCCESS)
+    /* The cairo path should be defined and in a perfect state */
+    if (path == NULL || path->num_data == 0 ||
+        path->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
-    segment->cairo_path = cairo_path;
-    segment->data = cairo_path->data;
-    segment->num_data = cairo_path->num_data;
+    segment->path = path;
+    segment->data = path->data;
+    segment->num_data = path->num_data;
 
     return normalize(segment);
 }
@@ -128,8 +139,8 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 void
 cpml_segment_reset(CpmlSegment *segment)
 {
-    segment->data = segment->cairo_path->data;
-    segment->num_data = segment->cairo_path->num_data;
+    segment->data = segment->path->data;
+    segment->num_data = segment->path->num_data;
     normalize(segment);
 }
 
@@ -144,8 +155,8 @@ cpml_segment_reset(CpmlSegment *segment)
 cairo_bool_t
 cpml_segment_next(CpmlSegment *segment)
 {
-    int rest = segment->cairo_path->num_data - segment->num_data +
-        segment->cairo_path->data - segment->data;
+    int rest = segment->path->num_data - segment->num_data +
+        segment->path->data - segment->data;
 
     if (rest <= 0)
         return 0;
@@ -439,8 +450,8 @@ reshape(CpmlSegment *segment)
     data = segment->data + new_num_data;
 
     /* Calculate the remaining data in the cairo path */
-    num_data = segment->cairo_path->num_data -
-               (segment->data - segment->cairo_path->data);
+    num_data = segment->path->num_data -
+               (segment->data - segment->path->data);
 
     while (new_num_data < num_data) {
         /* A primitive is considered valid if it has implemented
