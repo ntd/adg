@@ -384,6 +384,43 @@ cpml_primitive_type_get_npoints(cairo_path_data_type_t type)
 }
 
 /**
+ * cpml_primitive_length:
+ * @primitive: a #CpmlPrimitive
+ *
+ * Abstracts the length() family functions by providing a common
+ * way to access the underlying primitive-specific implementation.
+ * The function returns the length of @primitive.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ *
+ * Return value: the requested length or 0 on errors
+ **/
+double
+cpml_primitive_length(const CpmlPrimitive *primitive)
+{
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_LINE_TO:
+    case CAIRO_PATH_CLOSE_PATH:
+        return cpml_line_length(primitive);
+
+    case CAIRO_PATH_ARC_TO:
+        return cpml_arc_length(primitive);
+
+    case CAIRO_PATH_CURVE_TO:
+        return cpml_curve_length(primitive);
+
+    default:
+        break;
+    }
+
+    return 0.;
+}
+
+/**
  * cpml_primitive_pair_at:
  * @primitive: a #CpmlPrimitive
  * @pair:      the destination #CpmlPair
