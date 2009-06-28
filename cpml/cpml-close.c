@@ -33,6 +33,7 @@
 
 #include "cpml-close.h"
 #include "cpml-pair.h"
+#include "cpml-line.h"
 
 /**
  * cpml_close_type_get_npoints:
@@ -68,13 +69,7 @@ cpml_close_type_get_npoints(void)
 void
 cpml_close_pair_at(const CpmlPrimitive *close, CpmlPair *pair, double pos)
 {
-    cairo_path_data_t *p1, *p2;
-
-    p1 = cpml_primitive_get_point(close, 0);
-    p2 = cpml_primitive_get_point(close, -1);
-
-    pair->x = p1->point.x + (p1->point.x - p1->point.x) * pos;
-    pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
+    cpml_line_pair_at(close, pair, pos);
 }
 
 /**
@@ -91,13 +86,7 @@ void
 cpml_close_vector_at(const CpmlPrimitive *close,
                      CpmlVector *vector, double pos)
 {
-    cairo_path_data_t *p1, *p2;
-
-    p1 = cpml_primitive_get_point(close, 0);
-    p2 = cpml_primitive_get_point(close, -1);
-
-    vector->x = p2->point.x - p1->point.x;
-    vector->y = p2->point.y - p1->point.y;
+    cpml_line_vector_at(close, vector, pos);
 }
 
 /**
@@ -108,25 +97,9 @@ cpml_close_vector_at(const CpmlPrimitive *close,
  * Given a close segment specified by the @close primitive data,
  * computes the parallel close distant @offset from the original one
  * and returns the result by changing @close.
- *
- * The algorithm is practically the same as the one used for
- * cpml_line_offset() but using the proper start and end coordinates.
  **/
 void
 cpml_close_offset(CpmlPrimitive *close, double offset)
 {
-    cairo_path_data_t *p1, *p2;
-    CpmlVector normal;
-
-    p1 = cpml_primitive_get_point(close, 0);
-    p2 = cpml_primitive_get_point(close, -1);
-
-    cpml_close_vector_at(close, &normal, 0.);
-    cpml_vector_normal(&normal);
-    cpml_vector_set_length(&normal, offset);
-
-    p1->point.x += normal.x;
-    p1->point.y += normal.y;
-    p2->point.x += normal.x;
-    p2->point.y += normal.y;
+    cpml_line_offset(close, offset);
 }
