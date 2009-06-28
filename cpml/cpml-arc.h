@@ -40,6 +40,7 @@ cairo_bool_t
                                          double                 *r,
                                          double                 *start,
                                          double                 *end);
+double  cpml_arc_length                 (const CpmlPrimitive    *arc);
 void    cpml_arc_pair_at                (const CpmlPrimitive    *arc,
                                          CpmlPair               *pair,
                                          double                  pos);

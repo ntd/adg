@@ -162,6 +162,29 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
 }
 
 /**
+ * cpml_arc_length:
+ * @arc:  the #CpmlPrimitive arc data
+ *
+ * Given the @arc primitive, returns its length.
+ *
+ * Return value: the requested length or 0 on errors
+ **/
+double
+cpml_arc_length(const CpmlPrimitive *arc)
+{
+    double r, start, end, delta;
+
+    if (!cpml_arc_info(arc, NULL, &r, &start, &end) || start == end)
+        return 0.;
+
+    delta = end - start;
+    if (delta < 0)
+        delta += M_PI*2;
+
+    return r*delta;
+}
+
+/**
  * cpml_arc_pair_at:
  * @arc:  the #CpmlPrimitive arc data
  * @pair: the destination #CpmlPair
