@@ -174,7 +174,7 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     CpmlVector normal;
 
     p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, 1);
+    p2 = cpml_primitive_get_point(line, -1);
 
     cpml_line_vector_at(line, &normal, 0.);
     cpml_vector_normal(&normal);
