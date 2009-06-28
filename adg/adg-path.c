@@ -598,6 +598,12 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * primitive is required: if the chamfer operation is not properly
  * terminated not providing the second primitive, any API accessing the
  * path in reading mode will raise a warning.
+ *
+ * The chamfer operation requires two lengths: @delta1 specifies the
+ * "quantity" to trim on the first primitive while @delta2 is the same
+ * applied on the second primitive. The term "quantity" means the length
+ * of the portion to cut out from the original primitive (that is the
+ * primitive as would be without the chamfer).
  **/
 void
 adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
