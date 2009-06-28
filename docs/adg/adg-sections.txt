@@ -333,6 +333,7 @@ adg_path_close
 <SUBSECTION>
 adg_path_arc
 adg_path_chamfer
+adg_path_fillet
 <SUBSECTION>
 adg_path_dump
 <SUBSECTION Standard>
