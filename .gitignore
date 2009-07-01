@@ -3,7 +3,6 @@
 /ABOUT-NLS
 /INSTALL
 /aclocal.m4
-/m4/
 /autom4te.cache/
 /config.guess
 /config.rpath
@@ -12,6 +11,8 @@
 /depcomp
 /install-sh
 /ltmain.sh
+/shave
+/shave-libtool
 Makefile.in
 
 # ./configure

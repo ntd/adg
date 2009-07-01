@@ -43,7 +43,10 @@ PKG_CHECK_MODULES([CAIRO],[cairo >= 1.7.4])
 
 # Final step
 
-AC_CONFIG_FILES([Makefile
+SHAVE_INIT([],[enable])
+AC_CONFIG_FILES([shave
+                 shave-libtool
+                 Makefile
                  cpml/Makefile
                  adg/Makefile
 		 demo/Makefile
