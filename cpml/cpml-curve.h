@@ -42,14 +42,17 @@ void    cpml_curve_vector_at            (const CpmlPrimitive    *curve,
                                          double                  pos);
 int     cpml_curve_intersection         (const CpmlPrimitive    *curve,
                                          const CpmlPrimitive    *curve2,
-                                         CpmlPair               *dest);
+                                         CpmlPair               *dest,
+                                         int                     max);
 int     cpml_curve_intersection_with_arc(const CpmlPrimitive    *curve,
                                          const CpmlPrimitive    *arc,
-                                         CpmlPair               *dest);
+                                         CpmlPair               *dest,
+                                         int                     max);
 int     cpml_curve_intersection_with_line
                                         (const CpmlPrimitive    *curve,
                                          const CpmlPrimitive    *line,
-                                         CpmlPair               *dest);
+                                         CpmlPair               *dest,
+                                         int                     max);
 void    cpml_curve_offset               (CpmlPrimitive          *curve,
                                          double                  offset);
 
