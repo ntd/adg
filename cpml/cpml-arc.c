@@ -245,11 +245,17 @@ cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
  * cpml_arc_intersection:
  * @arc:  the first arc
  * @arc2: the second arc
- * @dest: a vector of at least 2 #CpmlPair
+ * @dest: a vector of #CpmlPair
+ * @max:  maximum number of intersections to return
+ *        (that is, the size of @dest)
  *
  * Given two arcs (@arc and @arc2), gets their intersection points
- * and store the result in @dest. Because two arcs can have
- * 2 intersections, @dest MUST be at least an array of 2 #CpmlPair.
+ * and store the result in @dest. Keep in mind two arcs can have
+ * up to 2 intersections.
+ *
+ * If @max is 0, the function returns 0 immediately without any
+ * further processing. If @arc and @arc2 are cohincident (same
+ * center and same radius), their intersections are not considered.
  *
  * <important>
  * <title>TODO</title>
@@ -258,11 +264,12 @@ cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections (max 2)
+ * Return value: the number of intersections found (max 2)
+ *               or 0 if the primitives do not intersect
  **/
 int
-cpml_arc_intersection(const CpmlPrimitive *arc,
-                      const CpmlPrimitive *arc2, CpmlPair *dest)
+cpml_arc_intersection(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
+                      CpmlPair *dest, int max)
 {
     return 0;
 }
@@ -271,12 +278,16 @@ cpml_arc_intersection(const CpmlPrimitive *arc,
  * cpml_arc_intersection_with_line:
  * @arc:  an arc
  * @line: a line
- * @dest: a vector of at least 2 #CpmlPair
+ * @dest: a vector of #CpmlPair
+ * @max:  maximum number of intersections to return
+ *        (that is, the size of @dest)
  *
  * Given an @arc and a @line, gets their intersection points
- * and store the result in @dest. Because an arc and a line
- * can have up to 2 intersections, @dest MUST be at least an
- * array of 2 #CpmlPair.
+ * and store the result in @dest. Keep in mind an arc and a
+ * line can have up to 2 intersections.
+ *
+ * If @max is 0, the function returns 0 immediately without any
+ * further processing.
  *
  * <important>
  * <title>TODO</title>
@@ -285,11 +296,13 @@ cpml_arc_intersection(const CpmlPrimitive *arc,
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections (max 2)
+ * Return value: the number of intersections found (max 2)
+ *               or 0 if the primitives do not intersect
  **/
 int
 cpml_arc_intersection_with_line(const CpmlPrimitive *arc,
-                                const CpmlPrimitive *line, CpmlPair *dest)
+                                const CpmlPrimitive *line,
+                                CpmlPair *dest, int max)
 {
     return 0;
 }
