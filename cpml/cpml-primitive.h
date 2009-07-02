@@ -73,7 +73,8 @@ cairo_bool_t
                                          CpmlPrimitive          *primitive2);
 int     cpml_primitive_intersection     (const CpmlPrimitive    *primitive,
                                          const CpmlPrimitive    *primitive2,
-                                         CpmlPair               *dest);
+                                         CpmlPair               *dest,
+                                         int                     max);
 void    cpml_primitive_offset           (CpmlPrimitive          *primitive,
                                          double                  offset);
 

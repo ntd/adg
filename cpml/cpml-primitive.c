@@ -325,24 +325,19 @@ cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
                                          CpmlPair *dest, int max)
 {
     CpmlPrimitive portion;
-    int partial, total;
-    CpmlPair tmp_pairs[4];
+    int found;
 
     cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
-    total = 0;
+    found = 0;
 
-    do {
-        partial = cpml_primitive_intersection(&portion, primitive, tmp_pairs);
-        if (total + partial > max)
-            partial = max - total;
+    while (found < max) {
+        found += cpml_primitive_intersection(&portion, primitive,
+                                             dest+found, max-found);
+        if (!cpml_primitive_next(&portion))
+            break;
+    }
 
-        if (partial > 0) {
-            memcpy(dest + total, tmp_pairs, partial * sizeof(CpmlPair));
-            total += partial;
-        }
-    } while (total < max && cpml_primitive_next(&portion));
-
-    return total;
+    return found;
 }
 
 
@@ -562,7 +557,7 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     data2[0].header.type = CAIRO_PATH_LINE_TO;
     data2[1] = *cpml_primitive_get_point(primitive2, 1);
 
-    if (!cpml_line_intersection(&line1, &line2, &joint))
+    if (!cpml_line_intersection(&line1, &line2, &joint, 1))
         return 0;
 
     cpml_pair_to_cairo(&joint, end1);
@@ -576,18 +571,16 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * @primitive:  the first #CpmlPrimitive
  * @primitive2: the second #CpmlPrimitive
  * @dest:       the destination #CpmlPair (or a vector of #CpmlPair)
+ * @max:        maximum number of intersections to return
  *
  * Finds the intersection points between the given primitives and
- * returns the result in @dest. The size of @dest is dependent
- * from the type of the most complex primitive involved in the
- * operation. If there are curves involved, @dest MUST be an array
- * of at least 4 #CpmlPair. If an arc is the most complex primitive
- * involved, @dest MUST be sized to 2 #CpmlPair. In the simplest
- * case, that is intersection between two lines, only 1 #CpmlPair
- * is required.
- *
- * If the primitive types are not known in advance, simply suppose
- * the worst case and leave room for 4 #CpmlPair in @dest.
+ * returns the result in @dest. The size of @dest should be enough
+ * to store @max #CpmlPair. The absoulte max number of intersections
+ * is dependent from the type of the primitive involved in the
+ * operation. If there are at least one Bézier curve involved, up to
+ * 4 intersections could be returned. Otherwise, if there is an arc
+ * the intersections will be 2 at maximum. For line line primitives,
+ * there is only 1 point (or obviously 0 if the lines do not intersect).
  *
  * <note><para>
  * This function is primitive dependent: every new primitive must
@@ -595,20 +588,21 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * (excluding %CAIRO_PATH_CLOSE_PATH, as it is converted to a line
  * primitive).</para>
  * <para>The convention used by CPML is that a primitive should
- * expose only APIs dealing with lower complexity primitives.
- * This is required to avoid double functions: you will have
- * only a cpml_curve_intersection_with_line() function not a
- * cpml_line_intersection_with_curve(), as the latter is
+ * expose only intersection APIs dealing with lower complexity
+ * primitives. This is required to avoid double functions:
+ * you will have only a cpml_curve_intersection_with_line() function,
+ * not a cpml_line_intersection_with_curve(), as the latter is
  * easily reproduced by calling the former with @primitive2
- * and @primitive switched.
+ * and @primitive swapped.
  * </para></note>
  *
- * Return value: the number of intersection points found
+ * Return value: the number of intersection points found or 0 if the
+ *               primitives do not intersect
  **/
 int
 cpml_primitive_intersection(const CpmlPrimitive *primitive,
                             const CpmlPrimitive *primitive2,
-                            CpmlPair *dest)
+                            CpmlPair *dest, int max)
 {
     cairo_path_data_type_t type1, type2;
 
@@ -642,23 +636,29 @@ cpml_primitive_intersection(const CpmlPrimitive *primitive,
 
     case CAIRO_PATH_LINE_TO:
         if (type2 == CAIRO_PATH_LINE_TO)
-            return cpml_line_intersection(primitive2, primitive, dest);
+            return cpml_line_intersection(primitive2, primitive,
+                                          dest, max);
         else if (type2 == CAIRO_PATH_ARC_TO)
-            return cpml_arc_intersection_with_line(primitive2, primitive, dest);
+            return cpml_arc_intersection_with_line(primitive2, primitive,
+                                                   dest, max);
         else if (type2 == CAIRO_PATH_CURVE_TO)
-            return cpml_curve_intersection_with_line(primitive2, primitive, dest);
+            return cpml_curve_intersection_with_line(primitive2, primitive,
+                                                     dest, max);
         break;
 
     case CAIRO_PATH_ARC_TO:
         if (type2 == CAIRO_PATH_ARC_TO)
-            return cpml_arc_intersection(primitive2, primitive, dest);
+            return cpml_arc_intersection(primitive2, primitive,
+                                         dest, max);
         else if (type2 == CAIRO_PATH_CURVE_TO)
-            return cpml_curve_intersection_with_arc(primitive2, primitive, dest);
+            return cpml_curve_intersection_with_arc(primitive2, primitive,
+                                                    dest, max);
         break;
 
     case CAIRO_PATH_CURVE_TO:
         if (type2 == CAIRO_PATH_CURVE_TO)
-            return cpml_curve_intersection(primitive2, primitive, dest);
+            return cpml_curve_intersection(primitive2, primitive,
+                                           dest, max);
         break;
 
     default:
