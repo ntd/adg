@@ -118,20 +118,30 @@ cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
  * cpml_line_intersection:
  * @line:  the first line
  * @line2: the second line
- * @dest:  the destination #CpmlPair
+ * @dest:  a vector of #CpmlPair
+ * @max:   maximum number of intersections to return
+ *         (that is, the size of @dest)
  *
  * Given two lines (@line and @line2), gets their intersection point
  * and store the result in @dest.
  *
- * Return value: 1 on success, 0 on no intersections
+ * If @max is 0, the function returns 0 immediately without any
+ * further processing. If @line and @line2 are cohincident,
+ * their intersections are not considered.
+ *
+ * Return value: the number of intersections found (max 1)
+ *               or 0 if the primitives do not intersect
  **/
 int
-cpml_line_intersection(const CpmlPrimitive *line,
-                       const CpmlPrimitive *line2, CpmlPair *dest)
+cpml_line_intersection(const CpmlPrimitive *line, const CpmlPrimitive *line2,
+                       CpmlPair *dest, int max)
 {
     const cairo_path_data_t *p1a, *p2a, *p1b, *p2b;
     CpmlVector va, vb;
     double factor;
+
+    if (max == 0)
+        return 0;
 
     p1a = cpml_primitive_get_point(line, 0);
     p2a = cpml_primitive_get_point(line, 1);

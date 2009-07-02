@@ -36,7 +36,8 @@ void    cpml_line_vector_at             (const CpmlPrimitive    *line,
                                          double                  pos);
 int     cpml_line_intersection          (const CpmlPrimitive    *line,
                                          const CpmlPrimitive    *line2,
-                                         CpmlPair               *dest);
+                                         CpmlPair               *dest,
+                                         int                     max);
 void    cpml_line_offset                (CpmlPrimitive          *line,
                                          double                  offset);
 
