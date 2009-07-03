@@ -242,6 +242,31 @@ cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
 }
 
 /**
+ * cpml_arc_near_pos:
+ * @arc: the #CpmlPrimitive arc data
+ * @pair: the coordinates of the subject point
+ *
+ * Returns the pos value of the point on @arc nearest to @pair.
+ * The returned value is always between 0 and 1.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: the pos value, always between 0 and 1
+ **/
+double
+cpml_arc_near_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
+{
+    /* TODO */
+
+    return 0;
+}
+
+/**
  * cpml_arc_intersection:
  * @arc:  the first arc
  * @arc2: the second arc

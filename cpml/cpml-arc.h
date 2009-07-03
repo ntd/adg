@@ -47,6 +47,8 @@ void    cpml_arc_pair_at                (const CpmlPrimitive    *arc,
 void    cpml_arc_vector_at              (const CpmlPrimitive    *arc,
                                          CpmlVector             *vector,
                                          double                  pos);
+double  cpml_arc_near_pos               (const CpmlPrimitive    *arc,
+                                         const CpmlPair         *pair);
 int     cpml_arc_intersection           (const CpmlPrimitive    *arc,
                                          const CpmlPrimitive    *arc2,
                                          CpmlPair               *dest,
