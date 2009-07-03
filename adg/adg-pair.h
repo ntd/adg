@@ -28,7 +28,6 @@
 G_BEGIN_DECLS
 
 #define ADG_TYPE_PAIR           (adg_pair_get_type())
-#define adg_pair_copy(pair,src) (cpml_pair_copy((pair), (src)))
 
 
 typedef CpmlPair AdgPair;
