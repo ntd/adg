@@ -20,6 +20,7 @@
     <title>ADG core reference</title>
     <xi:include href="xml/tree_index.sgml"/>
     <xi:include href="xml/pair.xml"/>
+    <xi:include href="xml/primitive.xml"/>
     <xi:include href="xml/point.xml"/>
     <xi:include href="xml/matrix.xml"/>
     <xi:include href="xml/pattern.xml"/>

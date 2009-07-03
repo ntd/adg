@@ -4,10 +4,21 @@
 AdgPair
 <SUBSECTION>
 adg_pair_dup
-adg_pair_copy
 <SUBSECTION Standard>
 ADG_TYPE_PAIR
 adg_pair_get_type
+</SECTION>
+
+<SECTION>
+<FILE>primitive</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgPrimitive
+<SUBSECTION>
+adg_primitive_deep_dup
+adg_primitive_dup
+<SUBSECTION Standard>
+ADG_TYPE_PRIMITIVE
+adg_primitive_get_type
 </SECTION>
 
 <SECTION>
