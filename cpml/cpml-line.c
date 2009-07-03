@@ -31,6 +31,14 @@
 #include "cpml-line.h"
 #include "cpml-pair.h"
 
+#include <stdlib.h>
+
+
+static cairo_bool_t     intersection            (const CpmlPair *p,
+                                                 CpmlPair       *dest,
+                                                 double         *get_factor);
+
+
 /**
  * cpml_line_type_get_npoints:
  *
@@ -115,6 +123,49 @@ cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
 }
 
 /**
+ * cpml_line_near_pos:
+ * @line: the #CpmlPrimitive line data
+ * @pair: the coordinates of the subject point
+ *
+ * Returns the pos value of the point on @line nearest to @pair.
+ * The returned value is always between 0 and 1.
+ *
+ * The point nearest to @pair is got by finding the its
+ * projection on @line, as this is when the point is closer to
+ * a line primitive.
+ *
+ * Return value: the pos value, always between 0 and 1
+ **/
+double
+cpml_line_near_pos(const CpmlPrimitive *line, const CpmlPair *pair)
+{
+    CpmlPair p[4];
+    CpmlVector normal;
+    double pos;
+
+    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
+
+    cpml_pair_sub(cpml_pair_copy(&normal, &p[1]), &p[2]);
+    cpml_vector_normal(&normal);
+
+    cpml_pair_copy(&p[2], pair);
+    cpml_pair_add(cpml_pair_copy(&p[3], pair), &normal);
+
+    /* Ensure to return 0 if intersection() fails */
+    pos = 0;
+    intersection(p, NULL, &pos);
+
+    /* Clamp the result to 0..1 */
+    if (pos < 0)
+        pos = 0;
+    else if (pos > 1.)
+        pos = 1.;
+
+    return pos;
+}
+
+/**
  * cpml_line_intersection:
  * @line:  the first line
  * @line2: the second line
@@ -136,36 +187,17 @@ int
 cpml_line_intersection(const CpmlPrimitive *line, const CpmlPrimitive *line2,
                        CpmlPair *dest, int max)
 {
-    const cairo_path_data_t *p1a, *p2a, *p1b, *p2b;
-    CpmlVector va, vb;
-    double factor;
+    CpmlPair p[4];
 
     if (max == 0)
         return 0;
 
-    p1a = cpml_primitive_get_point(line, 0);
-    p2a = cpml_primitive_get_point(line, 1);
-    p1b = cpml_primitive_get_point(line2, 0);
-    p2b = cpml_primitive_get_point(line2, 1);
+    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
+    cpml_pair_from_cairo(&p[2], cpml_primitive_get_point(line2, 0));
+    cpml_pair_from_cairo(&p[3], cpml_primitive_get_point(line2, -1));
 
-    va.x = p2a->point.x - p1a->point.x;
-    va.y = p2a->point.y - p1a->point.y;
-    vb.x = p2b->point.x - p1b->point.x;
-    vb.y = p2b->point.y - p1b->point.y;
-
-    factor = va.x * vb.y - va.y * vb.x;
-
-    /* Check if the lines are parallel */
-    if (factor == 0)
-        return 0;
-
-    factor = ((p1a->point.y - p1b->point.y) * vb.x -
-              (p1a->point.x - p1b->point.x) * vb.y) / factor;
-
-    dest->x = p1a->point.x + va.x * factor;
-    dest->y = p1a->point.y + va.y * factor;
-
-    return 1;
+    return intersection(p, dest, NULL) ? 1 : 0;
 }
 
 /**
@@ -194,4 +226,33 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     p1->point.y += normal.y;
     p2->point.x += normal.x;
     p2->point.y += normal.y;
+}
+
+
+static cairo_bool_t
+intersection(const CpmlPair *p, CpmlPair *dest, double *get_factor)
+{
+    CpmlVector v[2];
+    double factor;
+
+    cpml_pair_sub(cpml_pair_copy(&v[0], &p[1]), &p[0]);
+    cpml_pair_sub(cpml_pair_copy(&v[1], &p[3]), &p[2]);
+    factor = v[0].x * v[1].y - v[0].y * v[1].x;
+
+    /* Check for equal slopes (the lines are parallel) */
+    if (factor == 0)
+        return 0;
+
+    factor = ((p[0].y - p[2].y) * v[1].x -
+              (p[0].x - p[2].x) * v[1].y) / factor;
+
+    if (dest != NULL) {
+        dest->x = p[0].x + v[0].x * factor;
+        dest->y = p[0].y + v[0].y * factor;
+    }
+
+    if (get_factor != NULL)
+        *get_factor = factor;
+
+    return 1;
 }
