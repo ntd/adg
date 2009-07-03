@@ -90,6 +90,22 @@ cpml_close_vector_at(const CpmlPrimitive *close,
 }
 
 /**
+ * cpml_close_near_pos:
+ * @close: the #CpmlPrimitive close data
+ * @pair: the coordinates of the subject point
+ *
+ * Returns the pos value of the point on @close nearest to @pair.
+ * The returned value is always between 0 and 1.
+ *
+ * Return value: the pos value, always between 0 and 1
+ **/
+double
+cpml_close_near_pos(const CpmlPrimitive *close, const CpmlPair *pair)
+{
+    return cpml_line_near_pos(close, pair);
+}
+
+/**
  * cpml_close_offset:
  * @close:  the #CpmlPrimitive close data
  * @offset: distance for the computed parallel close
