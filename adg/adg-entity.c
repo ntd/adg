@@ -677,10 +677,10 @@ adg_entity_point_to_pair(AdgEntity *entity, const AdgPoint *point,
     model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
     paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
 
-    adg_pair_copy(&model_pair, &point->model);
+    cpml_pair_copy(&model_pair, &point->model);
     cpml_pair_transform(&model_pair, model_matrix);
     
-    adg_pair_copy(&paper_pair, &point->paper);
+    cpml_pair_copy(&paper_pair, &point->paper);
     cpml_pair_transform(&paper_pair, paper_matrix);
 
     pair->x = model_pair.x + paper_pair.x;
@@ -708,7 +708,7 @@ adg_entity_point_to_model_pair(AdgEntity *entity,
     g_return_if_fail(pair != NULL);
 
     paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
-    adg_pair_copy(pair, &point->paper);
+    cpml_pair_copy(pair, &point->paper);
     cpml_pair_transform(pair, paper_matrix);
 
     pair->x += point->model.x;
@@ -734,7 +734,7 @@ adg_entity_point_to_paper_pair(AdgEntity *entity,
     g_return_if_fail(pair != NULL);
 
     model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
-    adg_pair_copy(pair, &point->model);
+    cpml_pair_copy(pair, &point->model);
     cpml_pair_transform(pair, model_matrix);
 
     pair->x += point->paper.x;
