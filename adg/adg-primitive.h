@@ -18,29 +18,26 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_PRIMITIVE_H__
+#define __ADG_PRIMITIVE_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
-#include <adg/adg-primitive.h>
-#include <adg/adg-rotable.h>
-#include <adg/adg-stroke.h>
-#include <adg/adg-style.h>
-#include <adg/adg-title-block.h>
-#include <adg/adg-toy-text.h>
-#include <adg/adg-translatable.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
-#include <adg/adg-widget.h>
+#include <cpml/cpml.h>
+#include <glib-object.h>
 
-#endif /* __ADG_H__ */
+
+G_BEGIN_DECLS
+
+#define ADG_TYPE_PRIMITIVE              (adg_primitive_get_type())
+
+
+typedef CpmlPrimitive AdgPrimitive;
+
+
+GType           adg_primitive_get_type  (void) G_GNUC_CONST;
+AdgPrimitive *  adg_primitive_dup       (const AdgPrimitive     *primitive);
+AdgPrimitive *  adg_primitive_deep_dup  (const AdgPrimitive     *primitive);
+
+G_END_DECLS
+
+
+#endif /* __ADG_PRIMITIVE_H__ */

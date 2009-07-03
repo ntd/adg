@@ -23,6 +23,7 @@ adg_h_sources=			adg.h \
 				adg-path.h \
 				adg-pattern.h \
 				adg-point.h \
+				adg-primitive.h \
 				adg-rotable.h \
 				adg-stroke.h \
 				adg-style.h \
@@ -71,6 +72,7 @@ adg_c_sources=			adg-adim.c \
 				adg-path.c \
 				adg-pattern.c \
 				adg-point.c \
+				adg-primitive.c \
 				adg-rotable.c \
 				adg-stroke.c \
 				adg-style.c \
