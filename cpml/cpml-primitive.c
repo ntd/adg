@@ -51,6 +51,7 @@
 #include <string.h>
 #include <stdio.h>
 
+
 static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 
 
@@ -59,7 +60,8 @@ static void     dump_cairo_point        (const cairo_path_data_t *path_data);
  * @primitive: the destination #CpmlPrimitive
  * @src: the source #CpmlPrimitive
  *
- * Copies @src in @primitive.
+ * Copies @src in @primitive. This is a shallow copy: the internal fields
+ * of @primitive refer to the same memory as the original @src primitive.
  *
  * Return value: @primitive
  **/
@@ -507,6 +509,45 @@ cpml_primitive_vector_at(const CpmlPrimitive *primitive,
     default:
         break;
     }
+}
+
+/**
+ * cpml_primitive_near_pos:
+ * @primitive: a #CpmlPrimitive
+ * @pair:      the coordinates of the subject point
+ *
+ * Returns the pos value of the point on @primitive nearest to @pair.
+ * The returned value is always between 0 and 1 or -1 in case of errors.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ *
+ * Return value: the requested pos value between 0 and 1 or -1 on errors
+ **/
+double
+cpml_primitive_near_pos(const CpmlPrimitive *primitive, const CpmlPair *pair)
+{
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_LINE_TO:
+        return cpml_line_near_pos(primitive, pair);
+
+    case CAIRO_PATH_ARC_TO:
+        return cpml_arc_near_pos(primitive, pair);
+
+    case CAIRO_PATH_CURVE_TO:
+        return cpml_curve_near_pos(primitive, pair);
+
+    case CAIRO_PATH_CLOSE_PATH:
+        return cpml_close_near_pos(primitive, pair);
+
+    default:
+        break;
+    }
+
+    return -1.;
 }
 
 /**
