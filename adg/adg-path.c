@@ -46,6 +46,7 @@
 
 #include "adg-path.h"
 #include "adg-path-private.h"
+#include "adg-primitive.h"
 #include "adg-intl.h"
 
 #include <math.h>
@@ -57,13 +58,16 @@ static void             clear_cairo_path        (AdgPath        *path);
 static cairo_path_t *   get_cairo_path          (AdgPath        *path);
 static cairo_path_t *   get_cpml_path           (AdgPath        *path);
 static GArray *         arc_to_curves           (GArray         *array,
-                                                 const cairo_path_data_t *src);
+                                                 const cairo_path_data_t
+                                                                *src);
 static void             append_primitive_valist (AdgPath        *path,
-                                                 cairo_path_data_type_t type,
+                                                 cairo_path_data_type_t
+                                                                 type,
                                                  int             length,
                                                  va_list         var_args);
 static cairo_path_data_t *
-                        create_nodes_valist     (cairo_path_data_type_t type,
+                        create_nodes_valist     (cairo_path_data_type_t
+                                                                 type,
                                                  int             length,
                                                  va_list         var_args);
 static void             clear_operation         (AdgPath        *path);
@@ -71,11 +75,16 @@ static gboolean         append_operation        (AdgPath        *path,
                                                  AdgOperator     operator,
                                                  ...);
 static void             do_operation            (AdgPath        *path,
-                                                 cairo_path_data_t *data);
+                                                 cairo_path_data_t
+                                                                *data);
 static void             do_chamfer              (AdgPath        *path,
                                                  CpmlPrimitive  *current);
 static void             do_fillet               (AdgPath        *path,
                                                  CpmlPrimitive  *current);
+static gboolean         is_convex               (const CpmlPrimitive
+                                                                *primitive1,
+                                                 const CpmlPrimitive
+                                                                *primitive2);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
@@ -847,8 +856,6 @@ append_operation(AdgPath *path, AdgOperator operator, ...)
     }
 
     operation = &path->priv->operation; 
-    va_start(var_args, operator);
-
     if (operation->operator != ADG_OPERATOR_NONE) {
         /* TODO: this is a rude semplification, as a lot of operators can
          * and may cohexist. As an example, a fillet followed by a
@@ -858,6 +865,8 @@ append_operation(AdgPath *path, AdgOperator operator, ...)
                   operator, operation->operator);
         return FALSE;
     }
+
+    va_start(var_args, operator);
 
     switch (operator) {
 
@@ -896,6 +905,12 @@ do_operation(AdgPath *path, cairo_path_data_t *data)
 
     priv = path->priv;
     operator = priv->operation.operator;
+
+    /* Construct the current primitive, that is the primitive to be inserted.
+     * Its org is a copy of the end point of the last primitive: it can be
+     * modified without affecting anything else. It is expected the operation
+     * functions will add to @path the primitives required but NOT to add
+     * @current, as this one will be inserted automatically. */
     current.segment = NULL;
     current.org = &current_org;
     current.data = data;
@@ -918,7 +933,6 @@ do_operation(AdgPath *path, cairo_path_data_t *data)
         g_warning("Operation not implemented (operator `%d')", operator);
         return;
     }
-
 }
 
 static void
@@ -928,7 +942,7 @@ do_chamfer(AdgPath *path, CpmlPrimitive *current)
     CpmlPrimitive *last;
     gdouble delta1, delta2;
     gdouble len1, len2;
-    CpmlPair pair;
+    AdgPair pair;
     cairo_path_data_t line[2];
 
     priv = path->priv;
@@ -973,10 +987,74 @@ static void
 do_fillet(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *priv;
+    CpmlPrimitive *last, *current_dup, *last_dup;
+    gdouble radius, offset, pos;
+    AdgPair center, vector, p[3];
+    cairo_path_data_t arc[3];
 
     priv = path->priv;
+    last = &priv->last;
+    current_dup = adg_primitive_deep_dup(current);
+    last_dup = adg_primitive_deep_dup(last);
+    radius = priv->operation.data.fillet.radius;
+    offset = is_convex(last_dup, current_dup) ? -radius : radius;
 
-    /* TODO */
+    /* Find the center of the fillet from the intersection between
+     * the last and current primitives offseted by radius */
+    cpml_primitive_offset(current_dup, offset);
+    cpml_primitive_offset(last_dup, offset);
+    if (cpml_primitive_intersection(current_dup, last_dup,
+                                    &center, 1) == 0) {
+        g_warning("Fillet not applicable (radius = %lf)", radius);
+        g_free(current_dup);
+        g_free(last_dup);
+        return;
+    }
+
+    /* Compute the start point of the fillet */
+    pos = cpml_primitive_near_pos(last_dup, &center);
+    cpml_primitive_vector_at(last_dup, &vector, pos);
+    cpml_vector_set_length(&vector, offset);
+    cpml_vector_normal(&vector);
+    cpml_pair_sub(cpml_pair_copy(&p[0], &center), &vector);
+
+    /* Compute the mid point of the fillet */
+    cpml_pair_from_cairo(&vector, current->org);
+    cpml_pair_sub(&vector, &center);
+    cpml_vector_set_length(&vector, radius);
+    cpml_pair_add(cpml_pair_copy(&p[1], &center), &vector);
+
+    /* Compute the ent point of the fillet */
+    pos = cpml_primitive_near_pos(current_dup, &center);
+    cpml_primitive_vector_at(current_dup, &vector, pos);
+    cpml_vector_set_length(&vector, offset);
+    cpml_vector_normal(&vector);
+    cpml_pair_sub(cpml_pair_copy(&p[2], &center), &vector);
+
+    g_free(current_dup);
+    g_free(last_dup);
+
+    /* Modify the end point of the last primitive */
+    cpml_pair_to_cairo(&p[0], cpml_primitive_get_point(last, -1));
+
+    /* Add the fillet arc */
+    arc[0].header.type = CAIRO_PATH_ARC_TO;
+    arc[0].header.length = 3;
+    cpml_pair_to_cairo(&p[1], &arc[1]);
+    cpml_pair_to_cairo(&p[2], &arc[2]);
+    priv->path = g_array_append_vals(priv->path, arc, 3);
 
     priv->operation.operator = ADG_OPERATOR_NONE;
+}
+
+static gboolean
+is_convex(const CpmlPrimitive *primitive1, const CpmlPrimitive *primitive2)
+{
+    CpmlVector v1, v2;
+
+    cpml_primitive_vector_at(primitive1, &v1, -1);
+    cpml_primitive_vector_at(primitive2, &v2, 0);
+
+    /* I think this is a naive (and wrong) approach: test case needed */
+    return cpml_vector_angle(&v1) > cpml_vector_angle(&v2);
 }
