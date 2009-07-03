@@ -208,18 +208,20 @@ drawing_path(const DrawingData *data)
     y = (data->D1 - data->D2) / 2;
     adg_path_line_to(path, data->A - data->B - data->LD2 + y * SQRT3, data->D1 / 2 - y);
     adg_path_line_to(path, data->A - data->B, data->D2 / 2);
+    adg_path_fillet(path, 0.4);
     adg_path_line_to(path, data->A - data->B, data->D3 / 2);
     adg_path_chamfer(path, CHAMFER, CHAMFER);
     adg_path_line_to(path, data->A - data->B + data->LD3, data->D3 / 2);
     adg_path_chamfer(path, CHAMFER, CHAMFER);
-    x = data->A - data->B + data->LD3 + data->RD34;
-    y = data->D4 / 2 + data->RD34;
-    adg_path_arc(path, x, y, data->RD34, G_PI, -G_PI_2);
+    adg_path_line_to(path, data->A - data->B + data->LD3, data->D4 / 2);
+    adg_path_fillet(path, data->RD34);
     adg_path_line_to(path, data->A - data->C - data->LD5, data->D4 / 2);
     y = (data->D4 - data->D5) / 2;
     adg_path_line_to(path, data->A - data->C - data->LD5 + y, data->D4 / 2 - y);
     adg_path_line_to(path, data->A - data->C, data->D5 / 2);
+    adg_path_fillet(path, 0.2);
     adg_path_line_to(path, data->A - data->C, data->D6 / 2);
+    adg_path_fillet(path, 0.1);
     adg_path_line_to(path, data->A - data->C + data->LD6, data->D6 / 2);
     x = data->C - data->LD7 - data->LD6;
     y = x / SQRT3;
@@ -227,8 +229,8 @@ drawing_path(const DrawingData *data)
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
     adg_path_line_to(path, data->A, data->D7 / 2);
 
-    /* Build the shape by reflecting the current path, reversing the order
-     * and joining the result to the current path */
+    /* Build the rounded shape by duplicating the current path, reflecting on
+     * the y=0 axis, reversing it and joining the result to the current path */
     cairo_path = adg_path_dup_cpml_path(path);
 
     cpml_segment_from_cairo(&segment, cairo_path);
