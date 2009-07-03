@@ -13,21 +13,6 @@
             <property name="tab_pos">left</property>
             <property name="tab_vborder">6</property>
             <child>
-              <object class="AdgWidget" id="areaLDim">
-                <property name="visible">True</property>
-              </object>
-            </child>
-            <child type="tab">
-              <object class="GtkLabel" id="lblLDim">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">LDim</property>
-              </object>
-              <packing>
-                <property name="tab_fill">False</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkVBox" id="vbDrawing">
                 <property name="visible">True</property>
                 <child>
@@ -102,6 +87,21 @@
               </object>
               <packing>
                 <property name="position">1</property>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="AdgWidget" id="areaLDim">
+                <property name="visible">True</property>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="lblLDim">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">LDim</property>
+              </object>
+              <packing>
                 <property name="tab_fill">False</property>
               </packing>
             </child>
