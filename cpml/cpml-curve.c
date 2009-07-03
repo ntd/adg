@@ -203,6 +203,31 @@ cpml_curve_vector_at(const CpmlPrimitive *curve,
 }
 
 /**
+ * cpml_curve_near_pos:
+ * @curve: the #CpmlPrimitive curve data
+ * @pair:  the coordinates of the subject point
+ *
+ * Returns the pos value of the point on @curve nearest to @pair.
+ * The returned value is always between 0 and 1.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>To be implemented...</listitem>
+ * </itemizedlist>
+ * </important>
+ *
+ * Return value: the pos value, always between 0 and 1
+ **/
+double
+cpml_curve_near_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
+{
+    /* TODO */
+
+    return 0;
+}
+
+/**
  * cpml_curve_intersection:
  * @curve:  the first curve
  * @curve2: the second curve
