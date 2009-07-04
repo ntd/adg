@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:pair
  * @title: AdgPair
@@ -24,6 +25,14 @@
  *
  * The AdgPair is a wrapper typedef in GType syntax of the #CpmlPair struct.
  **/
+
+/**
+ * AdgPair:
+ *
+ * Another name for the #CpmlPair type: check its documentation
+ * for fields description.
+ **/
+
 
 #include "adg-pair.h"
 
