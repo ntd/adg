@@ -14,11 +14,23 @@ adg_pair_get_type
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgPrimitive
 <SUBSECTION>
-adg_primitive_deep_dup
 adg_primitive_dup
+adg_primitive_deep_dup
 <SUBSECTION Standard>
 ADG_TYPE_PRIMITIVE
 adg_primitive_get_type
+</SECTION>
+
+<SECTION>
+<FILE>segment</FILE>
+<INCLUDE>adg/adg.h</INCLUDE>
+AdgSegment
+<SUBSECTION>
+adg_segment_dup
+adg_segment_deep_dup
+<SUBSECTION Standard>
+ADG_TYPE_SEGMENT
+adg_segment_get_type
 </SECTION>
 
 <SECTION>
