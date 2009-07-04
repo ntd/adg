@@ -1069,10 +1069,17 @@ static gboolean
 is_convex(const CpmlPrimitive *primitive1, const CpmlPrimitive *primitive2)
 {
     CpmlVector v1, v2;
+    gdouble angle1, angle2;
 
     cpml_primitive_vector_at(primitive1, &v1, -1);
     cpml_primitive_vector_at(primitive2, &v2, 0);
 
-    /* I think this is a naive (and wrong) approach: test case needed */
-    return cpml_vector_angle(&v1) > cpml_vector_angle(&v2);
+    /* Probably there is a smarter way to get this without trygonometry */
+    angle1 = cpml_vector_angle(&v1);
+    angle2 = cpml_vector_angle(&v2);
+
+    if (angle1 > angle2)
+        angle1 -= M_PI*2;
+
+    return angle2-angle1 > M_PI;
 }
