@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:segment
  * @title: AdgSegment
@@ -27,6 +28,14 @@
  * are provided, such as shallow and deep duplication, as the CPML
  * library does not have dynamic memory APIs.
  **/
+
+/**
+ * AdgSegment:
+ *
+ * Another name for the #CpmlSegment type: check its documentation
+ * for fields description.
+ **/
+
 
 #include "adg-segment.h"
 
