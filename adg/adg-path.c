@@ -367,8 +367,8 @@ adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(primitive != NULL);
-    g_return_if_fail(primitive->org->point.x != path->priv->cp.x ||
-                     primitive->org->point.y != path->priv->cp.y);
+    g_return_if_fail(primitive->org->point.x == path->priv->cp.x &&
+                     primitive->org->point.y == path->priv->cp.y);
 
     /* The primitive data could be modified by pending operations:
      * work on a copy */
@@ -911,18 +911,20 @@ do_operation(AdgPath *path, cairo_path_data_t *data)
 {
     AdgPathPrivate *priv;
     AdgOperator operator;
+    CpmlSegment segment;
     CpmlPrimitive current;
     cairo_path_data_t current_org;
 
     priv = path->priv;
     operator = priv->operation.operator;
+    cpml_segment_from_cairo(&segment, get_cpml_path(path));
 
     /* Construct the current primitive, that is the primitive to be inserted.
      * Its org is a copy of the end point of the last primitive: it can be
      * modified without affecting anything else. It is expected the operation
      * functions will add to @path the primitives required but NOT to add
      * @current, as this one will be inserted automatically. */
-    current.segment = NULL;
+    current.segment = &segment;
     current.org = &current_org;
     current.data = data;
     cpml_pair_to_cairo(&priv->cp, &current_org);
@@ -1006,6 +1008,11 @@ do_fillet(AdgPath *path, CpmlPrimitive *current)
     priv = path->priv;
     last = &priv->last;
     current_dup = adg_primitive_deep_dup(current);
+
+    /* Force current_dup to point to the original segment so a
+     * CAIRO_PATH_CLOSE_PATH primitive will work as expected */
+    current_dup->segment = current->segment;
+
     last_dup = adg_primitive_deep_dup(last);
     radius = priv->operation.data.fillet.radius;
     offset = is_convex(last_dup, current_dup) ? -radius : radius;
@@ -1035,7 +1042,7 @@ do_fillet(AdgPath *path, CpmlPrimitive *current)
     cpml_vector_set_length(&vector, radius);
     cpml_pair_add(cpml_pair_copy(&p[1], &center), &vector);
 
-    /* Compute the ent point of the fillet */
+    /* Compute the end point of the fillet */
     pos = cpml_primitive_near_pos(current_dup, &center);
     cpml_primitive_vector_at(current_dup, &vector, pos);
     cpml_vector_set_length(&vector, offset);
