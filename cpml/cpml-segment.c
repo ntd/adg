@@ -20,25 +20,29 @@
 /**
  * SECTION:segment
  * @title: CpmlSegment
- * @short_description: Contiguous lines
+ * @short_description: A contiguous line that can be a fragment
+ *                     or a whole cairo path
  *
- * A segment is a single contiguous line got from a cairo path.
+ * A segment is a single contiguous line got from a cairo path. The
+ * CPML library relies on one assumption to let the data be independent
+ * from the current point (and thus from the cairo context): any segment
+ * MUST be preceded by at least one %CAIRO_PATH_MOVE_TO primitive.
+ * This means a valid segment in cairo could be rejected by CPML.
  *
- * Every #CpmlPath struct can contain more than one segment:
- * the CPML library provides iteration APIs to browse these segments.
- * The <structname>CpmlSegment</structname> struct internally keeps
- * a reference to the source #CpmlPath so it can be used both
- * for getting data from the current segment, browsing the next and
- * reset to the first (it is used also as a forward iterator).
+ * #CpmlSegment provides an unobtrusive way to access a cairo path.
+ * This means #CpmlSegment itsself does not hold any coordinates but
+ * instead a bunch of pointers to the original #cairo_path_t struct:
+ * modifying data throught this struct also changes the original path.
  *
+ * Every #CpmlPath struct can contain more than one segment: the CPML
+ * library provides iteration APIs to browse the segments of a path.
  * Use cpml_segment_reset() to reset the iterator at the start of the
  * cairo path (will point the first segment) and cpml_segment_next()
- * to get the next segment. When initialized,
- * <structname>CpmlSegment</structname> yet refers to the first
- * segment, so the initial reset is useless.
+ * to get the next segment. Getting the previous segment is not provided
+ * as the underlying cairo struct is not accessible in reverse order.
  *
- * Getting the previous segment is not provided, as the underlying
- * cairo struct is not accessible in reverse order.
+ * When initialized, #CpmlSegment yet refers to the first segment so
+ * the initial reset is not required.
  **/
 
 /**
@@ -55,13 +59,14 @@
 /**
  * CpmlSegment:
  * @path:     the source #CpmlPath struct
- * @data:     the segment data
+ * @data:     the data points of the segment; the first primitive
+ *            will always be a %CAIRO_PATH_MOVE_TO
  * @num_data: size of @data
  *
  * This is an unobtrusive struct to identify a segment inside a
  * cairo path. Unobtrusive means that the real coordinates are
- * still stored in @source: CpmlSegment only provides a way to
- * access the underlying cairo path.
+ * still stored in @path: CpmlSegment only provides a way to
+ * access them.
  **/
 
 #include "cpml-segment.h"
