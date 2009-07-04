@@ -197,8 +197,8 @@ drawing_path(const DrawingData *data)
 {
     AdgPath *path;
     double x, y;
-    cairo_path_t *cairo_path;
-    CpmlSegment segment;
+    AdgSegment segment_org;
+    AdgSegment *segment;
     cairo_matrix_t matrix;
 
     path = (AdgPath *) adg_path_new();
@@ -229,19 +229,19 @@ drawing_path(const DrawingData *data)
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
     adg_path_line_to(path, data->A, data->D7 / 2);
 
-    /* Build the rounded shape by duplicating the current path, reflecting on
-     * the y=0 axis, reversing it and joining the result to the current path */
-    cairo_path = adg_path_dup_cpml_path(path);
-
-    cpml_segment_from_cairo(&segment, cairo_path);
-    cpml_segment_reverse(&segment);
+    /* Build the rounded shape by duplicating the first segment of
+     * the current path, reflecting it on the y=0 axis, reversing and
+     * joining it the result to the original path */
+    cpml_segment_from_cairo(&segment_org, adg_path_get_cpml_path(path));
+    segment = adg_segment_deep_dup(&segment_org);
+    cpml_segment_reverse(segment);
     adg_matrix_init_reflection(&matrix, 0);
-    cpml_segment_transform(&segment, &matrix);
-    cairo_path->data[0].header.type = CAIRO_PATH_LINE_TO;
+    cpml_segment_transform(segment, &matrix);
+    segment->data[0].header.type = CAIRO_PATH_LINE_TO;
 
-    adg_path_append_cairo_path(path, cairo_path);
+    adg_path_append_segment(path, segment);
 
-    g_free(cairo_path);
+    g_free(segment);
 
     adg_path_close(path);
     return path;
