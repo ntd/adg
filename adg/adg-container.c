@@ -314,8 +314,8 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 
     if (parent_matrix)
         cairo_matrix_multiply(&container->priv->model_matrix,
-                              parent_matrix,
-                              &container->priv->model_transformation);
+                              &container->priv->model_transformation,
+                              parent_matrix);
     else
         adg_matrix_copy(&container->priv->model_matrix,
                         &container->priv->model_transformation);
@@ -338,8 +338,8 @@ paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 
     if (parent_matrix)
         cairo_matrix_multiply(&container->priv->paper_matrix,
-                              parent_matrix,
-                              &container->priv->paper_transformation);
+                              &container->priv->paper_transformation,
+                              parent_matrix);
     else
         adg_matrix_copy(&container->priv->paper_matrix,
                         &container->priv->paper_transformation);
