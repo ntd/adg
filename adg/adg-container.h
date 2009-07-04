@@ -57,36 +57,40 @@ struct _AdgContainerClass {
 };
 
 
-GType            adg_container_get_type         (void) G_GNUC_CONST;
-GSList *         adg_container_get_children	(AdgContainer   *container);
-void             adg_container_add		(AdgContainer   *container,
-						 AdgEntity      *entity);
-void             adg_container_remove		(AdgContainer   *container,
-						 AdgEntity      *entity);
+GType           adg_container_get_type          (void) G_GNUC_CONST;
 
-void             adg_container_foreach		(AdgContainer   *container,
-						 GCallback	 callback,
-						 gpointer	 user_data);
-void             adg_container_propagate	(AdgContainer   *container,
-						 guint           signal_id,
-						 GQuark          detail,
-						 ...);
-void             adg_container_propagate_by_name(AdgContainer   *container,
-						 const gchar    *detailed_signal,
-						 ...);
-void             adg_container_propagate_valist(AdgContainer    *container,
-						 guint           signal_id,
-						 GQuark          detail,
-						 va_list         var_args);
-const AdgMatrix *adg_container_get_model_transformation
-                                                (AdgContainer   *container);
-void             adg_container_set_model_transformation
-                                                (AdgContainer   *container,
+AdgEntity *     adg_container_new               (void);
+GSList *        adg_container_get_children      (AdgContainer    *container);
+void            adg_container_add               (AdgContainer    *container,
+                                                 AdgEntity       *entity);
+void            adg_container_remove            (AdgContainer    *container,
+                                                 AdgEntity       *entity);
+
+void            adg_container_foreach           (AdgContainer    *container,
+                                                 GCallback        callback,
+                                                 gpointer         user_data);
+void            adg_container_propagate         (AdgContainer    *container,
+                                                 guint            signal_id,
+                                                 GQuark           detail,
+                                                 ...);
+void            adg_container_propagate_by_name (AdgContainer    *container,
+                                                 const gchar     *detailed_signal,
+                                                 ...);
+void            adg_container_propagate_valist  (AdgContainer    *container,
+                                                 guint            signal_id,
+                                                 GQuark           detail,
+                                                 va_list          var_args);
+const AdgMatrix *
+                adg_container_get_model_transformation
+                                                (AdgContainer    *container);
+void            adg_container_set_model_transformation
+                                                (AdgContainer    *container,
                                                  const AdgMatrix *transformation);
-const AdgMatrix *adg_container_get_paper_transformation
-                                                (AdgContainer   *container);
-void             adg_container_set_paper_transformation
-                                                (AdgContainer   *container,
+const AdgMatrix *
+                adg_container_get_paper_transformation
+                                                (AdgContainer    *container);
+void            adg_container_set_paper_transformation
+                                                (AdgContainer    *container,
                                                  const AdgMatrix *transformation);
 
 G_END_DECLS

@@ -390,6 +390,20 @@ render(AdgEntity *entity, cairo_t *cr)
 
 
 /**
+ * adg_container_new:
+ *
+ * Creates a new container entity.
+ *
+ * Return value: the newly created entity
+ **/
+AdgEntity *
+adg_container_new(void)
+{
+    return (AdgEntity *) g_object_new(ADG_TYPE_CONTAINER, NULL);
+}
+
+
+/**
  * adg_container_add:
  * @container: an #AdgContainer
  * @entity: an #AdgEntity
