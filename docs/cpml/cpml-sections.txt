@@ -58,6 +58,7 @@ cpml_segment_offset
 <FILE>primitive</FILE>
 <INCLUDE>cpml/cpml.h</INCLUDE>
 CpmlPrimitive
+CpmlPrimitiveType
 <SUBSECTION>
 cpml_primitive_copy
 cpml_primitive_from_segment
