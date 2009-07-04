@@ -25,6 +25,7 @@ adg_h_sources=			adg.h \
 				adg-point.h \
 				adg-primitive.h \
 				adg-rotable.h \
+				adg-segment.h \
 				adg-stroke.h \
 				adg-style.h \
 				adg-title-block.h \
@@ -74,6 +75,7 @@ adg_c_sources=			adg-adim.c \
 				adg-point.c \
 				adg-primitive.c \
 				adg-rotable.c \
+				adg-segment.c \
 				adg-stroke.c \
 				adg-style.c \
 				adg-title-block.c \
