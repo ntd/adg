@@ -4,8 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
+ * version 2 of the License, or (at your option) any later version.  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -60,16 +59,10 @@ static cairo_path_t *   get_cpml_path           (AdgPath        *path);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t
                                                                 *src);
-static void             append_primitive_valist (AdgPath        *path,
-                                                 cairo_path_data_type_t
-                                                                 type,
-                                                 int             length,
-                                                 va_list         var_args);
-static cairo_path_data_t *
-                        create_nodes_valist     (cairo_path_data_type_t
-                                                                 type,
-                                                 int             length,
-                                                 va_list         var_args);
+static void             append_primitive        (AdgPath        *path,
+                                                 AdgPrimitive   *primitive);
+static gint             needed_pairs            (CpmlPrimitiveType type,
+                                                 gboolean        cp_is_valid);
 static void             clear_operation         (AdgPath        *path);
 static gboolean         append_operation        (AdgPath        *path,
                                                  AdgOperator     operator,
@@ -301,7 +294,7 @@ adg_path_clear(AdgPath *path)
  * a warning message will be triggered without other effect. 
  **/
 void
-adg_path_append(AdgPath *path, cairo_path_data_type_t type, ...)
+adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
 {
     va_list var_args;
 
@@ -319,45 +312,41 @@ adg_path_append(AdgPath *path, cairo_path_data_type_t type, ...)
  * va_list version of adg_path_append().
  **/
 void
-adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
-                       va_list var_args)
+adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 {
-    gint length;
+    AdgPrimitive primitive;
+    gint length, cnt;
+    cairo_path_data_t org;
+    cairo_path_data_t *data;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    switch (type) {
-
-    case CAIRO_PATH_CLOSE_PATH:
-        g_return_if_fail(path->priv->cp_is_valid);
-        length = 1;
-        break;
-
-    case CAIRO_PATH_MOVE_TO:
-        length = 2;
-        break;
-
-    case CAIRO_PATH_LINE_TO:
-        g_return_if_fail(path->priv->cp_is_valid);
-        length = 2;
-        break;
-
-    case CAIRO_PATH_ARC_TO:
-        g_return_if_fail(path->priv->cp_is_valid);
-        length = 3;
-        break;
-
-    case CAIRO_PATH_CURVE_TO:
-        g_return_if_fail(path->priv->cp_is_valid);
-        length = 4;
-        break;
-
-    default:
-        g_assert_not_reached();
+    length = needed_pairs(type, path->priv->cp_is_valid);
+    if (length == 0)
         return;
+
+    /* Set a copy of the current point as the primitive origin */
+    cpml_pair_to_cairo(&path->priv->cp, &org);
+    primitive.org = &org;
+
+    /* Build the cairo_path_data_t array */
+    primitive.data = data = g_new(cairo_path_data_t, length);
+
+    data->header.type = type;
+    data->header.length = length;
+
+    for (cnt = 1; cnt < length; ++ cnt) {
+        ++ data;
+        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), data);
     }
 
-    append_primitive_valist(path, type, length, var_args);
+    /* Terminate the creation of the temporary primitive */
+    primitive.segment = NULL;
+
+    /* Append this primitive to @path */
+    append_primitive(path, &primitive);
+
+    g_free(primitive.data);
 }
 
 /**
@@ -374,19 +363,20 @@ adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
 void
 adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
 {
+    AdgPrimitive *primitive_dup;
+
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(primitive != NULL);
     g_return_if_fail(primitive->org->point.x != path->priv->cp.x ||
                      primitive->org->point.y != path->priv->cp.y);
 
-    /* Check for empty primitive */
-    if (primitive->data == NULL)
-        return;
+    /* The primitive data could be modified by pending operations:
+     * work on a copy */
+    primitive_dup = adg_primitive_deep_dup(primitive);
 
-    clear_cairo_path(path);
-    path->priv->path = g_array_append_vals(path->priv->path,
-                                           primitive->data,
-                                           primitive->data[0].header.length);
+    append_primitive(path, primitive_dup);
+
+    g_free(primitive_dup);
 }
 
 /**
@@ -425,7 +415,6 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
                                            cairo_path->data,
                                            cairo_path->num_data);
 }
-
 
 /**
  * adg_path_move_to:
@@ -787,55 +776,69 @@ arc_to_curves(GArray *array, const cairo_path_data_t *src)
 }
 
 static void
-append_primitive_valist(AdgPath *path, cairo_path_data_type_t type,
-                        int length, va_list var_args)
+append_primitive(AdgPath *path, AdgPrimitive *current)
 {
-    AdgPathPrivate *priv;
-    cairo_path_data_t *nodes;
+    AdgPathPrivate *priv = path->priv;
+    cairo_path_data_t *data;
+    int length;
 
     priv = path->priv;
-    nodes = create_nodes_valist(type, length, var_args);
+    data = current->data;
+    length = data[0].header.length;
 
     /* Execute any pending operation */
-    do_operation(path, nodes);
+    do_operation(path, data);
 
-    /* Append the nodes to the internal path array */
-    priv->path = g_array_append_vals(priv->path, nodes, length);
-    g_free(nodes);
-    nodes = (cairo_path_data_t *) priv->path->data + priv->path->len - length;
+    /* Append the cairo data to the internal path array */
+    priv->path = g_array_append_vals(priv->path, data, length);
+
+    /* Set data to point to the recently appended cairo_path_data_t
+     * primitive: the first struct is the header */
+    data = (cairo_path_data_t *) priv->path->data + priv->path->len - length;
 
     /* Set the last primitive for subsequent binary operations */
-    priv->last.org = priv->cp_is_valid ? nodes - 1 : NULL;
+    priv->last.org = priv->cp_is_valid ? data - 1 : NULL;
     priv->last.segment = NULL;
-    priv->last.data = nodes;
+    priv->last.data = data;
 
     /* Save the last point as the current point, if applicable */
     priv->cp_is_valid = length > 1;
     if (length > 1)
-        cpml_pair_from_cairo(&priv->cp, &nodes[length-1]);
+        cpml_pair_from_cairo(&priv->cp, &data[length-1]);
 
     /* Invalidate cairo_path: should be recomputed */
     clear_cairo_path(path);
 }
 
-static cairo_path_data_t *
-create_nodes_valist(cairo_path_data_type_t type, int length, va_list var_args)
+static gint
+needed_pairs(CpmlPrimitiveType type, gboolean cp_is_valid)
 {
-    cairo_path_data_t *node, *nodes;
+    switch (type) {
 
-    node = nodes = g_new(cairo_path_data_t, length);
+    case CAIRO_PATH_CLOSE_PATH:
+        g_return_val_if_fail(cp_is_valid, 0);
+        return 1;
 
-    /* Append the header item */
-    node->header.type = type;
-    node->header.length = length;
+    case CAIRO_PATH_MOVE_TO:
+        return 2;
 
-    /* Append the data items (that is, the AdgPair points) */
-    while (--length) {
-        ++ node;
-        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), node);
+    case CAIRO_PATH_LINE_TO:
+        g_return_val_if_fail(cp_is_valid, 0);
+        return 2;
+
+    case CAIRO_PATH_ARC_TO:
+        g_return_val_if_fail(cp_is_valid, 0);
+        return 3;
+
+    case CAIRO_PATH_CURVE_TO:
+        g_return_val_if_fail(cp_is_valid, 0);
+        return 4;
+
+    default:
+        g_return_val_if_reached(0);
     }
 
-    return nodes;
+    return 0;
 }
 
 static void
