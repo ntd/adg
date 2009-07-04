@@ -219,46 +219,6 @@ adg_path_get_cpml_path(AdgPath *path)
 }
 
 /**
- * adg_path_dup_cpml_path:
- * @path: an #AdgPath
- *
- * Gets a duplicate of the cairo path structure of @path. The return
- * value should be freed with g_free(). The returned #cairo_path_t
- * struct also contains the #cairo_path_data_t array in the same
- * chunk of memory, so a g_free() to the returned pointer also frees
- * the data array.
- *
- * Although quite similar to adg_path_get_cpml_path(), the use case
- * of this method is different: being a duplicate, modifying the
- * returned path does not modify @path itsself.
- *
- * Return value: a newly allocated #cairo_path_t pointer to be freed
- *               with g_free() or %NULL on errors
- **/
-cairo_path_t *
-adg_path_dup_cpml_path(AdgPath *path)
-{
-    cairo_path_t *cpml_path;
-    gsize head_size, data_size;
-
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
-
-    head_size = sizeof(cairo_path_t);
-    data_size = sizeof(cairo_path_data_t) * path->priv->path->len;
-
-    /* Both the cairo_path_t struct and the cairo_path_data_t array
-     * are stored in the same chunk of memory, so only a single
-     * g_free() is needed */
-    cpml_path = g_malloc(head_size + data_size);
-    cpml_path->status = CAIRO_STATUS_SUCCESS;
-    cpml_path->data = (cairo_path_data_t *) ((gchar *) cpml_path + head_size);
-    cpml_path->num_data = path->priv->path->len;
-    memcpy(cpml_path->data, path->priv->path->data, data_size);
-
-    return cpml_path;
-}
-
-/**
  * adg_path_get_current_point:
  * @path: an #AdgPath
  * @x:    return value for x coordinate of the current point
