@@ -105,12 +105,10 @@ adg_primitive_deep_dup(const AdgPrimitive *primitive)
         dest->org = NULL;
     }
 
-    if (primitive->data != NULL) {
-        dest->data = p_data;
-        memcpy(p_data, primitive->data, data_size);
-    } else {
+    if (data_size > 0)
+        dest->data = memcpy(p_data, primitive->data, data_size);
+    else
         dest->data = NULL;
-    }
 
     return dest;
 }
