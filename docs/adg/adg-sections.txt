@@ -459,6 +459,8 @@ ADG_ROTABLE_GET_IFACE
 <INCLUDE>adg/adg.h</INCLUDE>
 AdgContainer
 <SUBSECTION>
+adg_container_new
+<SUBSECTION>
 adg_container_add
 adg_container_remove
 adg_container_get_children
