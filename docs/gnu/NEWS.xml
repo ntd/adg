@@ -6,6 +6,27 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.4.3">
+<title>ADG 0.4.3</title>
+
+<para>Higher level operators, such as chamfer and fillet, can now be used
+in the path definition. They do not work yet for Bézier curves but
+the infrastructure is in place.</para>
+
+<para>A Gtk+ widget for easily showing the canvas has been implemented. It
+is based on GtkDrawingArea and provides some interaction throught the
+mouse, such as zooming and panning. It is not viable for serious work
+but it is funny to use and opened to improvements.</para>
+
+<para>The CPML library has been enriched with the missing functions
+needed by the above new features. Now it has a ..._length() and
+..._near_pos() families of functions. The mathematic behind this
+library is far from complete: the overall design is quite stable
+but there are a lot of placeholders, especially when curves were
+involved.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.4.2">
 <title>ADG 0.4.2</title>
 
