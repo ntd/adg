@@ -13,10 +13,10 @@
             <property name="tab_pos">left</property>
             <property name="tab_vborder">6</property>
             <child>
-              <object class="GtkVBox" id="vbDrawing">
+              <object class="GtkVBox" id="vbSample">
                 <property name="visible">True</property>
                 <child>
-                  <object class="AdgWidget" id="areaDrawing">
+                  <object class="AdgWidget" id="areaSample">
                     <property name="width_request">640</property>
                     <property name="height_request">480</property>
                     <property name="visible">True</property>
@@ -26,7 +26,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkHButtonBox" id="hbbDrawing">
+                  <object class="GtkHButtonBox" id="hbbSample">
                     <property name="visible">True</property>
                     <property name="layout_style">end</property>
                     <child>
@@ -80,10 +80,10 @@
               </packing>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="lblDrawing">
+              <object class="GtkLabel" id="lblSample">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">Drawing</property>
+                <property name="label" translatable="yes">Sample</property>
               </object>
               <packing>
                 <property name="position">1</property>
@@ -91,15 +91,15 @@
               </packing>
             </child>
             <child>
-              <object class="AdgWidget" id="areaLDim">
+              <object class="AdgWidget" id="areaOperations">
                 <property name="visible">True</property>
               </object>
             </child>
             <child type="tab">
-              <object class="GtkLabel" id="lblLDim">
+              <object class="GtkLabel" id="lblOperations">
                 <property name="visible">True</property>
                 <property name="xalign">0</property>
-                <property name="label" translatable="yes">LDim</property>
+                <property name="label" translatable="yes">Operations</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>

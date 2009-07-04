@@ -4,8 +4,8 @@
 #include "demo.h"
 
 
-static AdgCanvas *      ldim_canvas             (void);
-static AdgCanvas *      drawing_canvas          (void);
+static AdgCanvas *      sample_canvas           (void);
+static AdgCanvas *      operations_canvas       (void);
 static void             to_pdf                  (AdgWidget      *widget,
                                                  GtkWidget      *caller);
 static void             to_png                  (AdgWidget      *widget,
@@ -20,7 +20,7 @@ main(gint argc, gchar **argv)
     gchar *path;
     GtkBuilder *builder;
     GError *error;
-    GtkWidget *window, *ldim, *drawing;
+    GtkWidget *window, *sample, *operations;
 
     gtk_init(&argc, &argv);
 
@@ -41,11 +41,11 @@ main(gint argc, gchar **argv)
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
 
-    ldim = (GtkWidget *) gtk_builder_get_object(builder, "areaLDim");
-    adg_widget_set_canvas(ADG_WIDGET(ldim), ldim_canvas());
+    sample = (GtkWidget *) gtk_builder_get_object(builder, "areaSample");
+    adg_widget_set_canvas(ADG_WIDGET(sample), sample_canvas());
 
-    drawing = (GtkWidget *) gtk_builder_get_object(builder, "areaDrawing");
-    adg_widget_set_canvas(ADG_WIDGET(drawing), drawing_canvas());
+    operations = (GtkWidget *) gtk_builder_get_object(builder, "areaOperations");
+    adg_widget_set_canvas(ADG_WIDGET(operations), operations_canvas());
 
     /* Connect signals */
     g_signal_connect(window, "delete-event",
@@ -53,11 +53,11 @@ main(gint argc, gchar **argv)
     g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
                      "clicked", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPng"),
-                             "clicked", G_CALLBACK(to_png), drawing);
+                             "clicked", G_CALLBACK(to_png), sample);
     g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPdf"),
-                             "clicked", G_CALLBACK(to_pdf), drawing);
+                             "clicked", G_CALLBACK(to_pdf), sample);
     g_signal_connect_swapped(gtk_builder_get_object(builder, "btnPs"),
-                             "clicked", G_CALLBACK(to_ps), drawing);
+                             "clicked", G_CALLBACK(to_ps), sample);
 
     g_object_unref(builder);
 
@@ -69,99 +69,49 @@ main(gint argc, gchar **argv)
 
 
 /**********************************************
- * A simple example
- **********************************************/
-
-static AdgCanvas *
-ldim_canvas(void)
-{
-    AdgPath *path;
-    AdgCanvas *canvas;
-    AdgContainer *container;
-    AdgEntity *entity;
-    AdgMatrix transformation;
-
-    /* Build the path model */
-    path = (AdgPath *) adg_path_new();
-
-    adg_path_move_to(path,  0,   0);
-    adg_path_line_to(path,  0,  -5);
-    adg_path_line_to(path,  2,  -5);
-    adg_path_line_to(path,  2, -10);
-    adg_path_line_to(path,  8, -10);
-    adg_path_line_to(path,  8,  -5);
-    adg_path_line_to(path, 10,  -5);
-    adg_path_line_to(path, 10,   0);
-    adg_path_close(path);
-
-    /* Populate the canvas */
-    canvas = adg_canvas_new();
-    container = (AdgContainer *) canvas;
-
-    entity = adg_stroke_new(path);
-    adg_container_add(container, entity);
-
-    entity = adg_ldim_new_full_explicit(2, -10, 8, -10, ADG_DIR_UP, 0, -10);
-    adg_container_add(container, entity);
-
-    entity = adg_ldim_new_full_explicit(0, -5, 10, -5, ADG_DIR_UP, 0, -10);
-    adg_dim_set_level(ADG_DIM(entity), 2);
-    adg_container_add(container, entity);
-
-    /* Set a decent starting pan position and zoom */
-    cairo_matrix_init_translate(&transformation, 10, 80);
-    cairo_matrix_scale(&transformation, 39, 39);
-    cairo_matrix_translate(&transformation, 0, 10);
-    adg_container_set_model_transformation(container, &transformation);
-
-    return canvas;
-}
-
-
-/**********************************************
- * A more complex example
+ * A sample mechanical part example
  **********************************************/
 
 #define SQRT3   1.732050808
 #define CHAMFER 0.3
 
-typedef struct _DrawingData DrawingData;
+typedef struct _SampleData SampleData;
 
-struct _DrawingData {
+struct _SampleData {
     gdouble A, B, C;
     gdouble D1, D2, D3, D4, D5, D6, D7;
     gdouble RD34, RD56;
     gdouble LD2, LD3, LD5, LD6, LD7;
 };
 
-static void     drawing_get             (DrawingData            *data);
-static AdgPath *drawing_path            (const DrawingData      *data);
-static void     drawing_add_dimensions  (AdgCanvas              *canvas,
-                                         const DrawingData      *data);
-static void     drawing_add_stuff       (AdgCanvas              *canvas,
-                                         const DrawingData      *data);
+static void     sample_get              (SampleData             *data);
+static AdgPath *sample_path             (const SampleData       *data);
+static void     sample_add_dimensions   (AdgCanvas              *canvas,
+                                         const SampleData       *data);
+static void     sample_add_stuff        (AdgCanvas              *canvas,
+                                         const SampleData       *data);
 
 
 static AdgCanvas *
-drawing_canvas(void)
+sample_canvas(void)
 {
-    DrawingData data;
+    SampleData data;
     AdgPath *path;
     AdgCanvas *canvas;
     AdgContainer *container;
     AdgEntity *entity;
     AdgMatrix transformation;
 
-    drawing_get(&data);
-    path = drawing_path(&data);
+    sample_get(&data);
+    path = sample_path(&data);
     canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
 
     entity = adg_stroke_new(path);
     adg_container_add(container, entity);
 
-    drawing_add_dimensions(canvas, &data);
-    drawing_add_stuff(canvas, &data);
+    sample_add_dimensions(canvas, &data);
+    sample_add_stuff(canvas, &data);
 
     cairo_matrix_init_translate(&transformation, 100, 70);
     cairo_matrix_scale(&transformation, 6.883, 6.883);
@@ -172,7 +122,7 @@ drawing_canvas(void)
 }
 
 static void
-drawing_get(DrawingData *data)
+sample_get(SampleData *data)
 {
     data->A = 52.3;
     data->B = 20.6;
@@ -193,7 +143,7 @@ drawing_get(DrawingData *data)
 }
 
 static AdgPath *
-drawing_path(const DrawingData *data)
+sample_path(const SampleData *data)
 {
     AdgPath *path;
     double x, y;
@@ -248,7 +198,7 @@ drawing_path(const DrawingData *data)
 }
 
 static void
-drawing_add_dimensions(AdgCanvas *canvas, const DrawingData *data)
+sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
 {
     AdgEntity *entity;
     double x, y;
@@ -339,21 +289,20 @@ drawing_add_dimensions(AdgCanvas *canvas, const DrawingData *data)
 }
 
 static void
-drawing_add_stuff(AdgCanvas *canvas, const DrawingData *data)
+sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
 {
     AdgEntity *toy_text;
 
-    toy_text = adg_toy_text_new("Horizontal toy_text above the piston");
+    toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
     adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
-                                         0., -data->D1 / 2,
-                                         0., -5.);
+                                         0., data->D3 / 2,
+                                         10., 30. + 30. * 2);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
-    toy_text = adg_toy_text_new("toy_text");
+    toy_text = adg_toy_text_new("Keep the wheel pressed while dragging the mouse to translate");
     adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
-                                         0., data->D1 / 2,
-                                         0., -5.);
-    adg_rotable_set_angle(ADG_ROTABLE(toy_text), M_PI * 3./2.);
+                                         0., data->D3 / 2,
+                                         10., 45. + 30. * 2);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 }
 
@@ -482,9 +431,9 @@ to_ps(AdgWidget *widget, GtkWidget *caller)
     /* Surface creation: A4 size */
     surface = cairo_ps_surface_create("test.ps", 841, 595);
     cairo_ps_surface_dsc_comment(surface,
-                                 "%%Title: Automatic Drawing Generation (Adg) demo");
+                                 "%%Title: Automatic Drawing Generation (ADG) demo");
     cairo_ps_surface_dsc_comment(surface,
-                                 "%%Copyright: Copyright (C) 2006 Fontana Nicola");
+                                 "%%Copyright: Copyright (C) 2006-2009 Fontana Nicola");
     cairo_ps_surface_dsc_comment(surface, "%%Orientation: Portrait");
 
     cairo_ps_surface_dsc_begin_setup(surface);
@@ -513,3 +462,135 @@ to_ps(AdgWidget *widget, GtkWidget *caller)
 }
 
 #endif
+
+
+/**********************************************
+ * Test case for basic operations,
+ * such as chamfer and fillet
+ **********************************************/
+
+static AdgPath *        operations_chamfer      (const AdgPath  *path,
+                                                 gdouble         delta1,
+                                                 gdouble         delta2);
+static AdgPath *        operations_fillet       (const AdgPath  *path,
+                                                 gdouble         radius);
+
+static AdgCanvas *
+operations_canvas(void)
+{
+    AdgPath *path, *chamfer_path, *fillet_path;
+    AdgCanvas *canvas;
+    AdgContainer *container;
+    AdgEntity *entity;
+    AdgMatrix transformation;
+
+    /* Build the base model */
+    path = (AdgPath *) adg_path_new();
+
+    adg_path_move_to(path,  2,  0);
+    adg_path_line_to(path,  0,  5);
+    adg_path_line_to(path,  2,  2);
+    adg_path_line_to(path,  0,  8);
+    adg_path_line_to(path,  2,  8);
+    adg_path_line_to(path,  2, 10);
+    adg_path_line_to(path,  3, 10);
+    adg_path_line_to(path, 10,  9);
+    adg_path_line_to(path,  5,  5);
+    adg_path_line_to(path,  3,  0);
+    adg_path_close(path);
+
+    /* Build the chamfer model */
+    chamfer_path = operations_chamfer(path, 0.25, 0.25);
+
+    /* Build the fillet model */
+    fillet_path = operations_fillet(path, 0.20);
+
+    /* Create the canvas */
+    canvas = adg_canvas_new();
+
+    /* Add the original shape */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    adg_container_add(container, adg_stroke_new(path));
+    entity = adg_toy_text_new("Original shape");
+    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
+                                           5., 10.,
+                                         -50., 20.);
+    adg_container_add(ADG_CONTAINER(canvas), entity);
+
+    /* Add the shape with 0.25x0.25 chamfer */
+    container = (AdgContainer *) adg_container_new();
+    cairo_matrix_init_translate(&transformation, 15., 0.);
+    adg_container_set_model_transformation(container, &transformation);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    adg_container_add(container, adg_stroke_new(chamfer_path));
+    entity = adg_toy_text_new("Shape with 0.25x0.25 chamfer");
+    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
+                                           5., 10.,
+                                        -120., 20.);
+    adg_container_add(container, entity);
+
+    /* Add the shape with fillets with 0.20 of radius */
+    container = (AdgContainer *) adg_container_new();
+    cairo_matrix_init_translate(&transformation, 30., 0.);
+    adg_container_set_model_transformation(container, &transformation);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    adg_container_add(container, adg_stroke_new(fillet_path));
+    entity = adg_toy_text_new("Shape with R=20 fillet");
+    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
+                                           5., 10.,
+                                         -90., 20.);
+    adg_container_add(container, entity);
+
+    /* Set a decent start position and zoom */
+    cairo_matrix_init_translate(&transformation, 10, -140);
+    cairo_matrix_scale(&transformation, 15, 15);
+    cairo_matrix_translate(&transformation, 0, 10);
+    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &transformation);
+
+    return canvas;
+}
+
+static AdgPath *
+operations_chamfer(const AdgPath *model, gdouble delta1, gdouble delta2)
+{
+    AdgPath *path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    path = (AdgPath *) adg_path_new();
+    cpml_segment_from_cairo(&segment, adg_path_get_cpml_path((AdgPath *) model));
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
+
+    do {
+        adg_path_append_primitive(path, &primitive);
+        if (primitive.data[0].header.type == CAIRO_PATH_LINE_TO)
+            adg_path_chamfer(path, delta1, delta2);
+    } while (cpml_primitive_next(&primitive));
+
+    return path;
+}
+
+static AdgPath *
+operations_fillet(const AdgPath *model, gdouble radius)
+{
+    AdgPath *path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    path = (AdgPath *) adg_path_new();
+    cpml_segment_from_cairo(&segment, adg_path_get_cpml_path((AdgPath *) model));
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
+
+    do {
+        adg_path_append_primitive(path, &primitive);
+        if (primitive.data[0].header.type == CAIRO_PATH_LINE_TO)
+            adg_path_fillet(path, radius);
+    } while (cpml_primitive_next(&primitive));
+
+    return path;
+}
