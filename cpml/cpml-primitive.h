@@ -27,6 +27,7 @@
 CAIRO_BEGIN_DECLS
 
 typedef struct _CpmlPrimitive CpmlPrimitive;
+typedef cairo_path_data_type_t CpmlPrimitiveType;
 
 struct _CpmlPrimitive {
         CpmlSegment       *segment;
@@ -60,7 +61,7 @@ int     cpml_primitive_intersection_with_segment
                                          int                     max);
 
 /* To be implemented by the primitives */
-int     cpml_primitive_type_get_npoints (cairo_path_data_type_t  type);
+int     cpml_primitive_type_get_npoints (CpmlPrimitiveType       type);
 double  cpml_primitive_length           (const CpmlPrimitive    *primitive);
 void    cpml_primitive_pair_at          (const CpmlPrimitive    *primitive,
                                          CpmlPair               *pair,

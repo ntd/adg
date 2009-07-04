@@ -23,10 +23,22 @@
  * @short_description: Basic component of segments
  *
  * A primitive is an atomic geometric element found inside #CpmlSegment.
- * The available primitives are defined in the #cairo_path_data_type_t
- * enum, excluding %CAIRO_PATH_MOVE_TO, as it is not considered a valid
- * primitive and it is managed in different way (the moveto primitives
- * are used to set the origin of the first primitive in a segment).
+ * The available primitives are the same defined by #cairo_path_data_type_t
+ * with the additional %CAIRO_PATH_ARC_TO type (check #CpmlPrimitiveType
+ * for further information) and without %CAIRO_PATH_MOVE_TO, as the latter
+ * is not considered a valid primitive and it is managed in different way
+ * (the move to primitives are only used to define the origin of a segment).
+ **/
+
+/**
+ * CpmlPrimitiveType:
+ *
+ * This is another name for #cairo_path_data_type_t type. Although
+ * phisically they are the same struct, #CpmlPrimitiveType conceptually
+ * embodies an important difference: it can be used to specify the
+ * special %CAIRO_PATH_ARC_TO primitive. This is not a native cairo
+ * primitive and having two different types is a good way to make clear
+ * when a function expect or not embedded arc-to primitives.
  **/
 
 /**
@@ -357,7 +369,7 @@ cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
  * Return value: the number of points or -1 on errors
  **/
 int
-cpml_primitive_type_get_npoints(cairo_path_data_type_t type)
+cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
 {
     switch (type) {
 
@@ -645,7 +657,7 @@ cpml_primitive_intersection(const CpmlPrimitive *primitive,
                             const CpmlPrimitive *primitive2,
                             CpmlPair *dest, int max)
 {
-    cairo_path_data_type_t type1, type2;
+    CpmlPrimitiveType type1, type2;
 
     type1 = primitive->data->header.type;
     type2 = primitive->data->header.type;
@@ -660,7 +672,7 @@ cpml_primitive_intersection(const CpmlPrimitive *primitive,
      * the dispatcher logic */
     if (cpml_primitive_type_get_npoints(type1) > cpml_primitive_type_get_npoints(type2)) {
         const CpmlPrimitive *tmp_primitive;
-        cairo_path_data_type_t tmp_type;
+        CpmlPrimitiveType tmp_type;
 
         tmp_type = type1;
         tmp_primitive = primitive;
