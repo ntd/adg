@@ -401,6 +401,54 @@ adg_path_append_valist(AdgPath *path, cairo_path_data_type_t type,
 }
 
 /**
+ * adg_path_append_primitive:
+ * @path:      an #AdgPath
+ * @primitive: the #AdgPrimitive to append
+ *
+ * Appends @primitive to @path. The primitive to add is considered the
+ * continuation of the current path so the <structfield>org</structfield>
+ * component of @primitive is not used. Anyway the current poins is
+ * checked against it: they must be equal or the function will fail
+ * without further processing.
+ **/
+void
+adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(primitive != NULL);
+    g_return_if_fail(primitive->org->point.x != path->priv->cp.x ||
+                     primitive->org->point.y != path->priv->cp.y);
+
+    /* Check for empty primitive */
+    if (primitive->data == NULL)
+        return;
+
+    clear_cairo_path(path);
+    path->priv->path = g_array_append_vals(path->priv->path,
+                                           primitive->data,
+                                           primitive->data[0].header.length);
+}
+
+/**
+ * adg_path_append_segment:
+ * @path:    an #AdgPath
+ * @segment: the #AdgSegment to append
+ *
+ * Appends @segment to @path.
+ **/
+void
+adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
+{
+    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(segment != NULL);
+
+    clear_cairo_path(path);
+    path->priv->path = g_array_append_vals(path->priv->path,
+                                           segment->data,
+                                           segment->num_data);
+}
+
+/**
  * adg_path_append_cairo_path:
  * @path:       an #AdgPath
  * @cairo_path: the #cairo_path_t path to append

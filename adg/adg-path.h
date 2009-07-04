@@ -22,6 +22,8 @@
 #define __ADG_PATH_H__
 
 #include <adg/adg-model.h>
+#include <adg/adg-primitive.h>
+#include <adg/adg-segment.h>
 #include <cpml/cpml.h>
 
 
@@ -63,13 +65,22 @@ gboolean        adg_path_has_current_point      (AdgPath        *path);
 void            adg_path_clear                  (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
-                                                 cairo_path_data_type_t type,
+                                                 cairo_path_data_type_t
+                                                                 type,
                                                  ...);
 void            adg_path_append_valist          (AdgPath        *path,
-                                                 cairo_path_data_type_t type,
+                                                 cairo_path_data_type_t
+                                                                 type,
                                                  va_list var_args);
+void            adg_path_append_primitive       (AdgPath        *path,
+                                                 const AdgPrimitive
+                                                                *primitive);
+void            adg_path_append_segment         (AdgPath        *path,
+                                                 const AdgSegment
+                                                                *segment);
 void            adg_path_append_cairo_path      (AdgPath        *path,
-                                                 const cairo_path_t *cairo_path);
+                                                 const cairo_path_t
+                                                                *cairo_path);
 void            adg_path_move_to                (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
