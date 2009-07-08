@@ -23,7 +23,23 @@
  * @title: AdgWidget
  * @short_description: A #GtkWidget specifically designed to contain
  *                     an #AdgCanvas entity
+ *
+ * This is a #GtkDrawingArea derived object that provides an easy way
+ * to show an ADG based canvas. Its default implementation reacts to
+ * some mouse events: if you drag the mouse by keepeng the wheel pressed
+ * the canvas is translated by translating its model transformation;
+ * if the mouse wheel is rotated, the model transformation of the canvas
+ * is scaled up or down (accordling to the wheel direction) by a factor
+ * specified by the #AdgWidget:factor property.
  **/
+
+/**
+ * AdgWidget:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-widget.h"
 #include "adg-widget-private.h"
