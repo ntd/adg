@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:entity
  * @title: AdgEntity
@@ -24,7 +25,15 @@
  *
  * This abstract class provides a base interface for all renderable objects
  * (all the objects that can be printed or viewed).
- */
+ **/
+
+/**
+ * AdgEntity:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-entity.h"
 #include "adg-entity-private.h"
@@ -79,7 +88,7 @@ static const AdgMatrix *get_paper_matrix        (AdgEntity      *entity);
 static guint signals[LAST_SIGNAL] = { 0 };
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED)
+G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED);
 
 
 static void
@@ -125,7 +134,7 @@ adg_entity_class_init(AdgEntityClass *klass)
    * @parent: the #AdgContainer parent of @entity
    *
    * Emitted after the parent container has changed.
-   */
+   **/
     signals[PARENT_SET] =
         g_signal_new("parent-set",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -141,7 +150,7 @@ adg_entity_class_init(AdgEntityClass *klass)
    * @parent_matrix: the parent model matrix
    *
    * Emitted after the current model matrix has changed.
-   */
+   **/
     signals[MODEL_MATRIX_CHANGED] =
         g_signal_new("model-matrix-changed",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -158,7 +167,7 @@ adg_entity_class_init(AdgEntityClass *klass)
    * @parent_matrix: the parent paper matrix
    *
    * Emitted after the current paper matrix has changed.
-   */
+   **/
     signals[PAPER_MATRIX_CHANGED] =
         g_signal_new("paper-matrix-changed",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -174,7 +183,7 @@ adg_entity_class_init(AdgEntityClass *klass)
    * @entity: an #AdgEntity
    *
    * Clears the cached data of @entity.
-   */
+   **/
     signals[INVALIDATE] =
         g_signal_new("invalidate",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -190,7 +199,7 @@ adg_entity_class_init(AdgEntityClass *klass)
    * @cr: a #cairo_t drawing context
    *
    * Causes the rendering of @entity on @cr.
-   */
+   **/
     signals[RENDER] =
         g_signal_new("render",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -277,7 +286,7 @@ dispose(GObject *object)
  * This function is only useful in entity implementations.
  *
  * Return value: the container object or %NULL if @entity is not contained
- */
+ **/
 AdgContainer *
 adg_entity_get_parent(AdgEntity *entity)
 {
@@ -294,7 +303,7 @@ adg_entity_get_parent(AdgEntity *entity)
  * Sets a new container of @entity.
  *
  * This function is only useful in entity implementations.
- */
+ **/
 void
 adg_entity_set_parent(AdgEntity *entity, AdgContainer *parent)
 {
@@ -410,7 +419,7 @@ adg_entity_set_context(AdgEntity *entity, AdgContext *context)
  *
  * Return value: the requested object or %NULL if there is no #AdgCanvas in
  *               the parent hierarchy.
- */
+ **/
 AdgCanvas *
 adg_entity_get_canvas(AdgEntity *entity)
 {
@@ -433,7 +442,7 @@ adg_entity_get_canvas(AdgEntity *entity)
  * Gets the model matrix to be used in rendering this @entity.
  *
  * Return value: the requested matrix
- */
+ **/
 const AdgMatrix *
 adg_entity_get_model_matrix(AdgEntity *entity)
 {
@@ -448,7 +457,7 @@ adg_entity_get_model_matrix(AdgEntity *entity)
  * Gets the paper matrix to be used in rendering this @entity.
  *
  * Return value: the requested matrix
- */
+ **/
 const AdgMatrix *
 adg_entity_get_paper_matrix(AdgEntity *entity)
 {
@@ -464,7 +473,7 @@ adg_entity_get_paper_matrix(AdgEntity *entity)
  * Sets the model matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
  * scale is changed.
- */
+ **/
 void
 adg_entity_scale_to_model(AdgEntity *entity, cairo_t *cr)
 {
@@ -489,7 +498,7 @@ adg_entity_scale_to_model(AdgEntity *entity, cairo_t *cr)
  * Sets the paper matrix as current matrix on @cr. The translation
  * and rotation component of the previous matrix are kept: only the
  * scale is changed.
- */
+ **/
 void
 adg_entity_scale_to_paper(AdgEntity *entity, cairo_t *cr)
 {
@@ -574,7 +583,7 @@ adg_entity_build_model2paper(AdgEntity *entity, AdgMatrix *matrix)
  * Emits the "model-matrix-changed" signal on @entity.
  *
  * This function is only useful in entity implementations.
- */
+ **/
 void
 adg_entity_model_matrix_changed(AdgEntity *entity,
                                 const AdgMatrix *parent_matrix)
@@ -592,7 +601,7 @@ adg_entity_model_matrix_changed(AdgEntity *entity,
  * Emits the "paper-matrix-changed" signal on @entity.
  *
  * This function is only useful in entity implementations.
- */
+ **/
 void
 adg_entity_paper_matrix_changed(AdgEntity *entity,
                                 const AdgMatrix *parent_matrix)
@@ -747,7 +756,7 @@ adg_entity_point_to_paper_pair(AdgEntity *entity,
  * @entity: an #AdgEntity
  *
  * Return value: %TRUE if the model matrix didn't change from the last render
- */
+ **/
 gboolean
 adg_entity_model_matrix_applied(AdgEntity *entity)
 {
@@ -760,7 +769,7 @@ adg_entity_model_matrix_applied(AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Return value: %TRUE if the paper matrix didn't change from the last render
- */
+ **/
 gboolean
 adg_entity_paper_matrix_applied(AdgEntity *entity)
 {
@@ -773,7 +782,7 @@ adg_entity_paper_matrix_applied(AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Return value: %TRUE if the model didn't change from the last render
- */
+ **/
 gboolean
 adg_entity_model_applied(AdgEntity *entity)
 {
@@ -787,7 +796,7 @@ adg_entity_model_applied(AdgEntity *entity)
  *
  * Emits the "invalidate" signal on @entity and all its children, if any,
  * so subsequent rendering will need a global recomputation.
- */
+ **/
 void
 adg_entity_invalidate(AdgEntity *entity)
 {
@@ -803,7 +812,7 @@ adg_entity_invalidate(AdgEntity *entity)
  *
  * Emits the "render" signal on @entity and all its children, if any,
  * causing the rendering operation the @cr cairo context.
- */
+ **/
 void
 adg_entity_render(AdgEntity *entity, cairo_t *cr)
 {
