@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
+
 struct _AdgArrowStylePrivate {
     gdouble             size;
     gdouble             angle;

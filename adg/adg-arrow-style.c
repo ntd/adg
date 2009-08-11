@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:arrow-style
  * @title: AdgArrowStyle
@@ -25,6 +26,14 @@
  * Contains parameters on how to draw arrows, providing a way to register a
  * custom rendering callback.
  */
+
+/**
+ * AdgArrowStyle:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-arrow-style.h"
 #include "adg-arrow-style-private.h"
@@ -136,35 +145,35 @@ adg_arrow_style_class_init(AdgArrowStyleClass *klass)
 static void
 adg_arrow_style_init(AdgArrowStyle *arrow_style)
 {
-    AdgArrowStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(arrow_style,
+    AdgArrowStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(arrow_style,
                                                              ADG_TYPE_ARROW_STYLE,
                                                              AdgArrowStylePrivate);
 
-    priv->size = 14.;
-    priv->angle = G_PI / 6.;
-    priv->margin = 14.;
-    priv->renderer = NULL;
+    data->size = 14.;
+    data->angle = G_PI / 6.;
+    data->margin = 14.;
+    data->renderer = NULL;
 
-    arrow_style->priv = priv;
+    arrow_style->data = data;
 }
 
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgArrowStyle *arrow_style = (AdgArrowStyle *) object;
+    AdgArrowStylePrivate *data = ((AdgArrowStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_SIZE:
-        g_value_set_double(value, arrow_style->priv->size);
+        g_value_set_double(value, data->size);
         break;
     case PROP_ANGLE:
-        g_value_set_double(value, arrow_style->priv->angle);
+        g_value_set_double(value, data->angle);
         break;
     case PROP_MARGIN:
-        g_value_set_double(value, arrow_style->priv->margin);
+        g_value_set_double(value, data->margin);
         break;
     case PROP_RENDERER:
-        g_value_set_pointer(value, arrow_style->priv->renderer);
+        g_value_set_pointer(value, data->renderer);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -176,20 +185,20 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgArrowStyle *arrow_style = (AdgArrowStyle *) object;
+    AdgArrowStylePrivate *data = ((AdgArrowStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_SIZE:
-        arrow_style->priv->size = g_value_get_double(value);
+        data->size = g_value_get_double(value);
         break;
     case PROP_ANGLE:
-        arrow_style->priv->angle = g_value_get_double(value);
+        data->angle = g_value_get_double(value);
         break;
     case PROP_MARGIN:
-        arrow_style->priv->margin = g_value_get_double(value);
+        data->margin = g_value_get_double(value);
         break;
     case PROP_RENDERER:
-        arrow_style->priv->renderer = g_value_get_pointer(value);
+        data->renderer = g_value_get_pointer(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -243,13 +252,16 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
                        cairo_t *cr, CpmlSegment *segment)
 {
     AdgStyleClass *style_class;
+    AdgArrowStylePrivate *data;
 
     g_return_if_fail(arrow_style != NULL);
     g_return_if_fail(cr != NULL);
     g_return_if_fail(segment != NULL);
 
+    data = arrow_style->data;
+
     /* NULL renderer */
-    if (arrow_style->priv->renderer == NULL)
+    if (data->renderer == NULL)
         return;
 
     style_class = (AdgStyleClass *) adg_arrow_style_parent_class;
@@ -257,7 +269,7 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
     if (style_class->apply != NULL)
         style_class->apply((AdgStyle *) arrow_style, cr);
 
-    arrow_style->priv->renderer(arrow_style, cr, segment);
+    data->renderer(arrow_style, cr, segment);
 }
 
 /**
@@ -271,9 +283,13 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
 gdouble
 adg_arrow_style_get_size(AdgArrowStyle *arrow_style)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_ARROW_STYLE(arrow_style), 0.);
 
-    return arrow_style->priv->size;
+    data = arrow_style->data;
+
+    return data->size;
 }
 
 /**
@@ -286,9 +302,13 @@ adg_arrow_style_get_size(AdgArrowStyle *arrow_style)
 void
 adg_arrow_style_set_size(AdgArrowStyle *arrow_style, gdouble size)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_if_fail(ADG_IS_ARROW_STYLE(arrow_style));
 
-    arrow_style->priv->size = size;
+    data = arrow_style->data;
+    data->size = size;
+
     g_object_notify((GObject *) arrow_style, "size");
 }
 
@@ -303,9 +323,13 @@ adg_arrow_style_set_size(AdgArrowStyle *arrow_style, gdouble size)
 gdouble
 adg_arrow_style_get_angle(AdgArrowStyle *arrow_style)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_ARROW_STYLE(arrow_style), 0.);
 
-    return arrow_style->priv->angle;
+    data = arrow_style->data;
+
+    return data->angle;
 }
 
 /**
@@ -318,9 +342,13 @@ adg_arrow_style_get_angle(AdgArrowStyle *arrow_style)
 void
 adg_arrow_style_set_angle(AdgArrowStyle *arrow_style, gdouble angle)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_if_fail(ADG_IS_ARROW_STYLE(arrow_style));
 
-    arrow_style->priv->angle = angle;
+    data = arrow_style->data;
+    data->angle = angle;
+
     g_object_notify((GObject *) arrow_style, "angle");
 }
 
@@ -336,9 +364,13 @@ adg_arrow_style_set_angle(AdgArrowStyle *arrow_style, gdouble angle)
 gdouble
 adg_arrow_style_get_margin(AdgArrowStyle *arrow_style)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_ARROW_STYLE(arrow_style), 0.);
 
-    return arrow_style->priv->margin;
+    data = arrow_style->data;
+
+    return data->margin;
 }
 
 /**
@@ -351,9 +383,13 @@ adg_arrow_style_get_margin(AdgArrowStyle *arrow_style)
 void
 adg_arrow_style_set_margin(AdgArrowStyle *arrow_style, gdouble margin)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_if_fail(ADG_IS_ARROW_STYLE(arrow_style));
 
-    arrow_style->priv->margin = margin;
+    data = arrow_style->data;
+    data->margin = margin;
+
     g_object_notify((GObject *) arrow_style, "margin");
 }
 
@@ -368,9 +404,13 @@ adg_arrow_style_set_margin(AdgArrowStyle *arrow_style, gdouble margin)
 AdgArrowRenderer
 adg_arrow_style_get_renderer(AdgArrowStyle *arrow_style)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_ARROW_STYLE(arrow_style), NULL);
 
-    return arrow_style->priv->renderer;
+    data = arrow_style->data;
+
+    return data->renderer;
 }
 
 /**
@@ -384,9 +424,13 @@ void
 adg_arrow_style_set_renderer(AdgArrowStyle *arrow_style,
                              AdgArrowRenderer renderer)
 {
+    AdgArrowStylePrivate *data;
+
     g_return_if_fail(ADG_IS_ARROW_STYLE(arrow_style));
 
-    arrow_style->priv->renderer = renderer;
+    data = arrow_style->data;
+    data->renderer = renderer;
+
     g_object_notify((GObject *) arrow_style, "renderer");
 }
 
@@ -478,14 +522,16 @@ tick_renderer(AdgArrowStyle *arrow_style, cairo_t *cr, CpmlSegment *segment)
 static void
 draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
 {
+    AdgArrowStylePrivate *data;
     double length, height_2;
     double org_x, org_y;
     double tmp;
     CpmlPair tail, tail1, tail2;
     CpmlPair vector;
 
-    length = arrow_style->priv->size;
-    height_2 = tan(arrow_style->priv->angle / 2.0) * length;
+    data = arrow_style->data;
+    length = data->size;
+    height_2 = tan(data->angle / 2.0) * length;
     cairo_device_to_user_distance(cr, &length, &height_2);
     org_x = segment->data[1].point.x;
     org_y = segment->data[1].point.y;
@@ -526,8 +572,13 @@ draw_triangle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
 static void
 draw_circle(cairo_t *cr, AdgArrowStyle *arrow_style, CpmlSegment *segment)
 {
-    double radius = arrow_style->priv->size / 2.;
-    double dummy = 0.;
+    AdgArrowStylePrivate *data;
+    double radius;
+    double dummy;
+
+    data = arrow_style->data;
+    radius = data->size / 2.;
+    dummy = 0;
 
     cairo_device_to_user_distance(cr, &radius, &dummy);
     cairo_new_path(cr);

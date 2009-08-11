@@ -38,7 +38,6 @@ G_BEGIN_DECLS
 
 typedef struct _AdgArrowStyle        AdgArrowStyle;
 typedef struct _AdgArrowStyleClass   AdgArrowStyleClass;
-typedef struct _AdgArrowStylePrivate AdgArrowStylePrivate;
 
 /**
  * AdgArrowRenderer:
@@ -55,13 +54,14 @@ typedef void (*AdgArrowRenderer)                (AdgArrowStyle  *arrow_style,
                                                  CpmlSegment    *segment);
 
 struct _AdgArrowStyle {
-    AdgStyle              style;
     /*< private >*/
-    AdgArrowStylePrivate *priv;
+    AdgStyle             parent;
+    gpointer             data;
 };
 
 struct _AdgArrowStyleClass {
-    AdgStyleClass         parent_class;
+    /*< private >*/
+    AdgStyleClass        parent_class;
 };
 
 
