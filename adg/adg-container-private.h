@@ -27,6 +27,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgContainerPrivate AdgContainerPrivate;
+
 struct _AdgContainerPrivate {
     GSList      *children;
     AdgMatrix    model_transformation;

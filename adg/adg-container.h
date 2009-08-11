@@ -36,18 +36,18 @@ G_BEGIN_DECLS
 
 /* AdgContainer declared in adg-entity.h */
 typedef struct _AdgContainerClass   AdgContainerClass;
-typedef struct _AdgContainerPrivate AdgContainerPrivate;
 
 struct _AdgContainer {
-    AdgEntity            entity;
-
     /*< private >*/
-    AdgContainerPrivate *priv;
+    AdgEntity            parent;
+    gpointer             data;
 };
 
 struct _AdgContainerClass {
+    /*< private >*/
     AdgEntityClass       parent_class;
 
+    /*< public >*/
     /* Virtual Table */
     GSList *    (*get_children)                 (AdgContainer   *container);
     gboolean    (*add)                          (AdgContainer   *container,
