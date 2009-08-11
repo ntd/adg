@@ -36,16 +36,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgToyText        AdgToyText;
 typedef struct _AdgToyTextClass   AdgToyTextClass;
-typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
 
 struct _AdgToyText {
-    AdgEntity            entity;
-
     /*< private >*/
-    AdgToyTextPrivate   *priv;
+    AdgEntity            parent;
+    gpointer             data;
 };
 
 struct _AdgToyTextClass {
+    /*< private >*/
     AdgEntityClass       parent_class;
 };
 

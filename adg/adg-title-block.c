@@ -35,7 +35,7 @@
 /**
  * AdgTitleBlock:
  *
- * All fields are private and should not be used directly.
+ * All fields are privates and should not be used directly.
  * Use its public methods instead.
  **/
 

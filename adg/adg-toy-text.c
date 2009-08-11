@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:toy-text
  * @title: AdgToyText
@@ -25,6 +26,14 @@
  * The #AdgToyText class is a basic class to show simple text. It internally
  * uses the so called cairo "toy" API and it shares the same limitations.
  **/
+
+/**
+ * AdgToyText:
+ *
+ * All fields are privates and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
@@ -90,15 +99,25 @@ translatable_init(AdgTranslatableIface *iface)
 static void
 get_origin(AdgTranslatable *translatable, AdgPoint *dest)
 {
-    AdgToyText *toy_text = (AdgToyText *) translatable;
-    adg_point_copy(dest, &toy_text->priv->origin);
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) translatable;
+    data = toy_text->data;
+
+    adg_point_copy(dest, &data->origin);
 }
 
 static void
 set_origin(AdgTranslatable *translatable, const AdgPoint *origin)
 {
-    AdgToyText *toy_text = (AdgToyText *) translatable;
-    adg_point_copy(&toy_text->priv->origin, origin);
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) translatable;
+    data = toy_text->data;
+
+    adg_point_copy(&data->origin, origin);
 }
 
 
@@ -112,15 +131,25 @@ rotable_init(AdgRotableIface *iface)
 static gdouble
 get_angle(AdgRotable *rotable)
 {
-    AdgToyText *toy_text = (AdgToyText *) rotable;
-    return toy_text->priv->angle;
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) rotable;
+    data = toy_text->data;
+
+    return data->angle;
 }
 
 static void
 set_angle(AdgRotable *rotable, gdouble angle)
 {
-    AdgToyText *toy_text = (AdgToyText *) rotable;
-    toy_text->priv->angle = angle;
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) rotable;
+    data = toy_text->data;
+
+    data->angle = angle;
 }
 
 
@@ -157,29 +186,31 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
 static void
 adg_toy_text_init(AdgToyText *toy_text)
 {
-    AdgToyTextPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(toy_text,
+    AdgToyTextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(toy_text,
                                                           ADG_TYPE_TOY_TEXT,
                                                           AdgToyTextPrivate);
 
-    priv->label = NULL;
-    adg_point_unset(&priv->origin);
+    data->label = NULL;
+    adg_point_unset(&data->origin);
 
-    priv->origin_cached = FALSE;
-    priv->glyphs = NULL;
+    data->origin_cached = FALSE;
+    data->glyphs = NULL;
 
-    toy_text->priv = priv;
+    toy_text->data = data;
 }
 
 static void
 finalize(GObject *object)
 {
     AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
     GObjectClass *object_class;
 
     toy_text = (AdgToyText *) object;
+    data = toy_text->data;
     object_class = (GObjectClass *) adg_toy_text_parent_class;
 
-    g_free(toy_text->priv->label);
+    g_free(data->label);
     clear_label_cache(toy_text);
     clear_origin_cache(toy_text);
 
@@ -190,17 +221,17 @@ finalize(GObject *object)
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
 
     switch (prop_id) {
     case PROP_ORIGIN:
-        g_value_set_boxed(value, &toy_text->priv->origin);
+        g_value_set_boxed(value, &data->origin);
         break;
     case PROP_ANGLE:
-        g_value_set_double(value, toy_text->priv->angle);
+        g_value_set_double(value, data->angle);
         break;
     case PROP_LABEL:
-        g_value_set_string(value, toy_text->priv->label);
+        g_value_set_string(value, data->label);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -212,21 +243,24 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) object;
+    data = toy_text->data;
 
     switch (prop_id) {
     case PROP_ORIGIN:
-        adg_point_copy(&toy_text->priv->origin,
-                       (AdgPoint *) g_value_get_boxed(value));
+        adg_point_copy(&data->origin, (AdgPoint *) g_value_get_boxed(value));
         clear_origin_cache(toy_text);
         break;
     case PROP_ANGLE:
-        toy_text->priv->angle = g_value_get_double(value);
+        data->angle = g_value_get_double(value);
         clear_origin_cache(toy_text);
         break;
     case PROP_LABEL:
-        g_free(toy_text->priv->label);
-        toy_text->priv->label = g_value_dup_string(value);
+        g_free(data->label);
+        data->label = g_value_dup_string(value);
         clear_label_cache(toy_text);
         break;
     default:
@@ -262,9 +296,13 @@ adg_toy_text_new(const gchar *label)
 const gchar *
 adg_toy_text_get_label(AdgToyText *toy_text)
 {
+    AdgToyTextPrivate *data;
+
     g_return_val_if_fail(ADG_IS_TOY_TEXT(toy_text), NULL);
 
-    return toy_text->priv->label;
+    data = toy_text->data;
+
+    return data->label;
 }
 
 /**
@@ -277,12 +315,15 @@ adg_toy_text_get_label(AdgToyText *toy_text)
 void
 adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 {
+    AdgToyTextPrivate *data;
+
     g_return_if_fail(ADG_IS_TOY_TEXT(label));
 
-    g_free(toy_text->priv->label);
-    toy_text->priv->label = g_strdup(label);
-    g_object_notify((GObject *) toy_text, "label");
+    data = toy_text->data;
+    g_free(data->label);
+    data->label = g_strdup(label);
 
+    g_object_notify((GObject *) toy_text, "label");
     clear_label_cache(toy_text);
 }
 
@@ -291,14 +332,14 @@ static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgToyText *toy_text;
-    AdgToyTextPrivate *priv;
+    AdgToyTextPrivate *data;
     AdgEntityClass *entity_class;
 
     toy_text = (AdgToyText *) entity;
-    priv = toy_text->priv;
+    data = toy_text->data;
     entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
-    if (priv->label) {
+    if (data->label) {
         AdgStyle *font_style;
 
         font_style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
@@ -306,14 +347,14 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_save(cr);
         cairo_set_matrix(cr, adg_entity_get_paper_matrix(entity));
         adg_style_apply(font_style, cr);
-        cairo_rotate(cr, priv->angle);
+        cairo_rotate(cr, data->angle);
 
-        if (!priv->glyphs)
+        if (!data->glyphs)
             update_label_cache(toy_text, cr);
-        if (!priv->origin_cached)
+        if (!data->origin_cached)
             update_origin_cache(toy_text, cr);
 
-        cairo_show_glyphs(cr, priv->glyphs, priv->num_glyphs);
+        cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
         cairo_restore(cr);
     }
 
@@ -351,33 +392,33 @@ invalidate(AdgEntity *entity)
 static gboolean
 update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 {
-    AdgToyTextPrivate *priv;
+    AdgToyTextPrivate *data;
     AdgPoint point;
     AdgPair *pair;
     cairo_glyph_t *glyph;
     double x, y;
     int cnt;
 
-    priv = toy_text->priv;
-    adg_point_copy(&point, &priv->origin);
-    pair = &priv->origin_pair;
-    glyph = priv->glyphs;
-    cnt = priv->num_glyphs;
+    data = toy_text->data;
+    adg_point_copy(&point, &data->origin);
+    pair = &data->origin_pair;
+    glyph = data->glyphs;
+    cnt = data->num_glyphs;
 
     /* On undefined label return error */
     if (glyph == NULL || cnt <= 0)
         return FALSE;
 
-    if (priv->angle != 0.) {
+    if (data->angle != 0.) {
         /* Following the less surprise rule, also the paper component
          * of the origin point should rotate with the provided angle */
         cairo_matrix_t rotation;
-        cairo_matrix_init_rotate(&rotation, priv->angle);
+        cairo_matrix_init_rotate(&rotation, data->angle);
         cpml_pair_transform(&point.paper, &rotation);
     }
 
     adg_entity_point_to_pair((AdgEntity *) toy_text, &point, pair, cr);
-    priv->origin_cached = TRUE;
+    data->origin_cached = TRUE;
 
     /* Check if the origin is still the same */
     if (pair->x == glyph->x && pair->y == glyph->y)
@@ -398,13 +439,13 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 static gboolean
 update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 {
-    AdgToyTextPrivate *priv = toy_text->priv;
+    AdgToyTextPrivate *data = toy_text->data;
     cairo_status_t status;
 
     status = cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
-                                              0., 0., priv->label, -1,
-                                              &priv->glyphs,
-                                              &priv->num_glyphs,
+                                              0., 0., data->label, -1,
+                                              &data->glyphs,
+                                              &data->num_glyphs,
                                               NULL, NULL, NULL);
 
     if (status != CAIRO_STATUS_SUCCESS) {
@@ -413,7 +454,7 @@ update_label_cache(AdgToyText *toy_text, cairo_t *cr)
         return FALSE;
     }
 
-    cairo_glyph_extents(cr, priv->glyphs, priv->num_glyphs, &priv->extents);
+    cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
 
     clear_origin_cache(toy_text);
     return TRUE;
@@ -422,19 +463,21 @@ update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 static void
 clear_origin_cache(AdgToyText *toy_text)
 {
-    toy_text->priv->origin_cached = FALSE;
+    AdgToyTextPrivate *data = toy_text->data;
+
+    data->origin_cached = FALSE;
 }
 
 static void
 clear_label_cache(AdgToyText *toy_text)
 {
-    AdgToyTextPrivate *priv = toy_text->priv;
+    AdgToyTextPrivate *data = toy_text->data;
 
-    if (priv->glyphs) {
-        cairo_glyph_free(priv->glyphs);
-        priv->glyphs = NULL;
+    if (data->glyphs) {
+        cairo_glyph_free(data->glyphs);
+        data->glyphs = NULL;
     }
 
-    priv->num_glyphs = 0;
-    memset(&priv->extents, 0, sizeof(priv->extents));
+    data->num_glyphs = 0;
+    memset(&data->extents, 0, sizeof(data->extents));
 }

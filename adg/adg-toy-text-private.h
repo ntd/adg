@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
+
 struct _AdgToyTextPrivate {
     /* Properties */
     AdgPoint             origin;
