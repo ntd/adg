@@ -5,8 +5,10 @@ DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=		$(top_srcdir)/adg
 SCANGOBJ_OPTIONS=
-SCAN_OPTIONS=		--rebuild-types
-MKDB_OPTIONS=		--sgml-mode --output-format=xml
+SCAN_OPTIONS=		--rebuild-types \
+			--rebuild-sections
+MKDB_OPTIONS=		--sgml-mode \
+			--output-format=xml
 MKTMPL_OPTIONS=
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/adg/*.h
@@ -25,3 +27,5 @@ GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
 include $(top_srcdir)/gtk-doc.make
 
 TESTS=			$(GTKDOC_CHECK)
+DISTCLEANFILES=		$(DOC_MODULE).types \
+			$(DOC_MODULE)-sections.txt
