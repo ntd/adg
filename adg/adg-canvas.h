@@ -36,16 +36,16 @@ G_BEGIN_DECLS
 
 /* AdgCanvas declared in adg-entity.h */
 typedef struct _AdgCanvasClass   AdgCanvasClass;
-typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 
 struct _AdgCanvas {
-    AdgContainer         container;
     /*< private >*/
-    AdgCanvasPrivate    *priv;
+    AdgContainer         parent;
+    gpointer             data;
 };
 
 struct _AdgCanvasClass {
+    /*< private >*/
     AdgContainerClass    parent_class;
 };
 

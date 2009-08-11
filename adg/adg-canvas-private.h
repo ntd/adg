@@ -26,7 +26,12 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
+
 struct _AdgCanvasPrivate {
+    /* Just to not have an empty struct, as I fear this could be
+     * a source of problems */
+    gint        dummy;
 };
 
 G_END_DECLS

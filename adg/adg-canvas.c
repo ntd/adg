@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:canvas
  * @title: AdgCanvas
@@ -28,6 +29,14 @@
  *
  * Internally, the target is mantained as a #cairo_t context pointer.
  */
+
+/**
+ * AdgCanvas:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
@@ -54,11 +63,11 @@ static void
 adg_canvas_init(AdgCanvas *canvas)
 {
     AdgContext *context;
-    AdgCanvasPrivate *priv =
-        G_TYPE_INSTANCE_GET_PRIVATE(canvas, ADG_TYPE_CANVAS,
-                                    AdgCanvasPrivate);
+    AdgCanvasPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(canvas,
+                                                         ADG_TYPE_CANVAS,
+                                                         AdgCanvasPrivate);
 
-    canvas->priv = priv;
+    canvas->data = data;
 
     context = adg_context_new(context_filler, NULL);
     adg_entity_set_context((AdgEntity *) canvas, context);
