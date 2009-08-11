@@ -29,13 +29,13 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgContextPrivate AdgContextPrivate;
 
 struct _AdgContextPrivate {
     GPtrArray           *style_slots;
     AdgContextFiller     context_filler;
     gpointer             user_data;
 };
-
 
 G_END_DECLS
 

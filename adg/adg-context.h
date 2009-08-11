@@ -36,17 +36,17 @@ G_BEGIN_DECLS
 
 typedef struct _AdgContext        AdgContext;
 typedef struct _AdgContextClass   AdgContextClass;
-typedef struct _AdgContextPrivate AdgContextPrivate;
 typedef AdgStyle * (*AdgContextFiller) (AdgStyleClass *style_class, gpointer user_data);
 
 struct _AdgContext {
-    GObject              object;
     /*< private >*/
-    AdgContextPrivate   *priv;
+    GObject              parent;
+    gpointer             data;
 };
 
 struct _AdgContextClass {
-    GObjectClass         object_class;
+    /*< private >*/
+    GObjectClass         parent_class;
 };
 
 

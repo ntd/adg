@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:context
  * @title: AdgContext
@@ -37,6 +38,13 @@
  **/
 
 /**
+ * AdgContext:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
+/**
  * AdgContextFiller:
  * @style_class: the new style class
  * @user_data: the user provided data
@@ -46,6 +54,7 @@
  *
  * Return value: the instance to use for the passed in style class
  **/
+
 
 #include "adg-context.h"
 #include "adg-context-private.h"
@@ -72,16 +81,16 @@ adg_context_class_init(AdgContextClass *klass)
 static void
 adg_context_init(AdgContext *context)
 {
-    AdgContextPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(context,
+    AdgContextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(context,
                                                           ADG_TYPE_CONTEXT,
                                                           AdgContextPrivate);
 
-    priv->style_slots = g_ptr_array_sized_new(class_slots ?
+    data->style_slots = g_ptr_array_sized_new(class_slots ?
                                               class_slots->len : 10);
-    priv->context_filler = context_filler;
-    priv->user_data = NULL;
+    data->context_filler = context_filler;
+    data->user_data = NULL;
 
-    context->priv = priv;
+    context->data = data;
 }
 
 
@@ -131,8 +140,10 @@ adg_context_new(AdgContextFiller context_filler, gpointer user_data)
     AdgContext *context = g_object_new(ADG_TYPE_CONTEXT, NULL);
 
     if (context_filler) {
-        context->priv->context_filler = context_filler;
-        context->priv->user_data = user_data;
+        AdgContextPrivate *data = context->data;
+
+        data->context_filler = context_filler;
+        data->user_data = user_data;
     }
 
     return context;
@@ -150,12 +161,14 @@ adg_context_new(AdgContextFiller context_filler, gpointer user_data)
 AdgStyle *
 adg_context_get_style(AdgContext *context, AdgStyleSlot slot)
 {
+    AdgContextPrivate *data;
     GPtrArray *style_slots;
 
     g_return_val_if_fail(ADG_IS_CONTEXT(context), NULL);
     g_return_val_if_fail(slot >= 0 && slot < class_slots->len, NULL);
 
-    style_slots = context->priv->style_slots;
+    data = context->data;
+    style_slots = data->style_slots;
 
     if (G_UNLIKELY(slot >= style_slots->len))
         fill_style_slots(context, slot);
@@ -174,14 +187,16 @@ adg_context_get_style(AdgContext *context, AdgStyleSlot slot)
 void
 adg_context_set_style(AdgContext *context, AdgStyle *style)
 {
+    AdgContextPrivate *data;
     AdgStyleSlot slot;
     GPtrArray *style_slots;
 
     g_return_if_fail(ADG_IS_CONTEXT(context));
     g_return_if_fail(ADG_IS_STYLE(style));
 
+    data = context->data;
     slot = adg_context_get_slot(G_TYPE_FROM_INSTANCE(style));
-    style_slots = context->priv->style_slots;
+    style_slots = data->style_slots;
 
     g_object_ref(style);
 
@@ -204,17 +219,18 @@ context_filler(AdgStyleClass *style_class, gpointer user_data)
 static void
 fill_style_slots(AdgContext *context, guint last_slot)
 {
+    AdgContextPrivate *data;
     GPtrArray *style_slots;
     AdgStyleClass *klass;
     AdgStyle *style;
     guint n;
 
-    style_slots = context->priv->style_slots;
+    data = context->data;
+    style_slots = data->style_slots;
 
     for (n = style_slots->len; n <= last_slot; ++n) {
         klass = (AdgStyleClass *) g_ptr_array_index(class_slots, n);
-        style =
-            context->priv->context_filler(klass, context->priv->user_data);
+        style = data->context_filler(klass, data->user_data);
         g_object_ref((GObject *) style);
         g_ptr_array_add(style_slots, style);
     }
