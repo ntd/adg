@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgADimPrivate AdgADimPrivate;
+
 struct _AdgADimPrivate {
     /* Cache */
     cairo_path_t        extension1;

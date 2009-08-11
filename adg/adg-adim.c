@@ -26,6 +26,14 @@
  * The #AdgADim entity represents an angular dimension.
  */
 
+/**
+ * AdgADim:
+ *
+ * All fields are privates and should not be used directly.
+ * Use its public methods instead.
+ **/
+
+
 #include "adg-adim.h"
 #include "adg-adim-private.h"
 #include "adg-container.h"
@@ -82,37 +90,37 @@ adg_adim_class_init(AdgADimClass *klass)
 static void
 adg_adim_init(AdgADim *adim)
 {
-    AdgADimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM,
+    AdgADimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM,
                                                        AdgADimPrivate);
 
-    priv->extension1.status = CAIRO_STATUS_SUCCESS;
-    priv->extension1.data = NULL;
-    priv->extension1.num_data = 4;
+    data->extension1.status = CAIRO_STATUS_SUCCESS;
+    data->extension1.data = NULL;
+    data->extension1.num_data = 4;
 
-    priv->extension2.status = CAIRO_STATUS_SUCCESS;
-    priv->extension2.data = NULL;
-    priv->extension2.num_data = 4;
+    data->extension2.status = CAIRO_STATUS_SUCCESS;
+    data->extension2.data = NULL;
+    data->extension2.num_data = 4;
 
-    priv->arrow_path.status = CAIRO_STATUS_SUCCESS;
-    priv->arrow_path.data = NULL;
-    priv->arrow_path.num_data = 4;
+    data->arrow_path.status = CAIRO_STATUS_SUCCESS;
+    data->arrow_path.data = NULL;
+    data->arrow_path.num_data = 4;
 
-    priv->baseline.status = CAIRO_STATUS_SUCCESS;
-    priv->baseline.data = NULL;
-    priv->baseline.num_data = 4;
+    data->baseline.status = CAIRO_STATUS_SUCCESS;
+    data->baseline.data = NULL;
+    data->baseline.num_data = 4;
 
-    adim->priv = priv;
+    adim->data = data;
 }
 
 static void
 finalize(GObject *object)
 {
-    AdgADimPrivate *priv = ((AdgADim *) object)->priv;
+    AdgADimPrivate *data = ((AdgADim *) object)->data;
 
-    g_free(priv->extension1.data);
-    g_free(priv->extension2.data);
-    g_free(priv->arrow_path.data);
-    g_free(priv->baseline.data);
+    g_free(data->extension1.data);
+    g_free(data->extension2.data);
+    g_free(data->arrow_path.data);
+    g_free(data->baseline.data);
 }
 
 static void
