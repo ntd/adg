@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgPathPrivate AdgPathPrivate;
+
 typedef enum {
     ADG_OPERATOR_NONE,
     ADG_OPERATOR_CHAMFER,

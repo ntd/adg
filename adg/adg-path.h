@@ -38,15 +38,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgPath        AdgPath;
 typedef struct _AdgPathClass   AdgPathClass;
-typedef struct _AdgPathPrivate AdgPathPrivate;
 
 struct _AdgPath {
     /*< private >*/
-    AdgModel		 model;
-    AdgPathPrivate	*priv;
+    AdgModel		 parent;
+    gpointer             data;
 };
 
 struct _AdgPathClass {
+    /*< private >*/
     AdgModelClass	 parent_class;
 };
 
