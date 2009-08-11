@@ -35,17 +35,17 @@ G_BEGIN_DECLS
 
 typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
-typedef struct _AdgModelPrivate AdgModelPrivate;
 
 struct _AdgModel {
     /*< private >*/
-    GObject              object;
-    AdgModelPrivate     *priv;
+    GObject              parent;
+    gpointer             data;
 };
 
 struct _AdgModelClass {
+    /*< private >*/
     GObjectClass         parent_class;
-
+    /*< public >*/
     /* Virtual Table */
     void                (*changed)              (AdgModel       *model);
 };

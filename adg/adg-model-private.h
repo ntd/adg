@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgModelPrivate AdgModelPrivate;
+
 struct _AdgModelPrivate {
     int         dummy;          /* Just to not have an empty struct */
 };

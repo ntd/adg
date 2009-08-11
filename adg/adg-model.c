@@ -104,9 +104,9 @@ adg_model_class_init(AdgModelClass *klass)
 static void
 adg_model_init(AdgModel *model)
 {
-    AdgModelPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
+    AdgModelPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
                                                         AdgModelPrivate);
-    model->priv = priv;
+    model->data = data;
 }
 
 static void
