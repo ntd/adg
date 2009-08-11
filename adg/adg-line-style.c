@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:line-style
  * @title: AdgLineStyle
@@ -25,6 +26,14 @@
  * Contains parameters on how to draw lines such as width, cap mode, join mode
  * and dash composition, if used.
  */
+
+/**
+ * AdgLineStyle:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
@@ -120,43 +129,43 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 static void
 adg_line_style_init(AdgLineStyle *line_style)
 {
-    AdgLineStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(line_style,
+    AdgLineStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(line_style,
                                                             ADG_TYPE_LINE_STYLE,
                                                             AdgLineStylePrivate);
 
-    priv->width = 2.;
-    priv->cap = CAIRO_LINE_CAP_ROUND;
-    priv->join = CAIRO_LINE_JOIN_MITER;
-    priv->miter_limit = 10.;
-    priv->antialias = CAIRO_ANTIALIAS_DEFAULT;
-    priv->dashes = NULL;
-    priv->num_dashes = 0;
-    priv->dash_offset = 0.;
+    data->width = 2.;
+    data->cap = CAIRO_LINE_CAP_ROUND;
+    data->join = CAIRO_LINE_JOIN_MITER;
+    data->miter_limit = 10.;
+    data->antialias = CAIRO_ANTIALIAS_DEFAULT;
+    data->dashes = NULL;
+    data->num_dashes = 0;
+    data->dash_offset = 0.;
 
-    line_style->priv = priv;
+    line_style->data = data;
 }
 
 static void
 get_property(GObject *object,
              guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgLineStyle *line_style = (AdgLineStyle *) object;
+    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_WIDTH:
-        g_value_set_double(value, line_style->priv->width);
+        g_value_set_double(value, data->width);
         break;
     case PROP_CAP:
-        g_value_set_int(value, line_style->priv->cap);
+        g_value_set_int(value, data->cap);
         break;
     case PROP_JOIN:
-        g_value_set_int(value, line_style->priv->join);
+        g_value_set_int(value, data->join);
         break;
     case PROP_MITER_LIMIT:
-        g_value_set_double(value, line_style->priv->miter_limit);
+        g_value_set_double(value, data->miter_limit);
         break;
     case PROP_ANTIALIAS:
-        g_value_set_int(value, line_style->priv->antialias);
+        g_value_set_int(value, data->antialias);
         break;
     case PROP_DASH:
         /* TODO */
@@ -171,23 +180,23 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgLineStyle *line_style = (AdgLineStyle *) object;
+    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_WIDTH:
-        line_style->priv->width = g_value_get_double(value);
+        data->width = g_value_get_double(value);
         break;
     case PROP_CAP:
-        line_style->priv->cap = g_value_get_int(value);
+        data->cap = g_value_get_int(value);
         break;
     case PROP_JOIN:
-        line_style->priv->join = g_value_get_int(value);
+        data->join = g_value_get_int(value);
         break;
     case PROP_MITER_LIMIT:
-        line_style->priv->miter_limit = g_value_get_double(value);
+        data->miter_limit = g_value_get_double(value);
         break;
     case PROP_ANTIALIAS:
-        line_style->priv->antialias = g_value_get_int(value);
+        data->antialias = g_value_get_int(value);
         break;
     case PROP_DASH:
         /* TODO */
@@ -241,9 +250,13 @@ adg_line_style_new(void)
 gdouble
 adg_line_style_get_width(AdgLineStyle *line_style)
 {
+    AdgLineStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
 
-    return line_style->priv->width;
+    data = line_style->data;
+
+    return data->width;
 }
 
 /**
@@ -256,9 +269,13 @@ adg_line_style_get_width(AdgLineStyle *line_style)
 void
 adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
 {
+    AdgLineStylePrivate *data;
+
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    line_style->priv->width = width;
+    data = line_style->data;
+    data->width = width;
+
     g_object_notify((GObject *) line_style, "width");
 }
 
@@ -273,10 +290,14 @@ adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
 cairo_line_cap_t
 adg_line_style_get_cap(AdgLineStyle *line_style)
 {
+    AdgLineStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_LINE_CAP_BUTT);
 
-    return line_style->priv->cap;
+    data = line_style->data;
+
+    return data->cap;
 }
 
 /**
@@ -289,9 +310,13 @@ adg_line_style_get_cap(AdgLineStyle *line_style)
 void
 adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
 {
+    AdgLineStylePrivate *data;
+
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    line_style->priv->cap = cap;
+    data = line_style->data;
+    data->cap = cap;
+
     g_object_notify((GObject *) line_style, "cap");
 }
 
@@ -306,10 +331,14 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
 cairo_line_join_t
 adg_line_style_get_join(AdgLineStyle *line_style)
 {
+    AdgLineStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_LINE_JOIN_MITER);
 
-    return line_style->priv->join;
+    data = line_style->data;
+
+    return data->join;
 }
 
 /**
@@ -322,9 +351,13 @@ adg_line_style_get_join(AdgLineStyle *line_style)
 void
 adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
 {
+    AdgLineStylePrivate *data;
+
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    line_style->priv->join = join;
+    data->join = join;
+    data = line_style->data;
+
     g_object_notify((GObject *) line_style, "join");
 }
 
@@ -340,9 +373,13 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
 gdouble
 adg_line_style_get_miter_limit(AdgLineStyle *line_style)
 {
+    AdgLineStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
 
-    return line_style->priv->miter_limit;
+    data = line_style->data;
+
+    return data->miter_limit;
 }
 
 /**
@@ -356,9 +393,13 @@ void
 adg_line_style_set_miter_limit(AdgLineStyle *line_style,
                                gdouble miter_limit)
 {
+    AdgLineStylePrivate *data;
+
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    line_style->priv->miter_limit = miter_limit;
+    data = line_style->data;
+    data->miter_limit = miter_limit;
+
     g_object_notify((GObject *) line_style, "miter-limit");
 }
 
@@ -373,10 +414,14 @@ adg_line_style_set_miter_limit(AdgLineStyle *line_style,
 cairo_antialias_t
 adg_line_style_get_antialias(AdgLineStyle *line_style)
 {
+    AdgLineStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_ANTIALIAS_DEFAULT);
 
-    return line_style->priv->antialias;
+    data = line_style->data;
+
+    return data->antialias;
 }
 
 /**
@@ -390,9 +435,13 @@ void
 adg_line_style_set_antialias(AdgLineStyle *line_style,
                              cairo_antialias_t antialias)
 {
+    AdgLineStylePrivate *data;
+
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    line_style->priv->antialias = antialias;
+    data = line_style->data;
+    data->antialias = antialias;
+
     g_object_notify((GObject *) line_style, "antialias");
 }
 
@@ -442,30 +491,30 @@ static void
 apply(AdgStyle *style, cairo_t *cr)
 {
     AdgLineStyle *line_style;
+    AdgLineStylePrivate *data;
     AdgStyleClass *style_class;
     gdouble device_width;
     gdouble dummy = 0.;
 
     line_style = (AdgLineStyle *) style;
+    data = line_style->data;
     style_class = (AdgStyleClass *) adg_line_style_parent_class;
 
     if (style_class->apply != NULL)
         style_class->apply(style, cr);
 
-    device_width = line_style->priv->width;
+    device_width = data->width;
     cairo_device_to_user_distance(cr, &device_width, &dummy);
     cairo_set_line_width(cr, device_width);
 
-    cairo_set_line_cap(cr, line_style->priv->cap);
-    cairo_set_line_join(cr, line_style->priv->join);
-    cairo_set_miter_limit(cr, line_style->priv->miter_limit);
-    cairo_set_antialias(cr, line_style->priv->antialias);
+    cairo_set_line_cap(cr, data->cap);
+    cairo_set_line_join(cr, data->join);
+    cairo_set_miter_limit(cr, data->miter_limit);
+    cairo_set_antialias(cr, data->antialias);
 
-    if (line_style->priv->num_dashes > 0) {
-        g_return_if_fail(line_style->priv->dashes != NULL);
+    if (data->num_dashes > 0) {
+        g_return_if_fail(data->dashes != NULL);
 
-        cairo_set_dash(cr, line_style->priv->dashes,
-                       line_style->priv->num_dashes,
-                       line_style->priv->dash_offset);
+        cairo_set_dash(cr, data->dashes, data->num_dashes, data->dash_offset);
     }
 }

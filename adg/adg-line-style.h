@@ -37,15 +37,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgLineStyle        AdgLineStyle;
 typedef struct _AdgLineStyleClass   AdgLineStyleClass;
-typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
 
 struct _AdgLineStyle {
-    AdgStyle             style;
     /*< private >*/
-    AdgLineStylePrivate *priv;
+    AdgStyle             parent;
+    gpointer             data;
 };
 
 struct _AdgLineStyleClass {
+    /*< private >*/
     AdgStyleClass        parent_class;
 };
 

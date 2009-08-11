@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
+
 struct _AdgLineStylePrivate {
     double               width;
     cairo_line_cap_t     cap;
