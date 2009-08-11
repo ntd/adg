@@ -28,6 +28,7 @@
 G_BEGIN_DECLS
 
 typedef struct _AdgTextCache AdgTextCache;
+typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgTextCache {
     const char                  *utf8;

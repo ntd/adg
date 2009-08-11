@@ -36,16 +36,17 @@ G_BEGIN_DECLS
 
 typedef struct _AdgDim        AdgDim;
 typedef struct _AdgDimClass   AdgDimClass;
-typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDim {
-    AdgEntity            entity;
     /*< private >*/
-    AdgDimPrivate       *priv;
+    AdgEntity            parent;
+    gpointer             data;
 };
 
 struct _AdgDimClass {
+    /*< private >*/
     AdgEntityClass       parent_class;
+    /*< public >*/
     /* Virtual Table */
     gchar *             (*default_quote)        (AdgDim         *dim);
     void                (*quote_layout)         (AdgDim         *dim,

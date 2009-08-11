@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:dim
  * @title: AdgDim
@@ -24,6 +25,14 @@
  *
  * The #AdgDim class is the base stub of all the dimension entities.
  */
+
+/**
+ * AdgDim:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
@@ -160,41 +169,43 @@ adg_dim_class_init(AdgDimClass *klass)
 static void
 adg_dim_init(AdgDim *dim)
 {
-    AdgDimPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
+    AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
-    priv->ref1.x = priv->ref1.y = 0;
-    priv->ref2.x = priv->ref2.y = 0;
-    priv->pos1.x = priv->pos1.y = 0;
-    priv->pos2.x = priv->pos2.y = 0;
-    priv->level = 1.;
-    priv->quote = NULL;
-    priv->tolerance_up = NULL;
-    priv->tolerance_down = NULL;
-    priv->note = NULL;
+    data->ref1.x = data->ref1.y = 0;
+    data->ref2.x = data->ref2.y = 0;
+    data->pos1.x = data->pos1.y = 0;
+    data->pos2.x = data->pos2.y = 0;
+    data->level = 1.;
+    data->quote = NULL;
+    data->tolerance_up = NULL;
+    data->tolerance_down = NULL;
+    data->note = NULL;
 
-    priv->org.x = priv->org.y = 0;
-    priv->angle = 0;
-    text_cache_init(&priv->quote_cache);
-    text_cache_init(&priv->tolerance_up_cache);
-    text_cache_init(&priv->tolerance_down_cache);
-    text_cache_init(&priv->note_cache);
+    data->org.x = data->org.y = 0;
+    data->angle = 0;
+    text_cache_init(&data->quote_cache);
+    text_cache_init(&data->tolerance_up_cache);
+    text_cache_init(&data->tolerance_down_cache);
+    text_cache_init(&data->note_cache);
 
-    dim->priv = priv;
+    dim->data = data;
 }
 
 static void
 finalize(GObject *object)
 {
     AdgDim *dim;
+    AdgDimPrivate *data;
     GObjectClass *object_class;
 
     dim = (AdgDim *) object;
+    data = dim->data;
     object_class = (GObjectClass *) adg_dim_parent_class;
 
-    g_free(dim->priv->quote);
-    g_free(dim->priv->tolerance_up);
-    g_free(dim->priv->tolerance_down);
+    g_free(data->quote);
+    g_free(data->tolerance_up);
+    g_free(data->tolerance_down);
 
     clear(dim);
 
@@ -205,35 +216,35 @@ finalize(GObject *object)
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgDim *dim = (AdgDim *) object;
+    AdgDimPrivate *data = ((AdgDim *) object)->data;
 
     switch (prop_id) {
     case PROP_REF1:
-        g_value_set_boxed(value, &dim->priv->ref1);
+        g_value_set_boxed(value, &data->ref1);
         break;
     case PROP_REF2:
-        g_value_set_boxed(value, &dim->priv->ref2);
+        g_value_set_boxed(value, &data->ref2);
         break;
     case PROP_POS1:
-        g_value_set_boxed(value, &dim->priv->pos1);
+        g_value_set_boxed(value, &data->pos1);
         break;
     case PROP_POS2:
-        g_value_set_boxed(value, &dim->priv->pos1);
+        g_value_set_boxed(value, &data->pos1);
         break;
     case PROP_LEVEL:
-        g_value_set_double(value, dim->priv->level);
+        g_value_set_double(value, data->level);
         break;
     case PROP_QUOTE:
-        g_value_set_string(value, dim->priv->quote);
+        g_value_set_string(value, data->quote);
         break;
     case PROP_TOLERANCE_UP:
-        g_value_set_string(value, dim->priv->tolerance_up);
+        g_value_set_string(value, data->tolerance_up);
         break;
     case PROP_TOLERANCE_DOWN:
-        g_value_set_string(value, dim->priv->tolerance_down);
+        g_value_set_string(value, data->tolerance_down);
         break;
     case PROP_NOTE:
-        g_value_set_string(value, dim->priv->note);
+        g_value_set_string(value, data->note);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -245,52 +256,52 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity;
-    AdgDim    *dim;
+    AdgDim *dim;
+    AdgDimPrivate *data;
 
-    entity = (AdgEntity *) object;
     dim = (AdgDim *) object;
+    data = dim->data;
 
     switch (prop_id) {
     case PROP_REF1:
-        cpml_pair_copy(&dim->priv->ref1, (AdgPair *) g_value_get_boxed(value));
+        cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
         clear(dim);
         break;
     case PROP_REF2:
-        cpml_pair_copy(&dim->priv->ref2, (AdgPair *) g_value_get_boxed(value));
+        cpml_pair_copy(&data->ref2, (AdgPair *) g_value_get_boxed(value));
         clear(dim);
         break;
     case PROP_POS1:
-        cpml_pair_copy(&dim->priv->pos1, (AdgPair *) g_value_get_boxed(value));
+        cpml_pair_copy(&data->pos1, (AdgPair *) g_value_get_boxed(value));
         clear(dim);
         break;
     case PROP_POS2:
-        cpml_pair_copy(&dim->priv->pos2, (AdgPair *) g_value_get_boxed(value));
+        cpml_pair_copy(&data->pos2, (AdgPair *) g_value_get_boxed(value));
         clear(dim);
         break;
     case PROP_LEVEL:
-        dim->priv->level = g_value_get_double(value);
+        data->level = g_value_get_double(value);
         clear(dim);
         break;
     case PROP_QUOTE:
-        g_free(dim->priv->quote);
-        dim->priv->quote = g_value_dup_string(value);
-        text_cache_clear(&dim->priv->quote_cache);
+        g_free(data->quote);
+        data->quote = g_value_dup_string(value);
+        text_cache_clear(&data->quote_cache);
         break;
     case PROP_TOLERANCE_UP:
-        g_free(dim->priv->tolerance_up);
-        dim->priv->tolerance_up = g_value_dup_string(value);
-        text_cache_clear(&dim->priv->tolerance_up_cache);
+        g_free(data->tolerance_up);
+        data->tolerance_up = g_value_dup_string(value);
+        text_cache_clear(&data->tolerance_up_cache);
         break;
     case PROP_TOLERANCE_DOWN:
-        g_free(dim->priv->tolerance_down);
-        dim->priv->tolerance_down = g_value_dup_string(value);
-        text_cache_clear(&dim->priv->tolerance_down_cache);
+        g_free(data->tolerance_down);
+        data->tolerance_down = g_value_dup_string(value);
+        text_cache_clear(&data->tolerance_down_cache);
         break;
     case PROP_NOTE:
-        g_free(dim->priv->note);
-        dim->priv->note = g_value_dup_string(value);
-        text_cache_clear(&dim->priv->note_cache);
+        g_free(data->note);
+        data->note = g_value_dup_string(value);
+        text_cache_clear(&data->note_cache);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -312,9 +323,13 @@ set_property(GObject *object, guint prop_id,
 const AdgPair *
 adg_dim_get_org(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return &dim->priv->org;
+    data = dim->data;
+
+    return &data->org;
 }
 
 /**
@@ -328,10 +343,13 @@ adg_dim_get_org(AdgDim *dim)
 void
 adg_dim_set_org(AdgDim *dim, const AdgPair *org)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
     g_return_if_fail(org != NULL);
 
-    dim->priv->org = *org;
+    data = dim->data;
+    data->org = *org;
 }
 
 /**
@@ -346,10 +364,13 @@ adg_dim_set_org(AdgDim *dim, const AdgPair *org)
 void
 adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    dim->priv->org.x = org_x;
-    dim->priv->org.y = org_y;
+    data = dim->data;
+    data->org.x = org_x;
+    data->org.y = org_y;
 }
 
 /**
@@ -364,9 +385,13 @@ adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
 gdouble
 adg_dim_get_angle(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
-    return dim->priv->angle;
+    data = dim->data;
+
+    return data->angle;
 }
 
 /**
@@ -380,9 +405,12 @@ adg_dim_get_angle(AdgDim *dim)
 void
 adg_dim_set_angle(AdgDim *dim, gdouble angle)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    dim->priv->angle = angle;
+    data = dim->data;
+    data->angle = angle;
 }
 
 /**
@@ -397,9 +425,13 @@ adg_dim_set_angle(AdgDim *dim, gdouble angle)
 const AdgPair *
 adg_dim_get_ref1(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return &dim->priv->ref1;
+    data = dim->data;
+
+    return &data->ref1;
 }
 
 /**
@@ -414,9 +446,13 @@ adg_dim_get_ref1(AdgDim *dim)
 const AdgPair *
 adg_dim_get_ref2(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return &dim->priv->ref2;
+    data = dim->data;
+
+    return &data->ref2;
 }
 
 /**
@@ -433,17 +469,21 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
     g_return_if_fail(ADG_IS_DIM(dim));
 
     if (ref1 != NULL || ref2 != NULL) {
-        GObject *object = (GObject *) dim;
+        GObject *object;
+        AdgDimPrivate *data;
+
+        data = dim->data;
+        object = (GObject *) dim;
 
         g_object_freeze_notify(object);
 
         if (ref1 != NULL) {
-            dim->priv->ref1 = *ref1;
+            data->ref1 = *ref1;
             g_object_notify(object, "ref1");
         }
 
         if (ref2 != NULL) {
-            dim->priv->ref2 = *ref2;
+            data->ref2 = *ref2;
             g_object_notify(object, "ref2");
         }
 
@@ -490,9 +530,13 @@ adg_dim_set_ref_explicit(AdgDim *dim, gdouble ref1_x, gdouble ref1_y,
 const AdgPair *
 adg_dim_get_pos1(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return &dim->priv->pos1;
+    data = dim->data;
+
+    return &data->pos1;
 }
 
 /**
@@ -507,9 +551,13 @@ adg_dim_get_pos1(AdgDim *dim)
 const AdgPair *
 adg_dim_get_pos2(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return &dim->priv->pos2;
+    data = dim->data;
+
+    return &data->pos2;
 }
 
 /**
@@ -526,16 +574,20 @@ adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
     g_return_if_fail(ADG_IS_DIM(dim));
 
     if (pos1 != NULL || pos2 != NULL) {
-        GObject *object = (GObject *) dim;
+        AdgDimPrivate *data;
+        GObject *object;
+
+        data = dim->data;
+        object = (GObject *) dim;
 
         g_object_freeze_notify(object);
 
         if (pos1 != NULL) {
-            dim->priv->pos1 = *pos1;
+            data->pos1 = *pos1;
             g_object_notify(object, "pos1");
         }
         if (pos2 != NULL) {
-            dim->priv->pos2 = *pos2;
+            data->pos2 = *pos2;
             g_object_notify(object, "pos2");
         }
 
@@ -581,9 +633,13 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
 gdouble
 adg_dim_get_level(AdgDim  *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
-    return dim->priv->level;
+    data = dim->data;
+
+    return data->level;
 }
 
 /**
@@ -598,9 +654,13 @@ adg_dim_get_level(AdgDim  *dim)
 void
 adg_dim_set_level(AdgDim *dim, gdouble level)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    dim->priv->level = level;
+    data = dim->data;
+    data->level = level;
+
     g_object_notify((GObject *) dim, "level");
     clear(dim);
 }
@@ -617,9 +677,13 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
 const gchar *
 adg_dim_get_quote(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return dim->priv->quote;
+    data = dim->data;
+
+    return data->quote;
 }
 
 /**
@@ -635,13 +699,17 @@ adg_dim_get_quote(AdgDim *dim)
 void
 adg_dim_set_quote(AdgDim *dim, const gchar *quote)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    g_free(dim->priv->quote);
-    dim->priv->quote = g_strdup(quote);
+    data = dim->data;
+
+    g_free(data->quote);
+    data->quote = g_strdup(quote);
     g_object_notify((GObject *) dim, "quote");
 
-    text_cache_clear(&dim->priv->quote_cache);
+    text_cache_clear(&data->quote_cache);
 }
 
 /**
@@ -656,9 +724,13 @@ adg_dim_set_quote(AdgDim *dim, const gchar *quote)
 const gchar *
 adg_dim_get_tolerance_up(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return dim->priv->tolerance_up;
+    data = dim->data;
+
+    return data->tolerance_up;
 }
 
 /**
@@ -671,13 +743,17 @@ adg_dim_get_tolerance_up(AdgDim *dim)
 void
 adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    g_free(dim->priv->tolerance_up);
-    dim->priv->tolerance_up = g_strdup(tolerance_up);
+    data = dim->data;
+
+    g_free(data->tolerance_up);
+    data->tolerance_up = g_strdup(tolerance_up);
     g_object_notify((GObject *) dim, "tolerance-up");
 
-    text_cache_clear(&dim->priv->tolerance_up_cache);
+    text_cache_clear(&data->tolerance_up_cache);
 }
 
 /**
@@ -692,9 +768,13 @@ adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
 const gchar *
 adg_dim_get_tolerance_down(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return dim->priv->tolerance_down;
+    data = dim->data;
+
+    return data->tolerance_down;
 }
 
 /**
@@ -707,13 +787,17 @@ adg_dim_get_tolerance_down(AdgDim *dim)
 void
 adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    g_free(dim->priv->tolerance_down);
-    dim->priv->tolerance_down = g_strdup(tolerance_down);
+    data = dim->data;
+
+    g_free(data->tolerance_down);
+    data->tolerance_down = g_strdup(tolerance_down);
     g_object_notify((GObject *) dim, "tolerance-down");
 
-    text_cache_clear(&dim->priv->tolerance_down_cache);
+    text_cache_clear(&data->tolerance_down_cache);
 }
 
 /**
@@ -748,9 +832,13 @@ adg_dim_set_tolerances(AdgDim *dim, const gchar *tolerance_up,
 const gchar *
 adg_dim_get_note(AdgDim *dim)
 {
+    AdgDimPrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    return dim->priv->note;
+    data = dim->data;
+
+    return data->note;
 }
 
 /**
@@ -763,13 +851,17 @@ adg_dim_get_note(AdgDim *dim)
 void
 adg_dim_set_note(AdgDim *dim, const gchar *note)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    g_free(dim->priv->note);
-    dim->priv->note = g_strdup(note);
+    data = dim->data;
+
+    g_free(data->note);
+    data->note = g_strdup(note);
     g_object_notify((GObject *) dim, "note");
 
-    text_cache_clear(&dim->priv->note_cache);
+    text_cache_clear(&data->note_cache);
 }
 
 /**
@@ -783,16 +875,16 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
 void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
-    AdgDimPrivate *priv;
+    AdgDimPrivate *data;
     AdgDimStyle *dim_style;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    priv = dim->priv;
+    data = dim->data;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
 
-    if (priv->quote == NULL)
+    if (data->quote == NULL)
         adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
 
     cairo_save(cr);
@@ -801,29 +893,29 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
     cairo_set_matrix(cr, adg_entity_get_model_matrix((AdgEntity *) dim));
 
-    cairo_translate(cr, priv->org.x, priv->org.y);
+    cairo_translate(cr, data->org.x, data->org.y);
     adg_entity_scale_to_paper((AdgEntity *) dim, cr);
-    cairo_rotate(cr, -priv->angle);
+    cairo_rotate(cr, -data->angle);
 
     /* Rendering quote */
     adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
-    text_cache_render(&priv->quote_cache, cr);
+    text_cache_render(&data->quote_cache, cr);
 
     /* Rendering tolerances */
-    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
+    if (data->tolerance_up != NULL || data->tolerance_down != NULL) {
         adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
 
-        if (priv->tolerance_up != NULL)
-            text_cache_render(&priv->tolerance_up_cache, cr);
+        if (data->tolerance_up != NULL)
+            text_cache_render(&data->tolerance_up_cache, cr);
 
-        if (priv->tolerance_down != NULL)
-            text_cache_render(&priv->tolerance_down_cache, cr);
+        if (data->tolerance_down != NULL)
+            text_cache_render(&data->tolerance_down_cache, cr);
     }
 
     /* Rendering the note */
-    if (priv->note != NULL) {
+    if (data->note != NULL) {
         adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
-        text_cache_render(&priv->note_cache, cr);
+        text_cache_render(&data->note_cache, cr);
     }
 
     cairo_restore(cr);
@@ -855,10 +947,12 @@ invalidate(AdgEntity *entity)
 static void
 clear(AdgDim *dim)
 {
-    text_cache_clear(&dim->priv->quote_cache);
-    text_cache_clear(&dim->priv->tolerance_up_cache);
-    text_cache_clear(&dim->priv->tolerance_down_cache);
-    text_cache_clear(&dim->priv->note_cache);
+    AdgDimPrivate *data = dim->data;
+
+    text_cache_clear(&data->quote_cache);
+    text_cache_clear(&data->tolerance_up_cache);
+    text_cache_clear(&data->tolerance_down_cache);
+    text_cache_clear(&data->note_cache);
 }
 
 static gchar *
@@ -872,13 +966,13 @@ default_quote(AdgDim *dim)
 static void
 quote_layout(AdgDim *dim, cairo_t *cr)
 {
-    AdgDimPrivate *priv;
+    AdgDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgPair shift;
     CpmlPair cp;
     CpmlPair tolerance_up_org, tolerance_down_org, note_org;
 
-    priv = dim->priv;
+    data = dim->data;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
     tolerance_up_org.x = tolerance_up_org.y = 0;
@@ -886,17 +980,17 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     note_org.x = note_org.y = 0;
 
     /* Compute the quote */
-    if (text_cache_update(&priv->quote_cache, priv->quote, cr,
+    if (text_cache_update(&data->quote_cache, data->quote, cr,
                           adg_dim_style_get_quote_style(dim_style))) {
-        cp.x = priv->quote_cache.extents.width;
-        cp.y = priv->quote_cache.extents.height / -2.;
+        cp.x = data->quote_cache.extents.width;
+        cp.y = data->quote_cache.extents.height / -2.;
     } else {
         cp.x = 0;
         cp.y = 0;
     }
 
     /* Compute the tolerances */
-    if (priv->tolerance_up != NULL || priv->tolerance_down != NULL) {
+    if (data->tolerance_up != NULL || data->tolerance_down != NULL) {
         gdouble width;
         gdouble midspacing;
 
@@ -907,63 +1001,63 @@ quote_layout(AdgDim *dim, cairo_t *cr)
         cpml_pair_copy(&shift, adg_dim_style_get_tolerance_shift(dim_style));
         cp.x += shift.x;
 
-        if (text_cache_update(&priv->tolerance_up_cache,
-                              priv->tolerance_up, cr, NULL)) {
+        if (text_cache_update(&data->tolerance_up_cache,
+                              data->tolerance_up, cr, NULL)) {
             tolerance_up_org.x = cp.x;
             tolerance_up_org.y = cp.y + shift.y - midspacing;
 
-            width = priv->tolerance_up_cache.extents.width;
+            width = data->tolerance_up_cache.extents.width;
         }
 
-        if (text_cache_update(&priv->tolerance_down_cache,
-                              priv->tolerance_down, cr, NULL)) {
+        if (text_cache_update(&data->tolerance_down_cache,
+                              data->tolerance_down, cr, NULL)) {
             tolerance_down_org.x = cp.x;
             tolerance_down_org.y = cp.y + shift.y + midspacing +
-                priv->tolerance_down_cache.extents.height;
+                data->tolerance_down_cache.extents.height;
 
-            if (priv->tolerance_down_cache.extents.width > width)
-                width = priv->tolerance_down_cache.extents.width;
+            if (data->tolerance_down_cache.extents.width > width)
+                width = data->tolerance_down_cache.extents.width;
         }
 
         cp.x += width;
     }
 
     /* Compute the note */
-    if (text_cache_update(&priv->note_cache, priv->note, cr,
+    if (text_cache_update(&data->note_cache, data->note, cr,
                           adg_dim_style_get_note_style(dim_style))) {
         cpml_pair_copy(&shift, adg_dim_style_get_note_shift(dim_style));
         cp.x += shift.x;
 
         note_org.x = cp.x;
-        note_org.y = cp.y + shift.y + priv->note_cache.extents.height / 2.;
+        note_org.y = cp.y + shift.y + data->note_cache.extents.height / 2.;
 
-        cp.x += priv->note_cache.extents.width;
+        cp.x += data->note_cache.extents.width;
     }
 
     /* Centering and shifting the whole group */
     cpml_pair_copy(&shift, adg_dim_style_get_quote_shift(dim_style));
     shift.x -= cp.x / 2.;
 
-    if (priv->quote_cache.glyphs) {
-        text_cache_move_to(&priv->quote_cache, &shift);
+    if (data->quote_cache.glyphs) {
+        text_cache_move_to(&data->quote_cache, &shift);
     }
 
-    if (priv->tolerance_up_cache.glyphs) {
+    if (data->tolerance_up_cache.glyphs) {
         tolerance_up_org.x += shift.x;
         tolerance_up_org.y += shift.y;
-        text_cache_move_to(&priv->tolerance_up_cache, &tolerance_up_org);
+        text_cache_move_to(&data->tolerance_up_cache, &tolerance_up_org);
     }
 
-    if (priv->tolerance_down_cache.glyphs) {
+    if (data->tolerance_down_cache.glyphs) {
         tolerance_down_org.x += shift.x;
         tolerance_down_org.y += shift.y;
-        text_cache_move_to(&priv->tolerance_down_cache, &tolerance_down_org);
+        text_cache_move_to(&data->tolerance_down_cache, &tolerance_down_org);
     }
 
-    if (priv->note_cache.glyphs) {
+    if (data->note_cache.glyphs) {
         note_org.x += shift.x;
         note_org.y += shift.y;
-        text_cache_move_to(&priv->note_cache, &note_org);
+        text_cache_move_to(&data->note_cache, &note_org);
     }
 }
 
