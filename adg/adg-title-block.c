@@ -103,28 +103,30 @@ adg_title_block_class_init(AdgTitleBlockClass *klass)
 static void
 adg_title_block_init(AdgTitleBlock *title_block)
 {
-    AdgTitleBlockPrivate *priv =
-        G_TYPE_INSTANCE_GET_PRIVATE(title_block, ADG_TYPE_TITLE_BLOCK,
-                                    AdgTitleBlockPrivate);
-    priv->name = NULL;
-    priv->material = NULL;
-    priv->treatment = NULL;
+    AdgTitleBlockPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(title_block,
+                                                             ADG_TYPE_TITLE_BLOCK,
+                                                             AdgTitleBlockPrivate);
+    data->name = NULL;
+    data->material = NULL;
+    data->treatment = NULL;
 
-    title_block->priv = priv;
+    title_block->data = data;
 }
 
 static void
 finalize(GObject *object)
 {
     AdgTitleBlock *title_block;
+    AdgTitleBlockPrivate *data;
     GObjectClass *object_class;
 
     title_block = (AdgTitleBlock *) object;
+    data = title_block->data;
     object_class = (GObjectClass *) adg_title_block_parent_class;
 
-    g_free(title_block->priv->name);
-    g_free(title_block->priv->material);
-    g_free(title_block->priv->treatment);
+    g_free(data->name);
+    g_free(data->material);
+    g_free(data->treatment);
 
     if (object_class->finalize != NULL)
         object_class->finalize(object);
@@ -135,17 +137,17 @@ static void
 get_property(GObject *object,
              guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgTitleBlockPrivate *priv = ((AdgTitleBlock *) object)->priv;
+    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
 
     switch (prop_id) {
     case PROP_NAME:
-        g_value_set_string(value, priv->name);
+        g_value_set_string(value, data->name);
         break;
     case PROP_MATERIAL:
-        g_value_set_string(value, priv->material);
+        g_value_set_string(value, data->material);
         break;
     case PROP_TREATMENT:
-        g_value_set_string(value, priv->treatment);
+        g_value_set_string(value, data->treatment);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -157,20 +159,20 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgTitleBlock *title_block = ADG_TITLE_BLOCK(object);
+    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
 
     switch (prop_id) {
     case PROP_NAME:
-        g_free(title_block->priv->name);
-        title_block->priv->name = g_value_dup_string(value);
+        g_free(data->name);
+        data->name = g_value_dup_string(value);
         break;
     case PROP_MATERIAL:
-        g_free(title_block->priv->material);
-        title_block->priv->material = g_value_dup_string(value);
+        g_free(data->material);
+        data->material = g_value_dup_string(value);
         break;
     case PROP_TREATMENT:
-        g_free(title_block->priv->treatment);
-        title_block->priv->treatment = g_value_dup_string(value);
+        g_free(data->treatment);
+        data->treatment = g_value_dup_string(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -193,9 +195,13 @@ set_property(GObject *object,
 gchar *
 adg_title_block_get_name(AdgTitleBlock *title_block)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    return g_strdup(title_block->priv->name);
+    data = title_block->data;
+
+    return g_strdup(data->name);
 }
 
 /**
@@ -208,10 +214,14 @@ adg_title_block_get_name(AdgTitleBlock *title_block)
 void
 adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    g_free(title_block->priv->name);
-    title_block->priv->name = g_strdup(name);
+    data = title_block->data;
+    g_free(data->name);
+    data->name = g_strdup(name);
+
     g_object_notify((GObject *) title_block, "name");
 }
 
@@ -231,9 +241,13 @@ adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
 gchar *
 adg_title_block_get_material(AdgTitleBlock *title_block)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    return g_strdup(title_block->priv->material);
+    data = title_block->data;
+
+    return g_strdup(data->material);
 }
 
 /**
@@ -247,10 +261,13 @@ void
 adg_title_block_set_material(AdgTitleBlock *title_block,
                              const gchar *material)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    g_free(title_block->priv->material);
-    title_block->priv->material = g_strdup(material);
+    data = title_block->data;
+    g_free(data->material);
+    data->material = g_strdup(material);
     g_object_notify((GObject *) title_block, "material");
 }
 
@@ -269,9 +286,13 @@ adg_title_block_set_material(AdgTitleBlock *title_block,
 gchar *
 adg_title_block_get_treatment(AdgTitleBlock *title_block)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    return g_strdup(title_block->priv->treatment);
+    data = title_block->data;
+
+    return g_strdup(data->treatment);
 }
 
 /**
@@ -285,9 +306,12 @@ void
 adg_title_block_set_treatment(AdgTitleBlock *title_block,
                               const gchar *treatment)
 {
+    AdgTitleBlockPrivate *data;
+
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    g_free(title_block->priv->treatment);
-    title_block->priv->treatment = g_strdup(treatment);
+    data = title_block->data;
+    g_free(data->treatment);
+    data->treatment = g_strdup(treatment);
     g_object_notify((GObject *) title_block, "treatment");
 }

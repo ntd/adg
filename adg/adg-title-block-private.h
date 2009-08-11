@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgTitleBlockPrivate AdgTitleBlockPrivate;
+
 struct _AdgTitleBlockPrivate {
     gchar       *name;
     gchar       *material;

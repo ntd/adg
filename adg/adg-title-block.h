@@ -35,15 +35,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgTitleBlock        AdgTitleBlock;
 typedef struct _AdgTitleBlockClass   AdgTitleBlockClass;
-typedef struct _AdgTitleBlockPrivate AdgTitleBlockPrivate;
 
 struct _AdgTitleBlock {
     /*< private >*/
-    AdgEntity             entity;
-    AdgTitleBlockPrivate *priv;
+    AdgEntity            parent;
+    gpointer             data;
 };
 
 struct _AdgTitleBlockClass {
+    /*< private >*/
     AdgEntityClass        parent_class;
 };
 
