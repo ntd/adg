@@ -17,6 +17,7 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:font-style
  * @title: AdgFontStyle
@@ -25,6 +26,14 @@
  * Contains parameters on how to draw texts such as font family, slanting,
  * weight, hinting and so on.
  */
+
+/**
+ * AdgFontStyle:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
 
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
@@ -151,51 +160,51 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
 static void
 adg_font_style_init(AdgFontStyle *font_style)
 {
-    AdgFontStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(font_style,
+    AdgFontStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(font_style,
                                                             ADG_TYPE_FONT_STYLE,
                                                             AdgFontStylePrivate);
 
-    priv->family = NULL;
-    priv->slant = CAIRO_FONT_SLANT_NORMAL;
-    priv->weight = CAIRO_FONT_WEIGHT_NORMAL;
-    priv->size = 10.;
-    priv->antialias = CAIRO_ANTIALIAS_DEFAULT;
-    priv->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
-    priv->hint_style = CAIRO_HINT_STYLE_DEFAULT;
-    priv->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
+    data->family = NULL;
+    data->slant = CAIRO_FONT_SLANT_NORMAL;
+    data->weight = CAIRO_FONT_WEIGHT_NORMAL;
+    data->size = 10.;
+    data->antialias = CAIRO_ANTIALIAS_DEFAULT;
+    data->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
+    data->hint_style = CAIRO_HINT_STYLE_DEFAULT;
+    data->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
 
-    font_style->priv = priv;
+    font_style->data = data;
 }
 
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgFontStyle *font_style = (AdgFontStyle *) object;
+    AdgFontStylePrivate *data = ((AdgFontStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_FAMILY:
-        g_value_set_string(value, font_style->priv->family);
+        g_value_set_string(value, data->family);
         break;
     case PROP_SLANT:
-        g_value_set_int(value, font_style->priv->slant);
+        g_value_set_int(value, data->slant);
         break;
     case PROP_WEIGHT:
-        g_value_set_int(value, font_style->priv->weight);
+        g_value_set_int(value, data->weight);
         break;
     case PROP_SIZE:
-        g_value_set_double(value, font_style->priv->size);
+        g_value_set_double(value, data->size);
         break;
     case PROP_ANTIALIAS:
-        g_value_set_int(value, font_style->priv->antialias);
+        g_value_set_int(value, data->antialias);
         break;
     case PROP_SUBPIXEL_ORDER:
-        g_value_set_int(value, font_style->priv->subpixel_order);
+        g_value_set_int(value, data->subpixel_order);
         break;
     case PROP_HINT_STYLE:
-        g_value_set_int(value, font_style->priv->hint_style);
+        g_value_set_int(value, data->hint_style);
         break;
     case PROP_HINT_METRICS:
-        g_value_set_int(value, font_style->priv->hint_metrics);
+        g_value_set_int(value, data->hint_metrics);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -207,32 +216,36 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgFontStyle *font_style = (AdgFontStyle *) object;
+    AdgFontStyle *font_style;
+    AdgFontStylePrivate *data;
+
+    font_style = (AdgFontStyle *) object;
+    data = font_style->data;
 
     switch (prop_id) {
     case PROP_FAMILY:
         set_family(font_style, g_value_get_string(value));
         break;
     case PROP_SLANT:
-        font_style->priv->slant = g_value_get_int(value);
+        data->slant = g_value_get_int(value);
         break;
     case PROP_WEIGHT:
-        font_style->priv->weight = g_value_get_int(value);
+        data->weight = g_value_get_int(value);
         break;
     case PROP_SIZE:
-        font_style->priv->size = g_value_get_double(value);
+        data->size = g_value_get_double(value);
         break;
     case PROP_ANTIALIAS:
-        font_style->priv->antialias = g_value_get_int(value);
+        data->antialias = g_value_get_int(value);
         break;
     case PROP_SUBPIXEL_ORDER:
-        font_style->priv->subpixel_order = g_value_get_int(value);
+        data->subpixel_order = g_value_get_int(value);
         break;
     case PROP_HINT_STYLE:
-        font_style->priv->hint_style = g_value_get_int(value);
+        data->hint_style = g_value_get_int(value);
         break;
     case PROP_HINT_METRICS:
-        font_style->priv->hint_metrics = g_value_get_int(value);
+        data->hint_metrics = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -284,9 +297,13 @@ adg_font_style_new(void)
 const gchar *
 adg_font_style_get_family(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
 
-    return font_style->priv->family;
+    data = font_style->data;
+
+    return data->family;
 }
 
 /**
@@ -316,10 +333,14 @@ adg_font_style_set_family(AdgFontStyle *font_style, const gchar *family)
 cairo_font_slant_t
 adg_font_style_get_slant(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_FONT_SLANT_NORMAL);
 
-    return font_style->priv->slant;
+    data = font_style->data;
+
+    return data->slant;
 }
 
 /**
@@ -333,9 +354,13 @@ void
 adg_font_style_set_slant(AdgFontStyle *font_style,
                          cairo_font_slant_t slant)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->slant = slant;
+    data = font_style->data;
+    data->slant = slant;
+
     g_object_notify((GObject *) font_style, "slant");
 }
 
@@ -350,10 +375,14 @@ adg_font_style_set_slant(AdgFontStyle *font_style,
 cairo_font_weight_t
 adg_font_style_get_weight(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_FONT_WEIGHT_NORMAL);
 
-    return font_style->priv->weight;
+    data = font_style->data;
+
+    return data->weight;
 }
 
 /**
@@ -367,9 +396,13 @@ void
 adg_font_style_set_weight(AdgFontStyle *font_style,
                           cairo_font_weight_t weight)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->weight = weight;
+    data = font_style->data;
+    data->weight = weight;
+
     g_object_notify((GObject *) font_style, "weight");
 }
 
@@ -384,9 +417,13 @@ adg_font_style_set_weight(AdgFontStyle *font_style,
 gdouble
 adg_font_style_get_size(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), 0.);
 
-    return font_style->priv->size;
+    data = font_style->data;
+
+    return data->size;
 }
 
 /**
@@ -399,9 +436,13 @@ adg_font_style_get_size(AdgFontStyle *font_style)
 void
 adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->size = size;
+    data = font_style->data;
+    data->size = size;
+
     g_object_notify((GObject *) font_style, "size");
 }
 
@@ -416,10 +457,14 @@ adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
 cairo_antialias_t
 adg_font_style_get_antialias(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_ANTIALIAS_DEFAULT);
 
-    return font_style->priv->antialias;
+    data = font_style->data;
+
+    return data->antialias;
 }
 
 /**
@@ -433,9 +478,13 @@ void
 adg_font_style_set_antialias(AdgFontStyle *font_style,
                              cairo_antialias_t antialias)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->antialias = antialias;
+    data = font_style->data;
+    data->antialias = antialias;
+
     g_object_notify((GObject *) font_style, "antialias");
 }
 
@@ -452,10 +501,14 @@ adg_font_style_set_antialias(AdgFontStyle *font_style,
 cairo_subpixel_order_t
 adg_font_style_get_subpixel_order(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_SUBPIXEL_ORDER_DEFAULT);
 
-    return font_style->priv->subpixel_order;
+    data = font_style->data;
+
+    return data->subpixel_order;
 }
 
 /**
@@ -469,9 +522,13 @@ void
 adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
                                   cairo_subpixel_order_t subpixel_order)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->subpixel_order = subpixel_order;
+    data = font_style->data;
+    data->subpixel_order = subpixel_order;
+
     g_object_notify((GObject *) font_style, "subpixel-order");
 }
 
@@ -487,10 +544,14 @@ adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
 cairo_hint_style_t
 adg_font_style_get_hint_style(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_HINT_STYLE_DEFAULT);
 
-    return font_style->priv->hint_style;
+    data = font_style->data;
+
+    return data->hint_style;
 }
 
 /**
@@ -504,9 +565,13 @@ void
 adg_font_style_set_hint_style(AdgFontStyle *font_style,
                               cairo_hint_style_t hint_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->hint_style = hint_style;
+    data = font_style->data;
+    data->hint_style = hint_style;
+
     g_object_notify((GObject *) font_style, "hint-style");
 }
 
@@ -521,10 +586,14 @@ adg_font_style_set_hint_style(AdgFontStyle *font_style,
 cairo_hint_metrics_t
 adg_font_style_get_hint_metrics(AdgFontStyle *font_style)
 {
+    AdgFontStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_HINT_METRICS_DEFAULT);
 
-    return font_style->priv->hint_metrics;
+    data = font_style->data;
+
+    return data->hint_metrics;
 }
 
 /**
@@ -538,9 +607,13 @@ void
 adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
                                 cairo_hint_metrics_t hint_metrics)
 {
+    AdgFontStylePrivate *data;
+
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    font_style->priv->hint_metrics = hint_metrics;
+    data = font_style->data;
+    data->hint_metrics = hint_metrics;
+
     g_object_notify((GObject *) font_style, "hint-metrics");
 }
 
@@ -576,6 +649,7 @@ static void
 apply(AdgStyle *style, cairo_t *cr)
 {
     AdgFontStyle *font_style;
+    AdgFontStylePrivate *data;
     AdgStyleClass *style_class;
     double size;
     cairo_font_options_t *options;
@@ -583,17 +657,17 @@ apply(AdgStyle *style, cairo_t *cr)
     cairo_matrix_t font_matrix;
 
     font_style = (AdgFontStyle *) style;
+    data = font_style->data;
     style_class = (AdgStyleClass *) adg_font_style_parent_class;
     cairo_get_matrix(cr, &matrix);
-    size = font_style->priv->size;
+    size = data->size;
 
     if (style_class->apply != NULL)
         style_class->apply(style, cr);
 
-    if (font_style->priv->family)
-        cairo_select_font_face(cr, font_style->priv->family,
-                               font_style->priv->slant,
-                               font_style->priv->weight);
+    if (data->family)
+        cairo_select_font_face(cr, data->family,
+                               data->slant, data->weight);
 
     cairo_matrix_init_scale(&font_matrix,
                             size / (matrix.xx - matrix.yx),
@@ -602,14 +676,10 @@ apply(AdgStyle *style, cairo_t *cr)
 
     options = cairo_font_options_create();
 
-    cairo_font_options_set_antialias(options, font_style->priv->antialias);
-    cairo_font_options_set_subpixel_order(options,
-                                          font_style->priv->
-                                          subpixel_order);
-    cairo_font_options_set_hint_style(options,
-                                      font_style->priv->hint_style);
-    cairo_font_options_set_hint_metrics(options,
-                                        font_style->priv->hint_metrics);
+    cairo_font_options_set_antialias(options, data->antialias);
+    cairo_font_options_set_subpixel_order(options, data->subpixel_order);
+    cairo_font_options_set_hint_style(options, data->hint_style);
+    cairo_font_options_set_hint_metrics(options, data->hint_metrics);
 
     cairo_set_font_options(cr, options);
     cairo_font_options_destroy(options);
@@ -618,6 +688,8 @@ apply(AdgStyle *style, cairo_t *cr)
 static void
 set_family(AdgFontStyle *font_style, const gchar *family)
 {
-    g_free(font_style->priv->family);
-    font_style->priv->family = g_strdup(family);
+    AdgFontStylePrivate *data = font_style->data;
+
+    g_free(data->family);
+    data->family = g_strdup(family);
 }

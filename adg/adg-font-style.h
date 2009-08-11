@@ -37,15 +37,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
-typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
 
 struct _AdgFontStyle {
-    AdgStyle             style;
     /*< private >*/
-    AdgFontStylePrivate *priv;
+    AdgStyle             parent;
+    gpointer             data;
 };
 
 struct _AdgFontStyleClass {
+    /*< private >*/
     AdgStyleClass        parent_class;
 };
 

@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
+
 struct _AdgFontStylePrivate {
     gchar                       *family;
     cairo_font_slant_t           slant;
