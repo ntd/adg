@@ -36,17 +36,17 @@ G_BEGIN_DECLS
 
 typedef struct _AdgWidget        AdgWidget;
 typedef struct _AdgWidgetClass   AdgWidgetClass;
-typedef struct _AdgWidgetPrivate AdgWidgetPrivate;
 
 struct _AdgWidget {
     /*< private >*/
-    GtkDrawingArea       object;
-    AdgWidgetPrivate    *priv;
+    GtkDrawingArea       parent;
+    gpointer             data;
 };
 
 struct _AdgWidgetClass {
+    /*< private >*/
     GtkDrawingAreaClass  parent_class;
-
+    /*< public >*/
     /* Virtual Table */
     void                (*canvas_changed)       (AdgWidget      *widget);
 };

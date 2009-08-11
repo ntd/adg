@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgWidgetPrivate AdgWidgetPrivate;
+
 struct _AdgWidgetPrivate {
     AdgCanvas   *canvas;
     gdouble      factor;
