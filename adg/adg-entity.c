@@ -213,14 +213,14 @@ adg_entity_class_init(AdgEntityClass *klass)
 static void
 adg_entity_init(AdgEntity *entity)
 {
-    AdgEntityPrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(entity,
+    AdgEntityPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(entity,
                                                          ADG_TYPE_ENTITY,
                                                          AdgEntityPrivate);
-    priv->parent = NULL;
-    priv->flags = 0;
-    priv->context = NULL;
+    data->parent = NULL;
+    data->flags = 0;
+    data->context = NULL;
 
-    entity->priv = priv;
+    entity->data = data;
 }
 
 static void
@@ -264,13 +264,15 @@ static void
 dispose(GObject *object)
 {
     AdgEntity *entity;
+    AdgEntityPrivate *data;
     GObjectClass *object_class;
 
     entity = (AdgEntity *) object;
+    data = entity->data;
     object_class = (GObjectClass *) adg_entity_parent_class;
 
-    if (entity->priv->parent)
-        adg_container_remove(entity->priv->parent, entity);
+    if (data->parent)
+        adg_container_remove(data->parent, entity);
 
     if (object_class->dispose != NULL)
         object_class->dispose(object);
@@ -381,13 +383,17 @@ adg_entity_reparent(AdgEntity *entity, AdgContainer *parent)
 AdgContext *
 adg_entity_get_context(AdgEntity *entity)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    if (entity->priv->context)
-        return entity->priv->context;
+    data = entity->data;
 
-    if (entity->priv->parent)
-        return adg_entity_get_context((AdgEntity *) entity->priv->parent);
+    if (data->context)
+        return data->context;
+
+    if (data->parent)
+        return adg_entity_get_context((AdgEntity *) data->parent);
 
     return NULL;
 }
@@ -625,18 +631,20 @@ adg_entity_paper_matrix_changed(AdgEntity *entity,
 AdgStyle *
 adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    if (entity->priv->context) {
-        AdgStyle *style = adg_context_get_style(entity->priv->context,
-                                                style_slot);
+    data = entity->data;
+
+    if (data->context) {
+        AdgStyle *style = adg_context_get_style(data->context, style_slot);
         if (style)
             return style;
     }
 
-    if (entity->priv->parent)
-        return adg_entity_get_style((AdgEntity *) entity->priv->parent,
-                                    style_slot);
+    if (data->parent)
+        return adg_entity_get_style((AdgEntity *) data->parent, style_slot);
 
     return NULL;
 }
@@ -760,8 +768,13 @@ adg_entity_point_to_paper_pair(AdgEntity *entity,
 gboolean
 adg_entity_model_matrix_applied(AdgEntity *entity)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-    return ADG_ISSET(entity->priv->flags, MODEL_MATRIX_APPLIED);
+
+    data = entity->data;
+
+    return ADG_ISSET(data->flags, MODEL_MATRIX_APPLIED);
 }
 
 /**
@@ -773,8 +786,13 @@ adg_entity_model_matrix_applied(AdgEntity *entity)
 gboolean
 adg_entity_paper_matrix_applied(AdgEntity *entity)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-    return ADG_ISSET(entity->priv->flags, PAPER_MATRIX_APPLIED);
+
+    data = entity->data;
+
+    return ADG_ISSET(data->flags, PAPER_MATRIX_APPLIED);
 }
 
 /**
@@ -786,8 +804,13 @@ adg_entity_paper_matrix_applied(AdgEntity *entity)
 gboolean
 adg_entity_model_applied(AdgEntity *entity)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-    return ADG_ISSET(entity->priv->flags, MODEL_APPLIED);
+
+    data = entity->data;
+
+    return ADG_ISSET(data->flags, MODEL_APPLIED);
 }
 
 /**
@@ -825,13 +848,17 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
 static AdgContainer *
 get_parent(AdgEntity *entity)
 {
-    return entity->priv->parent;
+    AdgEntityPrivate *data = entity->data;
+
+    return data->parent;
 }
 
 static void
 set_parent(AdgEntity *entity, AdgContainer *parent)
 {
-    entity->priv->parent = parent;
+    AdgEntityPrivate *data = entity->data;
+
+    data->parent = parent;
 }
 
 static void
@@ -852,12 +879,13 @@ parent_set(AdgEntity *entity, AdgContainer *old_parent)
 static AdgContext *
 get_context(AdgEntity *entity)
 {
+    AdgEntityPrivate *data = entity->data;
     AdgEntity *parent;
 
-    if (entity->priv->context)
-        return entity->priv->context;
+    if (data->context)
+        return data->context;
 
-    parent = (AdgEntity *) entity->priv->parent;
+    parent = (AdgEntity *) data->parent;
 
     return parent ? ADG_ENTITY_GET_CLASS(parent)->get_context(parent) : NULL;
 }
@@ -865,40 +893,52 @@ get_context(AdgEntity *entity)
 static void
 set_context(AdgEntity *entity, AdgContext *context)
 {
-    if (entity->priv->context)
-        g_object_unref((GObject *) entity->priv->context);
+    AdgEntityPrivate *data = entity->data;
+
+    if (data->context)
+        g_object_unref((GObject *) data->context);
 
     g_object_ref((GObject *) context);
-    entity->priv->context = context;
+    data->context = context;
 }
 
 static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    ADG_UNSET(entity->priv->flags, MODEL_MATRIX_APPLIED);
+    AdgEntityPrivate *data = entity->data;
+
+    ADG_UNSET(data->flags, MODEL_MATRIX_APPLIED);
 }
 
 static void
 paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
-    ADG_UNSET(entity->priv->flags, PAPER_MATRIX_APPLIED);
+    AdgEntityPrivate *data = entity->data;
+
+    ADG_UNSET(data->flags, PAPER_MATRIX_APPLIED);
 }
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    ADG_SET(entity->priv->flags,
+    AdgEntityPrivate *data = entity->data;
+
+    ADG_SET(data->flags,
             MODEL_MATRIX_APPLIED | PAPER_MATRIX_APPLIED | MODEL_APPLIED);
 }
 
 static const AdgMatrix *
 get_model_matrix(AdgEntity *entity)
 {
-    return adg_entity_get_model_matrix((AdgEntity *) entity->priv->parent);
+    AdgEntityPrivate *data = entity->data;
+
+    return adg_entity_get_model_matrix((AdgEntity *) data->parent);
 }
 
 static const AdgMatrix *
 get_paper_matrix(AdgEntity *entity)
 {
-    return adg_entity_get_paper_matrix((AdgEntity *) entity->priv->parent);
+    AdgEntityPrivate *data = entity->data;
+
+    return adg_entity_get_paper_matrix((AdgEntity *) data->parent);
 }

@@ -47,19 +47,19 @@ typedef struct _AdgContainer    AdgContainer;
 
 typedef struct _AdgEntity        AdgEntity;
 typedef struct _AdgEntityClass   AdgEntityClass;
-typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 
 struct _AdgEntity {
-    GInitiallyUnowned    initially_unowned;
-
     /*< private >*/
-    AdgEntityPrivate    *priv;
+    GInitiallyUnowned    parent;
+    gpointer             data;
 };
 
 struct _AdgEntityClass {
+    /*< private >*/
     GInitiallyUnownedClass parent_class;
 
+    /*< public >*/
     /* Signals */
     void                (*parent_set)           (AdgEntity      *entity,
                                                  AdgContainer   *old_parent);
