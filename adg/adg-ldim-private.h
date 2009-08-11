@@ -47,6 +47,8 @@ G_BEGIN_DECLS
  * [3]  = end of arrow director
  */
 
+typedef struct _AdgLDimPrivate AdgLDimPrivate;
+
 struct _AdgLDimPrivate {
     /* Properties */
     double              direction;

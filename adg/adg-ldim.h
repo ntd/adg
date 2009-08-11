@@ -36,15 +36,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgLDim        AdgLDim;
 typedef struct _AdgLDimClass   AdgLDimClass;
-typedef struct _AdgLDimPrivate AdgLDimPrivate;
 
 struct _AdgLDim {
-    AdgDim               dim;
     /*< private >*/
-    AdgLDimPrivate      *priv;
+    AdgDim               parent;
+    gpointer             data;
 };
 
 struct _AdgLDimClass {
+    /*< private >*/
     AdgDimClass          parent_class;
 };
 
