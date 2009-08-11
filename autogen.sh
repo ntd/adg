@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-(test -f $srcdir/configure.ac && test -d $srcdir/adg && test -f $srcdir/adg/adg.h) ||
+(test -f $srcdir/configure.ac && test -f $srcdir/adg/adg.h) ||
 {
         echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
         echo " top-level adg directory"
@@ -12,5 +12,5 @@ test -z "$srcdir" && srcdir=.
 }
 
 pushd $srcdir
-autoreconf -isf
+autoreconf -is -Wall
 popd
