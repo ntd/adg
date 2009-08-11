@@ -90,23 +90,23 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 static void
 adg_stroke_init(AdgStroke *stroke)
 {
-    AdgStrokePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(stroke,
+    AdgStrokePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(stroke,
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
-    priv->path = NULL;
+    data->path = NULL;
 
-    stroke->priv = priv;
+    stroke->data = data;
 }
 
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgStroke *stroke = (AdgStroke *) object;
+    AdgStrokePrivate *data = ((AdgStroke *) object)->data;
 
     switch (prop_id) {
     case PROP_PATH:
-        g_value_set_object(value, &stroke->priv->path);
+        g_value_set_object(value, &data->path);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -159,9 +159,13 @@ adg_stroke_new(AdgPath *path)
 AdgPath *
 adg_stroke_get_path(AdgStroke *stroke)
 {
+    AdgStrokePrivate *data;
+
     g_return_val_if_fail(ADG_IS_STROKE(stroke), NULL);
 
-    return stroke->priv->path;
+    data = stroke->data;
+
+    return data->path;
 }
 
 /**
@@ -195,19 +199,23 @@ adg_stroke_set_path(AdgStroke *stroke, AdgPath *path)
 static void
 set_path(AdgStroke *stroke, AdgPath *path)
 {
-    stroke->priv->path = path;
+    AdgStrokePrivate *data = stroke->data;
+
+    data->path = path;
 }
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgStroke *stroke;
+    AdgStrokePrivate *data;
     AdgEntityClass *entity_class;
     const cairo_path_t *cairo_path;
 
     stroke = (AdgStroke *) entity;
+    data = stroke->data;
     entity_class = (AdgEntityClass *) adg_stroke_parent_class;
-    cairo_path = adg_path_get_cairo_path(stroke->priv->path);
+    cairo_path = adg_path_get_cairo_path(data->path);
 
     if (cairo_path != NULL) {
         cairo_append_path(cr, cairo_path);

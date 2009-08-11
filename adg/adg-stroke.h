@@ -36,15 +36,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgStroke        AdgStroke;
 typedef struct _AdgStrokeClass   AdgStrokeClass;
-typedef struct _AdgStrokePrivate AdgStrokePrivate;
 
 struct _AdgStroke {
     /*< private >*/
     AdgEntity		 entity;
-    AdgStrokePrivate	*priv;
+    gpointer             data;
 };
 
 struct _AdgStrokeClass {
+    /*< private >*/
     AdgEntityClass	 parent_class;
 };
 

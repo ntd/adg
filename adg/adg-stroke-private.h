@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgStrokePrivate AdgStrokePrivate;
+
 struct _AdgStrokePrivate {
     AdgPath     *path;
 };
