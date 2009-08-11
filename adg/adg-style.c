@@ -27,6 +27,14 @@
  * must be derived.
  */
 
+/**
+ * AdgStyle:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
+
 #include "adg-style.h"
 #include "adg-style-private.h"
 #include "adg-line-style.h"
@@ -89,24 +97,24 @@ adg_style_class_init(AdgStyleClass *klass)
 static void
 adg_style_init(AdgStyle *style)
 {
-    AdgStylePrivate *priv =
-        G_TYPE_INSTANCE_GET_PRIVATE(style, ADG_TYPE_STYLE,
-                                    AdgStylePrivate);
+    AdgStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(style,
+                                                        ADG_TYPE_STYLE,
+                                                        AdgStylePrivate);
 
-    priv->pattern = NULL;
+    data->pattern = NULL;
 
-    style->priv = priv;
+    style->data = data;
 }
 
 static void
 get_property(GObject *object,
              guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgStyle *style = (AdgStyle *) object;
+    AdgStylePrivate *data = ((AdgStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_PATTERN:
-        g_value_set_boxed(value, style->priv->pattern);
+        g_value_set_boxed(value, data->pattern);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -222,9 +230,13 @@ adg_style_apply(AdgStyle *style, cairo_t *cr)
 const AdgPattern *
 adg_style_get_pattern(AdgStyle *style)
 {
+    AdgStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_STYLE(style), NULL);
 
-    return style->priv->pattern;
+    data = style->data;
+
+    return data->pattern;
 }
 
 /**
@@ -260,18 +272,22 @@ get_pool(void)
 static void
 apply(AdgStyle *style, cairo_t *cr)
 {
-    if (style->priv->pattern != NULL)
-        cairo_set_source(cr, style->priv->pattern);
+    AdgStylePrivate *data = style->data;
+
+    if (data->pattern != NULL)
+        cairo_set_source(cr, data->pattern);
 }
 
 static void
 set_pattern(AdgStyle *style, AdgPattern *pattern)
 {
-    if (style->priv->pattern != NULL)
-        cairo_pattern_destroy(style->priv->pattern);
+    AdgStylePrivate *data = style->data;
+
+    if (data->pattern != NULL)
+        cairo_pattern_destroy(data->pattern);
 
     if (pattern != NULL)
         cairo_pattern_reference(pattern);
 
-    style->priv->pattern = pattern;
+    data->pattern = pattern;
 }

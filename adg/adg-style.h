@@ -36,18 +36,19 @@ G_BEGIN_DECLS
 
 typedef struct _AdgStyle        AdgStyle;
 typedef struct _AdgStyleClass   AdgStyleClass;
-typedef struct _AdgStylePrivate AdgStylePrivate;
 typedef gint                    AdgStyleId;
 typedef gint                    AdgStyleSlot;
 
 struct _AdgStyle {
-    GObject              object;
     /*< private >*/
-    AdgStylePrivate     *priv;
+    GObject              parent;
+    gpointer             data;
 };
 
 struct _AdgStyleClass {
+    /*< private >*/
     GObjectClass         parent_class;
+    /*< public >*/
     /* Virtual table */
     GPtrArray *         (*get_pool)             (void);
     void                (*apply)                (AdgStyle       *style,

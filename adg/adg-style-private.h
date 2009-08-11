@@ -24,6 +24,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgStylePrivate AdgStylePrivate;
+
 struct _AdgStylePrivate {
     AdgPattern  *pattern;
 };
