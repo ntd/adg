@@ -26,6 +26,8 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
+
 struct _AdgDimStylePrivate {
     AdgStyle    *quote_style;
     AdgStyle    *tolerance_style;

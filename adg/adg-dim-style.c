@@ -28,6 +28,14 @@
  * dimension components etc...
  */
 
+/**
+ * AdgDimStyle:
+ *
+ * All fields are private and should not be used directly.
+ * Use its public methods instead.
+ **/
+
+
 #include "adg-dim-style.h"
 #include "adg-dim-style-private.h"
 #include "adg-font-style.h"
@@ -205,83 +213,83 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 static void
 adg_dim_style_init(AdgDimStyle *dim_style)
 {
-    AdgDimStylePrivate *priv = G_TYPE_INSTANCE_GET_PRIVATE(dim_style,
+    AdgDimStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim_style,
                                                            ADG_TYPE_DIM_STYLE,
                                                            AdgDimStylePrivate);
 
-    priv->quote_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
+    data->quote_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
                                           ADG_FONT_STYLE_QUOTE);
-    priv->tolerance_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
+    data->tolerance_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
                                               ADG_FONT_STYLE_TOLERANCE);
-    priv->note_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
+    data->note_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
                                          ADG_FONT_STYLE_NOTE);
-    priv->line_style = adg_style_from_id(ADG_TYPE_LINE_STYLE,
+    data->line_style = adg_style_from_id(ADG_TYPE_LINE_STYLE,
                                          ADG_LINE_STYLE_DIM);
-    priv->arrow_style = adg_style_from_id(ADG_TYPE_ARROW_STYLE,
+    data->arrow_style = adg_style_from_id(ADG_TYPE_ARROW_STYLE,
                                           ADG_ARROW_STYLE_ARROW);
-    priv->from_offset = 5.;
-    priv->to_offset = 5.;
-    priv->baseline_spacing = 30.;
-    priv->tolerance_spacing = 2.;
-    priv->quote_shift.x = 0.;
-    priv->quote_shift.y = -3.;
-    priv->tolerance_shift.x = +5.;
-    priv->tolerance_shift.y = -4.;
-    priv->note_shift.x = +5.;
-    priv->note_shift.y = 0.;
-    priv->number_format = g_strdup("%-.7g");
-    priv->number_tag = g_strdup("<>");
+    data->from_offset = 5.;
+    data->to_offset = 5.;
+    data->baseline_spacing = 30.;
+    data->tolerance_spacing = 2.;
+    data->quote_shift.x = 0.;
+    data->quote_shift.y = -3.;
+    data->tolerance_shift.x = +5.;
+    data->tolerance_shift.y = -4.;
+    data->note_shift.x = +5.;
+    data->note_shift.y = 0.;
+    data->number_format = g_strdup("%-.7g");
+    data->number_tag = g_strdup("<>");
 
-    dim_style->priv = priv;
+    dim_style->data = data;
 }
 
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgDimStyle *dim_style = (AdgDimStyle *) object;
+    AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_QUOTE_STYLE:
-        g_value_set_object(value, dim_style->priv->quote_style);
+        g_value_set_object(value, data->quote_style);
         break;
     case PROP_TOLERANCE_STYLE:
-        g_value_set_object(value, dim_style->priv->tolerance_style);
+        g_value_set_object(value, data->tolerance_style);
         break;
     case PROP_NOTE_STYLE:
-        g_value_set_object(value, dim_style->priv->note_style);
+        g_value_set_object(value, data->note_style);
         break;
     case PROP_LINE_STYLE:
-        g_value_set_object(value, dim_style->priv->line_style);
+        g_value_set_object(value, data->line_style);
         break;
     case PROP_ARROW_STYLE:
-        g_value_set_object(value, dim_style->priv->arrow_style);
+        g_value_set_object(value, data->arrow_style);
         break;
     case PROP_FROM_OFFSET:
-        g_value_set_double(value, dim_style->priv->from_offset);
+        g_value_set_double(value, data->from_offset);
         break;
     case PROP_TO_OFFSET:
-        g_value_set_double(value, dim_style->priv->to_offset);
+        g_value_set_double(value, data->to_offset);
         break;
     case PROP_BASELINE_SPACING:
-        g_value_set_double(value, dim_style->priv->baseline_spacing);
+        g_value_set_double(value, data->baseline_spacing);
         break;
     case PROP_TOLERANCE_SPACING:
-        g_value_set_double(value, dim_style->priv->tolerance_spacing);
+        g_value_set_double(value, data->tolerance_spacing);
         break;
     case PROP_QUOTE_SHIFT:
-        g_value_set_boxed(value, &dim_style->priv->quote_shift);
+        g_value_set_boxed(value, &data->quote_shift);
         break;
     case PROP_TOLERANCE_SHIFT:
-        g_value_set_boxed(value, &dim_style->priv->tolerance_shift);
+        g_value_set_boxed(value, &data->tolerance_shift);
         break;
     case PROP_NOTE_SHIFT:
-        g_value_set_boxed(value, &dim_style->priv->note_shift);
+        g_value_set_boxed(value, &data->note_shift);
         break;
     case PROP_NUMBER_FORMAT:
-        g_value_set_string(value, dim_style->priv->number_format);
+        g_value_set_string(value, data->number_format);
         break;
     case PROP_NUMBER_TAG:
-        g_value_set_string(value, dim_style->priv->number_tag);
+        g_value_set_string(value, data->number_tag);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -293,7 +301,11 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgDimStyle *dim_style = (AdgDimStyle *) object;
+    AdgDimStyle *dim_style;
+    AdgDimStylePrivate *data;
+
+    dim_style = (AdgDimStyle *) object;
+    data = dim_style->data;
 
     switch (prop_id) {
     case PROP_QUOTE_STYLE:
@@ -312,16 +324,16 @@ set_property(GObject *object,
         set_arrow_style(dim_style, g_value_get_object(value));
         break;
     case PROP_FROM_OFFSET:
-        dim_style->priv->from_offset = g_value_get_double(value);
+        data->from_offset = g_value_get_double(value);
         break;
     case PROP_TO_OFFSET:
-        dim_style->priv->to_offset = g_value_get_double(value);
+        data->to_offset = g_value_get_double(value);
         break;
     case PROP_BASELINE_SPACING:
-        dim_style->priv->baseline_spacing = g_value_get_double(value);
+        data->baseline_spacing = g_value_get_double(value);
         break;
     case PROP_TOLERANCE_SPACING:
-        dim_style->priv->tolerance_spacing = g_value_get_double(value);
+        data->tolerance_spacing = g_value_get_double(value);
         break;
     case PROP_QUOTE_SHIFT:
         set_quote_shift(dim_style, g_value_get_boxed(value));
@@ -388,9 +400,13 @@ adg_dim_style_new(void)
 AdgStyle *
 adg_dim_style_get_quote_style(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->quote_style;
+    data = dim_style->data;
+
+    return data->quote_style;
 }
 
 /**
@@ -423,9 +439,13 @@ adg_dim_style_set_quote_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 AdgStyle *
 adg_dim_style_get_tolerance_style(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->tolerance_style;
+    data = dim_style->data;
+
+    return data->tolerance_style;
 }
 
 /**
@@ -458,9 +478,13 @@ adg_dim_style_set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 AdgStyle *
 adg_dim_style_get_note_style(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->note_style;
+    data = dim_style->data;
+
+    return data->note_style;
 }
 
 /**
@@ -493,9 +517,13 @@ adg_dim_style_set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 AdgStyle *
 adg_dim_style_get_line_style(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->line_style;
+    data = dim_style->data;
+
+    return data->line_style;
 }
 
 /**
@@ -528,9 +556,13 @@ adg_dim_style_set_line_style(AdgDimStyle *dim_style, AdgLineStyle *style)
 AdgStyle *
 adg_dim_style_get_arrow_style(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->arrow_style;
+    data = dim_style->data;
+
+    return data->arrow_style;
 }
 
 /**
@@ -563,9 +595,13 @@ adg_dim_style_set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
 gdouble
 adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
 
-    return dim_style->priv->from_offset;
+    data = dim_style->data;
+
+    return data->from_offset;
 }
 
 /**
@@ -578,9 +614,13 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 {
+    AdgDimStylePrivate *data;
+
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    dim_style->priv->from_offset = offset;
+    data = dim_style->data;
+    data->from_offset = offset;
+
     g_object_notify((GObject *) dim_style, "from-offset");
 }
 
@@ -596,9 +636,13 @@ adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 gdouble
 adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
 
-    return dim_style->priv->to_offset;
+    data = dim_style->data;
+
+    return data->to_offset;
 }
 
 /**
@@ -611,9 +655,13 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 {
+    AdgDimStylePrivate *data;
+
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    dim_style->priv->to_offset = offset;
+    data = dim_style->data;
+    data->to_offset = offset;
+
     g_object_notify((GObject *) dim_style, "to-offset");
 }
 
@@ -629,9 +677,13 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 gdouble
 adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
 
-    return dim_style->priv->baseline_spacing;
+    data = dim_style->data;
+
+    return data->baseline_spacing;
 }
 
 /**
@@ -644,9 +696,13 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
+    AdgDimStylePrivate *data;
+
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    dim_style->priv->baseline_spacing = spacing;
+    data = dim_style->data;
+    data->baseline_spacing = spacing;
+
     g_object_notify((GObject *) dim_style, "baseline-spacing");
 }
 
@@ -661,9 +717,13 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 gdouble
 adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
 
-    return dim_style->priv->tolerance_spacing;
+    data = dim_style->data;
+
+    return data->tolerance_spacing;
 }
 
 /**
@@ -676,9 +736,13 @@ adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_tolerance_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
+    AdgDimStylePrivate *data;
+
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    dim_style->priv->tolerance_spacing = spacing;
+    data = dim_style->data;
+    data->tolerance_spacing = spacing;
+
     g_object_notify((GObject *) dim_style, "tolerance-spacing");
 }
 
@@ -694,9 +758,13 @@ adg_dim_style_set_tolerance_spacing(AdgDimStyle *dim_style, gdouble spacing)
 const AdgPair *
 adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return &dim_style->priv->quote_shift;
+    data = dim_style->data;
+
+    return &data->quote_shift;
 }
 
 /**
@@ -727,9 +795,13 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 const AdgPair *
 adg_dim_style_get_tolerance_shift(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return &dim_style->priv->tolerance_shift;
+    data = dim_style->data;
+
+    return &data->tolerance_shift;
 }
 
 /**
@@ -760,9 +832,13 @@ adg_dim_style_set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 const AdgPair *
 adg_dim_style_get_note_shift(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return &dim_style->priv->note_shift;
+    data = dim_style->data;
+
+    return &data->note_shift;
 }
 
 /**
@@ -794,9 +870,13 @@ adg_dim_style_set_note_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 const gchar *
 adg_dim_style_get_number_format(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->number_format;
+    data = dim_style->data;
+
+    return data->number_format;
 }
 
 /**
@@ -828,9 +908,13 @@ adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
 const gchar *
 adg_dim_style_get_number_tag(AdgDimStyle *dim_style)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    return dim_style->priv->number_tag;
+    data = dim_style->data;
+
+    return data->number_tag;
 }
 
 /**
@@ -868,7 +952,7 @@ get_pool(void)
         cairo_pattern_destroy(pattern);
 
         pool->len = ADG_DIM_STYLE_LAST;
-        }
+    }
 
     return pool;
 }
@@ -876,81 +960,101 @@ get_pool(void)
 static void
 set_quote_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 {
-    if (dim_style->priv->quote_style)
-        g_object_unref(dim_style->priv->quote_style);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    if (data->quote_style)
+        g_object_unref(data->quote_style);
 
     g_object_ref(style);
-    dim_style->priv->quote_style = (AdgStyle *) style;
+    data->quote_style = (AdgStyle *) style;
 }
 
 static void
 set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 {
-    if (dim_style->priv->tolerance_style)
-        g_object_unref(dim_style->priv->tolerance_style);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    if (data->tolerance_style)
+        g_object_unref(data->tolerance_style);
 
     g_object_ref(style);
-    dim_style->priv->tolerance_style = (AdgStyle *) style;
+    data->tolerance_style = (AdgStyle *) style;
 }
 
 static void
 set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 {
-    if (dim_style->priv->note_style)
-        g_object_unref(dim_style->priv->note_style);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    if (data->note_style)
+        g_object_unref(data->note_style);
 
     g_object_ref(style);
-    dim_style->priv->note_style = (AdgStyle *) style;
+    data->note_style = (AdgStyle *) style;
 }
 
 static void
 set_line_style(AdgDimStyle *dim_style, AdgLineStyle *style)
 {
-    if (dim_style->priv->line_style)
-        g_object_unref(dim_style->priv->line_style);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    if (data->line_style)
+        g_object_unref(data->line_style);
 
     g_object_ref(style);
-    dim_style->priv->line_style = (AdgStyle *) style;
+    data->line_style = (AdgStyle *) style;
 }
 
 static void
 set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
 {
-    if (dim_style->priv->arrow_style)
-        g_object_unref(dim_style->priv->arrow_style);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    if (data->arrow_style)
+        g_object_unref(data->arrow_style);
 
     g_object_ref(style);
-    dim_style->priv->arrow_style = (AdgStyle *) style;
+    data->arrow_style = (AdgStyle *) style;
 }
 
 static void
 set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
-    cpml_pair_copy(&dim_style->priv->quote_shift, shift);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    cpml_pair_copy(&data->quote_shift, shift);
 }
 
 static void
 set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
-    cpml_pair_copy(&dim_style->priv->tolerance_shift, shift);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    cpml_pair_copy(&data->tolerance_shift, shift);
 }
 
 static void
 set_note_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
-    cpml_pair_copy(&dim_style->priv->note_shift, shift);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    cpml_pair_copy(&data->note_shift, shift);
 }
 
 static void
 set_number_format(AdgDimStyle *dim_style, const gchar *format)
 {
-    g_free(dim_style->priv->number_format);
-    dim_style->priv->number_format = g_strdup(format);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    g_free(data->number_format);
+    data->number_format = g_strdup(format);
 }
 
 static void
 set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 {
-    g_free(dim_style->priv->number_tag);
-    dim_style->priv->number_tag = g_strdup(tag);
+    AdgDimStylePrivate *data = dim_style->data;
+
+    g_free(data->number_tag);
+    data->number_tag = g_strdup(tag);
 }

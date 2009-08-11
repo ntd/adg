@@ -41,15 +41,15 @@ G_BEGIN_DECLS
 
 typedef struct _AdgDimStyle        AdgDimStyle;
 typedef struct _AdgDimStyleClass   AdgDimStyleClass;
-typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
 
 struct _AdgDimStyle {
-    AdgStyle             style;
     /*< private >*/
-    AdgDimStylePrivate  *priv;
+    AdgStyle             parent;
+    gpointer             data;
 };
 
 struct _AdgDimStyleClass {
+    /*< private >*/
     AdgStyleClass        parent_class;
 };
 
