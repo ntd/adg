@@ -881,6 +881,9 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     priv = dim->priv;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
+    tolerance_up_org.x = tolerance_up_org.y = 0;
+    tolerance_down_org.x = tolerance_down_org.y = 0;
+    note_org.x = note_org.y = 0;
 
     /* Compute the quote */
     if (text_cache_update(&priv->quote_cache, priv->quote, cr,
