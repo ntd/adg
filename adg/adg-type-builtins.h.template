@@ -1,0 +1,26 @@
+/*** BEGIN file-header ***/
+#ifndef __ADG_TYPE_BUILTINS_H__
+#define __ADG_TYPE_BUILTINS_H__
+
+#include <glib-object.h>
+
+
+G_BEGIN_DECLS
+
+/*** END file-header ***/
+/*** BEGIN file-production ***/
+/* Enumerations from "@filename@" */
+/*** END file-production ***/
+/*** BEGIN value-header ***/
+
+#define ADG_TYPE_@ENUMSHORT@ (@enum_name@_get_type())
+
+GType @enum_name@_get_type(void) G_GNUC_CONST;
+
+/*** END value-header ***/
+/*** BEGIN file-tail ***/
+
+G_END_DECLS
+
+#endif /* __ADG_TYPE_BUILTINS_H__ */
+/*** END file-tail ***/

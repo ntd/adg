@@ -1,11 +1,12 @@
-## Process this file with automake to produce Makefile.in
-
 AM_CFLAGS=			@GTK2_CFLAGS@ \
 				-I$(top_srcdir)
 AM_LDFLAGS=			@GTK2_LIBS@
+GLIB_MKENUMS=			`which glib-mkenums` \
+					--template $(srcdir)/$@.template \
+					$(srcdir)/adg-enums.h
 
 # file groups
-adg_h_sources=			adg.h \
+h_sources=			adg.h \
 				adg-adim.h \
 				adg-arrow-style.h \
 				adg-canvas.h \
@@ -33,8 +34,8 @@ adg_h_sources=			adg.h \
 				adg-translatable.h \
 				adg-util.h \
 				adg-widget.h
-adg_built_h_sources=		adg-type-builtins.h
-adg_private_h_sources=		adg-adim-private.h \
+built_h_sources=		$(builddir)/adg-type-builtins.h
+private_h_sources=		adg-adim-private.h \
 				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
@@ -54,8 +55,8 @@ adg_private_h_sources=		adg-adim-private.h \
 				adg-title-block-private.h \
 				adg-toy-text-private.h \
 				adg-widget-private.h
-adg_built_private_h_sources= 
-adg_c_sources=			adg-adim.c \
+built_private_h_sources= 
+c_sources=			adg-adim.c \
 				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \
@@ -83,42 +84,34 @@ adg_c_sources=			adg-adim.c \
 				adg-translatable.c \
 				adg-util.c \
 				adg-widget.c
-adg_built_c_sources=		adg-type-builtins.c
+built_c_sources=		$(builddir)/adg-type-builtins.c
+EXTRA_DIST=			adg-type-builtins.c.template \
+				adg-type-builtins.h.template
 
 # targets
-BUILT_SOURCES=			$(adg_built_h_sources) \
-				$(adg_built_private_h_sources) \
-				$(adg_built_c_sources)
+BUILT_SOURCES=			$(built_h_sources)
+DISTCLEANFILES=			$(built_h_sources) \
+				$(built_private_h_sources) \
+				$(built_c_sources)
 
 libadg_includedir=		$(includedir)/adg
-libadg_include_DATA=		$(adg_h_sources) \
-				$(adg_built_h_sources)
+libadg_include_DATA=		$(h_sources) \
+				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libadg.la
 libadg_la_LDFLAGS=		-release @PACKAGE_VERSION@
-libadg_la_SOURCES=		$(adg_h_sources) \
-				$(adg_built_h_sources) \
-				$(adg_private_h_sources) \
-				$(adg_built_private_h_sources) \
-				$(adg_c_sources) \
-				$(adg_built_c_sources)
+libadg_la_SOURCES=		$(h_sources) \
+				$(private_h_sources) \
+				$(c_sources)
+nodist_libadg_la_SOURCES=	$(built_h_sources) \
+				$(built_private_h_sources) \
+				$(built_c_sources)
 libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
 libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
-adg-type-builtins.h: adg-enums.h Makefile
-	glib-mkenums \
-	--fhead "#ifndef __ADG_TYPE_BUILTINS_H__\n#define __ADG_TYPE_BUILTINS_H__\n\n#include <glib-object.h>\n\nG_BEGIN_DECLS\n\n" \
-	--fprod "\n/* enumerations from \"@filename@\" */\n" \
-	--vhead "#define ADG_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\nGType @enum_name@_get_type(void) G_GNUC_CONST;\n\n" \
-	--ftail "G_END_DECLS\n\n#endif /* __ADG_TYPE_BUILTINS_H__ */" \
-	adg-enums.h > $@
+adg-type-builtins.c: adg-type-builtins.c.template adg-enums.h
+	$(GLIB_MKENUMS) > $@
 
-adg-type-builtins.c: adg-enums.h Makefile
-	glib-mkenums \
-	--fhead "#include \"adg-enums.h\"\n\n" \
-	--fprod "\n/* enumerations from \"@filename@\" */" \
-	--vhead "\nGType\n@enum_name@_get_type(void)\n{\n    static GType etype = 0;\n    if (G_UNLIKELY(etype == 0)) {\n        static const G@Type@Value values[] = {" \
-	--vprod "            { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
-	--vtail "            { 0, NULL, NULL }\n        };\n        etype = g_@type@_register_static(\"@EnumName@\", values);\n    }\n    return etype;\n}\n" \
-	adg-enums.h > $@
+adg-type-builtins.h: adg-type-builtins.h.template adg-enums.h
+	$(GLIB_MKENUMS) > $@
