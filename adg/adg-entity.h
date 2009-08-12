@@ -21,6 +21,7 @@
 #ifndef __ADG_ENTITY_H__
 #define __ADG_ENTITY_H__
 
+#include <adg/adg-util.h>
 #include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-point.h>
@@ -32,11 +33,6 @@
 
 G_BEGIN_DECLS
 
-/* Forward declarations */
-typedef struct _AdgCanvas       AdgCanvas;
-typedef struct _AdgContainer    AdgContainer;
-
-
 #define ADG_TYPE_ENTITY             (adg_entity_get_type ())
 #define ADG_ENTITY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ENTITY, AdgEntity))
 #define ADG_ENTITY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_ENTITY, AdgEntityClass))
@@ -47,6 +43,9 @@ typedef struct _AdgContainer    AdgContainer;
 
 typedef struct _AdgEntity        AdgEntity;
 typedef struct _AdgEntityClass   AdgEntityClass;
+
+ADG_FORWARD_DECL(AdgCanvas);
+ADG_FORWARD_DECL(AdgContainer);
 
 
 struct _AdgEntity {
