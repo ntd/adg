@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:translatable
+ * SECTION:adg-translatable
  * @title: AdgTranslatable
  * @short_description: Interface for translatable entities
  *

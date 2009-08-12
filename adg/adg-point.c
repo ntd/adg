@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:point
+ * SECTION:adg-point
  * @title: AdgPoint
  * @short_description: A generic point with model and paper space components
  *

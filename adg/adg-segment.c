@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:segment
+ * SECTION:adg-segment
  * @title: AdgSegment
  * @short_description: A GObject based wrapper for the #CpmlSegment struct
  *

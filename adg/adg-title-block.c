@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:title-block
+ * SECTION:adg-title-block
  * @title: AdgTitleBlock
  * @short_description: A title block entity
  *

@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:container
+ * SECTION:adg-container
  * @title: AdgContainer
  * @short_description: Base class for entity that can contain other entities
  *

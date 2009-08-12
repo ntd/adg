@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:dim-style
+ * SECTION:adg-dim-style
  * @title: AdgDimStyle
  * @short_description: Dimension style related stuff
  *

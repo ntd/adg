@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:context
+ * SECTION:adg-context
  * @title: AdgContext
  * @short_description: Base class for styling the rendering process
  *

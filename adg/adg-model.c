@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:model
+ * SECTION:adg-model
  * @title: AdgModel
  * @short_description: The base class of the ADG model infrastructure
  *

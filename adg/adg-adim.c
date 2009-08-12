@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adim
+ * SECTION:adg-adim
  * @title: AdgADim
  * @short_description: Angular dimensions
  *

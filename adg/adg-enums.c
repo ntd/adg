@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:enums
+ * SECTION:adg-enums
  * @title: Standard enumerations
  * @short_description: Public enumerated types used throughout ADG
  *

@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:primitive
+ * SECTION:adg-primitive
  * @title: AdgPrimitive
  * @short_description: A GObject based wrapper for the #CpmlPrimitive struct
  *

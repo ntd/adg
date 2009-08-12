@@ -18,7 +18,7 @@
 
 
 /**
- * SECTION:path
+ * SECTION:adg-path
  * @title: AdgPath
  * @short_description: The basic model representing a generic path
  *

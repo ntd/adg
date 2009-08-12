@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:rotable
+ * SECTION:adg-rotable
  * @title: AdgRotable
  * @short_description: Interface for rotable entities
  *

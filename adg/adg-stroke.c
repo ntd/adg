@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:stroke
+ * SECTION:adg-stroke
  * @title: AdgStroke
  * @short_description: A stroked entity
  *

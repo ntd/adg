@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:canvas
+ * SECTION:adg-canvas
  * @title: AdgCanvas
  * @short_description: The drawing container
  *

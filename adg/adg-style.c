@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:style
+ * SECTION:adg-style
  * @title: AdgStyle
  * @short_description: The base class of all styling objects
  *

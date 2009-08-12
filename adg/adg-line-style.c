@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:line-style
+ * SECTION:adg-line-style
  * @title: AdgLineStyle
  * @short_description: Line style related stuff
  *

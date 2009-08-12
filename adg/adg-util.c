@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:util
+ * SECTION:adg-util
  * @title: Utilities
  * @short_description: Assorted macros and utilities
  *

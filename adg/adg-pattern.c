@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:pattern
+ * SECTION:adg-pattern
  * @title: AdgPattern
  * @short_description: A wrapper for the cairo_pattern_t struct
  *

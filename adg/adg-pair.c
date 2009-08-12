@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:pair
+ * SECTION:adg-pair
  * @title: AdgPair
  * @short_description: A wrapper for the #CpmlPair struct
  *

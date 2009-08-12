@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:ldim
+ * SECTION:adg-ldim
  * @title: AdgLDim
  * @short_description: Linear dimensions
  *

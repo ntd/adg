@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:matrix
+ * SECTION:adg-matrix
  * @title: AdgMatrix
  * @short_description: A wrapper for the cairo_matrix_t struct
  *

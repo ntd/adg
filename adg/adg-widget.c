@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:widget
+ * SECTION:adg-widget
  * @title: AdgWidget
  * @short_description: A #GtkWidget specifically designed to contain
  *                     an #AdgCanvas entity

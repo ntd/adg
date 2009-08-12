@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:dim
+ * SECTION:adg-dim
  * @title: AdgDim
  * @short_description: Root abstract class for all dimension entities
  *
