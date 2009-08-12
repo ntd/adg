@@ -3,19 +3,20 @@
 AUTOMAKE_OPTIONS=	1.6
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(top_srcdir)/adg
+DOC_SOURCE_DIR=		$(abs_top_srcdir)/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
 			--output-format=xml
-MKTMPL_OPTIONS=
+MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=
-HFILE_GLOB=		$(top_srcdir)/adg/*.h
-CFILE_GLOB=		$(top_srcdir)/adg/*.c
+HFILE_GLOB=		$(top_srcdir)/adg/*.h \
+			$(top_builddir)/adg/*.h
+CFILE_GLOB=		$(top_srcdir)/adg/*.c \
+			$(top_builddir)/adg/*.c
 IGNORE_HFILES=		adg.h \
 			adg-intl.h \
-			adg-type-builtins.h \
 			adg-adim-private.h \
 			adg-arrow-style-private.h \
 			adg-canvas-private.h \
@@ -46,6 +47,5 @@ GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
 
 include $(top_srcdir)/gtk-doc.make
 
-TESTS=			$(GTKDOC_CHECK)
 DISTCLEANFILES=		$(DOC_MODULE).types \
 			$(DOC_MODULE)-sections.txt

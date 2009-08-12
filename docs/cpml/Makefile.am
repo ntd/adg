@@ -3,11 +3,11 @@
 AUTOMAKE_OPTIONS=	1.6
 DOC_MODULE=		cpml
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(top_srcdir)/cpml
+DOC_SOURCE_DIR=		$(abs_top_srcdir)/cpml
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST"
 MKDB_OPTIONS=		--sgml-mode --output-format=xml
-MKTMPL_OPTIONS=
+MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/cpml/*.c
