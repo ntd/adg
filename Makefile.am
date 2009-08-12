@@ -1,29 +1,27 @@
-## Process this file with automake to produce Makefile.in.
+XSLTPROC=			`which xsltproc`
 
-XSLTPROC=		`which xsltproc`
+ACLOCAL_AMFLAGS=		-I m4
+DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk-doc
 
-ACLOCAL_AMFLAGS=	-I m4
+BUILT_SOURCES=			ChangeLog \
+				README \
+				NEWS \
+				TODO
 
-BUILT_SOURCES=		ChangeLog \
-			README \
-			NEWS \
-			TODO
+EXTRA_DIST=			ABOUT-NLS \
+				config.rpath \
+				COPYING \
+				ChangeLog-0.2.1 \
+				INSTALL \
+				m4/ChangeLog \
+				adg.doap \
+				$(BUILT_SOURCES)
 
-EXTRA_DIST=		ABOUT-NLS \
-			AUTHORS \
-			config.rpath \
-			COPYING \
-			ChangeLog-0.2.1 \
-			INSTALL \
-			m4/ChangeLog \
-			adg.doap \
-			$(BUILT_SOURCES)
-
-SUBDIRS=		cpml \
-			adg \
-			demo \
-			docs \
-			po
+SUBDIRS=			cpml \
+				adg \
+				demo \
+				docs \
+				po
 
 # Creating ChangeLog files from git log:
 # idea stolen from cairo/build/Makefile.am.changelog
