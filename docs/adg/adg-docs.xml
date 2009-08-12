@@ -18,18 +18,17 @@
 
   <part id="Core">
     <title>ADG core reference</title>
-    <xi:include href="xml/tree_index.sgml"/>
-    <xi:include href="xml/pair.xml"/>
-    <xi:include href="xml/primitive.xml"/>
-    <xi:include href="xml/segment.xml"/>
-    <xi:include href="xml/point.xml"/>
-    <xi:include href="xml/matrix.xml"/>
-    <xi:include href="xml/pattern.xml"/>
-    <xi:include href="xml/enums.xml"/>
-    <xi:include href="xml/util.xml"/>
+    <xi:include href="xml/adg-pair.xml"/>
+    <xi:include href="xml/adg-primitive.xml"/>
+    <xi:include href="xml/adg-segment.xml"/>
+    <xi:include href="xml/adg-point.xml"/>
+    <xi:include href="xml/adg-matrix.xml"/>
+    <xi:include href="xml/adg-pattern.xml"/>
+    <xi:include href="xml/adg-enums.xml"/>
+    <xi:include href="xml/adg-util.xml"/>
     <chapter id="Hierarchy">
       <title>Object Hierarchy</title>
-       <xi:include href="xml/tree_index.sgml"/>
+      <xi:include href="xml/tree_index.sgml"/>
     </chapter>
   </part>
 
@@ -37,47 +36,47 @@
     <title>Defining the model</title>
     <chapter id="Defining-abstract">
       <title>Abstract classes</title>
-      <xi:include href="xml/model.xml"/>
+      <xi:include href="xml/adg-model.xml"/>
     </chapter>
-    <xi:include href="xml/path.xml"/>
+    <xi:include href="xml/adg-path.xml"/>
   </part>
 
   <part id="Populating">
     <title>Populating the canvas</title>
     <chapter id="Populating-abstract">
       <title>Abstract classes</title>
-      <xi:include href="xml/entity.xml"/>
-      <xi:include href="xml/container.xml"/>
-      <xi:include href="xml/dim.xml"/>
+      <xi:include href="xml/adg-entity.xml"/>
+      <xi:include href="xml/adg-container.xml"/>
+      <xi:include href="xml/adg-dim.xml"/>
     </chapter>
     <chapter id="Populating-interface">
       <title>Shared interfaces</title>
-      <xi:include href="xml/translatable.xml"/>
-      <xi:include href="xml/rotable.xml"/>
+      <xi:include href="xml/adg-translatable.xml"/>
+      <xi:include href="xml/adg-rotable.xml"/>
     </chapter>
-    <xi:include href="xml/canvas.xml"/>
-    <xi:include href="xml/toy-text.xml"/>
-    <xi:include href="xml/stroke.xml"/>
+    <xi:include href="xml/adg-canvas.xml"/>
+    <xi:include href="xml/adg-toy-text.xml"/>
+    <xi:include href="xml/adg-stroke.xml"/>
     <chapter id="Quoting">
       <title>Quoting</title>
-      <xi:include href="xml/ldim.xml"/>
-      <xi:include href="xml/adim.xml"/>
+      <xi:include href="xml/adg-ldim.xml"/>
+      <xi:include href="xml/adg-adim.xml"/>
     </chapter>
-    <xi:include href="xml/title-block.xml"/>
+    <xi:include href="xml/adg-title-block.xml"/>
   </part>
 
   <part id="Rendering">
     <title>The rendering process</title>
     <chapter id="Rendering-abstract">
       <title>Abstract classes</title>
-      <xi:include href="xml/style.xml"/>
+      <xi:include href="xml/adg-style.xml"/>
     </chapter>
-    <xi:include href="xml/context.xml"/>
-    <xi:include href="xml/widget.xml"/>
-    <xi:include href="xml/line-style.xml"/>
-    <xi:include href="xml/arrow-style.xml"/>
-    <xi:include href="xml/font-style.xml"/>
-    <xi:include href="xml/dim-style.xml"/>
+    <xi:include href="xml/adg-context.xml"/>
+    <xi:include href="xml/adg-widget.xml"/>
+    <xi:include href="xml/adg-line-style.xml"/>
+    <xi:include href="xml/adg-arrow-style.xml"/>
+    <xi:include href="xml/adg-font-style.xml"/>
+    <xi:include href="xml/adg-dim-style.xml"/>
   </part>
 
   <index id="Index">
