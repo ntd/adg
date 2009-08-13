@@ -37,6 +37,8 @@ struct _AdgEntityPrivate {
     AdgContainer        *parent;
     AdgEntityFlags       flags;
     AdgContext          *context;
+    AdgMatrix            global_map;
+    AdgMatrix            local_map;
 };
 
 G_END_DECLS

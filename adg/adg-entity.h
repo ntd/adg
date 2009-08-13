@@ -86,48 +86,60 @@ typedef void (*AdgCallback)(AdgEntity *entity, cairo_t *cr, gpointer user_data);
 
 
 GType           adg_entity_get_type             (void) G_GNUC_CONST;
-AdgCanvas *     adg_entity_get_canvas           (AdgEntity      *entity);
+AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 
-AdgContainer *  adg_entity_get_parent           (AdgEntity      *entity);
-void            adg_entity_set_parent           (AdgEntity      *entity,
-                                                 AdgContainer   *parent);
-void		adg_entity_unparent		(AdgEntity      *entity);
-void            adg_entity_reparent             (AdgEntity      *entity,
-                                                 AdgContainer   *parent);
-AdgContext *    adg_entity_get_context          (AdgEntity      *entity);
-void            adg_entity_set_context          (AdgEntity      *entity,
-                                                 AdgContext     *context);
-const AdgMatrix*adg_entity_get_model_matrix     (AdgEntity      *entity);
-const AdgMatrix*adg_entity_get_paper_matrix     (AdgEntity      *entity);
-gboolean        adg_entity_build_paper2model    (AdgEntity      *entity,
-                                                 AdgMatrix      *matrix);
-gboolean        adg_entity_build_model2paper    (AdgEntity      *entity,
-                                                 AdgMatrix      *matrix);
-void            adg_entity_model_matrix_changed (AdgEntity      *entity,
-                                                 const AdgMatrix*parent_matrix);
-void            adg_entity_paper_matrix_changed (AdgEntity      *entity,
-                                                 const AdgMatrix*parent_matrix);
-AdgStyle *      adg_entity_get_style            (AdgEntity      *entity,
-                                                 AdgStyleSlot    style_slot);
-void            adg_entity_apply                (AdgEntity      *entity,
-                                                 AdgStyleSlot    style_slot,
-                                                 cairo_t        *cr);
-void            adg_entity_point_to_pair        (AdgEntity      *entity,
-                                                 const AdgPoint *point,
-                                                 AdgPair        *pair,
-                                                 cairo_t        *cr);
-void            adg_entity_point_to_model_pair  (AdgEntity      *entity,
-                                                 const AdgPoint *point,
-                                                 AdgPair        *pair);
-void            adg_entity_point_to_paper_pair  (AdgEntity      *entity,
-                                                 const AdgPoint *point,
-                                                 AdgPair        *pair);
-gboolean        adg_entity_model_matrix_applied (AdgEntity      *entity);
-gboolean        adg_entity_paper_matrix_applied (AdgEntity      *entity);
-gboolean        adg_entity_model_applied        (AdgEntity      *entity);
-void            adg_entity_invalidate           (AdgEntity      *entity);
-void            adg_entity_render               (AdgEntity      *entity,
-                                                 cairo_t        *cr);
+AdgContainer *  adg_entity_get_parent           (AdgEntity       *entity);
+void            adg_entity_set_parent           (AdgEntity       *entity,
+                                                 AdgContainer    *parent);
+void		adg_entity_unparent		(AdgEntity       *entity);
+void            adg_entity_reparent             (AdgEntity       *entity,
+                                                 AdgContainer    *parent);
+AdgContext *    adg_entity_get_context          (AdgEntity       *entity);
+void            adg_entity_set_context          (AdgEntity       *entity,
+                                                 AdgContext      *context);
+void            adg_entity_get_global_map       (AdgEntity       *entity,
+                                                 AdgMatrix       *map);
+void            adg_entity_set_global_map       (AdgEntity       *entity,
+                                                 const AdgMatrix *map);
+void            adg_entity_get_local_map        (AdgEntity       *entity,
+                                                 AdgMatrix       *map);
+void            adg_entity_set_local_map        (AdgEntity       *entity,
+                                                 const AdgMatrix *map);
+void            adg_entity_get_global_matrix    (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
+void            adg_entity_get_local_matrix     (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
+const AdgMatrix*adg_entity_get_model_matrix     (AdgEntity       *entity);
+const AdgMatrix*adg_entity_get_paper_matrix     (AdgEntity       *entity);
+gboolean        adg_entity_build_paper2model    (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
+gboolean        adg_entity_build_model2paper    (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
+void            adg_entity_model_matrix_changed (AdgEntity       *entity,
+                                                 const AdgMatrix *parent_matrix);
+void            adg_entity_paper_matrix_changed (AdgEntity       *entity,
+                                                 const AdgMatrix *parent_matrix);
+AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
+                                                 AdgStyleSlot     style_slot);
+void            adg_entity_apply                (AdgEntity       *entity,
+                                                 AdgStyleSlot     style_slot,
+                                                 cairo_t         *cr);
+void            adg_entity_point_to_pair        (AdgEntity       *entity,
+                                                 const AdgPoint  *point,
+                                                 AdgPair         *pair,
+                                                 cairo_t         *cr);
+void            adg_entity_point_to_model_pair  (AdgEntity       *entity,
+                                                 const AdgPoint  *point,
+                                                 AdgPair         *pair);
+void            adg_entity_point_to_paper_pair  (AdgEntity       *entity,
+                                                 const AdgPoint  *point,
+                                                 AdgPair         *pair);
+gboolean        adg_entity_model_matrix_applied (AdgEntity       *entity);
+gboolean        adg_entity_paper_matrix_applied (AdgEntity       *entity);
+gboolean        adg_entity_model_applied        (AdgEntity       *entity);
+void            adg_entity_invalidate           (AdgEntity       *entity);
+void            adg_entity_render               (AdgEntity       *entity,
+                                                 cairo_t         *cr);
 
 G_END_DECLS
 

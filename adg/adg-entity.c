@@ -46,7 +46,9 @@
 enum {
     PROP_0,
     PROP_PARENT,
-    PROP_CONTEXT
+    PROP_CONTEXT,
+    PROP_GLOBAL_MAP,
+    PROP_LOCAL_MAP
 };
 
 enum {
@@ -59,31 +61,35 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
-                                                 guint           prop_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
-                                                 guint           prop_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
-static void             dispose                 (GObject        *object);
-static AdgContainer *   get_parent              (AdgEntity      *entity);
-static void             set_parent              (AdgEntity      *entity,
-                                                 AdgContainer   *parent);
-static void             parent_set              (AdgEntity      *entity,
-                                                 AdgContainer   *old_parent);
-static AdgContext *     get_context             (AdgEntity      *entity);
-static void             set_context             (AdgEntity      *entity,
-                                                 AdgContext     *context);
-static void             model_matrix_changed    (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
-static void             paper_matrix_changed    (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
-static void             render                  (AdgEntity      *entity,
-                                                 cairo_t        *cr);
-static const AdgMatrix *get_model_matrix        (AdgEntity      *entity);
-static const AdgMatrix *get_paper_matrix        (AdgEntity      *entity);
+static void             get_property            (GObject         *object,
+                                                 guint            prop_id,
+                                                 GValue          *value,
+                                                 GParamSpec      *pspec);
+static void             set_property            (GObject         *object,
+                                                 guint            prop_id,
+                                                 const GValue    *value,
+                                                 GParamSpec      *pspec);
+static void             dispose                 (GObject         *object);
+static AdgContainer *   get_parent              (AdgEntity       *entity);
+static void             set_parent              (AdgEntity       *entity,
+                                                 AdgContainer    *parent);
+static void             parent_set              (AdgEntity       *entity,
+                                                 AdgContainer    *old_parent);
+static AdgContext *     get_context             (AdgEntity       *entity);
+static void             set_context             (AdgEntity       *entity,
+                                                 AdgContext      *context);
+static void             set_global_map          (AdgEntity       *entity,
+                                                 const AdgMatrix *map);
+static void             set_local_map           (AdgEntity       *entity,
+                                                 const AdgMatrix *map);
+static void             model_matrix_changed    (AdgEntity       *entity,
+                                                 AdgMatrix       *parent_matrix);
+static void             paper_matrix_changed    (AdgEntity       *entity,
+                                                 AdgMatrix       *parent_matrix);
+static void             render                  (AdgEntity       *entity,
+                                                 cairo_t         *cr);
+static const AdgMatrix *get_model_matrix        (AdgEntity       *entity);
+static const AdgMatrix *get_paper_matrix        (AdgEntity       *entity);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -128,13 +134,25 @@ adg_entity_class_init(AdgEntityClass *klass)
                                 ADG_TYPE_CONTEXT, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CONTEXT, param);
 
-  /**
-   * AdgEntity::parent-set:
-   * @entity: an #AdgEntity
-   * @parent: the #AdgContainer parent of @entity
-   *
-   * Emitted after the parent container has changed.
-   **/
+    param = g_param_spec_boxed("global-map",
+                               P_("Global Map"),
+                               P_("The transformation to be combined with the parent ones to get the global matrix"),
+                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_GLOBAL_MAP, param);
+
+    param = g_param_spec_boxed("local-map",
+                               P_("Local Map"),
+                               P_("The transformation to be combined with the parent ones to get the local matrix"),
+                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
+
+    /**
+     * AdgEntity::parent-set:
+     * @entity: an #AdgEntity
+     * @parent: the #AdgContainer parent of @entity
+     *
+     * Emitted after the parent container has changed.
+     **/
     signals[PARENT_SET] =
         g_signal_new("parent-set",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -144,13 +162,13 @@ adg_entity_class_init(AdgEntityClass *klass)
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_CONTAINER);
 
-  /**
-   * AdgEntity::model-matrix-changed:
-   * @entity: an #AdgEntity
-   * @parent_matrix: the parent model matrix
-   *
-   * Emitted after the current model matrix has changed.
-   **/
+    /**
+     * AdgEntity::model-matrix-changed:
+     * @entity: an #AdgEntity
+     * @parent_matrix: the parent model matrix
+     *
+     * Emitted after the current model matrix has changed.
+     **/
     signals[MODEL_MATRIX_CHANGED] =
         g_signal_new("model-matrix-changed",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -161,13 +179,13 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_TYPE_NONE, 1,
                      ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
 
-  /**
-   * AdgEntity::paper-matrix-changed:
-   * @entity: an #AdgEntity
-   * @parent_matrix: the parent paper matrix
-   *
-   * Emitted after the current paper matrix has changed.
-   **/
+    /**
+     * AdgEntity::paper-matrix-changed:
+     * @entity: an #AdgEntity
+     * @parent_matrix: the parent paper matrix
+     *
+     * Emitted after the current paper matrix has changed.
+     **/
     signals[PAPER_MATRIX_CHANGED] =
         g_signal_new("paper-matrix-changed",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -178,12 +196,12 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_TYPE_NONE, 1,
                      ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
 
-  /**
-   * AdgEntity::invalidate:
-   * @entity: an #AdgEntity
-   *
-   * Clears the cached data of @entity.
-   **/
+    /**
+     * AdgEntity::invalidate:
+     * @entity: an #AdgEntity
+     *
+     * Clears the cached data of @entity.
+     **/
     signals[INVALIDATE] =
         g_signal_new("invalidate",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -193,13 +211,13 @@ adg_entity_class_init(AdgEntityClass *klass)
                      g_cclosure_marshal_VOID__BOOLEAN,
                      G_TYPE_NONE, 0);
 
-  /**
-   * AdgEntity::render:
-   * @entity: an #AdgEntity
-   * @cr: a #cairo_t drawing context
-   *
-   * Causes the rendering of @entity on @cr.
-   **/
+    /**
+     * AdgEntity::render:
+     * @entity: an #AdgEntity
+     * @cr: a #cairo_t drawing context
+     *
+     * Causes the rendering of @entity on @cr.
+     **/
     signals[RENDER] =
         g_signal_new("render",
                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -219,6 +237,8 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     data->flags = 0;
     data->context = NULL;
+    cairo_matrix_init_identity(&data->local_map);
+    cairo_matrix_init_identity(&data->global_map);
 
     entity->data = data;
 }
@@ -226,7 +246,11 @@ adg_entity_init(AdgEntity *entity)
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity = (AdgEntity *) object;
+    AdgEntity *entity;
+    AdgEntityPrivate *data;
+
+    entity = (AdgEntity *) object;
+    data = entity->data;
 
     switch (prop_id) {
     case PROP_PARENT:
@@ -234,6 +258,12 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         break;
     case PROP_CONTEXT:
         g_value_set_object(value, get_context(entity));
+        break;
+    case PROP_GLOBAL_MAP:
+        g_value_set_boxed(value, &data->global_map);
+        break;
+    case PROP_LOCAL_MAP:
+        g_value_set_boxed(value, &data->local_map);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -249,10 +279,16 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_PARENT:
-        set_parent(entity, (AdgContainer *) g_value_get_object(value));
+        set_parent(entity, g_value_get_object(value));
         break;
     case PROP_CONTEXT:
         set_context(entity, g_value_get_object(value));
+        break;
+    case PROP_GLOBAL_MAP:
+        set_global_map(entity, g_value_get_boxed(value));
+        break;
+    case PROP_LOCAL_MAP:
+        set_local_map(entity, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -439,6 +475,134 @@ adg_entity_get_canvas(AdgEntity *entity)
     }
 
     return NULL;
+}
+
+/**
+ * adg_entity_get_global_map:
+ * @entity: an #AdgEntity object
+ * @map: where to store the global map
+ *
+ * Gets the transformation to be used to compute the global matrix
+ * of @entity and store it in @map.
+ **/
+void
+adg_entity_get_global_map(AdgEntity *entity, AdgMatrix *map)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(map != NULL);
+
+    data = entity->data;
+    adg_matrix_copy(map, &data->global_map);
+}
+
+/**
+ * adg_entity_set_global_map:
+ * @entity: an #AdgEntity object
+ * @map: the new map
+ *
+ * Sets the new global transformation of @entity to @map:
+ * the old map is discarded. If @map is %NULL an identity
+ * matrix is implied.
+ **/
+void
+adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    set_global_map(entity, map);
+    g_object_notify((GObject *) entity, "global-map");
+}
+
+/**
+ * adg_entity_get_local_map:
+ * @entity: an #AdgEntity object
+ * @map: where to store the local map
+ *
+ * Gets the transformation to be used to compute the local matrix
+ * of @entity and store it in @map.
+ **/
+void
+adg_entity_get_local_map(AdgEntity *entity, AdgMatrix *map)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(map != NULL);
+
+    data = entity->data;
+    adg_matrix_copy(map, &data->local_map);
+}
+
+/**
+ * adg_entity_set_local_map:
+ * @entity: an #AdgEntity object
+ * @map: the new map
+ *
+ * Sets the new global transformation of @entity to @map:
+ * the old map is discarded. If @map is %NULL an identity
+ * matrix is implied.
+ **/
+void
+adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    set_local_map(entity, map);
+    g_object_notify((GObject *) entity, "local-map");
+}
+
+/**
+ * adg_entity_get_global_matrix:
+ * @entity: an #AdgEntity object
+ * @matrix: where to store the global matrix
+ *
+ * Computes the global matrix by combining all the global maps of the
+ * @entity hierarchy and stores the result in @matrix.
+ **/
+void
+adg_entity_get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(matrix != NULL);
+
+    data = entity->data;
+
+    if (data->parent == NULL) {
+        adg_matrix_copy(matrix, &data->global_map);
+    } else {
+        adg_entity_get_global_matrix((AdgEntity *) data->parent, matrix);
+        cairo_matrix_multiply(matrix, &data->global_map, matrix);
+    }
+}
+
+/**
+ * adg_entity_get_local_matrix:
+ * @entity: an #AdgEntity object
+ * @matrix: where to store the local matrix
+ *
+ * Computes the local matrix by combining all the local maps of the
+ * @entity hierarchy and stores the result in @matrix.
+ **/
+void
+adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(matrix != NULL);
+
+    data = entity->data;
+
+    if (data->parent == NULL) {
+        adg_matrix_copy(matrix, &data->local_map);
+    } else {
+        adg_entity_get_local_matrix((AdgEntity *) data->parent, matrix);
+        cairo_matrix_multiply(matrix, &data->local_map, matrix);
+    }
 }
 
 /**
@@ -850,6 +1014,28 @@ set_context(AdgEntity *entity, AdgContext *context)
 
     g_object_ref((GObject *) context);
     data->context = context;
+}
+
+static void
+set_global_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (map == NULL)
+        cairo_matrix_init_identity(&data->global_map);
+    else
+        adg_matrix_copy(&data->global_map, map);
+}
+
+static void
+set_local_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (map == NULL)
+        cairo_matrix_init_identity(&data->local_map);
+    else
+        adg_matrix_copy(&data->local_map, map);
 }
 
 static void
