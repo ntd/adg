@@ -39,7 +39,6 @@
 #include <adg/adg-style.h>
 #include <adg/adg-title-block.h>
 #include <adg/adg-toy-text.h>
-#include <adg/adg-translatable.h>
 #include <adg/adg-type-builtins.h>
 #include <adg/adg-util.h>
 #include <adg/adg-widget.h>
