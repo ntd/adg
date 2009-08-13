@@ -31,7 +31,6 @@ h_sources=			adg.h \
 				adg-style.h \
 				adg-title-block.h \
 				adg-toy-text.h \
-				adg-translatable.h \
 				adg-util.h \
 				adg-widget.h
 built_h_sources=		$(builddir)/adg-type-builtins.h
@@ -81,7 +80,6 @@ c_sources=			adg-adim.c \
 				adg-style.c \
 				adg-title-block.c \
 				adg-toy-text.c \
-				adg-translatable.c \
 				adg-util.c \
 				adg-widget.c
 built_c_sources=		$(builddir)/adg-type-builtins.c

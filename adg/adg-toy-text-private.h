@@ -29,14 +29,8 @@ G_BEGIN_DECLS
 typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
 
 struct _AdgToyTextPrivate {
-    /* Properties */
-    AdgPoint             origin;
     gdouble              angle;
     gchar               *label;
-
-    /* Cache */
-    gboolean             origin_cached;
-    AdgPair              origin_pair;
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;
     cairo_text_extents_t extents;

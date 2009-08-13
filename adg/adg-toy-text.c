@@ -37,7 +37,6 @@
 
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
-#include "adg-translatable.h"
 #include "adg-rotable.h"
 #include "adg-font-style.h"
 #include "adg-intl.h"
@@ -45,16 +44,9 @@
 
 enum {
     PROP_0,
-    PROP_ORIGIN,
     PROP_ANGLE,
     PROP_LABEL
 };
-
-static void     translatable_init       (AdgTranslatableIface *iface);
-static void     get_origin              (AdgTranslatable*translatable,
-                                         AdgPoint       *dest);
-static void     set_origin              (AdgTranslatable*translatable,
-                                         const AdgPoint *origin);
 
 static void     rotable_init            (AdgRotableIface*iface);
 static gdouble  get_angle               (AdgRotable     *rotable);
@@ -80,45 +72,10 @@ static gboolean update_origin_cache     (AdgToyText     *toy_text,
 static gboolean update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
-static void     clear_origin_cache      (AdgToyText     *toy_text);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TRANSLATABLE,
-                                              translatable_init)
                         G_IMPLEMENT_INTERFACE(ADG_TYPE_ROTABLE, rotable_init))
-
-
-static void
-translatable_init(AdgTranslatableIface *iface)
-{
-    iface->get_origin = get_origin;
-    iface->set_origin = set_origin;
-}
-
-static void
-get_origin(AdgTranslatable *translatable, AdgPoint *dest)
-{
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) translatable;
-    data = toy_text->data;
-
-    adg_point_copy(dest, &data->origin);
-}
-
-static void
-set_origin(AdgTranslatable *translatable, const AdgPoint *origin)
-{
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) translatable;
-    data = toy_text->data;
-
-    adg_point_copy(&data->origin, origin);
-}
 
 
 static void
@@ -173,7 +130,6 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
-    g_object_class_override_property(gobject_class, PROP_ORIGIN, "origin");
     g_object_class_override_property(gobject_class, PROP_ANGLE, "angle");
 
     param = g_param_spec_string("label",
@@ -191,9 +147,6 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           AdgToyTextPrivate);
 
     data->label = NULL;
-    adg_point_unset(&data->origin);
-
-    data->origin_cached = FALSE;
     data->glyphs = NULL;
 
     toy_text->data = data;
@@ -212,7 +165,6 @@ finalize(GObject *object)
 
     g_free(data->label);
     clear_label_cache(toy_text);
-    clear_origin_cache(toy_text);
 
     if (object_class->finalize != NULL)
         object_class->finalize(object);
@@ -224,9 +176,6 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
 
     switch (prop_id) {
-    case PROP_ORIGIN:
-        g_value_set_boxed(value, &data->origin);
-        break;
     case PROP_ANGLE:
         g_value_set_double(value, data->angle);
         break;
@@ -250,13 +199,8 @@ set_property(GObject *object, guint prop_id,
     data = toy_text->data;
 
     switch (prop_id) {
-    case PROP_ORIGIN:
-        adg_point_copy(&data->origin, (AdgPoint *) g_value_get_boxed(value));
-        clear_origin_cache(toy_text);
-        break;
     case PROP_ANGLE:
         data->angle = g_value_get_double(value);
-        clear_origin_cache(toy_text);
         break;
     case PROP_LABEL:
         g_free(data->label);
@@ -351,8 +295,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
         if (!data->glyphs)
             update_label_cache(toy_text, cr);
-        if (!data->origin_cached)
-            update_origin_cache(toy_text, cr);
+        update_origin_cache(toy_text, cr);
 
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
         cairo_restore(cr);
@@ -367,7 +310,6 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
     AdgEntityClass *entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
-    clear_origin_cache((AdgToyText *) entity);
 
     if (entity_class->model_matrix_changed != NULL)
         entity_class->model_matrix_changed(entity, parent_matrix);
@@ -383,7 +325,6 @@ invalidate(AdgEntity *entity)
     entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
     clear_label_cache(toy_text);
-    clear_origin_cache(toy_text);
 
     if (entity_class->invalidate != NULL)
         entity_class->invalidate(entity);
@@ -393,15 +334,12 @@ static gboolean
 update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 {
     AdgToyTextPrivate *data;
-    AdgPoint point;
-    AdgPair *pair;
     cairo_glyph_t *glyph;
-    double x, y;
     int cnt;
+    AdgMatrix matrix;
+    double x, y;
 
     data = toy_text->data;
-    adg_point_copy(&point, &data->origin);
-    pair = &data->origin_pair;
     glyph = data->glyphs;
     cnt = data->num_glyphs;
 
@@ -409,23 +347,17 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
     if (glyph == NULL || cnt <= 0)
         return FALSE;
 
-    if (data->angle != 0.) {
-        /* Following the less surprise rule, also the paper component
-         * of the origin point should rotate with the provided angle */
-        cairo_matrix_t rotation;
-        cairo_matrix_init_rotate(&rotation, data->angle);
-        cpml_pair_transform(&point.paper, &rotation);
-    }
-
-    adg_entity_point_to_pair((AdgEntity *) toy_text, &point, pair, cr);
-    data->origin_cached = TRUE;
+    adg_entity_get_local_matrix((AdgEntity *) toy_text, &matrix);
+    cairo_matrix_transform_point(&matrix, &x, &y);
+    adg_entity_get_global_matrix((AdgEntity *) toy_text, &matrix);
+    cairo_matrix_transform_point(&matrix, &x, &y);
 
     /* Check if the origin is still the same */
-    if (pair->x == glyph->x && pair->y == glyph->y)
+    if (x == glyph->x && y == glyph->y)
         return TRUE;
 
-    x = pair->x - glyph->x;
-    y = pair->y - glyph->y;
+    x -= glyph->x;
+    y -= glyph->y;
 
     while (cnt --) {
         glyph->x += x;
@@ -456,16 +388,7 @@ update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 
     cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
 
-    clear_origin_cache(toy_text);
     return TRUE;
-}
-
-static void
-clear_origin_cache(AdgToyText *toy_text)
-{
-    AdgToyTextPrivate *data = toy_text->data;
-
-    data->origin_cached = FALSE;
 }
 
 static void
