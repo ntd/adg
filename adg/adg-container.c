@@ -653,6 +653,9 @@ adg_container_set_model_transformation(AdgContainer *container,
 
     adg_matrix_copy(&data->model_transformation, transformation);
     adg_entity_model_matrix_changed(entity, parent_matrix);
+
+    /* Temporary workaround: this function will be removed soon */
+    adg_entity_set_local_map(entity, transformation);
 }
 
 /**
@@ -702,4 +705,7 @@ adg_container_set_paper_transformation(AdgContainer *container,
 
     adg_matrix_copy(&data->paper_transformation, transformation);
     adg_entity_paper_matrix_changed(entity, parent_matrix);
+
+    /* Temporary workaround: this function will be removed soon */
+    adg_entity_set_global_map(entity, transformation);
 }
