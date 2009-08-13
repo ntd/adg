@@ -103,10 +103,6 @@ gboolean        adg_entity_build_paper2model    (AdgEntity      *entity,
                                                  AdgMatrix      *matrix);
 gboolean        adg_entity_build_model2paper    (AdgEntity      *entity,
                                                  AdgMatrix      *matrix);
-void            adg_entity_scale_to_model       (AdgEntity      *entity,
-                                                 cairo_t        *cr);
-void            adg_entity_scale_to_paper       (AdgEntity      *entity,
-                                                 cairo_t        *cr);
 void            adg_entity_model_matrix_changed (AdgEntity      *entity,
                                                  const AdgMatrix*parent_matrix);
 void            adg_entity_paper_matrix_changed (AdgEntity      *entity,

@@ -876,25 +876,32 @@ void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgDimPrivate *data;
+    AdgEntity *entity;
     AdgDimStyle *dim_style;
+    const AdgMatrix *paper;
+    cairo_matrix_t matrix;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
     data = dim->data;
-    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
-                                                     ADG_SLOT_DIM_STYLE);
+    entity = (AdgEntity *) dim;
+    dim_style = (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+    paper = adg_entity_get_paper_matrix(entity);
 
     if (data->quote == NULL)
         adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
 
     cairo_save(cr);
 
-    cairo_set_matrix(cr, adg_entity_get_paper_matrix((AdgEntity *) dim));
+    cairo_set_matrix(cr, paper);
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
-    cairo_set_matrix(cr, adg_entity_get_model_matrix((AdgEntity *) dim));
+    cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
 
     cairo_translate(cr, data->org.x, data->org.y);
-    adg_entity_scale_to_paper((AdgEntity *) dim, cr);
+    cairo_get_matrix(cr, &matrix);
+    matrix.xx = paper->xx;
+    matrix.yy = paper->yy;
+    cairo_set_matrix(cr, &matrix);
     cairo_rotate(cr, -data->angle);
 
     /* Rendering quote */

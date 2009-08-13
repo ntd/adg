@@ -472,56 +472,6 @@ adg_entity_get_paper_matrix(AdgEntity *entity)
 }
 
 /**
- * adg_entity_scale_to_model:
- * @entity: an #AdgEntity object
- * @cr: a #cairo_t drawing context
- *
- * Sets the model matrix as current matrix on @cr. The translation
- * and rotation component of the previous matrix are kept: only the
- * scale is changed.
- **/
-void
-adg_entity_scale_to_model(AdgEntity *entity, cairo_t *cr)
-{
-    const AdgMatrix *model_matrix;
-    cairo_matrix_t matrix;
-
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    model_matrix = ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
-    cairo_get_matrix(cr, &matrix);
-
-    matrix.xx = model_matrix->xx;
-    matrix.yy = model_matrix->yy;
-    cairo_set_matrix(cr, &matrix);
-}
-
-/**
- * adg_entity_scale_to_paper:
- * @entity: an #AdgEntity object
- * @cr: a #cairo_t drawing context
- *
- * Sets the paper matrix as current matrix on @cr. The translation
- * and rotation component of the previous matrix are kept: only the
- * scale is changed.
- **/
-void
-adg_entity_scale_to_paper(AdgEntity *entity, cairo_t *cr)
-{
-    const AdgMatrix *paper_matrix;
-    cairo_matrix_t matrix;
-
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    paper_matrix = ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
-    cairo_get_matrix(cr, &matrix);
-
-    matrix.xx = paper_matrix->xx;
-    matrix.yy = paper_matrix->yy;
-    cairo_set_matrix(cr, &matrix);
-}
-
-/**
  * adg_entity_build_paper2model:
  * @entity: an #AdgEntity
  * @matrix: the destination matrix
