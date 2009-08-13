@@ -100,7 +100,7 @@ sample_canvas(void)
     AdgCanvas *canvas;
     AdgContainer *container;
     AdgEntity *entity;
-    AdgMatrix transformation;
+    AdgMatrix map;
 
     sample_get(&data);
     path = sample_path(&data);
@@ -113,10 +113,10 @@ sample_canvas(void)
     sample_add_dimensions(canvas, &data);
     sample_add_stuff(canvas, &data);
 
-    cairo_matrix_init_translate(&transformation, 100, 70);
-    cairo_matrix_scale(&transformation, 6.883, 6.883);
-    cairo_matrix_translate(&transformation, 0, 10);
-    adg_container_set_model_transformation(container, &transformation);
+    cairo_matrix_init_translate(&map, 100, 70);
+    cairo_matrix_scale(&map, 6.883, 6.883);
+    cairo_matrix_translate(&map, 0, 10);
+    adg_container_set_model_transformation(container, &map);
 
     return canvas;
 }
@@ -292,17 +292,20 @@ static void
 sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
 {
     AdgEntity *toy_text;
+    AdgMatrix map;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
-    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
-                                         0., data->D3 / 2,
-                                         10., 30. + 30. * 2);
+    cairo_matrix_init_translate(&map, 0., data->D3 / 2);
+    adg_entity_set_local_map(toy_text, &map);
+    cairo_matrix_init_translate(&map, 10., 30. + 30. * 2);
+    adg_entity_set_global_map(toy_text, &map);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
     toy_text = adg_toy_text_new("Keep the wheel pressed while dragging the mouse to translate");
-    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(toy_text),
-                                         0., data->D3 / 2,
-                                         10., 45. + 30. * 2);
+    cairo_matrix_init_translate(&map, 0., data->D3 / 2);
+    adg_entity_set_local_map(toy_text, &map);
+    cairo_matrix_init_translate(&map, 10., 45. + 30. * 2);
+    adg_entity_set_global_map(toy_text, &map);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 }
 
@@ -482,7 +485,7 @@ operations_canvas(void)
     AdgCanvas *canvas;
     AdgContainer *container;
     AdgEntity *entity;
-    AdgMatrix transformation;
+    AdgMatrix map;
 
     /* Build the base model */
     path = (AdgPath *) adg_path_new();
@@ -513,40 +516,43 @@ operations_canvas(void)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
     adg_container_add(container, adg_stroke_new(path));
     entity = adg_toy_text_new("Original shape");
-    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
-                                           5., 10.,
-                                         -50., 20.);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    cairo_matrix_init_translate(&map, -50, 20);
+    adg_entity_set_global_map(entity, &map);
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* Add the shape with 0.25x0.25 chamfer */
     container = (AdgContainer *) adg_container_new();
-    cairo_matrix_init_translate(&transformation, 15., 0.);
-    adg_container_set_model_transformation(container, &transformation);
+    cairo_matrix_init_translate(&map, 15., 0.);
+    adg_container_set_model_transformation(container, &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
     adg_container_add(container, adg_stroke_new(chamfer_path));
     entity = adg_toy_text_new("Shape with 0.25x0.25 chamfer");
-    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
-                                           5., 10.,
-                                        -120., 20.);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    cairo_matrix_init_translate(&map, -120, 20);
+    adg_entity_set_global_map(entity, &map);
     adg_container_add(container, entity);
 
     /* Add the shape with fillets with 0.20 of radius */
     container = (AdgContainer *) adg_container_new();
-    cairo_matrix_init_translate(&transformation, 30., 0.);
-    adg_container_set_model_transformation(container, &transformation);
+    cairo_matrix_init_translate(&map, 30., 0.);
+    adg_container_set_model_transformation(container, &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
     adg_container_add(container, adg_stroke_new(fillet_path));
     entity = adg_toy_text_new("Shape with R=20 fillet");
-    adg_translatable_set_origin_explicit(ADG_TRANSLATABLE(entity),
-                                           5., 10.,
-                                         -90., 20.);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    cairo_matrix_init_translate(&map, -90, 20);
+    adg_entity_set_global_map(entity, &map);
     adg_container_add(container, entity);
 
     /* Set a decent start position and zoom */
-    cairo_matrix_init_translate(&transformation, 10, -140);
-    cairo_matrix_scale(&transformation, 15, 15);
-    cairo_matrix_translate(&transformation, 0, 10);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &transformation);
+    cairo_matrix_init_translate(&map, 10, -140);
+    cairo_matrix_scale(&map, 15, 15);
+    cairo_matrix_translate(&map, 0, 10);
+    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &map);
 
     return canvas;
 }
