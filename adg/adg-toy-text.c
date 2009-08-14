@@ -37,21 +37,15 @@
 
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
-#include "adg-rotable.h"
 #include "adg-font-style.h"
 #include "adg-intl.h"
 
 
 enum {
     PROP_0,
-    PROP_ANGLE,
     PROP_LABEL
 };
 
-static void     rotable_init            (AdgRotableIface*iface);
-static gdouble  get_angle               (AdgRotable     *rotable);
-static void     set_angle               (AdgRotable     *rotable,
-                                         gdouble         angle);
 
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
@@ -74,40 +68,7 @@ static gboolean update_label_cache      (AdgToyText     *toy_text,
 static void     clear_label_cache       (AdgToyText     *toy_text);
 
 
-G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_ROTABLE, rotable_init))
-
-
-static void
-rotable_init(AdgRotableIface *iface)
-{
-    iface->get_angle = get_angle;
-    iface->set_angle = set_angle;
-}
-
-static gdouble
-get_angle(AdgRotable *rotable)
-{
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) rotable;
-    data = toy_text->data;
-
-    return data->angle;
-}
-
-static void
-set_angle(AdgRotable *rotable, gdouble angle)
-{
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) rotable;
-    data = toy_text->data;
-
-    data->angle = angle;
-}
+G_DEFINE_TYPE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY);
 
 
 static void
@@ -129,8 +90,6 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->model_matrix_changed = model_matrix_changed;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
-
-    g_object_class_override_property(gobject_class, PROP_ANGLE, "angle");
 
     param = g_param_spec_string("label",
                                 P_("Label"),
@@ -176,9 +135,6 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
 
     switch (prop_id) {
-    case PROP_ANGLE:
-        g_value_set_double(value, data->angle);
-        break;
     case PROP_LABEL:
         g_value_set_string(value, data->label);
         break;
@@ -199,9 +155,6 @@ set_property(GObject *object, guint prop_id,
     data = toy_text->data;
 
     switch (prop_id) {
-    case PROP_ANGLE:
-        data->angle = g_value_get_double(value);
-        break;
     case PROP_LABEL:
         g_free(data->label);
         data->label = g_value_dup_string(value);
@@ -291,7 +244,6 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_save(cr);
         cairo_set_matrix(cr, adg_entity_get_paper_matrix(entity));
         adg_style_apply(font_style, cr);
-        cairo_rotate(cr, data->angle);
 
         if (!data->glyphs)
             update_label_cache(toy_text, cr);

@@ -60,7 +60,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Add a chamfer operation to AdgPath.</listitem>
    <listitem override="disc">Add a fillet operation to AdgPath.</listitem>
    <listitem>Change the matrix entity API, using a cleaner approach.</listitem>
-   <listitem>Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
+   <listitem override="disc">Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
    <listitem>Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
    <listitem>Change building scripts to get the Gtk+ dependency optional.</listitem>
    <listitem override="disc">Add AdgWidget, a GtkDrawingArea derived class that could accept an AdgCanvas.</listitem>

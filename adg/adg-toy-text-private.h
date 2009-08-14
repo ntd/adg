@@ -29,7 +29,6 @@ G_BEGIN_DECLS
 typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
 
 struct _AdgToyTextPrivate {
-    gdouble              angle;
     gchar               *label;
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;
