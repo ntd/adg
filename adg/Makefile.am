@@ -23,7 +23,6 @@ h_sources=			adg.h \
 				adg-pair.h \
 				adg-path.h \
 				adg-pattern.h \
-				adg-point.h \
 				adg-primitive.h \
 				adg-segment.h \
 				adg-stroke.h \
@@ -71,7 +70,6 @@ c_sources=			adg-adim.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-pattern.c \
-				adg-point.c \
 				adg-primitive.c \
 				adg-segment.c \
 				adg-stroke.c \

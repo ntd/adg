@@ -21,8 +21,6 @@
 #ifndef __ADG_TOY_TEXT_PRIVATE_H__
 #define __ADG_TOY_TEXT_PRIVATE_H__
 
-#include <adg/adg-point.h>
-
 
 G_BEGIN_DECLS
 
