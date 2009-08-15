@@ -52,8 +52,8 @@ AC_CONFIG_FILES([shave
 		 demo/Makefile
                  docs/Makefile
                  docs/adg/Makefile
-                 docs/adg/version.xml
+                 docs/adg/version.txt
                  docs/cpml/Makefile
-                 docs/cpml/version.xml
+                 docs/cpml/version.txt
                  po/Makefile.in])
 AC_OUTPUT
