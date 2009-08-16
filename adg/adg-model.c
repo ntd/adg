@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-model
- * @title: AdgModel
  * @short_description: The base class of the ADG model infrastructure
  *
  * A model is a conceptual representation of something. From an ADG

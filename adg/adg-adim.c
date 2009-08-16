@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-adim
- * @title: AdgADim
  * @short_description: Angular dimensions
  *
  * The #AdgADim entity represents an angular dimension.

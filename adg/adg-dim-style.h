@@ -31,13 +31,13 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_DIM_STYLE             (adg_dim_style_get_type ())
-#define ADG_SLOT_DIM_STYLE             (adg_dim_style_get_slot ())
-#define ADG_DIM_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_DIM_STYLE, AdgDimStyle))
-#define ADG_DIM_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_DIM_STYLE, AdgDimStyleClass))
-#define ADG_IS_DIM_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_DIM_STYLE))
-#define ADG_IS_DIM_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_DIM_STYLE))
-#define ADG_DIM_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_DIM_STYLE, AdgDimStyleClass))
+#define ADG_TYPE_DIM_STYLE             (adg_dim_style_get_type())
+#define ADG_DIM_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_DIM_STYLE, AdgDimStyle))
+#define ADG_DIM_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_DIM_STYLE, AdgDimStyleClass))
+#define ADG_IS_DIM_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_DIM_STYLE))
+#define ADG_IS_DIM_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_DIM_STYLE))
+#define ADG_DIM_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_DIM_STYLE, AdgDimStyleClass))
+#define ADG_SLOT_DIM_STYLE             (_adg_dim_style_get_slot())
 
 typedef struct _AdgDimStyle        AdgDimStyle;
 typedef struct _AdgDimStyleClass   AdgDimStyleClass;
@@ -55,7 +55,7 @@ struct _AdgDimStyleClass {
 
 
 GType           adg_dim_style_get_type          (void) G_GNUC_CONST;
-AdgStyleSlot    adg_dim_style_get_slot          (void) G_GNUC_CONST;
+AdgStyleSlot    _adg_dim_style_get_slot         (void) G_GNUC_CONST;
 AdgStyle *      adg_dim_style_new               (void);
 
 AdgStyle *      adg_dim_style_get_quote_style   (AdgDimStyle    *dim_style);

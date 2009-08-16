@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-line-style
- * @title: AdgLineStyle
  * @short_description: Line style related stuff
  *
  * Contains parameters on how to draw lines such as width, cap mode, join mode
@@ -32,6 +31,15 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ **/
+
+
+/**
+ * ADG_SLOT_LINE_STYLE:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the requested slot id
  **/
 
 
@@ -66,7 +74,7 @@ static void             apply           (AdgStyle       *style,
                                          cairo_t        *cr);
 
 
-G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
 
 
 static void
@@ -109,16 +117,14 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 
     param = g_param_spec_double("miter-limit",
                                 P_("Miter Limit"),
-                                P_
-                                ("Whether the lines should be joined with a bevel instead of a miter"),
+                                P_("Whether the lines should be joined with a bevel instead of a miter"),
                                 0., G_MAXDOUBLE, 10., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MITER_LIMIT,
                                     param);
 
     param = g_param_spec_int("antialias",
                              P_("Antialiasing Mode"),
-                             P_
-                             ("Type of antialiasing to do when rendering lines"),
+                             P_("Type of antialiasing to do when rendering lines"),
                              G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANTIALIAS, param);
@@ -208,15 +214,8 @@ set_property(GObject *object,
 }
 
 
-/**
- * adg_line_style_get_slot:
- *
- * Gets the slot id for this style class.
- *
- * Return value: the slot
- **/
 AdgStyleSlot
-adg_line_style_get_slot(void)
+_adg_line_style_get_slot(void)
 {
     static AdgStyleSlot slot = -1;
 

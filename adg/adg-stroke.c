@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-stroke
- * @title: AdgStroke
  * @short_description: A stroked entity
  *
  * The #AdgStroke object is a stroked representation of an #AdgPath model.

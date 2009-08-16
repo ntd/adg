@@ -17,13 +17,23 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:adg-matrix
+ * @Section_Id:AdgMatrix-GBoxed
  * @title: AdgMatrix
- * @short_description: A wrapper for the cairo_matrix_t struct
+ * @short_description: A wrapper for #cairo_matrix_t
  *
- * The AdgMatrix is essentially a wrapper for #cairo_matrix_t structures.
+ * AdgMatrix is a wrapper in #GType syntax of the #cairo_matrix_t struct.
  */
+
+/**
+ * AdgMatrix:
+ *
+ * Another name for #cairo_matrix_t: check its documentation for the
+ * fields description and visibility details.
+ **/
+
 
 #include "adg-matrix.h"
 

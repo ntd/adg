@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-arrow-style
- * @title: AdgArrowStyle
  * @short_description: Arrow rendering related stuff
  *
  * Contains parameters on how to draw arrows, providing a way to register a
@@ -32,6 +31,15 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ **/
+
+
+/**
+ * ADG_SLOT_ARROW_STYLE:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the requested slot id
  **/
 
 
@@ -207,15 +215,8 @@ set_property(GObject *object,
 }
 
 
-/**
- * adg_arrow_style_get_slot:
- *
- * Gets the slot id for this style class.
- *
- * Return value: the slot
- **/
 AdgStyleSlot
-adg_arrow_style_get_slot(void)
+_adg_arrow_style_get_slot(void)
 {
     static AdgStyleSlot slot = -1;
 

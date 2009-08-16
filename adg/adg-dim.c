@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-dim
- * @title: AdgDim
  * @short_description: Root abstract class for all dimension entities
  *
  * The #AdgDim class is the base stub of all the dimension entities.

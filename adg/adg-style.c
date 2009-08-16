@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-style
- * @title: AdgStyle
  * @short_description: The base class of all styling objects
  *
  * This is the fundamental abstract class from which all customization object

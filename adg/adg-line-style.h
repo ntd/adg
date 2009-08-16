@@ -27,13 +27,13 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_LINE_STYLE             (adg_line_style_get_type ())
-#define ADG_SLOT_LINE_STYLE             (adg_line_style_get_slot ())
-#define ADG_LINE_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_LINE_STYLE, AdgLineStyle))
-#define ADG_LINE_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
-#define ADG_IS_LINE_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_LINE_STYLE))
-#define ADG_IS_LINE_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_LINE_STYLE))
-#define ADG_LINE_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
+#define ADG_TYPE_LINE_STYLE             (adg_line_style_get_type())
+#define ADG_LINE_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_LINE_STYLE, AdgLineStyle))
+#define ADG_LINE_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
+#define ADG_IS_LINE_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_LINE_STYLE))
+#define ADG_IS_LINE_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_LINE_STYLE))
+#define ADG_LINE_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
+#define ADG_SLOT_LINE_STYLE             (_adg_line_style_get_slot())
 
 typedef struct _AdgLineStyle        AdgLineStyle;
 typedef struct _AdgLineStyleClass   AdgLineStyleClass;
@@ -51,7 +51,7 @@ struct _AdgLineStyleClass {
 
 
 GType           adg_line_style_get_type         (void) G_GNUC_CONST;
-AdgStyleSlot    adg_line_style_get_slot         (void) G_GNUC_CONST;
+AdgStyleSlot    _adg_line_style_get_slot        (void) G_GNUC_CONST;
 AdgStyle *      adg_line_style_new              (void);
 
 gdouble         adg_line_style_get_width        (AdgLineStyle   *line_style);

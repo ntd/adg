@@ -17,14 +17,23 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:adg-pattern
+ * @Section_Id:AdgPattern-GBoxed
  * @title: AdgPattern
- * @short_description: A wrapper for the cairo_pattern_t struct
+ * @short_description: A wrapper for #cairo_pattern_t
  *
- * This is essentially a wrapper for #cairo_pattern_t structures.
- * It is needed to allow pattern parameters in #AdgStyle objects.
- */
+ * AdgPattern is a wrapper in #GType syntax of the #cairo_pattern_t struct.
+ **/
+
+/**
+ * AdgPattern:
+ *
+ * Another name for #cairo_pattern_t: check its documentation for the
+ * fields description and visibility details.
+ **/
+
 
 #include "adg-pattern.h"
 

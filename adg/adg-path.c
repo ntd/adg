@@ -19,7 +19,6 @@
 
 /**
  * SECTION:adg-path
- * @title: AdgPath
  * @short_description: The basic model representing a generic path
  *
  * The #AdgPath model is a virtual path: in a few words, it is a

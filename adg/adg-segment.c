@@ -20,20 +20,20 @@
 
 /**
  * SECTION:adg-segment
+ * @Section_Id:AdgSegment-GBoxed
  * @title: AdgSegment
- * @short_description: A GObject based wrapper for the #CpmlSegment struct
+ * @short_description: A wrapper for #CpmlSegment
  *
- * The AdgSegment is a wrapper typedef in #GType syntax of the
- * #CpmlSegment struct. Furthermore, some dynamic memory functions
- * are provided, such as shallow and deep duplication, as the CPML
- * library does not have dynamic memory APIs.
+ * AdgSegment is a wrapper in #GType syntax of the #CpmlSegment struct.
+ * Furthermore, some dynamic memory functions are provided, such as
+ * shallow and deep duplication functions.
  **/
 
 /**
  * AdgSegment:
  *
- * Another name for the #CpmlSegment type: check its documentation
- * for fields description.
+ * Another name for #CpmlSegment: check its documentation for the
+ * fields description and visibility details.
  **/
 
 

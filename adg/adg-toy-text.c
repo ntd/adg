@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-toy-text
- * @title: AdgToyText
  * @short_description: Simple text entity that use the cairo "toy" text API
  *
  * The #AdgToyText class is a basic class to show simple text. It internally

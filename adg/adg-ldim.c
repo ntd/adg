@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-ldim
- * @title: AdgLDim
  * @short_description: Linear dimensions
  *
  * The #AdgLDim entity represents a linear dimension.

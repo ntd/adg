@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-entity
- * @title: AdgEntity
  * @short_description: The base class for renderable objects
  *
  * This abstract class provides a base interface for all renderable objects

@@ -17,6 +17,7 @@ CFILE_GLOB=		$(top_srcdir)/adg/*.c \
 			$(top_builddir)/adg/*.c
 IGNORE_HFILES=		adg.h \
 			adg-intl.h \
+			adg-type-builtins.h \
 			adg-adim-private.h \
 			adg-arrow-style-private.h \
 			adg-canvas-private.h \

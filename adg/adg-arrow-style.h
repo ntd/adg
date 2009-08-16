@@ -28,13 +28,13 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_ARROW_STYLE             (adg_arrow_style_get_type ())
-#define ADG_SLOT_ARROW_STYLE             (adg_arrow_style_get_slot ())
-#define ADG_ARROW_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyle))
-#define ADG_ARROW_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
-#define ADG_IS_ARROW_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_ARROW_STYLE))
-#define ADG_IS_ARROW_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_ARROW_STYLE))
-#define ADG_ARROW_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
+#define ADG_TYPE_ARROW_STYLE             (adg_arrow_style_get_type())
+#define ADG_ARROW_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyle))
+#define ADG_ARROW_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
+#define ADG_IS_ARROW_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_ARROW_STYLE))
+#define ADG_IS_ARROW_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_ARROW_STYLE))
+#define ADG_ARROW_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_ARROW_STYLE, AdgArrowStyleClass))
+#define ADG_SLOT_ARROW_STYLE             (_adg_arrow_style_get_slot())
 
 typedef struct _AdgArrowStyle        AdgArrowStyle;
 typedef struct _AdgArrowStyleClass   AdgArrowStyleClass;
@@ -66,7 +66,7 @@ struct _AdgArrowStyleClass {
 
 
 GType           adg_arrow_style_get_type        (void) G_GNUC_CONST;
-AdgStyleSlot    adg_arrow_style_get_slot        (void) G_GNUC_CONST;
+AdgStyleSlot    _adg_arrow_style_get_slot       (void) G_GNUC_CONST;
 AdgStyle *      adg_arrow_style_new             (void);
 
 void            adg_arrow_style_render          (AdgArrowStyle  *arrow_style,

@@ -27,7 +27,7 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_MATRIX  (adg_matrix_get_type ())
+#define ADG_TYPE_MATRIX  (adg_matrix_get_type())
 
 
 typedef cairo_matrix_t AdgMatrix;

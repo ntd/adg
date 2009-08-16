@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-font-style
- * @title: AdgFontStyle
  * @short_description: Font style related stuff
  *
  * Contains parameters on how to draw texts such as font family, slanting,
@@ -32,6 +31,15 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ **/
+
+
+/**
+ * ADG_SLOT_FONT_STYLE:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the requested slot id
  **/
 
 
@@ -254,15 +262,8 @@ set_property(GObject *object,
 }
 
 
-/**
- * adg_font_style_get_slot:
- *
- * Gets the slot id for this style class.
- *
- * Return value: the slot
- **/
 AdgStyleSlot
-adg_font_style_get_slot(void)
+_adg_font_style_get_slot(void)
 {
     static AdgStyleSlot slot = -1;
 

@@ -20,10 +20,11 @@
 
 /**
  * SECTION:adg-util
+ * @Section_Id:utilities
  * @title: Utilities
- * @short_description: Assorted macros and utilities
+ * @short_description: Assorted macros and functions
  *
- * A collection of macros and functions that do not fit inside any other topic.
+ * Collection of macros and functions that do not fit inside any other topic.
  **/
 
 /**

@@ -20,20 +20,18 @@
 
 /**
  * SECTION:adg-primitive
+ * @Section_Id:AdgPrimitive-GBoxed
  * @title: AdgPrimitive
- * @short_description: A GObject based wrapper for the #CpmlPrimitive struct
+ * @short_description: A wrapper for #CpmlPrimitive
  *
- * The AdgPrimitive is a wrapper typedef in #GType syntax of the
- * #CpmlPrimitive struct. Furthermore, some dynamic memory functions
- * are provided, such as shallow and deep duplication, as the CPML
- * library does not have dynamic memory APIs.
+ * AdgPrimitive is a wrapper in #GType syntax of the #CpmlPrimitive struct.
  **/
 
 /**
  * AdgPrimitive:
  *
- * Another name for the #CpmlPrimitive type: check its documentation
- * for fields description.
+ * Another name for #CpmlPrimitive: check its documentation for the
+ * fields description and visibility details.
  **/
 
 

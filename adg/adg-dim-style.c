@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-dim-style
- * @title: AdgDimStyle
  * @short_description: Dimension style related stuff
  *
  * Contains parameters on how to build dimensions such as the different font
@@ -33,6 +32,15 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ **/
+
+
+/**
+ * ADG_SLOT_DIM_STYLE:
+ *
+ * Gets the slot id for this style class.
+ *
+ * Return value: the requested slot id
  **/
 
 
@@ -357,15 +365,8 @@ set_property(GObject *object,
 }
 
 
-/**
- * adg_dim_style_get_slot:
- *
- * Gets the slot id for this style class.
- *
- * Return value: the slot
- **/
 AdgStyleSlot
-adg_dim_style_get_slot(void)
+_adg_dim_style_get_slot(void)
 {
     static AdgStyleSlot slot = -1;
 

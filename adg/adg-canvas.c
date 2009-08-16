@@ -20,7 +20,6 @@
 
 /**
  * SECTION:adg-canvas
- * @title: AdgCanvas
  * @short_description: The drawing container
  *
  * This container represents the object where the rendering process draws. All

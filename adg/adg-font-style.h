@@ -27,13 +27,13 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_FONT_STYLE             (adg_font_style_get_type ())
-#define ADG_SLOT_FONT_STYLE             (adg_font_style_get_slot ())
-#define ADG_FONT_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_FONT_STYLE, AdgFontStyle))
-#define ADG_FONT_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
-#define ADG_IS_FONT_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_FONT_STYLE))
-#define ADG_IS_FONT_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_FONT_STYLE))
-#define ADG_FONT_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
+#define ADG_TYPE_FONT_STYLE             (adg_font_style_get_type())
+#define ADG_FONT_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_FONT_STYLE, AdgFontStyle))
+#define ADG_FONT_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
+#define ADG_IS_FONT_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_FONT_STYLE))
+#define ADG_IS_FONT_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_FONT_STYLE))
+#define ADG_FONT_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
+#define ADG_SLOT_FONT_STYLE             (_adg_font_style_get_slot())
 
 typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
@@ -51,7 +51,7 @@ struct _AdgFontStyleClass {
 
 
 GType           adg_font_style_get_type         (void) G_GNUC_CONST;
-AdgStyleSlot    adg_font_style_get_slot         (void) G_GNUC_CONST;
+AdgStyleSlot    _adg_font_style_get_slot        (void) G_GNUC_CONST;
 AdgStyle *      adg_font_style_new              (void);
 
 const gchar *   adg_font_style_get_family       (AdgFontStyle   *font_style);
