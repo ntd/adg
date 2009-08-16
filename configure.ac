@@ -1,8 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([adg], [0.4.3],
-        [ntd at entidi.it],
-        [adg])
+AC_INIT([ADG], [0.4.3], [ntd at entidi.it],
+        [adg], [http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([adg/adg.h])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR(m4)
@@ -52,8 +51,8 @@ AC_CONFIG_FILES([shave
 		 demo/Makefile
                  docs/Makefile
                  docs/adg/Makefile
-                 docs/adg/version.txt
+                 docs/adg/bookinfo.xml
                  docs/cpml/Makefile
-                 docs/cpml/version.txt
+                 docs/cpml/bookinfo.xml
                  po/Makefile.in])
 AC_OUTPUT

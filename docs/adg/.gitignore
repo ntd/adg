@@ -1,5 +1,5 @@
 # ./configure
-/version.txt
+/bookinfo.xml
 
 # make
 /adg-decl-list.txt

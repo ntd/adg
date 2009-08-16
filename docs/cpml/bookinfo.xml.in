@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<bookinfo>
+  <!-- Here the CPML package name is hardcoded: when (and if) the CPML
+       library will be maintained on its own package, this file will
+       be the same as docs/adg/bookinfo.xml.in -->
+  <title>CPML reference manual</title>
+  <releaseinfo>
+      for CPML @PACKAGE_VERSION@.
+      The latest version of this document can be browsed online at
+      <ulink role="online-location" url="@PACKAGE_URL@">@PACKAGE_URL@</ulink>.
+  </releaseinfo>
+</bookinfo>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE bookinfo PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<bookinfo>
+  <title>@PACKAGE_NAME@ reference manual</title>
+  <releaseinfo>
+      for @PACKAGE_STRING@.
+      The latest version of this document can be browsed online at
+      <ulink role="online-location" url="@PACKAGE_URL@">@PACKAGE_URL@</ulink>.
+  </releaseinfo>
+</bookinfo>
