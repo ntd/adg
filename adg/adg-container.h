@@ -83,18 +83,6 @@ void            adg_container_propagate_valist  (AdgContainer    *container,
                                                  guint            signal_id,
                                                  GQuark           detail,
                                                  va_list          var_args);
-const AdgMatrix *
-                adg_container_get_model_transformation
-                                                (AdgContainer    *container);
-void            adg_container_set_model_transformation
-                                                (AdgContainer    *container,
-                                                 const AdgMatrix *transformation);
-const AdgMatrix *
-                adg_container_get_paper_transformation
-                                                (AdgContainer    *container);
-void            adg_container_set_paper_transformation
-                                                (AdgContainer    *container,
-                                                 const AdgMatrix *transformation);
 
 G_END_DECLS
 

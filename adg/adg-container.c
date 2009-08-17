@@ -23,14 +23,9 @@
  * @short_description: Base class for entity that can contain other entities
  *
  * The #AdgContainer is an entity that can contains more sub-entities.
- * Each AdgContainer has its paper matrix (#AdgContainer:paper_matrix) to be
- * used on paper-dependent references (such as font and arrow sizes, line
- * thickness etc...) and a model matrix usually applied to the model view. See
- * http://adg.entidi.com/tutorial/view/3 for details on this topic.
- *
- * This means an AdgContainer can be thought as a group of entities with the
- * same geometrical identity (same scale, reference point ecc...).
- */
+ * Moreover, it can apply a common transformation to local and/or global
+ * maps: see http://adg.entidi.com/tutorial/view/3 for further details.
+ **/
 
 /**
  * AdgContainer:
@@ -48,9 +43,7 @@
 
 enum {
     PROP_0,
-    PROP_CHILD,
-    PROP_MODEL_TRANSFORMATION,
-    PROP_PAPER_TRANSFORMATION
+    PROP_CHILD
 };
 
 enum {
@@ -60,21 +53,11 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
-                                                 guint           prop_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
 static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             dispose                 (GObject        *object);
-static const AdgMatrix *get_model_matrix        (AdgEntity      *entity);
-static const AdgMatrix *get_paper_matrix        (AdgEntity      *entity);
-static void             model_matrix_changed    (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
-static void             paper_matrix_changed    (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
 static GSList *         get_children            (AdgContainer   *container);
 static gboolean         add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
@@ -110,14 +93,9 @@ adg_container_class_init(AdgContainerClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgContainerPrivate));
 
-    gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
     gobject_class->dispose = dispose;
 
-    entity_class->model_matrix_changed = model_matrix_changed;
-    entity_class->paper_matrix_changed = paper_matrix_changed;
-    entity_class->get_model_matrix = get_model_matrix;
-    entity_class->get_paper_matrix = get_paper_matrix;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -130,20 +108,6 @@ adg_container_class_init(AdgContainerClass *klass)
                                 P_("Can be used to add a new child to the container"),
                                 ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_CHILD, param);
-
-    param = g_param_spec_boxed("model-transformation",
-                               P_("The model transformation"),
-                               P_("The model transformation to be applied to this container and its children entities"),
-                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class,
-                                    PROP_MODEL_TRANSFORMATION, param);
-
-    param = g_param_spec_boxed("paper-transformation",
-                               P_("The paper transformation"),
-                               P_("The paper transformation to be applied to this container and its children entities"),
-                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class,
-                                    PROP_PAPER_TRANSFORMATION, param);
 
     /**
      * AdgContainer::add:
@@ -182,30 +146,8 @@ adg_container_init(AdgContainer *container)
                                                             AdgContainerPrivate);
 
     data->children = NULL;
-    cairo_matrix_init_identity(&data->model_transformation);
-    cairo_matrix_init_identity(&data->paper_transformation);
-    cairo_matrix_init_identity(&data->model_matrix);
-    cairo_matrix_init_identity(&data->paper_matrix);
 
     container->data = data;
-}
-
-static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-    AdgContainerPrivate *data = ((AdgContainer *) object)->data;
-
-    switch (prop_id) {
-    case PROP_MODEL_TRANSFORMATION:
-        g_value_set_boxed(value, &data->model_transformation);
-        break;
-    case PROP_PAPER_TRANSFORMATION:
-        g_value_set_boxed(value, &data->paper_transformation);
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
 }
 
 static void
@@ -221,12 +163,6 @@ set_property(GObject *object,
     switch (prop_id) {
     case PROP_CHILD:
         adg_container_add(container, g_value_get_object(value));
-        break;
-    case PROP_MODEL_TRANSFORMATION:
-        adg_matrix_copy(&data->model_transformation, g_value_get_boxed(value));
-        break;
-    case PROP_PAPER_TRANSFORMATION:
-        adg_matrix_copy(&data->paper_transformation, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -319,69 +255,6 @@ real_remove(AdgContainer *container, AdgEntity *entity, gpointer user_data)
 
 
 static void
-model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgContainer *container;
-    AdgContainerPrivate *data;
-
-    container = (AdgContainer *) entity;
-    data = container->data;
-
-    if (PARENT_ENTITY_CLASS->model_matrix_changed != NULL)
-        PARENT_ENTITY_CLASS->model_matrix_changed(entity, parent_matrix);
-
-    if (parent_matrix)
-        cairo_matrix_multiply(&data->model_matrix,
-                              &data->model_transformation,
-                              parent_matrix);
-    else
-        adg_matrix_copy(&data->model_matrix, &data->model_transformation);
-
-    adg_container_propagate_by_name(container, "model-matrix-changed",
-                                    &data->model_matrix);
-}
-
-static void
-paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgContainer *container;
-    AdgContainerPrivate *data;
-
-    container = (AdgContainer *) entity;
-    data = container->data;
-
-    if (PARENT_ENTITY_CLASS->paper_matrix_changed != NULL)
-        PARENT_ENTITY_CLASS->paper_matrix_changed(entity, parent_matrix);
-
-    if (parent_matrix)
-        cairo_matrix_multiply(&data->paper_matrix,
-                              &data->paper_transformation,
-                              parent_matrix);
-    else
-        adg_matrix_copy(&data->paper_matrix, &data->paper_transformation);
-
-    adg_container_propagate_by_name(container, "paper-matrix-changed",
-                                    &data->paper_matrix);
-}
-
-static const AdgMatrix *
-get_model_matrix(AdgEntity *entity)
-{
-    AdgContainerPrivate *data = ((AdgContainer *) entity)->data;
-
-    return &data->model_matrix;
-}
-
-static const AdgMatrix *
-get_paper_matrix(AdgEntity *entity)
-{
-    AdgContainerPrivate *data = ((AdgContainer *) entity)->data;
-
-    return &data->paper_matrix;
-}
-
-
-static void
 invalidate(AdgEntity *entity)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
@@ -393,7 +266,6 @@ invalidate(AdgEntity *entity)
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
 
     if (PARENT_ENTITY_CLASS->render)
@@ -597,108 +469,4 @@ adg_container_propagate_valist(AdgContainer *container,
 
         children = g_slist_delete_link(children, children);
     }
-}
-
-/**
- * adg_container_get_model_transformation:
- * @container: an #AdgContainer
- *
- * Returns the transformation to be combined with the transformations of the
- * parent hierarchy to get the final matrix to be applied in the model space.
- *
- * Return value: the model transformation
- **/
-const AdgMatrix *
-adg_container_get_model_transformation(AdgContainer *container)
-{
-    AdgContainerPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_CONTAINER(container), NULL);
-
-    data = container->data;
-
-    return &data->model_transformation;
-}
-
-/**
- * adg_container_set_model_transformation:
- * @container: an #AdgContainer
- * @transformation: the new model transformation
- *
- * Sets the transformation to be applied in model space.
- **/
-void
-adg_container_set_model_transformation(AdgContainer *container,
-                                       const AdgMatrix *transformation)
-{
-    AdgEntity *entity;
-    AdgContainerPrivate *data;
-    AdgEntity *parent;
-    const AdgMatrix *parent_matrix;
-
-    g_return_if_fail(ADG_IS_CONTAINER(container));
-    g_return_if_fail(transformation != NULL);
-
-    entity = (AdgEntity *) container;
-    data = container->data;
-    parent = (AdgEntity *) adg_entity_get_parent(entity);
-    parent_matrix = parent ? adg_entity_get_model_matrix(parent) : NULL;
-
-    adg_matrix_copy(&data->model_transformation, transformation);
-    adg_entity_model_matrix_changed(entity, parent_matrix);
-
-    /* Temporary workaround: this function will be removed soon */
-    adg_entity_set_local_map(entity, transformation);
-}
-
-/**
- * adg_container_get_paper_transformation:
- * @container: an #AdgContainer
- *
- * Returns the transformation to be combined with the transformations of the
- * parent hierarchy to get the final matrix to be applied in the paper space.
- *
- * Return value: the paper transformation
- **/
-const AdgMatrix *
-adg_container_get_paper_transformation(AdgContainer *container)
-{
-    AdgContainerPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_CONTAINER(container), NULL);
-
-    data = container->data;
-
-    return &data->paper_transformation;
-}
-
-/**
- * adg_container_set_paper_transformation:
- * @container: an #AdgContainer
- * @transformation: the new paper transformation
- *
- * Sets the transformation to be applied in paper space.
- **/
-void
-adg_container_set_paper_transformation(AdgContainer *container,
-                                       const AdgMatrix *transformation)
-{
-    AdgEntity *entity;
-    AdgContainerPrivate *data;
-    AdgEntity *parent;
-    const AdgMatrix *parent_matrix;
-
-    g_return_if_fail(ADG_IS_CONTAINER(container));
-    g_return_if_fail(transformation != NULL);
-
-    entity = (AdgEntity *) container;
-    data = container->data;
-    parent = (AdgEntity *) adg_entity_get_parent(entity);
-    parent_matrix = parent ? adg_entity_get_paper_matrix(parent) : NULL;
-
-    adg_matrix_copy(&data->paper_transformation, transformation);
-    adg_entity_paper_matrix_changed(entity, parent_matrix);
-
-    /* Temporary workaround: this function will be removed soon */
-    adg_entity_set_global_map(entity, transformation);
 }
