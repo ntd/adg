@@ -52,8 +52,6 @@ enum {
 
 enum {
     PARENT_SET,
-    MODEL_MATRIX_CHANGED,
-    PAPER_MATRIX_CHANGED,
     INVALIDATE,
     RENDER,
     LAST_SIGNAL
@@ -81,14 +79,8 @@ static void             set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static void             set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-static void             model_matrix_changed    (AdgEntity       *entity,
-                                                 AdgMatrix       *parent_matrix);
-static void             paper_matrix_changed    (AdgEntity       *entity,
-                                                 AdgMatrix       *parent_matrix);
 static void             render                  (AdgEntity       *entity,
                                                  cairo_t         *cr);
-static const AdgMatrix *get_model_matrix        (AdgEntity       *entity);
-static const AdgMatrix *get_paper_matrix        (AdgEntity       *entity);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -114,12 +106,8 @@ adg_entity_class_init(AdgEntityClass *klass)
     klass->set_parent = set_parent;
     klass->parent_set = parent_set;
     klass->get_context = get_context;
-    klass->model_matrix_changed = model_matrix_changed;
-    klass->paper_matrix_changed = paper_matrix_changed;
     klass->invalidate = NULL;
     klass->render = render;
-    klass->get_model_matrix = get_model_matrix;
-    klass->get_paper_matrix = get_paper_matrix;
 
     param = g_param_spec_object("parent",
                                 P_("Parent Container"),
@@ -160,40 +148,6 @@ adg_entity_class_init(AdgEntityClass *klass)
                      NULL, NULL,
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_CONTAINER);
-
-    /**
-     * AdgEntity::model-matrix-changed:
-     * @entity: an #AdgEntity
-     * @parent_matrix: the parent model matrix
-     *
-     * Emitted after the current model matrix has changed.
-     **/
-    signals[MODEL_MATRIX_CHANGED] =
-        g_signal_new("model-matrix-changed",
-                     G_OBJECT_CLASS_TYPE(gobject_class),
-                     G_SIGNAL_RUN_FIRST,
-                     G_STRUCT_OFFSET(AdgEntityClass, model_matrix_changed),
-                     NULL, NULL,
-                     g_cclosure_marshal_VOID__BOXED,
-                     G_TYPE_NONE, 1,
-                     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
-
-    /**
-     * AdgEntity::paper-matrix-changed:
-     * @entity: an #AdgEntity
-     * @parent_matrix: the parent paper matrix
-     *
-     * Emitted after the current paper matrix has changed.
-     **/
-    signals[PAPER_MATRIX_CHANGED] =
-        g_signal_new("paper-matrix-changed",
-                     G_OBJECT_CLASS_TYPE(gobject_class),
-                     G_SIGNAL_RUN_FIRST,
-                     G_STRUCT_OFFSET(AdgEntityClass, paper_matrix_changed),
-                     NULL, NULL,
-                     g_cclosure_marshal_VOID__BOXED,
-                     G_TYPE_NONE, 1,
-                     ADG_TYPE_MATRIX | G_SIGNAL_TYPE_STATIC_SCOPE);
 
     /**
      * AdgEntity::invalidate:
@@ -605,132 +559,6 @@ adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
 }
 
 /**
- * adg_entity_get_model_matrix:
- * @entity: an #AdgEntity object
- *
- * Gets the model matrix to be used in rendering this @entity.
- *
- * Return value: the requested matrix
- **/
-const AdgMatrix *
-adg_entity_get_model_matrix(AdgEntity *entity)
-{
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-    return ADG_ENTITY_GET_CLASS(entity)->get_model_matrix(entity);
-}
-
-/**
- * adg_entity_get_paper_matrix:
- * @entity: an #AdgEntity object
- *
- * Gets the paper matrix to be used in rendering this @entity.
- *
- * Return value: the requested matrix
- **/
-const AdgMatrix *
-adg_entity_get_paper_matrix(AdgEntity *entity)
-{
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-    return ADG_ENTITY_GET_CLASS(entity)->get_paper_matrix(entity);
-}
-
-/**
- * adg_entity_build_paper2model:
- * @entity: an #AdgEntity
- * @matrix: the destination matrix
- *
- * Builds a matrix to translate from paper to model space and
- * put the result in @matrix.
- *
- * Return value: %TRUE on success, %FALSE on errors
- **/
-gboolean
-adg_entity_build_paper2model(AdgEntity *entity, AdgMatrix *matrix)
-{
-    cairo_status_t status;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-    g_return_val_if_fail(matrix != NULL, FALSE);
-
-    adg_matrix_copy(matrix, adg_entity_get_model_matrix(entity));
-    status = cairo_matrix_invert(matrix);
-    if (status != CAIRO_STATUS_SUCCESS) {
-        g_error("Unable to invert model matrix (cairo message: %s)",
-                cairo_status_to_string(status));
-        return FALSE;
-    }
-
-    cairo_matrix_multiply(matrix, matrix, adg_entity_get_paper_matrix(entity));
-    return TRUE;
-}
-
-/**
- * adg_entity_build_model2paper:
- * @entity: an #AdgEntity
- * @matrix: the destination matrix
- *
- * Builds a matrix to translate from model to paper space and
- * put the result in @matrix.
- *
- * Return value: %TRUE on success, %FALSE on errors
- **/
-gboolean
-adg_entity_build_model2paper(AdgEntity *entity, AdgMatrix *matrix)
-{
-    cairo_status_t status;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-    g_return_val_if_fail(matrix != NULL, FALSE);
-
-    adg_matrix_copy(matrix, adg_entity_get_paper_matrix(entity));
-    status = cairo_matrix_invert(matrix);
-    if (status != CAIRO_STATUS_SUCCESS) {
-        g_error("Unable to invert paper matrix (cairo message: %s)",
-                cairo_status_to_string(status));
-        return FALSE;
-    }
-
-    cairo_matrix_multiply(matrix, matrix, adg_entity_get_model_matrix(entity));
-    return TRUE;
-}
-
-/**
- * adg_entity_model_matrix_changed:
- * @entity: an #AdgEntity
- * @parent_matrix: the parent #AdgMatrix
- *
- * Emits the "model-matrix-changed" signal on @entity.
- *
- * This function is only useful in entity implementations.
- **/
-void
-adg_entity_model_matrix_changed(AdgEntity *entity,
-                                const AdgMatrix *parent_matrix)
-{
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    g_signal_emit(entity, signals[MODEL_MATRIX_CHANGED], 0, parent_matrix);
-}
-
-/**
- * adg_entity_paper_matrix_changed:
- * @entity: an #AdgEntity
- * @parent_matrix: the parent #AdgMatrix
- *
- * Emits the "paper-matrix-changed" signal on @entity.
- *
- * This function is only useful in entity implementations.
- **/
-void
-adg_entity_paper_matrix_changed(AdgEntity *entity,
-                                const AdgMatrix *parent_matrix)
-{
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    g_signal_emit(entity, signals[PAPER_MATRIX_CHANGED], 0, parent_matrix);
-}
-
-/**
  * adg_entity_get_style:
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to get
@@ -777,60 +605,6 @@ adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
 
     if (style)
         adg_style_apply(style, cr);
-}
-
-/**
- * adg_entity_model_matrix_applied:
- * @entity: an #AdgEntity
- *
- * Return value: %TRUE if the model matrix didn't change from the last render
- **/
-gboolean
-adg_entity_model_matrix_applied(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-
-    data = entity->data;
-
-    return ADG_ISSET(data->flags, MODEL_MATRIX_APPLIED);
-}
-
-/**
- * adg_entity_paper_matrix_applied:
- * @entity: an #AdgEntity
- *
- * Return value: %TRUE if the paper matrix didn't change from the last render
- **/
-gboolean
-adg_entity_paper_matrix_applied(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-
-    data = entity->data;
-
-    return ADG_ISSET(data->flags, PAPER_MATRIX_APPLIED);
-}
-
-/**
- * adg_entity_model_applied:
- * @entity: an #AdgEntity
- *
- * Return value: %TRUE if the model didn't change from the last render
- **/
-gboolean
-adg_entity_model_applied(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-
-    data = entity->data;
-
-    return ADG_ISSET(data->flags, MODEL_APPLIED);
 }
 
 /**
@@ -884,16 +658,6 @@ set_parent(AdgEntity *entity, AdgContainer *parent)
 static void
 parent_set(AdgEntity *entity, AdgContainer *old_parent)
 {
-    if (ADG_IS_CONTAINER(old_parent)) {
-        const AdgMatrix *old_model;
-        const AdgMatrix *old_paper;
-
-        old_model = adg_entity_get_model_matrix((AdgEntity *) old_parent);
-        old_paper = adg_entity_get_paper_matrix((AdgEntity *) old_parent);
-
-        adg_entity_model_matrix_changed(entity, old_model);
-        adg_entity_paper_matrix_changed(entity, old_paper);
-    }
 }
 
 static AdgContext *
@@ -945,42 +709,9 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 static void
-model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityPrivate *data = entity->data;
-
-    ADG_UNSET(data->flags, MODEL_MATRIX_APPLIED);
-}
-
-static void
-paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityPrivate *data = entity->data;
-
-    ADG_UNSET(data->flags, PAPER_MATRIX_APPLIED);
-}
-
-static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgEntityPrivate *data = entity->data;
 
-    ADG_SET(data->flags,
-            MODEL_MATRIX_APPLIED | PAPER_MATRIX_APPLIED | MODEL_APPLIED);
-}
-
-static const AdgMatrix *
-get_model_matrix(AdgEntity *entity)
-{
-    AdgEntityPrivate *data = entity->data;
-
-    return adg_entity_get_model_matrix((AdgEntity *) data->parent);
-}
-
-static const AdgMatrix *
-get_paper_matrix(AdgEntity *entity)
-{
-    AdgEntityPrivate *data = entity->data;
-
-    return adg_entity_get_paper_matrix((AdgEntity *) data->parent);
+    ADG_SET(data->flags, RENDERED);
 }

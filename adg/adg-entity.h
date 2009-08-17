@@ -61,10 +61,6 @@ struct _AdgEntityClass {
     /* Signals */
     void                (*parent_set)           (AdgEntity      *entity,
                                                  AdgContainer   *old_parent);
-    void                (*model_matrix_changed) (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
-    void                (*paper_matrix_changed) (AdgEntity      *entity,
-                                                 AdgMatrix      *parent_matrix);
     void                (*invalidate)           (AdgEntity      *entity);
     void                (*render)               (AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -73,8 +69,6 @@ struct _AdgEntityClass {
     void                (*set_parent)           (AdgEntity      *entity,
                                                  AdgContainer   *parent);
     AdgContext *        (*get_context)          (AdgEntity      *entity);
-    const AdgMatrix *   (*get_model_matrix)     (AdgEntity      *entity);
-    const AdgMatrix *   (*get_paper_matrix)     (AdgEntity      *entity);
 };
 
 
@@ -108,24 +102,11 @@ void            adg_entity_get_global_matrix    (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
-const AdgMatrix*adg_entity_get_model_matrix     (AdgEntity       *entity);
-const AdgMatrix*adg_entity_get_paper_matrix     (AdgEntity       *entity);
-gboolean        adg_entity_build_paper2model    (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
-gboolean        adg_entity_build_model2paper    (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
-void            adg_entity_model_matrix_changed (AdgEntity       *entity,
-                                                 const AdgMatrix *parent_matrix);
-void            adg_entity_paper_matrix_changed (AdgEntity       *entity,
-                                                 const AdgMatrix *parent_matrix);
 AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
                                                  AdgStyleSlot     style_slot);
 void            adg_entity_apply                (AdgEntity       *entity,
                                                  AdgStyleSlot     style_slot,
                                                  cairo_t         *cr);
-gboolean        adg_entity_model_matrix_applied (AdgEntity       *entity);
-gboolean        adg_entity_paper_matrix_applied (AdgEntity       *entity);
-gboolean        adg_entity_model_applied        (AdgEntity       *entity);
 void            adg_entity_invalidate           (AdgEntity       *entity);
 void            adg_entity_render               (AdgEntity       *entity,
                                                  cairo_t         *cr);

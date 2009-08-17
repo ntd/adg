@@ -28,9 +28,7 @@ typedef enum _AdgEntityFlags     AdgEntityFlags;
 typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 enum _AdgEntityFlags {
-    MODEL_MATRIX_APPLIED = 1 << 1,
-    PAPER_MATRIX_APPLIED = 1 << 2,
-    MODEL_APPLIED        = 1 << 3
+    RENDERED = 1 << 1
 };
 
 struct _AdgEntityPrivate {
