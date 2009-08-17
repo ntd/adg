@@ -91,6 +91,9 @@ void            adg_entity_reparent             (AdgEntity       *entity,
 AdgContext *    adg_entity_get_context          (AdgEntity       *entity);
 void            adg_entity_set_context          (AdgEntity       *entity,
                                                  AdgContext      *context);
+gboolean        adg_entity_get_rendered         (AdgEntity       *entity);
+void            adg_entity_set_rendered         (AdgEntity       *entity,
+                                                 gboolean         rendered);
 void            adg_entity_get_global_map       (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_global_map       (AdgEntity       *entity,

@@ -431,6 +431,50 @@ adg_entity_get_canvas(AdgEntity *entity)
 }
 
 /**
+ * adg_entity_get_rendered:
+ * @entity: an #AdgEntity object
+ *
+ * This function is only for use in entity implementations.
+ * Gets the rendered flag of @entity.
+ *
+ * Returns: the current rendered state
+ **/
+gboolean
+adg_entity_get_rendered(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
+
+    data = entity->data;
+
+    return ADG_ISSET(data->flags, RENDERED);
+}
+
+/**
+ * adg_entity_set_rendered:
+ * @entity: an #AdgEntity object
+ * @rendered: new state for the rendered flag
+ *
+ * This function is only for use in entity implementations.
+ * Sets the rendered flag of @entity to @rendered.
+ **/
+void
+adg_entity_set_rendered(AdgEntity *entity, gboolean rendered)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    data = entity->data;
+
+    if (rendered)
+        ADG_SET(data->flags, RENDERED);
+    else
+        ADG_UNSET(data->flags, RENDERED);
+}
+
+/**
  * adg_entity_get_global_map:
  * @entity: an #AdgEntity object
  * @map: where to store the global map
