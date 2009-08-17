@@ -43,6 +43,8 @@
 #include "adg-container-private.h"
 #include "adg-intl.h"
 
+#define PARENT_ENTITY_CLASS     ((AdgEntityClass *) adg_container_parent_class)
+
 
 enum {
     PROP_0,
@@ -123,10 +125,10 @@ adg_container_class_init(AdgContainerClass *klass)
     klass->add = add;
     klass->remove = remove;
 
-    param = g_param_spec_boxed("child",
-                               P_("Child"),
-                               P_("Can be used to add a new child to the container"),
-                               ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
+    param = g_param_spec_object("child",
+                                P_("Child"),
+                                P_("Can be used to add a new child to the container"),
+                                ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_CHILD, param);
 
     param = g_param_spec_boxed("model-transformation",
@@ -321,14 +323,12 @@ model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
     AdgContainer *container;
     AdgContainerPrivate *data;
-    AdgEntityClass *entity_class;
 
     container = (AdgContainer *) entity;
     data = container->data;
-    entity_class = (AdgEntityClass *) adg_container_parent_class;
 
-    if (entity_class->model_matrix_changed != NULL)
-        entity_class->model_matrix_changed(entity, parent_matrix);
+    if (PARENT_ENTITY_CLASS->model_matrix_changed != NULL)
+        PARENT_ENTITY_CLASS->model_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
         cairo_matrix_multiply(&data->model_matrix,
@@ -346,14 +346,12 @@ paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
     AdgContainer *container;
     AdgContainerPrivate *data;
-    AdgEntityClass *entity_class;
 
     container = (AdgContainer *) entity;
     data = container->data;
-    entity_class = (AdgEntityClass *) adg_container_parent_class;
 
-    if (entity_class->paper_matrix_changed != NULL)
-        entity_class->paper_matrix_changed(entity, parent_matrix);
+    if (PARENT_ENTITY_CLASS->paper_matrix_changed != NULL)
+        PARENT_ENTITY_CLASS->paper_matrix_changed(entity, parent_matrix);
 
     if (parent_matrix)
         cairo_matrix_multiply(&data->paper_matrix,
@@ -386,24 +384,20 @@ get_paper_matrix(AdgEntity *entity)
 static void
 invalidate(AdgEntity *entity)
 {
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_container_parent_class;
-
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
 
-    if (entity_class->invalidate)
-        entity_class->invalidate(entity);
+    if (PARENT_ENTITY_CLASS->invalidate)
+        PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_container_parent_class;
-
     cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
 
-    if (entity_class->render)
-        entity_class->render(entity, cr);
+    if (PARENT_ENTITY_CLASS->render)
+        PARENT_ENTITY_CLASS->render(entity, cr);
 }
 
 
