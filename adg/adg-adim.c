@@ -56,8 +56,6 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     model_matrix_changed    (AdgEntity      *entity,
-                                         AdgMatrix      *parent_matrix);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gchar *  default_quote           (AdgDim         *dim);
@@ -88,7 +86,6 @@ adg_adim_class_init(AdgADimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    entity_class->model_matrix_changed = model_matrix_changed;
     entity_class->render = render;
 
     dim_class->default_quote = default_quote;
@@ -179,17 +176,6 @@ set_property(GObject *object, guint prop_id,
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
     }
-}
-
-static void
-model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_adim_parent_class;
-
-    /* TODO */
-
-    if (entity_class->model_matrix_changed != NULL)
-        entity_class->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
