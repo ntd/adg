@@ -61,7 +61,7 @@ static void             add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             remove                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
+static gboolean         invalidate              (AdgEntity      *entity);
 static gboolean         render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 
@@ -172,74 +172,6 @@ dispose(GObject *object)
 
     if (object_class->dispose != NULL)
         object_class->dispose(object);
-}
-
-
-static GSList *
-get_children(AdgContainer *container)
-{
-    AdgContainerPrivate *data = container->data;
-
-    return g_slist_copy(data->children);
-}
-
-static void
-add(AdgContainer *container, AdgEntity *entity)
-{
-    AdgContainer *old_parent;
-    AdgContainerPrivate *data;
-
-    old_parent = adg_entity_get_parent(entity);
-    if (old_parent != NULL) {
-        g_warning("Attempting to add an entity with type %s to a container "
-                  "of type %s, but the entity is already inside a container "
-                  "of type %s.",
-                  g_type_name(G_OBJECT_TYPE(entity)),
-                  g_type_name(G_OBJECT_TYPE(container)),
-                  g_type_name(G_OBJECT_TYPE(old_parent)));
-        return;
-    }
-
-    data = container->data;
-    data->children = g_slist_append(data->children, entity);
-    adg_entity_set_parent(entity, container);
-}
-
-static void
-remove(AdgContainer *container, AdgEntity *entity)
-{
-    AdgContainerPrivate *data;
-    GSList *node;
-
-    data = container->data;
-    node = g_slist_find(data->children, entity);
-
-    if (node == NULL) {
-        g_warning("Attempting to remove an entity with type %s from a "
-                  "container of type %s, but the entity is not present.",
-                  g_type_name(G_OBJECT_TYPE(entity)),
-                  g_type_name(G_OBJECT_TYPE(container)));
-        return;
-    }
-
-    data->children = g_slist_delete_link(data->children, node);
-    adg_entity_unparent(entity);
-}
-
-
-static void
-invalidate(AdgEntity *entity)
-{
-    adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
-
-    ((AdgEntityClass *) adg_container_parent_class)->invalidate(entity);
-}
-
-static gboolean
-render(AdgEntity *entity, cairo_t *cr)
-{
-    adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
-    return TRUE;
 }
 
 
@@ -439,4 +371,71 @@ adg_container_propagate_valist(AdgContainer *container,
 
         children = g_slist_delete_link(children, children);
     }
+}
+
+
+static GSList *
+get_children(AdgContainer *container)
+{
+    AdgContainerPrivate *data = container->data;
+
+    return g_slist_copy(data->children);
+}
+
+static void
+add(AdgContainer *container, AdgEntity *entity)
+{
+    AdgContainer *old_parent;
+    AdgContainerPrivate *data;
+
+    old_parent = adg_entity_get_parent(entity);
+    if (old_parent != NULL) {
+        g_warning("Attempting to add an entity with type %s to a container "
+                  "of type %s, but the entity is already inside a container "
+                  "of type %s.",
+                  g_type_name(G_OBJECT_TYPE(entity)),
+                  g_type_name(G_OBJECT_TYPE(container)),
+                  g_type_name(G_OBJECT_TYPE(old_parent)));
+        return;
+    }
+
+    data = container->data;
+    data->children = g_slist_append(data->children, entity);
+    adg_entity_set_parent(entity, container);
+}
+
+static void
+remove(AdgContainer *container, AdgEntity *entity)
+{
+    AdgContainerPrivate *data;
+    GSList *node;
+
+    data = container->data;
+    node = g_slist_find(data->children, entity);
+
+    if (node == NULL) {
+        g_warning("Attempting to remove an entity with type %s from a "
+                  "container of type %s, but the entity is not present.",
+                  g_type_name(G_OBJECT_TYPE(entity)),
+                  g_type_name(G_OBJECT_TYPE(container)));
+        return;
+    }
+
+    data->children = g_slist_delete_link(data->children, node);
+    adg_entity_unparent(entity);
+}
+
+
+static gboolean
+invalidate(AdgEntity *entity)
+{
+    adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
+    return TRUE;
+}
+
+static gboolean
+render(AdgEntity *entity, cairo_t *cr)
+{
+    adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
+    return TRUE;
 }
