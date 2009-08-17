@@ -55,7 +55,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     invalidate              (AdgEntity      *entity);
+static gboolean invalidate              (AdgEntity      *entity);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gboolean update_origin_cache     (AdgToyText     *toy_text,
@@ -169,7 +169,7 @@ set_property(GObject *object, guint prop_id,
  *
  * Creates a new toy text entity using @label as its text
  *
- * Return value: the new entity
+ * Returns: the new entity
  */
 AdgEntity *
 adg_toy_text_new(const gchar *label)
@@ -184,7 +184,7 @@ adg_toy_text_new(const gchar *label)
  * Gets the label text. The string is internally owned and
  * must not be freed or modified.
  *
- * Return value: the label text
+ * Returns: the label text
  **/
 const gchar *
 adg_toy_text_get_label(AdgToyText *toy_text)
@@ -226,14 +226,13 @@ render(AdgEntity *entity, cairo_t *cr)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
-    AdgEntityClass *entity_class;
 
     toy_text = (AdgToyText *) entity;
     data = toy_text->data;
-    entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
     if (data->label) {
         adg_entity_apply(entity, ADG_SLOT_FONT_STYLE, cr);
+
         if (!data->glyphs)
             update_label_cache(toy_text, cr);
         update_origin_cache(toy_text, cr);
@@ -244,19 +243,11 @@ render(AdgEntity *entity, cairo_t *cr)
     return TRUE;
 }
 
-static void
+static gboolean
 invalidate(AdgEntity *entity)
 {
-    AdgToyText *toy_text;
-    AdgEntityClass *entity_class;
-
-    toy_text = (AdgToyText *) entity;
-    entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
-
-    clear_label_cache(toy_text);
-
-    if (entity_class->invalidate != NULL)
-        entity_class->invalidate(entity);
+    clear_label_cache((AdgToyText *) entity);
+    return ((AdgEntityClass *) adg_toy_text_parent_class)->invalidate(entity);
 }
 
 static gboolean
