@@ -53,6 +53,13 @@ GType           adg_adim_get_type               (void) G_GNUC_CONST;
 
 AdgEntity *     adg_adim_new                    (void);
 
+gdouble         adg_adim_get_angle1             (AdgADim        *adim);
+void            adg_adim_set_angle1             (AdgADim        *adim,
+                                                 gdouble         angle);
+gdouble         adg_adim_get_angle2             (AdgADim        *adim);
+void            adg_adim_set_angle2             (AdgADim        *adim,
+                                                 gdouble         angle);
+
 G_END_DECLS
 
 

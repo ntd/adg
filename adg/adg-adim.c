@@ -42,16 +42,29 @@
 
 enum {
     PROP_0,
-    PROP_DIRECTION
+    PROP_ANGLE1,
+    PROP_ANGLE2
 };
 
 
 static void     finalize                (GObject        *object);
+static void     get_property            (GObject        *object,
+                                         guint           param_id,
+                                         GValue         *value,
+                                         GParamSpec     *pspec);
+static void     set_property            (GObject        *object,
+                                         guint           param_id,
+                                         const GValue   *value,
+                                         GParamSpec     *pspec);
 static void     model_matrix_changed    (AdgEntity      *entity,
                                          AdgMatrix      *parent_matrix);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gchar *  default_quote           (AdgDim         *dim);
+static void     set_angle1              (AdgADim        *adim,
+                                         gdouble         angle);
+static void     set_angle2              (AdgADim        *adim,
+                                         gdouble         angle2);
 
 
 G_DEFINE_TYPE(AdgADim, adg_adim, ADG_TYPE_DIM);
@@ -72,18 +85,27 @@ adg_adim_class_init(AdgADimClass *klass)
     g_type_class_add_private(klass, sizeof(AdgADimPrivate));
 
     gobject_class->finalize = finalize;
+    gobject_class->get_property = get_property;
+    gobject_class->set_property = set_property;
 
     entity_class->model_matrix_changed = model_matrix_changed;
     entity_class->render = render;
 
     dim_class->default_quote = default_quote;
 
-    param = g_param_spec_double("direction",
-                                P_("Direction"),
-                                P_("The inclination angle of the extension lines"),
-                                -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+    param = g_param_spec_double("angle1",
+                                P_("Angle 1"),
+                                P_("Angle of the first reference line"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
-    g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
+    g_object_class_install_property(gobject_class, PROP_ANGLE1, param);
+
+    param = g_param_spec_double("angle2",
+                                P_("Angle 2"),
+                                P_("Angle of the second reference line"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 0,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+    g_object_class_install_property(gobject_class, PROP_ANGLE2, param);
 }
 
 static void
@@ -123,6 +145,43 @@ finalize(GObject *object)
 }
 
 static void
+get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+{
+    AdgADimPrivate *data = ((AdgADim *) object)->data;
+
+    switch (prop_id) {
+    case PROP_ANGLE1:
+        g_value_set_double(value, data->angle1);
+        break;
+    case PROP_ANGLE2:
+        g_value_set_double(value, data->angle2);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+set_property(GObject *object, guint prop_id,
+             const GValue *value, GParamSpec *pspec)
+{
+    AdgADim *adim = (AdgADim *) object;
+
+    switch (prop_id) {
+    case PROP_ANGLE1:
+        set_angle1(adim, g_value_get_double(value));
+        break;
+    case PROP_ANGLE2:
+        set_angle2(adim, g_value_get_double(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
 model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
 {
     AdgEntityClass *entity_class = (AdgEntityClass *) adg_adim_parent_class;
@@ -156,9 +215,100 @@ default_quote(AdgDim *dim)
  * adg_dim_set_pos().
  *
  * Return value: the new entity
- */
+ **/
 AdgEntity *
 adg_adim_new(void)
 {
     return (AdgEntity *) g_object_new(ADG_TYPE_ADIM, NULL);
+}
+
+/**
+ * adg_adim_get_angle1:
+ * @adim: an #AdgADim
+ *
+ * Gets the angle of the first reference line of @adim.
+ *
+ * Returns: an angle in radians or %0 on errors
+ **/
+gdouble
+adg_adim_get_angle1(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), 0);
+
+    data = adim->data;
+
+    return data->angle1;
+}
+
+/**
+ * adg_adim_set_angle1:
+ * @adim: an #AdgADim
+ * @angle: the new angle (in radians)
+ *
+ * Sets the angle of the first reference line of @adim to @angle.
+ **/
+void
+adg_adim_set_angle1(AdgADim *adim, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+
+    set_angle1(adim, angle);
+
+    g_object_notify((GObject *) adim, "angle1");
+}
+
+/**
+ * adg_adim_get_angle2:
+ * @adim: an #AdgADim
+ *
+ * Gets the angle of the second reference line of @adim.
+ *
+ * Returns: an angle in radians or %0 on errors
+ **/
+gdouble
+adg_adim_get_angle2(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), 0);
+
+    data = adim->data;
+
+    return data->angle2;
+}
+
+/**
+ * adg_adim_set_angle2:
+ * @adim: an #AdgADim
+ * @angle: the new angle (in radians)
+ *
+ * Sets the angle of the first reference line of @adim to @angle.
+ **/
+void
+adg_adim_set_angle2(AdgADim *adim, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+
+    set_angle2(adim, angle);
+
+    g_object_notify((GObject *) adim, "angle2");
+}
+
+
+static void
+set_angle1(AdgADim *adim, gdouble angle)
+{
+    AdgADimPrivate *data = adim->data;
+
+    data->angle1 = angle;
+}
+
+static void
+set_angle2(AdgADim *adim, gdouble angle)
+{
+    AdgADimPrivate *data = adim->data;
+
+    data->angle2 = angle;
 }

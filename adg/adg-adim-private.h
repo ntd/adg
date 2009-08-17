@@ -29,7 +29,8 @@ G_BEGIN_DECLS
 typedef struct _AdgADimPrivate AdgADimPrivate;
 
 struct _AdgADimPrivate {
-    /* Cache */
+    gdouble             angle1;
+    gdouble             angle2;
     cairo_path_t        extension1;
     cairo_path_t        extension2;
     cairo_path_t        arrow_path;
