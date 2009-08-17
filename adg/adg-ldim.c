@@ -54,7 +54,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     invalidate              (AdgEntity      *entity);
+static gboolean invalidate              (AdgEntity      *entity);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gchar *  default_quote           (AdgDim         *dim);
@@ -346,15 +346,11 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 }
 
 
-static void
+static gboolean
 invalidate(AdgEntity *entity)
 {
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
-
     clear((AdgLDim *) entity);
-
-    if (entity_class->invalidate != NULL)
-        entity_class->invalidate(entity);
+    return ((AdgEntityClass *) adg_ldim_parent_class)->invalidate(entity);
 }
 
 static gboolean
