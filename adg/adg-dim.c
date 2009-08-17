@@ -63,7 +63,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     invalidate              (AdgEntity      *entity);
+static gboolean invalidate              (AdgEntity      *entity);
 static void     clear                   (AdgDim         *entity);
 static gchar *  default_quote           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
@@ -926,15 +926,11 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 }
 
 
-static void
+static gboolean
 invalidate(AdgEntity *entity)
 {
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_dim_parent_class;
-
     clear((AdgDim *) entity);
-
-    if (entity_class->invalidate != NULL)
-        entity_class->invalidate(entity);
+    return TRUE;
 }
 
 static void
