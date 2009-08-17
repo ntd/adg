@@ -40,6 +40,8 @@
 #include <adg/adg-toy-text.h>
 #include <adg/adg-type-builtins.h>
 #include <adg/adg-util.h>
+/* if GTK2 */
 #include <adg/adg-widget.h>
+/* endif GTK2 */
 
 #endif /* __ADG_H__ */
