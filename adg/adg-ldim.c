@@ -54,10 +54,6 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     model_matrix_changed    (AdgEntity      *entity,
-                                         AdgMatrix      *parent_matrix);
-static void     paper_matrix_changed    (AdgEntity      *entity,
-                                         AdgMatrix      *parent_matrix);
 static void     invalidate              (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
@@ -86,8 +82,6 @@ adg_ldim_class_init(AdgLDimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    entity_class->model_matrix_changed = model_matrix_changed;
-    entity_class->paper_matrix_changed = paper_matrix_changed;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -353,28 +347,6 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 
 
 static void
-model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
-
-    clear((AdgLDim *) entity);
-
-    if (entity_class->model_matrix_changed != NULL)
-        entity_class->model_matrix_changed(entity, parent_matrix);
-}
-
-static void
-paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
-
-    clear((AdgLDim *) entity);
-
-    if (entity_class->paper_matrix_changed != NULL)
-        entity_class->paper_matrix_changed(entity, parent_matrix);
-}
-
-static void
 invalidate(AdgEntity *entity)
 {
     AdgEntityClass *entity_class = (AdgEntityClass *) adg_ldim_parent_class;
@@ -392,29 +364,34 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgLDimPrivate *data;
     AdgEntityClass *entity_class;
     AdgStyle *dim_style;
-    AdgStyle *line_style;
     AdgStyle *arrow_style;
+    AdgStyle *line_style;
+    AdgMatrix global, local;
 
     ldim = (AdgLDim *) entity;
     data = ldim->data;
     entity_class = (AdgEntityClass *) adg_ldim_parent_class;
     dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
     arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
-
-    update(ldim);
+    line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
+    adg_entity_get_global_matrix(entity, &global);
+    adg_entity_get_local_matrix(entity, &local);
 
     cairo_save(cr);
+    cairo_set_matrix(cr, &global);
+    update(ldim);
     adg_entity_apply(entity, ADG_SLOT_DIM_STYLE, cr);
 
+    cairo_save(cr);
+    cairo_transform(cr, &local);
     adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &data->director);
     cpml_segment_reverse(&data->director);
     adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &data->director);
     cpml_segment_reverse(&data->director);
+    cairo_append_path(cr, &data->path);
+    cairo_restore(cr);
 
     adg_style_apply(line_style, cr);
-
-    cairo_append_path(cr, &data->path);
     cairo_stroke(cr);
 
     adg_dim_render_quote((AdgDim *) ldim, cr);
@@ -454,15 +431,12 @@ update(AdgLDim *ldim)
     cairo_path_data_t *baseline1, *baseline2;
     cairo_path_data_t *from1, *to1, *from2, *to2;
     cairo_path_data_t *arrow1, *arrow2;
-    AdgMatrix paper2model;
+    AdgMatrix unlocal;
     CpmlPair vector;
     AdgPair offset;
     gdouble angle;
 
     data = ldim->data;
-    if (data->path.status == CAIRO_STATUS_SUCCESS)
-        return;
-
     dim_style = adg_entity_get_style((AdgEntity *) ldim, ADG_SLOT_DIM_STYLE);
     arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
 
@@ -484,8 +458,9 @@ update(AdgLDim *ldim)
     arrow1 = data->director_data + 1;
     arrow2 = data->director_data + 3;
 
-    /* Get the inverted transformation matrix */
-    if (!adg_entity_build_paper2model((AdgEntity *) ldim, &paper2model))
+    /* Get the inverted local matrix */
+    adg_entity_get_local_matrix((AdgEntity *) ldim, &unlocal);
+    if (cairo_matrix_invert(&unlocal) != CAIRO_STATUS_SUCCESS)
         return;
 
     /* Set vector to the director of the extension lines */
@@ -494,7 +469,7 @@ update(AdgLDim *ldim)
     /* Calculate from1 and from2 */
     offset.x = vector.x * from_offset;
     offset.y = vector.y * from_offset;
-    cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
+    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
 
     from1->point.x = ref1->x + offset.x;
     from1->point.y = ref1->y + offset.y;
@@ -504,7 +479,7 @@ update(AdgLDim *ldim)
     /* Calculate arrow1 and arrow2 */
     offset.x = vector.x * baseline_spacing * level;
     offset.y = vector.y * baseline_spacing * level;
-    cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
+    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
 
     arrow1->point.x = pos1->x + offset.x;
     arrow1->point.y = pos1->y + offset.y;
@@ -514,7 +489,7 @@ update(AdgLDim *ldim)
     /* Calculate to1 and to2 */
     offset.x = vector.x * adg_dim_style_get_to_offset((AdgDimStyle *) dim_style);
     offset.y = vector.y * adg_dim_style_get_to_offset((AdgDimStyle *) dim_style);
-    cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
+    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
 
     to1->point.x = arrow1->point.x + offset.x;
     to1->point.y = arrow1->point.y + offset.y;
@@ -537,7 +512,7 @@ update(AdgLDim *ldim)
     offset.y = adg_arrow_style_get_margin((AdgArrowStyle *) arrow_style);
     offset.x = vector.x * offset.y;
     offset.y *= vector.y;
-    cairo_matrix_transform_distance(&paper2model, &offset.x, &offset.y);
+    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
 
     baseline1->point.x = arrow1->point.x + offset.x;
     baseline1->point.y = arrow1->point.y + offset.y;
