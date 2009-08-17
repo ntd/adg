@@ -56,7 +56,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     render                  (AdgEntity      *entity,
+static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gchar *  default_quote           (AdgDim         *dim);
 static void     set_angle1              (AdgADim        *adim,
@@ -178,10 +178,11 @@ set_property(GObject *object, guint prop_id,
     }
 }
 
-static void
+static gboolean
 render(AdgEntity *entity, cairo_t *cr)
 {
     /* TODO */
+    return FALSE;
 }
 
 static gchar *

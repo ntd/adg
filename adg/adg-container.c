@@ -38,8 +38,6 @@
 #include "adg-container-private.h"
 #include "adg-intl.h"
 
-#define PARENT_ENTITY_CLASS     ((AdgEntityClass *) adg_container_parent_class)
-
 
 enum {
     PROP_0,
@@ -64,7 +62,7 @@ static void             add                     (AdgContainer   *container,
 static void             remove                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static gboolean         render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -234,17 +232,14 @@ invalidate(AdgEntity *entity)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    ((AdgEntityClass *) adg_container_parent_class)->invalidate(entity);
 }
 
-static void
+static gboolean
 render(AdgEntity *entity, cairo_t *cr)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
-
-    if (PARENT_ENTITY_CLASS->render)
-        PARENT_ENTITY_CLASS->render(entity, cr);
+    return TRUE;
 }
 
 

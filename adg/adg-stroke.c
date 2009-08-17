@@ -38,9 +38,6 @@
 #include "adg-line-style.h"
 #include "adg-intl.h"
 
-#define PARENT_ENTITY_CLASS     ((AdgEntityClass *) adg_stroke_parent_class)
-
-
 
 enum {
     PROP_0,
@@ -57,7 +54,7 @@ static void     set_property            (GObject        *object,
                                          GParamSpec     *pspec);
 static void     set_path                (AdgStroke      *stroke,
                                          AdgPath        *path);
-static void	render			(AdgEntity	*entity,
+static gboolean render			(AdgEntity	*entity,
 					 cairo_t	*cr);
 
 
@@ -206,7 +203,7 @@ set_path(AdgStroke *stroke, AdgPath *path)
     data->path = path;
 }
 
-static void
+static gboolean
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgStroke *stroke;
@@ -218,13 +215,9 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_path_get_cairo_path(data->path);
 
     if (cairo_path != NULL) {
-        AdgMatrix local, global;
+        AdgMatrix local;
 
         adg_entity_get_local_matrix(entity, &local);
-        adg_entity_get_global_matrix(entity, &global);
-
-        cairo_save(cr);
-        cairo_set_matrix(cr, &global);
 
         cairo_save(cr);
         cairo_transform(cr, &local);
@@ -233,9 +226,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
         adg_entity_apply(entity, ADG_SLOT_LINE_STYLE, cr);
         cairo_stroke(cr);
-        cairo_restore(cr);
     }
 
-    if (PARENT_ENTITY_CLASS->render != NULL)
-        PARENT_ENTITY_CLASS->render(entity, cr);
+    return TRUE;
 }

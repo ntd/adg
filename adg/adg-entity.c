@@ -79,8 +79,10 @@ static void             set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static void             set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-static void             render                  (AdgEntity       *entity,
-                                                 cairo_t         *cr);
+static void             invalidate              (AdgEntity       *entity);
+static void             real_render             (AdgEntity       *entity,
+                                                 cairo_t         *cr,
+                                                 gpointer         user_data);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -93,6 +95,8 @@ adg_entity_class_init(AdgEntityClass *klass)
 {
     GObjectClass *gobject_class;
     GParamSpec *param;
+    GClosure *closure;
+    GType param_types[1];
 
     gobject_class = (GObjectClass *) klass;
 
@@ -106,8 +110,8 @@ adg_entity_class_init(AdgEntityClass *klass)
     klass->set_parent = set_parent;
     klass->parent_set = parent_set;
     klass->get_context = get_context;
-    klass->invalidate = NULL;
-    klass->render = render;
+    klass->invalidate = invalidate;
+    klass->render = NULL;
 
     param = g_param_spec_object("parent",
                                 P_("Parent Container"),
@@ -140,14 +144,13 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * Emitted after the parent container has changed.
      **/
-    signals[PARENT_SET] =
-        g_signal_new("parent-set",
-                     G_OBJECT_CLASS_TYPE(gobject_class),
-                     G_SIGNAL_RUN_FIRST,
-                     G_STRUCT_OFFSET(AdgEntityClass, parent_set),
-                     NULL, NULL,
-                     g_cclosure_marshal_VOID__OBJECT,
-                     G_TYPE_NONE, 1, ADG_TYPE_CONTAINER);
+    signals[PARENT_SET] = g_signal_new("parent-set",
+                                       G_OBJECT_CLASS_TYPE(gobject_class),
+                                       G_SIGNAL_RUN_FIRST,
+                                       G_STRUCT_OFFSET(AdgEntityClass, parent_set),
+                                       NULL, NULL,
+                                       g_cclosure_marshal_VOID__OBJECT,
+                                       G_TYPE_NONE, 1, ADG_TYPE_CONTAINER);
 
     /**
      * AdgEntity::invalidate:
@@ -155,14 +158,13 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * Clears the cached data of @entity.
      **/
-    signals[INVALIDATE] =
-        g_signal_new("invalidate",
-                     G_OBJECT_CLASS_TYPE(gobject_class),
-                     G_SIGNAL_RUN_FIRST,
-                     G_STRUCT_OFFSET(AdgEntityClass, invalidate),
-                     NULL, NULL,
-                     g_cclosure_marshal_VOID__BOOLEAN,
-                     G_TYPE_NONE, 0);
+    signals[INVALIDATE] = g_signal_new("invalidate",
+                                       G_OBJECT_CLASS_TYPE(gobject_class),
+                                       G_SIGNAL_RUN_FIRST,
+                                       G_STRUCT_OFFSET(AdgEntityClass, invalidate),
+                                       NULL, NULL,
+                                       g_cclosure_marshal_VOID__BOOLEAN,
+                                       G_TYPE_NONE, 0);
 
     /**
      * AdgEntity::render:
@@ -171,14 +173,12 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * Causes the rendering of @entity on @cr.
      **/
-    signals[RENDER] =
-        g_signal_new("render",
-                     G_OBJECT_CLASS_TYPE(gobject_class),
-                     G_SIGNAL_RUN_FIRST,
-                     G_STRUCT_OFFSET(AdgEntityClass, render),
-                     NULL, NULL,
-                     g_cclosure_marshal_VOID__POINTER,
-                     G_TYPE_NONE, 1, G_TYPE_POINTER);
+    closure = g_cclosure_new(G_CALLBACK(real_render), (gpointer)0xdeadbeaf, NULL);
+    param_types[0] = G_TYPE_POINTER;
+    signals[RENDER] = g_signal_newv("render", ADG_TYPE_ENTITY,
+                                    G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                                    g_cclosure_marshal_VOID__POINTER,
+                                    G_TYPE_NONE, 1, param_types);
 }
 
 static void
@@ -709,9 +709,35 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+invalidate(AdgEntity *entity)
 {
     AdgEntityPrivate *data = entity->data;
 
-    ADG_SET(data->flags, RENDERED);
+    ADG_UNSET(data->flags, RENDERED);
+}
+
+static void
+real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
+{
+    AdgEntityClass *entity_class;
+    AdgEntityPrivate *data;
+
+    g_assert(user_data == (gpointer) 0xdeadbeaf);
+
+    entity_class = ADG_ENTITY_GET_CLASS(entity);
+    if (entity_class->render == NULL) {
+        g_warning("%s: `render' method not implemented for type `%s'",
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
+        return;
+    }
+
+    data = entity->data;
+
+    cairo_save(cr);
+    cairo_transform(cr, &data->global_map);
+
+    if (entity_class->render(entity, cr))
+        ADG_SET(data->flags, RENDERED);
+
+    cairo_restore(cr);
 }

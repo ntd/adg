@@ -55,7 +55,7 @@ static void     set_property            (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void     invalidate              (AdgEntity      *entity);
-static void     render                  (AdgEntity      *entity,
+static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gchar *  default_quote           (AdgDim         *dim);
 static void     update                  (AdgLDim        *ldim);
@@ -357,28 +357,23 @@ invalidate(AdgEntity *entity)
         entity_class->invalidate(entity);
 }
 
-static void
+static gboolean
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *data;
-    AdgEntityClass *entity_class;
     AdgStyle *dim_style;
     AdgStyle *arrow_style;
     AdgStyle *line_style;
-    AdgMatrix global, local;
+    AdgMatrix local;
 
     ldim = (AdgLDim *) entity;
     data = ldim->data;
-    entity_class = (AdgEntityClass *) adg_ldim_parent_class;
     dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
     arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
     line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
-    adg_entity_get_global_matrix(entity, &global);
     adg_entity_get_local_matrix(entity, &local);
 
-    cairo_save(cr);
-    cairo_set_matrix(cr, &global);
     update(ldim);
     adg_entity_apply(entity, ADG_SLOT_DIM_STYLE, cr);
 
@@ -396,10 +391,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
     adg_dim_render_quote((AdgDim *) ldim, cr);
 
-    cairo_restore(cr);
-
-    if (entity_class->render != NULL)
-        entity_class->render(entity, cr);
+    return TRUE;
 }
 
 static gchar *

@@ -62,13 +62,14 @@ struct _AdgEntityClass {
     void                (*parent_set)           (AdgEntity      *entity,
                                                  AdgContainer   *old_parent);
     void                (*invalidate)           (AdgEntity      *entity);
-    void                (*render)               (AdgEntity      *entity,
-                                                 cairo_t        *cr);
+
     /* Virtual Table */
     AdgContainer *      (*get_parent)           (AdgEntity      *entity);
     void                (*set_parent)           (AdgEntity      *entity,
                                                  AdgContainer   *parent);
     AdgContext *        (*get_context)          (AdgEntity      *entity);
+    gboolean            (*render)               (AdgEntity      *entity,
+                                                 cairo_t        *cr);
 };
 
 
