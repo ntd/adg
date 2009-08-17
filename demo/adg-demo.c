@@ -116,7 +116,7 @@ sample_canvas(void)
     cairo_matrix_init_translate(&map, 100, 70);
     cairo_matrix_scale(&map, 6.883, 6.883);
     cairo_matrix_translate(&map, 0, 10);
-    adg_container_set_model_transformation(container, &map);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
     return canvas;
 }
@@ -525,7 +525,7 @@ operations_canvas(void)
     /* Add the shape with 0.25x0.25 chamfer */
     container = (AdgContainer *) adg_container_new();
     cairo_matrix_init_translate(&map, 15., 0.);
-    adg_container_set_model_transformation(container, &map);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
     adg_container_add(container, adg_stroke_new(chamfer_path));
     entity = adg_toy_text_new("Shape with 0.25x0.25 chamfer");
@@ -538,7 +538,7 @@ operations_canvas(void)
     /* Add the shape with fillets with 0.20 of radius */
     container = (AdgContainer *) adg_container_new();
     cairo_matrix_init_translate(&map, 30., 0.);
-    adg_container_set_model_transformation(container, &map);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
     adg_container_add(container, adg_stroke_new(fillet_path));
     entity = adg_toy_text_new("Shape with R=20 fillet");
@@ -552,7 +552,7 @@ operations_canvas(void)
     cairo_matrix_init_translate(&map, 10, -140);
     cairo_matrix_scale(&map, 15, 15);
     cairo_matrix_translate(&map, 0, 10);
-    adg_container_set_model_transformation(ADG_CONTAINER(canvas), &map);
+    adg_entity_set_local_map(ADG_ENTITY(canvas), &map);
 
     return canvas;
 }
