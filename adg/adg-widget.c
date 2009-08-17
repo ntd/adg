@@ -26,10 +26,10 @@
  * This is a #GtkDrawingArea derived object that provides an easy way
  * to show an ADG based canvas. Its default implementation reacts to
  * some mouse events: if you drag the mouse by keepeng the wheel pressed
- * the canvas is translated by translating its model transformation;
- * if the mouse wheel is rotated, the model transformation of the canvas
- * is scaled up or down (accordling to the wheel direction) by a factor
- * specified by the #AdgWidget:factor property.
+ * the canvas is translated by translating its local map; if the mouse
+ * wheel is rotated, the local map of the canvas is scaled up or down
+ * (accordling to the wheel direction) by a factor specified in the
+ * #AdgWidget:factor property.
  **/
 
 /**
@@ -57,30 +57,30 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
-static void             get_property            (GObject        *object,
-                                                 guint           prop_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
-                                                 guint           prop_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
-static void             set_canvas              (AdgWidget      *widget,
-                                                 AdgCanvas      *canvas);
-static gboolean         expose_event            (GtkWidget      *widget,
-                                                 GdkEventExpose *event);
-static gboolean         scroll_event            (GtkWidget      *widget,
-                                                 GdkEventScroll *event);
-static gboolean         button_press_event      (GtkWidget      *widget,
-                                                 GdkEventButton *event);
-static gboolean         motion_notify_event     (GtkWidget      *widget,
-                                                 GdkEventMotion *event);
-static gboolean         get_transformation      (GtkWidget      *widget,
-                                                 AdgMatrix      *model,
-                                                 AdgMatrix      *inverted);
-static void             set_transformation      (GtkWidget      *widget,
-                                                 const AdgMatrix *model);
+static void             dispose                 (GObject         *object);
+static void             get_property            (GObject         *object,
+                                                 guint            prop_id,
+                                                 GValue          *value,
+                                                 GParamSpec      *pspec);
+static void             set_property            (GObject         *object,
+                                                 guint            prop_id,
+                                                 const GValue    *value,
+                                                 GParamSpec      *pspec);
+static void             set_canvas              (AdgWidget       *widget,
+                                                 AdgCanvas       *canvas);
+static gboolean         expose_event            (GtkWidget       *widget,
+                                                 GdkEventExpose  *event);
+static gboolean         scroll_event            (GtkWidget       *widget,
+                                                 GdkEventScroll  *event);
+static gboolean         button_press_event      (GtkWidget       *widget,
+                                                 GdkEventButton  *event);
+static gboolean         motion_notify_event     (GtkWidget       *widget,
+                                                 GdkEventMotion  *event);
+static gboolean         get_local_map           (GtkWidget       *widget,
+                                                 AdgMatrix       *map,
+                                                 AdgMatrix       *inverted);
+static void             set_local_map           (GtkWidget       *widget,
+                                                 const AdgMatrix *map);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -361,14 +361,14 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
     GtkWidgetClass *parent_class;
     AdgWidgetPrivate *data;
-    AdgMatrix model, inverted;
+    AdgMatrix map, inverted;
 
     parent_class = (GtkWidgetClass *) adg_widget_parent_class;
     data = ((AdgWidget *) widget)->data;
 
     if ((event->direction == GDK_SCROLL_UP ||
          event->direction == GDK_SCROLL_DOWN) &&
-        get_transformation(widget, &model, &inverted)) {
+        get_local_map(widget, &map, &inverted)) {
         double factor, x, y;
 
         if (event->direction == GDK_SCROLL_UP) {
@@ -382,10 +382,10 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
 
         cairo_matrix_transform_point(&inverted, &x, &y);
 
-        cairo_matrix_scale(&model, factor, factor);
-        cairo_matrix_translate(&model, x/factor - x, y/factor - y);
+        cairo_matrix_scale(&map, factor, factor);
+        cairo_matrix_translate(&map, x/factor - x, y/factor - y);
 
-        set_transformation(widget, &model);
+        set_local_map(widget, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -421,24 +421,24 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
     GtkWidgetClass *parent_class;
     AdgWidgetPrivate *data;
-    AdgMatrix model, inverted;
+    AdgMatrix map, inverted;
 
     parent_class = (GtkWidgetClass *) adg_widget_parent_class;
     data = ((AdgWidget *) widget)->data;
 
     if ((event->state & GDK_BUTTON2_MASK) > 0 &&
-        get_transformation(widget, &model, &inverted)) {
+        get_local_map(widget, &map, &inverted)) {
         double x, y;
 
         x = event->x - data->x_event;
         y = event->y - data->y_event;
 
         cairo_matrix_transform_distance(&inverted, &x, &y);
-        cairo_matrix_translate(&model, x, y);
+        cairo_matrix_translate(&map, x, y);
         data->x_event = event->x;
         data->y_event = event->y;
 
-        set_transformation(widget, &model);
+        set_local_map(widget, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -450,26 +450,24 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 }
 
 static gboolean
-get_transformation(GtkWidget *widget, AdgMatrix *model, AdgMatrix *inverted)
+get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
 {
     AdgWidgetPrivate *data;
     AdgCanvas *canvas;
-    const AdgMatrix *src;
 
     data = ((AdgWidget *) widget)->data;
     canvas = data->canvas;
     if (canvas == NULL)
         return FALSE;
 
-    src = adg_container_get_model_transformation((AdgContainer *) canvas);
+    adg_entity_get_local_map((AdgEntity *) canvas, map);
+    adg_matrix_copy(inverted, map);
 
-    adg_matrix_copy(model, src);
-    adg_matrix_copy(inverted, src);
     return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;
 }
 
 static void
-set_transformation(GtkWidget *widget, const AdgMatrix *model)
+set_local_map(GtkWidget *widget, const AdgMatrix *map)
 {
     AdgWidgetPrivate *data;
     AdgCanvas *canvas;
@@ -478,5 +476,5 @@ set_transformation(GtkWidget *widget, const AdgMatrix *model)
     canvas = data->canvas;
 
     if (canvas != NULL)
-        adg_container_set_model_transformation((AdgContainer *) canvas, model);
+        adg_entity_set_local_map((AdgEntity *) canvas, map);
 }
