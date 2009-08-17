@@ -78,7 +78,8 @@ c_sources=			adg-adim.c \
 				adg-util.c
 built_c_sources=		$(builddir)/adg-type-builtins.c
 EXTRA_DIST=			adg-type-builtins.c.template \
-				adg-type-builtins.h.template
+				adg-type-builtins.h.template \
+				adg.h.in
 if HAVE_GTK2
 AM_CFLAGS+=			@GTK2_CFLAGS@
 AM_LDFLAGS+=			@GTK2_LIBS@
