@@ -55,8 +55,6 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     model_matrix_changed    (AdgEntity      *entity,
-                                         AdgMatrix      *parent_matrix);
 static void     invalidate              (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
@@ -86,7 +84,6 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
  
-    entity_class->model_matrix_changed = model_matrix_changed;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -236,14 +233,14 @@ render(AdgEntity *entity, cairo_t *cr)
     entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
 
     if (data->label) {
-        AdgStyle *font_style;
+        AdgMatrix global;
 
-        font_style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
+        adg_entity_get_global_matrix(entity, &global);
 
         cairo_save(cr);
-        cairo_set_matrix(cr, adg_entity_get_paper_matrix(entity));
-        adg_style_apply(font_style, cr);
+        cairo_set_matrix(cr, &global);
 
+        adg_entity_apply(entity, ADG_SLOT_FONT_STYLE, cr);
         if (!data->glyphs)
             update_label_cache(toy_text, cr);
         update_origin_cache(toy_text, cr);
@@ -254,16 +251,6 @@ render(AdgEntity *entity, cairo_t *cr)
 
     if (entity_class->render != NULL)
         entity_class->render(entity, cr);
-}
-
-static void
-model_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_toy_text_parent_class;
-
-
-    if (entity_class->model_matrix_changed != NULL)
-        entity_class->model_matrix_changed(entity, parent_matrix);
 }
 
 static void
@@ -298,9 +285,8 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
     if (glyph == NULL || cnt <= 0)
         return FALSE;
 
+    x = y = 0;
     adg_entity_get_local_matrix((AdgEntity *) toy_text, &matrix);
-    cairo_matrix_transform_point(&matrix, &x, &y);
-    adg_entity_get_global_matrix((AdgEntity *) toy_text, &matrix);
     cairo_matrix_transform_point(&matrix, &x, &y);
 
     /* Check if the origin is still the same */
