@@ -63,8 +63,6 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     paper_matrix_changed    (AdgEntity      *entity,
-                                         AdgMatrix      *parent_matrix);
 static void     invalidate              (AdgEntity      *entity);
 static void     clear                   (AdgDim         *entity);
 static gchar *  default_quote           (AdgDim         *dim);
@@ -101,7 +99,6 @@ adg_dim_class_init(AdgDimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
  
-    entity_class->paper_matrix_changed = paper_matrix_changed;
     entity_class->invalidate = invalidate;
 
     klass->default_quote = default_quote;
@@ -648,7 +645,7 @@ adg_dim_get_level(AdgDim  *dim)
  *
  * Sets a new level for this dimension. The level is used to
  * stack the quotes using a spacing value from dim_style
- * (specified in paper space).
+ * (specified in global space).
  **/
 void
 adg_dim_set_level(AdgDim *dim, gdouble level)
@@ -877,7 +874,7 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     AdgDimPrivate *data;
     AdgEntity *entity;
     AdgDimStyle *dim_style;
-    const AdgMatrix *paper;
+    AdgMatrix global, local;
     cairo_matrix_t matrix;
 
     g_return_if_fail(ADG_IS_DIM(dim));
@@ -885,26 +882,27 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     data = dim->data;
     entity = (AdgEntity *) dim;
     dim_style = (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    paper = adg_entity_get_paper_matrix(entity);
+    adg_entity_get_global_matrix(entity, &global);
+    adg_entity_get_local_matrix(entity, &local);
 
     if (data->quote == NULL)
         adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
 
     cairo_save(cr);
 
-    cairo_set_matrix(cr, paper);
+    cairo_set_matrix(cr, &global);
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
-    cairo_set_matrix(cr, adg_entity_get_model_matrix(entity));
+    adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
 
+    cairo_set_matrix(cr, &local);
     cairo_translate(cr, data->org.x, data->org.y);
     cairo_get_matrix(cr, &matrix);
-    matrix.xx = paper->xx;
-    matrix.yy = paper->yy;
+    matrix.xx = global.xx;
+    matrix.yy = global.yy;
     cairo_set_matrix(cr, &matrix);
     cairo_rotate(cr, -data->angle);
 
     /* Rendering quote */
-    adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
     text_cache_render(&data->quote_cache, cr);
 
     /* Rendering tolerances */
@@ -927,17 +925,6 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
     cairo_restore(cr);
 }
 
-
-static void
-paper_matrix_changed(AdgEntity *entity, AdgMatrix *parent_matrix)
-{
-    AdgEntityClass *entity_class = (AdgEntityClass *) adg_dim_parent_class;
-
-    clear((AdgDim *) entity);
-
-    if (entity_class->paper_matrix_changed != NULL)
-        entity_class->paper_matrix_changed(entity, parent_matrix);
-}
 
 static void
 invalidate(AdgEntity *entity)
