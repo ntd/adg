@@ -277,7 +277,7 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
  * adg_arrow_style_get_size:
  * @arrow_style: an #AdgArrowStyle object
  *
- * Gets the size (in paper units) of the arrow (renderer dependent value).
+ * Gets the size (in global space) of the arrow (renderer dependent value).
  *
  * Return value: the size value
  **/
@@ -357,7 +357,7 @@ adg_arrow_style_set_angle(AdgArrowStyle *arrow_style, gdouble angle)
  * adg_arrow_style_get_margin:
  * @arrow_style: an #AdgArrowStyle object
  *
- * Gets the margin (in paper units) of this arrow (renderer dependent value).
+ * Gets the margin (in global space) of this arrow (renderer dependent value).
  * The margin is also used to trim the baseline of this amount.
  *
  * Return value: the margin value

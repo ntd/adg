@@ -242,7 +242,7 @@ adg_line_style_new(void)
  * adg_line_style_get_width:
  * @line_style: an #AdgLineStyle object
  *
- * Gets the line thickness value (in paper units).
+ * Gets the line thickness value (in global space).
  *
  * Return value: the requested width
  **/

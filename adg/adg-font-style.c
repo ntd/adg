@@ -411,7 +411,7 @@ adg_font_style_set_weight(AdgFontStyle *font_style,
  * adg_font_style_get_size:
  * @font_style: an #AdgFontStyle object
  *
- * Gets the size (in paper units) of @font_style.
+ * Gets the size (in global space) of @font_style.
  *
  * Return value: the size variant
  **/
@@ -432,7 +432,7 @@ adg_font_style_get_size(AdgFontStyle *font_style)
  * @font_style: an #AdgFontStyle object
  * @size: the new size
  *
- * Sets a new size (in paper units) on @font_style.
+ * Sets a new size (in global space) on @font_style.
  **/
 void
 adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)

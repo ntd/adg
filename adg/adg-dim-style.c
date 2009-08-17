@@ -159,14 +159,14 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_double("from-offset",
                                 P_("From Offset"),
-                                P_("Offset (in paper space) of the extension lines from the path to quote"),
+                                P_("Offset (in global space) of the extension lines from the path to quote"),
                                 0., G_MAXDOUBLE, 5., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FROM_OFFSET,
                                     param);
 
     param = g_param_spec_double("to-offset",
                                 P_("To Offset"),
-                                P_("How many extend (in paper space) the extension lines after hitting the baseline"),
+                                P_("How many extend (in global space) the extension lines after hitting the baseline"),
                                 0., G_MAXDOUBLE, 5., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TO_OFFSET, param);
 
@@ -186,21 +186,21 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
-                               P_("Used to specify a smooth displacement (in paper units) for the quote text by taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
+                               P_("Used to specify a smooth displacement (in global space) for the quote text by taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT,
                                     param);
 
     param = g_param_spec_boxed("tolerance-shift",
                                P_("Tolerance Shift"),
-                               P_("Used to specify a smooth displacement (in paper units) for the tolerance text by taking as reference the perfect compact position"),
+                               P_("Used to specify a smooth displacement (in global space) for the tolerance text by taking as reference the perfect compact position"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOLERANCE_SHIFT,
                                     param);
 
     param = g_param_spec_boxed("note-shift",
                                P_("Note Shift"),
-                               P_("Used to specify a smooth displacement (in paper units) for the note text by taking as reference the perfect compact position"),
+                               P_("Used to specify a smooth displacement (in global space) for the note text by taking as reference the perfect compact position"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NOTE_SHIFT, param);
 
@@ -588,7 +588,7 @@ adg_dim_style_set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
  * adg_dim_style_get_from_offset:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the distance (in paper space) the extension lines must keep from the
+ * Gets the distance (in global space) the extension lines must keep from the
  * sensed points.
  *
  * Return value: the requested distance
@@ -629,7 +629,7 @@ adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
  * adg_dim_style_get_to_offset:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets how much (in paper space) the extension lines must extend after
+ * Gets how much (in global space) the extension lines must extend after
  * crossing the baseline.
  *
  * Return value: the requested distance
@@ -711,7 +711,7 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * adg_dim_style_get_tolerance_spacing:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the distance (in paper space) between up and down tolerances.
+ * Gets the distance (in global space) between up and down tolerances.
  *
  * Return value: the requested spacing
  **/
