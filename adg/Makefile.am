@@ -1,13 +1,13 @@
-AM_CFLAGS=			@GTK2_CFLAGS@ \
-				-I$(top_srcdir)
-AM_LDFLAGS=			@GTK2_LIBS@
+AM_CFLAGS=			-I$(top_srcdir) \
+				-I$(top_builddir)
+AM_LDFLAGS=
 GLIB_MKENUMS=			`which glib-mkenums` \
 					--template $(srcdir)/$@.template \
 					$(srcdir)/adg-enums.h
+PATTERN=
 
 # file groups
-h_sources=			adg.h \
-				adg-adim.h \
+h_sources=			adg-adim.h \
 				adg-arrow-style.h \
 				adg-canvas.h \
 				adg-container.h \
@@ -29,9 +29,9 @@ h_sources=			adg.h \
 				adg-style.h \
 				adg-title-block.h \
 				adg-toy-text.h \
-				adg-util.h \
-				adg-widget.h
-built_h_sources=		$(builddir)/adg-type-builtins.h
+				adg-util.h
+built_h_sources=		$(builddir)/adg-type-builtins.h \
+				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
 				adg-arrow-style-private.h \
 				adg-canvas-private.h \
@@ -50,8 +50,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-stroke-private.h \
 				adg-style-private.h \
 				adg-title-block-private.h \
-				adg-toy-text-private.h \
-				adg-widget-private.h
+				adg-toy-text-private.h
 built_private_h_sources= 
 c_sources=			adg-adim.c \
 				adg-arrow-style.c \
@@ -76,15 +75,32 @@ c_sources=			adg-adim.c \
 				adg-style.c \
 				adg-title-block.c \
 				adg-toy-text.c \
-				adg-util.c \
-				adg-widget.c
+				adg-util.c
 built_c_sources=		$(builddir)/adg-type-builtins.c
 EXTRA_DIST=			adg-type-builtins.c.template \
 				adg-type-builtins.h.template
+if HAVE_GTK2
+AM_CFLAGS+=			@GTK2_CFLAGS@
+AM_LDFLAGS+=			@GTK2_LIBS@
+h_sources+=			adg-widget.h
+private_h_sources+=		adg-widget-private.h
+c_sources+=			adg-widget.c
+PATTERN+=			/\/\* if GTK2 \*\//d;/\/\* endif GTK2 \*\//d;
+
+else
+
+AM_CFLAGS+=			@GOBJECT2_CFLAGS@ \
+				@CAIRO_CFLAGS@
+AM_LDFLAGS+=			@GOBJECT2_LIBS@ \
+				@GTK2_LIBS@
+PATTERN+=			/\/\* if GTK2 \*\//,/\/\* endif GTK2 \*\//d;
+
+endif
+
 
 # targets
 BUILT_SOURCES=			$(built_h_sources)
-DISTCLEANFILES=			$(built_h_sources) \
+CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
 
@@ -109,3 +125,10 @@ adg-type-builtins.c: adg-type-builtins.c.template adg-enums.h
 
 adg-type-builtins.h: adg-type-builtins.h.template adg-enums.h
 	$(GLIB_MKENUMS) > $@
+
+# Regenerate the adg.h header file: forcing a dependency on config.log
+# is an easy way to invalidate this file whenever a ./configure is recall
+$(builddir)/adg.h: adg.h.in $(top_builddir)/config.log
+	rm -f $@.tmp
+	sed -e '$(PATTERN)' $< > $@.tmp
+	mv $@.tmp $@
