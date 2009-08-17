@@ -59,16 +59,10 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             dispose                 (GObject        *object);
 static GSList *         get_children            (AdgContainer   *container);
-static gboolean         add                     (AdgContainer   *container,
+static void             add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static void             real_add                (AdgContainer   *container,
-                                                 AdgEntity      *entity,
-                                                 gpointer        user_data);
-static gboolean         remove                  (AdgContainer   *container,
+static void             remove                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static void             real_remove             (AdgContainer   *container,
-                                                 AdgEntity      *entity,
-                                                 gpointer        user_data);
 static void             invalidate              (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -85,8 +79,6 @@ adg_container_class_init(AdgContainerClass *klass)
     GObjectClass *gobject_class;
     AdgEntityClass *entity_class;
     GParamSpec *param;
-    GClosure *closure;
-    GType param_types[1];
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
@@ -114,14 +106,16 @@ adg_container_class_init(AdgContainerClass *klass)
      * @container: an #AdgContainer
      * @entity: the #AdgEntity to add
      *
-     * Adds @entity to @container.
+     * Adds @entity to @container. @entity must not be inside another
+     * container or the operation will fail.
      **/
-    closure = g_cclosure_new(G_CALLBACK(real_add), (gpointer)0xdeadbeaf, NULL);
-    param_types[0] = G_TYPE_OBJECT;
-    signals[ADD] = g_signal_newv("add", ADG_TYPE_CONTAINER,
-                                 G_SIGNAL_RUN_FIRST, closure, NULL, NULL,
-                                 g_cclosure_marshal_VOID__OBJECT,
-                                 G_TYPE_NONE, 1, param_types);
+    signals[ADD] = g_signal_new("add",
+                                G_OBJECT_CLASS_TYPE(gobject_class),
+                                G_SIGNAL_RUN_FIRST,
+                                G_STRUCT_OFFSET(AdgContainerClass, add),
+                                NULL, NULL,
+                                g_cclosure_marshal_VOID__OBJECT,
+                                G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgContainer::remove:
@@ -130,12 +124,13 @@ adg_container_class_init(AdgContainerClass *klass)
      *
      * Removes @entity from @container.
      **/
-    closure = g_cclosure_new(G_CALLBACK(real_remove), (gpointer)0xdeadbeaf, NULL);
-    param_types[0] = G_TYPE_OBJECT;
-    signals[REMOVE] = g_signal_newv("remove", ADG_TYPE_CONTAINER,
-                                    G_SIGNAL_RUN_FIRST, closure, NULL, NULL,
-                                    g_cclosure_marshal_VOID__OBJECT,
-                                    G_TYPE_NONE, 1, param_types);
+    signals[REMOVE] = g_signal_new("remove",
+                                   G_OBJECT_CLASS_TYPE(gobject_class),
+                                   G_SIGNAL_RUN_FIRST,
+                                   G_STRUCT_OFFSET(AdgContainerClass, remove),
+                                   NULL, NULL,
+                                   g_cclosure_marshal_VOID__OBJECT,
+                                   G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 }
 
 static void
@@ -190,28 +185,16 @@ get_children(AdgContainer *container)
     return g_slist_copy(data->children);
 }
 
-static gboolean
+static void
 add(AdgContainer *container, AdgEntity *entity)
 {
-    AdgContainerPrivate *data = container->data;
-
-    data->children = g_slist_append(data->children, entity);
-
-    return TRUE;
-}
-
-static void
-real_add(AdgContainer *container, AdgEntity *entity, gpointer user_data)
-{
     AdgContainer *old_parent;
-
-    g_assert(user_data == (gpointer) 0xdeadbeaf);
+    AdgContainerPrivate *data;
 
     old_parent = adg_entity_get_parent(entity);
-
     if (old_parent != NULL) {
-        g_warning("Attempting to add an object with type %s to a container "
-                  "of type %s, but the object is already inside a container "
+        g_warning("Attempting to add an entity with type %s to a container "
+                  "of type %s, but the entity is already inside a container "
                   "of type %s.",
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(container)),
@@ -219,13 +202,12 @@ real_add(AdgContainer *container, AdgEntity *entity, gpointer user_data)
         return;
     }
 
-    if (ADG_CONTAINER_GET_CLASS(container)->add(container, entity))
-        adg_entity_set_parent(entity, container);
-    else
-        g_signal_stop_emission(container, signals[ADD], 0);
+    data = container->data;
+    data->children = g_slist_append(data->children, entity);
+    adg_entity_set_parent(entity, container);
 }
 
-static gboolean
+static void
 remove(AdgContainer *container, AdgEntity *entity)
 {
     AdgContainerPrivate *data;
@@ -234,23 +216,16 @@ remove(AdgContainer *container, AdgEntity *entity)
     data = container->data;
     node = g_slist_find(data->children, entity);
 
-    if (!node)
-        return FALSE;
+    if (node == NULL) {
+        g_warning("Attempting to remove an entity with type %s from a "
+                  "container of type %s, but the entity is not present.",
+                  g_type_name(G_OBJECT_TYPE(entity)),
+                  g_type_name(G_OBJECT_TYPE(container)));
+        return;
+    }
 
     data->children = g_slist_delete_link(data->children, node);
-
-    return TRUE;
-}
-
-static void
-real_remove(AdgContainer *container, AdgEntity *entity, gpointer user_data)
-{
-    g_assert(user_data == (gpointer) 0xdeadbeaf);
-
-    if (ADG_CONTAINER_GET_CLASS(container)->remove(container, entity))
-        adg_entity_unparent(entity);
-    else
-        g_signal_stop_emission(container, signals[REMOVE], 0);
+    adg_entity_unparent(entity);
 }
 
 

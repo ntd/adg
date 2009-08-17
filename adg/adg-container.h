@@ -53,9 +53,9 @@ struct _AdgContainerClass {
     /*< public >*/
     /* Virtual Table */
     GSList *    (*get_children)                 (AdgContainer   *container);
-    gboolean    (*add)                          (AdgContainer   *container,
+    void        (*add)                          (AdgContainer   *container,
                                                  AdgEntity      *entity);
-    gboolean    (*remove)                       (AdgContainer   *container,
+    void        (*remove)                       (AdgContainer   *container,
                                                  AdgEntity      *entity);
 };
 
