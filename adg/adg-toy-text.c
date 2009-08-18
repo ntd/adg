@@ -39,6 +39,9 @@
 #include "adg-font-style.h"
 #include "adg-intl.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_toy_text_parent_class)
+
 
 enum {
     PROP_0,
@@ -58,6 +61,8 @@ static void     set_property            (GObject        *object,
 static gboolean invalidate              (AdgEntity      *entity);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
+static gboolean set_label               (AdgToyText     *toy_text,
+                                         const gchar    *label);
 static gboolean update_origin_cache     (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static gboolean update_label_cache      (AdgToyText     *toy_text,
@@ -112,17 +117,15 @@ finalize(GObject *object)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
-    GObjectClass *object_class;
 
     toy_text = (AdgToyText *) object;
     data = toy_text->data;
-    object_class = (GObjectClass *) adg_toy_text_parent_class;
 
     g_free(data->label);
     clear_label_cache(toy_text);
 
-    if (object_class->finalize != NULL)
-        object_class->finalize(object);
+    if (PARENT_OBJECT_CLASS->finalize != NULL)
+        PARENT_OBJECT_CLASS->finalize(object);
 }
 
 static void
@@ -144,17 +147,11 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) object;
-    data = toy_text->data;
+    AdgToyText *toy_text = (AdgToyText *) object;
 
     switch (prop_id) {
     case PROP_LABEL:
-        g_free(data->label);
-        data->label = g_value_dup_string(value);
-        clear_label_cache(toy_text);
+        set_label(toy_text, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -203,23 +200,29 @@ adg_toy_text_get_label(AdgToyText *toy_text)
  * @toy_text: an #AdgToyText
  * @label: the label text
  *
- * Explicitely sets the text to use as label.
+ * Sets the a new label for @toy_text. @label can be also %NULL,
+ * in which case will be treated as an empty string.
  **/
 void
 adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 {
-    AdgToyTextPrivate *data;
+    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
 
-    g_return_if_fail(ADG_IS_TOY_TEXT(label));
-
-    data = toy_text->data;
-    g_free(data->label);
-    data->label = g_strdup(label);
-
-    g_object_notify((GObject *) toy_text, "label");
-    clear_label_cache(toy_text);
+    if (set_label(toy_text, label))
+        g_object_notify((GObject *) toy_text, "label");
 }
 
+
+static gboolean
+invalidate(AdgEntity *entity)
+{
+    clear_label_cache((AdgToyText *) entity);
+
+    if (PARENT_ENTITY_CLASS->invalidate != NULL)
+        return PARENT_ENTITY_CLASS->invalidate(entity);
+
+    return TRUE;
+}
 
 static gboolean
 render(AdgEntity *entity, cairo_t *cr)
@@ -230,10 +233,10 @@ render(AdgEntity *entity, cairo_t *cr)
     toy_text = (AdgToyText *) entity;
     data = toy_text->data;
 
-    if (data->label) {
+    if (data->label != NULL && data->label[0] != '\0') {
         adg_entity_apply(entity, ADG_SLOT_FONT_STYLE, cr);
 
-        if (!data->glyphs)
+        if (data->glyphs == NULL)
             update_label_cache(toy_text, cr);
         update_origin_cache(toy_text, cr);
 
@@ -243,11 +246,21 @@ render(AdgEntity *entity, cairo_t *cr)
     return TRUE;
 }
 
+
 static gboolean
-invalidate(AdgEntity *entity)
+set_label(AdgToyText *toy_text, const gchar *label)
 {
-    clear_label_cache((AdgToyText *) entity);
-    return ((AdgEntityClass *) adg_toy_text_parent_class)->invalidate(entity);
+    AdgToyTextPrivate *data = toy_text->data;
+
+    /* Check if the new label differs from the current label */
+    if (adg_strcmp(label, data->label) == 0)
+        return FALSE;
+
+    g_free(data->label);
+    data->label = g_strdup(label);
+
+    clear_label_cache(toy_text);
+    return TRUE;
 }
 
 static gboolean
@@ -315,7 +328,7 @@ clear_label_cache(AdgToyText *toy_text)
 {
     AdgToyTextPrivate *data = toy_text->data;
 
-    if (data->glyphs) {
+    if (data->glyphs != NULL) {
         cairo_glyph_free(data->glyphs);
         data->glyphs = NULL;
     }
