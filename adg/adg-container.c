@@ -38,6 +38,8 @@
 #include "adg-container-private.h"
 #include "adg-intl.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
+
 
 enum {
     PROP_0,
@@ -51,11 +53,11 @@ enum {
 };
 
 
+static void             dispose                 (GObject        *object);
 static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             dispose                 (GObject        *object);
 static GSList *         get_children            (AdgContainer   *container);
 static void             add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
@@ -68,7 +70,7 @@ static gboolean         render                  (AdgEntity      *entity,
 static guint signals[LAST_SIGNAL] = { 0 };
 
 
-G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY);
 
 
 static void
@@ -144,6 +146,26 @@ adg_container_init(AdgContainer *container)
 }
 
 static void
+dispose(GObject *object)
+{
+    AdgContainer *container;
+    AdgContainerPrivate *data;
+
+    container = (AdgContainer *) object;
+    data = container->data;
+
+    /* Remove all the children from the container: these will emit
+     * a "remove" signal for every child and will drop all the
+     * references from the children to this container (and, obviously,
+     * from the container to the children). */
+    while (data->children != NULL)
+        adg_container_remove(container, (AdgEntity *) data->children->data);
+
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
+}
+
+static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -162,25 +184,13 @@ set_property(GObject *object,
     }
 }
 
-static void
-dispose(GObject *object)
-{
-    GObjectClass *object_class = (GObjectClass *) adg_container_parent_class;
-
-    adg_container_foreach((AdgContainer *) object,
-                          G_CALLBACK(adg_entity_unparent), NULL);
-
-    if (object_class->dispose != NULL)
-        object_class->dispose(object);
-}
-
 
 /**
  * adg_container_new:
  *
  * Creates a new container entity.
  *
- * Return value: the newly created entity
+ * Returns: the newly created entity
  **/
 AdgEntity *
 adg_container_new(void)
@@ -194,11 +204,13 @@ adg_container_new(void)
  * @container: an #AdgContainer
  * @entity: an #AdgEntity
  *
- * Emits a #AdgContainer::add signal on @container passing
- * @entity as argument.
+ * Emits a #AdgContainer::add signal on @container passing @entity
+ * as argument. @entity must be added to only one container at a time,
+ * you can't place the same entity inside two different containers.
  *
- * @entity may be added to only one container at a time; you can't
- * place the same entity inside two different containers.
+ * Once @entity has been added, the floating reference will be removed
+ * and @container will own a reference to @entity. This means the only
+ * proper way to destroy @entity is to call adg_container_remove().
  **/
 void
 adg_container_add(AdgContainer *container, AdgEntity *entity)
@@ -217,16 +229,22 @@ adg_container_add(AdgContainer *container, AdgEntity *entity)
  * Emits a #AdgContainer::remove signal on @container passing
  * @entity as argument. @entity must be inside @container.
  *
- * Note that @container will own a reference to @entity
- * and that this may be the last reference held; so removing an
- * entity from its container can destroy it.
+ * Note that @container will own a reference to @entity and it
+ * may be the last reference held: this means removing an entity
+ * from its container can destroy it.
  *
  * If you want to use @entity again, you need to add a reference
  * to it, using g_object_ref(), before removing it from @container.
+ * The following typical example shows you how to properly move
+ * <varname>entity</varname> from <varname>container1</varname>
+ * to <varname>container2</varname>:
  *
- * If you don't want to use @entity again, it's usually more
- * efficient to simply destroy it directly using g_object_unref()
- * since this will remove it from the container.
+ * <informalexample><programlisting>
+ * g_object_ref(entity);
+ * adg_container_remove(container1, entity);
+ * adg_container_add(container2, entity)
+ * g_object_unref(entity);
+ * </programlisting></informalexample>
  **/
 void
 adg_container_remove(AdgContainer *container, AdgEntity *entity)
@@ -379,13 +397,14 @@ get_children(AdgContainer *container)
 {
     AdgContainerPrivate *data = container->data;
 
+    /* The NULL case is yet managed by GLib */
     return g_slist_copy(data->children);
 }
 
 static void
 add(AdgContainer *container, AdgEntity *entity)
 {
-    AdgContainer *old_parent;
+    AdgEntity *old_parent;
     AdgContainerPrivate *data;
 
     old_parent = adg_entity_get_parent(entity);
@@ -401,7 +420,9 @@ add(AdgContainer *container, AdgEntity *entity)
 
     data = container->data;
     data->children = g_slist_append(data->children, entity);
-    adg_entity_set_parent(entity, container);
+
+    g_object_ref_sink(entity);
+    adg_entity_set_parent(entity, (AdgEntity *) container);
 }
 
 static void
@@ -422,7 +443,8 @@ remove(AdgContainer *container, AdgEntity *entity)
     }
 
     data->children = g_slist_delete_link(data->children, node);
-    adg_entity_unparent(entity);
+    adg_entity_set_parent(entity, NULL);
+    g_object_unref(entity);
 }
 
 

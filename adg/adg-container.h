@@ -34,11 +34,8 @@ G_BEGIN_DECLS
 #define ADG_CONTAINER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_CONTAINER, AdgContainerClass))
 
 
-#if 0
-/* AdgContainer declared in adg-entity.h */
-typedef struct _AdgContainer AdgContainer;
-#endif
-typedef struct _AdgContainerClass   AdgContainerClass;
+typedef struct _AdgContainer       AdgContainer;
+typedef struct _AdgContainerClass  AdgContainerClass;
 
 struct _AdgContainer {
     /*< private >*/
