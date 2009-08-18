@@ -60,3 +60,41 @@
  * };
  * </programlisting></informalexample>
  **/
+
+
+#include <string.h>
+#include <limits.h>
+
+
+/**
+ * adg_strcmp:
+ * @s1: first string to compare
+ * @s2: second string to compare
+ *
+ * A strcmp() function guarded against %NULL values. It works in the
+ * same way exept for the following situations:
+ *
+ * <itemizedlist>
+ * <listitem><code>s1 == NULL && s2 == NULL</code>: returns %0;</listitem>
+ * <listitem><code>s1 == NULL</code>: returns %INT_MIN;</listitem>
+ * <listitem><code>s2 == NULL</code>: returns %INT_MAX.</listitem>
+ * </itemizedlist>
+ *
+ * Returns: %0 if @s1 matches @s2, a value less than %0 if @s1 is less
+ *          than @s2 or greather than %0 if @s1 is greather than @s2
+ **/
+int
+adg_strcmp(const char *s1, const char *s2)
+{
+    /* This will also catch the NULL == NULL case */
+    if (s1 == s2)
+        return 0;
+
+    if (s1 == NULL)
+        return INT_MIN;
+
+    if (s2 == NULL)
+        return INT_MAX;
+
+    return strcmp(s1, s2);
+}

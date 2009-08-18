@@ -44,4 +44,13 @@
 
 #define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
 
+
+G_BEGIN_DECLS
+
+int             adg_strcmp              (const char     *s1,
+                                         const gchar    *s2);
+
+G_END_DECLS
+
+
 #endif /* __ADG_UTIL_H__ */
