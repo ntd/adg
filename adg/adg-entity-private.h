@@ -32,7 +32,7 @@ enum _AdgEntityFlags {
 };
 
 struct _AdgEntityPrivate {
-    AdgContainer        *parent;
+    AdgEntity           *parent;
     AdgEntityFlags       flags;
     AdgContext          *context;
     AdgMatrix            global_map;

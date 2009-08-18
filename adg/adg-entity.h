@@ -24,10 +24,6 @@
 #include <adg/adg-util.h>
 #include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
-#include <adg/adg-line-style.h>
-#include <adg/adg-font-style.h>
-#include <adg/adg-arrow-style.h>
-#include <adg/adg-dim-style.h>
 
 
 G_BEGIN_DECLS
@@ -44,7 +40,6 @@ typedef struct _AdgEntity        AdgEntity;
 typedef struct _AdgEntityClass   AdgEntityClass;
 
 ADG_FORWARD_DECL(AdgCanvas);
-ADG_FORWARD_DECL(AdgContainer);
 
 
 struct _AdgEntity {
@@ -60,34 +55,24 @@ struct _AdgEntityClass {
     /*< public >*/
     /* Signals */
     void                (*parent_set)           (AdgEntity      *entity,
-                                                 AdgContainer   *old_parent);
+                                                 AdgEntity      *old_parent);
+    void                (*context_set)          (AdgEntity      *entity,
+                                                 AdgContext     *old_context);
 
     /* Virtual Table */
-    AdgContainer *      (*get_parent)           (AdgEntity      *entity);
-    void                (*set_parent)           (AdgEntity      *entity,
-                                                 AdgContainer   *parent);
-    AdgContext *        (*get_context)          (AdgEntity      *entity);
     gboolean            (*invalidate)           (AdgEntity      *entity);
     gboolean            (*render)               (AdgEntity      *entity,
                                                  cairo_t        *cr);
 };
 
 
-#define ADG_CALLBACK(f)             ((AdgCallback) (f))
-
-
-typedef void (*AdgCallback)(AdgEntity *entity, cairo_t *cr, gpointer user_data);
-
-
 GType           adg_entity_get_type             (void) G_GNUC_CONST;
 AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 
-AdgContainer *  adg_entity_get_parent           (AdgEntity       *entity);
+AdgEntity *     adg_entity_get_parent           (AdgEntity       *entity);
 void            adg_entity_set_parent           (AdgEntity       *entity,
-                                                 AdgContainer    *parent);
-void		adg_entity_unparent		(AdgEntity       *entity);
-void            adg_entity_reparent             (AdgEntity       *entity,
-                                                 AdgContainer    *parent);
+                                                 AdgEntity       *parent);
+AdgContext *    adg_entity_context              (AdgEntity       *entity);
 AdgContext *    adg_entity_get_context          (AdgEntity       *entity);
 void            adg_entity_set_context          (AdgEntity       *entity,
                                                  AdgContext      *context);

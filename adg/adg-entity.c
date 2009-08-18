@@ -22,8 +22,12 @@
  * SECTION:adg-entity
  * @short_description: The base class for renderable objects
  *
- * This abstract class provides a base interface for all renderable objects
- * (all the objects that can be printed or viewed).
+ * This abstract class provides the base for all renderable objects.
+ *
+ * To provide a proper #AdgEntity derived type, you must at least
+ * implement the render() virtual method. Also, if you are using
+ * some sort of caching, you must implement invalidate() to clear
+ * this cache.
  **/
 
 /**
@@ -33,13 +37,23 @@
  * Use its public methods instead.
  **/
 
+/**
+ * AdgEntityClass:
+ * @parent_set: called after the parent has changed
+ * @context_set: called after the context has changed
+ * @invalidate: invalidating callback, used to clear the cache
+ * @render: rendering callback, it must be implemented
+ *
+ * Any entity (if not abstract) must implement at least the @render method.
+ **/
+
 
 #include "adg-entity.h"
 #include "adg-entity-private.h"
 #include "adg-canvas.h"
-#include "adg-context.h"
-#include "adg-util.h"
 #include "adg-intl.h"
+
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 
 
 enum {
@@ -52,12 +66,14 @@ enum {
 
 enum {
     PARENT_SET,
+    CONTEXT_SET,
     INVALIDATE,
     RENDER,
     LAST_SIGNAL
 };
 
 
+static void             dispose                 (GObject         *object);
 static void             get_property            (GObject         *object,
                                                  guint            prop_id,
                                                  GValue          *value,
@@ -66,14 +82,9 @@ static void             set_property            (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
-static void             dispose                 (GObject         *object);
-static AdgContainer *   get_parent              (AdgEntity       *entity);
-static void             set_parent              (AdgEntity       *entity,
-                                                 AdgContainer    *parent);
-static void             parent_set              (AdgEntity       *entity,
-                                                 AdgContainer    *old_parent);
-static AdgContext *     get_context             (AdgEntity       *entity);
-static void             set_context             (AdgEntity       *entity,
+static gboolean         set_parent              (AdgEntity       *entity,
+                                                 AdgEntity       *parent);
+static gboolean         set_context             (AdgEntity       *entity,
                                                  AdgContext      *context);
 static void             set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
@@ -107,17 +118,15 @@ adg_entity_class_init(AdgEntityClass *klass)
     gobject_class->set_property = set_property;
     gobject_class->dispose = dispose;
 
-    klass->get_parent = get_parent;
-    klass->set_parent = set_parent;
-    klass->parent_set = parent_set;
-    klass->get_context = get_context;
+    klass->parent_set = NULL;
+    klass->context_set = NULL;
     klass->invalidate = NULL;
     klass->render = NULL;
 
     param = g_param_spec_object("parent",
-                                P_("Parent Container"),
-                                P_("The parent AdgContainer of this entity or NULL if this is a top-level entity"),
-                                ADG_TYPE_CONTAINER, G_PARAM_READWRITE);
+                                P_("Parent Entity"),
+                                P_("The parent entity of this entity or NULL if this is a top-level entity"),
+                                ADG_TYPE_ENTITY, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_PARENT, param);
 
     param = g_param_spec_object("context",
@@ -141,9 +150,12 @@ adg_entity_class_init(AdgEntityClass *klass)
     /**
      * AdgEntity::parent-set:
      * @entity: an #AdgEntity
-     * @parent: the #AdgContainer parent of @entity
+     * @old_parent: the old parent
      *
-     * Emitted after the parent container has changed.
+     * Emitted after the parent entity has changed. The new parent
+     * can be inspected using adg_entity_get_parent().
+     *
+     * It is allowed for both old and new parent to be %NULL.
      **/
     signals[PARENT_SET] = g_signal_new("parent-set",
                                        G_OBJECT_CLASS_TYPE(gobject_class),
@@ -151,7 +163,26 @@ adg_entity_class_init(AdgEntityClass *klass)
                                        G_STRUCT_OFFSET(AdgEntityClass, parent_set),
                                        NULL, NULL,
                                        g_cclosure_marshal_VOID__OBJECT,
-                                       G_TYPE_NONE, 1, ADG_TYPE_CONTAINER);
+                                       G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+
+    /**
+     * AdgEntity::context-set:
+     * @entity: an #AdgEntity
+     * @old_context: the old context
+     *
+     * Emitted after the context has changed.
+     * Emitted after the context has changed. The new context can be
+     * inspected using adg_entity_get_context().
+     *
+     * It is allowed for both old and new context to be %NULL.
+     **/
+    signals[CONTEXT_SET] = g_signal_new("context-set",
+                                        G_OBJECT_CLASS_TYPE(gobject_class),
+                                        G_SIGNAL_RUN_FIRST,
+                                        G_STRUCT_OFFSET(AdgEntityClass, context_set),
+                                        NULL, NULL,
+                                        g_cclosure_marshal_VOID__OBJECT,
+                                        G_TYPE_NONE, 1, ADG_TYPE_CONTEXT);
 
     /**
      * AdgEntity::invalidate:
@@ -203,6 +234,26 @@ adg_entity_init(AdgEntity *entity)
 }
 
 static void
+dispose(GObject *object)
+{
+    AdgEntity *entity;
+    AdgEntity *parent;
+
+    entity = (AdgEntity *) object;
+    parent = adg_entity_get_parent(entity);
+
+    /* These calls will emit a "notify" signal both for parent and
+     * context if they are not NULL. Consequentially, the references
+     * to the old parent and context are dropped. */
+    adg_entity_set_parent(entity, NULL);
+    adg_entity_set_context(entity, NULL);
+
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
+}
+
+
+static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgEntity *entity;
@@ -213,10 +264,10 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_PARENT:
-        g_value_set_object(value, get_parent(entity));
+        g_value_set_object(value, data->parent);
         break;
     case PROP_CONTEXT:
-        g_value_set_object(value, get_context(entity));
+        g_value_set_object(value, adg_entity_get_context(entity));
         break;
     case PROP_GLOBAL_MAP:
         g_value_set_boxed(value, &data->global_map);
@@ -255,125 +306,83 @@ set_property(GObject *object,
     }
 }
 
-static void
-dispose(GObject *object)
-{
-    AdgEntity *entity;
-    AdgEntityPrivate *data;
-    GObjectClass *object_class;
-
-    entity = (AdgEntity *) object;
-    data = entity->data;
-    object_class = (GObjectClass *) adg_entity_parent_class;
-
-    if (data->parent)
-        adg_container_remove(data->parent, entity);
-
-    if (object_class->dispose != NULL)
-        object_class->dispose(object);
-}
-
 
 /**
  * adg_entity_get_parent:
  * @entity: an #AdgEntity
  *
- * Gets the container parent of @entity.
+ * Gets the parent of @entity.
  *
- * This function is only useful in entity implementations.
- *
- * Return value: the container object or %NULL if @entity is not contained
+ * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
  **/
-AdgContainer *
+AdgEntity *
 adg_entity_get_parent(AdgEntity *entity)
 {
+    AdgEntityPrivate *data;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    return ADG_ENTITY_GET_CLASS(entity)->get_parent(entity);
+    data = entity->data;
+
+    return data->parent;
 }
 
 /**
  * adg_entity_set_parent:
  * @entity: an #AdgEntity
- * @parent: an #AdgContainer
+ * @parent: the parent entity
  *
- * Sets a new container of @entity.
+ * Sets a new parent on @entity.
  *
  * This function is only useful in entity implementations.
  **/
 void
-adg_entity_set_parent(AdgEntity *entity, AdgContainer *parent)
+adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    ADG_ENTITY_GET_CLASS(entity)->set_parent(entity, parent);
-    g_object_notify((GObject *) entity, "parent");
+    if (set_parent(entity, parent))
+        g_object_notify((GObject *) entity, "parent");
 }
 
 /**
- * adg_entity_unparent:
- * @entity: an #AdgEntity
+ * adg_entity_context:
+ * @entity: an #AdgEntity instance
  *
- * Removes the current parent of @entity, properly handling
- * the references between them.
+ * Gets the context to be used for @entity. If no context was
+ * explicitely set, it returns the parent context.
  *
- * If @entity has no parent, this function simply returns.
+ * Returns: the requested context or %NULL on errors or if @entity
+ *          does not have any parent with a context defined
  **/
-void
-adg_entity_unparent(AdgEntity *entity)
+AdgContext *
+adg_entity_context(AdgEntity *entity)
 {
-    AdgContainer *old_parent;
+    AdgContext *context;
 
-    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    old_parent = ADG_ENTITY_GET_CLASS(entity)->get_parent(entity);
+    context = adg_entity_get_context(entity);
 
-    if (old_parent == NULL)
-        return;
+    if (context == NULL) {
+        AdgEntity *parent = adg_entity_get_parent(entity);
 
-    ADG_ENTITY_GET_CLASS(entity)->set_parent(entity, NULL);
-    g_signal_emit(entity, signals[PARENT_SET], 0, old_parent);
+        if (parent != NULL)
+            context = adg_entity_get_context(parent);
+    }
 
-    g_object_unref(entity);
-}
-
-/**
- * adg_entity_reparent:
- * @entity: an #AdgEntity
- * @parent: the new container
- *
- * Moves @entity from the old parent to @parent, handling reference
- * count issues to avoid destroying the object.
- **/
-void
-adg_entity_reparent(AdgEntity *entity, AdgContainer *parent)
-{
-    AdgContainer *old_parent;
-
-    g_return_if_fail(ADG_IS_CONTAINER(parent));
-
-    old_parent = adg_entity_get_parent(entity);
-
-    /* Reparenting on the same container: do nothing */
-    if (old_parent == parent)
-        return;
-
-    g_return_if_fail(ADG_IS_CONTAINER(old_parent));
-
-    g_object_ref(entity);
-    adg_container_remove(old_parent, entity);
-    adg_container_add(parent, entity);
-    g_object_unref(entity);
+    return context;
 }
 
 /**
  * adg_entity_get_context:
  * @entity: an #AdgEntity instance
  *
- * Gets the context associated to @entity.
- * If no context was explicitely set, get the parent context.
+ * Gets the context associated to @entity. This is an accessor method:
+ * if you need to get the context for rendering, use adg_entity_context()
+ * instead.
  *
- * Return value: the requested context or %NULL on errors
+ * Returns: the context binded to @entity
  **/
 AdgContext *
 adg_entity_get_context(AdgEntity *entity)
@@ -384,13 +393,7 @@ adg_entity_get_context(AdgEntity *entity)
 
     data = entity->data;
 
-    if (data->context)
-        return data->context;
-
-    if (data->parent)
-        return adg_entity_get_context((AdgEntity *) data->parent);
-
-    return NULL;
+    return data->context;
 }
 
 /**
@@ -407,8 +410,8 @@ adg_entity_set_context(AdgEntity *entity, AdgContext *context)
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(ADG_IS_CONTEXT(context));
 
-    set_context(entity, context);
-    g_object_notify((GObject *) entity, "context");
+    if (set_context(entity, context))
+        g_object_notify((GObject *) entity, "context");
 }
 
 /**
@@ -418,8 +421,8 @@ adg_entity_set_context(AdgEntity *entity, AdgContext *context)
  * Walks on the @entity hierarchy and gets the first parent of @entity that is
  * of #AdgCanvas derived type.
  *
- * Return value: the requested object or %NULL if there is no #AdgCanvas in
- *               the parent hierarchy.
+ * Returns: the requested canvas or %NULL on errors or if there is
+ *          no #AdgCanvas in the @entity hierarchy
  **/
 AdgCanvas *
 adg_entity_get_canvas(AdgEntity *entity)
@@ -440,7 +443,7 @@ adg_entity_get_canvas(AdgEntity *entity)
  * adg_entity_get_rendered:
  * @entity: an #AdgEntity object
  *
- * This function is only for use in entity implementations.
+ * This function is only useful in entity implementations.
  * Gets the rendered flag of @entity.
  *
  * Returns: the current rendered state
@@ -462,7 +465,7 @@ adg_entity_get_rendered(AdgEntity *entity)
  * @entity: an #AdgEntity object
  * @rendered: new state for the rendered flag
  *
- * This function is only for use in entity implementations.
+ * This function is only useful in entity implementations.
  * Sets the rendered flag of @entity to @rendered.
  **/
 void
@@ -614,10 +617,11 @@ adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
  * @style_slot: the slot of the style to get
  *
  * Gets a style from this entity. If the entity has no context associated
- * or the style in undefined within this context, gets the style from its
- * parent container.
+ * or the style is undefined within this context, gets the style from its
+ * parent entity.
  *
- * Return value: the requested style or %NULL on errors
+ * Returns: the requested style or %NULL on errors or if there is no
+ *          context with this style defined in the @entity hierarchy
  **/
 AdgStyle *
 adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
@@ -689,51 +693,54 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
 }
 
 
-static AdgContainer *
-get_parent(AdgEntity *entity)
+static gboolean
+set_parent(AdgEntity *entity, AdgEntity *parent)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+    AdgEntity *old_parent;
 
-    return data->parent;
-}
+    data = entity->data;
+    old_parent = data->parent;
 
-static void
-set_parent(AdgEntity *entity, AdgContainer *parent)
-{
-    AdgEntityPrivate *data = entity->data;
+    /* Check if parent has changed */
+    if (parent == old_parent)
+        return FALSE;
+
+    if (parent != NULL)
+        g_object_ref(parent);
 
     data->parent = parent;
+    g_signal_emit(entity, signals[PARENT_SET], 0, old_parent);
+
+    if (old_parent != NULL)
+        g_object_unref(old_parent);
+
+    return TRUE;
 }
 
-static void
-parent_set(AdgEntity *entity, AdgContainer *old_parent)
-{
-}
-
-static AdgContext *
-get_context(AdgEntity *entity)
-{
-    AdgEntityPrivate *data = entity->data;
-    AdgEntity *parent;
-
-    if (data->context)
-        return data->context;
-
-    parent = (AdgEntity *) data->parent;
-
-    return parent ? ADG_ENTITY_GET_CLASS(parent)->get_context(parent) : NULL;
-}
-
-static void
+static gboolean
 set_context(AdgEntity *entity, AdgContext *context)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+    AdgContext *old_context;
 
-    if (data->context)
-        g_object_unref((GObject *) data->context);
+    data = entity->data;
+    old_context = data->context;
 
-    g_object_ref((GObject *) context);
+    /* Check if context has changed */
+    if (context == old_context)
+        return FALSE;
+
+    if (context != NULL)
+        g_object_ref(context);
+
     data->context = context;
+    g_signal_emit(entity, signals[CONTEXT_SET], 0, old_context);
+
+    if (old_context != NULL)
+        g_object_unref(old_context);
+
+    return TRUE;
 }
 
 static void
