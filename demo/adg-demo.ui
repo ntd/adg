@@ -105,6 +105,21 @@
                 <property name="tab_fill">False</property>
               </packing>
             </child>
+            <child>
+              <object class="AdgWidget" id="areaMapping">
+                <property name="visible">True</property>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="lblMapping">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="label" translatable="yes">Mapping</property>
+              </object>
+              <packing>
+                <property name="tab_fill">False</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="position">1</property>

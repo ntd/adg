@@ -6,6 +6,7 @@
 
 static AdgCanvas *      sample_canvas           (void);
 static AdgCanvas *      operations_canvas       (void);
+static AdgCanvas *      mapping_canvas          (void);
 static void             to_pdf                  (AdgWidget      *widget,
                                                  GtkWidget      *caller);
 static void             to_png                  (AdgWidget      *widget,
@@ -20,7 +21,10 @@ main(gint argc, gchar **argv)
     gchar *path;
     GtkBuilder *builder;
     GError *error;
-    GtkWidget *window, *sample, *operations;
+    GtkWidget *window;
+    GtkWidget *sample;
+    GtkWidget *operations;
+    GtkWidget *mapping;
 
     gtk_init(&argc, &argv);
 
@@ -47,6 +51,9 @@ main(gint argc, gchar **argv)
     operations = (GtkWidget *) gtk_builder_get_object(builder, "areaOperations");
     adg_widget_set_canvas(ADG_WIDGET(operations), operations_canvas());
 
+    mapping = (GtkWidget *) gtk_builder_get_object(builder, "areaMapping");
+    adg_widget_set_canvas(ADG_WIDGET(mapping), mapping_canvas());
+
     /* Connect signals */
     g_signal_connect(window, "delete-event",
                      G_CALLBACK(gtk_main_quit), NULL);
@@ -66,6 +73,9 @@ main(gint argc, gchar **argv)
 
     return 0;
 }
+
+
+static AdgPath *        non_trivial_model       (void);
 
 
 /**********************************************
@@ -222,13 +232,13 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     /* B */
     entity = adg_ldim_new_full_explicit(data->A - data->B, data->D3 / 2 - CHAMFER, data->A, data->D7 / 2,
                                         ADG_DIR_DOWN, 0, data->D3 / 2);
-    adg_dim_set_tolerances(ADG_DIM(entity), "+0.1", NULL);
+    adg_dim_set_tolerances(ADG_DIM(entity), NULL, "+0.1");
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
     /* A */
     entity = adg_ldim_new_full_explicit(0, data->D1 / 2, data->A, data->D7 / 2,
                                         ADG_DIR_DOWN, 0, data->D3 / 2);
-    adg_dim_set_tolerances(ADG_DIM(entity), "+0.05", "-0.05");
+    adg_dim_set_tolerances(ADG_DIM(entity), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(entity), 2);
     adg_container_add(ADG_CONTAINER(canvas), entity);
 
@@ -297,7 +307,8 @@ sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
     cairo_matrix_init_translate(&map, 0., data->D3 / 2);
     adg_entity_set_local_map(toy_text, &map);
-    cairo_matrix_init_translate(&map, 10., 30. + 30. * 2);
+    cairo_matrix_init_rotate(&map, 0.2);
+    cairo_matrix_translate(&map, 10., 30. + 30. * 2);
     adg_entity_set_global_map(toy_text, &map);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
@@ -487,34 +498,17 @@ operations_canvas(void)
     AdgEntity *entity;
     AdgMatrix map;
 
-    /* Build the base model */
-    path = (AdgPath *) adg_path_new();
-
-    adg_path_move_to(path,  2,  0);
-    adg_path_line_to(path,  0,  5);
-    adg_path_line_to(path,  2,  2);
-    adg_path_line_to(path,  0,  8);
-    adg_path_line_to(path,  2,  8);
-    adg_path_line_to(path,  2, 10);
-    adg_path_line_to(path,  3, 10);
-    adg_path_line_to(path, 10,  9);
-    adg_path_line_to(path,  5,  5);
-    adg_path_line_to(path,  3,  0);
-    adg_path_close(path);
-
-    /* Build the chamfer model */
+    path = non_trivial_model();
     chamfer_path = operations_chamfer(path, 0.25, 0.25);
-
-    /* Build the fillet model */
     fillet_path = operations_fillet(path, 0.20);
-
-    /* Create the canvas */
     canvas = adg_canvas_new();
 
     /* Add the original shape */
     container = (AdgContainer *) adg_container_new();
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+
     adg_container_add(container, adg_stroke_new(path));
+
     entity = adg_toy_text_new("Original shape");
     cairo_matrix_init_translate(&map, 5, 10);
     adg_entity_set_local_map(entity, &map);
@@ -527,7 +521,9 @@ operations_canvas(void)
     cairo_matrix_init_translate(&map, 15., 0.);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+
     adg_container_add(container, adg_stroke_new(chamfer_path));
+
     entity = adg_toy_text_new("Shape with 0.25x0.25 chamfer");
     cairo_matrix_init_translate(&map, 5, 10);
     adg_entity_set_local_map(entity, &map);
@@ -540,7 +536,9 @@ operations_canvas(void)
     cairo_matrix_init_translate(&map, 30., 0.);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+
     adg_container_add(container, adg_stroke_new(fillet_path));
+
     entity = adg_toy_text_new("Shape with R=20 fillet");
     cairo_matrix_init_translate(&map, 5, 10);
     adg_entity_set_local_map(entity, &map);
@@ -597,6 +595,110 @@ operations_fillet(const AdgPath *model, gdouble radius)
         if (primitive.data[0].header.type == CAIRO_PATH_LINE_TO)
             adg_path_fillet(path, radius);
     } while (cpml_primitive_next(&primitive));
+
+    return path;
+}
+
+
+/**********************************************
+ * Test case for mapping transformations,
+ * either on the local and global map
+ **********************************************/
+
+static AdgCanvas *
+mapping_canvas(void)
+{
+    AdgPath *path;
+    AdgCanvas *canvas;
+    AdgContainer *container;
+    AdgEntity *entity;
+    AdgMatrix map;
+
+    path = non_trivial_model();
+    canvas = adg_canvas_new();
+
+    /* Add the original shape */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+
+    adg_container_add(container, adg_stroke_new(path));
+
+    entity = adg_toy_text_new("Original shape");
+    cairo_matrix_init_translate(&map, -50, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(ADG_CONTAINER(canvas), entity);
+
+    /* Original shape with global rotated by 90 and local translated x+=10 */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    cairo_matrix_init_translate(&map, 15, 0);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
+
+    entity = adg_stroke_new(path);
+    cairo_matrix_init_rotate(&map, M_PI_2);
+    adg_entity_set_global_map(ADG_ENTITY(entity), &map);
+    cairo_matrix_init_translate(&map, 10, 0);
+    adg_entity_set_local_map(ADG_ENTITY(entity), &map);
+    adg_container_add(container, entity);
+
+    entity = adg_toy_text_new("Global map rotated by 90");
+    cairo_matrix_init_translate(&map, -120, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(container, entity);
+
+    /* Original shape with local translated x+=10 and rotated by 90 */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    cairo_matrix_init_translate(&map, 30, 0);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
+
+    entity = adg_stroke_new(path);
+    cairo_matrix_init_translate(&map, 10, 0);
+    cairo_matrix_rotate(&map, M_PI_2);
+    adg_entity_set_local_map(ADG_ENTITY(entity), &map);
+    adg_container_add(container, entity);
+
+    entity = adg_toy_text_new("Local map rotated by 90");
+    cairo_matrix_init_translate(&map, -120, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 5, 10);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(container, entity);
+
+    /* Set a decent start position and zoom */
+    cairo_matrix_init_translate(&map, 10, -140);
+    cairo_matrix_scale(&map, 15, 15);
+    cairo_matrix_translate(&map, 0, 10);
+    adg_entity_set_local_map(ADG_ENTITY(canvas), &map);
+
+    return canvas;
+}
+
+
+/**********************************************
+ * Non specific test related stuff
+ **********************************************/
+
+static AdgPath *
+non_trivial_model()
+{
+    AdgPath *path = (AdgPath *) adg_path_new();
+
+    adg_path_move_to(path,  2,  0);
+    adg_path_line_to(path,  0,  5);
+    adg_path_line_to(path,  2,  2);
+    adg_path_line_to(path,  0,  8);
+    adg_path_line_to(path,  2,  8);
+    adg_path_line_to(path,  2, 10);
+    adg_path_line_to(path,  3, 10);
+    adg_path_line_to(path, 10,  9);
+    adg_path_line_to(path,  5,  5);
+    adg_path_line_to(path,  3,  0);
+    adg_path_close(path);
 
     return path;
 }
