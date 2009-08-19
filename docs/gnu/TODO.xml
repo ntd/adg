@@ -119,8 +119,9 @@ must be reflected in the demo programs, where applicable.</para>
    automatically updated.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
-   <listitem>Implement shape tolerances.</listitem>
-   <listitem>Add a CpmlArc primitive and some API to CpmlCurve to be able
+   <listitem>Add datum support: for implementation ideas checkout this
+   <ulink href="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
+   <listitem override="disc">Add a CpmlArc primitive and some API to CpmlCurve to be able
    to check if a curve is an arc approximation. This gives additional
    information to do some operation, such as a proper arc offseting.</listitem>
    <listitem>Improve Bézier offset approximation enabling the choice of approximate
