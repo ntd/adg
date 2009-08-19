@@ -37,6 +37,7 @@
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
 #include "adg-font-style.h"
+#include "adg-type-builtins.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
@@ -45,7 +46,8 @@
 
 enum {
     PROP_0,
-    PROP_LABEL
+    PROP_LABEL,
+    PROP_FONT_STYLE
 };
 
 
@@ -63,9 +65,11 @@ static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gboolean set_label               (AdgToyText     *toy_text,
                                          const gchar    *label);
-static gboolean update_origin_cache     (AdgToyText     *toy_text,
+static gboolean set_font_style          (AdgToyText     *toy_text,
+                                         AdgFontStyleId  font_style);
+static void     update_origin_cache     (AdgToyText     *toy_text,
                                          cairo_t        *cr);
-static gboolean update_label_cache      (AdgToyText     *toy_text,
+static void     update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
 
@@ -97,6 +101,14 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
                                 P_("The label to display"),
                                 NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LABEL, param);
+
+    param = g_param_spec_enum("font-style",
+                              P_("Font Style"),
+                              P_("The identifier of the font to use while rendering the label"),
+                              ADG_TYPE_FONT_STYLE_ID,
+                              ADG_FONT_STYLE_TEXT,
+                              G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FONT_STYLE, param);
 }
 
 static void
@@ -107,6 +119,7 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           AdgToyTextPrivate);
 
     data->label = NULL;
+    data->font_style = ADG_FONT_STYLE_TEXT;
     data->glyphs = NULL;
 
     toy_text->data = data;
@@ -137,6 +150,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_LABEL:
         g_value_set_string(value, data->label);
         break;
+    case PROP_FONT_STYLE:
+        g_value_set_enum(value, data->font_style);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -152,6 +168,9 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_LABEL:
         set_label(toy_text, g_value_get_string(value));
+        break;
+    case PROP_FONT_STYLE:
+        set_font_style(toy_text, g_value_get_enum(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -200,7 +219,7 @@ adg_toy_text_get_label(AdgToyText *toy_text)
  * @toy_text: an #AdgToyText
  * @label: the label text
  *
- * Sets the a new label for @toy_text. @label can be also %NULL,
+ * Sets a new label for @toy_text. @label can be also %NULL,
  * in which case will be treated as an empty string.
  **/
 void
@@ -210,6 +229,70 @@ adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 
     if (set_label(toy_text, label))
         g_object_notify((GObject *) toy_text, "label");
+}
+
+/**
+ * adg_toy_text_get_font_style:
+ * @toy_text: an #AdgToyText
+ *
+ * Gets the font style id of this label.
+ *
+ * Returns: the font id
+ **/
+const AdgFontStyleId
+adg_toy_text_get_font_style(AdgToyText *toy_text)
+{
+    AdgToyTextPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TOY_TEXT(toy_text), ADG_FONT_STYLE_TEXT);
+
+    data = toy_text->data;
+
+    return data->font_style;
+}
+
+/**
+ * adg_toy_text_set_font_style:
+ * @toy_text: an #AdgToyText
+ * @font_style: the new font style id to use
+ *
+ * Sets a new font style for @toy_text.
+ **/
+void
+adg_toy_text_set_font_style(AdgToyText *toy_text, AdgFontStyleId font_style)
+{
+    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
+
+    if (set_font_style(toy_text, font_style))
+        g_object_notify((GObject *) toy_text, "font-style");
+}
+
+/**
+ * adg_toy_text_get_extents:
+ * @toy_text: an #AdgToyText
+ * @cr: a cairo context
+ * @extents: where to store the extents
+ *
+ * Computes the extents of @toy_text and returns the result in @extents.
+ * The cairo context is required for font computation.
+ **/
+void
+adg_toy_text_get_extents(AdgToyText *toy_text, cairo_t *cr,
+                         cairo_text_extents_t *extents)
+{
+    AdgToyTextPrivate *data;
+
+    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
+    g_return_if_fail(extents != NULL);
+
+    data = toy_text->data;
+
+    if (data->glyphs == NULL) {
+        adg_entity_apply_font((AdgEntity *) toy_text, data->font_style, cr);
+        update_label_cache(toy_text, cr);
+    }
+
+    *extents = data->extents;
 }
 
 
@@ -234,7 +317,7 @@ render(AdgEntity *entity, cairo_t *cr)
     data = toy_text->data;
 
     if (data->label != NULL && data->label[0] != '\0') {
-        adg_entity_apply(entity, ADG_SLOT_FONT_STYLE, cr);
+        adg_entity_apply_font(entity, data->font_style, cr);
 
         if (data->glyphs == NULL)
             update_label_cache(toy_text, cr);
@@ -264,6 +347,22 @@ set_label(AdgToyText *toy_text, const gchar *label)
 }
 
 static gboolean
+set_font_style(AdgToyText *toy_text, AdgFontStyleId font_style)
+{
+    AdgToyTextPrivate *data = toy_text->data;
+
+    /* Check if the new style differs from the current one */
+    if (font_style == data->font_style)
+        return FALSE;
+
+    data->font_style = font_style;
+
+    /* Changing the font invalidate the cache */
+    clear_label_cache(toy_text);
+    return TRUE;
+}
+
+static void
 update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 {
     AdgToyTextPrivate *data;
@@ -276,9 +375,9 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
     glyph = data->glyphs;
     cnt = data->num_glyphs;
 
-    /* On undefined label return error */
+    /* Check for no glyphs */
     if (glyph == NULL || cnt <= 0)
-        return FALSE;
+        return;
 
     x = y = 0;
     adg_entity_get_local_matrix((AdgEntity *) toy_text, &matrix);
@@ -286,7 +385,7 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
 
     /* Check if the origin is still the same */
     if (x == glyph->x && y == glyph->y)
-        return TRUE;
+        return;
 
     x -= glyph->x;
     y -= glyph->y;
@@ -296,11 +395,9 @@ update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
         glyph->y += y;
         ++ glyph;
     }
-
-    return TRUE;
 }
 
-static gboolean
+static void
 update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 {
     AdgToyTextPrivate *data = toy_text->data;
@@ -312,15 +409,11 @@ update_label_cache(AdgToyText *toy_text, cairo_t *cr)
                                               &data->num_glyphs,
                                               NULL, NULL, NULL);
 
-    if (status != CAIRO_STATUS_SUCCESS) {
+    if (status != CAIRO_STATUS_SUCCESS)
         g_error("Unable to build glyphs (cairo message: %s)",
                 cairo_status_to_string(status));
-        return FALSE;
-    }
-
-    cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
-
-    return TRUE;
+    else
+        cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
 }
 
 static void
