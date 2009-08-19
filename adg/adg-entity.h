@@ -24,6 +24,7 @@
 #include <adg/adg-util.h>
 #include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
+#include <adg/adg-enums.h>
 
 
 G_BEGIN_DECLS
@@ -95,6 +96,9 @@ AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
                                                  AdgStyleSlot     style_slot);
 void            adg_entity_apply                (AdgEntity       *entity,
                                                  AdgStyleSlot     style_slot,
+                                                 cairo_t         *cr);
+void            adg_entity_apply_font           (AdgEntity       *entity,
+                                                 AdgFontStyleId   font_id,
                                                  cairo_t         *cr);
 void            adg_entity_invalidate           (AdgEntity       *entity);
 void            adg_entity_render               (AdgEntity       *entity,

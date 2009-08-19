@@ -51,6 +51,8 @@
 #include "adg-entity.h"
 #include "adg-entity-private.h"
 #include "adg-canvas.h"
+#include "adg-font-style.h"
+#include "adg-dim-style.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
@@ -656,6 +658,55 @@ void
 adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
 {
     AdgStyle *style = adg_entity_get_style(entity, style_slot);
+
+    if (style)
+        adg_style_apply(style, cr);
+}
+
+/**
+ * adg_entity_apply_font:
+ * @entity: an #AdgEntity
+ * @font_id: a font id
+ * @cr: a #cairo_t drawing context
+ *
+ * Applies the specified font to the @cr cairo context. It is similar
+ * to adg_entity_apply() but instead of looking for a font slot, it
+ * searches for a specific font style by inspecting composite styles too.
+ *
+ * A typical example is when the tolerance font should be applied: this
+ * is a font style embedded in the dim style, so it is not enough to
+ * use adg_entity_apply().
+ **/
+void
+adg_entity_apply_font(AdgEntity *entity, AdgFontStyleId font_id, cairo_t *cr)
+{
+    AdgStyle *style;
+
+    switch (font_id) {
+
+    case ADG_FONT_STYLE_TEXT:
+        style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
+        break;
+
+    case ADG_FONT_STYLE_VALUE:
+        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+        style = adg_dim_style_get_value_style((AdgDimStyle *) style);
+        break;
+
+    case ADG_FONT_STYLE_TOLERANCE:
+        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+        style = adg_dim_style_get_tolerance_style((AdgDimStyle *) style);
+        break;
+
+    case ADG_FONT_STYLE_NOTE:
+        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
+        style = adg_dim_style_get_note_style((AdgDimStyle *) style);
+        break;
+
+    default:
+        g_warning ("%s: invalid font id (%d)", G_STRLOC, font_id);
+        return;
+    }
 
     if (style)
         adg_style_apply(style, cr);
