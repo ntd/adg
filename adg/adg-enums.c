@@ -44,7 +44,7 @@
 /**
  * AdgFontStyleId:
  * @ADG_FONT_STYLE_TEXT: generic text style
- * @ADG_FONT_STYLE_QUOTE: text style for the quote number
+ * @ADG_FONT_STYLE_VALUE: text style for the basic value of a dimension
  * @ADG_FONT_STYLE_TOLERANCE: text style for quote tolerances
  * @ADG_FONT_STYLE_NOTE: text style for additional notes appended to the quote
  * @ADG_FONT_STYLE_LAST: start of user defined font styles

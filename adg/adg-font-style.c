@@ -630,7 +630,7 @@ get_pool(void)
         pool->pdata[ADG_FONT_STYLE_TEXT] =
             g_object_new(ADG_TYPE_FONT_STYLE, "family", "Serif", "size",
                          14., NULL);
-        pool->pdata[ADG_FONT_STYLE_QUOTE] =
+        pool->pdata[ADG_FONT_STYLE_VALUE] =
             g_object_new(ADG_TYPE_FONT_STYLE, "family", "Sans", "size",
                          12., "weight", CAIRO_FONT_WEIGHT_BOLD, NULL);
         pool->pdata[ADG_FONT_STYLE_TOLERANCE] =
