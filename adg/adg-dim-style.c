@@ -23,7 +23,7 @@
  * @short_description: Dimension style related stuff
  *
  * Contains parameters on how to build dimensions such as the different font
- * styles (for quote, tolerance and note), line style, offsets of the various
+ * styles (for value, tolerance and note), line style, offsets of the various
  * dimension components etc...
  */
 
@@ -56,7 +56,7 @@
 
 enum {
     PROP_0,
-    PROP_QUOTE_STYLE,
+    PROP_VALUE_STYLE,
     PROP_TOLERANCE_STYLE,
     PROP_NOTE_STYLE,
     PROP_LINE_STYLE,
@@ -82,7 +82,7 @@ static void             set_property            (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static GPtrArray *      get_pool                (void);
-static void             set_quote_style         (AdgDimStyle    *dim_style,
+static void             set_value_style         (AdgDimStyle    *dim_style,
                                                  AdgFontStyle   *style);
 static void             set_tolerance_style     (AdgDimStyle    *dim_style,
                                                  AdgFontStyle   *style);
@@ -124,11 +124,11 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     style_class->get_pool = get_pool;
 
-    param = g_param_spec_object("quote-style",
-                                P_("Quote Style"),
-                                P_("Font style for the quote"),
+    param = g_param_spec_object("value-style",
+                                P_("Value Style"),
+                                P_("Font style for the basic value of the dimension"),
                                 ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_QUOTE_STYLE,
+    g_object_class_install_property(gobject_class, PROP_VALUE_STYLE,
                                     param);
 
     param = g_param_spec_object("tolerance-style",
@@ -140,7 +140,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_object("note-style",
                                 P_("Note Style"),
-                                P_("Font style for the note (the text after or under the quote)"),
+                                P_("Font style for the note (the text after or under the basic value)"),
                                 ADG_TYPE_STYLE, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NOTE_STYLE, param);
 
@@ -159,7 +159,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_double("from-offset",
                                 P_("From Offset"),
-                                P_("Offset (in global space) of the extension lines from the path to quote"),
+                                P_("Offset (in global space) of the extension lines from the path to the quote"),
                                 0., G_MAXDOUBLE, 5., G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FROM_OFFSET,
                                     param);
@@ -186,7 +186,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
-                               P_("Used to specify a smooth displacement (in global space) for the quote text by taking as reference the perfect compact position (the middle of the baseline on common linear quotes, for instance)"),
+                               P_("Used to specify a smooth displacement (in global space) of the quote by taking as reference the perfect compact position (the middle of the baseline on common linear dimension, for instance)"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT,
                                     param);
@@ -206,14 +206,14 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_string("number-format",
                                 P_("Number Format"),
-                                P_("The format (in printf style) of the numeric component of the quote"),
+                                P_("The format (in printf style) of the numeric component of the basic value"),
                                 "%-.7g", G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_FORMAT,
                                     param);
 
     param = g_param_spec_string("number-tag",
                                 P_("Number Tag"),
-                                P_("The tag to substitute inside the quote pattern"),
+                                P_("The tag to substitute inside the basic value pattern"),
                                 "<>", G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_TAG, param);
 }
@@ -225,8 +225,8 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                                            ADG_TYPE_DIM_STYLE,
                                                            AdgDimStylePrivate);
 
-    data->quote_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
-                                          ADG_FONT_STYLE_QUOTE);
+    data->value_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
+                                          ADG_FONT_STYLE_VALUE);
     data->tolerance_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
                                               ADG_FONT_STYLE_TOLERANCE);
     data->note_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
@@ -257,8 +257,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
     switch (prop_id) {
-    case PROP_QUOTE_STYLE:
-        g_value_set_object(value, data->quote_style);
+    case PROP_VALUE_STYLE:
+        g_value_set_object(value, data->value_style);
         break;
     case PROP_TOLERANCE_STYLE:
         g_value_set_object(value, data->tolerance_style);
@@ -316,8 +316,8 @@ set_property(GObject *object,
     data = dim_style->data;
 
     switch (prop_id) {
-    case PROP_QUOTE_STYLE:
-        set_quote_style(dim_style, g_value_get_object(value));
+    case PROP_VALUE_STYLE:
+        set_value_style(dim_style, g_value_get_object(value));
         break;
     case PROP_TOLERANCE_STYLE:
         set_tolerance_style(dim_style, g_value_get_object(value));
@@ -390,16 +390,16 @@ adg_dim_style_new(void)
 }
 
 /**
- * adg_dim_style_get_quote_style:
+ * adg_dim_style_get_value_style:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the quote style of @dim_style. No reference will be added to the
- * returned style; it should not be unreferenced.
+ * Gets the basic value font style of @dim_style. No reference will
+ * be added to the returned style; it should not be unreferenced.
  *
- * Return value: the quote style or %NULL on errors
+ * Return value: the basic value style or %NULL on errors
  **/
 AdgStyle *
-adg_dim_style_get_quote_style(AdgDimStyle *dim_style)
+adg_dim_style_get_value_style(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
@@ -407,25 +407,26 @@ adg_dim_style_get_quote_style(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return data->quote_style;
+    return data->value_style;
 }
 
 /**
- * adg_dim_style_set_quote_style:
+ * adg_dim_style_set_value_style:
  * @dim_style: an #AdgDimStyle object
- * @style: the new quote style
+ * @style: the new basic value font style
  *
- * Sets a new quote style on @dim_style. The old quote style (if any) will be
- * unreferenced while a new reference will be added to @style.
+ * Sets a new font style on @dim_style for basic values. The old
+ * font style (if any) will be unreferenced while a new reference
+ * will be added to @style.
  **/
 void
-adg_dim_style_set_quote_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
     g_return_if_fail(ADG_IS_FONT_STYLE(style));
 
-    set_quote_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "quote-style");
+    set_value_style(dim_style, style);
+    g_object_notify((GObject *) dim_style, "value-style");
 }
 
 /**
@@ -751,8 +752,8 @@ adg_dim_style_set_tolerance_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * adg_dim_style_get_quote_shift:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the smooth displacement of the quote text. The returned pointer
- * refers to an internal allocated struct and must not be modified or freed.
+ * Gets the smooth displacement of the quote. The returned pointer refers
+ * to an internal allocated struct and must not be modified or freed.
  *
  * Return value: the requested shift
  **/
@@ -900,7 +901,7 @@ adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
  * adg_dim_style_get_number_tag:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the number tag to substitute while building the quote text. The
+ * Gets the number tag to substitute while building the basic value. The
  * returned pointer refers to internally managed text that must not be
  * modified or freed.
  *
@@ -959,15 +960,15 @@ get_pool(void)
 }
 
 static void
-set_quote_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
 {
     AdgDimStylePrivate *data = dim_style->data;
 
-    if (data->quote_style)
-        g_object_unref(data->quote_style);
+    if (data->value_style)
+        g_object_unref(data->value_style);
 
     g_object_ref(style);
-    data->quote_style = (AdgStyle *) style;
+    data->value_style = (AdgStyle *) style;
 }
 
 static void

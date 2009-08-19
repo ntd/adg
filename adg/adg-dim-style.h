@@ -58,8 +58,8 @@ GType           adg_dim_style_get_type          (void) G_GNUC_CONST;
 AdgStyleSlot    _adg_dim_style_get_slot         (void) G_GNUC_CONST;
 AdgStyle *      adg_dim_style_new               (void);
 
-AdgStyle *      adg_dim_style_get_quote_style   (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_quote_style   (AdgDimStyle    *dim_style,
+AdgStyle *      adg_dim_style_get_value_style   (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_value_style   (AdgDimStyle    *dim_style,
                                                  AdgFontStyle   *style);
 AdgStyle *      adg_dim_style_get_tolerance_style
                                                 (AdgDimStyle    *dim_style);
