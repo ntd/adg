@@ -66,7 +66,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Add AdgWidget, a GtkDrawingArea derived class that could accept an AdgCanvas.</listitem>
    <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
    and enable caching where applicable.</listitem>
-   <listitem>Use AdgToyText to draw dimenstion quote where applicable.</listitem>
+   <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>
    <listitem>Add a "beyond" property to AdgDimStyle to be used when extending the
    baseline beyond the extension lines. If not specified, it must default
    to 3 x arrow size.</listitem>
@@ -83,21 +83,27 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.6.0</title>
 
 <itemizedlist mark="circle">
-   <listitem>Implement the outside arrows in AdgLDim.</listitem>
-   <listitem>Rename Arrow to Marker: the latter is more generic (that is, better).</listitem>
    <listitem>Rename StyleId to StyleType: the latter is more clear.</listitem>
-   <listitem>Implement AdgMarker as a customizable entity able to render (at least)
-   the styles defined in AdgMarkerStyleType. Also, the ARROW and TRIANGLE
-   styles should follow the director path that could be a curve. Use the
-   METAPOST solution suggested by John Hobby I don't know where, that is,
-   given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the path by half <parameter>angle</parameter> in both directions,
-   look for intersection with a circle at the end of the director path
-   with radius <parameter>size</parameter>, close the resulting path and fill the arrow.</listitem>
-   <listitem>Rework styles by using GObject and properties.</listitem>
-   <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
-   <listitem>Implement a basic AdgHatchStyle, derived from AdgLineStyle.</listitem>
+   <listitem>Implement AdgMarker as a model: it will be the base class for arrows,
+   ticks, squares and so on.</listitem>
+   <listitem>Implement at least AdgArrow as AdgMarker derived model.</listitem>
+   <listitem>Implement AdgCap, an entity that relates to AdgMarker as AdgStroke
+   does for AdgPath.</listitem>
+   <listitem>Rename AdgArrowStyle to AdgMarkerStyle and update the code to use the
+   newly created AdgMarker model. Change AdgDim and AdgLDim to use this
+   new implementation.</listitem>
+   <listitem>Implement the outside arrows in AdgLDim.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
+   <listitem>The ARROW and TRIANGLE markers should follow the director path that
+   could be a curve. Use the METAPOST solution suggested by John Hobby I
+   don't know where, that is, given <parameter>angle</parameter> and <parameter>size</parameter>,
+   rotate the path by half <parameter>angle</parameter> in both directions, look for intersection
+   with a circle centered at the end of the director path with radius <parameter>size</parameter>,
+   close the resulting path and optionally fill the arrow.</listitem>
+   <listitem override="disc">Rework styles by using GObject and properties.</listitem>
+   <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
+   <listitem>Implement a basic AdgHatchStyle, derived from AdgLineStyle.</listitem>
    <listitem>AdgPath should be an abstract class from which derive AdgPolyline,
    the basic stroked path entity.</listitem>
    <listitem>Add AdgHatch, an entity very similar to AdgStroke.</listitem>
@@ -120,7 +126,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Add datum support: for implementation ideas checkout this
-   <ulink href="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
+   <ulink url="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
    <listitem override="disc">Add a CpmlArc primitive and some API to CpmlCurve to be able
    to check if a curve is an arc approximation. This gives additional
    information to do some operation, such as a proper arc offseting.</listitem>
