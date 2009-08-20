@@ -160,27 +160,27 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_double("from-offset",
                                 P_("From Offset"),
                                 P_("Offset (in global space) of the extension lines from the path to the quote"),
-                                0., G_MAXDOUBLE, 5., G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 5, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FROM_OFFSET,
                                     param);
 
     param = g_param_spec_double("to-offset",
                                 P_("To Offset"),
                                 P_("How many extend (in global space) the extension lines after hitting the baseline"),
-                                0., G_MAXDOUBLE, 5., G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 5, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TO_OFFSET, param);
 
     param = g_param_spec_double("baseline-spacing",
                                 P_("Baseline Spacing"),
                                 P_("Distance between two consecutive baselines while stacking dimensions"),
-                                0., G_MAXDOUBLE, 30., G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 30, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING,
                                     param);
 
     param = g_param_spec_double("tolerance-spacing",
                                 P_("Tolerance Spacing"),
                                 P_("Distance between up and down tolerance text"),
-                                0., G_MAXDOUBLE, 2., G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 2, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOLERANCE_SPACING,
                                     param);
 
@@ -235,16 +235,16 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                          ADG_LINE_STYLE_DIM);
     data->arrow_style = adg_style_from_id(ADG_TYPE_ARROW_STYLE,
                                           ADG_ARROW_STYLE_ARROW);
-    data->from_offset = 5.;
-    data->to_offset = 5.;
-    data->baseline_spacing = 30.;
-    data->tolerance_spacing = 2.;
-    data->quote_shift.x = 0.;
-    data->quote_shift.y = -3.;
-    data->tolerance_shift.x = +5.;
-    data->tolerance_shift.y = -4.;
-    data->note_shift.x = +5.;
-    data->note_shift.y = 0.;
+    data->from_offset = 6;
+    data->to_offset = 6;
+    data->baseline_spacing = 30;
+    data->tolerance_spacing = 1;
+    data->quote_shift.x = 0;
+    data->quote_shift.y = -4;
+    data->tolerance_shift.x = +2;
+    data->tolerance_shift.y = -2;
+    data->note_shift.x = +4;
+    data->note_shift.y = 0;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
 
@@ -599,7 +599,7 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
 
@@ -640,7 +640,7 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
 
@@ -681,7 +681,7 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
 
@@ -721,7 +721,7 @@ adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0.);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
 
@@ -947,7 +947,7 @@ get_pool(void)
         pool = g_ptr_array_sized_new(ADG_DIM_STYLE_LAST);
 
         /* No need to specify further params: the default is already ISO */
-        pattern = cairo_pattern_create_rgb(1., 0., 0.);
+        pattern = cairo_pattern_create_rgb(1, 0, 0);
         pool->pdata[ADG_DIM_STYLE_ISO] = g_object_new(ADG_TYPE_DIM_STYLE,
                                                       "pattern", pattern,
                                                       NULL);
