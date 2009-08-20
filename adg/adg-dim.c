@@ -36,8 +36,9 @@
 #include "adg-dim.h"
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
+#include "adg-toy-text.h"
+#include "adg-type-builtins.h"
 #include "adg-intl.h"
-#include <string.h>
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
 
@@ -50,6 +51,7 @@ enum {
     PROP_POS2,
     PROP_ANGLE,
     PROP_LEVEL,
+    PROP_OUTSIDE,
     PROP_VALUE,
     PROP_VALUE_MIN,
     PROP_VALUE_MAX,
@@ -146,6 +148,13 @@ adg_dim_class_init(AdgDimClass *klass)
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_LEVEL, param);
+
+    param = g_param_spec_enum("outside",
+                                P_("Outside"),
+                                P_("Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), must be extended outside the extension lines (ADG_THREE_STATE_ON) or should be automatically handled depending on the available space"),
+                                ADG_TYPE_THREE_STATE, ADG_THREE_STATE_UNKNOWN,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+    g_object_class_install_property(gobject_class, PROP_OUTSIDE, param);
 
     param = g_param_spec_string("value",
                                 P_("Basic Value"),
@@ -261,6 +270,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_LEVEL:
         g_value_set_double(value, data->level);
         break;
+    case PROP_OUTSIDE:
+        g_value_set_enum(value, data->outside);
+        break;
     case PROP_VALUE:
         g_value_set_string(value, data->value);
         break;
@@ -307,6 +319,9 @@ set_property(GObject *object, guint prop_id,
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
+        break;
+    case PROP_OUTSIDE:
+        data->outside = g_value_get_enum(value);
         break;
     case PROP_VALUE:
         set_value(dim, g_value_get_string(value));
@@ -648,7 +663,7 @@ adg_dim_set_angle(AdgDim *dim, gdouble angle)
  * Returns: the level value
  **/
 gdouble
-adg_dim_get_level(AdgDim  *dim)
+adg_dim_get_level(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -679,6 +694,48 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
     data->level = level;
 
     g_object_notify((GObject *) dim, "level");
+}
+
+/**
+ * adg_dim_get_outside:
+ * @dim: an #AdgDim
+ *
+ * Gets the state of the #AdgDim:outside property: check the property
+ * documentation for further details.
+ *
+ * Returns: the current flag state
+ **/
+AdgThreeState
+adg_dim_get_outside(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_THREE_STATE_UNKNOWN);
+
+    data = dim->data;
+
+    return data->outside;
+}
+
+/**
+ * adg_dim_set_outside:
+ * @dim: an #AdgDim
+ * @outside: the new outside state
+ *
+ * Sets a new state for the #AdgDim:outside flag: check the property
+ * documentation for further details.
+ **/
+void
+adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
+{
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    data = dim->data;
+    data->outside = outside;
+
+    g_object_notify((GObject *) dim, "outside");
 }
 
 /**

@@ -21,9 +21,7 @@
 #ifndef __ADG_DIM_PRIVATE_H__
 #define __ADG_DIM_PRIVATE_H__
 
-#include <adg/adg-style.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-toy-text.h>
+#include <adg/adg-util.h>
 
 
 G_BEGIN_DECLS
@@ -37,6 +35,7 @@ struct _AdgDimPrivate {
     AdgPair              pos2;
     gdouble              angle;
     gdouble              level;
+    AdgThreeState        outside;
     gchar               *value;
     gchar               *value_min;
     gchar               *value_max;

@@ -87,6 +87,9 @@ void            adg_dim_set_pos_explicit        (AdgDim         *dim,
 gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);
+AdgThreeState   adg_dim_get_outside             (AdgDim         *dim);
+void            adg_dim_set_outside             (AdgDim         *dim,
+                                                 AdgThreeState   outside);
 const gchar *   adg_dim_get_value               (AdgDim         *dim);
 void            adg_dim_set_value               (AdgDim         *dim,
                                                  const gchar    *value);
