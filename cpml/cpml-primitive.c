@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -191,7 +191,7 @@ cairo_path_data_t *
 cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
 {
     int npoints;
-    
+
     /* For a start point request, simply return the origin
      * without further checking */
     if (npoint == 0)
@@ -569,7 +569,7 @@ cpml_primitive_near_pos(const CpmlPrimitive *primitive, const CpmlPair *pair)
  *
  * Joins two primitive modifying the end point of @primitive and the
  * start point of @primitive2 so that the resulting points will overlap.
- * 
+ *
  * <important>
  * <title>TODO</title>
  * <itemizedlist>

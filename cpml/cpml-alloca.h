@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -34,7 +34,7 @@
 # undef alloca
 # define alloca(size)   __builtin_alloca(size)
 #elif defined (HAVE_ALLOCA_H)
-/* a native and working alloca.h is there */ 
+/* a native and working alloca.h is there */
 # include <alloca.h>
 #else /* !__GNUC__ && !HAVE_ALLOCA_H */
 # if defined(_MSC_VER) || defined(__DMC__)

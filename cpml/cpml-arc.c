@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -471,7 +471,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
         return 1;
     }
 
-    /* Translate the 3 points of -p0, to simplify the formula */ 
+    /* Translate the 3 points of -p0, to simplify the formula */
     cpml_pair_sub(cpml_pair_copy(&b, &p[1]), &p[0]);
     cpml_pair_sub(cpml_pair_copy(&c, &p[2]), &p[0]);
 

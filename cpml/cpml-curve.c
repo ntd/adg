@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -405,7 +405,7 @@ cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
  * pk = (pm - (1-m)²(1+2m) p0 - m²(3-2m) p3) / (3m (1-m)).
  *
  * gives the following system:
- *     
+ *
  * (1-m) k0 v0.x + m k3 v3.x = pk.x;
  * (1-m) k0 v0.y + m k3 v3.y = pk.y.
  *
