@@ -84,12 +84,16 @@ void            adg_entity_get_global_map       (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_global_map       (AdgEntity       *entity,
                                                  const AdgMatrix *map);
+void            adg_entity_transform_global_map (AdgEntity       *entity,
+                                                 const AdgMatrix *transformation);
+void            adg_entity_get_global_matrix    (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
 void            adg_entity_get_local_map        (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_local_map        (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-void            adg_entity_get_global_matrix    (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
+void            adg_entity_transform_local_map  (AdgEntity       *entity,
+                                                 const AdgMatrix *transformation);
 void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,

@@ -524,6 +524,62 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
+ * adg_entity_transform_global_map:
+ * @entity: an #AdgEntity object
+ * @transformation: the transformation to apply
+ *
+ * Applies a transformation to the global map of @entity. This is
+ * equivalent to the following code:
+ *
+ * <informalexample><programlisting>
+ * AdgMatrix tmp_map;
+ * adg_entity_get_global_map(entity, &tmp_map);
+ * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
+ * adg_entity_set_global_map(entity, &tmp_map);
+ * </programlisting></informalexample>
+ **/
+void
+adg_entity_transform_global_map(AdgEntity *entity,
+                                const AdgMatrix *transformation)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(transformation != NULL);
+
+    data = entity->data;
+
+    cairo_matrix_multiply(&data->global_map, transformation, &data->global_map);
+    g_object_notify((GObject *) entity, "global-map");
+}
+
+/**
+ * adg_entity_get_global_matrix:
+ * @entity: an #AdgEntity object
+ * @matrix: where to store the global matrix
+ *
+ * Computes the global matrix by combining all the global maps of the
+ * @entity hierarchy and stores the result in @matrix.
+ **/
+void
+adg_entity_get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(matrix != NULL);
+
+    data = entity->data;
+
+    if (data->parent == NULL) {
+        adg_matrix_copy(matrix, &data->global_map);
+    } else {
+        adg_entity_get_global_matrix((AdgEntity *) data->parent, matrix);
+        cairo_matrix_multiply(matrix, &data->global_map, matrix);
+    }
+}
+
+/**
  * adg_entity_get_local_map:
  * @entity: an #AdgEntity object
  * @map: where to store the local map
@@ -562,29 +618,33 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
- * adg_entity_get_global_matrix:
+ * adg_entity_transform_local_map:
  * @entity: an #AdgEntity object
- * @matrix: where to store the global matrix
+ * @transformation: the transformation to apply
  *
- * Computes the global matrix by combining all the global maps of the
- * @entity hierarchy and stores the result in @matrix.
+ * Applies a transformation to the local map of @entity. This is
+ * equivalent to the following code:
+ *
+ * <informalexample><programlisting>
+ * AdgMatrix tmp_map;
+ * adg_entity_get_local_map(entity, &tmp_map);
+ * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
+ * adg_entity_set_local_map(entity, &tmp_map);
+ * </programlisting></informalexample>
  **/
 void
-adg_entity_get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
+adg_entity_transform_local_map(AdgEntity *entity,
+                               const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(matrix != NULL);
+    g_return_if_fail(transformation != NULL);
 
     data = entity->data;
 
-    if (data->parent == NULL) {
-        adg_matrix_copy(matrix, &data->global_map);
-    } else {
-        adg_entity_get_global_matrix((AdgEntity *) data->parent, matrix);
-        cairo_matrix_multiply(matrix, &data->global_map, matrix);
-    }
+    cairo_matrix_multiply(&data->local_map, transformation, &data->local_map);
+    g_object_notify((GObject *) entity, "local-map");
 }
 
 /**
