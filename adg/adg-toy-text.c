@@ -67,8 +67,6 @@ static gboolean set_label               (AdgToyText     *toy_text,
                                          const gchar    *label);
 static gboolean set_font_style          (AdgToyText     *toy_text,
                                          AdgFontStyleId  font_style);
-static void     update_origin_cache     (AdgToyText     *toy_text,
-                                         cairo_t        *cr);
 static void     update_label_cache      (AdgToyText     *toy_text,
                                          cairo_t        *cr);
 static void     clear_label_cache       (AdgToyText     *toy_text);
@@ -285,13 +283,9 @@ adg_toy_text_get_extents(AdgToyText *toy_text, cairo_t *cr,
     g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
     g_return_if_fail(extents != NULL);
 
+    update_label_cache(toy_text, cr);
+
     data = toy_text->data;
-
-    if (data->glyphs == NULL) {
-        adg_entity_apply_font((AdgEntity *) toy_text, data->font_style, cr);
-        update_label_cache(toy_text, cr);
-    }
-
     *extents = data->extents;
 }
 
@@ -317,13 +311,22 @@ render(AdgEntity *entity, cairo_t *cr)
     data = toy_text->data;
 
     if (data->label != NULL && data->label[0] != '\0') {
-        adg_entity_apply_font(entity, data->font_style, cr);
+        AdgMatrix ctm, org;
 
-        if (data->glyphs == NULL)
-            update_label_cache(toy_text, cr);
-        update_origin_cache(toy_text, cr);
+        adg_entity_get_local_matrix(entity, &org);
+        cairo_matrix_init_translate(&org, org.x0, org.y0);
+
+        update_label_cache(toy_text, cr);
+
+        cairo_save(cr);
+
+        /* Apply the org displacement BEFORE the global matrix */
+        cairo_get_matrix(cr, &ctm);
+        cairo_matrix_multiply(&ctm, &ctm, &org);
+        cairo_set_matrix(cr, &ctm);
 
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
+        cairo_restore(cr);
     }
 
     return TRUE;
@@ -363,57 +366,32 @@ set_font_style(AdgToyText *toy_text, AdgFontStyleId font_style)
 }
 
 static void
-update_origin_cache(AdgToyText *toy_text, cairo_t *cr)
-{
-    AdgToyTextPrivate *data;
-    cairo_glyph_t *glyph;
-    int cnt;
-    AdgMatrix matrix;
-    double x, y;
-
-    data = toy_text->data;
-    glyph = data->glyphs;
-    cnt = data->num_glyphs;
-
-    /* Check for no glyphs */
-    if (glyph == NULL || cnt <= 0)
-        return;
-
-    x = y = 0;
-    adg_entity_get_local_matrix((AdgEntity *) toy_text, &matrix);
-    cairo_matrix_transform_point(&matrix, &x, &y);
-
-    /* Check if the origin is still the same */
-    if (x == glyph->x && y == glyph->y)
-        return;
-
-    x -= glyph->x;
-    y -= glyph->y;
-
-    while (cnt --) {
-        glyph->x += x;
-        glyph->y += y;
-        ++ glyph;
-    }
-}
-
-static void
 update_label_cache(AdgToyText *toy_text, cairo_t *cr)
 {
-    AdgToyTextPrivate *data = toy_text->data;
+    AdgToyTextPrivate *data;
     cairo_status_t status;
 
+    data = toy_text->data;
+
+    adg_entity_apply_font((AdgEntity *) toy_text, data->font_style, cr);
+
+    if (data->glyphs != NULL)
+        return;
+
     status = cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
-                                              0., 0., data->label, -1,
+                                              0, 0, data->label, -1,
                                               &data->glyphs,
                                               &data->num_glyphs,
                                               NULL, NULL, NULL);
 
-    if (status != CAIRO_STATUS_SUCCESS)
+    if (status != CAIRO_STATUS_SUCCESS) {
+        clear_label_cache(toy_text);
         g_error("Unable to build glyphs (cairo message: %s)",
                 cairo_status_to_string(status));
-    else
-        cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
+        return;
+    }
+
+    cairo_glyph_extents(cr, data->glyphs, data->num_glyphs, &data->extents);
 }
 
 static void
