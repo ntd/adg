@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([ADG],[0.4.3],[ntd at entidi.it],[adg],[http://adg.entidi.com/])
+AC_INIT([ADG],[0.5.0],[ntd at entidi.it],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
