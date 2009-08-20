@@ -67,7 +67,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
    and enable caching where applicable.</listitem>
    <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>
-   <listitem>Add a "beyond" property to AdgDimStyle to be used when extending the
+   <listitem override="disc">Add a "beyond" property to AdgDimStyle to be used when extending the
    baseline beyond the extension lines. If not specified, it must default
    to 3 x arrow size.</listitem>
    <listitem>Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
