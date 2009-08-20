@@ -149,7 +149,7 @@ finalize(GObject *object)
  * function: AdgPath will cache and reuse the cairo_copy_path() returned by
  * the cairo context after the @callback call.
  *
- * Return value: the new model
+ * Returns: the new model
  **/
 AdgModel *
 adg_path_new(void)
@@ -162,7 +162,7 @@ adg_path_new(void)
  * adg_path_get_cairo_path:
  * @path: an #AdgPath
  *
- * Gets a pointer to the cairo path structure of @path. The return value
+ * Gets a pointer to the cairo path structure of @path. The return path
  * is owned by @path and must be considered read-only.
  *
  * This function also converts %CAIRO_PATH_ARC_TO primitives, not
@@ -181,7 +181,7 @@ adg_path_new(void)
  * </itemizedlist>
  * </important>
  *
- * Return value: a pointer to the internal cairo path or %NULL on errors
+ * Returns: a pointer to the internal cairo path or %NULL on errors
  **/
 const cairo_path_t *
 adg_path_get_cairo_path(AdgPath *path)
@@ -208,7 +208,7 @@ adg_path_get_cairo_path(AdgPath *path)
  * Keep in mind any changes to @path makes the value returned by
  * this function useless, as it is likely to contain plain garbage.
  *
- * Return value: a pointer to the internal cpml path or %NULL on errors
+ * Returns: a pointer to the internal cpml path or %NULL on errors
  **/
 cairo_path_t *
 adg_path_get_cpml_path(AdgPath *path)
@@ -223,8 +223,8 @@ adg_path_get_cpml_path(AdgPath *path)
 /**
  * adg_path_get_current_point:
  * @path: an #AdgPath
- * @x:    return value for x coordinate of the current point
- * @y:    return value for y coordinate of the current point
+ * @x: where to store the x coordinate of the current point
+ * @y: where to store the y coordinate of the current point
  *
  * Gets the current point of @path, which is conceptually the
  * final point reached by the path so far.
@@ -262,7 +262,7 @@ adg_path_get_current_point(AdgPath *path, gdouble *x, gdouble *y)
  * Returns whether a current point is defined on @path.
  * See adg_path_get_current_point() for details on the current point.
  *
- * Return value: whether a current point is defined
+ * Returns: whether a current point is defined
  **/
 gboolean
 adg_path_has_current_point(AdgPath *path)

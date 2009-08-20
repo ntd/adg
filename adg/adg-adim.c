@@ -200,7 +200,7 @@ default_value(AdgDim *dim)
  * the reference points with adg_dim_set_ref() and the position reference using
  * adg_dim_set_pos().
  *
- * Return value: the new entity
+ * Returns: the new entity
  **/
 AdgEntity *
 adg_adim_new(void)

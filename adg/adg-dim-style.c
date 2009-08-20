@@ -40,7 +40,7 @@
  *
  * Gets the slot id for this style class.
  *
- * Return value: the requested slot id
+ * Returns: the requested slot id
  **/
 
 
@@ -381,7 +381,7 @@ _adg_dim_style_get_slot(void)
  *
  * Constructs a new dimension style initialized with default params.
  *
- * Return value: a new dimension style
+ * Returns: a new dimension style
  **/
 AdgStyle *
 adg_dim_style_new(void)
@@ -396,7 +396,7 @@ adg_dim_style_new(void)
  * Gets the basic value font style of @dim_style. No reference will
  * be added to the returned style; it should not be unreferenced.
  *
- * Return value: the basic value style or %NULL on errors
+ * Returns: the basic value style or %NULL on errors
  **/
 AdgStyle *
 adg_dim_style_get_value_style(AdgDimStyle *dim_style)
@@ -436,7 +436,7 @@ adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  * Gets the tolerance style of @dim_style. No reference will be added to the
  * returned style; it should not be unreferenced.
  *
- * Return value: the tolerance style or %NULL on errors
+ * Returns: the tolerance style or %NULL on errors
  **/
 AdgStyle *
 adg_dim_style_get_tolerance_style(AdgDimStyle *dim_style)
@@ -475,7 +475,7 @@ adg_dim_style_set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  * Gets the note style of @dim_style. No reference will be added to the
  * returned style; it should not be unreferenced.
  *
- * Return value: the note style or %NULL on errors
+ * Returns: the note style or %NULL on errors
  **/
 AdgStyle *
 adg_dim_style_get_note_style(AdgDimStyle *dim_style)
@@ -514,7 +514,7 @@ adg_dim_style_set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  * Gets the line style of @dim_style. No reference will be added to the
  * returned style; it should not be unreferenced.
  *
- * Return value: the line style or %NULL on errors
+ * Returns: the line style or %NULL on errors
  **/
 AdgStyle *
 adg_dim_style_get_line_style(AdgDimStyle *dim_style)
@@ -553,7 +553,7 @@ adg_dim_style_set_line_style(AdgDimStyle *dim_style, AdgLineStyle *style)
  * Gets the arrow style of @dim_style. No reference will be added to the
  * returned style; it should not be unreferenced.
  *
- * Return value: the arrow style or %NULL on errors
+ * Returns: the arrow style or %NULL on errors
  **/
 AdgStyle *
 adg_dim_style_get_arrow_style(AdgDimStyle *dim_style)
@@ -592,7 +592,7 @@ adg_dim_style_set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
  * Gets the distance (in global space) the extension lines must keep from the
  * sensed points.
  *
- * Return value: the requested distance
+ * Returns: the requested distance
  **/
 gdouble
 adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
@@ -633,7 +633,7 @@ adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
  * Gets how much (in global space) the extension lines must extend after
  * crossing the baseline.
  *
- * Return value: the requested distance
+ * Returns: the requested distance
  **/
 gdouble
 adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
@@ -674,7 +674,7 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
  * Gets the distance between two consecutive baselines
  * while stacking dimensions.
  *
- * Return value: the requested spacing
+ * Returns: the requested spacing
  **/
 gdouble
 adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
@@ -714,7 +714,7 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
  *
  * Gets the distance (in global space) between up and down tolerances.
  *
- * Return value: the requested spacing
+ * Returns: the requested spacing
  **/
 gdouble
 adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
@@ -755,7 +755,7 @@ adg_dim_style_set_tolerance_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * Gets the smooth displacement of the quote. The returned pointer refers
  * to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested shift
+ * Returns: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
@@ -792,7 +792,7 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * Gets the smooth displacement of the tolerance text. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested shift
+ * Returns: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_tolerance_shift(AdgDimStyle *dim_style)
@@ -829,7 +829,7 @@ adg_dim_style_set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * Gets the smooth displacement of the note text. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Return value: the requested shift
+ * Returns: the requested shift
  **/
 const AdgPair *
 adg_dim_style_get_note_shift(AdgDimStyle *dim_style)
@@ -867,7 +867,7 @@ adg_dim_style_set_note_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * returned pointer refers to internally managed text that must not be
  * modified or freed.
  *
- * Return value: the requested format
+ * Returns: the requested format
  **/
 const gchar *
 adg_dim_style_get_number_format(AdgDimStyle *dim_style)
@@ -905,7 +905,7 @@ adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
  * returned pointer refers to internally managed text that must not be
  * modified or freed.
  *
- * Return value: the requested tag
+ * Returns: the requested tag
  **/
 const gchar *
 adg_dim_style_get_number_tag(AdgDimStyle *dim_style)

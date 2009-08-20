@@ -51,7 +51,7 @@
  * Callback to be used to get the default instance for
  * newly registered style classes.
  *
- * Return value: the instance to use for the passed in style class
+ * Returns: the instance to use for the passed in style class
  **/
 
 
@@ -101,7 +101,7 @@ adg_context_init(AdgContext *context)
  * style family by assigning a new slot id to it: the internal register
  * will keep a reference to this style class.
  *
- * Return value: the requested slot id
+ * Returns: the requested slot id
  **/
 AdgStyleSlot
 adg_context_get_slot(GType type)
@@ -131,7 +131,7 @@ adg_context_get_slot(GType type)
  * Constructs a new empty context. If @context_filler is %NULL, the default
  * filler callback will be used (the new style instances will be %NULL).
  *
- * Return value: a new context
+ * Returns: a new context
  **/
 AdgContext *
 adg_context_new(AdgContextFiller context_filler, gpointer user_data)
@@ -155,7 +155,7 @@ adg_context_new(AdgContextFiller context_filler, gpointer user_data)
  *
  * Gets a style instance from the specified @slot of @context.
  *
- * Return value: the style instance
+ * Returns: the style instance
  **/
 AdgStyle *
 adg_context_get_style(AdgContext *context, AdgStyleSlot slot)

@@ -188,8 +188,8 @@ set_property(GObject *object,
  * The title block name usually represents what is commonly
  * referred as "title of the drawing".
  *
- * Return value: a copy of the title block name: it must be freed
- *               with g_free() when no longer needed
+ * Returns: a copy of the title block name: it must be freed
+ *          with g_free() when no longer needed
  **/
 gchar *
 adg_title_block_get_name(AdgTitleBlock *title_block)
@@ -234,8 +234,8 @@ adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
  * representing more than one part (such as assemblies) the material
  * item has no meaning.
  *
- * Return value: a copy of the material name: it must be freed
- *               with g_free() when no longer needed
+ * Returns: a copy of the material name: it must be freed
+ *          with g_free() when no longer needed
  **/
 gchar *
 adg_title_block_get_material(AdgTitleBlock *title_block)
@@ -279,8 +279,8 @@ adg_title_block_set_material(AdgTitleBlock *title_block,
  * block. As for :material property, also the treatment
  * should be set only when applicable.
  *
- * Return value: a copy of the treatment description: it must be freed
- *               with g_free() when no longer needed
+ * Returns: a copy of the treatment description: it must be freed
+ *          with g_free() when no longer needed
  **/
 gchar *
 adg_title_block_get_treatment(AdgTitleBlock *title_block)

@@ -223,7 +223,7 @@ set_property(GObject *object,
  *
  * Creates a new #AdgWidget.
  *
- * Return value: the newly created widget
+ * Returns: the newly created widget
  **/
 GtkWidget *
 adg_widget_new(AdgCanvas *canvas)
@@ -240,7 +240,7 @@ adg_widget_new(AdgCanvas *canvas)
  *
  * Gets the canvas associated to @widget.
  *
- * Return value: the requested #AdgCanvas object or %NULL on errors
+ * Returns: the requested #AdgCanvas object or %NULL on errors
  **/
 AdgCanvas *
 adg_widget_get_canvas(AdgWidget *widget)
@@ -281,7 +281,7 @@ adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
  * 1.05 will zoom of 5% every iteration) and it is reversed while
  * zooming out (that is, the default factor will use 1/1.05).
  *
- * Return value: the requested zoom factor or 0 on error
+ * Returns: the requested zoom factor or 0 on error
  **/
 gdouble
 adg_widget_get_factor(AdgWidget *widget)

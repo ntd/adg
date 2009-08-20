@@ -64,8 +64,8 @@ adg_matrix_get_type(void)
  *
  * Duplicates @matrix.
  *
- * Return value: the duplicate of @matrix: must be freed with g_free()
- *               when no longer needed.
+ * Returns: the duplicate of @matrix: must be freed with g_free()
+ *          when no longer needed.
  */
 AdgMatrix *
 adg_matrix_dup(const AdgMatrix *matrix)
@@ -81,7 +81,7 @@ adg_matrix_dup(const AdgMatrix *matrix)
  * Gets a fallback matrix. The fallback matrix is a statically allocated
  * identity matrix.
  *
- * Return value: the fallback matrix
+ * Returns: the fallback matrix
  */
 const AdgMatrix *
 adg_matrix_get_fallback(void)
@@ -107,7 +107,7 @@ adg_matrix_init_null(AdgMatrix *matrix)
  *
  * Checks if a matrix is a nullified matrix.
  *
- * Return value: %TRUE if the matrix is a null matrix, %FALSE otherwise
+ * Returns: %TRUE if the matrix is a null matrix, %FALSE otherwise
  */
 gboolean
 adg_matrix_is_null(const AdgMatrix *matrix)
@@ -122,7 +122,7 @@ adg_matrix_is_null(const AdgMatrix *matrix)
  *
  * Copies @matrix to @dst.
  *
- * Return value: @matrix
+ * Returns: @matrix
  **/
 AdgMatrix *
 adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
@@ -142,7 +142,7 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  *
  * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
  *
- * Return value: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
+ * Returns: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
  */
 gboolean
 adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)

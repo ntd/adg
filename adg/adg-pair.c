@@ -59,8 +59,8 @@ adg_pair_get_type(void)
  *
  * Duplicates @pair.
  *
- * Return value: the duplicate of @pair: must be freed with g_free()
- *               when no longer needed.
+ * Returns: the duplicate of @pair: must be freed with g_free()
+ *           when no longer needed.
  **/
 AdgPair *
 adg_pair_dup(const AdgPair * pair)

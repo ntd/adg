@@ -39,7 +39,7 @@
  *
  * Gets the slot id for this style class.
  *
- * Return value: the requested slot id
+ * Returns: the requested slot id
  **/
 
 
@@ -280,7 +280,7 @@ _adg_font_style_get_slot(void)
  *
  * Constructs a new font style initialized with default params.
  *
- * Return value: a new font style
+ * Returns: a new font style
  **/
 AdgStyle *
 adg_font_style_new(void)
@@ -295,7 +295,7 @@ adg_font_style_new(void)
  * Gets the family of @font_style. The returned pointer refers to
  * internally managed text that must not be modified or freed.
  *
- * Return value: the requested family
+ * Returns: the requested family
  **/
 const gchar *
 adg_font_style_get_family(AdgFontStyle *font_style)
@@ -331,7 +331,7 @@ adg_font_style_set_family(AdgFontStyle *font_style, const gchar *family)
  *
  * Gets the slant variant of @font_style.
  *
- * Return value: the slant variant
+ * Returns: the slant variant
  **/
 cairo_font_slant_t
 adg_font_style_get_slant(AdgFontStyle *font_style)
@@ -373,7 +373,7 @@ adg_font_style_set_slant(AdgFontStyle *font_style,
  *
  * Gets the weight variant of @font_style.
  *
- * Return value: the weight variant
+ * Returns: the weight variant
  **/
 cairo_font_weight_t
 adg_font_style_get_weight(AdgFontStyle *font_style)
@@ -415,7 +415,7 @@ adg_font_style_set_weight(AdgFontStyle *font_style,
  *
  * Gets the size (in global space) of @font_style.
  *
- * Return value: the size variant
+ * Returns: the size variant
  **/
 gdouble
 adg_font_style_get_size(AdgFontStyle *font_style)
@@ -455,7 +455,7 @@ adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
  *
  * Gets the antialias mode used.
  *
- * Return value: the requested antialias mode
+ * Returns: the requested antialias mode
  **/
 cairo_antialias_t
 adg_font_style_get_antialias(AdgFontStyle *font_style)
@@ -499,7 +499,7 @@ adg_font_style_set_antialias(AdgFontStyle *font_style,
  * within each pixel on the display device when rendering with an
  * antialiasing mode of %CAIRO_ANTIALIAS_SUBPIXEL.
  *
- * Return value: the requested subpixel order mode
+ * Returns: the requested subpixel order mode
  **/
 cairo_subpixel_order_t
 adg_font_style_get_subpixel_order(AdgFontStyle *font_style)
@@ -542,7 +542,7 @@ adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
  * Gets the hint style mode used, that is how to fit outlines
  * to the pixel grid in order to improve the appearance of the result.
  *
- * Return value: the requested hint style mode
+ * Returns: the requested hint style mode
  **/
 cairo_hint_style_t
 adg_font_style_get_hint_style(AdgFontStyle *font_style)
@@ -584,7 +584,7 @@ adg_font_style_set_hint_style(AdgFontStyle *font_style,
  *
  * Gets the state on whether to hint font metrics.
  *
- * Return value: the requested hint metrics state
+ * Returns: the requested hint metrics state
  **/
 cairo_hint_metrics_t
 adg_font_style_get_hint_metrics(AdgFontStyle *font_style)

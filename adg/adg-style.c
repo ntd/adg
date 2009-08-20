@@ -144,7 +144,7 @@ set_property(GObject *object,
  *
  * Registers a new style in the internal register.
  *
- * Return value: the new id associated to this style or %0 on errors
+ * Returns: the new id associated to this style or %0 on errors
  **/
 AdgStyleId
 adg_style_register_id(AdgStyle *style)
@@ -168,7 +168,7 @@ adg_style_register_id(AdgStyle *style)
  *
  * Gets the preregistered style identified by @id of @style family.
  *
- * Return value: the requested style or %NULL on errors
+ * Returns: the requested style or %NULL on errors
  **/
 AdgStyle *
 adg_style_from_id(GType type, AdgStyleId id)
@@ -224,7 +224,7 @@ adg_style_apply(AdgStyle *style, cairo_t *cr)
  * Gets the pattern binded to this style. The returned pattern refers to
  * an internally managed struct that must not be modified or freed.
  *
- * Return value: the requested pattern or %NULL on no pattern or errors
+ * Returns: the requested pattern or %NULL on no pattern or errors
  **/
 const AdgPattern *
 adg_style_get_pattern(AdgStyle *style)

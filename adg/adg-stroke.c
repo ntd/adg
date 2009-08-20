@@ -136,7 +136,7 @@ set_property(GObject *object, guint prop_id,
  *
  * Creates a new stroke entity.
  *
- * Return value: the newly created entity
+ * Returns: the newly created entity
  **/
 AdgEntity *
 adg_stroke_new(AdgPath *path)
@@ -153,7 +153,7 @@ adg_stroke_new(AdgPath *path)
  *
  * Gets the #AdgPath binded to this @stroke entity.
  *
- * Return value: the requested #AdgPath or %NULL on errors
+ * Returns: the requested #AdgPath or %NULL on errors
  **/
 AdgPath *
 adg_stroke_get_path(AdgStroke *stroke)

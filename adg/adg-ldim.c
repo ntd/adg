@@ -175,7 +175,7 @@ set_property(GObject *object,
  * adg_ldim_set_direction() and the position reference using adg_dim_set_pos()
  * or, better, adg_ldim_set_pos().
  *
- * Return value: the new entity
+ * Returns: the new entity
  */
 AdgEntity *
 adg_ldim_new(void)
@@ -193,7 +193,7 @@ adg_ldim_new(void)
  * Creates a new linear dimension, specifing all the needed properties in
  * one shot.
  *
- * Return value: the new entity
+ * Returns: the new entity
  */
 AdgEntity *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
@@ -220,7 +220,7 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  *
  * Wrappes adg_ldim_new_full() with explicit values.
  *
- * Return value: the new entity
+ * Returns: the new entity
  */
 AdgEntity *
 adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
@@ -313,7 +313,7 @@ adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble pos_x, gdouble pos_y)
  *
  * Gets the direction where @ldim will extend.
  *
- * Return value: the direction angle in radians
+ * Returns: the direction angle in radians
  */
 gdouble
 adg_ldim_get_direction(AdgLDim *ldim)

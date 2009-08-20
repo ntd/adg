@@ -79,7 +79,7 @@ adg_canvas_init(AdgCanvas *canvas)
  *
  * Creates a new empty canvas object.
  *
- * Return value: the canvas
+ * Returns: the canvas
  **/
 AdgCanvas *
 adg_canvas_new(void)

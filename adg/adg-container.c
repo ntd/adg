@@ -309,9 +309,10 @@ adg_container_foreach(AdgContainer *container,
  * @container: an #AdgContainer
  * @signal_id: the signal id
  * @detail: the detail
- * @...: parameters to be passed to the signal, followed by a location for
- *       the return value. If the return type of the signal is G_TYPE_NONE,
- *       the return value location can be omitted.
+ * @...: parameters to be passed to the signal, followed by a pointer
+ *       to the allocated memory where to store the return type: if
+ *       the signal is %G_TYPE_NONE (void return type), this trailing
+ *       pointer should be omitted
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.
@@ -331,9 +332,10 @@ adg_container_propagate(AdgContainer *container,
  * adg_container_propagate_by_name:
  * @container: an #AdgContainer
  * @detailed_signal: a string of the form "signal-name::detail".
- * @...: a list of parameters to be passed to the signal, followed by
- *       a location for the return value. If the return type of the signal
- *       is G_TYPE_NONE, the return value location can be omitted.
+ * @...: parameters to be passed to the signal, followed by a pointer
+ *       to the allocated memory where to store the return type: if
+ *       the signal is %G_TYPE_NONE (void return type), this trailing
+ *       pointer should be omitted
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.
@@ -363,9 +365,10 @@ adg_container_propagate_by_name(AdgContainer *container,
  * @container: an #AdgContainer
  * @signal_id: the signal id
  * @detail: the detail
- * @var_args: a list of parameters to be passed to the signal, followed by a
- *            location for the return value. If the return type of the signal
- *            is G_TYPE_NONE, the return value location can be omitted.
+ * @var_args: parameters to be passed to the signal, followed by a
+ *            pointer to the allocated memory where to store the
+ *            return type: if the signal is %G_TYPE_NONE (void return
+ *            type), this trailing pointer should be omitted
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.

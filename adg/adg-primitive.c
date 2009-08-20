@@ -63,8 +63,8 @@ adg_primitive_get_type(void)
  * out adg_primitive_deep_dup() if it is required also the content
  * duplication.
  *
- * Return value: a shallow duplicate of @primitive: must be freed
- *               with g_free() when no longer needed.
+ * Returns: a shallow duplicate of @primitive: must be freed
+ *          with g_free() when no longer needed.
  **/
 AdgPrimitive *
 adg_primitive_dup(const AdgPrimitive *primitive)
@@ -85,8 +85,8 @@ adg_primitive_dup(const AdgPrimitive *primitive)
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.
  *
- * Return value: a deep duplicate of @primitive: must be freed
- *               with g_free() when no longer needed.
+ * Returns: a deep duplicate of @primitive: must be freed
+ *          with g_free() when no longer needed.
  **/
 AdgPrimitive *
 adg_primitive_deep_dup(const AdgPrimitive *primitive)

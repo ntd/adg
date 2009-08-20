@@ -39,7 +39,7 @@
  *
  * Gets the slot id for this style class.
  *
- * Return value: the requested slot id
+ * Returns: the requested slot id
  **/
 
 
@@ -231,7 +231,7 @@ _adg_arrow_style_get_slot(void)
  *
  * Constructs a new arrow style initialized with default params.
  *
- * Return value: a new arrow style
+ * Returns: a new arrow style
  **/
 AdgStyle *
 adg_arrow_style_new(void)
@@ -279,7 +279,7 @@ adg_arrow_style_render(AdgArrowStyle *arrow_style,
  *
  * Gets the size (in global space) of the arrow (renderer dependent value).
  *
- * Return value: the size value
+ * Returns: the size value
  **/
 gdouble
 adg_arrow_style_get_size(AdgArrowStyle *arrow_style)
@@ -319,7 +319,7 @@ adg_arrow_style_set_size(AdgArrowStyle *arrow_style, gdouble size)
  *
  * Gets the angle (in degree) of the arrow (renderer dependent value).
  *
- * Return value: the angle value
+ * Returns: the angle value
  **/
 gdouble
 adg_arrow_style_get_angle(AdgArrowStyle *arrow_style)
@@ -360,7 +360,7 @@ adg_arrow_style_set_angle(AdgArrowStyle *arrow_style, gdouble angle)
  * Gets the margin (in global space) of this arrow (renderer dependent value).
  * The margin is also used to trim the baseline of this amount.
  *
- * Return value: the margin value
+ * Returns: the margin value
  **/
 gdouble
 adg_arrow_style_get_margin(AdgArrowStyle *arrow_style)
@@ -400,7 +400,7 @@ adg_arrow_style_set_margin(AdgArrowStyle *arrow_style, gdouble margin)
  *
  * Gets the renderer of @arrow_style.
  *
- * Return value: the renderer value
+ * Returns: the renderer value
  **/
 AdgArrowRenderer
 adg_arrow_style_get_renderer(AdgArrowStyle *arrow_style)

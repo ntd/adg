@@ -39,7 +39,7 @@
  *
  * Gets the slot id for this style class.
  *
- * Return value: the requested slot id
+ * Returns: the requested slot id
  **/
 
 
@@ -232,7 +232,7 @@ _adg_line_style_get_slot(void)
  *
  * Constructs a new line style initialized with default params.
  *
- * Return value: a new line style
+ * Returns: a new line style
  **/
 AdgStyle *
 adg_line_style_new(void)
@@ -246,7 +246,7 @@ adg_line_style_new(void)
  *
  * Gets the line thickness value (in global space).
  *
- * Return value: the requested width
+ * Returns: the requested width
  **/
 gdouble
 adg_line_style_get_width(AdgLineStyle *line_style)
@@ -286,7 +286,7 @@ adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
  *
  * Gets the line cap mode.
  *
- * Return value: the requested line cap mode
+ * Returns: the requested line cap mode
  **/
 cairo_line_cap_t
 adg_line_style_get_cap(AdgLineStyle *line_style)
@@ -327,7 +327,7 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
  *
  * Gets the line join mode.
  *
- * Return value: the requested line join mode
+ * Returns: the requested line join mode
  **/
 cairo_line_join_t
 adg_line_style_get_join(AdgLineStyle *line_style)
@@ -369,7 +369,7 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
  * Gets the line miter limit value. The miter limit is used to determine
  * whether the lines should be joined with a bevel instead of a miter.
  *
- * Return value: the requested miter limit
+ * Returns: the requested miter limit
  **/
 gdouble
 adg_line_style_get_miter_limit(AdgLineStyle *line_style)
@@ -410,7 +410,7 @@ adg_line_style_set_miter_limit(AdgLineStyle *line_style,
  *
  * Gets the antialias mode used.
  *
- * Return value: the requested antialias mode
+ * Returns: the requested antialias mode
  **/
 cairo_antialias_t
 adg_line_style_get_antialias(AdgLineStyle *line_style)

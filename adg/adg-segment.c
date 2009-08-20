@@ -65,8 +65,8 @@ adg_segment_get_type(void)
  * adg_segment_deep_dup() if it is required also the content
  * duplication.
  *
- * Return value: a shallow duplicate of @segment: must be freed
- *               with g_free() when no longer needed.
+ * Returns: a shallow duplicate of @segment: must be freed
+ *          with g_free() when no longer needed.
  **/
 AdgSegment *
 adg_segment_dup(const AdgSegment *segment)
@@ -87,8 +87,8 @@ adg_segment_dup(const AdgSegment *segment)
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.
  *
- * Return value: a deep duplicate of @segment: must be freed
- *               with g_free() when no longer needed.
+ * Returns: a deep duplicate of @segment: must be freed
+ *          with g_free() when no longer needed.
  **/
 AdgSegment *
 adg_segment_deep_dup(const AdgSegment *segment)
