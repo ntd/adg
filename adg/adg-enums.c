@@ -73,3 +73,14 @@
  *
  * Builtin id to get some predefined #AdgDimStyle instances.
  **/
+
+/**
+ * AdgThreeState:
+ * @ADG_THREE_STATE_OFF: disabled, switched off, disactive
+ * @ADG_THREE_STATE_ON: enabled, switched on, active
+ * @ADG_THREE_STATE_UNKNOWN: unknown / indefinite / automatic state
+ *
+ * A generic three state flags to be used whenever needed. Could be
+ * user when a boolean is requested but also an indefinite / default
+ * state should be caught.
+ **/

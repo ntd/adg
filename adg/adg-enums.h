@@ -59,6 +59,12 @@ typedef enum {
     ADG_DIM_STYLE_LAST
 } AdgDimStyleId;
 
+typedef enum {
+    ADG_THREE_STATE_OFF,
+    ADG_THREE_STATE_ON,
+    ADG_THREE_STATE_UNKNOWN
+} AdgThreeState;
+
 G_END_DECLS
 
 
