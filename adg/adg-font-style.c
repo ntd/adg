@@ -49,6 +49,8 @@
 #include "adg-intl.h"
 #include "adg-util.h"
 
+#define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_font_style_parent_class)
+
 
 enum {
     PROP_0,
@@ -651,29 +653,18 @@ apply(AdgStyle *style, cairo_t *cr)
 {
     AdgFontStyle *font_style;
     AdgFontStylePrivate *data;
-    AdgStyleClass *style_class;
-    double size;
     cairo_font_options_t *options;
-    cairo_matrix_t matrix;
-    cairo_matrix_t font_matrix;
 
     font_style = (AdgFontStyle *) style;
     data = font_style->data;
-    style_class = (AdgStyleClass *) adg_font_style_parent_class;
-    cairo_get_matrix(cr, &matrix);
-    size = data->size;
 
-    if (style_class->apply != NULL)
-        style_class->apply(style, cr);
+    if (PARENT_STYLE_CLASS->apply != NULL)
+        PARENT_STYLE_CLASS->apply(style, cr);
 
     if (data->family)
-        cairo_select_font_face(cr, data->family,
-                               data->slant, data->weight);
+        cairo_select_font_face(cr, data->family, data->slant, data->weight);
 
-    cairo_matrix_init_scale(&font_matrix,
-                            size / (matrix.xx - matrix.yx),
-                            size / (matrix.yy + matrix.xy));
-    cairo_set_font_matrix(cr, &font_matrix);
+    cairo_set_font_size(cr, data->size);
 
     options = cairo_font_options_create();
 
@@ -681,8 +672,8 @@ apply(AdgStyle *style, cairo_t *cr)
     cairo_font_options_set_subpixel_order(options, data->subpixel_order);
     cairo_font_options_set_hint_style(options, data->hint_style);
     cairo_font_options_set_hint_metrics(options, data->hint_metrics);
-
     cairo_set_font_options(cr, options);
+
     cairo_font_options_destroy(options);
 }
 
