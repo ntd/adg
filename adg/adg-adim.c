@@ -36,7 +36,6 @@
 #include "adg-adim.h"
 #include "adg-adim-private.h"
 #include "adg-container.h"
-#include "adg-util.h"
 #include "adg-intl.h"
 
 
@@ -58,7 +57,7 @@ static void     set_property            (GObject        *object,
                                          GParamSpec     *pspec);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gchar *  default_quote           (AdgDim         *dim);
+static gchar *  default_value           (AdgDim         *dim);
 static void     set_angle1              (AdgADim        *adim,
                                          gdouble         angle);
 static void     set_angle2              (AdgADim        *adim,
@@ -88,7 +87,7 @@ adg_adim_class_init(AdgADimClass *klass)
 
     entity_class->render = render;
 
-    dim_class->default_quote = default_quote;
+    dim_class->default_value = default_value;
 
     param = g_param_spec_double("angle1",
                                 P_("Angle 1"),
@@ -186,7 +185,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gchar *
-default_quote(AdgDim *dim)
+default_value(AdgDim *dim)
 {
     /* TODO */
     return g_strdup("TODO");
