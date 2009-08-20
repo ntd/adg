@@ -668,6 +668,61 @@ mapping_canvas(void)
     adg_entity_set_local_map(entity, &map);
     adg_container_add(container, entity);
 
+    /* Original shape with global map scaled by 0.5 */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    cairo_matrix_init_translate(&map, 3.5, 15);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
+
+    entity = adg_stroke_new(path);
+    cairo_matrix_init_scale(&map, 0.5, 0.5);
+    adg_entity_set_global_map(ADG_ENTITY(entity), &map);
+    adg_container_add(container, entity);
+
+    entity = adg_toy_text_new("Global map scaled by 0.5");
+    cairo_matrix_init_translate(&map, -100, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 2.5, 5);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(container, entity);
+
+    /* Original shape with local map scaled by 0.5 */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    cairo_matrix_init_translate(&map, 18, 15);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
+
+    entity = adg_stroke_new(path);
+    cairo_matrix_init_scale(&map, 0.5, 0.5);
+    adg_entity_set_local_map(ADG_ENTITY(entity), &map);
+    adg_container_add(container, entity);
+
+    entity = adg_toy_text_new("Local map scaled by 0.5");
+    cairo_matrix_init_translate(&map, -100, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 2.5, 5);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(container, entity);
+
+    /* Original shape with global and local maps scaled by 0.5 */
+    container = (AdgContainer *) adg_container_new();
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
+    cairo_matrix_init_translate(&map, 33, 15);
+    adg_entity_set_local_map(ADG_ENTITY(container), &map);
+
+    entity = adg_stroke_new(path);
+    cairo_matrix_init_scale(&map, 0.5, 0.5);
+    adg_entity_set_global_map(ADG_ENTITY(entity), &map);
+    adg_entity_set_local_map(ADG_ENTITY(entity), &map);
+    adg_container_add(container, entity);
+
+    entity = adg_toy_text_new("Local&global scaled by 0.5");
+    cairo_matrix_init_translate(&map, -130, 20);
+    adg_entity_set_global_map(entity, &map);
+    cairo_matrix_init_translate(&map, 2.5, 5);
+    adg_entity_set_local_map(entity, &map);
+    adg_container_add(container, entity);
+
     /* Set a decent start position and zoom */
     cairo_matrix_init_translate(&map, 10, -140);
     cairo_matrix_scale(&map, 15, 15);
