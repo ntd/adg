@@ -48,8 +48,14 @@
  * @style_class: the new style class
  * @user_data: the user provided data
  *
- * Callback to be used to get the default instance for
- * newly registered style classes.
+ * Callback to be used to get the default instance for newly registered
+ * style classes. This is needed to solve the issue rising on #AdgContext
+ * instances when a new style is added.
+ *
+ * The arrays that keep track of the style instances inside the contexts
+ * are dynamics (#GPtrArray type): whenever an undefined style instance
+ * is requested, the context object fills the array "holes" using a call
+ * to this callback.
  *
  * Returns: the instance to use for the passed in style class
  **/
