@@ -12,7 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -103,7 +103,7 @@ adg_dim_class_init(AdgDimClass *klass)
     gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
- 
+
     entity_class->invalidate = invalidate;
 
     klass->default_value = default_value;

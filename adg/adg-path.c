@@ -11,7 +11,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the 
+ * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02110-1301, USA.
  */
@@ -312,7 +312,7 @@ adg_path_clear(AdgPath *path)
  * This function accepts also the special %CAIRO_PATH_ARC_TO primitive.
  *
  * If @path has no current point while the requested primitive needs it,
- * a warning message will be triggered without other effect. 
+ * a warning message will be triggered without other effect.
  **/
 void
 adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
@@ -478,7 +478,7 @@ adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
  * After this call the current point will be (@x, @y).
  *
  * If @path has no current point before this call, this function will
- * trigger a warning without other effect. 
+ * trigger a warning without other effect.
  **/
 void
 adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
@@ -504,7 +504,7 @@ adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
  * will be (@x2, @y2).
  *
  * If @path has no current point before this call, this function will
- * trigger a warning without other effect. 
+ * trigger a warning without other effect.
  **/
 void
 adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
@@ -534,7 +534,7 @@ adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
  * control points. After this call the current point will be (@x3, @y3).
  *
  * If @path has no current point before this call, this function will
- * trigger a warning without other effect. 
+ * trigger a warning without other effect.
  **/
 void
 adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
@@ -568,7 +568,7 @@ adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
  * primitive of the segment.
  *
  * If @path has no current point before this call, this function will
- * trigger a warning without other effect. 
+ * trigger a warning without other effect.
  **/
 void
 adg_path_close(AdgPath *path)
@@ -771,7 +771,7 @@ get_cairo_path(AdgPath *path)
     cairo_path->status = CAIRO_STATUS_SUCCESS;
     cairo_path->num_data = dst->len;
     cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
-    
+
     return cairo_path;
 }
 
@@ -895,7 +895,7 @@ clear_operation(AdgPath *path)
     AdgOperation *operation;
 
     data = path->data;
-    operation = &data->operation; 
+    operation = &data->operation;
 
     if (operation->operator == ADG_OPERATOR_NONE)
         return;
@@ -920,7 +920,7 @@ append_operation(AdgPath *path, AdgOperator operator, ...)
         return FALSE;
     }
 
-    operation = &data->operation; 
+    operation = &data->operation;
     if (operation->operator != ADG_OPERATOR_NONE) {
         /* TODO: this is a rude semplification, as a lot of operators can
          * and may cohexist. As an example, a fillet followed by a
