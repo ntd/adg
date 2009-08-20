@@ -35,9 +35,11 @@
 
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
+#include "adg-dim-style.h"
 #include "adg-container.h"
-#include "adg-util.h"
 #include "adg-intl.h"
+
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
 enum {
@@ -57,7 +59,7 @@ static void     set_property            (GObject        *object,
 static gboolean invalidate              (AdgEntity      *entity);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gchar *  default_quote           (AdgDim         *dim);
+static gchar *  default_value           (AdgDim         *dim);
 static void     update                  (AdgLDim        *ldim);
 static void     clear                   (AdgLDim        *ldim);
 
@@ -85,7 +87,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
-    dim_class->default_quote = default_quote;
+    dim_class->default_value = default_value;
 
     param = g_param_spec_double("direction",
                                 P_("Direction"),
@@ -216,7 +218,7 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  * @pos_x: the x coordinate of the position reference
  * @pos_y: the y coordinate of the position reference
  *
- * Wrappes adg_ldim_new_full() with explicit quotes.
+ * Wrappes adg_ldim_new_full() with explicit values.
  *
  * Return value: the new entity
  */
@@ -350,7 +352,7 @@ static gboolean
 invalidate(AdgEntity *entity)
 {
     clear((AdgLDim *) entity);
-    return ((AdgEntityClass *) adg_ldim_parent_class)->invalidate(entity);
+    return PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
 static gboolean
@@ -391,7 +393,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gchar *
-default_quote(AdgDim *dim)
+default_value(AdgDim *dim)
 {
     const AdgPair *pos1, *pos2;
     AdgStyle *dim_style;
@@ -422,6 +424,7 @@ update(AdgLDim *ldim)
     AdgMatrix unlocal;
     CpmlPair vector;
     AdgPair offset;
+    AdgPair quote_org;
     gdouble angle;
 
     data = ldim->data;
@@ -490,9 +493,10 @@ update(AdgLDim *ldim)
     cpml_vector_set_length(cpml_pair_copy(&vector, &offset), 1);
 
     /* Update the AdgDim cache contents */
-    adg_dim_set_org_explicit((AdgDim *) ldim,
-                             (arrow1->point.x + arrow2->point.x) / 2.,
-                             (arrow1->point.y + arrow2->point.y) / 2.);
+
+    quote_org.x = (arrow1->point.x + arrow2->point.x) / 2;
+    quote_org.y = (arrow1->point.y + arrow2->point.y) / 2;
+    adg_dim_set_org((AdgDim *) ldim, &quote_org);
     angle = cpml_vector_angle(&vector);
     adg_dim_set_angle((AdgDim *) ldim, angle);
 
