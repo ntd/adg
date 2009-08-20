@@ -23,43 +23,30 @@
 
 #include <adg/adg-style.h>
 #include <adg/adg-pair.h>
+#include <adg/adg-toy-text.h>
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgTextCache AdgTextCache;
 typedef struct _AdgDimPrivate AdgDimPrivate;
 
-struct _AdgTextCache {
-    const char                  *utf8;
-    int                          utf8_len;
-    cairo_glyph_t               *glyphs;
-    int                          num_glyphs;
-    cairo_text_cluster_t        *clusters;
-    int                          num_clusters;
-    cairo_text_cluster_flags_t   cluster_flags;
-    cairo_text_extents_t         extents;
-};
-
 struct _AdgDimPrivate {
-    /* Properties */
     AdgPair              ref1;
     AdgPair              ref2;
     AdgPair              pos1;
     AdgPair              pos2;
+    gdouble              angle;
     gdouble              level;
-    gchar               *quote;
-    gchar               *tolerance_up;
-    gchar               *tolerance_down;
+    gchar               *value;
+    gchar               *value_min;
+    gchar               *value_max;
     gchar               *note;
 
-    /* Cache */
     AdgPair              org;
-    gdouble              angle;
-    AdgTextCache         quote_cache;
-    AdgTextCache         tolerance_up_cache;
-    AdgTextCache         tolerance_down_cache;
-    AdgTextCache         note_cache;
+    AdgEntity           *value_entity;
+    AdgEntity           *value_min_entity;
+    AdgEntity           *value_max_entity;
+    AdgEntity           *note_entity;
 };
 
 G_END_DECLS

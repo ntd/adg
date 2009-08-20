@@ -48,7 +48,7 @@ struct _AdgDimClass {
     AdgEntityClass       parent_class;
     /*< public >*/
     /* Virtual Table */
-    gchar *             (*default_quote)        (AdgDim         *dim);
+    gchar *             (*default_value)        (AdgDim         *dim);
     void                (*quote_layout)         (AdgDim         *dim,
                                                  cairo_t        *cr);
 };
@@ -87,18 +87,18 @@ void            adg_dim_set_pos_explicit        (AdgDim         *dim,
 gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);
-const gchar *   adg_dim_get_quote               (AdgDim         *dim);
-void            adg_dim_set_quote               (AdgDim         *dim,
-                                                 const gchar    *quote);
-const gchar *   adg_dim_get_tolerance_up        (AdgDim         *dim);
-void            adg_dim_set_tolerance_up        (AdgDim         *dim,
-                                                 const gchar    *tolerance_up);
-const gchar *   adg_dim_get_tolerance_down      (AdgDim         *dim);
-void            adg_dim_set_tolerance_down      (AdgDim         *dim,
-                                                 const gchar    *tolerance_down);
+const gchar *   adg_dim_get_value               (AdgDim         *dim);
+void            adg_dim_set_value               (AdgDim         *dim,
+                                                 const gchar    *value);
+const gchar *   adg_dim_get_value_min           (AdgDim         *dim);
+void            adg_dim_set_value_min           (AdgDim         *dim,
+                                                 const gchar    *value_min);
+const gchar *   adg_dim_get_value_max           (AdgDim         *dim);
+void            adg_dim_set_value_max           (AdgDim         *dim,
+                                                 const gchar    *value_max);
 void            adg_dim_set_tolerances          (AdgDim         *dim,
-                                                 const gchar    *tolerance_up,
-                                                 const gchar    *tolerance_down);
+                                                 const gchar    *value_min,
+                                                 const gchar    *value_max);
 const gchar *   adg_dim_get_note                (AdgDim         *dim);
 void            adg_dim_set_note                (AdgDim         *dim,
                                                  const gchar    *note);

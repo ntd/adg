@@ -23,7 +23,7 @@
  * @short_description: Root abstract class for all dimension entities
  *
  * The #AdgDim class is the base stub of all the dimension entities.
- */
+ **/
 
 /**
  * AdgDim:
@@ -35,9 +35,11 @@
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
-#include "adg-util.h"
+#include "adg-dim-style.h"
 #include "adg-intl.h"
 #include <string.h>
+
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
 
 
 enum {
@@ -46,14 +48,16 @@ enum {
     PROP_REF2,
     PROP_POS1,
     PROP_POS2,
+    PROP_ANGLE,
     PROP_LEVEL,
-    PROP_QUOTE,
-    PROP_TOLERANCE_UP,
-    PROP_TOLERANCE_DOWN,
+    PROP_VALUE,
+    PROP_VALUE_MIN,
+    PROP_VALUE_MAX,
     PROP_NOTE
 };
 
 
+static void     dispose                 (GObject        *object);
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
                                          guint           param_id,
@@ -64,20 +68,18 @@ static void     set_property            (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static gboolean invalidate              (AdgEntity      *entity);
-static void     clear                   (AdgDim         *entity);
-static gchar *  default_quote           (AdgDim         *dim);
+static gchar *  default_value           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
-static void     text_cache_init         (AdgTextCache   *text_cache);
-static gboolean text_cache_update       (AdgTextCache   *text_cache,
-                                         const gchar    *text,
-                                         cairo_t        *cr,
-                                         AdgStyle       *style);
-static void     text_cache_clear        (AdgTextCache   *text_cache);
-static void     text_cache_move_to      (AdgTextCache   *text_cache,
-                                         const CpmlPair *to);
-static void     text_cache_render       (AdgTextCache   *text_cache,
-                                         cairo_t        *cr);
+static gboolean set_value               (AdgDim         *dim,
+                                         const gchar    *value);
+static gboolean set_value_min           (AdgDim         *dim,
+                                         const gchar    *value_min);
+static gboolean set_value_max           (AdgDim         *dim,
+                                         const gchar    *value_max);
+static gboolean set_note                (AdgDim         *dim,
+                                         const gchar    *note);
+static void     detach_entity           (AdgEntity     **p_entity);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -95,13 +97,14 @@ adg_dim_class_init(AdgDimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgDimPrivate));
 
+    gobject_class->dispose = dispose;
     gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
  
     entity_class->invalidate = invalidate;
 
-    klass->default_quote = default_quote;
+    klass->default_value = default_value;
     klass->quote_layout = quote_layout;
 
     param = g_param_spec_boxed("ref1",
@@ -130,6 +133,13 @@ adg_dim_class_init(AdgDimClass *klass)
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_POS2, param);
 
+    param = g_param_spec_double("angle",
+                                P_("Angle"),
+                                P_("The dimension direction, if relevant"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 0,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+    g_object_class_install_property(gobject_class, PROP_ANGLE, param);
+
     param = g_param_spec_double("level",
                                 P_("Level"),
                                 P_("The dimension level, that is the factor to multiply dim_style->baseline_spacing to get the offset (in device units) from pos1..pos2 where render the dimension baseline"),
@@ -137,27 +147,27 @@ adg_dim_class_init(AdgDimClass *klass)
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_LEVEL, param);
 
-    param = g_param_spec_string("quote",
-                                P_("Quote"),
-                                P_("The quote to display: set to NULL to get the default quote"),
+    param = g_param_spec_string("value",
+                                P_("Basic Value"),
+                                P_("The theoretically exact value for this quote: set to NULL to automatically get the default value"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_QUOTE, param);
+    g_object_class_install_property(gobject_class, PROP_VALUE, param);
 
-    param = g_param_spec_string("tolerance-up",
-                                P_("Up Tolerance"),
-                                P_("The up tolerance of the quote: set to NULL to suppress"),
+    param = g_param_spec_string("value-min",
+                                P_("Minimum Value or Low Tolerance"),
+                                P_("The minimum value allowed or the lowest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_UP, param);
+    g_object_class_install_property(gobject_class, PROP_VALUE_MIN, param);
 
-    param = g_param_spec_string("tolerance-down",
-                                P_("Down Tolerance"),
-                                P_("The down tolerance of the quote: set to NULL to suppress"),
+    param = g_param_spec_string("value-max",
+                                P_("Maximum Value or High Tolerance"),
+                                P_("The maximum value allowed or the highest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_DOWN, param);
+    g_object_class_install_property(gobject_class, PROP_VALUE_MAX, param);
 
     param = g_param_spec_string("note",
                                 P_("Note"),
-                                P_("A custom note appended to the dimension quote"),
+                                P_("A custom note appended to the end of the quote"),
                                 NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NOTE, param);
 }
@@ -172,41 +182,59 @@ adg_dim_init(AdgDim *dim)
     data->ref2.x = data->ref2.y = 0;
     data->pos1.x = data->pos1.y = 0;
     data->pos2.x = data->pos2.y = 0;
-    data->level = 1.;
-    data->quote = NULL;
-    data->tolerance_up = NULL;
-    data->tolerance_down = NULL;
+    data->angle = 0;
+    data->level = 1;
+    data->value = NULL;
+    data->value_min = NULL;
+    data->value_max = NULL;
     data->note = NULL;
 
-    data->org.x = data->org.y = 0;
-    data->angle = 0;
-    text_cache_init(&data->quote_cache);
-    text_cache_init(&data->tolerance_up_cache);
-    text_cache_init(&data->tolerance_down_cache);
-    text_cache_init(&data->note_cache);
+    data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                      "parent", dim,
+                                      "font-style", ADG_FONT_STYLE_VALUE,
+                                      NULL);
+    data->value_min_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                          "parent", dim,
+                                          "font-style", ADG_FONT_STYLE_TOLERANCE,
+                                          NULL);
+    data->value_max_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                          "parent", dim,
+                                          "font-style", ADG_FONT_STYLE_TOLERANCE,
+                                          NULL);
+    data->note_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                     "parent", dim,
+                                     "font-style", ADG_FONT_STYLE_NOTE,
+                                     NULL);
 
     dim->data = data;
 }
 
 static void
+dispose(GObject *object)
+{
+    AdgDimPrivate *data = ((AdgDim *) object)->data;
+
+    detach_entity(&data->value_entity);
+    detach_entity(&data->value_min_entity);
+    detach_entity(&data->value_max_entity);
+    detach_entity(&data->note_entity);
+
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
+}
+
+static void
 finalize(GObject *object)
 {
-    AdgDim *dim;
-    AdgDimPrivate *data;
-    GObjectClass *object_class;
+    AdgDimPrivate *data = ((AdgDim *) object)->data;
 
-    dim = (AdgDim *) object;
-    data = dim->data;
-    object_class = (GObjectClass *) adg_dim_parent_class;
+    g_free(data->value);
+    g_free(data->value_min);
+    g_free(data->value_max);
+    g_free(data->note);
 
-    g_free(data->quote);
-    g_free(data->tolerance_up);
-    g_free(data->tolerance_down);
-
-    clear(dim);
-
-    if (object_class->finalize != NULL)
-        object_class->finalize(object);
+    if (PARENT_OBJECT_CLASS->finalize != NULL)
+        PARENT_OBJECT_CLASS->finalize(object);
 }
 
 static void
@@ -227,17 +255,20 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_POS2:
         g_value_set_boxed(value, &data->pos1);
         break;
+    case PROP_ANGLE:
+        g_value_set_double(value, data->angle);
+        break;
     case PROP_LEVEL:
         g_value_set_double(value, data->level);
         break;
-    case PROP_QUOTE:
-        g_value_set_string(value, data->quote);
+    case PROP_VALUE:
+        g_value_set_string(value, data->value);
         break;
-    case PROP_TOLERANCE_UP:
-        g_value_set_string(value, data->tolerance_up);
+    case PROP_VALUE_MIN:
+        g_value_set_string(value, data->value_min);
         break;
-    case PROP_TOLERANCE_DOWN:
-        g_value_set_string(value, data->tolerance_down);
+    case PROP_VALUE_MAX:
+        g_value_set_string(value, data->value_max);
         break;
     case PROP_NOTE:
         g_value_set_string(value, data->note);
@@ -261,43 +292,33 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_REF1:
         cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
-        clear(dim);
         break;
     case PROP_REF2:
         cpml_pair_copy(&data->ref2, (AdgPair *) g_value_get_boxed(value));
-        clear(dim);
         break;
     case PROP_POS1:
         cpml_pair_copy(&data->pos1, (AdgPair *) g_value_get_boxed(value));
-        clear(dim);
         break;
     case PROP_POS2:
         cpml_pair_copy(&data->pos2, (AdgPair *) g_value_get_boxed(value));
-        clear(dim);
+        break;
+    case PROP_ANGLE:
+        data->angle = g_value_get_double(value);
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
-        clear(dim);
         break;
-    case PROP_QUOTE:
-        g_free(data->quote);
-        data->quote = g_value_dup_string(value);
-        text_cache_clear(&data->quote_cache);
+    case PROP_VALUE:
+        set_value(dim, g_value_get_string(value));
         break;
-    case PROP_TOLERANCE_UP:
-        g_free(data->tolerance_up);
-        data->tolerance_up = g_value_dup_string(value);
-        text_cache_clear(&data->tolerance_up_cache);
+    case PROP_VALUE_MIN:
+        set_value_min(dim, g_value_get_string(value));
         break;
-    case PROP_TOLERANCE_DOWN:
-        g_free(data->tolerance_down);
-        data->tolerance_down = g_value_dup_string(value);
-        text_cache_clear(&data->tolerance_down_cache);
+    case PROP_VALUE_MAX:
+        set_value_max(dim, g_value_get_string(value));
         break;
     case PROP_NOTE:
-        g_free(data->note);
-        data->note = g_value_dup_string(value);
-        text_cache_clear(&data->note_cache);
+        set_note(dim, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -314,7 +335,7 @@ set_property(GObject *object, guint prop_id,
  * owned and must not be freed or modified. This function is only
  * useful in new dimension implementations.
  *
- * Return value: the org coordinates
+ * Returns: the org coordinates
  **/
 const AdgPair *
 adg_dim_get_org(AdgDim *dim)
@@ -370,53 +391,13 @@ adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
 }
 
 /**
- * adg_dim_get_angle:
- * @dim: an #AdgDim
- *
- * Gets the dimension angle. This function is only useful
- * in new dimension implementations.
- *
- * Return value: the angle (in radians)
- **/
-gdouble
-adg_dim_get_angle(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
-
-    data = dim->data;
-
-    return data->angle;
-}
-
-/**
- * adg_dim_set_angle:
- * @dim: an #AdgDim
- * @angle: the new angle (in radians)
- *
- * Sets a new dimension angle. This function is only useful
- * in new dimension implementations.
- **/
-void
-adg_dim_set_angle(AdgDim *dim, gdouble angle)
-{
-    AdgDimPrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    data = dim->data;
-    data->angle = angle;
-}
-
-/**
  * adg_dim_get_ref1:
  * @dim: an #AdgDim
  *
  * Gets the ref1 coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Return value: the ref1 coordinates
+ * Returns: the ref1 coordinates
  **/
 const AdgPair *
 adg_dim_get_ref1(AdgDim *dim)
@@ -437,7 +418,7 @@ adg_dim_get_ref1(AdgDim *dim)
  * Gets the ref2 coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Return value: the ref2 coordinates
+ * Returns: the ref2 coordinates
  **/
 const AdgPair *
 adg_dim_get_ref2(AdgDim *dim)
@@ -484,7 +465,6 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
         }
 
         g_object_thaw_notify(object);
-        clear(dim);
     }
 }
 
@@ -521,7 +501,7 @@ adg_dim_set_ref_explicit(AdgDim *dim, gdouble ref1_x, gdouble ref1_y,
  * Gets the pos1 coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Return value: the pos1 coordinates
+ * Returns: the pos1 coordinates
  **/
 const AdgPair *
 adg_dim_get_pos1(AdgDim *dim)
@@ -542,7 +522,7 @@ adg_dim_get_pos1(AdgDim *dim)
  * Gets the pos2 coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Return value: the pos2 coordinates
+ * Returns: the pos2 coordinates
  **/
 const AdgPair *
 adg_dim_get_pos2(AdgDim *dim)
@@ -588,7 +568,6 @@ adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
         }
 
         g_object_thaw_notify(object);
-        clear(dim);
     }
 }
 
@@ -619,12 +598,54 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
 }
 
 /**
+ * adg_dim_get_angle:
+ * @dim: an #AdgDim
+ *
+ * Gets the dimension angle. This function is only useful
+ * in new dimension implementations.
+ *
+ * Returns: the angle (in radians)
+ **/
+gdouble
+adg_dim_get_angle(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
+
+    data = dim->data;
+
+    return data->angle;
+}
+
+/**
+ * adg_dim_set_angle:
+ * @dim: an #AdgDim
+ * @angle: the new angle (in radians)
+ *
+ * Sets a new dimension angle. This function is only useful
+ * in new dimension implementations.
+ **/
+void
+adg_dim_set_angle(AdgDim *dim, gdouble angle)
+{
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    data = dim->data;
+    data->angle = angle;
+
+    g_object_notify((GObject *) dim, "angle");
+}
+
+/**
  * adg_dim_get_level:
  * @dim: an #AdgDim
  *
  * Gets the level of this dimension.
  *
- * Return value: the level value
+ * Returns: the level value
  **/
 gdouble
 adg_dim_get_level(AdgDim  *dim)
@@ -658,20 +679,19 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
     data->level = level;
 
     g_object_notify((GObject *) dim, "level");
-    clear(dim);
 }
 
 /**
- * adg_dim_get_quote:
+ * adg_dim_get_value:
  * @dim: an #AdgDim
  *
- * Gets the quote text. The string is internally owned and
+ * Gets the value text. The string is internally owned and
  * must not be freed or modified.
  *
- * Return value: the quote text
+ * Returns: the value text
  **/
 const gchar *
-adg_dim_get_quote(AdgDim *dim)
+adg_dim_get_value(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -679,46 +699,39 @@ adg_dim_get_quote(AdgDim *dim)
 
     data = dim->data;
 
-    return data->quote;
+    return data->value;
 }
 
 /**
- * adg_dim_set_quote:
+ * adg_dim_set_value:
  * @dim: an #AdgDim
- * @quote: the quote text
+ * @value: the value text
  *
- * Explicitely sets the text to use as quote. If @quote is %NULL or
- * was never set, an automatic text is calculated using the format as
- * specified by the dim_style associated to this entity and getting
- * the number from the construction points (ref1, ref2, pos1 and pos2).
+ * Explicitely sets the text to use as value. If @value is %NULL or
+ * was never set, an automatic text is calculated using the format
+ * specified in the current #AdgDimStyle and getting its value by
+ * calling the default_value() virtual method.
  **/
 void
-adg_dim_set_quote(AdgDim *dim, const gchar *quote)
+adg_dim_set_value(AdgDim *dim, const gchar *value)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
-    g_free(data->quote);
-    data->quote = g_strdup(quote);
-    g_object_notify((GObject *) dim, "quote");
-
-    text_cache_clear(&data->quote_cache);
+    if (set_value(dim, value))
+        g_object_notify((GObject *) dim, "value");
 }
 
 /**
- * adg_dim_get_tolerance_up:
+ * adg_dim_get_value_min:
  * @dim: an #AdgDim
  *
- * Gets the upper tolerance text or %NULL on upper tolerance disabled.
+ * Gets the minimum value text or %NULL on minimum value disabled.
  * The string is internally owned and must not be freed or modified.
  *
- * Return value: the tolerance text
+ * Returns: the mimimum value text
  **/
 const gchar *
-adg_dim_get_tolerance_up(AdgDim *dim)
+adg_dim_get_value_min(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -726,43 +739,36 @@ adg_dim_get_tolerance_up(AdgDim *dim)
 
     data = dim->data;
 
-    return data->tolerance_up;
+    return data->value_min;
 }
 
 /**
- * adg_dim_set_tolerance_up:
+ * adg_dim_set_value_min:
  * @dim: an #AdgDim
- * @tolerance_up: the upper tolerance
+ * @value_min: the new minimum value
  *
- * Sets the upper tolerance. Use %NULL as @tolerance_up to disable it.
+ * Sets the minimum value. Use %NULL as @value_min to disable it.
  **/
 void
-adg_dim_set_tolerance_up(AdgDim *dim, const gchar *tolerance_up)
+adg_dim_set_value_min(AdgDim *dim, const gchar *value_min)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
-    g_free(data->tolerance_up);
-    data->tolerance_up = g_strdup(tolerance_up);
-    g_object_notify((GObject *) dim, "tolerance-up");
-
-    text_cache_clear(&data->tolerance_up_cache);
+    if (set_value_min(dim, value_min))
+        g_object_notify((GObject *) dim, "value-min");
 }
 
 /**
- * adg_dim_get_tolerance_down:
+ * adg_dim_get_value_max:
  * @dim: an #AdgDim
  *
- * Gets the lower tolerance text or %NULL on lower tolerance disabled.
+ * Gets the maximum value text or %NULL on maximum value disabled.
  * The string is internally owned and must not be freed or modified.
  *
- * Return value: the tolerance text
+ * Returns: the maximum value text
  **/
 const gchar *
-adg_dim_get_tolerance_down(AdgDim *dim)
+adg_dim_get_value_max(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -770,49 +776,42 @@ adg_dim_get_tolerance_down(AdgDim *dim)
 
     data = dim->data;
 
-    return data->tolerance_down;
+    return data->value_max;
 }
 
 /**
- * adg_dim_set_tolerance_down:
+ * adg_dim_set_value_max:
  * @dim: an #AdgDim
- * @tolerance_down: the lower tolerance
+ * @value_max: the new maximum value
  *
- * Sets the lower tolerance. Use %NULL as @tolerance_down to disable it.
+ * Sets the maximum value. Use %NULL as @value_max to disable it.
  **/
 void
-adg_dim_set_tolerance_down(AdgDim *dim, const gchar *tolerance_down)
+adg_dim_set_value_max(AdgDim *dim, const gchar *value_max)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
-    g_free(data->tolerance_down);
-    data->tolerance_down = g_strdup(tolerance_down);
-    g_object_notify((GObject *) dim, "tolerance-down");
-
-    text_cache_clear(&data->tolerance_down_cache);
+    if (set_value_max(dim, value_max))
+        g_object_notify((GObject *) dim, "value-max");
 }
 
 /**
  * adg_dim_set_tolerances:
  * @dim: an #AdgDim
- * @tolerance_up: the upper tolerance text
- * @tolerance_down: the lower tolerance text
+ * @value_min: the new minumum value
+ * @value_max: the new maximum value
  *
- * Shortcut to set both the tolerance at once.
+ * Shortcut to set both the tolerances at once.
  **/
 void
-adg_dim_set_tolerances(AdgDim *dim, const gchar *tolerance_up,
-                       const gchar *tolerance_down)
+adg_dim_set_tolerances(AdgDim *dim,
+                       const gchar *value_min, const gchar *value_max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
     g_object_freeze_notify((GObject *) dim);
-    adg_dim_set_tolerance_up(dim, tolerance_up);
-    adg_dim_set_tolerance_down(dim, tolerance_down);
+    adg_dim_set_value_min(dim, value_min);
+    adg_dim_set_value_max(dim, value_max);
     g_object_thaw_notify((GObject *) dim);
 }
 
@@ -823,7 +822,7 @@ adg_dim_set_tolerances(AdgDim *dim, const gchar *tolerance_up,
  * Gets the note text or %NULL if the note is not used. The string is
  * internally owned and must not be freed or modified.
  *
- * Return value: the note text
+ * Returns: the note text
  **/
 const gchar *
 adg_dim_get_note(AdgDim *dim)
@@ -847,17 +846,10 @@ adg_dim_get_note(AdgDim *dim)
 void
 adg_dim_set_note(AdgDim *dim, const gchar *note)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
-    g_free(data->note);
-    data->note = g_strdup(note);
-    g_object_notify((GObject *) dim, "note");
-
-    text_cache_clear(&data->note_cache);
+    if (set_note(dim, note))
+        g_object_notify((GObject *) dim, "note");
 }
 
 /**
@@ -867,87 +859,48 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
  *
  * Renders the quote of @dim at the @org position. This function
  * is only useful in new dimension implementations.
- */
+ **/
 void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgDimPrivate *data;
-    AdgEntity *entity;
-    AdgDimStyle *dim_style;
-    AdgMatrix global, local;
-    cairo_matrix_t matrix;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
     data = dim->data;
-    entity = (AdgEntity *) dim;
-    dim_style = (AdgDimStyle *) adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    adg_entity_get_global_matrix(entity, &global);
-    adg_entity_get_local_matrix(entity, &local);
 
-    if (data->quote == NULL)
-        adg_dim_set_quote(dim, ADG_DIM_GET_CLASS(dim)->default_quote(dim));
+    /* Check if the basic value text needs to be automatically generated */
+    if (data->value == NULL) {
+        gchar *text = ADG_DIM_GET_CLASS(dim)->default_value(dim);
+        adg_toy_text_set_label((AdgToyText *) data->value_entity, text);
+        g_free(text);
+    }
 
-    cairo_save(cr);
-
-    cairo_set_matrix(cr, &global);
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
-    adg_style_apply(adg_dim_style_get_quote_style(dim_style), cr);
 
-    cairo_set_matrix(cr, &local);
-    cairo_translate(cr, data->org.x, data->org.y);
-    cairo_get_matrix(cr, &matrix);
-    matrix.xx = global.xx;
-    matrix.yy = global.yy;
-    cairo_set_matrix(cr, &matrix);
-    cairo_rotate(cr, -data->angle);
-
-    /* Rendering quote */
-    text_cache_render(&data->quote_cache, cr);
-
-    /* Rendering tolerances */
-    if (data->tolerance_up != NULL || data->tolerance_down != NULL) {
-        adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
-
-        if (data->tolerance_up != NULL)
-            text_cache_render(&data->tolerance_up_cache, cr);
-
-        if (data->tolerance_down != NULL)
-            text_cache_render(&data->tolerance_down_cache, cr);
-    }
-
-    /* Rendering the note */
-    if (data->note != NULL) {
-        adg_style_apply(adg_dim_style_get_note_style(dim_style), cr);
-        text_cache_render(&data->note_cache, cr);
-    }
-
-    cairo_restore(cr);
+    adg_entity_render(data->value_entity, cr);
+    adg_entity_render(data->value_min_entity, cr);
+    adg_entity_render(data->value_max_entity, cr);
+    adg_entity_render(data->note_entity, cr);
 }
-
 
 static gboolean
 invalidate(AdgEntity *entity)
 {
-    clear((AdgDim *) entity);
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    adg_entity_invalidate(data->value_entity);
+    adg_entity_invalidate(data->value_min_entity);
+    adg_entity_invalidate(data->value_max_entity);
+    adg_entity_invalidate(data->note_entity);
+
     return TRUE;
 }
 
-static void
-clear(AdgDim *dim)
-{
-    AdgDimPrivate *data = dim->data;
-
-    text_cache_clear(&data->quote_cache);
-    text_cache_clear(&data->tolerance_up_cache);
-    text_cache_clear(&data->tolerance_down_cache);
-    text_cache_clear(&data->note_cache);
-}
-
 static gchar *
-default_quote(AdgDim *dim)
+default_value(AdgDim *dim)
 {
-    g_warning("AdgDim::default_quote not implemented for `%s'",
+    g_warning("AdgDim::default_value not implemented for `%s'",
               g_type_name(G_TYPE_FROM_INSTANCE(dim)));
     return g_strdup("undef");
 }
@@ -957,195 +910,159 @@ quote_layout(AdgDim *dim, cairo_t *cr)
 {
     AdgDimPrivate *data;
     AdgDimStyle *dim_style;
-    AdgPair shift;
-    CpmlPair cp;
-    CpmlPair tolerance_up_org, tolerance_down_org, note_org;
+    cairo_text_extents_t extents;
+    AdgMatrix map;
+    const AdgPair *shift;
 
     data = dim->data;
     dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
                                                      ADG_SLOT_DIM_STYLE);
-    tolerance_up_org.x = tolerance_up_org.y = 0;
-    tolerance_down_org.x = tolerance_down_org.y = 0;
-    note_org.x = note_org.y = 0;
 
-    /* Compute the quote */
-    if (text_cache_update(&data->quote_cache, data->quote, cr,
-                          adg_dim_style_get_quote_style(dim_style))) {
-        cp.x = data->quote_cache.extents.width;
-        cp.y = data->quote_cache.extents.height / -2.;
-    } else {
-        cp.x = 0;
-        cp.y = 0;
+    /* Initialize local maps to the origin */
+    cairo_matrix_init_translate(&map, data->org.x, data->org.y);
+
+    adg_entity_set_local_map(data->value_entity, &map);
+    adg_entity_set_local_map(data->value_min_entity, &map);
+    adg_entity_set_local_map(data->value_max_entity, &map);
+    adg_entity_set_local_map(data->note_entity, &map);
+
+    /* Initialize global maps to the quote rotation angle:
+     * XXX: check why I had to invert the angle */
+    cairo_matrix_init_rotate(&map, -data->angle);
+
+    adg_entity_set_global_map(data->value_entity, &map);
+    adg_entity_set_global_map(data->value_min_entity, &map);
+    adg_entity_set_global_map(data->value_max_entity, &map);
+    adg_entity_set_global_map(data->note_entity, &map);
+
+    /* Basic value */
+    adg_toy_text_get_extents((AdgToyText *) data->value_entity, cr, &extents);
+
+    /* Limit values (value_min and value_max) */
+    if (data->value_min != NULL || data->value_max != NULL) {
+        cairo_text_extents_t min_extents = { 0 };
+        cairo_text_extents_t max_extents = { 0 };
+        gdouble spacing = 0;
+
+        /* Low tolerance */
+        if (data->value_min != NULL)
+            adg_toy_text_get_extents((AdgToyText *) data->value_min_entity,
+                                     cr, &min_extents);
+
+        /* High tolerance */
+        if (data->value_max != NULL)
+            adg_toy_text_get_extents((AdgToyText *) data->value_max_entity,
+                                     cr, &max_extents);
+
+        shift = adg_dim_style_get_tolerance_shift(dim_style);
+        if (data->value_min != NULL && data->value_max != NULL)
+            spacing = adg_dim_style_get_tolerance_spacing(dim_style);
+
+        cairo_matrix_init_translate(&map, extents.width + shift->x,
+                                    (spacing + min_extents.height +
+                                     max_extents.height) / 2 +
+                                    shift->y - extents.height / 2);
+        adg_entity_transform_global_map(data->value_min_entity, &map);
+        cairo_matrix_translate(&map, 0, -min_extents.height - spacing);
+        adg_entity_transform_global_map(data->value_max_entity, &map);
+
+        extents.width += shift->x + MAX(min_extents.width, max_extents.width);
     }
 
-    /* Compute the tolerances */
-    if (data->tolerance_up != NULL || data->tolerance_down != NULL) {
-        gdouble width;
-        gdouble midspacing;
+    /* Note */
+    if (data->note != NULL) {
+        cairo_text_extents_t note_extents;
 
-        adg_style_apply(adg_dim_style_get_tolerance_style(dim_style), cr);
+        adg_toy_text_get_extents((AdgToyText *) data->note_entity,
+                                 cr, &note_extents);
+        shift = adg_dim_style_get_note_shift(dim_style);
 
-        width = 0;
-        midspacing = adg_dim_style_get_tolerance_spacing(dim_style) / 2.;
-        cpml_pair_copy(&shift, adg_dim_style_get_tolerance_shift(dim_style));
-        cp.x += shift.x;
+        cairo_matrix_init_translate(&map, extents.width + shift->x, shift->y);
+        adg_entity_transform_global_map(data->note_entity, &map);
 
-        if (text_cache_update(&data->tolerance_up_cache,
-                              data->tolerance_up, cr, NULL)) {
-            tolerance_up_org.x = cp.x;
-            tolerance_up_org.y = cp.y + shift.y - midspacing;
-
-            width = data->tolerance_up_cache.extents.width;
-        }
-
-        if (text_cache_update(&data->tolerance_down_cache,
-                              data->tolerance_down, cr, NULL)) {
-            tolerance_down_org.x = cp.x;
-            tolerance_down_org.y = cp.y + shift.y + midspacing +
-                data->tolerance_down_cache.extents.height;
-
-            if (data->tolerance_down_cache.extents.width > width)
-                width = data->tolerance_down_cache.extents.width;
-        }
-
-        cp.x += width;
+        extents.width += shift->x + note_extents.width;
     }
 
-    /* Compute the note */
-    if (text_cache_update(&data->note_cache, data->note, cr,
-                          adg_dim_style_get_note_style(dim_style))) {
-        cpml_pair_copy(&shift, adg_dim_style_get_note_shift(dim_style));
-        cp.x += shift.x;
+    /* Center and apply the style displacements */
+    shift = adg_dim_style_get_quote_shift(dim_style);
+    cairo_matrix_init_translate(&map, shift->x - extents.width / 2, shift->y);
 
-        note_org.x = cp.x;
-        note_org.y = cp.y + shift.y + data->note_cache.extents.height / 2.;
-
-        cp.x += data->note_cache.extents.width;
-    }
-
-    /* Centering and shifting the whole group */
-    cpml_pair_copy(&shift, adg_dim_style_get_quote_shift(dim_style));
-    shift.x -= cp.x / 2.;
-
-    if (data->quote_cache.glyphs) {
-        text_cache_move_to(&data->quote_cache, &shift);
-    }
-
-    if (data->tolerance_up_cache.glyphs) {
-        tolerance_up_org.x += shift.x;
-        tolerance_up_org.y += shift.y;
-        text_cache_move_to(&data->tolerance_up_cache, &tolerance_up_org);
-    }
-
-    if (data->tolerance_down_cache.glyphs) {
-        tolerance_down_org.x += shift.x;
-        tolerance_down_org.y += shift.y;
-        text_cache_move_to(&data->tolerance_down_cache, &tolerance_down_org);
-    }
-
-    if (data->note_cache.glyphs) {
-        note_org.x += shift.x;
-        note_org.y += shift.y;
-        text_cache_move_to(&data->note_cache, &note_org);
-    }
-}
-
-static void
-text_cache_init(AdgTextCache *text_cache)
-{
-    text_cache->utf8 = NULL;
-    text_cache->utf8_len = -1;
-    text_cache->glyphs = NULL;
-    text_cache->num_glyphs = 0;
-    text_cache->clusters = NULL;
-    text_cache->num_clusters = 0;
-    text_cache->cluster_flags = 0;
-    memset(&text_cache->extents, 0, sizeof(text_cache->extents));
+    adg_entity_transform_global_map(data->value_entity, &map);
+    adg_entity_transform_global_map(data->value_min_entity, &map);
+    adg_entity_transform_global_map(data->value_max_entity, &map);
+    adg_entity_transform_global_map(data->note_entity, &map);
 }
 
 static gboolean
-text_cache_update(AdgTextCache *text_cache, const gchar *text,
-                  cairo_t *cr, AdgStyle *style)
+set_value(AdgDim *dim, const gchar *value)
 {
-    if (!text)
+    AdgDimPrivate *data;
+
+    data = dim->data;
+
+    if (adg_strcmp(value, data->value) == 0)
         return FALSE;
 
-    text_cache->utf8 = text;
-    text_cache->utf8_len = g_utf8_strlen(text, -1);
+    g_free(data->value);
+    data->value = g_strdup(value);
+    adg_toy_text_set_label((AdgToyText *) data->value_entity, value);
 
-    if (style)
-        adg_style_apply(style, cr);
+    return TRUE;
+}
 
-    if (!text_cache->glyphs) {
-        cairo_status_t status;
+static gboolean
+set_value_min(AdgDim *dim, const gchar *value_min)
+{
+    AdgDimPrivate *data = dim->data;
 
-        status = cairo_scaled_font_text_to_glyphs(cairo_get_scaled_font(cr),
-                                                  0, 0,
-                                                  text_cache->utf8,
-                                                  text_cache->utf8_len,
-                                                  &text_cache->glyphs,
-                                                  &text_cache->num_glyphs,
-                                                  &text_cache->clusters,
-                                                  &text_cache->num_clusters,
-                                                  &text_cache->cluster_flags);
+    if (adg_strcmp(value_min, data->value_min) == 0)
+        return FALSE;
 
-        if (status != CAIRO_STATUS_SUCCESS) {
-            g_error("Unable to build glyphs (cairo message: %s)",
-                    cairo_status_to_string(status));
-            return FALSE;
-        }
+    g_free(data->value_min);
+    data->value_min = g_strdup(value_min);
+    adg_toy_text_set_label((AdgToyText *) data->value_min_entity, value_min);
 
-        cairo_glyph_extents(cr, text_cache->glyphs, text_cache->num_glyphs,
-                            &text_cache->extents);
-    }
+    return TRUE;
+}
+
+static gboolean
+set_value_max(AdgDim *dim, const gchar *value_max)
+{
+    AdgDimPrivate *data = dim->data;
+
+    if (adg_strcmp(value_max, data->value_max) == 0)
+        return FALSE;
+
+    g_free(data->value_max);
+    data->value_max = g_strdup(value_max);
+    adg_toy_text_set_label((AdgToyText *) data->value_max_entity, value_max);
+
+    return TRUE;
+}
+
+static gboolean
+set_note(AdgDim *dim, const gchar *note)
+{
+    AdgDimPrivate *data;
+
+    data = dim->data;
+
+    if (adg_strcmp(note, data->note) == 0)
+        return FALSE;
+
+    g_free(data->note);
+    data->note = g_strdup(note);
+    adg_toy_text_set_label((AdgToyText *) data->note_entity, note);
 
     return TRUE;
 }
 
 static void
-text_cache_clear(AdgTextCache *text_cache)
+detach_entity(AdgEntity **p_entity)
 {
-    text_cache->utf8 = NULL;
-    text_cache->utf8_len = -1;
-
-    if (text_cache->glyphs) {
-        cairo_glyph_free(text_cache->glyphs);
-        text_cache->glyphs = NULL;
-        text_cache->num_glyphs = 0;
+    if (*p_entity != NULL) {
+        adg_entity_set_parent(*p_entity, NULL);
+        g_object_unref(*p_entity);
+        *p_entity = NULL;
     }
-    if (text_cache->clusters) {
-        cairo_text_cluster_free(text_cache->clusters);
-        text_cache->clusters = NULL;
-        text_cache->num_clusters = 0;
-        text_cache->cluster_flags = 0;
-    }
-    memset(&text_cache->extents, 0, sizeof(text_cache->extents));
-}
-
-static void
-text_cache_move_to(AdgTextCache *text_cache, const CpmlPair *to)
-{
-    cairo_glyph_t *glyph;
-    int cnt;
-    gdouble x, y;
-
-    glyph = text_cache->glyphs;
-    cnt = text_cache->num_glyphs;
-    x = to->x - glyph->x;
-    y = to->y - glyph->y;
-
-    while (cnt --) {
-        glyph->x += x;
-        glyph->y += y;
-        ++ glyph;
-    }
-}
-
-static void
-text_cache_render(AdgTextCache *text_cache, cairo_t *cr)
-{
-    cairo_show_text_glyphs(cr, text_cache->utf8, text_cache->utf8_len,
-                           text_cache->glyphs, text_cache->num_glyphs,
-                           text_cache->clusters, text_cache->num_clusters,
-                           text_cache->cluster_flags);
 }
