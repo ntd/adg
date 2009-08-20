@@ -72,7 +72,7 @@ must be reflected in the demo programs, where applicable.</para>
    to 3 x arrow size.</listitem>
    <listitem override="disc">Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
    ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
-   <listitem>Add the three-state "outside" property to allow forcing an outside quote.
+   <listitem override="disc">Add the three-state "outside" property to allow forcing an outside quote.
    In the default state, the outside must be decided by the space between
    the extension lines: if greather than 3 x arrow size => inside arrows.</listitem>
 </itemizedlist>
