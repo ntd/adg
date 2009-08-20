@@ -143,12 +143,12 @@ sample_get(SampleData *data)
     data->D4 = 6.5;
     data->D5 = 4.5;
     data->D6 = 7.2;
-    data->D7 = 3.;
-    data->RD34 = 1.;
-    data->LD2 = 7.;
+    data->D7 = 3;
+    data->RD34 = 1;
+    data->LD2 = 7;
     data->LD3 = 3.5;
-    data->LD5 = 5.;
-    data->LD6 = 1.;
+    data->LD5 = 5;
+    data->LD6 = 1;
     data->LD7 = 0.5;
 }
 
@@ -305,17 +305,16 @@ sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
     AdgMatrix map;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
-    cairo_matrix_init_translate(&map, 0., data->D3 / 2);
+    cairo_matrix_init_translate(&map, 0, data->D3 / 2);
     adg_entity_set_local_map(toy_text, &map);
-    cairo_matrix_init_rotate(&map, 0.2);
-    cairo_matrix_translate(&map, 10., 30. + 30. * 2);
+    cairo_matrix_translate(&map, 10, 30 + 30 * 2);
     adg_entity_set_global_map(toy_text, &map);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 
     toy_text = adg_toy_text_new("Keep the wheel pressed while dragging the mouse to translate");
-    cairo_matrix_init_translate(&map, 0., data->D3 / 2);
+    cairo_matrix_init_translate(&map, 0, data->D3 / 2);
     adg_entity_set_local_map(toy_text, &map);
-    cairo_matrix_init_translate(&map, 10., 45. + 30. * 2);
+    cairo_matrix_init_translate(&map, 10, 50 + 30 * 2);
     adg_entity_set_global_map(toy_text, &map);
     adg_container_add(ADG_CONTAINER(canvas), toy_text);
 }
@@ -518,7 +517,7 @@ operations_canvas(void)
 
     /* Add the shape with 0.25x0.25 chamfer */
     container = (AdgContainer *) adg_container_new();
-    cairo_matrix_init_translate(&map, 15., 0.);
+    cairo_matrix_init_translate(&map, 15, 0);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
@@ -533,7 +532,7 @@ operations_canvas(void)
 
     /* Add the shape with fillets with 0.20 of radius */
     container = (AdgContainer *) adg_container_new();
-    cairo_matrix_init_translate(&map, 30., 0.);
+    cairo_matrix_init_translate(&map, 30, 0);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
