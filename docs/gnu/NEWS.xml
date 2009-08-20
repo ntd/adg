@@ -6,6 +6,26 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.5.0">
+<title>ADG 0.5.0</title>
+
+<para>The old paper-model matrix approach has been superseded by a cleaner and
+smarter approach based on global/local maps. This resulted in a great
+code complexity reduction: check out the home page for further details.</para>
+
+<para>Parent-child relationship is no more tied to AdgContainer: dependencies
+between AdgEntities can now be expressed without a full-fledged container.</para>
+
+<para>AdgDim now uses internally four AdgToyText entities to render the quote.
+This has been made possible by the new parent-child APIs, simplyfing the
+rendering code a lot.</para>
+
+<para>A bunch of classes, most notably AdgRotable, AdgTranslatable and AdgPoint,
+have been superseded by the new global/local map approach and have been
+removed from the project.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.4.3">
 <title>ADG 0.4.3</title>
 
