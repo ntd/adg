@@ -63,6 +63,7 @@ enum {
     PROP_ARROW_STYLE,
     PROP_FROM_OFFSET,
     PROP_TO_OFFSET,
+    PROP_BEYOND,
     PROP_BASELINE_SPACING,
     PROP_TOLERANCE_SPACING,
     PROP_QUOTE_SHIFT,
@@ -170,6 +171,12 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                 0, G_MAXDOUBLE, 5, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TO_OFFSET, param);
 
+    param = g_param_spec_double("beyond",
+                                P_("Beyond Length"),
+                                P_("How much the baseline should be extended (in global space) beyond the extension lines on dimensions with outside arrows: 0 means to automatically compute this value at run-time as 3*arrow-size (got from the binded array-style)"),
+                                0, G_MAXDOUBLE, 0, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_BEYOND, param);
+
     param = g_param_spec_double("baseline-spacing",
                                 P_("Baseline Spacing"),
                                 P_("Distance between two consecutive baselines while stacking dimensions"),
@@ -237,6 +244,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                           ADG_ARROW_STYLE_ARROW);
     data->from_offset = 6;
     data->to_offset = 6;
+    data->beyond = 0;
     data->baseline_spacing = 30;
     data->tolerance_spacing = 1;
     data->quote_shift.x = 0;
@@ -277,6 +285,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         break;
     case PROP_TO_OFFSET:
         g_value_set_double(value, data->to_offset);
+        break;
+    case PROP_BEYOND:
+        g_value_set_double(value, data->beyond);
         break;
     case PROP_BASELINE_SPACING:
         g_value_set_double(value, data->baseline_spacing);
@@ -336,6 +347,9 @@ set_property(GObject *object,
         break;
     case PROP_TO_OFFSET:
         data->to_offset = g_value_get_double(value);
+        break;
+    case PROP_BEYOND:
+        data->beyond = g_value_get_double(value);
         break;
     case PROP_BASELINE_SPACING:
         data->baseline_spacing = g_value_get_double(value);
@@ -665,6 +679,79 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
     data->to_offset = offset;
 
     g_object_notify((GObject *) dim_style, "to-offset");
+}
+
+/**
+ * adg_dim_style_beyond:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets how much (in global space) the baseline should extend beyound
+ * the extension lines when a dimension has outside arrows. If the
+ * underlying AdgDimStyle:beyond property is %0, this function returns
+ * the 3*"arrow-size", where "arrow-size" is the value returned by
+ * adg_arrow_style_get_size() on #AdgArrowStyle binded to @dim_style.
+ *
+ * Returns: the requested lenght
+ **/
+gdouble
+adg_dim_style_beyond(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+    gdouble arrow_size;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
+
+    data = dim_style->data;
+
+    if (data->beyond > 0)
+        return data->beyond;
+
+    arrow_size = adg_arrow_style_get_size((AdgArrowStyle *) data->arrow_style);
+
+    return arrow_size * 3;
+}
+
+/**
+ * adg_dim_style_get_beyond:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets how much (in global space) the baseline should extend beyound
+ * the extension lines on dimension with outside arrows. This is an
+ * accessor method: if you need AdgDimStyle:beyond for rendering purpose,
+ * use adg_dim_style_beyond() instead.
+ *
+ * Returns: the requested lenght or %0 for automatic computation
+ **/
+gdouble
+adg_dim_style_get_beyond(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
+
+    data = dim_style->data;
+
+    return data->beyond;
+}
+
+/**
+ * adg_dim_style_set_beyond:
+ * @dim_style: an #AdgDimStyle object
+ * @length: the new length
+ *
+ * Sets a new "beyond" value.
+ **/
+void
+adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble length)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+    data->beyond = length;
+
+    g_object_notify((GObject *) dim_style, "beyond");
 }
 
 /**

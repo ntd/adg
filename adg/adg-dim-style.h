@@ -81,6 +81,10 @@ void            adg_dim_style_set_from_offset   (AdgDimStyle    *dim_style,
 gdouble         adg_dim_style_get_to_offset     (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_to_offset     (AdgDimStyle    *dim_style,
                                                  gdouble         offset);
+gdouble         adg_dim_style_beyond            (AdgDimStyle    *dim_style);
+gdouble         adg_dim_style_get_beyond        (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_beyond        (AdgDimStyle    *dim_style,
+                                                 gdouble         length);
 gdouble         adg_dim_style_get_baseline_spacing
                                                 (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_baseline_spacing

@@ -36,6 +36,7 @@ struct _AdgDimStylePrivate {
     AdgStyle    *arrow_style;
     gdouble      from_offset;
     gdouble      to_offset;
+    gdouble      beyond;
     gdouble      baseline_spacing;
     gdouble      tolerance_spacing;
     AdgPair      quote_shift;
