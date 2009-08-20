@@ -70,7 +70,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Add a "beyond" property to AdgDimStyle to be used when extending the
    baseline beyond the extension lines. If not specified, it must default
    to 3 x arrow size.</listitem>
-   <listitem>Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
+   <listitem override="disc">Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
    ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
    <listitem>Add the three-state "outside" property to allow forcing an outside quote.
    In the default state, the outside must be decided by the space between
