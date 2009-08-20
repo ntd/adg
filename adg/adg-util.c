@@ -31,15 +31,21 @@
  * ADG_FORWARD_DECL:
  * @id: The name of a struct
  *
- * Forward declaration of struct @id. For example,
- * <code>ADG_FORWARD_DECL(test)</code> will expand to:
+ * Forward declaration of struct @id. It is equivalent to a typical
+ * struct forward declaration, for example:
  *
- * <informalexample><programlisting>
+ * |[
+ * ADG_FORWARD_DECL(test)
+ * ]|
+ *
+ * will expand to:
+ *
+ * |[
  * typedef struct _test test
- * </programlisting></informalexample>
+ * ]|
  *
- * This macro is useful to trick <command>gtk-doc</command>, as up
- * to now (v.1.12) it generates two conflicting links when using
+ * This macro is needed to fake <command>gtk-doc</command>, because
+ * up to now (v.1.12) it generates two conflicting links when using
  * forward declarations: the first in the source with the declaration
  * and the second where the type is defined. Using ADG_FORWARD_DECL()
  * instead of the usual typedef avoids the parsing of the declaration
@@ -50,7 +56,7 @@
  * the previous example, you can use something like this where struct
  * _type is defined:
  *
- * <informalexample><programlisting>
+ * |[
  * #if 0
  * // This is declared in another file
  * typedef struct _type type;
@@ -58,7 +64,7 @@
  * struct _type {
  * ...
  * };
- * </programlisting></informalexample>
+ * ]|
  **/
 
 

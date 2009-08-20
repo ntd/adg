@@ -531,12 +531,12 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  * Applies a transformation to the global map of @entity. This is
  * equivalent to the following code:
  *
- * <informalexample><programlisting>
+ * |[
  * AdgMatrix tmp_map;
  * adg_entity_get_global_map(entity, &tmp_map);
  * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
  * adg_entity_set_global_map(entity, &tmp_map);
- * </programlisting></informalexample>
+ * ]|
  **/
 void
 adg_entity_transform_global_map(AdgEntity *entity,
@@ -625,12 +625,12 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  * Applies a transformation to the local map of @entity. This is
  * equivalent to the following code:
  *
- * <informalexample><programlisting>
+ * |[
  * AdgMatrix tmp_map;
  * adg_entity_get_local_map(entity, &tmp_map);
  * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
  * adg_entity_set_local_map(entity, &tmp_map);
- * </programlisting></informalexample>
+ * ]|
  **/
 void
 adg_entity_transform_local_map(AdgEntity *entity,

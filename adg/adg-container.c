@@ -239,12 +239,12 @@ adg_container_add(AdgContainer *container, AdgEntity *entity)
  * <varname>entity</varname> from <varname>container1</varname>
  * to <varname>container2</varname>:
  *
- * <informalexample><programlisting>
+ * |[
  * g_object_ref(entity);
  * adg_container_remove(container1, entity);
  * adg_container_add(container2, entity)
  * g_object_unref(entity);
- * </programlisting></informalexample>
+ * ]|
  **/
 void
 adg_container_remove(AdgContainer *container, AdgEntity *entity)
