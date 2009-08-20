@@ -68,7 +68,7 @@ static void             fill_style_slots        (AdgContext     *context,
 static GPtrArray *class_slots = NULL;
 
 
-G_DEFINE_TYPE(AdgContext, adg_context, G_TYPE_OBJECT)
+G_DEFINE_TYPE(AdgContext, adg_context, G_TYPE_OBJECT);
 
 
 static void
