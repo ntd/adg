@@ -21,15 +21,13 @@
 #ifndef __ADG_MODEL_PRIVATE_H__
 #define __ADG_MODEL_PRIVATE_H__
 
-#include <glib.h>
-
 
 G_BEGIN_DECLS
 
 typedef struct _AdgModelPrivate AdgModelPrivate;
 
 struct _AdgModelPrivate {
-    int         dummy;          /* Just to not have an empty struct */
+    GSList      *dependencies;
 };
 
 G_END_DECLS
