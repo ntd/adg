@@ -52,10 +52,11 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     set_path                (AdgStroke      *stroke,
+static gboolean set_path                (AdgStroke      *stroke,
                                          AdgPath        *path);
-static gboolean render			(AdgEntity	*entity,
-					 cairo_t	*cr);
+static void     unset_path              (AdgStroke      *stroke);
+static gboolean render                  (AdgEntity      *entity,
+                                         cairo_t        *cr);
 
 
 G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
@@ -173,34 +174,56 @@ adg_stroke_get_path(AdgStroke *stroke)
  * @path: the new #AdgPath to bind
  *
  * Sets @path as the new path to be stroked by @stroke.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>Actually the #AdgPath is disjointed from #AdgStroke (or any
- *           other #AdgEntity). When the model-entity dependency will be
- *           in place, make sure to destroy this entity when its binded
- *           path is destroyed.</listitem>
- * </itemizedlist>
- * </important>
  **/
 void
 adg_stroke_set_path(AdgStroke *stroke, AdgPath *path)
 {
     g_return_if_fail(ADG_IS_STROKE(stroke));
 
-    set_path(stroke, path);
-
-    g_object_notify((GObject *) stroke, "path");
+    if (set_path(stroke, path))
+        g_object_notify((GObject *) stroke, "path");
 }
 
 
-static void
+static gboolean
 set_path(AdgStroke *stroke, AdgPath *path)
+{
+    AdgEntity *entity;
+    AdgStrokePrivate *data;
+
+    entity = (AdgEntity *) stroke;
+    data = stroke->data;
+
+    if (path == data->path)
+        return FALSE;
+
+    if (data->path != NULL) {
+        g_object_weak_unref((GObject *) data->path,
+                            (GWeakNotify) unset_path, stroke);
+        adg_model_remove_dependency((AdgModel *) data->path, entity);
+    }
+
+    data->path = path;
+
+    if (data->path != NULL) {
+        g_object_weak_ref((GObject *) data->path,
+                          (GWeakNotify) unset_path, stroke);
+        adg_model_add_dependency((AdgModel *) data->path, entity);
+    }
+
+    return TRUE;
+}
+
+static void
+unset_path(AdgStroke *stroke)
 {
     AdgStrokePrivate *data = stroke->data;
 
-    data->path = path;
+    if (data->path)
+        return;
+
+    data->path = NULL;
+    adg_entity_invalidate((AdgEntity *) stroke);
 }
 
 static gboolean
