@@ -4,7 +4,8 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.  *
+ * version 2 of the License, or (at your option) any later version.
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -36,9 +37,9 @@
  * As an example, following the rule of the less surprise, some
  * cairo functions guess the current point when it is not defined,
  * while the #AdgPath methods trigger a warning without other effect.
- * Furthermore, after a cairo_path_close_path() call a MOVE_TO
+ * Furthermore, after a cairo_path_close_path() call a %MOVE_TO
  * primitive to the starting point of the segment is automatically
- * added by cairo while in the ADG, after an adg_path_close(), the
+ * added by cairo while in ADG, after an adg_path_close(), the
  * current point is simply unset.
  **/
 
