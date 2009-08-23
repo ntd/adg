@@ -120,7 +120,7 @@ must be reflected in the demo programs, where applicable.</para>
 <itemizedlist mark="circle">
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
    external data. Use libgda as sample data provider.</listitem> 
-   <listitem>Add model-view interaction by providing signal propagation from AdgModel
+   <listitem override="disc">Add model-view interaction by providing signal propagation from AdgModel
    to the dependent entities, so when a data changes the entities will be
    automatically updated.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
