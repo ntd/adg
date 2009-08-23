@@ -22,7 +22,6 @@
 #define __ADG_CONTAINER_PRIVATE_H__
 
 #include <glib.h>
-#include <adg/adg-matrix.h>
 
 
 G_BEGIN_DECLS

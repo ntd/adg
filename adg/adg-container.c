@@ -85,8 +85,8 @@ adg_container_class_init(AdgContainerClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgContainerPrivate));
 
-    gobject_class->set_property = set_property;
     gobject_class->dispose = dispose;
+    gobject_class->set_property = set_property;
 
     entity_class->invalidate = invalidate;
     entity_class->render = render;
@@ -169,11 +169,7 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgContainer *container;
-    AdgContainerPrivate *data;
-
-    container = (AdgContainer *) object;
-    data = container->data;
+    AdgContainer *container = (AdgContainer *) object;
 
     switch (prop_id) {
     case PROP_CHILD:
@@ -259,10 +255,13 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
  * adg_container_get_children:
  * @container: an #AdgContainer
  *
- * Gets the children list of @container.
- * This list must be manually freed when no longer user.
+ * Gets the children list of @container. This list must be manually
+ * freed with g_slist_free() when no longer user.
  *
- * Returns: a newly allocated #GSList or %NULL on error
+ * The returned list is ordered from the most recently added child
+ * to the oldest one.
+ *
+ * Returns: a newly allocated #GSList or %NULL empty list or on errors
  **/
 GSList *
 adg_container_get_children(AdgContainer *container)
@@ -281,9 +280,9 @@ adg_container_get_children(AdgContainer *container)
  * Invokes @callback on each child of @container.
  * The callback should be declared as:
  *
- * <code>
+ * |[
  * void callback(AdgEntity *entity, gpointer user_data);
- * </code>
+ * ]|
  **/
 void
 adg_container_foreach(AdgContainer *container,
@@ -422,7 +421,7 @@ add(AdgContainer *container, AdgEntity *entity)
     }
 
     data = container->data;
-    data->children = g_slist_append(data->children, entity);
+    data->children = g_slist_prepend(data->children, entity);
 
     g_object_ref_sink(entity);
     adg_entity_set_parent(entity, (AdgEntity *) container);
