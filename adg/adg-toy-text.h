@@ -27,12 +27,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_TOY_TEXT             (adg_toy_text_get_type ())
-#define ADG_TOY_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_TOY_TEXT, AdgToyText))
-#define ADG_TOY_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_TOY_TEXT, AdgToyTextClass))
-#define ADG_IS_TOY_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_TOY_TEXT))
-#define ADG_IS_TOY_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_TOY_TEXT))
-#define ADG_TOY_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_TOY_TEXT, AdgToyTextClass))
+#define ADG_TYPE_TOY_TEXT             (adg_toy_text_get_type())
+#define ADG_TOY_TEXT(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_TOY_TEXT, AdgToyText))
+#define ADG_TOY_TEXT_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_TOY_TEXT, AdgToyTextClass))
+#define ADG_IS_TOY_TEXT(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_TOY_TEXT))
+#define ADG_IS_TOY_TEXT_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_TOY_TEXT))
+#define ADG_TOY_TEXT_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_TOY_TEXT, AdgToyTextClass))
 
 typedef struct _AdgToyText        AdgToyText;
 typedef struct _AdgToyTextClass   AdgToyTextClass;

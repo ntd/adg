@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_ADIM             (adg_adim_get_type ())
-#define ADG_ADIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ADIM, AdgADim))
-#define ADG_ADIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_ADIM, AdgADimClass))
-#define ADG_IS_ADIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_ADIM))
-#define ADG_IS_ADIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_ADIM))
-#define ADG_ADIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ADIM, AdgADimClass))
+#define ADG_TYPE_ADIM             (adg_adim_get_type())
+#define ADG_ADIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_ADIM, AdgADim))
+#define ADG_ADIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_ADIM, AdgADimClass))
+#define ADG_IS_ADIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_ADIM))
+#define ADG_IS_ADIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_ADIM))
+#define ADG_ADIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_ADIM, AdgADimClass))
 
 
 typedef struct _AdgADim        AdgADim;

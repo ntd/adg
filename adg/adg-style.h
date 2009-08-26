@@ -27,12 +27,12 @@
 G_BEGIN_DECLS
 
 
-#define ADG_TYPE_STYLE             (adg_style_get_type ())
-#define ADG_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_STYLE, AdgStyle))
-#define ADG_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_STYLE, AdgStyleClass))
-#define ADG_IS_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_STYLE))
-#define ADG_IS_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_STYLE))
-#define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_STYLE, AdgStyleClass))
+#define ADG_TYPE_STYLE             (adg_style_get_type())
+#define ADG_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_STYLE, AdgStyle))
+#define ADG_STYLE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_STYLE, AdgStyleClass))
+#define ADG_IS_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_STYLE))
+#define ADG_IS_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_STYLE))
+#define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_STYLE, AdgStyleClass))
 
 typedef struct _AdgStyle        AdgStyle;
 typedef struct _AdgStyleClass   AdgStyleClass;

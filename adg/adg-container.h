@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_CONTAINER             (adg_container_get_type ())
-#define ADG_CONTAINER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_CONTAINER, AdgContainer))
-#define ADG_CONTAINER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_CONTAINER, AdgContainerClass))
-#define ADG_IS_CONTAINER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_CONTAINER))
-#define ADG_IS_CONTAINER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_CONTAINER))
-#define ADG_CONTAINER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_CONTAINER, AdgContainerClass))
+#define ADG_TYPE_CONTAINER             (adg_container_get_type())
+#define ADG_CONTAINER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_CONTAINER, AdgContainer))
+#define ADG_CONTAINER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_CONTAINER, AdgContainerClass))
+#define ADG_IS_CONTAINER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_CONTAINER))
+#define ADG_IS_CONTAINER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_CONTAINER))
+#define ADG_CONTAINER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_CONTAINER, AdgContainerClass))
 
 
 typedef struct _AdgContainer       AdgContainer;

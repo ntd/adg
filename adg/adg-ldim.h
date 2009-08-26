@@ -26,12 +26,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_LDIM             (adg_ldim_get_type ())
-#define ADG_LDIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_LDIM, AdgLDim))
-#define ADG_LDIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_LDIM, AdgLDimClass))
-#define ADG_IS_LDIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_LDIM))
-#define ADG_IS_LDIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_LDIM))
-#define ADG_LDIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_LDIM, AdgLDimClass))
+#define ADG_TYPE_LDIM             (adg_ldim_get_type())
+#define ADG_LDIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_LDIM, AdgLDim))
+#define ADG_LDIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_LDIM, AdgLDimClass))
+#define ADG_IS_LDIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_LDIM))
+#define ADG_IS_LDIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_LDIM))
+#define ADG_LDIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_LDIM, AdgLDimClass))
 
 
 typedef struct _AdgLDim        AdgLDim;

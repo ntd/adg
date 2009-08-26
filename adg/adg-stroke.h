@@ -27,12 +27,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_STROKE             (adg_stroke_get_type ())
-#define ADG_STROKE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_STROKE, AdgStroke))
-#define ADG_STROKE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_STROKE, AdgStrokeClass))
-#define ADG_IS_STROKE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_STROKE))
-#define ADG_IS_STROKE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_STROKE))
-#define ADG_STROKE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_STROKE, AdgStrokeClass))
+#define ADG_TYPE_STROKE             (adg_stroke_get_type())
+#define ADG_STROKE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_STROKE, AdgStroke))
+#define ADG_STROKE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_STROKE, AdgStrokeClass))
+#define ADG_IS_STROKE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_STROKE))
+#define ADG_IS_STROKE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_STROKE))
+#define ADG_STROKE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_STROKE, AdgStrokeClass))
 
 typedef struct _AdgStroke        AdgStroke;
 typedef struct _AdgStrokeClass   AdgStrokeClass;

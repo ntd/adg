@@ -27,12 +27,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_DIM             (adg_dim_get_type ())
-#define ADG_DIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_DIM, AdgDim))
-#define ADG_DIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_DIM, AdgDimClass))
-#define ADG_IS_DIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_DIM))
-#define ADG_IS_DIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_DIM))
-#define ADG_DIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_DIM, AdgDimClass))
+#define ADG_TYPE_DIM             (adg_dim_get_type())
+#define ADG_DIM(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_DIM, AdgDim))
+#define ADG_DIM_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_DIM, AdgDimClass))
+#define ADG_IS_DIM(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_DIM))
+#define ADG_IS_DIM_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_DIM))
+#define ADG_DIM_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_DIM, AdgDimClass))
 
 typedef struct _AdgDim        AdgDim;
 typedef struct _AdgDimClass   AdgDimClass;

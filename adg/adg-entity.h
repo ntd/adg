@@ -29,12 +29,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_ENTITY             (adg_entity_get_type ())
-#define ADG_ENTITY(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_ENTITY, AdgEntity))
-#define ADG_ENTITY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_ENTITY, AdgEntityClass))
-#define ADG_IS_ENTITY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_ENTITY))
-#define ADG_IS_ENTITY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_ENTITY))
-#define ADG_ENTITY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_ENTITY, AdgEntityClass))
+#define ADG_TYPE_ENTITY             (adg_entity_get_type())
+#define ADG_ENTITY(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_ENTITY, AdgEntity))
+#define ADG_ENTITY_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_ENTITY, AdgEntityClass))
+#define ADG_IS_ENTITY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_ENTITY))
+#define ADG_IS_ENTITY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_ENTITY))
+#define ADG_ENTITY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_ENTITY, AdgEntityClass))
 
 
 typedef struct _AdgEntity        AdgEntity;
