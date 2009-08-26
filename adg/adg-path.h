@@ -29,25 +29,25 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_PATH             (adg_path_get_type ())
-#define ADG_PATH(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), ADG_TYPE_PATH, AdgPath))
-#define ADG_PATH_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), ADG_TYPE_PATH, AdgPathClass))
-#define ADG_IS_PATH(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), ADG_TYPE_PATH))
-#define ADG_IS_PATH_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), ADG_TYPE_PATH))
-#define ADG_PATH_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), ADG_TYPE_PATH, AdgPathClass))
+#define ADG_TYPE_PATH             (adg_path_get_type())
+#define ADG_PATH(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_PATH, AdgPath))
+#define ADG_PATH_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_PATH, AdgPathClass))
+#define ADG_IS_PATH(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_PATH))
+#define ADG_IS_PATH_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_PATH))
+#define ADG_PATH_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_PATH, AdgPathClass))
 
 typedef struct _AdgPath        AdgPath;
 typedef struct _AdgPathClass   AdgPathClass;
 
 struct _AdgPath {
     /*< private >*/
-    AdgModel		 parent;
+    AdgModel             parent;
     gpointer             data;
 };
 
 struct _AdgPathClass {
     /*< private >*/
-    AdgModelClass	 parent_class;
+    AdgModelClass        parent_class;
 };
 
 
@@ -56,7 +56,7 @@ AdgModel *      adg_path_new                    (void);
 
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
-cairo_path_t *  adg_path_get_cpml_path          (AdgPath        *path);
+CpmlPath *      adg_path_get_cpml_path          (AdgPath        *path);
 void            adg_path_get_current_point      (AdgPath        *path,
                                                  gdouble        *x,
                                                  gdouble        *y);

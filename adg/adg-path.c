@@ -22,9 +22,9 @@
  * SECTION:adg-path
  * @short_description: The basic model representing a generic path
  *
- * The #AdgPath model is a virtual path: in a few words, it is a
- * simple conceptual #cairo_path_t struct. This class implements
- * methods to manipulate the underlying cairo path.
+ * The #AdgPath model is a virtual path: in other words it is a
+ * non-rendered #cairo_path_t struct. This class implements methods
+ * to manipulate the underlying cairo path.
  *
  * Although some of the provided methods are clearly based on the
  * original cairo path manipulation API, their behavior could be
@@ -63,7 +63,7 @@ static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
 static void             clear_cairo_path        (AdgPath        *path);
 static cairo_path_t *   get_cairo_path          (AdgPath        *path);
-static cairo_path_t *   get_cpml_path           (AdgPath        *path);
+static CpmlPath *       get_cpml_path           (AdgPath        *path);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t
                                                                 *src);
@@ -206,12 +206,13 @@ adg_path_get_cairo_path(AdgPath *path)
  * path as long as its size is retained and its data contains a
  * valid path.
  *
- * Keep in mind any changes to @path makes the value returned by
- * this function useless, as it is likely to contain plain garbage.
+ * Any changes to the @path instance will make the returned pointer
+ * useless because probably the internal #CpmlPath will be relocated
+ * and the old #CpmlPath will likely contain plain garbage.
  *
  * Returns: a pointer to the internal cpml path or %NULL on errors
  **/
-cairo_path_t *
+CpmlPath *
 adg_path_get_cpml_path(AdgPath *path)
 {
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
@@ -776,11 +777,11 @@ get_cairo_path(AdgPath *path)
     return cairo_path;
 }
 
-static cairo_path_t *
+static CpmlPath *
 get_cpml_path(AdgPath *path)
 {
     AdgPathPrivate *data;
-    cairo_path_t *cpml_path;
+    CpmlPath *cpml_path;
 
     data = path->data;
     cpml_path = &data->cpml_path;
