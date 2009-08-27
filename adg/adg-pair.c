@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-pair
- * @Section_Id:AdgPair-GBoxed
+ * @Section_Id:AdgPair
  * @title: AdgPair
  * @short_description: A wrapper for #CpmlPair
  *

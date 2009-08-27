@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-segment
- * @Section_Id:AdgSegment-GBoxed
+ * @Section_Id:AdgSegment
  * @title: AdgSegment
  * @short_description: A wrapper for #CpmlSegment
  *

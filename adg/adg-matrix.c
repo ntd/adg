@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-matrix
- * @Section_Id:AdgMatrix-GBoxed
+ * @Section_Id:AdgMatrix
  * @title: AdgMatrix
  * @short_description: A wrapper for #cairo_matrix_t
  *

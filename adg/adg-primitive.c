@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-primitive
- * @Section_Id:AdgPrimitive-GBoxed
+ * @Section_Id:AdgPrimitive
  * @title: AdgPrimitive
  * @short_description: A wrapper for #CpmlPrimitive
  *

@@ -8,6 +8,7 @@ SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
+			--type-name-mangling \
 			--output-format=xml
 MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=

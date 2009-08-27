@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-pattern
- * @Section_Id:AdgPattern-GBoxed
+ * @Section_Id:AdgPattern
  * @title: AdgPattern
  * @short_description: A wrapper for #cairo_pattern_t
  *
