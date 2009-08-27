@@ -18,6 +18,7 @@ h_sources=			adg-adim.h \
 				adg-font-style.h \
 				adg-ldim.h \
 				adg-line-style.h \
+				adg-marker.h \
 				adg-matrix.h \
 				adg-model.h \
 				adg-pair.h \
@@ -45,6 +46,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-intl.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
+				adg-marker-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-stroke-private.h \
@@ -64,6 +66,7 @@ c_sources=			adg-adim.c \
 				adg-font-style.c \
 				adg-ldim.c \
 				adg-line-style.c \
+				adg-marker.c \
 				adg-matrix.c \
 				adg-model.c \
 				adg-pair.c \
