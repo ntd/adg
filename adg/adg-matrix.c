@@ -25,7 +25,7 @@
  * @short_description: A wrapper for #cairo_matrix_t
  *
  * AdgMatrix is a wrapper in #GType syntax of the #cairo_matrix_t struct.
- */
+ **/
 
 /**
  * AdgMatrix:
@@ -66,7 +66,7 @@ adg_matrix_get_type(void)
  *
  * Returns: the duplicate of @matrix: must be freed with g_free()
  *          when no longer needed.
- */
+ **/
 AdgMatrix *
 adg_matrix_dup(const AdgMatrix *matrix)
 {
@@ -82,7 +82,7 @@ adg_matrix_dup(const AdgMatrix *matrix)
  * identity matrix.
  *
  * Returns: the fallback matrix
- */
+ **/
 const AdgMatrix *
 adg_matrix_get_fallback(void)
 {
@@ -94,7 +94,7 @@ adg_matrix_get_fallback(void)
  * @matrix: the #AdgMatrix to nullify
  *
  * Nullifies a matrix, setting all its components to 0.
- */
+ **/
 void
 adg_matrix_init_null(AdgMatrix *matrix)
 {
@@ -108,7 +108,7 @@ adg_matrix_init_null(AdgMatrix *matrix)
  * Checks if a matrix is a nullified matrix.
  *
  * Returns: %TRUE if the matrix is a null matrix, %FALSE otherwise
- */
+ **/
 gboolean
 adg_matrix_is_null(const AdgMatrix *matrix)
 {
@@ -143,7 +143,7 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
  *
  * Returns: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
- */
+ **/
 gboolean
 adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 {

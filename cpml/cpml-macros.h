@@ -17,29 +17,9 @@
  * Boston, MA  02110-1301, USA.
  */
 
-
-/**
- * SECTION:macros
- * @Section_Id:macros
- * @title: Macros
- * @short_description: General purpose macros
- *
- * Collection of macros used by the CPML library.
- **/
-
-
 #ifndef __CPML_MACROS_H__
 #define __CPML_MACROS_H__
 
-/**
- * CPML_GNUC_CONST:
- *
- * To be appended at the end of a function to notice the compiler (gcc)
- * that the return value is constant.
- *
- * The coded is an adaptation of the #G_GNUC_CONST macro found
- * in gmacros.h of glib-2.18.3.
- **/
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
 #define CPML_GNUC_CONST    __attribute__((__const__))
 #else

@@ -22,6 +22,7 @@ cpml_c_sources=			cpml-arc.c \
 				cpml-close.c \
 				cpml-curve.c \
 				cpml-line.c \
+				cpml-macros.c \
 				cpml-pair.c \
 				cpml-primitive.c \
 				cpml-segment.c
