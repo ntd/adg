@@ -17,17 +17,19 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:primitive
+ * @Section_Id:CpmlPrimitive
  * @title: CpmlPrimitive
  * @short_description: Basic component of segments
  *
  * A primitive is an atomic geometric element found inside #CpmlSegment.
  * The available primitives are the same defined by #cairo_path_data_type_t
  * with the additional %CAIRO_PATH_ARC_TO type (check #CpmlPrimitiveType
- * for further information) and without %CAIRO_PATH_MOVE_TO, as the latter
- * is not considered a valid primitive and it is managed in different way
- * (the move to primitives are only used to define the origin of a segment).
+ * for further information) and without %CAIRO_PATH_MOVE_TO as it is not
+ * considered a primitive and it is managed in different way: the move-to
+ * primitives are only used to define the origin of a segment.
  **/
 
 /**
@@ -52,6 +54,7 @@
  * keeps pointers to the original segment (and, by transition, to
  * the underlying #CpmlPath struct).
  **/
+
 
 #include "cpml-primitive.h"
 #include "cpml-line.h"

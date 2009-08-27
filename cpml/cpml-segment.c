@@ -17,10 +17,12 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:segment
+ * @Section_Id:CpmlSegment
  * @title: CpmlSegment
- * @short_description: A contiguous line that can be a fragment
+ * @short_description: Contiguous segment that can be a fragment
  *                     or a whole cairo path
  *
  * A segment is a single contiguous line got from a cairo path. The
@@ -68,6 +70,7 @@
  * still stored in @path: CpmlSegment only provides a way to
  * access them.
  **/
+
 
 #include "cpml-segment.h"
 #include "cpml-primitive.h"

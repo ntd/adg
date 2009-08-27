@@ -17,26 +17,28 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:arc
- * @title: Circular arcs
- * @short_description: Functions for manipulating circular arcs
+ * @Section_Id:CpmlArc
+ * @title: CpmlArc
+ * @short_description: Manipulation of circular arcs
  *
  * The following functions manipulate %CAIRO_PATH_ARC_TO #CpmlPrimitive.
- * No check is made on the primitive struct, so be sure
- * <structname>CpmlPrimitive</structname> is effectively an arc
- * before calling these APIs.
+ * No validation is made on the input so use the following methods
+ * only when you are sure the <varname>primitive</varname> argument
+ * is effectively an arc-to.
  *
  * The arc primitive is defined by 3 points: the first one is the usual
  * implicit point got from the previous primitive, the second point is
  * an arbitrary intermediate point laying on the arc and the third point
  * is the end of the arc. These points identify univocally an arc:
- * furthermore, the intermediate point also gives the "direction" of
+ * furthermore, the intermediate point also gives the side of
  * the arc.
  *
  * As a special case, when the first point is coincident with the end
- * point, the primitive is considered a circle with diameter defined
- * by the segment between the first and the intermediate point.
+ * point the primitive is considered a circle with diameter defined by
+ * the segment between the first and the intermediate point.
  *
  * <important>
  * <para>
@@ -44,8 +46,8 @@
  * </para>
  * </important>
  *
- * Using the CPML APIs you are free to use %CAIRO_PATH_ARC_TO whenever
- * you want. But if you are directly accessing the struct fields you
+ * Using these CPML APIs you are free to use %CAIRO_PATH_ARC_TO whenever
+ * you want but, if you are directly accessing the struct fields, you
  * are responsible of converting arcs to curves before passing them
  * to cairo. In other words, do not directly feed #CpmlPath struct to
  * cairo (throught cairo_append_path() for example) or at least do not
@@ -58,6 +60,7 @@
  * approach as it allows to specify the number of curves to use and do
  * not need a cairo context.
  **/
+
 
 #include "cpml-arc.h"
 #include "cpml-pair.h"

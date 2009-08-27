@@ -17,20 +17,22 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:line
- * @title: Straight lines
- * @short_description: Line primitive management
+ * @Section_Id:CpmlLine
+ * @title: CpmlLine
+ * @short_description: APIs manipulating straight lines
  *
  * The following functions manipulate %CAIRO_PATH_LINE_TO #CpmlPrimitive.
- * No check is made on the primitive struct, so be sure the
- * <structname>CpmlPrimitive</structname> is effectively a line before
- * calling these APIs.
+ * No validation is made on the input so use the following methods
+ * only when you are sure the <varname>primitive</varname> argument
+ * is effectively a straingt line.
  **/
+
 
 #include "cpml-line.h"
 #include "cpml-pair.h"
-
 #include <stdlib.h>
 
 

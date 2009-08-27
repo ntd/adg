@@ -17,13 +17,16 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:macros
+ * @Section_Id:macros
  * @title: Macros
  * @short_description: General purpose macros
  *
  * Collection of macros used by the CPML library.
  **/
+
 
 #ifndef __CPML_MACROS_H__
 #define __CPML_MACROS_H__

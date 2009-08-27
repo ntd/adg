@@ -6,7 +6,9 @@ DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=		$(abs_top_srcdir)/cpml
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST"
-MKDB_OPTIONS=		--sgml-mode --output-format=xml
+MKDB_OPTIONS=		--sgml-mode \
+			--type-name-mangling \
+			--output-format=xml
 MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/cpml/*.h

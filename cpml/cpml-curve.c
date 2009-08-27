@@ -19,17 +19,20 @@
 
 /**
  * SECTION:curve
- * @title: Bézier curves
+ * @Section_Id:CpmlCurve
+ * @title: CpmlCurve
  * @short_description: Bézier cubic curve primitive management
  *
  * The following functions manipulate %CAIRO_PATH_CURVE_TO #CpmlPrimitive.
- * No check is made on the primitive struct, so be sure
- * <structname>CpmlPrimitive</structname> is effectively a Bézier curve
- * before calling these APIs.
+ * No validation is made on the input so use the following methods
+ * only when you are sure the <varname>primitive</varname> argument
+ * is effectively a cubic Bézier curve.
  **/
+
 
 #include "cpml-curve.h"
 #include "cpml-pair.h"
+
 
 /**
  * cpml_curve_type_get_npoints:

@@ -17,23 +17,27 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:close
- * @title: Closing path lines
- * @short_description: APIs to manage closing path virtual primitives
+ * @Section_Id:CpmlClose
+ * @title: CpmlClose
+ * @short_description: Straigth line used to close cyclic segments
  *
  * The following functions manipulate %CAIRO_PATH_CLOSE_PATH
- * #CpmlPrimitive. No check is made on the primitive struct, so be
- * sure the <structname>CpmlPrimitive</structname> is effectively
- * a close operation before calling these APIs.
+ * #CpmlPrimitive. No validation is made on the input so use the
+ * following methods only when you are sure the
+ * <varname>primitive</varname> argument is effectively a close path.
  *
  * This primitive management is almost identical to straight lines,
  * but taking properly start and end points.
  **/
 
+
 #include "cpml-close.h"
 #include "cpml-pair.h"
 #include "cpml-line.h"
+
 
 /**
  * cpml_close_type_get_npoints:

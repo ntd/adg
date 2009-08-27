@@ -17,12 +17,14 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:pair
+ * @Section_Id:CpmlPair
  * @title: CpmlPair
- * @short_description: A structure holding a couple of values
+ * @short_description: Basic struct holding a couple of values
  *
- * The CpmlPair is a generic 2D structure. It can be used to represent
+ * The #CpmlPair is a generic 2D structure. It can be used to represent
  * coordinates, sizes, offsets or whatever have two components.
  *
  * The name comes from MetaFont.
@@ -51,6 +53,7 @@
  * (as usual) but the y axis increases at down (the reverse of a usual
  * cartesian plan). An angle of 0 is at V=(1; 0) (middle right).
  **/
+
 
 #include "cpml-pair.h"
 #include "cpml-macros.h"
