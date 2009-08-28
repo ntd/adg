@@ -28,10 +28,10 @@ G_BEGIN_DECLS
 
 #define ADG_TYPE_TITLE_BLOCK             (adg_title_block_get_type())
 #define ADG_TITLE_BLOCK(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_TITLE_BLOCK, AdgTitleBlock))
-#define ADG_TITLE_BLOCK_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_TITLE_BLOCK, AdgTitleBlock))
+#define ADG_TITLE_BLOCK_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_TITLE_BLOCK, AdgTitleBlockClass))
 #define ADG_IS_TITLE_BLOCK(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_TITLE_BLOCK))
 #define ADG_IS_TITLE_BLOCK_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_TITLE_BLOCK))
-#define ADG_TITLE_BLOCK_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_TITLE_BLOCK, AdgTitleBlock))
+#define ADG_TITLE_BLOCK_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_TITLE_BLOCK, AdgTitleBlockClass))
 
 typedef struct _AdgTitleBlock        AdgTitleBlock;
 typedef struct _AdgTitleBlockClass   AdgTitleBlockClass;
