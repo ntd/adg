@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 
 #define ADG_TYPE_WIDGET             (adg_widget_get_type())
 #define ADG_WIDGET(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_WIDGET, AdgWidget))
-#define ADG_WIDGET_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_WIDGET, AdgWidget))
+#define ADG_WIDGET_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_WIDGET, AdgWidgetClass))
 #define ADG_IS_WIDGET(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_WIDGET))
 #define ADG_IS_WIDGET_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_WIDGET))
 #define ADG_WIDGET_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_WIDGET, AdgWidgetClass))
