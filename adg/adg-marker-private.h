@@ -31,6 +31,7 @@ typedef struct _AdgMarkerPrivate AdgMarkerPrivate;
 struct _AdgMarkerPrivate {
     gdouble      size;
     gdouble      angle;
+    gdouble      margin;
 };
 
 G_END_DECLS

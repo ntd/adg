@@ -42,7 +42,8 @@
 enum {
     PROP_0,
     PROP_SIZE,
-    PROP_ANGLE
+    PROP_ANGLE,
+    PROP_MARGIN
 };
 
 
@@ -58,6 +59,8 @@ static gboolean set_size                (AdgMarker      *marker,
                                          gdouble         size);
 static gboolean set_angle               (AdgMarker      *marker,
                                          gdouble         angle);
+static gboolean set_margin              (AdgMarker      *marker,
+                                         gdouble         margin);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY);
@@ -79,16 +82,23 @@ adg_marker_class_init(AdgMarkerClass *klass)
     param = g_param_spec_double("size",
                                 P_("Marker Size"),
                                 P_("The size (in global space) of the marker"),
-                                0, G_MAXDOUBLE, 10,
+                                0, G_MAXDOUBLE, 12,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
 
     param = g_param_spec_double("angle",
                                 P_("Marker Angle"),
-                                P_("The angle of the marker, an implementation dependend value"),
+                                P_("The tip or rotation angle of the marker"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 0,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE, param);
+
+    param = g_param_spec_double("margin",
+                                P_("Margin"),
+                                P_("The margin around the marker, in global space: left to 0 means to use the default value (implementation dependent)"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 0,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_MARGIN, param);
 }
 
 static void
@@ -99,6 +109,7 @@ adg_marker_init(AdgMarker *marker)
                                                          AdgMarkerPrivate);
     data->size = 10;
     data->angle = 0;
+    data->margin = 0;
 
     marker->data = data;
 }
@@ -116,6 +127,9 @@ get_property(GObject *object,
         break;
     case PROP_ANGLE:
         g_value_set_double(value, data->angle);
+        break;
+    case PROP_MARGIN:
+        g_value_set_double(value, data->margin);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -136,6 +150,9 @@ set_property(GObject *object,
     case PROP_ANGLE:
         set_angle(marker, g_value_get_double(value));
         break;
+    case PROP_MARGIN:
+        set_margin(marker, g_value_get_double(value));
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -149,7 +166,7 @@ set_property(GObject *object,
  *
  * Gets the current size of @marker.
  *
- * Returns: the marker size in global space
+ * Returns: the marker size, in global space
  **/
 gdouble
 adg_marker_get_size(AdgMarker *marker)
@@ -217,6 +234,43 @@ adg_marker_set_angle(AdgMarker *marker, gdouble angle)
         g_object_notify((GObject *) marker, "angle");
 }
 
+/**
+ * adg_marker_get_margin:
+ * @marker: an #AdgMarker
+ *
+ * Gets the current margin of @marker.
+ *
+ * Returns: the marker margin, in global space
+ **/
+gdouble
+adg_marker_get_margin(AdgMarker *marker)
+{
+    AdgMarkerPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_MARKER(marker), 0);
+
+    data = marker->data;
+
+    return data->margin;
+}
+
+/**
+ * adg_marker_set_margin:
+ * @marker: an #AdgMarker
+ * @margin: the new margin
+ *
+ * Sets a new margin on @marker. The @margin is an implementation-dependent
+ * property: it has meaning only when used by an #AdgMarker derived type.
+ **/
+void
+adg_marker_set_margin(AdgMarker *marker, gdouble margin)
+{
+    g_return_if_fail(ADG_IS_MARKER(marker));
+
+    if (set_margin(marker, margin))
+        g_object_notify((GObject *) marker, "margin");
+}
+
 
 static gboolean
 set_size(AdgMarker *marker, gdouble size)
@@ -240,6 +294,19 @@ set_angle(AdgMarker *marker, gdouble angle)
         return FALSE;
 
     data->angle = angle;
+
+    return TRUE;
+}
+
+static gboolean
+set_margin(AdgMarker *marker, gdouble margin)
+{
+    AdgMarkerPrivate *data = marker->data;
+
+    if (margin == data->margin)
+        return FALSE;
+
+    data->margin = margin;
 
     return TRUE;
 }

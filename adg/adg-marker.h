@@ -56,6 +56,9 @@ void            adg_marker_set_size             (AdgMarker      *marker,
 gdouble         adg_marker_get_angle            (AdgMarker      *marker);
 void            adg_marker_set_angle            (AdgMarker      *marker,
                                                  gdouble         angle);
+gdouble         adg_marker_get_margin           (AdgMarker      *marker);
+void            adg_marker_set_margin           (AdgMarker      *marker,
+                                                 gdouble         margin);
 
 G_END_DECLS
 
