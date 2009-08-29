@@ -237,19 +237,9 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_path_get_cairo_path(data->path);
 
     if (cairo_path != NULL) {
-        AdgMatrix local, ctm;
-
-        adg_entity_get_local_matrix(entity, &local);
-
         cairo_save(cr);
-
-        /* Apply the local matrix BEFORE the global one */
-        cairo_get_matrix(cr, &ctm);
-        cairo_matrix_multiply(&ctm, &ctm, &local);
-        cairo_set_matrix(cr, &ctm);
-
+        adg_entity_apply_local_matrix(entity, cr);
         cairo_append_path(cr, cairo_path);
-
         cairo_restore(cr);
 
         adg_entity_apply(entity, ADG_SLOT_LINE_STYLE, cr);
