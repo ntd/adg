@@ -59,7 +59,7 @@ static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 
 
-G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY);
 
 
 static void
@@ -219,11 +219,10 @@ unset_path(AdgStroke *stroke)
 {
     AdgStrokePrivate *data = stroke->data;
 
-    if (data->path)
-        return;
-
-    data->path = NULL;
-    adg_entity_invalidate((AdgEntity *) stroke);
+    if (data->path != NULL) {
+        data->path = NULL;
+        adg_entity_invalidate((AdgEntity *) stroke);
+    }
 }
 
 static gboolean
