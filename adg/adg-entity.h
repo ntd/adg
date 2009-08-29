@@ -52,14 +52,12 @@ struct _AdgEntity {
 struct _AdgEntityClass {
     /*< private >*/
     GInitiallyUnownedClass parent_class;
-
     /*< public >*/
     /* Signals */
     void                (*parent_set)           (AdgEntity      *entity,
                                                  AdgEntity      *old_parent);
     void                (*context_set)          (AdgEntity      *entity,
                                                  AdgContext     *old_context);
-
     /* Virtual Table */
     gboolean            (*invalidate)           (AdgEntity      *entity);
     gboolean            (*render)               (AdgEntity      *entity,
@@ -96,6 +94,8 @@ void            adg_entity_transform_local_map  (AdgEntity       *entity,
                                                  const AdgMatrix *transformation);
 void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
+void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
+                                                 cairo_t         *cr);
 AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
                                                  AdgStyleSlot     style_slot);
 void            adg_entity_apply                (AdgEntity       *entity,

@@ -682,6 +682,39 @@ adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
 }
 
 /**
+ * adg_entity_apply_local_matrix:
+ * @entity: an #AdgEntity object
+ * @cr: a #cairo_t drawing context
+ *
+ * Applies the local matrix of @entity BEFORE the current transformation
+ * matrix of @cr. This is a convenience function equivalent to:
+ *
+ * |[
+ * AdgMatrix local, ctm;
+ *
+ * adg_entity_get_local_matrix(entity, &local);
+ * cairo_get_matrix(cr, &ctm);
+ *
+ * cairo_matrix_multiply(&ctm, &ctm, &local);
+ * cairo_set_matrix(cr, &ctm);
+ * ]|
+ **/
+void
+adg_entity_apply_local_matrix(AdgEntity *entity, cairo_t *cr)
+{
+    AdgMatrix local, ctm;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(cr != NULL);
+
+    adg_entity_get_local_matrix(entity, &local);
+    cairo_get_matrix(cr, &ctm);
+
+    cairo_matrix_multiply(&ctm, &ctm, &local);
+    cairo_set_matrix(cr, &ctm);
+}
+
+/**
  * adg_entity_get_style:
  * @entity: an #AdgEntity
  * @style_slot: the slot of the style to get
