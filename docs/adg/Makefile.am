@@ -20,6 +20,7 @@ IGNORE_HFILES=		adg.h \
 			adg-intl.h \
 			adg-type-builtins.h \
 			adg-adim-private.h \
+			adg-arrow-private.h \
 			adg-arrow-style-private.h \
 			adg-canvas-private.h \
 			adg-container-private.h \

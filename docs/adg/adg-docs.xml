@@ -39,6 +39,11 @@
     <xi:include href="xml/adg-title-block.xml"/>
     <xi:include href="xml/adg-stroke.xml"/>
     <xi:include href="xml/adg-toy-text.xml"/>
+    <chapter id="Populating-marker">
+      <title>Markers</title>
+      <xi:include href="xml/adg-marker.xml"/>
+      <xi:include href="xml/adg-arrow.xml"/>
+    </chapter>
     <chapter id="Populating-quoting">
       <title>Quoting</title>
       <xi:include href="xml/adg-dim.xml"/>
