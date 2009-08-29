@@ -202,10 +202,12 @@ set_property(GObject *object,
  * @model: an #AdgModel
  * @entity: an #AdgEntity
  *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
  * Emits a #AdgModel::add-dependency signal on @model passing @entity
  * as argument. This will add a reference to @entity owned by @model.
- *
- * This function is only useful in entity implementations.
  **/
 void
 adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
@@ -221,14 +223,16 @@ adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
  * @model: an #AdgModel
  * @entity: an #AdgEntity
  *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
  * Emits a #AdgModel::remove-dependency signal on @model passing
  * @entity as argument. @entity must be inside @model.
  *
  * Note that @model will own a reference to @entity and it
  * may be the last reference held: this means removing an entity
  * from the model can destroy it.
- *
- * This function is only useful in entity implementations.
  **/
 void
 adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
@@ -293,10 +297,12 @@ adg_model_foreach_dependency(AdgModel *model, GCallback callback,
  * adg_model_changed:
  * @model: an #AdgModel
  *
- * Emits the #AdgModel::changed signal on @model.
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
  *
- * This function is only useful in model implementations.
- */
+ * Emits the #AdgModel::changed signal on @model.
+ **/
 void
 adg_model_changed(AdgModel *model)
 {
