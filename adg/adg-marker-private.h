@@ -21,17 +21,19 @@
 #ifndef __ADG_MARKER_PRIVATE_H__
 #define __ADG_MARKER_PRIVATE_H__
 
-#include <glib.h>
-
 
 G_BEGIN_DECLS
 
 typedef struct _AdgMarkerPrivate AdgMarkerPrivate;
 
 struct _AdgMarkerPrivate {
+    AdgPath     *path;
+    guint        n_segment;
+    AdgSegment  *backup_segment;
+    AdgSegment   segment;
+    gdouble      pos;
     gdouble      size;
-    gdouble      angle;
-    gdouble      margin;
+    AdgModel    *model;
 };
 
 G_END_DECLS

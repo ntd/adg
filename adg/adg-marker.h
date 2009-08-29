@@ -22,43 +22,57 @@
 #define __ADG_MARKER_H__
 
 #include <adg/adg-entity.h>
+#include <adg/adg-path.h>
 
 
 G_BEGIN_DECLS
 
 #define ADG_TYPE_MARKER             (adg_marker_get_type())
 #define ADG_MARKER(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_MARKER, AdgMarker))
-#define ADG_MARKER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_MARKER, AdgMarker))
+#define ADG_MARKER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST((klass), ADG_TYPE_MARKER, AdgMarkerClass))
 #define ADG_IS_MARKER(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_MARKER))
 #define ADG_IS_MARKER_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_MARKER))
-#define ADG_MARKER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_MARKER, AdgMarker))
+#define ADG_MARKER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_MARKER, AdgMarkerClass))
 
 typedef struct _AdgMarker       AdgMarker;
 typedef struct _AdgMarkerClass  AdgMarkerClass;
 
 struct _AdgMarker {
     /*< private >*/
-    AdgEntity            parent;
-    gpointer             data;
+    AdgEntity           parent;
+    gpointer            data;
 };
 
 struct _AdgMarkerClass {
     /*< private >*/
-    AdgEntityClass       parent_class;
+    AdgEntityClass      parent_class;
+    /*< public >*/
+    /* Virtual Table */
+    AdgModel *          (*create_model)         (AdgMarker      *marker);
 };
 
 
 GType           adg_marker_get_type             (void) G_GNUC_CONST;
 
+AdgPath *       adg_marker_get_path             (AdgMarker      *marker);
+void            adg_marker_set_path             (AdgMarker      *marker,
+                                                 AdgPath        *path);
+gint            adg_marker_get_n_segment        (AdgMarker      *marker);
+void            adg_marker_set_n_segment        (AdgMarker      *marker,
+                                                 gint            n_segment);
+const AdgSegment *
+                adg_marker_get_backup_segment   (AdgMarker      *marker);
+AdgSegment *    adg_marker_get_segment          (AdgMarker      *marker);
+gdouble         adg_marker_get_pos              (AdgMarker      *marker);
+void            adg_marker_set_pos              (AdgMarker      *marker,
+                                                 gdouble         pos);
 gdouble         adg_marker_get_size             (AdgMarker      *marker);
 void            adg_marker_set_size             (AdgMarker      *marker,
                                                  gdouble         size);
-gdouble         adg_marker_get_angle            (AdgMarker      *marker);
-void            adg_marker_set_angle            (AdgMarker      *marker,
-                                                 gdouble         angle);
-gdouble         adg_marker_get_margin           (AdgMarker      *marker);
-void            adg_marker_set_margin           (AdgMarker      *marker,
-                                                 gdouble         margin);
+AdgModel *      adg_marker_model                (AdgMarker      *marker);
+AdgModel *      adg_marker_get_model            (AdgMarker      *marker);
+void            adg_marker_set_model            (AdgMarker      *marker,
+                                                 AdgModel       *model);
 
 G_END_DECLS
 
