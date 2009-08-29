@@ -59,6 +59,10 @@ struct _AdgEntityClass {
     void                (*context_set)          (AdgEntity      *entity,
                                                  AdgContext     *old_context);
     /* Virtual Table */
+    void                (*get_global_matrix)    (AdgEntity      *entity,
+                                                 AdgMatrix      *matrix);
+    void                (*get_local_matrix)     (AdgEntity      *entity,
+                                                 AdgMatrix      *matrix);
     gboolean            (*invalidate)           (AdgEntity      *entity);
     gboolean            (*render)               (AdgEntity      *entity,
                                                  cairo_t        *cr);

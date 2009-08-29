@@ -92,6 +92,10 @@ static void             set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static void             set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
+static void             get_global_matrix       (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
+static void             get_local_matrix        (AdgEntity       *entity,
+                                                 AdgMatrix       *matrix);
 static void             real_invalidate         (AdgEntity       *entity,
                                                  gpointer         user_data);
 static void             real_render             (AdgEntity       *entity,
@@ -122,6 +126,8 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     klass->parent_set = NULL;
     klass->context_set = NULL;
+    klass->get_global_matrix = get_global_matrix;
+    klass->get_local_matrix = get_local_matrix;
     klass->invalidate = NULL;
     klass->render = NULL;
 
@@ -572,19 +578,10 @@ adg_entity_transform_global_map(AdgEntity *entity,
 void
 adg_entity_get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
 {
-    AdgEntityPrivate *data;
-
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(matrix != NULL);
 
-    data = entity->data;
-
-    if (data->parent == NULL) {
-        adg_matrix_copy(matrix, &data->global_map);
-    } else {
-        adg_entity_get_global_matrix((AdgEntity *) data->parent, matrix);
-        cairo_matrix_multiply(matrix, &data->global_map, matrix);
-    }
+    ADG_ENTITY_GET_CLASS(entity)->get_global_matrix(entity, matrix);
 }
 
 /**
@@ -666,19 +663,10 @@ adg_entity_transform_local_map(AdgEntity *entity,
 void
 adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
 {
-    AdgEntityPrivate *data;
-
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(matrix != NULL);
 
-    data = entity->data;
-
-    if (data->parent == NULL) {
-        adg_matrix_copy(matrix, &data->local_map);
-    } else {
-        adg_entity_get_local_matrix((AdgEntity *) data->parent, matrix);
-        cairo_matrix_multiply(matrix, &data->local_map, matrix);
-    }
+    ADG_ENTITY_GET_CLASS(entity)->get_local_matrix(entity, matrix);
 }
 
 /**
@@ -742,7 +730,7 @@ adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
     }
 
     if (data->parent)
-        return adg_entity_get_style((AdgEntity *) data->parent, style_slot);
+        return adg_entity_get_style(data->parent, style_slot);
 
     return NULL;
 }
@@ -915,6 +903,32 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
         cairo_matrix_init_identity(&data->local_map);
     else
         adg_matrix_copy(&data->local_map, map);
+}
+
+static void
+get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (data->parent == NULL) {
+        adg_matrix_copy(matrix, &data->global_map);
+    } else {
+        adg_entity_get_global_matrix(data->parent, matrix);
+        cairo_matrix_multiply(matrix, &data->global_map, matrix);
+    }
+}
+
+static void
+get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (data->parent == NULL) {
+        adg_matrix_copy(matrix, &data->local_map);
+    } else {
+        adg_entity_get_local_matrix(data->parent, matrix);
+        cairo_matrix_multiply(matrix, &data->local_map, matrix);
+    }
 }
 
 static void
