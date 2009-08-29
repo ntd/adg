@@ -116,9 +116,9 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgEntityPrivate));
 
+    gobject_class->dispose = dispose;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
-    gobject_class->dispose = dispose;
 
     klass->parent_set = NULL;
     klass->context_set = NULL;
