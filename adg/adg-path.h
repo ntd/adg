@@ -57,6 +57,9 @@ AdgModel *      adg_path_new                    (void);
 const cairo_path_t *
                 adg_path_get_cairo_path         (AdgPath        *path);
 CpmlPath *      adg_path_get_cpml_path          (AdgPath        *path);
+gboolean        adg_path_get_segment            (AdgPath        *path,
+                                                 AdgSegment     *segment,
+                                                 guint           n);
 void            adg_path_get_current_point      (AdgPath        *path,
                                                  gdouble        *x,
                                                  gdouble        *y);

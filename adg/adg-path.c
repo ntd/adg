@@ -223,6 +223,42 @@ adg_path_get_cpml_path(AdgPath *path)
 }
 
 /**
+ * adg_path_get_segment:
+ * @path: an #AdgPath
+ * @segment: the destination #AdgSegment
+ * @n: the segment number to retrieve
+ *
+ * Convenient function to get a segment from @path. The segment is
+ * got from the CPML path: check out adg_path_get_cpml_path() for
+ * further information.
+ *
+ * Returns: %TRUE on success or %FALSE on errors
+ **/
+gboolean
+adg_path_get_segment(AdgPath *path, AdgSegment *segment, guint n)
+{
+    CpmlPath *cpml_path;
+    guint cnt;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), FALSE);
+
+    if (n == 0)
+        return FALSE;
+
+    cpml_path = get_cpml_path(path);
+
+    cpml_segment_from_cairo(segment, cpml_path);
+    for (cnt = 1; cnt < n; ++cnt)
+        if (!cpml_segment_next(segment)) {
+            g_warning("%s: segment `%u' out of range for type `%s'",
+                      G_STRLOC, n, g_type_name(G_OBJECT_TYPE(path)));
+            return FALSE;
+        }
+
+    return TRUE;
+}
+
+/**
  * adg_path_get_current_point:
  * @path: an #AdgPath
  * @x: where to store the x coordinate of the current point
