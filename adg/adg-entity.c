@@ -334,9 +334,11 @@ adg_entity_get_parent(AdgEntity *entity)
  * @entity: an #AdgEntity
  * @parent: the parent entity
  *
- * Sets a new parent on @entity.
- *
+ * <note><para>
  * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Sets a new parent on @entity.
  **/
 void
 adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
@@ -445,7 +447,10 @@ adg_entity_get_canvas(AdgEntity *entity)
  * adg_entity_get_rendered:
  * @entity: an #AdgEntity object
  *
+ * <note><para>
  * This function is only useful in entity implementations.
+ * </para></note>
+ *
  * Gets the rendered flag of @entity.
  *
  * Returns: the current rendered state
@@ -467,7 +472,10 @@ adg_entity_get_rendered(AdgEntity *entity)
  * @entity: an #AdgEntity object
  * @rendered: new state for the rendered flag
  *
+ * <note><para>
  * This function is only useful in entity implementations.
+ * </para></note>
+ *
  * Sets the rendered flag of @entity to @rendered.
  **/
 void
