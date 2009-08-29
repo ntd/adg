@@ -8,6 +8,7 @@ PATTERN=
 
 # file groups
 h_sources=			adg-adim.h \
+				adg-arrow.h \
 				adg-arrow-style.h \
 				adg-canvas.h \
 				adg-container.h \
@@ -34,6 +35,7 @@ h_sources=			adg-adim.h \
 built_h_sources=		$(builddir)/adg-type-builtins.h \
 				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
+				adg-arrow-private.h \
 				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
@@ -55,6 +57,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-toy-text-private.h
 built_private_h_sources= 
 c_sources=			adg-adim.c \
+				adg-arrow.c \
 				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \

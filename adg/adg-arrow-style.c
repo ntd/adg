@@ -24,7 +24,7 @@
  *
  * Contains parameters on how to draw arrows, providing a way to register a
  * custom rendering callback.
- */
+ **/
 
 /**
  * AdgArrowStyle:
@@ -32,7 +32,6 @@
  * All fields are private and should not be used directly.
  * Use its public methods instead.
  **/
-
 
 /**
  * ADG_SLOT_ARROW_STYLE:
