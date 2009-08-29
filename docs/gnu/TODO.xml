@@ -83,32 +83,32 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.6.0</title>
 
 <itemizedlist mark="circle">
-   <listitem>Rename StyleId to StyleType: the latter is more clear.</listitem>
-   <listitem>Implement AdgMarker as a model: it will be the base class for arrows,
-   ticks, squares and so on.</listitem>
-   <listitem>Implement at least AdgArrow as AdgMarker derived model.</listitem>
-   <listitem>Implement AdgCap, an entity that relates to AdgMarker as AdgStroke
-   does for AdgPath.</listitem>
+   <listitem>Implement adg_matrix_normalize() to get rid of the scaling component
+   of a matrix: consider the point (0,0) and (1,1) on the identity matrix and
+   force on the matrix to normalize a distance of 1.4142... between the same
+   points by modifying only the xx and yy components.</listitem>
+   <listitem>Move the custom get_local_matrix() inside AdgEntity and implement a
+   common way to manage local matrix - entity interaction: if the model is
+   rotated an AdgToyText should rotate but not scaled.</listitem>
+   <listitem override="disc">Implement AdgMarker as an abstract entity: it will be the base class
+   for arrows, ticks, squares, dots and so on.</listitem>
+   <listitem override="disc">Implement AdgArrow as AdgMarker derived entity.</listitem>
    <listitem>Rename AdgArrowStyle to AdgMarkerStyle and update the code to use the
-   newly created AdgMarker model. Change AdgDim and AdgLDim to use this
-   new implementation.</listitem>
+   newly created AdgMarker entity.</listitem>
+   <listitem>Rewrite AdgLDim to use the new marker APIs instead of hardcoding the
+   arrows and calling the deprecated rendering callbacks.</listitem>
    <listitem>Implement the outside arrows in AdgLDim.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
-   <listitem>The ARROW and TRIANGLE markers should follow the director path that
-   could be a curve. Use the METAPOST solution suggested by John Hobby I
-   don't know where, that is, given <parameter>angle</parameter> and <parameter>size</parameter>,
-   rotate the path by half <parameter>angle</parameter> in both directions, look for intersection
-   with a circle centered at the end of the director path with radius <parameter>size</parameter>,
-   close the resulting path and optionally fill the arrow.</listitem>
    <listitem override="disc">Rework styles by using GObject and properties.</listitem>
    <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
-   <listitem>Implement a basic AdgHatchStyle, derived from AdgLineStyle.</listitem>
-   <listitem>AdgPath should be an abstract class from which derive AdgPolyline,
-   the basic stroked path entity.</listitem>
-   <listitem>Add AdgHatch, an entity very similar to AdgStroke.</listitem>
+   <listitem>Implement a basic AdgPatternStyle, abstracting the cairo_pattern_t APIs
+   and providing a way to customize filling, similar to what AdgLineStyle
+   does for stroking.</listitem>
+   <listitem>Add AdgHatch, an entity very similar to AdgStroke but that uses
+   cairo_fill() instead of cairo_stroke().</listitem>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
-   <listitem>Add AdgTitleBlock, a complex entity in paper space used to frame the
+   <listitem>Add AdgTitleBlock, a complex entity in global space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
 </itemizedlist>
 
@@ -118,6 +118,12 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to unknown</title>
 
 <itemizedlist mark="circle">
+   <listitem>The ARROW and TRIANGLE markers should follow the director path that
+   could be a curve. Use the METAPOST solution suggested by John Hobby I
+   don't know where, that is, given <parameter>angle</parameter> and <parameter>size</parameter>,
+   rotate the path by half <parameter>angle</parameter> in both directions, look for intersection
+   with a circle centered at the end of the director path with radius <parameter>size</parameter>,
+   close the resulting path and optionally fill the arrow.</listitem>
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
    external data. Use libgda as sample data provider.</listitem> 
    <listitem override="disc">Add model-view interaction by providing signal propagation from AdgModel
