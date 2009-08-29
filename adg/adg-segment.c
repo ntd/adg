@@ -115,3 +115,51 @@ adg_segment_deep_dup(const AdgSegment *segment)
 
     return dest;
 }
+
+/**
+ * adg_segment_deep_copy:
+ * @segment: an #AdgSegment structure
+ * @src: the source segment to copy
+ *
+ * Makes a deep copy of @src to @segment. For a shallow copy, check out
+ * the cpml_segment_copy() API provided by the CPML library.
+ *
+ * This could seem a somewhat unusual operation because @segment should
+ * be "compatible" with @src: it is expected that they have the same
+ * <structfield>num_data</structfield> value. Anyway, it is convenient
+ * in some situation, such as when restoring the original data from a
+ * deep duplicated source:
+ *
+ * |[
+ * AdgSegment *backup;
+ *
+ * backup = adg_segment_deep_dup(&segment);
+ * // Now &segment can be modified
+ * ...
+ * adg_segment_deep_copy(&segment, backup);
+ * g_free(backup);
+ * ]|
+ *
+ * The struct fields of @segment are left untouched and used only to
+ * check if it is compatible with @src.
+ *
+ * Returns: @segment
+ **/
+AdgSegment *
+adg_segment_deep_copy(AdgSegment *segment, const AdgSegment *src)
+{
+    size_t n;
+
+    g_return_val_if_fail(segment != NULL, segment);
+    g_return_val_if_fail(src != NULL, segment);
+    g_return_val_if_fail(segment->num_data == src->num_data, segment);
+
+    if (src->num_data <= 0)
+        return segment;
+
+    n = sizeof(cairo_path_data_t) * segment->num_data;
+
+    memcpy(segment->data, src->data, n);
+
+    return segment;
+}

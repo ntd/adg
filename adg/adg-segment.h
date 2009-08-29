@@ -36,6 +36,8 @@ typedef CpmlSegment AdgSegment;
 GType           adg_segment_get_type    (void) G_GNUC_CONST;
 AdgSegment *    adg_segment_dup         (const AdgSegment       *segment);
 AdgSegment *    adg_segment_deep_dup    (const AdgSegment       *segment);
+AdgSegment *    adg_segment_deep_copy   (AdgSegment             *segment,
+                                         const AdgSegment       *src);
 
 G_END_DECLS
 
