@@ -24,6 +24,18 @@
  *
  * A marker is an entity to be applied at the start or end of a segment.
  * Typical examples include arrows, ticks, dots and so on.
+ *
+ * The #AdgMarker:path and #AdgMarker:n-segment properties specify the
+ * segment where the marker should be applied. Similarly to the
+ * #AdgStroke type, if the associated path is destroyed the above
+ * properties are unset.
+ *
+ * Use adg_marker_set_pos() to select the position where the marker
+ * should be put: %0 means the start point of the segment while %1
+ * means the end point.
+ *
+ * The #AdgMarker:model property and APIs are intended only for marker
+ * implementation purposes.
  **/
 
 /**
