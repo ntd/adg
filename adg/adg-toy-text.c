@@ -24,6 +24,8 @@
  *
  * The #AdgToyText class is a basic class to show simple text. It internally
  * uses the so called cairo "toy" API and it shares the same limitations.
+ *
+ * The toy text entity is not subject to the local matrix, only its origin is.
  **/
 
 /**
@@ -60,6 +62,8 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
+static void     get_local_matrix        (AdgEntity      *entity,
+                                         AdgMatrix      *matrix);
 static gboolean invalidate              (AdgEntity      *entity);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
@@ -91,6 +95,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->get_local_matrix = get_local_matrix;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -290,6 +295,13 @@ adg_toy_text_get_extents(AdgToyText *toy_text, cairo_t *cr,
 }
 
 
+static void
+get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+{
+    PARENT_ENTITY_CLASS->get_local_matrix(entity, matrix);
+    cairo_matrix_init_translate(matrix, matrix->x0, matrix->y0);
+}
+
 static gboolean
 invalidate(AdgEntity *entity)
 {
@@ -311,20 +323,10 @@ render(AdgEntity *entity, cairo_t *cr)
     data = toy_text->data;
 
     if (data->label != NULL && data->label[0] != '\0') {
-        AdgMatrix ctm, org;
-
-        adg_entity_get_local_matrix(entity, &org);
-        cairo_matrix_init_translate(&org, org.x0, org.y0);
-
         update_label_cache(toy_text, cr);
 
         cairo_save(cr);
-
-        /* Apply the org displacement BEFORE the global matrix */
-        cairo_get_matrix(cr, &ctm);
-        cairo_matrix_multiply(&ctm, &ctm, &org);
-        cairo_set_matrix(cr, &ctm);
-
+        adg_entity_apply_local_matrix(entity, cr);
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
         cairo_restore(cr);
     }
