@@ -369,8 +369,11 @@ adg_dim_get_org(AdgDim *dim)
  * @dim: an #AdgDim
  * @org: the org coordinates
  *
- * Sets new org coordinates. This function is only useful
- * in new dimension implementations.
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Sets new org coordinates.
  **/
 void
 adg_dim_set_org(AdgDim *dim, const AdgPair *org)
@@ -390,8 +393,11 @@ adg_dim_set_org(AdgDim *dim, const AdgPair *org)
  * @org_x: x component of org
  * @org_y: y component of org
  *
- * Explicitely sets new org coordinates. This function is only useful
- * in new dimension implementations.
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Explicitely sets new org coordinates.
  **/
 void
 adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
@@ -616,8 +622,11 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
  * adg_dim_get_angle:
  * @dim: an #AdgDim
  *
- * Gets the dimension angle. This function is only useful
- * in new dimension implementations.
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Gets the dimension angle.
  *
  * Returns: the angle (in radians)
  **/
@@ -638,8 +647,11 @@ adg_dim_get_angle(AdgDim *dim)
  * @dim: an #AdgDim
  * @angle: the new angle (in radians)
  *
- * Sets a new dimension angle. This function is only useful
- * in new dimension implementations.
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Sets a new dimension angle.
  **/
 void
 adg_dim_set_angle(AdgDim *dim, gdouble angle)
@@ -914,8 +926,11 @@ adg_dim_set_note(AdgDim *dim, const gchar *note)
  * @dim: an #AdgDim object
  * @cr: a #cairo_t drawing context
  *
- * Renders the quote of @dim at the @org position. This function
- * is only useful in new dimension implementations.
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Renders the quote of @dim at the @org position.
  **/
 void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
