@@ -109,7 +109,7 @@ cpml_curve_pair_at_time(const CpmlPrimitive *curve, CpmlPair *pair, double t)
 /**
  * cpml_curve_pair_at:
  * @curve: the #CpmlPrimitive curve data
- * @pair:  the destination #AdgPair
+ * @pair:  the destination #CpmlPair
  * @pos:   the position value
  *
  * Given the @curve Bézier cubic, finds the coordinates at position
