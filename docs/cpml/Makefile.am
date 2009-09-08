@@ -15,7 +15,7 @@ HFILE_GLOB=		$(top_srcdir)/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/cpml/*.c
 IGNORE_HFILES=		cpml-alloca.h
 HTML_IMAGES=
-CONTENT_FILES=
-EXPAND_CONTENT_FILES=
+content_files=
+expand_content_files=
 
 include $(top_srcdir)/gtk-doc.make

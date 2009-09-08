@@ -6,7 +6,7 @@
 
   <part id="Core">
     <title>Core reference</title>
-    <xi:include href="xml/macros.xml"/>
+    <xi:include href="xml/util.xml"/>
     <xi:include href="xml/pair.xml"/>
   </part>
 
