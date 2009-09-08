@@ -11,10 +11,10 @@ cpml_h_sources=			cpml.h \
 				cpml-close.h \
 				cpml-curve.h \
 				cpml-line.h \
-				cpml-macros.h \
 				cpml-pair.h \
 				cpml-primitive.h \
-				cpml-segment.h
+				cpml-segment.h \
+				cpml-util.h
 cpml_built_h_sources=
 cpml_private_h_sources=		cpml-alloca.h
 cpml_built_private_h_sources=
@@ -22,10 +22,10 @@ cpml_c_sources=			cpml-arc.c \
 				cpml-close.c \
 				cpml-curve.c \
 				cpml-line.c \
-				cpml-macros.c \
 				cpml-pair.c \
 				cpml-primitive.c \
-				cpml-segment.c
+				cpml-segment.c \
+				cpml-util.c
 cpml_built_c_sources=
 
 # targets
