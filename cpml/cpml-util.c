@@ -19,13 +19,18 @@
 
 
 /**
- * SECTION:macros
- * @Section_Id:macros
- * @title: Macros
- * @short_description: General purpose macros
+ * SECTION:util
+ * @Section_Id:utilities
+ * @title: Utilities
+ * @short_description: Assorted macros and functions
  *
- * Collection of macros used by the CPML library.
+ * Collection of macros and functions that do not fit inside any other topic.
  **/
+
+
+#include "cpml-util.h"
+#include <math.h>
+
 
 /**
  * CPML_GNUC_CONST:
@@ -54,3 +59,25 @@
  *
  * Check out the #CpmlArc section for further information.
  **/
+
+
+/**
+ * cpml_angle:
+ * @angle: an angle in radians
+ *
+ * Normalizes @angle, that is returns the equivalent radians value
+ * between the range %M_PI (inclusive) and %-M_PI (exclusive).
+ *
+ * Returns: an equivalent value in radians
+ **/
+double
+cpml_angle(double angle)
+{
+    while (angle > M_PI)
+        angle -= M_PI * 2;
+
+    while (angle <= -M_PI)
+        angle += M_PI * 2;
+
+    return angle;
+}
