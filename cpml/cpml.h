@@ -23,9 +23,9 @@
 #include <cpml/cpml-arc.h>
 #include <cpml/cpml-curve.h>
 #include <cpml/cpml-line.h>
-#include <cpml/cpml-macros.h>
 #include <cpml/cpml-pair.h>
 #include <cpml/cpml-primitive.h>
 #include <cpml/cpml-segment.h>
+#include <cpml/cpml-util.h>
 
 #endif /* __CPML_H__ */

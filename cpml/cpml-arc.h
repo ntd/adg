@@ -21,14 +21,7 @@
 #define __CPML_ARC_H__
 
 #include <cpml/cpml-primitive.h>
-#include <cpml/cpml-macros.h>
-
-#ifndef CAIRO_PATH_ARC_TO
-#define CAIRO_PATH_ARC_TO       100
-#undef  CAIRO_HAS_ARC_SUPPORT
-#else
-#define CAIRO_HAS_ARC_SUPPORT   1
-#endif
+#include <cpml/cpml-util.h>
 
 
 CAIRO_BEGIN_DECLS

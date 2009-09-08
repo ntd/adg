@@ -21,7 +21,7 @@
 #define __CPML_CLOSE_H__
 
 #include <cpml/cpml-primitive.h>
-#include <cpml/cpml-macros.h>
+#include <cpml/cpml-util.h>
 
 
 CAIRO_BEGIN_DECLS
