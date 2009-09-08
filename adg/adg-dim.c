@@ -73,6 +73,8 @@ static gboolean invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
+static gboolean set_angle               (AdgDim         *dim,
+                                         gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
 static gboolean set_value_min           (AdgDim         *dim,
@@ -315,7 +317,7 @@ set_property(GObject *object, guint prop_id,
         cpml_pair_copy(&data->pos2, (AdgPair *) g_value_get_boxed(value));
         break;
     case PROP_ANGLE:
-        data->angle = g_value_get_double(value);
+        set_angle(dim, g_value_get_double(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -651,19 +653,17 @@ adg_dim_get_angle(AdgDim *dim)
  * This function is only useful in new dimension implementations.
  * </para></note>
  *
- * Sets a new dimension angle.
+ * Sets a new dimension angle. The @angle could be modified by this
+ * function to fit in the current dimension style mode, so do not
+ * expect to get the same value with adg_dim_get_angle().
  **/
 void
 adg_dim_set_angle(AdgDim *dim, gdouble angle)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-    data->angle = angle;
-
-    g_object_notify((GObject *) dim, "angle");
+    if (set_angle(dim, angle))
+        g_object_notify((GObject *) dim, "angle");
 }
 
 /**
@@ -998,9 +998,8 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_set_local_map(data->value_max_entity, &map);
     adg_entity_set_local_map(data->note_entity, &map);
 
-    /* Initialize global maps to the quote rotation angle:
-     * XXX: check why I had to invert the angle */
-    cairo_matrix_init_rotate(&map, -data->angle);
+    /* Initialize global maps to the quote rotation angle */
+    cairo_matrix_init_rotate(&map, data->angle);
 
     adg_entity_set_global_map(data->value_entity, &map);
     adg_entity_set_global_map(data->value_min_entity, &map);
@@ -1066,6 +1065,23 @@ quote_layout(AdgDim *dim, cairo_t *cr)
 }
 
 static gboolean
+set_angle(AdgDim *dim, gdouble angle)
+{
+    AdgDimPrivate *data = dim->data;
+
+    angle = cpml_angle(angle);
+    if (angle > G_PI_4 || angle <= -G_PI_4 * 3)
+        angle = cpml_angle(angle + G_PI);
+
+    if (angle == data->angle)
+        return FALSE;
+
+    data->angle = angle;
+
+    return TRUE;
+}
+
+static gboolean
 set_value(AdgDim *dim, const gchar *value)
 {
     AdgDimPrivate *data;
@@ -1115,9 +1131,7 @@ set_value_max(AdgDim *dim, const gchar *value_max)
 static gboolean
 set_note(AdgDim *dim, const gchar *note)
 {
-    AdgDimPrivate *data;
-
-    data = dim->data;
+    AdgDimPrivate *data = dim->data;
 
     if (adg_strcmp(note, data->note) == 0)
         return FALSE;
