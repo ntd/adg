@@ -52,7 +52,7 @@ struct _AdgPathClass {
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
-AdgModel *      adg_path_new                    (void);
+AdgPath *       adg_path_new                    (void);
 
 void            adg_path_get_current_point      (AdgPath        *path,
                                                  gdouble        *x,

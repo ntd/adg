@@ -152,12 +152,12 @@ finalize(GObject *object)
  * function: AdgPath will cache and reuse the cairo_copy_path() returned by
  * the cairo context after the @callback call.
  *
- * Returns: the new model
+ * Returns: the newly created path model
  **/
-AdgModel *
+AdgPath *
 adg_path_new(void)
 {
-    return (AdgModel *) g_object_new(ADG_TYPE_PATH, NULL);
+    return g_object_new(ADG_TYPE_PATH, NULL);
 }
 
 /**
