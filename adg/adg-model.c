@@ -97,9 +97,9 @@ adg_model_class_init(AdgModelClass *klass)
     klass->remove_dependency = remove_dependency;
     klass->changed = changed;
 
-    param = g_param_spec_object("entity",
-                                P_("Entity"),
-                                P_("Can be used to associate a new entity to this model (will be invalidated on model changed)"),
+    param = g_param_spec_object("dependency",
+                                P_("Dependency"),
+                                P_("Can be used to add a new dependency from this model (this entity will be invalidated on model changed)"),
                                 ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_DEPENDENCY, param);
 
