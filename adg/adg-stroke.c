@@ -87,7 +87,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
                                 P_("Trail"),
                                 P_("The trail to be stroked"),
                                 ADG_TYPE_TRAIL,
-                                G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_TRAIL, param);
 }
 
