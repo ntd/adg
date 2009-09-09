@@ -141,21 +141,21 @@ adg_dim_class_init(AdgDimClass *klass)
                                 P_("Angle"),
                                 P_("The dimension direction, if relevant"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE, param);
 
     param = g_param_spec_double("level",
                                 P_("Level"),
                                 P_("The dimension level, that is the factor to multiply dim_style->baseline_spacing to get the offset (in device units) from pos1..pos2 where render the dimension baseline"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEVEL, param);
 
     param = g_param_spec_enum("outside",
                                 P_("Outside"),
                                 P_("Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), must be extended outside the extension lines (ADG_THREE_STATE_ON) or should be automatically handled depending on the available space"),
                                 ADG_TYPE_THREE_STATE, ADG_THREE_STATE_UNKNOWN,
-                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_OUTSIDE, param);
 
     param = g_param_spec_string("value",
