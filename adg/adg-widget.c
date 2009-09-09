@@ -230,7 +230,7 @@ adg_widget_new(AdgCanvas *canvas)
 {
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
 
-    return (GtkWidget *) g_object_new(ADG_TYPE_WIDGET, "canvas", canvas, NULL);
+    return g_object_new(ADG_TYPE_WIDGET, "canvas", canvas, NULL);
 }
 
 
