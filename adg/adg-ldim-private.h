@@ -21,12 +21,15 @@
 #ifndef __ADG_LDIM_PRIVATE_H__
 #define __ADG_LDIM_PRIVATE_H__
 
-#include <cairo.h>
+#include <adg-trail.h>
+#include <adg-marker.h>
 
 
 G_BEGIN_DECLS
 
-/* The path_data cache is structured as following:
+/*
+ * The cpml.data array is structured in the following way:
+ *
  * [0]  = MOVE_TO
  * [1]  = baseline start
  * [2]  = LINE_TO
@@ -39,25 +42,28 @@ G_BEGIN_DECLS
  * [9]  = second extension line start
  * [10] = LINE_TO
  * [11] = second extension line end
- *
- * The director_data cache is as following:
- * [0]  = MOVE_TO
- * [1]  = start of arrow director
- * [2]  = LINE_TO
- * [3]  = end of arrow director
  */
 
 typedef struct _AdgLDimPrivate AdgLDimPrivate;
 
 struct _AdgLDimPrivate {
-    /* Properties */
-    double              direction;
+    double       direction;
 
-    /* Cache */
-    cairo_path_t        path;
-    cairo_path_data_t   path_data[12];
-    CpmlSegment         director;
-    cairo_path_data_t   director_data[4];
+    gboolean     has_extension1;
+    gboolean     has_extension2;
+
+    struct {
+        CpmlPath path;
+        cairo_path_data_t data[12];
+    }            cpml;
+
+    AdgTrail    *trail;
+    AdgMarker   *marker1;
+    AdgMarker   *marker2;
+
+    CpmlPair     from_shift;
+    CpmlPair     arrow_shift;
+    CpmlPair     to_shift;
 };
 
 G_END_DECLS

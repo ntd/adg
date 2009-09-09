@@ -23,7 +23,7 @@
  * @short_description: Linear dimensions
  *
  * The #AdgLDim entity represents a linear dimension.
- */
+ **/
 
 /**
  * AdgLDim:
@@ -36,32 +36,41 @@
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
 #include "adg-dim-style.h"
-#include "adg-container.h"
+#include "adg-stroke.h"
+#include "adg-arrow.h"
 #include "adg-intl.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_ldim_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
 enum {
     PROP_0,
-    PROP_DIRECTION
+    PROP_DIRECTION,
+    PROP_HAS_EXTENSION1,
+    PROP_HAS_EXTENSION2
 };
 
 
-static void     get_property            (GObject        *object,
-                                         guint           param_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
-                                         guint           param_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static gboolean invalidate              (AdgEntity      *entity);
-static gboolean render                  (AdgEntity      *entity,
-                                         cairo_t        *cr);
-static gchar *  default_value           (AdgDim         *dim);
-static void     update                  (AdgLDim        *ldim);
-static void     clear                   (AdgLDim        *ldim);
+static void             dispose                 (GObject        *object);
+static void             get_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static gboolean         invalidate              (AdgEntity      *entity);
+static gboolean         render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static gchar *          default_value           (AdgDim         *dim);
+static void             layout                  (AdgLDim        *ldim);
+static void             update_matrices         (AdgLDim        *ldim);
+static void             update_markers          (AdgLDim        *ldim);
+static void             dispose_markers         (AdgLDim        *ldim);
+static CpmlPath *       trail_callback          (AdgTrail       *trail,
+                                                 gpointer        user_data);
 
 
 G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -81,6 +90,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgLDimPrivate));
 
+    gobject_class->dispose = dispose;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
@@ -95,43 +105,60 @@ adg_ldim_class_init(AdgLDimClass *klass)
                                 -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
+
+    param = g_param_spec_boolean("has-extension1",
+                                 P_("Has First Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the first extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION1, param);
+
+    param = g_param_spec_boolean("has-extension2",
+                                 P_("Has Second Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the second extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION2, param);
 }
 
 static void
 adg_ldim_init(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(ldim, ADG_TYPE_LDIM,
-                                                       AdgLDimPrivate);
+    AdgLDimPrivate *data;
+    cairo_path_data_t move_to, line_to;
 
-    data->direction = ADG_DIR_RIGHT;
+    data = G_TYPE_INSTANCE_GET_PRIVATE(ldim, ADG_TYPE_LDIM, AdgLDimPrivate);
+    move_to.header.type = CAIRO_PATH_MOVE_TO;
+    move_to.header.length = 2;
+    line_to.header.type = CAIRO_PATH_LINE_TO;
+    line_to.header.length = 2;
 
-    data->path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->path.data = data->path_data;
-    data->path.num_data = 12;
+    data->direction = 0;
+    data->has_extension1 = TRUE;
+    data->has_extension2 = TRUE;
 
-    data->path_data[0].header.type = CAIRO_PATH_MOVE_TO;
-    data->path_data[0].header.length = 2;
-    data->path_data[2].header.type = CAIRO_PATH_LINE_TO;
-    data->path_data[2].header.length = 2;
-    data->path_data[4].header.type = CAIRO_PATH_MOVE_TO;
-    data->path_data[4].header.length = 2;
-    data->path_data[6].header.type = CAIRO_PATH_LINE_TO;
-    data->path_data[6].header.length = 2;
-    data->path_data[8].header.type = CAIRO_PATH_MOVE_TO;
-    data->path_data[8].header.length = 2;
-    data->path_data[10].header.type = CAIRO_PATH_LINE_TO;
-    data->path_data[10].header.length = 2;
+    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cpml.path.data = data->cpml.data;
+    data->cpml.path.num_data = 12;
+    data->cpml.path.data[0] = move_to;
+    data->cpml.path.data[2] = line_to;
+    data->cpml.path.data[4] = move_to;
+    data->cpml.path.data[6] = line_to;
+    data->cpml.path.data[8] = move_to;
+    data->cpml.path.data[10] = line_to;
 
-    data->director.data = data->director_data;
-    data->director.num_data = 4;
-    data->director.path = NULL;
-
-    data->director_data[0].header.type = CAIRO_PATH_MOVE_TO;
-    data->director_data[0].header.length = 2;
-    data->director_data[2].header.type = CAIRO_PATH_LINE_TO;
-    data->director_data[2].header.length = 2;
+    data->trail = NULL;
+    data->marker1 = NULL;
+    data->marker2 = NULL;
 
     ldim->data = data;
+}
+
+static void
+dispose(GObject *object)
+{
+    dispose_markers((AdgLDim *) object);
+
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -143,6 +170,12 @@ get_property(GObject *object,
     switch (prop_id) {
     case PROP_DIRECTION:
         g_value_set_double(value, data->direction);
+        break;
+    case PROP_HAS_EXTENSION1:
+        g_value_set_boolean(value, data->has_extension1);
+        break;
+    case PROP_HAS_EXTENSION2:
+        g_value_set_boolean(value, data->has_extension2);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -160,6 +193,12 @@ set_property(GObject *object,
     case PROP_DIRECTION:
         data->direction = g_value_get_double(value);
         break;
+    case PROP_HAS_EXTENSION1:
+        data->has_extension1 = g_value_get_boolean(value);
+        break;
+    case PROP_HAS_EXTENSION2:
+        data->has_extension2 = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -175,12 +214,12 @@ set_property(GObject *object,
  * adg_ldim_set_direction() and the position reference using adg_dim_set_pos()
  * or, better, adg_ldim_set_pos().
  *
- * Returns: the new entity
- */
-AdgEntity *
+ * Returns: the newly created linear dimension entity
+ **/
+AdgLDim *
 adg_ldim_new(void)
 {
-    return (AdgEntity *) g_object_new(ADG_TYPE_LDIM, NULL);
+    return g_object_new(ADG_TYPE_LDIM, NULL);
 }
 
 /**
@@ -193,19 +232,16 @@ adg_ldim_new(void)
  * Creates a new linear dimension, specifing all the needed properties in
  * one shot.
  *
- * Returns: the new entity
- */
-AdgEntity *
+ * Returns: the newly created linear dimension entity
+ **/
+AdgLDim *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
                   gdouble direction, const AdgPair *pos)
 {
-    AdgEntity *entity = (AdgEntity *) g_object_new(ADG_TYPE_LDIM,
-                                                   "ref1", ref1,
-                                                   "ref2", ref2,
-                                                   "direction", direction,
-                                                   NULL);
-    adg_ldim_set_pos((AdgLDim *) entity, pos);
-    return entity;
+    AdgLDim *ldim = g_object_new(ADG_TYPE_LDIM, "ref1", ref1, "ref2", ref2,
+                                 "direction", direction, NULL);
+    adg_ldim_set_pos(ldim, pos);
+    return ldim;
 }
 
 /**
@@ -220,9 +256,9 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  *
  * Wrappes adg_ldim_new_full() with explicit values.
  *
- * Returns: the new entity
- */
-AdgEntity *
+ * Returns: the newly created linear dimension entity
+ **/
+AdgLDim *
 adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
                            gdouble ref2_x, gdouble ref2_y,
                            gdouble direction, gdouble pos_x, gdouble pos_y)
@@ -250,7 +286,7 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
  * single @pos point. Before this call, @ldim MUST HAVE defined the reference
  * points and the direction. If these conditions are not met, an error message
  * is logged and the position references will not be set.
- */
+ **/
 void
 adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
 {
@@ -295,7 +331,7 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
  * @pos_y: the new y coordinate position reference
  *
  * Wrappers adg_ldim_set_pos() with explicit coordinates.
- */
+ **/
 void
 adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble pos_x, gdouble pos_y)
 {
@@ -314,7 +350,7 @@ adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble pos_x, gdouble pos_y)
  * Gets the direction where @ldim will extend.
  *
  * Returns: the direction angle in radians
- */
+ **/
 gdouble
 adg_ldim_get_direction(AdgLDim *ldim)
 {
@@ -333,7 +369,7 @@ adg_ldim_get_direction(AdgLDim *ldim)
  * @direction: an angle value, in radians
  *
  * Sets the direction angle where to extend @ldim.
- */
+ **/
 void
 adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 {
@@ -347,12 +383,98 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
     g_object_notify((GObject *) ldim, "direction");
 }
 
+/**
+ * adg_ldim_has_extension1:
+ * @ldim: an #AdgLDim entity
+ *
+ * Checks if @ldim should render also the first extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_ldim_has_extension1(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
+
+    data = ldim->data;
+
+    return data->has_extension1;
+}
+
+/**
+ * adg_ldim_switch_extension1:
+ * @ldim: an #AdgLDim entity
+ * @state: the new state
+ *
+ * Shows (if @state is %TRUE) or hide (if @state is %FALSE) the first
+ * extension line of @ldim.
+ **/
+void
+adg_ldim_switch_extension1(AdgLDim *ldim, gboolean state)
+{
+    AdgLDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_LDIM(ldim));
+
+    data = ldim->data;
+
+    data->has_extension1 = state;
+    g_object_notify((GObject *) ldim, "has-extension1");
+}
+
+/**
+ * adg_ldim_has_extension2:
+ * @ldim: an #AdgLDim entity
+ *
+ * Checks if @ldim should render also the second extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_ldim_has_extension2(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
+
+    data = ldim->data;
+
+    return data->has_extension2;
+}
+
+/**
+ * adg_ldim_switch_extension2:
+ * @ldim: an #AdgLDim entity
+ * @state: the new state
+ *
+ * Shows (if @state is %TRUE) or hide (if @state is %FALSE) the second
+ * extension line of @ldim.
+ **/
+void
+adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
+{
+    AdgLDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_LDIM(ldim));
+
+    data = ldim->data;
+
+    data->has_extension2 = state;
+    g_object_notify((GObject *) ldim, "has-extension2");
+}
+
 
 static gboolean
 invalidate(AdgEntity *entity)
 {
-    clear((AdgLDim *) entity);
-    return PARENT_ENTITY_CLASS->invalidate(entity);
+    dispose_markers((AdgLDim *) entity);
+
+    if (PARENT_ENTITY_CLASS->invalidate != NULL)
+        return PARENT_ENTITY_CLASS->invalidate(entity);
+
+    return TRUE;
 }
 
 static gboolean
@@ -361,31 +483,33 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgLDim *ldim;
     AdgLDimPrivate *data;
     AdgStyle *dim_style;
-    AdgStyle *arrow_style;
     AdgStyle *line_style;
-    AdgMatrix local;
 
     ldim = (AdgLDim *) entity;
     data = ldim->data;
     dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
     line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
-    adg_entity_get_local_matrix(entity, &local);
 
-    update(ldim);
+    if (!adg_entity_get_rendered(entity))
+        update_matrices(ldim);
+
+    layout(ldim);
+
+    if (!adg_entity_get_rendered(entity))
+        update_markers(ldim);
+
     adg_entity_apply(entity, ADG_SLOT_DIM_STYLE, cr);
 
-    cairo_save(cr);
-    cairo_transform(cr, &local);
-    adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &data->director);
-    cpml_segment_reverse(&data->director);
-    adg_arrow_style_render((AdgArrowStyle *) arrow_style, cr, &data->director);
-    cpml_segment_reverse(&data->director);
-    cairo_append_path(cr, &data->path);
-    cairo_restore(cr);
-
+    /* This CpmlPath has no arcs, so it can be feeded directly into cairo */
     adg_style_apply(line_style, cr);
+    cairo_append_path(cr, &data->cpml.path);
     cairo_stroke(cr);
+
+    if (data->marker1 != NULL)
+        adg_entity_render((AdgEntity *) data->marker1, cr);
+
+    if (data->marker2 != NULL)
+        adg_entity_render((AdgEntity *) data->marker2, cr);
 
     adg_dim_render_quote((AdgDim *) ldim, cr);
 
@@ -410,114 +534,157 @@ default_value(AdgDim *dim)
 }
 
 static void
-update(AdgLDim *ldim)
+layout(AdgLDim *ldim)
 {
+    AdgEntity *entity;
+    AdgDim *dim;
     AdgLDimPrivate *data;
-    AdgStyle *dim_style;
-    AdgStyle *arrow_style;
-    const AdgPair *ref1, *ref2, *pos1, *pos2;
-    gdouble level;
-    gdouble baseline_spacing, from_offset;
-    cairo_path_data_t *baseline1, *baseline2;
-    cairo_path_data_t *from1, *to1, *from2, *to2;
-    cairo_path_data_t *arrow1, *arrow2;
-    AdgMatrix unlocal;
-    CpmlPair vector;
-    AdgPair offset;
-    AdgPair quote_org;
-    gdouble angle;
+    AdgMatrix local;
+    AdgPair ref1, ref2, pos1, pos2;
+    AdgPair pair;
 
+    entity = (AdgEntity *) ldim;
+    dim = (AdgDim *) ldim;
     data = ldim->data;
-    dim_style = adg_entity_get_style((AdgEntity *) ldim, ADG_SLOT_DIM_STYLE);
-    arrow_style = adg_dim_style_get_arrow_style((AdgDimStyle *) dim_style);
+    adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
 
-    ref1 = adg_dim_get_ref1((AdgDim *) ldim);
-    ref2 = adg_dim_get_ref2((AdgDim *) ldim);
-    pos1 = adg_dim_get_pos1((AdgDim *) ldim);
-    pos2 = adg_dim_get_pos2((AdgDim *) ldim);
-    level = adg_dim_get_level((AdgDim *) ldim);
+    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
+    cpml_pair_transform(&ref1, &local);
+    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
+    cpml_pair_transform(&ref2, &local);
+    cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
+    cpml_pair_transform(&pos1, &local);
+    cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
+    cpml_pair_transform(&pos2, &local);
 
-    baseline_spacing = adg_dim_style_get_baseline_spacing((AdgDimStyle *) dim_style);
-    from_offset = adg_dim_style_get_from_offset((AdgDimStyle *) dim_style);
+    cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->from_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
 
-    baseline1 = data->path_data + 1;
-    baseline2 = data->path_data + 3;
-    from1 = data->path_data + 5;
-    to1 = data->path_data + 7;
-    from2 = data->path_data + 9;
-    to2 = data->path_data + 11;
-    arrow1 = data->director_data + 1;
-    arrow2 = data->director_data + 3;
+    cpml_pair_add(cpml_pair_copy(&pair, &pos1), &data->arrow_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
-    /* Get the inverted local matrix */
-    adg_entity_get_local_matrix((AdgEntity *) ldim, &unlocal);
-    if (cairo_matrix_invert(&unlocal) != CAIRO_STATUS_SUCCESS)
-        return;
+    cpml_pair_add(&pair, &data->to_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[7]);
 
-    /* Set vector to the director of the extension lines */
-    cpml_vector_from_angle(&vector, data->direction, 1);
+    cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->from_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
 
-    /* Calculate from1 and from2 */
-    offset.x = vector.x * from_offset;
-    offset.y = vector.y * from_offset;
-    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
+    cpml_pair_add(cpml_pair_copy(&pair, &pos2), &data->arrow_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
-    from1->point.x = ref1->x + offset.x;
-    from1->point.y = ref1->y + offset.y;
-    from2->point.x = ref2->x + offset.x;
-    from2->point.y = ref2->y + offset.y;
+    cpml_pair_add(&pair, &data->to_shift);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[11]);
 
-    /* Calculate arrow1 and arrow2 */
-    offset.x = vector.x * baseline_spacing * level;
-    offset.y = vector.y * baseline_spacing * level;
-    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
+    /* Play with header lengths to show or hide the extension lines */
+    if (data->has_extension1) {
+        if (data->has_extension2)
+            data->cpml.data[6].header.length = 2;
+        else
+            data->cpml.data[6].header.length = 6;
+    } else {
+        if (data->has_extension2)
+            data->cpml.data[2].header.length = 6;
+        else
+            data->cpml.data[2].header.length = 10;
+    }
 
-    arrow1->point.x = pos1->x + offset.x;
-    arrow1->point.y = pos1->y + offset.y;
-    arrow2->point.x = pos2->x + offset.x;
-    arrow2->point.y = pos2->y + offset.y;
+    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
-    /* Calculate to1 and to2 */
-    offset.x = vector.x * adg_dim_style_get_to_offset((AdgDimStyle *) dim_style);
-    offset.y = vector.y * adg_dim_style_get_to_offset((AdgDimStyle *) dim_style);
-    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
+    /* TODO: temporary workaround. AdgDim should manage text rendering
+     *       positioning using global/local matrix of an AdgContainer
+     *       (to be implemented) of AdgToyText entities */
+    AdgPair org;
 
-    to1->point.x = arrow1->point.x + offset.x;
-    to1->point.y = arrow1->point.y + offset.y;
-    to2->point.x = arrow2->point.x + offset.x;
-    to2->point.y = arrow2->point.y + offset.y;
+    org.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
+    org.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
 
-    /* Set vector to the director of the baseline */
-    offset.x = arrow2->point.x - arrow1->point.x;
-    offset.y = arrow2->point.y - arrow1->point.y;
-    cpml_vector_set_length(cpml_pair_copy(&vector, &offset), 1);
-
-    /* Update the AdgDim cache contents */
-
-    quote_org.x = (arrow1->point.x + arrow2->point.x) / 2;
-    quote_org.y = (arrow1->point.y + arrow2->point.y) / 2;
-    adg_dim_set_org((AdgDim *) ldim, &quote_org);
-    angle = cpml_vector_angle(&vector);
-    adg_dim_set_angle((AdgDim *) ldim, angle);
-
-    /* Calculate baseline1 and baseline2 */
-    offset.y = adg_arrow_style_get_margin((AdgArrowStyle *) arrow_style);
-    offset.x = vector.x * offset.y;
-    offset.y *= vector.y;
-    cairo_matrix_transform_distance(&unlocal, &offset.x, &offset.y);
-
-    baseline1->point.x = arrow1->point.x + offset.x;
-    baseline1->point.y = arrow1->point.y + offset.y;
-    baseline2->point.x = arrow2->point.x - offset.x;
-    baseline2->point.y = arrow2->point.y - offset.y;
-
-    data->path.status = CAIRO_STATUS_SUCCESS;
+    cairo_matrix_invert(&local);
+    cairo_matrix_transform_point(&local, &org.x, &org.y);
+    adg_dim_set_org(dim, &org);
+    adg_dim_set_angle(dim, data->direction + G_PI_2);
 }
 
 static void
-clear(AdgLDim *ldim)
+update_matrices(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+    AdgDimStyle *dim_style;
+    AdgMatrix matrix;
+    gdouble from_offset;
+    gdouble to_offset;
+    gdouble baseline_spacing;
+    gdouble level;
+
+    data = ldim->data;
+    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) ldim,
+                                                     ADG_SLOT_DIM_STYLE);
+    from_offset = adg_dim_style_get_from_offset(dim_style);
+    to_offset = adg_dim_style_get_to_offset(dim_style);
+    baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
+    level = adg_dim_get_level((AdgDim *) ldim);
+
+    cairo_matrix_init_rotate(&matrix, data->direction);
+
+    data->from_shift.x = data->from_shift.y = 0;
+    data->arrow_shift.x = data->arrow_shift.y = 0;
+    data->to_shift.x = data->to_shift.y = 0;
+
+    cairo_matrix_translate(&matrix, from_offset, 0);
+    cpml_pair_transform(&data->from_shift, &matrix);
+    cairo_matrix_translate(&matrix, to_offset-from_offset, 0);
+    cpml_pair_transform(&data->to_shift, &matrix);
+    cairo_matrix_translate(&matrix, level*baseline_spacing-to_offset, 0);
+    cpml_pair_transform(&data->arrow_shift, &matrix);
+}
+
+static void
+update_markers(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    data->path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    if (data->trail == NULL)
+        data->trail = adg_trail_new(trail_callback, ldim);
+
+    if (data->marker1 == NULL)
+        data->marker1 = g_object_new(ADG_TYPE_ARROW,
+                                     "trail", data->trail, NULL);
+
+    if (data->marker2 == NULL)
+        data->marker2 = g_object_new(ADG_TYPE_ARROW,
+                                     "trail", data->trail, "pos", 1.,  NULL);
+}
+
+static void
+dispose_markers(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data = ldim->data;
+
+    if (data->trail != NULL) {
+        g_object_unref(data->trail);
+        data->trail = NULL;
+    }
+
+    if (data->marker1 != NULL) {
+        g_object_unref(data->marker1);
+        data->marker1 = NULL;
+    }
+
+    if (data->marker2 != NULL) {
+        g_object_unref(data->marker2);
+        data->marker2 = NULL;
+    }
+}
+
+static CpmlPath *
+trail_callback(AdgTrail *trail, gpointer user_data)
+{
+    AdgLDim *ldim;
+    AdgLDimPrivate *data;
+
+    ldim = (AdgLDim *) user_data;
+    data = ldim->data;
+
+    adg_trail_clear_cairo_path(trail);
+
+    return &data->cpml.path;
 }

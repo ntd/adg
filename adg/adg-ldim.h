@@ -51,12 +51,12 @@ struct _AdgLDimClass {
 
 GType           adg_ldim_get_type               (void) G_GNUC_CONST;
 
-AdgEntity *     adg_ldim_new                    (void);
-AdgEntity *     adg_ldim_new_full               (const AdgPair  *ref1,
+AdgLDim *       adg_ldim_new                    (void);
+AdgLDim *       adg_ldim_new_full               (const AdgPair  *ref1,
                                                  const AdgPair  *ref2,
                                                  gdouble         direction,
                                                  const AdgPair  *pos);
-AdgEntity *     adg_ldim_new_full_explicit      (gdouble         ref1_x,
+AdgLDim *       adg_ldim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         ref1_y,
                                                  gdouble         ref2_x,
                                                  gdouble         ref2_y,
@@ -72,6 +72,12 @@ void            adg_ldim_set_pos_explicit       (AdgLDim        *ldim,
 gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_set_direction          (AdgLDim        *ldim,
                                                  gdouble         direction);
+gboolean        adg_ldim_has_extension1         (AdgLDim        *ldim);
+void            adg_ldim_switch_extension1      (AdgLDim        *ldim,
+                                                 gboolean        state);
+gboolean        adg_ldim_has_extension2         (AdgLDim        *ldim);
+void            adg_ldim_switch_extension2      (AdgLDim        *ldim,
+                                                 gboolean        state);
 
 G_END_DECLS
 
