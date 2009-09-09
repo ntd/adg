@@ -133,7 +133,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
     AdgTrail *trail;
     AdgTrailPrivate *data;
 
-    trail = (AdgTrail *) g_object_new(ADG_TYPE_TRAIL, NULL);
+    trail = g_object_new(ADG_TYPE_TRAIL, NULL);
     data = trail->data;
 
     data->callback = callback;
