@@ -200,12 +200,12 @@ default_value(AdgDim *dim)
  * the reference points with adg_dim_set_ref() and the position reference using
  * adg_dim_set_pos().
  *
- * Returns: the new entity
+ * Returns: the newly created angular dimension entity
  **/
-AdgEntity *
+AdgADim *
 adg_adim_new(void)
 {
-    return (AdgEntity *) g_object_new(ADG_TYPE_ADIM, NULL);
+    return g_object_new(ADG_TYPE_ADIM, NULL);
 }
 
 /**

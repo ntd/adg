@@ -51,7 +51,7 @@ struct _AdgADimClass {
 
 GType           adg_adim_get_type               (void) G_GNUC_CONST;
 
-AdgEntity *     adg_adim_new                    (void);
+AdgADim *       adg_adim_new                    (void);
 
 gdouble         adg_adim_get_angle1             (AdgADim        *adim);
 void            adg_adim_set_angle1             (AdgADim        *adim,
