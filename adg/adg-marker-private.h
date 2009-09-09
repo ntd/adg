@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgMarkerPrivate AdgMarkerPrivate;
 
 struct _AdgMarkerPrivate {
-    AdgPath     *path;
+    AdgTrail    *trail;
     guint        n_segment;
     AdgSegment  *backup_segment;
     AdgSegment   segment;

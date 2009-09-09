@@ -22,7 +22,7 @@
 #define __ADG_MARKER_H__
 
 #include <adg/adg-entity.h>
-#include <adg/adg-path.h>
+#include <adg/adg-trail.h>
 
 
 G_BEGIN_DECLS
@@ -54,9 +54,9 @@ struct _AdgMarkerClass {
 
 GType           adg_marker_get_type             (void) G_GNUC_CONST;
 
-AdgPath *       adg_marker_get_path             (AdgMarker      *marker);
-void            adg_marker_set_path             (AdgMarker      *marker,
-                                                 AdgPath        *path);
+AdgTrail *      adg_marker_get_trail            (AdgMarker      *marker);
+void            adg_marker_set_trail            (AdgMarker      *marker,
+                                                 AdgTrail       *trail);
 gint            adg_marker_get_n_segment        (AdgMarker      *marker);
 void            adg_marker_set_n_segment        (AdgMarker      *marker,
                                                  gint            n_segment);
