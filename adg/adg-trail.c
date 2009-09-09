@@ -58,9 +58,8 @@
 
 #include "adg-trail.h"
 #include "adg-trail-private.h"
-#include "adg-primitive.h"
 
-#include <math.h>
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
 
 
 static void             finalize                (GObject        *object);
@@ -108,16 +107,14 @@ finalize(GObject *object)
 {
     AdgTrail *trail;
     AdgTrailPrivate *data;
-    GObjectClass *object_class;
 
     trail = (AdgTrail *) object;
     data = trail->data;
-    object_class = (GObjectClass *) adg_trail_parent_class;
 
     adg_trail_clear_cairo_path(trail);
 
-    if (object_class->finalize != NULL)
-        object_class->finalize(object);
+    if (PARENT_OBJECT_CLASS->finalize != NULL)
+        PARENT_OBJECT_CLASS->finalize(object);
 }
 
 
@@ -128,9 +125,9 @@ finalize(GObject *object)
  * function: AdgTrail will cache and reuse the cairo_copy_path() returned by
  * the cairo context after the @callback call.
  *
- * Returns: the new model
+ * Returns: a new trail model
  **/
-AdgModel *
+AdgTrail *
 adg_trail_new(AdgTrailCallback callback, gpointer user_data)
 {
     AdgTrail *trail;
@@ -142,7 +139,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
     data->callback = callback;
     data->user_data = user_data;
 
-    return (AdgModel *) trail;
+    return trail;
 }
 
 
@@ -177,6 +174,32 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
     return get_cairo_path(trail);
+}
+
+/**
+ * adg_trail_clear_cairo_path:
+ * @trail: an #AdgTrail
+ *
+ * Clears the internal cairo path of @trail so it will be recomputed
+ * the next time is requested throught adg_trail_get_cairo_path().
+ **/
+void
+adg_trail_clear_cairo_path(AdgTrail *trail)
+{
+    AdgTrailPrivate *data;
+    cairo_path_t *cairo_path;
+
+    data = trail->data;
+    cairo_path = &data->cairo_path;
+
+    if (cairo_path->data == NULL)
+        return;
+
+    g_free(cairo_path->data);
+
+    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
+    cairo_path->data = NULL;
+    cairo_path->num_data = 0;
 }
 
 /**
@@ -350,30 +373,4 @@ arc_to_curves(GArray *array, const cairo_path_data_t *src)
     }
 
     return array;
-}
-
-/**
- * adg_trail_clear_cairo_path:
- * @trail: an #AdgTrail
- *
- * Clears the internal cairo path of @trail so it will be recomputed
- * the next time is requested throught adg_trail_get_cairo_path().
- **/
-void
-adg_trail_clear_cairo_path(AdgTrail *trail)
-{
-    AdgTrailPrivate *data;
-    cairo_path_t *cairo_path;
-
-    data = trail->data;
-    cairo_path = &data->cairo_path;
-
-    if (cairo_path->data == NULL)
-        return;
-
-    g_free(cairo_path->data);
-
-    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
-    cairo_path->data = NULL;
-    cairo_path->num_data = 0;
 }

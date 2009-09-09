@@ -56,7 +56,7 @@ struct _AdgTrailClass {
 
 
 GType           adg_trail_get_type              (void) G_GNUC_CONST;
-AdgModel *      adg_trail_new                   (AdgTrailCallback callback,
+AdgTrail *      adg_trail_new                   (AdgTrailCallback callback,
                                                  gpointer         user_data);
 
 const cairo_path_t *
