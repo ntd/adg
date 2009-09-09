@@ -99,6 +99,9 @@ adg_trail_init(AdgTrail *trail)
     data->cairo_path.data = NULL;
     data->cairo_path.num_data = 0;
 
+    data->callback = NULL;
+    data->user_data = NULL;
+
     trail->data = data;
 }
 
@@ -120,10 +123,12 @@ finalize(GObject *object)
 
 /**
  * adg_trail_new:
+ * @callback: the #CpmlPath constructor function
+ * @user_data: generic pointer to pass to the callback
  *
- * Creates a new trail model. The trail must be constructed in the @callback
- * function: AdgTrail will cache and reuse the cairo_copy_path() returned by
- * the cairo context after the @callback call.
+ * Creates a new trail model. The #CpmlPath must be constructed by the
+ * @callback function: #AdgTrail will not cache anything, so you should
+ * implement any caching mechanism in the callback, if needed.
  *
  * Returns: a new trail model
  **/
@@ -250,8 +255,11 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
 
-    if (n == 0)
+    if (n == 0) {
+        g_warning("%s: requested undefined segment for type `%s'",
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return FALSE;
+    }
 
     cpml_path = adg_trail_get_cpml_path(trail);
 
