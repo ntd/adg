@@ -150,14 +150,14 @@ set_property(GObject *object, guint prop_id,
  *
  * Creates a new stroke entity.
  *
- * Returns: the newly created entity
+ * Returns: the newly created stroke entity
  **/
-AdgEntity *
+AdgStroke *
 adg_stroke_new(AdgTrail *trail)
 {
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
-    return (AdgEntity *) g_object_new(ADG_TYPE_STROKE, "trail", trail, NULL);
+    return g_object_new(ADG_TYPE_STROKE, "trail", trail, NULL);
 }
 
 
