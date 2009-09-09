@@ -186,12 +186,12 @@ set_property(GObject *object,
  *
  * Creates a new container entity.
  *
- * Returns: the newly created entity
+ * Returns: the newly created container entity
  **/
-AdgEntity *
+AdgContainer *
 adg_container_new(void)
 {
-    return (AdgEntity *) g_object_new(ADG_TYPE_CONTAINER, NULL);
+    return g_object_new(ADG_TYPE_CONTAINER, NULL);
 }
 
 
