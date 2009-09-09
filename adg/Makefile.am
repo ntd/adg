@@ -30,6 +30,7 @@ h_sources=			adg-adim.h \
 				adg-stroke.h \
 				adg-style.h \
 				adg-title-block.h \
+				adg-trail.h \
 				adg-toy-text.h \
 				adg-util.h
 built_h_sources=		$(builddir)/adg-type-builtins.h \
@@ -54,6 +55,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-stroke-private.h \
 				adg-style-private.h \
 				adg-title-block-private.h \
+				adg-trail-private.h \
 				adg-toy-text-private.h
 built_private_h_sources= 
 c_sources=			adg-adim.c \
@@ -80,6 +82,7 @@ c_sources=			adg-adim.c \
 				adg-stroke.c \
 				adg-style.c \
 				adg-title-block.c \
+				adg-trail.c \
 				adg-toy-text.c \
 				adg-util.c
 built_c_sources=		$(builddir)/adg-type-builtins.c
