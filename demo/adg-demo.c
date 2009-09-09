@@ -225,6 +225,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     ldim = adg_ldim_new_full_explicit(data->A - data->B, -data->D3 / 2 + CHAMFER, data->A - data->B + data->LD3,
                                       -data->D3 / 2 + CHAMFER, ADG_DIR_UP, 0,
                                       -data->D3 / 2);
+    adg_ldim_switch_extension1(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* SOUTH */
@@ -233,6 +234,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     ldim = adg_ldim_new_full_explicit(data->A - data->B, data->D3 / 2 - CHAMFER, data->A, data->D7 / 2,
                                       ADG_DIR_DOWN, 0, data->D3 / 2);
     adg_dim_set_tolerances(ADG_DIM(ldim), NULL, "+0.1");
+    adg_ldim_switch_extension2(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* A */
