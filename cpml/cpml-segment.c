@@ -177,6 +177,111 @@ cpml_segment_next(CpmlSegment *segment)
 
 
 /**
+ * cpml_segment_length:
+ * @segment: a #CpmlSegment
+ *
+ * Gets the whole length of @segment.
+ *
+ * Returns: the requested length
+ **/
+double
+cpml_segment_length(const CpmlSegment *segment)
+{
+    CpmlPrimitive primitive;
+    double length;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+    length = 0;
+
+    do {
+        length += cpml_primitive_length(&primitive);
+    } while (cpml_primitive_next(&primitive));
+
+    return length;
+}
+
+/**
+ * cpml_segment_pair_at:
+ * @segment: a #CpmlSegment
+ * @pair:    the destination #CpmlPair
+ * @pos:     the position value
+ *
+ * Gets the coordinates of the point lying on @segment at position
+ * @pos. @pos is an homogeneous factor where %0 is the start point,
+ * %1 the end point, %0.5 the mid point and so on.
+ * The relation %0 < @pos < %1 should be satisfied, although some
+ * cases accept value outside this range.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>The actual implementation returns only the start and end points,
+ *           that is only when @pos is %0 or %1.</listitem>
+ * </itemizedlist>
+ * </important>
+ **/
+void
+cpml_segment_pair_at(const CpmlSegment *segment, CpmlPair *pair, double pos)
+{
+    CpmlPrimitive primitive;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+
+    /* Handle the common cases: start and end points */
+    if (pos == 0)
+        return cpml_primitive_pair_at(&primitive, pair, 0);
+
+    if (pos == 1) {
+        while (cpml_primitive_next(&primitive))
+            ;
+        return cpml_primitive_pair_at(&primitive, pair, 1);
+    }
+}
+
+/**
+ * cpml_segment_vector_at:
+ * @segment: a #CpmlSegment
+ * @vector:  the destination #CpmlVector
+ * @pos:     the position value
+ *
+ * Gets the steepness of the point lying on @segment at position
+ * @pos. @pos is an homogeneous factor where %0 is the start point,
+ * %1 the end point, %0.5 the mid point and so on.
+ * The relation %0 < @pos < %1 should be satisfied, although some
+ * cases accept value outside this range.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>The actual implementation returns only the start and end
+ *           steepness, that is only when @pos is %0 or %1.</listitem>
+ * </itemizedlist>
+ * </important>
+ **/
+void
+cpml_segment_vector_at(const CpmlSegment *segment,
+                       CpmlVector *vector, double pos)
+{
+    CpmlPrimitive primitive;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+
+    /* Handle the common cases: start and end points */
+    if (pos == 0) {
+        cpml_primitive_vector_at(&primitive, vector, 0);
+        return;
+    }
+
+    if (pos == 1) {
+        while (cpml_primitive_next(&primitive))
+            ;
+        cpml_primitive_vector_at(&primitive, vector, 1);
+        return;
+    }
+}
+
+
+/**
  * cpml_segment_to_cairo:
  * @segment: a #CpmlSegment
  * @cr: the destination cairo context

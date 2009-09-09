@@ -51,6 +51,14 @@ void    cpml_segment_reset              (CpmlSegment            *segment);
 cairo_bool_t
         cpml_segment_next               (CpmlSegment            *segment);
 
+double  cpml_segment_length             (const CpmlSegment      *segment);
+void    cpml_segment_pair_at            (const CpmlSegment      *segment,
+                                         CpmlPair               *pair,
+                                         double                  pos);
+void    cpml_segment_vector_at          (const CpmlSegment      *segment,
+                                         CpmlVector             *vector,
+                                         double                  pos);
+
 void    cpml_segment_reverse            (CpmlSegment            *segment);
 void    cpml_segment_transform          (CpmlSegment            *segment,
                                          const cairo_matrix_t   *matrix);
