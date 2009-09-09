@@ -188,12 +188,12 @@ set_property(GObject *object, guint prop_id,
  *
  * Creates a new toy text entity using @label as its text
  *
- * Returns: the new entity
- */
-AdgEntity *
+ * Returns: the newly created toy text entity
+ **/
+AdgToyText *
 adg_toy_text_new(const gchar *label)
 {
-    return (AdgEntity *) g_object_new(ADG_TYPE_TOY_TEXT, "label", label, NULL);
+    return g_object_new(ADG_TYPE_TOY_TEXT, "label", label, NULL);
 }
 
 /**
