@@ -113,14 +113,14 @@ adg_widget_class_init(AdgWidgetClass *klass)
                                 P_("Canvas"),
                                 P_("The canvas to be shown by this widget"),
                                 ADG_TYPE_CANVAS,
-                                G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_CANVAS, param);
 
     param = g_param_spec_double("factor",
                                 P_("Factor"),
                                 P_("The factor used in zooming in and out"),
                                 1., G_MAXDOUBLE, 1.05,
-                                G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
     /**
