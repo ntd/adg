@@ -67,7 +67,7 @@ void            adg_path_append                 (AdgPath        *path,
 void            adg_path_append_valist          (AdgPath        *path,
                                                  cairo_path_data_type_t
                                                                  type,
-                                                 va_list var_args);
+                                                 va_list         var_args);
 void            adg_path_append_primitive       (AdgPath        *path,
                                                  const AdgPrimitive
                                                                 *primitive);

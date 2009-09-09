@@ -26,6 +26,12 @@
  * implements methods to create the path and provides additional
  * operations specific to technical drawings.
  *
+ * #AdgPath overrides the get_cpml_path() method of the parent
+ * #AdgTrail class, avoiding the need of an #AdgTrailCallback.
+ * The path is constructed programmaticaly: keep in mind any
+ * method that modifies the path will invalidate the #CpmlPath
+ * returned by adg_trail_get_cpml_path().
+ *
  * Although some of the provided methods are clearly based on the
  * original cairo path manipulation API, their behavior could be
  * sligthly different. This is intentional, because the ADG provides
@@ -37,10 +43,10 @@
  * As an example, following the rule of the less surprise, some
  * cairo functions guess the current point when it is not defined,
  * while the #AdgPath methods trigger a warning without other effect.
- * Furthermore, after a cairo_path_close_path() call a %MOVE_TO
+ * Furthermore, after cairo_path_close_path() a %CAIRO_PATH_MOVE_TO
  * primitive to the starting point of the segment is automatically
- * added by cairo while in ADG, after an adg_path_close(), the
- * current point is simply unset.
+ * added by cairo; in ADG, after an adg_path_close() the current
+ * point is simply unset.
  **/
 
 /**
@@ -152,43 +158,6 @@ AdgModel *
 adg_path_new(void)
 {
     return (AdgModel *) g_object_new(ADG_TYPE_PATH, NULL);
-}
-
-
-/**
- * adg_path_get_segment:
- * @path: an #AdgPath
- * @segment: the destination #AdgSegment
- * @n: the segment number to retrieve
- *
- * Convenient function to get a segment from @path. The segment is
- * got from the CPML path: check out adg_path_get_cpml_path() for
- * further information.
- *
- * Returns: %TRUE on success or %FALSE on errors
- **/
-gboolean
-adg_path_get_segment(AdgPath *path, AdgSegment *segment, guint n)
-{
-    CpmlPath *cpml_path;
-    guint cnt;
-
-    g_return_val_if_fail(ADG_IS_PATH(path), FALSE);
-
-    if (n == 0)
-        return FALSE;
-
-    cpml_path = read_cpml_path(path);
-
-    cpml_segment_from_cairo(segment, cpml_path);
-    for (cnt = 1; cnt < n; ++cnt)
-        if (!cpml_segment_next(segment)) {
-            g_warning("%s: segment `%u' out of range for type `%s'",
-                      G_STRLOC, n, g_type_name(G_OBJECT_TYPE(path)));
-            return FALSE;
-        }
-
-    return TRUE;
 }
 
 /**
