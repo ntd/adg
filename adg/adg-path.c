@@ -148,9 +148,8 @@ finalize(GObject *object)
 /**
  * adg_path_new:
  *
- * Creates a new path model. The path must be constructed in the @callback
- * function: AdgPath will cache and reuse the cairo_copy_path() returned by
- * the cairo context after the @callback call.
+ * Creates a new path model. The path should be constructed
+ * programmatically by using the methods provided by #AdgPath.
  *
  * Returns: the newly created path model
  **/
