@@ -93,14 +93,14 @@ adg_adim_class_init(AdgADimClass *klass)
                                 P_("Angle 1"),
                                 P_("Angle of the first reference line"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE1, param);
 
     param = g_param_spec_double("angle2",
                                 P_("Angle 2"),
                                 P_("Angle of the second reference line"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE2, param);
 }
 
