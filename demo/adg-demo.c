@@ -117,7 +117,7 @@ sample_canvas(void)
     canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     adg_container_add(container, entity);
 
     sample_add_dimensions(canvas, &data);
@@ -157,8 +157,8 @@ sample_path(const SampleData *data)
 {
     AdgPath *path;
     double x, y;
-    AdgSegment segment_org;
-    AdgSegment *segment;
+    AdgSegment segment;
+    AdgSegment *dup_segment;
     cairo_matrix_t matrix;
 
     path = (AdgPath *) adg_path_new();
@@ -192,16 +192,16 @@ sample_path(const SampleData *data)
     /* Build the rounded shape by duplicating the first segment of
      * the current path, reflecting it on the y=0 axis, reversing and
      * joining it the result to the original path */
-    cpml_segment_from_cairo(&segment_org, adg_path_get_cpml_path(path));
-    segment = adg_segment_deep_dup(&segment_org);
-    cpml_segment_reverse(segment);
+    adg_trail_get_segment(ADG_TRAIL(path), &segment, 1);
+    dup_segment = adg_segment_deep_dup(&segment);
+    cpml_segment_reverse(dup_segment);
     adg_matrix_init_reflection(&matrix, 0);
-    cpml_segment_transform(segment, &matrix);
-    segment->data[0].header.type = CAIRO_PATH_LINE_TO;
+    cpml_segment_transform(dup_segment, &matrix);
+    dup_segment->data[0].header.type = CAIRO_PATH_LINE_TO;
 
-    adg_path_append_segment(path, segment);
+    adg_path_append_segment(path, dup_segment);
 
-    g_free(segment);
+    g_free(dup_segment);
 
     adg_path_close(path);
     return path;
@@ -506,7 +506,7 @@ operations_canvas(void)
     container = (AdgContainer *) adg_container_new();
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
-    adg_container_add(container, adg_stroke_new(path));
+    adg_container_add(container, adg_stroke_new(ADG_TRAIL(path)));
 
     entity = adg_toy_text_new("Original shape");
     cairo_matrix_init_translate(&map, 5, 10);
@@ -521,7 +521,7 @@ operations_canvas(void)
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
-    adg_container_add(container, adg_stroke_new(chamfer_path));
+    adg_container_add(container, adg_stroke_new(ADG_TRAIL(chamfer_path)));
 
     entity = adg_toy_text_new("Shape with 0.25x0.25 chamfer");
     cairo_matrix_init_translate(&map, 5, 10);
@@ -536,7 +536,7 @@ operations_canvas(void)
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
-    adg_container_add(container, adg_stroke_new(fillet_path));
+    adg_container_add(container, adg_stroke_new(ADG_TRAIL(fillet_path)));
 
     entity = adg_toy_text_new("Shape with R=20 fillet");
     cairo_matrix_init_translate(&map, 5, 10);
@@ -562,7 +562,7 @@ operations_chamfer(const AdgPath *model, gdouble delta1, gdouble delta2)
     CpmlPrimitive primitive;
 
     path = (AdgPath *) adg_path_new();
-    cpml_segment_from_cairo(&segment, adg_path_get_cpml_path((AdgPath *) model));
+    adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
     cpml_primitive_from_segment(&primitive, &segment);
 
     adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
@@ -584,7 +584,7 @@ operations_fillet(const AdgPath *model, gdouble radius)
     CpmlPrimitive primitive;
 
     path = (AdgPath *) adg_path_new();
-    cpml_segment_from_cairo(&segment, adg_path_get_cpml_path((AdgPath *) model));
+    adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
     cpml_primitive_from_segment(&primitive, &segment);
 
     adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
@@ -620,7 +620,7 @@ mapping_canvas(void)
     container = (AdgContainer *) adg_container_new();
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(container));
 
-    adg_container_add(container, adg_stroke_new(path));
+    adg_container_add(container, adg_stroke_new(ADG_TRAIL(path)));
 
     entity = adg_toy_text_new("Original shape");
     cairo_matrix_init_translate(&map, -50, 20);
@@ -635,7 +635,7 @@ mapping_canvas(void)
     cairo_matrix_init_translate(&map, 15, 0);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     cairo_matrix_init_rotate(&map, M_PI_2);
     adg_entity_set_global_map(ADG_ENTITY(entity), &map);
     cairo_matrix_init_translate(&map, 10, 0);
@@ -655,7 +655,7 @@ mapping_canvas(void)
     cairo_matrix_init_translate(&map, 30, 0);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     cairo_matrix_init_translate(&map, 10, 0);
     cairo_matrix_rotate(&map, M_PI_2);
     adg_entity_set_local_map(ADG_ENTITY(entity), &map);
@@ -674,7 +674,7 @@ mapping_canvas(void)
     cairo_matrix_init_translate(&map, 3.5, 15);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     cairo_matrix_init_scale(&map, 0.5, 0.5);
     adg_entity_set_global_map(ADG_ENTITY(entity), &map);
     adg_container_add(container, entity);
@@ -692,7 +692,7 @@ mapping_canvas(void)
     cairo_matrix_init_translate(&map, 18, 15);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     cairo_matrix_init_scale(&map, 0.5, 0.5);
     adg_entity_set_local_map(ADG_ENTITY(entity), &map);
     adg_container_add(container, entity);
@@ -710,7 +710,7 @@ mapping_canvas(void)
     cairo_matrix_init_translate(&map, 33, 15);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
-    entity = adg_stroke_new(path);
+    entity = adg_stroke_new(ADG_TRAIL(path));
     cairo_matrix_init_scale(&map, 0.5, 0.5);
     adg_entity_set_global_map(ADG_ENTITY(entity), &map);
     adg_entity_set_local_map(ADG_ENTITY(entity), &map);
