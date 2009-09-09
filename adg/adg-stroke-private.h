@@ -21,15 +21,13 @@
 #ifndef __ADG_STROKE_PRIVATE_H__
 #define __ADG_STROKE_PRIVATE_H__
 
-#include <adg/adg-path.h>
-
 
 G_BEGIN_DECLS
 
 typedef struct _AdgStrokePrivate AdgStrokePrivate;
 
 struct _AdgStrokePrivate {
-    AdgPath     *path;
+    AdgTrail    *trail;
 };
 
 G_END_DECLS

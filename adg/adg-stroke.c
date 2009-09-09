@@ -22,7 +22,7 @@
  * SECTION:adg-stroke
  * @short_description: A stroked entity
  *
- * The #AdgStroke object is a stroked representation of an #AdgPath model.
+ * The #AdgStroke object is a stroked representation of an #AdgTrail model.
  **/
 
 /**
@@ -41,7 +41,7 @@
 
 enum {
     PROP_0,
-    PROP_PATH
+    PROP_TRAIL
 };
 
 static void     get_property            (GObject        *object,
@@ -52,9 +52,9 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static gboolean set_path                (AdgStroke      *stroke,
-                                         AdgPath        *path);
-static void     unset_path              (AdgStroke      *stroke);
+static gboolean set_trail               (AdgStroke      *stroke,
+                                         AdgTrail       *trail);
+static void     unset_trail             (AdgStroke      *stroke);
 static gboolean render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 
@@ -79,12 +79,12 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 
     entity_class->render = render;
 
-    param = g_param_spec_object("path",
-                                P_("Path"),
-                                P_("The path to be stroked"),
-                                ADG_TYPE_PATH,
+    param = g_param_spec_object("trail",
+                                P_("Trail"),
+                                P_("The trail to be stroked"),
+                                ADG_TYPE_TRAIL,
                                 G_PARAM_CONSTRUCT|G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_PATH, param);
+    g_object_class_install_property(gobject_class, PROP_TRAIL, param);
 }
 
 static void
@@ -94,7 +94,7 @@ adg_stroke_init(AdgStroke *stroke)
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
-    data->path = NULL;
+    data->trail = NULL;
 
     stroke->data = data;
 }
@@ -105,8 +105,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgStrokePrivate *data = ((AdgStroke *) object)->data;
 
     switch (prop_id) {
-    case PROP_PATH:
-        g_value_set_object(value, &data->path);
+    case PROP_TRAIL:
+        g_value_set_object(value, &data->trail);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -121,8 +121,8 @@ set_property(GObject *object, guint prop_id,
     AdgStroke *stroke = (AdgStroke *) object;
 
     switch (prop_id) {
-    case PROP_PATH:
-        set_path(stroke, (AdgPath *) g_value_get_object(value));
+    case PROP_TRAIL:
+        set_trail(stroke, (AdgTrail *) g_value_get_object(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -133,31 +133,31 @@ set_property(GObject *object, guint prop_id,
 
 /**
  * adg_stroke_new:
- * @path: the #AdgPath to stroke
+ * @trail: the #AdgTrail to stroke
  *
  * Creates a new stroke entity.
  *
  * Returns: the newly created entity
  **/
 AdgEntity *
-adg_stroke_new(AdgPath *path)
+adg_stroke_new(AdgTrail *trail)
 {
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+    g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
-    return (AdgEntity *) g_object_new(ADG_TYPE_STROKE, "path", path, NULL);
+    return (AdgEntity *) g_object_new(ADG_TYPE_STROKE, "trail", trail, NULL);
 }
 
 
 /**
- * adg_stroke_get_path:
+ * adg_stroke_get_trail:
  * @stroke: an #AdgStroke
  *
- * Gets the #AdgPath binded to this @stroke entity.
+ * Gets the #AdgTrail binded to this @stroke entity.
  *
- * Returns: the requested #AdgPath or %NULL on errors
+ * Returns: the requested #AdgTrail or %NULL on errors
  **/
-AdgPath *
-adg_stroke_get_path(AdgStroke *stroke)
+AdgTrail *
+adg_stroke_get_trail(AdgStroke *stroke)
 {
     AdgStrokePrivate *data;
 
@@ -165,28 +165,28 @@ adg_stroke_get_path(AdgStroke *stroke)
 
     data = stroke->data;
 
-    return data->path;
+    return data->trail;
 }
 
 /**
- * adg_stroke_set_path:
+ * adg_stroke_set_trail:
  * @stroke: an #AdgStroke
- * @path: the new #AdgPath to bind
+ * @trail: the new #AdgTrail to bind
  *
- * Sets @path as the new path to be stroked by @stroke.
+ * Sets @trail as the new trail to be stroked by @stroke.
  **/
 void
-adg_stroke_set_path(AdgStroke *stroke, AdgPath *path)
+adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 {
     g_return_if_fail(ADG_IS_STROKE(stroke));
 
-    if (set_path(stroke, path))
-        g_object_notify((GObject *) stroke, "path");
+    if (set_trail(stroke, trail))
+        g_object_notify((GObject *) stroke, "trail");
 }
 
 
 static gboolean
-set_path(AdgStroke *stroke, AdgPath *path)
+set_trail(AdgStroke *stroke, AdgTrail *trail)
 {
     AdgEntity *entity;
     AdgStrokePrivate *data;
@@ -194,33 +194,33 @@ set_path(AdgStroke *stroke, AdgPath *path)
     entity = (AdgEntity *) stroke;
     data = stroke->data;
 
-    if (path == data->path)
+    if (trail == data->trail)
         return FALSE;
 
-    if (data->path != NULL) {
-        g_object_weak_unref((GObject *) data->path,
-                            (GWeakNotify) unset_path, stroke);
-        adg_model_remove_dependency((AdgModel *) data->path, entity);
+    if (data->trail != NULL) {
+        g_object_weak_unref((GObject *) data->trail,
+                            (GWeakNotify) unset_trail, stroke);
+        adg_model_remove_dependency((AdgModel *) data->trail, entity);
     }
 
-    data->path = path;
+    data->trail = trail;
 
-    if (data->path != NULL) {
-        g_object_weak_ref((GObject *) data->path,
-                          (GWeakNotify) unset_path, stroke);
-        adg_model_add_dependency((AdgModel *) data->path, entity);
+    if (data->trail != NULL) {
+        g_object_weak_ref((GObject *) data->trail,
+                          (GWeakNotify) unset_trail, stroke);
+        adg_model_add_dependency((AdgModel *) data->trail, entity);
     }
 
     return TRUE;
 }
 
 static void
-unset_path(AdgStroke *stroke)
+unset_trail(AdgStroke *stroke)
 {
     AdgStrokePrivate *data = stroke->data;
 
-    if (data->path != NULL) {
-        data->path = NULL;
+    if (data->trail != NULL) {
+        data->trail = NULL;
         adg_entity_invalidate((AdgEntity *) stroke);
     }
 }
@@ -234,7 +234,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
     stroke = (AdgStroke *) entity;
     data = stroke->data;
-    cairo_path = adg_path_get_cairo_path(data->path);
+    cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
         cairo_save(cr);

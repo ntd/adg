@@ -22,7 +22,7 @@
 #define __ADG_STROKE_H__
 
 #include <adg/adg-entity.h>
-#include <adg/adg-path.h>
+#include <adg/adg-trail.h>
 
 
 G_BEGIN_DECLS
@@ -39,23 +39,23 @@ typedef struct _AdgStrokeClass   AdgStrokeClass;
 
 struct _AdgStroke {
     /*< private >*/
-    AdgEntity		 entity;
-    gpointer             data;
+    AdgEntity           parent;
+    gpointer            data;
 };
 
 struct _AdgStrokeClass {
     /*< private >*/
-    AdgEntityClass	 parent_class;
+    AdgEntityClass      parent_class;
 };
 
 
 GType           adg_stroke_get_type             (void) G_GNUC_CONST;
 
-AdgEntity *     adg_stroke_new                  (AdgPath        *path);
+AdgEntity *     adg_stroke_new                  (AdgTrail       *trail);
 
-AdgPath *       adg_stroke_get_path             (AdgStroke      *stroke);
-void            adg_stroke_set_path             (AdgStroke      *stroke,
-                                                 AdgPath        *path);
+AdgTrail *      adg_stroke_get_trail            (AdgStroke      *stroke);
+void            adg_stroke_set_trail            (AdgStroke      *stroke,
+                                                 AdgTrail       *trail);
 
 G_END_DECLS
 
