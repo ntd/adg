@@ -28,6 +28,7 @@
   <part id="Defining">
     <title>Defining the model</title>
     <xi:include href="xml/adg-model.xml"/>
+    <xi:include href="xml/adg-trail.xml"/>
     <xi:include href="xml/adg-path.xml"/>
   </part>
 

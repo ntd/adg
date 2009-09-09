@@ -37,6 +37,7 @@ IGNORE_HFILES=		adg.h \
 			adg-stroke-private.h \
 			adg-style-private.h \
 			adg-title-block-private.h \
+			adg-trail-private.h \
 			adg-toy-text-private.h \
 			adg-widget-private.h
 HTML_IMAGES=
