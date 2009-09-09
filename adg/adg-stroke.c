@@ -38,12 +38,15 @@
 #include "adg-line-style.h"
 #include "adg-intl.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
+
 
 enum {
     PROP_0,
     PROP_TRAIL
 };
 
+static void     dispose                 (GObject        *object);
 static void     get_property            (GObject        *object,
                                          guint           param_id,
                                          GValue         *value,
@@ -74,6 +77,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgStrokePrivate));
 
+    gobject_class->dispose = dispose;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
@@ -97,6 +101,15 @@ adg_stroke_init(AdgStroke *stroke)
     data->trail = NULL;
 
     stroke->data = data;
+}
+
+static void
+dispose(GObject *object)
+{
+    adg_stroke_set_trail((AdgStroke *) object, NULL);
+
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
 }
 
 static void
