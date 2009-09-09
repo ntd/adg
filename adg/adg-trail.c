@@ -42,6 +42,19 @@
  * Use its public methods instead.
  **/
 
+/**
+ * AdgTrailCallback:
+ * @trail: an #AdgTrail
+ * @user_data: the general purpose pointer set by adg_trail_new()
+ *
+ * This is the callback used to generate the #CpmlPath and it is
+ * called directly by adg_trail_get_cpml_path(). The caller owns
+ * the returned path, that is the finalization of the returned
+ * #CpmlPath should be made by the caller when appropriate.
+ *
+ * Returns: the #CpmlPath of this trail model
+ **/
+
 
 #include "adg-trail.h"
 #include "adg-trail-private.h"
@@ -180,9 +193,9 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * path as long as its size is retained and its data contains a
  * valid path (this is needed by the #AdgMarker infrastructure).
  *
- * Any changes to the @trail instance will make the returned pointer
- * useless because probably the internal #CpmlPath will be relocated
- * and the old #CpmlPath will likely contain plain garbage.
+ * Any further call to this method will probably make the pointer
+ * previously returned useless because the internal #CpmlPath could
+ * be relocated and the old #CpmlPath will likely contain rubbish.
  *
  * Returns: a pointer to the internal #CpmlPath or %NULL on errors
  **/
