@@ -57,11 +57,12 @@ GType           adg_marker_get_type             (void) G_GNUC_CONST;
 AdgTrail *      adg_marker_get_trail            (AdgMarker      *marker);
 void            adg_marker_set_trail            (AdgMarker      *marker,
                                                  AdgTrail       *trail);
-gint            adg_marker_get_n_segment        (AdgMarker      *marker);
+guint           adg_marker_get_n_segment        (AdgMarker      *marker);
 void            adg_marker_set_n_segment        (AdgMarker      *marker,
-                                                 gint            n_segment);
+                                                 guint           n_segment);
 const AdgSegment *
                 adg_marker_get_backup_segment   (AdgMarker      *marker);
+void            adg_marker_backup_segment       (AdgMarker      *marker);
 AdgSegment *    adg_marker_get_segment          (AdgMarker      *marker);
 gdouble         adg_marker_get_pos              (AdgMarker      *marker);
 void            adg_marker_set_pos              (AdgMarker      *marker,
