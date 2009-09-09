@@ -51,9 +51,8 @@ typedef struct {
 struct _AdgPathPrivate {
     gboolean             cp_is_valid;
     AdgPair              cp;
-    GArray              *path;
-    cairo_path_t         cairo_path;
     CpmlPath             cpml_path;
+    GArray              *path;
     CpmlPrimitive        last;
     AdgOperation         operation;
 };

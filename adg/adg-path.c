@@ -22,9 +22,9 @@
  * SECTION:adg-path
  * @short_description: The basic model representing a generic path
  *
- * The #AdgPath model is a virtual path: in other words it is a
- * non-rendered #cairo_path_t struct. This class implements methods
- * to manipulate the underlying cairo path.
+ * The #AdgPath model represents a virtual #CpmlPath: this class
+ * implements methods to create the path and provides additional
+ * operations specific to technical drawings.
  *
  * Although some of the provided methods are clearly based on the
  * original cairo path manipulation API, their behavior could be
@@ -61,12 +61,8 @@
 
 static void             finalize                (GObject        *object);
 static void             changed                 (AdgModel       *model);
-static void             clear_cairo_path        (AdgPath        *path);
-static cairo_path_t *   get_cairo_path          (AdgPath        *path);
-static CpmlPath *       get_cpml_path           (AdgPath        *path);
-static GArray *         arc_to_curves           (GArray         *array,
-                                                 const cairo_path_data_t
-                                                                *src);
+static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
+static CpmlPath *       read_cpml_path          (AdgPath        *path);
 static void             append_primitive        (AdgPath        *path,
                                                  AdgPrimitive   *primitive);
 static gint             needed_pairs            (CpmlPrimitiveType type,
@@ -88,7 +84,7 @@ static gboolean         is_convex               (const CpmlPrimitive
                                                                 *primitive2);
 
 
-G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_MODEL);
+G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
 
 
 static void
@@ -96,15 +92,19 @@ adg_path_class_init(AdgPathClass *klass)
 {
     GObjectClass *gobject_class;
     AdgModelClass *model_class;
+    AdgTrailClass *trail_class;
 
     gobject_class = (GObjectClass *) klass;
     model_class = (AdgModelClass *) klass;
+    trail_class = (AdgTrailClass *) klass;
 
     g_type_class_add_private(klass, sizeof(AdgPathPrivate));
 
     gobject_class->finalize = finalize;
 
     model_class->changed = changed;
+
+    trail_class->get_cpml_path = get_cpml_path;
 }
 
 static void
@@ -115,9 +115,6 @@ adg_path_init(AdgPath *path)
 
     data->cp_is_valid = FALSE;
     data->path = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
-    data->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->cairo_path.data = NULL;
-    data->cairo_path.num_data = 0;
     data->operation.operator = ADG_OPERATOR_NONE;
 
     path->data = data;
@@ -135,7 +132,6 @@ finalize(GObject *object)
     object_class = (GObjectClass *) adg_path_parent_class;
 
     g_array_free(data->path, TRUE);
-    clear_cairo_path(path);
     clear_operation(path);
 
     if (object_class->finalize != NULL)
@@ -160,69 +156,6 @@ adg_path_new(void)
 
 
 /**
- * adg_path_get_cairo_path:
- * @path: an #AdgPath
- *
- * Gets a pointer to the cairo path structure of @path. The return path
- * is owned by @path and must be considered read-only.
- *
- * This function also converts %CAIRO_PATH_ARC_TO primitives, not
- * recognized by cairo, into approximated Bézier curves. The conversion
- * is cached so any furter request is O(1). This cache is cleared
- * whenever @path is modified (by adding a new primitive or by calling
- * adg_path_clear()).
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>Actually, the arcs are approximated to Bézier using the
- *           hardcoded max angle of PI/2. This should be customizable
- *           by adding, for instance, a property to the #AdgPath class
- *           with a default value of PI/2.</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: a pointer to the internal cairo path or %NULL on errors
- **/
-const cairo_path_t *
-adg_path_get_cairo_path(AdgPath *path)
-{
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
-
-    return get_cairo_path(path);
-}
-
-/**
- * adg_path_get_cpml_path:
- * @path: an #AdgPath
- *
- * Gets a pointer to the cairo path structure of @path. The return
- * value is owned by @path and must not be freed.
- *
- * This function is similar to adg_path_get_cairo_path() but with
- * two important differences: firstly the arc primitives are not
- * expanded to Bézier curves and secondly the returned path is
- * not read-only. This means it is allowed to modify the returned
- * path as long as its size is retained and its data contains a
- * valid path.
- *
- * Any changes to the @path instance will make the returned pointer
- * useless because probably the internal #CpmlPath will be relocated
- * and the old #CpmlPath will likely contain plain garbage.
- *
- * Returns: a pointer to the internal cpml path or %NULL on errors
- **/
-CpmlPath *
-adg_path_get_cpml_path(AdgPath *path)
-{
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
-
-    clear_cairo_path(path);
-
-    return get_cpml_path(path);
-}
-
-/**
  * adg_path_get_segment:
  * @path: an #AdgPath
  * @segment: the destination #AdgSegment
@@ -245,7 +178,7 @@ adg_path_get_segment(AdgPath *path, AdgSegment *segment, guint n)
     if (n == 0)
         return FALSE;
 
-    cpml_path = get_cpml_path(path);
+    cpml_path = read_cpml_path(path);
 
     cpml_segment_from_cairo(segment, cpml_path);
     for (cnt = 1; cnt < n; ++cnt)
@@ -331,8 +264,8 @@ adg_path_clear(AdgPath *path)
     data = path->data;
 
     g_array_set_size(data->path, 0);
-    clear_cairo_path(path);
     clear_operation(path);
+    adg_trail_clear_cairo_path((AdgTrail *) path);
 }
 
 
@@ -461,7 +394,7 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
 
     data = path->data;
 
-    clear_cairo_path(path);
+    adg_trail_clear_cairo_path((AdgTrail *) path);
     data->path = g_array_append_vals(data->path,
                                      segment->data, segment->num_data);
 }
@@ -482,7 +415,7 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 
     data = path->data;
 
-    clear_cairo_path(path);
+    adg_trail_clear_cairo_path((AdgTrail *) path);
     data->path = g_array_append_vals(data->path,
                                      cairo_path->data, cairo_path->num_data);
 }
@@ -718,34 +651,6 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 }
 
 
-/**
- * adg_path_dump:
- * @path: an #AdgPath
- *
- * Dumps the data content of @path to stdout in a human readable format.
- **/
-void
-adg_path_dump(AdgPath *path)
-{
-    CpmlSegment segment;
-    cairo_path_t *cairo_path;
-
-    g_return_if_fail(ADG_IS_PATH(path));
-
-    cairo_path = get_cairo_path(path);
-
-    g_return_if_fail(cairo_path != NULL);
-
-    if (!cpml_segment_from_cairo(&segment, cairo_path)) {
-        g_warning("Invalid path data to dump!\n");
-    } else {
-        do {
-            cpml_segment_dump(&segment);
-        } while (cpml_segment_next(&segment));
-    }
-}
-
-
 static void
 changed(AdgModel *model)
 {
@@ -757,64 +662,16 @@ changed(AdgModel *model)
         model_class->changed(model);
 }
 
-static void
-clear_cairo_path(AdgPath *path)
+static CpmlPath *
+get_cpml_path(AdgTrail *trail)
 {
-    AdgPathPrivate *data;
-    cairo_path_t *cairo_path;
+    adg_trail_clear_cairo_path(trail);
 
-    data = path->data;
-    cairo_path = &data->cairo_path;
-
-    if (cairo_path->data == NULL)
-        return;
-
-    g_free(cairo_path->data);
-
-    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
-    cairo_path->data = NULL;
-    cairo_path->num_data = 0;
-}
-
-static cairo_path_t *
-get_cairo_path(AdgPath *path)
-{
-    AdgPathPrivate *data;
-    cairo_path_t *cairo_path;
-    const GArray *src;
-    GArray *dst;
-    const cairo_path_data_t *p_src;
-    int i;
-
-    data = path->data;
-    cairo_path = &data->cairo_path;
-
-    /* Check for cached result */
-    if (cairo_path->data != NULL)
-        return cairo_path;
-
-    src = data->path;
-    dst = g_array_sized_new(FALSE, FALSE, sizeof(cairo_path_data_t), src->len);
-
-    /* Cycle the path and convert arcs to Bézier curves */
-    for (i = 0; i < src->len; i += p_src->header.length) {
-        p_src = (const cairo_path_data_t *) src->data + i;
-
-        if (p_src->header.type == CAIRO_PATH_ARC_TO)
-            dst = arc_to_curves(dst, p_src);
-        else
-            dst = g_array_append_vals(dst, p_src, p_src->header.length);
-    }
-
-    cairo_path->status = CAIRO_STATUS_SUCCESS;
-    cairo_path->num_data = dst->len;
-    cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
-
-    return cairo_path;
+    return read_cpml_path((AdgPath *) trail);
 }
 
 static CpmlPath *
-get_cpml_path(AdgPath *path)
+read_cpml_path(AdgPath *path)
 {
     AdgPathPrivate *data;
     CpmlPath *cpml_path;
@@ -827,36 +684,6 @@ get_cpml_path(AdgPath *path)
     cpml_path->num_data = data->path->len;
 
     return cpml_path;
-}
-
-static GArray *
-arc_to_curves(GArray *array, const cairo_path_data_t *src)
-{
-    CpmlPrimitive arc;
-    double start, end;
-
-    /* Build the arc primitive: the arc origin is supposed to be the previous
-     * point (src-1): this means a primitive must exist before the arc */
-    arc.segment = NULL;
-    arc.org = (cairo_path_data_t *) (src-1);
-    arc.data = (cairo_path_data_t *) src;
-
-    if (cpml_arc_info(&arc, NULL, NULL, &start, &end)) {
-        CpmlSegment segment;
-        int n_curves;
-        cairo_path_data_t *curves;
-
-        n_curves = ceil(fabs(end-start) / M_PI_2);
-        curves = g_new(cairo_path_data_t, n_curves * 4);
-        segment.data = curves;
-        cpml_arc_to_curves(&arc, &segment, n_curves);
-
-        array = g_array_append_vals(array, curves, n_curves * 4);
-
-        g_free(curves);
-    }
-
-    return array;
 }
 
 static void
@@ -892,7 +719,7 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
         cpml_pair_from_cairo(&data->cp, &path_data[length-1]);
 
     /* Invalidate cairo_path: should be recomputed */
-    clear_cairo_path(path);
+    adg_trail_clear_cairo_path((AdgTrail *) path);
 }
 
 static gint
@@ -1009,7 +836,7 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
 
     data = path->data;
     operator = data->operation.operator;
-    cpml_segment_from_cairo(&segment, get_cpml_path(path));
+    cpml_segment_from_cairo(&segment, read_cpml_path(path));
 
     /* Construct the current primitive, that is the primitive to be inserted.
      * Its org is a copy of the end point of the last primitive: it can be

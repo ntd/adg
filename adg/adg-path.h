@@ -21,7 +21,7 @@
 #ifndef __ADG_PATH_H__
 #define __ADG_PATH_H__
 
-#include <adg/adg-model.h>
+#include <adg/adg-trail.h>
 #include <adg/adg-primitive.h>
 #include <adg/adg-segment.h>
 #include <cpml/cpml.h>
@@ -41,25 +41,19 @@ typedef struct _AdgPathClass   AdgPathClass;
 
 struct _AdgPath {
     /*< private >*/
-    AdgModel             parent;
+    AdgTrail             parent;
     gpointer             data;
 };
 
 struct _AdgPathClass {
     /*< private >*/
-    AdgModelClass        parent_class;
+    AdgTrailClass        parent_class;
 };
 
 
 GType           adg_path_get_type               (void) G_GNUC_CONST;
 AdgModel *      adg_path_new                    (void);
 
-const cairo_path_t *
-                adg_path_get_cairo_path         (AdgPath        *path);
-CpmlPath *      adg_path_get_cpml_path          (AdgPath        *path);
-gboolean        adg_path_get_segment            (AdgPath        *path,
-                                                 AdgSegment     *segment,
-                                                 guint           n);
 void            adg_path_get_current_point      (AdgPath        *path,
                                                  gdouble        *x,
                                                  gdouble        *y);
@@ -114,8 +108,6 @@ void            adg_path_chamfer                (AdgPath        *path,
                                                  gdouble         delta2);
 void            adg_path_fillet                 (AdgPath        *path,
                                                  gdouble         radius);
-
-void            adg_path_dump                   (AdgPath        *path);
 
 G_END_DECLS
 
