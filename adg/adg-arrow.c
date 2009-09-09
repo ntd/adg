@@ -182,7 +182,7 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgModel *model;
     const cairo_path_t *cairo_path;
 
-    model = adg_marker_get_model((AdgMarker *) entity);
+    model = adg_marker_model((AdgMarker *) entity);
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) model);
 
     if (cairo_path != NULL) {
