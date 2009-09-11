@@ -122,6 +122,9 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to unknown</title>
 
 <itemizedlist mark="circle">
+   <listitem>Add labeling feature to the models and let AdgDim and children points
+   be expressed as references to these labeled points instead of using
+   explicit coordinates.</listitem>
    <listitem>The ARROW and TRIANGLE markers should follow the director path that
    could be a curve. Use the METAPOST solution suggested by John Hobby
    I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
