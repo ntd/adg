@@ -63,7 +63,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
    <listitem override="disc">Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
    <listitem override="disc">Change building scripts to get the GTK+ dependency optional.</listitem>
-   <listitem override="disc">Add AdgWidget, a GtkDrawingArea derived class that could accept an AdgCanvas.</listitem>
+   <listitem override="disc">Add AdgWidget, a GtkDrawingArea that can accept an AdgCanvas.</listitem>
    <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
    and enable caching where applicable.</listitem>
    <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>
@@ -84,9 +84,9 @@ must be reflected in the demo programs, where applicable.</para>
 
 <itemizedlist mark="circle">
    <listitem>Implement adg_matrix_normalize() to get rid of the scaling component
-   of a matrix: consider the point (0,0) and (1,1) on the identity matrix and
-   force on the matrix to normalize a distance of 1.4142... between the same
-   points by modifying only the xx and yy components.</listitem>
+   of a matrix: consider the point (0,0) and (1,1) on the identity matrix
+   and force on the matrix to normalize a distance of 1.4142... between
+   the same points by modifying only the xx and yy components.</listitem>
    <listitem>Move the custom get_local_matrix() inside AdgEntity and implement a
    common way to manage local matrix - entity interaction: if the model is
    rotated an AdgToyText should rotate but not scaled.</listitem>
@@ -95,6 +95,10 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Implement AdgArrow as AdgMarker derived entity.</listitem>
    <listitem>Rename AdgArrowStyle to AdgMarkerStyle and update the code to use the
    newly created AdgMarker entity.</listitem>
+   <listitem>Rework the style approach by detaching the slot and type concepts: more
+   slots could be applied to the same type, such as expressing different
+   lines, such as ADG_SLOT_LINE_MODEL or ADG_SLOT_LINE_DIM, with the same
+   class (AdgLineStyle in the previous example).</listitem>
    <listitem>Rewrite AdgLDim to use the new marker APIs instead of hardcoding the
    arrows and calling the deprecated rendering callbacks.</listitem>
    <listitem>Implement the outside arrows in AdgLDim.</listitem>
@@ -119,11 +123,11 @@ must be reflected in the demo programs, where applicable.</para>
 
 <itemizedlist mark="circle">
    <listitem>The ARROW and TRIANGLE markers should follow the director path that
-   could be a curve. Use the METAPOST solution suggested by John Hobby I
-   don't know where, that is, given <parameter>angle</parameter> and <parameter>size</parameter>,
-   rotate the path by half <parameter>angle</parameter> in both directions, look for intersection
-   with a circle centered at the end of the director path with radius <parameter>size</parameter>,
-   close the resulting path and optionally fill the arrow.</listitem>
+   could be a curve. Use the METAPOST solution suggested by John Hobby
+   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
+   path by half <parameter>angle</parameter> in both directions, look for intersection with a
+   circle centered at the end of the director path with radius <parameter>size</parameter> and
+   close the resulting path.</listitem>
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
    external data. Use libgda as sample data provider.</listitem> 
    <listitem override="disc">Add model-view interaction by providing signal propagation from AdgModel
