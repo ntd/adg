@@ -34,9 +34,9 @@ enum _AdgEntityFlags {
 struct _AdgEntityPrivate {
     AdgEntity           *parent;
     AdgEntityFlags       flags;
-    AdgContext          *context;
     AdgMatrix            global_map;
     AdgMatrix            local_map;
+    GHashTable          *hash_styles;
 };
 
 G_END_DECLS

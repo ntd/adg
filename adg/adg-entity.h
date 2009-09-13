@@ -22,9 +22,8 @@
 #define __ADG_ENTITY_H__
 
 #include <adg/adg-util.h>
-#include <adg/adg-context.h>
 #include <adg/adg-matrix.h>
-#include <adg/adg-enums.h>
+#include <adg/adg-dress.h>
 
 
 G_BEGIN_DECLS
@@ -56,8 +55,6 @@ struct _AdgEntityClass {
     /* Signals */
     void                (*parent_set)           (AdgEntity      *entity,
                                                  AdgEntity      *old_parent);
-    void                (*context_set)          (AdgEntity      *entity,
-                                                 AdgContext     *old_context);
     /* Virtual Table */
     void                (*get_global_matrix)    (AdgEntity      *entity,
                                                  AdgMatrix      *matrix);
@@ -75,10 +72,6 @@ AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 AdgEntity *     adg_entity_get_parent           (AdgEntity       *entity);
 void            adg_entity_set_parent           (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-AdgContext *    adg_entity_context              (AdgEntity       *entity);
-AdgContext *    adg_entity_get_context          (AdgEntity       *entity);
-void            adg_entity_set_context          (AdgEntity       *entity,
-                                                 AdgContext      *context);
 gboolean        adg_entity_get_rendered         (AdgEntity       *entity);
 void            adg_entity_set_rendered         (AdgEntity       *entity,
                                                  gboolean         rendered);
@@ -100,13 +93,15 @@ void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
                                                  cairo_t         *cr);
+AdgStyle *      adg_entity_style                (AdgEntity       *entity,
+                                                 AdgDress         dress);
 AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
-                                                 AdgStyleSlot     style_slot);
-void            adg_entity_apply                (AdgEntity       *entity,
-                                                 AdgStyleSlot     style_slot,
-                                                 cairo_t         *cr);
-void            adg_entity_apply_font           (AdgEntity       *entity,
-                                                 AdgFontStyleId   font_id,
+                                                 AdgDress         dress);
+void            adg_entity_set_style            (AdgEntity       *entity,
+                                                 AdgDress         dress,
+                                                 AdgStyle        *style);
+void            adg_entity_apply_dress          (AdgEntity       *entity,
+                                                 AdgDress         dress,
                                                  cairo_t         *cr);
 void            adg_entity_invalidate           (AdgEntity       *entity);
 void            adg_entity_render               (AdgEntity       *entity,

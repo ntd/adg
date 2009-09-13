@@ -40,7 +40,6 @@
 /**
  * AdgEntityClass:
  * @parent_set: called after the parent has changed
- * @context_set: called after the context has changed
  * @invalidate: invalidating callback, used to clear the cache
  * @render: rendering callback, it must be implemented
  *
@@ -61,14 +60,12 @@
 enum {
     PROP_0,
     PROP_PARENT,
-    PROP_CONTEXT,
     PROP_GLOBAL_MAP,
     PROP_LOCAL_MAP
 };
 
 enum {
     PARENT_SET,
-    CONTEXT_SET,
     INVALIDATE,
     RENDER,
     LAST_SIGNAL
@@ -86,8 +83,6 @@ static void             set_property            (GObject         *object,
                                                  GParamSpec      *pspec);
 static gboolean         set_parent              (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-static gboolean         set_context             (AdgEntity       *entity,
-                                                 AdgContext      *context);
 static void             set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static void             set_local_map           (AdgEntity       *entity,
@@ -125,7 +120,6 @@ adg_entity_class_init(AdgEntityClass *klass)
     gobject_class->set_property = set_property;
 
     klass->parent_set = NULL;
-    klass->context_set = NULL;
     klass->get_global_matrix = get_global_matrix;
     klass->get_local_matrix = get_local_matrix;
     klass->invalidate = NULL;
@@ -136,12 +130,6 @@ adg_entity_class_init(AdgEntityClass *klass)
                                 P_("The parent entity of this entity or NULL if this is a top-level entity"),
                                 ADG_TYPE_ENTITY, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_PARENT, param);
-
-    param = g_param_spec_object("context",
-                                P_("Context"),
-                                P_("The context associated to this entity or NULL to inherit the parent context"),
-                                ADG_TYPE_CONTEXT, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_CONTEXT, param);
 
     param = g_param_spec_boxed("global-map",
                                P_("Global Map"),
@@ -172,25 +160,6 @@ adg_entity_class_init(AdgEntityClass *klass)
                                        NULL, NULL,
                                        g_cclosure_marshal_VOID__OBJECT,
                                        G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
-
-    /**
-     * AdgEntity::context-set:
-     * @entity: an #AdgEntity
-     * @old_context: the old context
-     *
-     * Emitted after the context has changed.
-     * Emitted after the context has changed. The new context can be
-     * inspected using adg_entity_get_context().
-     *
-     * It is allowed for both old and new context to be %NULL.
-     **/
-    signals[CONTEXT_SET] = g_signal_new("context-set",
-                                        G_OBJECT_CLASS_TYPE(gobject_class),
-                                        G_SIGNAL_RUN_FIRST,
-                                        G_STRUCT_OFFSET(AdgEntityClass, context_set),
-                                        NULL, NULL,
-                                        g_cclosure_marshal_VOID__OBJECT,
-                                        G_TYPE_NONE, 1, ADG_TYPE_CONTEXT);
 
     /**
      * AdgEntity::invalidate:
@@ -234,9 +203,9 @@ adg_entity_init(AdgEntity *entity)
                                                          AdgEntityPrivate);
     data->parent = NULL;
     data->flags = 0;
-    data->context = NULL;
     cairo_matrix_init_identity(&data->local_map);
     cairo_matrix_init_identity(&data->global_map);
+    data->hash_styles = NULL;
 
     entity->data = data;
 }
@@ -245,16 +214,19 @@ static void
 dispose(GObject *object)
 {
     AdgEntity *entity;
-    AdgEntity *parent;
+    AdgEntityPrivate *data;
 
     entity = (AdgEntity *) object;
-    parent = adg_entity_get_parent(entity);
+    data = entity->data;
 
-    /* These calls will emit a "notify" signal both for parent and
-     * context if they are not NULL. Consequentially, the references
-     * to the old parent and context are dropped. */
+    /* This call will emit a "notify" signal for parent.
+     * Consequentially, the references to the old parent is dropped. */
     adg_entity_set_parent(entity, NULL);
-    adg_entity_set_context(entity, NULL);
+
+    if (data->hash_styles != NULL) {
+        g_hash_table_destroy(data->hash_styles);
+        data->hash_styles = NULL;
+    }
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -273,9 +245,6 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     switch (prop_id) {
     case PROP_PARENT:
         g_value_set_object(value, data->parent);
-        break;
-    case PROP_CONTEXT:
-        g_value_set_object(value, adg_entity_get_context(entity));
         break;
     case PROP_GLOBAL_MAP:
         g_value_set_boxed(value, &data->global_map);
@@ -298,9 +267,6 @@ set_property(GObject *object,
     switch (prop_id) {
     case PROP_PARENT:
         set_parent(entity, g_value_get_object(value));
-        break;
-    case PROP_CONTEXT:
-        set_context(entity, g_value_get_object(value));
         break;
     case PROP_GLOBAL_MAP:
         set_global_map(entity, g_value_get_boxed(value));
@@ -353,75 +319,6 @@ adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
 
     if (set_parent(entity, parent))
         g_object_notify((GObject *) entity, "parent");
-}
-
-/**
- * adg_entity_context:
- * @entity: an #AdgEntity instance
- *
- * Gets the context to be used for @entity. If no context was
- * explicitely set, it returns the parent context.
- *
- * Returns: the requested context or %NULL on errors or if @entity
- *          does not have any parent with a context defined
- **/
-AdgContext *
-adg_entity_context(AdgEntity *entity)
-{
-    AdgContext *context;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    context = adg_entity_get_context(entity);
-
-    if (context == NULL) {
-        AdgEntity *parent = adg_entity_get_parent(entity);
-
-        if (parent != NULL)
-            context = adg_entity_get_context(parent);
-    }
-
-    return context;
-}
-
-/**
- * adg_entity_get_context:
- * @entity: an #AdgEntity instance
- *
- * Gets the context associated to @entity. This is an accessor method:
- * if you need to get the context for rendering, use adg_entity_context()
- * instead.
- *
- * Returns: the context binded to @entity
- **/
-AdgContext *
-adg_entity_get_context(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return data->context;
-}
-
-/**
- * adg_entity_set_context:
- * @entity: an #AdgEntity instance
- * @context: the new context
- *
- * Sets a new context. The old context (if any) will be unreferenced
- * while a new reference will be added to @context.
- **/
-void
-adg_entity_set_context(AdgEntity *entity, AdgContext *context)
-{
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(ADG_IS_CONTEXT(context));
-
-    if (set_context(entity, context))
-        g_object_notify((GObject *) entity, "context");
 }
 
 /**
@@ -703,102 +600,135 @@ adg_entity_apply_local_matrix(AdgEntity *entity, cairo_t *cr)
 }
 
 /**
- * adg_entity_get_style:
+ * adg_entity_style:
  * @entity: an #AdgEntity
- * @style_slot: the slot of the style to get
+ * @dress: the dress of the style to get
  *
- * Gets a style from this entity. If the entity has no context associated
- * or the style is undefined within this context, gets the style from its
- * parent entity.
+ * Gets the style to be used for @entity. @dress specifies the "type"
+ * of style to get.
  *
- * Returns: the requested style or %NULL on errors or if there is no
- *          context with this style defined in the @entity hierarchy
+ * This method is supposed to always return a valid style instance,
+ * specifically the most appropriate one for this entity. The following
+ * sequence of checks is performed to get the proper @dress style,
+ * stopping at the first succesfull result:
+ *
+ * <orderedlist>
+ * <listitem>check if the style is defined directly by this entity type,
+ *           as returned by adg_entity_get_style();</listitem>
+ * <listitem>check if @entity has a parent, in which case returns the
+ *           adg_entity_style() of the parent;</listitem>
+ * <listitem>returns the main style with adg_dress_get_style().</listitem>
+ * </orderedlist>
+ *
+ * Returns: the requested style or %NULL on errors
  **/
 AdgStyle *
-adg_entity_get_style(AdgEntity *entity, AdgStyleSlot style_slot)
+adg_entity_style(AdgEntity *entity, AdgDress dress)
+{
+    AdgStyle *style;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+    g_return_val_if_fail(dress != ADG_DRESS_UNDEFINED, NULL);
+
+    style = adg_entity_get_style(entity, dress);
+
+    if (style == NULL) {
+        AdgEntityPrivate *data = entity->data;
+
+        if (data->parent != NULL)
+            style = adg_entity_style(data->parent, dress);
+        else
+            style = adg_dress_get_style(dress);
+    }
+
+    return style;
+}
+
+/**
+ * adg_entity_get_style:
+ * @entity: an #AdgEntity
+ * @dress: the dress of the style to get
+ *
+ * Gets the overriden @dress style from @entity. This is a kind
+ * of accessor function: to get the style to be used for rendering
+ * purpose, consider adg_entity_style().
+ *
+ * Returns: the requested style or %NULL if the @dress style
+ *          is not overriden
+ **/
+AdgStyle *
+adg_entity_get_style(AdgEntity *entity, AdgDress dress)
 {
     AdgEntityPrivate *data;
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+    g_return_val_if_fail(dress != ADG_DRESS_UNDEFINED, NULL);
 
     data = entity->data;
 
-    if (data->context) {
-        AdgStyle *style = adg_context_get_style(data->context, style_slot);
-        if (style)
-            return style;
-    }
+    if (data->hash_styles == NULL)
+        return NULL;
 
-    if (data->parent)
-        return adg_entity_get_style(data->parent, style_slot);
-
-    return NULL;
+    return g_hash_table_lookup(data->hash_styles, GINT_TO_POINTER(dress));
 }
 
 /**
- * adg_entity_apply:
+ * adg_entity_set_style:
  * @entity: an #AdgEntity
- * @style_slot: the slot of the style to apply
- * @cr: a #cairo_t drawing context
+ * @dress: a dress style
+ * @style: the new style to use
  *
- * Applies the specified style to the @cr cairo context.
+ * Overrides the style of @dress for @entity and its children.
+ * If @style is %NULL, any previous override is removed.
  **/
 void
-adg_entity_apply(AdgEntity *entity, AdgStyleSlot style_slot, cairo_t *cr)
+adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 {
-    AdgStyle *style = adg_entity_get_style(entity, style_slot);
+    AdgEntityPrivate *data;
+    gpointer p_dress;
+    AdgStyle *old_style;
 
-    if (style)
-        adg_style_apply(style, cr);
-}
+    g_return_if_fail(ADG_IS_ENTITY(entity));
 
-/**
- * adg_entity_apply_font:
- * @entity: an #AdgEntity
- * @font_id: a font id
- * @cr: a #cairo_t drawing context
- *
- * Applies the specified font to the @cr cairo context. It is similar
- * to adg_entity_apply() but instead of looking for a font slot, it
- * searches for a specific font style by inspecting composite styles too.
- *
- * A typical example is when the tolerance font should be applied: this
- * is a font style embedded in the dim style, so it is not enough to
- * use adg_entity_apply().
- **/
-void
-adg_entity_apply_font(AdgEntity *entity, AdgFontStyleId font_id, cairo_t *cr)
-{
-    AdgStyle *style;
+    data = entity->data;
 
-    switch (font_id) {
-
-    case ADG_FONT_STYLE_TEXT:
-        style = adg_entity_get_style(entity, ADG_SLOT_FONT_STYLE);
-        break;
-
-    case ADG_FONT_STYLE_VALUE:
-        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-        style = adg_dim_style_get_value_style((AdgDimStyle *) style);
-        break;
-
-    case ADG_FONT_STYLE_TOLERANCE:
-        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-        style = adg_dim_style_get_tolerance_style((AdgDimStyle *) style);
-        break;
-
-    case ADG_FONT_STYLE_NOTE:
-        style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-        style = adg_dim_style_get_note_style((AdgDimStyle *) style);
-        break;
-
-    default:
-        g_warning ("%s: invalid font id (%d)", G_STRLOC, font_id);
+    if (data->hash_styles == NULL && style == NULL)
         return;
-    }
 
-    if (style)
-        adg_style_apply(style, cr);
+    if (data->hash_styles == NULL)
+        data->hash_styles = g_hash_table_new_full(NULL, NULL,
+                                                  NULL, g_object_unref);
+
+    p_dress = GINT_TO_POINTER(dress);
+    old_style = g_hash_table_lookup(data->hash_styles, p_dress);
+
+    if (style == old_style)
+        return;
+
+    if (style == NULL) {
+        g_hash_table_remove(data->hash_styles, p_dress);
+    } else {
+        g_object_ref(style);
+        g_hash_table_replace(data->hash_styles, p_dress, style);
+    }
+}
+
+/**
+ * adg_entity_apply_dress:
+ * @entity: an #AdgEntity
+ * @dress: the dress style to apply
+ * @cr: a #cairo_t drawing context
+ *
+ * Convenient function to apply a @dress style (as returned by
+ * adg_entity_style()) to the @cr cairo context.
+ **/
+void
+adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(cr != NULL);
+
+    adg_style_apply(adg_entity_style(entity, dress), cr);
 }
 
 /**
@@ -858,31 +788,6 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
     return TRUE;
 }
 
-static gboolean
-set_context(AdgEntity *entity, AdgContext *context)
-{
-    AdgEntityPrivate *data;
-    AdgContext *old_context;
-
-    data = entity->data;
-    old_context = data->context;
-
-    /* Check if context has changed */
-    if (context == old_context)
-        return FALSE;
-
-    if (context != NULL)
-        g_object_ref(context);
-
-    data->context = context;
-    g_signal_emit(entity, signals[CONTEXT_SET], 0, old_context);
-
-    if (old_context != NULL)
-        g_object_unref(old_context);
-
-    return TRUE;
-}
-
 static void
 set_global_map(AdgEntity *entity, const AdgMatrix *map)
 {
@@ -934,15 +839,15 @@ get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
 static void
 real_invalidate(AdgEntity *entity, gpointer user_data)
 {
-    AdgEntityClass *entity_class;
+    AdgEntityClass *klass;
     AdgEntityPrivate *data;
 
     g_assert(user_data == (gpointer) 0xdeadbeaf);
 
-    entity_class = ADG_ENTITY_GET_CLASS(entity);
-    if (entity_class->invalidate == NULL) {
+    klass = ADG_ENTITY_GET_CLASS(entity);
+    if (klass->invalidate == NULL) {
         /* Assume the entity does not have cache to be cleared */
-    } else if (!entity_class->invalidate(entity)) {
+    } else if (!klass->invalidate(entity)) {
         return;
     }
 
@@ -953,13 +858,13 @@ real_invalidate(AdgEntity *entity, gpointer user_data)
 static void
 real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
 {
-    AdgEntityClass *entity_class;
+    AdgEntityClass *klass;
     AdgEntityPrivate *data;
 
     g_assert(user_data == (gpointer) 0xdeadbeaf);
 
-    entity_class = ADG_ENTITY_GET_CLASS(entity);
-    if (entity_class->render == NULL) {
+    klass = ADG_ENTITY_GET_CLASS(entity);
+    if (klass->render == NULL) {
         /* The render method must be defined */
         g_warning("%s: `render' method not implemented for type `%s'",
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
@@ -971,7 +876,7 @@ real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     cairo_save(cr);
     cairo_transform(cr, &data->global_map);
 
-    if (entity_class->render(entity, cr))
+    if (klass->render(entity, cr))
         ADG_SET(data->flags, RENDERED);
 
     cairo_restore(cr);
