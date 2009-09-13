@@ -21,8 +21,6 @@
 #ifndef __ADG_FONT_STYLE_PRIVATE_H__
 #define __ADG_FONT_STYLE_PRIVATE_H__
 
-#include <adg/adg-font-style.h>
-
 
 G_BEGIN_DECLS
 

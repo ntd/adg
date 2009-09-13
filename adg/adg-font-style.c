@@ -34,22 +34,9 @@
  **/
 
 
-/**
- * ADG_SLOT_FONT_STYLE:
- *
- * Gets the slot id for this style class.
- *
- * Returns: the requested slot id
- **/
-
-
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
-#include "adg-context.h"
 #include "adg-intl.h"
-#include "adg-util.h"
-
-#define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_font_style_parent_class)
 
 
 enum {
@@ -73,14 +60,13 @@ static void             set_property    (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static GPtrArray *      get_pool        (void);
 static void             apply           (AdgStyle       *style,
                                          cairo_t        *cr);
 static void             set_family      (AdgFontStyle   *font_style,
                                          const gchar    *family);
 
 
-G_DEFINE_TYPE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE);
 
 
 static void
@@ -98,28 +84,25 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    style_class->get_pool = get_pool;
     style_class->apply = apply;
 
     param = g_param_spec_string("family",
                                 P_("Font Family"),
-                                P_
-                                ("The font family name, encoded in UTF-8"),
-                                NULL, G_PARAM_READWRITE);
+                                P_("The font family name, encoded in UTF-8"),
+                                NULL,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FAMILY, param);
 
     param = g_param_spec_int("slant",
                              P_("Font Slant"),
-                             P_
-                             ("Variant of a font face based on its slant"),
+                             P_("Variant of a font face based on its slant"),
                              G_MININT, G_MAXINT, CAIRO_FONT_SLANT_NORMAL,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SLANT, param);
 
     param = g_param_spec_int("weight",
                              P_("Font Weight"),
-                             P_
-                             ("Variant of a font face based on its weight"),
+                             P_("Variant of a font face based on its weight"),
                              G_MININT, G_MAXINT, CAIRO_FONT_WEIGHT_NORMAL,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_WEIGHT, param);
@@ -127,44 +110,39 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
     param = g_param_spec_double("size",
                                 P_("Font Size"),
                                 P_("Font size in user space units"),
-                                0., G_MAXDOUBLE, 10., G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 10,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
 
     param = g_param_spec_int("antialias",
                              P_("Font Antialiasing Mode"),
-                             P_
-                             ("Type of antialiasing to do when rendering text"),
+                             P_("Type of antialiasing to do when rendering text"),
                              G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANTIALIAS, param);
 
     param = g_param_spec_int("subpixel-order",
                              P_("Font Subpixel Order"),
-                             P_
-                             ("The order of color elements within each pixel on the display device when rendering with subpixel antialiasing mode"),
+                             P_("The order of color elements within each pixel on the display device when rendering with subpixel antialiasing mode"),
                              G_MININT, G_MAXINT,
                              CAIRO_SUBPIXEL_ORDER_DEFAULT,
                              G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_SUBPIXEL_ORDER,
-                                    param);
+    g_object_class_install_property(gobject_class, PROP_SUBPIXEL_ORDER, param);
 
     param = g_param_spec_int("hint-style",
                              P_("Type of Hinting"),
-                             P_
-                             ("How outlines must fit to the pixel grid in order to improve the glyph appearance"),
+                             P_("How outlines must fit to the pixel grid in order to improve the glyph appearance"),
                              G_MININT, G_MAXINT, CAIRO_HINT_STYLE_DEFAULT,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_HINT_STYLE, param);
 
     param = g_param_spec_int("hint-metrics",
                              P_("Font Metric Hinting"),
-                             P_
-                             ("Whether to hint font metrics, that is align them to integer values in device space"),
+                             P_("Whether to hint font metrics, that is align them to integer values in device space"),
                              G_MININT, G_MAXINT,
                              CAIRO_HINT_METRICS_DEFAULT,
                              G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_HINT_METRICS,
-                                    param);
+    g_object_class_install_property(gobject_class, PROP_HINT_METRICS, param);
 }
 
 static void
@@ -177,7 +155,7 @@ adg_font_style_init(AdgFontStyle *font_style)
     data->family = NULL;
     data->slant = CAIRO_FONT_SLANT_NORMAL;
     data->weight = CAIRO_FONT_WEIGHT_NORMAL;
-    data->size = 10.;
+    data->size = 10;
     data->antialias = CAIRO_ANTIALIAS_DEFAULT;
     data->subpixel_order = CAIRO_SUBPIXEL_ORDER_DEFAULT;
     data->hint_style = CAIRO_HINT_STYLE_DEFAULT;
@@ -263,17 +241,6 @@ set_property(GObject *object,
     }
 }
 
-
-AdgStyleSlot
-_adg_font_style_get_slot(void)
-{
-    static AdgStyleSlot slot = -1;
-
-    if (G_UNLIKELY(slot < 0))
-        slot = adg_context_get_slot(ADG_TYPE_FONT_STYLE);
-
-    return slot;
-}
 
 /**
  * adg_font_style_new:
@@ -620,34 +587,6 @@ adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
     g_object_notify((GObject *) font_style, "hint-metrics");
 }
 
-
-static GPtrArray *
-get_pool(void)
-{
-    static GPtrArray *pool = NULL;
-
-    if (G_UNLIKELY(pool == NULL)) {
-        pool = g_ptr_array_sized_new(ADG_FONT_STYLE_LAST);
-
-        pool->pdata[ADG_FONT_STYLE_TEXT] =
-            g_object_new(ADG_TYPE_FONT_STYLE, "family", "Serif", "size",
-                         14., NULL);
-        pool->pdata[ADG_FONT_STYLE_VALUE] =
-            g_object_new(ADG_TYPE_FONT_STYLE, "family", "Sans", "size",
-                         12., "weight", CAIRO_FONT_WEIGHT_BOLD, NULL);
-        pool->pdata[ADG_FONT_STYLE_TOLERANCE] =
-            g_object_new(ADG_TYPE_FONT_STYLE, "family", "Sans", "size", 8.,
-                         NULL);
-        pool->pdata[ADG_FONT_STYLE_NOTE] =
-            g_object_new(ADG_TYPE_FONT_STYLE, "family", "Sans", "size",
-                         12., NULL);
-
-        pool->len = ADG_FONT_STYLE_LAST;
-        }
-
-    return pool;
-}
-
 static void
 apply(AdgStyle *style, cairo_t *cr)
 {
@@ -657,9 +596,6 @@ apply(AdgStyle *style, cairo_t *cr)
 
     font_style = (AdgFontStyle *) style;
     data = font_style->data;
-
-    if (PARENT_STYLE_CLASS->apply != NULL)
-        PARENT_STYLE_CLASS->apply(style, cr);
 
     if (data->family)
         cairo_select_font_face(cr, data->family, data->slant, data->weight);
