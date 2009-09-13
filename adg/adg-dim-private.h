@@ -29,6 +29,7 @@ G_BEGIN_DECLS
 typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDimPrivate {
+    AdgDress             dress;
     AdgPair              ref1;
     AdgPair              ref2;
     AdgPair              pos1;

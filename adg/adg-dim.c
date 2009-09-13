@@ -45,6 +45,7 @@
 
 enum {
     PROP_0,
+    PROP_DRESS,
     PROP_REF1,
     PROP_REF2,
     PROP_POS1,
@@ -73,6 +74,8 @@ static gboolean invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
+static gboolean set_dress               (AdgDim         *dim,
+                                         AdgDress        dress);
 static gboolean set_angle               (AdgDim         *dim,
                                          gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
@@ -110,6 +113,13 @@ adg_dim_class_init(AdgDimClass *klass)
 
     klass->default_value = default_value;
     klass->quote_layout = quote_layout;
+
+    param = adg_param_spec_dress("dress",
+                                 P_("Dress Style"),
+                                 P_("The dress to use for rendering this dimension"),
+                                 ADG_DRESS_DIMENSION,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
     param = g_param_spec_boxed("ref1",
                                P_("Reference 1"),
@@ -189,6 +199,7 @@ adg_dim_init(AdgDim *dim)
     AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
+    data->dress = ADG_DRESS_DIMENSION;
     data->ref1.x = data->ref1.y = 0;
     data->ref2.x = data->ref2.y = 0;
     data->pos1.x = data->pos1.y = 0;
@@ -202,19 +213,19 @@ adg_dim_init(AdgDim *dim)
 
     data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                       "parent", dim,
-                                      "font-style", ADG_FONT_STYLE_VALUE,
+                                      "dress", ADG_DRESS_TEXT_QUOTE,
                                       NULL);
     data->value_min_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                           "parent", dim,
-                                          "font-style", ADG_FONT_STYLE_TOLERANCE,
+                                          "dress", ADG_DRESS_TEXT_LIMIT,
                                           NULL);
     data->value_max_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                           "parent", dim,
-                                          "font-style", ADG_FONT_STYLE_TOLERANCE,
+                                          "dress", ADG_DRESS_TEXT_LIMIT,
                                           NULL);
     data->note_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                      "parent", dim,
-                                     "font-style", ADG_FONT_STYLE_NOTE,
+                                     "dress", ADG_DRESS_TEXT_QUOTE,
                                      NULL);
 
     dim->data = data;
@@ -254,6 +265,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
     switch (prop_id) {
+    case PROP_DRESS:
+        g_value_set_int(value, data->dress);
+        break;
     case PROP_REF1:
         g_value_set_boxed(value, &data->ref1);
         break;
@@ -304,6 +318,9 @@ set_property(GObject *object, guint prop_id,
     data = dim->data;
 
     switch (prop_id) {
+    case PROP_DRESS:
+        set_dress(dim, g_value_get_int(value));
+        break;
     case PROP_REF1:
         cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
         break;
@@ -343,6 +360,48 @@ set_property(GObject *object, guint prop_id,
     }
 }
 
+
+/**
+ * adg_dim_get_dress:
+ * @dim: an #AdgDim
+ *
+ * Gets the dimension dress to be used in rendering @dim.
+ *
+ * Returns: the current dimension dress
+ **/
+AdgDress
+adg_dim_get_dress(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_DRESS_UNDEFINED);
+
+    data = dim->data;
+
+    return data->dress;
+}
+
+/**
+ * adg_dim_set_dress:
+ * @dim: an #AdgDim
+ * @dress: the new #AdgDress to use
+ *
+ * Sets a new dimension dress to @dim. The new dress must be
+ * related to the original dress for this property: you cannot
+ * set a dress used for line styles to a dress managing fonts.
+ *
+ * The check is done by calling adg_dress_are_related() with
+ * @dress and the previous dress as arguments. Check out its
+ * documentation for details on what is a related dress.
+ **/
+void
+adg_dim_set_dress(AdgDim *dim, AdgDress dress)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (set_dress(dim, dress))
+        g_object_notify((GObject *) dim, "dress");
+}
 
 /**
  * adg_dim_get_org:
@@ -980,15 +1039,16 @@ default_value(AdgDim *dim)
 static void
 quote_layout(AdgDim *dim, cairo_t *cr)
 {
+    AdgEntity *entity;
     AdgDimPrivate *data;
     AdgDimStyle *dim_style;
     cairo_text_extents_t extents;
     AdgMatrix map;
     const AdgPair *shift;
 
+    entity = (AdgEntity *) dim;
     data = dim->data;
-    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) dim,
-                                                     ADG_SLOT_DIM_STYLE);
+    dim_style = (AdgDimStyle *) adg_entity_style(entity, data->dress);
 
     /* Initialize local maps to the origin */
     cairo_matrix_init_translate(&map, data->org.x, data->org.y);
@@ -1062,6 +1122,26 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_transform_global_map(data->value_min_entity, &map);
     adg_entity_transform_global_map(data->value_max_entity, &map);
     adg_entity_transform_global_map(data->note_entity, &map);
+}
+
+static gboolean
+set_dress(AdgDim *dim, AdgDress dress)
+{
+    AdgDimPrivate *data = dim->data;
+
+    if (dress == data->dress)
+        return FALSE;
+
+    if (!adg_dress_are_related(dress, data->dress)) {
+        g_warning("%s: `%s' and `%s' families are not coherents",
+                  G_STRLOC, adg_dress_name(dress),
+                  adg_dress_name(data->dress));
+        return FALSE;
+    }
+
+    data->dress = dress;
+
+    return TRUE;
 }
 
 static gboolean

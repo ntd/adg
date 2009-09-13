@@ -23,6 +23,7 @@
 
 #include <adg/adg-entity.h>
 #include <adg/adg-pair.h>
+#include <adg/adg-enums.h>
 
 
 G_BEGIN_DECLS
@@ -55,6 +56,9 @@ struct _AdgDimClass {
 
 
 GType           adg_dim_get_type                (void) G_GNUC_CONST;
+AdgDress        adg_dim_get_dress               (AdgDim         *dim);
+void            adg_dim_set_dress               (AdgDim         *dim,
+                                                 AdgDress        dress);
 const AdgPair * adg_dim_get_org                 (AdgDim         *dim);
 void            adg_dim_set_org                 (AdgDim         *dim,
                                                  const AdgPair  *org);
