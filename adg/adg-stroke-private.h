@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgStrokePrivate AdgStrokePrivate;
 
 struct _AdgStrokePrivate {
+    AdgDress     dress;
     AdgTrail    *trail;
 };
 

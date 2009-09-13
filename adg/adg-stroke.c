@@ -35,7 +35,6 @@
 
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
-#include "adg-line-style.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
@@ -43,23 +42,24 @@
 
 enum {
     PROP_0,
-    PROP_TRAIL
+    PROP_TRAIL,
+    PROP_DRESS
 };
 
-static void     dispose                 (GObject        *object);
-static void     get_property            (GObject        *object,
-                                         guint           param_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
-                                         guint           param_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static gboolean set_trail               (AdgStroke      *stroke,
-                                         AdgTrail       *trail);
-static void     unset_trail             (AdgStroke      *stroke);
-static gboolean render                  (AdgEntity      *entity,
-                                         cairo_t        *cr);
+static void             dispose                 (GObject        *object);
+static void             get_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static gboolean         render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static gboolean         set_trail               (AdgStroke      *stroke,
+                                                 AdgTrail       *trail);
+static void             unset_trail             (AdgStroke      *stroke);
 
 
 G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY);
@@ -83,6 +83,13 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 
     entity_class->render = render;
 
+    param = adg_param_spec_dress("dress",
+                                 P_("Dress Style"),
+                                 P_("The dress style to use for stroking this entity"),
+                                 ADG_DRESS_LINE_MODEL,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DRESS, param);
+
     param = g_param_spec_object("trail",
                                 P_("Trail"),
                                 P_("The trail to be stroked"),
@@ -99,6 +106,7 @@ adg_stroke_init(AdgStroke *stroke)
                                                          AdgStrokePrivate);
 
     data->trail = NULL;
+    data->dress = ADG_DRESS_LINE_MODEL;
 
     stroke->data = data;
 }
@@ -106,7 +114,9 @@ adg_stroke_init(AdgStroke *stroke)
 static void
 dispose(GObject *object)
 {
-    adg_stroke_set_trail((AdgStroke *) object, NULL);
+    AdgStroke *stroke = (AdgStroke *) object;
+
+    adg_stroke_set_trail(stroke, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -118,6 +128,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgStrokePrivate *data = ((AdgStroke *) object)->data;
 
     switch (prop_id) {
+    case PROP_DRESS:
+        g_value_set_int(value, data->dress);
+        break;
     case PROP_TRAIL:
         g_value_set_object(value, &data->trail);
         break;
@@ -131,9 +144,16 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgStroke *stroke = (AdgStroke *) object;
+    AdgStroke *stroke;
+    AdgStrokePrivate *data;
+
+    stroke = (AdgStroke *) object;
+    data = stroke->data;
 
     switch (prop_id) {
+    case PROP_DRESS:
+        adg_dress_set(&data->dress, g_value_get_int(value));
+        break;
     case PROP_TRAIL:
         set_trail(stroke, (AdgTrail *) g_value_get_object(value));
         break;
@@ -160,6 +180,52 @@ adg_stroke_new(AdgTrail *trail)
     return g_object_new(ADG_TYPE_STROKE, "trail", trail, NULL);
 }
 
+/**
+ * adg_stroke_get_dress:
+ * @stroke: an #AdgStroke
+ *
+ * Gets the line dress to be used in rendering @stroke.
+ *
+ * Returns: the current line dress
+ **/
+AdgDress
+adg_stroke_get_dress(AdgStroke *stroke)
+{
+    AdgStrokePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_STROKE(stroke), ADG_DRESS_UNDEFINED);
+
+    data = stroke->data;
+
+    return data->dress;
+}
+
+/**
+ * adg_stroke_set_dress:
+ * @stroke: an #AdgStroke
+ * @dress: the new #AdgDress to use
+ *
+ * Sets a new line dress for rendering @stroke. The new dress
+ * must be related to the original dress for this property:
+ * you cannot set a dress used for line styles to a dress
+ * managing fonts.
+ *
+ * The check is done by calling adg_dress_are_related() with
+ * @dress and the previous dress as arguments. Check out its
+ * documentation for details on what is a related dress.
+ **/
+void
+adg_stroke_set_dress(AdgStroke *stroke, AdgDress dress)
+{
+    AdgStrokePrivate *data;
+
+    g_return_if_fail(ADG_IS_STROKE(stroke));
+
+    data = stroke->data;
+
+    if (adg_dress_set(&data->dress, dress))
+        g_object_notify((GObject *) stroke, "dress");
+}
 
 /**
  * adg_stroke_get_trail:
@@ -199,6 +265,30 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 
 
 static gboolean
+render(AdgEntity *entity, cairo_t *cr)
+{
+    AdgStroke *stroke;
+    AdgStrokePrivate *data;
+    const cairo_path_t *cairo_path;
+
+    stroke = (AdgStroke *) entity;
+    data = stroke->data;
+    cairo_path = adg_trail_get_cairo_path(data->trail);
+
+    if (cairo_path != NULL) {
+        cairo_save(cr);
+        adg_entity_apply_local_matrix(entity, cr);
+        cairo_append_path(cr, cairo_path);
+        cairo_restore(cr);
+
+        adg_entity_apply_dress(entity, data->dress, cr);
+        cairo_stroke(cr);
+    }
+
+    return TRUE;
+}
+
+static gboolean
 set_trail(AdgStroke *stroke, AdgTrail *trail)
 {
     AdgEntity *entity;
@@ -236,28 +326,4 @@ unset_trail(AdgStroke *stroke)
         data->trail = NULL;
         adg_entity_invalidate((AdgEntity *) stroke);
     }
-}
-
-static gboolean
-render(AdgEntity *entity, cairo_t *cr)
-{
-    AdgStroke *stroke;
-    AdgStrokePrivate *data;
-    const cairo_path_t *cairo_path;
-
-    stroke = (AdgStroke *) entity;
-    data = stroke->data;
-    cairo_path = adg_trail_get_cairo_path(data->trail);
-
-    if (cairo_path != NULL) {
-        cairo_save(cr);
-        adg_entity_apply_local_matrix(entity, cr);
-        cairo_append_path(cr, cairo_path);
-        cairo_restore(cr);
-
-        adg_entity_apply(entity, ADG_SLOT_LINE_STYLE, cr);
-        cairo_stroke(cr);
-    }
-
-    return TRUE;
 }
