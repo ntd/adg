@@ -25,6 +25,7 @@
 #include <adg/adg-canvas.h>
 #include <adg/adg-container.h>
 #include <adg/adg-dim.h>
+#include <adg/adg-dress.h>
 #include <adg/adg-entity.h>
 #include <adg/adg-enums.h>
 #include <adg/adg-ldim.h>

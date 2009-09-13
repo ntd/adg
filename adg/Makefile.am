@@ -9,12 +9,11 @@ PATTERN=
 # file groups
 h_sources=			adg-adim.h \
 				adg-arrow.h \
-				adg-arrow-style.h \
 				adg-canvas.h \
 				adg-container.h \
-				adg-context.h \
 				adg-dim.h \
 				adg-dim-style.h \
+				adg-dress.h \
 				adg-entity.h \
 				adg-font-style.h \
 				adg-ldim.h \
@@ -37,12 +36,11 @@ built_h_sources=		$(builddir)/adg-type-builtins.h \
 				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
 				adg-arrow-private.h \
-				adg-arrow-style-private.h \
 				adg-canvas-private.h \
 				adg-container-private.h \
-				adg-context-private.h \
 				adg-dim-private.h \
 				adg-dim-style-private.h \
+				adg-dress-private.h \
 				adg-entity-private.h \
 				adg-enums.h \
 				adg-font-style-private.h \
@@ -53,19 +51,17 @@ private_h_sources=		adg-adim-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-stroke-private.h \
-				adg-style-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
 				adg-toy-text-private.h
 built_private_h_sources= 
 c_sources=			adg-adim.c \
 				adg-arrow.c \
-				adg-arrow-style.c \
 				adg-canvas.c \
 				adg-container.c \
-				adg-context.c \
 				adg-dim.c \
 				adg-dim-style.c \
+				adg-dress.c \
 				adg-entity.c \
 				adg-enums.c \
 				adg-font-style.c \
