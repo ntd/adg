@@ -21,12 +21,11 @@ IGNORE_HFILES=		adg.h \
 			adg-type-builtins.h \
 			adg-adim-private.h \
 			adg-arrow-private.h \
-			adg-arrow-style-private.h \
 			adg-canvas-private.h \
 			adg-container-private.h \
-			adg-context-private.h \
 			adg-dim-private.h \
 			adg-dim-style-private.h \
+			adg-dress-private.h \
 			adg-entity-private.h \
 			adg-font-style-private.h \
 			adg-ldim-private.h \
@@ -35,7 +34,6 @@ IGNORE_HFILES=		adg.h \
 			adg-model-private.h \
 			adg-path-private.h \
 			adg-stroke-private.h \
-			adg-style-private.h \
 			adg-title-block-private.h \
 			adg-trail-private.h \
 			adg-toy-text-private.h \

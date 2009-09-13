@@ -55,13 +55,12 @@
 
   <part id="Rendering">
     <title>The rendering process</title>
-    <xi:include href="xml/adg-context.xml"/>
     <xi:include href="xml/adg-widget.xml"/>
+    <xi:include href="xml/adg-dress.xml"/>
     <chapter id="Rendering-style">
       <title>Style classes</title>
       <xi:include href="xml/adg-style.xml"/>
       <xi:include href="xml/adg-line-style.xml"/>
-      <xi:include href="xml/adg-arrow-style.xml"/>
       <xi:include href="xml/adg-font-style.xml"/>
       <xi:include href="xml/adg-dim-style.xml"/>
     </chapter>
