@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 #define ADG_LINE_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
 #define ADG_SLOT_LINE_STYLE             (_adg_line_style_get_slot())
 
+
 typedef struct _AdgLineStyle        AdgLineStyle;
 typedef struct _AdgLineStyleClass   AdgLineStyleClass;
 
@@ -51,8 +52,7 @@ struct _AdgLineStyleClass {
 
 
 GType           adg_line_style_get_type         (void) G_GNUC_CONST;
-AdgStyleSlot    _adg_line_style_get_slot        (void) G_GNUC_CONST;
-AdgStyle *      adg_line_style_new              (void);
+AdgLineStyle *  adg_line_style_new              (void);
 
 gdouble         adg_line_style_get_width        (AdgLineStyle   *line_style);
 void            adg_line_style_set_width        (AdgLineStyle   *line_style,

@@ -34,20 +34,9 @@
  **/
 
 
-/**
- * ADG_SLOT_LINE_STYLE:
- *
- * Gets the slot id for this style class.
- *
- * Returns: the requested slot id
- **/
-
-
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
-#include "adg-context.h"
 #include "adg-intl.h"
-#include "adg-util.h"
 
 #define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_line_style_parent_class)
 
@@ -71,7 +60,6 @@ static void             set_property    (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static GPtrArray *      get_pool        (void);
 static void             apply           (AdgStyle       *style,
                                          cairo_t        *cr);
 
@@ -94,7 +82,6 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    style_class->get_pool = get_pool;
     style_class->apply = apply;
 
     param = g_param_spec_double("width",
@@ -216,17 +203,6 @@ set_property(GObject *object,
 }
 
 
-AdgStyleSlot
-_adg_line_style_get_slot(void)
-{
-    static AdgStyleSlot slot = -1;
-
-    if (G_UNLIKELY(slot < 0))
-        slot = adg_context_get_slot(ADG_TYPE_LINE_STYLE);
-
-    return slot;
-}
-
 /**
  * adg_line_style_new:
  *
@@ -234,7 +210,7 @@ _adg_line_style_get_slot(void)
  *
  * Returns: a new line style
  **/
-AdgStyle *
+AdgLineStyle *
 adg_line_style_new(void)
 {
     return g_object_new(ADG_TYPE_LINE_STYLE, NULL);
@@ -446,59 +422,10 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
     g_object_notify((GObject *) line_style, "antialias");
 }
 
-
-static GPtrArray *
-get_pool(void)
-{
-    static GPtrArray *pool = NULL;
-
-    if (G_UNLIKELY(pool == NULL)) {
-        cairo_pattern_t *pattern;
-
-        pool = g_ptr_array_sized_new(ADG_LINE_STYLE_LAST);
-
-        pool->pdata[ADG_LINE_STYLE_DRAW] =
-            g_object_new(ADG_TYPE_LINE_STYLE, "width", 2., NULL);
-
-        pattern = cairo_pattern_create_rgb(0., 1., 0.);
-        pool->pdata[ADG_LINE_STYLE_CENTER] =
-            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-                         0.75, NULL);
-        cairo_pattern_destroy(pattern);
-
-        pattern = cairo_pattern_create_rgba(0., 0., 0., 0.5);
-        pool->pdata[ADG_LINE_STYLE_HIDDEN] =
-            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-                         0.75, NULL);
-        cairo_pattern_destroy(pattern);
-
-        pattern = cairo_pattern_create_rgb(0., 0., 1.);
-        pool->pdata[ADG_LINE_STYLE_HATCH] =
-            g_object_new(ADG_TYPE_LINE_STYLE, "pattern", pattern, "width",
-                         1.25, NULL);
-        cairo_pattern_destroy(pattern);
-
-        pool->pdata[ADG_LINE_STYLE_DIM] = g_object_new(ADG_TYPE_LINE_STYLE,
-                                                       "width", 0.75,
-                                                       NULL);
-
-        pool->len = ADG_LINE_STYLE_LAST;
-        }
-
-    return pool;
-}
-
 static void
 apply(AdgStyle *style, cairo_t *cr)
 {
-    AdgLineStyle *line_style;
-    AdgLineStylePrivate *data;
-
-    line_style = (AdgLineStyle *) style;
-    data = line_style->data;
-
-    if (PARENT_STYLE_CLASS->apply != NULL)
-        PARENT_STYLE_CLASS->apply(style, cr);
+    AdgLineStylePrivate *data = ((AdgLineStyle *) style)->data;
 
     cairo_set_line_width(cr, data->width);
     cairo_set_line_cap(cr, data->cap);
