@@ -66,7 +66,8 @@ static gboolean         render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
 static void             layout                  (AdgLDim        *ldim);
-static void             update_matrices         (AdgLDim        *ldim);
+static void             update_matrices         (AdgLDim        *ldim,
+                                                 AdgDimStyle    *dim_style);
 static void             update_markers          (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
 static CpmlPath *       trail_callback          (AdgTrail       *trail,
@@ -481,27 +482,29 @@ static gboolean
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLDim *ldim;
+    AdgDim *dim;
     AdgLDimPrivate *data;
     AdgStyle *dim_style;
-    AdgStyle *line_style;
+    AdgDress line_dress;
 
     ldim = (AdgLDim *) entity;
+    dim = (AdgDim *) entity;
     data = ldim->data;
-    dim_style = adg_entity_get_style(entity, ADG_SLOT_DIM_STYLE);
-    line_style = adg_dim_style_get_line_style((AdgDimStyle *) dim_style);
+    dim_style = adg_entity_style(entity, adg_dim_get_dress(dim));
+    line_dress = adg_dim_style_get_line_dress((AdgDimStyle *) dim_style);
 
     if (!adg_entity_get_rendered(entity))
-        update_matrices(ldim);
+        update_matrices(ldim, (AdgDimStyle *) dim_style);
 
     layout(ldim);
 
     if (!adg_entity_get_rendered(entity))
         update_markers(ldim);
 
-    adg_entity_apply(entity, ADG_SLOT_DIM_STYLE, cr);
+    adg_style_apply(dim_style, cr);
 
     /* This CpmlPath has no arcs, so it can be feeded directly into cairo */
-    adg_style_apply(line_style, cr);
+    adg_entity_apply_dress(entity, line_dress, cr);
     cairo_append_path(cr, &data->cpml.path);
     cairo_stroke(cr);
 
@@ -511,7 +514,7 @@ render(AdgEntity *entity, cairo_t *cr)
     if (data->marker2 != NULL)
         adg_entity_render((AdgEntity *) data->marker2, cr);
 
-    adg_dim_render_quote((AdgDim *) ldim, cr);
+    adg_dim_render_quote(dim, cr);
 
     return TRUE;
 }
@@ -519,15 +522,17 @@ render(AdgEntity *entity, cairo_t *cr)
 static gchar *
 default_value(AdgDim *dim)
 {
+    AdgEntity *entity;
     const AdgPair *pos1, *pos2;
     AdgStyle *dim_style;
     gdouble distance;
     const gchar *format;
 
+    entity = (AdgEntity *) dim;
     pos1 = adg_dim_get_pos1(dim);
     pos2 = adg_dim_get_pos2(dim);
     distance = cpml_pair_distance(pos1, pos2);
-    dim_style = adg_entity_get_style((AdgEntity *) dim, ADG_SLOT_DIM_STYLE);
+    dim_style = adg_entity_style(entity, adg_dim_get_dress(dim));
     format = adg_dim_style_get_number_format((AdgDimStyle *) dim_style);
 
     return g_strdup_printf(format, distance);
@@ -605,10 +610,9 @@ layout(AdgLDim *ldim)
 }
 
 static void
-update_matrices(AdgLDim *ldim)
+update_matrices(AdgLDim *ldim, AdgDimStyle *dim_style)
 {
     AdgLDimPrivate *data;
-    AdgDimStyle *dim_style;
     AdgMatrix matrix;
     gdouble from_offset;
     gdouble to_offset;
@@ -616,8 +620,6 @@ update_matrices(AdgLDim *ldim)
     gdouble level;
 
     data = ldim->data;
-    dim_style = (AdgDimStyle *) adg_entity_get_style((AdgEntity *) ldim,
-                                                     ADG_SLOT_DIM_STYLE);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
