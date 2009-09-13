@@ -39,14 +39,7 @@
 
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
-#include "adg-line-style.h"
-#include "adg-font-style.h"
-#include "adg-arrow-style.h"
 #include "adg-intl.h"
-
-
-static AdgStyle *       context_filler  (AdgStyleClass  *style_class,
-                                         gpointer        user_data);
 
 
 G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
@@ -61,16 +54,11 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 static void
 adg_canvas_init(AdgCanvas *canvas)
 {
-    AdgContext *context;
     AdgCanvasPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(canvas,
                                                          ADG_TYPE_CANVAS,
                                                          AdgCanvasPrivate);
 
     canvas->data = data;
-
-    context = adg_context_new(context_filler, NULL);
-    adg_entity_set_context((AdgEntity *) canvas, context);
-    g_object_unref(context);
 }
 
 
@@ -85,11 +73,4 @@ AdgCanvas *
 adg_canvas_new(void)
 {
     return g_object_new(ADG_TYPE_CANVAS, NULL);
-}
-
-
-static AdgStyle *
-context_filler(AdgStyleClass *style_class, gpointer user_data)
-{
-    return adg_style_get_default(style_class);
 }
