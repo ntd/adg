@@ -35,32 +35,21 @@
  **/
 
 
-/**
- * ADG_SLOT_DIM_STYLE:
- *
- * Gets the slot id for this style class.
- *
- * Returns: the requested slot id
- **/
-
-
 #include "adg-dim-style.h"
 #include "adg-dim-style-private.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
-#include "adg-arrow-style.h"
-#include "adg-context.h"
 #include "adg-intl.h"
 #include "adg-util.h"
 
 
 enum {
     PROP_0,
-    PROP_VALUE_STYLE,
-    PROP_TOLERANCE_STYLE,
-    PROP_NOTE_STYLE,
-    PROP_LINE_STYLE,
-    PROP_ARROW_STYLE,
+    PROP_VALUE_DRESS,
+    PROP_UP_DRESS,
+    PROP_DOWN_DRESS,
+    PROP_NOTE_DRESS,
+    PROP_LINE_DRESS,
     PROP_FROM_OFFSET,
     PROP_TO_OFFSET,
     PROP_BEYOND,
@@ -82,17 +71,8 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static GPtrArray *      get_pool                (void);
-static void             set_value_style         (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-static void             set_tolerance_style     (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-static void             set_note_style          (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-static void             set_line_style          (AdgDimStyle    *dim_style,
-                                                 AdgLineStyle   *style);
-static void             set_arrow_style         (AdgDimStyle    *dim_style,
-                                                 AdgArrowStyle  *style);
+static void             apply                   (AdgStyle       *style,
+                                                 cairo_t        *cr);
 static void             set_quote_shift         (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
 static void             set_tolerance_shift     (AdgDimStyle    *dim_style,
@@ -105,7 +85,7 @@ static void             set_number_tag          (AdgDimStyle    *dim_style,
                                                  const gchar    *tag);
 
 
-G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
 
 
 static void
@@ -123,80 +103,83 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    style_class->get_pool = get_pool;
+    style_class->apply = apply;
 
-    param = g_param_spec_object("value-style",
-                                P_("Value Style"),
-                                P_("Font style for the basic value of the dimension"),
-                                ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_VALUE_STYLE,
-                                    param);
+    param = adg_param_spec_dress("value-dress",
+                                  P_("Value Dress"),
+                                  P_("Font dress for the nominal value of the dimension"),
+                                  ADG_DRESS_TEXT_QUOTE,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
-    param = g_param_spec_object("tolerance-style",
-                                P_("Tolerance Style"),
-                                P_("Font style for the tolerances"),
-                                ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_STYLE,
-                                    param);
+    param = adg_param_spec_dress("up-dress",
+                                  P_("Up-limit Dress"),
+                                  P_("Font dress for the upper limit value"),
+                                  ADG_DRESS_TEXT_LIMIT,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_UP_DRESS, param);
 
-    param = g_param_spec_object("note-style",
-                                P_("Note Style"),
-                                P_("Font style for the note (the text after or under the basic value)"),
-                                ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NOTE_STYLE, param);
+    param = adg_param_spec_dress("down-dress",
+                                  P_("Down-limit Dress"),
+                                  P_("Font dress for the lower limit value"),
+                                  ADG_DRESS_TEXT_LIMIT,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DOWN_DRESS, param);
 
-    param = g_param_spec_object("line-style",
-                                P_("Line Style"),
-                                P_("Line style for the baseline and the extension lines"),
-                                ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_LINE_STYLE, param);
+    param = adg_param_spec_dress("note-dress",
+                                  P_("Note Dress"),
+                                  P_("Font dress for the note"),
+                                  ADG_DRESS_TEXT_QUOTE,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_NOTE_DRESS, param);
 
-    param = g_param_spec_object("arrow-style",
-                                P_("Arrow Style"),
-                                P_("Arrow style to use on the baseline"),
-                                ADG_TYPE_STYLE, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_ARROW_STYLE,
-                                    param);
+    param = adg_param_spec_dress("line-dress",
+                                  P_("Line Dress"),
+                                  P_("Line dress for the baseline and the extension lines"),
+                                  ADG_DRESS_LINE_QUOTE,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
     param = g_param_spec_double("from-offset",
                                 P_("From Offset"),
                                 P_("Offset (in global space) of the extension lines from the path to the quote"),
-                                0, G_MAXDOUBLE, 5, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_FROM_OFFSET,
-                                    param);
+                                0, G_MAXDOUBLE, 5,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FROM_OFFSET, param);
 
     param = g_param_spec_double("to-offset",
                                 P_("To Offset"),
                                 P_("How many extend (in global space) the extension lines after hitting the baseline"),
-                                0, G_MAXDOUBLE, 5, G_PARAM_READWRITE);
+                                0, G_MAXDOUBLE, 5,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TO_OFFSET, param);
 
     param = g_param_spec_double("beyond",
                                 P_("Beyond Length"),
-                                P_("How much the baseline should be extended (in global space) beyond the extension lines on dimensions with outside arrows: 0 means to automatically compute this value at run-time as 3*arrow-size (got from the binded array-style)"),
-                                0, G_MAXDOUBLE, 0, G_PARAM_READWRITE);
+                                P_("How much the baseline should be extended (in global space) beyond the extension lines on dimensions with outside markers: 0 means to automatically compute this value at run-time as 3*marker-size (got from the binded array-style)"),
+                                0, G_MAXDOUBLE, 0,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BEYOND, param);
 
     param = g_param_spec_double("baseline-spacing",
                                 P_("Baseline Spacing"),
                                 P_("Distance between two consecutive baselines while stacking dimensions"),
-                                0, G_MAXDOUBLE, 30, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING,
-                                    param);
+                                0, G_MAXDOUBLE, 30,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING, param);
 
     param = g_param_spec_double("tolerance-spacing",
                                 P_("Tolerance Spacing"),
                                 P_("Distance between up and down tolerance text"),
-                                0, G_MAXDOUBLE, 2, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_SPACING,
-                                    param);
+                                0, G_MAXDOUBLE, 2,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_TOLERANCE_SPACING, param);
 
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
                                P_("Used to specify a smooth displacement (in global space) of the quote by taking as reference the perfect compact position (the middle of the baseline on common linear dimension, for instance)"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT,
-                                    param);
+    g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT, param);
 
     param = g_param_spec_boxed("tolerance-shift",
                                P_("Tolerance Shift"),
@@ -232,16 +215,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                                            ADG_TYPE_DIM_STYLE,
                                                            AdgDimStylePrivate);
 
-    data->value_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
-                                          ADG_FONT_STYLE_VALUE);
-    data->tolerance_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
-                                              ADG_FONT_STYLE_TOLERANCE);
-    data->note_style = adg_style_from_id(ADG_TYPE_FONT_STYLE,
-                                         ADG_FONT_STYLE_NOTE);
-    data->line_style = adg_style_from_id(ADG_TYPE_LINE_STYLE,
-                                         ADG_LINE_STYLE_DIM);
-    data->arrow_style = adg_style_from_id(ADG_TYPE_ARROW_STYLE,
-                                          ADG_ARROW_STYLE_ARROW);
+    data->value_dress = ADG_DRESS_TEXT_QUOTE;
+    data->up_dress = ADG_DRESS_TEXT_LIMIT;
+    data->down_dress = ADG_DRESS_TEXT_LIMIT;
+    data->note_dress = ADG_DRESS_TEXT_QUOTE;
+    data->line_dress = ADG_DRESS_LINE_QUOTE;
+    data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;
     data->to_offset = 6;
     data->beyond = 0;
@@ -265,20 +244,20 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
     switch (prop_id) {
-    case PROP_VALUE_STYLE:
-        g_value_set_object(value, data->value_style);
+    case PROP_VALUE_DRESS:
+        g_value_set_int(value, data->value_dress);
         break;
-    case PROP_TOLERANCE_STYLE:
-        g_value_set_object(value, data->tolerance_style);
+    case PROP_UP_DRESS:
+        g_value_set_int(value, data->up_dress);
         break;
-    case PROP_NOTE_STYLE:
-        g_value_set_object(value, data->note_style);
+    case PROP_DOWN_DRESS:
+        g_value_set_int(value, data->down_dress);
         break;
-    case PROP_LINE_STYLE:
-        g_value_set_object(value, data->line_style);
+    case PROP_NOTE_DRESS:
+        g_value_set_int(value, data->note_dress);
         break;
-    case PROP_ARROW_STYLE:
-        g_value_set_object(value, data->arrow_style);
+    case PROP_LINE_DRESS:
+        g_value_set_int(value, data->line_dress);
         break;
     case PROP_FROM_OFFSET:
         g_value_set_double(value, data->from_offset);
@@ -327,20 +306,20 @@ set_property(GObject *object,
     data = dim_style->data;
 
     switch (prop_id) {
-    case PROP_VALUE_STYLE:
-        set_value_style(dim_style, g_value_get_object(value));
+    case PROP_VALUE_DRESS:
+        adg_dress_set(&data->value_dress, g_value_get_int(value));
         break;
-    case PROP_TOLERANCE_STYLE:
-        set_tolerance_style(dim_style, g_value_get_object(value));
+    case PROP_UP_DRESS:
+        adg_dress_set(&data->up_dress, g_value_get_int(value));
         break;
-    case PROP_NOTE_STYLE:
-        set_note_style(dim_style, g_value_get_object(value));
+    case PROP_DOWN_DRESS:
+        adg_dress_set(&data->down_dress, g_value_get_int(value));
         break;
-    case PROP_LINE_STYLE:
-        set_line_style(dim_style, g_value_get_object(value));
+    case PROP_NOTE_DRESS:
+        adg_dress_set(&data->note_dress, g_value_get_int(value));
         break;
-    case PROP_ARROW_STYLE:
-        set_arrow_style(dim_style, g_value_get_object(value));
+    case PROP_LINE_DRESS:
+        adg_dress_set(&data->line_dress, g_value_get_int(value));
         break;
     case PROP_FROM_OFFSET:
         data->from_offset = g_value_get_double(value);
@@ -379,17 +358,6 @@ set_property(GObject *object,
 }
 
 
-AdgStyleSlot
-_adg_dim_style_get_slot(void)
-{
-    static AdgStyleSlot slot = -1;
-
-    if (G_UNLIKELY(slot < 0))
-        slot = adg_context_get_slot(ADG_TYPE_DIM_STYLE);
-
-    return slot;
-}
-
 /**
  * adg_dim_style_new:
  *
@@ -412,20 +380,20 @@ adg_dim_style_new(void)
  *
  * Returns: the basic value style or %NULL on errors
  **/
-AdgStyle *
-adg_dim_style_get_value_style(AdgDimStyle *dim_style)
+AdgDress
+adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
     data = dim_style->data;
 
-    return data->value_style;
+    return data->value_dress;
 }
 
 /**
- * adg_dim_style_set_value_style:
+ * adg_dim_style_set_value_dress:
  * @dim_style: an #AdgDimStyle object
  * @style: the new basic value font style
  *
@@ -434,17 +402,20 @@ adg_dim_style_get_value_style(AdgDimStyle *dim_style)
  * will be added to @style.
  **/
 void
-adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgDress dress)
 {
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(ADG_IS_FONT_STYLE(style));
+    AdgDimStylePrivate *data;
 
-    set_value_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "value-style");
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->value_dress, dress))
+        g_object_notify((GObject *) dim_style, "value-dress");
 }
 
 /**
- * adg_dim_style_get_tolerance_style:
+ * adg_dim_style_get_up_dress:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the tolerance style of @dim_style. No reference will be added to the
@@ -452,38 +423,41 @@ adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  *
  * Returns: the tolerance style or %NULL on errors
  **/
-AdgStyle *
-adg_dim_style_get_tolerance_style(AdgDimStyle *dim_style)
+AdgDress
+adg_dim_style_get_up_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
     data = dim_style->data;
 
-    return data->tolerance_style;
+    return data->up_dress;
 }
 
 /**
- * adg_dim_style_set_tolerance_style:
+ * adg_dim_style_set_up_dress:
  * @dim_style: an #AdgDimStyle object
- * @style: the new tolerance style
+ * @dress: the new upper limit dress
  *
  * Sets a new tolerance style on @dim_style. The old tolerance style (if any)
  * will be unreferenced while a new reference will be added to @style.
  **/
 void
-adg_dim_style_set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+adg_dim_style_set_up_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(ADG_IS_FONT_STYLE(style));
+    AdgDimStylePrivate *data;
 
-    set_tolerance_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "tolerance-style");
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->up_dress, dress))
+        g_object_notify((GObject *) dim_style, "up-dress");
 }
 
 /**
- * adg_dim_style_get_note_style:
+ * adg_dim_style_get_note_dress:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the note style of @dim_style. No reference will be added to the
@@ -491,20 +465,20 @@ adg_dim_style_set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  *
  * Returns: the note style or %NULL on errors
  **/
-AdgStyle *
-adg_dim_style_get_note_style(AdgDimStyle *dim_style)
+AdgDress
+adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
     data = dim_style->data;
 
-    return data->note_style;
+    return data->note_dress;
 }
 
 /**
- * adg_dim_style_set_note_style:
+ * adg_dim_style_set_note_dress:
  * @dim_style: an #AdgDimStyle object
  * @style: the new note style
  *
@@ -512,17 +486,20 @@ adg_dim_style_get_note_style(AdgDimStyle *dim_style)
  * unreferenced while a new reference will be added to @style.
  **/
 void
-adg_dim_style_set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+adg_dim_style_set_note_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(ADG_IS_FONT_STYLE(style));
+    AdgDimStylePrivate *data;
 
-    set_note_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "note-style");
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->note_dress, dress))
+        g_object_notify((GObject *) dim_style, "note-dress");
 }
 
 /**
- * adg_dim_style_get_line_style:
+ * adg_dim_style_get_line_dress:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the line style of @dim_style. No reference will be added to the
@@ -530,73 +507,36 @@ adg_dim_style_set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
  *
  * Returns: the line style or %NULL on errors
  **/
-AdgStyle *
-adg_dim_style_get_line_style(AdgDimStyle *dim_style)
+AdgDress
+adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
     data = dim_style->data;
 
-    return data->line_style;
+    return data->line_dress;
 }
 
 /**
- * adg_dim_style_set_line_style:
+ * adg_dim_style_set_line_dress:
  * @dim_style: an #AdgDimStyle object
- * @style: the new line style
+ * @dress: the new line dress
  *
- * Sets a new line style on @dim_style. The old line style (if any) will be
- * unreferenced while a new reference will be added to @style.
+ * Sets a new line dress on @dim_style.
  **/
 void
-adg_dim_style_set_line_style(AdgDimStyle *dim_style, AdgLineStyle *style)
-{
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(ADG_IS_LINE_STYLE(style));
-
-    set_line_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "line-style");
-}
-
-/**
- * adg_dim_style_get_arrow_style:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets the arrow style of @dim_style. No reference will be added to the
- * returned style; it should not be unreferenced.
- *
- * Returns: the arrow style or %NULL on errors
- **/
-AdgStyle *
-adg_dim_style_get_arrow_style(AdgDimStyle *dim_style)
+adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
 
-    return data->arrow_style;
-}
-
-/**
- * adg_dim_style_set_arrow_style:
- * @dim_style: an #AdgDimStyle object
- * @style: the new arrow style
- *
- * Sets a new arrow style on @dim_style. The old arrow style (if any) will be
- * unreferenced while a new reference will be added to @style.
- **/
-void
-adg_dim_style_set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
-{
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(ADG_IS_ARROW_STYLE(style));
-
-    set_arrow_style(dim_style, style);
-    g_object_notify((GObject *) dim_style, "arrow-style");
+    if (adg_dress_set(&data->line_dress, dress))
+        g_object_notify((GObject *) dim_style, "line-dress");
 }
 
 /**
@@ -686,10 +626,10 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
  * @dim_style: an #AdgDimStyle object
  *
  * Gets how much (in global space) the baseline should extend beyound
- * the extension lines when a dimension has outside arrows. If the
+ * the extension lines when a dimension has outside markers. If the
  * underlying AdgDimStyle:beyond property is %0, this function returns
- * the 3*"arrow-size", where "arrow-size" is the value returned by
- * adg_arrow_style_get_size() on #AdgArrowStyle binded to @dim_style.
+ * the 3*"marker-size", where "marker-size" is the value returned by
+ * adg_marker_style_get_size() on #AdgMarkerStyle binded to @dim_style.
  *
  * Returns: the requested lenght
  **/
@@ -697,18 +637,17 @@ gdouble
 adg_dim_style_beyond(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
-    gdouble arrow_size;
+    gdouble marker_size;
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
+    marker_size = 10;
 
     if (data->beyond > 0)
         return data->beyond;
 
-    arrow_size = adg_arrow_style_get_size((AdgArrowStyle *) data->arrow_style);
-
-    return arrow_size * 3;
+    return marker_size * 3;
 }
 
 /**
@@ -716,7 +655,7 @@ adg_dim_style_beyond(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  *
  * Gets how much (in global space) the baseline should extend beyound
- * the extension lines on dimension with outside arrows. This is an
+ * the extension lines on dimension with outside markers. This is an
  * accessor method: if you need AdgDimStyle:beyond for rendering purpose,
  * use adg_dim_style_beyond() instead.
  *
@@ -1023,87 +962,9 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 }
 
 
-static GPtrArray *
-get_pool(void)
-{
-    static GPtrArray *pool = NULL;
-
-    if (G_UNLIKELY(pool == NULL)) {
-        cairo_pattern_t *pattern;
-
-        pool = g_ptr_array_sized_new(ADG_DIM_STYLE_LAST);
-
-        /* No need to specify further params: the default is already ISO */
-        pattern = cairo_pattern_create_rgb(1, 0, 0);
-        pool->pdata[ADG_DIM_STYLE_ISO] = g_object_new(ADG_TYPE_DIM_STYLE,
-                                                      "pattern", pattern,
-                                                      NULL);
-        cairo_pattern_destroy(pattern);
-
-        pool->len = ADG_DIM_STYLE_LAST;
-    }
-
-    return pool;
-}
-
 static void
-set_value_style(AdgDimStyle *dim_style, AdgFontStyle *style)
+apply(AdgStyle *style, cairo_t *cr)
 {
-    AdgDimStylePrivate *data = dim_style->data;
-
-    if (data->value_style)
-        g_object_unref(data->value_style);
-
-    g_object_ref(style);
-    data->value_style = (AdgStyle *) style;
-}
-
-static void
-set_tolerance_style(AdgDimStyle *dim_style, AdgFontStyle *style)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    if (data->tolerance_style)
-        g_object_unref(data->tolerance_style);
-
-    g_object_ref(style);
-    data->tolerance_style = (AdgStyle *) style;
-}
-
-static void
-set_note_style(AdgDimStyle *dim_style, AdgFontStyle *style)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    if (data->note_style)
-        g_object_unref(data->note_style);
-
-    g_object_ref(style);
-    data->note_style = (AdgStyle *) style;
-}
-
-static void
-set_line_style(AdgDimStyle *dim_style, AdgLineStyle *style)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    if (data->line_style)
-        g_object_unref(data->line_style);
-
-    g_object_ref(style);
-    data->line_style = (AdgStyle *) style;
-}
-
-static void
-set_arrow_style(AdgDimStyle *dim_style, AdgArrowStyle *style)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    if (data->arrow_style)
-        g_object_unref(data->arrow_style);
-
-    g_object_ref(style);
-    data->arrow_style = (AdgStyle *) style;
 }
 
 static void

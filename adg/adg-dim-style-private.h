@@ -29,11 +29,12 @@ G_BEGIN_DECLS
 typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
 
 struct _AdgDimStylePrivate {
-    AdgStyle    *value_style;
-    AdgStyle    *tolerance_style;
-    AdgStyle    *note_style;
-    AdgStyle    *line_style;
-    AdgStyle    *arrow_style;
+    AdgDress     value_dress;
+    AdgDress     up_dress;
+    AdgDress     down_dress;
+    AdgDress     note_dress;
+    AdgDress     line_dress;
+    AdgDress     marker_dress;
     gdouble      from_offset;
     gdouble      to_offset;
     gdouble      beyond;

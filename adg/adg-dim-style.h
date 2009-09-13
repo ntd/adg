@@ -22,11 +22,8 @@
 #define __ADG_DIM_STYLE_H__
 
 #include <adg/adg-style.h>
-#include <adg/adg-font-style.h>
-#include <adg/adg-line-style.h>
-#include <adg/adg-arrow-style.h>
+#include <adg/adg-dress.h>
 #include <adg/adg-pair.h>
-#include <adg/adg-enums.h>
 
 
 G_BEGIN_DECLS
@@ -55,26 +52,23 @@ struct _AdgDimStyleClass {
 
 
 GType           adg_dim_style_get_type          (void) G_GNUC_CONST;
-AdgStyleSlot    _adg_dim_style_get_slot         (void) G_GNUC_CONST;
 AdgStyle *      adg_dim_style_new               (void);
 
-AdgStyle *      adg_dim_style_get_value_style   (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_value_style   (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-AdgStyle *      adg_dim_style_get_tolerance_style
-                                                (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_tolerance_style
-                                                (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-AdgStyle *      adg_dim_style_get_note_style    (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_note_style    (AdgDimStyle    *dim_style,
-                                                 AdgFontStyle   *style);
-AdgStyle *      adg_dim_style_get_line_style    (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_line_style    (AdgDimStyle    *dim_style,
-                                                 AdgLineStyle   *style);
-AdgStyle *      adg_dim_style_get_arrow_style   (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_arrow_style   (AdgDimStyle    *dim_style,
-                                                 AdgArrowStyle  *style);
+AdgDress        adg_dim_style_get_value_dress   (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_value_dress   (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
+AdgDress        adg_dim_style_get_up_dress      (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_up_dress      (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
+AdgDress        adg_dim_style_get_down_dress    (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_down_dress    (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
+AdgDress        adg_dim_style_get_note_dress    (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_note_dress    (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
+AdgDress        adg_dim_style_get_line_dress    (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_line_dress    (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
 gdouble         adg_dim_style_get_from_offset   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_from_offset   (AdgDimStyle    *dim_style,
                                                  gdouble         offset);
