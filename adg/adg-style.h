@@ -21,11 +21,11 @@
 #ifndef __ADG_STYLE_H__
 #define __ADG_STYLE_H__
 
-#include <adg/adg-pattern.h>
+#include <glib-object.h>
+#include <cairo.h>
 
 
 G_BEGIN_DECLS
-
 
 #define ADG_TYPE_STYLE             (adg_style_get_type())
 #define ADG_STYLE(obj)             (G_TYPE_CHECK_INSTANCE_CAST((obj), ADG_TYPE_STYLE, AdgStyle))
@@ -34,39 +34,27 @@ G_BEGIN_DECLS
 #define ADG_IS_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_STYLE))
 #define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_STYLE, AdgStyleClass))
 
+
 typedef struct _AdgStyle        AdgStyle;
 typedef struct _AdgStyleClass   AdgStyleClass;
-typedef gint                    AdgStyleId;
-typedef gint                    AdgStyleSlot;
 
 struct _AdgStyle {
     /*< private >*/
     GObject              parent;
-    gpointer             data;
 };
 
 struct _AdgStyleClass {
     /*< private >*/
     GObjectClass         parent_class;
     /*< public >*/
-    /* Virtual table */
-    GPtrArray *         (*get_pool)             (void);
     void                (*apply)                (AdgStyle       *style,
                                                  cairo_t        *cr);
 };
 
 GType                   adg_style_get_type      (void) G_GNUC_CONST;
-AdgStyleId              adg_style_register_id   (AdgStyle       *style);
-AdgStyle *              adg_style_from_id       (GType           type,
-                                                 AdgStyleId      id);
-AdgStyle *              adg_style_get_default   (AdgStyleClass  *klass);
 
 void                    adg_style_apply         (AdgStyle       *style,
                                                  cairo_t        *cr);
-const AdgPattern *      adg_style_get_pattern   (AdgStyle       *style);
-void                    adg_style_set_pattern   (AdgStyle       *style,
-                                                 AdgPattern     *pattern);
-
 
 G_END_DECLS
 
