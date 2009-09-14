@@ -60,6 +60,7 @@
     <chapter id="Rendering-style">
       <title>Style classes</title>
       <xi:include href="xml/adg-style.xml"/>
+      <xi:include href="xml/adg-color-style.xml"/>
       <xi:include href="xml/adg-line-style.xml"/>
       <xi:include href="xml/adg-font-style.xml"/>
       <xi:include href="xml/adg-dim-style.xml"/>
