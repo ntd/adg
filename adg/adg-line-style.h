@@ -22,7 +22,7 @@
 #define __ADG_LINE_STYLE_H__
 
 #include <adg/adg-style.h>
-#include <adg/adg-enums.h>
+#include <adg/adg-dress.h>
 
 
 G_BEGIN_DECLS
@@ -33,7 +33,6 @@ G_BEGIN_DECLS
 #define ADG_IS_LINE_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_LINE_STYLE))
 #define ADG_IS_LINE_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_LINE_STYLE))
 #define ADG_LINE_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_LINE_STYLE, AdgLineStyleClass))
-#define ADG_SLOT_LINE_STYLE             (_adg_line_style_get_slot())
 
 
 typedef struct _AdgLineStyle        AdgLineStyle;
@@ -54,6 +53,9 @@ struct _AdgLineStyleClass {
 GType           adg_line_style_get_type         (void) G_GNUC_CONST;
 AdgLineStyle *  adg_line_style_new              (void);
 
+AdgDress        adg_line_style_get_color_dress  (AdgLineStyle   *line_style);
+void            adg_line_style_set_color_dress  (AdgLineStyle   *line_style,
+                                                 AdgDress        color_dress);
 gdouble         adg_line_style_get_width        (AdgLineStyle   *line_style);
 void            adg_line_style_set_width        (AdgLineStyle   *line_style,
                                                  gdouble         width);
