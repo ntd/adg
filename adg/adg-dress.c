@@ -44,6 +44,7 @@
 
 #include "adg-dress.h"
 #include "adg-dress-private.h"
+#include "adg-color-style.h"
 #include "adg-line-style.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
@@ -478,7 +479,38 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 
 
 AdgDress
-_adg_dress_line_model(void)
+_adg_dress_color_regular(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *style = g_object_new(ADG_TYPE_COLOR_STYLE, NULL);
+
+        dress = adg_dress_new("color-regular", style);
+        g_object_unref(style);
+    }
+
+    return dress;
+}
+
+AdgDress
+_adg_dress_color_dimension(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *style = g_object_new(ADG_TYPE_COLOR_STYLE,
+                                       "red", 0.75, NULL);
+
+        dress = adg_dress_new("color-dimension", style);
+        g_object_unref(style);
+    }
+
+    return dress;
+}
+
+AdgDress
+_adg_dress_line_regular(void)
 {
     static AdgDress dress = 0;
 
@@ -486,7 +518,7 @@ _adg_dress_line_model(void)
         AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
                                        "width", 2., NULL);
 
-        dress = adg_dress_new("line-model", style);
+        dress = adg_dress_new("line-regular", style);
         g_object_unref(style);
     }
 
@@ -494,15 +526,16 @@ _adg_dress_line_model(void)
 }
 
 AdgDress
-_adg_dress_line_quote(void)
+_adg_dress_line_dimension(void)
 {
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
+                                       "color-dress", ADG_DRESS_COLOR_DIMENSION,
                                        "width", 1., NULL);
 
-        dress = adg_dress_new("line-quote", style);
+        dress = adg_dress_new("line-dimension", style);
         g_object_unref(style);
     }
 
@@ -510,7 +543,7 @@ _adg_dress_line_quote(void)
 }
 
 AdgDress
-_adg_dress_text_normal(void)
+_adg_dress_text_regular(void)
 {
     static AdgDress dress = 0;
 
@@ -519,7 +552,7 @@ _adg_dress_text_normal(void)
                                        "family", "Serif",
                                        "size", 14., NULL);
 
-        dress = adg_dress_new("text-normal", style);
+        dress = adg_dress_new("text-regular", style);
         g_object_unref(style);
     }
 
@@ -527,7 +560,7 @@ _adg_dress_text_normal(void)
 }
 
 AdgDress
-_adg_dress_text_quote(void)
+_adg_dress_text_value(void)
 {
     static AdgDress dress = 0;
 
@@ -537,7 +570,7 @@ _adg_dress_text_quote(void)
                                        "weight", CAIRO_FONT_WEIGHT_BOLD,
                                        "size", 12., NULL);
 
-        dress = adg_dress_new("text-quote", style);
+        dress = adg_dress_new("text-value", style);
         g_object_unref(style);
     }
 
@@ -562,14 +595,14 @@ _adg_dress_text_limit(void)
 }
 
 AdgDress
-_adg_dress_dimension(void)
+_adg_dress_dimension_regular(void)
 {
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *style = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
 
-        dress = adg_dress_new("dimension", style);
+        dress = adg_dress_new("dimension-regular", style);
         g_object_unref(style);
     }
 
