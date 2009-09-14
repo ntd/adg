@@ -108,7 +108,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = adg_param_spec_dress("value-dress",
                                   P_("Value Dress"),
                                   P_("Font dress for the nominal value of the dimension"),
-                                  ADG_DRESS_TEXT_QUOTE,
+                                  ADG_DRESS_TEXT_VALUE,
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
@@ -129,14 +129,14 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = adg_param_spec_dress("note-dress",
                                   P_("Note Dress"),
                                   P_("Font dress for the note"),
-                                  ADG_DRESS_TEXT_QUOTE,
+                                  ADG_DRESS_TEXT_VALUE,
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NOTE_DRESS, param);
 
     param = adg_param_spec_dress("line-dress",
                                   P_("Line Dress"),
                                   P_("Line dress for the baseline and the extension lines"),
-                                  ADG_DRESS_LINE_QUOTE,
+                                  ADG_DRESS_LINE_DIMENSION,
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
@@ -215,11 +215,11 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                                            ADG_TYPE_DIM_STYLE,
                                                            AdgDimStylePrivate);
 
-    data->value_dress = ADG_DRESS_TEXT_QUOTE;
+    data->value_dress = ADG_DRESS_TEXT_VALUE;
     data->up_dress = ADG_DRESS_TEXT_LIMIT;
     data->down_dress = ADG_DRESS_TEXT_LIMIT;
-    data->note_dress = ADG_DRESS_TEXT_QUOTE;
-    data->line_dress = ADG_DRESS_LINE_QUOTE;
+    data->note_dress = ADG_DRESS_TEXT_VALUE;
+    data->line_dress = ADG_DRESS_LINE_DIMENSION;
     data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;
     data->to_offset = 6;

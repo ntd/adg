@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 #define ADG_IS_DIM_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_DIM_STYLE))
 #define ADG_IS_DIM_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_DIM_STYLE))
 #define ADG_DIM_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_DIM_STYLE, AdgDimStyleClass))
-#define ADG_SLOT_DIM_STYLE             (_adg_dim_style_get_slot())
+
 
 typedef struct _AdgDimStyle        AdgDimStyle;
 typedef struct _AdgDimStyleClass   AdgDimStyleClass;
