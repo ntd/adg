@@ -97,8 +97,8 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->render = render;
 
     param = adg_param_spec_dress("dress",
-                                 P_("Dress Style"),
-                                 P_("The dress style to use for rendering this text"),
+                                 P_("Font Dress"),
+                                 P_("The font dress to use for rendering this text"),
                                  ADG_DRESS_TEXT_REGULAR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
@@ -195,6 +195,53 @@ AdgToyText *
 adg_toy_text_new(const gchar *label)
 {
     return g_object_new(ADG_TYPE_TOY_TEXT, "label", label, NULL);
+}
+
+/**
+ * adg_toy_text_get_dress:
+ * @toy_text: an #AdgToyText
+ *
+ * Gets the font dress to be used in rendering @toy_text.
+ *
+ * Returns: the current font dress
+ **/
+AdgDress
+adg_toy_text_get_dress(AdgToyText *toy_text)
+{
+    AdgToyTextPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TOY_TEXT(toy_text), ADG_DRESS_UNDEFINED);
+
+    data = toy_text->data;
+
+    return data->dress;
+}
+
+/**
+ * adg_toy_text_set_dress:
+ * @toy_text: an #AdgToyText
+ * @dress: the new #AdgDress to use
+ *
+ * Sets a new font dress for rendering @toy_text. The new dress
+ * must be related to the original dress for this property:
+ * you cannot set a dress used for line styles to a dress
+ * managing fonts.
+ *
+ * The check is done by calling adg_dress_are_related() with
+ * @dress and the previous dress as arguments. Check out its
+ * documentation for details on what is a related dress.
+ **/
+void
+adg_toy_text_set_dress(AdgToyText *toy_text, AdgDress dress)
+{
+    AdgToyTextPrivate *data;
+
+    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
+
+    data = toy_text->data;
+
+    if (adg_dress_set(&data->dress, dress))
+        g_object_notify((GObject *) toy_text, "dress");
 }
 
 /**
