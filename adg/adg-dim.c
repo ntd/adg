@@ -117,7 +117,7 @@ adg_dim_class_init(AdgDimClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress to use for rendering this dimension"),
-                                 ADG_DRESS_DIMENSION,
+                                 ADG_DRESS_DIMENSION_REGULAR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
@@ -199,7 +199,7 @@ adg_dim_init(AdgDim *dim)
     AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
-    data->dress = ADG_DRESS_DIMENSION;
+    data->dress = ADG_DRESS_DIMENSION_REGULAR;
     data->ref1.x = data->ref1.y = 0;
     data->ref2.x = data->ref2.y = 0;
     data->pos1.x = data->pos1.y = 0;
@@ -213,7 +213,7 @@ adg_dim_init(AdgDim *dim)
 
     data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                       "parent", dim,
-                                      "dress", ADG_DRESS_TEXT_QUOTE,
+                                      "dress", ADG_DRESS_TEXT_VALUE,
                                       NULL);
     data->value_min_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                           "parent", dim,
@@ -225,7 +225,7 @@ adg_dim_init(AdgDim *dim)
                                           NULL);
     data->note_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                      "parent", dim,
-                                     "dress", ADG_DRESS_TEXT_QUOTE,
+                                     "dress", ADG_DRESS_TEXT_VALUE,
                                      NULL);
 
     dim->data = data;
