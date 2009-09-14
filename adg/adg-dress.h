@@ -29,7 +29,7 @@ G_BEGIN_DECLS
 #define ADG_TYPE_DRESS                 (adg_dress_get_type())
 #define ADG_VALUE_HOLDS_DRESS(value)   (G_TYPE_CHECK_VALUE_TYPE((value), ADG_TYPE_DRESS))
 
-#define ADG_TYPE_PARAM_SPEC_DRESS      (adg_param_spec_dress_get_type())
+#define ADG_TYPE_PARAM_SPEC_DRESS      (_adg_param_spec_dress_get_type())
 #define ADG_IS_PARAM_SPEC_DRESS(spec)  (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
 
 #define ADG_DRESS_UNDEFINED            0
@@ -65,7 +65,7 @@ void            adg_dress_set_style             (AdgDress        dress,
 gboolean        adg_dress_accept_style          (AdgDress        dress,
                                                  AdgStyle       *style);
 
-GType           adg_param_spec_dress_get_type   (void) G_GNUC_CONST;
+GType           _adg_param_spec_dress_get_type  (void) G_GNUC_CONST;
 GParamSpec *    adg_param_spec_dress            (const gchar    *name,
                                                  const gchar    *nick,
                                                  const gchar    *blurb,

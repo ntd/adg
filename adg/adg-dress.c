@@ -20,13 +20,15 @@
 
 /**
  * SECTION:adg-dress
+ * @Section_Id:AdgDress
+ * @title: AdgDress
  * @short_description: The ADG way to associate styles to entities
  *
  * The dress is a virtualization of an #AdgStyle instance. #AdgEntity
- * instances do not directly embed #AdgStyle but use instead #AdgDress.
- * This allows some advanced operations, such as overriding a dress
- * only in a specific entity branch of the hierarchy or customize
- * multiple entities at once.
+ * objects do not directly refer to #AdgStyle but use #AdgDress values
+ * instead. This allows some advanced operations, such as overriding
+ * a dress only in a specific entity branch of the hierarchy or
+ * customize multiple entities at once.
  **/
 
 /**
@@ -36,9 +38,12 @@
  **/
 
 /**
- * AdgParamSpecDress:
+ * ADG_VALUE_HOLDS_DRESS:
+ * @value: a #GValue
  *
- * A #GParamSpec for #AdgDress values.
+ * Checks whether a #GValue is actually holding an #AdgDress value or not.
+ *
+ * Returns: %TRUE is @value is holding an #AdgDress, %FALSE otherwise
  **/
 
 
@@ -87,8 +92,8 @@ adg_dress_get_type(void)
  * @name: the dress name
  * @style: the style to associate
  *
- * Creates a new dress. It is a convenient wrapper for adg_dress_new_full()
- * that uses as ancestor the #G_TYPE_FROM_INSTANCE of @style.
+ * Creates a new dress. It is a convenient wrapper of adg_dress_new_full()
+ * that uses as ancestor the G_TYPE_FROM_INSTANCE() of @style.
  *
  * After a succesfull call, a new reference is added to @style.
  *
@@ -400,7 +405,7 @@ struct _AdgParamSpecDress {
 
 
 GType
-adg_param_spec_dress_get_type(void)
+_adg_param_spec_dress_get_type(void)
 {
     static GType type = 0;
 
@@ -455,7 +460,7 @@ value_validate(GParamSpec *spec, GValue *value)
  * @dress: the #AdgDress dress
  * @flags: a combination of #GParamFlags
  *
- * Creates a param spec to hold a dress param.
+ * Creates a param spec to hold a dress value.
  *
  * Returns: the newly allocated #GParamSpec
  **/
@@ -478,6 +483,18 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 }
 
 
+/**
+ * ADG_DRESS_UNDEFINED:
+ *
+ * A value reperesenting an undefined #AdgDress.
+ **/
+
+/**
+ * ADG_DRESS_COLOR_REGULAR:
+ *
+ * The default builtin #AdgDress color. This dress will be resolved
+ * to an #AdgColorStyle instance.
+ **/
 AdgDress
 _adg_dress_color_regular(void)
 {
@@ -493,6 +510,12 @@ _adg_dress_color_regular(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_COLOR_DIMENSION:
+ *
+ * The builtin #AdgDress color used by dimensioning items. This dress
+ * will be resolved to an #AdgColorStyle instance.
+ **/
 AdgDress
 _adg_dress_color_dimension(void)
 {
@@ -509,6 +532,12 @@ _adg_dress_color_dimension(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_LINE_REGULAR:
+ *
+ * The default builtin #AdgDress line. This dress will be resolved
+ * to an #AdgLineStyle instance.
+ **/
 AdgDress
 _adg_dress_line_regular(void)
 {
@@ -525,6 +554,12 @@ _adg_dress_line_regular(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_LINE_DIMENSION:
+ *
+ * The builtin #AdgDress line type used by base and extension lines in
+ * dimensioning. This dress will be resolved to an #AdgLineStyle instance.
+ **/
 AdgDress
 _adg_dress_line_dimension(void)
 {
@@ -533,6 +568,7 @@ _adg_dress_line_dimension(void)
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
                                        "color-dress", ADG_DRESS_COLOR_DIMENSION,
+                                       "antialias", CAIRO_ANTIALIAS_NONE,
                                        "width", 1., NULL);
 
         dress = adg_dress_new("line-dimension", style);
@@ -542,6 +578,12 @@ _adg_dress_line_dimension(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_TEXT_REGULAR:
+ *
+ * The default builtin #AdgDress font. This dress will be resolved
+ * to an #AdgFontStyle instance.
+ **/
 AdgDress
 _adg_dress_text_regular(void)
 {
@@ -559,6 +601,12 @@ _adg_dress_text_regular(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_TEXT_VALUE:
+ *
+ * The builtin #AdgDress font used to render the nominal value of a
+ * dimension. This dress will be resolved to an #AdgFontStyle instance.
+ **/
 AdgDress
 _adg_dress_text_value(void)
 {
@@ -577,6 +625,13 @@ _adg_dress_text_value(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_TEXT_LIMIT:
+ *
+ * The builtin #AdgDress font used to render the tolerances or both
+ * the upper and lower values of a dimension. This dress will be
+ * resolved to an #AdgFontStyle instance.
+ **/
 AdgDress
 _adg_dress_text_limit(void)
 {
@@ -594,6 +649,12 @@ _adg_dress_text_limit(void)
     return dress;
 }
 
+/**
+ * ADG_DRESS_DIMENSION_REGULAR:
+ *
+ * The default builtin #AdgDress dimensioning style. This dress
+ * will be resolved to an #AdgDimStyle instance.
+ **/
 AdgDress
 _adg_dress_dimension_regular(void)
 {
