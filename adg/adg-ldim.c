@@ -36,7 +36,8 @@
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
 #include "adg-dim-style.h"
-#include "adg-stroke.h"
+#include "adg-line-style.h"
+#include "adg-color-style.h"
 #include "adg-arrow.h"
 #include "adg-intl.h"
 
@@ -484,27 +485,33 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgLDim *ldim;
     AdgDim *dim;
     AdgLDimPrivate *data;
-    AdgStyle *dim_style;
-    AdgDress line_dress;
+    AdgDimStyle *dim_style;
+    AdgLineStyle *line_style;
+    AdgColorStyle *color_style;
 
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) entity;
     data = ldim->data;
-    dim_style = adg_entity_style(entity, adg_dim_get_dress(dim));
-    line_dress = adg_dim_style_get_line_dress((AdgDimStyle *) dim_style);
+    dim_style = (AdgDimStyle *)
+        adg_entity_style(entity, adg_dim_get_dress(dim));
+    line_style = (AdgLineStyle *)
+        adg_entity_style(entity, adg_dim_style_get_line_dress(dim_style));
+    color_style = (AdgColorStyle *)
+        adg_entity_style(entity, adg_line_style_get_color_dress(line_style));
 
     if (!adg_entity_get_rendered(entity))
-        update_matrices(ldim, (AdgDimStyle *) dim_style);
+        update_matrices(ldim, dim_style);
 
     layout(ldim);
 
     if (!adg_entity_get_rendered(entity))
         update_markers(ldim);
 
-    adg_style_apply(dim_style, cr);
+    adg_style_apply((AdgStyle *) dim_style, cr);
+    adg_style_apply((AdgStyle *) line_style, cr);
+    adg_style_apply((AdgStyle *) color_style, cr);
 
     /* This CpmlPath has no arcs, so it can be feeded directly into cairo */
-    adg_entity_apply_dress(entity, line_dress, cr);
     cairo_append_path(cr, &data->cpml.path);
     cairo_stroke(cr);
 

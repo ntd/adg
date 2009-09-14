@@ -43,8 +43,8 @@
 
 enum {
     PROP_0,
-    PROP_TRAIL,
-    PROP_DRESS
+    PROP_DRESS,
+    PROP_TRAIL
 };
 
 static void             dispose                 (GObject        *object);
