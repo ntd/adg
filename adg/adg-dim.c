@@ -74,8 +74,6 @@ static gboolean invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static void     quote_layout            (AdgDim         *dim,
                                          cairo_t        *cr);
-static gboolean set_dress               (AdgDim         *dim,
-                                         AdgDress        dress);
 static gboolean set_angle               (AdgDim         *dim,
                                          gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
@@ -212,21 +210,13 @@ adg_dim_init(AdgDim *dim)
     data->note = NULL;
 
     data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                      "parent", dim,
-                                      "dress", ADG_DRESS_TEXT_VALUE,
-                                      NULL);
+                                      "parent", dim, NULL);
     data->value_min_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                          "parent", dim,
-                                          "dress", ADG_DRESS_TEXT_LIMIT,
-                                          NULL);
+                                          "parent", dim, NULL);
     data->value_max_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                          "parent", dim,
-                                          "dress", ADG_DRESS_TEXT_LIMIT,
-                                          NULL);
+                                          "parent", dim, NULL);
     data->note_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                     "parent", dim,
-                                     "dress", ADG_DRESS_TEXT_VALUE,
-                                     NULL);
+                                     "parent", dim, NULL);
 
     dim->data = data;
 }
@@ -319,7 +309,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DRESS:
-        set_dress(dim, g_value_get_int(value));
+        adg_dress_set(&data->dress, g_value_get_int(value));
         break;
     case PROP_REF1:
         cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
@@ -397,9 +387,13 @@ adg_dim_get_dress(AdgDim *dim)
 void
 adg_dim_set_dress(AdgDim *dim, AdgDress dress)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_dress(dim, dress))
+    data = dim->data;
+
+    if (adg_dress_set(&data->dress, dress))
         g_object_notify((GObject *) dim, "dress");
 }
 
@@ -995,10 +989,13 @@ void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgDimPrivate *data;
+    AdgDimStyle *dim_style;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
     data = dim->data;
+    dim_style = (AdgDimStyle *)
+        adg_entity_style((AdgEntity *) dim, data->dress);
 
     /* Check if the basic value text needs to be automatically generated */
     if (data->value == NULL) {
@@ -1006,6 +1003,16 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
         adg_toy_text_set_label((AdgToyText *) data->value_entity, text);
         g_free(text);
     }
+
+    /* Set the internal toy_text dresses */
+    adg_toy_text_set_dress((AdgToyText *) data->value_entity,
+                           adg_dim_style_get_value_dress(dim_style));
+    adg_toy_text_set_dress((AdgToyText *) data->value_min_entity,
+                           adg_dim_style_get_down_dress(dim_style));
+    adg_toy_text_set_dress((AdgToyText *) data->value_max_entity,
+                           adg_dim_style_get_up_dress(dim_style));
+    adg_toy_text_set_dress((AdgToyText *) data->note_entity,
+                           adg_dim_style_get_note_dress(dim_style));
 
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
 
@@ -1122,26 +1129,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_transform_global_map(data->value_min_entity, &map);
     adg_entity_transform_global_map(data->value_max_entity, &map);
     adg_entity_transform_global_map(data->note_entity, &map);
-}
-
-static gboolean
-set_dress(AdgDim *dim, AdgDress dress)
-{
-    AdgDimPrivate *data = dim->data;
-
-    if (dress == data->dress)
-        return FALSE;
-
-    if (!adg_dress_are_related(dress, data->dress)) {
-        g_warning("%s: `%s' and `%s' families are not coherents",
-                  G_STRLOC, adg_dress_name(dress),
-                  adg_dress_name(data->dress));
-        return FALSE;
-    }
-
-    data->dress = dress;
-
-    return TRUE;
 }
 
 static gboolean
