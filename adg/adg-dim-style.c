@@ -372,13 +372,12 @@ adg_dim_style_new(void)
 }
 
 /**
- * adg_dim_style_get_value_style:
+ * adg_dim_style_get_value_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the basic value font style of @dim_style. No reference will
- * be added to the returned style; it should not be unreferenced.
+ * Gets the @dim_style dress to be used for the basic value.
  *
- * Returns: the basic value style or %NULL on errors
+ * Returns: the basic value dress
  **/
 AdgDress
 adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
@@ -397,12 +396,10 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @style: the new basic value font style
  *
- * Sets a new font style on @dim_style for basic values. The old
- * font style (if any) will be unreferenced while a new reference
- * will be added to @style.
+ * Sets a new dress on @dim_style for the basic value.
  **/
 void
-adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -418,10 +415,9 @@ adg_dim_style_set_value_style(AdgDimStyle *dim_style, AdgDress dress)
  * adg_dim_style_get_up_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the tolerance style of @dim_style. No reference will be added to the
- * returned style; it should not be unreferenced.
+ * Gets the @dim_style dress to be used for the upper limit.
  *
- * Returns: the tolerance style or %NULL on errors
+ * Returns: the upper limit dress
  **/
 AdgDress
 adg_dim_style_get_up_dress(AdgDimStyle *dim_style)
@@ -440,8 +436,7 @@ adg_dim_style_get_up_dress(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @dress: the new upper limit dress
  *
- * Sets a new tolerance style on @dim_style. The old tolerance style (if any)
- * will be unreferenced while a new reference will be added to @style.
+ * Sets a new dress on @dim_style for the upper limit value.
  **/
 void
 adg_dim_style_set_up_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -457,13 +452,52 @@ adg_dim_style_set_up_dress(AdgDimStyle *dim_style, AdgDress dress)
 }
 
 /**
+ * adg_dim_style_get_down_dress:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the @dim_style dress to be used for the lower limit.
+ *
+ * Returns: the lower limit dress
+ **/
+AdgDress
+adg_dim_style_get_down_dress(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
+
+    data = dim_style->data;
+
+    return data->down_dress;
+}
+
+/**
+ * adg_dim_style_set_down_dress:
+ * @dim_style: an #AdgDimStyle object
+ * @dress: the new lower limit dress
+ *
+ * Sets a new dress on @dim_style for the lower limit value.
+ **/
+void
+adg_dim_style_set_down_dress(AdgDimStyle *dim_style, AdgDress dress)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->down_dress, dress))
+        g_object_notify((GObject *) dim_style, "down-dress");
+}
+
+/**
  * adg_dim_style_get_note_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the note style of @dim_style. No reference will be added to the
- * returned style; it should not be unreferenced.
+ * Gets the @dim_style dress to be used for the note text.
  *
- * Returns: the note style or %NULL on errors
+ * Returns: the note dress
  **/
 AdgDress
 adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
@@ -482,8 +516,7 @@ adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @style: the new note style
  *
- * Sets a new note style on @dim_style. The old note style (if any) will be
- * unreferenced while a new reference will be added to @style.
+ * Sets a new dress on @dim_style for the note text.
  **/
 void
 adg_dim_style_set_note_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -502,10 +535,10 @@ adg_dim_style_set_note_dress(AdgDimStyle *dim_style, AdgDress dress)
  * adg_dim_style_get_line_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the line style of @dim_style. No reference will be added to the
- * returned style; it should not be unreferenced.
+ * Gets the @dim_style dress to be used for rendering the baseline and
+ * the extension lines.
  *
- * Returns: the line style or %NULL on errors
+ * Returns: the line dress
  **/
 AdgDress
 adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
