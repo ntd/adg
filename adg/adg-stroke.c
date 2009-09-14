@@ -35,6 +35,7 @@
 
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
+#include "adg-line-style.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
@@ -86,7 +87,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress style to use for stroking this entity"),
-                                 ADG_DRESS_LINE_MODEL,
+                                 ADG_DRESS_LINE_REGULAR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
@@ -105,8 +106,8 @@ adg_stroke_init(AdgStroke *stroke)
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
+    data->dress = ADG_DRESS_LINE_REGULAR;
     data->trail = NULL;
-    data->dress = ADG_DRESS_LINE_MODEL;
 
     stroke->data = data;
 }
@@ -276,12 +277,19 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
+        AdgLineStyle *line_style;
+        AdgDress color_dress;
+
+        line_style = (AdgLineStyle *) adg_entity_style(entity, data->dress);
+        color_dress = adg_line_style_get_color_dress(line_style);
+
         cairo_save(cr);
         adg_entity_apply_local_matrix(entity, cr);
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        adg_entity_apply_dress(entity, data->dress, cr);
+        adg_style_apply((AdgStyle *) line_style, cr);
+        adg_entity_apply_dress(entity, color_dress, cr);
         cairo_stroke(cr);
     }
 
