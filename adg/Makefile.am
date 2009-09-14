@@ -10,6 +10,7 @@ PATTERN=
 h_sources=			adg-adim.h \
 				adg-arrow.h \
 				adg-canvas.h \
+				adg-color-style.h \
 				adg-container.h \
 				adg-dim.h \
 				adg-dim-style.h \
@@ -37,6 +38,7 @@ built_h_sources=		$(builddir)/adg-type-builtins.h \
 private_h_sources=		adg-adim-private.h \
 				adg-arrow-private.h \
 				adg-canvas-private.h \
+				adg-color-style-private.h \
 				adg-container-private.h \
 				adg-dim-private.h \
 				adg-dim-style-private.h \
@@ -58,6 +60,7 @@ built_private_h_sources=
 c_sources=			adg-adim.c \
 				adg-arrow.c \
 				adg-canvas.c \
+				adg-color-style.c \
 				adg-container.c \
 				adg-dim.c \
 				adg-dim-style.c \
