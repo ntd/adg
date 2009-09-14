@@ -99,14 +99,15 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress style to use for rendering this text"),
-                                 ADG_DRESS_TEXT_NORMAL,
+                                 ADG_DRESS_TEXT_REGULAR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
     param = g_param_spec_string("label",
                                 P_("Label"),
                                 P_("The label to display"),
-                                NULL, G_PARAM_READWRITE);
+                                NULL,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LABEL, param);
 }
 
@@ -117,7 +118,7 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           ADG_TYPE_TOY_TEXT,
                                                           AdgToyTextPrivate);
 
-    data->dress = ADG_DRESS_TEXT_NORMAL;
+    data->dress = ADG_DRESS_TEXT_REGULAR;
     data->label = NULL;
     data->glyphs = NULL;
 
