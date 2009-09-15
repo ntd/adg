@@ -62,8 +62,8 @@ struct _AdgLDimPrivate {
     }            cpml;
 
     AdgTrail    *trail;
-    AdgMarker   *start_marker;
-    AdgMarker   *end_marker;
+    AdgMarker   *marker1;
+    AdgMarker   *marker2;
 
     CpmlPair     from_shift;
     CpmlPair     marker_shift;

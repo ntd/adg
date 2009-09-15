@@ -151,8 +151,8 @@ adg_ldim_init(AdgLDim *ldim)
     data->cpml.path.data[10] = line_to;
 
     data->trail = NULL;
-    data->start_marker = NULL;
-    data->end_marker = NULL;
+    data->marker1 = NULL;
+    data->marker2 = NULL;
 
     ldim->data = data;
 }
@@ -645,15 +645,11 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, ldim);
 
-    if (data->start_marker == NULL) {
-        data->start_marker = adg_dim_style_start_marker_new(context->dim_style);
-        adg_marker_set_trail(data->start_marker, data->trail);
-    }
+    if (data->marker1 == NULL)
+        data->marker1 = adg_dim_style_marker1_new(context->dim_style);
 
-    if (data->end_marker == NULL) {
-        data->end_marker = adg_dim_style_end_marker_new(context->dim_style);
-        adg_marker_set_trail(data->end_marker, data->trail);
-    }
+    if (data->marker2 == NULL)
+        data->marker2 = adg_dim_style_marker2_new(context->dim_style);
 }
 
 static void
@@ -661,11 +657,15 @@ render_gage(AdgLDim *ldim, const AdgLDimContext *context)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->start_marker != NULL)
-        adg_entity_render((AdgEntity *) data->start_marker, context->cr);
+    if (data->marker1 != NULL) {
+        adg_marker_set_trail(data->marker1, data->trail);
+        adg_entity_render((AdgEntity *) data->marker1, context->cr);
+    }
 
-    if (data->end_marker != NULL)
-        adg_entity_render((AdgEntity *) data->end_marker, context->cr);
+    if (data->marker2 != NULL) {
+        adg_marker_set_trail(data->marker2, data->trail);
+        adg_entity_render((AdgEntity *) data->marker2, context->cr);
+    }
 
     adg_style_apply((AdgStyle *) context->line_style, context->cr);
     adg_style_apply((AdgStyle *) context->line_color_style, context->cr);
@@ -685,14 +685,14 @@ dispose_markers(AdgLDim *ldim)
         data->trail = NULL;
     }
 
-    if (data->start_marker != NULL) {
-        g_object_unref(data->start_marker);
-        data->start_marker = NULL;
+    if (data->marker1 != NULL) {
+        g_object_unref(data->marker1);
+        data->marker1 = NULL;
     }
 
-    if (data->end_marker != NULL) {
-        g_object_unref(data->end_marker);
-        data->end_marker = NULL;
+    if (data->marker2 != NULL) {
+        g_object_unref(data->marker2);
+        data->marker2 = NULL;
     }
 }
 
