@@ -6,6 +6,25 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.5.1">
+<title>ADG 0.5.1</title>
+
+<para>The new AdgMarker abstract class has been added to provide a common
+ancestor to marker entities. AdgArrow (a filled arrow) is its first
+renderable implementation.</para>
+
+<para>The rendering customization is now provided by AdgDress, an index that
+virtualizes the underlying AdgStyle and derived instances. This allows
+some advanced operation, such as overriding a style in a specific branch
+of the entity hierarchy. The deprecated AdgContext class has been removed.</para>
+
+<para>The AdgPath class has been splitted in AdgTrail and AdgPath. The former
+provides low level access to CpmlPath, allowing the implementation of
+paths that do not fit in the global/local model. AdgLDim internally
+uses a private AdgTrail to implement base and extension lines rendering.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.5.0">
 <title>ADG 0.5.0</title>
 
@@ -102,8 +121,8 @@ rotation of entities where this is applicable (e.g. AdgToyText).</para>
 
 <para>The CPML API has been almost rewrote from scratch: removed a lot of
 duplicated stuff, dropped CpmlPath (by using the original cairo_path_t)
-and implemented new functions, such as segment browsing (always in forward
-direction), reversing and transformation.</para>
+and implemented new functions, such as segment browsing (always in
+forward direction), reversing and transformation.</para>
 
 <para>README, NEWS, TODO and ChangeLog are now automatically generated, so
 redundancy is removed and the maintainability improved. The originals
@@ -150,8 +169,8 @@ other than the default identity matrix.</para>
 <para>Reworked styles and implemented AdgContext, a clean and well defined
 approach to manage rendering customization.</para>
  
-<para>Moved all the geometrical stuff in Cairo Path Manipulation Library (CPML),
-an internal library depending only on cairo.</para>
+<para>Moved all the geometrical stuff in Cairo Path Manipulation Library
+(CPML), an internal library depending only on cairo.</para>
   
 <para>Greatly improved documentation.</para>
 
@@ -180,8 +199,8 @@ and used private structs instead of populating the instance structure.</para>
 <simplesect id="NEWS.0.2.0">
 <title>ADG 0.2.0</title>
  
-<para>This is the first public release of the ADG library. It is in a early stage of
-developement, but the goal is quite ambitious!</para>
+<para>This is the first public release of the ADG library. It is in a early
+stage of developement, but the goal is quite ambitious!</para>
 
 </simplesect>
 
