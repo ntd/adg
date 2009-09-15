@@ -45,6 +45,8 @@
 
 enum {
     PROP_0,
+    PROP_MARKER1,
+    PROP_MARKER2,
     PROP_VALUE_DRESS,
     PROP_UP_DRESS,
     PROP_DOWN_DRESS,
@@ -63,6 +65,7 @@ enum {
 };
 
 
+static void             finalize                (GObject        *object);
 static void             get_property            (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
@@ -73,8 +76,6 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             apply                   (AdgStyle       *style,
                                                  cairo_t        *cr);
-static void             set_quote_shift         (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
 static void             set_tolerance_shift     (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
 static void             set_note_shift          (AdgDimStyle    *dim_style,
@@ -83,6 +84,11 @@ static void             set_number_format       (AdgDimStyle    *dim_style,
                                                  const gchar    *format);
 static void             set_number_tag          (AdgDimStyle    *dim_style,
                                                  const gchar    *tag);
+static AdgMarker *      marker_new              (const AdgMarkerData
+                                                                *marker_data);
+static void             use_marker              (AdgMarkerData  *marker_data,
+                                                 AdgMarker      *marker);
+static void             free_marker             (AdgMarkerData  *marker_data);
 
 
 G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
@@ -100,10 +106,25 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgDimStylePrivate));
 
+    gobject_class->finalize = finalize;
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
     style_class->apply = apply;
+
+    param = g_param_spec_object("marker1",
+                                P_("First Marker"),
+                                P_("The template entity to use as first marker"),
+                                ADG_TYPE_MARKER,
+                                G_PARAM_WRITABLE);
+    g_object_class_install_property(gobject_class, PROP_MARKER1, param);
+
+    param = g_param_spec_object("marker2",
+                                P_("Second Marker"),
+                                P_("The template entity to use as second marker"),
+                                ADG_TYPE_MARKER,
+                                G_PARAM_WRITABLE);
+    g_object_class_install_property(gobject_class, PROP_MARKER2, param);
 
     param = adg_param_spec_dress("value-dress",
                                   P_("Value Dress"),
@@ -215,6 +236,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
                                                            ADG_TYPE_DIM_STYLE,
                                                            AdgDimStylePrivate);
 
+    data->marker1.type = 0;
+    data->marker1.n_parameters = 0;
+    data->marker1.parameters = NULL;
+    data->marker2.type = 0;
+    data->marker2.n_parameters = 0;
+    data->marker2.parameters = NULL;
     data->value_dress = ADG_DRESS_TEXT_VALUE;
     data->up_dress = ADG_DRESS_TEXT_LIMIT;
     data->down_dress = ADG_DRESS_TEXT_LIMIT;
@@ -236,6 +263,21 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->number_tag = g_strdup("<>");
 
     dim_style->data = data;
+}
+
+static void
+finalize(GObject *object)
+{
+    AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
+
+    free_marker(&data->marker1);
+    free_marker(&data->marker2);
+
+    g_free(data->number_format);
+    data->number_format = NULL;
+
+    g_free(data->number_tag);
+    data->number_tag = NULL;
 }
 
 static void
@@ -306,6 +348,12 @@ set_property(GObject *object,
     data = dim_style->data;
 
     switch (prop_id) {
+    case PROP_MARKER1:
+        use_marker(&data->marker1, g_value_get_object(value));
+        break;
+    case PROP_MARKER2:
+        use_marker(&data->marker2, g_value_get_object(value));
+        break;
     case PROP_VALUE_DRESS:
         adg_dress_set(&data->value_dress, g_value_get_int(value));
         break;
@@ -337,7 +385,7 @@ set_property(GObject *object,
         data->tolerance_spacing = g_value_get_double(value);
         break;
     case PROP_QUOTE_SHIFT:
-        set_quote_shift(dim_style, g_value_get_boxed(value));
+        cpml_pair_copy(&data->quote_shift, g_value_get_boxed(value));
         break;
     case PROP_TOLERANCE_SHIFT:
         set_tolerance_shift(dim_style, g_value_get_boxed(value));
@@ -369,6 +417,104 @@ AdgStyle *
 adg_dim_style_new(void)
 {
     return g_object_new(ADG_TYPE_DIM_STYLE, NULL);
+}
+
+/**
+ * adg_dim_style_marker1_new:
+ * @dim_style: an #AdgDimStyle
+ *
+ * Creates a new #AdgMarker entity accordling to the template marker
+ * stored with the #AdgDimStyle:marker1 property of @dim_style.
+ *
+ * Returns: a newly created #AdgMarker derived entity or %NULL if
+ *          @dim_style has the #AdgDimStyle:marker1 property unset
+ **/
+AdgMarker *
+adg_dim_style_marker1_new(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+
+    data = dim_style->data;
+
+    return marker_new(&data->marker1);
+}
+
+/**
+ * adg_dim_style_marker2_new:
+ * @dim_style: an #AdgDimStyle
+ *
+ * Creates a new #AdgMarker entity accordling to the template marker
+ * stored with the #AdgDimStyle:marker2 property of @dim_style.
+ *
+ * Returns: a newly created #AdgMarker derived entity or %NULL if
+ *          @dim_style has the #AdgDimStyle:marker2 property unset
+ **/
+AdgMarker *
+adg_dim_style_marker2_new(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+
+    data = dim_style->data;
+
+    return marker_new(&data->marker2);
+}
+
+/**
+ * adg_dim_style_use_marker1:
+ * @dim_style: an #AdgStyle
+ * @marker: an #AdgMarker derived entity
+ *
+ * Uses @marker as entity template to generate a new marker entity
+ * when a call to adg_dim_style_marker1_new() is made.
+ *
+ * This method duplicates internally the property values of @marker,
+ * so any further change to @marker does not affect @dim_style anymore.
+ * This also means @marker could be destroyed because @dim_style only
+ * uses its property values and does not add any references to @marker.
+ **/
+void
+adg_dim_style_use_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
+
+    data = dim_style->data;
+
+    use_marker(&data->marker1, marker);
+    g_object_notify((GObject *) dim_style, "marker1");
+}
+
+/**
+ * adg_dim_style_use_marker2:
+ * @dim_style: an #AdgStyle
+ * @marker: an #AdgMarker derived entity
+ *
+ * Uses @marker as entity template to generate a new marker entity
+ * when a call to adg_dim_style_marker2_new() is made.
+ *
+ * This method duplicates internally the property values of @marker,
+ * so any further change to @marker does not affect @dim_style anymore.
+ * This also means @marker could be destroyed because @dim_style only
+ * uses its property values and does not add any references to @marker.
+ **/
+void
+adg_dim_style_use_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
+
+    data = dim_style->data;
+
+    use_marker(&data->marker2, marker);
+    g_object_notify((GObject *) dim_style, "marker2");
 }
 
 /**
@@ -838,9 +984,13 @@ adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
+    AdgDimStylePrivate *data;
+
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    set_quote_shift(dim_style, shift);
+    data = dim_style->data;
+    cpml_pair_copy(&data->quote_shift, shift);
+
     g_object_notify((GObject *) dim_style, "quote-shift");
 }
 
@@ -1001,14 +1151,6 @@ apply(AdgStyle *style, cairo_t *cr)
 }
 
 static void
-set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    cpml_pair_copy(&data->quote_shift, shift);
-}
-
-static void
 set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     AdgDimStylePrivate *data = dim_style->data;
@@ -1040,4 +1182,66 @@ set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 
     g_free(data->number_tag);
     data->number_tag = g_strdup(tag);
+}
+
+static AdgMarker *
+marker_new(const AdgMarkerData *marker_data)
+{
+    if (marker_data->type == 0)
+        return NULL;
+
+    return g_object_newv(marker_data->type,
+                         marker_data->n_parameters,
+                         marker_data->parameters);
+}
+
+static void
+use_marker(AdgMarkerData *marker_data, AdgMarker *marker)
+{
+    GObject *object;
+    GParamSpec **specs;
+    GParamSpec *spec;
+    GParameter *parameter;
+    guint n;
+
+    /* Free the previous marker data, if any */
+    free_marker(marker_data);
+
+    if (marker == NULL)
+        return;
+
+    object = (GObject *) marker;
+    specs = g_object_class_list_properties(G_OBJECT_GET_CLASS(marker),
+                                           &marker_data->n_parameters);
+
+    marker_data->type = G_TYPE_FROM_INSTANCE(marker);
+    marker_data->parameters = g_new0(GParameter, marker_data->n_parameters);
+
+    for (n = 0; n < marker_data->n_parameters; ++n) {
+        spec = specs[n];
+        parameter = &marker_data->parameters[n];
+
+        /* Using intern strings because GParameter:name is const.
+         * GObject properties are internally managed using non-static
+         * GQuark, so g_intern_string() is the way to go */
+        parameter->name = g_intern_string(spec->name);
+
+        g_value_init(&parameter->value, spec->value_type);
+        g_object_get_property(object, spec->name, &parameter->value);
+    }
+
+    g_free(specs);
+}
+
+static void
+free_marker(AdgMarkerData *marker_data)
+{
+    guint n;
+
+    for (n = 0; n < marker_data->n_parameters; ++n)
+        g_value_unset(&marker_data->parameters[n].value);
+
+    marker_data->type = 0;
+    marker_data->n_parameters = 0;
+    marker_data->parameters = NULL;
 }

@@ -23,6 +23,7 @@
 
 #include <adg/adg-style.h>
 #include <adg/adg-dress.h>
+#include <adg/adg-marker.h>
 #include <adg/adg-pair.h>
 
 
@@ -54,6 +55,12 @@ struct _AdgDimStyleClass {
 GType           adg_dim_style_get_type          (void) G_GNUC_CONST;
 AdgStyle *      adg_dim_style_new               (void);
 
+AdgMarker *     adg_dim_style_marker1_new       (AdgDimStyle    *dim_style);
+AdgMarker *     adg_dim_style_marker2_new       (AdgDimStyle    *dim_style);
+void            adg_dim_style_use_marker1       (AdgDimStyle    *dim_style,
+                                                 AdgMarker      *marker);
+void            adg_dim_style_use_marker2       (AdgDimStyle    *dim_style,
+                                                 AdgMarker      *marker);
 AdgDress        adg_dim_style_get_value_dress   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_value_dress   (AdgDimStyle    *dim_style,
                                                  AdgDress        dress);

@@ -26,25 +26,34 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgMarkerData AdgMarkerData;
 typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
 
+struct _AdgMarkerData {
+    GType                type;
+    guint                n_parameters;
+    GParameter          *parameters;
+};
+
 struct _AdgDimStylePrivate {
-    AdgDress     value_dress;
-    AdgDress     up_dress;
-    AdgDress     down_dress;
-    AdgDress     note_dress;
-    AdgDress     line_dress;
-    AdgDress     marker_dress;
-    gdouble      from_offset;
-    gdouble      to_offset;
-    gdouble      beyond;
-    gdouble      baseline_spacing;
-    gdouble      tolerance_spacing;
-    AdgPair      quote_shift;
-    AdgPair      tolerance_shift;
-    AdgPair      note_shift;
-    gchar       *number_format;
-    gchar       *number_tag;
+    AdgMarkerData        marker1;
+    AdgMarkerData        marker2;
+    AdgDress             value_dress;
+    AdgDress             up_dress;
+    AdgDress             down_dress;
+    AdgDress             note_dress;
+    AdgDress             line_dress;
+    AdgDress             marker_dress;
+    gdouble              from_offset;
+    gdouble              to_offset;
+    gdouble              beyond;
+    gdouble              baseline_spacing;
+    gdouble              tolerance_spacing;
+    AdgPair              quote_shift;
+    AdgPair              tolerance_shift;
+    AdgPair              note_shift;
+    gchar               *number_format;
+    gchar               *number_tag;
 };
 
 G_END_DECLS
