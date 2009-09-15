@@ -494,6 +494,8 @@ render(AdgEntity *entity, cairo_t *cr)
     fill_context(ldim, &context);
     layout(ldim, &context);
 
+    adg_style_apply((AdgStyle *) context.color_style, cr);
+
     render_gage(ldim, &context);
     adg_dim_render_quote((AdgDim *) ldim, cr);
 
@@ -534,8 +536,8 @@ fill_context(AdgLDim *ldim, AdgLDimContext *context)
     dress = adg_dim_style_get_line_dress(context->dim_style);
     context->line_style = (AdgLineStyle *) adg_entity_style(entity, dress);
 
-    dress = adg_line_style_get_color_dress(context->line_style);
-    context->line_color_style = (AdgColorStyle *) adg_entity_style(entity, dress);
+    dress = adg_dim_style_get_color_dress(context->dim_style);
+    context->color_style = (AdgColorStyle *) adg_entity_style(entity, dress);
 }
 
 static void
@@ -668,7 +670,6 @@ render_gage(AdgLDim *ldim, const AdgLDimContext *context)
     }
 
     adg_style_apply((AdgStyle *) context->line_style, context->cr);
-    adg_style_apply((AdgStyle *) context->line_color_style, context->cr);
 
     /* This CpmlPath has no arcs, so it can be fed directly into cairo */
     cairo_append_path(context->cr, &data->cpml.path);

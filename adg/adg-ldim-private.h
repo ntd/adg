@@ -74,7 +74,7 @@ struct _AdgLDimContext {
     cairo_t             *cr;
     AdgDimStyle         *dim_style;
     AdgLineStyle        *line_style;
-    AdgColorStyle       *line_color_style;
+    AdgColorStyle       *color_style;
 };
 
 G_END_DECLS
