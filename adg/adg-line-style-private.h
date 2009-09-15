@@ -29,7 +29,6 @@ G_BEGIN_DECLS
 typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
 
 struct _AdgLineStylePrivate {
-    AdgDress             color_dress;
     double               width;
     cairo_line_cap_t     cap;
     cairo_line_join_t    join;

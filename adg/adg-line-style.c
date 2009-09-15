@@ -43,7 +43,6 @@
 
 enum {
     PROP_0,
-    PROP_COLOR_DRESS,
     PROP_WIDTH,
     PROP_CAP,
     PROP_JOIN,
@@ -84,13 +83,6 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
     gobject_class->set_property = set_property;
 
     style_class->apply = apply;
-
-    param = adg_param_spec_dress("color-dress",
-                                 P_("Color Dress"),
-                                 P_("The color to dress when using this line"),
-                                 ADG_DRESS_COLOR_REGULAR,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = g_param_spec_double("width",
                                 P_("Line Width"),
@@ -136,7 +128,6 @@ adg_line_style_init(AdgLineStyle *line_style)
                                                             ADG_TYPE_LINE_STYLE,
                                                             AdgLineStylePrivate);
 
-    data->color_dress = ADG_DRESS_COLOR_REGULAR;
     data->width = 2.;
     data->cap = CAIRO_LINE_CAP_ROUND;
     data->join = CAIRO_LINE_JOIN_MITER;
@@ -156,9 +147,6 @@ get_property(GObject *object,
     AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
-    case PROP_COLOR_DRESS:
-        g_value_set_int(value, data->color_dress);
-        break;
     case PROP_WIDTH:
         g_value_set_double(value, data->width);
         break;
@@ -190,9 +178,6 @@ set_property(GObject *object,
     AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
-    case PROP_COLOR_DRESS:
-        adg_dress_set(&data->color_dress, g_value_get_int(value));
-        break;
     case PROP_WIDTH:
         data->width = g_value_get_double(value);
         break;
@@ -229,46 +214,6 @@ AdgLineStyle *
 adg_line_style_new(void)
 {
     return g_object_new(ADG_TYPE_LINE_STYLE, NULL);
-}
-
-/**
- * adg_line_style_get_color_dress:
- * @line_style: an #AdgLineStyle object
- *
- * Gets the color dress.
- *
- * Returns: the requested #AdgDress color
- **/
-AdgDress
-adg_line_style_get_color_dress(AdgLineStyle *line_style)
-{
-    AdgLineStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
-
-    data = line_style->data;
-
-    return data->color_dress;
-}
-
-/**
- * adg_line_style_set_color_dress:
- * @line_style: an #AdgLineStyle object
- * @color_dress: the new color dress
- *
- * Sets a new color to dress for @line_style.
- **/
-void
-adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress color_dress)
-{
-    AdgLineStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-
-    data = line_style->data;
-    data->color_dress = color_dress;
-
-    g_object_notify((GObject *) line_style, "color-dress");
 }
 
 /**
