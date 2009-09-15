@@ -53,6 +53,7 @@
 #include "adg-line-style.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
+#include "adg-arrow.h"
 
 
 static AdgDress quark_to_dress          (GQuark                  quark);
@@ -661,10 +662,16 @@ _adg_dress_dimension_regular(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
+        AdgMarker *arrow = g_object_new(ADG_TYPE_ARROW, NULL);
         AdgStyle *style = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
+
+        adg_dim_style_use_marker1((AdgDimStyle *) style, arrow);
+        adg_marker_set_pos(arrow, 1);
+        adg_dim_style_use_marker2((AdgDimStyle *) style, arrow);
 
         dress = adg_dress_new("dimension-regular", style);
         g_object_unref(style);
+        g_object_unref(arrow);
     }
 
     return dress;
