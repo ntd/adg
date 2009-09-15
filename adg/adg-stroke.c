@@ -278,10 +278,8 @@ render(AdgEntity *entity, cairo_t *cr)
 
     if (cairo_path != NULL) {
         AdgLineStyle *line_style;
-        AdgDress color_dress;
 
         line_style = (AdgLineStyle *) adg_entity_style(entity, data->dress);
-        color_dress = adg_line_style_get_color_dress(line_style);
 
         cairo_save(cr);
         adg_entity_apply_local_matrix(entity, cr);
@@ -289,7 +287,6 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_restore(cr);
 
         adg_style_apply((AdgStyle *) line_style, cr);
-        adg_entity_apply_dress(entity, color_dress, cr);
         cairo_stroke(cr);
     }
 
