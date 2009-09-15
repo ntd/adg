@@ -568,7 +568,6 @@ _adg_dress_line_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
-                                       "color-dress", ADG_DRESS_COLOR_DIMENSION,
                                        "antialias", CAIRO_ANTIALIAS_NONE,
                                        "width", 1., NULL);
 
