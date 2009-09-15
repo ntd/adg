@@ -47,6 +47,7 @@ enum {
     PROP_0,
     PROP_MARKER1,
     PROP_MARKER2,
+    PROP_COLOR_DRESS,
     PROP_VALUE_DRESS,
     PROP_UP_DRESS,
     PROP_DOWN_DRESS,
@@ -125,6 +126,13 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                 ADG_TYPE_MARKER,
                                 G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_MARKER2, param);
+
+    param = adg_param_spec_dress("color-dress",
+                                  P_("Color Dress"),
+                                  P_("Color dress for the whole dimension"),
+                                  ADG_DRESS_COLOR_DIMENSION,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = adg_param_spec_dress("value-dress",
                                   P_("Value Dress"),
@@ -242,6 +250,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->marker2.type = 0;
     data->marker2.n_parameters = 0;
     data->marker2.parameters = NULL;
+    data->color_dress = ADG_DRESS_COLOR_DIMENSION;
     data->value_dress = ADG_DRESS_TEXT_VALUE;
     data->up_dress = ADG_DRESS_TEXT_LIMIT;
     data->down_dress = ADG_DRESS_TEXT_LIMIT;
@@ -286,6 +295,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
     switch (prop_id) {
+    case PROP_COLOR_DRESS:
+        g_value_set_int(value, data->color_dress);
+        break;
     case PROP_VALUE_DRESS:
         g_value_set_int(value, data->value_dress);
         break;
@@ -353,6 +365,9 @@ set_property(GObject *object,
         break;
     case PROP_MARKER2:
         use_marker(&data->marker2, g_value_get_object(value));
+        break;
+    case PROP_COLOR_DRESS:
+        adg_dress_set(&data->color_dress, g_value_get_int(value));
         break;
     case PROP_VALUE_DRESS:
         adg_dress_set(&data->value_dress, g_value_get_int(value));
@@ -518,6 +533,46 @@ adg_dim_style_use_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
 }
 
 /**
+ * adg_dim_style_get_color_dress:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the @dim_style color dress to be used.
+ *
+ * Returns: the color dress
+ **/
+AdgDress
+adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
+
+    data = dim_style->data;
+
+    return data->color_dress;
+}
+
+/**
+ * adg_dim_style_set_color_dress:
+ * @dim_style: an #AdgDimStyle object
+ * @dress: the new color dress
+ *
+ * Sets a new color dress on @dim_style.
+ **/
+void
+adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->color_dress, dress))
+        g_object_notify((GObject *) dim_style, "color-dress");
+}
+
+/**
  * adg_dim_style_get_value_dress:
  * @dim_style: an #AdgDimStyle object
  *
@@ -540,7 +595,7 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
 /**
  * adg_dim_style_set_value_dress:
  * @dim_style: an #AdgDimStyle object
- * @style: the new basic value font style
+ * @dress: the new basic value font style
  *
  * Sets a new dress on @dim_style for the basic value.
  **/
@@ -660,7 +715,7 @@ adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
 /**
  * adg_dim_style_set_note_dress:
  * @dim_style: an #AdgDimStyle object
- * @style: the new note style
+ * @dress: the new note style
  *
  * Sets a new dress on @dim_style for the note text.
  **/

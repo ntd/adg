@@ -38,6 +38,7 @@ struct _AdgMarkerData {
 struct _AdgDimStylePrivate {
     AdgMarkerData        marker1;
     AdgMarkerData        marker2;
+    AdgDress             color_dress;
     AdgDress             value_dress;
     AdgDress             up_dress;
     AdgDress             down_dress;

@@ -61,6 +61,9 @@ void            adg_dim_style_use_marker1       (AdgDimStyle    *dim_style,
                                                  AdgMarker      *marker);
 void            adg_dim_style_use_marker2       (AdgDimStyle    *dim_style,
                                                  AdgMarker      *marker);
+AdgDress        adg_dim_style_get_color_dress   (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_color_dress   (AdgDimStyle    *dim_style,
+                                                 AdgDress        dress);
 AdgDress        adg_dim_style_get_value_dress   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_value_dress   (AdgDimStyle    *dim_style,
                                                  AdgDress        dress);
