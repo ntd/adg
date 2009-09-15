@@ -89,23 +89,21 @@ must be reflected in the demo programs, where applicable.</para>
    the same points by modifying only the xx and yy components.</listitem>
    <listitem>Move the custom get_local_matrix() inside AdgEntity and implement a
    common way to manage local matrix - entity interaction: if the model is
-   rotated an AdgToyText should rotate but not scaled.</listitem>
+   rotated an AdgToyText should rotate but not scale.</listitem>
    <listitem override="disc">Implement AdgMarker as an abstract entity: it will be the base class
    for arrows, ticks, squares, dots and so on.</listitem>
    <listitem override="disc">Implement AdgArrow as AdgMarker derived entity.</listitem>
-   <listitem>Rename AdgArrowStyle to AdgMarkerStyle and update the code to use the
-   newly created AdgMarker entity.</listitem>
-   <listitem>Rework the style approach by detaching the slot and type concepts: more
-   slots could be applied to the same type, such as expressing different
-   lines, such as ADG_SLOT_LINE_MODEL or ADG_SLOT_LINE_DIM, with the same
-   class (AdgLineStyle in the previous example).</listitem>
-   <listitem>Rewrite AdgLDim to use the new marker APIs instead of hardcoding the
+   <listitem override="disc">Implement AdgArrowStyle directly inside the AdgDimStyle class and
+   provides a way to customize the markers.</listitem>
+   <listitem override="disc">Rework the style approach by detaching the slot and type concepts:
+   rename slot to dress and let the door opened to future expansion by
+   breaking the one style = one dress equation.</listitem>
+   <listitem override="disc">Rewrite AdgLDim to use the new marker APIs instead of hardcoding the
    arrows and calling the deprecated rendering callbacks.</listitem>
    <listitem>Implement the outside arrows in AdgLDim.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
    <listitem override="disc">Rework styles by using GObject and properties.</listitem>
-   <listitem>Modify AdgMarkerStyle to use the newly implemented AdgMarker entity.</listitem>
    <listitem>Implement a basic AdgPatternStyle, abstracting the cairo_pattern_t APIs
    and providing a way to customize filling, similar to what AdgLineStyle
    does for stroking.</listitem>
