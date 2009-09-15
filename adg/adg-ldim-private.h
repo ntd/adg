@@ -23,6 +23,9 @@
 
 #include <adg-trail.h>
 #include <adg-marker.h>
+#include <adg-dim-style.h>
+#include <adg-line-style.h>
+#include <adg-color-style.h>
 
 
 G_BEGIN_DECLS
@@ -45,6 +48,7 @@ G_BEGIN_DECLS
  */
 
 typedef struct _AdgLDimPrivate AdgLDimPrivate;
+typedef struct _AdgLDimContext AdgLDimContext;
 
 struct _AdgLDimPrivate {
     double       direction;
@@ -58,12 +62,19 @@ struct _AdgLDimPrivate {
     }            cpml;
 
     AdgTrail    *trail;
-    AdgMarker   *marker1;
-    AdgMarker   *marker2;
+    AdgMarker   *start_marker;
+    AdgMarker   *end_marker;
 
     CpmlPair     from_shift;
-    CpmlPair     arrow_shift;
+    CpmlPair     marker_shift;
     CpmlPair     to_shift;
+};
+
+struct _AdgLDimContext {
+    cairo_t             *cr;
+    AdgDimStyle         *dim_style;
+    AdgLineStyle        *line_style;
+    AdgColorStyle       *line_color_style;
 };
 
 G_END_DECLS
