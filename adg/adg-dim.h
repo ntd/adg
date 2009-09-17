@@ -106,9 +106,6 @@ void            adg_dim_set_value_max           (AdgDim         *dim,
 void            adg_dim_set_tolerances          (AdgDim         *dim,
                                                  const gchar    *value_min,
                                                  const gchar    *value_max);
-const gchar *   adg_dim_get_note                (AdgDim         *dim);
-void            adg_dim_set_note                (AdgDim         *dim,
-                                                 const gchar    *note);
 void            adg_dim_render_quote            (AdgDim         *dim,
                                                  cairo_t        *cr);
 

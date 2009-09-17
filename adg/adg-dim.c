@@ -55,8 +55,7 @@ enum {
     PROP_OUTSIDE,
     PROP_VALUE,
     PROP_VALUE_MIN,
-    PROP_VALUE_MAX,
-    PROP_NOTE
+    PROP_VALUE_MAX
 };
 
 
@@ -82,8 +81,6 @@ static gboolean set_value_min           (AdgDim         *dim,
                                          const gchar    *value_min);
 static gboolean set_value_max           (AdgDim         *dim,
                                          const gchar    *value_max);
-static gboolean set_note                (AdgDim         *dim,
-                                         const gchar    *note);
 static void     detach_entity           (AdgEntity     **p_entity);
 
 
@@ -183,12 +180,6 @@ adg_dim_class_init(AdgDimClass *klass)
                                 P_("The maximum value allowed or the highest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_MAX, param);
-
-    param = g_param_spec_string("note",
-                                P_("Note"),
-                                P_("A custom note appended to the end of the quote"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NOTE, param);
 }
 
 static void
@@ -207,7 +198,6 @@ adg_dim_init(AdgDim *dim)
     data->value = NULL;
     data->value_min = NULL;
     data->value_max = NULL;
-    data->note = NULL;
 
     data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                       "parent", dim, NULL);
@@ -215,8 +205,6 @@ adg_dim_init(AdgDim *dim)
                                           "parent", dim, NULL);
     data->value_max_entity = g_object_new(ADG_TYPE_TOY_TEXT,
                                           "parent", dim, NULL);
-    data->note_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                     "parent", dim, NULL);
 
     dim->data = data;
 }
@@ -229,7 +217,6 @@ dispose(GObject *object)
     detach_entity(&data->value_entity);
     detach_entity(&data->value_min_entity);
     detach_entity(&data->value_max_entity);
-    detach_entity(&data->note_entity);
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -243,7 +230,6 @@ finalize(GObject *object)
     g_free(data->value);
     g_free(data->value_min);
     g_free(data->value_max);
-    g_free(data->note);
 
     if (PARENT_OBJECT_CLASS->finalize != NULL)
         PARENT_OBJECT_CLASS->finalize(object);
@@ -287,9 +273,6 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         break;
     case PROP_VALUE_MAX:
         g_value_set_string(value, data->value_max);
-        break;
-    case PROP_NOTE:
-        g_value_set_string(value, data->note);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -340,9 +323,6 @@ set_property(GObject *object, guint prop_id,
         break;
     case PROP_VALUE_MAX:
         set_value_max(dim, g_value_get_string(value));
-        break;
-    case PROP_NOTE:
-        set_note(dim, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -938,43 +918,6 @@ adg_dim_set_tolerances(AdgDim *dim,
 }
 
 /**
- * adg_dim_get_note:
- * @dim: and #AdgDim
- *
- * Gets the note text or %NULL if the note is not used. The string is
- * internally owned and must not be freed or modified.
- *
- * Returns: the note text
- **/
-const gchar *
-adg_dim_get_note(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return data->note;
-}
-
-/**
- * adg_dim_set_note:
- * @dim: an #AdgDim
- * @note: the new note
- *
- * Sets a new note text, usually appended at the end of the dimension text.
- **/
-void
-adg_dim_set_note(AdgDim *dim, const gchar *note)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (set_note(dim, note))
-        g_object_notify((GObject *) dim, "note");
-}
-
-/**
  * adg_dim_render_quote:
  * @dim: an #AdgDim object
  * @cr: a #cairo_t drawing context
@@ -1011,15 +954,12 @@ adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
                            adg_dim_style_get_down_dress(dim_style));
     adg_toy_text_set_dress((AdgToyText *) data->value_max_entity,
                            adg_dim_style_get_up_dress(dim_style));
-    adg_toy_text_set_dress((AdgToyText *) data->note_entity,
-                           adg_dim_style_get_note_dress(dim_style));
 
     ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
 
     adg_entity_render(data->value_entity, cr);
     adg_entity_render(data->value_min_entity, cr);
     adg_entity_render(data->value_max_entity, cr);
-    adg_entity_render(data->note_entity, cr);
 }
 
 static gboolean
@@ -1030,7 +970,6 @@ invalidate(AdgEntity *entity)
     adg_entity_invalidate(data->value_entity);
     adg_entity_invalidate(data->value_min_entity);
     adg_entity_invalidate(data->value_max_entity);
-    adg_entity_invalidate(data->note_entity);
 
     return TRUE;
 }
@@ -1063,7 +1002,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_set_local_map(data->value_entity, &map);
     adg_entity_set_local_map(data->value_min_entity, &map);
     adg_entity_set_local_map(data->value_max_entity, &map);
-    adg_entity_set_local_map(data->note_entity, &map);
 
     /* Initialize global maps to the quote rotation angle */
     cairo_matrix_init_rotate(&map, data->angle);
@@ -1071,7 +1009,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_set_global_map(data->value_entity, &map);
     adg_entity_set_global_map(data->value_min_entity, &map);
     adg_entity_set_global_map(data->value_max_entity, &map);
-    adg_entity_set_global_map(data->note_entity, &map);
 
     /* Basic value */
     adg_toy_text_get_extents((AdgToyText *) data->value_entity, cr, &extents);
@@ -1107,20 +1044,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
         extents.width += shift->x + MAX(min_extents.width, max_extents.width);
     }
 
-    /* Note */
-    if (data->note != NULL) {
-        cairo_text_extents_t note_extents;
-
-        adg_toy_text_get_extents((AdgToyText *) data->note_entity,
-                                 cr, &note_extents);
-        shift = adg_dim_style_get_note_shift(dim_style);
-
-        cairo_matrix_init_translate(&map, extents.width + shift->x, shift->y);
-        adg_entity_transform_global_map(data->note_entity, &map);
-
-        extents.width += shift->x + note_extents.width;
-    }
-
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(dim_style);
     cairo_matrix_init_translate(&map, shift->x - extents.width / 2, shift->y);
@@ -1128,7 +1051,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     adg_entity_transform_global_map(data->value_entity, &map);
     adg_entity_transform_global_map(data->value_min_entity, &map);
     adg_entity_transform_global_map(data->value_max_entity, &map);
-    adg_entity_transform_global_map(data->note_entity, &map);
 }
 
 static gboolean
@@ -1191,21 +1113,6 @@ set_value_max(AdgDim *dim, const gchar *value_max)
     g_free(data->value_max);
     data->value_max = g_strdup(value_max);
     adg_toy_text_set_label((AdgToyText *) data->value_max_entity, value_max);
-
-    return TRUE;
-}
-
-static gboolean
-set_note(AdgDim *dim, const gchar *note)
-{
-    AdgDimPrivate *data = dim->data;
-
-    if (adg_strcmp(note, data->note) == 0)
-        return FALSE;
-
-    g_free(data->note);
-    data->note = g_strdup(note);
-    adg_toy_text_set_label((AdgToyText *) data->note_entity, note);
 
     return TRUE;
 }

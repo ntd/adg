@@ -40,13 +40,11 @@ struct _AdgDimPrivate {
     gchar               *value;
     gchar               *value_min;
     gchar               *value_max;
-    gchar               *note;
 
     AdgPair              org;
     AdgEntity           *value_entity;
     AdgEntity           *value_min_entity;
     AdgEntity           *value_max_entity;
-    AdgEntity           *note_entity;
 };
 
 G_END_DECLS
