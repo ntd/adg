@@ -185,8 +185,8 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_double("beyond",
                                 P_("Beyond Length"),
-                                P_("How much the baseline should be extended (in global space) beyond the extension lines on dimensions with outside markers: 0 means to automatically compute this value at run-time as 3*marker-size (got from the binded array-style)"),
-                                0, G_MAXDOUBLE, 0,
+                                P_("How much the baseline should be extended (in global space) beyond the extension lines on dimensions with outside markers"),
+                                0, G_MAXDOUBLE, 20,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BEYOND, param);
 
@@ -259,7 +259,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;
     data->to_offset = 6;
-    data->beyond = 0;
+    data->beyond = 20;
     data->baseline_spacing = 30;
     data->tolerance_spacing = 1;
     data->quote_shift.x = 0;
