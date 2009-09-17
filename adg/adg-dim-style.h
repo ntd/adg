@@ -67,14 +67,11 @@ void            adg_dim_style_set_color_dress   (AdgDimStyle    *dim_style,
 AdgDress        adg_dim_style_get_value_dress   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_value_dress   (AdgDimStyle    *dim_style,
                                                  AdgDress        dress);
-AdgDress        adg_dim_style_get_up_dress      (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_up_dress      (AdgDimStyle    *dim_style,
+AdgDress        adg_dim_style_get_min_dress     (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_min_dress     (AdgDimStyle    *dim_style,
                                                  AdgDress        dress);
-AdgDress        adg_dim_style_get_down_dress    (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_down_dress    (AdgDimStyle    *dim_style,
-                                                 AdgDress        dress);
-AdgDress        adg_dim_style_get_note_dress    (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_note_dress    (AdgDimStyle    *dim_style,
+AdgDress        adg_dim_style_get_max_dress     (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_max_dress     (AdgDimStyle    *dim_style,
                                                  AdgDress        dress);
 AdgDress        adg_dim_style_get_line_dress    (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_line_dress    (AdgDimStyle    *dim_style,
@@ -94,21 +91,14 @@ gdouble         adg_dim_style_get_baseline_spacing
 void            adg_dim_style_set_baseline_spacing
                                                 (AdgDimStyle    *dim_style,
                                                  gdouble         spacing);
-gdouble         adg_dim_style_get_tolerance_spacing
-                                                (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_tolerance_spacing
-                                                (AdgDimStyle    *dim_style,
+gdouble         adg_dim_style_get_limits_spacing(AdgDimStyle    *dim_style);
+void            adg_dim_style_set_limits_spacing(AdgDimStyle    *dim_style,
                                                  gdouble         spacing);
 const AdgPair * adg_dim_style_get_quote_shift   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_quote_shift   (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
-const AdgPair * adg_dim_style_get_tolerance_shift
-                                                (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_tolerance_shift
-                                                (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-const AdgPair * adg_dim_style_get_note_shift    (AdgDimStyle    *dim_style);
-void            adg_dim_style_set_note_shift    (AdgDimStyle    *dim_style,
+const AdgPair * adg_dim_style_get_limits_shift  (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_limits_shift  (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
 const gchar *   adg_dim_style_get_number_format (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_number_format (AdgDimStyle    *dim_style,

@@ -23,7 +23,7 @@
  * @short_description: Dimension style related stuff
  *
  * Contains parameters on how to build dimensions such as the different font
- * styles (for value, tolerance and note), line style, offsets of the various
+ * styles (for value and limits), line style, offsets of the various
  * dimension components etc...
  */
 
@@ -49,18 +49,16 @@ enum {
     PROP_MARKER2,
     PROP_COLOR_DRESS,
     PROP_VALUE_DRESS,
-    PROP_UP_DRESS,
-    PROP_DOWN_DRESS,
-    PROP_NOTE_DRESS,
+    PROP_MIN_DRESS,
+    PROP_MAX_DRESS,
     PROP_LINE_DRESS,
     PROP_FROM_OFFSET,
     PROP_TO_OFFSET,
     PROP_BEYOND,
     PROP_BASELINE_SPACING,
-    PROP_TOLERANCE_SPACING,
+    PROP_LIMITS_SPACING,
     PROP_QUOTE_SHIFT,
-    PROP_TOLERANCE_SHIFT,
-    PROP_NOTE_SHIFT,
+    PROP_LIMITS_SHIFT,
     PROP_NUMBER_FORMAT,
     PROP_NUMBER_TAG
 };
@@ -77,9 +75,7 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             apply                   (AdgStyle       *style,
                                                  cairo_t        *cr);
-static void             set_tolerance_shift     (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-static void             set_note_shift          (AdgDimStyle    *dim_style,
+static void             set_limits_shift        (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
 static void             set_number_format       (AdgDimStyle    *dim_style,
                                                  const gchar    *format);
@@ -141,26 +137,19 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
-    param = adg_param_spec_dress("up-dress",
-                                  P_("Up-limit Dress"),
-                                  P_("Font dress for the upper limit value"),
-                                  ADG_DRESS_TEXT_LIMIT,
-                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_UP_DRESS, param);
-
-    param = adg_param_spec_dress("down-dress",
-                                  P_("Down-limit Dress"),
+    param = adg_param_spec_dress("min-dress",
+                                  P_("Minimum Limit Dress"),
                                   P_("Font dress for the lower limit value"),
                                   ADG_DRESS_TEXT_LIMIT,
                                   G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_DOWN_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_MIN_DRESS, param);
 
-    param = adg_param_spec_dress("note-dress",
-                                  P_("Note Dress"),
-                                  P_("Font dress for the note"),
-                                  ADG_DRESS_TEXT_VALUE,
+    param = adg_param_spec_dress("max-dress",
+                                  P_("Maximum Limit Dress"),
+                                  P_("Font dress for the upper limit value"),
+                                  ADG_DRESS_TEXT_LIMIT,
                                   G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NOTE_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_MAX_DRESS, param);
 
     param = adg_param_spec_dress("line-dress",
                                   P_("Line Dress"),
@@ -197,12 +186,12 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING, param);
 
-    param = g_param_spec_double("tolerance-spacing",
-                                P_("Tolerance Spacing"),
-                                P_("Distance between up and down tolerance text"),
+    param = g_param_spec_double("limits-spacing",
+                                P_("Limits Spacing"),
+                                P_("Distance between limits/tolerances"),
                                 0, G_MAXDOUBLE, 2,
                                 G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_SPACING, param);
+    g_object_class_install_property(gobject_class, PROP_LIMITS_SPACING, param);
 
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
@@ -210,18 +199,12 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT, param);
 
-    param = g_param_spec_boxed("tolerance-shift",
-                               P_("Tolerance Shift"),
-                               P_("Used to specify a smooth displacement (in global space) for the tolerance text by taking as reference the perfect compact position"),
+    param = g_param_spec_boxed("limits-shift",
+                               P_("Limits Shift"),
+                               P_("Used to specify a smooth displacement (in global space) for the limits/tolerances by taking as reference the perfect compact position"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TOLERANCE_SHIFT,
+    g_object_class_install_property(gobject_class, PROP_LIMITS_SHIFT,
                                     param);
-
-    param = g_param_spec_boxed("note-shift",
-                               P_("Note Shift"),
-                               P_("Used to specify a smooth displacement (in global space) for the note text by taking as reference the perfect compact position"),
-                               ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NOTE_SHIFT, param);
 
     param = g_param_spec_string("number-format",
                                 P_("Number Format"),
@@ -252,22 +235,19 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->marker2.parameters = NULL;
     data->color_dress = ADG_DRESS_COLOR_DIMENSION;
     data->value_dress = ADG_DRESS_TEXT_VALUE;
-    data->up_dress = ADG_DRESS_TEXT_LIMIT;
-    data->down_dress = ADG_DRESS_TEXT_LIMIT;
-    data->note_dress = ADG_DRESS_TEXT_VALUE;
+    data->min_dress = ADG_DRESS_TEXT_LIMIT;
+    data->max_dress = ADG_DRESS_TEXT_LIMIT;
     data->line_dress = ADG_DRESS_LINE_DIMENSION;
     data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;
     data->to_offset = 6;
     data->beyond = 20;
     data->baseline_spacing = 30;
-    data->tolerance_spacing = 1;
+    data->limits_spacing = 1;
     data->quote_shift.x = 0;
     data->quote_shift.y = -4;
-    data->tolerance_shift.x = +2;
-    data->tolerance_shift.y = -2;
-    data->note_shift.x = +4;
-    data->note_shift.y = 0;
+    data->limits_shift.x = +2;
+    data->limits_shift.y = -2;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
 
@@ -301,14 +281,11 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_VALUE_DRESS:
         g_value_set_int(value, data->value_dress);
         break;
-    case PROP_UP_DRESS:
-        g_value_set_int(value, data->up_dress);
+    case PROP_MIN_DRESS:
+        g_value_set_int(value, data->min_dress);
         break;
-    case PROP_DOWN_DRESS:
-        g_value_set_int(value, data->down_dress);
-        break;
-    case PROP_NOTE_DRESS:
-        g_value_set_int(value, data->note_dress);
+    case PROP_MAX_DRESS:
+        g_value_set_int(value, data->max_dress);
         break;
     case PROP_LINE_DRESS:
         g_value_set_int(value, data->line_dress);
@@ -325,17 +302,14 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_BASELINE_SPACING:
         g_value_set_double(value, data->baseline_spacing);
         break;
-    case PROP_TOLERANCE_SPACING:
-        g_value_set_double(value, data->tolerance_spacing);
+    case PROP_LIMITS_SPACING:
+        g_value_set_double(value, data->limits_spacing);
         break;
     case PROP_QUOTE_SHIFT:
         g_value_set_boxed(value, &data->quote_shift);
         break;
-    case PROP_TOLERANCE_SHIFT:
-        g_value_set_boxed(value, &data->tolerance_shift);
-        break;
-    case PROP_NOTE_SHIFT:
-        g_value_set_boxed(value, &data->note_shift);
+    case PROP_LIMITS_SHIFT:
+        g_value_set_boxed(value, &data->limits_shift);
         break;
     case PROP_NUMBER_FORMAT:
         g_value_set_string(value, data->number_format);
@@ -372,14 +346,11 @@ set_property(GObject *object,
     case PROP_VALUE_DRESS:
         adg_dress_set(&data->value_dress, g_value_get_int(value));
         break;
-    case PROP_UP_DRESS:
-        adg_dress_set(&data->up_dress, g_value_get_int(value));
+    case PROP_MIN_DRESS:
+        adg_dress_set(&data->min_dress, g_value_get_int(value));
         break;
-    case PROP_DOWN_DRESS:
-        adg_dress_set(&data->down_dress, g_value_get_int(value));
-        break;
-    case PROP_NOTE_DRESS:
-        adg_dress_set(&data->note_dress, g_value_get_int(value));
+    case PROP_MAX_DRESS:
+        adg_dress_set(&data->max_dress, g_value_get_int(value));
         break;
     case PROP_LINE_DRESS:
         adg_dress_set(&data->line_dress, g_value_get_int(value));
@@ -396,17 +367,14 @@ set_property(GObject *object,
     case PROP_BASELINE_SPACING:
         data->baseline_spacing = g_value_get_double(value);
         break;
-    case PROP_TOLERANCE_SPACING:
-        data->tolerance_spacing = g_value_get_double(value);
+    case PROP_LIMITS_SPACING:
+        data->limits_spacing = g_value_get_double(value);
         break;
     case PROP_QUOTE_SHIFT:
         cpml_pair_copy(&data->quote_shift, g_value_get_boxed(value));
         break;
-    case PROP_TOLERANCE_SHIFT:
-        set_tolerance_shift(dim_style, g_value_get_boxed(value));
-        break;
-    case PROP_NOTE_SHIFT:
-        set_note_shift(dim_style, g_value_get_boxed(value));
+    case PROP_LIMITS_SHIFT:
+        set_limits_shift(dim_style, g_value_get_boxed(value));
         break;
     case PROP_NUMBER_FORMAT:
         set_number_format(dim_style, g_value_get_string(value));
@@ -613,47 +581,7 @@ adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 }
 
 /**
- * adg_dim_style_get_up_dress:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets the @dim_style dress to be used for the upper limit.
- *
- * Returns: the upper limit dress
- **/
-AdgDress
-adg_dim_style_get_up_dress(AdgDimStyle *dim_style)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
-
-    data = dim_style->data;
-
-    return data->up_dress;
-}
-
-/**
- * adg_dim_style_set_up_dress:
- * @dim_style: an #AdgDimStyle object
- * @dress: the new upper limit dress
- *
- * Sets a new dress on @dim_style for the upper limit value.
- **/
-void
-adg_dim_style_set_up_dress(AdgDimStyle *dim_style, AdgDress dress)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->up_dress, dress))
-        g_object_notify((GObject *) dim_style, "up-dress");
-}
-
-/**
- * adg_dim_style_get_down_dress:
+ * adg_dim_style_get_min_dress:
  * @dim_style: an #AdgDimStyle object
  *
  * Gets the @dim_style dress to be used for the lower limit.
@@ -661,7 +589,7 @@ adg_dim_style_set_up_dress(AdgDimStyle *dim_style, AdgDress dress)
  * Returns: the lower limit dress
  **/
 AdgDress
-adg_dim_style_get_down_dress(AdgDimStyle *dim_style)
+adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
@@ -669,18 +597,18 @@ adg_dim_style_get_down_dress(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return data->down_dress;
+    return data->min_dress;
 }
 
 /**
- * adg_dim_style_set_down_dress:
+ * adg_dim_style_set_min_dress:
  * @dim_style: an #AdgDimStyle object
  * @dress: the new lower limit dress
  *
  * Sets a new dress on @dim_style for the lower limit value.
  **/
 void
-adg_dim_style_set_down_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -688,20 +616,20 @@ adg_dim_style_set_down_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->down_dress, dress))
-        g_object_notify((GObject *) dim_style, "down-dress");
+    if (adg_dress_set(&data->min_dress, dress))
+        g_object_notify((GObject *) dim_style, "min-dress");
 }
 
 /**
- * adg_dim_style_get_note_dress:
+ * adg_dim_style_get_max_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the @dim_style dress to be used for the note text.
+ * Gets the @dim_style dress to be used for the upper limit.
  *
- * Returns: the note dress
+ * Returns: the upper limit dress
  **/
 AdgDress
-adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
+adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
@@ -709,18 +637,18 @@ adg_dim_style_get_note_dress(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return data->note_dress;
+    return data->max_dress;
 }
 
 /**
- * adg_dim_style_set_note_dress:
+ * adg_dim_style_set_max_dress:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new note style
+ * @dress: the new upper limit dress
  *
- * Sets a new dress on @dim_style for the note text.
+ * Sets a new dress on @dim_style for the upper limit value.
  **/
 void
-adg_dim_style_set_note_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -728,8 +656,8 @@ adg_dim_style_set_note_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->note_dress, dress))
-        g_object_notify((GObject *) dim_style, "note-dress");
+    if (adg_dress_set(&data->max_dress, dress))
+        g_object_notify((GObject *) dim_style, "max-dress");
 }
 
 /**
@@ -969,15 +897,15 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 }
 
 /**
- * adg_dim_style_get_tolerance_spacing:
+ * adg_dim_style_get_limits_spacing:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the distance (in global space) between up and down tolerances.
+ * Gets the distance (in global space) between the limits/tolerances.
  *
  * Returns: the requested spacing
  **/
 gdouble
-adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
+adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
@@ -985,27 +913,27 @@ adg_dim_style_get_tolerance_spacing(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return data->tolerance_spacing;
+    return data->limits_spacing;
 }
 
 /**
- * adg_dim_style_set_tolerance_spacing:
+ * adg_dim_style_set_limits_spacing:
  * @dim_style: an #AdgDimStyle object
  * @spacing: the new spacing
  *
- * Sets a new "tolerance-spacing" value.
+ * Sets a new #AdgDimStyle:limits-spacing value.
  **/
 void
-adg_dim_style_set_tolerance_spacing(AdgDimStyle *dim_style, gdouble spacing)
+adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
-    data->tolerance_spacing = spacing;
+    data->limits_spacing = spacing;
 
-    g_object_notify((GObject *) dim_style, "tolerance-spacing");
+    g_object_notify((GObject *) dim_style, "limits-spacing");
 }
 
 /**
@@ -1050,16 +978,16 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 }
 
 /**
- * adg_dim_style_get_tolerance_shift:
+ * adg_dim_style_get_limits_shift:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the smooth displacement of the tolerance text. The returned pointer
+ * Gets the smooth displacement for the limits. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
  * Returns: the requested shift
  **/
 const AdgPair *
-adg_dim_style_get_tolerance_shift(AdgDimStyle *dim_style)
+adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
@@ -1067,60 +995,23 @@ adg_dim_style_get_tolerance_shift(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return &data->tolerance_shift;
+    return &data->limits_shift;
 }
 
 /**
- * adg_dim_style_set_tolerance_shift:
+ * adg_dim_style_set_limits_shift:
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
- * Sets a new "tolerance-shift" value.
+ * Sets a new #AdgDimStyle:limits-shift value.
  **/
 void
-adg_dim_style_set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    set_tolerance_shift(dim_style, shift);
-    g_object_notify((GObject *) dim_style, "tolerance-shift");
-}
-
-/**
- * adg_dim_style_get_note_shift:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets the smooth displacement of the note text. The returned pointer
- * refers to an internal allocated struct and must not be modified or freed.
- *
- * Returns: the requested shift
- **/
-const AdgPair *
-adg_dim_style_get_note_shift(AdgDimStyle *dim_style)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
-
-    data = dim_style->data;
-
-    return &data->note_shift;
-}
-
-/**
- * adg_dim_style_set_note_shift:
- * @dim_style: an #AdgDimStyle object
- * @shift: the new displacement
- *
- * Sets a new "note-shift" value.
- **/
-void
-adg_dim_style_set_note_shift(AdgDimStyle *dim_style, const AdgPair *shift)
-{
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    set_note_shift(dim_style, shift);
-    g_object_notify((GObject *) dim_style, "note-shift");
+    set_limits_shift(dim_style, shift);
+    g_object_notify((GObject *) dim_style, "limits-shift");
 }
 
 /**
@@ -1206,19 +1097,11 @@ apply(AdgStyle *style, cairo_t *cr)
 }
 
 static void
-set_tolerance_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     AdgDimStylePrivate *data = dim_style->data;
 
-    cpml_pair_copy(&data->tolerance_shift, shift);
-}
-
-static void
-set_note_shift(AdgDimStyle *dim_style, const AdgPair *shift)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    cpml_pair_copy(&data->note_shift, shift);
+    cpml_pair_copy(&data->limits_shift, shift);
 }
 
 static void
