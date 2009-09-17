@@ -435,12 +435,43 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
- * adg_entity_transform_global_map:
+ * adg_entity_before_global_map:
  * @entity: an #AdgEntity object
  * @transformation: the transformation to apply
  *
- * Applies a transformation to the global map of @entity. This is
- * equivalent to the following code:
+ * Convenient function to change the global map of @entity by
+ * applying @tranformation before the current matrix. This is
+ * logically equivalent to the following code:
+ *
+ * |[
+ * AdgMatrix tmp_map;
+ * adg_entity_get_global_map(entity, &tmp_map);
+ * cairo_matrix_multiply(&tmp_map, &tmp_map, transformation);
+ * adg_entity_set_global_map(entity, &tmp_map);
+ * ]|
+ **/
+void
+adg_entity_before_global_map(AdgEntity *entity, const AdgMatrix *transformation)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(transformation != NULL);
+
+    data = entity->data;
+
+    cairo_matrix_multiply(&data->global_map, &data->global_map, transformation);
+    g_object_notify((GObject *) entity, "global-map");
+}
+
+/**
+ * adg_entity_after_global_map:
+ * @entity: an #AdgEntity object
+ * @transformation: the transformation to apply
+ *
+ * Convenient function to change the global map of @entity by
+ * applying @tranformation after the current matrix. This is
+ * logically equivalent to the following code:
  *
  * |[
  * AdgMatrix tmp_map;
@@ -450,8 +481,7 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  * ]|
  **/
 void
-adg_entity_transform_global_map(AdgEntity *entity,
-                                const AdgMatrix *transformation)
+adg_entity_after_global_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
 
@@ -520,12 +550,43 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
- * adg_entity_transform_local_map:
+ * adg_entity_before_local_map:
  * @entity: an #AdgEntity object
  * @transformation: the transformation to apply
  *
- * Applies a transformation to the local map of @entity. This is
- * equivalent to the following code:
+ * Convenient function to change the local map of @entity by
+ * applying @tranformation before the current matrix. This is
+ * logically equivalent to the following code:
+ *
+ * |[
+ * AdgMatrix tmp_map;
+ * adg_entity_get_local_map(entity, &tmp_map);
+ * cairo_matrix_multiply(&tmp_map, &tmp_map, transformation);
+ * adg_entity_set_local_map(entity, &tmp_map);
+ * ]|
+ **/
+void
+adg_entity_before_local_map(AdgEntity *entity, const AdgMatrix *transformation)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(transformation != NULL);
+
+    data = entity->data;
+
+    cairo_matrix_multiply(&data->local_map, &data->local_map, transformation);
+    g_object_notify((GObject *) entity, "local-map");
+}
+
+/**
+ * adg_entity_after_local_map:
+ * @entity: an #AdgEntity object
+ * @transformation: the transformation to apply
+ *
+ * Convenient function to change the local map of @entity by
+ * applying @tranformation after the current matrix. This is
+ * logically equivalent to the following code:
  *
  * |[
  * AdgMatrix tmp_map;
@@ -535,8 +596,7 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  * ]|
  **/
 void
-adg_entity_transform_local_map(AdgEntity *entity,
-                               const AdgMatrix *transformation)
+adg_entity_after_local_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
 
