@@ -628,8 +628,8 @@ _adg_dress_text_value(void)
 /**
  * ADG_DRESS_TEXT_LIMIT:
  *
- * The builtin #AdgDress font used to render the tolerances or both
- * the upper and lower values of a dimension. This dress will be
+ * The builtin #AdgDress font used to render the limits of either
+ * the min and max values of a dimension. This dress will be
  * resolved to an #AdgFontStyle instance.
  **/
 AdgDress
