@@ -233,14 +233,14 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     /* B */
     ldim = adg_ldim_new_full_explicit(data->A - data->B, data->D3 / 2 - CHAMFER, data->A, data->D7 / 2,
                                       ADG_DIR_DOWN, 0, data->D3 / 2);
-    adg_dim_set_tolerances(ADG_DIM(ldim), NULL, "+0.1");
+    adg_dim_set_limits(ADG_DIM(ldim), NULL, "+0.1");
     adg_ldim_switch_extension2(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* A */
     ldim = adg_ldim_new_full_explicit(0, data->D1 / 2, data->A, data->D7 / 2,
                                       ADG_DIR_DOWN, 0, data->D3 / 2);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "-0.05", "+0.05");
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -250,7 +250,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     x = data->A - data->B + data->LD3 - CHAMFER;
     ldim = adg_ldim_new_full_explicit(x, -data->D3 / 2, x, data->D3 / 2,
                                       ADG_DIR_RIGHT, data->A, 0);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "-0.25", NULL);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 5);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -258,7 +258,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     x = data->A - data->C + data->LD6;
     ldim = adg_ldim_new_full_explicit(x, -data->D6 / 2, x, data->D6 / 2,
                                       ADG_DIR_RIGHT, data->A, 0);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -273,7 +273,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     x = data->A - data->C;
     ldim = adg_ldim_new_full_explicit(x, -data->D5 / 2, x, data->D5 / 2,
                                       ADG_DIR_RIGHT, data->A, 0);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -287,7 +287,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     /* D1 */
     ldim = adg_ldim_new_full_explicit(0, -data->D1 / 2, 0, data->D1 / 2,
                                       ADG_DIR_LEFT, 0, 0);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "+0.05", "-0.05");
+    adg_dim_set_limits(ADG_DIM(ldim), "+0.05", "-0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -296,7 +296,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     x = data->A - data->B - data->LD2 + y * SQRT3;
     ldim = adg_ldim_new_full_explicit(x, -data->D2 / 2, x, data->D2 / 2,
                                       ADG_DIR_LEFT, 0, 0);
-    adg_dim_set_tolerances(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
 
