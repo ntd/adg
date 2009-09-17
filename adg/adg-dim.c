@@ -50,7 +50,6 @@ enum {
     PROP_REF2,
     PROP_POS1,
     PROP_POS2,
-    PROP_ANGLE,
     PROP_LEVEL,
     PROP_OUTSIDE,
     PROP_VALUE,
@@ -71,10 +70,7 @@ static void     set_property            (GObject        *object,
                                          GParamSpec     *pspec);
 static gboolean invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
-static void     quote_layout            (AdgDim         *dim,
-                                         cairo_t        *cr);
-static gboolean set_angle               (AdgDim         *dim,
-                                         gdouble         angle);
+static gdouble  quote_angle             (gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
 static gboolean set_min                 (AdgDim         *dim,
@@ -105,6 +101,7 @@ adg_dim_class_init(AdgDimClass *klass)
 
     entity_class->invalidate = invalidate;
 
+    klass->quote_angle = quote_angle;
     klass->default_value = default_value;
 
     param = adg_param_spec_dress("dress",
@@ -139,13 +136,6 @@ adg_dim_class_init(AdgDimClass *klass)
                                P_("Second position point: it will be computed with the level property to get the real dimension position"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_POS2, param);
-
-    param = g_param_spec_double("angle",
-                                P_("Angle"),
-                                P_("The dimension direction, if relevant"),
-                                -G_MAXDOUBLE, G_MAXDOUBLE, 0,
-                                G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_ANGLE, param);
 
     param = g_param_spec_double("level",
                                 P_("Level"),
@@ -191,7 +181,6 @@ adg_dim_init(AdgDim *dim)
     data->ref2.x = data->ref2.y = 0;
     data->pos1.x = data->pos1.y = 0;
     data->pos2.x = data->pos2.y = 0;
-    data->angle = 0;
     data->level = 1;
     data->value = NULL;
     data->min = NULL;
@@ -248,9 +237,6 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_POS2:
         g_value_set_boxed(value, &data->pos1);
         break;
-    case PROP_ANGLE:
-        g_value_set_double(value, data->angle);
-        break;
     case PROP_LEVEL:
         g_value_set_double(value, data->level);
         break;
@@ -297,9 +283,6 @@ set_property(GObject *object, guint prop_id,
         break;
     case PROP_POS2:
         cpml_pair_copy(&data->pos2, (AdgPair *) g_value_get_boxed(value));
-        break;
-    case PROP_ANGLE:
-        set_angle(dim, g_value_get_double(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -367,75 +350,6 @@ adg_dim_set_dress(AdgDim *dim, AdgDress dress)
 
     if (adg_dress_set(&data->dress, dress))
         g_object_notify((GObject *) dim, "dress");
-}
-
-/**
- * adg_dim_get_org:
- * @dim: an #AdgDim
- *
- * Gets the origin (org) coordinates. The returned pair is internally
- * owned and must not be freed or modified. This function is only
- * useful in new dimension implementations.
- *
- * Returns: the org coordinates
- **/
-const AdgPair *
-adg_dim_get_org(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return &data->org;
-}
-
-/**
- * adg_dim_set_org:
- * @dim: an #AdgDim
- * @org: the org coordinates
- *
- * <note><para>
- * This function is only useful in new dimension implementations.
- * </para></note>
- *
- * Sets new org coordinates.
- **/
-void
-adg_dim_set_org(AdgDim *dim, const AdgPair *org)
-{
-    AdgDimPrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM(dim));
-    g_return_if_fail(org != NULL);
-
-    data = dim->data;
-    data->org = *org;
-}
-
-/**
- * adg_dim_set_org_explicit:
- * @dim: an #AdgDim
- * @org_x: x component of org
- * @org_y: y component of org
- *
- * <note><para>
- * This function is only useful in new dimension implementations.
- * </para></note>
- *
- * Explicitely sets new org coordinates.
- **/
-void
-adg_dim_set_org_explicit(AdgDim *dim, gdouble org_x, gdouble org_y)
-{
-    AdgDimPrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    data = dim->data;
-    data->org.x = org_x;
-    data->org.y = org_y;
 }
 
 /**
@@ -643,52 +557,6 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
     pos2.y = pos2_y;
 
     adg_dim_set_pos(dim, &pos1, &pos2);
-}
-
-/**
- * adg_dim_get_angle:
- * @dim: an #AdgDim
- *
- * <note><para>
- * This function is only useful in new dimension implementations.
- * </para></note>
- *
- * Gets the dimension angle.
- *
- * Returns: the angle (in radians)
- **/
-gdouble
-adg_dim_get_angle(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
-
-    data = dim->data;
-
-    return data->angle;
-}
-
-/**
- * adg_dim_set_angle:
- * @dim: an #AdgDim
- * @angle: the new angle (in radians)
- *
- * <note><para>
- * This function is only useful in new dimension implementations.
- * </para></note>
- *
- * Sets a new dimension angle. The @angle could be modified by this
- * function to fit in the current dimension style mode, so do not
- * expect to get the same value with adg_dim_get_angle().
- **/
-void
-adg_dim_set_angle(AdgDim *dim, gdouble angle)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (set_angle(dim, angle))
-        g_object_notify((GObject *) dim, "angle");
 }
 
 /**
@@ -909,50 +777,50 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 }
 
 /**
- * adg_dim_render_quote:
- * @dim: an #AdgDim object
- * @cr: a #cairo_t drawing context
+ * adg_dim_quote_angle:
+ * @dim: an #AdgDim
+ * @angle: an angle (in radians)
  *
  * <note><para>
  * This function is only useful in new dimension implementations.
  * </para></note>
  *
- * Renders the quote of @dim at the @org position.
+ * Converts @angle accordling to the style of @dim. Any quote angle
+ * should be validated by this method because every dimensioning
+ * style has its own convention regardling the text rotation.
+ *
+ * Returns: the angle to use (always in radians)
  **/
-void
-adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
+gdouble
+adg_dim_quote_angle(AdgDim *dim, gdouble angle)
 {
-    AdgDimPrivate *data;
+    AdgDimClass *klass;
 
-    g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_val_if_fail(ADG_IS_DIM(dim), angle);
 
-    data = dim->data;
+    klass = ADG_DIM_GET_CLASS(dim);
 
-    quote_layout(dim, cr);
+    if (klass->quote_angle == NULL)
+        return angle;
 
-    adg_entity_render((AdgEntity *) data->quote.container, cr);
+    return klass->quote_angle(angle);
 }
 
-static gboolean
-invalidate(AdgEntity *entity)
-{
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
-
-    adg_entity_invalidate((AdgEntity *) data->quote.container);
-
-    return TRUE;
-}
-
-static gchar *
-default_value(AdgDim *dim)
-{
-    g_warning("AdgDim::default_value not implemented for `%s'",
-              g_type_name(G_TYPE_FROM_INSTANCE(dim)));
-    return g_strdup("undef");
-}
-
-static void
-quote_layout(AdgDim *dim, cairo_t *cr)
+/**
+ * adg_dim_get_quote:
+ * @dim: an #AdgDim
+ * @cr: a cairo context
+ *
+ * Updates the layout of the quote of @dim and returns an #AdgContainer
+ * grouping all the entities needed to render() this quote.
+ *
+ * This container should still be positioned and rotated properly, as
+ * its origin is always (0, 0) and does not have any rotation.
+ *
+ * Returns: the #AdgContainer of the quote
+ **/
+AdgContainer *
+adg_dim_get_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgEntity *entity;
     AdgDimPrivate *data;
@@ -1001,14 +869,6 @@ quote_layout(AdgDim *dim, cairo_t *cr)
         adg_toy_text_set_label((AdgToyText *) data->quote.max, data->max);
     }
 
-    /* Initialize local maps to the origin */
-    cairo_matrix_init_translate(&map, data->org.x, data->org.y);
-    adg_entity_set_local_map((AdgEntity *) data->quote.container, &map);
-
-    /* Initialize global maps to the quote rotation angle */
-    cairo_matrix_init_rotate(&map, data->angle);
-    adg_entity_set_global_map((AdgEntity *) data->quote.container, &map);
-
     /* Basic value */
     adg_toy_text_get_extents((AdgToyText *) data->quote.value, cr, &extents);
 
@@ -1051,24 +911,39 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(dim_style);
     cairo_matrix_init_translate(&map, shift->x - extents.width / 2, shift->y);
-    adg_entity_transform_global_map((AdgEntity *) data->quote.container, &map);
+    adg_entity_set_global_map((AdgEntity *) data->quote.container, &map);
+
+    return data->quote.container;
 }
 
-static gboolean
-set_angle(AdgDim *dim, gdouble angle)
-{
-    AdgDimPrivate *data = dim->data;
 
+static gboolean
+invalidate(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    adg_entity_invalidate((AdgEntity *) data->quote.container);
+
+    return TRUE;
+}
+
+static gchar *
+default_value(AdgDim *dim)
+{
+    g_warning("AdgDim::default_value not implemented for `%s'",
+              g_type_name(G_TYPE_FROM_INSTANCE(dim)));
+    return g_strdup("undef");
+}
+
+static gdouble
+quote_angle(gdouble angle)
+{
     angle = cpml_angle(angle);
+
     if (angle > G_PI_4 || angle <= -G_PI_4 * 3)
         angle = cpml_angle(angle + G_PI);
 
-    if (angle == data->angle)
-        return FALSE;
-
-    data->angle = angle;
-
-    return TRUE;
+    return angle;
 }
 
 static gboolean

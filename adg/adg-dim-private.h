@@ -34,7 +34,6 @@ struct _AdgDimPrivate {
     AdgPair              ref2;
     AdgPair              pos1;
     AdgPair              pos2;
-    gdouble              angle;
     gdouble              level;
     AdgThreeState        outside;
     gchar               *value;
@@ -47,8 +46,6 @@ struct _AdgDimPrivate {
         AdgEntity       *min;
         AdgEntity       *max;
     }                    quote;
-
-    AdgPair              org;
 };
 
 G_END_DECLS

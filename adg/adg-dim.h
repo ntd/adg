@@ -21,7 +21,7 @@
 #ifndef __ADG_DIM_H__
 #define __ADG_DIM_H__
 
-#include <adg/adg-entity.h>
+#include <adg/adg-container.h>
 #include <adg/adg-pair.h>
 #include <adg/adg-enums.h>
 
@@ -49,6 +49,7 @@ struct _AdgDimClass {
     AdgEntityClass       parent_class;
     /*< public >*/
     /* Virtual Table */
+    gdouble             (*quote_angle)          (gdouble         angle);
     gchar *             (*default_value)        (AdgDim         *dim);
 };
 
@@ -57,15 +58,6 @@ GType           adg_dim_get_type                (void) G_GNUC_CONST;
 AdgDress        adg_dim_get_dress               (AdgDim         *dim);
 void            adg_dim_set_dress               (AdgDim         *dim,
                                                  AdgDress        dress);
-const AdgPair * adg_dim_get_org                 (AdgDim         *dim);
-void            adg_dim_set_org                 (AdgDim         *dim,
-                                                 const AdgPair  *org);
-void            adg_dim_set_org_explicit        (AdgDim         *dim,
-                                                 gdouble         org_x,
-                                                 gdouble         org_y);
-gdouble         adg_dim_get_angle               (AdgDim         *dim);
-void            adg_dim_set_angle               (AdgDim         *dim,
-                                                 gdouble         angle);
 const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
 const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
 void            adg_dim_set_ref                 (AdgDim         *dim,
@@ -104,7 +96,9 @@ void            adg_dim_set_max                 (AdgDim         *dim,
 void            adg_dim_set_limits              (AdgDim         *dim,
                                                  const gchar    *min,
                                                  const gchar    *max);
-void            adg_dim_render_quote            (AdgDim         *dim,
+gdouble         adg_dim_quote_angle             (AdgDim         *dim,
+                                                 gdouble         angle);
+AdgContainer *  adg_dim_get_quote               (AdgDim         *dim,
                                                  cairo_t        *cr);
 
 G_END_DECLS
