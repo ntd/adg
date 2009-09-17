@@ -586,6 +586,7 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     AdgLDimPrivate *data;
     AdgMatrix local;
     AdgPair ref1, ref2, pos1, pos2;
+    gboolean outside;
     AdgPair pair;
     gint n;
 
@@ -597,6 +598,7 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
     cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
+    outside = FALSE;
 
     if (!adg_entity_get_rendered(entity))
         update_shifts(ldim, context);
@@ -624,8 +626,37 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     cpml_pair_add(&pair, &data->to_shift);
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
-    data->cpml.data[2].header.length = 10;
-    n = 2;
+    /* Calculate the outside segments */
+    if (outside) {
+        gdouble beyond;
+        CpmlVector vector;
+
+        beyond = adg_dim_style_get_beyond(context->dim_style);
+        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
+
+        cpml_pair_from_cairo(&vector, &data->cpml.data[3]);
+        cpml_pair_sub(&vector, &pair);
+        cpml_vector_set_length(&vector, beyond);
+
+        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
+        cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
+
+        cpml_pair_sub(&pair, &vector);
+        cpml_pair_to_cairo(&pair, &data->cpml.data[7]);
+
+        cpml_pair_from_cairo(&pair, &data->cpml.data[3]);
+        cpml_pair_to_cairo(&pair, &data->cpml.data[11]);
+
+        cpml_pair_add(&pair, &vector);
+        cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
+
+        data->cpml.data[2].header.length = 2;
+        data->cpml.data[10].header.length = 2;
+        n = 10;
+    } else {
+        data->cpml.data[2].header.length = 10;
+        n = 2;
+    }
 
     /* Play with header lengths to show or hide the extension lines */
     if (data->has_extension1) {
@@ -642,22 +673,21 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
         /* Update global and local map of the quote container */
         AdgEntity *quote;
         gdouble angle;
-        AdgMatrix matrix, map;
+        AdgMatrix matrix;
 
         quote = (AdgEntity *) context->quote;
         angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
+        adg_matrix_copy(&matrix, &local);
+        cairo_matrix_invert(&matrix);
 
         pair.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
         pair.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
-        cairo_matrix_invert(&local);
-        cairo_matrix_transform_point(&local, &pair.x, &pair.y);
+        cairo_matrix_transform_point(&matrix, &pair.x, &pair.y);
         cairo_matrix_init_translate(&matrix, pair.x, pair.y);
         adg_entity_set_local_map(quote, &matrix);
 
-        adg_entity_get_global_map(quote, &map);
         cairo_matrix_init_rotate(&matrix, angle);
-        cairo_matrix_multiply(&map, &map, &matrix);
-        adg_entity_set_global_map(quote, &map);
+        adg_entity_before_global_map(quote, &matrix);
     }
 
     /* Create the internal entities, if needed */
@@ -667,12 +697,12 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     if (data->marker1 == NULL)
         data->marker1 = adg_dim_style_marker1_new(context->dim_style);
     if (data->marker1 != NULL)
-        adg_marker_set_segment(data->marker1, data->trail, 1);
+        adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
 
     if (data->marker2 == NULL)
         data->marker2 = adg_dim_style_marker2_new(context->dim_style);
     if (data->marker2 != NULL)
-        adg_marker_set_segment(data->marker2, data->trail, 1);
+        adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
 }
 
 static void
