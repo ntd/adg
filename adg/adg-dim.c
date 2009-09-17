@@ -54,8 +54,8 @@ enum {
     PROP_LEVEL,
     PROP_OUTSIDE,
     PROP_VALUE,
-    PROP_VALUE_MIN,
-    PROP_VALUE_MAX
+    PROP_MIN,
+    PROP_MAX
 };
 
 
@@ -77,11 +77,10 @@ static gboolean set_angle               (AdgDim         *dim,
                                          gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
-static gboolean set_value_min           (AdgDim         *dim,
-                                         const gchar    *value_min);
-static gboolean set_value_max           (AdgDim         *dim,
-                                         const gchar    *value_max);
-static void     detach_entity           (AdgEntity     **p_entity);
+static gboolean set_min                 (AdgDim         *dim,
+                                         const gchar    *min);
+static gboolean set_max                 (AdgDim         *dim,
+                                         const gchar    *max);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -107,7 +106,6 @@ adg_dim_class_init(AdgDimClass *klass)
     entity_class->invalidate = invalidate;
 
     klass->default_value = default_value;
-    klass->quote_layout = quote_layout;
 
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
@@ -173,13 +171,13 @@ adg_dim_class_init(AdgDimClass *klass)
                                 P_("Minimum Value or Low Tolerance"),
                                 P_("The minimum value allowed or the lowest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_VALUE_MIN, param);
+    g_object_class_install_property(gobject_class, PROP_MIN, param);
 
     param = g_param_spec_string("value-max",
                                 P_("Maximum Value or High Tolerance"),
                                 P_("The maximum value allowed or the highest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_VALUE_MAX, param);
+    g_object_class_install_property(gobject_class, PROP_MAX, param);
 }
 
 static void
@@ -196,15 +194,8 @@ adg_dim_init(AdgDim *dim)
     data->angle = 0;
     data->level = 1;
     data->value = NULL;
-    data->value_min = NULL;
-    data->value_max = NULL;
-
-    data->value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                      "parent", dim, NULL);
-    data->value_min_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                          "parent", dim, NULL);
-    data->value_max_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                          "parent", dim, NULL);
+    data->min = NULL;
+    data->max = NULL;
 
     dim->data = data;
 }
@@ -214,9 +205,10 @@ dispose(GObject *object)
 {
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
-    detach_entity(&data->value_entity);
-    detach_entity(&data->value_min_entity);
-    detach_entity(&data->value_max_entity);
+    if (data->quote.container != NULL) {
+        g_object_unref(data->quote.container);
+        data->quote.container = NULL;
+    }
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -228,8 +220,8 @@ finalize(GObject *object)
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
     g_free(data->value);
-    g_free(data->value_min);
-    g_free(data->value_max);
+    g_free(data->min);
+    g_free(data->max);
 
     if (PARENT_OBJECT_CLASS->finalize != NULL)
         PARENT_OBJECT_CLASS->finalize(object);
@@ -268,11 +260,11 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_VALUE:
         g_value_set_string(value, data->value);
         break;
-    case PROP_VALUE_MIN:
-        g_value_set_string(value, data->value_min);
+    case PROP_MIN:
+        g_value_set_string(value, data->min);
         break;
-    case PROP_VALUE_MAX:
-        g_value_set_string(value, data->value_max);
+    case PROP_MAX:
+        g_value_set_string(value, data->max);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -318,11 +310,11 @@ set_property(GObject *object, guint prop_id,
     case PROP_VALUE:
         set_value(dim, g_value_get_string(value));
         break;
-    case PROP_VALUE_MIN:
-        set_value_min(dim, g_value_get_string(value));
+    case PROP_MIN:
+        set_min(dim, g_value_get_string(value));
         break;
-    case PROP_VALUE_MAX:
-        set_value_max(dim, g_value_get_string(value));
+    case PROP_MAX:
+        set_max(dim, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -824,7 +816,7 @@ adg_dim_set_value(AdgDim *dim, const gchar *value)
 }
 
 /**
- * adg_dim_get_value_min:
+ * adg_dim_get_min:
  * @dim: an #AdgDim
  *
  * Gets the minimum value text or %NULL on minimum value disabled.
@@ -833,7 +825,7 @@ adg_dim_set_value(AdgDim *dim, const gchar *value)
  * Returns: the mimimum value text
  **/
 const gchar *
-adg_dim_get_value_min(AdgDim *dim)
+adg_dim_get_min(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -841,27 +833,27 @@ adg_dim_get_value_min(AdgDim *dim)
 
     data = dim->data;
 
-    return data->value_min;
+    return data->min;
 }
 
 /**
- * adg_dim_set_value_min:
+ * adg_dim_set_min:
  * @dim: an #AdgDim
- * @value_min: the new minimum value
+ * @min: the new minimum limit
  *
- * Sets the minimum value. Use %NULL as @value_min to disable it.
+ * Sets the minimum value. Use %NULL as @min to disable it.
  **/
 void
-adg_dim_set_value_min(AdgDim *dim, const gchar *value_min)
+adg_dim_set_min(AdgDim *dim, const gchar *min)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_value_min(dim, value_min))
+    if (set_min(dim, min))
         g_object_notify((GObject *) dim, "value-min");
 }
 
 /**
- * adg_dim_get_value_max:
+ * adg_dim_get_max:
  * @dim: an #AdgDim
  *
  * Gets the maximum value text or %NULL on maximum value disabled.
@@ -870,7 +862,7 @@ adg_dim_set_value_min(AdgDim *dim, const gchar *value_min)
  * Returns: the maximum value text
  **/
 const gchar *
-adg_dim_get_value_max(AdgDim *dim)
+adg_dim_get_max(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -878,42 +870,41 @@ adg_dim_get_value_max(AdgDim *dim)
 
     data = dim->data;
 
-    return data->value_max;
+    return data->max;
 }
 
 /**
- * adg_dim_set_value_max:
+ * adg_dim_set_max:
  * @dim: an #AdgDim
- * @value_max: the new maximum value
+ * @max: the new maximum value
  *
- * Sets the maximum value. Use %NULL as @value_max to disable it.
+ * Sets the maximum value. Use %NULL as @max to disable it.
  **/
 void
-adg_dim_set_value_max(AdgDim *dim, const gchar *value_max)
+adg_dim_set_max(AdgDim *dim, const gchar *max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_value_max(dim, value_max))
+    if (set_max(dim, max))
         g_object_notify((GObject *) dim, "value-max");
 }
 
 /**
- * adg_dim_set_tolerances:
+ * adg_dim_set_limits:
  * @dim: an #AdgDim
- * @value_min: the new minumum value
- * @value_max: the new maximum value
+ * @min: the new minumum value
+ * @max: the new maximum value
  *
- * Shortcut to set both the tolerances at once.
+ * Shortcut to set both the limits at once.
  **/
 void
-adg_dim_set_tolerances(AdgDim *dim,
-                       const gchar *value_min, const gchar *value_max)
+adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
     g_object_freeze_notify((GObject *) dim);
-    adg_dim_set_value_min(dim, value_min);
-    adg_dim_set_value_max(dim, value_max);
+    adg_dim_set_min(dim, min);
+    adg_dim_set_max(dim, max);
     g_object_thaw_notify((GObject *) dim);
 }
 
@@ -932,34 +923,14 @@ void
 adg_dim_render_quote(AdgDim *dim, cairo_t *cr)
 {
     AdgDimPrivate *data;
-    AdgDimStyle *dim_style;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
     data = dim->data;
-    dim_style = (AdgDimStyle *)
-        adg_entity_style((AdgEntity *) dim, data->dress);
 
-    /* Check if the basic value text needs to be automatically generated */
-    if (data->value == NULL) {
-        gchar *text = ADG_DIM_GET_CLASS(dim)->default_value(dim);
-        adg_toy_text_set_label((AdgToyText *) data->value_entity, text);
-        g_free(text);
-    }
+    quote_layout(dim, cr);
 
-    /* Set the internal toy_text dresses */
-    adg_toy_text_set_dress((AdgToyText *) data->value_entity,
-                           adg_dim_style_get_value_dress(dim_style));
-    adg_toy_text_set_dress((AdgToyText *) data->value_min_entity,
-                           adg_dim_style_get_down_dress(dim_style));
-    adg_toy_text_set_dress((AdgToyText *) data->value_max_entity,
-                           adg_dim_style_get_up_dress(dim_style));
-
-    ADG_DIM_GET_CLASS(dim)->quote_layout(dim, cr);
-
-    adg_entity_render(data->value_entity, cr);
-    adg_entity_render(data->value_min_entity, cr);
-    adg_entity_render(data->value_max_entity, cr);
+    adg_entity_render((AdgEntity *) data->quote.container, cr);
 }
 
 static gboolean
@@ -967,9 +938,7 @@ invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    adg_entity_invalidate(data->value_entity);
-    adg_entity_invalidate(data->value_min_entity);
-    adg_entity_invalidate(data->value_max_entity);
+    adg_entity_invalidate((AdgEntity *) data->quote.container);
 
     return TRUE;
 }
@@ -996,50 +965,85 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     data = dim->data;
     dim_style = (AdgDimStyle *) adg_entity_style(entity, data->dress);
 
+    if (data->quote.container == NULL)
+        data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
+                                             "parent", dim, NULL);
+
+    if (data->quote.value == NULL) {
+        AdgDress dress = adg_dim_style_get_value_dress(dim_style);
+        data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
+                                         "dress", dress, NULL);
+        adg_container_add(data->quote.container, data->quote.value);
+
+        /* Check if the basic value needs to be automatically generated */
+        if (data->value == NULL) {
+            gchar *text = ADG_DIM_GET_CLASS(dim)->default_value(dim);
+            adg_toy_text_set_label((AdgToyText *) data->quote.value, text);
+            g_free(text);
+        }
+    }
+
+    if (data->quote.min == NULL && data->min != NULL) {
+        AdgDress dress = adg_dim_style_get_min_dress(dim_style);
+        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
+                                       "dress", dress, NULL);
+        adg_container_add(data->quote.container, data->quote.min);
+
+        adg_toy_text_set_label((AdgToyText *) data->quote.min, data->min);
+    }
+
+    if (data->quote.max == NULL && data->max != NULL) {
+        AdgDress dress = adg_dim_style_get_max_dress(dim_style);
+        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
+                                       "dress", dress, NULL);
+        adg_container_add(data->quote.container, data->quote.max);
+
+        adg_toy_text_set_label((AdgToyText *) data->quote.max, data->max);
+    }
+
     /* Initialize local maps to the origin */
     cairo_matrix_init_translate(&map, data->org.x, data->org.y);
-
-    adg_entity_set_local_map(data->value_entity, &map);
-    adg_entity_set_local_map(data->value_min_entity, &map);
-    adg_entity_set_local_map(data->value_max_entity, &map);
+    adg_entity_set_local_map((AdgEntity *) data->quote.container, &map);
 
     /* Initialize global maps to the quote rotation angle */
     cairo_matrix_init_rotate(&map, data->angle);
-
-    adg_entity_set_global_map(data->value_entity, &map);
-    adg_entity_set_global_map(data->value_min_entity, &map);
-    adg_entity_set_global_map(data->value_max_entity, &map);
+    adg_entity_set_global_map((AdgEntity *) data->quote.container, &map);
 
     /* Basic value */
-    adg_toy_text_get_extents((AdgToyText *) data->value_entity, cr, &extents);
+    adg_toy_text_get_extents((AdgToyText *) data->quote.value, cr, &extents);
 
-    /* Limit values (value_min and value_max) */
-    if (data->value_min != NULL || data->value_max != NULL) {
+    /* Limit values (min and max) */
+    if (data->quote.min != NULL || data->quote.max != NULL) {
         cairo_text_extents_t min_extents = { 0 };
         cairo_text_extents_t max_extents = { 0 };
         gdouble spacing = 0;
 
-        /* Low tolerance */
-        if (data->value_min != NULL)
-            adg_toy_text_get_extents((AdgToyText *) data->value_min_entity,
+        /* Minimum limit */
+        if (data->quote.min != NULL)
+            adg_toy_text_get_extents((AdgToyText *) data->quote.min,
                                      cr, &min_extents);
 
-        /* High tolerance */
-        if (data->value_max != NULL)
-            adg_toy_text_get_extents((AdgToyText *) data->value_max_entity,
+        /* Maximum limit */
+        if (data->quote.max != NULL)
+            adg_toy_text_get_extents((AdgToyText *) data->quote.max,
                                      cr, &max_extents);
 
-        shift = adg_dim_style_get_tolerance_shift(dim_style);
-        if (data->value_min != NULL && data->value_max != NULL)
-            spacing = adg_dim_style_get_tolerance_spacing(dim_style);
+        shift = adg_dim_style_get_limits_shift(dim_style);
+        if (data->quote.min != NULL && data->quote.max != NULL)
+            spacing = adg_dim_style_get_limits_spacing(dim_style);
 
         cairo_matrix_init_translate(&map, extents.width + shift->x,
                                     (spacing + min_extents.height +
                                      max_extents.height) / 2 +
                                     shift->y - extents.height / 2);
-        adg_entity_transform_global_map(data->value_min_entity, &map);
-        cairo_matrix_translate(&map, 0, -min_extents.height - spacing);
-        adg_entity_transform_global_map(data->value_max_entity, &map);
+
+        if (data->quote.min != NULL)
+            adg_entity_set_global_map(data->quote.min, &map);
+
+        if (data->quote.max != NULL) {
+            cairo_matrix_translate(&map, 0, -min_extents.height - spacing);
+            adg_entity_set_global_map(data->quote.max, &map);
+        }
 
         extents.width += shift->x + MAX(min_extents.width, max_extents.width);
     }
@@ -1047,10 +1051,7 @@ quote_layout(AdgDim *dim, cairo_t *cr)
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(dim_style);
     cairo_matrix_init_translate(&map, shift->x - extents.width / 2, shift->y);
-
-    adg_entity_transform_global_map(data->value_entity, &map);
-    adg_entity_transform_global_map(data->value_min_entity, &map);
-    adg_entity_transform_global_map(data->value_max_entity, &map);
+    adg_entity_transform_global_map((AdgEntity *) data->quote.container, &map);
 }
 
 static gboolean
@@ -1082,47 +1083,49 @@ set_value(AdgDim *dim, const gchar *value)
 
     g_free(data->value);
     data->value = g_strdup(value);
-    adg_toy_text_set_label((AdgToyText *) data->value_entity, value);
 
-    return TRUE;
-}
-
-static gboolean
-set_value_min(AdgDim *dim, const gchar *value_min)
-{
-    AdgDimPrivate *data = dim->data;
-
-    if (adg_strcmp(value_min, data->value_min) == 0)
-        return FALSE;
-
-    g_free(data->value_min);
-    data->value_min = g_strdup(value_min);
-    adg_toy_text_set_label((AdgToyText *) data->value_min_entity, value_min);
-
-    return TRUE;
-}
-
-static gboolean
-set_value_max(AdgDim *dim, const gchar *value_max)
-{
-    AdgDimPrivate *data = dim->data;
-
-    if (adg_strcmp(value_max, data->value_max) == 0)
-        return FALSE;
-
-    g_free(data->value_max);
-    data->value_max = g_strdup(value_max);
-    adg_toy_text_set_label((AdgToyText *) data->value_max_entity, value_max);
-
-    return TRUE;
-}
-
-static void
-detach_entity(AdgEntity **p_entity)
-{
-    if (*p_entity != NULL) {
-        adg_entity_set_parent(*p_entity, NULL);
-        g_object_unref(*p_entity);
-        *p_entity = NULL;
+    if (data->quote.value != NULL) {
+        g_object_unref(data->quote.value);
+        data->quote.value = NULL;
     }
+
+    return TRUE;
+}
+
+static gboolean
+set_min(AdgDim *dim, const gchar *min)
+{
+    AdgDimPrivate *data = dim->data;
+
+    if (adg_strcmp(min, data->min) == 0)
+        return FALSE;
+
+    g_free(data->min);
+    data->min = g_strdup(min);
+
+    if (data->quote.min != NULL) {
+        g_object_unref(data->quote.min);
+        data->quote.min = NULL;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+set_max(AdgDim *dim, const gchar *max)
+{
+    AdgDimPrivate *data = dim->data;
+
+    if (adg_strcmp(max, data->max) == 0)
+        return FALSE;
+
+    g_free(data->max);
+    data->max = g_strdup(max);
+
+    if (data->quote.max != NULL) {
+        g_object_unref(data->quote.max);
+        data->quote.max = NULL;
+    }
+
+    return TRUE;
 }

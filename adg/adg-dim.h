@@ -50,8 +50,6 @@ struct _AdgDimClass {
     /*< public >*/
     /* Virtual Table */
     gchar *             (*default_value)        (AdgDim         *dim);
-    void                (*quote_layout)         (AdgDim         *dim,
-                                                 cairo_t        *cr);
 };
 
 
@@ -97,15 +95,15 @@ void            adg_dim_set_outside             (AdgDim         *dim,
 const gchar *   adg_dim_get_value               (AdgDim         *dim);
 void            adg_dim_set_value               (AdgDim         *dim,
                                                  const gchar    *value);
-const gchar *   adg_dim_get_value_min           (AdgDim         *dim);
-void            adg_dim_set_value_min           (AdgDim         *dim,
-                                                 const gchar    *value_min);
-const gchar *   adg_dim_get_value_max           (AdgDim         *dim);
-void            adg_dim_set_value_max           (AdgDim         *dim,
-                                                 const gchar    *value_max);
-void            adg_dim_set_tolerances          (AdgDim         *dim,
-                                                 const gchar    *value_min,
-                                                 const gchar    *value_max);
+const gchar *   adg_dim_get_min                 (AdgDim         *dim);
+void            adg_dim_set_min                 (AdgDim         *dim,
+                                                 const gchar    *min);
+const gchar *   adg_dim_get_max                 (AdgDim         *dim);
+void            adg_dim_set_max                 (AdgDim         *dim,
+                                                 const gchar    *max);
+void            adg_dim_set_limits              (AdgDim         *dim,
+                                                 const gchar    *min,
+                                                 const gchar    *max);
 void            adg_dim_render_quote            (AdgDim         *dim,
                                                  cairo_t        *cr);
 
