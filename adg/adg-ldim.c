@@ -71,7 +71,7 @@ static void             update_shifts   (AdgLDim                *ldim,
                                          const AdgLDimContext   *context);
 static void             layout          (AdgLDim                *ldim,
                                          const AdgLDimContext   *context);
-static void             render_gage     (AdgLDim                *ldim,
+static void             render_cage     (AdgLDim                *ldim,
                                          const AdgLDimContext   *context);
 static void             dispose_markers (AdgLDim                *ldim);
 static CpmlPath *       trail_callback  (AdgTrail               *trail,
@@ -142,13 +142,17 @@ adg_ldim_init(AdgLDim *ldim)
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cpml.path.data = data->cpml.data;
-    data->cpml.path.num_data = 12;
+    data->cpml.path.num_data = G_N_ELEMENTS(data->cpml.data);
     data->cpml.path.data[0] = move_to;
     data->cpml.path.data[2] = line_to;
     data->cpml.path.data[4] = move_to;
     data->cpml.path.data[6] = line_to;
     data->cpml.path.data[8] = move_to;
     data->cpml.path.data[10] = line_to;
+    data->cpml.path.data[12] = move_to;
+    data->cpml.path.data[14] = line_to;
+    data->cpml.path.data[16] = move_to;
+    data->cpml.path.data[18] = line_to;
 
     data->trail = NULL;
     data->marker1 = NULL;
@@ -496,8 +500,8 @@ render(AdgEntity *entity, cairo_t *cr)
 
     adg_style_apply((AdgStyle *) context.color_style, cr);
 
-    render_gage(ldim, &context);
-    adg_dim_render_quote((AdgDim *) ldim, cr);
+    render_cage(ldim, &context);
+    adg_entity_render((AdgEntity *) context.quote, cr);
 
     return TRUE;
 }
@@ -524,13 +528,15 @@ default_value(AdgDim *dim)
 static void
 fill_context(AdgLDim *ldim, AdgLDimContext *context)
 {
+    AdgDim *dim;
     AdgEntity *entity;
     AdgDress dress;
 
+    dim = (AdgDim *) ldim;
     entity = (AdgEntity *) ldim;
 
     /* Resolve dresses to styles once for all */
-    dress = adg_dim_get_dress((AdgDim *) ldim);
+    dress = adg_dim_get_dress(dim);
     context->dim_style = (AdgDimStyle *) adg_entity_style(entity, dress);
 
     dress = adg_dim_style_get_line_dress(context->dim_style);
@@ -538,6 +544,8 @@ fill_context(AdgLDim *ldim, AdgLDimContext *context)
 
     dress = adg_dim_style_get_color_dress(context->dim_style);
     context->color_style = (AdgColorStyle *) adg_entity_style(entity, dress);
+
+    context->quote = adg_dim_get_quote(dim, context->cr);
 }
 
 static void
@@ -579,69 +587,78 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     AdgMatrix local;
     AdgPair ref1, ref2, pos1, pos2;
     AdgPair pair;
+    gint n;
 
     entity = (AdgEntity *) ldim;
     dim = (AdgDim *) ldim;
     data = ldim->data;
     adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
+    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
+    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
+    cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
+    cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
 
     if (!adg_entity_get_rendered(entity))
         update_shifts(ldim, context);
 
-    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_transform(&ref1, &local);
-    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_transform(&ref2, &local);
-    cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
     cpml_pair_transform(&pos1, &local);
-    cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
     cpml_pair_transform(&pos2, &local);
 
     cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->from_shift);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
     cpml_pair_add(cpml_pair_copy(&pair, &pos1), &data->marker_shift);
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
     cpml_pair_add(&pair, &data->to_shift);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[7]);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[15]);
 
     cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->from_shift);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
     cpml_pair_add(cpml_pair_copy(&pair, &pos2), &data->marker_shift);
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
     cpml_pair_add(&pair, &data->to_shift);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[11]);
+    cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
+
+    data->cpml.data[2].header.length = 10;
+    n = 2;
 
     /* Play with header lengths to show or hide the extension lines */
     if (data->has_extension1) {
-        if (data->has_extension2)
-            data->cpml.data[6].header.length = 2;
-        else
-            data->cpml.data[6].header.length = 6;
+        data->cpml.data[14].header.length = data->has_extension2 ? 2 : 6;
     } else {
-        if (data->has_extension2)
-            data->cpml.data[2].header.length = 6;
-        else
-            data->cpml.data[2].header.length = 10;
+        data->cpml.data[n].header.length += 4;
+        if (!data->has_extension2)
+            data->cpml.data[n].header.length += 4;
     }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
-    /* TODO: temporary workaround. AdgDim should manage text rendering
-     *       positioning using global/local matrix of an AdgContainer
-     *       (to be implemented) of AdgToyText entities */
-    AdgPair org;
+    if (context->quote != NULL) {
+        /* Update global and local map of the quote container */
+        AdgEntity *quote;
+        gdouble angle;
+        AdgMatrix matrix, map;
 
-    org.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
-    org.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
+        quote = (AdgEntity *) context->quote;
+        angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
 
-    cairo_matrix_invert(&local);
-    cairo_matrix_transform_point(&local, &org.x, &org.y);
-    adg_dim_set_org(dim, &org);
-    adg_dim_set_angle(dim, data->direction + G_PI_2);
+        pair.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
+        pair.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
+        cairo_matrix_invert(&local);
+        cairo_matrix_transform_point(&local, &pair.x, &pair.y);
+        cairo_matrix_init_translate(&matrix, pair.x, pair.y);
+        adg_entity_set_local_map(quote, &matrix);
+
+        adg_entity_get_global_map(quote, &map);
+        cairo_matrix_init_rotate(&matrix, angle);
+        cairo_matrix_multiply(&map, &map, &matrix);
+        adg_entity_set_global_map(quote, &map);
+    }
 
     /* Create the internal entities, if needed */
     if (data->trail == NULL)
@@ -649,29 +666,28 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
 
     if (data->marker1 == NULL)
         data->marker1 = adg_dim_style_marker1_new(context->dim_style);
+    if (data->marker1 != NULL)
+        adg_marker_set_segment(data->marker1, data->trail, 1);
 
     if (data->marker2 == NULL)
         data->marker2 = adg_dim_style_marker2_new(context->dim_style);
+    if (data->marker2 != NULL)
+        adg_marker_set_segment(data->marker2, data->trail, 1);
 }
 
 static void
-render_gage(AdgLDim *ldim, const AdgLDimContext *context)
+render_cage(AdgLDim *ldim, const AdgLDimContext *context)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->marker1 != NULL) {
-        adg_marker_set_trail(data->marker1, data->trail);
+    if (data->marker1 != NULL)
         adg_entity_render((AdgEntity *) data->marker1, context->cr);
-    }
 
-    if (data->marker2 != NULL) {
-        adg_marker_set_trail(data->marker2, data->trail);
+    if (data->marker2 != NULL)
         adg_entity_render((AdgEntity *) data->marker2, context->cr);
-    }
-
-    adg_style_apply((AdgStyle *) context->line_style, context->cr);
 
     /* This CpmlPath has no arcs, so it can be fed directly into cairo */
+    adg_style_apply((AdgStyle *) context->line_style, context->cr);
     cairo_append_path(context->cr, &data->cpml.path);
     cairo_stroke(context->cr);
 }

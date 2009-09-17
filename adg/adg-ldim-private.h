@@ -38,13 +38,21 @@ G_BEGIN_DECLS
  * [2]  = LINE_TO
  * [3]  = baseline end
  * [4]  = MOVE_TO
- * [5]  = first extension line start
+ * [5]  = first outside line start
  * [6]  = LINE_TO
- * [7]  = first extension line end
+ * [7]  = first outside line end
  * [8]  = MOVE_TO
- * [9]  = second extension line start
+ * [9]  = second outside line start
  * [10] = LINE_TO
- * [11] = second extension line end
+ * [11] = second outside line end
+ * [12] = MOVE_TO
+ * [13] = first extension line start
+ * [14] = LINE_TO
+ * [15] = first extension line end
+ * [16] = MOVE_TO
+ * [17] = second extension line start
+ * [18] = LINE_TO
+ * [19] = second extension line end
  */
 
 typedef struct _AdgLDimPrivate AdgLDimPrivate;
@@ -58,7 +66,7 @@ struct _AdgLDimPrivate {
 
     struct {
         CpmlPath path;
-        cairo_path_data_t data[12];
+        cairo_path_data_t data[20];
     }            cpml;
 
     AdgTrail    *trail;
@@ -75,6 +83,7 @@ struct _AdgLDimContext {
     AdgDimStyle         *dim_style;
     AdgLineStyle        *line_style;
     AdgColorStyle       *color_style;
+    AdgContainer        *quote;
 };
 
 G_END_DECLS
