@@ -1,9 +1,6 @@
 AM_CFLAGS=			-I$(top_srcdir) \
 				-I$(top_builddir)
 AM_LDFLAGS=
-GLIB_MKENUMS=			`which glib-mkenums` \
-					--template $(srcdir)/$@.template \
-					$(srcdir)/adg-enums.h
 PATTERN=
 
 # file groups
@@ -85,8 +82,8 @@ c_sources=			adg-adim.c \
 				adg-toy-text.c \
 				adg-util.c
 built_c_sources=		$(builddir)/adg-type-builtins.c
-EXTRA_DIST=			adg-type-builtins.c.template \
-				adg-type-builtins.h.template \
+EXTRA_DIST=			adg-type-builtins.c.mkenums \
+				adg-type-builtins.h.mkenums \
 				adg.h.in
 if HAVE_GTK2
 AM_CFLAGS+=			@GTK2_CFLAGS@
@@ -129,11 +126,8 @@ libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
 libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
-adg-type-builtins.c: adg-type-builtins.c.template adg-enums.h
-	$(GLIB_MKENUMS) > $@
-
-adg-type-builtins.h: adg-type-builtins.h.template adg-enums.h
-	$(GLIB_MKENUMS) > $@
+adg-type-builtins.c adg-type-builtins.h: %: %.mkenums adg-enums.h
+	$(GLIB_MKENUMS) --template $< $(srcdir)/adg-enums.h > $@
 
 # Regenerate the adg.h header file: forcing a dependency on config.log
 # is an easy way to invalidate this file whenever a ./configure is recall

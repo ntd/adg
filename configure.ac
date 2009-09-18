@@ -13,6 +13,8 @@ AC_PROG_CC
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 PKG_PROG_PKG_CONFIG
+AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums])
+AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal])
 
 
 # Check for functions
