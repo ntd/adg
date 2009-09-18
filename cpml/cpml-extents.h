@@ -17,16 +17,27 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPML_H__
-#define __CPML_H__
+#ifndef __CPML_EXTENTS_H__
+#define __CPML_EXTENTS_H__
 
-#include <cpml/cpml-arc.h>
-#include <cpml/cpml-curve.h>
-#include <cpml/cpml-extents.h>
-#include <cpml/cpml-line.h>
 #include <cpml/cpml-pair.h>
-#include <cpml/cpml-primitive.h>
-#include <cpml/cpml-segment.h>
-#include <cpml/cpml-util.h>
 
-#endif /* __CPML_H__ */
+
+CAIRO_BEGIN_DECLS
+
+typedef struct _CpmlExtents CpmlExtents;
+
+struct _CpmlExtents {
+    cairo_bool_t is_defined;
+    CpmlPair     p1;
+    CpmlPair     p2;
+};
+
+
+CpmlExtents *   cpml_extents_copy               (CpmlExtents       *extents,
+                                                 const CpmlExtents *src);
+
+CAIRO_END_DECLS
+
+
+#endif /* __CPML_EXTENTS_H__ */

@@ -10,6 +10,7 @@ cpml_h_sources=			cpml.h \
 				cpml-arc.h \
 				cpml-close.h \
 				cpml-curve.h \
+				cpml-extents.h \
 				cpml-line.h \
 				cpml-pair.h \
 				cpml-primitive.h \
@@ -21,6 +22,7 @@ cpml_built_private_h_sources=
 cpml_c_sources=			cpml-arc.c \
 				cpml-close.c \
 				cpml-curve.c \
+				cpml-extents.c \
 				cpml-line.c \
 				cpml-pair.c \
 				cpml-primitive.c \
