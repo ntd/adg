@@ -52,6 +52,7 @@
 #include "adg-canvas.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
+#include "adg-marshal.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
@@ -158,7 +159,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                                        G_SIGNAL_RUN_FIRST,
                                        G_STRUCT_OFFSET(AdgEntityClass, parent_set),
                                        NULL, NULL,
-                                       g_cclosure_marshal_VOID__OBJECT,
+                                       adg_marshal_VOID__OBJECT,
                                        G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -174,7 +175,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                              (gpointer)0xdeadbeaf, NULL);
     signals[INVALIDATE] = g_signal_newv("invalidate", ADG_TYPE_ENTITY,
                                         G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                                        g_cclosure_marshal_VOID__VOID,
+                                        adg_marshal_VOID__VOID,
                                         G_TYPE_NONE, 0, param_types);
 
     /**
@@ -191,7 +192,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     param_types[0] = G_TYPE_POINTER;
     signals[RENDER] = g_signal_newv("render", ADG_TYPE_ENTITY,
                                     G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                                    g_cclosure_marshal_VOID__POINTER,
+                                    adg_marshal_VOID__POINTER,
                                     G_TYPE_NONE, 1, param_types);
 }
 

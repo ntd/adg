@@ -1,3 +1,6 @@
+GEN_NOTIFY=			@echo ' GEN    '$@;
+MKENUMS=			$(GEN_NOTIFY)$(GLIB_MKENUMS)
+GENMARSHAL=			$(GEN_NOTIFY)$(GLIB_GENMARSHAL)
 AM_CFLAGS=			-I$(top_srcdir) \
 				-I$(top_builddir)
 AM_LDFLAGS=
@@ -31,6 +34,7 @@ h_sources=			adg-adim.h \
 				adg-toy-text.h \
 				adg-util.h
 built_h_sources=		$(builddir)/adg-type-builtins.h \
+				$(builddir)/adg-marshal.h \
 				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
 				adg-arrow-private.h \
@@ -81,9 +85,11 @@ c_sources=			adg-adim.c \
 				adg-trail.c \
 				adg-toy-text.c \
 				adg-util.c
-built_c_sources=		$(builddir)/adg-type-builtins.c
+built_c_sources=		$(builddir)/adg-type-builtins.c \
+				$(builddir)/adg-marshal.c
 EXTRA_DIST=			adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
+				adg-marshal.genmarshal \
 				adg.h.in
 if HAVE_GTK2
 AM_CFLAGS+=			@GTK2_CFLAGS@
@@ -126,8 +132,17 @@ libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
 libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
-adg-type-builtins.c adg-type-builtins.h: %: %.mkenums adg-enums.h
-	$(GLIB_MKENUMS) --template $< $(srcdir)/adg-enums.h > $@
+adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
+	$(MKENUMS) --template $^ > $@
+
+adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
+	$(MKENUMS) --template $^ > $@
+
+adg-marshal.c: adg-marshal.genmarshal
+	$(GENMARSHAL) --body --prefix=adg_marshal $< > $@
+
+adg-marshal.h: adg-marshal.genmarshal
+	$(GENMARSHAL) --header --prefix=adg_marshal $< > $@
 
 # Regenerate the adg.h header file: forcing a dependency on config.log
 # is an easy way to invalidate this file whenever a ./configure is recall

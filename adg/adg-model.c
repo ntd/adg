@@ -42,6 +42,7 @@
 
 #include "adg-model.h"
 #include "adg-model-private.h"
+#include "adg-marshal.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
@@ -116,7 +117,7 @@ adg_model_class_init(AdgModelClass *klass)
                                            G_SIGNAL_RUN_FIRST,
                                            G_STRUCT_OFFSET(AdgModelClass, add_dependency),
                                            NULL, NULL,
-                                           g_cclosure_marshal_VOID__OBJECT,
+                                           adg_marshal_VOID__OBJECT,
                                            G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -132,7 +133,7 @@ adg_model_class_init(AdgModelClass *klass)
                                               G_SIGNAL_RUN_FIRST,
                                               G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
                                               NULL, NULL,
-                                              g_cclosure_marshal_VOID__OBJECT,
+                                              adg_marshal_VOID__OBJECT,
                                               G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -146,7 +147,7 @@ adg_model_class_init(AdgModelClass *klass)
                                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                                      G_STRUCT_OFFSET(AdgModelClass, changed),
                                      NULL, NULL,
-                                     g_cclosure_marshal_VOID__VOID,
+                                     adg_marshal_VOID__VOID,
                                      G_TYPE_NONE, 0);
 }
 

@@ -36,6 +36,7 @@
 
 #include "adg-container.h"
 #include "adg-container-private.h"
+#include "adg-marshal.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
@@ -114,7 +115,7 @@ adg_container_class_init(AdgContainerClass *klass)
                                 G_SIGNAL_RUN_FIRST,
                                 G_STRUCT_OFFSET(AdgContainerClass, add),
                                 NULL, NULL,
-                                g_cclosure_marshal_VOID__OBJECT,
+                                adg_marshal_VOID__OBJECT,
                                 G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -129,7 +130,7 @@ adg_container_class_init(AdgContainerClass *klass)
                                    G_SIGNAL_RUN_FIRST,
                                    G_STRUCT_OFFSET(AdgContainerClass, remove),
                                    NULL, NULL,
-                                   g_cclosure_marshal_VOID__OBJECT,
+                                   adg_marshal_VOID__OBJECT,
                                    G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 }
 

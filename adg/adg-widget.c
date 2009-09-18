@@ -42,6 +42,7 @@
 
 #include "adg-widget.h"
 #include "adg-widget-private.h"
+#include "adg-marshal.h"
 #include "adg-intl.h"
 
 
@@ -133,7 +134,7 @@ adg_widget_class_init(AdgWidgetClass *klass)
                                            G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                                            G_STRUCT_OFFSET(AdgWidgetClass, canvas_changed),
                                            NULL, NULL,
-                                           g_cclosure_marshal_VOID__VOID,
+                                           adg_marshal_VOID__VOID,
                                            G_TYPE_NONE, 0);
 }
 
