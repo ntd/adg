@@ -784,44 +784,13 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 }
 
 /**
- * adg_dim_style_beyond:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets how much (in global space) the baseline should extend beyound
- * the extension lines when a dimension has outside markers. If the
- * underlying AdgDimStyle:beyond property is %0, this function returns
- * the 3*"marker-size", where "marker-size" is the value returned by
- * adg_marker_style_get_size() on #AdgMarkerStyle binded to @dim_style.
- *
- * Returns: the requested lenght
- **/
-gdouble
-adg_dim_style_beyond(AdgDimStyle *dim_style)
-{
-    AdgDimStylePrivate *data;
-    gdouble marker_size;
-
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
-
-    data = dim_style->data;
-    marker_size = 10;
-
-    if (data->beyond > 0)
-        return data->beyond;
-
-    return marker_size * 3;
-}
-
-/**
  * adg_dim_style_get_beyond:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets how much (in global space) the baseline should extend beyound
- * the extension lines on dimension with outside markers. This is an
- * accessor method: if you need AdgDimStyle:beyond for rendering purpose,
- * use adg_dim_style_beyond() instead.
+ * Gets how much (in global space) the baseline should extend beyond
+ * the extension lines on dimension with outside markers.
  *
- * Returns: the requested lenght or %0 for automatic computation
+ * Returns: the requested beyond length
  **/
 gdouble
 adg_dim_style_get_beyond(AdgDimStyle *dim_style)
