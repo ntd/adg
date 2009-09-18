@@ -68,7 +68,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static gboolean invalidate              (AdgEntity      *entity);
+static void     invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
 static gboolean set_value               (AdgDim         *dim,
@@ -917,14 +917,12 @@ adg_dim_get_quote(AdgDim *dim, cairo_t *cr)
 }
 
 
-static gboolean
+static void
 invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
     adg_entity_invalidate((AdgEntity *) data->quote.container);
-
-    return TRUE;
 }
 
 static gchar *

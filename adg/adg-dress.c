@@ -243,7 +243,7 @@ adg_dress_name(AdgDress dress)
  * adg_dress_from_name:
  * @name: the name of a dress
  *
- * Gets the dress binded to a @name string. No warnings are raised
+ * Gets the dress bound to a @name string. No warnings are raised
  * if the dress is not found.
  *
  * Returns: the #AdgDress code or #ADG_DRESS_UNDEFINED if not found

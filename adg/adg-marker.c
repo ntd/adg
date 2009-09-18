@@ -74,7 +74,7 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             get_local_matrix        (AdgEntity      *entity,
                                                  AdgMatrix      *matrix);
-static gboolean         invalidate              (AdgEntity      *entity);
+static void             invalidate              (AdgEntity      *entity);
 static gboolean         set_segment             (AdgMarker      *marker,
                                                  AdgTrail       *trail,
                                                  guint           n_segment);
@@ -580,14 +580,10 @@ get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
     cairo_matrix_multiply (matrix, &tmp, matrix);
 }
 
-static gboolean
+static void
 invalidate(AdgEntity *entity)
 {
-    AdgMarker *marker = (AdgMarker *) entity;
-
-    adg_marker_set_model(marker, NULL);
-
-    return TRUE;
+    adg_marker_set_model((AdgMarker *) entity, NULL);
 }
 
 

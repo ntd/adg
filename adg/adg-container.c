@@ -63,8 +63,8 @@ static void             add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             remove                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static gboolean         invalidate              (AdgEntity      *entity);
-static gboolean         render                  (AdgEntity      *entity,
+static void             invalidate              (AdgEntity      *entity);
+static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -450,16 +450,14 @@ remove(AdgContainer *container, AdgEntity *entity)
 }
 
 
-static gboolean
+static void
 invalidate(AdgEntity *entity)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
-    return TRUE;
 }
 
-static gboolean
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
-    return TRUE;
 }

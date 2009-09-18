@@ -54,7 +54,7 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static gboolean         render                  (AdgEntity      *entity,
+static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static AdgModel *       create_model            (AdgMarker      *marker);
 static gboolean         set_angle               (AdgArrow       *arrow,
@@ -176,7 +176,7 @@ adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
 }
 
 
-static gboolean
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgModel *model;
@@ -199,8 +199,6 @@ render(AdgEntity *entity, cairo_t *cr)
 
         cairo_fill(cr);
     }
-
-    return TRUE;
 }
 
 static AdgModel *

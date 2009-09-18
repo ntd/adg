@@ -56,7 +56,7 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static gboolean         render                  (AdgEntity      *entity,
+static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gboolean         set_trail               (AdgStroke      *stroke,
                                                  AdgTrail       *trail);
@@ -232,7 +232,7 @@ adg_stroke_set_dress(AdgStroke *stroke, AdgDress dress)
  * adg_stroke_get_trail:
  * @stroke: an #AdgStroke
  *
- * Gets the #AdgTrail binded to this @stroke entity.
+ * Gets the #AdgTrail bound to this @stroke entity.
  *
  * Returns: the requested #AdgTrail or %NULL on errors
  **/
@@ -265,7 +265,7 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 }
 
 
-static gboolean
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgStroke *stroke;
@@ -289,8 +289,6 @@ render(AdgEntity *entity, cairo_t *cr)
         adg_style_apply((AdgStyle *) line_style, cr);
         cairo_stroke(cr);
     }
-
-    return TRUE;
 }
 
 static gboolean

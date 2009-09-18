@@ -905,11 +905,11 @@ real_invalidate(AdgEntity *entity, gpointer user_data)
     g_assert(user_data == (gpointer) 0xdeadbeaf);
 
     klass = ADG_ENTITY_GET_CLASS(entity);
-    if (klass->invalidate == NULL) {
-        /* Assume the entity does not have cache to be cleared */
-    } else if (!klass->invalidate(entity)) {
-        return;
-    }
+
+    /* Do not raise any warning if invalidate() is not defined,
+     * assuming entity does not have cache to be cleared */
+    if (klass->invalidate != NULL)
+        klass->invalidate(entity);
 
     data = entity->data;
     ADG_UNSET(data->flags, RENDERED);
@@ -935,9 +935,8 @@ real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
 
     cairo_save(cr);
     cairo_transform(cr, &data->global_map);
-
-    if (klass->render(entity, cr))
-        ADG_SET(data->flags, RENDERED);
-
+    klass->render(entity, cr);
     cairo_restore(cr);
+
+    ADG_SET(data->flags, RENDERED);
 }

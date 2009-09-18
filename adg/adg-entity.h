@@ -60,8 +60,8 @@ struct _AdgEntityClass {
                                                  AdgMatrix      *matrix);
     void                (*get_local_matrix)     (AdgEntity      *entity,
                                                  AdgMatrix      *matrix);
-    gboolean            (*invalidate)           (AdgEntity      *entity);
-    gboolean            (*render)               (AdgEntity      *entity,
+    void                (*invalidate)           (AdgEntity      *entity);
+    void                (*render)               (AdgEntity      *entity,
                                                  cairo_t        *cr);
 };
 

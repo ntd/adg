@@ -61,8 +61,8 @@ static void             set_property    (GObject                *object,
                                          guint                   param_id,
                                          const GValue           *value,
                                          GParamSpec             *pspec);
-static gboolean         invalidate      (AdgEntity              *entity);
-static gboolean         render          (AdgEntity              *entity,
+static void             invalidate      (AdgEntity              *entity);
+static void             render          (AdgEntity              *entity,
                                          cairo_t                *cr);
 static gchar *          default_value   (AdgDim                 *dim);
 static void             fill_context    (AdgLDim                *ldim,
@@ -475,18 +475,16 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
 }
 
 
-static gboolean
+static void
 invalidate(AdgEntity *entity)
 {
     dispose_markers((AdgLDim *) entity);
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
-        return PARENT_ENTITY_CLASS->invalidate(entity);
-
-    return TRUE;
+        PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
-static gboolean
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLDim *ldim;
@@ -502,8 +500,6 @@ render(AdgEntity *entity, cairo_t *cr)
 
     render_cage(ldim, &context);
     adg_entity_render((AdgEntity *) context.quote, cr);
-
-    return TRUE;
 }
 
 static gchar *

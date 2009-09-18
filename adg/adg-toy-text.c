@@ -63,8 +63,8 @@ static void     set_property            (GObject        *object,
                                          GParamSpec     *pspec);
 static void     get_local_matrix        (AdgEntity      *entity,
                                          AdgMatrix      *matrix);
-static gboolean invalidate              (AdgEntity      *entity);
-static gboolean render                  (AdgEntity      *entity,
+static void     invalidate              (AdgEntity      *entity);
+static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
 static gboolean set_label               (AdgToyText     *toy_text,
                                          const gchar    *label);
@@ -314,18 +314,16 @@ get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
     cairo_matrix_init_translate(matrix, matrix->x0, matrix->y0);
 }
 
-static gboolean
+static void
 invalidate(AdgEntity *entity)
 {
     clear_label_cache((AdgToyText *) entity);
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         return PARENT_ENTITY_CLASS->invalidate(entity);
-
-    return TRUE;
 }
 
-static gboolean
+static void
 render(AdgEntity *entity, cairo_t *cr)
 {
     AdgToyText *toy_text;
@@ -342,8 +340,6 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
         cairo_restore(cr);
     }
-
-    return TRUE;
 }
 
 
