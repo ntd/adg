@@ -41,6 +41,7 @@
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
 
 
 enum {
@@ -68,6 +69,8 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
+static void     global_changed          (AdgEntity      *entity);
+static void     local_changed           (AdgEntity      *entity);
 static void     invalidate              (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
@@ -99,6 +102,8 @@ adg_dim_class_init(AdgDimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = global_changed;
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
 
     klass->quote_angle = quote_angle;
@@ -918,11 +923,34 @@ adg_dim_get_quote(AdgDim *dim, cairo_t *cr)
 
 
 static void
+global_changed(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (data->quote.container != NULL)
+        adg_entity_global_changed((AdgEntity *) data->quote.container);
+}
+
+static void
+local_changed(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    PARENT_ENTITY_CLASS->local_changed(entity);
+
+    if (data->quote.container != NULL)
+        adg_entity_local_changed((AdgEntity *) data->quote.container);
+}
+
+static void
 invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    adg_entity_invalidate((AdgEntity *) data->quote.container);
+    if (data->quote.container != NULL)
+        adg_entity_invalidate((AdgEntity *) data->quote.container);
 }
 
 static gchar *
