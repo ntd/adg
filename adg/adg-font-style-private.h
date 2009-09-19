@@ -35,6 +35,9 @@ struct _AdgFontStylePrivate {
     cairo_subpixel_order_t       subpixel_order;
     cairo_hint_style_t           hint_style;
     cairo_hint_metrics_t         hint_metrics;
+
+    cairo_font_face_t           *face;
+    cairo_scaled_font_t         *font;
 };
 
 G_END_DECLS
