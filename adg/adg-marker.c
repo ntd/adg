@@ -30,6 +30,11 @@
  * #AdgStroke type, if the associated trail is destroyed the above
  * properties are unset.
  *
+ * The local map is used internally to align the marker to the trail end,
+ * so adg_entity_set_local_map() and friends is reserved. Therefore, if
+ * the trail is modified and the marker had no way to know it, you should
+ * call adg_entity_local_changed() to update the marker position.
+ *
  * Use adg_marker_set_pos() to select the position where the marker
  * should be put: %0 means the start point of the segment while %1
  * means the end point.
@@ -72,8 +77,7 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             get_local_matrix        (AdgEntity      *entity,
-                                                 AdgMatrix      *matrix);
+static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static gboolean         set_segment             (AdgMarker      *marker,
                                                  AdgTrail       *trail,
@@ -109,7 +113,7 @@ adg_marker_class_init(AdgMarkerClass *klass)
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
 
-    entity_class->get_local_matrix = get_local_matrix;
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
 
     klass->create_model = create_model;
@@ -557,14 +561,17 @@ adg_marker_set_model(AdgMarker *marker, AdgModel *model)
 
 
 static void
-get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+local_changed(AdgEntity *entity)
 {
     AdgMarkerPrivate *data;
     CpmlPair pair;
     CpmlVector vector;
-    AdgMatrix tmp;
+    AdgMatrix matrix, tmp;
 
     data = ((AdgMarker *) entity)->data;
+    if (data->trail == NULL)
+        return;
+
     cpml_segment_pair_at(&data->segment, &pair, data->pos);
     cpml_segment_vector_at(&data->segment, &vector, data->pos);
     cpml_vector_set_length(&vector, data->size);
@@ -574,10 +581,12 @@ get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
         vector.y = -vector.y;
     }
 
-    cairo_matrix_init (&tmp, vector.x, vector.y, -vector.y, vector.x, 0, 0);
+    cairo_matrix_init(&tmp, vector.x, vector.y, -vector.y, vector.x, 0, 0);
 
-    cairo_matrix_init_translate(matrix, pair.x, pair.y);
-    cairo_matrix_multiply (matrix, &tmp, matrix);
+    cairo_matrix_init_translate(&matrix, pair.x, pair.y);
+    cairo_matrix_multiply(&matrix, &tmp, &matrix);
+
+    adg_entity_set_local_matrix(entity, &matrix);
 }
 
 static void
@@ -694,8 +703,10 @@ set_model(AdgMarker *marker, AdgModel *model)
 
     data->model = model;
 
-    if (data->model != NULL)
+    if (data->model != NULL) {
         g_object_ref((GObject *) data->model);
+        adg_entity_local_changed((AdgEntity *) marker);
+    }
 
     return TRUE;
 }
