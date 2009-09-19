@@ -31,6 +31,9 @@ struct _AdgEntityPrivate {
     AdgMatrix    global_map;
     AdgMatrix    local_map;
     GHashTable  *hash_styles;
+
+    AdgMatrix    global_matrix;
+    AdgMatrix    local_matrix;
 };
 
 G_END_DECLS

@@ -53,16 +53,15 @@ struct _AdgEntityClass {
     GInitiallyUnownedClass parent_class;
     /*< public >*/
     /* Signals */
-    void                (*parent_set)           (AdgEntity      *entity,
-                                                 AdgEntity      *old_parent);
+    void                (*parent_set)           (AdgEntity       *entity,
+                                                 AdgEntity       *old_parent);
+    void                (*global_changed)       (AdgEntity       *entity);
+    void                (*local_changed)        (AdgEntity       *entity);
+
     /* Virtual Table */
-    void                (*get_global_matrix)    (AdgEntity      *entity,
-                                                 AdgMatrix      *matrix);
-    void                (*get_local_matrix)     (AdgEntity      *entity,
-                                                 AdgMatrix      *matrix);
-    void                (*invalidate)           (AdgEntity      *entity);
-    void                (*render)               (AdgEntity      *entity,
-                                                 cairo_t        *cr);
+    void                (*invalidate)           (AdgEntity       *entity);
+    void                (*render)               (AdgEntity       *entity,
+                                                 cairo_t         *cr);
 };
 
 
@@ -82,6 +81,8 @@ void            adg_entity_after_global_map     (AdgEntity       *entity,
                                                  const AdgMatrix *transformation);
 void            adg_entity_get_global_matrix    (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
+void            adg_entity_set_global_matrix    (AdgEntity       *entity,
+                                                 const AdgMatrix *matrix);
 void            adg_entity_get_local_map        (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_local_map        (AdgEntity       *entity,
@@ -92,6 +93,8 @@ void            adg_entity_after_local_map      (AdgEntity       *entity,
                                                  const AdgMatrix *transformation);
 void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
+void            adg_entity_set_local_matrix     (AdgEntity       *entity,
+                                                 const AdgMatrix *matrix);
 void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
                                                  cairo_t         *cr);
 AdgStyle *      adg_entity_style                (AdgEntity       *entity,
@@ -104,6 +107,8 @@ void            adg_entity_set_style            (AdgEntity       *entity,
 void            adg_entity_apply_dress          (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  cairo_t         *cr);
+void            adg_entity_global_changed       (AdgEntity       *entity);
+void            adg_entity_local_changed        (AdgEntity       *entity);
 void            adg_entity_invalidate           (AdgEntity       *entity);
 void            adg_entity_render               (AdgEntity       *entity,
                                                  cairo_t         *cr);

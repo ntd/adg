@@ -25,9 +25,9 @@
  * This abstract class provides the base for all renderable objects.
  *
  * To provide a proper #AdgEntity derived type, you must at least
- * implement the render() virtual method. Also, if you are using
- * some sort of caching, you must implement invalidate() to clear
- * this cache.
+ * implement its arrange() and render() virtual methods. Also,
+ * if you are using some sort of caching, ensure to clear it in the
+ * invalidate() method.
  **/
 
 /**
@@ -67,6 +67,8 @@ enum {
 
 enum {
     PARENT_SET,
+    GLOBAL_CHANGED,
+    LOCAL_CHANGED,
     INVALIDATE,
     RENDER,
     LAST_SIGNAL
@@ -84,14 +86,12 @@ static void             set_property            (GObject         *object,
                                                  GParamSpec      *pspec);
 static gboolean         set_parent              (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-static void             set_global_map          (AdgEntity       *entity,
+static void             global_changed          (AdgEntity       *entity);
+static void             local_changed           (AdgEntity       *entity);
+static gboolean         set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-static void             set_local_map           (AdgEntity       *entity,
+static gboolean         set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-static void             get_global_matrix       (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
-static void             get_local_matrix        (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
 static void             real_invalidate         (AdgEntity       *entity,
                                                  gpointer         user_data);
 static void             real_render             (AdgEntity       *entity,
@@ -121,8 +121,8 @@ adg_entity_class_init(AdgEntityClass *klass)
     gobject_class->set_property = set_property;
 
     klass->parent_set = NULL;
-    klass->get_global_matrix = get_global_matrix;
-    klass->get_local_matrix = get_local_matrix;
+    klass->global_changed = global_changed;
+    klass->local_changed = local_changed;
     klass->invalidate = NULL;
     klass->render = NULL;
 
@@ -163,6 +163,39 @@ adg_entity_class_init(AdgEntityClass *klass)
                                        G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
+     * AdgEntity::global_changed
+     * @entity: an #AdgEntity
+     *
+     * Emitted when the global map of @entity or any of its parent
+     * has changed. The default handler will compute the new global
+     * matrix, storing the value with adg_entity_set_global_matrix().
+     **/
+    signals[GLOBAL_CHANGED] = g_signal_new("global-changed",
+                                           G_OBJECT_CLASS_TYPE(gobject_class),
+                                           G_SIGNAL_RUN_FIRST,
+                                           G_STRUCT_OFFSET(AdgEntityClass, global_changed),
+                                           NULL, NULL,
+                                           adg_marshal_VOID__VOID,
+                                           G_TYPE_NONE, 0);
+
+    /**
+     * AdgEntity::local_changed
+     * @entity: an #AdgEntity
+     * @matrix: where to store the new matrix
+     *
+     * Emitted when the local map of @entity or any of its parent
+     * has changed. The default handler will compute the new local
+     * matrix, storing the value with adg_entity_set_local_matrix().
+     **/
+    signals[LOCAL_CHANGED] = g_signal_new("local-changed",
+                                          G_OBJECT_CLASS_TYPE(gobject_class),
+                                          G_SIGNAL_RUN_FIRST,
+                                          G_STRUCT_OFFSET(AdgEntityClass, local_changed),
+                                          NULL, NULL,
+                                          adg_marshal_VOID__VOID,
+                                          G_TYPE_NONE, 0);
+
+    /**
      * AdgEntity::invalidate:
      * @entity: an #AdgEntity
      *
@@ -184,8 +217,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * @cr: a #cairo_t drawing context
      *
      * Causes the rendering of @entity on @cr. A render signal will
-     * automatically emit #AdgEntity::arrange signal just before
-     * the real rendering on the cairo context.
+     * automatically emit #AdgEntity::arrange just before the real
+     * rendering on the cairo context.
      **/
     closure = g_cclosure_new(G_CALLBACK(real_render),
                              (gpointer)0xdeadbeaf, NULL);
@@ -203,9 +236,12 @@ adg_entity_init(AdgEntity *entity)
                                                          ADG_TYPE_ENTITY,
                                                          AdgEntityPrivate);
     data->parent = NULL;
-    cairo_matrix_init_identity(&data->local_map);
     cairo_matrix_init_identity(&data->global_map);
+    cairo_matrix_init_identity(&data->local_map);
     data->hash_styles = NULL;
+
+    cairo_matrix_init_identity(&data->global_matrix);
+    cairo_matrix_init_identity(&data->local_matrix);
 
     entity->data = data;
 }
@@ -380,8 +416,8 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    set_global_map(entity, map);
-    g_object_notify((GObject *) entity, "global-map");
+    if (set_global_map(entity, map))
+        g_object_notify((GObject *) entity, "global-map");
 }
 
 /**
@@ -404,14 +440,16 @@ void
 adg_entity_before_global_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
+    AdgMatrix map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
+    cairo_matrix_multiply(&map, &data->global_map, transformation);
 
-    cairo_matrix_multiply(&data->global_map, &data->global_map, transformation);
-    g_object_notify((GObject *) entity, "global-map");
+    if (set_global_map(entity, &map))
+        g_object_notify((GObject *) entity, "global-map");
 }
 
 /**
@@ -434,14 +472,16 @@ void
 adg_entity_after_global_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
+    AdgMatrix map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
+    cairo_matrix_multiply(&map, transformation, &data->global_map);
 
-    cairo_matrix_multiply(&data->global_map, transformation, &data->global_map);
-    g_object_notify((GObject *) entity, "global-map");
+    if (set_global_map(entity, &map))
+        g_object_notify((GObject *) entity, "global-map");
 }
 
 /**
@@ -449,16 +489,46 @@ adg_entity_after_global_map(AdgEntity *entity, const AdgMatrix *transformation)
  * @entity: an #AdgEntity object
  * @matrix: where to store the global matrix
  *
- * Computes the global matrix by combining all the global maps of the
+ * Gets the global matrix by combining all the global maps of the
  * @entity hierarchy and stores the result in @matrix.
  **/
 void
 adg_entity_get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
 {
+    AdgEntityPrivate *data;
+
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(matrix != NULL);
 
-    ADG_ENTITY_GET_CLASS(entity)->get_global_matrix(entity, matrix);
+    data = entity->data;
+
+    adg_matrix_copy(matrix, &data->global_matrix);
+}
+
+/**
+ * adg_entity_set_global_matrix:
+ * @entity: an #AdgEntity object
+ * @matrix: the new global matrix
+ *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Sets a new global matrix on @entity. This matrix is usually computed
+ * from the global maps of @entity and its parents, so this method is
+ * provided only for entity implementation.
+ **/
+void
+adg_entity_set_global_matrix(AdgEntity *entity, const AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(matrix != NULL);
+
+    data = entity->data;
+
+    adg_matrix_copy(&data->global_matrix, matrix);
 }
 
 /**
@@ -478,6 +548,7 @@ adg_entity_get_local_map(AdgEntity *entity, AdgMatrix *map)
     g_return_if_fail(map != NULL);
 
     data = entity->data;
+
     adg_matrix_copy(map, &data->local_map);
 }
 
@@ -486,7 +557,7 @@ adg_entity_get_local_map(AdgEntity *entity, AdgMatrix *map)
  * @entity: an #AdgEntity object
  * @map: the new map
  *
- * Sets the new global transformation of @entity to @map:
+ * Sets the new local transformation of @entity to @map:
  * the old map is discarded. If @map is %NULL an identity
  * matrix is implied.
  **/
@@ -495,8 +566,8 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    set_local_map(entity, map);
-    g_object_notify((GObject *) entity, "local-map");
+    if (set_local_map(entity, map))
+        g_object_notify((GObject *) entity, "local-map");
 }
 
 /**
@@ -519,14 +590,16 @@ void
 adg_entity_before_local_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
+    AdgMatrix map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
+    cairo_matrix_multiply(&map, &data->local_map, transformation);
 
-    cairo_matrix_multiply(&data->local_map, &data->local_map, transformation);
-    g_object_notify((GObject *) entity, "local-map");
+    if (set_local_map(entity, &map))
+        g_object_notify((GObject *) entity, "local-map");
 }
 
 /**
@@ -549,14 +622,16 @@ void
 adg_entity_after_local_map(AdgEntity *entity, const AdgMatrix *transformation)
 {
     AdgEntityPrivate *data;
+    AdgMatrix map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
+    cairo_matrix_multiply(&map, transformation, &data->local_map);
 
-    cairo_matrix_multiply(&data->local_map, transformation, &data->local_map);
-    g_object_notify((GObject *) entity, "local-map");
+    if (set_local_map(entity, &map))
+        g_object_notify((GObject *) entity, "local-map");
 }
 
 /**
@@ -570,10 +645,40 @@ adg_entity_after_local_map(AdgEntity *entity, const AdgMatrix *transformation)
 void
 adg_entity_get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
 {
+    AdgEntityPrivate *data;
+
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(matrix != NULL);
 
-    ADG_ENTITY_GET_CLASS(entity)->get_local_matrix(entity, matrix);
+    data = entity->data;
+
+    adg_matrix_copy(matrix, &data->local_matrix);
+}
+
+/**
+ * adg_entity_set_local_matrix:
+ * @entity: an #AdgEntity object
+ * @matrix: the new local matrix
+ *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Sets a new local matrix on @entity. This matrix is usually computed
+ * from the local maps of @entity and its parents, so this method is
+ * provided only for entity implementation.
+ **/
+void
+adg_entity_set_local_matrix(AdgEntity *entity, const AdgMatrix *matrix)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(matrix != NULL);
+
+    data = entity->data;
+
+    adg_matrix_copy(&data->local_matrix, matrix);
 }
 
 /**
@@ -742,18 +847,50 @@ adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
 }
 
 /**
+ * adg_entity_global_changed:
+ * @entity: an #AdgEntity
+ *
+ * Emits the #AdgEntity::global-changed signal on @entity and on all of
+ * its children, if any.
+ **/
+void
+adg_entity_global_changed(AdgEntity *entity)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+}
+
+/**
+ * adg_entity_local_changed:
+ * @entity: an #AdgEntity
+ *
+ * Emits the #AdgEntity::local-changed signal on @entity and on all of
+ * its children, if any.
+ **/
+void
+adg_entity_local_changed(AdgEntity *entity)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+}
+
+/**
  * adg_entity_invalidate:
  * @entity: an #AdgEntity
  *
- * Emits the "invalidate" signal on @entity and all its children, if any,
- * so subsequent rendering will need a global recomputation.
+ * Emits the #AdgEntity::invalidate signal on @entity and on all of
+ * its children, if any, clearing the eventual cache stored by the
+ * #AdgEntity::arrange signal and setting the entity state similary
+ * to the just initialized entity.
  **/
 void
 adg_entity_invalidate(AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[INVALIDATE], 0, NULL);
+    g_signal_emit(entity, signals[INVALIDATE], 0);
 }
 
 /**
@@ -761,8 +898,8 @@ adg_entity_invalidate(AdgEntity *entity)
  * @entity: an #AdgEntity
  * @cr: a #cairo_t drawing context
  *
- * Emits the "render" signal on @entity and all its children, if any,
- * causing the rendering operation the @cr cairo context.
+ * Emits the #AdgEntity::render signal on @entity and on all of its
+ * children, if any, causing the rendering to the @cr cairo context.
  **/
 void
 adg_entity_render(AdgEntity *entity, cairo_t *cr)
@@ -799,31 +936,13 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
 }
 
 static void
-set_global_map(AdgEntity *entity, const AdgMatrix *map)
+global_changed(AdgEntity *entity)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+    AdgMatrix *matrix;
 
-    if (map == NULL)
-        cairo_matrix_init_identity(&data->global_map);
-    else
-        adg_matrix_copy(&data->global_map, map);
-}
-
-static void
-set_local_map(AdgEntity *entity, const AdgMatrix *map)
-{
-    AdgEntityPrivate *data = entity->data;
-
-    if (map == NULL)
-        cairo_matrix_init_identity(&data->local_map);
-    else
-        adg_matrix_copy(&data->local_map, map);
-}
-
-static void
-get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
-{
-    AdgEntityPrivate *data = entity->data;
+    data = entity->data;
+    matrix = &data->global_matrix;
 
     if (data->parent == NULL) {
         adg_matrix_copy(matrix, &data->global_map);
@@ -834,9 +953,13 @@ get_global_matrix(AdgEntity *entity, AdgMatrix *matrix)
 }
 
 static void
-get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+local_changed(AdgEntity *entity)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+    AdgMatrix *matrix;
+
+    data = entity->data;
+    matrix = &data->local_matrix;
 
     if (data->parent == NULL) {
         adg_matrix_copy(matrix, &data->local_map);
@@ -844,6 +967,40 @@ get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
         adg_entity_get_local_matrix(data->parent, matrix);
         cairo_matrix_multiply(matrix, &data->local_map, matrix);
     }
+}
+
+static gboolean
+set_global_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (map != NULL && adg_matrix_equal(&data->global_map, map))
+        return FALSE;
+
+    if (map == NULL)
+        cairo_matrix_init_identity(&data->global_map);
+    else
+        adg_matrix_copy(&data->global_map, map);
+
+    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0, &data->global_matrix);
+    return TRUE;
+}
+
+static gboolean
+set_local_map(AdgEntity *entity, const AdgMatrix *map)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (map != NULL && adg_matrix_equal(&data->local_map, map))
+        return FALSE;
+
+    if (map == NULL)
+        cairo_matrix_init_identity(&data->local_map);
+    else
+        adg_matrix_copy(&data->local_map, map);
+
+    g_signal_emit(entity, signals[LOCAL_CHANGED], 0, &data->local_matrix);
+    return TRUE;
 }
 
 static void
