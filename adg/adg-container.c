@@ -40,6 +40,7 @@
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
 
 
 enum {
@@ -59,14 +60,16 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             global_changed          (AdgEntity      *entity);
+static void             local_changed           (AdgEntity      *entity);
+static void             invalidate              (AdgEntity      *entity);
+static void             render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
 static GSList *         get_children            (AdgContainer   *container);
 static void             add                     (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             remove                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
-                                                 cairo_t        *cr);
 
 static guint signals[LAST_SIGNAL] = { 0 };
 
@@ -89,6 +92,8 @@ adg_container_class_init(AdgContainerClass *klass)
     gobject_class->dispose = dispose;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = global_changed;
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -395,6 +400,33 @@ adg_container_propagate_valist(AdgContainer *container,
 }
 
 
+static void
+global_changed(AdgEntity *entity)
+{
+    PARENT_ENTITY_CLASS->global_changed(entity);
+    adg_container_propagate_by_name((AdgContainer *) entity, "global-changed");
+}
+
+static void
+local_changed(AdgEntity *entity)
+{
+    PARENT_ENTITY_CLASS->local_changed(entity);
+    adg_container_propagate_by_name((AdgContainer *) entity, "local-changed");
+}
+
+static void
+invalidate(AdgEntity *entity)
+{
+    adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
+}
+
+static void
+render(AdgEntity *entity, cairo_t *cr)
+{
+    adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
+}
+
+
 static GSList *
 get_children(AdgContainer *container)
 {
@@ -448,17 +480,4 @@ remove(AdgContainer *container, AdgEntity *entity)
     data->children = g_slist_delete_link(data->children, node);
     adg_entity_set_parent(entity, NULL);
     g_object_unref(entity);
-}
-
-
-static void
-invalidate(AdgEntity *entity)
-{
-    adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
-}
-
-static void
-render(AdgEntity *entity, cairo_t *cr)
-{
-    adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
 }
