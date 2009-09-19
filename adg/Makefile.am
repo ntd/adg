@@ -1,4 +1,4 @@
-GEN_NOTIFY=			@echo ' GEN    '$@;
+GEN_NOTIFY=			@echo '  GEN   '$@;
 MKENUMS=			$(GEN_NOTIFY)$(GLIB_MKENUMS)
 GENMARSHAL=			$(GEN_NOTIFY)$(GLIB_GENMARSHAL)
 AM_CFLAGS=			-I$(top_srcdir) \
