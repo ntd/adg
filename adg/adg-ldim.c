@@ -701,13 +701,17 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
 
     if (data->marker1 == NULL)
         data->marker1 = adg_dim_style_marker1_new(context->dim_style);
-    if (data->marker1 != NULL)
+    if (data->marker1 != NULL) {
         adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
+        adg_entity_local_changed((AdgEntity *) data->marker1);
+    }
 
     if (data->marker2 == NULL)
         data->marker2 = adg_dim_style_marker2_new(context->dim_style);
-    if (data->marker2 != NULL)
+    if (data->marker2 != NULL) {
         adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
+        adg_entity_local_changed((AdgEntity *) data->marker2);
+    }
 }
 
 static void
