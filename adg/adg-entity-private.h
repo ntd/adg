@@ -24,19 +24,13 @@
 
 G_BEGIN_DECLS
 
-typedef enum _AdgEntityFlags     AdgEntityFlags;
 typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
-enum _AdgEntityFlags {
-    RENDERED = 1 << 1
-};
-
 struct _AdgEntityPrivate {
-    AdgEntity           *parent;
-    AdgEntityFlags       flags;
-    AdgMatrix            global_map;
-    AdgMatrix            local_map;
-    GHashTable          *hash_styles;
+    AdgEntity   *parent;
+    AdgMatrix    global_map;
+    AdgMatrix    local_map;
+    GHashTable  *hash_styles;
 };
 
 G_END_DECLS

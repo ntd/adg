@@ -72,9 +72,6 @@ AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 AdgEntity *     adg_entity_get_parent           (AdgEntity       *entity);
 void            adg_entity_set_parent           (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-gboolean        adg_entity_get_rendered         (AdgEntity       *entity);
-void            adg_entity_set_rendered         (AdgEntity       *entity,
-                                                 gboolean         rendered);
 void            adg_entity_get_global_map       (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_global_map       (AdgEntity       *entity,

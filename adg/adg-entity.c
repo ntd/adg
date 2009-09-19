@@ -166,10 +166,10 @@ adg_entity_class_init(AdgEntityClass *klass)
      * AdgEntity::invalidate:
      * @entity: an #AdgEntity
      *
-     * The inverse of the rendering. Usually, invalidation causes the
-     * cache of @entity to be cleared. After a succesful invalidation
-     * the rendered flag is reset: you can access its state using
-     * adg_entity_get_rendered().
+     * Invalidates the whole @entity, that is resets all the cache
+     * (if present) built during the #AdgEntity::arrange signal.
+     * The resulting state is a clean entity, similar to what you
+     * have just before the first rendering.
      **/
     closure = g_cclosure_new(G_CALLBACK(real_invalidate),
                              (gpointer)0xdeadbeaf, NULL);
@@ -183,9 +183,9 @@ adg_entity_class_init(AdgEntityClass *klass)
      * @entity: an #AdgEntity
      * @cr: a #cairo_t drawing context
      *
-     * Causes the rendering of @entity on @cr. After a succesful rendering
-     * the rendered flag is set: you can access its state using
-     * adg_entity_get_rendered().
+     * Causes the rendering of @entity on @cr. A render signal will
+     * automatically emit #AdgEntity::arrange signal just before
+     * the real rendering on the cairo context.
      **/
     closure = g_cclosure_new(G_CALLBACK(real_render),
                              (gpointer)0xdeadbeaf, NULL);
@@ -203,7 +203,6 @@ adg_entity_init(AdgEntity *entity)
                                                          ADG_TYPE_ENTITY,
                                                          AdgEntityPrivate);
     data->parent = NULL;
-    data->flags = 0;
     cairo_matrix_init_identity(&data->local_map);
     cairo_matrix_init_identity(&data->global_map);
     data->hash_styles = NULL;
@@ -345,56 +344,6 @@ adg_entity_get_canvas(AdgEntity *entity)
     }
 
     return NULL;
-}
-
-/**
- * adg_entity_get_rendered:
- * @entity: an #AdgEntity object
- *
- * <note><para>
- * This function is only useful in entity implementations.
- * </para></note>
- *
- * Gets the rendered flag of @entity.
- *
- * Returns: the current rendered state
- **/
-gboolean
-adg_entity_get_rendered(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
-
-    data = entity->data;
-
-    return ADG_ISSET(data->flags, RENDERED);
-}
-
-/**
- * adg_entity_set_rendered:
- * @entity: an #AdgEntity object
- * @rendered: new state for the rendered flag
- *
- * <note><para>
- * This function is only useful in entity implementations.
- * </para></note>
- *
- * Sets the rendered flag of @entity to @rendered.
- **/
-void
-adg_entity_set_rendered(AdgEntity *entity, gboolean rendered)
-{
-    AdgEntityPrivate *data;
-
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    data = entity->data;
-
-    if (rendered)
-        ADG_SET(data->flags, RENDERED);
-    else
-        ADG_UNSET(data->flags, RENDERED);
 }
 
 /**
@@ -913,7 +862,6 @@ real_invalidate(AdgEntity *entity, gpointer user_data)
         klass->invalidate(entity);
 
     data = entity->data;
-    ADG_UNSET(data->flags, RENDERED);
 }
 
 static void
@@ -938,6 +886,4 @@ real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
     cairo_transform(cr, &data->global_map);
     klass->render(entity, cr);
     cairo_restore(cr);
-
-    ADG_SET(data->flags, RENDERED);
 }
