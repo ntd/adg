@@ -61,8 +61,7 @@ static void     set_property            (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     get_local_matrix        (AdgEntity      *entity,
-                                         AdgMatrix      *matrix);
+static void     local_changed           (AdgEntity      *entity);
 static void     invalidate              (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
@@ -92,7 +91,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    entity_class->get_local_matrix = get_local_matrix;
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->render = render;
 
@@ -308,10 +307,15 @@ adg_toy_text_get_extents(AdgToyText *toy_text, cairo_t *cr,
 
 
 static void
-get_local_matrix(AdgEntity *entity, AdgMatrix *matrix)
+local_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->get_local_matrix(entity, matrix);
-    cairo_matrix_init_translate(matrix, matrix->x0, matrix->y0);
+    AdgMatrix matrix;
+
+    PARENT_ENTITY_CLASS->local_changed(entity);
+
+    adg_entity_get_local_matrix(entity, &matrix);
+    cairo_matrix_init_translate(&matrix, matrix.x0, matrix.y0);
+    adg_entity_set_local_matrix(entity, &matrix);
 }
 
 static void
