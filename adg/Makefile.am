@@ -1,6 +1,4 @@
-GEN_NOTIFY=			@echo '  GEN   '$@;
-MKENUMS=			$(GEN_NOTIFY)$(GLIB_MKENUMS)
-GENMARSHAL=			$(GEN_NOTIFY)$(GLIB_GENMARSHAL)
+MSG_GEN=			echo '  GEN   '$@;
 AM_CFLAGS=			-I$(top_srcdir) \
 				-I$(top_builddir)
 AM_LDFLAGS=
@@ -133,16 +131,16 @@ libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
 adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
-	$(MKENUMS) --template $^ > $@
+	$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 
 adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
-	$(MKENUMS) --template $^ > $@
+	$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 
 adg-marshal.c: adg-marshal.genmarshal
-	$(GENMARSHAL) --body --prefix=adg_marshal $< > $@
+	$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $< > $@
 
 adg-marshal.h: adg-marshal.genmarshal
-	$(GENMARSHAL) --header --prefix=adg_marshal $< > $@
+	$(MSG_GEN)$(GLIB_GENMARSHAL) --header --prefix=adg_marshal $< > $@
 
 # Regenerate the adg.h header file: forcing a dependency on config.log
 # is an easy way to invalidate this file whenever a ./configure is recall
