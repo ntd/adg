@@ -73,9 +73,12 @@ struct _AdgLDimPrivate {
     AdgMarker   *marker1;
     AdgMarker   *marker2;
 
-    CpmlPair     from_shift;
-    CpmlPair     marker_shift;
-    CpmlPair     to_shift;
+    struct {
+        gboolean        is_arranged;
+        CpmlPair        from;
+        CpmlPair        marker;
+        CpmlPair        to;
+    }            shift;
 };
 
 struct _AdgLDimContext {

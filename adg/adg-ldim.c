@@ -478,6 +478,13 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
 static void
 invalidate(AdgEntity *entity)
 {
+    AdgLDim *ldim;
+    AdgLDimPrivate *data;
+
+    ldim = (AdgLDim *) entity;
+    data = ldim->data;
+
+    data->shift.is_arranged = FALSE;
     dispose_markers((AdgLDim *) entity);
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
@@ -562,16 +569,18 @@ update_shifts(AdgLDim *ldim, const AdgLDimContext *context)
 
     cairo_matrix_init_rotate(&matrix, data->direction);
 
-    data->from_shift.x = data->from_shift.y = 0;
-    data->marker_shift.x = data->marker_shift.y = 0;
-    data->to_shift.x = data->to_shift.y = 0;
+    data->shift.from.x = data->shift.from.y = 0;
+    data->shift.marker.x = data->shift.marker.y = 0;
+    data->shift.to.x = data->shift.to.y = 0;
 
     cairo_matrix_translate(&matrix, from_offset, 0);
-    cpml_pair_transform(&data->from_shift, &matrix);
+    cpml_pair_transform(&data->shift.from, &matrix);
     cairo_matrix_translate(&matrix, to_offset-from_offset, 0);
-    cpml_pair_transform(&data->to_shift, &matrix);
+    cpml_pair_transform(&data->shift.to, &matrix);
     cairo_matrix_translate(&matrix, level*baseline_spacing-to_offset, 0);
-    cpml_pair_transform(&data->marker_shift, &matrix);
+    cpml_pair_transform(&data->shift.marker, &matrix);
+
+    data->shift.is_arranged = TRUE;
 }
 
 static void
@@ -596,7 +605,7 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
     outside = FALSE;
 
-    if (!adg_entity_get_rendered(entity))
+    if (!data->shift.is_arranged)
         update_shifts(ldim, context);
 
     cpml_pair_transform(&ref1, &local);
@@ -604,22 +613,22 @@ layout(AdgLDim *ldim, const AdgLDimContext *context)
     cpml_pair_transform(&pos1, &local);
     cpml_pair_transform(&pos2, &local);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->from_shift);
+    cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &pos1), &data->marker_shift);
+    cpml_pair_add(cpml_pair_copy(&pair, &pos1), &data->shift.marker);
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
-    cpml_pair_add(&pair, &data->to_shift);
+    cpml_pair_add(&pair, &data->shift.to);
     cpml_pair_to_cairo(&pair, &data->cpml.data[15]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->from_shift);
+    cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &pos2), &data->marker_shift);
+    cpml_pair_add(cpml_pair_copy(&pair, &pos2), &data->shift.marker);
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
-    cpml_pair_add(&pair, &data->to_shift);
+    cpml_pair_add(&pair, &data->shift.to);
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
     /* Calculate the outside segments */
