@@ -304,13 +304,26 @@ global_changed(AdgEntity *entity)
 static void
 local_changed(AdgEntity *entity)
 {
-    AdgMatrix matrix;
+    AdgMatrix old, new;
+    CpmlExtents extents;
+
+    adg_entity_get_local_matrix(entity, &old);
 
     PARENT_ENTITY_CLASS->local_changed(entity);
 
-    adg_entity_get_local_matrix(entity, &matrix);
-    cairo_matrix_init_translate(&matrix, matrix.x0, matrix.y0);
-    adg_entity_set_local_matrix(entity, &matrix);
+    adg_entity_get_local_matrix(entity, &new);
+    cairo_matrix_init_translate(&new, new.x0, new.y0);
+    adg_entity_set_local_matrix(entity, &new);
+
+    /* Update the extents position (if needed) without
+     * invalidating the font */
+    adg_entity_get_extents(entity, &extents);
+
+    if (extents.is_defined) {
+        extents.org.x += new.x0 - old.x0;
+        extents.org.y += new.y0 - old.y0;
+        adg_entity_set_extents(entity, &extents);
+    }
 }
 
 static void
@@ -330,6 +343,7 @@ arrange(AdgEntity *entity)
     AdgToyTextPrivate *data;
     cairo_status_t status;
     cairo_text_extents_t cairo_extents;
+    AdgMatrix local;
     CpmlExtents extents;
 
     toy_text = (AdgToyText *) entity;
@@ -337,12 +351,10 @@ arrange(AdgEntity *entity)
 
     if (data->font == NULL) {
         AdgFontStyle *font_style;
-        AdgMatrix ctm, local_matrix;
+        AdgMatrix ctm;
 
         font_style = (AdgFontStyle *) adg_entity_style(entity, data->dress);
         adg_entity_get_global_matrix(entity, &ctm);
-        adg_entity_get_local_matrix(entity, &local_matrix);
-        cairo_matrix_multiply(&ctm, &ctm, &local_matrix);
         data->font = adg_font_style_font(font_style, &ctm);
     }
 
@@ -365,6 +377,11 @@ arrange(AdgEntity *entity)
     cairo_scaled_font_glyph_extents(data->font, data->glyphs,
                                     data->num_glyphs, &cairo_extents);
     cpml_extents_from_cairo_text(&extents, &cairo_extents);
+
+    adg_entity_get_local_map(entity, &local);
+    cairo_matrix_transform_point(&local, &extents.org.x, &extents.org.y);
+    cairo_matrix_transform_distance(&local, &extents.size.x, &extents.size.y);
+
     adg_entity_set_extents(entity, &extents);
 }
 
