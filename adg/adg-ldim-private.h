@@ -59,34 +59,25 @@ typedef struct _AdgLDimPrivate AdgLDimPrivate;
 typedef struct _AdgLDimContext AdgLDimContext;
 
 struct _AdgLDimPrivate {
-    double       direction;
+    double               direction;
+    gboolean             has_extension1;
+    gboolean             has_extension2;
 
-    gboolean     has_extension1;
-    gboolean     has_extension2;
+    AdgTrail            *trail;
+    AdgMarker           *marker1;
+    AdgMarker           *marker2;
 
     struct {
         CpmlPath path;
         cairo_path_data_t data[20];
     }            cpml;
 
-    AdgTrail    *trail;
-    AdgMarker   *marker1;
-    AdgMarker   *marker2;
-
     struct {
-        gboolean        is_arranged;
-        CpmlPair        from;
-        CpmlPair        marker;
-        CpmlPair        to;
-    }            shift;
-};
-
-struct _AdgLDimContext {
-    cairo_t             *cr;
-    AdgDimStyle         *dim_style;
-    AdgLineStyle        *line_style;
-    AdgColorStyle       *color_style;
-    AdgContainer        *quote;
+        gboolean         is_arranged;
+        CpmlPair         from;
+        CpmlPair         marker;
+        CpmlPair         to;
+    }                    shift;
 };
 
 G_END_DECLS
