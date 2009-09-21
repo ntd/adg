@@ -64,8 +64,8 @@ static void             global_changed          (AdgEntity      *entity);
 static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
-static void             add_child_extents       (AdgEntity      *child,
-                                                 CpmlExtents    *extents);
+static void             add_extents             (AdgEntity      *entity,
+                                                 CpmlExtents    *container_extents);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static GSList *         get_children            (AdgContainer   *container);
@@ -428,20 +428,25 @@ static void
 arrange(AdgEntity *entity)
 {
     AdgContainer *container = (AdgContainer *) entity;
-    CpmlExtents extents = { 0., };
+    CpmlExtents extents = { 0 };
 
     adg_container_propagate_by_name(container, "arrange", NULL);
-    adg_container_foreach(container, G_CALLBACK(add_child_extents), &extents);
+    adg_container_foreach(container, G_CALLBACK(add_extents), &extents);
     adg_entity_set_extents(entity, &extents);
 }
 
 static void
-add_child_extents(AdgEntity *child, CpmlExtents *extents)
+add_extents(AdgEntity *entity, CpmlExtents *container_extents)
 {
-    CpmlExtents child_extents;
+    CpmlExtents extents;
+    AdgMatrix map;
 
-    adg_entity_get_extents(child, &child_extents);
-    cpml_extents_add(extents, &child_extents);
+    adg_entity_get_extents(entity, &extents);
+    adg_entity_get_global_map(entity, &map);
+
+    cairo_matrix_transform_point(&map, &extents.org.x, &extents.org.y);
+    cairo_matrix_transform_distance(&map, &extents.size.x, &extents.size.y);
+    cpml_extents_add(container_extents, &extents);
 }
 
 static void
