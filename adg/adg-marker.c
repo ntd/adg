@@ -661,6 +661,11 @@ set_n_segment(AdgMarker *marker, guint n_segment)
 
     data->n_segment = n_segment;
 
+    if (n_segment == 0) {
+        memset(&data->segment, 0, sizeof(data->segment));
+        return TRUE;
+    }
+
     return adg_trail_get_segment(data->trail, &data->segment, n_segment);
 }
 
