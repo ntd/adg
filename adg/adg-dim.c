@@ -191,6 +191,7 @@ adg_dim_init(AdgDim *dim)
     data->pos1.x = data->pos1.y = 0;
     data->pos2.x = data->pos2.y = 0;
     data->level = 1;
+    data->outside = ADG_THREE_STATE_UNKNOWN;
     data->value = NULL;
     data->min = NULL;
     data->max = NULL;
@@ -865,6 +866,7 @@ arrange(AdgEntity *entity)
 {
     AdgDim *dim;
     AdgDimPrivate *data;
+    AdgEntity *container_entity;
     AdgEntity *value_entity;
     AdgEntity *min_entity;
     AdgEntity *max_entity;
@@ -920,6 +922,7 @@ arrange(AdgEntity *entity)
         adg_toy_text_set_label(data->quote.max, data->max);
     }
 
+    container_entity = (AdgEntity *) data->quote.container;
     value_entity = (AdgEntity *) data->quote.value;
     min_entity = (AdgEntity *) data->quote.min;
     max_entity = (AdgEntity *) data->quote.max;
@@ -929,8 +932,8 @@ arrange(AdgEntity *entity)
 
     /* Limit values (min and max) */
     if (min_entity != NULL || max_entity != NULL) {
-        CpmlExtents min_extents = { 0, };
-        CpmlExtents max_extents = { 0, };
+        CpmlExtents min_extents = { 0 };
+        CpmlExtents max_extents = { 0 };
         gdouble spacing = 0;
 
         /* Minimum limit */
@@ -964,7 +967,9 @@ arrange(AdgEntity *entity)
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(data->dim_style);
     cairo_matrix_init_translate(&map, shift->x - extents.size.x / 2, shift->y);
-    adg_entity_set_global_map((AdgEntity *) data->quote.container, &map);
+    adg_entity_set_global_map(container_entity, &map);
+
+    adg_entity_arrange(container_entity);
 }
 
 
