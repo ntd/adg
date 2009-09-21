@@ -54,6 +54,7 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static AdgModel *       create_model            (AdgMarker      *marker);
@@ -81,6 +82,7 @@ adg_arrow_class_init(AdgArrowClass *klass)
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
 
+    entity_class->arrange = arrange;
     entity_class->render = render;
 
     marker_class->create_model = create_model;
@@ -175,6 +177,11 @@ adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
         g_object_notify((GObject *) arrow, "angle");
 }
 
+static void
+arrange(AdgEntity *entity)
+{
+    /* TODO */
+}
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
@@ -186,14 +193,8 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) model);
 
     if (cairo_path != NULL) {
-        AdgMatrix local, ctm;
-
-        adg_entity_get_local_matrix(entity, &local);
-        cairo_get_matrix(cr, &ctm);
-        cairo_matrix_multiply(&ctm, &ctm, &local);
-
         cairo_save(cr);
-        cairo_set_matrix(cr, &ctm);
+        adg_entity_apply_local_matrix(entity, cr);
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
