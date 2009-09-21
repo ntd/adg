@@ -24,10 +24,10 @@
  * @title: CpmlExtents
  * @short_description: A rectangular area representing a bounding box
  *
- * The #CpmlExtents struct groups two pairs representing the rectangular
- * area of a bounding box. The <fieldname>p1</fieldname> field holds the
- * lowest (x, y) coordinates while <fieldname>p2</fieldname> holds
- * the highest ones. The additional <fieldname>is_defined</fieldname>
+ * The #CpmlExtents struct groups two pairs representing the area of a
+ * bounding box. The <fieldname>org</fieldname> field holds the lowest
+ * (x, y) coordinates while <fieldname>size</fieldname> holds the x and
+ * y extents of the area. The additional <fieldname>is_defined</fieldname>
  * boolean flag can be checked to know if #CpmlExtents has been computed
  * (when equal to %1) or not (when <fieldname>is_defined</fieldname> is %0).
  **/
@@ -35,8 +35,8 @@
 /**
  * CpmlExtents:
  * @is_defined: %1 if these extents should be considered, %0 otherwise
- * @p1: the lowest x,y coordinates
- * @p2: the highest x,y coordinates
+ * @org: the lowest x,y coordinates
+ * @size: the width (x) and height (y) of the extents
  *
  * A structure defining a bounding box area.
  **/
@@ -78,11 +78,10 @@ CpmlExtents *
 cpml_extents_from_cairo_text(CpmlExtents *extents,
                              const cairo_text_extents_t *cairo_extents)
 {
-    extents->is_defined = 1;
-    extents->p1.x = cairo_extents->x_bearing;
-    extents->p1.y = cairo_extents->y_bearing;
-    extents->p2.x = cairo_extents->x_bearing + cairo_extents->width;
-    extents->p1.y = cairo_extents->y_bearing + cairo_extents->height;
+    extents->org.x = cairo_extents->x_bearing;
+    extents->org.y = cairo_extents->y_bearing;
+    extents->size.x = cairo_extents->width;
+    extents->size.y = cairo_extents->height;
 
     return extents;
 }
@@ -97,15 +96,23 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
 void
 cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
 {
-    if (src->p1.x < extents->p1.x)
-        extents->p1.x = src->p1.x;
+    if (src->is_defined == 0)
+        return;
 
-    if (src->p1.y < extents->p1.y)
-        extents->p1.y = src->p1.y;
+    if (extents->is_defined == 0) {
+        cpml_extents_copy(extents, src);
+        return;
+    }
 
-    if (src->p2.x > extents->p2.x)
-        extents->p2.x = src->p2.x;
+    if (src->org.x < extents->org.x)
+        extents->org.x = src->org.x;
 
-    if (src->p2.y > extents->p2.y)
-        extents->p2.y = src->p2.y;
+    if (src->org.y < extents->org.y)
+        extents->org.y = src->org.y;
+
+    if (src->org.x + src->size.x > extents->org.x + extents->size.x)
+        extents->size.x = src->org.x + src->size.x - extents->org.x;
+
+    if (src->org.y + src->size.y > extents->org.y + extents->size.y)
+        extents->size.y = src->org.y + src->size.y - extents->org.y;
 }

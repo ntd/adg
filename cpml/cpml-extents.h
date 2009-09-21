@@ -29,8 +29,8 @@ typedef struct _CpmlExtents CpmlExtents;
 
 struct _CpmlExtents {
     cairo_bool_t is_defined;
-    CpmlPair     p1;
-    CpmlPair     p2;
+    CpmlPair     org;
+    CpmlPair     size;
 };
 
 
