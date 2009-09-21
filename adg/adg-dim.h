@@ -22,7 +22,7 @@
 #define __ADG_DIM_H__
 
 #include <adg/adg-container.h>
-#include <adg/adg-pair.h>
+#include <adg/adg-dim-style.h>
 #include <adg/adg-enums.h>
 
 
@@ -96,10 +96,10 @@ void            adg_dim_set_max                 (AdgDim         *dim,
 void            adg_dim_set_limits              (AdgDim         *dim,
                                                  const gchar    *min,
                                                  const gchar    *max);
+AdgDimStyle *   adg_dim_get_dim_style           (AdgDim         *dim);
 gdouble         adg_dim_quote_angle             (AdgDim         *dim,
                                                  gdouble         angle);
-AdgContainer *  adg_dim_get_quote               (AdgDim         *dim,
-                                                 cairo_t        *cr);
+AdgContainer *  adg_dim_get_quote               (AdgDim         *dim);
 
 G_END_DECLS
 

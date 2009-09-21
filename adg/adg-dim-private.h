@@ -21,7 +21,7 @@
 #ifndef __ADG_DIM_PRIVATE_H__
 #define __ADG_DIM_PRIVATE_H__
 
-#include <adg/adg-container.h>
+#include <adg/adg-toy-text.h>
 
 
 G_BEGIN_DECLS
@@ -40,11 +40,13 @@ struct _AdgDimPrivate {
     gchar               *min;
     gchar               *max;
 
+    AdgDimStyle         *dim_style;
+
     struct {
         AdgContainer    *container;
-        AdgEntity       *value;
-        AdgEntity       *min;
-        AdgEntity       *max;
+        AdgToyText      *value;
+        AdgToyText      *min;
+        AdgToyText      *max;
     }                    quote;
 };
 

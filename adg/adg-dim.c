@@ -72,8 +72,11 @@ static void     set_property            (GObject        *object,
 static void     global_changed          (AdgEntity      *entity);
 static void     local_changed           (AdgEntity      *entity);
 static void     invalidate              (AdgEntity      *entity);
+static void     arrange                 (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
+static gboolean set_dress               (AdgDim         *dim,
+                                         AdgDress        dress);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
 static gboolean set_min                 (AdgDim         *dim,
@@ -105,6 +108,7 @@ adg_dim_class_init(AdgDimClass *klass)
     entity_class->global_changed = global_changed;
     entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
+    entity_class->arrange = arrange;
 
     klass->quote_angle = quote_angle;
     klass->default_value = default_value;
@@ -275,7 +279,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DRESS:
-        adg_dress_set(&data->dress, g_value_get_int(value));
+        set_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
         cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
@@ -347,13 +351,9 @@ adg_dim_get_dress(AdgDim *dim)
 void
 adg_dim_set_dress(AdgDim *dim, AdgDress dress)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
-    if (adg_dress_set(&data->dress, dress))
+    if (set_dress(dim, dress))
         g_object_notify((GObject *) dim, "dress");
 }
 
@@ -782,6 +782,55 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 }
 
 /**
+ * adg_dim_get_dim_style:
+ * @dim: an #AdgDim entity
+ *
+ * Gets the #AdgDimStyle associated to @dim. The dress to style
+ * resolution is done in the arrange() method so this value is
+ * typically available in render() or in a derived arrange()
+ * method, after the #AdgDim arrange() function has been chained up.
+ *
+ * Returns: the dim style of @entity
+ **/
+AdgDimStyle *
+adg_dim_get_dim_style(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+
+    return data->dim_style;
+}
+
+/**
+ * adg_dim_get_quote:
+ * @dim: an #AdgDim
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Gets the quote container, if any. This function is valid only
+ * after the #AdgDim implementation of the arrange() virtual method
+ * has been called.
+ *
+ * Returns: the quote container
+ **/
+AdgContainer *
+adg_dim_get_quote(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+
+    return data->quote.container;
+}
+
+/**
  * adg_dim_quote_angle:
  * @dim: an #AdgDim
  * @angle: an angle (in radians)
@@ -811,114 +860,111 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
     return klass->quote_angle(angle);
 }
 
-/**
- * adg_dim_get_quote:
- * @dim: an #AdgDim
- * @cr: a cairo context
- *
- * Updates the layout of the quote of @dim and returns an #AdgContainer
- * grouping all the entities needed to render() this quote.
- *
- * This container should still be positioned and rotated properly, as
- * its origin is always (0, 0) and does not have any rotation.
- *
- * Returns: the #AdgContainer of the quote
- **/
-AdgContainer *
-adg_dim_get_quote(AdgDim *dim, cairo_t *cr)
+static void
+arrange(AdgEntity *entity)
 {
-    AdgEntity *entity;
+    AdgDim *dim;
     AdgDimPrivate *data;
-    AdgDimStyle *dim_style;
-    cairo_text_extents_t extents;
+    AdgEntity *value_entity;
+    AdgEntity *min_entity;
+    AdgEntity *max_entity;
+    CpmlExtents extents;
     AdgMatrix map;
     const AdgPair *shift;
 
-    entity = (AdgEntity *) dim;
+    dim = (AdgDim *) entity;
     data = dim->data;
-    dim_style = (AdgDimStyle *) adg_entity_style(entity, data->dress);
+
+    /* Resolve the dim style */
+    if (data->dim_style == NULL)
+        data->dim_style = (AdgDimStyle *) adg_entity_style(entity, data->dress);
 
     if (data->quote.container == NULL)
         data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
                                              "parent", dim, NULL);
 
     if (data->quote.value == NULL) {
-        AdgDress dress = adg_dim_style_get_value_dress(dim_style);
+        AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
+
         data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
                                          "dress", dress, NULL);
-        adg_container_add(data->quote.container, data->quote.value);
 
-        /* Check if the basic value needs to be automatically generated */
+        adg_container_add(data->quote.container,
+                          (AdgEntity *) data->quote.value);
+
         if (data->value == NULL) {
+            /* Automatically generate the value text */
             gchar *text = ADG_DIM_GET_CLASS(dim)->default_value(dim);
-            adg_toy_text_set_label((AdgToyText *) data->quote.value, text);
+            adg_toy_text_set_label(data->quote.value, text);
             g_free(text);
+        } else {
+            adg_toy_text_set_label(data->quote.value, data->value);
         }
     }
 
     if (data->quote.min == NULL && data->min != NULL) {
-        AdgDress dress = adg_dim_style_get_min_dress(dim_style);
-        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "dress", dress, NULL);
-        adg_container_add(data->quote.container, data->quote.min);
+        AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
-        adg_toy_text_set_label((AdgToyText *) data->quote.min, data->min);
+        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT, "dress", dress, NULL);
+
+        adg_container_add(data->quote.container, (AdgEntity *) data->quote.min);
+        adg_toy_text_set_label(data->quote.min, data->min);
     }
 
     if (data->quote.max == NULL && data->max != NULL) {
-        AdgDress dress = adg_dim_style_get_max_dress(dim_style);
-        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "dress", dress, NULL);
-        adg_container_add(data->quote.container, data->quote.max);
+        AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
-        adg_toy_text_set_label((AdgToyText *) data->quote.max, data->max);
+        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT, "dress", dress, NULL);
+
+        adg_container_add(data->quote.container, (AdgEntity *) data->quote.max);
+        adg_toy_text_set_label(data->quote.max, data->max);
     }
 
+    value_entity = (AdgEntity *) data->quote.value;
+    min_entity = (AdgEntity *) data->quote.min;
+    max_entity = (AdgEntity *) data->quote.max;
+
     /* Basic value */
-    adg_toy_text_get_extents((AdgToyText *) data->quote.value, cr, &extents);
+    adg_entity_get_extents(value_entity, &extents);
 
     /* Limit values (min and max) */
-    if (data->quote.min != NULL || data->quote.max != NULL) {
-        cairo_text_extents_t min_extents = { 0 };
-        cairo_text_extents_t max_extents = { 0 };
+    if (min_entity != NULL || max_entity != NULL) {
+        CpmlExtents min_extents = { 0, };
+        CpmlExtents max_extents = { 0, };
         gdouble spacing = 0;
 
         /* Minimum limit */
-        if (data->quote.min != NULL)
-            adg_toy_text_get_extents((AdgToyText *) data->quote.min,
-                                     cr, &min_extents);
+        if (min_entity != NULL)
+            adg_entity_get_extents(min_entity, &min_extents);
 
         /* Maximum limit */
-        if (data->quote.max != NULL)
-            adg_toy_text_get_extents((AdgToyText *) data->quote.max,
-                                     cr, &max_extents);
+        if (max_entity != NULL)
+            adg_entity_get_extents(max_entity, &max_extents);
 
-        shift = adg_dim_style_get_limits_shift(dim_style);
-        if (data->quote.min != NULL && data->quote.max != NULL)
-            spacing = adg_dim_style_get_limits_spacing(dim_style);
+        shift = adg_dim_style_get_limits_shift(data->dim_style);
+        if (min_entity != NULL && max_entity != NULL)
+            spacing = adg_dim_style_get_limits_spacing(data->dim_style);
 
-        cairo_matrix_init_translate(&map, extents.width + shift->x,
-                                    (spacing + min_extents.height +
-                                     max_extents.height) / 2 +
-                                    shift->y - extents.height / 2);
+        cairo_matrix_init_translate(&map, extents.size.x + shift->x,
+                                    (spacing + min_extents.size.y +
+                                     max_extents.size.y) / 2 +
+                                    shift->y - extents.size.y / 2);
 
-        if (data->quote.min != NULL)
-            adg_entity_set_global_map(data->quote.min, &map);
+        if (min_entity != NULL)
+            adg_entity_set_global_map(min_entity, &map);
 
-        if (data->quote.max != NULL) {
-            cairo_matrix_translate(&map, 0, -min_extents.height - spacing);
-            adg_entity_set_global_map(data->quote.max, &map);
+        if (max_entity != NULL) {
+            cairo_matrix_translate(&map, 0, -min_extents.size.y - spacing);
+            adg_entity_set_global_map(max_entity, &map);
         }
 
-        extents.width += shift->x + MAX(min_extents.width, max_extents.width);
+        extents.size.x += shift->x + MAX(min_extents.size.x, max_extents.size.x);
     }
 
     /* Center and apply the style displacements */
-    shift = adg_dim_style_get_quote_shift(dim_style);
-    cairo_matrix_init_translate(&map, shift->x - extents.width / 2, shift->y);
+    shift = adg_dim_style_get_quote_shift(data->dim_style);
+    cairo_matrix_init_translate(&map, shift->x - extents.size.x / 2, shift->y);
     adg_entity_set_global_map((AdgEntity *) data->quote.container, &map);
-
-    return data->quote.container;
 }
 
 
@@ -970,6 +1016,19 @@ quote_angle(gdouble angle)
         angle = cpml_angle(angle + G_PI);
 
     return angle;
+}
+
+static gboolean
+set_dress(AdgDim *dim, AdgDress dress)
+{
+    AdgDimPrivate *data = dim->data;
+
+    if (adg_dress_set(&data->dress, dress)) {
+        data->dim_style = NULL;
+        return TRUE;
+    }
+
+    return FALSE;
 }
 
 static gboolean
