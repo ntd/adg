@@ -100,7 +100,9 @@ must be reflected in the demo programs, where applicable.</para>
    breaking the one style = one dress equation.</listitem>
    <listitem override="disc">Rewrite AdgLDim to use the new marker APIs instead of hardcoding the
    arrows and calling the deprecated rendering callbacks.</listitem>
-   <listitem>Implement the outside arrows in AdgLDim.</listitem>
+   <listitem override="disc">Implement the extents infrastructure that computes the bounding box
+   of the entities without rendering them.</listitem>
+   <listitem override="disc">Implement the outside arrows in AdgLDim.</listitem>
    <listitem>Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
    <listitem override="disc">Rework styles by using GObject and properties.</listitem>
