@@ -63,6 +63,9 @@ static void             set_property            (GObject        *object,
 static void             global_changed          (AdgEntity      *entity);
 static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
+static void             arrange                 (AdgEntity      *entity);
+static void             add_child_extents       (AdgEntity      *child,
+                                                 CpmlExtents    *extents);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static GSList *         get_children            (AdgContainer   *container);
@@ -95,6 +98,7 @@ adg_container_class_init(AdgContainerClass *klass)
     entity_class->global_changed = global_changed;
     entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
+    entity_class->arrange = arrange;
     entity_class->render = render;
 
     klass->get_children = get_children;
@@ -299,10 +303,10 @@ adg_container_foreach(AdgContainer *container,
     g_return_if_fail(ADG_IS_CONTAINER(container));
     g_return_if_fail(callback != NULL);
 
-    children = adg_container_get_children (container);
+    children = adg_container_get_children(container);
 
-    while (children) {
-        if (children->data)
+    while (children != NULL) {
+        if (children->data != NULL)
             ((void (*) (gpointer, gpointer)) callback) (children->data, user_data);
 
         children = g_slist_delete_link(children, children);
@@ -389,8 +393,8 @@ adg_container_propagate_valist(AdgContainer *container,
 
     children = adg_container_get_children(container);
 
-    while (children) {
-        if (children->data) {
+    while (children != NULL) {
+        if (children->data != NULL) {
             G_VA_COPY(var_copy, var_args);
             g_signal_emit_valist(children->data, signal_id, detail, var_copy);
         }
@@ -418,6 +422,26 @@ static void
 invalidate(AdgEntity *entity)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
+}
+
+static void
+arrange(AdgEntity *entity)
+{
+    AdgContainer *container = (AdgContainer *) entity;
+    CpmlExtents extents = { 0., };
+
+    adg_container_propagate_by_name(container, "arrange", NULL);
+    adg_container_foreach(container, G_CALLBACK(add_child_extents), &extents);
+    adg_entity_set_extents(entity, &extents);
+}
+
+static void
+add_child_extents(AdgEntity *child, CpmlExtents *extents)
+{
+    CpmlExtents child_extents;
+
+    adg_entity_get_extents(child, &child_extents);
+    cpml_extents_add(extents, &child_extents);
 }
 
 static void
