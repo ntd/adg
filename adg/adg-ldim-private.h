@@ -63,6 +63,7 @@ struct _AdgLDimPrivate {
     gboolean             has_extension1;
     gboolean             has_extension2;
 
+    gdouble              distance;
     AdgTrail            *trail;
     AdgMarker           *marker1;
     AdgMarker           *marker2;

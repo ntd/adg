@@ -50,24 +50,27 @@ enum {
 };
 
 
-static void             dispose         (GObject                *object);
-static void             get_property    (GObject                *object,
-                                         guint                   param_id,
-                                         GValue                 *value,
-                                         GParamSpec             *pspec);
-static void             set_property    (GObject                *object,
-                                         guint                   param_id,
-                                         const GValue           *value,
-                                         GParamSpec             *pspec);
-static void             invalidate      (AdgEntity              *entity);
-static void             arrange         (AdgEntity              *entity);
-static void             render          (AdgEntity              *entity,
-                                         cairo_t                *cr);
-static gchar *          default_value   (AdgDim                 *dim);
-static void             arrange_shift   (AdgLDim                *ldim);
-static void             dispose_markers (AdgLDim                *ldim);
-static CpmlPath *       trail_callback  (AdgTrail               *trail,
-                                         gpointer                user_data);
+static void             dispose                 (GObject        *object);
+static void             get_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             set_property            (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             invalidate              (AdgEntity      *entity);
+static void             arrange                 (AdgEntity      *entity);
+static void             render                  (AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static gchar *          default_value           (AdgDim         *dim);
+static gdouble          get_distance            (AdgLDim        *ldim);
+static void             update_shift            (AdgLDim        *ldim);
+static void             update_entities         (AdgLDim        *ldim);
+static gboolean         choose_outside          (AdgLDim        *ldim);
+static void             dispose_markers         (AdgLDim        *ldim);
+static CpmlPath *       trail_callback          (AdgTrail       *trail,
+                                                 gpointer        user_data);
 
 
 G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -129,6 +132,7 @@ adg_ldim_init(AdgLDim *ldim)
     line_to.header.type = CAIRO_PATH_LINE_TO;
     line_to.header.length = 2;
 
+    data->distance = -1;
     data->direction = 0;
     data->has_extension1 = TRUE;
     data->has_extension2 = TRUE;
@@ -325,6 +329,8 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
     pos2.x = ref2->x + k * extension_vector.x;
     pos2.y = ref2->y + k * extension_vector.y;
 
+    data->distance = -1;
+
     adg_dim_set_pos((AdgDim *) ldim, &pos1, &pos2);
 }
 
@@ -494,13 +500,12 @@ arrange(AdgEntity *entity)
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgContainer *quote;
+    gboolean outside;
     AdgMatrix local;
     AdgPair ref1, ref2, pos1, pos2;
-    gboolean outside;
     AdgPair pair;
     gint n;
 
-    /* Chain up the parent method */
     PARENT_ENTITY_CLASS->arrange(entity);
 
     ldim = (AdgLDim *) entity;
@@ -509,12 +514,27 @@ arrange(AdgEntity *entity)
     dim_style = adg_dim_get_dim_style(dim);
     quote = adg_dim_get_quote(dim);
 
+    update_shift(ldim);
+    update_entities(ldim);
+
+    switch (adg_dim_get_outside(dim)) {
+    case ADG_THREE_STATE_OFF:
+        outside = FALSE;
+        break;
+    case ADG_THREE_STATE_ON:
+        outside = TRUE;
+        break;
+    case ADG_THREE_STATE_UNKNOWN:
+    default:
+        outside = choose_outside(ldim);
+        break;
+    }
+
     adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
     cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
-    outside = FALSE;
 
     cpml_pair_transform(&ref1, &local);
     cpml_pair_transform(&ref2, &local);
@@ -538,8 +558,6 @@ arrange(AdgEntity *entity)
 
     cpml_pair_add(&pair, &data->shift.to);
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
-
-    arrange_shift(ldim);
 
     /* Calculate the outside segments */
     if (outside) {
@@ -603,19 +621,11 @@ arrange(AdgEntity *entity)
         adg_entity_before_global_map((AdgEntity *) quote, &matrix);
     }
 
-    /* Create the internal entities, if needed */
-    if (data->trail == NULL)
-        data->trail = adg_trail_new(trail_callback, ldim);
-
-    if (data->marker1 == NULL)
-        data->marker1 = adg_dim_style_marker1_new(dim_style);
     if (data->marker1 != NULL) {
         adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
         adg_entity_local_changed((AdgEntity *) data->marker1);
     }
 
-    if (data->marker2 == NULL)
-        data->marker2 = adg_dim_style_marker2_new(dim_style);
     if (data->marker2 != NULL) {
         adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
         adg_entity_local_changed((AdgEntity *) data->marker2);
@@ -659,21 +669,39 @@ render(AdgEntity *entity, cairo_t *cr)
 static gchar *
 default_value(AdgDim *dim)
 {
-    AdgEntity *entity;
     AdgDimStyle *dim_style;
     const gchar *format;
-    gdouble value;
+    gdouble distance;
 
-    entity = (AdgEntity *) dim;
     dim_style = adg_dim_get_dim_style(dim);
     format = adg_dim_style_get_number_format(dim_style);
-    value = cpml_pair_distance(adg_dim_get_pos1(dim), adg_dim_get_pos2(dim));
+    distance = get_distance((AdgLDim *) dim);
 
-    return g_strdup_printf(format, value);
+    return g_strdup_printf(format, distance);
+}
+
+static gdouble
+get_distance(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data = ldim->data;
+
+    if (data->distance < 0) {
+        AdgDim *dim;
+        const AdgPair *pos1;
+        const AdgPair *pos2;
+
+        dim = (AdgDim *) ldim;
+        pos1 = adg_dim_get_pos1(dim);
+        pos2 = adg_dim_get_pos2(dim);
+
+        data->distance = cpml_pair_distance(pos1, pos2);
+    }
+
+    return data->distance;
 }
 
 static void
-arrange_shift(AdgLDim *ldim)
+update_shift(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
@@ -708,6 +736,48 @@ arrange_shift(AdgLDim *ldim)
     cpml_pair_transform(&data->shift.marker, &matrix);
 
     data->shift.is_arranged = TRUE;
+}
+
+static void
+update_entities(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+    AdgDimStyle *dim_style;
+
+    data = ldim->data;
+    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
+
+    if (data->trail == NULL)
+        data->trail = adg_trail_new(trail_callback, ldim);
+
+    if (data->marker1 == NULL)
+        data->marker1 = adg_dim_style_marker1_new(dim_style);
+
+    if (data->marker2 == NULL)
+        data->marker2 = adg_dim_style_marker2_new(dim_style);
+}
+
+static gboolean
+choose_outside(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+    AdgContainer *quote;
+    CpmlExtents extents;
+    AdgMatrix local;
+    gdouble marker1, marker2;
+    gdouble needed, available;
+
+    data = ldim->data;
+    quote = adg_dim_get_quote((AdgDim *) ldim);
+    adg_entity_get_extents((AdgEntity *) quote, &extents);
+    adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
+    marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
+    marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
+
+    needed = extents.size.x + marker1 + marker2;
+    available = get_distance(ldim) * local.xx;
+
+    return needed > available;
 }
 
 static void
