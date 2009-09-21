@@ -57,9 +57,6 @@ void            adg_toy_text_set_dress          (AdgToyText     *toy_text,
 const gchar *   adg_toy_text_get_label          (AdgToyText     *toy_text);
 void            adg_toy_text_set_label          (AdgToyText     *toy_text,
                                                  const gchar    *label);
-void            adg_toy_text_get_extents        (AdgToyText     *toy_text,
-                                                 cairo_t        *cr,
-                                                 cairo_text_extents_t *extents);
 
 G_END_DECLS
 

@@ -31,7 +31,8 @@ struct _AdgToyTextPrivate {
     gchar               *label;
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;
-    cairo_text_extents_t extents;
+
+    cairo_scaled_font_t *font;
 };
 
 G_END_DECLS
