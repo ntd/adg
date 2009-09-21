@@ -56,6 +56,7 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gboolean         set_trail               (AdgStroke      *stroke,
@@ -82,6 +83,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->arrange = arrange;
     entity_class->render = render;
 
     param = adg_param_spec_dress("dress",
@@ -264,6 +266,11 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
         g_object_notify((GObject *) stroke, "trail");
 }
 
+
+static void
+arrange(AdgEntity *entity)
+{
+}
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
