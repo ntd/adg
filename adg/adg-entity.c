@@ -25,8 +25,8 @@
  * This abstract class provides the base for all renderable objects.
  *
  * To provide a proper #AdgEntity derived type, you must at least
- * implement its arrange() and render() virtual methods. Also,
- * if you are using some sort of caching, ensure to clear it in the
+ * implement its arrange() and render() virtual methods. Also, if
+ * you are using some sort of caching, ensure to clear it in the
  * invalidate() method.
  **/
 
@@ -41,6 +41,7 @@
  * AdgEntityClass:
  * @parent_set: called after the parent has changed
  * @invalidate: invalidating callback, used to clear the cache
+ * @arrange: prepare the layout and fill the extents struct
  * @render: rendering callback, it must be implemented
  *
  * Any entity (if not abstract) must implement at least the @render method.
@@ -70,6 +71,7 @@ enum {
     GLOBAL_CHANGED,
     LOCAL_CHANGED,
     INVALIDATE,
+    ARRANGE,
     RENDER,
     LAST_SIGNAL
 };
@@ -93,6 +95,8 @@ static gboolean         set_global_map          (AdgEntity       *entity,
 static gboolean         set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static void             real_invalidate         (AdgEntity       *entity,
+                                                 gpointer         user_data);
+static void             real_arrange            (AdgEntity       *entity,
                                                  gpointer         user_data);
 static void             real_render             (AdgEntity       *entity,
                                                  cairo_t         *cr,
@@ -124,6 +128,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     klass->global_changed = global_changed;
     klass->local_changed = local_changed;
     klass->invalidate = NULL;
+    klass->arrange= NULL;
     klass->render = NULL;
 
     param = g_param_spec_object("parent",
@@ -181,7 +186,6 @@ adg_entity_class_init(AdgEntityClass *klass)
     /**
      * AdgEntity::local_changed
      * @entity: an #AdgEntity
-     * @matrix: where to store the new matrix
      *
      * Emitted when the local map of @entity or any of its parent
      * has changed. The default handler will compute the new local
@@ -212,6 +216,19 @@ adg_entity_class_init(AdgEntityClass *klass)
                                         G_TYPE_NONE, 0, param_types);
 
     /**
+     * AdgEntity::arrange:
+     * @entity: an #AdgEntity
+     *
+     * Arranges the layout of @entity, updating the cache if necessary,
+     * and computes the extents of @entity.
+     **/
+    closure = g_cclosure_new(G_CALLBACK(real_arrange),
+                             (gpointer)0xdeadbeaf, NULL);
+    signals[ARRANGE] = g_signal_newv("arrange", ADG_TYPE_ENTITY,
+                                     G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                                     adg_marshal_VOID__VOID,
+                                     G_TYPE_NONE, 0, param_types);
+    /**
      * AdgEntity::render:
      * @entity: an #AdgEntity
      * @cr: a #cairo_t drawing context
@@ -238,6 +255,7 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
+    data->extents.is_defined = FALSE;
     data->hash_styles = NULL;
 
     cairo_matrix_init_identity(&data->global_matrix);
@@ -715,6 +733,57 @@ adg_entity_apply_local_matrix(AdgEntity *entity, cairo_t *cr)
 }
 
 /**
+ * adg_entity_get_extents:
+ * @entity: an #AdgEntity
+ * @extents: where to store the extents
+ *
+ * Stores a copy of the bounding box of @entity in @extents.
+ * This struct specifies the surface portion (in global space)
+ * occupied by the entity without taking into account line
+ * thickness and caps.
+ *
+ * The #AdgEntity::arrange signal will be emitted in order to
+ * update the entity layout before computing the extents.
+ **/
+void
+adg_entity_get_extents(AdgEntity *entity, CpmlExtents *extents)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    data = entity->data;
+
+    g_signal_emit(entity, signals[ARRANGE], 0);
+
+    if (extents != NULL)
+        cpml_extents_copy(extents, &data->extents);
+}
+
+/**
+ * adg_entity_set_extents:
+ * @entity: an #AdgEntity
+ * @extents: the new extents
+ *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Sets a new bounding box for @entity.
+ **/
+void
+adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    data = entity->data;
+
+    cpml_extents_copy(&data->extents, extents);
+}
+
+/**
  * adg_entity_style:
  * @entity: an #AdgEntity
  * @dress: the dress of the style to get
@@ -894,6 +963,27 @@ adg_entity_invalidate(AdgEntity *entity)
 }
 
 /**
+ * adg_entity_arrange:
+ * @entity: an #AdgEntity
+ *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Emits the #AdgEntity::arrange signal on @entity and all its children,
+ * if any. This function is rarely needed as the arrange call is usually
+ * managed by the #AdgEntity::render signal or indirectly by a call to
+ * adg_entity_get_extents().
+ **/
+void
+adg_entity_arrange(AdgEntity *entity)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    g_signal_emit(entity, signals[ARRANGE], 0);
+}
+
+/**
  * adg_entity_render:
  * @entity: an #AdgEntity
  * @cr: a #cairo_t drawing context
@@ -1019,6 +1109,29 @@ real_invalidate(AdgEntity *entity, gpointer user_data)
         klass->invalidate(entity);
 
     data = entity->data;
+
+    data->extents.is_defined = FALSE;
+}
+
+static void
+real_arrange(AdgEntity *entity, gpointer user_data)
+{
+    AdgEntityClass *klass;
+    AdgEntityPrivate *data;
+
+    g_assert(user_data == (gpointer) 0xdeadbeaf);
+
+    klass = ADG_ENTITY_GET_CLASS(entity);
+    if (klass->arrange == NULL) {
+        /* The arrange() method must be defined */
+        g_warning("%s: `arrange' method not implemented for type `%s'",
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
+        return;
+    }
+
+    data = entity->data;
+
+    klass->arrange(entity);
 }
 
 static void
@@ -1041,6 +1154,10 @@ real_render(AdgEntity *entity, cairo_t *cr, gpointer user_data)
 
     cairo_save(cr);
     cairo_transform(cr, &data->global_map);
+
+    /* Before the rendering, the entity should be arranged */
+    g_signal_emit(entity, signals[ARRANGE], 0);
     klass->render(entity, cr);
+
     cairo_restore(cr);
 }

@@ -24,6 +24,7 @@
 #include <adg/adg-util.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-dress.h>
+#include <cpml/cpml.h>
 
 
 G_BEGIN_DECLS
@@ -60,6 +61,7 @@ struct _AdgEntityClass {
 
     /* Virtual Table */
     void                (*invalidate)           (AdgEntity       *entity);
+    void                (*arrange)              (AdgEntity      *entity);
     void                (*render)               (AdgEntity       *entity,
                                                  cairo_t         *cr);
 };
@@ -97,6 +99,10 @@ void            adg_entity_set_local_matrix     (AdgEntity       *entity,
                                                  const AdgMatrix *matrix);
 void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
                                                  cairo_t         *cr);
+void            adg_entity_get_extents          (AdgEntity       *entity,
+                                                 CpmlExtents     *extents);
+void            adg_entity_set_extents          (AdgEntity       *entity,
+                                                 const CpmlExtents *extents);
 AdgStyle *      adg_entity_style                (AdgEntity       *entity,
                                                  AdgDress         dress);
 AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
@@ -110,6 +116,7 @@ void            adg_entity_apply_dress          (AdgEntity       *entity,
 void            adg_entity_global_changed       (AdgEntity       *entity);
 void            adg_entity_local_changed        (AdgEntity       *entity);
 void            adg_entity_invalidate           (AdgEntity       *entity);
+void            adg_entity_arrange              (AdgEntity       *entity);
 void            adg_entity_render               (AdgEntity       *entity,
                                                  cairo_t         *cr);
 
