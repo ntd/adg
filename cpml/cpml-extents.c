@@ -78,6 +78,7 @@ CpmlExtents *
 cpml_extents_from_cairo_text(CpmlExtents *extents,
                              const cairo_text_extents_t *cairo_extents)
 {
+    extents->is_defined = 1;
     extents->org.x = cairo_extents->x_bearing;
     extents->org.y = cairo_extents->y_bearing;
     extents->size.x = cairo_extents->width;
@@ -104,11 +105,17 @@ cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
         return;
     }
 
-    if (src->org.x < extents->org.x)
-        extents->org.x = src->org.x;
+    extents->is_defined = 1;
 
-    if (src->org.y < extents->org.y)
+    if (src->org.x < extents->org.x) {
+        extents->size.x += extents->org.x - src->org.x;
+        extents->org.x = src->org.x;
+    }
+
+    if (src->org.y < extents->org.y) {
+        extents->size.y += extents->org.y - src->org.y;
         extents->org.y = src->org.y;
+    }
 
     if (src->org.x + src->size.x > extents->org.x + extents->size.x)
         extents->size.x = src->org.x + src->size.x - extents->org.x;
