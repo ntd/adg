@@ -34,12 +34,10 @@ typedef cairo_matrix_t AdgMatrix;
 
 
 GType           adg_matrix_get_type             (void) G_GNUC_CONST;
-AdgMatrix *     adg_matrix_dup                  (const AdgMatrix *matrix);
-const AdgMatrix*adg_matrix_get_fallback         (void) G_GNUC_CONST;
 AdgMatrix *     adg_matrix_copy                 (AdgMatrix       *matrix,
                                                  const AdgMatrix *src);
-void            adg_matrix_init_null            (AdgMatrix       *matrix);
-gboolean        adg_matrix_is_null              (const AdgMatrix *matrix);
+AdgMatrix *     adg_matrix_dup                  (const AdgMatrix *matrix);
+const AdgMatrix*adg_matrix_identity             (void) G_GNUC_CONST;
 gboolean        adg_matrix_equal                (const AdgMatrix *matrix1,
                                                  const AdgMatrix *matrix2);
 void            adg_matrix_init_reflection      (AdgMatrix       *matrix,

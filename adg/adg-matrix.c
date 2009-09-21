@@ -41,10 +41,6 @@
 #include <math.h>
 
 
-static AdgMatrix null_matrix = { 0., 0., 0., 0., 0., 0. };
-static AdgMatrix identity_matrix = { 1., 0., 0., 1., 0., 0. };
-
-
 GType
 adg_matrix_get_type(void)
 {
@@ -56,63 +52,6 @@ adg_matrix_get_type(void)
                                                    g_free);
 
     return matrix_type;
-}
-
-/**
- * adg_matrix_dup:
- * @matrix: an #AdgMatrix structure
- *
- * Duplicates @matrix.
- *
- * Returns: the duplicate of @matrix: must be freed with g_free()
- *          when no longer needed.
- **/
-AdgMatrix *
-adg_matrix_dup(const AdgMatrix *matrix)
-{
-    g_return_val_if_fail(matrix != NULL, NULL);
-
-    return g_memdup(matrix, sizeof(AdgMatrix));
-}
-
-/**
- * adg_matrix_get_fallback:
- *
- * Gets a fallback matrix. The fallback matrix is a statically allocated
- * identity matrix.
- *
- * Returns: the fallback matrix
- **/
-const AdgMatrix *
-adg_matrix_get_fallback(void)
-{
-    return &identity_matrix;
-}
-
-/**
- * adg_matrix_init_null:
- * @matrix: the #AdgMatrix to nullify
- *
- * Nullifies a matrix, setting all its components to 0.
- **/
-void
-adg_matrix_init_null(AdgMatrix *matrix)
-{
-    memcpy(matrix, &null_matrix, sizeof(AdgMatrix));
-}
-
-/**
- * adg_matrix_is_null:
- * @matrix: the #AdgMatrix to check
- *
- * Checks if a matrix is a nullified matrix.
- *
- * Returns: %TRUE if the matrix is a null matrix, %FALSE otherwise
- **/
-gboolean
-adg_matrix_is_null(const AdgMatrix *matrix)
-{
-    return memcmp(matrix, &null_matrix, sizeof(AdgMatrix)) == 0;
 }
 
 /**
@@ -133,6 +72,44 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
     memcpy(matrix, src, sizeof(AdgMatrix));
 
     return matrix;
+}
+
+/**
+ * adg_matrix_dup:
+ * @matrix: an #AdgMatrix structure
+ *
+ * Duplicates @matrix.
+ *
+ * Returns: the duplicate of @matrix: must be freed with g_free()
+ *          when no longer needed.
+ **/
+AdgMatrix *
+adg_matrix_dup(const AdgMatrix *matrix)
+{
+    g_return_val_if_fail(matrix != NULL, NULL);
+
+    return g_memdup(matrix, sizeof(AdgMatrix));
+}
+
+/**
+ * adg_matrix_identity:
+ *
+ * A constant identity matrix provided as facility.
+ *
+ * Returns: a pointer to the identity matrix
+ **/
+const AdgMatrix *
+adg_matrix_identity(void)
+{
+    static AdgMatrix identity_matrix;
+    static gboolean initialized = FALSE;
+
+    if (G_UNLIKELY(!initialized)) {
+        cairo_matrix_init_identity(&identity_matrix);
+        initialized = TRUE;
+    }
+
+    return &identity_matrix;
 }
 
 /**
