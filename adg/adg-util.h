@@ -22,7 +22,6 @@
 #define __ADG_UTIL_H__
 
 #include <glib.h>
-#include <cairo.h>
 #include <math.h>
 
 #define ADG_DIR_RIGHT           0.
@@ -31,23 +30,13 @@
 #define ADG_DIR_UP              (M_PI_2 * 3.)
 
 #define ADG_FORWARD_DECL(id)    typedef struct _##id id
-#define ADG_ISSET(flags,mask)   (((flags) & (mask)) != 0 ? TRUE : FALSE)
-#define ADG_SET(flags,mask)     G_STMT_START{ (flags) |= (mask); }G_STMT_END
-#define ADG_UNSET(flags,mask)   G_STMT_START{ (flags) &= ~(mask); }G_STMT_END
-
-
-#define ADG_CHECKPOINT_WITH_MESSAGE(message) \
-                                g_log (G_LOG_DOMAIN, G_LOG_LEVEL_DEBUG, \
-                                       "file `%s' at line %d: %s", \
-                                       __FILE__, __LINE__, #message)
-#define ADG_CHECKPOINT()        ADG_CHECKPOINT_WITH_MESSAGE ("check point")
-
-#define ADG_STUB()              ADG_CHECKPOINT_WITH_MESSAGE("stub")
+#define ADG_MESSAGE(message)    g_message("file `%s' at line %d: %s", \
+                                          __FILE__, __LINE__, #message)
 
 
 G_BEGIN_DECLS
 
-int             adg_strcmp              (const char     *s1,
+gint            adg_strcmp              (const gchar    *s1,
                                          const gchar    *s2);
 
 G_END_DECLS
