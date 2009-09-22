@@ -28,6 +28,30 @@
  **/
 
 /**
+ * ADG_DIR_RIGHT:
+ *
+ * Symbolic constant for the right direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_DOWN:
+ *
+ * Symbolic constant for the down direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_LEFT:
+ *
+ * Symbolic constant for the left direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_UP:
+ *
+ * Symbolic constant for the up direction (in radians).
+ **/
+
+/**
  * ADG_FORWARD_DECL:
  * @id: The name of a struct
  *
@@ -67,7 +91,17 @@
  * ]|
  **/
 
+/**
+ * ADG_MESSAGE:
+ * @message: the message string
+ *
+ * A convenient function to output debug information. It is similar
+ * to g_message() but prepends @message with some text specifying
+ * the position where this function has been called.
+ **/
 
+
+#include "adg-util.h"
 #include <string.h>
 #include <limits.h>
 
@@ -89,8 +123,8 @@
  * Returns: %0 if @s1 matches @s2, a value less than %0 if @s1 is less
  *          than @s2 or greather than %0 if @s1 is greather than @s2
  **/
-int
-adg_strcmp(const char *s1, const char *s2)
+gint
+adg_strcmp(const gchar *s1, const gchar *s2)
 {
     /* This will also catch the NULL == NULL case */
     if (s1 == s2)

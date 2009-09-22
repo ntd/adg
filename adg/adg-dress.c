@@ -38,6 +38,13 @@
  **/
 
 /**
+ * ADG_TYPE_DRESS:
+ *
+ * The type used to express a dress index. It is defined only for GObject
+ * internal and should not be used directly (at least, as far as I know).
+ **/
+
+/**
  * ADG_VALUE_HOLDS_DRESS:
  * @value: a #GValue
  *
