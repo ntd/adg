@@ -604,9 +604,11 @@ arrange(AdgEntity *entity)
 
     if (quote != NULL) {
         /* Update global and local map of the quote container */
+        AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix matrix;
 
+        quote_entity = (AdgEntity *) quote;
         angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
         adg_matrix_copy(&matrix, &local);
         cairo_matrix_invert(&matrix);
@@ -615,10 +617,10 @@ arrange(AdgEntity *entity)
         pair.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
         cairo_matrix_transform_point(&matrix, &pair.x, &pair.y);
         cairo_matrix_init_translate(&matrix, pair.x, pair.y);
-        adg_entity_set_local_map((AdgEntity *) quote, &matrix);
+        adg_entity_set_local_map(quote_entity, &matrix);
 
         cairo_matrix_init_rotate(&matrix, angle);
-        adg_entity_before_global_map((AdgEntity *) quote, &matrix);
+        adg_entity_transform_global_map(quote_entity, &matrix, ADG_TRANSFORM_BEFORE);
     }
 
     if (data->marker1 != NULL) {
