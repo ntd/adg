@@ -21,7 +21,7 @@
 #ifndef __ADG_MATRIX_H__
 #define __ADG_MATRIX_H__
 
-#include <glib-object.h>
+#include <adg/adg-enums.h>
 #include <cairo.h>
 
 
@@ -42,6 +42,9 @@ AdgMatrix *     adg_matrix_dup                  (const AdgMatrix *matrix);
 gboolean        adg_matrix_equal                (const AdgMatrix *matrix1,
                                                  const AdgMatrix *matrix2);
 gboolean        adg_matrix_normalize            (AdgMatrix       *matrix);
+void            adg_matrix_transform            (AdgMatrix       *matrix,
+                                                 const AdgMatrix *transformation,
+                                                 AdgTransformationMode mode);
 
 G_END_DECLS
 

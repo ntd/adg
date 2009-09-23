@@ -97,7 +97,7 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
 
 /**
  * adg_matrix_dup:
- * @matrix: an #AdgMatrix structure
+ * @matrix: the souce #AdgMatrix
  *
  * Duplicates @matrix.
  *
@@ -133,7 +133,7 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 
 /**
  * adg_matrix_normalize:
- * @matrix: an #AdgMatrix
+ * @matrix: the source/destination #AdgMatrix
  *
  * Gets rid of the scaling component of a matrix: considering the
  * (0,0) and (1,1) points, this function normalizes @matrix by
@@ -253,4 +253,44 @@ adg_matrix_normalize(AdgMatrix *matrix)
     matrix->yy *= k;
 
     return TRUE;
+}
+
+/**
+ * adg_matrix_transform:
+ * @matrix: the source/destination #AdgMatrix
+ * @transformation: the transformation to apply
+ * @mode: how @transformation should be applied
+ *
+ * Modifies @matrix applying @transformation in the way specified by
+ * @mode.
+ **/
+void
+adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
+                     AdgTransformationMode mode)
+{
+    AdgMatrix tmp_matrix;
+
+    g_return_if_fail(matrix != NULL);
+    g_return_if_fail(transformation != NULL);
+
+    switch (mode) {
+    case ADG_TRANSFORM_NONE:
+        break;
+    case ADG_TRANSFORM_BEFORE:
+        cairo_matrix_multiply(matrix, matrix, transformation);
+        break;
+    case ADG_TRANSFORM_AFTER:
+        cairo_matrix_multiply(matrix, transformation, matrix);
+        break;
+    case ADG_TRANSFORM_BEFORE_NORMALIZED:
+        adg_matrix_copy(&tmp_matrix, transformation);
+        adg_matrix_normalize(&tmp_matrix);
+        cairo_matrix_multiply(matrix, matrix, &tmp_matrix);
+        break;
+    case ADG_TRANSFORM_AFTER_NORMALIZED:
+        adg_matrix_copy(&tmp_matrix, transformation);
+        adg_matrix_normalize(&tmp_matrix);
+        cairo_matrix_multiply(matrix, &tmp_matrix, matrix);
+        break;
+    }
 }
