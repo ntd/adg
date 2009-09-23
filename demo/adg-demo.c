@@ -195,7 +195,7 @@ sample_path(const SampleData *data)
     adg_trail_get_segment(ADG_TRAIL(path), &segment, 1);
     dup_segment = adg_segment_deep_dup(&segment);
     cpml_segment_reverse(dup_segment);
-    adg_matrix_init_reflection(&matrix, 0);
+    cairo_matrix_init(&matrix, 1, 0, 0, -1, 0, 0);
     cpml_segment_transform(dup_segment, &matrix);
     dup_segment->data[0].header.type = CAIRO_PATH_LINE_TO;
 
