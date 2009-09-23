@@ -61,7 +61,7 @@ struct _AdgEntityClass {
 
     /* Virtual Table */
     void                (*invalidate)           (AdgEntity       *entity);
-    void                (*arrange)              (AdgEntity      *entity);
+    void                (*arrange)              (AdgEntity       *entity);
     void                (*render)               (AdgEntity       *entity,
                                                  cairo_t         *cr);
 };
@@ -77,10 +77,9 @@ void            adg_entity_get_global_map       (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_global_map       (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-void            adg_entity_before_global_map    (AdgEntity       *entity,
-                                                 const AdgMatrix *transformation);
-void            adg_entity_after_global_map     (AdgEntity       *entity,
-                                                 const AdgMatrix *transformation);
+void            adg_entity_transform_global_map (AdgEntity       *entity,
+                                                 const AdgMatrix *transformation,
+                                                 AdgTransformationMode mode);
 void            adg_entity_get_global_matrix    (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 void            adg_entity_set_global_matrix    (AdgEntity       *entity,
@@ -89,10 +88,9 @@ void            adg_entity_get_local_map        (AdgEntity       *entity,
                                                  AdgMatrix       *map);
 void            adg_entity_set_local_map        (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-void            adg_entity_before_local_map     (AdgEntity       *entity,
-                                                 const AdgMatrix *transformation);
-void            adg_entity_after_local_map      (AdgEntity       *entity,
-                                                 const AdgMatrix *transformation);
+void            adg_entity_transform_local_map  (AdgEntity       *entity,
+                                                 const AdgMatrix *transformation,
+                                                 AdgTransformationMode mode);
 void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 void            adg_entity_set_local_matrix     (AdgEntity       *entity,

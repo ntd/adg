@@ -439,23 +439,26 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
- * adg_entity_before_global_map:
+ * adg_entity_transform_global_map:
  * @entity: an #AdgEntity object
  * @transformation: the transformation to apply
+ * @mode: how @transformation should be applied
  *
  * Convenient function to change the global map of @entity by
- * applying @tranformation before the current matrix. This is
- * logically equivalent to the following code:
+ * applying @tranformation using the @mode operator. This is
+ * logically equivalent to the following:
  *
  * |[
  * AdgMatrix tmp_map;
  * adg_entity_get_global_map(entity, &tmp_map);
- * cairo_matrix_multiply(&tmp_map, &tmp_map, transformation);
+ * adg_matrix_transform(&tmp_map, transformation, mode);
  * adg_entity_set_global_map(entity, &tmp_map);
  * ]|
  **/
 void
-adg_entity_before_global_map(AdgEntity *entity, const AdgMatrix *transformation)
+adg_entity_transform_global_map(AdgEntity *entity,
+                                const AdgMatrix *transformation,
+                                AdgTransformationMode mode)
 {
     AdgEntityPrivate *data;
     AdgMatrix map;
@@ -464,39 +467,9 @@ adg_entity_before_global_map(AdgEntity *entity, const AdgMatrix *transformation)
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
-    cairo_matrix_multiply(&map, &data->global_map, transformation);
 
-    if (set_global_map(entity, &map))
-        g_object_notify((GObject *) entity, "global-map");
-}
-
-/**
- * adg_entity_after_global_map:
- * @entity: an #AdgEntity object
- * @transformation: the transformation to apply
- *
- * Convenient function to change the global map of @entity by
- * applying @tranformation after the current matrix. This is
- * logically equivalent to the following code:
- *
- * |[
- * AdgMatrix tmp_map;
- * adg_entity_get_global_map(entity, &tmp_map);
- * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
- * adg_entity_set_global_map(entity, &tmp_map);
- * ]|
- **/
-void
-adg_entity_after_global_map(AdgEntity *entity, const AdgMatrix *transformation)
-{
-    AdgEntityPrivate *data;
-    AdgMatrix map;
-
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(transformation != NULL);
-
-    data = entity->data;
-    cairo_matrix_multiply(&map, transformation, &data->global_map);
+    adg_matrix_copy(&map, &data->global_map);
+    adg_matrix_transform(&map, transformation, mode);
 
     if (set_global_map(entity, &map))
         g_object_notify((GObject *) entity, "global-map");
@@ -589,23 +562,26 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
 }
 
 /**
- * adg_entity_before_local_map:
+ * adg_entity_transform_local_map:
  * @entity: an #AdgEntity object
  * @transformation: the transformation to apply
+ * @mode: how @transformation should be applied
  *
  * Convenient function to change the local map of @entity by
- * applying @tranformation before the current matrix. This is
- * logically equivalent to the following code:
+ * applying @tranformation using the @mode operator. This is
+ * logically equivalent to the following:
  *
  * |[
  * AdgMatrix tmp_map;
  * adg_entity_get_local_map(entity, &tmp_map);
- * cairo_matrix_multiply(&tmp_map, &tmp_map, transformation);
+ * adg_matrix_transform(&tmp_map, transformation, mode);
  * adg_entity_set_local_map(entity, &tmp_map);
  * ]|
  **/
 void
-adg_entity_before_local_map(AdgEntity *entity, const AdgMatrix *transformation)
+adg_entity_transform_local_map(AdgEntity *entity,
+                               const AdgMatrix *transformation,
+                               AdgTransformationMode mode)
 {
     AdgEntityPrivate *data;
     AdgMatrix map;
@@ -614,39 +590,9 @@ adg_entity_before_local_map(AdgEntity *entity, const AdgMatrix *transformation)
     g_return_if_fail(transformation != NULL);
 
     data = entity->data;
-    cairo_matrix_multiply(&map, &data->local_map, transformation);
 
-    if (set_local_map(entity, &map))
-        g_object_notify((GObject *) entity, "local-map");
-}
-
-/**
- * adg_entity_after_local_map:
- * @entity: an #AdgEntity object
- * @transformation: the transformation to apply
- *
- * Convenient function to change the local map of @entity by
- * applying @tranformation after the current matrix. This is
- * logically equivalent to the following code:
- *
- * |[
- * AdgMatrix tmp_map;
- * adg_entity_get_local_map(entity, &tmp_map);
- * cairo_matrix_multiply(&tmp_map, transformation, &tmp_map);
- * adg_entity_set_local_map(entity, &tmp_map);
- * ]|
- **/
-void
-adg_entity_after_local_map(AdgEntity *entity, const AdgMatrix *transformation)
-{
-    AdgEntityPrivate *data;
-    AdgMatrix map;
-
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(transformation != NULL);
-
-    data = entity->data;
-    cairo_matrix_multiply(&map, transformation, &data->local_map);
+    adg_matrix_copy(&map, &data->local_map);
+    adg_matrix_transform(&map, transformation, mode);
 
     if (set_local_map(entity, &map))
         g_object_notify((GObject *) entity, "local-map");
