@@ -32,6 +32,14 @@ typedef enum {
     ADG_THREE_STATE_UNKNOWN
 } AdgThreeState;
 
+typedef enum {
+    ADG_TRANSFORM_NONE,
+    ADG_TRANSFORM_BEFORE,
+    ADG_TRANSFORM_AFTER,
+    ADG_TRANSFORM_BEFORE_NORMALIZED,
+    ADG_TRANSFORM_AFTER_NORMALIZED
+} AdgTransformationMode;
+
 G_END_DECLS
 
 

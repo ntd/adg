@@ -39,3 +39,22 @@
  * user when a boolean is requested but also an indefinite / default
  * state should be caught.
  **/
+
+/**
+ * AdgTransformationMode:
+ * @ADG_TRANSFORM_NONE: do not apply any transformation
+ * @ADG_TRANSFORM_BEFORE: apply the transformation before the matrix using
+ *                        cairo_matrix_multiply(matrix, matrix, transformation)
+ * @ADG_TRANSFORM_AFTER: apply the transformation after the matrix using
+ *                       cairo_matrix_multiply(matrix, transformation, matrix)
+ * @ADG_TRANSFORM_BEFORE_NORMALIZED: same as %ADG_TRANSFORM_BEFORE but
+ *                                   normalizing the transformation with
+ *                                   adg_matrix_normalize() before applying it
+ * @ADG_TRANSFORM_AFTER_NORMALIZED: same as %ADG_TRANSFORM_AFTER but
+ *                                  normalizing the transformation with
+ *                                  adg_matrix_normalize() before applying it
+ *
+ * Specifies the mode a generic transformation should be applied on
+ * a subject matrix. Although used in different places, the function
+ * performing the dirty work is always adg_matrix_transform().
+ **/
