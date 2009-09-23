@@ -129,20 +129,3 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 
     return memcmp(matrix1, matrix2, sizeof(AdgMatrix)) == 0;
 }
-
-/**
- * adg_matrix_init_reflection:
- * @matrix: the destination #AdgMatrix
- * @radians: angle of the mirroring axis, in radians
- *
- * Initialized @matrix to a transformation that reflects arond an axis
- * rotated by @radians and passing throught the origin (0, 0).
- **/
-void
-adg_matrix_init_reflection(AdgMatrix *matrix, double radians)
-{
-    double s2 = sin(2*radians);
-    double c2 = cos(2*radians);
-
-    cairo_matrix_init(matrix, c2, s2, s2, -c2, 0, 0);
-}

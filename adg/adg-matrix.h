@@ -40,8 +40,6 @@ AdgMatrix *     adg_matrix_dup                  (const AdgMatrix *matrix);
 const AdgMatrix*adg_matrix_identity             (void) G_GNUC_CONST;
 gboolean        adg_matrix_equal                (const AdgMatrix *matrix1,
                                                  const AdgMatrix *matrix2);
-void            adg_matrix_init_reflection      (AdgMatrix       *matrix,
-                                                 double           radians);
 
 G_END_DECLS
 
