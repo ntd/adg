@@ -283,22 +283,9 @@ adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 static void
 global_changed(AdgEntity *entity)
 {
-    AdgMatrix old, new;
-
-    adg_entity_get_global_matrix(entity, &old);
+    unset_font((AdgToyText *) entity);
 
     PARENT_ENTITY_CLASS->global_changed(entity);
-
-    adg_entity_get_global_matrix(entity, &new);
-
-    /* The scaled font should be recomputed only if the two matrices
-     * does not match (the translation is not considered) */
-    if (old.xx == new.xx && old.yy == new.yy &&
-        old.xy == new.xy && old.yx == new.yx)
-        return;
-
-    /* The matrices does not match: invalidate the font cache */
-    unset_font((AdgToyText *) entity);
 }
 
 static void
