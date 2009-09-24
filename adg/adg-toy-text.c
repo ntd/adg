@@ -364,11 +364,13 @@ render(AdgEntity *entity, cairo_t *cr)
     data = toy_text->data;
 
     if (data->glyphs != NULL) {
-        cairo_save(cr);
+        AdgMatrix ctm;
+
+        adg_entity_get_ctm(entity, &ctm);
+
         cairo_set_scaled_font(cr, data->font);
-        adg_entity_apply_local_matrix(entity, cr);
+        cairo_set_matrix(cr, &ctm);
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
-        cairo_restore(cr);
     }
 }
 
