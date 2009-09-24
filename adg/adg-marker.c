@@ -168,6 +168,10 @@ adg_marker_init(AdgMarker *marker)
     data->size = 10;
     data->model = NULL;
 
+    adg_entity_set_local_mode((AdgEntity *) marker,
+                              ADG_TRANSFORM_BEFORE);
+
+
     marker->data = data;
 }
 
@@ -566,7 +570,7 @@ local_changed(AdgEntity *entity)
     AdgMarkerPrivate *data;
     CpmlPair pair;
     CpmlVector vector;
-    AdgMatrix matrix, tmp;
+    AdgMatrix matrix;
 
     data = ((AdgMarker *) entity)->data;
     if (data->trail == NULL)
@@ -581,10 +585,8 @@ local_changed(AdgEntity *entity)
         vector.y = -vector.y;
     }
 
-    cairo_matrix_init(&tmp, vector.x, vector.y, -vector.y, vector.x, 0, 0);
-
-    cairo_matrix_init_translate(&matrix, pair.x, pair.y);
-    cairo_matrix_multiply(&matrix, &tmp, &matrix);
+    cairo_matrix_init(&matrix, vector.x, vector.y,
+                      -vector.y, vector.x, pair.x, pair.y);
 
     adg_entity_set_local_matrix(entity, &matrix);
 }
