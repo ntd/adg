@@ -67,3 +67,18 @@ adg_pair_dup(const AdgPair * pair)
 {
     return g_memdup(pair, sizeof(AdgPair));
 }
+
+/**
+ * adg_pair_equal:
+ * @pair1: the first pair to compare
+ * @pair2: the second pair to compare
+ *
+ * Compares @pair1 and @pair2 and returns %TRUE if the pairs are equals.
+ *
+ * Returns: %TRUE if @pair1 is equal to @pair2, %FALSE otherwise
+ **/
+gboolean
+adg_pair_equal(const AdgPair *pair1, const AdgPair *pair2)
+{
+    return pair1->x == pair2->x && pair1->y == pair2->y;
+}

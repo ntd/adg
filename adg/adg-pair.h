@@ -35,6 +35,8 @@ typedef CpmlPair AdgPair;
 
 GType           adg_pair_get_type       (void) G_GNUC_CONST;
 AdgPair *       adg_pair_dup            (const AdgPair  *pair);
+gboolean        adg_pair_equal          (const AdgPair  *pair1,
+                                         const AdgPair  *pair2);
 
 G_END_DECLS
 
