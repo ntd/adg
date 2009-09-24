@@ -217,10 +217,10 @@ set_property(GObject *object,
 /**
  * adg_ldim_new:
  *
- * Creates a new - unreferenced - linear dimension. You must, at least, define
- * the reference points with adg_dim_set_ref(), the dimension direction with
- * adg_ldim_set_direction() and the position reference using adg_dim_set_pos()
- * or, better, adg_ldim_set_pos().
+ * Creates a new - undefined - linear dimension. You must, at least,
+ * define the reference points with adg_dim_set_ref(), the dimension
+ * direction with adg_ldim_set_direction() and the position reference
+ * using adg_dim_set_pos() or, better, adg_ldim_set_pos().
  *
  * Returns: the newly created linear dimension entity
  **/

@@ -56,7 +56,6 @@ G_BEGIN_DECLS
  */
 
 typedef struct _AdgLDimPrivate AdgLDimPrivate;
-typedef struct _AdgLDimContext AdgLDimContext;
 
 struct _AdgLDimPrivate {
     double               direction;
