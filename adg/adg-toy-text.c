@@ -62,7 +62,6 @@ static void     set_property            (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void     global_changed          (AdgEntity      *entity);
-static void     local_changed           (AdgEntity      *entity);
 static void     invalidate              (AdgEntity      *entity);
 static void     arrange                 (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
@@ -95,7 +94,6 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     gobject_class->set_property = set_property;
 
     entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -288,31 +286,6 @@ global_changed(AdgEntity *entity)
 {
     PARENT_ENTITY_CLASS->global_changed(entity);
     unset_font((AdgToyText *) entity);
-}
-
-static void
-local_changed(AdgEntity *entity)
-{
-    AdgMatrix old, new;
-    CpmlExtents extents;
-
-    adg_entity_get_local_matrix(entity, &old);
-
-    PARENT_ENTITY_CLASS->local_changed(entity);
-
-    adg_entity_get_local_matrix(entity, &new);
-    cairo_matrix_init_translate(&new, new.x0, new.y0);
-    adg_entity_set_local_matrix(entity, &new);
-
-    /* Update the extents position (if needed) without
-     * invalidating the font */
-    adg_entity_get_extents(entity, &extents);
-
-    if (extents.is_defined) {
-        extents.org.x += new.x0 - old.x0;
-        extents.org.y += new.y0 - old.y0;
-        adg_entity_set_extents(entity, &extents);
-    }
 }
 
 static void
