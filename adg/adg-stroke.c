@@ -111,6 +111,8 @@ adg_stroke_init(AdgStroke *stroke)
     data->dress = ADG_DRESS_LINE_REGULAR;
     data->trail = NULL;
 
+    adg_entity_set_local_mode((AdgEntity *) stroke, ADG_TRANSFORM_BEFORE);
+
     stroke->data = data;
 }
 
