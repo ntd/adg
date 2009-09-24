@@ -87,9 +87,10 @@ must be reflected in the demo programs, where applicable.</para>
    of a matrix: consider the point (0,0) and (1,1) on the identity matrix
    and force on the matrix to normalize a distance of 1.4142... between
    the same points by modifying only the xx and yy components.</listitem>
-   <listitem>Move the custom get_local_matrix() inside AdgEntity and implement a
-   common way to manage local matrix - entity interaction: if the model is
-   rotated an AdgToyText should rotate but not scale.</listitem>
+   <listitem override="disc">Move the custom get_local_matrix() inside AdgEntity and implement a
+   common way to manage local matrix - entity interaction: for instance,
+   if the model is rotated an AdgToyText should rotate accordling but not
+   scale (usually, at least if it is not a text written on the model).</listitem>
    <listitem override="disc">Implement AdgMarker as an abstract entity: it will be the base class
    for arrows, ticks, squares, dots and so on.</listitem>
    <listitem override="disc">Implement AdgArrow as AdgMarker derived entity.</listitem>
