@@ -23,9 +23,6 @@
 
 #include <adg-trail.h>
 #include <adg-marker.h>
-#include <adg-dim-style.h>
-#include <adg-line-style.h>
-#include <adg-color-style.h>
 
 
 G_BEGIN_DECLS

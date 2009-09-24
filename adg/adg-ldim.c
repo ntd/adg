@@ -337,18 +337,18 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
 /**
  * adg_ldim_set_pos_explicit:
  * @ldim: an #AdgLDim entity
- * @pos_x: the new x coordinate position reference
- * @pos_y: the new y coordinate position reference
+ * @x: the new x coordinate position reference
+ * @y: the new y coordinate position reference
  *
  * Wrappers adg_ldim_set_pos() with explicit coordinates.
  **/
 void
-adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble pos_x, gdouble pos_y)
+adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble x, gdouble y)
 {
     AdgPair pos;
 
-    pos.x = pos_x;
-    pos.y = pos_y;
+    pos.x = x;
+    pos.y = y;
 
     adg_ldim_set_pos(ldim, &pos);
 }
@@ -714,11 +714,11 @@ update_shift(AdgLDim *ldim)
     gdouble level;
 
     data = ldim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
 
     if (data->shift.is_arranged)
         return;
 
+    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
