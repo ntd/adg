@@ -50,15 +50,23 @@ struct _AdgADimClass {
 
 
 GType           adg_adim_get_type               (void) G_GNUC_CONST;
-
 AdgADim *       adg_adim_new                    (void);
+AdgADim *       adg_adim_new_full               (const AdgPair  *ref1,
+                                                 const AdgPair  *ref2,
+                                                 const AdgPair  *org1,
+                                                 const AdgPair  *org2,
+                                                 const AdgPair  *pos);
 
-gdouble         adg_adim_get_angle1             (AdgADim        *adim);
-void            adg_adim_set_angle1             (AdgADim        *adim,
-                                                 gdouble         angle);
-gdouble         adg_adim_get_angle2             (AdgADim        *adim);
-void            adg_adim_set_angle2             (AdgADim        *adim,
-                                                 gdouble         angle);
+const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
+const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
+void            adg_adim_set_org                (AdgADim        *adim,
+                                                 const AdgPair  *org1,
+                                                 const AdgPair  *org2);
+void            adg_adim_set_pos                (AdgADim        *adim,
+                                                 const AdgPair  *pos);
+void            adg_adim_set_pos_explicit       (AdgADim        *adim,
+                                                 gdouble         x,
+                                                 gdouble         y);
 
 G_END_DECLS
 

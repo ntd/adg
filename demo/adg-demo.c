@@ -270,7 +270,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* D5 */
-    x = data->A - data->C;
+    x = data->A - data->C - 0.2;
     ldim = adg_ldim_new_full_explicit(x, -data->D5 / 2, x, data->D5 / 2,
                                       ADG_DIR_RIGHT, data->A, 0);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);

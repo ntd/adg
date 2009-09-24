@@ -26,15 +26,52 @@
 
 G_BEGIN_DECLS
 
+/*
+ * The cpml.data array is structured in the following way:
+ *
+ * [0]  = MOVE_TO
+ * [1]  = arc start
+ * [2]  = ARC_TO
+ * [3]  = arc middle
+ * [4]  = arc end
+ * [5]  = MOVE_TO
+ * [6]  = first extension line start
+ * [7]  = LINE_TO
+ * [8]  = first extension line end
+ * [9]  = MOVE_TO
+ * [10] = second extension line start
+ * [11] = LINE_TO
+ * [12] = second extension line end
+ */
+
 typedef struct _AdgADimPrivate AdgADimPrivate;
 
 struct _AdgADimPrivate {
-    gdouble             angle1;
-    gdouble             angle2;
-    cairo_path_t        extension1;
-    cairo_path_t        extension2;
-    cairo_path_t        arrow_path;
-    cairo_path_t        baseline;
+    AdgPair              org1;
+    AdgPair              org2;
+    gboolean             has_extension1;
+    gboolean             has_extension2;
+
+    gdouble              angle1;
+    gdouble              angle2;
+    AdgTrail            *trail;
+    AdgMarker           *marker1;
+    AdgMarker           *marker2;
+
+    struct {
+        CpmlPath path;
+        cairo_path_data_t data[13];
+    }            cpml;
+
+    struct {
+        gboolean         is_arranged;
+        CpmlPair         from1;
+        CpmlPair         from2;
+        CpmlPair         marker1;
+        CpmlPair         marker2;
+        CpmlPair         to1;
+        CpmlPair         to2;
+    }                    shift;
 };
 
 G_END_DECLS
