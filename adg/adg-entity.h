@@ -22,6 +22,7 @@
 #define __ADG_ENTITY_H__
 
 #include <adg/adg-util.h>
+#include <adg/adg-type-builtins.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-dress.h>
 #include <cpml/cpml.h>
@@ -51,7 +52,8 @@ struct _AdgEntity {
 
 struct _AdgEntityClass {
     /*< private >*/
-    GInitiallyUnownedClass parent_class;
+    GInitiallyUnownedClass      parent_class;
+    AdgTransformationMode       default_local_mode;
     /*< public >*/
     /* Signals */
     void                (*parent_set)           (AdgEntity       *entity,
@@ -95,6 +97,12 @@ void            adg_entity_get_local_matrix     (AdgEntity       *entity,
                                                  AdgMatrix       *matrix);
 void            adg_entity_set_local_matrix     (AdgEntity       *entity,
                                                  const AdgMatrix *matrix);
+AdgTransformationMode
+                adg_entity_get_local_mode       (AdgEntity       *entity);
+void            adg_entity_set_local_mode       (AdgEntity       *entity,
+                                                 AdgTransformationMode mode);
+void            adg_entity_get_ctm              (AdgEntity       *entity,
+                                                 AdgMatrix       *ctm);
 void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
                                                  cairo_t         *cr);
 void            adg_entity_get_extents          (AdgEntity       *entity,

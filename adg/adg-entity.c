@@ -63,7 +63,8 @@ enum {
     PROP_0,
     PROP_PARENT,
     PROP_GLOBAL_MAP,
-    PROP_LOCAL_MAP
+    PROP_LOCAL_MAP,
+    PROP_LOCAL_MODE
 };
 
 enum {
@@ -94,6 +95,8 @@ static gboolean         set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static gboolean         set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
+static gboolean         set_local_mode          (AdgEntity       *entity,
+                                                 AdgTransformationMode mode);
 static void             real_invalidate         (AdgEntity       *entity,
                                                  gpointer         user_data);
 static void             real_arrange            (AdgEntity       *entity,
@@ -102,7 +105,7 @@ static void             real_render             (AdgEntity       *entity,
                                                  cairo_t         *cr,
                                                  gpointer         user_data);
 
-static guint signals[LAST_SIGNAL] = { 0 };
+static guint    signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED);
@@ -134,20 +137,31 @@ adg_entity_class_init(AdgEntityClass *klass)
     param = g_param_spec_object("parent",
                                 P_("Parent Entity"),
                                 P_("The parent entity of this entity or NULL if this is a top-level entity"),
-                                ADG_TYPE_ENTITY, G_PARAM_READWRITE);
+                                ADG_TYPE_ENTITY,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_PARENT, param);
 
     param = g_param_spec_boxed("global-map",
                                P_("Global Map"),
                                P_("The transformation to be combined with the parent ones to get the global matrix"),
-                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+                               ADG_TYPE_MATRIX,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_GLOBAL_MAP, param);
 
     param = g_param_spec_boxed("local-map",
                                P_("Local Map"),
                                P_("The transformation to be combined with the parent ones to get the local matrix"),
-                               ADG_TYPE_MATRIX, G_PARAM_READWRITE);
+                               ADG_TYPE_MATRIX,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
+
+    param = g_param_spec_enum("local-mode",
+                              P_("Local Mode"),
+                              P_("How the local matrix should be combined with the CTM by the adg_entity_apply_local_matrix() method"),
+                              ADG_TYPE_TRANSFORMATION_MODE,
+                              klass->default_local_mode,
+                              G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LOCAL_MODE, param);
 
     /**
      * AdgEntity::parent-set:
@@ -255,11 +269,11 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
-    data->extents.is_defined = FALSE;
+    data->local_mode = ADG_ENTITY_GET_CLASS(entity)->default_local_mode;
     data->hash_styles = NULL;
-
     cairo_matrix_init_identity(&data->global_matrix);
     cairo_matrix_init_identity(&data->local_matrix);
+    data->extents.is_defined = FALSE;
 
     entity->data = data;
 }
@@ -306,6 +320,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_LOCAL_MAP:
         g_value_set_boxed(value, &data->local_map);
         break;
+    case PROP_LOCAL_MODE:
+        g_value_set_enum(value, data->local_mode);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -327,6 +344,9 @@ set_property(GObject *object,
         break;
     case PROP_LOCAL_MAP:
         set_local_map(entity, g_value_get_boxed(value));
+        break;
+    case PROP_LOCAL_MODE:
+        set_local_mode(entity, g_value_get_enum(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -646,35 +666,107 @@ adg_entity_set_local_matrix(AdgEntity *entity, const AdgMatrix *matrix)
 }
 
 /**
+ * adg_entity_get_local_mode:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the transformation mode to be used by
+ * adg_entity_apply_local_matrix().
+ *
+ * Returns: the current transformation mode
+ **/
+AdgTransformationMode
+adg_entity_get_local_mode(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_TRANSFORM_NONE);
+
+    data = entity->data;
+
+    return data->local_mode;
+}
+
+/**
+ * adg_entity_set_local_mode:
+ * @entity: an #AdgEntity object
+ * @mode: the new mode
+ *
+ * Sets a new transformation mode to be used by
+ * adg_entity_apply_local_matrix().
+ **/
+void
+adg_entity_set_local_mode(AdgEntity *entity, AdgTransformationMode mode)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    if (set_local_mode(entity, mode))
+        g_object_notify((GObject *) entity, "local-mode");
+}
+
+/**
+ * adg_entity_get_ctm:
+ * @entity: an #AdgEntity object
+ * @ctm: where to store the current transformation matrix
+ *
+ * Gets the "official" ctm of @entity by combining the global
+ * and local matrices in the way specified by the
+ * #AdgEntity:local-mode property. The result is stored in
+ * @ctm.
+ **/
+void
+adg_entity_get_ctm(AdgEntity *entity, AdgMatrix *ctm)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(ctm != NULL);
+
+    data = entity->data;
+
+    adg_matrix_copy(ctm, &data->global_matrix);
+    adg_matrix_transform(ctm, &data->local_matrix, data->local_mode);
+}
+
+/**
  * adg_entity_apply_local_matrix:
  * @entity: an #AdgEntity object
  * @cr: a #cairo_t drawing context
  *
- * Applies the local matrix of @entity BEFORE the current transformation
- * matrix of @cr. This is a convenience function equivalent to:
+ * Applies the local matrix of @entity to the @cr cairo context
+ * combining the local matrix with the ctm of @cr in the mode
+ * specified by the #AdgEntity:local-mode property.
+ *
+ * Beware: the local matrix is combined with the ctm of @cr, not
+ * with the global matrix. This usually makes no differences, as
+ * the global matrix is selected by default in the render() method,
+ * but in some circumstances it can cause unexpected behaviors.
+ *
+ * This function is roughly equivalent to:
  *
  * |[
- * AdgMatrix local, ctm;
+ * AdgMatrix ctm, local;
  *
  * adg_entity_get_local_matrix(entity, &local);
  * cairo_get_matrix(cr, &ctm);
  *
- * cairo_matrix_multiply(&ctm, &ctm, &local);
+ * adg_matrix_transform(&ctm, &local,
+ *                      adg_entity_get_local_mode(entity));
  * cairo_set_matrix(cr, &ctm);
  * ]|
  **/
 void
 adg_entity_apply_local_matrix(AdgEntity *entity, cairo_t *cr)
 {
-    AdgMatrix local, ctm;
+    AdgEntityPrivate *data;
+    AdgMatrix ctm;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(cr != NULL);
 
-    adg_entity_get_local_matrix(entity, &local);
-    cairo_get_matrix(cr, &ctm);
+    data = entity->data;
 
-    cairo_matrix_multiply(&ctm, &ctm, &local);
+    cairo_get_matrix(cr, &ctm);
+    adg_matrix_transform(&ctm, &data->local_matrix, data->local_mode);
     cairo_set_matrix(cr, &ctm);
 }
 
@@ -1036,6 +1128,19 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
         adg_matrix_copy(&data->local_map, map);
 
     g_signal_emit(entity, signals[LOCAL_CHANGED], 0, &data->local_matrix);
+    return TRUE;
+}
+
+static gboolean
+set_local_mode(AdgEntity *entity, AdgTransformationMode mode)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (mode == data->local_mode)
+        return FALSE;
+
+    data->local_mode = mode;
+
     return TRUE;
 }
 
