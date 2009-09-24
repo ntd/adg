@@ -53,7 +53,6 @@ struct _AdgEntity {
 struct _AdgEntityClass {
     /*< private >*/
     GInitiallyUnownedClass      parent_class;
-    AdgTransformationMode       default_local_mode;
     /*< public >*/
     /* Signals */
     void                (*parent_set)           (AdgEntity       *entity,

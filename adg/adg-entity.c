@@ -159,7 +159,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                               P_("Local Mode"),
                               P_("How the local matrix should be combined with the CTM by the adg_entity_apply_local_matrix() method"),
                               ADG_TYPE_TRANSFORMATION_MODE,
-                              klass->default_local_mode,
+                              ADG_TRANSFORM_NONE,
                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MODE, param);
 
@@ -269,7 +269,7 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
-    data->local_mode = ADG_ENTITY_GET_CLASS(entity)->default_local_mode;
+    data->local_mode = ADG_TRANSFORM_NONE;
     data->hash_styles = NULL;
     cairo_matrix_init_identity(&data->global_matrix);
     cairo_matrix_init_identity(&data->local_matrix);
