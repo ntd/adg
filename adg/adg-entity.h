@@ -68,61 +68,53 @@ struct _AdgEntityClass {
 };
 
 
-GType           adg_entity_get_type             (void) G_GNUC_CONST;
-AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
+GType            adg_entity_get_type            (void) G_GNUC_CONST;
+AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
 
-AdgEntity *     adg_entity_get_parent           (AdgEntity       *entity);
-void            adg_entity_set_parent           (AdgEntity       *entity,
+AdgEntity *      adg_entity_get_parent          (AdgEntity       *entity);
+void             adg_entity_set_parent          (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-void            adg_entity_get_global_map       (AdgEntity       *entity,
+void             adg_entity_get_global_map      (AdgEntity       *entity,
                                                  AdgMatrix       *map);
-void            adg_entity_set_global_map       (AdgEntity       *entity,
+void             adg_entity_set_global_map      (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-void            adg_entity_transform_global_map (AdgEntity       *entity,
+void             adg_entity_transform_global_map(AdgEntity       *entity,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformationMode mode);
-void            adg_entity_get_global_matrix    (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
-void            adg_entity_set_global_matrix    (AdgEntity       *entity,
-                                                 const AdgMatrix *matrix);
-void            adg_entity_get_local_map        (AdgEntity       *entity,
+void             adg_entity_get_local_map       (AdgEntity       *entity,
                                                  AdgMatrix       *map);
-void            adg_entity_set_local_map        (AdgEntity       *entity,
+void             adg_entity_set_local_map       (AdgEntity       *entity,
                                                  const AdgMatrix *map);
-void            adg_entity_transform_local_map  (AdgEntity       *entity,
+void             adg_entity_transform_local_map (AdgEntity       *entity,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformationMode mode);
-void            adg_entity_get_local_matrix     (AdgEntity       *entity,
-                                                 AdgMatrix       *matrix);
-void            adg_entity_set_local_matrix     (AdgEntity       *entity,
-                                                 const AdgMatrix *matrix);
 AdgTransformationMode
-                adg_entity_get_local_mode       (AdgEntity       *entity);
-void            adg_entity_set_local_mode       (AdgEntity       *entity,
+                 adg_entity_get_local_mode      (AdgEntity       *entity);
+void             adg_entity_set_local_mode      (AdgEntity       *entity,
                                                  AdgTransformationMode mode);
-void            adg_entity_get_ctm              (AdgEntity       *entity,
-                                                 AdgMatrix       *ctm);
-void            adg_entity_apply_local_matrix   (AdgEntity       *entity,
-                                                 cairo_t         *cr);
-void            adg_entity_get_extents          (AdgEntity       *entity,
+void             adg_entity_get_extents         (AdgEntity       *entity,
                                                  CpmlExtents     *extents);
-void            adg_entity_set_extents          (AdgEntity       *entity,
+void             adg_entity_set_extents         (AdgEntity       *entity,
                                                  const CpmlExtents *extents);
-AdgStyle *      adg_entity_style                (AdgEntity       *entity,
+AdgStyle *       adg_entity_style               (AdgEntity       *entity,
                                                  AdgDress         dress);
-AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
+AdgStyle *       adg_entity_get_style           (AdgEntity       *entity,
                                                  AdgDress         dress);
-void            adg_entity_set_style            (AdgEntity       *entity,
+void             adg_entity_set_style           (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  AdgStyle        *style);
-void            adg_entity_apply_dress          (AdgEntity       *entity,
+void             adg_entity_apply_dress         (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  cairo_t         *cr);
-void            adg_entity_global_changed       (AdgEntity       *entity);
-void            adg_entity_local_changed        (AdgEntity       *entity);
-void            adg_entity_invalidate           (AdgEntity       *entity);
-void            adg_entity_arrange              (AdgEntity       *entity);
-void            adg_entity_render               (AdgEntity       *entity,
+const AdgMatrix *adg_entity_global_matrix       (AdgEntity       *entity);
+const AdgMatrix *adg_entity_local_matrix        (AdgEntity       *entity);
+void             adg_entity_get_ctm             (AdgEntity       *entity,
+                                                 AdgMatrix       *ctm);
+void             adg_entity_global_changed      (AdgEntity       *entity);
+void             adg_entity_local_changed       (AdgEntity       *entity);
+void             adg_entity_invalidate          (AdgEntity       *entity);
+void             adg_entity_arrange             (AdgEntity       *entity);
+void             adg_entity_render              (AdgEntity       *entity,
                                                  cairo_t         *cr);
 
 G_END_DECLS
