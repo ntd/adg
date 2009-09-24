@@ -501,7 +501,7 @@ arrange(AdgEntity *entity)
     AdgDimStyle *dim_style;
     AdgContainer *quote;
     gboolean outside;
-    AdgMatrix local;
+    const AdgMatrix *local;
     AdgPair ref1, ref2, pos1, pos2;
     AdgPair pair;
     gint n;
@@ -530,16 +530,16 @@ arrange(AdgEntity *entity)
         break;
     }
 
-    adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
+    local = adg_entity_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
     cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
 
-    cpml_pair_transform(&ref1, &local);
-    cpml_pair_transform(&ref2, &local);
-    cpml_pair_transform(&pos1, &local);
-    cpml_pair_transform(&pos2, &local);
+    cpml_pair_transform(&ref1, local);
+    cpml_pair_transform(&ref2, local);
+    cpml_pair_transform(&pos1, local);
+    cpml_pair_transform(&pos2, local);
 
     cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
@@ -610,7 +610,7 @@ arrange(AdgEntity *entity)
 
         quote_entity = (AdgEntity *) quote;
         angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
-        adg_matrix_copy(&matrix, &local);
+        adg_matrix_copy(&matrix, local);
         cairo_matrix_invert(&matrix);
 
         pair.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
@@ -764,20 +764,20 @@ choose_outside(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgContainer *quote;
+    const AdgMatrix *local;
     CpmlExtents extents;
-    AdgMatrix local;
     gdouble marker1, marker2;
     gdouble needed, available;
 
     data = ldim->data;
     quote = adg_dim_get_quote((AdgDim *) ldim);
+    local = adg_entity_local_matrix((AdgEntity *) ldim);
     adg_entity_get_extents((AdgEntity *) quote, &extents);
-    adg_entity_get_local_matrix((AdgEntity *) ldim, &local);
     marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
     marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
 
     needed = extents.size.x + marker1 + marker2;
-    available = get_distance(ldim) * local.xx;
+    available = get_distance(ldim) * local->xx;
 
     return needed > available;
 }
