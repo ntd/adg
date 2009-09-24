@@ -83,7 +83,7 @@ must be reflected in the demo programs, where applicable.</para>
 <title>Road to adg-0.6.0</title>
 
 <itemizedlist mark="circle">
-   <listitem>Implement adg_matrix_normalize() to get rid of the scaling component
+   <listitem override="disc">Implement adg_matrix_normalize() to get rid of the scaling component
    of a matrix: consider the point (0,0) and (1,1) on the identity matrix
    and force on the matrix to normalize a distance of 1.4142... between
    the same points by modifying only the xx and yy components.</listitem>
