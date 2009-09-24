@@ -126,6 +126,9 @@ adg_toy_text_init(AdgToyText *toy_text)
     data->label = NULL;
     data->glyphs = NULL;
 
+    adg_entity_set_local_mode((AdgEntity *) toy_text,
+                              ADG_TRANSFORM_BEFORE_NORMALIZED);
+
     toy_text->data = data;
 }
 
@@ -283,9 +286,8 @@ adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 static void
 global_changed(AdgEntity *entity)
 {
-    unset_font((AdgToyText *) entity);
-
     PARENT_ENTITY_CLASS->global_changed(entity);
+    unset_font((AdgToyText *) entity);
 }
 
 static void
@@ -328,8 +330,6 @@ arrange(AdgEntity *entity)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
-    cairo_status_t status;
-    cairo_text_extents_t cairo_extents;
     AdgMatrix local;
     CpmlExtents extents;
 
@@ -341,35 +341,44 @@ arrange(AdgEntity *entity)
         AdgMatrix ctm;
 
         font_style = (AdgFontStyle *) adg_entity_style(entity, data->dress);
-        adg_entity_get_global_matrix(entity, &ctm);
+        adg_entity_get_ctm(entity, &ctm);
+
         data->font = adg_font_style_font(font_style, &ctm);
     }
 
-    if (data->glyphs != NULL || data->label == NULL || data->label[0] == '\0')
-        return;
-
-    status = cairo_scaled_font_text_to_glyphs(data->font, 0, 0,
-                                              data->label, -1,
-                                              &data->glyphs,
-                                              &data->num_glyphs,
-                                              NULL, NULL, NULL);
-
-    if (status != CAIRO_STATUS_SUCCESS) {
-        unset_glyphs(toy_text);
-        g_error("Unable to build glyphs (cairo message: %s)",
-                cairo_status_to_string(status));
+    if (data->label == NULL || data->label[0] == '\0') {
+        /* Undefined label */
+        extents.is_defined = FALSE;
+        adg_entity_set_extents(entity, &extents);
         return;
     }
 
-    cairo_scaled_font_glyph_extents(data->font, data->glyphs,
-                                    data->num_glyphs, &cairo_extents);
-    cpml_extents_from_cairo_text(&extents, &cairo_extents);
+    if (data->glyphs == NULL) {
+        cairo_status_t status;
+        cairo_text_extents_t cairo_extents;
 
-    adg_entity_get_local_map(entity, &local);
-    cairo_matrix_transform_point(&local, &extents.org.x, &extents.org.y);
-    cairo_matrix_transform_distance(&local, &extents.size.x, &extents.size.y);
+        status = cairo_scaled_font_text_to_glyphs(data->font, 0, 0,
+                                                  data->label, -1,
+                                                  &data->glyphs,
+                                                  &data->num_glyphs,
+                                                  NULL, NULL, NULL);
 
-    adg_entity_set_extents(entity, &extents);
+        if (status != CAIRO_STATUS_SUCCESS) {
+            unset_glyphs(toy_text);
+            g_error("Unable to build glyphs (cairo message: %s)",
+                    cairo_status_to_string(status));
+            return;
+        }
+
+        cairo_scaled_font_glyph_extents(data->font, data->glyphs,
+                                        data->num_glyphs, &cairo_extents);
+        cpml_extents_from_cairo_text(&extents, &cairo_extents);
+        adg_entity_get_local_map(entity, &local);
+        cairo_matrix_transform_point(&local, &extents.org.x, &extents.org.y);
+        cairo_matrix_transform_distance(&local, &extents.size.x, &extents.size.y);
+
+        adg_entity_set_extents(entity, &extents);
+    }
 }
 
 static void
