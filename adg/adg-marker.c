@@ -56,6 +56,7 @@
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
 
 
 enum {
@@ -168,9 +169,7 @@ adg_marker_init(AdgMarker *marker)
     data->size = 10;
     data->model = NULL;
 
-    adg_entity_set_local_mode((AdgEntity *) marker,
-                              ADG_TRANSFORM_BEFORE);
-
+    adg_entity_set_local_mode((AdgEntity *) marker, ADG_TRANSFORM_BEFORE);
 
     marker->data = data;
 }
@@ -570,7 +569,7 @@ local_changed(AdgEntity *entity)
     AdgMarkerPrivate *data;
     CpmlPair pair;
     CpmlVector vector;
-    AdgMatrix matrix;
+    AdgMatrix map;
 
     data = ((AdgMarker *) entity)->data;
     if (data->trail == NULL)
@@ -585,10 +584,12 @@ local_changed(AdgEntity *entity)
         vector.y = -vector.y;
     }
 
-    cairo_matrix_init(&matrix, vector.x, vector.y,
+    cairo_matrix_init(&map, vector.x, vector.y,
                       -vector.y, vector.x, pair.x, pair.y);
 
-    adg_entity_set_local_matrix(entity, &matrix);
+    adg_entity_set_local_map(entity, &map);
+
+    PARENT_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
