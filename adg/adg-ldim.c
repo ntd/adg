@@ -659,39 +659,39 @@ update_shift(AdgLDim *ldim)
 static void
 update_geometry(AdgLDim *ldim)
 {
-    AdgDim *dim;
     AdgLDimPrivate *data;
+    AdgDim *dim;
     const AdgPair *ref1, *ref2;
     const AdgPair *pos;
-    CpmlPair baseline_vector, extension_vector;
+    CpmlVector baseline, extension;
     gdouble d, k;
 
-    dim = (AdgDim *) ldim;
     data = ldim->data;
 
     if (data->geometry.is_arranged)
         return;
 
+    dim = (AdgDim *) ldim;
     ref1 = adg_dim_get_ref1(dim);
     ref2 = adg_dim_get_ref2(dim);
     pos = adg_dim_get_pos(dim);
-    cpml_vector_from_angle(&extension_vector, data->direction);
-    baseline_vector.x = -extension_vector.y;
-    baseline_vector.y = extension_vector.x;
+    cpml_vector_from_angle(&extension, data->direction);
+    cpml_pair_copy(&baseline, &extension);
+    cpml_vector_normal(&baseline);
 
-    d = extension_vector.y * baseline_vector.x -
-        extension_vector.x * baseline_vector.y;
+    d = extension.y * baseline.x -
+        extension.x * baseline.y;
     g_return_if_fail(d != 0);
 
-    k = ((pos->y - ref1->y) * baseline_vector.x -
-         (pos->x - ref1->x) * baseline_vector.y) / d;
-    data->geometry.base1.x = ref1->x + k * extension_vector.x;
-    data->geometry.base1.y = ref1->y + k * extension_vector.y;
+    k = ((pos->y - ref1->y) * baseline.x -
+         (pos->x - ref1->x) * baseline.y) / d;
+    data->geometry.base1.x = ref1->x + k * extension.x;
+    data->geometry.base1.y = ref1->y + k * extension.y;
 
-    k = ((pos->y - ref2->y) * baseline_vector.x -
-         (pos->x - ref2->x) * baseline_vector.y) / d;
-    data->geometry.base2.x = ref2->x + k * extension_vector.x;
-    data->geometry.base2.y = ref2->y + k * extension_vector.y;
+    k = ((pos->y - ref2->y) * baseline.x -
+         (pos->x - ref2->x) * baseline.y) / d;
+    data->geometry.base2.x = ref2->x + k * extension.x;
+    data->geometry.base2.y = ref2->y + k * extension.y;
 
     data->geometry.distance = cpml_pair_distance(&data->geometry.base1,
                                                  &data->geometry.base2);

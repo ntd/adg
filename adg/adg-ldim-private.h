@@ -78,7 +78,6 @@ struct _AdgLDimPrivate {
         CpmlPath path;
         cairo_path_data_t data[20];
     }                    cpml;
-
 };
 
 G_END_DECLS
