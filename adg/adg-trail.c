@@ -158,8 +158,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * This function also converts %CAIRO_PATH_ARC_TO primitives, not
  * recognized by cairo, into approximated Bézier curves. The conversion
  * is cached so any furter request is O(1). This cache is cleared
- * whenever @trail is modified (by adding a new primitive or by calling
- * adg_path_clear()).
+ * only after adg_trail_clear_cairo_path() is called.
  *
  * <important>
  * <title>TODO</title>
@@ -193,6 +192,8 @@ adg_trail_clear_cairo_path(AdgTrail *trail)
 {
     AdgTrailPrivate *data;
     cairo_path_t *cairo_path;
+
+    g_return_if_fail(ADG_IS_TRAIL(trail));
 
     data = trail->data;
     cairo_path = &data->cairo_path;
@@ -254,6 +255,7 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
     guint cnt;
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
+    g_return_val_if_fail(segment != NULL, FALSE);
 
     if (n == 0) {
         g_warning("%s: requested undefined segment for type `%s'",
@@ -300,6 +302,7 @@ adg_trail_dump(AdgTrail *trail)
         } while (cpml_segment_next(&segment));
     }
 }
+
 
 static cairo_path_t *
 get_cairo_path(AdgTrail *trail)
