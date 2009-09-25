@@ -759,12 +759,12 @@ append_operation(AdgPath *path, AdgOperator operator, ...)
 
     operation = &data->operation;
     if (operation->operator != ADG_OPERATOR_NONE) {
-        /* TODO: this is a rude semplification, as a lot of operators can
-         * and may cohexist. As an example, a fillet followed by a
-         * polar chamfer is not difficult to compute */
         g_warning("Operation requested but another operation is yet active"
                   "(operators: new `%d', old `%d')",
                   operator, operation->operator);
+        ADG_MESSAGE("TODO: this is a rude simplification, as a lot of "
+                    "operators can and may cohexist. As an example, a "
+                    "fillet followed by a polar chamfer should be done.");
         return FALSE;
     }
 
