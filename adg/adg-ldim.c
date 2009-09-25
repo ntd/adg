@@ -310,7 +310,7 @@ adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
     ref1 = adg_dim_get_ref1((AdgDim *) ldim);
     ref2 = adg_dim_get_ref2((AdgDim *) ldim);
 
-    cpml_vector_from_angle(&extension_vector, data->direction, 1);
+    cpml_vector_from_angle(&extension_vector, data->direction);
 
     baseline_vector.x = -extension_vector.y;
     baseline_vector.y = extension_vector.x;
@@ -707,11 +707,9 @@ update_shift(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
-    AdgMatrix matrix;
-    gdouble from_offset;
-    gdouble to_offset;
-    gdouble baseline_spacing;
-    gdouble level;
+    gdouble from_offset, to_offset;
+    gdouble baseline_spacing, level;
+    CpmlVector vector;
 
     data = ldim->data;
 
@@ -724,18 +722,16 @@ update_shift(AdgLDim *ldim)
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level((AdgDim *) ldim);
 
-    cairo_matrix_init_rotate(&matrix, data->direction);
+    cpml_vector_from_angle(&vector, data->direction);
 
-    data->shift.from.x = data->shift.from.y = 0;
-    data->shift.marker.x = data->shift.marker.y = 0;
-    data->shift.to.x = data->shift.to.y = 0;
+    cpml_vector_set_length(&vector, from_offset);
+    cpml_pair_copy(&data->shift.from, &vector);
 
-    cairo_matrix_translate(&matrix, from_offset, 0);
-    cpml_pair_transform(&data->shift.from, &matrix);
-    cairo_matrix_translate(&matrix, to_offset-from_offset, 0);
-    cpml_pair_transform(&data->shift.to, &matrix);
-    cairo_matrix_translate(&matrix, level*baseline_spacing-to_offset, 0);
-    cpml_pair_transform(&data->shift.marker, &matrix);
+    cpml_vector_set_length(&vector, to_offset);
+    cpml_pair_copy(&data->shift.to, &vector);
+
+    cpml_vector_set_length(&vector, level * baseline_spacing);
+    cpml_pair_copy(&data->shift.marker, &vector);
 
     data->shift.is_arranged = TRUE;
 }
