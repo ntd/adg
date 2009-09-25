@@ -64,8 +64,8 @@ static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
-static gdouble          get_distance            (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
+static void             update_geometry         (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
 static gboolean         choose_outside          (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
@@ -132,7 +132,6 @@ adg_ldim_init(AdgLDim *ldim)
     line_to.header.type = CAIRO_PATH_LINE_TO;
     line_to.header.length = 2;
 
-    data->distance = -1;
     data->direction = 0;
     data->has_extension1 = TRUE;
     data->has_extension2 = TRUE;
@@ -156,6 +155,7 @@ adg_ldim_init(AdgLDim *ldim)
     data->marker2 = NULL;
 
     data->shift.is_arranged = FALSE;
+    data->geometry.is_arranged = FALSE;
 
     ldim->data = data;
 }
@@ -220,7 +220,7 @@ set_property(GObject *object,
  * Creates a new - undefined - linear dimension. You must, at least,
  * define the reference points with adg_dim_set_ref(), the dimension
  * direction with adg_ldim_set_direction() and the position reference
- * using adg_dim_set_pos() or, better, adg_ldim_set_pos().
+ * using adg_dim_set_pos().
  *
  * Returns: the newly created linear dimension entity
  **/
@@ -248,7 +248,7 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
 {
     AdgLDim *ldim = g_object_new(ADG_TYPE_LDIM, "ref1", ref1, "ref2", ref2,
                                  "direction", direction, NULL);
-    adg_ldim_set_pos(ldim, pos);
+    adg_dim_set_pos((AdgDim *) ldim, pos);
     return ldim;
 }
 
@@ -283,74 +283,6 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
     pos.y = pos_y;
 
     return adg_ldim_new_full(&ref1, &ref2, direction, &pos);
-}
-
-/**
- * adg_ldim_set_pos:
- * @ldim: an #AdgLDim entity
- * @pos: an #AdgPair structure
- *
- * Sets the position references (pos1 and pos2 properties) of @ldim using a
- * single @pos point. Before this call, @ldim MUST HAVE defined the reference
- * points and the direction. If these conditions are not met, an error message
- * is logged and the position references will not be set.
- **/
-void
-adg_ldim_set_pos(AdgLDim *ldim, const AdgPair *pos)
-{
-    AdgLDimPrivate *data;
-    const AdgPair *ref1, *ref2;
-    AdgPair pos1, pos2;
-    CpmlPair baseline_vector, extension_vector;
-    gdouble d, k;
-
-    g_return_if_fail(ADG_IS_LDIM(ldim));
-
-    data = ldim->data;
-    ref1 = adg_dim_get_ref1((AdgDim *) ldim);
-    ref2 = adg_dim_get_ref2((AdgDim *) ldim);
-
-    cpml_vector_from_angle(&extension_vector, data->direction);
-
-    baseline_vector.x = -extension_vector.y;
-    baseline_vector.y = extension_vector.x;
-
-    d = extension_vector.y * baseline_vector.x -
-        extension_vector.x * baseline_vector.y;
-    g_return_if_fail(d != 0);
-
-    k = ((pos->y - ref1->y) * baseline_vector.x -
-         (pos->x - ref1->x) * baseline_vector.y) / d;
-    pos1.x = ref1->x + k * extension_vector.x;
-    pos1.y = ref1->y + k * extension_vector.y;
-
-    k = ((pos->y - ref2->y) * baseline_vector.x -
-         (pos->x - ref2->x) * baseline_vector.y) / d;
-    pos2.x = ref2->x + k * extension_vector.x;
-    pos2.y = ref2->y + k * extension_vector.y;
-
-    data->distance = -1;
-
-    adg_dim_set_pos((AdgDim *) ldim, &pos1, &pos2);
-}
-
-/**
- * adg_ldim_set_pos_explicit:
- * @ldim: an #AdgLDim entity
- * @x: the new x coordinate position reference
- * @y: the new y coordinate position reference
- *
- * Wrappers adg_ldim_set_pos() with explicit coordinates.
- **/
-void
-adg_ldim_set_pos_explicit(AdgLDim *ldim, gdouble x, gdouble y)
-{
-    AdgPair pos;
-
-    pos.x = x;
-    pos.y = y;
-
-    adg_ldim_set_pos(ldim, &pos);
 }
 
 /**
@@ -487,6 +419,7 @@ invalidate(AdgEntity *entity)
 
     dispose_markers(ldim);
     data->shift.is_arranged = FALSE;
+    data->geometry.is_arranged = FALSE;
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
@@ -502,7 +435,7 @@ arrange(AdgEntity *entity)
     AdgContainer *quote;
     gboolean outside;
     const AdgMatrix *local;
-    AdgPair ref1, ref2, pos1, pos2;
+    AdgPair ref1, ref2, base1, base2;
     AdgPair pair;
     gint n;
 
@@ -515,6 +448,7 @@ arrange(AdgEntity *entity)
     quote = adg_dim_get_quote(dim);
 
     update_shift(ldim);
+    update_geometry(ldim);
     update_entities(ldim);
 
     switch (adg_dim_get_outside(dim)) {
@@ -533,18 +467,19 @@ arrange(AdgEntity *entity)
     local = adg_entity_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
-    cpml_pair_copy(&pos1, adg_dim_get_pos1(dim));
-    cpml_pair_copy(&pos2, adg_dim_get_pos2(dim));
+    cpml_pair_copy(&base1, &data->geometry.base1);
+    cpml_pair_copy(&base2, &data->geometry.base2);
 
     cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
-    cpml_pair_transform(&pos1, local);
-    cpml_pair_transform(&pos2, local);
+    cpml_pair_transform(&base1, local);
+    cpml_pair_transform(&base2, local);
 
     cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &pos1), &data->shift.marker);
+    cpml_pair_copy(&pair, &base1);
+    cpml_pair_add(&pair, &data->shift.marker);
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
     cpml_pair_add(&pair, &data->shift.to);
@@ -553,7 +488,8 @@ arrange(AdgEntity *entity)
     cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &pos2), &data->shift.marker);
+    cpml_pair_copy(&pair, &base2);
+    cpml_pair_add(&pair, &data->shift.marker);
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
     cpml_pair_add(&pair, &data->shift.to);
@@ -671,35 +607,19 @@ render(AdgEntity *entity, cairo_t *cr)
 static gchar *
 default_value(AdgDim *dim)
 {
+    AdgLDim *ldim;
+    AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
     const gchar *format;
-    gdouble distance;
 
+    ldim = (AdgLDim *) dim;
+    data = ldim->data;
     dim_style = adg_dim_get_dim_style(dim);
     format = adg_dim_style_get_number_format(dim_style);
-    distance = get_distance((AdgLDim *) dim);
 
-    return g_strdup_printf(format, distance);
-}
+    update_geometry(ldim);
 
-static gdouble
-get_distance(AdgLDim *ldim)
-{
-    AdgLDimPrivate *data = ldim->data;
-
-    if (data->distance < 0) {
-        AdgDim *dim;
-        const AdgPair *pos1;
-        const AdgPair *pos2;
-
-        dim = (AdgDim *) ldim;
-        pos1 = adg_dim_get_pos1(dim);
-        pos2 = adg_dim_get_pos2(dim);
-
-        data->distance = cpml_pair_distance(pos1, pos2);
-    }
-
-    return data->distance;
+    return g_strdup_printf(format, data->geometry.distance);
 }
 
 static void
@@ -734,6 +654,49 @@ update_shift(AdgLDim *ldim)
     cpml_pair_copy(&data->shift.marker, &vector);
 
     data->shift.is_arranged = TRUE;
+}
+
+static void
+update_geometry(AdgLDim *ldim)
+{
+    AdgDim *dim;
+    AdgLDimPrivate *data;
+    const AdgPair *ref1, *ref2;
+    const AdgPair *pos;
+    CpmlPair baseline_vector, extension_vector;
+    gdouble d, k;
+
+    dim = (AdgDim *) ldim;
+    data = ldim->data;
+
+    if (data->geometry.is_arranged)
+        return;
+
+    ref1 = adg_dim_get_ref1(dim);
+    ref2 = adg_dim_get_ref2(dim);
+    pos = adg_dim_get_pos(dim);
+    cpml_vector_from_angle(&extension_vector, data->direction);
+    baseline_vector.x = -extension_vector.y;
+    baseline_vector.y = extension_vector.x;
+
+    d = extension_vector.y * baseline_vector.x -
+        extension_vector.x * baseline_vector.y;
+    g_return_if_fail(d != 0);
+
+    k = ((pos->y - ref1->y) * baseline_vector.x -
+         (pos->x - ref1->x) * baseline_vector.y) / d;
+    data->geometry.base1.x = ref1->x + k * extension_vector.x;
+    data->geometry.base1.y = ref1->y + k * extension_vector.y;
+
+    k = ((pos->y - ref2->y) * baseline_vector.x -
+         (pos->x - ref2->x) * baseline_vector.y) / d;
+    data->geometry.base2.x = ref2->x + k * extension_vector.x;
+    data->geometry.base2.y = ref2->y + k * extension_vector.y;
+
+    data->geometry.distance = cpml_pair_distance(&data->geometry.base1,
+                                                 &data->geometry.base2);
+
+    data->geometry.is_arranged = TRUE;
 }
 
 static void
@@ -773,7 +736,7 @@ choose_outside(AdgLDim *ldim)
     marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
 
     needed = extents.size.x + marker1 + marker2;
-    available = get_distance(ldim) * local->xx;
+    available = data->geometry.distance * local->xx;
 
     return needed > available;
 }

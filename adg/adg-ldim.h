@@ -64,11 +64,6 @@ AdgLDim *       adg_ldim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         pos_x,
                                                  gdouble         pos_y);
 
-void            adg_ldim_set_pos                (AdgLDim        *ldim,
-                                                 const AdgPair  *pos);
-void            adg_ldim_set_pos_explicit       (AdgLDim        *ldim,
-                                                 gdouble         x,
-                                                 gdouble         y);
 gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_set_direction          (AdgLDim        *ldim,
                                                  gdouble         direction);

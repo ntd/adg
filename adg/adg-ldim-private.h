@@ -59,22 +59,26 @@ struct _AdgLDimPrivate {
     gboolean             has_extension1;
     gboolean             has_extension2;
 
-    gdouble              distance;
     AdgTrail            *trail;
     AdgMarker           *marker1;
     AdgMarker           *marker2;
 
     struct {
-        CpmlPath path;
-        cairo_path_data_t data[20];
-    }            cpml;
+        gboolean         is_arranged;
+        CpmlPair         from, marker, to;
+    }                    shift;
 
     struct {
         gboolean         is_arranged;
-        CpmlPair         from;
-        CpmlPair         marker;
-        CpmlPair         to;
-    }                    shift;
+        AdgPair          base1, base2;
+        gdouble          distance;
+    }                    geometry;
+
+    struct {
+        CpmlPath path;
+        cairo_path_data_t data[20];
+    }                    cpml;
+
 };
 
 G_END_DECLS
