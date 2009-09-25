@@ -313,15 +313,14 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
  * cpml_vector_from_angle:
  * @vector: the destination #CpmlVector
  * @angle: angle of direction, in radians
- * @length: the length of the vector
  *
- * Calculates the coordinates of the point far @length from the origin
+ * Calculates the coordinates of the point far %1 from the origin
  * in the @angle direction. The result is stored in @vector.
  *
  * Return value: @vector
  **/
 CpmlVector *
-cpml_vector_from_angle(CpmlVector *vector, double angle, double length)
+cpml_vector_from_angle(CpmlVector *vector, double angle)
 {
     /* Check for common conditions */
     if (angle == -M_PI_2) {

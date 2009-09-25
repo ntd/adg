@@ -58,8 +58,7 @@ double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
 
 CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
-                                                 double          angle,
-                                                 double          length);
+                                                 double          angle);
 
 void            cpml_vector_set_length          (CpmlVector     *vector,
                                                  double          length);
