@@ -246,10 +246,8 @@ AdgLDim *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
                   gdouble direction, const AdgPair *pos)
 {
-    AdgLDim *ldim = g_object_new(ADG_TYPE_LDIM, "ref1", ref1, "ref2", ref2,
-                                 "direction", direction, NULL);
-    adg_dim_set_pos((AdgDim *) ldim, pos);
-    return ldim;
+    return g_object_new(ADG_TYPE_LDIM, "ref1", ref1, "ref2", ref2,
+                        "direction", direction, "pos", pos, NULL);
 }
 
 /**
