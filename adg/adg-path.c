@@ -552,9 +552,13 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
     center.x = xc;
     center.y = yc;
 
-    cpml_vector_from_angle(&p[0], start, r);
-    cpml_vector_from_angle(&p[1], (end-start) / 2, r);
-    cpml_vector_from_angle(&p[2], end, r);
+    cpml_vector_from_angle(&p[0], start);
+    cpml_vector_from_angle(&p[1], (end-start) / 2);
+    cpml_vector_from_angle(&p[2], end);
+
+    cpml_vector_set_length(&p[0], r);
+    cpml_vector_set_length(&p[1], r);
+    cpml_vector_set_length(&p[2], r);
 
     cpml_pair_add(&p[0], &center);
     cpml_pair_add(&p[1], &center);
