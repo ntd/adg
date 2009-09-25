@@ -56,17 +56,23 @@ AdgADim *       adg_adim_new_full               (const AdgPair  *ref1,
                                                  const AdgPair  *org1,
                                                  const AdgPair  *org2,
                                                  const AdgPair  *pos);
+AdgADim *       adg_adim_new_full_explicit      (gdouble         ref1_x,
+                                                 gdouble         ref1_y,
+                                                 gdouble         ref2_x,
+                                                 gdouble         ref2_y,
+                                                 gdouble         org1_x,
+                                                 gdouble         org1_y,
+                                                 gdouble         org2_x,
+                                                 gdouble         org2_y,
+                                                 gdouble         pos_x,
+                                                 gdouble         pos_y);
+
 
 const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
 const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
 void            adg_adim_set_org                (AdgADim        *adim,
                                                  const AdgPair  *org1,
                                                  const AdgPair  *org2);
-void            adg_adim_set_pos                (AdgADim        *adim,
-                                                 const AdgPair  *pos);
-void            adg_adim_set_pos_explicit       (AdgADim        *adim,
-                                                 gdouble         x,
-                                                 gdouble         y);
 
 G_END_DECLS
 

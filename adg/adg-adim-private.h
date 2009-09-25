@@ -52,26 +52,28 @@ struct _AdgADimPrivate {
     gboolean             has_extension1;
     gboolean             has_extension2;
 
-    gdouble              angle1;
-    gdouble              angle2;
     AdgTrail            *trail;
     AdgMarker           *marker1;
     AdgMarker           *marker2;
 
     struct {
-        CpmlPath path;
-        cairo_path_data_t data[13];
-    }            cpml;
+        gboolean         is_arranged;
+        gdouble          angle1, angle2;
+        AdgPair          center;
+        AdgPair          base1, base12, base2;
+    }                    geometry;
 
     struct {
         gboolean         is_arranged;
-        CpmlPair         from1;
-        CpmlPair         from2;
-        CpmlPair         marker1;
-        CpmlPair         marker2;
-        CpmlPair         to1;
-        CpmlPair         to2;
+        CpmlPair         from1, from2;
+        CpmlPair         base1, base12, base2;
+        CpmlPair         to1, to2;
     }                    shift;
+
+    struct {
+        CpmlPath path;
+        cairo_path_data_t data[13];
+    }                    cpml;
 };
 
 G_END_DECLS
