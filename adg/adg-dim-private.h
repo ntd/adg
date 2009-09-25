@@ -32,8 +32,7 @@ struct _AdgDimPrivate {
     AdgDress             dress;
     AdgPair              ref1;
     AdgPair              ref2;
-    AdgPair              pos1;
-    AdgPair              pos2;
+    AdgPair              pos;
     gdouble              level;
     AdgThreeState        outside;
     gchar               *value;

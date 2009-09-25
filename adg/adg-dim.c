@@ -49,8 +49,7 @@ enum {
     PROP_DRESS,
     PROP_REF1,
     PROP_REF2,
-    PROP_POS1,
-    PROP_POS2,
+    PROP_POS,
     PROP_LEVEL,
     PROP_OUTSIDE,
     PROP_VALUE,
@@ -134,21 +133,15 @@ adg_dim_class_init(AdgDimClass *klass)
                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_REF2, param);
 
-    param = g_param_spec_boxed("pos1",
-                               P_("Position 1"),
-                               P_("First position point: it will be computed with the level property to get the real dimension position"),
+    param = g_param_spec_boxed("pos",
+                               P_("Position"),
+                               P_("The reference position in local space of the quote: it will be combined with \"level\" to get the real quote position"),
                                ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_POS1, param);
-
-    param = g_param_spec_boxed("pos2",
-                               P_("Position 2"),
-                               P_("Second position point: it will be computed with the level property to get the real dimension position"),
-                               ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_POS2, param);
+    g_object_class_install_property(gobject_class, PROP_POS, param);
 
     param = g_param_spec_double("level",
                                 P_("Level"),
-                                P_("The dimension level, that is the factor to multiply dim_style->baseline_spacing to get the offset (in device units) from pos1..pos2 where render the dimension baseline"),
+                                P_("The dimension level, that is the factor to multiply the baseline spacing (defined in the dimension style) to get the offset from pos where the quote should be rendered"),
                                 -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEVEL, param);
@@ -188,8 +181,7 @@ adg_dim_init(AdgDim *dim)
     data->dress = ADG_DRESS_DIMENSION_REGULAR;
     data->ref1.x = data->ref1.y = 0;
     data->ref2.x = data->ref2.y = 0;
-    data->pos1.x = data->pos1.y = 0;
-    data->pos2.x = data->pos2.y = 0;
+    data->pos.x = data->pos.y = 0;
     data->level = 1;
     data->outside = ADG_THREE_STATE_UNKNOWN;
     data->value = NULL;
@@ -241,11 +233,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_REF2:
         g_value_set_boxed(value, &data->ref2);
         break;
-    case PROP_POS1:
-        g_value_set_boxed(value, &data->pos1);
-        break;
-    case PROP_POS2:
-        g_value_set_boxed(value, &data->pos1);
+    case PROP_POS:
+        g_value_set_boxed(value, &data->pos);
         break;
     case PROP_LEVEL:
         g_value_set_double(value, data->level);
@@ -288,11 +277,8 @@ set_property(GObject *object, guint prop_id,
     case PROP_REF2:
         cpml_pair_copy(&data->ref2, (AdgPair *) g_value_get_boxed(value));
         break;
-    case PROP_POS1:
-        cpml_pair_copy(&data->pos1, (AdgPair *) g_value_get_boxed(value));
-        break;
-    case PROP_POS2:
-        cpml_pair_copy(&data->pos2, (AdgPair *) g_value_get_boxed(value));
+    case PROP_POS:
+        cpml_pair_copy(&data->pos, (AdgPair *) g_value_get_boxed(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -439,10 +425,10 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
 /**
  * adg_dim_set_ref_explicit:
  * @dim: an #AdgDim
- * @ref1_x: x component of pos1
- * @ref1_y: y component of pos1
- * @ref2_x: x component of pos2
- * @ref2_y: y component of pos2
+ * @ref1_x: x coordinate of ref1
+ * @ref1_y: y coordinate of ref1
+ * @ref2_x: x coordinate of ref2
+ * @ref2_y: y coordinate of ref2
  *
  * Shortcut to set ref1 and ref2 points at once,
  * using explicit coordinates.
@@ -463,16 +449,16 @@ adg_dim_set_ref_explicit(AdgDim *dim, gdouble ref1_x, gdouble ref1_y,
 }
 
 /**
- * adg_dim_get_pos1:
+ * adg_dim_get_pos:
  * @dim: an #AdgDim
  *
- * Gets the pos1 coordinates. The returned pair is internally owned
+ * Gets the position coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Returns: the pos1 coordinates
+ * Returns: the pos coordinates
  **/
 const AdgPair *
-adg_dim_get_pos1(AdgDim *dim)
+adg_dim_get_pos(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -480,89 +466,48 @@ adg_dim_get_pos1(AdgDim *dim)
 
     data = dim->data;
 
-    return &data->pos1;
-}
-
-/**
- * adg_dim_get_pos2:
- * @dim: an #AdgDim
- *
- * Gets the pos2 coordinates. The returned pair is internally owned
- * and must not be freed or modified.
- *
- * Returns: the pos2 coordinates
- **/
-const AdgPair *
-adg_dim_get_pos2(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return &data->pos2;
+    return &data->pos;
 }
 
 /**
  * adg_dim_set_pos:
  * @dim: an #AdgDim
- * @pos1: the pos1 coordinates
- * @pos2: the pos2 coordinates
+ * @pos: the pos coordinates
  *
- * Shortcut to set pos1 and pos2 points at once.
+ * Sets a new #AdgDim:pos position.
  **/
 void
-adg_dim_set_pos(AdgDim *dim, AdgPair *pos1, AdgPair *pos2)
+adg_dim_set_pos(AdgDim *dim, const AdgPair *pos)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_if_fail(pos != NULL);
 
-    if (pos1 != NULL || pos2 != NULL) {
-        AdgDimPrivate *data;
-        GObject *object;
+    data = dim->data;
 
-        data = dim->data;
-        object = (GObject *) dim;
+    data->pos = *pos;
 
-        g_object_freeze_notify(object);
-
-        if (pos1 != NULL) {
-            data->pos1 = *pos1;
-            g_object_notify(object, "pos1");
-        }
-        if (pos2 != NULL) {
-            data->pos2 = *pos2;
-            g_object_notify(object, "pos2");
-        }
-
-        g_object_thaw_notify(object);
-    }
+    g_object_notify((GObject *) dim, "pos");
 }
 
 /**
  * adg_dim_set_pos_explicit:
  * @dim: an #AdgDim
- * @pos1_x: x component of pos1
- * @pos1_y: y component of pos1
- * @pos2_x: x component of pos2
- * @pos2_y: y component of pos2
+ * @pos_x: x coordinate of pos
+ * @pos_y: y coordinate of pos
  *
- * Shortcut to set pos1 and pos2 points at once,
- * using explicit coordinates.
+ * Shortcut to set #AdgDim:pos using explicit coordinates.
  **/
 void
-adg_dim_set_pos_explicit(AdgDim *dim, gdouble pos1_x, gdouble pos1_y,
-                         gdouble pos2_x, gdouble pos2_y)
+adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
 {
-    AdgPair pos1;
-    AdgPair pos2;
+    AdgPair pos;
 
-    pos1.x = pos1_x;
-    pos1.y = pos1_y;
-    pos2.x = pos2_x;
-    pos2.y = pos2_y;
+    pos.x = x;
+    pos.y = y;
 
-    adg_dim_set_pos(dim, &pos1, &pos2);
+    adg_dim_set_pos(dim, &pos);
 }
 
 /**

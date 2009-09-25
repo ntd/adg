@@ -68,16 +68,12 @@ void            adg_dim_set_ref_explicit        (AdgDim         *dim,
                                                  gdouble         ref1_y,
                                                  gdouble         ref2_x,
                                                  gdouble         ref2_y);
-const AdgPair * adg_dim_get_pos1                (AdgDim         *dim);
-const AdgPair * adg_dim_get_pos2                (AdgDim         *dim);
+const AdgPair * adg_dim_get_pos                 (AdgDim         *dim);
 void            adg_dim_set_pos                 (AdgDim         *dim,
-                                                 AdgPair        *pos1,
-                                                 AdgPair        *pos2);
+                                                 const AdgPair  *pos);
 void            adg_dim_set_pos_explicit        (AdgDim         *dim,
-                                                 gdouble         pos1_x,
-                                                 gdouble         pos1_y,
-                                                 gdouble         pos2_x,
-                                                 gdouble         pos2_y);
+                                                 gdouble         x,
+                                                 gdouble         y);
 gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);
