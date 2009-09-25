@@ -75,6 +75,11 @@ struct _AdgLDimPrivate {
     }                    shift;
 
     struct {
+        AdgMatrix        local_map;
+        AdgMatrix        global_map;
+    }                    quote;
+
+    struct {
         CpmlPath path;
         cairo_path_data_t data[20];
     }                    cpml;

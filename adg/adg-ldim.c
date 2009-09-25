@@ -59,6 +59,7 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
@@ -94,6 +95,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -407,6 +409,19 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
 
 
 static void
+local_changed(AdgEntity *entity)
+{
+    AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
+
+    if (data->trail != NULL)
+        adg_trail_clear_cairo_path(data->trail);
+
+    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+
+    PARENT_ENTITY_CLASS->local_changed(entity);
+}
+
+static void
 invalidate(AdgEntity *entity)
 {
     AdgLDim *ldim;
@@ -418,6 +433,8 @@ invalidate(AdgEntity *entity)
     dispose_markers(ldim);
     data->geometry.is_arranged = FALSE;
     data->shift.is_arranged = FALSE;
+    adg_trail_clear_cairo_path(data->trail);
+    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
@@ -429,8 +446,8 @@ arrange(AdgEntity *entity)
     AdgLDim *ldim;
     AdgDim *dim;
     AdgLDimPrivate *data;
-    AdgDimStyle *dim_style;
     AdgContainer *quote;
+    AdgDimStyle *dim_style;
     gboolean outside;
     const AdgMatrix *local;
     AdgPair ref1, ref2, base1, base2;
@@ -442,12 +459,20 @@ arrange(AdgEntity *entity)
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) ldim;
     data = ldim->data;
-    dim_style = adg_dim_get_dim_style(dim);
     quote = adg_dim_get_quote(dim);
 
     update_geometry(ldim);
     update_shift(ldim);
     update_entities(ldim);
+
+    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
+        AdgEntity *quote_entity = (AdgEntity *) quote;
+        adg_entity_set_global_map(quote_entity, &data->quote.global_map);
+        adg_entity_set_local_map(quote_entity, &data->quote.local_map);
+        return;
+    }
+
+    dim_style = adg_dim_get_dim_style(dim);
 
     switch (adg_dim_get_outside(dim)) {
     case ADG_THREE_STATE_OFF:
@@ -555,6 +580,9 @@ arrange(AdgEntity *entity)
 
         cairo_matrix_init_rotate(&matrix, angle);
         adg_entity_transform_global_map(quote_entity, &matrix, ADG_TRANSFORM_BEFORE);
+
+        adg_entity_get_global_map(quote_entity, &data->quote.global_map);
+        adg_entity_get_local_map(quote_entity, &data->quote.local_map);
     }
 
     if (data->marker1 != NULL) {
@@ -578,6 +606,7 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgDress dress;
+    const cairo_path_t *cairo_path;
 
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) entity;
@@ -595,10 +624,11 @@ render(AdgEntity *entity, cairo_t *cr)
 
     adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
 
-    /* This CpmlPath has no arcs, so it can be fed directly into cairo */
     dress = adg_dim_style_get_line_dress(dim_style);
     adg_entity_apply_dress(entity, dress, cr);
-    cairo_append_path(cr, &data->cpml.path);
+
+    cairo_path = adg_trail_get_cairo_path(data->trail);
+    cairo_append_path(cr, cairo_path);
     cairo_stroke(cr);
 }
 
@@ -768,8 +798,6 @@ trail_callback(AdgTrail *trail, gpointer user_data)
 
     ldim = (AdgLDim *) user_data;
     data = ldim->data;
-
-    adg_trail_clear_cairo_path(trail);
 
     return &data->cpml.path;
 }
