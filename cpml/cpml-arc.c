@@ -214,7 +214,8 @@ cpml_arc_pair_at(const CpmlPrimitive *arc, CpmlPair *pair, double pos)
             return;
 
         angle = (end-start)*pos + start;
-        cpml_vector_from_angle(pair, angle, r);
+        cpml_vector_from_angle(pair, angle);
+        cpml_vector_set_length(pair, r);
         cpml_pair_add(pair, &center);
     }
 }
@@ -240,7 +241,7 @@ cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
         return;
 
     angle = (end-start)*pos + start;
-    cpml_vector_from_angle(vector, angle, 1.);
+    cpml_vector_from_angle(vector, angle);
     cpml_vector_normal(vector);
 }
 
