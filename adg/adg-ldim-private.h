@@ -65,14 +65,14 @@ struct _AdgLDimPrivate {
 
     struct {
         gboolean         is_arranged;
-        CpmlPair         from, marker, to;
-    }                    shift;
-
-    struct {
-        gboolean         is_arranged;
         AdgPair          base1, base2;
         gdouble          distance;
     }                    geometry;
+
+    struct {
+        gboolean         is_arranged;
+        CpmlPair         from, base, to;
+    }                    shift;
 
     struct {
         CpmlPath path;

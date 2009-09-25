@@ -64,8 +64,8 @@ static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
-static void             update_shift            (AdgLDim        *ldim);
 static void             update_geometry         (AdgLDim        *ldim);
+static void             update_shift            (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
 static gboolean         choose_outside          (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
@@ -154,8 +154,8 @@ adg_ldim_init(AdgLDim *ldim)
     data->marker1 = NULL;
     data->marker2 = NULL;
 
-    data->shift.is_arranged = FALSE;
     data->geometry.is_arranged = FALSE;
+    data->shift.is_arranged = FALSE;
 
     ldim->data = data;
 }
@@ -416,8 +416,8 @@ invalidate(AdgEntity *entity)
     data = ldim->data;
 
     dispose_markers(ldim);
-    data->shift.is_arranged = FALSE;
     data->geometry.is_arranged = FALSE;
+    data->shift.is_arranged = FALSE;
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
@@ -445,8 +445,8 @@ arrange(AdgEntity *entity)
     dim_style = adg_dim_get_dim_style(dim);
     quote = adg_dim_get_quote(dim);
 
-    update_shift(ldim);
     update_geometry(ldim);
+    update_shift(ldim);
     update_entities(ldim);
 
     switch (adg_dim_get_outside(dim)) {
@@ -477,7 +477,7 @@ arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
     cpml_pair_copy(&pair, &base1);
-    cpml_pair_add(&pair, &data->shift.marker);
+    cpml_pair_add(&pair, &data->shift.base);
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
     cpml_pair_add(&pair, &data->shift.to);
@@ -487,7 +487,7 @@ arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
     cpml_pair_copy(&pair, &base2);
-    cpml_pair_add(&pair, &data->shift.marker);
+    cpml_pair_add(&pair, &data->shift.base);
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
     cpml_pair_add(&pair, &data->shift.to);
@@ -621,40 +621,6 @@ default_value(AdgDim *dim)
 }
 
 static void
-update_shift(AdgLDim *ldim)
-{
-    AdgLDimPrivate *data;
-    AdgDimStyle *dim_style;
-    gdouble from_offset, to_offset;
-    gdouble baseline_spacing, level;
-    CpmlVector vector;
-
-    data = ldim->data;
-
-    if (data->shift.is_arranged)
-        return;
-
-    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
-    from_offset = adg_dim_style_get_from_offset(dim_style);
-    to_offset = adg_dim_style_get_to_offset(dim_style);
-    baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
-    level = adg_dim_get_level((AdgDim *) ldim);
-
-    cpml_vector_from_angle(&vector, data->direction);
-
-    cpml_vector_set_length(&vector, from_offset);
-    cpml_pair_copy(&data->shift.from, &vector);
-
-    cpml_vector_set_length(&vector, to_offset);
-    cpml_pair_copy(&data->shift.to, &vector);
-
-    cpml_vector_set_length(&vector, level * baseline_spacing);
-    cpml_pair_copy(&data->shift.marker, &vector);
-
-    data->shift.is_arranged = TRUE;
-}
-
-static void
 update_geometry(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
@@ -695,6 +661,40 @@ update_geometry(AdgLDim *ldim)
                                                  &data->geometry.base2);
 
     data->geometry.is_arranged = TRUE;
+}
+
+static void
+update_shift(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+    AdgDimStyle *dim_style;
+    gdouble from_offset, to_offset;
+    gdouble baseline_spacing, level;
+    CpmlVector vector;
+
+    data = ldim->data;
+
+    if (data->shift.is_arranged)
+        return;
+
+    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
+    from_offset = adg_dim_style_get_from_offset(dim_style);
+    to_offset = adg_dim_style_get_to_offset(dim_style);
+    baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
+    level = adg_dim_get_level((AdgDim *) ldim);
+
+    cpml_vector_from_angle(&vector, data->direction);
+
+    cpml_vector_set_length(&vector, from_offset);
+    cpml_pair_copy(&data->shift.from, &vector);
+
+    cpml_vector_set_length(&vector, to_offset);
+    cpml_pair_copy(&data->shift.to, &vector);
+
+    cpml_vector_set_length(&vector, level * baseline_spacing);
+    cpml_pair_copy(&data->shift.base, &vector);
+
+    data->shift.is_arranged = TRUE;
 }
 
 static void
