@@ -215,7 +215,7 @@ create_model(AdgMarker *marker)
 
     data = ((AdgArrow *) marker)->data;
     path = adg_path_new();
-    cpml_vector_from_angle(&vector, data->angle / 2, 1);
+    cpml_vector_from_angle(&vector, data->angle / 2);
 
     adg_path_move_to(path, 0, 0);
     adg_path_line_to(path, vector.x, vector.y);
