@@ -355,16 +355,28 @@ cpml_vector_from_angle(CpmlVector *vector, double angle)
  * @vector: a #CpmlVector
  * @length: the new length
  *
- * Imposes the specified @length to @vector. If the old length is 0
- * (and so the direction is not known), nothing happens.
+ * Imposes the specified @length to @vector. If the old length is %0
+ * (and so the direction is not known), nothing happens. If @length
+ * is %0, @vector is set to (0, 0).
+ *
+ * The @length parameter can be negative, in which case the vector
+ * is inverted.
  **/
 void
 cpml_vector_set_length(CpmlVector *vector, double length)
 {
-    double divisor = cpml_pair_distance(NULL, vector);
+    double divisor;
+
+    if (length == 0) {
+        vector->x = 0;
+        vector->y = 0;
+        return;
+    }
+
+    divisor = cpml_pair_distance(NULL, vector);
 
     /* Check for valid length (anything other than 0) */
-    if (divisor <= 0)
+    if (divisor != 0)
         return;
 
     divisor /= length;
