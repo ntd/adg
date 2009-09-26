@@ -581,6 +581,9 @@ update_geometry(AdgADim *adim)
     cpml_vector_set_length(&vector[1], level * spacing);
     cpml_pair_copy(&data->shift.base12, &vector[1]);
 
+    /* Distance can be 0, so the following will leave the
+     * vector array in undefined state */
+
     /* point.base1 */
     cpml_vector_set_length(&vector[0], distance);
     cpml_pair_add(cpml_pair_copy(&data->point.base1, &vector[0]), &center);
@@ -668,7 +671,7 @@ get_info(AdgADim *adim, CpmlVector vector[],
 {
     AdgDim *dim;
     AdgADimPrivate *data;
-    const AdgPair *ref1, *ref2, *pos;
+    const AdgPair *ref1, *ref2;
     gdouble factor, angle1, angle2;
 
     dim = (AdgDim *) adim;
@@ -688,16 +691,7 @@ get_info(AdgADim *adim, CpmlVector vector[],
 
     center->x = ref1->x + vector[0].x * factor;
     center->y = ref1->y + vector[0].y * factor;
-
-    pos = adg_dim_get_pos(dim);
-
-    *distance = cpml_pair_distance(center, pos);
-
-    /* Ensure the distance is non-zero, as this would fuck up
-     * cpml_vector_set_length() */
-    if (*distance == 0)
-        *distance = 0.01;
-
+    *distance = cpml_pair_distance(center, adg_dim_get_pos(dim));
     angle1 = cpml_vector_angle(&vector[0]);
     angle2 = cpml_vector_angle(&vector[2]);
     while (angle2 < angle1)
