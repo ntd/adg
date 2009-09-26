@@ -104,7 +104,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Implement the extents infrastructure that computes the bounding box
    of the entities without rendering them.</listitem>
    <listitem override="disc">Implement the outside arrows in AdgLDim.</listitem>
-   <listitem>Add AdgADim, the angular dimension.</listitem>
+   <listitem override="disc">Add AdgADim, the angular dimension.</listitem>
    <listitem>Add AdgRDim, the radial dimension.</listitem>
    <listitem override="disc">Rework styles by using GObject and properties.</listitem>
    <listitem>Implement a basic AdgPatternStyle, abstracting the cairo_pattern_t APIs
