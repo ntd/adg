@@ -57,7 +57,7 @@ struct _AdgADimPrivate {
     AdgMarker           *marker2;
 
     gboolean             geometry_arranged;
-    gdouble              angle;
+    gdouble              angle1, angle2;
 
     struct {
         AdgPair          base1, base12, base2;
@@ -68,6 +68,11 @@ struct _AdgADimPrivate {
         CpmlPair         base1, base12, base2;
         CpmlPair         to1, to2;
     }                    shift;
+
+    struct {
+        AdgMatrix        local_map;
+        AdgMatrix        global_map;
+    }                    quote;
 
     struct {
         CpmlPath path;

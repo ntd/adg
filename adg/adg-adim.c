@@ -404,8 +404,9 @@ static void
 arrange(AdgEntity *entity)
 {
     AdgADim *adim;
-    AdgADimPrivate *data;
     AdgDim *dim;
+    AdgADimPrivate *data;
+    AdgContainer *quote;
     const AdgMatrix *local;
     AdgPair ref1, ref2, base1, base12, base2;
     AdgPair pair;
@@ -413,15 +414,20 @@ arrange(AdgEntity *entity)
     PARENT_ENTITY_CLASS->arrange(entity);
 
     adim = (AdgADim *) entity;
+    dim = (AdgDim *) adim;
     data = adim->data;
+    quote = adg_dim_get_quote(dim);
 
     update_geometry(adim);
     update_entities(adim);
 
-    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS)
+    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
+        AdgEntity *quote_entity = (AdgEntity *) quote;
+        adg_entity_set_global_map(quote_entity, &data->quote.global_map);
+        adg_entity_set_local_map(quote_entity, &data->quote.local_map);
         return;
+    }
 
-    dim = (AdgDim *) adim;
     local = adg_entity_local_matrix(entity);
 
     /* Apply the local matrix to the relevant points */
@@ -454,6 +460,29 @@ arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&pair, &data->cpml.data[12]);
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
+
+    if (quote != NULL) {
+        /* Update global and local map of the quote container */
+        AdgEntity *quote_entity;
+        gdouble angle;
+        AdgMatrix matrix;
+
+        quote_entity = (AdgEntity *) quote;
+        angle = adg_dim_quote_angle(dim, (data->angle1 + data->angle2) / 2 + G_PI_2);
+        adg_matrix_copy(&matrix, local);
+        cairo_matrix_invert(&matrix);
+
+        cpml_pair_from_cairo(&pair, &data->cpml.data[3]);
+        cairo_matrix_transform_point(&matrix, &pair.x, &pair.y);
+        cairo_matrix_init_translate(&matrix, pair.x, pair.y);
+        adg_entity_set_local_map(quote_entity, &matrix);
+
+        cairo_matrix_init_rotate(&matrix, angle);
+        adg_entity_transform_global_map(quote_entity, &matrix, ADG_TRANSFORM_BEFORE);
+
+        adg_entity_get_global_map(quote_entity, &data->quote.global_map);
+        adg_entity_get_local_map(quote_entity, &data->quote.local_map);
+    }
 
     /* Signal to the markers (if any) that the path has changed */
     if (data->marker1 != NULL) {
@@ -509,6 +538,7 @@ default_value(AdgDim *dim)
     AdgADim *adim;
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
+    gdouble angle;
     const gchar *format;
 
     adim = (AdgADim *) dim;
@@ -517,8 +547,9 @@ default_value(AdgDim *dim)
     format = adg_dim_style_get_number_format(dim_style);
 
     update_geometry(adim);
+    angle = (data->angle2 - data->angle1) * 180 / M_PI;
 
-    return g_strdup_printf(format, data->angle * 180 / M_PI);
+    return g_strdup_printf(format, angle);
 }
 
 /* With "geometry" is considered any data (point, vector or angle)
@@ -672,7 +703,7 @@ get_info(AdgADim *adim, CpmlVector vector[],
     AdgDim *dim;
     AdgADimPrivate *data;
     const AdgPair *ref1, *ref2;
-    gdouble factor, angle1, angle2;
+    gdouble factor;
 
     dim = (AdgDim *) adim;
     data = adim->data;
@@ -692,14 +723,12 @@ get_info(AdgADim *adim, CpmlVector vector[],
     center->x = ref1->x + vector[0].x * factor;
     center->y = ref1->y + vector[0].y * factor;
     *distance = cpml_pair_distance(center, adg_dim_get_pos(dim));
-    angle1 = cpml_vector_angle(&vector[0]);
-    angle2 = cpml_vector_angle(&vector[2]);
-    while (angle2 < angle1)
-        angle2 += M_PI * 2;
+    data->angle1 = cpml_vector_angle(&vector[0]);
+    data->angle2 = cpml_vector_angle(&vector[2]);
+    while (data->angle2 < data->angle1)
+        data->angle2 += M_PI * 2;
 
-    cpml_vector_from_angle(&vector[1], (angle1 + angle2) / 2);
-
-    data->angle = angle2 - angle1;
+    cpml_vector_from_angle(&vector[1], (data->angle1 + data->angle2) / 2);
 
     return TRUE;
 }
