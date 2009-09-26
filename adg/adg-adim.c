@@ -66,13 +66,16 @@ static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
 static void             update_geometry         (AdgADim        *adim);
-static void             update_shift            (AdgADim        *adim);
 static void             update_entities         (AdgADim        *adim);
 static gboolean         set_org1                (AdgADim        *adim,
                                                  const AdgPair  *org1);
 static gboolean         set_org2                (AdgADim        *adim,
                                                  const AdgPair  *org2);
 static void             dispose_markers         (AdgADim        *adim);
+static gboolean         get_info                (AdgADim        *adim,
+                                                 CpmlVector      vector[],
+                                                 AdgPair        *center,
+                                                 gdouble        *distance);
 static CpmlPath *       trail_callback          (AdgTrail       *trail,
                                                  gpointer        user_data);
 
@@ -153,8 +156,7 @@ adg_adim_init(AdgADim *adim)
     data->marker1 = NULL;
     data->marker2 = NULL;
 
-    data->geometry.is_arranged = FALSE;
-    data->shift.is_arranged = FALSE;
+    data->geometry_arranged = FALSE;
 
     adim->data = data;
 }
@@ -390,8 +392,7 @@ invalidate(AdgEntity *entity)
     data = adim->data;
 
     dispose_markers(adim);
-    data->geometry.is_arranged = FALSE;
-    data->shift.is_arranged = FALSE;
+    data->geometry_arranged = FALSE;
     adg_trail_clear_cairo_path(data->trail);
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 
@@ -415,7 +416,6 @@ arrange(AdgEntity *entity)
     data = adim->data;
 
     update_geometry(adim);
-    update_shift(adim);
     update_entities(adim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS)
@@ -423,37 +423,31 @@ arrange(AdgEntity *entity)
 
     dim = (AdgDim *) adim;
     local = adg_entity_local_matrix(entity);
-    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
-    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
-    cpml_pair_copy(&base1, &data->geometry.base1);
-    cpml_pair_copy(&base12, &data->geometry.base12);
-    cpml_pair_copy(&base2, &data->geometry.base2);
 
-    cpml_pair_transform(&ref1, local);
-    cpml_pair_transform(&ref2, local);
-    cpml_pair_transform(&base1, local);
-    cpml_pair_transform(&base12, local);
-    cpml_pair_transform(&base2, local);
+    /* Apply the local matrix to the relevant points */
+    cpml_pair_transform(cpml_pair_copy(&ref1, adg_dim_get_ref1(dim)), local);
+    cpml_pair_transform(cpml_pair_copy(&ref2, adg_dim_get_ref2(dim)), local);
+    cpml_pair_transform(cpml_pair_copy(&base1, &data->point.base1), local);
+    cpml_pair_transform(cpml_pair_copy(&base12, &data->point.base12), local);
+    cpml_pair_transform(cpml_pair_copy(&base2, &data->point.base2), local);
 
+    /* Combine points and global shifts to build the path */
     cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->shift.from1);
     cpml_pair_to_cairo(&pair, &data->cpml.data[6]);
 
-    cpml_pair_copy(&pair, &base1);
-    cpml_pair_add(&pair, &data->shift.base1);
+    cpml_pair_add(cpml_pair_copy(&pair, &base1), &data->shift.base1);
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
     cpml_pair_add(&pair, &data->shift.to1);
     cpml_pair_to_cairo(&pair, &data->cpml.data[8]);
 
-    cpml_pair_copy(&pair, &base12);
-    cpml_pair_add(&pair, &data->shift.base12);
+    cpml_pair_add(cpml_pair_copy(&pair, &base12), &data->shift.base12);
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
     cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->shift.from2);
     cpml_pair_to_cairo(&pair, &data->cpml.data[10]);
 
-    cpml_pair_copy(&pair, &base2);
-    cpml_pair_add(&pair, &data->shift.base2);
+    cpml_pair_add(cpml_pair_copy(&pair, &base2), &data->shift.base2);
     cpml_pair_to_cairo(&pair, &data->cpml.data[4]);
 
     cpml_pair_add(&pair, &data->shift.to2);
@@ -461,6 +455,7 @@ arrange(AdgEntity *entity)
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
+    /* Signal to the markers (if any) that the path has changed */
     if (data->marker1 != NULL) {
         adg_marker_set_segment(data->marker1, data->trail, 1);
         adg_entity_local_changed((AdgEntity *) data->marker1);
@@ -515,7 +510,6 @@ default_value(AdgDim *dim)
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
     const gchar *format;
-    gdouble angle;
 
     adim = (AdgADim *) dim;
     data = adim->data;
@@ -524,142 +518,82 @@ default_value(AdgDim *dim)
 
     update_geometry(adim);
 
-    angle = data->geometry.angle2 - data->geometry.angle1;
-    angle *= 180. / M_PI;
-
-    return g_strdup_printf(format, angle);
+    return g_strdup_printf(format, data->angle * 180 / M_PI);
 }
 
+/* With "geometry" is considered any data (point, vector or angle)
+ * that can be cached: this is strictly related on how the arrange()
+ * method works */
 static void
 update_geometry(AdgADim *adim)
 {
     AdgADimPrivate *data;
-    AdgDim *dim;
-    const AdgPair *ref1, *ref2, *pos;
-    CpmlVector vector1, vector2;
-    gdouble factor, distance;
-
-    g_return_if_fail(ADG_IS_ADIM(adim));
+    AdgDimStyle *dim_style;
+    gdouble from_offset, to_offset;
+    gdouble spacing, level;
+    CpmlVector vector[3];
+    CpmlPair center;
+    gdouble distance;
 
     data = adim->data;
 
-    if (data->geometry.is_arranged)
+    if (data->geometry_arranged)
         return;
 
-    dim = (AdgDim *) adim;
-    ref1 = adg_dim_get_ref1(dim);
-    ref2 = adg_dim_get_ref2(dim);
-    pos = adg_dim_get_pos(dim);
-    cpml_pair_sub(cpml_pair_copy(&vector1, ref1), &data->org1);
-    cpml_pair_sub(cpml_pair_copy(&vector2, ref2), &data->org2);
-    factor = vector1.x * vector2.y - vector1.y * vector2.x;
-
-    if (factor == 0) {
+    if (!get_info(adim, vector, &center, &distance)) {
         /* Parallel lines: hang with an error message */
-        g_warning("%s: trying to use an angular quote on parallel lines",
+        g_warning("%s: trying to set an angular dimension on parallel lines",
                   G_STRLOC);
         return;
-    } else {
-        factor = ((ref1->y - ref2->y) * vector2.x -
-                  (ref1->x - ref2->x) * vector2.y) / factor;
-        data->geometry.center.x = ref1->x + vector1.x * factor;
-        data->geometry.center.y = ref1->y + vector1.y * factor;
     }
 
-    distance = cpml_pair_distance(&data->geometry.center, pos);
-
-    /* angle1 */
-    data->geometry.angle1 = cpml_vector_angle(&vector1);
-    if (data->geometry.angle1 < 0)
-        data->geometry.angle1 += M_PI * 2;
-
-    /* angle2 */
-    data->geometry.angle2 = cpml_vector_angle(&vector2);
-    while (data->geometry.angle2 < data->geometry.angle1)
-        data->geometry.angle2 += M_PI * 2;
-
-    /* base1 */
-    cpml_pair_copy(&data->geometry.base1, &vector1);
-    cpml_vector_set_length(&data->geometry.base1, distance);
-    cpml_pair_add(&data->geometry.base1, &data->geometry.center);
-
-    /* base2 */
-    cpml_pair_copy(&data->geometry.base2, &vector2);
-    cpml_vector_set_length(&data->geometry.base2, distance);
-    cpml_pair_add(&data->geometry.base2, &data->geometry.center);
-
-    /* base12 */
-    data->geometry.base12.x = (data->geometry.base1.x + data->geometry.base2.x) / 2;
-    data->geometry.base12.y = (data->geometry.base1.y + data->geometry.base2.y) / 2;
-    cpml_pair_sub(&data->geometry.base12, &data->geometry.center);
-    cpml_vector_set_length(&data->geometry.base12, distance);
-    cpml_pair_add(&data->geometry.base12, &data->geometry.center);
-
-    data->geometry.is_arranged = TRUE;
-}
-
-static void
-update_shift(AdgADim *adim)
-{
-    AdgADimPrivate *data;
-    AdgDim *dim;
-    AdgDimStyle *dim_style;
-    CpmlVector vector;
-    gdouble from_offset;
-    gdouble to_offset;
-    gdouble baseline_spacing;
-    gdouble level;
-
-    data = adim->data;
-
-    if (data->shift.is_arranged)
-        return;
-
-    dim = (AdgDim *) adim;
     dim_style = adg_dim_get_dim_style((AdgDim *) adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
-    baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
+    spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level((AdgDim *) adim);
 
-    cpml_pair_copy(&vector, adg_dim_get_ref1(dim));
-    cpml_pair_sub(&vector, &data->org1);
+    /* shift.from1 */
+    cpml_vector_set_length(&vector[0], from_offset);
+    cpml_pair_copy(&data->shift.from1, &vector[0]);
 
-    /* from1 */
-    cpml_vector_set_length(&vector, from_offset);
-    cpml_pair_copy(&data->shift.from1, &vector);
+    /* shift.base1 */
+    cpml_vector_set_length(&vector[0], level * spacing);
+    cpml_pair_copy(&data->shift.base1, &vector[0]);
 
-    /* base1 */
-    cpml_vector_set_length(&vector, level * baseline_spacing);
-    cpml_pair_copy(&data->shift.base1, &vector);
+    /* shift.to1 */
+    cpml_vector_set_length(&vector[0], to_offset);
+    cpml_pair_copy(&data->shift.to1, &vector[0]);
 
-    /* to1 */
-    cpml_vector_set_length(&vector, to_offset);
-    cpml_pair_copy(&data->shift.to1, &vector);
+    /* shift.from2 */
+    cpml_vector_set_length(&vector[2], from_offset);
+    cpml_pair_copy(&data->shift.from2, &vector[2]);
 
-    cpml_pair_copy(&vector, adg_dim_get_ref2(dim));
-    cpml_pair_sub(&vector, &data->org2);
+    /* shift.base2 */
+    cpml_vector_set_length(&vector[2], level * spacing);
+    cpml_pair_copy(&data->shift.base2, &vector[2]);
 
-    /* from2 */
-    cpml_vector_set_length(&vector, from_offset);
-    cpml_pair_copy(&data->shift.from2, &vector);
+    /* shift.to2 */
+    cpml_vector_set_length(&vector[2], to_offset);
+    cpml_pair_copy(&data->shift.to2, &vector[2]);
 
-    /* base2 */
-    cpml_vector_set_length(&vector, level * baseline_spacing);
-    cpml_pair_copy(&data->shift.base2, &vector);
+    /* shift.base12 */
+    cpml_vector_set_length(&vector[1], level * spacing);
+    cpml_pair_copy(&data->shift.base12, &vector[1]);
 
-    /* to2 */
-    cpml_vector_set_length(&vector, to_offset);
-    cpml_pair_copy(&data->shift.to2, &vector);
+    /* point.base1 */
+    cpml_vector_set_length(&vector[0], distance);
+    cpml_pair_add(cpml_pair_copy(&data->point.base1, &vector[0]), &center);
 
-    cpml_pair_copy(&vector, &data->geometry.base12);
-    cpml_pair_sub(&vector, &data->geometry.center);
+    /* point.base2 */
+    cpml_vector_set_length(&vector[2], distance);
+    cpml_pair_add(cpml_pair_copy(&data->point.base2, &vector[2]), &center);
 
-    /* base12 */
-    cpml_vector_set_length(&vector, level * baseline_spacing);
-    cpml_pair_copy(&data->shift.base12, &vector);
+    /* point.base12 */
+    cpml_vector_set_length(&vector[1], distance);
+    cpml_pair_add(cpml_pair_copy(&data->point.base12, &vector[1]), &center);
 
-    data->shift.is_arranged = TRUE;
+    data->geometry_arranged = TRUE;
 }
 
 static void
@@ -726,6 +660,54 @@ dispose_markers(AdgADim *adim)
         g_object_unref(data->marker2);
         data->marker2 = NULL;
     }
+}
+
+static gboolean
+get_info(AdgADim *adim, CpmlVector vector[],
+         AdgPair *center, gdouble *distance)
+{
+    AdgDim *dim;
+    AdgADimPrivate *data;
+    const AdgPair *ref1, *ref2, *pos;
+    gdouble factor, angle1, angle2;
+
+    dim = (AdgDim *) adim;
+    data = adim->data;
+    ref1 = adg_dim_get_ref1(dim);
+    ref2 = adg_dim_get_ref2(dim);
+
+    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), &data->org1);
+    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), &data->org2);
+
+    factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
+    if (factor == 0)
+        return FALSE;
+
+    factor = ((ref1->y - ref2->y) * vector[2].x -
+              (ref1->x - ref2->x) * vector[2].y) / factor;
+
+    center->x = ref1->x + vector[0].x * factor;
+    center->y = ref1->y + vector[0].y * factor;
+
+    pos = adg_dim_get_pos(dim);
+
+    *distance = cpml_pair_distance(center, pos);
+
+    /* Ensure the distance is non-zero, as this would fuck up
+     * cpml_vector_set_length() */
+    if (*distance == 0)
+        *distance = 0.01;
+
+    angle1 = cpml_vector_angle(&vector[0]);
+    angle2 = cpml_vector_angle(&vector[2]);
+    while (angle2 < angle1)
+        angle2 += M_PI * 2;
+
+    cpml_vector_from_angle(&vector[1], (angle1 + angle2) / 2);
+
+    data->angle = angle2 - angle1;
+
+    return TRUE;
 }
 
 static CpmlPath *

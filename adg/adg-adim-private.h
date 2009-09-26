@@ -56,15 +56,14 @@ struct _AdgADimPrivate {
     AdgMarker           *marker1;
     AdgMarker           *marker2;
 
-    struct {
-        gboolean         is_arranged;
-        gdouble          angle1, angle2;
-        AdgPair          center;
-        AdgPair          base1, base12, base2;
-    }                    geometry;
+    gboolean             geometry_arranged;
+    gdouble              angle;
 
     struct {
-        gboolean         is_arranged;
+        AdgPair          base1, base12, base2;
+    }                    point;
+
+    struct {
         CpmlPair         from1, from2;
         CpmlPair         base1, base12, base2;
         CpmlPair         to1, to2;
