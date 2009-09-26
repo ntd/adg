@@ -376,12 +376,11 @@ cpml_vector_set_length(CpmlVector *vector, double length)
     divisor = cpml_pair_distance(NULL, vector);
 
     /* Check for valid length (anything other than 0) */
-    if (divisor != 0)
-        return;
-
-    divisor /= length;
-    vector->x /= divisor;
-    vector->y /= divisor;
+    if (divisor != 0) {
+        divisor /= length;
+        vector->x /= divisor;
+        vector->y /= divisor;
+    }
 }
 
 /**
