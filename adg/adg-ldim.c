@@ -770,7 +770,7 @@ unset_trail(AdgLDim *ldim)
     AdgLDimPrivate *data = ldim->data;
 
     if (data->trail != NULL)
-        adg_trail_invalidate(data->trail);
+        adg_model_clear((AdgModel *) data->trail);
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
