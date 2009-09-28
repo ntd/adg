@@ -71,6 +71,7 @@ static gboolean         set_org1                (AdgADim        *adim,
                                                  const AdgPair  *org1);
 static gboolean         set_org2                (AdgADim        *adim,
                                                  const AdgPair  *org2);
+static void             unset_trail             (AdgADim        *adim);
 static void             dispose_markers         (AdgADim        *adim);
 static gboolean         get_info                (AdgADim        *adim,
                                                  CpmlVector      vector[],
@@ -372,12 +373,7 @@ adg_adim_set_org(AdgADim *adim, const AdgPair *org1, const AdgPair *org2)
 static void
 local_changed(AdgEntity *entity)
 {
-    AdgADimPrivate *data = ((AdgADim *) entity)->data;
-
-    if (data->trail != NULL)
-        adg_trail_clear_cairo_path(data->trail);
-
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    unset_trail((AdgADim *) entity);
 
     PARENT_ENTITY_CLASS->local_changed(entity);
 }
@@ -393,8 +389,7 @@ invalidate(AdgEntity *entity)
 
     dispose_markers(adim);
     data->geometry_arranged = FALSE;
-    adg_trail_clear_cairo_path(data->trail);
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    unset_trail(adim);
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
@@ -673,6 +668,17 @@ set_org2(AdgADim *adim, const AdgPair *org2)
     data->org2 = *org2;
 
     return TRUE;
+}
+
+static void
+unset_trail(AdgADim *adim)
+{
+    AdgADimPrivate *data = adim->data;
+
+    if (data->trail != NULL)
+        adg_trail_invalidate(data->trail);
+
+    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
 
 static void
