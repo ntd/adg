@@ -125,7 +125,7 @@ adg_path_init(AdgPath *path)
                                                        AdgPathPrivate);
 
     data->cp_is_valid = FALSE;
-    data->path = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
+    data->cpml.array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
     data->operation.operator = ADG_OPERATOR_NONE;
 
     path->data = data;
@@ -140,7 +140,7 @@ finalize(GObject *object)
     path = (AdgPath *) object;
     data = path->data;
 
-    g_array_free(data->path, TRUE);
+    g_array_free(data->cpml.array, TRUE);
     clear_operation(path);
 
     if (PARENT_OBJECT_CLASS->finalize != NULL)
@@ -344,8 +344,8 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
     data = path->data;
 
     clear_parent((AdgModel *) path);
-    data->path = g_array_append_vals(data->path,
-                                     segment->data, segment->num_data);
+    data->cpml.array = g_array_append_vals(data->cpml.array,
+                                           segment->data, segment->num_data);
 }
 
 /**
@@ -365,8 +365,9 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
     data = path->data;
 
     clear_parent((AdgModel *) path);
-    data->path = g_array_append_vals(data->path,
-                                     cairo_path->data, cairo_path->num_data);
+    data->cpml.array = g_array_append_vals(data->cpml.array,
+                                           cairo_path->data,
+                                           cairo_path->num_data);
 }
 
 /**
@@ -613,7 +614,7 @@ clear(AdgModel *model)
     path = (AdgPath *) model;
     data = path->data;
 
-    g_array_set_size(data->path, 0);
+    g_array_set_size(data->cpml.array, 0);
     clear_operation(path);
     clear_parent(model);
 }
@@ -644,17 +645,14 @@ get_cpml_path(AdgTrail *trail)
 static CpmlPath *
 read_cpml_path(AdgPath *path)
 {
-    AdgPathPrivate *data;
-    CpmlPath *cpml_path;
+    AdgPathPrivate *data = path->data;
 
-    data = path->data;
-    cpml_path = &data->cpml_path;
+    /* Always regenerate the CpmlPath as it is a trivial operation */
+    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
+    data->cpml.path.data = (cairo_path_data_t *) (data->cpml.array)->data;
+    data->cpml.path.num_data = (data->cpml.array)->len;
 
-    cpml_path->status = CAIRO_STATUS_SUCCESS;
-    cpml_path->data = (cairo_path_data_t *) data->path->data;
-    cpml_path->num_data = data->path->len;
-
-    return cpml_path;
+    return &data->cpml.path;
 }
 
 static void
@@ -672,12 +670,13 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
     do_operation(path, path_data);
 
     /* Append the path data to the internal path array */
-    data->path = g_array_append_vals(data->path, path_data, length);
+    data->cpml.array = g_array_append_vals(data->cpml.array,
+                                           path_data, length);
 
     /* Set path data to point to the recently appended cairo_path_data_t
      * primitive: the first struct is the header */
-    path_data = (cairo_path_data_t *) data->path->data +
-                data->path->len - length;
+    path_data = (cairo_path_data_t *) (data->cpml.array)->data +
+                (data->cpml.array)->len - length;
 
     /* Set the last primitive for subsequent binary operations */
     data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
@@ -881,7 +880,7 @@ do_chamfer(AdgPath *path, CpmlPrimitive *current)
     line[0].header.length = 2;
     line[1].point.x = pair.x;
     line[1].point.y = pair.y;
-    data->path = g_array_append_vals(data->path, line, 2);
+    data->cpml.array = g_array_append_vals(data->cpml.array, line, 2);
 
     data->operation.operator = ADG_OPERATOR_NONE;
 }
@@ -950,7 +949,7 @@ do_fillet(AdgPath *path, CpmlPrimitive *current)
     arc[0].header.length = 3;
     cpml_pair_to_cairo(&p[1], &arc[1]);
     cpml_pair_to_cairo(&p[2], &arc[2]);
-    data->path = g_array_append_vals(data->path, arc, 3);
+    data->cpml.array = g_array_append_vals(data->cpml.array, arc, 3);
 
     data->operation.operator = ADG_OPERATOR_NONE;
 }
