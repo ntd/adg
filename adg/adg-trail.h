@@ -61,11 +61,11 @@ AdgTrail *      adg_trail_new                   (AdgTrailCallback callback,
 
 const cairo_path_t *
                 adg_trail_get_cairo_path        (AdgTrail        *trail);
-void            adg_trail_clear_cairo_path      (AdgTrail        *trail);
 CpmlPath *      adg_trail_get_cpml_path         (AdgTrail        *trail);
 gboolean        adg_trail_get_segment           (AdgTrail        *trail,
                                                  AdgSegment      *segment,
                                                  guint            n);
+void            adg_trail_invalidate            (AdgTrail        *trail);
 void            adg_trail_dump                  (AdgTrail        *trail);
 
 G_END_DECLS

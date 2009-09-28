@@ -32,7 +32,7 @@
  * dynamically and the global and local maps do not suffice to express
  * this alteration. A typical example is the path used to draw extension
  * lines and base line of #AdgLDim: every point is subject to different
- * constrains not applicable with a single affine transformation.
+ * constrains not expressible with a single affine transformation.
  **/
 
 /**
@@ -63,7 +63,6 @@
 
 
 static void             finalize                (GObject        *object);
-static cairo_path_t *   get_cairo_path          (AdgTrail       *trail);
 static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t
@@ -114,7 +113,7 @@ finalize(GObject *object)
     trail = (AdgTrail *) object;
     data = trail->data;
 
-    adg_trail_clear_cairo_path(trail);
+    adg_trail_invalidate(trail);
 
     if (PARENT_OBJECT_CLASS->finalize != NULL)
         PARENT_OBJECT_CLASS->finalize(object);
@@ -152,13 +151,15 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * adg_trail_get_cairo_path:
  * @trail: an #AdgTrail
  *
- * Gets a pointer to the cairo path structure of @trail. The return path
- * is owned by @trail and must be considered read-only.
+ * Gets a pointer to the cairo path of @trail. The return path is
+ * owned by @trail and must be considered read-only.
  *
- * This function also converts %CAIRO_PATH_ARC_TO primitives, not
- * recognized by cairo, into approximated Bézier curves. The conversion
- * is cached so any furter request is O(1). This cache is cleared
- * only after adg_trail_clear_cairo_path() is called.
+ * This function gets the #CpmlPath of @trail by calling
+ * adg_trail_get_cpml_path() and converts its %CAIRO_PATH_ARC_TO
+ * primitives, not recognized by cairo, into approximated Bézier
+ * curves primitives (%CAIRO_PATH_CURVE_TO). The conversion is
+ * cached, so any furter request is O(1). This cache is cleared
+ * only by the adg_trail_invalidate() method.
  *
  * <important>
  * <title>TODO</title>
@@ -175,58 +176,64 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
 const cairo_path_t *
 adg_trail_get_cairo_path(AdgTrail *trail)
 {
-    g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
-
-    return get_cairo_path(trail);
-}
-
-/**
- * adg_trail_clear_cairo_path:
- * @trail: an #AdgTrail
- *
- * Clears the internal cairo path of @trail so it will be recomputed
- * the next time is requested throught adg_trail_get_cairo_path().
- **/
-void
-adg_trail_clear_cairo_path(AdgTrail *trail)
-{
     AdgTrailPrivate *data;
     cairo_path_t *cairo_path;
+    CpmlPath *src;
+    GArray *dst;
+    const cairo_path_data_t *p_src;
+    int i;
 
-    g_return_if_fail(ADG_IS_TRAIL(trail));
+    g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
     data = trail->data;
     cairo_path = &data->cairo_path;
 
-    if (cairo_path->data == NULL)
-        return;
+    /* Check for cached result */
+    if (cairo_path->data != NULL)
+        return cairo_path;
 
-    g_free(cairo_path->data);
+    src = adg_trail_get_cpml_path(trail);
+    dst = g_array_sized_new(FALSE, FALSE,
+                            sizeof(cairo_path_data_t), src->num_data);
 
-    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
-    cairo_path->data = NULL;
-    cairo_path->num_data = 0;
+    /* Cycle the CpmlPath and convert arcs to Bézier curves */
+    for (i = 0; i < src->num_data; i += p_src->header.length) {
+        p_src = (const cairo_path_data_t *) src->data + i;
+
+        if (p_src->header.type == CAIRO_PATH_ARC_TO)
+            dst = arc_to_curves(dst, p_src);
+        else
+            dst = g_array_append_vals(dst, p_src, p_src->header.length);
+    }
+
+    cairo_path->status = CAIRO_STATUS_SUCCESS;
+    cairo_path->num_data = dst->len;
+    cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
+
+    return cairo_path;
 }
 
 /**
  * adg_trail_get_cpml_path:
  * @trail: an #AdgTrail
  *
- * Gets a pointer to the CPML path structure of @trail. The return
- * value is owned by @trail and must not be freed.
+ * Gets the CPML path structure defined by @trail. The returned
+ * value is managed by the #AdgTrail implementation, that is this
+ * method simply calls the #AdgTrailClass::get_cpml_path() virtual
+ * function that any trail instance must implement.
  *
- * This function is similar to adg_trail_get_cairo_path() but with
- * two important differences: firstly the arc primitives are not
- * expanded to Bézier curves and secondly the returned path is
- * not read-only. This means it is allowed to modify the returned
- * path as long as its size is retained and its data contains a
- * valid path (this is needed by the #AdgMarker infrastructure).
+ * Whenever used internally by the ADG project, the returned path
+ * is (by convention) owned by @trail and so it should not be freed.
+ * Anyway, it is allowed to modify it as long as its size is
+ * retained and its data contains a valid path: this is needed to
+ * let the #AdgMarker infrastructure work properly (the markers
+ * should be able to modify the trail where they are applied).
  *
  * Any further call to this method will probably make the pointer
- * previously returned useless because the internal #CpmlPath could
- * be relocated and the old #CpmlPath will likely contain rubbish.
+ * previously returned useless because the #CpmlPath could be
+ * relocated and the old #CpmlPath will likely contain rubbish.
  *
- * Returns: a pointer to the internal #CpmlPath or %NULL on errors
+ * Returns: a pointer to the #CpmlPath or %NULL on errors
  **/
 CpmlPath *
 adg_trail_get_cpml_path(AdgTrail *trail)
@@ -277,6 +284,38 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
 }
 
 /**
+ * adg_trail_invalidate:
+ * @trail: an #AdgTrail
+ *
+ * Clears the internal cairo path of @trail so the next call to
+ * adg_trail_get_cairo_path() will recompute cached #cairo_path_t.
+ * Check its documentation for details.
+ *
+ * This must be called by the #AdgTrail implementation whenever
+ * the original #CpmlPath changes.
+ **/
+void
+adg_trail_invalidate(AdgTrail *trail)
+{
+    AdgTrailPrivate *data;
+    cairo_path_t *cairo_path;
+
+    g_return_if_fail(ADG_IS_TRAIL(trail));
+
+    data = trail->data;
+    cairo_path = &data->cairo_path;
+
+    if (cairo_path->data == NULL)
+        return;
+
+    g_free(cairo_path->data);
+
+    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
+    cairo_path->data = NULL;
+    cairo_path->num_data = 0;
+}
+
+/**
  * adg_trail_dump:
  * @trail: an #AdgTrail
  *
@@ -290,7 +329,7 @@ adg_trail_dump(AdgTrail *trail)
 
     g_return_if_fail(ADG_IS_TRAIL(trail));
 
-    cairo_path = get_cairo_path(trail);
+    cairo_path = (cairo_path_t *) adg_trail_get_cairo_path(trail);
 
     g_return_if_fail(cairo_path != NULL);
 
@@ -303,44 +342,6 @@ adg_trail_dump(AdgTrail *trail)
     }
 }
 
-
-static cairo_path_t *
-get_cairo_path(AdgTrail *trail)
-{
-    AdgTrailPrivate *data;
-    cairo_path_t *cairo_path;
-    CpmlPath *src;
-    GArray *dst;
-    const cairo_path_data_t *p_src;
-    int i;
-
-    data = trail->data;
-    cairo_path = &data->cairo_path;
-
-    /* Check for cached result */
-    if (cairo_path->data != NULL)
-        return cairo_path;
-
-    src = adg_trail_get_cpml_path(trail);
-    dst = g_array_sized_new(FALSE, FALSE,
-                            sizeof(cairo_path_data_t), src->num_data);
-
-    /* Cycle the CpmlPath and convert arcs to Bézier curves */
-    for (i = 0; i < src->num_data; i += p_src->header.length) {
-        p_src = (const cairo_path_data_t *) src->data + i;
-
-        if (p_src->header.type == CAIRO_PATH_ARC_TO)
-            dst = arc_to_curves(dst, p_src);
-        else
-            dst = g_array_append_vals(dst, p_src, p_src->header.length);
-    }
-
-    cairo_path->status = CAIRO_STATUS_SUCCESS;
-    cairo_path->num_data = dst->len;
-    cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
-
-    return cairo_path;
-}
 
 static CpmlPath *
 get_cpml_path(AdgTrail *trail)
