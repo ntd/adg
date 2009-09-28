@@ -51,6 +51,7 @@ struct _AdgModelClass {
                                                  AdgEntity      *entity);
     void                (*remove_dependency)    (AdgModel       *model,
                                                  AdgEntity      *entity);
+    void                (*clear)                (AdgModel       *model);
     void                (*changed)              (AdgModel       *model);
 };
 
@@ -66,6 +67,7 @@ void            adg_model_foreach_dependency    (AdgModel       *model,
                                                  GCallback       callback,
                                                  gpointer        user_data);
 
+void            adg_model_clear                 (AdgModel       *model);
 void            adg_model_changed               (AdgModel       *model);
 
 G_END_DECLS

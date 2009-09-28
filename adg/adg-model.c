@@ -56,6 +56,7 @@ enum {
 enum {
     ADD_DEPENDENCY,
     REMOVE_DEPENDENCY,
+    CLEAR,
     CHANGED,
     LAST_SIGNAL
 };
@@ -96,6 +97,7 @@ adg_model_class_init(AdgModelClass *klass)
     klass->get_dependencies = get_dependencies;
     klass->add_dependency = add_dependency;
     klass->remove_dependency = remove_dependency;
+    klass->clear = NULL;
     klass->changed = changed;
 
     param = g_param_spec_object("dependency",
@@ -137,11 +139,24 @@ adg_model_class_init(AdgModelClass *klass)
                                               G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
+     * AdgModel::clear:
+     * @model: an #AdgModel
+     *
+     * Removes any cached information from @model.
+     **/
+    signals[CLEAR] = g_signal_new("clear", ADG_TYPE_MODEL,
+                                  G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                                  G_STRUCT_OFFSET(AdgModelClass, clear),
+                                  NULL, NULL,
+                                  adg_marshal_VOID__VOID,
+                                  G_TYPE_NONE, 0);
+
+    /**
      * AdgModel::changed:
      * @model: an #AdgModel
      *
-     * Notificates that the model has changed. By default, the model
-     * cache is invalidated.
+     * Notificates that the model has changed. By default, all the
+     * dependent entities are invalidated.
      **/
     signals[CHANGED] = g_signal_new("changed", ADG_TYPE_MODEL,
                                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
@@ -292,6 +307,24 @@ adg_model_foreach_dependency(AdgModel *model, GCallback callback,
 
         dependencies = g_slist_delete_link(dependencies, dependencies);
     }
+}
+
+/**
+ * adg_model_clear:
+ * @model: an #AdgModel
+ *
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
+ *
+ * Emits the #AdgModel::clear signal on @model.
+ **/
+void
+adg_model_clear(AdgModel *model)
+{
+    g_return_if_fail(ADG_IS_MODEL(model));
+
+    g_signal_emit(model, signals[CLEAR], 0);
 }
 
 /**
