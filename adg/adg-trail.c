@@ -60,9 +60,11 @@
 #include "adg-trail-private.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
+#define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
 
 
 static void             finalize                (GObject        *object);
+static void             clear                   (AdgModel       *model);
 static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
 static GArray *         arc_to_curves           (GArray         *array,
                                                  const cairo_path_data_t
@@ -84,6 +86,8 @@ adg_trail_class_init(AdgTrailClass *klass)
     g_type_class_add_private(klass, sizeof(AdgTrailPrivate));
 
     gobject_class->finalize = finalize;
+
+    model_class->clear = clear;
 
     klass->get_cpml_path = get_cpml_path;
 }
@@ -107,13 +111,7 @@ adg_trail_init(AdgTrail *trail)
 static void
 finalize(GObject *object)
 {
-    AdgTrail *trail;
-    AdgTrailPrivate *data;
-
-    trail = (AdgTrail *) object;
-    data = trail->data;
-
-    adg_trail_invalidate(trail);
+    clear((AdgModel *) object);
 
     if (PARENT_OBJECT_CLASS->finalize != NULL)
         PARENT_OBJECT_CLASS->finalize(object);
@@ -159,7 +157,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * primitives, not recognized by cairo, into approximated Bézier
  * curves primitives (%CAIRO_PATH_CURVE_TO). The conversion is
  * cached, so any furter request is O(1). This cache is cleared
- * only by the adg_trail_invalidate() method.
+ * only by the adg_model_clear() method.
  *
  * <important>
  * <title>TODO</title>
@@ -284,38 +282,6 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
 }
 
 /**
- * adg_trail_invalidate:
- * @trail: an #AdgTrail
- *
- * Clears the internal cairo path of @trail so the next call to
- * adg_trail_get_cairo_path() will recompute cached #cairo_path_t.
- * Check its documentation for details.
- *
- * This must be called by the #AdgTrail implementation whenever
- * the original #CpmlPath changes.
- **/
-void
-adg_trail_invalidate(AdgTrail *trail)
-{
-    AdgTrailPrivate *data;
-    cairo_path_t *cairo_path;
-
-    g_return_if_fail(ADG_IS_TRAIL(trail));
-
-    data = trail->data;
-    cairo_path = &data->cairo_path;
-
-    if (cairo_path->data == NULL)
-        return;
-
-    g_free(cairo_path->data);
-
-    cairo_path->status = CAIRO_STATUS_INVALID_PATH_DATA;
-    cairo_path->data = NULL;
-    cairo_path->num_data = 0;
-}
-
-/**
  * adg_trail_dump:
  * @trail: an #AdgTrail
  *
@@ -342,6 +308,21 @@ adg_trail_dump(AdgTrail *trail)
     }
 }
 
+
+static void
+clear(AdgModel *model)
+{
+    AdgTrailPrivate *data = ((AdgTrail *) model)->data;
+
+    g_free(data->cairo_path.data);
+
+    data->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo_path.data = NULL;
+    data->cairo_path.num_data = 0;
+
+    if (PARENT_MODEL_CLASS->clear != NULL)
+        PARENT_MODEL_CLASS->clear(model);
+}
 
 static CpmlPath *
 get_cpml_path(AdgTrail *trail)
