@@ -639,10 +639,8 @@ unset_trail(AdgMarker *marker)
 {
     AdgMarkerPrivate *data = marker->data;
 
-    if (data->trail != NULL) {
-        data->trail = NULL;
-        set_n_segment(marker, 0);
-    }
+    if (data->trail != NULL)
+        set_segment(marker, NULL, 0);
 }
 
 static gboolean
