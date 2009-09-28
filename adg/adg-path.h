@@ -58,7 +58,6 @@ void            adg_path_get_current_point      (AdgPath        *path,
                                                  gdouble        *x,
                                                  gdouble        *y);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
-void            adg_path_clear                  (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
                                                  cairo_path_data_type_t
