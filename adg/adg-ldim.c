@@ -69,6 +69,7 @@ static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
 static gboolean         choose_outside          (AdgLDim        *ldim);
+static void             unset_trail             (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
 static CpmlPath *       trail_callback          (AdgTrail       *trail,
                                                  gpointer        user_data);
@@ -411,12 +412,7 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
 static void
 local_changed(AdgEntity *entity)
 {
-    AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
-
-    if (data->trail != NULL)
-        adg_trail_clear_cairo_path(data->trail);
-
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    unset_trail((AdgLDim *) entity);
 
     PARENT_ENTITY_CLASS->local_changed(entity);
 }
@@ -433,8 +429,7 @@ invalidate(AdgEntity *entity)
     dispose_markers(ldim);
     data->geometry.is_arranged = FALSE;
     data->shift.is_arranged = FALSE;
-    adg_trail_clear_cairo_path(data->trail);
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    unset_trail(ldim);
 
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
@@ -767,6 +762,17 @@ choose_outside(AdgLDim *ldim)
     available = data->geometry.distance * local->xx;
 
     return needed > available;
+}
+
+static void
+unset_trail(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data = ldim->data;
+
+    if (data->trail != NULL)
+        adg_trail_invalidate(data->trail);
+
+    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
 
 static void
