@@ -676,7 +676,7 @@ unset_trail(AdgADim *adim)
     AdgADimPrivate *data = adim->data;
 
     if (data->trail != NULL)
-        adg_trail_invalidate(data->trail);
+        adg_model_clear((AdgModel *) data->trail);
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
