@@ -61,8 +61,10 @@
 #include "adg-path-private.h"
 #include "adg-primitive.h"
 #include "adg-intl.h"
-
 #include <math.h>
+
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
+#define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
 
 
 static void             finalize                (GObject        *object);
@@ -131,17 +133,15 @@ finalize(GObject *object)
 {
     AdgPath *path;
     AdgPathPrivate *data;
-    GObjectClass *object_class;
 
     path = (AdgPath *) object;
     data = path->data;
-    object_class = (GObjectClass *) adg_path_parent_class;
 
     g_array_free(data->path, TRUE);
     clear_operation(path);
 
-    if (object_class->finalize != NULL)
-        object_class->finalize(object);
+    if (PARENT_OBJECT_CLASS->finalize != NULL)
+        PARENT_OBJECT_CLASS->finalize(object);
 }
 
 
@@ -233,7 +233,7 @@ adg_path_clear(AdgPath *path)
 
     g_array_set_size(data->path, 0);
     clear_operation(path);
-    adg_trail_clear_cairo_path((AdgTrail *) path);
+    adg_trail_invalidate((AdgTrail *) path);
 }
 
 
@@ -362,7 +362,7 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
 
     data = path->data;
 
-    adg_trail_clear_cairo_path((AdgTrail *) path);
+    adg_trail_invalidate((AdgTrail *) path);
     data->path = g_array_append_vals(data->path,
                                      segment->data, segment->num_data);
 }
@@ -383,7 +383,7 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 
     data = path->data;
 
-    adg_trail_clear_cairo_path((AdgTrail *) path);
+    adg_trail_invalidate((AdgTrail *) path);
     data->path = g_array_append_vals(data->path,
                                      cairo_path->data, cairo_path->num_data);
 }
@@ -626,18 +626,16 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 static void
 changed(AdgModel *model)
 {
-    AdgModelClass *model_class = (AdgModelClass *) adg_path_parent_class;
-
     adg_path_clear((AdgPath *) model);
 
-    if (model_class->changed != NULL)
-        model_class->changed(model);
+    if (PARENT_MODEL_CLASS->changed != NULL)
+        PARENT_MODEL_CLASS->changed(model);
 }
 
 static CpmlPath *
 get_cpml_path(AdgTrail *trail)
 {
-    adg_trail_clear_cairo_path(trail);
+    adg_trail_invalidate(trail);
 
     return read_cpml_path((AdgPath *) trail);
 }
@@ -691,7 +689,7 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
         cpml_pair_from_cairo(&data->cp, &path_data[length-1]);
 
     /* Invalidate cairo_path: should be recomputed */
-    adg_trail_clear_cairo_path((AdgTrail *) path);
+    adg_trail_invalidate((AdgTrail *) path);
 }
 
 static gint
