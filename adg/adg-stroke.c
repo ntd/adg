@@ -336,8 +336,6 @@ unset_trail(AdgStroke *stroke)
 {
     AdgStrokePrivate *data = stroke->data;
 
-    if (data->trail != NULL) {
-        data->trail = NULL;
-        adg_entity_invalidate((AdgEntity *) stroke);
-    }
+    if (data->trail != NULL)
+        set_trail(stroke, NULL);
 }
