@@ -106,18 +106,22 @@ static AdgCanvas *
 sample_canvas(void)
 {
     SampleData data;
-    AdgPath *path;
     AdgCanvas *canvas;
     AdgContainer *container;
+    AdgTrail *trail;
     AdgEntity *entity;
     AdgMatrix map;
 
     sample_get(&data);
-    path = sample_path(&data);
     canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
 
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(path)));
+    trail = ADG_TRAIL(sample_path(&data));
+    entity = ADG_ENTITY(adg_stroke_new(trail));
+    adg_container_add(container, entity);
+
+    trail = ADG_TRAIL(adg_edges_new_with_source(trail));
+    entity = ADG_ENTITY(adg_stroke_new(trail));
     adg_container_add(container, entity);
 
     sample_add_dimensions(canvas, &data);
@@ -189,9 +193,10 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
     adg_path_line_to(path, data->A, data->D7 / 2);
 
-    /* Build the rounded shape by duplicating the first segment of
-     * the current path, reflecting it on the y=0 axis, reversing and
-     * joining it the result to the original path */
+    /* Reflect the shape by duplicating the first segment of
+     * the current path, applying a -1 y scale (that is
+     * mirroring it on the y=0 axis), reversing the resulting
+     * path and appending it to the original one */
     adg_trail_get_segment(ADG_TRAIL(path), &segment, 1);
     dup_segment = adg_segment_deep_dup(&segment);
     cpml_segment_reverse(dup_segment);

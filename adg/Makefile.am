@@ -13,6 +13,7 @@ h_sources=			adg-adim.h \
 				adg-dim.h \
 				adg-dim-style.h \
 				adg-dress.h \
+				adg-edges.h \
 				adg-entity.h \
 				adg-font-style.h \
 				adg-ldim.h \
@@ -42,6 +43,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-dim-private.h \
 				adg-dim-style-private.h \
 				adg-dress-private.h \
+				adg-edges-private.h \
 				adg-entity-private.h \
 				adg-enums.h \
 				adg-font-style-private.h \
@@ -64,6 +66,7 @@ c_sources=			adg-adim.c \
 				adg-dim.c \
 				adg-dim-style.c \
 				adg-dress.c \
+				adg-edges.c \
 				adg-entity.c \
 				adg-enums.c \
 				adg-font-style.c \

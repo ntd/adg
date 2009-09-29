@@ -28,6 +28,7 @@ IGNORE_HFILES=		adg.h \
 			adg-dim-private.h \
 			adg-dim-style-private.h \
 			adg-dress-private.h \
+			adg-edges-private.h \
 			adg-entity-private.h \
 			adg-font-style-private.h \
 			adg-ldim-private.h \

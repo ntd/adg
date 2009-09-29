@@ -30,6 +30,7 @@
     <xi:include href="xml/adg-model.xml"/>
     <xi:include href="xml/adg-trail.xml"/>
     <xi:include href="xml/adg-path.xml"/>
+    <xi:include href="xml/adg-edges.xml"/>
   </part>
 
   <part id="Populating">

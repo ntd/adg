@@ -18,32 +18,24 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_EDGES_PRIVATE_H__
+#define __ADG_EDGES_PRIVATE_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-dress.h>
-#include <adg/adg-edges.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
-#include <adg/adg-primitive.h>
-#include <adg/adg-segment.h>
-#include <adg/adg-stroke.h>
-#include <adg/adg-style.h>
-#include <adg/adg-title-block.h>
-#include <adg/adg-toy-text.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
-/* if GTK2 */
-#include <adg/adg-widget.h>
-/* endif GTK2 */
 
-#endif /* __ADG_H__ */
+G_BEGIN_DECLS
+
+typedef struct _AdgEdgesPrivate AdgEdgesPrivate;
+
+struct _AdgEdgesPrivate {
+    AdgTrail    *source;
+
+    struct {
+        CpmlPath path;
+        GArray  *array;
+    }            cpml;
+};
+
+G_END_DECLS
+
+
+#endif /* __ADG_EDGES_PRIVATE_H__ */
