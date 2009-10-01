@@ -56,6 +56,9 @@ AdgEdges *      adg_edges_new_with_source       (AdgTrail       *source);
 void            adg_edges_set_source            (AdgEdges       *edges,
                                                  AdgTrail       *source);
 AdgTrail *      adg_edges_get_source            (AdgEdges       *edges);
+void            adg_edges_set_critical_angle    (AdgEdges       *edges,
+                                                 gdouble         angle);
+gdouble         adg_edges_get_critical_angle    (AdgEdges       *edges);
 
 G_END_DECLS
 

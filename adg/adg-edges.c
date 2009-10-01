@@ -47,7 +47,8 @@
 
 enum {
     PROP_0,
-    PROP_SOURCE
+    PROP_SOURCE,
+    PROP_CRITICAL_ANGLE
 };
 
 
@@ -65,10 +66,13 @@ static void             clear                   (AdgModel       *model);
 static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
 static gboolean         set_source              (AdgEdges       *edges,
                                                  AdgTrail       *source);
+static gboolean         set_critical_angle      (AdgEdges       *edges,
+                                                 gdouble         angle);
 static void             unset_source            (AdgEdges       *edges);
 static void             clear_cpml_path         (AdgEdges       *edges);
 static GSList *         get_vertices            (CpmlSegment    *segment,
                                                  gdouble         threshold);
+static GSList *         optimize_vertices       (GSList         *vertices);
 static GArray *         build_array             (const GSList   *vertices);
 
 
@@ -104,6 +108,13 @@ adg_edges_class_init(AdgEdgesClass *klass)
                                 ADG_TYPE_TRAIL,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_SOURCE, param);
+
+    param = g_param_spec_double("critical-angle",
+                                P_("Critical Angle"),
+                                P_("The angle that defines which corner generates an edge (if the corner angle is greater than this critical angle) and which edge is ignored"),
+                                0, G_PI, G_PI / 45,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SOURCE, param);
 }
 
 static void
@@ -113,6 +124,9 @@ adg_edges_init(AdgEdges *edges)
                                                         AdgEdgesPrivate);
 
     data->source = NULL;
+    data->threshold = sin(G_PI / 45);
+    data->threshold *= data->threshold * 2;
+
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cpml.array = NULL;
 
@@ -142,11 +156,18 @@ finalize(GObject *object)
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-    AdgEdgesPrivate *data = ((AdgEdges *) object)->data;
+    AdgEdges *edges;
+    AdgEdgesPrivate *data;
+
+    edges = (AdgEdges *) object;
+    data = edges->data;
 
     switch (prop_id) {
     case PROP_SOURCE:
         g_value_set_object(value, &data->source);
+        break;
+    case PROP_CRITICAL_ANGLE:
+        g_value_set_double(value, adg_edges_get_critical_angle(edges));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -163,6 +184,9 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_SOURCE:
         set_source(edges, g_value_get_object(value));
+        break;
+    case PROP_CRITICAL_ANGLE:
+        set_critical_angle(edges, g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -235,6 +259,48 @@ adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
         g_object_notify((GObject *) edges, "source");
 }
 
+/**
+ * adg_edges_get_critical_angle:
+ * @edges: an #AdgEdges
+ *
+ * Gets the current critical angle of @edges. The angle is internally
+ * converted to a threshold value, so the returned angle could be not
+ * exactly what set throught adg_edges_set_critical_angle().
+ *
+ * Returns: the value (in radians) of the critical angle
+ **/
+gdouble
+adg_edges_get_critical_angle(AdgEdges *edges)
+{
+    AdgEdgesPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_EDGES(edges), 0);
+
+    data = edges->data;
+
+    return asin(sqrt(data->threshold / 2));
+}
+
+/**
+ * adg_edges_set_critical_angle:
+ * @edges: an #AdgEdges
+ * @angle: the new angle (in radians)
+ *
+ * Sets a new critical angle on @edges. The critical angle defines
+ * what corner should generate an edge and what not. Typical values
+ * are close to %0, being %0 the lowest angle where all the corners
+ * generate an edge.
+ **/
+void
+adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_EDGES(edges));
+
+    if (set_critical_angle(edges, angle))
+        g_object_notify((GObject *) edges, "critical-angle");
+}
+
+
 static void
 clear(AdgModel *model)
 {
@@ -265,6 +331,7 @@ get_cpml_path(AdgTrail *trail)
 
         adg_trail_get_segment(data->source, &segment, 1);
         vertices = get_vertices(&segment, 0.01);
+        vertices = optimize_vertices(vertices);
         data->cpml.array = build_array(vertices);
 
         g_slist_foreach(vertices, (GFunc) g_free, NULL);
@@ -300,6 +367,24 @@ set_source(AdgEdges *edges, AdgTrail *source)
     if (data->source != NULL)
         g_object_weak_ref((GObject *) data->source,
                           (GWeakNotify) unset_source, edges);
+
+    return TRUE;
+}
+
+static gboolean
+set_critical_angle(AdgEdges *edges, gdouble angle)
+{
+    AdgEdgesPrivate *data;
+    gdouble threshold;
+
+    data = edges->data;
+    threshold = sin(angle);
+    threshold *= threshold * 2;
+
+    if (threshold == data->threshold)
+        return FALSE;
+
+    data->threshold = threshold;
 
     return TRUE;
 }
@@ -343,10 +428,15 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
         /* The first vector and the undefined ones
          * must always be skipped */
         if (old.x != 0 || old.y != 0) {
+            cpml_vector_set_length(&old, 1);
             cpml_primitive_vector_at(&primitive, &new, 0);
             cpml_vector_set_length(&new, 1);
 
-            if (cpml_pair_squared_distance(&old, &new) > threshold) {
+            /* Vertical vectors are always added, as they represent
+             * a vertical side and could be filleted, thus skipping
+             * the edge detection */
+            if (new.x == 0 ||
+                cpml_pair_squared_distance(&old, &new) > threshold) {
                 AdgPair pair;
 
                 cpml_primitive_pair_at(&primitive, &pair, 0);
@@ -355,18 +445,84 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
         }
 
         cpml_primitive_vector_at(&primitive, &old, 1);
-        cpml_vector_set_length(&old, 1);
     } while (cpml_primitive_next(&primitive));
 
     return g_slist_reverse(vertices);
 }
 
+/* Removes adjacent vertices lying on the same edge */
+static GSList *
+optimize_vertices(GSList *vertices)
+{
+    GSList *vertex, *old_vertex;
+    AdgPair *pair, *old_pair;
+
+    /* Check for empty list */
+    if (vertices == NULL)
+        return vertices;
+
+    old_vertex = vertices;
+
+    while ((vertex = old_vertex->next) != NULL) {
+        pair = vertex->data;
+        old_pair = old_vertex->data;
+
+        if (pair->x != old_pair->x) {
+            old_vertex = vertex;
+            continue;
+        }
+
+        if (old_pair->y < pair->y) {
+            /* Preserve the old vertex and remove the current one */
+            g_free(pair);
+            vertices = g_slist_delete_link(vertices, vertex);
+        } else {
+            /* Preserve the current vertex and remove the old one */
+            g_free(old_pair);
+            vertices = g_slist_delete_link(vertices, old_vertex);
+            old_vertex = vertex;
+        }
+    }
+
+    return vertices;
+}
+
 static GArray *
 build_array(const GSList *vertices)
 {
+    cairo_path_data_t line[4];
     GArray *array;
+    const GSList *vertex, *vertex2;
+    const AdgPair *pair, *pair2;
+
+    line[0].header.type = CAIRO_PATH_MOVE_TO;
+    line[0].header.length = 2;
+    line[2].header.type = CAIRO_PATH_LINE_TO;
+    line[2].header.length = 2;
 
     array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
+    vertex = vertices;
+
+    while (vertex != NULL) {
+        pair = vertex->data;
+        vertex = vertex->next;
+        vertex2 = vertex;
+
+        while (vertex2 != NULL) {
+            pair2 = vertex2->data;
+
+            if (pair->x == pair2->x) {
+                /* Opposite vertex found: append a line in the path
+                 * and quit from this loop */
+                cpml_pair_to_cairo(pair, &line[1]);
+                cpml_pair_to_cairo(pair2, &line[3]);
+                array = g_array_append_vals(array, line, G_N_ELEMENTS(line));
+                break;
+            }
+
+            vertex2 = vertex2->next;
+        }
+    }
 
     return array;
 }
