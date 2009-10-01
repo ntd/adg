@@ -26,6 +26,17 @@
  * #AdgTrail source. It is useful for any part made by revolution,
  * where the shape is symmetric along a specific axis and thus the
  * corners can be easily computed.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>Actually the edges of the source trail are always computed
+ *           taking the y=0 axis as the origin: anyway, it would be not
+ *           too hard to apply an arbitrary transformation to aling the
+ *           trail on the y=0 axis, compute the edges as usual and apply
+ *           the inverse transformation to the result.</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 
 /**
