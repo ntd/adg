@@ -9,20 +9,20 @@
 <simplesect id="NEWS.0.5.2">
 <title>ADG 0.5.2</title>
 
-<para>AdgADim, a new entity to quote angular dimensions, has been implemented.</para>
+<para>AdgADim, a new entity to quote angular dimensions, is implemented.</para>
 
-<para>The linear dimensions now accept the "outside" property to reflect the
-arrows in reference to the extension lines. By default, the value of
-this property is undefined and will be computed runtime depending on
-the quote size and the available space.</para>
+<para>The linear dimensions now accept the "outside" property to reflect
+the arrows around the extension lines. The default value of this
+property is ADG_THREE_STATE_UNKNOWN, meaning it will be computed at
+runtime, depending on quote size and available space.</para>
 
-<para>The new AdgEdges model can now be used to programmatically build a serie
-of vertical lines expressing the edges of another model. This can be
-used on symmetrical shape, often met in turned parts.</para>
+<para>The new AdgEdges model can now be used to programmatically build a
+serie of vertical lines expressing the edges of another model. This
+can be used on symmetrical shapes, often met in turned parts.</para>
 
-<para>The entities now actively responds to extents requests, so it is possible
-to get the needed space before rendering them. Any matrix change now
-emits specific signals to fulfill this requirement.</para>
+<para>The entities now actively respond to extents requests: it is possible
+to know the necessary space before rendering them. Any matrix change
+now emits specific signals to fulfill this requirement.</para>
 
 </simplesect>
 
