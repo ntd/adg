@@ -36,6 +36,7 @@ IGNORE_HFILES=		adg.h \
 			adg-marker-private.h \
 			adg-model-private.h \
 			adg-path-private.h \
+			adg-rdim-private.h \
 			adg-stroke-private.h \
 			adg-title-block-private.h \
 			adg-trail-private.h \

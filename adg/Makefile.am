@@ -25,6 +25,7 @@ h_sources=			adg-adim.h \
 				adg-path.h \
 				adg-pattern.h \
 				adg-primitive.h \
+				adg-rdim.h \
 				adg-segment.h \
 				adg-stroke.h \
 				adg-style.h \
@@ -53,6 +54,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-marker-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
+				adg-rdim-private.h \
 				adg-stroke-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
@@ -79,6 +81,7 @@ c_sources=			adg-adim.c \
 				adg-path.c \
 				adg-pattern.c \
 				adg-primitive.c \
+				adg-rdim.c \
 				adg-segment.c \
 				adg-stroke.c \
 				adg-style.c \

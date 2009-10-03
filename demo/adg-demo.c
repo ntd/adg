@@ -217,6 +217,7 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
 {
     AdgLDim *ldim;
     AdgADim *adim;
+    AdgRDim *rdim;
     double x, y;
 
     /* NORTH */
@@ -235,17 +236,6 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     adg_ldim_switch_extension1(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* Angular D6+ */
-    x = data->A - data->C;
-    y = data->D6 / 2 - (data->C - data->LD6 - data->LD7) / SQRT3;
-    adim = adg_adim_new_full_explicit(x + data->LD6, data->D6 / 2,
-                                      x + 0.1, data->D6 / 2,
-                                      data->A - data->LD7, y,
-                                      x + data->LD6, data->D6 / 2,
-                                      x + data->LD6, data->D6 / 2);
-    adg_dim_set_level(ADG_DIM(adim), 2);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
-
     /* SOUTH */
 
     /* B */
@@ -261,6 +251,28 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
+
+    /* Angular D6+ */
+    x = data->A - data->C;
+    y = data->D6 / 2 - (data->C - data->LD6 - data->LD7) / SQRT3;
+    adim = adg_adim_new_full_explicit(x + data->LD6, data->D6 / 2,
+                                      x + 0.1, data->D6 / 2,
+                                      data->A - data->LD7, y,
+                                      x + data->LD6, data->D6 / 2,
+                                      x + data->LD6, data->D6 / 2);
+    adg_dim_set_level(ADG_DIM(adim), 2);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
+
+    /* Radial RD34 */
+    x = data->A - data->B + data->LD3 + data->RD34;
+    y = data->D4 / 2 + data->RD34;
+    rdim = adg_rdim_new_full_explicit(x, y,
+                                      x - cos(G_PI_4) * data->RD34,
+                                      y - sin(G_PI_4) * data->RD34,
+                                      x + cos(G_PI_4) * data->RD34,
+                                      y + sin(G_PI_4) * data->RD34);
+    adg_dim_set_level(ADG_DIM(rdim), 1);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(rdim));
 
     /* EAST */
 

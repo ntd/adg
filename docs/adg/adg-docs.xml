@@ -51,6 +51,7 @@
       <xi:include href="xml/adg-dim.xml"/>
       <xi:include href="xml/adg-ldim.xml"/>
       <xi:include href="xml/adg-adim.xml"/>
+      <xi:include href="xml/adg-rdim.xml"/>
     </chapter>
   </part>
 
