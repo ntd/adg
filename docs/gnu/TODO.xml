@@ -107,7 +107,7 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem override="disc">Add AdgADim, the angular dimension.</listitem>
    <listitem override="disc">Implement AdgEdges, a model that computes the edges of an AdgTrail
    model and build a CpmlPath containing all the vertical edges.</listitem>
-   <listitem>Add AdgRDim, the radial dimension.</listitem>
+   <listitem override="disc">Add AdgRDim, the radial dimension.</listitem>
    <listitem override="disc">Rework styles by using GObject and properties.</listitem>
    <listitem>Implement a basic AdgPatternStyle, abstracting the cairo_pattern_t APIs
    and providing a way to customize filling, similar to what AdgLineStyle
