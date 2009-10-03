@@ -71,7 +71,7 @@ struct _AdgLDimPrivate {
 
     struct {
         gboolean         is_arranged;
-        CpmlPair         from, base, to;
+        AdgPair          from, base, to;
     }                    shift;
 
     struct {
