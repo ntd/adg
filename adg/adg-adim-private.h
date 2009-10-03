@@ -64,9 +64,9 @@ struct _AdgADimPrivate {
     }                    point;
 
     struct {
-        CpmlPair         from1, from2;
-        CpmlPair         base1, base12, base2;
-        CpmlPair         to1, to2;
+        AdgPair          from1, from2;
+        AdgPair          base1, base12, base2;
+        AdgPair          to1, to2;
     }                    shift;
 
     struct {
