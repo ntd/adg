@@ -18,35 +18,19 @@
  */
 
 
-#ifndef __ADG_H__
-#define __ADG_H__
+#ifndef __ADG_FILL_STYLE_PRIVATE_H__
+#define __ADG_FILL_STYLE_PRIVATE_H__
 
-#include <adg/adg-adim.h>
-#include <adg/adg-canvas.h>
-#include <adg/adg-container.h>
-#include <adg/adg-dim.h>
-#include <adg/adg-dress.h>
-#include <adg/adg-edges.h>
-#include <adg/adg-entity.h>
-#include <adg/adg-enums.h>
-#include <adg/adg-fill-style.h>
-#include <adg/adg-ldim.h>
-#include <adg/adg-matrix.h>
-#include <adg/adg-model.h>
-#include <adg/adg-pair.h>
-#include <adg/adg-path.h>
-#include <adg/adg-pattern.h>
-#include <adg/adg-primitive.h>
-#include <adg/adg-rdim.h>
-#include <adg/adg-segment.h>
-#include <adg/adg-stroke.h>
-#include <adg/adg-style.h>
-#include <adg/adg-title-block.h>
-#include <adg/adg-toy-text.h>
-#include <adg/adg-type-builtins.h>
-#include <adg/adg-util.h>
-/* if GTK2 */
-#include <adg/adg-widget.h>
-/* endif GTK2 */
+G_BEGIN_DECLS
 
-#endif /* __ADG_H__ */
+typedef struct _AdgFillStylePrivate AdgFillStylePrivate;
+
+struct _AdgFillStylePrivate {
+    AdgPattern  *pattern;
+    CpmlExtents  extents;
+};
+
+G_END_DECLS
+
+
+#endif /* __ADG_FILL_STYLE_PRIVATE_H__ */

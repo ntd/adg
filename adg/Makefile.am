@@ -2,9 +2,7 @@ MSG_GEN=			echo '  GEN   '$@;
 AM_CFLAGS=			-I$(top_srcdir) \
 				-I$(top_builddir)
 AM_LDFLAGS=
-PATTERN=
-
-# file groups
+PATTERN= # file groups
 h_sources=			adg-adim.h \
 				adg-arrow.h \
 				adg-canvas.h \
@@ -24,6 +22,7 @@ h_sources=			adg-adim.h \
 				adg-pair.h \
 				adg-path.h \
 				adg-pattern.h \
+				adg-fill-style.h \
 				adg-primitive.h \
 				adg-rdim.h \
 				adg-segment.h \
@@ -54,6 +53,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-marker-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
+				adg-fill-style-private.h \
 				adg-rdim-private.h \
 				adg-stroke-private.h \
 				adg-title-block-private.h \
@@ -80,6 +80,7 @@ c_sources=			adg-adim.c \
 				adg-pair.c \
 				adg-path.c \
 				adg-pattern.c \
+				adg-fill-style.c \
 				adg-primitive.c \
 				adg-rdim.c \
 				adg-segment.c \
