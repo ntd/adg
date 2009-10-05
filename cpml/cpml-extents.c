@@ -19,22 +19,18 @@
 
 
 /**
- * SECTION:extents
+ * SECTION:cpml-extents
  * @Section_Id:CpmlExtents
  * @title: CpmlExtents
  * @short_description: A rectangular area representing a bounding box
  *
- * The #CpmlExtents struct groups two pairs representing the area of a
- * bounding box. The <fieldname>org</fieldname> field holds the lowest
- * (x, y) coordinates while <fieldname>size</fieldname> holds the x and
- * y extents of the area. The additional <fieldname>is_defined</fieldname>
- * boolean flag can be checked to know if #CpmlExtents has been computed
- * (when equal to %1) or not (when <fieldname>is_defined</fieldname> is %0).
+ * The #CpmlExtents struct groups two pairs representing the rectangular
+ * area of a bounding box.
  **/
 
 /**
  * CpmlExtents:
- * @is_defined: %1 if these extents should be considered, %0 otherwise
+ * @is_defined: set to %0 when these extents are undefined
  * @org: the lowest x,y coordinates
  * @size: the width (x) and height (y) of the extents
  *

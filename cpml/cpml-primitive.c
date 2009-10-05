@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:primitive
+ * SECTION:cpml-primitive
  * @Section_Id:CpmlPrimitive
  * @title: CpmlPrimitive
  * @short_description: Basic component of segments

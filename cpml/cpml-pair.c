@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:pair
+ * SECTION:cpml-pair
  * @Section_Id:CpmlPair
  * @title: CpmlPair
  * @short_description: Basic struct holding a couple of values

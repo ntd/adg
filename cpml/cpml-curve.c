@@ -18,7 +18,7 @@
  */
 
 /**
- * SECTION:curve
+ * SECTION:cpml-curve
  * @Section_Id:CpmlCurve
  * @title: CpmlCurve
  * @short_description: Bézier cubic curve primitive management

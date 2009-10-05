@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:close
+ * SECTION:cpml-close
  * @Section_Id:CpmlClose
  * @title: CpmlClose
  * @short_description: Straigth line used to close cyclic segments

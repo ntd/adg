@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:arc
+ * SECTION:cpml-arc
  * @Section_Id:CpmlArc
  * @title: CpmlArc
  * @short_description: Manipulation of circular arcs

@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:line
+ * SECTION:cpml-line
  * @Section_Id:CpmlLine
  * @title: CpmlLine
  * @short_description: APIs manipulating straight lines

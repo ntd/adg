@@ -6,25 +6,26 @@
 
   <part id="Core">
     <title>Core reference</title>
-    <xi:include href="xml/util.xml"/>
-    <xi:include href="xml/pair.xml"/>
+    <xi:include href="xml/cpml-util.xml"/>
+    <xi:include href="xml/cpml-pair.xml"/>
   </part>
 
   <part id="Constructs">
     <title>CPML constructs</title>
-    <xi:include href="xml/segment.xml"/>
-    <xi:include href="xml/primitive.xml"/>
+    <xi:include href="xml/cpml-segment.xml"/>
+    <xi:include href="xml/cpml-primitive.xml"/>
     <chapter id="Constructs-primitives">
       <title>Primitive types</title>
-      <xi:include href="xml/line.xml"/>
-      <xi:include href="xml/arc.xml"/>
-      <xi:include href="xml/curve.xml"/>
-      <xi:include href="xml/close.xml"/>
+      <xi:include href="xml/cpml-line.xml"/>
+      <xi:include href="xml/cpml-arc.xml"/>
+      <xi:include href="xml/cpml-curve.xml"/>
+      <xi:include href="xml/cpml-close.xml"/>
     </chapter>
+    <xi:include href="xml/cpml-extents.xml"/>
   </part>
 
   <index id="Index">
     <title>Index</title>
   </index>
-    
+
 </book>

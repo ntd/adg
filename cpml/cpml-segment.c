@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:segment
+ * SECTION:cpml-segment
  * @Section_Id:CpmlSegment
  * @title: CpmlSegment
  * @short_description: Contiguous segment that can be a fragment
