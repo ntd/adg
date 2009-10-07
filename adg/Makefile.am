@@ -14,6 +14,7 @@ h_sources=			adg-adim.h \
 				adg-edges.h \
 				adg-entity.h \
 				adg-font-style.h \
+				adg-hatch.h \
 				adg-ldim.h \
 				adg-line-style.h \
 				adg-marker.h \
@@ -25,6 +26,7 @@ h_sources=			adg-adim.h \
 				adg-fill-style.h \
 				adg-primitive.h \
 				adg-rdim.h \
+				adg-ruled-fill.h \
 				adg-segment.h \
 				adg-stroke.h \
 				adg-style.h \
@@ -47,6 +49,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-entity-private.h \
 				adg-enums.h \
 				adg-font-style-private.h \
+				adg-hatch-private.h \
 				adg-intl.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
@@ -55,6 +58,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-path-private.h \
 				adg-fill-style-private.h \
 				adg-rdim-private.h \
+				adg-ruled-fill-private.h \
 				adg-stroke-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
@@ -72,6 +76,7 @@ c_sources=			adg-adim.c \
 				adg-entity.c \
 				adg-enums.c \
 				adg-font-style.c \
+				adg-hatch.c \
 				adg-ldim.c \
 				adg-line-style.c \
 				adg-marker.c \
@@ -83,6 +88,7 @@ c_sources=			adg-adim.c \
 				adg-fill-style.c \
 				adg-primitive.c \
 				adg-rdim.c \
+				adg-ruled-fill.c \
 				adg-segment.c \
 				adg-stroke.c \
 				adg-style.c \
