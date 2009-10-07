@@ -41,6 +41,10 @@ CpmlExtents *   cpml_extents_from_cairo_text    (CpmlExtents       *extents,
                                                                    *cairo_extents);
 void            cpml_extents_add                (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
+cairo_bool_t    cpml_extents_is_inside          (const CpmlExtents *extents,
+                                                 const CpmlExtents *src);
+cairo_bool_t    cpml_extents_pair_is_inside     (const CpmlExtents *extents,
+                                                 const CpmlPair    *src);
 
 CAIRO_END_DECLS
 

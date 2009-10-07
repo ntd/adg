@@ -119,3 +119,64 @@ cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
     if (src->org.y + src->size.y > extents->org.y + extents->size.y)
         extents->size.y = src->org.y + src->size.y - extents->org.y;
 }
+
+/**
+ * cpml_extents_is_inside:
+ * @extents: the container #CpmlExtents
+ * @src: the subject #CpmlExtents
+ *
+ * Checks wheter @src is enterely contained by @extents. If @extents
+ * is undefined, %0 will be returned. If @src is undefined, %1 will
+ * be returned. The border of @extents is considered inside.
+ *
+ * Returns: %1 if @src is totally inside @extents, %0 otherwise
+ **/
+cairo_bool_t
+cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
+{
+    CpmlPair pe, ps;
+
+    if (extents->is_defined == 0)
+        return 0;
+
+    if (src->is_defined == 0)
+        return 1;
+
+    cpml_pair_copy(&pe, &extents->org);
+    cpml_pair_copy(&ps, &src->org);
+
+    if (ps.x < pe.x || ps.y < pe.y)
+        return 0;
+
+    cpml_pair_add(&pe, &extents->size);
+    cpml_pair_add(&ps, &src->size);
+
+    if (ps.x > pe.x || ps.y > pe.y)
+        return 0;
+
+    return 1;
+}
+
+/**
+ * cpml_extents_pair_is_inside:
+ * @extents: the container #CpmlExtents
+ * @src: the subject #CpmlPair
+ *
+ * Checks wheter @src is inside @extents. If @extents is undefined,
+ * %0 will be returned. The border of @extents is considered inside.
+ *
+ * Returns: %1 if @src is inside @extents, %0 otherwise
+ **/
+cairo_bool_t
+cpml_extents_pair_is_inside(const CpmlExtents *extents, const CpmlPair *src)
+{
+    if (extents->is_defined == 0)
+        return 0;
+
+    if (src->x < extents->org.x || src->y < extents->org.y ||
+        src->x > extents->org.x + extents->size.x ||
+        src->y > extents->org.y + extents->size.y)
+        return 0;
+
+    return 1;
+}
