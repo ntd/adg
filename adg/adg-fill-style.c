@@ -59,6 +59,8 @@ static void             apply           (AdgStyle       *style,
                                          cairo_t        *cr);
 static gboolean         set_pattern     (AdgFillStyle   *fill_style,
                                          AdgPattern     *pattern);
+static void             set_extents     (AdgFillStyle   *fill_style,
+                                         const CpmlExtents *extents);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE);
@@ -81,6 +83,8 @@ adg_fill_style_class_init(AdgFillStyleClass *klass)
     gobject_class->set_property = set_property;
 
     style_class->apply = apply;
+
+    klass->set_extents = set_extents;
 
     param = g_param_spec_boxed("pattern",
                                P_("Pattern"),
@@ -133,11 +137,11 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
+    AdgFillStyle *fill_style = (AdgFillStyle *) object;
 
     switch (prop_id) {
     case PROP_PATTERN:
-        data->pattern = g_value_get_boxed(value);
+        set_pattern(fill_style, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -230,13 +234,16 @@ adg_fill_style_add_extents(AdgFillStyle *fill_style,
                            const CpmlExtents *extents)
 {
     AdgFillStylePrivate *data;
+    CpmlExtents tmp;
 
     g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
     g_return_if_fail(extents != NULL);
 
     data = fill_style->data;
 
-    cpml_extents_add(&data->extents, extents);
+    cpml_extents_copy(&tmp, &data->extents);
+    cpml_extents_add(&tmp, extents);
+    adg_fill_style_set_extents(fill_style, &tmp);
 }
 
 /**
@@ -248,20 +255,18 @@ adg_fill_style_add_extents(AdgFillStyle *fill_style,
  * This function is only useful in new fill style implementations.
  * </para></note>
  *
- * Forcibly sets new extents on @fill_style.
+ * Forcibly sets new extents on @fill_style. Any fill style class
+ * that want to make some kind of customization can override the
+ * set_extents() virtual method to intercept any extents change.
  **/
 void
 adg_fill_style_set_extents(AdgFillStyle *fill_style,
                            const CpmlExtents *extents)
 {
-    AdgFillStylePrivate *data;
-
     g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
     g_return_if_fail(extents != NULL);
 
-    data = fill_style->data;
-
-    cpml_extents_copy(&data->extents, extents);
+    ADG_FILL_STYLE_GET_CLASS(fill_style)->set_extents(fill_style, extents);
 }
 
 
@@ -294,4 +299,12 @@ set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
         cairo_pattern_reference(data->pattern);
 
     return TRUE;
+}
+
+static void
+set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
+{
+    AdgFillStylePrivate *data = fill_style->data;
+
+    cpml_extents_copy(&data->extents, extents);
 }
