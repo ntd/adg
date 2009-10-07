@@ -60,6 +60,7 @@
 #include "adg-line-style.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
+#include "adg-ruled-fill.h"
 #include "adg-arrow.h"
 
 
@@ -677,6 +678,27 @@ _adg_dress_dimension_regular(void)
         dress = adg_dress_new("dimension-regular", style);
         g_object_unref(style);
         g_object_unref(arrow);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_FILL_REGULAR:
+ *
+ * The default builtin #AdgDress filling style. This dress
+ * will be resolved to an #AdgFillStyle derived instance.
+ **/
+AdgDress
+_adg_dress_fill_regular(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *style = g_object_new(ADG_TYPE_RULED_FILL, NULL);
+
+        dress = adg_dress_new("fill-regular", style);
+        g_object_unref(style);
     }
 
     return dress;

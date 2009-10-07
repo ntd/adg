@@ -26,21 +26,22 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_DRESS                 (adg_dress_get_type())
-#define ADG_VALUE_HOLDS_DRESS(value)   (G_TYPE_CHECK_VALUE_TYPE((value), ADG_TYPE_DRESS))
+#define ADG_TYPE_DRESS                  (adg_dress_get_type())
+#define ADG_VALUE_HOLDS_DRESS(value)    (G_TYPE_CHECK_VALUE_TYPE((value), ADG_TYPE_DRESS))
 
-#define ADG_TYPE_PARAM_SPEC_DRESS      (_adg_param_spec_dress_get_type())
-#define ADG_IS_PARAM_SPEC_DRESS(spec)  (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
+#define ADG_TYPE_PARAM_SPEC_DRESS       (_adg_param_spec_dress_get_type())
+#define ADG_IS_PARAM_SPEC_DRESS(spec)   (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
 
-#define ADG_DRESS_UNDEFINED            0
-#define ADG_DRESS_COLOR_REGULAR        (_adg_dress_color_regular())
-#define ADG_DRESS_COLOR_DIMENSION      (_adg_dress_color_dimension())
-#define ADG_DRESS_LINE_REGULAR         (_adg_dress_line_regular())
-#define ADG_DRESS_LINE_DIMENSION       (_adg_dress_line_dimension())
-#define ADG_DRESS_TEXT_REGULAR         (_adg_dress_text_regular())
-#define ADG_DRESS_TEXT_VALUE           (_adg_dress_text_value())
-#define ADG_DRESS_TEXT_LIMIT           (_adg_dress_text_limit())
-#define ADG_DRESS_DIMENSION_REGULAR    (_adg_dress_dimension_regular())
+#define ADG_DRESS_UNDEFINED             0
+#define ADG_DRESS_COLOR_REGULAR         (_adg_dress_color_regular())
+#define ADG_DRESS_COLOR_DIMENSION       (_adg_dress_color_dimension())
+#define ADG_DRESS_LINE_REGULAR          (_adg_dress_line_regular())
+#define ADG_DRESS_LINE_DIMENSION        (_adg_dress_line_dimension())
+#define ADG_DRESS_TEXT_REGULAR          (_adg_dress_text_regular())
+#define ADG_DRESS_TEXT_VALUE            (_adg_dress_text_value())
+#define ADG_DRESS_TEXT_LIMIT            (_adg_dress_text_limit())
+#define ADG_DRESS_DIMENSION_REGULAR     (_adg_dress_dimension_regular())
+#define ADG_DRESS_FILL_REGULAR          (_adg_dress_fill_regular())
 
 
 typedef gint AdgDress;
@@ -80,6 +81,7 @@ AdgDress        _adg_dress_text_regular         (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_value           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_limit           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_dimension_regular    (void) G_GNUC_CONST;
+AdgDress        _adg_dress_fill_regular         (void) G_GNUC_CONST;
 
 G_END_DECLS
 
