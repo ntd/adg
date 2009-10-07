@@ -115,9 +115,12 @@ sample_canvas(void)
     sample_get(&data);
     canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
-
     trail = ADG_TRAIL(sample_path(&data));
+
     entity = ADG_ENTITY(adg_stroke_new(trail));
+    adg_container_add(container, entity);
+
+    entity = ADG_ENTITY(adg_hatch_new(trail));
     adg_container_add(container, entity);
 
     trail = ADG_TRAIL(adg_edges_new_with_source(trail));
