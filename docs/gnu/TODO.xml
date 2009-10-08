@@ -6,81 +6,71 @@
 <title>Planned features</title>
 <subtitle>A very rough roadmap of ADG features implementation</subtitle>
 
-<para>The following list is roughly in implementation order. All the improvements
-must be reflected in the demo programs, where applicable.</para>
+<para>The following list is roughly in reversed implementation order. All the
+improvements must be reflected in the demo programs, where applicable.</para>
 
-<simplesect id="TODO.0.4.0">
-<title>Road to adg-0.4.0</title>
+<simplesect id="TODO.unknown">
+<title>Road to unknown</title>
+
+<para>This is the collection of TODOs that could be applied also after the
+1.0.0 version has been released. They are usually non-blocking and hard
+to implement.</para>
 
 <itemizedlist mark="circle">
-   <listitem override="disc">Split mathematic stuff in its own library. It will be called CPML,
-   that is Cairo Path Manipulation Library.</listitem>
-   <listitem override="disc">Avoid wrapping of cairo APIs in AdgPath.</listitem>
-   <listitem override="disc">Implement AdgToyText, a basic text entity using the cairo "toy" text API.</listitem>
-   <listitem override="disc">Implement AdgTranslatable, a shared interface for entities that
-   can be translated.</listitem>
-   <listitem override="disc">Implement AdgRotable, a shared interface for entities that can be rotated.</listitem>
+   <listitem>Check if the decentralization of the quote is applicable to the angular
+   dimensions too and if it is worth the effort.</listitem>
+   <listitem>The ARROW and TRIANGLE markers should follow the director path that
+   could be a curve. Use the METAPOST solution suggested by John Hobby
+   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
+   path by half <parameter>angle</parameter> in both directions, look for intersection with a
+   circle centered at the end of the director path with radius <parameter>size</parameter> and
+   close the resulting path.</listitem>
+   <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
+   external data. Use libgda as sample data provider.</listitem> 
+   <listitem>Implement AdgText, a generic text management, using pango.</listitem>
+   <listitem>Add self-intersection API for CPML segments.</listitem>
+   <listitem>Add datum support: for implementation ideas checkout this
+   <ulink url="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
+   <listitem>Add a CpmlArc primitive and some API to CpmlCurve to be able to check
+   if a curve is an arc approximation. This gives additional information
+   to do some operation, such as a proper radial quote on a Bézier curve.</listitem>
+   <listitem>Hunt the TODOs in CPML and fill the missing logic.</listitem>
+   <listitem>Improve Bézier offset approximation enabling the choice of approximate
+   a single curve with multiple offset curves.</listitem>
 </itemizedlist>
 
 </simplesect>
 
-<simplesect id="TODO.0.5.0">
-<title>Road to adg-0.5.0</title>
+<simplesect id="TODO.0.7.0">
+<title>Road to adg-0.7.0</title>
+
+<para>The target for the 0.7 branch is to clean up the code and stabilize the
+API. The 0.7.0 release will probably be a beta release.</para>
 
 <itemizedlist mark="circle">
-   <listitem override="disc">Develop a basic demo CPML program to visually check the results.</listitem>
-   <listitem override="disc">Provide CPML APIs for accessing cairo paths and browse their segments
-   (a contiguous line segment).</listitem>
-   <listitem override="disc">Provide CPML APIs for accessing segments and browse their primitives
-   (a single line / curve / close path).</listitem>
-   <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
-   approximation for single Bézier curves must be implemented.</listitem>
-   <listitem override="disc">Implement APIs to get intersection points between different primitives.</listitem>
-   <listitem override="disc">Provide an abstract API (cpml_segment_intersection?) to compute the
-   intersection points between two segments. To be evaluated the way to
-   return the results (maybe using an argument to specify the maximum
-   number of intersections to return).</listitem>
-   <listitem override="disc">Generate documentation for CPML.</listitem>
-   <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
-   interface on GtkBuilder.</listitem>
-   <listitem override="disc">Implement AdgModel as a bare empty class. Move the actual stuff in
-   AdgTitleBlock.</listitem>
-   <listitem override="disc">Rename AdgPath to AdgStroke, being the latter a stroke representation
-   of a single AdgPath.</listitem>
-   <listitem override="disc">Implement AdgPath as an AdgModel derived class of a conceptual path.
-   Any AdgPath instance could be referenced by one or more entities.</listitem>
-   <listitem override="disc">Add arcs in CPML to transparently support, whenever possible, the
-   conversion between arcs and Bézier curves.</listitem>
-   <listitem override="disc">Add to AdgPath the basic functionality to build a path: basically a
-   bunch of methods emulating the cairo path API but without the need of
-   a yet instantiated cairo context.</listitem>
-   <listitem override="disc">Add support for the CPML arc feature in AdgPath.</listitem>
-   <listitem override="disc">Update the demo using the newly implemented AdgPath to deeply test the
-   model/entity interaction.</listitem>
-   <listitem override="disc">Add a chamfer operation to AdgPath.</listitem>
-   <listitem override="disc">Add a fillet operation to AdgPath.</listitem>
-   <listitem override="disc">Change the matrix entity API, using a cleaner approach.</listitem>
-   <listitem override="disc">Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
-   <listitem override="disc">Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
-   <listitem override="disc">Change building scripts to get the GTK+ dependency optional.</listitem>
-   <listitem override="disc">Add AdgWidget, a GtkDrawingArea that can accept an AdgCanvas.</listitem>
-   <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
-   and enable caching where applicable.</listitem>
-   <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>
-   <listitem override="disc">Add a "beyond" property to AdgDimStyle to be used when extending the
-   baseline beyond the extension lines. If not specified, it must default
-   to 3 x arrow size.</listitem>
-   <listitem override="disc">Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
-   ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
-   <listitem override="disc">Add the three-state "outside" property to allow forcing an outside quote.
-   In the default state, the outside must be decided by the space between
-   the extension lines: if greather than 3 x arrow size => inside arrows.</listitem>
+   <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
+   should come from the CPML library (and there the TODO items are
+   bound to the less common use cases).</listitem>
+   <listitem>Create a separate project called lua-adg to host the lua bindings for
+   the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
+   <listitem>Add italian localization.</listitem>
+   <listitem>Try to cross compile and build a windows binary package. Check out
+   <ulink url="http://ricardo.ecn.wfu.edu/~cottrell/cross-gtk/">Allin suggestions</ulink>
+   for hints.</listitem>
+   <listitem>Implement a decent "make check" target, basing the check programs on
+   the test framework of glib. Make this an optional feature, as this
+   framework is based on the too young glib-2.16.0.</listitem>
 </itemizedlist>
 
 </simplesect>
 
 <simplesect id="TODO.0.6.0">
 <title>Road to adg-0.6.0</title>
+
+<para>The target for the 0.6 branch is to provide a usable canvas: with usable
+it is meant a canvas that can generate fairly completed drawings. The
+0.5.x releases leading up to 0.6.0 should add all the missing features
+needed to generate this drawing.</para>
 
 <itemizedlist mark="circle">
    <listitem override="disc">Implement adg_matrix_normalize() to get rid of the scaling component
@@ -119,12 +109,17 @@ must be reflected in the demo programs, where applicable.</para>
    <listitem>Implement the extents also for the path so the AdgHatch entity can work
    reliable: check if it is better to add new code in CPML or to directly
    use the functions provided by cairo.</listitem>
+   <listitem>Add labeling feature to the models and let AdgDim and children points
+   be expressed as references to those labeled points instead of using
+   explicit coordinates.</listitem>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in global space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
    <listitem>The dressing feature needs more attention: they are still not well
    polished and always using the "dress" property will likely give name
    conflicts: a basic mangling is required.</listitem>
+   <listitem>Allow the linear dimension to be decentralized by using the pos point
+   as reference and using a dedicated enum instead of a three-state.</listitem>
    <listitem>Provide a decent demo program to show the progresses so far, including
    title block, hatches and various dimensions types: update the website
    with new (and hopefully more impressive) screenshots.</listitem>
@@ -132,40 +127,83 @@ must be reflected in the demo programs, where applicable.</para>
 
 </simplesect>
 
-<simplesect id="TODO.unknown">
-<title>Road to unknown</title>
+<simplesect id="TODO.0.5.0">
+<title>Road to adg-0.5.0</title>
+
+<para>The target for the 0.5 branch is to build the base of the canvas:
+few user visible changes but a quite stable bare code. All the
+main infrastructures should be in place.</para>
 
 <itemizedlist mark="circle">
-   <listitem>Add labeling feature to the models and let AdgDim and children points
-   be expressed as references to those labeled points instead of using
-   explicit coordinates.</listitem>
-   <listitem>Implement a decent "make check" target, basing the check programs on
-   the test framework of glib. Make this an optional feature, as this
-   framework is based on the too young glib-2.16.0.</listitem>
-   <listitem>Allow the linear dimension to be decentralized by using the pos point
-   as reference and using a dedicated enum instead of a three-state.</listitem>
-   <listitem>Check if the above feature is applicable to the angular dimensions and
-   if it is worth the effort.</listitem>
-   <listitem>The ARROW and TRIANGLE markers should follow the director path that
-   could be a curve. Use the METAPOST solution suggested by John Hobby
-   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
-   path by half <parameter>angle</parameter> in both directions, look for intersection with a
-   circle centered at the end of the director path with radius <parameter>size</parameter> and
-   close the resulting path.</listitem>
-   <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
-   external data. Use libgda as sample data provider.</listitem> 
+   <listitem override="disc">Develop a basic demo CPML program to visually check the results.</listitem>
+   <listitem override="disc">Provide CPML APIs for accessing cairo paths and browse their segments
+   (a contiguous line segment).</listitem>
+   <listitem override="disc">Provide CPML APIs for accessing segments and browse their primitives
+   (a single line / curve / close path).</listitem>
+   <listitem override="disc">CPML APIs to offset cairo paths: specifically, a decent
+   approximation for single Bézier curves must be implemented.</listitem>
+   <listitem override="disc">Implement APIs to get intersection points between different primitives.</listitem>
+   <listitem override="disc">Provide an abstract API (cpml_segment_intersection?) to compute the
+   intersection points between two segments. To be evaluated the way to
+   return the results (maybe using an argument to specify the maximum
+   number of intersections to return).</listitem>
+   <listitem override="disc">Generate documentation for CPML.</listitem>
+   <listitem override="disc">Merge ldim and adg-demo into a single demo program, basing the user
+   interface on GtkBuilder.</listitem>
+   <listitem override="disc">Implement AdgModel as a bare empty class. Move the actual stuff in
+   AdgTitleBlock.</listitem>
    <listitem override="disc">Add model-view interaction by providing signal propagation from AdgModel
    to the dependent entities, so when a data changes the entities will be
    automatically updated.</listitem>
-   <listitem>Implement AdgText, a generic text management, using pango.</listitem>
-   <listitem>Add self-intersection API for CPML segments.</listitem>
-   <listitem>Add datum support: for implementation ideas checkout this
-   <ulink url="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
-   <listitem override="disc">Add a CpmlArc primitive and some API to CpmlCurve to be able
-   to check if a curve is an arc approximation. This gives additional
-   information to do some operation, such as a proper arc offseting.</listitem>
-   <listitem>Improve Bézier offset approximation enabling the choice of approximate
-   a single curve with multiple offset curves.</listitem>
+   <listitem override="disc">Rename AdgPath to AdgStroke, being the latter a stroke representation
+   of a single AdgPath.</listitem>
+   <listitem override="disc">Implement AdgPath as an AdgModel derived class of a conceptual path.
+   Any AdgPath instance could be referenced by one or more entities.</listitem>
+   <listitem override="disc">Add arcs in CPML to transparently support, whenever possible, the
+   conversion between arcs and Bézier curves.</listitem>
+   <listitem override="disc">Add to AdgPath the basic functionality to build a path: basically a
+   bunch of methods emulating the cairo path API but without the need of
+   a yet instantiated cairo context.</listitem>
+   <listitem override="disc">Add support for the CPML arc feature in AdgPath.</listitem>
+   <listitem override="disc">Update the demo using the newly implemented AdgPath to deeply test the
+   model/entity interaction.</listitem>
+   <listitem override="disc">Add a chamfer operation to AdgPath.</listitem>
+   <listitem override="disc">Add a fillet operation to AdgPath.</listitem>
+   <listitem override="disc">Change the matrix entity API, using a cleaner approach.</listitem>
+   <listitem override="disc">Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
+   <listitem override="disc">Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
+   <listitem override="disc">Change building scripts to get the GTK+ dependency optional.</listitem>
+   <listitem override="disc">Add AdgWidget, a GtkDrawingArea that can accept an AdgCanvas.</listitem>
+   <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
+   and enable caching where applicable.</listitem>
+   <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>
+   <listitem override="disc">Add a "beyond" property to AdgDimStyle to be used when extending the
+   baseline beyond the extension lines. If not specified, it must default
+   to 3 x arrow size.</listitem>
+   <listitem override="disc">Add a three-state enum to adg-enums.h: ADG_THREE_STATE_OFF,
+   ADG_THREE_STATE_ON and ADG_THREE_STATE_UNKNOWN.</listitem>
+   <listitem override="disc">Add the three-state "outside" property to allow forcing an outside quote.
+   In the default state, the outside must be decided by the space between
+   the extension lines: if greather than 3 x arrow size => inside arrows.</listitem>
+</itemizedlist>
+
+</simplesect>
+
+<simplesect id="TODO.0.4.0">
+<title>Road to adg-0.4.0</title>
+
+<para>The target for the 0.4 branch is to give a shape to the project: build
+system, docs and a bunch of (probably temporary) basic classes should
+be enough to give a direction.</para>
+
+<itemizedlist mark="circle">
+   <listitem override="disc">Split mathematic stuff in its own library. It will be called CPML,
+   that is Cairo Path Manipulation Library.</listitem>
+   <listitem override="disc">Avoid wrapping of cairo APIs in AdgPath.</listitem>
+   <listitem override="disc">Implement AdgToyText, a basic text entity using the cairo "toy" text API.</listitem>
+   <listitem override="disc">Implement AdgTranslatable, a shared interface for entities that
+   can be translated.</listitem>
+   <listitem override="disc">Implement AdgRotable, a shared interface for entities that can be rotated.</listitem>
 </itemizedlist>
 
 </simplesect>
