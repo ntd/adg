@@ -39,6 +39,7 @@
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
 
 
 enum {
@@ -56,6 +57,7 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             local_changed           (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -83,6 +85,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->local_changed = local_changed;
     entity_class->arrange = arrange;
     entity_class->render = render;
 
@@ -270,8 +273,36 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 
 
 static void
+local_changed(AdgEntity *entity)
+{
+    PARENT_ENTITY_CLASS->local_changed(entity);
+    adg_entity_set_extents(entity, NULL);
+}
+
+static void
 arrange(AdgEntity *entity)
 {
+    CpmlExtents extents;
+
+    adg_entity_get_extents(entity, &extents);
+
+    if (!extents.is_defined) {
+        AdgStroke *stroke;
+        AdgStrokePrivate *data;
+        const AdgMatrix *local;
+
+        stroke = (AdgStroke *) entity;
+        data = stroke->data;
+        local = adg_entity_local_matrix(entity);
+
+        cpml_extents_copy(&extents, adg_trail_extents(data->trail));
+
+        /* Apply the local matrix to the extents */
+        cpml_pair_transform(&extents.org, local);
+        cpml_vector_transform(&extents.size, local);
+
+        adg_entity_set_extents(entity, &extents);
+    }
 }
 
 static void
