@@ -206,16 +206,6 @@ render(AdgEntity *entity, cairo_t *cr)
     AdgHatchPrivate *data;
     const cairo_path_t *cairo_path;
 
-    /* TODO: the following is just to see if the hatch is working:
-     * the extents computation in CPML should be still implemented */
-    CpmlExtents tmp;
-    tmp.org.x = 0;
-    tmp.org.y = 0;
-    tmp.size.x = 1000;
-    tmp.size.y = 1000;
-    tmp.is_defined = TRUE;
-    adg_entity_set_extents(entity, &tmp);
-
     hatch = (AdgHatch *) entity;
     stroke = (AdgStroke *) entity;
     data = hatch->data;
