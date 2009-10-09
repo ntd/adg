@@ -63,6 +63,8 @@ int     cpml_primitive_intersection_with_segment
 /* To be implemented by the primitives */
 int     cpml_primitive_type_get_npoints (CpmlPrimitiveType       type);
 double  cpml_primitive_length           (const CpmlPrimitive    *primitive);
+void    cpml_primitive_extents          (const CpmlPrimitive    *primitive,
+                                         CpmlExtents            *extents);
 void    cpml_primitive_pair_at          (const CpmlPrimitive    *primitive,
                                          CpmlPair               *pair,
                                          double                  pos);

@@ -70,6 +70,29 @@ cpml_curve_length(const CpmlPrimitive *curve)
 }
 
 /**
+ * cpml_curve_extents:
+ * @curve: the #CpmlPrimitive curve data
+ * @extents: where to store the extents
+ *
+ * Given a @curve primitive, returns its boundary box in @extents.
+ **/
+void
+cpml_curve_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
+{
+    CpmlPair p1, p2, p3, p4;
+
+    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(curve, 0));
+    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(curve, 1));
+    cpml_pair_from_cairo(&p3, cpml_primitive_get_point(curve, 2));
+    cpml_pair_from_cairo(&p4, cpml_primitive_get_point(curve, 3));
+
+    cpml_extents_pair_add(extents, &p1);
+    cpml_extents_pair_add(extents, &p2);
+    cpml_extents_pair_add(extents, &p3);
+    cpml_extents_pair_add(extents, &p4);
+}
+
+/**
  * cpml_curve_pair_at_time:
  * @curve: the #CpmlPrimitive curve data
  * @pair:  the destination pair

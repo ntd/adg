@@ -188,6 +188,61 @@ cpml_arc_length(const CpmlPrimitive *arc)
 }
 
 /**
+ * cpml_arc_extents:
+ * @arc: the #CpmlPrimitive arc data
+ * @extents: where to store the extents
+ *
+ * Given an @arc primitive, returns its boundary box in @extents.
+ **/
+void
+cpml_arc_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
+{
+    double r, start, end;
+    CpmlPair pair;
+
+    if (!cpml_arc_info(arc, NULL, &r, &start, &end))
+        return;
+
+    /* Add the right quadrant point if needed */
+    if ((start < 0 && end > 0) ||
+        (end < M_PI * 2 && start > M_PI * 2)) {
+        pair.x = r;
+        pair.y = 0;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the bottom quadrant point if needed */
+    if ((start < M_PI_2 && end > M_PI_2) ||
+        (end < M_PI_2 * 5 && start > M_PI_2 * 5)) {
+        pair.x = 0;
+        pair.y = r;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the left quadrant point if needed */
+    if (start < M_PI && end > M_PI) {
+        pair.x = -r;
+        pair.y = 0;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the top quadrant point if needed */
+    if (start < M_PI_2 * 3 && end > M_PI) {
+        pair.x = 0;
+        pair.y = -r;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the start point */
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, 0));
+    cpml_extents_pair_add(extents, &pair);
+
+    /* Add the end point */
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, -1));
+    cpml_extents_pair_add(extents, &pair);
+}
+
+/**
  * cpml_arc_pair_at:
  * @arc:  the #CpmlPrimitive arc data
  * @pair: the destination #CpmlPair

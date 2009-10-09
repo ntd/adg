@@ -56,6 +56,9 @@ double          cpml_pair_squared_distance      (const CpmlPair *from,
                                                  const CpmlPair *to);
 double          cpml_pair_distance              (const CpmlPair *from,
                                                  const CpmlPair *to);
+void            cpml_pair_to_cairo              (const CpmlPair *pair,
+                                                 cairo_path_data_t
+                                                                *path_data);
 
 CpmlVector *    cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle);
@@ -65,9 +68,9 @@ void            cpml_vector_set_length          (CpmlVector     *vector,
 double          cpml_vector_angle               (const CpmlVector
                                                                 *vector);
 void            cpml_vector_normal              (CpmlVector     *vector);
-void            cpml_pair_to_cairo              (const CpmlPair *pair,
-                                                 cairo_path_data_t
-                                                                *path_data);
+void            cpml_vector_transform           (CpmlVector     *vector,
+                                                 const cairo_matrix_t
+                                                                *matrix);
 
 
 CAIRO_END_DECLS

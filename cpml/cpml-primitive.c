@@ -433,6 +433,40 @@ cpml_primitive_length(const CpmlPrimitive *primitive)
 }
 
 /**
+ * cpml_primitive_extents:
+ * @primitive: a #CpmlPrimitive
+ * @extents: where to store the extents
+ *
+ * Abstracts the extents() family functions by providing a common
+ * way to access the underlying primitive-specific implementation.
+ * The function stores in @extents the bounding box of @primitive.
+ *
+ * <note><para>
+ * This function is primitive dependent, that is every primitive has
+ * its own implementation.
+ * </para></note>
+ **/
+void
+cpml_primitive_extents(const CpmlPrimitive *primitive, CpmlExtents *extents)
+{
+    switch (primitive->data->header.type) {
+
+    case CAIRO_PATH_LINE_TO:
+    case CAIRO_PATH_CLOSE_PATH:
+        return cpml_line_extents(primitive, extents);
+
+    case CAIRO_PATH_ARC_TO:
+        return cpml_arc_extents(primitive, extents);
+
+    case CAIRO_PATH_CURVE_TO:
+        return cpml_curve_extents(primitive, extents);
+
+    default:
+        break;
+    }
+}
+
+/**
  * cpml_primitive_pair_at:
  * @primitive: a #CpmlPrimitive
  * @pair:      the destination #CpmlPair

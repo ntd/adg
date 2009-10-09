@@ -201,6 +201,28 @@ cpml_segment_length(const CpmlSegment *segment)
 }
 
 /**
+ * cpml_segment_extents:
+ * @segment: a #CpmlSegment
+ * @extents: where to store the extents
+ *
+ * Gets the whole extents of @segment.
+ **/
+void
+cpml_segment_extents(const CpmlSegment *segment, CpmlExtents *extents)
+{
+    CpmlPrimitive primitive;
+    CpmlExtents primitive_extents;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+    extents->is_defined = 0;
+
+    do {
+        cpml_primitive_extents(&primitive, &primitive_extents);
+        cpml_extents_add(extents, &primitive_extents);
+    } while (cpml_primitive_next(&primitive));
+}
+
+/**
  * cpml_segment_pair_at:
  * @segment: a #CpmlSegment
  * @pair:    the destination #CpmlPair

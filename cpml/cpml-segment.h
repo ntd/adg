@@ -21,7 +21,7 @@
 #define __CPML_SEGMENT_H__
 
 #include <cairo.h>
-#include <cpml/cpml-pair.h>
+#include <cpml/cpml-extents.h>
 
 
 CAIRO_BEGIN_DECLS
@@ -52,6 +52,8 @@ cairo_bool_t
         cpml_segment_next               (CpmlSegment            *segment);
 
 double  cpml_segment_length             (const CpmlSegment      *segment);
+void    cpml_segment_extents            (const CpmlSegment      *segment,
+                                         CpmlExtents            *extents);
 void    cpml_segment_pair_at            (const CpmlSegment      *segment,
                                          CpmlPair               *pair,
                                          double                  pos);

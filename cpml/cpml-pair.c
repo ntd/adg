@@ -214,7 +214,6 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
     cairo_matrix_transform_point(matrix, &pair->x, &pair->y);
 }
 
-
 /**
  * cpml_pair_squared_distance:
  * @from: the first #CpmlPair struct
@@ -308,6 +307,22 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 
     return p;
 }
+
+/**
+ * cpml_pair_to_cairo:
+ * @pair: the destination #CpmlPair
+ * @path_data: the original path data point
+ *
+ * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
+ * operation of cpml_pair_from_cairo().
+ **/
+void
+cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
+{
+    path_data->point.x = pair->x;
+    path_data->point.y = pair->y;
+}
+
 
 /**
  * cpml_vector_from_angle:
@@ -427,16 +442,17 @@ cpml_vector_normal(CpmlVector *vector)
 }
 
 /**
- * cpml_pair_to_cairo:
- * @pair: the destination #CpmlPair
- * @path_data: the original path data point
+ * cpml_vector_transform:
+ * @vector: the destination #CpmlPair struct
+ * @matrix: the transformation matrix
  *
- * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
- * operation of cpml_pair_from_cairo().
+ * Shortcut to apply a specific transformation matrix to @vector.
+ * It works in a similar way of cpml_pair_transform() but uses
+ * cairo_matrix_transform_distance() instead of
+ * cairo_matrix_transform_point().
  **/
 void
-cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
+cpml_vector_transform(CpmlPair *vector, const cairo_matrix_t *matrix)
 {
-    path_data->point.x = pair->x;
-    path_data->point.y = pair->y;
+    cairo_matrix_transform_distance(matrix, &vector->x, &vector->y);
 }
