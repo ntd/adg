@@ -30,7 +30,7 @@ typedef struct _CpmlExtents CpmlExtents;
 struct _CpmlExtents {
     cairo_bool_t is_defined;
     CpmlPair     org;
-    CpmlPair     size;
+    CpmlVector   size;
 };
 
 
@@ -41,6 +41,8 @@ CpmlExtents *   cpml_extents_from_cairo_text    (CpmlExtents       *extents,
                                                                    *cairo_extents);
 void            cpml_extents_add                (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
+void            cpml_extents_pair_add           (CpmlExtents       *extents,
+                                                 const CpmlPair    *src);
 cairo_bool_t    cpml_extents_is_inside          (const CpmlExtents *extents,
                                                  const CpmlExtents *src);
 cairo_bool_t    cpml_extents_pair_is_inside     (const CpmlExtents *extents,

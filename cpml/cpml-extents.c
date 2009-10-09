@@ -34,7 +34,9 @@
  * @org: the lowest x,y coordinates
  * @size: the width (x) and height (y) of the extents
  *
- * A structure defining a bounding box area.
+ * A structure defining a bounding box area. These APIs expect the
+ * size of the extents to be always positives, so be careful while
+ * directly accessing the @size field.
  **/
 
 
@@ -93,31 +95,51 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
 void
 cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
 {
+    CpmlPair pair;
+
     if (src->is_defined == 0)
         return;
 
+    cpml_pair_copy(&pair, &src->org);
+    cpml_extents_pair_add(extents, &pair);
+
+    cpml_pair_add(&pair, &src->size);
+    cpml_extents_pair_add(extents, &pair);
+}
+
+/**
+ * cpml_extents_pair_add:
+ * @extents: the destination #CpmlExtents
+ * @src: the #AdgPair to add
+ *
+ * Extends @extents, if required, to include @src. If @extents is
+ * undefined, the origin of @extents is set to @src and its size
+ * will be (0,0).
+ **/
+void
+cpml_extents_pair_add(CpmlExtents *extents, const CpmlPair *src)
+{
     if (extents->is_defined == 0) {
-        cpml_extents_copy(extents, src);
+        extents->is_defined = 1;
+        cpml_pair_copy(&extents->org, src);
+        extents->size.x = 0;
+        extents->size.y = 0;
         return;
     }
 
-    extents->is_defined = 1;
-
-    if (src->org.x < extents->org.x) {
-        extents->size.x += extents->org.x - src->org.x;
-        extents->org.x = src->org.x;
+    if (src->x < extents->org.x) {
+        extents->size.x += extents->org.x - src->x;
+        extents->org.x = src->x;
+    } else if (src->x > extents->org.x + extents->size.x) {
+        extents->size.x = src->x - extents->org.x;
     }
 
-    if (src->org.y < extents->org.y) {
-        extents->size.y += extents->org.y - src->org.y;
-        extents->org.y = src->org.y;
+    if (src->y < extents->org.y) {
+        extents->size.y += extents->org.y - src->y;
+        extents->org.y = src->y;
+    } else if (src->y > extents->org.y + extents->size.y) {
+        extents->size.y = src->y - extents->org.y;
     }
-
-    if (src->org.x + src->size.x > extents->org.x + extents->size.x)
-        extents->size.x = src->org.x + src->size.x - extents->org.x;
-
-    if (src->org.y + src->size.y > extents->org.y + extents->size.y)
-        extents->size.y = src->org.y + src->size.y - extents->org.y;
 }
 
 /**
