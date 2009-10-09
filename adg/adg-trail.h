@@ -65,6 +65,8 @@ CpmlPath *      adg_trail_get_cpml_path         (AdgTrail        *trail);
 gboolean        adg_trail_get_segment           (AdgTrail        *trail,
                                                  AdgSegment      *segment,
                                                  guint            n);
+const CpmlExtents *
+                adg_trail_extents               (AdgTrail        *trail);
 void            adg_trail_dump                  (AdgTrail        *trail);
 
 G_END_DECLS

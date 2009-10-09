@@ -282,6 +282,41 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
 }
 
 /**
+ * adg_trail_extents:
+ * @trail: an #AdgTrail
+ *
+ * Gets the extents of @trail. The returned pointer is owned by
+ * @trail and should not be freed nor modified.
+ *
+ * Returns: the requested extents or %NULL on errors
+ **/
+const CpmlExtents *
+adg_trail_extents(AdgTrail *trail)
+{
+    AdgTrailPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
+
+    data = trail->data;
+
+    if (!data->extents.is_defined) {
+        CpmlPath *cpml_path;
+        CpmlSegment segment;
+        CpmlExtents extents;
+
+        cpml_path = adg_trail_get_cpml_path(trail);
+
+        if (cpml_segment_from_cairo(&segment, cpml_path))
+            do {
+                cpml_segment_extents(&segment, &extents);
+                cpml_extents_add(&data->extents, &extents);
+            } while (cpml_segment_next(&segment));
+    }
+
+    return &data->extents;
+}
+
+/**
  * adg_trail_dump:
  * @trail: an #AdgTrail
  *
