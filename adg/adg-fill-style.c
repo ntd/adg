@@ -216,37 +216,6 @@ adg_fill_style_get_extents(AdgFillStyle *fill_style, CpmlExtents *extents)
 }
 
 /**
- * adg_fill_style_add_extents:
- * @fill_style: an #AdgFillStyle
- * @extents: the new extents
- *
- * <note><para>
- * This function is only useful in entity implementations.
- * </para></note>
- *
- * Adds new extents to the @fill_style. These extents are usually
- * added by the arrange() method of the entity using this filling
- * style so, after the arrange phase, the extents are supposed to
- * cover all the needed space.
- **/
-void
-adg_fill_style_add_extents(AdgFillStyle *fill_style,
-                           const CpmlExtents *extents)
-{
-    AdgFillStylePrivate *data;
-    CpmlExtents tmp;
-
-    g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
-    g_return_if_fail(extents != NULL);
-
-    data = fill_style->data;
-
-    cpml_extents_copy(&tmp, &data->extents);
-    cpml_extents_add(&tmp, extents);
-    adg_fill_style_set_extents(fill_style, &tmp);
-}
-
-/**
  * adg_fill_style_set_extents:
  * @fill_style: an #AdgFillStyle
  * @extents: the new extents
@@ -258,6 +227,14 @@ adg_fill_style_add_extents(AdgFillStyle *fill_style,
  * Forcibly sets new extents on @fill_style. Any fill style class
  * that want to make some kind of customization can override the
  * set_extents() virtual method to intercept any extents change.
+ *
+ * Sets new extents on @fill_style. These extents are usually set
+ * by the arrange() method of the entity using this filling style.
+ * The default implementation simply sets the extents, so the
+ * last one has precedence. Any fill style implementation can
+ * override the set_extents() implementation to customize this
+ * behavior, for example to keep the greatest boundary box instead
+ * of the last one.
  **/
 void
 adg_fill_style_set_extents(AdgFillStyle *fill_style,

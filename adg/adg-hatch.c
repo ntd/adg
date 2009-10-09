@@ -220,7 +220,7 @@ render(AdgEntity *entity, cairo_t *cr)
         adg_entity_get_ctm(entity, &ctm);
 
         adg_entity_get_extents(entity, &extents);
-        adg_fill_style_add_extents(fill_style, &extents);
+        adg_fill_style_set_extents(fill_style, &extents);
 
         cairo_save(cr);
 

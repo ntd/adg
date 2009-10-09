@@ -241,18 +241,16 @@ adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 static void
 apply(AdgStyle *style, cairo_t *cr)
 {
-    AdgRuledFill *ruled_fill;
     AdgFillStyle *fill_style;
     cairo_pattern_t *pattern;
     CpmlExtents extents;
     cairo_matrix_t matrix;
 
-    ruled_fill = (AdgRuledFill *) style;
     fill_style = (AdgFillStyle *) style;
     pattern = adg_fill_style_get_pattern(fill_style);
 
     if (pattern == NULL) {
-        pattern = create_pattern(ruled_fill, cr);
+        pattern = create_pattern((AdgRuledFill *) style, cr);
         if (pattern == NULL)
             return;
 

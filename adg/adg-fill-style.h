@@ -60,8 +60,6 @@ void            adg_fill_style_set_pattern      (AdgFillStyle   *fill_style,
                                                  AdgPattern     *pattern);
 void            adg_fill_style_get_extents      (AdgFillStyle   *fill_style,
                                                  CpmlExtents    *extents);
-void            adg_fill_style_add_extents      (AdgFillStyle   *fill_style,
-                                                 const CpmlExtents *extents);
 void            adg_fill_style_set_extents      (AdgFillStyle   *fill_style,
                                                  const CpmlExtents *extents);
 
