@@ -576,9 +576,31 @@ _adg_dress_line_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
-                                       "width", 1., NULL);
+                                       "width", 0.75, NULL);
 
         dress = adg_dress_new("line-dimension", style);
+        g_object_unref(style);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_HATCH:
+ *
+ * The builtin #AdgDress line type used by base and extension lines in
+ * dimensioning. This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_hatch(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
+                                       "width", 1., NULL);
+
+        dress = adg_dress_new("line-hatch", style);
         g_object_unref(style);
     }
 

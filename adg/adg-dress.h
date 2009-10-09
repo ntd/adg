@@ -37,6 +37,7 @@ G_BEGIN_DECLS
 #define ADG_DRESS_COLOR_DIMENSION       (_adg_dress_color_dimension())
 #define ADG_DRESS_LINE_REGULAR          (_adg_dress_line_regular())
 #define ADG_DRESS_LINE_DIMENSION        (_adg_dress_line_dimension())
+#define ADG_DRESS_LINE_HATCH            (_adg_dress_line_hatch())
 #define ADG_DRESS_TEXT_REGULAR          (_adg_dress_text_regular())
 #define ADG_DRESS_TEXT_VALUE            (_adg_dress_text_value())
 #define ADG_DRESS_TEXT_LIMIT            (_adg_dress_text_limit())
@@ -77,6 +78,7 @@ AdgDress        _adg_dress_color_regular        (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_dimension      (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_regular         (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_dimension       (void) G_GNUC_CONST;
+AdgDress        _adg_dress_line_hatch           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_regular         (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_value           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_limit           (void) G_GNUC_CONST;
