@@ -17,6 +17,9 @@ improvements must be reflected in the demo programs, where applicable.</para>
 to implement.</para>
 
 <itemizedlist mark="circle">
+   <listitem>Hide the CPML APIs accessible from the CpmlPrimitive interface: use
+   a private struct of function pointers to delegate the job to the
+   different primitives.</listitem>
    <listitem>Check if the decentralization of the quote is applicable to the angular
    dimensions too and if it is worth the effort.</listitem>
    <listitem>The ARROW and TRIANGLE markers should follow the director path that
@@ -26,7 +29,7 @@ to implement.</para>
    circle centered at the end of the director path with radius <parameter>size</parameter> and
    close the resulting path.</listitem>
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
-   external data. Use libgda as sample data provider.</listitem> 
+   external data. Use libgda as sample data provider.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Add datum support: for implementation ideas checkout this
