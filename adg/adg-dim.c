@@ -872,6 +872,9 @@ arrange(AdgEntity *entity)
     min_entity = (AdgEntity *) data->quote.min;
     max_entity = (AdgEntity *) data->quote.max;
 
+    /* Propagate the arrange signal to the quote container */
+    adg_entity_arrange(container_entity);
+
     /* Basic value */
     adg_entity_get_extents(value_entity, &extents);
 
