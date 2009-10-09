@@ -26,6 +26,7 @@ G_BEGIN_DECLS
 typedef struct _AdgRuledFillPrivate AdgRuledFillPrivate;
 
 struct _AdgRuledFillPrivate {
+    AdgDress     line_dress;
     gdouble      spacing;
     gdouble      angle;
 };

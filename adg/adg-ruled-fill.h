@@ -22,6 +22,7 @@
 #define __ADG_RULED_FILL_H__
 
 #include <adg/adg-fill-style.h>
+#include <adg/adg-dress.h>
 
 
 G_BEGIN_DECLS
@@ -51,6 +52,9 @@ struct _AdgRuledFillClass {
 
 GType           adg_ruled_fill_get_type         (void) G_GNUC_CONST;
 
+AdgDress        adg_ruled_fill_get_line_dress   (AdgRuledFill   *ruled_fill);
+void            adg_ruled_fill_set_line_dress   (AdgRuledFill   *ruled_fill,
+                                                 AdgDress        dress);
 gdouble         adg_ruled_fill_get_spacing      (AdgRuledFill   *ruled_fill);
 void            adg_ruled_fill_set_spacing      (AdgRuledFill   *ruled_fill,
                                                  gdouble         spacing);

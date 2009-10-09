@@ -46,6 +46,7 @@
 
 enum {
     PROP_0,
+    PROP_LINE_DRESS,
     PROP_SPACING,
     PROP_ANGLE
 };
@@ -98,6 +99,13 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
 
     fill_style_class->set_extents = set_extents;
 
+    param = adg_param_spec_dress("line-dress",
+                                  P_("Line Dress"),
+                                  P_("Dress to be used for rendering the lines"),
+                                  ADG_DRESS_LINE_HATCH,
+                                  G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
+
     param = g_param_spec_double("spacing",
                                P_("Spacing"),
                                P_("The spacing in global spaces between the lines"),
@@ -120,6 +128,7 @@ adg_ruled_fill_init(AdgRuledFill *ruled_fill)
                                                             ADG_TYPE_RULED_FILL,
                                                             AdgRuledFillPrivate);
 
+    data->line_dress = ADG_DRESS_LINE_HATCH;
     data->angle = G_PI_4;
     data->spacing = 16;
 
@@ -133,6 +142,9 @@ get_property(GObject *object,
     AdgRuledFillPrivate *data = ((AdgRuledFill *) object)->data;
 
     switch (prop_id) {
+    case PROP_LINE_DRESS:
+        g_value_set_int(value, data->line_dress);
+        break;
     case PROP_SPACING:
         g_value_set_double(value, data->spacing);
         break;
@@ -149,9 +161,16 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgRuledFill *ruled_fill = (AdgRuledFill *) object;
+    AdgRuledFill *ruled_fill;
+    AdgRuledFillPrivate *data;
+
+    ruled_fill = (AdgRuledFill *) object;
+    data = ruled_fill->data;
 
     switch (prop_id) {
+    case PROP_LINE_DRESS:
+        adg_dress_set(&data->line_dress, g_value_get_int(value));
+        break;
     case PROP_SPACING:
         set_spacing(ruled_fill, g_value_get_double(value));
         break;
@@ -164,6 +183,46 @@ set_property(GObject *object,
     }
 }
 
+
+/**
+ * adg_ruled_fill_get_line_dress:
+ * @ruled_fill: an #AdgRuledFill object
+ *
+ * Gets the @ruled_fill dress to be used for rendering the lines.
+ *
+ * Returns: the line dress
+ **/
+AdgDress
+adg_ruled_fill_get_line_dress(AdgRuledFill *ruled_fill)
+{
+    AdgRuledFillPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_RULED_FILL(ruled_fill), ADG_DRESS_UNDEFINED);
+
+    data = ruled_fill->data;
+
+    return data->line_dress;
+}
+
+/**
+ * adg_ruled_fill_set_line_dress:
+ * @ruled_fill: an #AdgRuledFill object
+ * @dress: the new line dress
+ *
+ * Sets a new line dress on @ruled_fill.
+ **/
+void
+adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
+{
+    AdgRuledFillPrivate *data;
+
+    g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
+
+    data = ruled_fill->data;
+
+    if (adg_dress_set(&data->line_dress, dress))
+        g_object_notify((GObject *) ruled_fill, "line-dress");
+}
 
 /**
  * adg_ruled_fill_get_spacing:
@@ -346,6 +405,12 @@ create_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
     spacing.y = sin(data->angle) * data->spacing;
 
     context = cairo_create(surface);
+
+    /* TODO: the apply() method needs an AdgEntity so the style
+     * could be resolved directly here */
+    AdgStyle *style = adg_dress_get_style(data->line_dress);
+    adg_style_apply(style, context);
+
     draw_lines(&spacing, &extents.size, context);
     cairo_destroy(context);
 
