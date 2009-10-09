@@ -67,7 +67,7 @@ static gboolean         set_spacing     (AdgRuledFill   *ruled_fill,
                                          gdouble         spacing);
 static gboolean         set_angle       (AdgRuledFill   *ruled_fill,
                                          gdouble         angle);
-static void             build_pattern   (AdgRuledFill   *ruled_fill,
+static cairo_pattern_t *create_pattern  (AdgRuledFill   *ruled_fill,
                                          cairo_t        *cr);
 static void             draw_lines      (const CpmlPair *spacing,
                                          const CpmlPair *size,
@@ -241,10 +241,28 @@ adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 static void
 apply(AdgStyle *style, cairo_t *cr)
 {
-    AdgFillStyle *fill_style = (AdgFillStyle *) style;
+    AdgRuledFill *ruled_fill;
+    AdgFillStyle *fill_style;
+    cairo_pattern_t *pattern;
+    CpmlExtents extents;
+    cairo_matrix_t matrix;
 
-    if (adg_fill_style_get_pattern(fill_style) == NULL)
-        build_pattern((AdgRuledFill *) style, cr);
+    ruled_fill = (AdgRuledFill *) style;
+    fill_style = (AdgFillStyle *) style;
+    pattern = adg_fill_style_get_pattern(fill_style);
+
+    if (pattern == NULL) {
+        pattern = create_pattern(ruled_fill, cr);
+        if (pattern == NULL)
+            return;
+
+        adg_fill_style_set_pattern(fill_style, pattern);
+        cairo_pattern_destroy(pattern);
+    }
+
+    adg_fill_style_get_extents(fill_style, &extents);
+    cairo_matrix_init_translate(&matrix, -extents.org.x, -extents.org.y);
+    cairo_pattern_set_matrix(pattern, &matrix);
 
     if (PARENT_STYLE_CLASS->apply != NULL)
         PARENT_STYLE_CLASS->apply(style, cr);
@@ -253,16 +271,22 @@ apply(AdgStyle *style, cairo_t *cr)
 static void
 set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
 {
-    CpmlExtents old;
+    CpmlExtents old, new;
 
     adg_fill_style_get_extents(fill_style, &old);
 
-    /* This will let the extents grow only */
-    if (cpml_extents_is_inside(&old, extents))
-        return;
+    /* The pattern is invalidated (and thus regenerated) only
+     * when the new extents are wider than the old ones */
+    if (old.size.x >= extents->size.x && old.size.y >= extents->size.y) {
+        new.org = extents->org;
+        new.size = old.size;
+    } else {
+        cpml_extents_copy(&new, extents);
+        adg_fill_style_set_pattern(fill_style, NULL);
+    }
 
     if (PARENT_FILL_STYLE_CLASS->set_extents != NULL)
-        PARENT_FILL_STYLE_CLASS->set_extents(fill_style, extents);
+        PARENT_FILL_STYLE_CLASS->set_extents(fill_style, &new);
 }
 
 static gboolean
@@ -293,8 +317,8 @@ set_angle(AdgRuledFill *ruled_fill, gdouble angle)
     return TRUE;
 }
 
-static void
-build_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
+static cairo_pattern_t *
+create_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
     CpmlExtents extents;
@@ -302,7 +326,6 @@ build_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
     cairo_pattern_t *pattern;
     cairo_surface_t *surface;
     CpmlPair spacing;
-    cairo_matrix_t matrix;
     cairo_t *context;
 
     fill_style = (AdgFillStyle *) ruled_fill;
@@ -310,7 +333,7 @@ build_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
 
     /* Check for valid extents */
     if (!extents.is_defined)
-        return;
+        return NULL;
 
     data = ruled_fill->data;
 
@@ -323,15 +346,12 @@ build_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
 
     spacing.x = cos(data->angle) * data->spacing;
     spacing.y = sin(data->angle) * data->spacing;
-    cairo_matrix_init_translate(&matrix, -extents.org.x, -extents.org.y);
 
     context = cairo_create(surface);
-    cairo_pattern_set_matrix(pattern, &matrix);
     draw_lines(&spacing, &extents.size, context);
     cairo_destroy(context);
 
-    adg_fill_style_set_pattern(fill_style, pattern);
-    cairo_pattern_destroy(pattern);
+    return pattern;
 }
 
 static void
@@ -382,7 +402,7 @@ draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
         step1.x = 0;
         step1.y = step.y;
 
-        while (p1.y > 0 && p1.y < size->y) {
+        while (p1.y >= 0 && p1.y <= size->y) {
             if (p2.y <= 0 || p2.y >= size->y) {
                 step2.x = step.x;
                 step2.y = 0;
