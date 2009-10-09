@@ -30,13 +30,16 @@ IGNORE_HFILES=		adg.h \
 			adg-dress-private.h \
 			adg-edges-private.h \
 			adg-entity-private.h \
+			adg-fill-style-private.h \
 			adg-font-style-private.h \
+			adg-hatch-private.h \
 			adg-ldim-private.h \
 			adg-line-style-private.h \
 			adg-marker-private.h \
 			adg-model-private.h \
 			adg-path-private.h \
 			adg-rdim-private.h \
+			adg-ruled-fill-private.h \
 			adg-stroke-private.h \
 			adg-title-block-private.h \
 			adg-trail-private.h \
