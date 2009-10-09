@@ -617,8 +617,9 @@ adg_entity_set_local_mode(AdgEntity *entity, AdgTransformationMode mode)
  * occupied by the entity without taking into account line
  * thickness and caps.
  *
- * The #AdgEntity::arrange signal will be emitted in order to
- * update the entity layout before computing the extents.
+ * The #AdgEntity::arrange should be emitted before this call
+ * (either explicitely or throught adg_entity_arrange()) in
+ * order to get an up to date boundary box.
  **/
 void
 adg_entity_get_extents(AdgEntity *entity, CpmlExtents *extents)
@@ -626,13 +627,11 @@ adg_entity_get_extents(AdgEntity *entity, CpmlExtents *extents)
     AdgEntityPrivate *data;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(extents != NULL);
 
     data = entity->data;
 
-    g_signal_emit(entity, signals[ARRANGE], 0);
-
-    if (extents != NULL)
-        cpml_extents_copy(extents, &data->extents);
+    cpml_extents_copy(extents, &data->extents);
 }
 
 /**
@@ -644,7 +643,8 @@ adg_entity_get_extents(AdgEntity *entity, CpmlExtents *extents)
  * This function is only useful in entity implementations.
  * </para></note>
  *
- * Sets a new bounding box for @entity.
+ * Sets a new bounding box for @entity. @extents can be %NULL,
+ * in which case the extents are unset.
  **/
 void
 adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
@@ -655,7 +655,10 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
 
     data = entity->data;
 
-    cpml_extents_copy(&data->extents, extents);
+    if (extents == NULL)
+        data->extents.is_defined = FALSE;
+    else
+        cpml_extents_copy(&data->extents, extents);
 }
 
 /**
@@ -828,10 +831,6 @@ adg_entity_local_changed(AdgEntity *entity)
  * @entity hierarchy. The returned value is owned by @entity and
  * should not be changed or freed.
  *
- * This method is only useful after the #AdgEntity::arrange default
- * handler has been called, that is at the rendering stage or while
- * arranging the entity after the parent method has been chained up.
- *
  * Returns: the global matrix or %NULL on errors
  **/
 const AdgMatrix *
@@ -855,11 +854,7 @@ adg_entity_global_matrix(AdgEntity *entity)
  * @entity hierarchy. The returned value is owned by @entity and
  * should not be changed or freed.
  *
- * This method is only useful after the #AdgEntity::arrange default
- * handler has been called, that is at the rendering stage or while
- * arranging the entity after the parent method has been chained up.
- *
- * Returns: the global matrix or %NULL on errors
+ * Returns: the local matrix or %NULL on errors
  **/
 const AdgMatrix *
 adg_entity_local_matrix(AdgEntity *entity)
