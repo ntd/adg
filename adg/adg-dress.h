@@ -50,9 +50,9 @@ typedef gint AdgDress;
 
 GType           adg_dress_get_type              (void) G_GNUC_CONST;
 AdgDress        adg_dress_new                   (const gchar    *name,
-                                                 AdgStyle       *style);
+                                                 AdgStyle       *fallback);
 AdgDress        adg_dress_new_full              (const gchar    *name,
-                                                 AdgStyle       *style,
+                                                 AdgStyle       *fallback,
                                                  GType           ancestor_type);
 gboolean        adg_dress_set                   (AdgDress       *dress,
                                                  AdgDress        src);
@@ -61,11 +61,11 @@ gboolean        adg_dress_are_related           (AdgDress        dress1,
 const gchar *   adg_dress_name                  (AdgDress        dress);
 AdgDress        adg_dress_from_name             (const gchar    *name);
 GType           adg_dress_get_ancestor_type     (AdgDress        dress);
-AdgStyle *      adg_dress_get_style             (AdgDress        dress);
-void            adg_dress_set_style             (AdgDress        dress,
-                                                 AdgStyle       *style);
-gboolean        adg_dress_accept_style          (AdgDress        dress,
-                                                 AdgStyle       *style);
+AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
+void            adg_dress_set_fallback          (AdgDress        dress,
+                                                 AdgStyle       *fallback);
+gboolean        adg_dress_accept_fallback       (AdgDress        dress,
+                                                 AdgStyle       *fallback);
 
 GType           _adg_param_spec_dress_get_type  (void) G_GNUC_CONST;
 GParamSpec *    adg_param_spec_dress            (const gchar    *name,

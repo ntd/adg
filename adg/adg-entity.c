@@ -700,7 +700,7 @@ adg_entity_style(AdgEntity *entity, AdgDress dress)
         if (data->parent != NULL)
             style = adg_entity_style(data->parent, dress);
         else
-            style = adg_dress_get_style(dress);
+            style = adg_dress_get_fallback(dress);
     }
 
     return style;

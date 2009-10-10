@@ -99,49 +99,49 @@ adg_dress_get_type(void)
 /**
  * adg_dress_new:
  * @name: the dress name
- * @style: the style to associate
+ * @fallback: the fallback style
  *
  * Creates a new dress. It is a convenient wrapper of adg_dress_new_full()
- * that uses as ancestor the G_TYPE_FROM_INSTANCE() of @style.
+ * that uses as ancestor the G_TYPE_FROM_INSTANCE() of @fallback.
  *
- * After a succesfull call, a new reference is added to @style.
+ * After a succesfull call, a new reference is added to @fallback.
  *
  * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
  **/
 AdgDress
-adg_dress_new(const gchar *name, AdgStyle *style)
+adg_dress_new(const gchar *name, AdgStyle *fallback)
 {
-    return adg_dress_new_full(name, style, G_TYPE_FROM_INSTANCE(style));
+    return adg_dress_new_full(name, fallback, G_TYPE_FROM_INSTANCE(fallback));
 }
 
 /**
  * adg_dress_new_full:
  * @name: the dress name
- * @style: the style to associate
+ * @fallback: the fallback style
  * @ancestor_type: the common ancestor type
  *
  * Creates a new dress, explicitely setting the ancestor type.
- * @ancestor_type must be present in the @style hierarchy: check
- * out the adg_dress_set_style() documentation to know what the
- * ancestor type is used for.
+ * @ancestor_type must be present in the @fallback hierarchy:
+ * check out the adg_dress_set_style() documentation to know
+ * what the ancestor type is used for.
  *
  * If a dress with the same name exists, a warning is raised and
  * #ADG_DRESS_UNDEFINED is returned without further actions.
  *
- * After a succesfull call, a new reference is added to @style.
+ * After a succesfull call, a new reference is added to @fallback.
  *
  * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
  **/
 AdgDress
-adg_dress_new_full(const gchar *name, AdgStyle *style, GType ancestor_type)
+adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
 {
     GQuark quark;
     AdgDress dress;
     AdgDressPrivate data;
 
     g_return_val_if_fail(name != NULL, 0);
-    g_return_val_if_fail(style != NULL, 0);
-    g_return_val_if_fail(G_TYPE_CHECK_INSTANCE_TYPE(style, ancestor_type), 0);
+    g_return_val_if_fail(fallback != NULL, 0);
+    g_return_val_if_fail(G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type), 0);
 
     quark = g_quark_from_string(name);
     dress = quark_to_dress(quark);
@@ -153,10 +153,10 @@ adg_dress_new_full(const gchar *name, AdgStyle *style, GType ancestor_type)
     }
 
     data.quark = quark;
-    data.style = style;
+    data.fallback = fallback;
     data.ancestor_type = ancestor_type;
 
-    g_object_ref(style);
+    g_object_ref(fallback);
 
     return array_append(&data) - 1;
 }
@@ -285,16 +285,16 @@ adg_dress_get_ancestor_type(AdgDress dress)
 }
 
 /**
- * adg_dress_get_style:
+ * adg_dress_get_fallback:
  * @dress: an #AdgDress
  *
- * Gets the style associated to @dress. No warnings are raised
- * if the dress is not found.
+ * Gets the fallback style associated to @dress. No warnings
+ * are raised if the dress is not found.
  *
  * Returns: the requested #AdgStyle derived instance or %NULL if not found
  **/
 AdgStyle *
-adg_dress_get_style(AdgDress dress)
+adg_dress_get_fallback(AdgDress dress)
 {
     AdgDressPrivate *data;
 
@@ -303,27 +303,27 @@ adg_dress_get_style(AdgDress dress)
 
     data = array_lookup(dress);
 
-    return data->style;
+    return data->fallback;
 }
 
 /**
- * adg_dress_set_style:
+ * adg_dress_set_fallback:
  * @dress: an #AdgDress
- * @style: the new style
+ * @fallback: the new fallback style
  *
- * Associates a new @style to @dress. If the dress does not exist
- * (it was not previously created by adg_dress_new()), a warning
- * message is raised and the function fails.
+ * Associates a new @fallback style to @dress. If the dress does
+ * not exist (it was not previously created by adg_dress_new()),
+ * a warning message is raised and the function fails.
  *
- * @style is checked for compatibily with @dress. Any dress holds
- * an ancestor type: if this type is not found in the @style
+ * @fallback is checked for compatibily with @dress. Any dress holds
+ * an ancestor type: if this type is not found in the @fallback
  * hierarchy, a warning message is raised the function fails.
  *
- * After a succesfull call, the reference to the old style (if any)
- * is dropped while a new reference to @style is added.
+ * After a succesfull call, the reference to the previous fallback
+ * (if any) is dropped while a new reference to @fallback is added.
  **/
 void
-adg_dress_set_style(AdgDress dress, AdgStyle *style)
+adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 {
     AdgDressPrivate *data;
 
@@ -334,45 +334,45 @@ adg_dress_set_style(AdgDress dress, AdgStyle *style)
 
     data = array_lookup(dress);
 
-    if (data->style == style)
+    if (data->fallback == fallback)
         return;
 
-    /* Check if the new style is compatible with this dress */
-    if (!G_TYPE_CHECK_INSTANCE_TYPE(style, data->ancestor_type)) {
+    /* Check if the new fallback style is compatible with this dress */
+    if (!G_TYPE_CHECK_INSTANCE_TYPE(fallback, data->ancestor_type)) {
         g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
-                  G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(style)),
+                  G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(fallback)),
                   g_type_name(data->ancestor_type), adg_dress_name(dress));
         return;
     }
 
-    if (data->style != NULL)
-        g_object_unref(data->style);
+    if (data->fallback != NULL)
+        g_object_unref(data->fallback);
 
-    data->style = style;
+    data->fallback = fallback;
 
-    if (data->style != NULL)
-        g_object_ref(data->style);
+    if (data->fallback != NULL)
+        g_object_ref(data->fallback);
 }
 
 /**
- * adg_dress_accept_style:
+ * adg_dress_accept_fallback:
  * @dress: an #AdgDress
  * @style: the #AdgStyle to check
  *
- * Checks whether @style could be associated to @dress using
- * adg_dress_set_style().
+ * Checks whether @style could be set on @dress as fallback
+ * style with adg_dress_set_fallback().
  *
- * Returns: %TRUE if @dress can accept @style, %FALSE otherwise
+ * Returns: %TRUE if @dress can accept @fallback, %FALSE otherwise
  **/
 gboolean
-adg_dress_accept_style(AdgDress dress, AdgStyle *style)
+adg_dress_accept_fallback(AdgDress dress, AdgStyle *fallback)
 {
     GType ancestor_type = adg_dress_get_ancestor_type(dress);
 
     g_return_val_if_fail(ancestor_type > 0, FALSE);
-    g_return_val_if_fail(ADG_IS_STYLE(style), FALSE);
+    g_return_val_if_fail(ADG_IS_STYLE(fallback), FALSE);
 
-    return G_TYPE_CHECK_INSTANCE_TYPE(style, ancestor_type);
+    return G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type);
 }
 
 
@@ -510,10 +510,10 @@ _adg_dress_color_regular(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_COLOR_STYLE, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE, NULL);
 
-        dress = adg_dress_new("color-regular", style);
-        g_object_unref(style);
+        dress = adg_dress_new("color-regular", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -531,11 +531,11 @@ _adg_dress_color_dimension(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_COLOR_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
                                        "red", 0.75, NULL);
 
-        dress = adg_dress_new("color-dimension", style);
-        g_object_unref(style);
+        dress = adg_dress_new("color-dimension", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -553,11 +553,11 @@ _adg_dress_line_regular(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
                                        "width", 2., NULL);
 
-        dress = adg_dress_new("line-regular", style);
-        g_object_unref(style);
+        dress = adg_dress_new("line-regular", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -575,11 +575,11 @@ _adg_dress_line_dimension(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
-                                       "width", 0.75, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "width", 0.75, NULL);
 
-        dress = adg_dress_new("line-dimension", style);
-        g_object_unref(style);
+        dress = adg_dress_new("line-dimension", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -597,11 +597,11 @@ _adg_dress_line_hatch(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_LINE_STYLE,
-                                       "width", 1., NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "width", 1., NULL);
 
-        dress = adg_dress_new("line-hatch", style);
-        g_object_unref(style);
+        dress = adg_dress_new("line-hatch", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -619,12 +619,12 @@ _adg_dress_text_regular(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_FONT_STYLE,
-                                       "family", "Serif",
-                                       "size", 14., NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+                                          "family", "Serif",
+                                          "size", 14., NULL);
 
-        dress = adg_dress_new("text-regular", style);
-        g_object_unref(style);
+        dress = adg_dress_new("text-regular", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -642,13 +642,13 @@ _adg_dress_text_value(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_FONT_STYLE,
-                                       "family", "Sans",
-                                       "weight", CAIRO_FONT_WEIGHT_BOLD,
-                                       "size", 12., NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+                                          "family", "Sans",
+                                          "weight", CAIRO_FONT_WEIGHT_BOLD,
+                                          "size", 12., NULL);
 
-        dress = adg_dress_new("text-value", style);
-        g_object_unref(style);
+        dress = adg_dress_new("text-value", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -667,12 +667,12 @@ _adg_dress_text_limit(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_FONT_STYLE,
-                                       "family", "Sans",
-                                       "size", 8., NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+                                          "family", "Sans",
+                                          "size", 8., NULL);
 
-        dress = adg_dress_new("text-limit", style);
-        g_object_unref(style);
+        dress = adg_dress_new("text-limit", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;
@@ -681,7 +681,7 @@ _adg_dress_text_limit(void)
 /**
  * ADG_DRESS_DIMENSION_REGULAR:
  *
- * The default builtin #AdgDress dimensioning style. This dress
+ * The default builtin #AdgDress for dimensioning. This dress
  * will be resolved to an #AdgDimStyle instance.
  **/
 AdgDress
@@ -691,14 +691,14 @@ _adg_dress_dimension_regular(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgMarker *arrow = g_object_new(ADG_TYPE_ARROW, NULL);
-        AdgStyle *style = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
 
-        adg_dim_style_use_marker1((AdgDimStyle *) style, arrow);
+        adg_dim_style_use_marker1((AdgDimStyle *) fallback, arrow);
         adg_marker_set_pos(arrow, 1);
-        adg_dim_style_use_marker2((AdgDimStyle *) style, arrow);
+        adg_dim_style_use_marker2((AdgDimStyle *) fallback, arrow);
 
-        dress = adg_dress_new("dimension-regular", style);
-        g_object_unref(style);
+        dress = adg_dress_new("dimension-regular", fallback);
+        g_object_unref(fallback);
         g_object_unref(arrow);
     }
 
@@ -708,7 +708,7 @@ _adg_dress_dimension_regular(void)
 /**
  * ADG_DRESS_FILL_REGULAR:
  *
- * The default builtin #AdgDress filling style. This dress
+ * The default builtin #AdgDress for filling. This dress
  * will be resolved to an #AdgFillStyle derived instance.
  **/
 AdgDress
@@ -717,10 +717,10 @@ _adg_dress_fill_regular(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *style = g_object_new(ADG_TYPE_RULED_FILL, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL, NULL);
 
-        dress = adg_dress_new("fill-regular", style);
-        g_object_unref(style);
+        dress = adg_dress_new("fill-regular", fallback);
+        g_object_unref(fallback);
     }
 
     return dress;

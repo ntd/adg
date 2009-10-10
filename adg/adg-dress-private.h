@@ -28,7 +28,7 @@ typedef struct _AdgDressPrivate AdgDressPrivate;
 
 struct _AdgDressPrivate {
     GQuark       quark;
-    AdgStyle    *style;
+    AdgStyle    *fallback;
     GType        ancestor_type;
 };
 

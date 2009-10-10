@@ -408,7 +408,7 @@ create_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
 
     /* TODO: the apply() method needs an AdgEntity so the style
      * could be resolved directly here */
-    AdgStyle *style = adg_dress_get_style(data->line_dress);
+    AdgStyle *style = adg_dress_get_fallback(data->line_dress);
     adg_style_apply(style, context);
 
     draw_lines(&spacing, &extents.size, context);
