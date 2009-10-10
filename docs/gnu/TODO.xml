@@ -109,9 +109,11 @@ needed to generate this drawing.</para>
    with a serie of parallel lines with customizable angle and distance.</listitem>
    <listitem override="disc">Add AdgHatch, an entity very similar to AdgStroke but that uses
    cairo_fill() instead of cairo_stroke().</listitem>
-   <listitem>Implement the extents also for the path so the AdgHatch entity can work
+   <listitem override="disc">Implement the extents also for the path so the AdgHatch entity can work
    reliable: check if it is better to add new code in CPML or to directly
-   use the functions provided by cairo.</listitem>
+   use the functions provided by cairo. (Implemented in CPML as the arc
+   primitive is not native in cairo and it is the only one with some quirks
+   in the extents computation)</listitem>
    <listitem>Add labeling feature to the models and let AdgDim and children points
    be expressed as references to those labeled points instead of using
    explicit coordinates.</listitem>
