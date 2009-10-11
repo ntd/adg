@@ -158,7 +158,8 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
     data.fallback = fallback;
     data.ancestor_type = ancestor_type;
 
-    g_object_ref(fallback);
+    if (fallback != NULL)
+        g_object_ref(fallback);
 
     return array_append(&data) - 1;
 }
