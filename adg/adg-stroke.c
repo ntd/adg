@@ -318,10 +318,8 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
-        AdgLineStyle *line_style;
         AdgMatrix ctm;
 
-        line_style = (AdgLineStyle *) adg_entity_style(entity, data->dress);
         adg_entity_get_ctm(entity, &ctm);
 
         cairo_save(cr);
@@ -329,7 +327,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        adg_style_apply((AdgStyle *) line_style, cr);
+        adg_entity_apply_dress(entity, data->dress, cr);
         cairo_stroke(cr);
     }
 }

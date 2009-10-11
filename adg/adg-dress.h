@@ -33,7 +33,7 @@ G_BEGIN_DECLS
 #define ADG_IS_PARAM_SPEC_DRESS(spec)   (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
 
 
-typedef gint AdgDress;
+/* AdgDress defined in adg-entity.h */
 
 
 GType           adg_dress_get_type              (void) G_GNUC_CONST;

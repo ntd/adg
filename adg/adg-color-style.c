@@ -61,6 +61,7 @@ static void             set_property    (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void             apply           (AdgStyle       *style,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 
 
@@ -298,7 +299,7 @@ adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgColorStylePrivate *data = ((AdgColorStyle *) style)->data;
 

@@ -75,6 +75,7 @@ static void             set_property            (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             apply                   (AdgStyle       *style,
+                                                 AdgEntity      *entity,
                                                  cairo_t        *cr);
 static void             set_limits_shift        (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
@@ -1062,7 +1063,7 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
 }
 

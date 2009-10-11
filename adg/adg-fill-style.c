@@ -56,6 +56,7 @@ static void             set_property    (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void             apply           (AdgStyle       *style,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 static gboolean         set_pattern     (AdgFillStyle   *fill_style,
                                          AdgPattern     *pattern);
@@ -248,7 +249,7 @@ adg_fill_style_set_extents(AdgFillStyle *fill_style,
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStylePrivate *data = ((AdgFillStyle *) style)->data;
 

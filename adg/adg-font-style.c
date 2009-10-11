@@ -65,6 +65,7 @@ static void             set_property            (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             apply                   (AdgStyle       *style,
+                                                 AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gboolean         set_family              (AdgFontStyle   *font_style,
                                                  const gchar    *family);
@@ -651,7 +652,7 @@ adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgMatrix ctm;
     cairo_scaled_font_t *font;

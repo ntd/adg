@@ -61,6 +61,7 @@ static void             set_property    (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void             apply           (AdgStyle       *style,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 
 
@@ -423,7 +424,7 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
 }
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) style)->data;
 

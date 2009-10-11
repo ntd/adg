@@ -806,7 +806,7 @@ adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
     style = adg_entity_style(entity, dress);
 
     if (style != NULL)
-        adg_style_apply(style, cr);
+        adg_style_apply(style, entity, cr);
 }
 
 /**

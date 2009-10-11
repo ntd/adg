@@ -21,8 +21,7 @@
 #ifndef __ADG_STYLE_H__
 #define __ADG_STYLE_H__
 
-#include <glib-object.h>
-#include <cairo.h>
+#include <adg/adg-entity.h>
 
 
 G_BEGIN_DECLS
@@ -35,7 +34,10 @@ G_BEGIN_DECLS
 #define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_STYLE, AdgStyleClass))
 
 
-typedef struct _AdgStyle        AdgStyle;
+#if 0
+/* This is declared in adg-entity.h */
+typedef struct _AdgStyle AdgStyle;
+#endif
 typedef struct _AdgStyleClass   AdgStyleClass;
 
 struct _AdgStyle {
@@ -48,12 +50,15 @@ struct _AdgStyleClass {
     GObjectClass         parent_class;
     /*< public >*/
     void                (*apply)                (AdgStyle       *style,
+                                                 AdgEntity      *entity,
                                                  cairo_t        *cr);
 };
+
 
 GType                   adg_style_get_type      (void) G_GNUC_CONST;
 
 void                    adg_style_apply         (AdgStyle       *style,
+                                                 AdgEntity      *entity,
                                                  cairo_t        *cr);
 
 G_END_DECLS

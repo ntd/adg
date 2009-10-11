@@ -37,6 +37,7 @@
 
 
 static void             apply           (AdgStyle       *style,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 
 
@@ -58,23 +59,26 @@ adg_style_init(AdgStyle *style)
 /**
  * adg_style_apply:
  * @style: an #AdgStyle derived style
+ * @entity: the caller #AdgEntity
  * @cr: the subject cairo context
  *
- * Applies @style to @cr so the next rendering operations will be done
- * accordling to this style directives.
+ * Applies @style to @cr so the next rendering operations will be
+ * done accordling to this style directives. The @entity parameter
+ * is used to resolve the internal dresses of @style, if any.
  **/
 void
-adg_style_apply(AdgStyle *style, cairo_t *cr)
+adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     g_return_if_fail(ADG_IS_STYLE(style));
+    g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(cr != NULL);
 
-    ADG_STYLE_GET_CLASS(style)->apply(style, cr);
+    ADG_STYLE_GET_CLASS(style)->apply(style, entity, cr);
 }
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     /* The apply method must be defined */
     g_warning("%s: `apply' method not implemented for type `%s'",

@@ -24,7 +24,6 @@
 #include <adg/adg-util.h>
 #include <adg/adg-type-builtins.h>
 #include <adg/adg-matrix.h>
-#include <adg/adg-dress.h>
 #include <cpml/cpml.h>
 
 
@@ -36,6 +35,11 @@ G_BEGIN_DECLS
 #define ADG_IS_ENTITY(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_ENTITY))
 #define ADG_IS_ENTITY_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_ENTITY))
 #define ADG_ENTITY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_ENTITY, AdgEntityClass))
+
+
+/* Forward declaration */
+ADG_FORWARD_DECL(AdgStyle);
+typedef gint                     AdgDress;
 
 
 typedef struct _AdgEntity        AdgEntity;

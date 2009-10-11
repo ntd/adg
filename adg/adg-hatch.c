@@ -230,7 +230,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        adg_style_apply((AdgStyle *) fill_style, cr);
+        adg_style_apply((AdgStyle *) fill_style, entity, cr);
         cairo_fill(cr);
 
         cairo_restore(cr);

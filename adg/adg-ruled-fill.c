@@ -62,6 +62,7 @@ static void             set_property    (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 static void             apply           (AdgStyle       *style,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 static void             set_extents     (AdgFillStyle   *fill_style,
                                          const CpmlExtents *extents);
@@ -70,6 +71,7 @@ static gboolean         set_spacing     (AdgRuledFill   *ruled_fill,
 static gboolean         set_angle       (AdgRuledFill   *ruled_fill,
                                          gdouble         angle);
 static cairo_pattern_t *create_pattern  (AdgRuledFill   *ruled_fill,
+                                         AdgEntity      *entity,
                                          cairo_t        *cr);
 static void             draw_lines      (const CpmlPair *spacing,
                                          const CpmlPair *size,
@@ -299,7 +301,7 @@ adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 
 
 static void
-apply(AdgStyle *style, cairo_t *cr)
+apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
     cairo_pattern_t *pattern;
@@ -310,7 +312,7 @@ apply(AdgStyle *style, cairo_t *cr)
     pattern = adg_fill_style_get_pattern(fill_style);
 
     if (pattern == NULL) {
-        pattern = create_pattern((AdgRuledFill *) style, cr);
+        pattern = create_pattern((AdgRuledFill *) style, entity, cr);
         if (pattern == NULL)
             return;
 
@@ -323,7 +325,7 @@ apply(AdgStyle *style, cairo_t *cr)
     cairo_pattern_set_matrix(pattern, &matrix);
 
     if (PARENT_STYLE_CLASS->apply != NULL)
-        PARENT_STYLE_CLASS->apply(style, cr);
+        PARENT_STYLE_CLASS->apply(style, entity, cr);
 }
 
 static void
@@ -376,11 +378,12 @@ set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 }
 
 static cairo_pattern_t *
-create_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
+create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
     CpmlExtents extents;
     AdgRuledFillPrivate *data;
+    AdgStyle *line_style;
     cairo_pattern_t *pattern;
     cairo_surface_t *surface;
     CpmlPair spacing;
@@ -394,24 +397,21 @@ create_pattern(AdgRuledFill *ruled_fill, cairo_t *cr)
         return NULL;
 
     data = ruled_fill->data;
-
+    line_style = adg_entity_style(entity, data->line_dress);
     surface = cairo_surface_create_similar(cairo_get_target(cr),
                                            CAIRO_CONTENT_COLOR_ALPHA,
                                            extents.size.x, extents.size.y);
     pattern = cairo_pattern_create_for_surface(surface);
-    /* The pattern holds a reference to the surface */
+
+    /* The pattern holds a reference to the surface, so the
+     * surface should be unreferenced once */
     cairo_surface_destroy(surface);
 
     spacing.x = cos(data->angle) * data->spacing;
     spacing.y = sin(data->angle) * data->spacing;
 
     context = cairo_create(surface);
-
-    /* TODO: the apply() method needs an AdgEntity so the style
-     * could be resolved directly here */
-    AdgStyle *style = adg_dress_get_fallback(data->line_dress);
-    adg_style_apply(style, context);
-
+    adg_style_apply(line_style, entity, context);
     draw_lines(&spacing, &extents.size, context);
     cairo_destroy(context);
 
