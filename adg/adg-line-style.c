@@ -89,7 +89,7 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
-                                 P_("The dress color of this line dress"),
+                                 P_("The color dress to bind to this line style"),
                                  ADG_DRESS_COLOR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
@@ -278,7 +278,7 @@ adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
     data = line_style->data;
 
     if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) line_style, "color_dress");
+        g_object_notify((GObject *) line_style, "color-dress");
 }
 
 /**
