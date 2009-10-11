@@ -369,7 +369,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
         adg_entity_get_ctm(entity, &ctm);
 
-        cairo_set_scaled_font(cr, data->font);
+        adg_entity_apply_dress(entity, data->dress, cr);
         cairo_set_matrix(cr, &ctm);
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }

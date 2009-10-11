@@ -36,6 +36,7 @@
 
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-util.h"
 #include "adg-intl.h"
 
@@ -44,6 +45,7 @@
 
 enum {
     PROP_0,
+    PROP_COLOR_DRESS,
     PROP_FAMILY,
     PROP_SLANT,
     PROP_WEIGHT,
@@ -107,6 +109,13 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
     gobject_class->set_property = set_property;
 
     style_class->apply = apply;
+
+    param = adg_param_spec_dress("color-dress",
+                                 P_("Color Dress"),
+                                 P_("The color dress to bind to this font style"),
+                                 ADG_DRESS_COLOR,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = g_param_spec_string("family",
                                 P_("Font Family"),
@@ -174,6 +183,7 @@ adg_font_style_init(AdgFontStyle *font_style)
                                                             ADG_TYPE_FONT_STYLE,
                                                             AdgFontStylePrivate);
 
+    data->color_dress = ADG_DRESS_COLOR;
     data->family = NULL;
     data->slant = CAIRO_FONT_SLANT_NORMAL;
     data->weight = CAIRO_FONT_WEIGHT_NORMAL;
@@ -199,13 +209,15 @@ dispose(GObject *object)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
-
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
     AdgFontStylePrivate *data = ((AdgFontStyle *) object)->data;
 
     switch (prop_id) {
+    case PROP_COLOR_DRESS:
+        g_value_set_int(value, data->color_dress);
+        break;
     case PROP_FAMILY:
         g_value_set_string(value, data->family);
         break;
@@ -247,6 +259,9 @@ set_property(GObject *object,
     data = font_style->data;
 
     switch (prop_id) {
+    case PROP_COLOR_DRESS:
+        adg_dress_set(&data->color_dress, g_value_get_int(value));
+        break;
     case PROP_FAMILY:
         set_family(font_style, g_value_get_string(value));
         break;
@@ -344,6 +359,54 @@ adg_font_style_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
     cairo_font_options_destroy(options);
 
     return data->font;
+}
+
+/**
+ * adg_font_style_get_color_dress:
+ * @font_style: an #AdgFontStyle
+ *
+ * Gets the color dress used by @font_style.
+ *
+ * Returns: the current color dress
+ **/
+AdgDress
+adg_font_style_get_color_dress(AdgFontStyle *font_style)
+{
+    AdgFontStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), ADG_DRESS_UNDEFINED);
+
+    data = font_style->data;
+
+    return data->color_dress;
+}
+
+/**
+ * adg_font_style_set_color_dress:
+ * @font_style: an #AdgFontStyle
+ * @dress: the new color dress to use
+ *
+ * Sets a new color dress on @font_style. The new dress
+ * should be related to the original dress: you cannot
+ * set a dress used for font styles to a dress managing
+ * fonts.
+ *
+ * The validation of the new dress is done by calling
+ * adg_dress_are_related() with @dress and the previous
+ * dress as arguments: check out its documentation for
+ * details on what is a related dress.
+ **/
+void
+adg_font_style_set_color_dress(AdgFontStyle *font_style, AdgDress dress)
+{
+    AdgFontStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
+
+    data = font_style->data;
+
+    if (adg_dress_set(&data->color_dress, dress))
+        g_object_notify((GObject *) font_style, "color-dress");
 }
 
 /**
@@ -654,8 +717,15 @@ adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
 static void
 apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
+    AdgFontStyle *font_style;
+    AdgFontStylePrivate *data;
     AdgMatrix ctm;
     cairo_scaled_font_t *font;
+
+    font_style = (AdgFontStyle *) style;
+    data = font_style->data;
+
+    adg_entity_apply_dress(entity, data->color_dress, cr);
 
     cairo_get_matrix(cr, &ctm);
     font = adg_font_style_font((AdgFontStyle *) style, &ctm);

@@ -55,6 +55,9 @@ cairo_scaled_font_t *
                 adg_font_style_font             (AdgFontStyle    *font_style,
                                                  const AdgMatrix *ctm);
 
+AdgDress        adg_font_style_get_color_dress  (AdgFontStyle   *font_style);
+void            adg_font_style_set_color_dress  (AdgFontStyle   *font_style,
+                                                 AdgDress        dress);
 const gchar *   adg_font_style_get_family       (AdgFontStyle    *font_style);
 void            adg_font_style_set_family       (AdgFontStyle    *font_style,
                                                  const gchar     *family);

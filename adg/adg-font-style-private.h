@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgFontStylePrivate AdgFontStylePrivate;
 
 struct _AdgFontStylePrivate {
+    AdgDress                     color_dress;
     gchar                       *family;
     cairo_font_slant_t           slant;
     cairo_font_weight_t          weight;
