@@ -88,28 +88,28 @@ adg_color_style_class_init(AdgColorStyleClass *klass)
     param = g_param_spec_double("red",
                                 P_("Red Channel"),
                                 P_("The red value, where 0 means no red and 1 is full red"),
-                                0, G_MAXDOUBLE, 0,
+                                0, 1, 0,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RED, param);
 
     param = g_param_spec_double("green",
                                 P_("Green Channel"),
                                 P_("The green value, where 0 means no green and 1 is full green"),
-                                0, G_MAXDOUBLE, 0,
+                                0, 1, 0,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_GREEN, param);
 
     param = g_param_spec_double("blue",
                                 P_("Blue Channel"),
                                 P_("The blue value, where 0 means no blue and 1 is full blue"),
-                                0, G_MAXDOUBLE, 0,
+                                0, 1, 0,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BLUE, param);
 
     param = g_param_spec_double("alpha",
                                 P_("Alpha Channel"),
                                 P_("The alpha value, where 0 means completely transparent and 1 is fully opaque"),
-                                0, G_MAXDOUBLE, 1,
+                                0, 1, 1,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ALPHA, param);
 }
