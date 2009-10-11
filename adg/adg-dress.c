@@ -111,6 +111,8 @@ adg_dress_get_type(void)
 AdgDress
 adg_dress_new(const gchar *name, AdgStyle *fallback)
 {
+    g_return_val_if_fail(ADG_IS_STYLE(fallback), ADG_DRESS_UNDEFINED);
+
     return adg_dress_new_full(name, fallback, G_TYPE_FROM_INSTANCE(fallback));
 }
 
@@ -121,14 +123,17 @@ adg_dress_new(const gchar *name, AdgStyle *fallback)
  * @ancestor_type: the common ancestor type
  *
  * Creates a new dress, explicitely setting the ancestor type.
- * @ancestor_type must be present in the @fallback hierarchy:
- * check out the adg_dress_set_style() documentation to know
- * what the ancestor type is used for.
+ * If @fallback is not %NULL, @ancestor_type must be present in
+ * its hierarchy: check out the adg_dress_style_is_compatible()
+ * documentation to know what the ancestor type is used for.
  *
- * If a dress with the same name exists, a warning is raised and
- * #ADG_DRESS_UNDEFINED is returned without further actions.
+ * @fallback can be %NULL, in which case a "transparent" dress
+ * is created. This kind of dress does not change the cairo
+ * context because there is no style to apply. Any entity could
+ * override it to change this behavior though.
  *
- * After a succesfull call, a new reference is added to @fallback.
+ * After a succesfull call, a new reference is added to @fallback
+ * if needed.
  *
  * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
  **/
@@ -139,9 +144,12 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
     AdgDress dress;
     AdgDressPrivate data;
 
-    g_return_val_if_fail(name != NULL, 0);
-    g_return_val_if_fail(fallback != NULL, 0);
-    g_return_val_if_fail(G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type), 0);
+    g_return_val_if_fail(name != NULL, ADG_DRESS_UNDEFINED);
+    g_return_val_if_fail(g_type_is_a(ancestor_type, ADG_TYPE_STYLE),
+                         ADG_DRESS_UNDEFINED);
+    g_return_val_if_fail(fallback == NULL ||
+                         G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type),
+                         ADG_DRESS_UNDEFINED);
 
     quark = g_quark_from_string(name);
     dress = quark_to_dress(quark);
@@ -291,7 +299,7 @@ adg_dress_get_ancestor_type(AdgDress dress)
  * Gets the fallback style associated to @dress. No warnings
  * are raised if the dress is not found.
  *
- * Returns: the requested #AdgStyle derived instance or %NULL if not found
+ * Returns: the requested #AdgStyle derived instance or %NULL if not set
  **/
 AdgStyle *
 adg_dress_get_fallback(AdgDress dress)
@@ -317,7 +325,7 @@ adg_dress_get_fallback(AdgDress dress)
  *
  * @fallback is checked for compatibily with @dress. Any dress holds
  * an ancestor type: if this type is not found in the @fallback
- * hierarchy, a warning message is raised the function fails.
+ * hierarchy, a warning message is raised and the function fails.
  *
  * After a succesfull call, the reference to the previous fallback
  * (if any) is dropped while a new reference to @fallback is added.
@@ -338,7 +346,7 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
         return;
 
     /* Check if the new fallback style is compatible with this dress */
-    if (!G_TYPE_CHECK_INSTANCE_TYPE(fallback, data->ancestor_type)) {
+    if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
         g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
                   G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(fallback)),
                   g_type_name(data->ancestor_type), adg_dress_name(dress));
@@ -355,24 +363,25 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 }
 
 /**
- * adg_dress_accept_fallback:
+ * adg_dress_style_is_compatible:
  * @dress: an #AdgDress
  * @style: the #AdgStyle to check
  *
- * Checks whether @style could be set on @dress as fallback
- * style with adg_dress_set_fallback().
+ * Checks whether @style is compatible with @dress, that is if
+ * @style has the ancestor style type (as returned by
+ * adg_dress_get_ancestor_type()) in its hierarchy.
  *
- * Returns: %TRUE if @dress can accept @fallback, %FALSE otherwise
+ * Returns: %TRUE if @dress can accept @style, %FALSE otherwise
  **/
 gboolean
-adg_dress_accept_fallback(AdgDress dress, AdgStyle *fallback)
+adg_dress_style_is_compatible(AdgDress dress, AdgStyle *style)
 {
     GType ancestor_type = adg_dress_get_ancestor_type(dress);
 
     g_return_val_if_fail(ancestor_type > 0, FALSE);
-    g_return_val_if_fail(ADG_IS_STYLE(fallback), FALSE);
+    g_return_val_if_fail(ADG_IS_STYLE(style), FALSE);
 
-    return G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type);
+    return G_TYPE_CHECK_INSTANCE_TYPE(style, ancestor_type);
 }
 
 
@@ -719,7 +728,8 @@ _adg_dress_fill_regular(void)
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL, NULL);
 
-        dress = adg_dress_new("fill-regular", fallback);
+        dress = adg_dress_new_full("fill-regular", fallback,
+                                   ADG_TYPE_FILL_STYLE);
         g_object_unref(fallback);
     }
 

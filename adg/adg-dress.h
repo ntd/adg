@@ -64,8 +64,8 @@ GType           adg_dress_get_ancestor_type     (AdgDress        dress);
 AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
 void            adg_dress_set_fallback          (AdgDress        dress,
                                                  AdgStyle       *fallback);
-gboolean        adg_dress_accept_fallback       (AdgDress        dress,
-                                                 AdgStyle       *fallback);
+gboolean        adg_dress_style_is_compatible   (AdgDress        dress,
+                                                 AdgStyle       *style);
 
 GType           _adg_param_spec_dress_get_type  (void) G_GNUC_CONST;
 GParamSpec *    adg_param_spec_dress            (const gchar    *name,

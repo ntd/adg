@@ -669,10 +669,8 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * Gets the style to be used for @entity. @dress specifies the "type"
  * of style to get.
  *
- * This method is supposed to always return a valid style instance,
- * specifically the most appropriate one for this entity. The following
- * sequence of checks is performed to get the proper @dress style,
- * stopping at the first succesfull result:
+ * The following sequence of checks is performed to get the proper
+ * @dress style, stopping at the first succesfull result:
  *
  * <orderedlist>
  * <listitem>check if the style is defined directly by this entity type,
@@ -682,7 +680,7 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * <listitem>returns the main style with adg_dress_get_style().</listitem>
  * </orderedlist>
  *
- * Returns: the requested style or %NULL on errors
+ * Returns: the requested style or %NULL for transparent dresses or errors
  **/
 AdgStyle *
 adg_entity_style(AdgEntity *entity, AdgDress dress)
@@ -713,7 +711,7 @@ adg_entity_style(AdgEntity *entity, AdgDress dress)
  *
  * Gets the overriden @dress style from @entity. This is a kind
  * of accessor function: to get the style to be used for rendering
- * purpose, consider adg_entity_style().
+ * purpose, use adg_entity_style() instead.
  *
  * Returns: the requested style or %NULL if the @dress style
  *          is not overriden
@@ -742,6 +740,10 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
  *
  * Overrides the style of @dress for @entity and its children.
  * If @style is %NULL, any previous override is removed.
+ *
+ * The new style must still be compatible with @dress: check out
+ * the adg_dress_style_is_compatible() documentation to know
+ * what a compatible style means.
  **/
 void
 adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
@@ -769,10 +771,21 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 
     if (style == NULL) {
         g_hash_table_remove(data->hash_styles, p_dress);
-    } else {
-        g_object_ref(style);
-        g_hash_table_replace(data->hash_styles, p_dress, style);
+        return;
     }
+
+    if (!adg_dress_style_is_compatible(dress, style)) {
+        GType ancestor_type = adg_dress_get_ancestor_type(dress);
+
+        g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
+                  G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(style)),
+                  g_type_name(ancestor_type), adg_dress_name(dress));
+
+        return;
+    }
+
+    g_object_ref(style);
+    g_hash_table_replace(data->hash_styles, p_dress, style);
 }
 
 /**
@@ -787,10 +800,15 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 void
 adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
 {
+    AdgStyle *style;
+
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(cr != NULL);
 
-    adg_style_apply(adg_entity_style(entity, dress), cr);
+    style = adg_entity_style(entity, dress);
+
+    if (style != NULL)
+        adg_style_apply(style, cr);
 }
 
 /**
