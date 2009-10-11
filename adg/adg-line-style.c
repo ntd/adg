@@ -36,6 +36,7 @@
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-intl.h"
 
 #define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_line_style_parent_class)
@@ -43,6 +44,7 @@
 
 enum {
     PROP_0,
+    PROP_COLOR_DRESS,
     PROP_WIDTH,
     PROP_CAP,
     PROP_JOIN,
@@ -84,6 +86,13 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
     gobject_class->set_property = set_property;
 
     style_class->apply = apply;
+
+    param = adg_param_spec_dress("color-dress",
+                                 P_("Color Dress"),
+                                 P_("The dress color of this line dress"),
+                                 ADG_DRESS_COLOR,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = g_param_spec_double("width",
                                 P_("Line Width"),
@@ -129,6 +138,7 @@ adg_line_style_init(AdgLineStyle *line_style)
                                                             ADG_TYPE_LINE_STYLE,
                                                             AdgLineStylePrivate);
 
+    data->color_dress = ADG_DRESS_COLOR;
     data->width = 2.;
     data->cap = CAIRO_LINE_CAP_ROUND;
     data->join = CAIRO_LINE_JOIN_MITER;
@@ -142,12 +152,15 @@ adg_line_style_init(AdgLineStyle *line_style)
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+get_property(GObject *object, guint prop_id,
+             GValue *value, GParamSpec *pspec)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
+    case PROP_COLOR_DRESS:
+        g_value_set_int(value, data->color_dress);
+        break;
     case PROP_WIDTH:
         g_value_set_double(value, data->width);
         break;
@@ -173,12 +186,15 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+set_property(GObject *object, guint prop_id,
+             const GValue *value, GParamSpec *pspec)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
+    case PROP_COLOR_DRESS:
+        adg_dress_set(&data->color_dress, g_value_get_int(value));
+        break;
     case PROP_WIDTH:
         data->width = g_value_get_double(value);
         break;
@@ -215,6 +231,54 @@ AdgLineStyle *
 adg_line_style_new(void)
 {
     return g_object_new(ADG_TYPE_LINE_STYLE, NULL);
+}
+
+/**
+ * adg_line_style_get_color_dress:
+ * @line_style: an #AdgLineStyle
+ *
+ * Gets the color dress used by @line_style.
+ *
+ * Returns: the current color dress
+ **/
+AdgDress
+adg_line_style_get_color_dress(AdgLineStyle *line_style)
+{
+    AdgLineStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), ADG_DRESS_UNDEFINED);
+
+    data = line_style->data;
+
+    return data->color_dress;
+}
+
+/**
+ * adg_line_style_set_color_dress:
+ * @line_style: an #AdgLineStyle
+ * @dress: the new color dress to use
+ *
+ * Sets a new color dress on @line_style. The new dress
+ * should be related to the original dress: you cannot
+ * set a dress used for line styles to a dress managing
+ * fonts.
+ *
+ * The validation of the new dress is done by calling
+ * adg_dress_are_related() with @dress and the previous
+ * dress as arguments: check out its documentation for
+ * details on what is a related dress.
+ **/
+void
+adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
+{
+    AdgLineStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
+
+    data = line_style->data;
+
+    if (adg_dress_set(&data->color_dress, dress))
+        g_object_notify((GObject *) line_style, "color_dress");
 }
 
 /**
@@ -428,6 +492,7 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) style)->data;
 
+    adg_entity_apply_dress(entity, data->color_dress, cr);
     cairo_set_line_width(cr, data->width);
     cairo_set_line_cap(cr, data->cap);
     cairo_set_line_join(cr, data->join);

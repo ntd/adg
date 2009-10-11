@@ -53,6 +53,9 @@ struct _AdgLineStyleClass {
 GType           adg_line_style_get_type         (void) G_GNUC_CONST;
 AdgLineStyle *  adg_line_style_new              (void);
 
+AdgDress        adg_line_style_get_color_dress  (AdgLineStyle   *line_style);
+void            adg_line_style_set_color_dress  (AdgLineStyle   *line_style,
+                                                 AdgDress        dress);
 gdouble         adg_line_style_get_width        (AdgLineStyle   *line_style);
 void            adg_line_style_set_width        (AdgLineStyle   *line_style,
                                                  gdouble         width);

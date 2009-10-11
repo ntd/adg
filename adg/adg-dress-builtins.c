@@ -92,8 +92,8 @@ _adg_dress_color_stroke(void)
 /**
  * ADG_DRESS_COLOR_DIMENSION:
  *
- * The builtin #AdgDress color used by dimensioning items. The
- * fallback style is a %0.75 red.
+ * The builtin #AdgDress color used by default in #AdgDimStyle.
+ * The fallback style is a %0.75 red.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -117,7 +117,7 @@ _adg_dress_color_dimension(void)
  * ADG_DRESS_COLOR_HATCH:
  *
  * The default builtin #AdgDress color for #AdgHatch entities.
- * The fallback style is a %0.75 blue.
+ * The fallback style is a %0.5 blue.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -128,7 +128,7 @@ _adg_dress_color_hatch(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "blue", 0.75, NULL);
+                                          "blue", 0.5, NULL);
 
         dress = adg_dress_new("color-hatch", fallback);
         g_object_unref(fallback);
@@ -222,6 +222,7 @@ _adg_dress_line_hatch(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_HATCH,
                                           "width", 1., NULL);
 
         dress = adg_dress_new("line-hatch", fallback);
@@ -373,7 +374,9 @@ _adg_dress_fill_hatch(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL,
+                                          "line-dress", ADG_DRESS_LINE_HATCH,
+                                          NULL);
 
         dress = adg_dress_new_full("fill-hatch", fallback,
                                    ADG_TYPE_FILL_STYLE);
