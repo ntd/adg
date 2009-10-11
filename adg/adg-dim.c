@@ -36,6 +36,7 @@
 #include "adg-dim.h"
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
+#include "adg-dress-builtins.h"
 #include "adg-toy-text.h"
 #include "adg-type-builtins.h"
 #include "adg-intl.h"
@@ -115,7 +116,7 @@ adg_dim_class_init(AdgDimClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress to use for rendering this dimension"),
-                                 ADG_DRESS_DIMENSION_REGULAR,
+                                 ADG_DRESS_DIMENSION,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
@@ -178,7 +179,7 @@ adg_dim_init(AdgDim *dim)
     AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
-    data->dress = ADG_DRESS_DIMENSION_REGULAR;
+    data->dress = ADG_DRESS_DIMENSION;
     data->ref1.x = data->ref1.y = 0;
     data->ref2.x = data->ref2.y = 0;
     data->pos.x = data->pos.y = 0;

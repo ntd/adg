@@ -36,6 +36,7 @@
 
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-fill-style.h"
 #include "adg-intl.h"
 
@@ -82,7 +83,7 @@ adg_hatch_class_init(AdgHatchClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress style to use for filling this entity"),
-                                 ADG_DRESS_FILL_REGULAR,
+                                 ADG_DRESS_FILL_HATCH,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 }
@@ -93,7 +94,7 @@ adg_hatch_init(AdgHatch *hatch)
     AdgHatchPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(hatch, ADG_TYPE_HATCH,
                                                         AdgHatchPrivate);
 
-    data->dress = ADG_DRESS_FILL_REGULAR;
+    data->dress = ADG_DRESS_FILL_HATCH;
 
     hatch->data = data;
 }

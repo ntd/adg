@@ -37,6 +37,7 @@
 
 #include "adg-dim-style.h"
 #include "adg-dim-style-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
 #include "adg-intl.h"

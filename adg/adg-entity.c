@@ -666,18 +666,18 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * @entity: an #AdgEntity
  * @dress: the dress of the style to get
  *
- * Gets the style to be used for @entity. @dress specifies the "type"
- * of style to get.
+ * Gets the style to be used for @entity. @dress specifies which
+ * "family" of style to get.
  *
  * The following sequence of checks is performed to get the proper
- * @dress style, stopping at the first succesfull result:
+ * style, stopping at the first succesfull result:
  *
  * <orderedlist>
- * <listitem>check if the style is defined directly by this entity type,
+ * <listitem>check if the style is directly overriden by this entity,
  *           as returned by adg_entity_get_style();</listitem>
  * <listitem>check if @entity has a parent, in which case returns the
  *           adg_entity_style() of the parent;</listitem>
- * <listitem>returns the main style with adg_dress_get_style().</listitem>
+ * <listitem>returns the main style with adg_dress_get_fallback().</listitem>
  * </orderedlist>
  *
  * Returns: the requested style or %NULL for transparent dresses or errors
@@ -688,7 +688,6 @@ adg_entity_style(AdgEntity *entity, AdgDress dress)
     AdgStyle *style;
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-    g_return_val_if_fail(dress != ADG_DRESS_UNDEFINED, NULL);
 
     style = adg_entity_get_style(entity, dress);
 
@@ -722,7 +721,6 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
     AdgEntityPrivate *data;
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-    g_return_val_if_fail(dress != ADG_DRESS_UNDEFINED, NULL);
 
     data = entity->data;
 

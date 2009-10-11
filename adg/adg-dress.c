@@ -56,27 +56,21 @@
 
 #include "adg-dress.h"
 #include "adg-dress-private.h"
-#include "adg-color-style.h"
-#include "adg-line-style.h"
-#include "adg-font-style.h"
-#include "adg-dim-style.h"
-#include "adg-ruled-fill.h"
-#include "adg-arrow.h"
+#include "adg-dress-builtins.h"
 
 
-static AdgDress quark_to_dress          (GQuark                  quark);
-static void     dress_to_string         (const GValue           *src,
-                                         GValue                 *dst);
-static void     string_to_dress         (const GValue           *src,
-                                         GValue                 *dst);
-static void     param_class_init        (GParamSpecClass        *klass);
-static gboolean value_validate          (GParamSpec             *spec,
-                                         GValue                 *value);
+static AdgDress         quark_to_dress          (GQuark          quark);
+static void             dress_to_string         (const GValue   *src,
+                                                 GValue         *dst);
+static void             string_to_dress         (const GValue   *src,
+                                                 GValue         *dst);
+static void             param_class_init        (GParamSpecClass*klass);
+static gboolean         value_validate          (GParamSpec     *spec,
+                                                 GValue         *value);
 
-static guint    array_append            (AdgDressPrivate        *data);
-static AdgDressPrivate *
-                array_lookup            (guint                  n);
-static guint    array_len               (void);
+static guint            array_append            (AdgDressPrivate*data);
+static AdgDressPrivate *array_lookup            (guint           n);
+static guint            array_len               (void);
 
 
 GType
@@ -498,242 +492,6 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
     fspec->source_dress = dress;
 
     return (GParamSpec *) fspec;
-}
-
-
-/**
- * ADG_DRESS_UNDEFINED:
- *
- * A value reperesenting an undefined #AdgDress.
- **/
-
-/**
- * ADG_DRESS_COLOR_REGULAR:
- *
- * The default builtin #AdgDress color. This dress will be resolved
- * to an #AdgColorStyle instance.
- **/
-AdgDress
-_adg_dress_color_regular(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE, NULL);
-
-        dress = adg_dress_new("color-regular", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_COLOR_DIMENSION:
- *
- * The builtin #AdgDress color used by dimensioning items. This dress
- * will be resolved to an #AdgColorStyle instance.
- **/
-AdgDress
-_adg_dress_color_dimension(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                       "red", 0.75, NULL);
-
-        dress = adg_dress_new("color-dimension", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_REGULAR:
- *
- * The default builtin #AdgDress line. This dress will be resolved
- * to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_regular(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                       "width", 2., NULL);
-
-        dress = adg_dress_new("line-regular", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_DIMENSION:
- *
- * The builtin #AdgDress line type used by base and extension lines in
- * dimensioning. This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_dimension(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 0.75, NULL);
-
-        dress = adg_dress_new("line-dimension", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_HATCH:
- *
- * The builtin #AdgDress line type used by base and extension lines in
- * dimensioning. This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_hatch(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 1., NULL);
-
-        dress = adg_dress_new("line-hatch", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_TEXT_REGULAR:
- *
- * The default builtin #AdgDress font. This dress will be resolved
- * to an #AdgFontStyle instance.
- **/
-AdgDress
-_adg_dress_text_regular(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
-                                          "family", "Serif",
-                                          "size", 14., NULL);
-
-        dress = adg_dress_new("text-regular", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_TEXT_VALUE:
- *
- * The builtin #AdgDress font used to render the nominal value of a
- * dimension. This dress will be resolved to an #AdgFontStyle instance.
- **/
-AdgDress
-_adg_dress_text_value(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
-                                          "family", "Sans",
-                                          "weight", CAIRO_FONT_WEIGHT_BOLD,
-                                          "size", 12., NULL);
-
-        dress = adg_dress_new("text-value", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_TEXT_LIMIT:
- *
- * The builtin #AdgDress font used to render the limits of either
- * the min and max values of a dimension. This dress will be
- * resolved to an #AdgFontStyle instance.
- **/
-AdgDress
-_adg_dress_text_limit(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
-                                          "family", "Sans",
-                                          "size", 8., NULL);
-
-        dress = adg_dress_new("text-limit", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_DIMENSION_REGULAR:
- *
- * The default builtin #AdgDress for dimensioning. This dress
- * will be resolved to an #AdgDimStyle instance.
- **/
-AdgDress
-_adg_dress_dimension_regular(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgMarker *arrow = g_object_new(ADG_TYPE_ARROW, NULL);
-        AdgStyle *fallback = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
-
-        adg_dim_style_use_marker1((AdgDimStyle *) fallback, arrow);
-        adg_marker_set_pos(arrow, 1);
-        adg_dim_style_use_marker2((AdgDimStyle *) fallback, arrow);
-
-        dress = adg_dress_new("dimension-regular", fallback);
-        g_object_unref(fallback);
-        g_object_unref(arrow);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_FILL_REGULAR:
- *
- * The default builtin #AdgDress for filling. This dress
- * will be resolved to an #AdgFillStyle derived instance.
- **/
-AdgDress
-_adg_dress_fill_regular(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL, NULL);
-
-        dress = adg_dress_new_full("fill-regular", fallback,
-                                   ADG_TYPE_FILL_STYLE);
-        g_object_unref(fallback);
-    }
-
-    return dress;
 }
 
 

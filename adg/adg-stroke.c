@@ -35,6 +35,7 @@
 
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-line-style.h"
 #include "adg-intl.h"
 
@@ -92,7 +93,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Dress Style"),
                                  P_("The dress style to use for stroking this entity"),
-                                 ADG_DRESS_LINE_REGULAR,
+                                 ADG_DRESS_LINE_STROKE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
@@ -111,7 +112,7 @@ adg_stroke_init(AdgStroke *stroke)
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
-    data->dress = ADG_DRESS_LINE_REGULAR;
+    data->dress = ADG_DRESS_LINE_STROKE;
     data->trail = NULL;
 
     adg_entity_set_local_mode((AdgEntity *) stroke, ADG_TRANSFORM_BEFORE);

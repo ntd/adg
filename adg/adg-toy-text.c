@@ -38,6 +38,7 @@
 
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
+#include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 #include "adg-intl.h"
 
@@ -101,7 +102,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     param = adg_param_spec_dress("dress",
                                  P_("Font Dress"),
                                  P_("The font dress to use for rendering this text"),
-                                 ADG_DRESS_TEXT_REGULAR,
+                                 ADG_DRESS_TEXT,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DRESS, param);
 
@@ -120,7 +121,7 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           ADG_TYPE_TOY_TEXT,
                                                           AdgToyTextPrivate);
 
-    data->dress = ADG_DRESS_TEXT_REGULAR;
+    data->dress = ADG_DRESS_TEXT;
     data->label = NULL;
     data->glyphs = NULL;
 

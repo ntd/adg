@@ -11,6 +11,7 @@ h_sources=			adg-adim.h \
 				adg-dim.h \
 				adg-dim-style.h \
 				adg-dress.h \
+				adg-dress-builtins.h \
 				adg-edges.h \
 				adg-entity.h \
 				adg-font-style.h \
@@ -72,6 +73,7 @@ c_sources=			adg-adim.c \
 				adg-dim.c \
 				adg-dim-style.c \
 				adg-dress.c \
+				adg-dress-builtins.c \
 				adg-edges.c \
 				adg-entity.c \
 				adg-enums.c \

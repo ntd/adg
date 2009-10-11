@@ -26,6 +26,7 @@
 #include <adg/adg-container.h>
 #include <adg/adg-dim.h>
 #include <adg/adg-dress.h>
+#include <adg/adg-dress-builtins.h>
 #include <adg/adg-edges.h>
 #include <adg/adg-entity.h>
 #include <adg/adg-enums.h>
