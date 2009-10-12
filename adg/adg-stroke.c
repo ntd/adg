@@ -45,7 +45,7 @@
 
 enum {
     PROP_0,
-    PROP_DRESS,
+    PROP_LINE_DRESS,
     PROP_TRAIL
 };
 
@@ -90,12 +90,12 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     entity_class->arrange = arrange;
     entity_class->render = render;
 
-    param = adg_param_spec_dress("dress",
-                                 P_("Dress Style"),
-                                 P_("The dress style to use for stroking this entity"),
+    param = adg_param_spec_dress("line-dress",
+                                 P_("Line Dress"),
+                                 P_("The dress to use for stroking this entity"),
                                  ADG_DRESS_LINE_STROKE,
                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
     param = g_param_spec_object("trail",
                                 P_("Trail"),
@@ -112,7 +112,7 @@ adg_stroke_init(AdgStroke *stroke)
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
-    data->dress = ADG_DRESS_LINE_STROKE;
+    data->line_dress = ADG_DRESS_LINE_STROKE;
     data->trail = NULL;
 
     adg_entity_set_local_mode((AdgEntity *) stroke, ADG_TRANSFORM_BEFORE);
@@ -137,8 +137,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgStrokePrivate *data = ((AdgStroke *) object)->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        g_value_set_int(value, data->dress);
+    case PROP_LINE_DRESS:
+        g_value_set_int(value, data->line_dress);
         break;
     case PROP_TRAIL:
         g_value_set_object(value, &data->trail);
@@ -160,8 +160,8 @@ set_property(GObject *object, guint prop_id,
     data = stroke->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        adg_dress_set(&data->dress, g_value_get_int(value));
+    case PROP_LINE_DRESS:
+        adg_dress_set(&data->line_dress, g_value_get_int(value));
         break;
     case PROP_TRAIL:
         set_trail(stroke, (AdgTrail *) g_value_get_object(value));
@@ -190,7 +190,7 @@ adg_stroke_new(AdgTrail *trail)
 }
 
 /**
- * adg_stroke_get_dress:
+ * adg_stroke_get_line_dress:
  * @stroke: an #AdgStroke
  *
  * Gets the line dress to be used in rendering @stroke.
@@ -198,7 +198,7 @@ adg_stroke_new(AdgTrail *trail)
  * Returns: the current line dress
  **/
 AdgDress
-adg_stroke_get_dress(AdgStroke *stroke)
+adg_stroke_get_line_dress(AdgStroke *stroke)
 {
     AdgStrokePrivate *data;
 
@@ -206,11 +206,11 @@ adg_stroke_get_dress(AdgStroke *stroke)
 
     data = stroke->data;
 
-    return data->dress;
+    return data->line_dress;
 }
 
 /**
- * adg_stroke_set_dress:
+ * adg_stroke_set_line_dress:
  * @stroke: an #AdgStroke
  * @dress: the new #AdgDress to use
  *
@@ -224,7 +224,7 @@ adg_stroke_get_dress(AdgStroke *stroke)
  * documentation for details on what is a related dress.
  **/
 void
-adg_stroke_set_dress(AdgStroke *stroke, AdgDress dress)
+adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
 {
     AdgStrokePrivate *data;
 
@@ -232,8 +232,8 @@ adg_stroke_set_dress(AdgStroke *stroke, AdgDress dress)
 
     data = stroke->data;
 
-    if (adg_dress_set(&data->dress, dress))
-        g_object_notify((GObject *) stroke, "dress");
+    if (adg_dress_set(&data->line_dress, dress))
+        g_object_notify((GObject *) stroke, "line-dress");
 }
 
 /**
@@ -327,7 +327,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        adg_entity_apply_dress(entity, data->dress, cr);
+        adg_entity_apply_dress(entity, data->line_dress, cr);
         cairo_stroke(cr);
     }
 }

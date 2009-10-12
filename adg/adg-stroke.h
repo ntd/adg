@@ -53,8 +53,8 @@ GType           adg_stroke_get_type             (void) G_GNUC_CONST;
 
 AdgStroke *     adg_stroke_new                  (AdgTrail       *trail);
 
-AdgDress        adg_stroke_get_dress            (AdgStroke      *stroke);
-void            adg_stroke_set_dress            (AdgStroke      *stroke,
+AdgDress        adg_stroke_get_line_dress       (AdgStroke      *stroke);
+void            adg_stroke_set_line_dress       (AdgStroke      *stroke,
                                                  AdgDress        dress);
 AdgTrail *      adg_stroke_get_trail            (AdgStroke      *stroke);
 void            adg_stroke_set_trail            (AdgStroke      *stroke,
