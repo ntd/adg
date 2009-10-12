@@ -120,7 +120,7 @@ needed to generate this drawing.</para>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in global space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
-   <listitem>The dressing feature needs more attention: they are still not well
+   <listitem override="disc">The dressing feature needs more attention: they are still not well
    polished and always using the "dress" property will likely give name
    conflicts: a basic mangling is required.</listitem>
    <listitem>Allow the linear dimension to be decentralized by using the pos point
