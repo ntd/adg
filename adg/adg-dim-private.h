@@ -26,10 +26,13 @@
 
 G_BEGIN_DECLS
 
+#define GET_DIM_STYLE(dim)  (((AdgDimPrivate *) ((AdgDim *) (dim))->data)->dim_style)
+
+
 typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDimPrivate {
-    AdgDress             dress;
+    AdgDress             dim_dress;
     AdgPair              ref1;
     AdgPair              ref2;
     AdgPair              pos;

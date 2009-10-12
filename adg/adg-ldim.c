@@ -35,6 +35,7 @@
 
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
+#include "adg-dim-private.h"
 #include "adg-dim-style.h"
 #include "adg-intl.h"
 
@@ -467,7 +468,7 @@ arrange(AdgEntity *entity)
         return;
     }
 
-    dim_style = adg_dim_get_dim_style(dim);
+    dim_style = GET_DIM_STYLE(dim);
 
     switch (adg_dim_get_outside(dim)) {
     case ADG_THREE_STATE_OFF:
@@ -606,10 +607,9 @@ render(AdgEntity *entity, cairo_t *cr)
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) entity;
     data = ldim->data;
-    dim_style = adg_dim_get_dim_style(dim);
+    dim_style = GET_DIM_STYLE(dim);
 
-    dress = adg_dim_style_get_color_dress(dim_style);
-    adg_entity_apply_dress(entity, dress, cr);
+    adg_style_apply((AdgStyle *) dim_style, entity, cr);
 
     if (data->marker1 != NULL)
         adg_entity_render((AdgEntity *) data->marker1, cr);
@@ -637,7 +637,7 @@ default_value(AdgDim *dim)
 
     ldim = (AdgLDim *) dim;
     data = ldim->data;
-    dim_style = adg_dim_get_dim_style(dim);
+    dim_style = GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
     update_geometry(ldim);
@@ -702,7 +702,7 @@ update_shift(AdgLDim *ldim)
     if (data->shift.is_arranged)
         return;
 
-    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
+    dim_style = GET_DIM_STYLE(ldim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
@@ -729,7 +729,7 @@ update_entities(AdgLDim *ldim)
     AdgDimStyle *dim_style;
 
     data = ldim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
+    dim_style = GET_DIM_STYLE(ldim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, ldim);

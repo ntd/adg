@@ -47,7 +47,7 @@
 
 enum {
     PROP_0,
-    PROP_DRESS,
+    PROP_DIM_DRESS,
     PROP_REF1,
     PROP_REF2,
     PROP_POS,
@@ -75,7 +75,7 @@ static void     invalidate              (AdgEntity      *entity);
 static void     arrange                 (AdgEntity      *entity);
 static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
-static gboolean set_dress               (AdgDim         *dim,
+static gboolean set_dim_dress           (AdgDim         *dim,
                                          AdgDress        dress);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
@@ -113,12 +113,12 @@ adg_dim_class_init(AdgDimClass *klass)
     klass->quote_angle = quote_angle;
     klass->default_value = default_value;
 
-    param = adg_param_spec_dress("dress",
+    param = adg_param_spec_dress("dim-dress",
                                  P_("Dress Style"),
                                  P_("The dress to use for rendering this dimension"),
                                  ADG_DRESS_DIMENSION,
                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_DIM_DRESS, param);
 
     param = g_param_spec_boxed("ref1",
                                P_("Reference 1"),
@@ -179,7 +179,7 @@ adg_dim_init(AdgDim *dim)
     AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
                                                       AdgDimPrivate);
 
-    data->dress = ADG_DRESS_DIMENSION;
+    data->dim_dress = ADG_DRESS_DIMENSION;
     data->ref1.x = data->ref1.y = 0;
     data->ref2.x = data->ref2.y = 0;
     data->pos.x = data->pos.y = 0;
@@ -225,8 +225,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        g_value_set_int(value, data->dress);
+    case PROP_DIM_DRESS:
+        g_value_set_int(value, data->dim_dress);
         break;
     case PROP_REF1:
         g_value_set_boxed(value, &data->ref1);
@@ -269,8 +269,8 @@ set_property(GObject *object, guint prop_id,
     data = dim->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        set_dress(dim, g_value_get_int(value));
+    case PROP_DIM_DRESS:
+        set_dim_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
         cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
@@ -304,7 +304,7 @@ set_property(GObject *object, guint prop_id,
 
 
 /**
- * adg_dim_get_dress:
+ * adg_dim_get_dim_dress:
  * @dim: an #AdgDim
  *
  * Gets the dimension dress to be used in rendering @dim.
@@ -312,7 +312,7 @@ set_property(GObject *object, guint prop_id,
  * Returns: the current dimension dress
  **/
 AdgDress
-adg_dim_get_dress(AdgDim *dim)
+adg_dim_get_dim_dress(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -320,11 +320,11 @@ adg_dim_get_dress(AdgDim *dim)
 
     data = dim->data;
 
-    return data->dress;
+    return data->dim_dress;
 }
 
 /**
- * adg_dim_set_dress:
+ * adg_dim_set_dim_dress:
  * @dim: an #AdgDim
  * @dress: the new #AdgDress to use
  *
@@ -337,12 +337,12 @@ adg_dim_get_dress(AdgDim *dim)
  * documentation for details on what is a related dress.
  **/
 void
-adg_dim_set_dress(AdgDim *dim, AdgDress dress)
+adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_dress(dim, dress))
-        g_object_notify((GObject *) dim, "dress");
+    if (set_dim_dress(dim, dress))
+        g_object_notify((GObject *) dim, "dim-dress");
 }
 
 /**
@@ -729,29 +729,6 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 }
 
 /**
- * adg_dim_get_dim_style:
- * @dim: an #AdgDim entity
- *
- * Gets the #AdgDimStyle associated to @dim. The dress to style
- * resolution is done in the arrange() method so this value is
- * typically available in render() or in a derived arrange()
- * method, after the #AdgDim arrange() function has been chained up.
- *
- * Returns: the dim style of @entity
- **/
-AdgDimStyle *
-adg_dim_get_dim_style(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return data->dim_style;
-}
-
-/**
  * adg_dim_get_quote:
  * @dim: an #AdgDim
  *
@@ -807,6 +784,30 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
     return klass->quote_angle(angle);
 }
 
+/**
+ * _adg_dim_get_dim_style:
+ * @dim: an #AdgDim entity
+ *
+ * Gets the #AdgDimStyle associated to @dim. The dress to style
+ * resolution is done in the arrange() method so this value is
+ * typically available in render() or in a derived arrange()
+ * method, after the #AdgDim arrange() function has been chained up.
+ *
+ * Returns: the dim style of @entity
+ **/
+AdgDimStyle *
+_adg_dim_get_dim_style(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+
+    return data->dim_style;
+}
+
+
 static void
 arrange(AdgEntity *entity)
 {
@@ -825,7 +826,8 @@ arrange(AdgEntity *entity)
 
     /* Resolve the dim style */
     if (data->dim_style == NULL)
-        data->dim_style = (AdgDimStyle *) adg_entity_style(entity, data->dress);
+        data->dim_style = (AdgDimStyle *) adg_entity_style(entity,
+                                                           data->dim_dress);
 
     if (data->quote.container == NULL)
         data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
@@ -921,7 +923,6 @@ arrange(AdgEntity *entity)
     adg_entity_arrange(container_entity);
 }
 
-
 static void
 global_changed(AdgEntity *entity)
 {
@@ -973,11 +974,11 @@ quote_angle(gdouble angle)
 }
 
 static gboolean
-set_dress(AdgDim *dim, AdgDress dress)
+set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     AdgDimPrivate *data = dim->data;
 
-    if (adg_dress_set(&data->dress, dress)) {
+    if (adg_dress_set(&data->dim_dress, dress)) {
         data->dim_style = NULL;
         return TRUE;
     }

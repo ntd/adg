@@ -1065,6 +1065,9 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 static void
 apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
+    AdgDimStylePrivate *data = ((AdgDimStyle *) style)->data;
+
+    adg_entity_apply_dress(entity, data->color_dress, cr);
 }
 
 static void

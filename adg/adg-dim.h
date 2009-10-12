@@ -55,8 +55,8 @@ struct _AdgDimClass {
 
 
 GType           adg_dim_get_type                (void) G_GNUC_CONST;
-AdgDress        adg_dim_get_dress               (AdgDim         *dim);
-void            adg_dim_set_dress               (AdgDim         *dim,
+AdgDress        adg_dim_get_dim_dress           (AdgDim         *dim);
+void            adg_dim_set_dim_dress           (AdgDim         *dim,
                                                  AdgDress        dress);
 const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
 const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
@@ -92,7 +92,6 @@ void            adg_dim_set_max                 (AdgDim         *dim,
 void            adg_dim_set_limits              (AdgDim         *dim,
                                                  const gchar    *min,
                                                  const gchar    *max);
-AdgDimStyle *   adg_dim_get_dim_style           (AdgDim         *dim);
 gdouble         adg_dim_quote_angle             (AdgDim         *dim,
                                                  gdouble         angle);
 AdgContainer *  adg_dim_get_quote               (AdgDim         *dim);

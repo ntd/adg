@@ -35,6 +35,7 @@
 
 #include "adg-adim.h"
 #include "adg-adim-private.h"
+#include "adg-dim-private.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
@@ -506,10 +507,9 @@ render(AdgEntity *entity, cairo_t *cr)
     adim = (AdgADim *) entity;
     dim = (AdgDim *) entity;
     data = adim->data;
-    dim_style = adg_dim_get_dim_style(dim);
+    dim_style = GET_DIM_STYLE(dim);
 
-    dress = adg_dim_style_get_color_dress(dim_style);
-    adg_entity_apply_dress(entity, dress, cr);
+    adg_style_apply((AdgStyle *) dim_style, entity, cr);
 
     if (data->marker1 != NULL)
         adg_entity_render((AdgEntity *) data->marker1, cr);
@@ -538,7 +538,7 @@ default_value(AdgDim *dim)
 
     adim = (AdgADim *) dim;
     data = adim->data;
-    dim_style = adg_dim_get_dim_style(dim);
+    dim_style = GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
     update_geometry(adim);
@@ -573,7 +573,7 @@ update_geometry(AdgADim *adim)
         return;
     }
 
-    dim_style = adg_dim_get_dim_style((AdgDim *) adim);
+    dim_style = GET_DIM_STYLE(adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
@@ -632,7 +632,7 @@ update_entities(AdgADim *adim)
     AdgDimStyle *dim_style;
 
     data = adim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) adim);
+    dim_style = GET_DIM_STYLE(adim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, adim);
