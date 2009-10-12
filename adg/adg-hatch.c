@@ -215,25 +215,18 @@ render(AdgEntity *entity, cairo_t *cr)
     if (cairo_path != NULL) {
         AdgFillStyle *fill_style;
         CpmlExtents extents;
-        AdgMatrix ctm;
 
-        fill_style = (AdgFillStyle *) adg_entity_style(entity,
-                                                       data->fill_dress);
-        adg_entity_get_ctm(entity, &ctm);
-
+        fill_style = (AdgFillStyle *) adg_entity_style(entity, data->fill_dress);
         adg_entity_get_extents(entity, &extents);
+
         adg_fill_style_set_extents(fill_style, &extents);
 
         cairo_save(cr);
-
-        cairo_save(cr);
-        cairo_set_matrix(cr, &ctm);
+        cairo_set_matrix(cr, adg_entity_ctm(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
         adg_style_apply((AdgStyle *) fill_style, entity, cr);
         cairo_fill(cr);
-
-        cairo_restore(cr);
     }
 }

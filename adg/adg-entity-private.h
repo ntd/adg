@@ -30,12 +30,12 @@ struct _AdgEntityPrivate {
     AdgEntity   *parent;
     AdgMatrix    global_map;
     AdgMatrix    local_map;
-    AdgTransformationMode
-                 local_mode;
+    gboolean     normalized;
     GHashTable  *hash_styles;
 
     AdgMatrix    global_matrix;
     AdgMatrix    local_matrix;
+    AdgMatrix    ctm;
     CpmlExtents  extents;
 };
 

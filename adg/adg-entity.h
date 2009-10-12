@@ -92,10 +92,9 @@ void             adg_entity_set_local_map       (AdgEntity       *entity,
 void             adg_entity_transform_local_map (AdgEntity       *entity,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformationMode mode);
-AdgTransformationMode
-                 adg_entity_get_local_mode      (AdgEntity       *entity);
-void             adg_entity_set_local_mode      (AdgEntity       *entity,
-                                                 AdgTransformationMode mode);
+gboolean         adg_entity_get_normalized      (AdgEntity       *entity);
+void             adg_entity_set_normalized      (AdgEntity       *entity,
+                                                 gboolean         normalized);
 void             adg_entity_get_extents         (AdgEntity       *entity,
                                                  CpmlExtents     *extents);
 void             adg_entity_set_extents         (AdgEntity       *entity,
@@ -112,8 +111,7 @@ void             adg_entity_apply_dress         (AdgEntity       *entity,
                                                  cairo_t         *cr);
 const AdgMatrix *adg_entity_global_matrix       (AdgEntity       *entity);
 const AdgMatrix *adg_entity_local_matrix        (AdgEntity       *entity);
-void             adg_entity_get_ctm             (AdgEntity       *entity,
-                                                 AdgMatrix       *ctm);
+const AdgMatrix *adg_entity_ctm                 (AdgEntity       *entity);
 void             adg_entity_global_changed      (AdgEntity       *entity);
 void             adg_entity_local_changed       (AdgEntity       *entity);
 void             adg_entity_invalidate          (AdgEntity       *entity);

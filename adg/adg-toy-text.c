@@ -125,10 +125,9 @@ adg_toy_text_init(AdgToyText *toy_text)
     data->label = NULL;
     data->glyphs = NULL;
 
-    adg_entity_set_local_mode((AdgEntity *) toy_text,
-                              ADG_TRANSFORM_BEFORE_NORMALIZED);
-
     toy_text->data = data;
+
+    adg_entity_set_normalized((AdgEntity *) toy_text, TRUE);
 }
 
 static void
@@ -311,14 +310,10 @@ arrange(AdgEntity *entity)
     data = toy_text->data;
 
     if (data->font == NULL) {
-        AdgFontStyle *font_style;
-        AdgMatrix ctm;
+        AdgFontStyle *font_style = (AdgFontStyle *)
+            adg_entity_style(entity, data->font_dress);
 
-        font_style = (AdgFontStyle *) adg_entity_style(entity,
-                                                       data->font_dress);
-        adg_entity_get_ctm(entity, &ctm);
-
-        data->font = adg_font_style_font(font_style, &ctm);
+        data->font = adg_font_style_font(font_style, adg_entity_ctm(entity));
     }
 
     if (data->label == NULL || data->label[0] == '\0') {
@@ -366,12 +361,8 @@ render(AdgEntity *entity, cairo_t *cr)
     data = toy_text->data;
 
     if (data->glyphs != NULL) {
-        AdgMatrix ctm;
-
-        adg_entity_get_ctm(entity, &ctm);
-
         adg_entity_apply_dress(entity, data->font_dress, cr);
-        cairo_set_matrix(cr, &ctm);
+        cairo_set_matrix(cr, adg_entity_ctm(entity));
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }
 }

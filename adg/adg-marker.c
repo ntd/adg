@@ -169,8 +169,6 @@ adg_marker_init(AdgMarker *marker)
     data->size = 10;
     data->model = NULL;
 
-    adg_entity_set_local_mode((AdgEntity *) marker, ADG_TRANSFORM_BEFORE);
-
     marker->data = data;
 }
 

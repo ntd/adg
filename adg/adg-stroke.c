@@ -115,8 +115,6 @@ adg_stroke_init(AdgStroke *stroke)
     data->line_dress = ADG_DRESS_LINE_STROKE;
     data->trail = NULL;
 
-    adg_entity_set_local_mode((AdgEntity *) stroke, ADG_TRANSFORM_BEFORE);
-
     stroke->data = data;
 }
 
@@ -318,12 +316,8 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
-        AdgMatrix ctm;
-
-        adg_entity_get_ctm(entity, &ctm);
-
         cairo_save(cr);
-        cairo_set_matrix(cr, &ctm);
+        cairo_set_matrix(cr, adg_entity_ctm(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 

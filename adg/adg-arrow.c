@@ -193,12 +193,8 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) model);
 
     if (cairo_path != NULL) {
-        AdgMatrix ctm;
-
-        adg_entity_get_ctm(entity, &ctm);
-
         cairo_save(cr);
-        cairo_set_matrix(cr, &ctm);
+        cairo_set_matrix(cr, adg_entity_ctm(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
