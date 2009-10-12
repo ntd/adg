@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
 
 struct _AdgToyTextPrivate {
-    AdgDress             dress;
+    AdgDress             font_dress;
     gchar               *label;
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;

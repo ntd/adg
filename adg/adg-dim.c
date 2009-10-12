@@ -837,7 +837,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
 
         data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
-                                         "dress", dress, NULL);
+                                         "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container,
                           (AdgEntity *) data->quote.value);
@@ -855,7 +855,8 @@ arrange(AdgEntity *entity)
     if (data->quote.min == NULL && data->min != NULL) {
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
-        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT, "dress", dress, NULL);
+        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
+                                       "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.min);
         adg_toy_text_set_label(data->quote.min, data->min);
@@ -864,7 +865,8 @@ arrange(AdgEntity *entity)
     if (data->quote.max == NULL && data->max != NULL) {
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
-        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT, "dress", dress, NULL);
+        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
+                                       "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.max);
         adg_toy_text_set_label(data->quote.max, data->max);

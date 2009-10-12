@@ -48,7 +48,7 @@
 
 enum {
     PROP_0,
-    PROP_DRESS,
+    PROP_FONT_DRESS,
     PROP_LABEL
 };
 
@@ -67,7 +67,7 @@ static void     invalidate              (AdgEntity      *entity);
 static void     arrange                 (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gboolean set_dress               (AdgToyText     *toy_text,
+static gboolean set_font_dress          (AdgToyText     *toy_text,
                                          AdgDress        dress);
 static gboolean set_label               (AdgToyText     *toy_text,
                                          const gchar    *label);
@@ -99,12 +99,12 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     entity_class->arrange = arrange;
     entity_class->render = render;
 
-    param = adg_param_spec_dress("dress",
+    param = adg_param_spec_dress("font-dress",
                                  P_("Font Dress"),
                                  P_("The font dress to use for rendering this text"),
                                  ADG_DRESS_TEXT,
                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_FONT_DRESS, param);
 
     param = g_param_spec_string("label",
                                 P_("Label"),
@@ -121,7 +121,7 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           ADG_TYPE_TOY_TEXT,
                                                           AdgToyTextPrivate);
 
-    data->dress = ADG_DRESS_TEXT;
+    data->font_dress = ADG_DRESS_TEXT;
     data->label = NULL;
     data->glyphs = NULL;
 
@@ -154,8 +154,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        g_value_set_int(value, data->dress);
+    case PROP_FONT_DRESS:
+        g_value_set_int(value, data->font_dress);
         break;
     case PROP_LABEL:
         g_value_set_string(value, data->label);
@@ -173,8 +173,8 @@ set_property(GObject *object, guint prop_id,
     AdgToyText *toy_text = (AdgToyText *) object;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        set_dress(toy_text, g_value_get_int(value));
+    case PROP_FONT_DRESS:
+        set_font_dress(toy_text, g_value_get_int(value));
         break;
     case PROP_LABEL:
         set_label(toy_text, g_value_get_string(value));
@@ -201,7 +201,7 @@ adg_toy_text_new(const gchar *label)
 }
 
 /**
- * adg_toy_text_get_dress:
+ * adg_toy_text_get_font_dress:
  * @toy_text: an #AdgToyText
  *
  * Gets the font dress to be used in rendering @toy_text.
@@ -209,7 +209,7 @@ adg_toy_text_new(const gchar *label)
  * Returns: the current font dress
  **/
 AdgDress
-adg_toy_text_get_dress(AdgToyText *toy_text)
+adg_toy_text_get_font_dress(AdgToyText *toy_text)
 {
     AdgToyTextPrivate *data;
 
@@ -217,11 +217,11 @@ adg_toy_text_get_dress(AdgToyText *toy_text)
 
     data = toy_text->data;
 
-    return data->dress;
+    return data->font_dress;
 }
 
 /**
- * adg_toy_text_set_dress:
+ * adg_toy_text_set_font_dress:
  * @toy_text: an #AdgToyText
  * @dress: the new #AdgDress to use
  *
@@ -235,12 +235,12 @@ adg_toy_text_get_dress(AdgToyText *toy_text)
  * documentation for details on what is a related dress.
  **/
 void
-adg_toy_text_set_dress(AdgToyText *toy_text, AdgDress dress)
+adg_toy_text_set_font_dress(AdgToyText *toy_text, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
 
-    if (set_dress(toy_text, dress))
-        g_object_notify((GObject *) toy_text, "dress");
+    if (set_font_dress(toy_text, dress))
+        g_object_notify((GObject *) toy_text, "font-dress");
 }
 
 /**
@@ -314,7 +314,8 @@ arrange(AdgEntity *entity)
         AdgFontStyle *font_style;
         AdgMatrix ctm;
 
-        font_style = (AdgFontStyle *) adg_entity_style(entity, data->dress);
+        font_style = (AdgFontStyle *) adg_entity_style(entity,
+                                                       data->font_dress);
         adg_entity_get_ctm(entity, &ctm);
 
         data->font = adg_font_style_font(font_style, &ctm);
@@ -369,18 +370,18 @@ render(AdgEntity *entity, cairo_t *cr)
 
         adg_entity_get_ctm(entity, &ctm);
 
-        adg_entity_apply_dress(entity, data->dress, cr);
+        adg_entity_apply_dress(entity, data->font_dress, cr);
         cairo_set_matrix(cr, &ctm);
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }
 }
 
 static gboolean
-set_dress(AdgToyText *toy_text, AdgDress dress)
+set_font_dress(AdgToyText *toy_text, AdgDress dress)
 {
     AdgToyTextPrivate *data = toy_text->data;
 
-    if (adg_dress_set(&data->dress, dress)) {
+    if (adg_dress_set(&data->font_dress, dress)) {
         unset_font(toy_text);
         return TRUE;
     }
