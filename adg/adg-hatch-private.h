@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgHatchPrivate AdgHatchPrivate;
 
 struct _AdgHatchPrivate {
-    AdgDress     dress;
+    AdgDress     fill_dress;
 };
 
 G_END_DECLS

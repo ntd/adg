@@ -45,7 +45,7 @@
 
 enum {
     PROP_0,
-    PROP_DRESS
+    PROP_FILL_DRESS
 };
 
 static void             get_property            (GObject        *object,
@@ -80,12 +80,12 @@ adg_hatch_class_init(AdgHatchClass *klass)
 
     entity_class->render = render;
 
-    param = adg_param_spec_dress("dress",
-                                 P_("Dress Style"),
-                                 P_("The dress style to use for filling this entity"),
+    param = adg_param_spec_dress("fill-dress",
+                                 P_("Fill Dress"),
+                                 P_("The dress to use for filling this entity"),
                                  ADG_DRESS_FILL_HATCH,
                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_FILL_DRESS, param);
 }
 
 static void
@@ -94,7 +94,7 @@ adg_hatch_init(AdgHatch *hatch)
     AdgHatchPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(hatch, ADG_TYPE_HATCH,
                                                         AdgHatchPrivate);
 
-    data->dress = ADG_DRESS_FILL_HATCH;
+    data->fill_dress = ADG_DRESS_FILL_HATCH;
 
     hatch->data = data;
 }
@@ -105,8 +105,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgHatchPrivate *data = ((AdgHatch *) object)->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        g_value_set_int(value, data->dress);
+    case PROP_FILL_DRESS:
+        g_value_set_int(value, data->fill_dress);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -125,8 +125,8 @@ set_property(GObject *object, guint prop_id,
     data = hatch->data;
 
     switch (prop_id) {
-    case PROP_DRESS:
-        adg_dress_set(&data->dress, g_value_get_int(value));
+    case PROP_FILL_DRESS:
+        adg_dress_set(&data->fill_dress, g_value_get_int(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -152,7 +152,7 @@ adg_hatch_new(AdgTrail *trail)
 }
 
 /**
- * adg_hatch_get_dress:
+ * adg_hatch_get_fill_dress:
  * @hatch: an #AdgHatch
  *
  * Gets the line dress to be used in rendering @hatch.
@@ -160,7 +160,7 @@ adg_hatch_new(AdgTrail *trail)
  * Returns: the current line dress
  **/
 AdgDress
-adg_hatch_get_dress(AdgHatch *hatch)
+adg_hatch_get_fill_dress(AdgHatch *hatch)
 {
     AdgHatchPrivate *data;
 
@@ -168,11 +168,11 @@ adg_hatch_get_dress(AdgHatch *hatch)
 
     data = hatch->data;
 
-    return data->dress;
+    return data->fill_dress;
 }
 
 /**
- * adg_hatch_set_dress:
+ * adg_hatch_set_fill_dress:
  * @hatch: an #AdgHatch
  * @dress: the new #AdgDress to use
  *
@@ -186,7 +186,7 @@ adg_hatch_get_dress(AdgHatch *hatch)
  * documentation for details on what is a related dress.
  **/
 void
-adg_hatch_set_dress(AdgHatch *hatch, AdgDress dress)
+adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
 {
     AdgHatchPrivate *data;
 
@@ -194,8 +194,8 @@ adg_hatch_set_dress(AdgHatch *hatch, AdgDress dress)
 
     data = hatch->data;
 
-    if (adg_dress_set(&data->dress, dress))
-        g_object_notify((GObject *) hatch, "dress");
+    if (adg_dress_set(&data->fill_dress, dress))
+        g_object_notify((GObject *) hatch, "fill-dress");
 }
 
 
@@ -217,7 +217,8 @@ render(AdgEntity *entity, cairo_t *cr)
         CpmlExtents extents;
         AdgMatrix ctm;
 
-        fill_style = (AdgFillStyle *) adg_entity_style(entity, data->dress);
+        fill_style = (AdgFillStyle *) adg_entity_style(entity,
+                                                       data->fill_dress);
         adg_entity_get_ctm(entity, &ctm);
 
         adg_entity_get_extents(entity, &extents);
