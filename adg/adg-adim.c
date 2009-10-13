@@ -259,8 +259,16 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
                   const AdgPair *org1, const AdgPair *org2,
                   const AdgPair *pos)
 {
-    return g_object_new(ADG_TYPE_ADIM, "ref1", ref1, "ref2", ref2,
-                        "org1", org1, "org2", org2, "pos", pos, NULL);
+    AdgADim *adim;
+    AdgDim *dim;
+
+    adim = g_object_new(ADG_TYPE_ADIM, "org1", org1, "org2", org2, NULL);
+    dim = (AdgDim *) adim;
+
+    adg_dim_set_ref(dim, ref1, ref2);
+    adg_dim_set_pos(dim, pos);
+
+    return adim;
 }
 
 /**

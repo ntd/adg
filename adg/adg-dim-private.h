@@ -22,6 +22,7 @@
 #define __ADG_DIM_PRIVATE_H__
 
 #include <adg/adg-toy-text.h>
+#include <adg/adg-point.h>
 
 
 G_BEGIN_DECLS
@@ -33,9 +34,9 @@ typedef struct _AdgDimPrivate AdgDimPrivate;
 
 struct _AdgDimPrivate {
     AdgDress             dim_dress;
-    AdgPair              ref1;
-    AdgPair              ref2;
-    AdgPair              pos;
+    AdgPoint            *ref1;
+    AdgPoint            *ref2;
+    AdgPoint            *pos;
     gdouble              level;
     AdgThreeState        outside;
     gchar               *value;

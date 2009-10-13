@@ -123,21 +123,22 @@ adg_dim_class_init(AdgDimClass *klass)
     param = g_param_spec_boxed("ref1",
                                P_("Reference 1"),
                                P_("First reference point of the dimension"),
-                               ADG_TYPE_PAIR,
-                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                               ADG_TYPE_POINT,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_REF1, param);
 
     param = g_param_spec_boxed("ref2",
                                P_("Reference 2"),
                                P_("Second reference point of the dimension"),
-                               ADG_TYPE_PAIR,
-                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+                               ADG_TYPE_POINT,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_REF2, param);
 
     param = g_param_spec_boxed("pos",
                                P_("Position"),
                                P_("The reference position in local space of the quote: it will be combined with \"level\" to get the real quote position"),
-                               ADG_TYPE_PAIR, G_PARAM_READWRITE);
+                               ADG_TYPE_POINT,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_POS, param);
 
     param = g_param_spec_double("level",
@@ -157,19 +158,22 @@ adg_dim_class_init(AdgDimClass *klass)
     param = g_param_spec_string("value",
                                 P_("Basic Value"),
                                 P_("The theoretically exact value for this quote: set to NULL to automatically get the default value"),
-                                NULL, G_PARAM_READWRITE);
+                                NULL,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE, param);
 
     param = g_param_spec_string("value-min",
                                 P_("Minimum Value or Low Tolerance"),
                                 P_("The minimum value allowed or the lowest tolerance from value (depending of the dimension style): set to NULL to suppress"),
-                                NULL, G_PARAM_READWRITE);
+                                NULL,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MIN, param);
 
     param = g_param_spec_string("value-max",
                                 P_("Maximum Value or High Tolerance"),
                                 P_("The maximum value allowed or the highest tolerance from value (depending of the dimension style): set to NULL to suppress"),
-                                NULL, G_PARAM_READWRITE);
+                                NULL,
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MAX, param);
 }
 
@@ -180,9 +184,9 @@ adg_dim_init(AdgDim *dim)
                                                       AdgDimPrivate);
 
     data->dim_dress = ADG_DRESS_DIMENSION;
-    data->ref1.x = data->ref1.y = 0;
-    data->ref2.x = data->ref2.y = 0;
-    data->pos.x = data->pos.y = 0;
+    data->ref1 = NULL;
+    data->ref2 = NULL;
+    data->pos = NULL;
     data->level = 1;
     data->outside = ADG_THREE_STATE_UNKNOWN;
     data->value = NULL;
@@ -200,6 +204,18 @@ dispose(GObject *object)
     if (data->quote.container != NULL) {
         g_object_unref(data->quote.container);
         data->quote.container = NULL;
+    }
+    if (data->ref1 != NULL) {
+        adg_point_destroy(data->ref1);
+        data->ref1 = NULL;
+    }
+    if (data->ref2 != NULL) {
+        adg_point_destroy(data->ref2);
+        data->ref2 = NULL;
+    }
+    if (data->pos != NULL) {
+        adg_point_destroy(data->pos);
+        data->pos = NULL;
     }
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
@@ -229,13 +245,13 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         g_value_set_int(value, data->dim_dress);
         break;
     case PROP_REF1:
-        g_value_set_boxed(value, &data->ref1);
+        g_value_set_boxed(value, data->ref1);
         break;
     case PROP_REF2:
-        g_value_set_boxed(value, &data->ref2);
+        g_value_set_boxed(value, data->ref2);
         break;
     case PROP_POS:
-        g_value_set_boxed(value, &data->pos);
+        g_value_set_boxed(value, data->pos);
         break;
     case PROP_LEVEL:
         g_value_set_double(value, data->level);
@@ -273,13 +289,19 @@ set_property(GObject *object, guint prop_id,
         set_dim_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
-        cpml_pair_copy(&data->ref1, (AdgPair *) g_value_get_boxed(value));
+        if (data->ref1 != NULL)
+            adg_point_destroy(data->ref1);
+        data->ref1 = g_value_dup_boxed(value);
         break;
     case PROP_REF2:
-        cpml_pair_copy(&data->ref2, (AdgPair *) g_value_get_boxed(value));
+        if (data->ref2 != NULL)
+            adg_point_destroy(data->ref2);
+        data->ref2 = g_value_dup_boxed(value);
         break;
     case PROP_POS:
-        cpml_pair_copy(&data->pos, (AdgPair *) g_value_get_boxed(value));
+        if (data->pos != NULL)
+            adg_point_destroy(data->pos);
+        data->pos = g_value_dup_boxed(value);
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -363,7 +385,7 @@ adg_dim_get_ref1(AdgDim *dim)
 
     data = dim->data;
 
-    return &data->ref1;
+    return ADG_POINT_PAIR(data->ref1);
 }
 
 /**
@@ -384,7 +406,7 @@ adg_dim_get_ref2(AdgDim *dim)
 
     data = dim->data;
 
-    return &data->ref2;
+    return ADG_POINT_PAIR(data->ref2);
 }
 
 /**
@@ -410,12 +432,20 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
         g_object_freeze_notify(object);
 
         if (ref1 != NULL) {
-            data->ref1 = *ref1;
+            if (data->ref1 == NULL)
+                data->ref1 = adg_point_new();
+
+            adg_point_set(data->ref1, ref1);
+
             g_object_notify(object, "ref1");
         }
 
         if (ref2 != NULL) {
-            data->ref2 = *ref2;
+            if (data->ref2 == NULL)
+                data->ref2 = adg_point_new();
+
+            adg_point_set(data->ref2, ref2);
+
             g_object_notify(object, "ref2");
         }
 
@@ -435,7 +465,8 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
  * using explicit coordinates.
  **/
 void
-adg_dim_set_ref_explicit(AdgDim *dim, gdouble ref1_x, gdouble ref1_y,
+adg_dim_set_ref_explicit(AdgDim *dim,
+                         gdouble ref1_x, gdouble ref1_y,
                          gdouble ref2_x, gdouble ref2_y)
 {
     AdgPair ref1;
@@ -467,7 +498,7 @@ adg_dim_get_pos(AdgDim *dim)
 
     data = dim->data;
 
-    return &data->pos;
+    return ADG_POINT_PAIR(data->pos);
 }
 
 /**
@@ -487,7 +518,10 @@ adg_dim_set_pos(AdgDim *dim, const AdgPair *pos)
 
     data = dim->data;
 
-    data->pos = *pos;
+    if (data->pos == NULL)
+        data->pos = adg_point_new();
+
+    adg_point_set(data->pos, pos);
 
     g_object_notify((GObject *) dim, "pos");
 }

@@ -156,8 +156,16 @@ AdgRDim *
 adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
                   const AdgPair *pos)
 {
-    return g_object_new(ADG_TYPE_RDIM, "ref1", center, "ref2", radius,
-                        "pos", pos, NULL);
+    AdgRDim *rdim;
+    AdgDim *dim;
+
+    rdim = adg_rdim_new();
+    dim = (AdgDim *) rdim;
+
+    adg_dim_set_ref(dim, center, radius);
+    adg_dim_set_pos(dim, pos);
+
+    return rdim;
 }
 
 /**
