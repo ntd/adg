@@ -16,8 +16,9 @@
     <xi:include href="xml/adg-util.xml"/>
     <xi:include href="xml/adg-enums.xml"/>
     <chapter id="Core-gboxed">
-      <title>GBoxed foreign types</title>
+      <title>GBoxed types</title>
       <xi:include href="xml/adg-pair.xml"/>
+      <xi:include href="xml/adg-point.xml"/>
       <xi:include href="xml/adg-primitive.xml"/>
       <xi:include href="xml/adg-segment.xml"/>
       <xi:include href="xml/adg-matrix.xml"/>
@@ -38,14 +39,15 @@
     <xi:include href="xml/adg-canvas.xml"/>
     <xi:include href="xml/adg-entity.xml"/>
     <xi:include href="xml/adg-container.xml"/>
-    <xi:include href="xml/adg-title-block.xml"/>
-    <xi:include href="xml/adg-stroke.xml"/>
-    <xi:include href="xml/adg-hatch.xml"/>
-    <xi:include href="xml/adg-toy-text.xml"/>
-    <chapter id="Populating-marker">
-      <title>Markers</title>
-      <xi:include href="xml/adg-marker.xml"/>
-      <xi:include href="xml/adg-arrow.xml"/>
+    <chapter id="Populating-stock">
+      <title>Stock entities</title>
+      <xi:include href="xml/adg-stroke.xml"/>
+      <xi:include href="xml/adg-hatch.xml"/>
+      <xi:include href="xml/adg-toy-text.xml"/>
+    </chapter>
+    <chapter id="Populating-special">
+      <title>Special entities</title>
+      <xi:include href="xml/adg-title-block.xml"/>
     </chapter>
     <chapter id="Populating-quoting">
       <title>Quoting</title>
@@ -53,6 +55,11 @@
       <xi:include href="xml/adg-ldim.xml"/>
       <xi:include href="xml/adg-adim.xml"/>
       <xi:include href="xml/adg-rdim.xml"/>
+    </chapter>
+    <chapter id="Populating-marker">
+      <title>Markers</title>
+      <xi:include href="xml/adg-marker.xml"/>
+      <xi:include href="xml/adg-arrow.xml"/>
     </chapter>
   </part>
 

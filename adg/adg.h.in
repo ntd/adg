@@ -38,6 +38,7 @@
 #include <adg/adg-pair.h>
 #include <adg/adg-path.h>
 #include <adg/adg-pattern.h>
+#include <adg/adg-point.h>
 #include <adg/adg-primitive.h>
 #include <adg/adg-rdim.h>
 #include <adg/adg-segment.h>
