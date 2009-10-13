@@ -567,11 +567,12 @@ adg_entity_transform_local_map(AdgEntity *entity,
 }
 
 /**
- * adg_entity_set_normalized:
+ * adg_entity_get_normalized:
  * @entity: an #AdgEntity object
  *
  * Gets the normalized state of @entity. Check out the
- * adg_entity_set_normalized() to know what a normalized entity is.
+ * adg_entity_set_normalized() documentation to know what a
+ * normalized entity is.
  *
  * Returns: the normalized state of @entity
  **/
