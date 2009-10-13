@@ -46,7 +46,6 @@ struct _AdgModelClass {
     /*< private >*/
     GObjectClass         parent_class;
     /*< public >*/
-    GSList *            (*get_dependencies)     (AdgModel       *model);
     void                (*add_dependency)       (AdgModel       *model,
                                                  AdgEntity      *entity);
     void                (*remove_dependency)    (AdgModel       *model,
@@ -58,17 +57,17 @@ struct _AdgModelClass {
 
 GType           adg_model_get_type              (void) G_GNUC_CONST;
 
-void            adg_model_add_dependency        (AdgModel       *model,
-                                                 AdgEntity      *entity);
-void            adg_model_remove_dependency     (AdgModel       *model,
-                                                 AdgEntity      *entity);
-GSList *        adg_model_get_dependencies      (AdgModel       *model);
-void            adg_model_foreach_dependency    (AdgModel       *model,
-                                                 GCallback       callback,
-                                                 gpointer        user_data);
+void            adg_model_add_dependency        (AdgModel         *model,
+                                                 AdgEntity        *entity);
+void            adg_model_remove_dependency     (AdgModel         *model,
+                                                 AdgEntity        *entity);
+const GSList *  adg_model_dependencies          (AdgModel         *model);
+void            adg_model_foreach_dependency    (AdgModel         *model,
+                                                 AdgEntityCallback callback,
+                                                 gpointer          user_data);
 
-void            adg_model_clear                 (AdgModel       *model);
-void            adg_model_changed               (AdgModel       *model);
+void            adg_model_clear                 (AdgModel         *model);
+void            adg_model_changed               (AdgModel         *model);
 
 G_END_DECLS
 

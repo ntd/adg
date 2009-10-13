@@ -68,7 +68,6 @@ static void     set_property            (GObject        *object,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
 
-static GSList * get_dependencies        (AdgModel       *model);
 static void     add_dependency          (AdgModel       *model,
                                          AdgEntity      *entity);
 static void     remove_dependency       (AdgModel       *model,
@@ -94,7 +93,6 @@ adg_model_class_init(AdgModelClass *klass)
     gobject_class->dispose = dispose;
     gobject_class->set_property = set_property;
 
-    klass->get_dependencies = get_dependencies;
     klass->add_dependency = add_dependency;
     klass->remove_dependency = remove_dependency;
     klass->clear = NULL;
@@ -182,6 +180,7 @@ dispose(GObject *object)
 {
     AdgModel *model;
     AdgModelPrivate *data;
+    AdgEntity *entity;
 
     model = (AdgModel *) object;
     data = model->data;
@@ -189,9 +188,10 @@ dispose(GObject *object)
     /* Remove all the dependencies from the model: this will emit
      * a "remove" signal for every dependency and will drop all the
      * references from those entities to this model */
-    while (data->dependencies != NULL)
-        adg_model_remove_dependency(model,
-                                    (AdgEntity *) data->dependencies->data);
+    while (data->dependencies != NULL) {
+        entity = (AdgEntity *) data->dependencies->data;
+        adg_model_remove_dependency(model, entity);
+    }
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -260,52 +260,55 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
 }
 
 /**
- * adg_model_get_dependencies:
+ * adg_model_dependencies:
  * @model: an #AdgModel
  *
- * Gets a list of entities dependent on @model.
- * This list must be freed with g_slist_free() when no longer user.
+ * Gets the list of entities dependending on @model. This list
+ * is owned by @model and must not be modified or freed.
  *
- * Returns: a newly allocated #GSList or %NULL on error
+ * Returns: a #GSList of dependencies or %NULL on error
  **/
-GSList *
-adg_model_get_dependencies(AdgModel *model)
+const GSList *
+adg_model_dependencies(AdgModel *model)
 {
+    AdgModelPrivate *data;
+
     g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
 
-    return ADG_MODEL_GET_CLASS(model)->get_dependencies(model);
+    data = model->data;
+
+    return data->dependencies;
 }
 
 /**
  * adg_model_foreach_dependency:
  * @model: an #AdgModel
- * @callback: a callback
- * @user_data: callback user data
+ * @callback: the entity callback
+ * @user_data: callback general purpose user data
  *
  * Invokes @callback on each entity linked to @model.
- * The callback should be declared as:
- *
- * |[
- * void callback(AdgEntity *entity, gpointer user_data);
- * ]|
  **/
 void
-adg_model_foreach_dependency(AdgModel *model, GCallback callback,
+adg_model_foreach_dependency(AdgModel *model, AdgEntityCallback callback,
                              gpointer user_data)
 {
-    GSList *dependencies;
+    AdgModelPrivate *data;
+    GSList *dependency;
+    AdgEntity *entity;
 
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(callback != NULL);
 
-    dependencies = adg_model_get_dependencies(model);
+    data = model->data;
+    dependency = data->dependencies;
 
-    while (dependencies) {
-        if (dependencies->data)
-            ((void (*) (gpointer, gpointer)) callback) (dependencies->data,
-                                                        user_data);
+    while (dependency != NULL) {
+        entity = dependency->data;
 
-        dependencies = g_slist_delete_link(dependencies, dependencies);
+        if (entity != NULL && ADG_IS_ENTITY(entity))
+            callback(entity, user_data);
+
+        dependency = dependency->next;
     }
 }
 
@@ -378,19 +381,11 @@ remove_dependency(AdgModel *model, AdgEntity *entity)
     g_object_unref(entity);
 }
 
-static GSList *
-get_dependencies(AdgModel *model)
-{
-    AdgModelPrivate *data = model->data;
-
-    /* The NULL case is yet managed by GLib */
-    return g_slist_copy(data->dependencies);
-}
-
 static void
 changed(AdgModel *model)
 {
     /* Invalidate all the entities dependent on this model */
     adg_model_foreach_dependency(model,
-                                 G_CALLBACK(adg_entity_invalidate), NULL);
+                                 (AdgEntityCallback) adg_entity_invalidate,
+                                 NULL);
 }
