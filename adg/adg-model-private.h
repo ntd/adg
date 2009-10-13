@@ -24,10 +24,11 @@
 
 G_BEGIN_DECLS
 
-typedef struct _AdgModelPrivate AdgModelPrivate;
+typedef struct _AdgModelPrivate  AdgModelPrivate;
 
 struct _AdgModelPrivate {
     GSList      *dependencies;
+    GHashTable  *named_pairs;
 };
 
 G_END_DECLS

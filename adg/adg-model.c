@@ -56,6 +56,7 @@ enum {
 enum {
     ADD_DEPENDENCY,
     REMOVE_DEPENDENCY,
+    SET_NAMED_PAIR,
     CLEAR,
     CHANGED,
     LAST_SIGNAL
@@ -67,11 +68,16 @@ static void     set_property            (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-
 static void     add_dependency          (AdgModel       *model,
                                          AdgEntity      *entity);
 static void     remove_dependency       (AdgModel       *model,
                                          AdgEntity      *entity);
+static const AdgPair *
+                get_named_pair          (AdgModel       *model,
+                                         const gchar    *name);
+static void     set_named_pair          (AdgModel       *model,
+                                         const gchar    *name,
+                                         const AdgPair  *pair);
 static void     changed                 (AdgModel       *model);
 
 static guint signals[LAST_SIGNAL] = { 0 };
@@ -95,13 +101,16 @@ adg_model_class_init(AdgModelClass *klass)
 
     klass->add_dependency = add_dependency;
     klass->remove_dependency = remove_dependency;
+    klass->get_named_pair = get_named_pair;
+    klass->set_named_pair = set_named_pair;
     klass->clear = NULL;
     klass->changed = changed;
 
     param = g_param_spec_object("dependency",
                                 P_("Dependency"),
                                 P_("Can be used to add a new dependency from this model (this entity will be invalidated on model changed)"),
-                                ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
+                                ADG_TYPE_ENTITY,
+                                G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_DEPENDENCY, param);
 
     /**
@@ -135,6 +144,31 @@ adg_model_class_init(AdgModelClass *klass)
                                               NULL, NULL,
                                               adg_marshal_VOID__OBJECT,
                                               G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+
+    /**
+     * AdgModel::set-named-pair:
+     * @model: an #AdgModel
+     * @name: an arbitrary name
+     * @pair: an #AdgPair
+     *
+     * Adds, updates or deletes a named pair, accordling to the given
+     * parameters.
+     *
+     * If @pair is %NULL, the @name named pair is searched and deleted.
+     * If it is not found, a warning is raised.
+     *
+     * Otherwise, the @name named pair is searched: if it is found,
+     * its data are updated with @pair. If it is not found, a new
+     * named pair is created using @name and @pair.
+     **/
+    signals[SET_NAMED_PAIR] = g_signal_new("set-named-pair",
+                                           G_OBJECT_CLASS_TYPE(gobject_class),
+                                           G_SIGNAL_RUN_FIRST,
+                                           G_STRUCT_OFFSET(AdgModelClass, set_named_pair),
+                                           NULL, NULL,
+                                           adg_marshal_VOID__STRING_POINTER,
+                                           G_TYPE_NONE, 2,
+                                           G_TYPE_STRING, G_TYPE_POINTER);
 
     /**
      * AdgModel::clear:
@@ -313,6 +347,50 @@ adg_model_foreach_dependency(AdgModel *model, AdgEntityCallback callback,
 }
 
 /**
+ * adg_model_set_named_pair:
+ * @model: an #AdgModel
+ * @name: the name to associate to the pair
+ * @pair: the #AdgPair
+ *
+ * <note><para>
+ * This function is only useful in model definitions, such as
+ * inside an #AdgTrailCallback function or while constructing
+ * an #AdgPath instance.
+ * </para></note>
+ *
+ * Emits a #AdgModel::set-named-pair signal on @model passing
+ * @name and @pair as arguments.
+ **/
+void
+adg_model_set_named_pair(AdgModel *model, const gchar *name,
+                         const AdgPair *pair)
+{
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(name != NULL);
+
+    g_signal_emit(model, signals[SET_NAMED_PAIR], 0, name, pair);
+}
+
+/**
+ * adg_model_get_named_pair:
+ * @model: an #AdgModel
+ * @name: the name of the pair to get
+ *
+ * Gets the @name named pair associated to @model. The returned
+ * pair is owned by @model and must not be modified or freed.
+ *
+ * Returns: the requested #AdgPair or %NULL if not found
+ **/
+const AdgPair *
+adg_model_get_named_pair(AdgModel *model, const gchar *name)
+{
+    g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
+    g_return_val_if_fail(name != NULL, NULL);
+
+    return ADG_MODEL_GET_CLASS(model)->get_named_pair(model, name);
+}
+
+/**
  * adg_model_clear:
  * @model: an #AdgModel
  *
@@ -370,8 +448,9 @@ remove_dependency(AdgModel *model, AdgEntity *entity)
     node = g_slist_find(data->dependencies, entity);
 
     if (node == NULL) {
-        g_warning("Attempting to remove an entity with type %s from a "
-                  "model of type %s, but the entity is not present.",
+        g_warning("%s: attempting to remove an entity with type %s "
+                  "from a model of type %s, but the entity is not present.",
+                  G_STRLOC,
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(model)));
         return;
@@ -379,6 +458,47 @@ remove_dependency(AdgModel *model, AdgEntity *entity)
 
     data->dependencies = g_slist_delete_link(data->dependencies, node);
     g_object_unref(entity);
+}
+
+static void
+set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
+{
+    AdgModelPrivate *data;
+    GHashTable **hash;
+    gchar *key;
+    AdgPair *value;
+
+    data = model->data;
+    hash = &data->named_pairs;
+
+    if (pair == NULL) {
+        /* Delete mode: raise a warning if @name is not found */
+        if (*hash == NULL || !g_hash_table_remove(*hash, name))
+            g_warning("%s: attempting to remove inexistent `%s' named pair",
+                      G_STRLOC, name);
+
+        return;
+    }
+
+    /* Insert/update mode */
+    key = g_strdup(name);
+    value = adg_pair_dup(pair);
+
+    if (*hash == NULL)
+        *hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+
+    g_hash_table_insert(*hash, key, value);
+}
+
+static const AdgPair *
+get_named_pair(AdgModel *model, const gchar *name)
+{
+    AdgModelPrivate *data = model->data;
+
+    if (data->named_pairs == NULL)
+        return NULL;
+
+    return g_hash_table_lookup(data->named_pairs, name);
 }
 
 static void
