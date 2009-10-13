@@ -44,11 +44,27 @@ to implement.</para>
 
 </simplesect>
 
+<simplesect id="TODO.1.0.0">
+<title>Road to adg-1.0.0</title>
+
+<para>The commits in the 0.7 branch should be atomics, that is a succesfull
+built will be added as a prerequisite for each commit, so bisecting
+with "git bisect" is usable. The API should be considered almost
+frozen, new additions are still accepted tough. This is a testing
+branch: the target is to reach a sufficient quality level to make
+a 1.0.0 release.</para>
+
+<para>These releases should reach the wider audience, accordling to a niche
+project such as the ADG canvas. This means to build releases also
+for different platforms, such as *BSD, OpenSolaris and Windows.</para>
+
+</simplesect>
+
 <simplesect id="TODO.0.7.0">
 <title>Road to adg-0.7.0</title>
 
-<para>The target for the 0.7 branch is to clean up the code and stabilize the
-API. The 0.7.0 release will probably be a beta release.</para>
+<para>The target of the 0.6 branch is to clean up the code and stabilize the
+API: the 0.7.0 release will probably be a beta release.</para>
 
 <itemizedlist mark="circle">
    <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
@@ -70,7 +86,7 @@ API. The 0.7.0 release will probably be a beta release.</para>
 <simplesect id="TODO.0.6.0">
 <title>Road to adg-0.6.0</title>
 
-<para>The target for the 0.6 branch is to provide a usable canvas: with usable
+<para>The target of the 0.5 branch is to provide a usable canvas: with usable
 it is meant a canvas that can generate fairly completed drawings. The
 0.5.x releases leading up to 0.6.0 should add all the missing features
 needed to generate this drawing.</para>
@@ -135,8 +151,8 @@ needed to generate this drawing.</para>
 <simplesect id="TODO.0.5.0">
 <title>Road to adg-0.5.0</title>
 
-<para>The target for the 0.5 branch is to build the base of the canvas:
-few user visible changes but a quite stable bare code. All the
+<para>The target of the 0.4 branch is to build the base of the canvas:
+few user visible changes but a quite stable base code. All the
 main infrastructures should be in place.</para>
 
 <itemizedlist mark="circle">
@@ -197,7 +213,7 @@ main infrastructures should be in place.</para>
 <simplesect id="TODO.0.4.0">
 <title>Road to adg-0.4.0</title>
 
-<para>The target for the 0.4 branch is to give a shape to the project: build
+<para>The target for the 0.3 branch is to give a shape to the project: build
 system, docs and a bunch of (probably temporary) basic classes should
 be enough to give a direction.</para>
 
