@@ -44,6 +44,7 @@ typedef gint                     AdgDress;
 
 typedef struct _AdgEntity        AdgEntity;
 typedef struct _AdgEntityClass   AdgEntityClass;
+typedef void (*AdgEntityCallback) (AdgEntity *entity, gpointer user_data);
 
 ADG_FORWARD_DECL(AdgCanvas);
 

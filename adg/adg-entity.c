@@ -47,6 +47,16 @@
  * Any entity (if not abstract) must implement at least the @render method.
  **/
 
+/**
+ * AdgEntityCallback:
+ * @entity: an #AdgEntity
+ * @user_data: a general purpose pointer
+ *
+ * Callback used when inspecting or browsing entities. For example,
+ * it is passed to adg_model_foreach_dependency() to perform an
+ * operation on all the entities depending on an #AdgModel.
+ **/
+
 
 #include "adg-entity.h"
 #include "adg-entity-private.h"
