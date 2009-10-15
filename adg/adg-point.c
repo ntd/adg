@@ -262,6 +262,12 @@ adg_point_update(AdgPoint *point)
         return;
 
     pair = adg_model_get_named_pair(point->model, point->name);
+    if (pair == NULL) {
+        g_warning("%s: `%s' named pair not found in `%s' model instance",
+                  G_STRLOC, point->name,
+                  g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
+        return;
+    }
 
     cpml_pair_copy(&point->pair, pair);
 }
