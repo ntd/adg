@@ -97,6 +97,7 @@ struct _SampleData {
 static void     sample_get              (SampleData             *data);
 static AdgPath *sample_path             (const SampleData       *data);
 static void     sample_add_dimensions   (AdgCanvas              *canvas,
+                                         AdgModel               *model,
                                          const SampleData       *data);
 static void     sample_add_stuff        (AdgCanvas              *canvas,
                                          const SampleData       *data);
@@ -108,26 +109,26 @@ sample_canvas(void)
     SampleData data;
     AdgCanvas *canvas;
     AdgContainer *container;
-    AdgTrail *trail;
+    AdgTrail *shape, *edges;
     AdgEntity *entity;
     AdgMatrix map;
 
     sample_get(&data);
     canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
-    trail = ADG_TRAIL(sample_path(&data));
+    shape = ADG_TRAIL(sample_path(&data));
+    edges = ADG_TRAIL(adg_edges_new_with_source(shape));
 
-    entity = ADG_ENTITY(adg_stroke_new(trail));
+    entity = ADG_ENTITY(adg_stroke_new(shape));
     adg_container_add(container, entity);
 
-    entity = ADG_ENTITY(adg_hatch_new(trail));
+    entity = ADG_ENTITY(adg_hatch_new(shape));
     adg_container_add(container, entity);
 
-    trail = ADG_TRAIL(adg_edges_new_with_source(trail));
-    entity = ADG_ENTITY(adg_stroke_new(trail));
+    entity = ADG_ENTITY(adg_stroke_new(edges));
     adg_container_add(container, entity);
 
-    sample_add_dimensions(canvas, &data);
+    sample_add_dimensions(canvas, ADG_MODEL(shape), &data);
     sample_add_stuff(canvas, &data);
 
     cairo_matrix_init_translate(&map, 100, 70);
@@ -163,6 +164,7 @@ static AdgPath *
 sample_path(const SampleData *data)
 {
     AdgPath *path;
+    AdgPair pair;
     double x, y;
     AdgSegment segment;
     AdgSegment *dup_segment;
@@ -170,7 +172,11 @@ sample_path(const SampleData *data)
 
     path = adg_path_new();
 
-    adg_path_move_to(path, 0, data->D1 / 2);
+    pair.x = 0;
+    pair.y = data->D1 / 2;
+    adg_path_move_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(ADG_MODEL(path), "D1I", &pair);
+
     adg_path_line_to(path, data->A - data->B - data->LD2, data->D1 / 2);
     y = (data->D1 - data->D2) / 2;
     adg_path_line_to(path, data->A - data->B - data->LD2 + y * SQRT3, data->D1 / 2 - y);
@@ -178,7 +184,12 @@ sample_path(const SampleData *data)
     adg_path_fillet(path, 0.4);
     adg_path_line_to(path, data->A - data->B, data->D3 / 2);
     adg_path_chamfer(path, CHAMFER, CHAMFER);
-    adg_path_line_to(path, data->A - data->B + data->LD3, data->D3 / 2);
+
+    pair.x = data->A - data->B + data->LD3;
+    pair.y = data->D3 / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(ADG_MODEL(path), "D3F", &pair);
+
     adg_path_chamfer(path, CHAMFER, CHAMFER);
     adg_path_line_to(path, data->A - data->B + data->LD3, data->D4 / 2);
     adg_path_fillet(path, data->RD34);
@@ -194,7 +205,11 @@ sample_path(const SampleData *data)
     y = x / SQRT3;
     adg_path_line_to(path, data->A - data->C + data->LD6 + x, data->D6 / 2 - y);
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
-    adg_path_line_to(path, data->A, data->D7 / 2);
+
+    pair.x = data->A;
+    pair.y = data->D7 / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(ADG_MODEL(path), "D7F", &pair);
 
     /* Reflect the shape by duplicating the first segment of
      * the current path, applying a -1 y scale (that is
@@ -216,7 +231,8 @@ sample_path(const SampleData *data)
 }
 
 static void
-sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
+sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
+                      const SampleData *data)
 {
     AdgLDim *ldim;
     AdgADim *adim;
@@ -249,8 +265,12 @@ sample_add_dimensions(AdgCanvas *canvas, const SampleData *data)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* A */
-    ldim = adg_ldim_new_full_explicit(0, data->D1 / 2, data->A, data->D7 / 2,
-                                      ADG_DIR_DOWN, 0, data->D3 / 2);
+    /*ldim = adg_ldim_new_full_explicit(0, data->D1 / 2, data->A, data->D7 / 2,
+                                      ADG_DIR_DOWN, 0, data->D3 / 2);*/
+    ldim = adg_ldim_new();
+    adg_ldim_set_direction(ldim, ADG_DIR_DOWN);
+    adg_dim_set_ref_from_model(ADG_DIM(ldim), model, "D1I", "D7F");
+    adg_dim_set_pos_from_model(ADG_DIM(ldim), model, "D3F");
     adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
