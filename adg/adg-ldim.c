@@ -238,8 +238,8 @@ adg_ldim_new(void)
  * adg_ldim_new_full:
  * @ref1: the first reference point
  * @ref2: the second reference point
- * @direction: angle where to extend the dimension
  * @pos: the position reference
+ * @direction: angle where to extend the dimension
  *
  * Creates a new linear dimension, specifing all the needed properties in
  * one shot.
@@ -248,7 +248,7 @@ adg_ldim_new(void)
  **/
 AdgLDim *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
-                  gdouble direction, const AdgPair *pos)
+                  const AdgPair *pos, gdouble direction)
 {
     AdgLDim *ldim;
     AdgDim *dim;
@@ -268,9 +268,9 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  * @ref1_y: the y coordinate of the first reference point
  * @ref2_x: the x coordinate of the second reference point
  * @ref2_y: the y coordinate of the second reference point
- * @direction: angle where to extend the dimension
  * @pos_x: the x coordinate of the position reference
  * @pos_y: the y coordinate of the position reference
+ * @direction: angle where to extend the dimension
  *
  * Wrappes adg_ldim_new_full() with explicit values.
  *
@@ -279,7 +279,7 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
 AdgLDim *
 adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
                            gdouble ref2_x, gdouble ref2_y,
-                           gdouble direction, gdouble pos_x, gdouble pos_y)
+                           gdouble pos_x,  gdouble pos_y, gdouble direction)
 {
     AdgPair ref1;
     AdgPair ref2;
@@ -292,7 +292,7 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
     pos.x = pos_x;
     pos.y = pos_y;
 
-    return adg_ldim_new_full(&ref1, &ref2, direction, &pos);
+    return adg_ldim_new_full(&ref1, &ref2, &pos, direction);
 }
 
 /**

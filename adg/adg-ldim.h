@@ -54,15 +54,15 @@ GType           adg_ldim_get_type               (void) G_GNUC_CONST;
 AdgLDim *       adg_ldim_new                    (void);
 AdgLDim *       adg_ldim_new_full               (const AdgPair  *ref1,
                                                  const AdgPair  *ref2,
-                                                 gdouble         direction,
-                                                 const AdgPair  *pos);
+                                                 const AdgPair  *pos,
+                                                 gdouble         direction);
 AdgLDim *       adg_ldim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         ref1_y,
                                                  gdouble         ref2_x,
                                                  gdouble         ref2_y,
-                                                 gdouble         direction,
                                                  gdouble         pos_x,
-                                                 gdouble         pos_y);
+                                                 gdouble         pos_y,
+                                                 gdouble         direction);
 
 gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_set_direction          (AdgLDim        *ldim,
