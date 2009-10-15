@@ -154,7 +154,9 @@ adg_widget_init(AdgWidget *widget)
 
     /* Enable GDK events to catch wheel rotation and drag */
     gtk_widget_add_events((GtkWidget *) widget,
-                          GDK_BUTTON2_MOTION_MASK|GDK_SCROLL_MASK);
+                          GDK_BUTTON_PRESS_MASK|
+                          GDK_BUTTON2_MOTION_MASK|
+                          GDK_SCROLL_MASK);
 }
 
 static void
