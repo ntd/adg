@@ -68,12 +68,19 @@ void            adg_dim_set_ref_explicit        (AdgDim         *dim,
                                                  gdouble         ref1_y,
                                                  gdouble         ref2_x,
                                                  gdouble         ref2_y);
+void            adg_dim_set_ref_from_model      (AdgDim         *dim,
+                                                 AdgModel       *model,
+                                                 const gchar    *ref1,
+                                                 const gchar    *ref2);
 const AdgPair * adg_dim_get_pos                 (AdgDim         *dim);
 void            adg_dim_set_pos                 (AdgDim         *dim,
                                                  const AdgPair  *pos);
 void            adg_dim_set_pos_explicit        (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
+void            adg_dim_set_pos_from_model      (AdgDim         *dim,
+                                                 AdgModel       *model,
+                                                 const gchar    *pos);
 gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);

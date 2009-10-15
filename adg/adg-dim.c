@@ -415,42 +415,44 @@ adg_dim_get_ref2(AdgDim *dim)
  * @ref1: the ref1 coordinates
  * @ref2: the ref2 coordinates
  *
- * Shortcut to set ref1 and ref2 points at once.
+ * Sets the #AdgDim:ref1 and #AdgDim:ref2 reference points
+ * using @ref1 and @ref2 pairs.  @ref1 or @ref2 could be
+ * %NULL (but not both), in which case only the non-null
+ * reference point is changed.
  **/
 void
 adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
 {
+    GObject *object;
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_if_fail(ref1 != NULL || ref2 != NULL);
 
-    if (ref1 != NULL || ref2 != NULL) {
-        GObject *object;
-        AdgDimPrivate *data;
+    data = dim->data;
+    object = (GObject *) dim;
 
-        data = dim->data;
-        object = (GObject *) dim;
+    g_object_freeze_notify(object);
 
-        g_object_freeze_notify(object);
+    if (ref1 != NULL) {
+        if (data->ref1 == NULL)
+            data->ref1 = adg_point_new();
 
-        if (ref1 != NULL) {
-            if (data->ref1 == NULL)
-                data->ref1 = adg_point_new();
+        adg_point_set(data->ref1, ref1);
 
-            adg_point_set(data->ref1, ref1);
-
-            g_object_notify(object, "ref1");
-        }
-
-        if (ref2 != NULL) {
-            if (data->ref2 == NULL)
-                data->ref2 = adg_point_new();
-
-            adg_point_set(data->ref2, ref2);
-
-            g_object_notify(object, "ref2");
-        }
-
-        g_object_thaw_notify(object);
+        g_object_notify(object, "ref1");
     }
+
+    if (ref2 != NULL) {
+        if (data->ref2 == NULL)
+            data->ref2 = adg_point_new();
+
+        adg_point_set(data->ref2, ref2);
+
+        g_object_notify(object, "ref2");
+    }
+
+    g_object_thaw_notify(object);
 }
 
 /**
@@ -461,8 +463,10 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
  * @ref2_x: x coordinate of ref2
  * @ref2_y: y coordinate of ref2
  *
- * Shortcut to set ref1 and ref2 points at once,
- * using explicit coordinates.
+ * Works in the same way as adg_dim_set_ref() but using
+ * explicit coordinates instead of #AdgPair args. The
+ * notable difference is that, by using gdouble values,
+ * you can't set only one reference point.
  **/
 void
 adg_dim_set_ref_explicit(AdgDim *dim,
@@ -478,6 +482,63 @@ adg_dim_set_ref_explicit(AdgDim *dim,
     ref2.y = ref2_y;
 
     adg_dim_set_ref(dim, &ref1, &ref2);
+}
+
+/**
+ * adg_dim_set_ref_from_model:
+ * @dim: an #AdgDim
+ * @model: the source #AdgModel
+ * @ref1: name of the pair in @model to use as ref1
+ * @ref2: name of the pair in @model to use as ref2
+ *
+ * Sets #AdgDim:ref1 and #AdgDim:ref2 properties  by linking
+ * them to the @ref1 and @ref2 named pairs in @model. @ref1
+ * or @ref2 could be %NULL (but not both), in which case
+ * only the non-null reference point is changed.
+ *
+ * Using this function twice you can also link the reference
+ * points to named pairs taken from different models:
+ *
+ * |[
+ * adg_dim_set_ref_from_model(dim, model1, ref1, NULL);
+ * adg_dim_set_ref_from_model(dim, model2, NULL, ref2);
+ * ]|
+ **/
+void
+adg_dim_set_ref_from_model(AdgDim *dim, AdgModel *model,
+                           const gchar *ref1, const gchar *ref2)
+{
+    GObject *object;
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(ref1 != NULL || ref2 != NULL);
+
+    object = (GObject *) dim;
+    data = dim->data;
+
+    g_object_freeze_notify(object);
+
+    if (ref1 != NULL) {
+        if (data->ref1 == NULL)
+            data->ref1 = adg_point_new();
+
+        adg_point_set_from_model(data->ref1, model, ref1);
+
+        g_object_notify(object, "ref1");
+    }
+
+    if (ref2 != NULL) {
+        if (data->ref2 == NULL)
+            data->ref2 = adg_point_new();
+
+        adg_point_set_from_model(data->ref2, model, ref2);
+
+        g_object_notify(object, "ref2");
+    }
+
+    g_object_thaw_notify(object);
 }
 
 /**
@@ -543,6 +604,34 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
     pos.y = y;
 
     adg_dim_set_pos(dim, &pos);
+}
+
+/**
+ * adg_dim_set_pos_from_model:
+ * @dim: an #AdgDim
+ * @model: the source #AdgModel
+ * @ref1: name of the pair in @model to use as pos
+ *
+ * Sets #AdgDim:pos by linking it to the @pos named pair
+ * in @model.
+ **/
+void
+adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
+{
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(pos != NULL);
+
+    data = dim->data;
+
+    if (data->pos == NULL)
+        data->pos = adg_point_new();
+
+    adg_point_set_from_model(data->pos, model, pos);
+
+    g_object_notify((GObject *) dim, "pos");
 }
 
 /**
