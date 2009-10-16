@@ -39,6 +39,15 @@
  * Use its public methods instead.
  **/
 
+/**
+ * AdgNamedPairCallback:
+ * @name: an arbitrary name
+ * @pair: an #AdgPair
+ * @user_data: a general purpose pointer
+ *
+ * Callback used by adg_model_foreach_named_pair().
+ **/
+
 
 #include "adg-model.h"
 #include "adg-model-private.h"
@@ -318,7 +327,7 @@ adg_model_dependencies(AdgModel *model)
  * adg_model_foreach_dependency:
  * @model: an #AdgModel
  * @callback: the entity callback
- * @user_data: callback general purpose user data
+ * @user_data: general purpose user data passed "as is" to @callback
  *
  * Invokes @callback on each entity linked to @model.
  **/
@@ -388,6 +397,33 @@ adg_model_named_pair(AdgModel *model, const gchar *name)
     g_return_val_if_fail(name != NULL, NULL);
 
     return ADG_MODEL_GET_CLASS(model)->named_pair(model, name);
+}
+
+/**
+ * adg_model_foreach_named_pair:
+ * @model: an #AdgModel
+ * @callback: the named pair callback
+ * @user_data: general purpose user data passed "as is" to @callback
+ *
+ * Invokes @callback for each named pair set on @model. This can
+ * be used, for example, to retrieve all the named pairs of a @model
+ * or to duplicate a transformed version of every named pair.
+ **/
+void
+adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairCallback callback,
+                             gpointer user_data)
+{
+    AdgModelPrivate *data;
+
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(callback != NULL);
+
+    data = model->data;
+
+    if (data->named_pairs == NULL)
+        return;
+
+    g_hash_table_foreach(data->named_pairs, (GHFunc) callback, user_data);
 }
 
 /**

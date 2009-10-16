@@ -36,6 +36,8 @@ G_BEGIN_DECLS
 
 typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
+typedef void (*AdgNamedPairCallback) (const gchar *name, AdgPair *pair,
+                                      gpointer user_data);
 
 struct _AdgModel {
     /*< private >*/
@@ -76,6 +78,9 @@ void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const AdgPair    *pair);
 const AdgPair * adg_model_named_pair            (AdgModel         *model,
                                                  const gchar      *name);
+void            adg_model_foreach_named_pair    (AdgModel         *model,
+                                                 AdgNamedPairCallback callback,
+                                                 gpointer          user_data);
 void            adg_model_clear                 (AdgModel         *model);
 void            adg_model_changed               (AdgModel         *model);
 
