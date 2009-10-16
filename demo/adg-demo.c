@@ -101,6 +101,9 @@ static void     sample_add_dimensions   (AdgCanvas              *canvas,
                                          const SampleData       *data);
 static void     sample_add_stuff        (AdgCanvas              *canvas,
                                          const SampleData       *data);
+static void     reverse_pair            (const gchar            *name,
+                                         AdgPair                *pair,
+                                         AdgModel               *model);
 
 
 static AdgCanvas *
@@ -164,43 +167,85 @@ static AdgPath *
 sample_path(const SampleData *data)
 {
     AdgPath *path;
+    AdgModel *model;
     AdgPair pair;
     double x, y;
     AdgSegment segment;
     AdgSegment *dup_segment;
+    const AdgPrimitive *primitive;
     cairo_matrix_t matrix;
 
     path = adg_path_new();
+    model = ADG_MODEL(path);
 
     pair.x = 0;
     pair.y = data->D1 / 2;
     adg_path_move_to(path, pair.x, pair.y);
-    adg_model_set_named_pair(ADG_MODEL(path), "D1I", &pair);
+    adg_model_set_named_pair(model, "D1I", &pair);
 
-    adg_path_line_to(path, data->A - data->B - data->LD2, data->D1 / 2);
+    pair.x = data->A - data->B - data->LD2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D1F", &pair);
+
     y = (data->D1 - data->D2) / 2;
-    adg_path_line_to(path, data->A - data->B - data->LD2 + y * SQRT3, data->D1 / 2 - y);
+    pair.x += (data->D1 - data->D2) * SQRT3 / 2;
+    pair.y -= (data->D1 - data->D2) / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D2I", &pair);
+
     adg_path_line_to(path, data->A - data->B, data->D2 / 2);
     adg_path_fillet(path, 0.4);
-    adg_path_line_to(path, data->A - data->B, data->D3 / 2);
+
+    pair.x = data->A - data->B;
+    pair.y = data->D3 / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D3I", &pair);
+
     adg_path_chamfer(path, CHAMFER, CHAMFER);
 
     pair.x = data->A - data->B + data->LD3;
     pair.y = data->D3 / 2;
     adg_path_line_to(path, pair.x, pair.y);
-    adg_model_set_named_pair(ADG_MODEL(path), "D3F", &pair);
+
+    primitive = adg_path_over_primitive(path);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D3I_X", &pair);
 
     adg_path_chamfer(path, CHAMFER, CHAMFER);
     adg_path_line_to(path, data->A - data->B + data->LD3, data->D4 / 2);
+
+    primitive = adg_path_over_primitive(path);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D3F_Y", &pair);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, -1));
+    adg_model_set_named_pair(model, "D3F_X", &pair);
+
     adg_path_fillet(path, data->RD34);
-    adg_path_line_to(path, data->A - data->C - data->LD5, data->D4 / 2);
+
+    pair.x = data->A - data->C - data->LD5;
+    pair.y = data->D4 / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D4F", &pair);
+
     y = (data->D4 - data->D5) / 2;
     adg_path_line_to(path, data->A - data->C - data->LD5 + y, data->D4 / 2 - y);
     adg_path_line_to(path, data->A - data->C, data->D5 / 2);
+
     adg_path_fillet(path, 0.2);
+
     adg_path_line_to(path, data->A - data->C, data->D6 / 2);
+
+    primitive = adg_path_over_primitive(path);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D5F", &pair);
+
     adg_path_fillet(path, 0.1);
-    adg_path_line_to(path, data->A - data->C + data->LD6, data->D6 / 2);
+
+    pair.x = data->A - data->C + data->LD6;
+    pair.y = data->D6 / 2;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D6F", &pair);
+
     x = data->C - data->LD7 - data->LD6;
     y = x / SQRT3;
     adg_path_line_to(path, data->A - data->C + data->LD6 + x, data->D6 / 2 - y);
@@ -209,7 +254,7 @@ sample_path(const SampleData *data)
     pair.x = data->A;
     pair.y = data->D7 / 2;
     adg_path_line_to(path, pair.x, pair.y);
-    adg_model_set_named_pair(ADG_MODEL(path), "D7F", &pair);
+    adg_model_set_named_pair(model, "D7F", &pair);
 
     /* Reflect the shape by duplicating the first segment of
      * the current path, applying a -1 y scale (that is
@@ -226,6 +271,9 @@ sample_path(const SampleData *data)
 
     g_free(dup_segment);
 
+    adg_model_foreach_named_pair(model, (AdgNamedPairCallback) reverse_pair,
+                                 model);
+
     adg_path_close(path);
     return path;
 }
@@ -241,38 +289,25 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
 
     /* NORTH */
 
-    /* LD2 */
-    ldim = adg_ldim_new_full_explicit(data->A - data->B - data->LD2, -data->D1 / 2,
-                                      data->A - data->B, -data->D3 / 2 + CHAMFER,
-                                      0, -data->D3 / 2,
-                                      ADG_DIR_UP);
+    ldim = adg_ldim_new_full_from_model(model, "-D1F", "-D3I_X", "-D3F_Y",
+                                        ADG_DIR_UP);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* LD3 */
-    ldim = adg_ldim_new_full_explicit(data->A - data->B, -data->D3 / 2 + CHAMFER,
-                                      data->A - data->B + data->LD3,
-                                      -data->D3 / 2 + CHAMFER,
-                                      0, -data->D3 / 2,
-                                      ADG_DIR_UP);
+    ldim = adg_ldim_new_full_from_model(model, "-D3I_X", "-D3F_X", "-D3F_Y",
+                                        ADG_DIR_UP);
     adg_ldim_switch_extension1(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* SOUTH */
 
-    /* B */
-    ldim = adg_ldim_new_full_explicit(data->A - data->B, data->D3 / 2 - CHAMFER,
-                                      data->A, data->D7 / 2,
-                                      0, data->D3 / 2,
-                                      ADG_DIR_DOWN);
+    ldim = adg_ldim_new_full_from_model(model, "D3I_X", "D7F", "D3F_Y",
+                                        ADG_DIR_DOWN);
     adg_dim_set_limits(ADG_DIM(ldim), NULL, "+0.1");
     adg_ldim_switch_extension2(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* A */
-    ldim = adg_ldim_new();
-    adg_ldim_set_direction(ldim, ADG_DIR_DOWN);
-    adg_dim_set_ref_from_model(ADG_DIM(ldim), model, "D1I", "D7F");
-    adg_dim_set_pos_from_model(ADG_DIM(ldim), model, "D3F");
+    ldim = adg_ldim_new_full_from_model(model, "D1I", "D7F", "D3F_Y",
+                                        ADG_DIR_DOWN);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
@@ -301,70 +336,43 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
 
     /* EAST */
 
-    /* D3 */
-    x = data->A - data->B + data->LD3 - CHAMFER;
-    ldim = adg_ldim_new_full_explicit(x, -data->D3 / 2,
-                                      x, data->D3 / 2,
-                                      data->A, 0,
-                                      ADG_DIR_RIGHT);
+    ldim = adg_ldim_new_full_from_model(model, "D3F_Y", "-D3F_Y", "D7F",
+                                        ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 5);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* D6 */
-    x = data->A - data->C + data->LD6;
-    ldim = adg_ldim_new_full_explicit(x, -data->D6 / 2,
-                                      x, data->D6 / 2,
-                                      data->A, 0,
-                                      ADG_DIR_RIGHT);
+    ldim = adg_ldim_new_full_from_model(model, "D6F", "-D6F", "D7F",
+                                        ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* D4 */
-    x = data->A - data->C - data->LD5;
-    ldim = adg_ldim_new_full_explicit(x, -data->D4 / 2,
-                                      x, data->D4 / 2,
-                                      data->A, 0,
-                                      ADG_DIR_RIGHT);
+    ldim = adg_ldim_new_full_from_model(model, "D4F", "-D4F", "D7F",
+                                        ADG_DIR_RIGHT);
     adg_dim_set_level(ADG_DIM(ldim), 3);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* D5 */
-    x = data->A - data->C - 0.2;
-    ldim = adg_ldim_new_full_explicit(x, -data->D5 / 2,
-                                      x, data->D5 / 2,
-                                      data->A, 0,
-                                      ADG_DIR_RIGHT);
+    ldim = adg_ldim_new_full_from_model(model, "D5F", "-D5F", "D7F",
+                                        ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* D7 */
-    ldim = adg_ldim_new_full_explicit(data->A, -data->D7 / 2,
-                                      data->A, data->D7 / 2,
-                                      data->A, 0,
-                                      ADG_DIR_RIGHT);
+    ldim = adg_ldim_new_full_from_model(model, "D7F", "-D7F", "D7F",
+                                        ADG_DIR_RIGHT);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* WEST */
 
-    /* D1 */
-    ldim = adg_ldim_new_full_explicit(0, -data->D1 / 2,
-                                      0, data->D1 / 2,
-                                      0, 0,
-                                      ADG_DIR_LEFT);
+    ldim = adg_ldim_new_full_from_model(model, "D1I", "-D1I", "D1I",
+                                        ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "+0.05", "-0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* D2 */
-    y = (data->D1 - data->D2) / 2;
-    x = data->A - data->B - data->LD2 + y * SQRT3;
-    ldim = adg_ldim_new_full_explicit(x, -data->D2 / 2,
-                                      x, data->D2 / 2,
-                                      0, 0,
-                                      ADG_DIR_LEFT);
+    ldim = adg_ldim_new_full_from_model(model, "D2I", "-D2I", "D1I",
+                                        ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
@@ -830,4 +838,19 @@ non_trivial_model()
     adg_path_close(path);
 
     return path;
+}
+
+static void
+reverse_pair(const gchar *name, AdgPair *pair, AdgModel *model)
+{
+    gchar *new_name;
+    AdgPair new_pair;
+
+    new_name = g_strdup_printf("-%s", name);
+    cpml_pair_copy(&new_pair, pair);
+    new_pair.y = -new_pair.y;
+
+    adg_model_set_named_pair(model, new_name, &new_pair);
+
+    g_free(new_name);
 }
