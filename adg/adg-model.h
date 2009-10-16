@@ -51,7 +51,7 @@ struct _AdgModelClass {
                                                  AdgEntity        *entity);
     void                (*remove_dependency)    (AdgModel         *model,
                                                  AdgEntity        *entity);
-    const AdgPair *     (*get_named_pair)       (AdgModel         *model,
+    const AdgPair *     (*named_pair)           (AdgModel         *model,
                                                  const gchar      *name);
     void                (*set_named_pair)       (AdgModel         *model,
                                                  const gchar      *name,
@@ -74,7 +74,7 @@ void            adg_model_foreach_dependency    (AdgModel         *model,
 void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
-const AdgPair * adg_model_get_named_pair        (AdgModel         *model,
+const AdgPair * adg_model_named_pair            (AdgModel         *model,
                                                  const gchar      *name);
 void            adg_model_clear                 (AdgModel         *model);
 void            adg_model_changed               (AdgModel         *model);

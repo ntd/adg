@@ -248,7 +248,7 @@ adg_point_set_from_model(AdgPoint *point, AdgModel *model, const gchar *name)
  * Updates the pair of @point. If @point is an explicit pair (either
  * if set with adg_point_set() or adg_point_set_explicit()), no action
  * is taken. If @point is linked to a named pair, instead, the internal
- * pair is updated with the value returned by adg_model_get_named_pair().
+ * pair is updated with the value returned by adg_model_named_pair().
  **/
 void
 adg_point_update(AdgPoint *point)
@@ -261,7 +261,7 @@ adg_point_update(AdgPoint *point)
     if (point->model == NULL)
         return;
 
-    pair = adg_model_get_named_pair(point->model, point->name);
+    pair = adg_model_named_pair(point->model, point->name);
     if (pair == NULL) {
         g_warning("%s: `%s' named pair not found in `%s' model instance",
                   G_STRLOC, point->name,

@@ -73,7 +73,7 @@ static void     add_dependency          (AdgModel       *model,
 static void     remove_dependency       (AdgModel       *model,
                                          AdgEntity      *entity);
 static const AdgPair *
-                get_named_pair          (AdgModel       *model,
+                named_pair              (AdgModel       *model,
                                          const gchar    *name);
 static void     set_named_pair          (AdgModel       *model,
                                          const gchar    *name,
@@ -101,7 +101,7 @@ adg_model_class_init(AdgModelClass *klass)
 
     klass->add_dependency = add_dependency;
     klass->remove_dependency = remove_dependency;
-    klass->get_named_pair = get_named_pair;
+    klass->named_pair = named_pair;
     klass->set_named_pair = set_named_pair;
     klass->clear = NULL;
     klass->changed = changed;
@@ -372,7 +372,7 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
 }
 
 /**
- * adg_model_get_named_pair:
+ * adg_model_named_pair:
  * @model: an #AdgModel
  * @name: the name of the pair to get
  *
@@ -382,12 +382,12 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
  * Returns: the requested #AdgPair or %NULL if not found
  **/
 const AdgPair *
-adg_model_get_named_pair(AdgModel *model, const gchar *name)
+adg_model_named_pair(AdgModel *model, const gchar *name)
 {
     g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
     g_return_val_if_fail(name != NULL, NULL);
 
-    return ADG_MODEL_GET_CLASS(model)->get_named_pair(model, name);
+    return ADG_MODEL_GET_CLASS(model)->named_pair(model, name);
 }
 
 /**
@@ -491,7 +491,7 @@ set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
 }
 
 static const AdgPair *
-get_named_pair(AdgModel *model, const gchar *name)
+named_pair(AdgModel *model, const gchar *name)
 {
     AdgModelPrivate *data = model->data;
 
