@@ -63,6 +63,11 @@ AdgLDim *       adg_ldim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         pos_x,
                                                  gdouble         pos_y,
                                                  gdouble         direction);
+AdgLDim *       adg_ldim_new_full_from_model    (AdgModel       *model,
+                                                 const gchar    *ref1,
+                                                 const gchar    *ref2,
+                                                 const gchar    *pos,
+                                                 gdouble         direction);
 
 gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_set_direction          (AdgLDim        *ldim,

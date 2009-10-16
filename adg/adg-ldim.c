@@ -296,6 +296,36 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 }
 
 /**
+ * adg_ldim_new_full_from_model:
+ * @model: the model from which the named pairs are taken
+ * @ref1: the first reference point
+ * @ref2: the second reference point
+ * @pos: the position reference
+ * @direction: angle where to extend the dimension
+ *
+ * Creates a new linear dimension, specifing all the needed properties in
+ * one shot and using named pairs from @model.
+ *
+ * Returns: the newly created linear dimension entity
+ **/
+AdgLDim *
+adg_ldim_new_full_from_model(AdgModel *model,
+                             const gchar *ref1, const gchar *ref2,
+                             const gchar *pos, gdouble direction)
+{
+    AdgLDim *ldim;
+    AdgDim *dim;
+
+    ldim = g_object_new(ADG_TYPE_LDIM, "direction", direction, NULL);
+    dim = (AdgDim *) ldim;
+
+    adg_dim_set_ref_from_model(dim, model, ref1, ref2);
+    adg_dim_set_pos_from_model(dim, model, pos);
+
+    return ldim;
+}
+
+/**
  * adg_ldim_get_direction:
  * @ldim: an #AdgLDim entity
  *
