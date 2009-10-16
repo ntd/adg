@@ -29,13 +29,13 @@ G_BEGIN_DECLS
 typedef struct _AdgPathPrivate AdgPathPrivate;
 
 typedef enum {
-    ADG_OPERATOR_NONE,
-    ADG_OPERATOR_CHAMFER,
-    ADG_OPERATOR_FILLET
-} AdgOperator;
+    ADG_ACTION_NONE,
+    ADG_ACTION_CHAMFER,
+    ADG_ACTION_FILLET
+} AdgAction;
 
 typedef struct {
-    AdgOperator operator;
+    AdgAction action;
 
     union {
         struct {

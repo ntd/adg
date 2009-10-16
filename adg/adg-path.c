@@ -79,7 +79,7 @@ static gint             needed_pairs            (CpmlPrimitiveType type,
                                                  gboolean        cp_is_valid);
 static void             clear_operation         (AdgPath        *path);
 static gboolean         append_operation        (AdgPath        *path,
-                                                 AdgOperator     operator,
+                                                 AdgAction       action,
                                                  ...);
 static void             do_operation            (AdgPath        *path,
                                                  cairo_path_data_t
@@ -126,7 +126,7 @@ adg_path_init(AdgPath *path)
 
     data->cp_is_valid = FALSE;
     data->cpml.array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
-    data->operation.operator = ADG_OPERATOR_NONE;
+    data->operation.action = ADG_ACTION_NONE;
 
     path->data = data;
 }
@@ -557,7 +557,7 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * @delta1: the distance from the intersection point of the current primitive
  * @delta2: the distance from the intersection point of the next primitive
  *
- * A binary operator that generates a chamfer between two primitives.
+ * A binary action that generates a chamfer between two primitives.
  * The first primitive involved is the current primitive, the second will
  * be the next primitive appended to @path after this call. The second
  * primitive is required: if the chamfer operation is not properly
@@ -575,7 +575,7 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!append_operation(path, ADG_OPERATOR_CHAMFER, delta1, delta2))
+    if (!append_operation(path, ADG_ACTION_CHAMFER, delta1, delta2))
         return;
 }
 
@@ -585,7 +585,7 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * @radius: the radius of the fillet
  *
  *
- * A binary operator that joins to primitives with an arc.
+ * A binary action that joins to primitives with an arc.
  * The first primitive involved is the current primitive, the second will
  * be the next primitive appended to @path after this call. The second
  * primitive is required: if the fillet operation is not properly
@@ -597,7 +597,7 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!append_operation(path, ADG_OPERATOR_FILLET, radius))
+    if (!append_operation(path, ADG_ACTION_FILLET, radius))
         return;
 }
 
@@ -729,16 +729,16 @@ clear_operation(AdgPath *path)
     data = path->data;
     operation = &data->operation;
 
-    if (operation->operator == ADG_OPERATOR_NONE)
+    if (operation->action == ADG_ACTION_NONE)
         return;
 
     g_warning("An operation is still active while clearing the path "
-              "(operator `%d')", operation->operator);
-    operation->operator = ADG_OPERATOR_NONE;
+              "(action `%d')", operation->action);
+    operation->action = ADG_ACTION_NONE;
 }
 
 static gboolean
-append_operation(AdgPath *path, AdgOperator operator, ...)
+append_operation(AdgPath *path, AdgAction action, ...)
 {
     AdgPathPrivate *data;
     AdgOperation *operation;
@@ -748,45 +748,45 @@ append_operation(AdgPath *path, AdgOperator operator, ...)
 
     if (!data->cp_is_valid) {
         g_warning("Operation requested but path has no current primitive "
-                  "(operator `%d')", operator);
+                  "(action `%d')", action);
         return FALSE;
     }
 
     operation = &data->operation;
-    if (operation->operator != ADG_OPERATOR_NONE) {
+    if (operation->action != ADG_ACTION_NONE) {
         g_warning("Operation requested but another operation is yet active"
                   "(operators: new `%d', old `%d')",
-                  operator, operation->operator);
+                  action, operation->action);
         ADG_MESSAGE("TODO: this is a rude simplification, as a lot of "
                     "operators can and may cohexist. As an example, a "
                     "fillet followed by a polar chamfer should be done.");
         return FALSE;
     }
 
-    va_start(var_args, operator);
+    va_start(var_args, action);
 
-    switch (operator) {
+    switch (action) {
 
-    case ADG_OPERATOR_CHAMFER:
+    case ADG_ACTION_CHAMFER:
         operation->data.chamfer.delta1 = va_arg(var_args, double);
         operation->data.chamfer.delta2 = va_arg(var_args, double);
         break;
 
-    case ADG_OPERATOR_FILLET:
+    case ADG_ACTION_FILLET:
         operation->data.fillet.radius = va_arg(var_args, double);
         break;
 
-    case ADG_OPERATOR_NONE:
+    case ADG_ACTION_NONE:
         va_end(var_args);
         return TRUE;
 
     default:
-        g_warning("Operation not recognized (operator `%d')", operator);
+        g_warning("Operation not recognized (action `%d')", action);
         va_end(var_args);
         return FALSE;
     }
 
-    operation->operator = operator;
+    operation->action = action;
     va_end(var_args);
 
     return TRUE;
@@ -796,13 +796,13 @@ static void
 do_operation(AdgPath *path, cairo_path_data_t *path_data)
 {
     AdgPathPrivate *data;
-    AdgOperator operator;
+    AdgAction action;
     CpmlSegment segment;
     CpmlPrimitive current;
     cairo_path_data_t current_org;
 
     data = path->data;
-    operator = data->operation.operator;
+    action = data->operation.action;
     cpml_segment_from_cairo(&segment, read_cpml_path(path));
 
     /* Construct the current primitive, that is the primitive to be inserted.
@@ -815,21 +815,21 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
     current.data = path_data;
     cpml_pair_to_cairo(&data->cp, &current_org);
 
-    switch (operator) {
+    switch (action) {
 
-    case ADG_OPERATOR_NONE:
+    case ADG_ACTION_NONE:
         return;
 
-    case ADG_OPERATOR_CHAMFER:
+    case ADG_ACTION_CHAMFER:
         do_chamfer(path, &current);
         break;
 
-    case ADG_OPERATOR_FILLET:
+    case ADG_ACTION_FILLET:
         do_fillet(path, &current);
         break;
 
     default:
-        g_warning("Operation not implemented (operator `%d')", operator);
+        g_warning("Operation not implemented (action `%d')", action);
         return;
     }
 }
@@ -879,7 +879,7 @@ do_chamfer(AdgPath *path, CpmlPrimitive *current)
     line[1].point.y = pair.y;
     data->cpml.array = g_array_append_vals(data->cpml.array, line, 2);
 
-    data->operation.operator = ADG_OPERATOR_NONE;
+    data->operation.action = ADG_ACTION_NONE;
 }
 
 static void
@@ -948,7 +948,7 @@ do_fillet(AdgPath *path, CpmlPrimitive *current)
     cpml_pair_to_cairo(&p[2], &arc[2]);
     data->cpml.array = g_array_append_vals(data->cpml.array, arc, 3);
 
-    data->operation.operator = ADG_OPERATOR_NONE;
+    data->operation.action = ADG_ACTION_NONE;
 }
 
 static gboolean
