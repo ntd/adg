@@ -163,38 +163,35 @@ adg_path_new(void)
 }
 
 /**
- * adg_path_get_current_point:
+ * adg_path_current_point:
  * @path: an #AdgPath
- * @x: where to store the x coordinate of the current point
- * @y: where to store the y coordinate of the current point
  *
  * Gets the current point of @path, which is conceptually the
  * final point reached by the path so far.
  *
- * If there is no defined current point, @x and @y will both be set
- * to 0 and a warning will be triggered. It is possible to check this
- * in advance with adg_path_has_current_point().
+ * If there is no defined current point, %NULL is returned.
+ * It is possible to check this in advance with
+ * adg_path_has_current_point().
  *
  * Most #AdgPath methods alter the current point and most of them
  * expect a current point to be defined otherwise will fail triggering
  * a warning. Check the description of every method for specific details.
+ *
+ * Returns: the current point or %NULL on no current point set or errors
  **/
-void
-adg_path_get_current_point(AdgPath *path, gdouble *x, gdouble *y)
+const AdgPair *
+adg_path_current_point(AdgPath *path)
 {
     AdgPathPrivate *data;
 
-    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
     data = path->data;
 
-    if (data->cp_is_valid) {
-        *x = data->cp.x;
-        *y = data->cp.y;
-    } else {
-        *x = *y = 0.;
-        g_return_if_reached();
-    }
+    if (!data->cp_is_valid)
+        return NULL;
+
+    return &data->cp;
 }
 
 /**

@@ -54,9 +54,7 @@ struct _AdgPathClass {
 GType           adg_path_get_type               (void) G_GNUC_CONST;
 AdgPath *       adg_path_new                    (void);
 
-void            adg_path_get_current_point      (AdgPath        *path,
-                                                 gdouble        *x,
-                                                 gdouble        *y);
+const AdgPair * adg_path_current_point          (AdgPath        *path);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
