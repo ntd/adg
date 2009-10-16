@@ -169,7 +169,6 @@ sample_path(const SampleData *data)
     AdgPath *path;
     AdgModel *model;
     AdgPair pair;
-    double x, y;
     AdgSegment segment;
     AdgSegment *dup_segment;
     const AdgPrimitive *primitive;
@@ -187,7 +186,6 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, pair.x, pair.y);
     adg_model_set_named_pair(model, "D1F", &pair);
 
-    y = (data->D1 - data->D2) / 2;
     pair.x += (data->D1 - data->D2) * SQRT3 / 2;
     pair.y -= (data->D1 - data->D2) / 2;
     adg_path_line_to(path, pair.x, pair.y);
@@ -227,8 +225,8 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, pair.x, pair.y);
     adg_model_set_named_pair(model, "D4F", &pair);
 
-    y = (data->D4 - data->D5) / 2;
-    adg_path_line_to(path, data->A - data->C - data->LD5 + y, data->D4 / 2 - y);
+    pair.y = (data->D4 - data->D5) / 2;
+    adg_path_line_to(path, data->A - data->C - data->LD5 + pair.y, data->D4 / 2 - pair.y);
     adg_path_line_to(path, data->A - data->C, data->D5 / 2);
 
     adg_path_fillet(path, 0.2);
@@ -246,9 +244,15 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, pair.x, pair.y);
     adg_model_set_named_pair(model, "D6F", &pair);
 
-    x = data->C - data->LD7 - data->LD6;
-    y = x / SQRT3;
-    adg_path_line_to(path, data->A - data->C + data->LD6 + x, data->D6 / 2 - y);
+    primitive = adg_path_over_primitive(path);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, -1));
+    adg_model_set_named_pair(model, "D6I_Y", &pair);
+
+    pair.x = data->A - data->LD7;
+    pair.y = data->D6 / 2 - (data->C - data->LD7 - data->LD6) / SQRT3;
+    adg_path_line_to(path, pair.x, pair.y);
+    adg_model_set_named_pair(model, "D67", &pair);
+
     adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
 
     pair.x = data->A;
@@ -313,13 +317,8 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* Angular D6+ */
-    x = data->A - data->C;
-    y = data->D6 / 2 - (data->C - data->LD6 - data->LD7) / SQRT3;
-    adim = adg_adim_new_full_explicit(x + data->LD6, data->D6 / 2,
-                                      x + 0.1, data->D6 / 2,
-                                      data->A - data->LD7, y,
-                                      x + data->LD6, data->D6 / 2,
-                                      x + data->LD6, data->D6 / 2);
+    adim = adg_adim_new_full_from_model(model, "D6F", "D6I_Y", "D67",
+                                        "D6F", "D6F");
     adg_dim_set_level(ADG_DIM(adim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
 
