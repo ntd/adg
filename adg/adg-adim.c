@@ -68,10 +68,6 @@ static void             render                  (AdgEntity      *entity,
 static gchar *          default_value           (AdgDim         *dim);
 static void             update_geometry         (AdgADim        *adim);
 static void             update_entities         (AdgADim        *adim);
-static gboolean         set_org1                (AdgADim        *adim,
-                                                 const AdgPair  *org1);
-static gboolean         set_org2                (AdgADim        *adim,
-                                                 const AdgPair  *org2);
 static void             unset_trail             (AdgADim        *adim);
 static void             dispose_markers         (AdgADim        *adim);
 static gboolean         get_info                (AdgADim        *adim,
@@ -113,14 +109,14 @@ adg_adim_class_init(AdgADimClass *klass)
     param = g_param_spec_boxed("org1",
                                P_("First Origin"),
                                P_("Where the first line comes from: this point is used toghether with \"ref1\" to align the first extension line"),
-                               ADG_TYPE_PAIR,
+                               ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ORG1, param);
 
     param = g_param_spec_boxed("org2",
                                P_("Second Origin"),
                                P_("Where the second line comes from: this point is used toghether with \"ref2\" to align the second extension line"),
-                               ADG_TYPE_PAIR,
+                               ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ORG2, param);
 }
@@ -139,8 +135,8 @@ adg_adim_init(AdgADim *adim)
     arc_to.header.type = CAIRO_PATH_ARC_TO;
     arc_to.header.length = 3;
 
-    data->org1.x = data->org1.y = 0;
-    data->org2.x = data->org2.y = 0;
+    data->org1 = NULL;
+    data->org2 = NULL;
     data->has_extension1 = TRUE;
     data->has_extension2 = TRUE;
 
@@ -166,7 +162,22 @@ adg_adim_init(AdgADim *adim)
 static void
 dispose(GObject *object)
 {
+    AdgADim *adim;
+    AdgADimPrivate *data;
+
+    adim = (AdgADim *) object;
+    data = adim->data;
+
     dispose_markers((AdgADim *) object);
+
+    if (data->org1 != NULL) {
+        adg_point_destroy(data->org1);
+        data->org1 = NULL;
+    }
+    if (data->org2 != NULL) {
+        adg_point_destroy(data->org2);
+        data->org2 = NULL;
+    }
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -208,10 +219,14 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_ORG1:
-        set_org1(adim, g_value_get_boxed(value));
+        if (data->org1 != NULL)
+            adg_point_destroy(data->org1);
+        data->org1 = g_value_dup_boxed(value);
         break;
     case PROP_ORG2:
-        set_org2(adim, g_value_get_boxed(value));
+        if (data->org2 != NULL)
+            adg_point_destroy(data->org2);
+        data->org2 = g_value_dup_boxed(value);
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -262,10 +277,11 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     AdgADim *adim;
     AdgDim *dim;
 
-    adim = g_object_new(ADG_TYPE_ADIM, "org1", org1, "org2", org2, NULL);
+    adim = g_object_new(ADG_TYPE_ADIM, NULL);
     dim = (AdgDim *) adim;
 
     adg_dim_set_ref(dim, ref1, ref2);
+    adg_adim_set_org(adim, org1, org2);
     adg_dim_set_pos(dim, pos);
 
     return adim;
@@ -309,6 +325,39 @@ adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 }
 
 /**
+ * adg_adim_new_full_from_model:
+ * @model: the model from which the named pairs are taken
+ * @ref1: the end point of the first line
+ * @ref2: the end point of the second line
+ * @org1: the origin of the first line
+ * @org2: the origin of the second line
+ * @pos: the position reference
+ *
+ * Creates a new angular dimension, specifing all the needed properties
+ * in one shot and using named pairs from @model.
+ *
+ * Returns: the newly created angular dimension entity
+ **/
+AdgADim *
+adg_adim_new_full_from_model(AdgModel *model,
+                             const gchar *ref1, const gchar *ref2,
+                             const gchar *org1, const gchar *org2,
+                             const gchar *pos)
+{
+    AdgADim *adim;
+    AdgDim *dim;
+
+    adim = g_object_new(ADG_TYPE_ADIM, NULL);
+    dim = (AdgDim *) adim;
+
+    adg_dim_set_ref_from_model(dim, model, ref1, ref2);
+    adg_dim_set_pos_from_model(dim, model, pos);
+    adg_adim_set_org_from_model(adim, model, org1, org2);
+
+    return adim;
+}
+
+/**
  * adg_adim_get_org1:
  * @adim: an #AdgADim
  *
@@ -326,7 +375,7 @@ adg_adim_get_org1(AdgADim *adim)
 
     data = adim->data;
 
-    return &data->org1;
+    return ADG_POINT_PAIR(data->org1);
 }
 
 /**
@@ -347,7 +396,7 @@ adg_adim_get_org2(AdgADim *adim)
 
     data = adim->data;
 
-    return &data->org2;
+    return ADG_POINT_PAIR(data->org2);
 }
 
 /**
@@ -356,24 +405,126 @@ adg_adim_get_org2(AdgADim *adim)
  * @org1: the first origin
  * @org2: the second origin
  *
- * Sets at once the two origins on @adim.
+ * Sets at once the two origins on @adim. One of @org1 or @org2
+ * (but not both) could be %NULL, in which case only the non-null
+ * origin is set.
  **/
 void
 adg_adim_set_org(AdgADim *adim, const AdgPair *org1, const AdgPair *org2)
 {
     GObject *object;
+    AdgADimPrivate *data;
 
     g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(org1 != NULL || org2 != NULL);
 
     object = (GObject *) adim;
+    data = adim->data;
 
     g_object_freeze_notify(object);
 
-    if (set_org1(adim, org1))
-        g_object_notify(object, "org1");
+    if (org1 != NULL) {
+        if (data->org1 == NULL)
+            data->org1 = adg_point_new();
 
-    if (set_org2(adim, org1))
+        adg_point_set(data->org1, org1);
+
+        g_object_notify(object, "org1");
+    }
+
+    if (org2 != NULL) {
+        if (data->org2 == NULL)
+            data->org2 = adg_point_new();
+
+        adg_point_set(data->org2, org2);
+
         g_object_notify(object, "org2");
+    }
+
+    g_object_thaw_notify(object);
+}
+
+/**
+ * adg_adim_set_org_explicit:
+ * @adim: an #AdgADim
+ * @org1_x: x coordinate of org1
+ * @org1_y: y coordinate of org1
+ * @org2_x: x coordinate of org2
+ * @org2_y: y coordinate of org2
+ *
+ * Works in the same way as adg_adim_set_org() but using
+ * explicit coordinates instead of #AdgPair args. The
+ * notable difference is that, by using gdouble values,
+ * you can't set only a single origin point.
+ **/
+void
+adg_adim_set_org_explicit(AdgADim *adim,
+                          gdouble org1_x, gdouble org1_y,
+                          gdouble org2_x, gdouble org2_y)
+{
+    AdgPair org1, org2;
+
+    org1.x = org1_x;
+    org1.y = org1_y;
+    org2.x = org2_x;
+    org2.y = org2_y;
+
+    adg_adim_set_org(adim, &org1, &org2);
+}
+
+/**
+ * adg_adim_set_org_from_model:
+ * @adim: an #AdgADim
+ * @model: the source #AdgModel
+ * @org1: name of the pair in @model to use as org1
+ * @org2: name of the pair in @model to use as org2
+ *
+ * Sets #AdgADim:org1 and #AdgADim:org2 properties by linking
+ * them to the @org1 and @org2 named pairs in @model. @org1
+ * or @org2 could be %NULL (but not both), in which case
+ * only the non-null origin point is changed.
+ *
+ * Using this function twice you can also link the origin
+ * points to named pairs taken from different models:
+ *
+ * |[
+ * adg_adim_set_org_from_model(adim, model1, org1, NULL);
+ * adg_adim_set_org_from_model(adim, model2, NULL, org2);
+ * ]|
+ **/
+void
+adg_adim_set_org_from_model(AdgADim *adim, AdgModel *model,
+                            const gchar *org1, const gchar *org2)
+{
+    GObject *object;
+    AdgADimPrivate *data;
+
+    g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(org1 != NULL || org2 != NULL);
+
+    object = (GObject *) adim;
+    data = adim->data;
+
+    g_object_freeze_notify(object);
+
+    if (org1 != NULL) {
+        if (data->org1 == NULL)
+            data->org1 = adg_point_new();
+
+        adg_point_set_from_model(data->org1, model, org1);
+
+        g_object_notify(object, "org1");
+    }
+
+    if (org2 != NULL) {
+        if (data->org2 == NULL)
+            data->org2 = adg_point_new();
+
+        adg_point_set_from_model(data->org2, model, org2);
+
+        g_object_notify(object, "org2");
+    }
 
     g_object_thaw_notify(object);
 }
@@ -652,32 +803,6 @@ update_entities(AdgADim *adim)
         data->marker2 = adg_dim_style_marker2_new(dim_style);
 }
 
-static gboolean
-set_org1(AdgADim *adim, const AdgPair *org1)
-{
-    AdgADimPrivate *data = adim->data;
-
-    if (adg_pair_equal(&data->org1, org1))
-        return FALSE;
-
-    data->org1 = *org1;
-
-    return TRUE;
-}
-
-static gboolean
-set_org2(AdgADim *adim, const AdgPair *org2)
-{
-    AdgADimPrivate *data = adim->data;
-
-    if (adg_pair_equal(&data->org2, org2))
-        return FALSE;
-
-    data->org2 = *org2;
-
-    return TRUE;
-}
-
 static void
 unset_trail(AdgADim *adim)
 {
@@ -724,8 +849,8 @@ get_info(AdgADim *adim, CpmlVector vector[],
     ref1 = adg_dim_get_ref1(dim);
     ref2 = adg_dim_get_ref2(dim);
 
-    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), &data->org1);
-    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), &data->org2);
+    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), ADG_POINT_PAIR(data->org1));
+    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), ADG_POINT_PAIR(data->org2));
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0)

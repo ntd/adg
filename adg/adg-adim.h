@@ -66,13 +66,27 @@ AdgADim *       adg_adim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         org2_y,
                                                  gdouble         pos_x,
                                                  gdouble         pos_y);
-
+AdgADim *       adg_adim_new_full_from_model    (AdgModel       *model,
+                                                 const gchar    *ref1,
+                                                 const gchar    *ref2,
+                                                 const gchar    *org1,
+                                                 const gchar    *org2,
+                                                 const gchar    *pos);
 
 const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
 const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
 void            adg_adim_set_org                (AdgADim        *adim,
                                                  const AdgPair  *org1,
                                                  const AdgPair  *org2);
+void            adg_adim_set_org_explicit       (AdgADim        *adim,
+                                                 gdouble         org1_x,
+                                                 gdouble         org1_y,
+                                                 gdouble         org2_x,
+                                                 gdouble         org2_y);
+void            adg_adim_set_org_from_model     (AdgADim        *adim,
+                                                 AdgModel       *model,
+                                                 const gchar    *org1,
+                                                 const gchar    *org2);
 
 G_END_DECLS
 

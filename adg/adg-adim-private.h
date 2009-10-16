@@ -21,7 +21,7 @@
 #ifndef __ADG_ADIM_PRIVATE_H__
 #define __ADG_ADIM_PRIVATE_H__
 
-#include <cairo.h>
+#include <adg/adg-point.h>
 
 
 G_BEGIN_DECLS
@@ -47,8 +47,8 @@ G_BEGIN_DECLS
 typedef struct _AdgADimPrivate AdgADimPrivate;
 
 struct _AdgADimPrivate {
-    AdgPair              org1;
-    AdgPair              org2;
+    AdgPoint            *org1;
+    AdgPoint            *org2;
     gboolean             has_extension1;
     gboolean             has_extension2;
 

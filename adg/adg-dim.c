@@ -466,15 +466,14 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
  * Works in the same way as adg_dim_set_ref() but using
  * explicit coordinates instead of #AdgPair args. The
  * notable difference is that, by using gdouble values,
- * you can't set only one reference point.
+ * you can't set only a single reference point.
  **/
 void
 adg_dim_set_ref_explicit(AdgDim *dim,
                          gdouble ref1_x, gdouble ref1_y,
                          gdouble ref2_x, gdouble ref2_y)
 {
-    AdgPair ref1;
-    AdgPair ref2;
+    AdgPair ref1, ref2;
 
     ref1.x = ref1_x;
     ref1.y = ref1_y;
@@ -491,7 +490,7 @@ adg_dim_set_ref_explicit(AdgDim *dim,
  * @ref1: name of the pair in @model to use as ref1
  * @ref2: name of the pair in @model to use as ref2
  *
- * Sets #AdgDim:ref1 and #AdgDim:ref2 properties  by linking
+ * Sets #AdgDim:ref1 and #AdgDim:ref2 properties by linking
  * them to the @ref1 and @ref2 named pairs in @model. @ref1
  * or @ref2 could be %NULL (but not both), in which case
  * only the non-null reference point is changed.
