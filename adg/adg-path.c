@@ -85,12 +85,12 @@ static void             do_operation            (AdgPath        *path,
                                                  cairo_path_data_t
                                                                 *path_data);
 static void             do_chamfer              (AdgPath        *path,
-                                                 CpmlPrimitive  *current);
+                                                 AdgPrimitive   *current);
 static void             do_fillet               (AdgPath        *path,
-                                                 CpmlPrimitive  *current);
-static gboolean         is_convex               (const CpmlPrimitive
+                                                 AdgPrimitive   *current);
+static gboolean         is_convex               (const AdgPrimitive
                                                                 *primitive1,
-                                                 const CpmlPrimitive
+                                                 const AdgPrimitive
                                                                 *primitive2);
 
 
@@ -584,7 +584,6 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * @path:   an #AdgPath
  * @radius: the radius of the fillet
  *
- *
  * A binary action that joins to primitives with an arc.
  * The first primitive involved is the current primitive, the second will
  * be the next primitive appended to @path after this call. The second
@@ -599,6 +598,52 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 
     if (!append_operation(path, ADG_ACTION_FILLET, radius))
         return;
+}
+
+/**
+ * adg_path_last_primitive:
+ * @path: an #AdgPath
+ *
+ * Gets the last primitive appended to @path. The returned struct
+ * is owned by @path and should not be freed or modified.
+ *
+ * Returns: a pointer to the last appended primitive or %NULL on errors
+ **/
+const AdgPrimitive *
+adg_path_last_primitive(AdgPath *path)
+{
+    AdgPathPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    data = path->data;
+
+    return &data->last;
+}
+
+/**
+ * adg_path_over_primitive:
+ * @path: an #AdgPath
+ *
+ * Gets the primitive before the last one appended to @path. The
+ * "over" term comes from forth, where the %OVER operator works
+ * on the stack in the same way as adg_path_over_primitive() works
+ * on @path. The returned struct is owned by @path and should not
+ * be freed or modified.
+ *
+ * Returns: a pointer to the primitive before the last appended one
+ *          or %NULL on errors
+ **/
+const AdgPrimitive *
+adg_path_over_primitive(AdgPath *path)
+{
+    AdgPathPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    data = path->data;
+
+    return &data->over;
 }
 
 
@@ -674,6 +719,9 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
      * primitive: the first struct is the header */
     path_data = (cairo_path_data_t *) (data->cpml.array)->data +
                 (data->cpml.array)->len - length;
+
+    /* Store the over primitive */
+    memcpy(&data->over, &data->last, sizeof(AdgPrimitive));
 
     /* Set the last primitive for subsequent binary operations */
     data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
@@ -797,8 +845,8 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
 {
     AdgPathPrivate *data;
     AdgAction action;
-    CpmlSegment segment;
-    CpmlPrimitive current;
+    AdgSegment segment;
+    AdgPrimitive current;
     cairo_path_data_t current_org;
 
     data = path->data;
@@ -835,14 +883,13 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
 }
 
 static void
-do_chamfer(AdgPath *path, CpmlPrimitive *current)
+do_chamfer(AdgPath *path, AdgPrimitive *current)
 {
     AdgPathPrivate *data;
-    CpmlPrimitive *last;
+    AdgPrimitive *last;
     gdouble delta1, delta2;
     gdouble len1, len2;
     AdgPair pair;
-    cairo_path_data_t line[2];
 
     data = path->data;
     last = &data->last;
@@ -873,23 +920,17 @@ do_chamfer(AdgPath *path, CpmlPrimitive *current)
     cpml_pair_to_cairo(&pair, cpml_primitive_get_point(current, 0));
 
     /* Add the chamfer line */
-    line[0].header.type = CAIRO_PATH_LINE_TO;
-    line[0].header.length = 2;
-    line[1].point.x = pair.x;
-    line[1].point.y = pair.y;
-    data->cpml.array = g_array_append_vals(data->cpml.array, line, 2);
-
     data->operation.action = ADG_ACTION_NONE;
+    adg_path_append(path, CAIRO_PATH_LINE_TO, &pair);
 }
 
 static void
-do_fillet(AdgPath *path, CpmlPrimitive *current)
+do_fillet(AdgPath *path, AdgPrimitive *current)
 {
     AdgPathPrivate *data;
-    CpmlPrimitive *last, *current_dup, *last_dup;
+    AdgPrimitive *last, *current_dup, *last_dup;
     gdouble radius, offset, pos;
     AdgPair center, vector, p[3];
-    cairo_path_data_t arc[3];
 
     data = path->data;
     last = &data->last;
@@ -938,21 +979,19 @@ do_fillet(AdgPath *path, CpmlPrimitive *current)
     g_free(current_dup);
     g_free(last_dup);
 
-    /* Modify the end point of the last primitive */
+    /* Change the end point of the last primitive */
     cpml_pair_to_cairo(&p[0], cpml_primitive_get_point(last, -1));
 
-    /* Add the fillet arc */
-    arc[0].header.type = CAIRO_PATH_ARC_TO;
-    arc[0].header.length = 3;
-    cpml_pair_to_cairo(&p[1], &arc[1]);
-    cpml_pair_to_cairo(&p[2], &arc[2]);
-    data->cpml.array = g_array_append_vals(data->cpml.array, arc, 3);
+    /* Change the start point of the current primitive */
+    cpml_pair_to_cairo(&p[2], cpml_primitive_get_point(current, 0));
 
+    /* Add the fillet arc */
     data->operation.action = ADG_ACTION_NONE;
+    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
 }
 
 static gboolean
-is_convex(const CpmlPrimitive *primitive1, const CpmlPrimitive *primitive2)
+is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
 {
     CpmlVector v1, v2;
     gdouble angle1, angle2;

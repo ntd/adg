@@ -58,6 +58,7 @@ struct _AdgPathPrivate {
     }                    cpml;
 
     CpmlPrimitive        last;
+    CpmlPrimitive        over;
     AdgOperation         operation;
 };
 

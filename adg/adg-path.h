@@ -24,7 +24,6 @@
 #include <adg/adg-trail.h>
 #include <adg/adg-primitive.h>
 #include <adg/adg-segment.h>
-#include <cpml/cpml.h>
 
 
 G_BEGIN_DECLS
@@ -58,19 +57,16 @@ const AdgPair * adg_path_current_point          (AdgPath        *path);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
-                                                 cairo_path_data_type_t
-                                                                 type,
+                                                 cairo_path_data_type_t type,
                                                  ...);
 void            adg_path_append_valist          (AdgPath        *path,
-                                                 cairo_path_data_type_t
-                                                                 type,
+                                                 cairo_path_data_type_t type,
                                                  va_list         var_args);
 void            adg_path_append_primitive       (AdgPath        *path,
                                                  const AdgPrimitive
                                                                 *primitive);
 void            adg_path_append_segment         (AdgPath        *path,
-                                                 const AdgSegment
-                                                                *segment);
+                                                 const AdgSegment *segment);
 void            adg_path_append_cairo_path      (AdgPath        *path,
                                                  const cairo_path_t
                                                                 *cairo_path);
@@ -105,6 +101,10 @@ void            adg_path_chamfer                (AdgPath        *path,
                                                  gdouble         delta2);
 void            adg_path_fillet                 (AdgPath        *path,
                                                  gdouble         radius);
+const AdgPrimitive *
+                adg_path_last_primitive         (AdgPath        *path);
+const AdgPrimitive *
+                adg_path_over_primitive         (AdgPath        *path);
 
 G_END_DECLS
 
