@@ -225,6 +225,19 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, pair.x, pair.y);
     adg_model_set_named_pair(model, "D4F", &pair);
 
+    primitive = adg_path_over_primitive(path);
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
+    pair.x += data->RD34;
+    adg_model_set_named_pair(model, "RD34", &pair);
+
+    pair.x -= cos(G_PI_4) * data->RD34,
+    pair.y -= sin(G_PI_4) * data->RD34,
+    adg_model_set_named_pair(model, "RD34_R", &pair);
+
+    pair.x += data->RD34,
+    pair.y += data->RD34,
+    adg_model_set_named_pair(model, "RD34_XY", &pair);
+
     pair.y = (data->D4 - data->D5) / 2;
     adg_path_line_to(path, data->A - data->C - data->LD5 + pair.y, data->D4 / 2 - pair.y);
     adg_path_line_to(path, data->A - data->C, data->D5 / 2);
@@ -289,7 +302,6 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
     AdgLDim *ldim;
     AdgADim *adim;
     AdgRDim *rdim;
-    double x, y;
 
     /* NORTH */
 
@@ -316,21 +328,12 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    /* Angular D6+ */
     adim = adg_adim_new_full_from_model(model, "D6F", "D6I_Y", "D67",
                                         "D6F", "D6F");
     adg_dim_set_level(ADG_DIM(adim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
 
-    /* Radial RD34 */
-    x = data->A - data->B + data->LD3 + data->RD34;
-    y = data->D4 / 2 + data->RD34;
-    rdim = adg_rdim_new_full_explicit(x, y,
-                                      x - cos(G_PI_4) * data->RD34,
-                                      y - sin(G_PI_4) * data->RD34,
-                                      x + cos(G_PI_4) * data->RD34,
-                                      y + sin(G_PI_4) * data->RD34);
-    adg_dim_set_level(ADG_DIM(rdim), 1);
+    rdim = adg_rdim_new_full_from_model(model, "RD34", "RD34_R", "RD34_XY");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(rdim));
 
     /* EAST */
