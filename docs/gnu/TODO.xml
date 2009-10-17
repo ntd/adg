@@ -132,7 +132,7 @@ needed to generate this drawing.</para>
    use the functions provided by cairo. (Implemented in CPML as the arc
    primitive is not native in cairo and it is the only one with some quirks
    in the extents computation)</listitem>
-   <listitem>Add labeling feature to the models and let AdgDim and children points
+   <listitem override="disc">Add labeling feature to the models and let AdgDim and children points
    be expressed as references to those labeled points instead of using
    explicit coordinates.</listitem>
    <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
