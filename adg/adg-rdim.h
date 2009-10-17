@@ -61,6 +61,10 @@ AdgRDim *       adg_rdim_new_full_explicit      (gdouble         center_x,
                                                  gdouble         radius_y,
                                                  gdouble         pos_x,
                                                  gdouble         pos_y);
+AdgRDim *       adg_rdim_new_full_from_model    (AdgModel       *model,
+                                                 const gchar    *center,
+                                                 const gchar    *radius,
+                                                 const gchar    *pos);
 
 G_END_DECLS
 

@@ -200,6 +200,30 @@ adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
     return adg_rdim_new_full(&center, &radius, &pos);
 }
 
+/**
+ * adg_rdim_new_full_from_model:
+ * @model: the model from which the named pairs are taken
+ * @center: the center point of the arc to quote
+ * @radius: an arbitrary point on the arc
+ * @pos: the position reference
+ *
+ * Creates a new radial dimension, specifing all the needed properties in
+ * one shot and using named pairs from @model.
+ *
+ * Returns: the newly created radial dimension entity
+ **/
+AdgRDim *
+adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,
+                             const gchar *radius, const gchar *pos)
+{
+    AdgDim *dim = g_object_new(ADG_TYPE_RDIM, NULL);
+
+    adg_dim_set_ref_from_model(dim, model, center, radius);
+    adg_dim_set_pos_from_model(dim, model, pos);
+
+    return (AdgRDim *) dim;
+}
+
 
 static void
 local_changed(AdgEntity *entity)
