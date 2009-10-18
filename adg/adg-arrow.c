@@ -207,15 +207,17 @@ create_model(AdgMarker *marker)
 {
     AdgArrowPrivate *data;
     AdgPath *path;
-    CpmlVector vector;
+    CpmlPair p1, p2;
 
     data = ((AdgArrow *) marker)->data;
     path = adg_path_new();
-    cpml_vector_from_angle(&vector, data->angle / 2);
+    cpml_vector_from_angle(&p1, data->angle / 2);
+    p2.x = p1.x;
+    p2.y = -p1.y;
 
-    adg_path_move_to(path, 0, 0);
-    adg_path_line_to(path, vector.x, vector.y);
-    adg_path_line_to(path, vector.x, -vector.y);
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to(path, &p1);
+    adg_path_line_to(path, &p2);
     adg_path_close(path);
 
     return (AdgModel *) path;

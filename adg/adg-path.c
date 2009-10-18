@@ -370,13 +370,27 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 /**
  * adg_path_move_to:
  * @path: an #AdgPath
+ * @pair: the destination coordinates
+ *
+ * Begins a new segment. After this call the current point will be @pair.
+ **/
+void
+adg_path_move_to(AdgPath *path, const AdgPair *pair)
+{
+    adg_path_append(path, CAIRO_PATH_MOVE_TO, pair);
+}
+
+/**
+ * adg_path_move_to_explicit:
+ * @path: an #AdgPath
  * @x:    the new x coordinate
  * @y:    the new y coordinate
  *
- * Begins a new segment. After this call the current point will be (@x, @y).
+ * Convenient function to call adg_path_move_to() using explicit
+ * coordinates instead of #AdgPair.
  **/
 void
-adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
+adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
 {
     AdgPair p;
 
@@ -389,17 +403,31 @@ adg_path_move_to(AdgPath *path, gdouble x, gdouble y)
 /**
  * adg_path_line_to:
  * @path: an #AdgPath
- * @x:    the new x coordinate
- * @y:    the new y coordinate
+ * @pair: the destination coordinates
  *
- * Adds a line to @path from the current point to position (@x, @y).
- * After this call the current point will be (@x, @y).
+ * Adds a line to @path from the current point to @pair. After this
+ * call the current point will be @pair.
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
  **/
 void
-adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
+adg_path_line_to(AdgPath *path, const AdgPair *pair)
+{
+    adg_path_append(path, CAIRO_PATH_LINE_TO, pair);
+}
+
+/**
+ * adg_path_line_to_explicit:
+ * @path: an #AdgPath
+ * @x:    the new x coordinate
+ * @y:    the new y coordinate
+ *
+ * Convenient function to call adg_path_line_to() using explicit
+ * coordinates instead of #AdgPair.
+ **/
+void
+adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
 {
     AdgPair p;
 
@@ -411,21 +439,36 @@ adg_path_line_to(AdgPath *path, gdouble x, gdouble y)
 
 /**
  * adg_path_arc_to:
+ * @path:     an #AdgPath
+ * @throught: an arbitrary point on the arc
+ * @pair:     the destination coordinates
+ *
+ * Adds an arc to the path from the current point to @pair, passing
+ * throught @throught. After this call the current point will be @pair.
+ *
+ * If @path has no current point before this call, this function will
+ * trigger a warning without other effect.
+ **/
+void
+adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
+{
+    adg_path_append(path, CAIRO_PATH_ARC_TO, throught, pair);
+}
+
+/**
+ * adg_path_arc_to_explicit:
  * @path: an #AdgPath
  * @x1:   the x coordinate of an intermediate point
  * @y1:   the y coordinate of an intermediate point
  * @x2:   the x coordinate of the end of the arc
  * @y2:   the y coordinate of the end of the arc
  *
- * Adds an arc to the path from the current point to (@x2, @y2),
- * passing throught (@x1, @y1). After this call the current point
- * will be (@x2, @y2).
- *
- * If @path has no current point before this call, this function will
- * trigger a warning without other effect.
+ * Convenient function to call adg_path_arc_to() using explicit
+ * coordinates instead of #AdgPair.
  **/
 void
-adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
+adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
+                         gdouble x2, gdouble y2)
 {
     AdgPair p[2];
 
@@ -440,6 +483,27 @@ adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
 /**
  * adg_path_curve_to:
  * @path: an #AdgPath
+ * @control1: the first control point of the curve
+ * @control2: the second control point of the curve
+ * @pair:     the destination coordinates
+ *
+ * Adds a cubic Bézier curve to the path from the current point to
+ * position @pair, using @control1 and @control2 as control points.
+ * After this call the current point will be @pair.
+ *
+ * If @path has no current point before this call, this function will
+ * trigger a warning without other effect.
+ **/
+void
+adg_path_curve_to(AdgPath *path, const AdgPair *control1,
+                  const AdgPair *control2, const AdgPair *pair)
+{
+    adg_path_append(path, CAIRO_PATH_CURVE_TO, control1, control2, pair);
+}
+
+/**
+ * adg_path_curve_to_explicit:
+ * @path: an #AdgPath
  * @x1:   the x coordinate of the first control point
  * @y1:   the y coordinate of the first control point
  * @x2:   the x coordinate of the second control point
@@ -447,16 +511,12 @@ adg_path_arc_to(AdgPath *path, gdouble x1, gdouble y1, gdouble x2, gdouble y2)
  * @x3:   the x coordinate of the end of the curve
  * @y3:   the y coordinate of the end of the curve
  *
- * Adds a cubic Bézier curve to the path from the current point to
- * position (@x3, @y3), using (@x1, @y1) and (@x2, @y2) as the
- * control points. After this call the current point will be (@x3, @y3).
- *
- * If @path has no current point before this call, this function will
- * trigger a warning without other effect.
+ * Convenient function to call adg_path_curve_to() using explicit
+ * coordinates instead of #AdgPair.
  **/
 void
-adg_path_curve_to(AdgPath *path, gdouble x1, gdouble y1,
-                  gdouble x2, gdouble y2, gdouble x3, gdouble y3)
+adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
+                           gdouble x2, gdouble y2, gdouble x3, gdouble y3)
 {
     AdgPair p[3];
 

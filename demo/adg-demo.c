@@ -168,7 +168,7 @@ sample_path(const SampleData *data)
 {
     AdgPath *path;
     AdgModel *model;
-    AdgPair pair;
+    AdgPair pair, tmp;
     AdgSegment segment;
     AdgSegment *dup_segment;
     const AdgPrimitive *primitive;
@@ -179,98 +179,103 @@ sample_path(const SampleData *data)
 
     pair.x = 0;
     pair.y = data->D1 / 2;
-    adg_path_move_to(path, pair.x, pair.y);
+    adg_path_move_to(path, &pair);
     adg_model_set_named_pair(model, "D1I", &pair);
 
     pair.x = data->A - data->B - data->LD2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D1F", &pair);
 
     pair.x += (data->D1 - data->D2) * SQRT3 / 2;
     pair.y -= (data->D1 - data->D2) / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D2I", &pair);
 
-    adg_path_line_to(path, data->A - data->B, data->D2 / 2);
+    pair.x = data->A - data->B;
+    adg_path_line_to(path, &pair);
     adg_path_fillet(path, 0.4);
 
     pair.x = data->A - data->B;
     pair.y = data->D3 / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D3I", &pair);
 
     adg_path_chamfer(path, CHAMFER, CHAMFER);
 
     pair.x = data->A - data->B + data->LD3;
     pair.y = data->D3 / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
-    adg_model_set_named_pair(model, "D3I_X", &pair);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D3I_X", &tmp);
 
     adg_path_chamfer(path, CHAMFER, CHAMFER);
-    adg_path_line_to(path, data->A - data->B + data->LD3, data->D4 / 2);
+
+    pair.y = data->D4 / 2;
+    adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
-    adg_model_set_named_pair(model, "D3F_Y", &pair);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, -1));
-    adg_model_set_named_pair(model, "D3F_X", &pair);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D3F_Y", &tmp);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, -1));
+    adg_model_set_named_pair(model, "D3F_X", &tmp);
 
     adg_path_fillet(path, data->RD34);
 
     pair.x = data->A - data->C - data->LD5;
-    pair.y = data->D4 / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D4F", &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
-    pair.x += data->RD34;
-    adg_model_set_named_pair(model, "RD34", &pair);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    tmp.x += data->RD34;
+    adg_model_set_named_pair(model, "RD34", &tmp);
 
-    pair.x -= cos(G_PI_4) * data->RD34,
-    pair.y -= sin(G_PI_4) * data->RD34,
-    adg_model_set_named_pair(model, "RD34_R", &pair);
+    tmp.x -= cos(G_PI_4) * data->RD34,
+    tmp.y -= sin(G_PI_4) * data->RD34,
+    adg_model_set_named_pair(model, "RD34_R", &tmp);
 
-    pair.x += data->RD34,
-    pair.y += data->RD34,
-    adg_model_set_named_pair(model, "RD34_XY", &pair);
+    tmp.x += data->RD34,
+    tmp.y += data->RD34,
+    adg_model_set_named_pair(model, "RD34_XY", &tmp);
 
-    pair.y = (data->D4 - data->D5) / 2;
-    adg_path_line_to(path, data->A - data->C - data->LD5 + pair.y, data->D4 / 2 - pair.y);
-    adg_path_line_to(path, data->A - data->C, data->D5 / 2);
+    pair.x += (data->D4 - data->D5) / 2;
+    pair.y = data->D5 / 2;
+    adg_path_line_to(path, &pair);
+
+    pair.x = data->A - data->C;
+    adg_path_line_to(path, &pair);
 
     adg_path_fillet(path, 0.2);
 
-    adg_path_line_to(path, data->A - data->C, data->D6 / 2);
+    pair.y = data->D6 / 2;
+    adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, 0));
-    adg_model_set_named_pair(model, "D5F", &pair);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    adg_model_set_named_pair(model, "D5F", &tmp);
 
     adg_path_fillet(path, 0.1);
 
-    pair.x = data->A - data->C + data->LD6;
-    pair.y = data->D6 / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    pair.x += data->LD6;
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D6F", &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(primitive, -1));
-    adg_model_set_named_pair(model, "D6I_Y", &pair);
+    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, -1));
+    adg_model_set_named_pair(model, "D6I_Y", &tmp);
 
     pair.x = data->A - data->LD7;
-    pair.y = data->D6 / 2 - (data->C - data->LD7 - data->LD6) / SQRT3;
-    adg_path_line_to(path, pair.x, pair.y);
+    pair.y -= (data->C - data->LD7 - data->LD6) / SQRT3;
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D67", &pair);
 
-    adg_path_line_to(path, data->A - data->LD7, data->D7 / 2);
+    pair.y = data->D7 / 2;
+    adg_path_line_to(path, &pair);
 
     pair.x = data->A;
-    pair.y = data->D7 / 2;
-    adg_path_line_to(path, pair.x, pair.y);
+    adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D7F", &pair);
 
     /* Reflect the shape by duplicating the first segment of
@@ -644,12 +649,14 @@ operations_chamfer(const AdgPath *model, gdouble delta1, gdouble delta2)
     AdgPath *path;
     CpmlSegment segment;
     CpmlPrimitive primitive;
+    CpmlPair org;
 
     path = adg_path_new();
     adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
     cpml_primitive_from_segment(&primitive, &segment);
+    cpml_pair_from_cairo(&org, primitive.org);
 
-    adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
+    adg_path_move_to(path, &org);
 
     do {
         adg_path_append_primitive(path, &primitive);
@@ -666,12 +673,14 @@ operations_fillet(const AdgPath *model, gdouble radius)
     AdgPath *path;
     CpmlSegment segment;
     CpmlPrimitive primitive;
+    CpmlPair org;
 
     path = adg_path_new();
     adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
     cpml_primitive_from_segment(&primitive, &segment);
+    cpml_pair_from_cairo(&org, primitive.org);
 
-    adg_path_move_to(path, (primitive.org)->point.x, (primitive.org)->point.y);
+    adg_path_move_to(path, &org);
 
     do {
         adg_path_append_primitive(path, &primitive);
@@ -827,16 +836,16 @@ non_trivial_model()
 {
     AdgPath *path = adg_path_new();
 
-    adg_path_move_to(path,  2,  0);
-    adg_path_line_to(path,  0,  5);
-    adg_path_line_to(path,  2,  2);
-    adg_path_line_to(path,  0,  8);
-    adg_path_line_to(path,  2,  8);
-    adg_path_line_to(path,  2, 10);
-    adg_path_line_to(path,  3, 10);
-    adg_path_line_to(path, 10,  9);
-    adg_path_line_to(path,  5,  5);
-    adg_path_line_to(path,  3,  0);
+    adg_path_move_to_explicit(path,  2,  0);
+    adg_path_line_to_explicit(path,  0,  5);
+    adg_path_line_to_explicit(path,  2,  2);
+    adg_path_line_to_explicit(path,  0,  8);
+    adg_path_line_to_explicit(path,  2,  8);
+    adg_path_line_to_explicit(path,  2, 10);
+    adg_path_line_to_explicit(path,  3, 10);
+    adg_path_line_to_explicit(path, 10,  9);
+    adg_path_line_to_explicit(path,  5,  5);
+    adg_path_line_to_explicit(path,  3,  0);
     adg_path_close(path);
 
     return path;

@@ -71,17 +71,28 @@ void            adg_path_append_cairo_path      (AdgPath        *path,
                                                  const cairo_path_t
                                                                 *cairo_path);
 void            adg_path_move_to                (AdgPath        *path,
+                                                 const AdgPair  *pair);
+void            adg_path_move_to_explicit       (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_line_to                (AdgPath        *path,
+                                                 const AdgPair  *pair);
+void            adg_path_line_to_explicit       (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_arc_to                 (AdgPath        *path,
+                                                 const AdgPair  *throught,
+                                                 const AdgPair  *pair);
+void            adg_path_arc_to_explicit        (AdgPath        *path,
                                                  gdouble         x1,
                                                  gdouble         y1,
                                                  gdouble         x2,
                                                  gdouble         y2);
 void            adg_path_curve_to               (AdgPath        *path,
+                                                 const AdgPair  *control1,
+                                                 const AdgPair  *control2,
+                                                 const AdgPair  *pair);
+void            adg_path_curve_to_explicit      (AdgPath        *path,
                                                  gdouble         x1,
                                                  gdouble         y1,
                                                  gdouble         x2,
