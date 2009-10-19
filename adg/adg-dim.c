@@ -1076,6 +1076,10 @@ invalidate(AdgEntity *entity)
 
     if (data->quote.container != NULL)
         adg_entity_invalidate((AdgEntity *) data->quote.container);
+
+    adg_point_invalidate(data->ref1);
+    adg_point_invalidate(data->ref2);
+    adg_point_invalidate(data->pos);
 }
 
 static gchar *
