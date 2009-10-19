@@ -6,6 +6,25 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.5.3">
+<title>ADG 0.5.3</title>
+
+<para>AdgRDim, a new entity to quote radial dimensions, is now available.</para>
+
+<para>A bunch of new classes to manage hatches have been implemented.
+Specifically, AdgHatch is the entity to be added to the canvas,
+AdgFillStyle a generic abstract class that wraps cairo_pattern_t
+and AdgRuledFill the AdgFillStyle implementation to fill an hatch
+with a serie of parallel lines with custom spacing and angle.</para>
+
+<para>The AdgModel now supports named pairs, that is any coordinates
+can be set explicitely (as before) or as a reference to a pair
+set by the model. The AdgPoint helper class is the object used
+to manage this relationship. The API of dimension entities has
+been updated to accept AdgPoint instead of plain AdgPair.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.5.2">
 <title>ADG 0.5.2</title>
 
