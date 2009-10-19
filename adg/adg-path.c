@@ -92,6 +92,9 @@ static gboolean         is_convex               (const AdgPrimitive
                                                                 *primitive1,
                                                  const AdgPrimitive
                                                                 *primitive2);
+static void             dup_reversed_pair       (const gchar    *name,
+                                                 AdgPair        *pair,
+                                                 gpointer        user_data);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
@@ -213,6 +216,52 @@ adg_path_has_current_point(AdgPath *path)
     data = path->data;
 
     return data->cp_is_valid;
+}
+
+/**
+ * adg_path_last_primitive:
+ * @path: an #AdgPath
+ *
+ * Gets the last primitive appended to @path. The returned struct
+ * is owned by @path and should not be freed or modified.
+ *
+ * Returns: a pointer to the last appended primitive or %NULL on errors
+ **/
+const AdgPrimitive *
+adg_path_last_primitive(AdgPath *path)
+{
+    AdgPathPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    data = path->data;
+
+    return &data->last;
+}
+
+/**
+ * adg_path_over_primitive:
+ * @path: an #AdgPath
+ *
+ * Gets the primitive before the last one appended to @path. The
+ * "over" term comes from forth, where the %OVER operator works
+ * on the stack in the same way as adg_path_over_primitive() works
+ * on @path. The returned struct is owned by @path and should not
+ * be freed or modified.
+ *
+ * Returns: a pointer to the primitive before the last appended one
+ *          or %NULL on errors
+ **/
+const AdgPrimitive *
+adg_path_over_primitive(AdgPath *path)
+{
+    AdgPathPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+
+    data = path->data;
+
+    return &data->over;
 }
 
 /**
@@ -682,49 +731,61 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 }
 
 /**
- * adg_path_last_primitive:
- * @path: an #AdgPath
+ * adg_path_reflect:
+ * @path:   an #AdgPath
+ * @vector: the slope of the axis
  *
- * Gets the last primitive appended to @path. The returned struct
- * is owned by @path and should not be freed or modified.
- *
- * Returns: a pointer to the last appended primitive or %NULL on errors
+ * Reflects the first segment or @path around the axis passing
+ * throught (0, 0) and with a @vector slope. The internal segment
+ * is duplicated and the proper transformation (computed from
+ * @vector) to mirror the segment is applied on all its points.
+ * The result is then reversed with cpml_segment_reverse() and
+ * appended to the original path with adg_path_append_segment().
  **/
-const AdgPrimitive *
-adg_path_last_primitive(AdgPath *path)
+void
+adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 {
-    AdgPathPrivate *data;
+    AdgNamedPairData data;
+    AdgSegment segment, *dup_segment;
 
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+    g_return_if_fail(ADG_IS_PATH(path));
 
-    data = path->data;
+    data.model = (AdgModel *) path;
 
-    return &data->last;
-}
+    if (vector == NULL) {
+        cairo_matrix_init_scale(&data.matrix, 1, -1);
+    } else {
+        CpmlVector slope;
+        gdouble cos2angle, sin2angle;
 
-/**
- * adg_path_over_primitive:
- * @path: an #AdgPath
- *
- * Gets the primitive before the last one appended to @path. The
- * "over" term comes from forth, where the %OVER operator works
- * on the stack in the same way as adg_path_over_primitive() works
- * on @path. The returned struct is owned by @path and should not
- * be freed or modified.
- *
- * Returns: a pointer to the primitive before the last appended one
- *          or %NULL on errors
- **/
-const AdgPrimitive *
-adg_path_over_primitive(AdgPath *path)
-{
-    AdgPathPrivate *data;
+        cpml_pair_copy(&slope, vector);
+        cpml_vector_set_length(&slope, 1);
 
-    g_return_val_if_fail(ADG_IS_PATH(path), NULL);
+        if (slope.x == 0 && slope.y == 0) {
+            g_warning(_("%s: the axis of the reflection is not known"),
+                      G_STRLOC);
+            return;
+        }
 
-    data = path->data;
+        sin2angle = 2. * vector->x * vector->y;
+        cos2angle = 2. * vector->x * vector->x - 1;
 
-    return &data->over;
+        cairo_matrix_init(&data.matrix, cos2angle, sin2angle,
+                          sin2angle, -cos2angle, 0, 0);
+    }
+
+    adg_trail_get_segment((AdgTrail *) path, &segment, 1);
+    dup_segment = adg_segment_deep_dup(&segment);
+
+    cpml_segment_reverse(dup_segment);
+    cpml_segment_transform(dup_segment, &data.matrix);
+    dup_segment->data[0].header.type = CAIRO_PATH_LINE_TO;
+
+    adg_path_append_segment(path, dup_segment);
+
+    g_free(dup_segment);
+
+    adg_model_foreach_named_pair(data.model, dup_reversed_pair, &data);
 }
 
 
@@ -858,12 +919,11 @@ clear_operation(AdgPath *path)
     data = path->data;
     operation = &data->operation;
 
-    if (operation->action == ADG_ACTION_NONE)
-        return;
-
-    g_warning("An operation is still active while clearing the path "
-              "(action `%d')", operation->action);
-    operation->action = ADG_ACTION_NONE;
+    if (operation->action != ADG_ACTION_NONE) {
+        g_warning(_("%s: a `%d' operation is still active while clearing the path"),
+                  G_STRLOC, operation->action);
+        operation->action = ADG_ACTION_NONE;
+    }
 }
 
 static gboolean
@@ -876,19 +936,18 @@ append_operation(AdgPath *path, AdgAction action, ...)
     data = path->data;
 
     if (!data->cp_is_valid) {
-        g_warning("Operation requested but path has no current primitive "
-                  "(action `%d')", action);
+        g_warning(_("%s: requested a `%d' operation on a path without current primitive"),
+                  G_STRLOC, action);
         return FALSE;
     }
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning("Operation requested but another operation is yet active"
-                  "(operators: new `%d', old `%d')",
-                  action, operation->action);
+        g_warning(_("%s: requested a `%d' operation while a `%d' operation is active"),
+                  G_STRLOC, action, operation->action);
         ADG_MESSAGE("TODO: this is a rude simplification, as a lot of "
-                    "operators can and may cohexist. As an example, a "
-                    "fillet followed by a polar chamfer should be done.");
+                    "actions could be chained up. As an example, a fillet "
+                    "followed by a polar chamfer is quite common.");
         return FALSE;
     }
 
@@ -910,7 +969,8 @@ append_operation(AdgPath *path, AdgAction action, ...)
         return TRUE;
 
     default:
-        g_warning("Operation not recognized (action `%d')", action);
+        g_warning(_("%s: `%d' operation not recognized"),
+                  G_STRLOC, action);
         va_end(var_args);
         return FALSE;
     }
@@ -958,7 +1018,8 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
         break;
 
     default:
-        g_warning("Operation not implemented (action `%d')", action);
+        g_warning(_("%s: `%d' operation not recognized"),
+                  G_STRLOC, action);
         return;
     }
 }
@@ -978,8 +1039,8 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
     len1 = cpml_primitive_length(last);
 
     if (delta1 >= len1) {
-        g_warning("Chamfer too big for the last primitive (%lf >= %lf)",
-                  delta1, len1);
+        g_warning(_("%s: first chamfer delta of `%lf' is greather than the available `%lf' length"),
+                  G_STRLOC, delta1, len1);
         return;
     }
 
@@ -987,8 +1048,8 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
     len2 = cpml_primitive_length(current);
 
     if (delta2 >= len2) {
-        g_warning("Chamfer too big for the current primitive (%lf >= %lf)",
-                  delta2, len2);
+        g_warning(_("%s: second chamfer delta of `%lf' is greather than the available `%lf' length"),
+                  G_STRLOC, delta1, len1);
         return;
     }
 
@@ -1031,7 +1092,8 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     cpml_primitive_offset(last_dup, offset);
     if (cpml_primitive_intersection(current_dup, last_dup,
                                     &center, 1) == 0) {
-        g_warning("Fillet not applicable (radius = %lf)", radius);
+        g_warning(_("%s: fillet with radius of `%lf' is not applicable here"),
+                  G_STRLOC, radius);
         g_free(current_dup);
         g_free(last_dup);
         return;
@@ -1088,4 +1150,21 @@ is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
         angle1 -= M_PI*2;
 
     return angle2-angle1 > M_PI;
+}
+
+static void
+dup_reversed_pair(const gchar *name, AdgPair *pair, gpointer user_data)
+{
+    AdgNamedPairData *data;
+    gchar *new_name;
+    AdgPair new_pair;
+
+    data = (AdgNamedPairData *) user_data;
+    new_name = g_strdup_printf("-%s", name);
+    cpml_pair_copy(&new_pair, pair);
+
+    cpml_pair_transform(&new_pair, &data->matrix);
+    adg_model_set_named_pair(data->model, new_name, &new_pair);
+
+    g_free(new_name);
 }

@@ -26,15 +26,23 @@
 
 G_BEGIN_DECLS
 
-typedef struct _AdgPathPrivate AdgPathPrivate;
+typedef struct _AdgNamedPairData AdgNamedPairData;
+typedef enum   _AdgAction        AdgAction;
+typedef struct _AdgOperation     AdgOperation;
+typedef struct _AdgPathPrivate   AdgPathPrivate;
 
-typedef enum {
+struct _AdgNamedPairData {
+    AdgMatrix    matrix;
+    AdgModel    *model;
+};
+
+enum _AdgAction {
     ADG_ACTION_NONE,
     ADG_ACTION_CHAMFER,
     ADG_ACTION_FILLET
-} AdgAction;
+};
 
-typedef struct {
+struct _AdgOperation{
     AdgAction action;
 
     union {
@@ -46,7 +54,7 @@ typedef struct {
         } fillet;
     } data;
 
-} AdgOperation;
+};
 
 struct _AdgPathPrivate {
     gboolean             cp_is_valid;

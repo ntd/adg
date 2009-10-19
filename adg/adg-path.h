@@ -55,6 +55,10 @@ AdgPath *       adg_path_new                    (void);
 
 const AdgPair * adg_path_current_point          (AdgPath        *path);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
+const AdgPrimitive *
+                adg_path_last_primitive         (AdgPath        *path);
+const AdgPrimitive *
+                adg_path_over_primitive         (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
                                                  cairo_path_data_type_t type,
@@ -116,10 +120,8 @@ void            adg_path_chamfer                (AdgPath        *path,
                                                  gdouble         delta2);
 void            adg_path_fillet                 (AdgPath        *path,
                                                  gdouble         radius);
-const AdgPrimitive *
-                adg_path_last_primitive         (AdgPath        *path);
-const AdgPrimitive *
-                adg_path_over_primitive         (AdgPath        *path);
+void            adg_path_reflect                (AdgPath        *path,
+                                                 const CpmlVector *vector);
 
 G_END_DECLS
 
