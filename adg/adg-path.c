@@ -346,14 +346,15 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
 }
 
 /**
- * adg_path_append_cairo_path:
- * @path:       an #AdgPath
- * @cairo_path: the #cairo_path_t path to append
+ * adg_path_append_cpml_path:
+ * @path:      an #AdgPath
+ * @cpml_path: the #cairo_path_t path to append
  *
- * Appends a whole cairo path to @path.
+ * Appends a whole #CpmlPath to @path. #CpmlPath is a superset of
+ * #cairo_path_t, so this function can be feeded with both.
  **/
 void
-adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
+adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
 {
     AdgPathPrivate *data;
 
@@ -363,8 +364,8 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 
     clear_parent((AdgModel *) path);
     data->cpml.array = g_array_append_vals(data->cpml.array,
-                                           cairo_path->data,
-                                           cairo_path->num_data);
+                                           cpml_path->data,
+                                           cpml_path->num_data);
 }
 
 /**

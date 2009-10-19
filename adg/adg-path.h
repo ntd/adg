@@ -67,9 +67,8 @@ void            adg_path_append_primitive       (AdgPath        *path,
                                                                 *primitive);
 void            adg_path_append_segment         (AdgPath        *path,
                                                  const AdgSegment *segment);
-void            adg_path_append_cairo_path      (AdgPath        *path,
-                                                 const cairo_path_t
-                                                                *cairo_path);
+void            adg_path_append_cpml_path       (AdgPath        *path,
+                                                 const CpmlPath *cpml_path);
 void            adg_path_move_to                (AdgPath        *path,
                                                  const AdgPair  *pair);
 void            adg_path_move_to_explicit       (AdgPath        *path,
