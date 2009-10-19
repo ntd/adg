@@ -385,7 +385,7 @@ adg_dim_get_ref1(AdgDim *dim)
 
     data = dim->data;
 
-    return ADG_POINT_PAIR(data->ref1);
+    return adg_point_pair(data->ref1);
 }
 
 /**
@@ -406,7 +406,7 @@ adg_dim_get_ref2(AdgDim *dim)
 
     data = dim->data;
 
-    return ADG_POINT_PAIR(data->ref2);
+    return adg_point_pair(data->ref2);
 }
 
 /**
@@ -558,7 +558,7 @@ adg_dim_get_pos(AdgDim *dim)
 
     data = dim->data;
 
-    return ADG_POINT_PAIR(data->pos);
+    return adg_point_pair(data->pos);
 }
 
 /**

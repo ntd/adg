@@ -28,7 +28,6 @@
 G_BEGIN_DECLS
 
 #define ADG_TYPE_POINT                  (adg_point_get_type())
-#define ADG_POINT_PAIR(point)           ((AdgPair *) (point))
 
 
 typedef struct _AdgPoint  AdgPoint;
@@ -41,6 +40,7 @@ AdgPoint *      adg_point_copy          (AdgPoint       *point,
 AdgPoint *      adg_point_new           (void);
 AdgPoint *      adg_point_dup           (const AdgPoint *point);
 void            adg_point_destroy       (AdgPoint       *point);
+const AdgPair * adg_point_pair          (AdgPoint       *point);
 void            adg_point_set           (AdgPoint       *point,
                                          const AdgPair  *pair);
 void            adg_point_set_explicit  (AdgPoint       *point,
@@ -49,7 +49,7 @@ void            adg_point_set_explicit  (AdgPoint       *point,
 void            adg_point_set_from_model(AdgPoint       *point,
                                          AdgModel       *model,
                                          const gchar    *name);
-void            adg_point_update        (AdgPoint       *point);
+void            adg_point_invalidate    (AdgPoint       *point);
 
 G_END_DECLS
 

@@ -29,20 +29,8 @@
  * set explicitely throught adg_point_set() and adg_point_set_explicit()
  * or taken from a model with adg_point_set_from_model(). It can be
  * thought as an #AdgPair on steroid, because it adds named pair
- * support to a simple pairs, and thus enabling coordinates depending
+ * support to a simple pair, thus enabling coordinates depending
  * on #AdgModel instances.
- **/
-
-/**
- * ADG_POINT_PAIR:
- * @point: an #AdgPoint
- *
- * #AdgPoint is an evolution of the pair concept, but internally the
- * relevant data is still kept by an #AdgPair struct. This macro
- * gets this struct. Being declared at the start of the #AdgPoint
- * struct, it'd suffice to cast the point to an #AdgPair too.
- *
- * Returns: the pair of @point
  **/
 
 /**
@@ -53,6 +41,7 @@
 
 
 #include "adg-point.h"
+#include "adg-intl.h"
 
 #include <string.h>
 
@@ -61,6 +50,7 @@ struct _AdgPoint {
     AdgPair      pair;
     AdgModel    *model;
     gchar       *name;
+    gboolean     is_uptodate;
 };
 
 GType
@@ -81,7 +71,9 @@ adg_point_get_type(void)
  * @point: an #AdgPoint
  * @src: the source point to copy
  *
- * Copies @src into @point.
+ * Copies @src into @point. If @point was linked to a named pair, the
+ * reference to the old model is dropped. Similary, if @src is linked
+ * to a model, a new reference to this new model is added.
  *
  * Returns: @point
  **/
@@ -104,7 +96,8 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
  * adg_point_dup:
  * @point: an #AdgPoint structure
  *
- * Duplicates @point.
+ * Duplicates @point. This operation also adds a new reference
+ * to the internal model if @point is linked to a named pair.
  *
  * Returns: the duplicated #AdgPoint struct or %NULL on errors
  **/
@@ -151,6 +144,46 @@ adg_point_destroy(AdgPoint *point)
 }
 
 /**
+ * adg_point_pair:
+ * @point: an #AdgPoint
+ *
+ * #AdgPoint is an evolution of the pair concept, but internally the
+ * relevant data is still stored in an #AdgPair struct. This function
+ * gets this struct, optionally updating the internal value from the
+ * linked named pair if necessary.
+ *
+ * Returns: the pair of @point
+ **/
+const AdgPair *
+adg_point_pair(AdgPoint *point)
+{
+    if (!point->is_uptodate) {
+        const AdgPair *pair;
+
+        if (point->model == NULL) {
+            /* A point with explicit coordinates not up to date
+             * is an unexpected condition */
+            g_warning(_("%s: trying to get a pair from an undefined point"),
+                      G_STRLOC);
+            return NULL;
+        }
+
+        pair = adg_model_named_pair(point->model, point->name);
+
+        if (pair == NULL) {
+            g_warning(_("%s: `%s' named pair not found in `%s' model instance"),
+                      G_STRLOC, point->name,
+                      g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
+            return NULL;
+        }
+
+        cpml_pair_copy(&point->pair, pair);
+    }
+
+    return (AdgPair *) point;
+}
+
+/**
  * adg_point_set:
  * @point: an #AdgPoint
  * @pair: the #AdgPair to use
@@ -187,11 +220,12 @@ adg_point_set_explicit(AdgPoint *point, gdouble x, gdouble y)
 
     point->pair.x = x;
     point->pair.y = y;
+    point->is_uptodate = TRUE;
 }
 
 /**
  * adg_point_set_from_model:
- * @point: an #AdgPair
+ * @point: an #AdgPoint
  * @model: the #AdgModel
  * @name: the id of a named pair in @model
  *
@@ -232,42 +266,28 @@ adg_point_set_from_model(AdgPoint *point, AdgModel *model, const gchar *name)
         point->name = NULL;
     }
 
+    point->is_uptodate = FALSE;
+
     if (model != NULL) {
         /* Set the new named pair */
         point->model = model;
         point->name = g_strdup(name);
     }
-
-    adg_point_update(point);
 }
 
 /**
- * adg_point_update:
+ * adg_point_invalidate:
  * @point: an #AdgPoint
  *
- * Updates the pair of @point. If @point is an explicit pair (either
- * if set with adg_point_set() or adg_point_set_explicit()), no action
- * is taken. If @point is linked to a named pair, instead, the internal
- * pair is updated with the value returned by adg_model_named_pair().
+ * Invalidates @point, forcing a refresh of its internal #AdgPair if
+ * the point is linked to a named pair. If @point is explicitely set,
+ * this function has no effect.
  **/
 void
-adg_point_update(AdgPoint *point)
+adg_point_invalidate(AdgPoint *point)
 {
-    const AdgPair *pair;
-
     g_return_if_fail(point != NULL);
 
-    /* A point with explicit coordinates does not need to be updated */
-    if (point->model == NULL)
-        return;
-
-    pair = adg_model_named_pair(point->model, point->name);
-    if (pair == NULL) {
-        g_warning("%s: `%s' named pair not found in `%s' model instance",
-                  G_STRLOC, point->name,
-                  g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
-        return;
-    }
-
-    cpml_pair_copy(&point->pair, pair);
+    if (point->model != NULL)
+        point->is_uptodate = FALSE;
 }

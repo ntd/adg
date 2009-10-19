@@ -375,7 +375,7 @@ adg_adim_get_org1(AdgADim *adim)
 
     data = adim->data;
 
-    return ADG_POINT_PAIR(data->org1);
+    return adg_point_pair(data->org1);
 }
 
 /**
@@ -396,7 +396,7 @@ adg_adim_get_org2(AdgADim *adim)
 
     data = adim->data;
 
-    return ADG_POINT_PAIR(data->org2);
+    return adg_point_pair(data->org2);
 }
 
 /**
@@ -849,8 +849,8 @@ get_info(AdgADim *adim, CpmlVector vector[],
     ref1 = adg_dim_get_ref1(dim);
     ref2 = adg_dim_get_ref2(dim);
 
-    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), ADG_POINT_PAIR(data->org1));
-    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), ADG_POINT_PAIR(data->org2));
+    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), adg_point_pair(data->org1));
+    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), adg_point_pair(data->org2));
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0)
