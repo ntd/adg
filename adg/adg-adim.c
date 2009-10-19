@@ -551,6 +551,9 @@ invalidate(AdgEntity *entity)
     data->geometry_arranged = FALSE;
     unset_trail(adim);
 
+    adg_point_invalidate(data->org1);
+    adg_point_invalidate(data->org2);
+
     if (PARENT_ENTITY_CLASS->invalidate != NULL)
         PARENT_ENTITY_CLASS->invalidate(entity);
 }
