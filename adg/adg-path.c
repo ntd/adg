@@ -556,10 +556,9 @@ adg_path_close(AdgPath *path)
 }
 
 /**
- * adg_path_arc
+ * adg_path_arc:
  * @path:  an #AdgPath
- * @xc:    x position of the center of the arc
- * @yc:    y position of the center of the arc
+ * @center: coordinates of the center of the arc
  * @r:     the radius of the arc
  * @start: the start angle, in radians
  * @end:   the end angle, in radians
@@ -577,21 +576,18 @@ adg_path_close(AdgPath *path)
  * current point before the call a %CAIRO_PATH_MOVE_TO to the start
  * point of the arc will be automatically prepended to the arc.
  * If @path has a current point, a %CAIRO_PATH_LINE_TO to the start
- * point of the arc will be used instead of the moveto.
+ * point of the arc will be used instead of the "move to" primitive.
  **/
 void
-adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
+adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
              gdouble start, gdouble end)
 {
     AdgPathPrivate *data;
-    AdgPair center, p[3];
+    AdgPair p[3];
 
     g_return_if_fail(ADG_IS_PATH(path));
 
     data = path->data;
-    center.x = xc;
-    center.y = yc;
-
     cpml_vector_from_angle(&p[0], start);
     cpml_vector_from_angle(&p[1], (end-start) / 2);
     cpml_vector_from_angle(&p[2], end);
@@ -600,9 +596,9 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
     cpml_vector_set_length(&p[1], r);
     cpml_vector_set_length(&p[2], r);
 
-    cpml_pair_add(&p[0], &center);
-    cpml_pair_add(&p[1], &center);
-    cpml_pair_add(&p[2], &center);
+    cpml_pair_add(&p[0], center);
+    cpml_pair_add(&p[1], center);
+    cpml_pair_add(&p[2], center);
 
     if (!data->cp_is_valid)
         adg_path_append(path, CAIRO_PATH_MOVE_TO, &p[0]);
@@ -610,6 +606,30 @@ adg_path_arc(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
         adg_path_append(path, CAIRO_PATH_LINE_TO, &p[0]);
 
     adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
+}
+
+/**
+ * adg_path_arc_explicit:
+ * @path:  an #AdgPath
+ * @xc:    x position of the center of the arc
+ * @yc:    y position of the center of the arc
+ * @r:     the radius of the arc
+ * @start: the start angle, in radians
+ * @end:   the end angle, in radians
+ *
+ * Convenient function to call adg_path_arc() using explicit
+ * coordinates instead of #AdgPair.
+ **/
+void
+adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
+                      gdouble start, gdouble end)
+{
+    AdgPair center;
+
+    center.x = xc;
+    center.y = yc;
+
+    adg_path_arc(path, &center, r, start, end);
 }
 
 /**

@@ -101,6 +101,11 @@ void            adg_path_curve_to_explicit      (AdgPath        *path,
 void            adg_path_close                  (AdgPath        *path);
 
 void            adg_path_arc                    (AdgPath        *path,
+                                                 const AdgPair  *pair,
+                                                 gdouble         r,
+                                                 gdouble         start,
+                                                 gdouble         end);
+void            adg_path_arc_explicit           (AdgPath        *path,
                                                  gdouble         xc,
                                                  gdouble         yc,
                                                  gdouble         r,
