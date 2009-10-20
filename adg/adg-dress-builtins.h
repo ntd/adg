@@ -41,6 +41,7 @@ G_BEGIN_DECLS
 #define ADG_DRESS_DIMENSION             (_adg_dress_dimension())
 #define ADG_DRESS_FILL                  (_adg_dress_fill())
 #define ADG_DRESS_FILL_HATCH            (_adg_dress_fill_hatch())
+#define ADG_DRESS_TABLE                 (_adg_dress_table())
 
 
 AdgDress        _adg_dress_color                (void) G_GNUC_CONST;
@@ -57,6 +58,7 @@ AdgDress        _adg_dress_text_limit           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_dimension            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_fill                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_fill_hatch           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_table                (void) G_GNUC_CONST;
 
 G_END_DECLS
 

@@ -32,6 +32,8 @@ h_sources=			adg-adim.h \
 				adg-segment.h \
 				adg-stroke.h \
 				adg-style.h \
+				adg-table.h \
+				adg-table-style.h \
 				adg-title-block.h \
 				adg-trail.h \
 				adg-toy-text.h \
@@ -62,6 +64,8 @@ private_h_sources=		adg-adim-private.h \
 				adg-rdim-private.h \
 				adg-ruled-fill-private.h \
 				adg-stroke-private.h \
+				adg-table-private.h \
+				adg-table-style-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
 				adg-toy-text-private.h
@@ -96,6 +100,8 @@ c_sources=			adg-adim.c \
 				adg-segment.c \
 				adg-stroke.c \
 				adg-style.c \
+				adg-table.c \
+				adg-table-style.c \
 				adg-title-block.c \
 				adg-trail.c \
 				adg-toy-text.c \

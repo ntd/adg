@@ -35,8 +35,9 @@
 #include "adg-line-style.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
-#include "adg-ruled-fill.h"
 #include "adg-arrow.h"
+#include "adg-ruled-fill.h"
+#include "adg-table-style.h"
 
 
 /**
@@ -362,7 +363,7 @@ _adg_dress_fill(void)
 /**
  * ADG_DRESS_FILL_HATCH:
  *
- * The default builtin #AdgDress for used by #AdgHatch instances.
+ * The default builtin #AdgDress used by #AdgHatch instances.
  * The fallback style is the default implementation of the
  * #AdgRuledFill instance.
  *
@@ -380,6 +381,28 @@ _adg_dress_fill_hatch(void)
 
         dress = adg_dress_new_full("fill-hatch", fallback,
                                    ADG_TYPE_FILL_STYLE);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_TABLE:
+ *
+ * The default builtin #AdgDress for tables. The fallback style
+ * is the default implementation of the #AdgTableStyle instance.
+ *
+ * This dress will be resolved to an #AdgTableStyle derived instance.
+ **/
+AdgDress
+_adg_dress_table(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_TABLE_STYLE, NULL);
+        dress = adg_dress_new_full("table", fallback, ADG_TYPE_TABLE_STYLE);
         g_object_unref(fallback);
     }
 
