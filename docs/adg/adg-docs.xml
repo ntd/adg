@@ -47,6 +47,7 @@
     </chapter>
     <chapter id="Populating-special">
       <title>Special entities</title>
+      <xi:include href="xml/adg-table.xml"/>
       <xi:include href="xml/adg-title-block.xml"/>
     </chapter>
     <chapter id="Populating-quoting">
@@ -77,6 +78,7 @@
       <xi:include href="xml/adg-ruled-fill.xml"/>
       <xi:include href="xml/adg-font-style.xml"/>
       <xi:include href="xml/adg-dim-style.xml"/>
+      <xi:include href="xml/adg-table-style.xml"/>
     </chapter>
   </part>
 

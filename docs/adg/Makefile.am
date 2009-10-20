@@ -41,6 +41,8 @@ IGNORE_HFILES=		adg.h \
 			adg-rdim-private.h \
 			adg-ruled-fill-private.h \
 			adg-stroke-private.h \
+			adg-table-private.h \
+			adg-table-style-private.h \
 			adg-title-block-private.h \
 			adg-trail-private.h \
 			adg-toy-text-private.h \
