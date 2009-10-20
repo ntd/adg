@@ -506,7 +506,10 @@ adg_dim_style_use_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
  * adg_dim_style_get_color_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the @dim_style color dress to be used.
+ * Gets the @dim_style color dress to be used. This dress should be
+ * intended as a fallback color as it could be overriden by more
+ * specific dresses, such as a color explicitely specified on the
+ * #AdgDimStyle:value-dress.
  *
  * Returns: the color dress
  **/
@@ -546,9 +549,10 @@ adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
  * adg_dim_style_get_value_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the @dim_style dress to be used for the basic value.
+ * Gets the font dress to be used for the basic value of dimensions
+ * with @dim_style.
  *
- * Returns: the basic value dress
+ * Returns: the font dress
  **/
 AdgDress
 adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
@@ -666,8 +670,8 @@ adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
  * adg_dim_style_get_line_dress:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the @dim_style dress to be used for rendering the baseline and
- * the extension lines.
+ * Gets the line dress to be used for rendering the base and
+ * the extension lines with @dim_style.
  *
  * Returns: the line dress
  **/
@@ -933,7 +937,7 @@ adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @shift: the new displacement
  *
- * Sets a new "quote-shift" value.
+ * Sets a new #AdgDimStyle:quote-shift value.
  **/
 void
 adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
@@ -941,6 +945,7 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_return_if_fail(shift != NULL);
 
     data = dim_style->data;
     cpml_pair_copy(&data->quote_shift, shift);
