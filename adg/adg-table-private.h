@@ -28,10 +28,25 @@ G_BEGIN_DECLS
 
 typedef struct _AdgTablePrivate AdgTablePrivate;
 
+struct _AdgTableCell {
+    AdgTableRow  *row;
+    gchar        *title;
+    gchar        *value;
+    CpmlExtents   extents;
+};
+
+struct _AdgTableRow {
+    AdgTable     *table;
+    GSList       *cells;
+    CpmlExtents   extents;
+};
+
 struct _AdgTablePrivate {
-    AdgDress     table_dress;
-    AdgStroke   *border;
-    AdgStroke   *grid;
+    AdgDress      table_dress;
+    AdgStroke    *border;
+    AdgStroke    *grid;
+    GSList       *rows;
+    GHashTable   *cell_names;
 };
 
 G_END_DECLS
