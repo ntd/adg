@@ -788,7 +788,7 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
     if (!adg_dress_style_is_compatible(dress, style)) {
         GType ancestor_type = adg_dress_get_ancestor_type(dress);
 
-        g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
+        g_warning(_("%s: `%s' is not compatible with `%s' for `%s' dress"),
                   G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(style)),
                   g_type_name(ancestor_type), adg_dress_name(dress));
 
@@ -1098,7 +1098,7 @@ real_arrange(AdgEntity *entity)
 
     if (klass->arrange == NULL) {
         /* The arrange() method must be defined */
-        g_warning("%s: `arrange' method not implemented for type `%s'",
+        g_warning(_("%s: `arrange' method not implemented for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
     } else {
         AdgEntityPrivate *data;
@@ -1123,7 +1123,7 @@ real_render(AdgEntity *entity, cairo_t *cr)
 
     if (klass->render == NULL) {
         /* The render method must be defined */
-        g_warning("%s: `render' method not implemented for type `%s'",
+        g_warning(_("%s: `render' method not implemented for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
     } else {
         /* Before the rendering, the entity should be arranged */
