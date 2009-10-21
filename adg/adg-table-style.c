@@ -453,7 +453,7 @@ adg_table_style_get_padding(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_quote_shift:
+ * adg_table_style_set_padding:
  * @table_style: an #AdgTableStyle object
  * @padding: the new padding values
  *
