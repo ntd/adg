@@ -22,7 +22,7 @@
 #define __ADG_DIM_H__
 
 #include <adg/adg-container.h>
-#include <adg/adg-dim-style.h>
+#include <adg/adg-model.h>
 #include <adg/adg-enums.h>
 
 

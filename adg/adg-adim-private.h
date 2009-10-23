@@ -22,6 +22,8 @@
 #define __ADG_ADIM_PRIVATE_H__
 
 #include <adg/adg-point.h>
+#include <adg/adg-trail.h>
+#include <adg/adg-marker.h>
 
 
 G_BEGIN_DECLS

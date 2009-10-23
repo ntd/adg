@@ -114,7 +114,7 @@ adg_dim_class_init(AdgDimClass *klass)
     klass->default_value = default_value;
 
     param = adg_param_spec_dress("dim-dress",
-                                 P_("Dress Style"),
+                                 P_("Dimension Dress"),
                                  P_("The dress to use for rendering this dimension"),
                                  ADG_DRESS_DIMENSION,
                                  G_PARAM_READWRITE);
@@ -906,29 +906,6 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
     return klass->quote_angle(angle);
 }
 
-/**
- * _adg_dim_get_dim_style:
- * @dim: an #AdgDim entity
- *
- * Gets the #AdgDimStyle associated to @dim. The dress to style
- * resolution is done in the arrange() method so this value is
- * typically available in render() or in a derived arrange()
- * method, after the #AdgDim arrange() function has been chained up.
- *
- * Returns: the dim style of @entity
- **/
-AdgDimStyle *
-_adg_dim_get_dim_style(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return data->dim_style;
-}
-
 
 static void
 arrange(AdgEntity *entity)
@@ -949,8 +926,8 @@ arrange(AdgEntity *entity)
 
     /* Resolve the dim style */
     if (data->dim_style == NULL)
-        data->dim_style = (AdgDimStyle *) adg_entity_style(entity,
-                                                           data->dim_dress);
+        data->dim_style = (AdgDimStyle *)
+            adg_entity_style(entity, data->dim_dress);
 
     if (data->quote.container == NULL)
         data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
