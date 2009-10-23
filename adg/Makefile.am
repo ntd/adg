@@ -168,6 +168,6 @@ adg-marshal.h: adg-marshal.genmarshal
 # Regenerate the adg.h header file: forcing a dependency on config.log
 # is an easy way to invalidate this file whenever a ./configure is recall
 $(builddir)/adg.h: adg.h.in $(top_builddir)/config.log
-	rm -f $@.tmp
+	$(MSG_GEN)rm -f $@.tmp
 	sed -e '$(PATTERN)' $< > $@.tmp
 	mv $@.tmp $@
