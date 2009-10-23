@@ -621,30 +621,33 @@ adg_entity_set_normalized(AdgEntity *entity, gboolean normalized)
 }
 
 /**
- * adg_entity_get_extents:
+ * adg_entity_extents:
  * @entity: an #AdgEntity
- * @extents: where to store the extents
  *
- * Stores a copy of the bounding box of @entity in @extents.
- * This struct specifies the surface portion (in global space)
- * occupied by the entity without taking into account line
- * thickness and caps.
+ * Gets the bounding box of @entity. The returned struct is
+ * owned by @entity and should not modified or freed.
  *
- * The #AdgEntity::arrange should be emitted before this call
- * (either explicitely or throught adg_entity_arrange()) in
- * order to get an up to date boundary box.
+ * This struct specifies the surface portion (in global space
+ * of @entity) occupied by the entity without taking into
+ * account rendering properties such as line thickness or caps.
+ *
+ * The #AdgEntity::arrange signal should be emitted before
+ * this call (either explicitely trought adg_entity_arrange()
+ * or implicitely with adg_entity_render()) in order to get
+ * an up to date boundary box.
+ *
+ * Returns: the bounding box of @entity or %NULL on errors
  **/
-void
-adg_entity_get_extents(AdgEntity *entity, CpmlExtents *extents)
+const CpmlExtents *
+adg_entity_extents(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(extents != NULL);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     data = entity->data;
 
-    cpml_extents_copy(extents, &data->extents);
+    return &data->extents;
 }
 
 /**

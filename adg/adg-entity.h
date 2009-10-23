@@ -96,8 +96,8 @@ void             adg_entity_transform_local_map (AdgEntity       *entity,
 gboolean         adg_entity_get_normalized      (AdgEntity       *entity);
 void             adg_entity_set_normalized      (AdgEntity       *entity,
                                                  gboolean         normalized);
-void             adg_entity_get_extents         (AdgEntity       *entity,
-                                                 CpmlExtents     *extents);
+const CpmlExtents *
+                 adg_entity_extents             (AdgEntity       *entity);
 void             adg_entity_set_extents         (AdgEntity       *entity,
                                                  const CpmlExtents *extents);
 AdgStyle *       adg_entity_style               (AdgEntity       *entity,

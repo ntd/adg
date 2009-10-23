@@ -783,20 +783,18 @@ static gboolean
 choose_outside(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
-    AdgContainer *quote;
+    AdgEntity *quote;
     const AdgMatrix *local;
-    CpmlExtents extents;
     gdouble marker1, marker2;
     gdouble needed, available;
 
     data = ldim->data;
-    quote = adg_dim_get_quote((AdgDim *) ldim);
+    quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     local = adg_entity_local_matrix((AdgEntity *) ldim);
-    adg_entity_get_extents((AdgEntity *) quote, &extents);
     marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
     marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
 
-    needed = extents.size.x + marker1 + marker2;
+    needed = adg_entity_extents(quote)->size.x + marker1 + marker2;
     available = data->geometry.distance * local->xx;
 
     return needed > available;

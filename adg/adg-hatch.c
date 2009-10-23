@@ -213,13 +213,10 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(adg_stroke_get_trail(stroke));
 
     if (cairo_path != NULL) {
-        AdgFillStyle *fill_style;
-        CpmlExtents extents;
+        AdgFillStyle *fill_style = (AdgFillStyle *)
+            adg_entity_style(entity, data->fill_dress);
 
-        fill_style = (AdgFillStyle *) adg_entity_style(entity, data->fill_dress);
-        adg_entity_get_extents(entity, &extents);
-
-        adg_fill_style_set_extents(fill_style, &extents);
+        adg_fill_style_set_extents(fill_style, adg_entity_extents(entity));
 
         cairo_save(cr);
         cairo_set_matrix(cr, adg_entity_ctm(entity));

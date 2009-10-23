@@ -939,7 +939,8 @@ arrange(AdgEntity *entity)
     AdgEntity *value_entity;
     AdgEntity *min_entity;
     AdgEntity *max_entity;
-    CpmlExtents extents;
+    gdouble width;
+    const CpmlExtents *extents;
     AdgMatrix map;
     const AdgPair *shift;
 
@@ -1003,7 +1004,8 @@ arrange(AdgEntity *entity)
     adg_entity_arrange(container_entity);
 
     /* Basic value */
-    adg_entity_get_extents(value_entity, &extents);
+    extents = adg_entity_extents(value_entity);
+    width = extents->size.x;
 
     /* Limit values (min and max) */
     if (min_entity != NULL || max_entity != NULL) {
@@ -1013,20 +1015,20 @@ arrange(AdgEntity *entity)
 
         /* Minimum limit */
         if (min_entity != NULL)
-            adg_entity_get_extents(min_entity, &min_extents);
+            cpml_extents_copy(&min_extents, adg_entity_extents(min_entity));
 
         /* Maximum limit */
         if (max_entity != NULL)
-            adg_entity_get_extents(max_entity, &max_extents);
+            cpml_extents_copy(&max_extents, adg_entity_extents(max_entity));
 
         shift = adg_dim_style_get_limits_shift(data->dim_style);
         if (min_entity != NULL && max_entity != NULL)
             spacing = adg_dim_style_get_limits_spacing(data->dim_style);
 
-        cairo_matrix_init_translate(&map, extents.size.x + shift->x,
+        cairo_matrix_init_translate(&map, width + shift->x,
                                     (spacing + min_extents.size.y +
                                      max_extents.size.y) / 2 +
-                                    shift->y - extents.size.y / 2);
+                                    shift->y - extents->size.y / 2);
 
         if (min_entity != NULL)
             adg_entity_set_global_map(min_entity, &map);
@@ -1036,12 +1038,12 @@ arrange(AdgEntity *entity)
             adg_entity_set_global_map(max_entity, &map);
         }
 
-        extents.size.x += shift->x + MAX(min_extents.size.x, max_extents.size.x);
+        width += shift->x + MAX(min_extents.size.x, max_extents.size.x);
     }
 
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(data->dim_style);
-    cairo_matrix_init_translate(&map, shift->x - extents.size.x / 2, shift->y);
+    cairo_matrix_init_translate(&map, shift->x - width / 2, shift->y);
     adg_entity_set_global_map(container_entity, &map);
 
     adg_entity_arrange(container_entity);

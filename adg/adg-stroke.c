@@ -281,11 +281,9 @@ local_changed(AdgEntity *entity)
 static void
 arrange(AdgEntity *entity)
 {
-    CpmlExtents extents;
+    CpmlExtents *extents = (CpmlExtents *) adg_entity_extents(entity);
 
-    adg_entity_get_extents(entity, &extents);
-
-    if (!extents.is_defined) {
+    if (!extents->is_defined) {
         AdgStroke *stroke;
         AdgStrokePrivate *data;
         const AdgMatrix *local;
@@ -294,13 +292,11 @@ arrange(AdgEntity *entity)
         data = stroke->data;
         local = adg_entity_local_matrix(entity);
 
-        cpml_extents_copy(&extents, adg_trail_extents(data->trail));
+        cpml_extents_copy(extents, adg_trail_extents(data->trail));
 
         /* Apply the local matrix to the extents */
-        cpml_pair_transform(&extents.org, local);
-        cpml_vector_transform(&extents.size, local);
-
-        adg_entity_set_extents(entity, &extents);
+        cpml_pair_transform(&extents->org, local);
+        cpml_vector_transform(&extents->size, local);
     }
 }
 
