@@ -316,7 +316,7 @@ arrange(AdgEntity *entity)
         data->font = adg_font_style_font(font_style, adg_entity_ctm(entity));
     }
 
-    if (data->label == NULL || data->label[0] == '\0') {
+    if (adg_is_empty(data->label)) {
         /* Undefined label */
         extents.is_defined = FALSE;
         adg_entity_set_extents(entity, &extents);

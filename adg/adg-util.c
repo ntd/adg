@@ -138,3 +138,18 @@ adg_strcmp(const gchar *s1, const gchar *s2)
 
     return strcmp(s1, s2);
 }
+
+/**
+ * adg_is_empty:
+ * @str: the subject string
+ *
+ * Checks if @str is an empty string, that is if is %NULL or if
+ * its first character is %'\0'.
+ *
+ * Returns: %TRUE if @str is an empty string, %FALSE otherwise
+ **/
+gboolean
+adg_is_empty(const gchar *str)
+{
+    return str == NULL || str[0] == '\0';
+}

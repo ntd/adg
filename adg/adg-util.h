@@ -38,6 +38,7 @@ G_BEGIN_DECLS
 
 gint            adg_strcmp              (const gchar    *s1,
                                          const gchar    *s2);
+gboolean        adg_is_empty            (const gchar    *str);
 
 G_END_DECLS
 
