@@ -156,7 +156,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = adg_param_spec_dress("line-dress",
                                   P_("Line Dress"),
                                   P_("Line dress for the baseline and the extension lines"),
-                                  ADG_DRESS_LINE_DIMENSION,
+                                  ADG_DRESS_LINE_THINNER,
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
@@ -239,7 +239,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->value_dress = ADG_DRESS_TEXT_VALUE;
     data->min_dress = ADG_DRESS_TEXT_LIMIT;
     data->max_dress = ADG_DRESS_TEXT_LIMIT;
-    data->line_dress = ADG_DRESS_LINE_DIMENSION;
+    data->line_dress = ADG_DRESS_LINE_THINNER;
     data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;
     data->to_offset = 6;

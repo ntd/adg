@@ -105,7 +105,7 @@ _adg_dress_color_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "red", 0.75, NULL);
+                                          "red", 0.667, NULL);
 
         dress = adg_dress_new("color-dimension", fallback);
         g_object_unref(fallback);
@@ -129,7 +129,7 @@ _adg_dress_color_hatch(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "blue", 0.5, NULL);
+                                          "blue", 0.333, NULL);
 
         dress = adg_dress_new("color-hatch", fallback);
         g_object_unref(fallback);
@@ -159,23 +159,24 @@ _adg_dress_line(void)
 }
 
 /**
- * ADG_DRESS_LINE_STROKE:
+ * ADG_DRESS_LINE_MEDIUM:
  *
- * The builtin #AdgDress line used by default by #AdgStroke entities.
- * The fallback style is a default line with a thickness of %1.75.
+ * The default generic builtin #AdgDress line type: it is used by
+ * default for rendering #AdgStroke entities. The fallback style
+ * is a default line with a thickness of %1.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_stroke(void)
+_adg_dress_line_medium(void)
 {
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 1.75, NULL);
+                                          "width", 1.5, NULL);
 
-        dress = adg_dress_new("line-stroke", fallback);
+        dress = adg_dress_new("line-medium", fallback);
         g_object_unref(fallback);
     }
 
@@ -183,16 +184,65 @@ _adg_dress_line_stroke(void)
 }
 
 /**
- * ADG_DRESS_LINE_DIMENSION:
+ * ADG_DRESS_LINE_THIN:
  *
- * The builtin #AdgDress line type used by base and extension lines
- * for dimensions. The fallback style is a default line with a
- * thickness of %0.75.
+ * A generic builtin #AdgDress line type for thin lines.
+ * The fallback style is a default line with a thickness of %1.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_dimension(void)
+_adg_dress_line_thin(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "width", 1., NULL);
+
+        dress = adg_dress_new("line-thin", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_THICK:
+ *
+ * A generic builtin #AdgDress line type for thick lines.
+ * The fallback style is a default line with a thickness of %2.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_thick(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "width", 2., NULL);
+
+        dress = adg_dress_new("line-thick", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_THINNER:
+ *
+ * A generic builtin #AdgDress line type for really thin lines:
+ * it is used by default for rendering base and extension lines
+ * of dimension entities. The fallback style is a default line
+ * with a thickness of %0.75.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_thinner(void)
 {
     static AdgDress dress = 0;
 
@@ -200,7 +250,31 @@ _adg_dress_line_dimension(void)
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
                                           "width", 0.75, NULL);
 
-        dress = adg_dress_new("line-dimension", fallback);
+        dress = adg_dress_new("line-thinner", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_THICKER:
+ *
+ * A generic builtin #AdgDress line type for really thick lines.
+ * The fallback style is a default line with a thickness of %2.5.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_thicker(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "width", 2.5, NULL);
+
+        dress = adg_dress_new("line-thicker", fallback);
         g_object_unref(fallback);
     }
 
@@ -212,7 +286,7 @@ _adg_dress_line_dimension(void)
  *
  * The builtin #AdgDress line type used by the default #AdgRuledFill
  * style implementation. The fallback style is a default line with
- * a thickness of %1.
+ * a thickness of %1 and an #ADG_DRESS_COLOR_HATCH color dress.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -222,11 +296,67 @@ _adg_dress_line_hatch(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "color-dress", ADG_DRESS_COLOR_HATCH,
-                                          "width", 1., NULL);
+        AdgLineStyle *thin_style;
+        AdgStyle *fallback;
+
+        thin_style = (AdgLineStyle *) adg_dress_get_fallback(ADG_DRESS_LINE_THIN);
+        fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                "width", adg_line_style_get_width(thin_style),
+                                "color-dress", ADG_DRESS_COLOR_HATCH, NULL);
 
         dress = adg_dress_new("line-hatch", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_GRID:
+ *
+ * The builtin #AdgDress line type used for rendering grids of
+ * #AdgTable entities. The fallback style is a default line with
+ * a thickness of %1 and no antialiasing.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_grid(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "antialias", CAIRO_ANTIALIAS_NONE,
+                                          "width", 1., NULL);
+
+        dress = adg_dress_new("line-grid", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_FRAME:
+ *
+ * The builtin #AdgDress line type used for rendering frames of
+ * #AdgTable entities. The fallback style is a default line with
+ * a thickness of %2 and no antialiasing.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_frame(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "antialias", CAIRO_ANTIALIAS_NONE,
+                                          "width", 2., NULL);
+
+        dress = adg_dress_new("line-frame", fallback);
         g_object_unref(fallback);
     }
 
