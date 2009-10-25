@@ -58,8 +58,8 @@ AdgStyle *      adg_table_style_new               (void);
 AdgDress        adg_table_style_get_color_dress (AdgTableStyle  *table_style);
 void            adg_table_style_set_color_dress (AdgTableStyle  *table_style,
                                                  AdgDress        dress);
-AdgDress        adg_table_style_get_border_dress(AdgTableStyle  *table_style);
-void            adg_table_style_set_border_dress(AdgTableStyle  *table_style,
+AdgDress        adg_table_style_get_frame_dress (AdgTableStyle  *table_style);
+void            adg_table_style_set_frame_dress (AdgTableStyle  *table_style,
                                                  AdgDress        dress);
 AdgDress        adg_table_style_get_grid_dress  (AdgTableStyle  *table_style);
 void            adg_table_style_set_grid_dress  (AdgTableStyle  *table_style,
@@ -70,9 +70,15 @@ void            adg_table_style_set_title_dress (AdgTableStyle  *table_style,
 AdgDress        adg_table_style_get_value_dress (AdgTableStyle  *table_style);
 void            adg_table_style_set_value_dress (AdgTableStyle  *table_style,
                                                  AdgDress        dress);
-const AdgPair * adg_table_style_get_padding     (AdgTableStyle  *table_style);
-void            adg_table_style_set_padding     (AdgTableStyle  *table_style,
-                                                 const AdgPair  *padding);
+gdouble         adg_table_style_get_row_height  (AdgTableStyle  *table_style);
+void            adg_table_style_set_row_height  (AdgTableStyle  *table_style,
+                                                 gdouble         row_height);
+const AdgPair * adg_table_style_get_cell_padding(AdgTableStyle  *table_style);
+void            adg_table_style_set_cell_padding(AdgTableStyle  *table_style,
+                                                 const AdgPair  *cell_padding);
+const AdgPair * adg_table_style_get_cell_spacing(AdgTableStyle  *table_style);
+void            adg_table_style_set_cell_spacing(AdgTableStyle  *table_style,
+                                                 const AdgPair  *cell_spacing);
 
 G_END_DECLS
 

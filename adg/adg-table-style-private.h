@@ -30,11 +30,13 @@ typedef struct _AdgTableStylePrivate AdgTableStylePrivate;
 
 struct _AdgTableStylePrivate {
     AdgDress    color_dress;
-    AdgDress    border_dress;
     AdgDress    grid_dress;
+    AdgDress    frame_dress;
     AdgDress    title_dress;
     AdgDress    value_dress;
-    AdgPair     padding;
+    gdouble     row_height;
+    AdgPair     cell_padding;
+    AdgPair     cell_spacing;
 };
 
 G_END_DECLS

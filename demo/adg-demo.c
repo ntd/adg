@@ -418,6 +418,8 @@ sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
 {
     AdgToyText *toy_text;
     AdgMatrix map;
+    AdgTable *table;
+    AdgTableRow *row;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
     cairo_matrix_init_translate(&map, 0, data->D3 / 2);
@@ -432,6 +434,16 @@ sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
     cairo_matrix_init_translate(&map, 10, 50 + 30 * 2);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
+
+    table = adg_table_new();
+    row = adg_table_row_new(table);
+    adg_table_cell_new(row, 40);
+    adg_table_cell_new_full(row, 200, "title", "TITLE", "Title of the drawing");
+    row = adg_table_row_new(table);
+    adg_table_cell_new(row, 40);
+    adg_table_cell_new_full(row, 100, "file", "FILE", "File name");
+    adg_table_cell_new_full(row, 100, "author", "AUTHOR", "Author");
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(table));
 }
 
 

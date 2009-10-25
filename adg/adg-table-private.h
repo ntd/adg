@@ -21,32 +21,39 @@
 #ifndef __ADG_TABLE_PRIVATE_H__
 #define __ADG_TABLE_PRIVATE_H__
 
+#include <adg/adg-table-style.h>
 #include <adg/adg-stroke.h>
 
 
 G_BEGIN_DECLS
 
+#define GET_TABLE_STYLE(table)  (((AdgTablePrivate *) ((AdgTable *) (table))->data)->table_style)
+
 typedef struct _AdgTablePrivate AdgTablePrivate;
 
 struct _AdgTableCell {
-    AdgTableRow  *row;
-    gchar        *title;
-    gchar        *value;
-    CpmlExtents   extents;
+    AdgTableRow   *row;
+    gdouble        width;
+    AdgEntity     *title;
+    AdgEntity     *value;
+    CpmlExtents    extents;
 };
 
 struct _AdgTableRow {
-    AdgTable     *table;
-    GSList       *cells;
-    CpmlExtents   extents;
+    AdgTable      *table;
+    GSList        *cells;
+    gdouble        height;
+    CpmlExtents    extents;
 };
 
 struct _AdgTablePrivate {
-    AdgDress      table_dress;
-    AdgStroke    *border;
-    AdgStroke    *grid;
-    GSList       *rows;
-    GHashTable   *cell_names;
+    AdgDress       table_dress;
+
+    AdgTableStyle *table_style;
+    AdgStroke     *grid;
+    AdgStroke     *frame;
+    GSList        *rows;
+    GHashTable    *cell_names;
 };
 
 G_END_DECLS

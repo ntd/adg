@@ -60,7 +60,9 @@
 #include "adg-table.h"
 #include "adg-table-private.h"
 #include "adg-dress-builtins.h"
+#include "adg-path.h"
 #include "adg-line-style.h"
+#include "adg-toy-text.h"
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_table_parent_class)
@@ -84,18 +86,29 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
+static void             arrange_grid            (AdgEntity      *entity);
+static void             arrange_frame           (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
+static AdgTableRow *    row_new                 (AdgTable       *table,
+                                                 AdgTableRow    *before_row);
 static void             row_arrange_size        (AdgTableRow    *row);
-static void             row_arrange_org         (AdgTableRow    *row);
+static void             row_arrange             (AdgTableRow    *row);
+static void             row_render              (AdgTableRow    *row,
+                                                 cairo_t        *cr);
+static void             row_dispose             (AdgTableRow    *row);
 static void             row_free                (AdgTableRow    *row);
 static AdgTableCell *   cell_new                (AdgTableRow    *row,
                                                  AdgTableCell   *before_cell,
-                                                 gdouble         padding,
                                                  gdouble         width,
                                                  const gchar    *name,
-                                                 const gchar    *title,
-                                                 const gchar    *value);
+                                                 AdgEntity      *title,
+                                                 AdgEntity      *value);
+static void             cell_arrange_size       (AdgTableCell   *cell);
+static void             cell_arrange            (AdgTableCell   *cell);
+static void             cell_render             (AdgTableCell   *cell,
+                                                 cairo_t        *cr);
+static void             cell_dispose            (AdgTableCell   *cell);
 static void             cell_free               (AdgTableCell   *cell);
 static gboolean         value_match             (gpointer        key,
                                                  gpointer        value,
@@ -142,8 +155,8 @@ adg_table_init(AdgTable *table)
                                                         AdgTablePrivate);
 
     data->table_dress = ADG_DRESS_TABLE;
-    data->border = NULL;
     data->grid = NULL;
+    data->frame = NULL;
     data->rows = NULL;
     data->cell_names = NULL;
 
@@ -153,7 +166,12 @@ adg_table_init(AdgTable *table)
 static void
 dispose(GObject *object)
 {
+    AdgTablePrivate *data = ((AdgTable *) object)->data;
+
     invalidate((AdgEntity *) object);
+
+    if (data->rows != NULL)
+        g_slist_foreach(data->rows, (GFunc) row_dispose, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose != NULL)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -302,77 +320,38 @@ adg_table_get_n_rows(AdgTable *table)
 /**
  * adg_table_row_new:
  * @table: an #AdgTable
- * @height: height of the row
  *
  * Creates a new empty row and appends it at the end of the rows
- * yet present in @table.
+ * yet present in @table. By default, the height of this new
+ * row will be the fallback value provided by the table style:
+ * you can override it by using adg_table_row_set_height().
  *
  * Returns: the newly created row or %NULL on errors
  **/
 AdgTableRow *
-adg_table_row_new(AdgTable *table, gdouble height)
+adg_table_row_new(AdgTable *table)
 {
-    AdgTablePrivate *data;
-    AdgTableRow *new_row;
-
     g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
 
-    data = table->data;
-    new_row = g_new(AdgTableRow, 1);
-    new_row->table = table;
-    new_row->cells = NULL;
-    new_row->extents.is_defined = FALSE;
-    new_row->extents.size.y = height;
-
-    data->rows = g_slist_append(data->rows, new_row);
-
-    if (height != 0)
-        invalidate((AdgEntity *) table);
-
-    return new_row;
+    return row_new(table, NULL);
 }
 
 /**
  * adg_table_row_new_before:
  * @row: a valid #AdgTableRow
- * @height: height of the row
  *
- * Creates a new empty row and inserts it just before @row.
+ * Creates a new empty row with default height and inserts it
+ * just before @row.
  *
  * Returns: the newly created row or %NULL on errors
  **/
 AdgTableRow *
-adg_table_row_new_before(AdgTableRow *row, gdouble height)
+adg_table_row_new_before(AdgTableRow *row)
 {
-    AdgTable *table;
-    AdgTablePrivate *data;
-    GSList *row_node;
-    AdgTableRow *new_row;
-
     g_return_val_if_fail(row != NULL, NULL);
+    g_return_val_if_fail(ADG_IS_TABLE(row->table), NULL);
 
-    table = row->table;
-
-    g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
-
-    data = table->data;
-    row_node = g_slist_find(data->rows, row);
-
-    /* This MUST be present, otherwise something really bad happened */
-    g_assert(row_node != NULL);
-
-    new_row = g_new(AdgTableRow, 1);
-    new_row->table = table;
-    new_row->cells = NULL;
-    new_row->extents.is_defined = FALSE;
-    new_row->extents.size.y = height;
-
-    data->rows = g_slist_insert_before(data->rows, row_node, new_row);
-
-    if (height != 0)
-        invalidate((AdgEntity *) table);
-
-    return new_row;
+    return row_new(row->table, row);
 }
 
 /**
@@ -427,15 +406,16 @@ adg_table_row_get_n_cells(const AdgTableRow *row)
  * @row: a valid #AdgTableRow
  * @height: the new height
  *
- * Sets a new height on @row. The extents will be invalidated, so
- * will be recomputed in the next arrange() phase.
+ * Sets a new height on @row. The extents will be invalidated to
+ * recompute the whole layout of the table. Specifying %0 in
+ * @height will use the default height set in the table style.
  **/
 void
 adg_table_row_set_height(AdgTableRow *row, gdouble height)
 {
     g_return_if_fail(row != NULL);
 
-    row->extents.size.y = height;
+    row->height = height;
 
     adg_entity_invalidate((AdgEntity *) row->table);
 }
@@ -485,44 +465,39 @@ adg_table_get_cell_by_name(AdgTable *table, const gchar *name)
 /**
  * adg_table_cell_new:
  * @row: a valid #AdgTableRow
- * @padding: empty space to add before the cell
  * @width: width of the cell
- * @name: name to associate
- * @title: title to render
- * @value: value to render
  *
  * Creates a new cell and appends it at the end of the cells
- * yet present in @row.
- *
- * @name is an optional identifier to univoquely access this cell
- * by using adg_table_get_cell_by_name(). The identifier must be
- * univoque, so it there is yet a cell with the same name this
- * function will fail.
- *
- * @title and @value could be %NULL, in which case nothing will
- * be rendered. There is still the possibility to change these
- * properties programmaticaly at a later time by using
+ * yet present in @row. You can add content to the cell by using
  * adg_table_cell_set_title() and adg_table_cell_set_value().
+ *
+ * A positive @width value specifies the width of this cell in global
+ * space: if the width of its content (that is, either the title or the
+ * value entity) will be greater than @width, it will be rendered
+ * outside the cell boundary box, luckely overwriting the adiacent
+ * cells.
+ *
+ * Using %0 as @width means the width of the cell will be automatically
+ * adjusted to the maximum width of its content.
+ *
+ * Negative width values are not allowed: this condition will raise
+ * a warning without any further processing.
  *
  * Returns: the newly created cell or %NULL on errors
  **/
 AdgTableCell *
-adg_table_cell_new(AdgTableRow *row, gdouble padding, gdouble width,
-                   const gchar *name, const gchar *title, const gchar *value)
+adg_table_cell_new(AdgTableRow *row, gdouble width)
 {
     g_return_val_if_fail(row != NULL, NULL);
+    g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(row, NULL, padding, width, name, title, value);
+    return cell_new(row, NULL, width, NULL, NULL, NULL);
 }
 
 /**
  * adg_table_cell_new_before:
  * @cell: a valid #AdgTableCell
- * @padding: empty space to add before the cell
  * @width: width of the cell
- * @name: name to associate
- * @title: title to render
- * @value: value to render
  *
  * Creates a new cell and inserts it rigthly before the @cell cell.
  * This works similarily and accepts the same parameters as the
@@ -531,14 +506,71 @@ adg_table_cell_new(AdgTableRow *row, gdouble padding, gdouble width,
  * Returns: the newly created cell or %NULL on errors
  **/
 AdgTableCell *
-adg_table_cell_new_before(AdgTableCell *cell, gdouble padding,
-                          gdouble width, const gchar *name,
-                          const gchar *title, const gchar *value)
+adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
 {
     g_return_val_if_fail(cell != NULL, NULL);
     g_return_val_if_fail(cell->row != NULL, NULL);
+    g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(cell->row, cell, padding, width, name, title, value);
+    return cell_new(cell->row, cell, width, NULL, NULL, NULL);
+}
+
+/**
+ * adg_table_cell_new_full:
+ * @row: a valid #AdgTableRow
+ * @width: width of the cell
+ * @name: name to associate
+ * @title: title to render
+ * @value: value to render
+ *
+ * A convenient function to append a cell to @row with a specific
+ * title and value text. The font to use for rendering @title and
+ * @value will be picked up from the table style, so be sure to
+ * have the correct table dress set before calling this function.
+ *
+ * @row and @width have the same meanings as in adg_table_cell_new():
+ * check its documentation for details.
+ *
+ * @name is an optional identifier to univoquely access this cell
+ * by using adg_table_get_cell_by_name(). The identifier must be
+ * univoque: if there is yet a cell with the same name a warning
+ * message will be raised and the function will fail.
+ *
+ * Returns: the newly created cell or %NULL on errors
+ **/
+AdgTableCell *
+adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
+                        const gchar *title, const gchar *value)
+{
+    AdgEntity *title_entity, *value_entity;
+    AdgTableStyle *table_style;
+
+    g_return_val_if_fail(row != NULL, NULL);
+    g_return_val_if_fail(ADG_IS_TABLE(row->table), NULL);
+
+    table_style = (AdgTableStyle *)
+        adg_entity_style((AdgEntity *) row->table,
+                         adg_table_get_table_dress(row->table));
+
+    if (title != NULL) {
+        AdgDress dress = adg_table_style_get_title_dress(table_style);
+        title_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                    "label", title,
+                                    "font-dress", dress, NULL);
+    } else {
+        title_entity = NULL;
+    }
+
+    if (value != NULL) {
+        AdgDress dress = adg_table_style_get_value_dress(table_style);
+        value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                    "label", value,
+                                    "font-dress", dress, NULL);
+    } else {
+        value_entity = NULL;
+    }
+
+    return cell_new(row, NULL, width, name, title_entity, value_entity);
 }
 
 /**
@@ -570,9 +602,9 @@ adg_table_cell_delete(AdgTableCell *cell)
  * Gets the current title of @cell. The returned string is owned
  * by @cell and must not be modified or freed.
  *
- * Returns: the title text or %NULL on errors
+ * Returns: the title entity or %NULL for undefined title
  **/
-const gchar *
+AdgEntity *
 adg_table_cell_get_title(AdgTableCell *cell)
 {
     g_return_val_if_fail(cell != NULL, NULL);
@@ -583,17 +615,39 @@ adg_table_cell_get_title(AdgTableCell *cell)
 /**
  * adg_table_cell_set_title:
  * @cell: a valid #AdgTableCell
- * @title: the new title to use
+ * @title: the new title entity
  *
- * Sets a new title on @cell.
+ * Sets @title as the new title entity of @cell. The top left
+ * corner of the bounding box of @title will be cohincident to
+ * the top left corner of the cell extents, taking into accounts
+ * eventual padding spaces specified by the table style.
+ *
+ * The old internal entity is unrefenrenced while the @title (if
+ * not %NULL) is refenenced with g_object_ref_sink().
+ *
+ * @title can be %NULL, in which case the old entity is removed.
  **/
 void
-adg_table_cell_set_title(AdgTableCell *cell, const gchar *title)
+adg_table_cell_set_title(AdgTableCell *cell, AdgEntity *title)
 {
     g_return_if_fail(cell != NULL);
+    g_return_if_fail(title == NULL || ADG_IS_ENTITY(title));
 
-    g_free(cell->title);
-    cell->title = g_strdup(title);
+    if (title == cell->title)
+        return;
+
+    if (cell->title != NULL)
+        g_object_unref(cell->title);
+
+    cell->title = title;
+
+    if (cell->title != NULL)
+        g_object_ref_sink(cell->title);
+
+    /* Invalidate the whole table if the with of this cell depends
+     * on the cell content */
+    if (cell->width == 0)
+        adg_entity_invalidate((AdgEntity *) cell->row->table);
 }
 
 /**
@@ -603,9 +657,9 @@ adg_table_cell_set_title(AdgTableCell *cell, const gchar *title)
  * Gets the current value of @cell. The returned string is owned
  * by @cell and must not be modified or freed.
  *
- * Returns: the value text or %NULL on errors
+ * Returns: the value entity or %NULL for undefined value
  **/
-const gchar *
+AdgEntity *
 adg_table_cell_get_value(AdgTableCell *cell)
 {
     g_return_val_if_fail(cell != NULL, NULL);
@@ -616,17 +670,39 @@ adg_table_cell_get_value(AdgTableCell *cell)
 /**
  * adg_table_cell_set_value:
  * @cell: a valid #AdgTableCell
- * @value: the new value to use
+ * @value: the new value entity
  *
- * Sets a new value on @cell.
+ * Sets @value as the new value entity of @cell. The bottom middle
+ * point of the bounding box of @value will be cohincident to the
+ * bottom middle point of the cell extents, taking into accounts
+ * eventual padding spaces specified by the table style.
+ *
+ * The old internal entity is unrefenrenced while the @value (if
+ * not %NULL) is refenenced with g_object_ref_sink().
+ *
+ * @value can be %NULL, in which case the old entity is removed.
  **/
 void
-adg_table_cell_set_value(AdgTableCell *cell, const gchar *value)
+adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
 {
     g_return_if_fail(cell != NULL);
+    g_return_if_fail(value == NULL || ADG_IS_ENTITY(value));
 
-    g_free(cell->value);
-    cell->value = g_strdup(value);
+    if (value == cell->value)
+        return;
+
+    if (cell->value != NULL)
+        g_object_unref(cell->value);
+
+    cell->value = value;
+
+    if (cell->value != NULL)
+        g_object_ref_sink(cell->value);
+
+    /* Invalidate the whole table if the with of this cell depends
+     * on the cell content */
+    if (cell->width == 0)
+        adg_entity_invalidate((AdgEntity *) cell->row->table);
 }
 
 /**
@@ -643,7 +719,7 @@ adg_table_cell_set_width(AdgTableCell *cell, gdouble width)
 {
     g_return_if_fail(cell != NULL);
 
-    cell->extents.size.x = width;
+    cell->width = width;
 
     adg_entity_invalidate((AdgEntity *) cell->row->table);
 }
@@ -672,9 +748,9 @@ invalidate(AdgEntity *entity)
 {
     AdgTablePrivate *data = ((AdgTable *) entity)->data;
 
-    if (data->border != NULL) {
-        g_object_unref(data->border);
-        data->border = NULL;
+    if (data->frame != NULL) {
+        g_object_unref(data->frame);
+        data->frame = NULL;
     }
 
     if (data->grid != NULL) {
@@ -688,27 +764,141 @@ arrange(AdgEntity *entity)
 {
     AdgTable *table;
     AdgTablePrivate *data;
+    CpmlExtents extents;
+    const AdgPair *spacing;
     GSList *row_node;
     AdgTableRow *row;
+    gdouble y;
 
     table = (AdgTable *) entity;
     data = table->data;
+    cpml_extents_copy(&extents, adg_entity_extents(entity));
+
+    /* Resolve the table style */
+    if (data->table_style == NULL)
+        data->table_style = (AdgTableStyle *)
+            adg_entity_style(entity, data->table_dress);
+
+    if (extents.is_defined)
+        return;
+
+    spacing = adg_table_style_get_cell_spacing(data->table_style);
+    extents.size.x = 0;
+    extents.size.y = 0;
 
     for (row_node = data->rows; row_node; row_node = row_node->next) {
         row = row_node->data;
+
         row_arrange_size(row);
+
+        if (row->extents.size.x > extents.size.x)
+            extents.size.x = row->extents.size.x;
+        extents.size.y += row->extents.size.y;
     }
 
     /* TODO: update the org according to the table alignments */
 
+    y = extents.org.y + spacing->y;
     for (row_node = data->rows; row_node; row_node = row_node->next) {
         row = row_node->data;
-        row_arrange_org(row);
+
+        row->extents.org.x = extents.org.x;
+        row->extents.org.y = y;
+
+        row_arrange(row);
+
+        y += row->extents.size.y + spacing->y;
     }
 
-    data = table->data;
+    extents.is_defined = TRUE;
+    adg_entity_set_extents(entity, &extents);
 
-    /* TODO: update border, grid and build the toy-text */
+    arrange_grid(entity);
+    arrange_frame(entity);
+}
+
+static void
+arrange_grid(AdgEntity *entity)
+{
+    AdgTablePrivate *data;
+    AdgPath *path;
+    AdgTrail *trail;
+    GSList *row_node, *cell_node;
+    AdgTableRow *row;
+    AdgTableCell *cell;
+    AdgPair pair;
+    AdgDress dress;
+
+    data = ((AdgTable *) entity)->data;
+
+    if (data->grid != NULL)
+        return;
+
+    path = adg_path_new();
+    trail = (AdgTrail *) path;
+
+    for (row_node = data->rows; row_node; row_node = row_node->next) {
+        row = row_node->data;
+
+        for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
+            cell = cell_node->data;
+
+            if (cell->title == NULL && cell->value == NULL)
+                continue;
+
+            cpml_pair_copy(&pair, &cell->extents.org);
+            adg_path_move_to(path, &pair);
+            pair.x += cell->extents.size.x;
+            adg_path_line_to(path, &pair);
+            pair.y += cell->extents.size.y;
+            adg_path_line_to(path, &pair);
+            pair.x -= cell->extents.size.x;
+            adg_path_line_to(path, &pair);
+            adg_path_close(path);
+        }
+    }
+
+    if (!adg_trail_extents(trail)->is_defined)
+        return;
+
+    dress = adg_table_style_get_grid_dress(data->table_style);
+    data->grid = g_object_new(ADG_TYPE_STROKE,
+                              "line-dress", dress,
+                              "trail", trail, NULL);
+}
+
+static void
+arrange_frame(AdgEntity *entity)
+{
+    AdgTablePrivate *data;
+    AdgPath *path;
+    const CpmlExtents *extents;
+    AdgPair pair;
+    AdgDress dress;
+
+    data = ((AdgTable *) entity)->data;
+
+    if (data->frame != NULL)
+        return;
+
+    path = adg_path_new();
+    extents = adg_entity_extents(entity);
+
+    cpml_pair_copy(&pair, &extents->org);
+    adg_path_move_to(path, &pair);
+    pair.x += extents->size.x;
+    adg_path_line_to(path, &pair);
+    pair.y += extents->size.y;
+    adg_path_line_to(path, &pair);
+    pair.x -= extents->size.x;
+    adg_path_line_to(path, &pair);
+    adg_path_close(path);
+
+    dress = adg_table_style_get_frame_dress(data->table_style);
+
+    data->frame = g_object_new(ADG_TYPE_STROKE,
+                               "line-dress", dress,
+                               "trail", (AdgTrail *) path, NULL);
 }
 
 static void
@@ -716,51 +906,125 @@ render(AdgEntity *entity, cairo_t *cr)
 {
     AdgTable *table;
     AdgTablePrivate *data;
+    GSList *row_node;
 
     table = (AdgTable *) entity;
     data = table->data;
 
-    if (data->border != NULL)
-        adg_entity_render((AdgEntity *) data->border, cr);
+    if (data->frame != NULL)
+        adg_entity_render((AdgEntity *) data->frame, cr);
 
     if (data->grid != NULL)
         adg_entity_render((AdgEntity *) data->grid, cr);
+
+    for (row_node = data->rows; row_node; row_node = row_node->next)
+        row_render(row_node->data, cr);
+}
+
+static AdgTableRow *
+row_new(AdgTable *table, AdgTableRow *before_row)
+{
+    AdgTablePrivate *data;
+    AdgTableRow *new_row;
+
+    data = table->data;
+    new_row = g_new(AdgTableRow, 1);
+    new_row->table = table;
+    new_row->cells = NULL;
+    new_row->height = 0;
+    new_row->extents.is_defined = FALSE;
+
+    if (before_row == NULL) {
+        data->rows = g_slist_append(data->rows, new_row);
+    } else {
+        GSList *before_node = g_slist_find(data->rows, before_row);
+
+        /* This MUST be present, otherwise something really bad happened */
+        g_assert(before_node != NULL);
+
+        data->rows = g_slist_insert_before(data->rows, before_node, new_row);
+    }
+
+    invalidate((AdgEntity *) table);
+
+    return new_row;
 }
 
 static void
 row_arrange_size(AdgTableRow *row)
 {
+    AdgTableStyle *table_style;
+    const AdgPair *spacing;
+    CpmlVector *size;
     AdgTableCell *cell;
     GSList *cell_node;
 
-    row->extents.size.x = 0;
+    table_style = GET_TABLE_STYLE(row->table);
+    spacing = adg_table_style_get_cell_spacing(table_style);
+    size = &row->extents.size;
 
-    /* Force all the cells of this row to the same height and
-     * compute the row width by summing every cell width */
+    size->x = 0;
+    if (row->height == 0)
+        size->y = adg_table_style_get_row_height(table_style);
+    else
+        size->y = row->height;
+
+    /* Compute the row width by summing every cell width */
     for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
         cell = cell_node->data;
 
-        cell->extents.size.y = row->extents.size.y;
+        cell_arrange_size(cell);
 
-        row->extents.size.x += cell->extents.size.x;
+        size->x += cell->extents.size.x + spacing->x;
     }
+
+    if (size->x > 0)
+        size->x += spacing->x;
 }
 
+/* Before calling this function, row->extents should be updated */
 static void
-row_arrange_org(AdgTableRow *row)
+row_arrange(AdgTableRow *row)
 {
+    AdgTableStyle *table_style;
+    const AdgPair *spacing;
+    const AdgPair *org;
     AdgTableCell *cell;
     GSList *cell_node;
+    gdouble x;
+
+    table_style = GET_TABLE_STYLE(row->table);
+    spacing = adg_table_style_get_cell_spacing(table_style);
+    org = &row->extents.org;
+    x = org->x + spacing->x;
 
     for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
         cell = cell_node->data;
 
-        cell->extents.org.x = row->extents.org.x + row->extents.size.x;
-        cell->extents.org.y = row->extents.org.y;
-        cell->extents.is_defined = TRUE;
+        cell->extents.org.x = x;
+        cell->extents.org.y = org->y;
+
+        cell_arrange(cell);
+
+        x += cell->extents.size.x + spacing->x;
     }
 
     row->extents.is_defined = TRUE;
+}
+
+static void
+row_render(AdgTableRow *row, cairo_t *cr)
+{
+    GSList *cell_node;
+
+    for (cell_node = row->cells; cell_node; cell_node = cell_node->next)
+        cell_render(cell_node->data, cr);
+}
+
+static void
+row_dispose(AdgTableRow *row)
+{
+    g_slist_foreach(row->cells, (GFunc) cell_dispose, NULL);
 }
 
 static void
@@ -773,9 +1037,8 @@ row_free(AdgTableRow *row)
 }
 
 static AdgTableCell *
-cell_new(AdgTableRow *row, AdgTableCell *before_cell,
-         gdouble padding, gdouble width,
-         const gchar *name, const gchar *title, const gchar *value)
+cell_new(AdgTableRow *row, AdgTableCell *before_cell, gdouble width,
+         const gchar *name, AdgEntity *title, AdgEntity *value)
 {
     AdgTablePrivate *data;
     AdgTableCell *new_cell;
@@ -795,15 +1058,24 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
 
     new_cell = g_new(AdgTableCell, 1);
     new_cell->row = row;
-    new_cell->title = g_strdup(title);
-    new_cell->value = g_strdup(value);
+    new_cell->width = width;
+    new_cell->title = title;
+    new_cell->value = value;
     new_cell->extents.is_defined = FALSE;
-    new_cell->extents.size.x = width;
+
+    if (title != NULL)
+        g_object_ref_sink(title);
+
+    if (value != NULL)
+        g_object_ref_sink(value);
 
     if (before_cell == NULL) {
         row->cells = g_slist_append(row->cells, new_cell);
     } else {
         GSList *before_node = g_slist_find(row->cells, before_cell);
+
+        /* This MUST be present, otherwise something really bad happened */
+        g_assert(before_node != NULL);
 
         row->cells = g_slist_insert_before(row->cells, before_node, new_cell);
     }
@@ -815,14 +1087,115 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
 }
 
 static void
+cell_arrange_size(AdgTableCell *cell)
+{
+    AdgTableStyle *table_style;
+    CpmlVector *size;
+
+    table_style = GET_TABLE_STYLE(cell->row->table);
+    size = &cell->extents.size;
+
+    if (cell->title != NULL)
+        adg_entity_arrange(cell->title);
+
+    if (cell->value != NULL)
+        adg_entity_arrange(cell->value);
+
+    size->y = cell->row->extents.size.y;
+
+    if (cell->width == 0) {
+        const CpmlVector *content_size;
+
+        /* The width depends on the cell content (default: 0) */
+        size->x = 0;
+
+        if (cell->title != NULL) {
+            content_size = &adg_entity_extents(cell->title)->size;
+            size->x = content_size->x;
+        }
+
+        if (cell->value != NULL) {
+            content_size = &adg_entity_extents(cell->value)->size;
+            if (content_size->x > size->x)
+                size->x = content_size->x;
+        }
+
+        size->x += adg_table_style_get_cell_padding(table_style)->x * 2;
+    } else {
+        size->x = cell->width;
+    }
+}
+
+/* Before calling this function, cell->extents should be updated */
+static void
+cell_arrange(AdgTableCell *cell)
+{
+    AdgTableStyle *table_style;
+    const AdgPair *padding;
+    const CpmlPair *org;
+    const CpmlVector *size, *content_size;
+    AdgMatrix map;
+
+    table_style = GET_TABLE_STYLE(cell->row->table);
+    padding = adg_table_style_get_cell_padding(table_style);
+    org = &cell->extents.org;
+    size = &cell->extents.size;
+
+    if (cell->title != NULL) {
+        content_size = &adg_entity_extents(cell->title)->size;
+
+        cairo_matrix_init_translate(&map,
+                                    org->x + padding->x,
+                                    org->y + content_size->y + padding->y);
+
+        adg_entity_set_global_map(cell->title, &map);
+    }
+
+    if (cell->value != NULL) {
+        content_size = &adg_entity_extents(cell->value)->size;
+
+        cairo_matrix_init_translate(&map,
+                                    org->x + (size->x - content_size->x) / 2,
+                                    org->y + size->y - padding->y);
+
+        adg_entity_set_global_map(cell->value, &map);
+    }
+
+    cell->extents.is_defined = TRUE;
+}
+
+static void
+cell_render(AdgTableCell *cell, cairo_t *cr)
+{
+    if (cell->title != NULL)
+        adg_entity_render(cell->title, cr);
+
+    if (cell->value != NULL)
+        adg_entity_render(cell->value, cr);
+}
+
+static void
+cell_dispose(AdgTableCell *cell)
+{
+    if (cell->title != NULL) {
+        g_object_unref(cell->title);
+        cell->title = NULL;
+    }
+
+    if (cell->value != NULL) {
+        g_object_unref(cell->value);
+        cell->value = NULL;
+    }
+}
+
+static void
 cell_free(AdgTableCell *cell)
 {
     AdgTablePrivate *data = cell->row->table->data;
 
     g_hash_table_foreach_remove(data->cell_names, value_match, cell);
+    cell_dispose(cell);
 
-    g_free(cell->title);
-    g_free(cell->value);
     g_free(cell);
 }
 
