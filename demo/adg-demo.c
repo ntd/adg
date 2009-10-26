@@ -44,6 +44,7 @@ main(gint argc, gchar **argv)
     }
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
+    gtk_window_maximize(GTK_WINDOW(window));
 
     sample = (GtkWidget *) gtk_builder_get_object(builder, "areaSample");
     adg_widget_set_canvas(ADG_WIDGET(sample), sample_canvas());
@@ -436,6 +437,8 @@ sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 
     table = adg_table_new();
+    cairo_matrix_init_translate(&map, 500, 500);
+    adg_entity_set_global_map(ADG_ENTITY(table), &map);
     row = adg_table_row_new(table);
     adg_table_cell_new(row, 40);
     adg_table_cell_new_full(row, 200, "title", "TITLE", "Title of the drawing");

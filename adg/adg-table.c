@@ -84,18 +84,21 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             global_changed          (AdgEntity      *entity);
+static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             arrange_grid            (AdgEntity      *entity);
 static void             arrange_frame           (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
+static void             propagate               (AdgTable       *table,
+                                                 const gchar    *detailed_signal,
+                                                 ...);
 static AdgTableRow *    row_new                 (AdgTable       *table,
                                                  AdgTableRow    *before_row);
 static void             row_arrange_size        (AdgTableRow    *row);
 static void             row_arrange             (AdgTableRow    *row);
-static void             row_render              (AdgTableRow    *row,
-                                                 cairo_t        *cr);
 static void             row_dispose             (AdgTableRow    *row);
 static void             row_free                (AdgTableRow    *row);
 static AdgTableCell *   cell_new                (AdgTableRow    *row,
@@ -106,8 +109,6 @@ static AdgTableCell *   cell_new                (AdgTableRow    *row,
                                                  AdgEntity      *value);
 static void             cell_arrange_size       (AdgTableCell   *cell);
 static void             cell_arrange            (AdgTableCell   *cell);
-static void             cell_render             (AdgTableCell   *cell,
-                                                 cairo_t        *cr);
 static void             cell_dispose            (AdgTableCell   *cell);
 static void             cell_free               (AdgTableCell   *cell);
 static gboolean         value_match             (gpointer        key,
@@ -135,6 +136,8 @@ adg_table_class_init(AdgTableClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = global_changed;
+    entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -237,14 +240,16 @@ set_property(GObject *object, guint prop_id,
 /**
  * adg_table_new:
  *
- * Creates a new table entity.
+ * Creates a new empty table entity. The #AdgEntity:local-mode
+ * property is set by default to #ADG_TRANSFORM_NONE.
  *
  * Returns: the newly created table entity
  **/
 AdgTable *
 adg_table_new(void)
 {
-    return g_object_new(ADG_TYPE_TABLE, NULL);
+    return g_object_new(ADG_TYPE_TABLE,
+                        "local-mode", ADG_TRANSFORM_NONE, NULL);
 }
 
 /**
@@ -542,21 +547,27 @@ AdgTableCell *
 adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
                         const gchar *title, const gchar *value)
 {
-    AdgEntity *title_entity, *value_entity;
+    AdgEntity *table, *title_entity, *value_entity;
     AdgTableStyle *table_style;
+    AdgTransformMode local_mode;
 
     g_return_val_if_fail(row != NULL, NULL);
-    g_return_val_if_fail(ADG_IS_TABLE(row->table), NULL);
+
+    table = (AdgEntity *) row->table;
+
+    g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
 
     table_style = (AdgTableStyle *)
-        adg_entity_style((AdgEntity *) row->table,
-                         adg_table_get_table_dress(row->table));
+        adg_entity_style(table, adg_table_get_table_dress(row->table));
+    local_mode = adg_entity_get_local_mode(table);
 
     if (title != NULL) {
         AdgDress dress = adg_table_style_get_title_dress(table_style);
         title_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                    "local-mode", local_mode,
                                     "label", title,
-                                    "font-dress", dress, NULL);
+                                    "font-dress", dress,
+                                    "parent", table, NULL);
     } else {
         title_entity = NULL;
     }
@@ -564,8 +575,10 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
     if (value != NULL) {
         AdgDress dress = adg_table_style_get_value_dress(table_style);
         value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                                    "local-mode", local_mode,
                                     "label", value,
-                                    "font-dress", dress, NULL);
+                                    "font-dress", dress,
+                                    "parent", table, NULL);
     } else {
         value_entity = NULL;
     }
@@ -744,19 +757,23 @@ adg_table_cell_extents(AdgTableCell *cell)
 
 
 static void
+global_changed(AdgEntity *entity)
+{
+    PARENT_ENTITY_CLASS->global_changed(entity);
+    propagate((AdgTable *) entity, "global-changed");
+}
+
+static void
+local_changed(AdgEntity *entity)
+{
+    PARENT_ENTITY_CLASS->local_changed(entity);
+    propagate((AdgTable *) entity, "local-changed");
+}
+
+static void
 invalidate(AdgEntity *entity)
 {
-    AdgTablePrivate *data = ((AdgTable *) entity)->data;
-
-    if (data->frame != NULL) {
-        g_object_unref(data->frame);
-        data->frame = NULL;
-    }
-
-    if (data->grid != NULL) {
-        g_object_unref(data->grid);
-        data->grid = NULL;
-    }
+    propagate((AdgTable *) entity, "invalidate");
 }
 
 static void
@@ -779,8 +796,13 @@ arrange(AdgEntity *entity)
         data->table_style = (AdgTableStyle *)
             adg_entity_style(entity, data->table_dress);
 
-    if (extents.is_defined)
+    if (extents.is_defined) {
+        if (data->grid != NULL)
+            adg_entity_arrange((AdgEntity *) data->grid);
+        if (data->frame != NULL)
+            adg_entity_arrange((AdgEntity *) data->frame);
         return;
+    }
 
     spacing = adg_table_style_get_cell_spacing(data->table_style);
     extents.size.x = 0;
@@ -863,8 +885,11 @@ arrange_grid(AdgEntity *entity)
 
     dress = adg_table_style_get_grid_dress(data->table_style);
     data->grid = g_object_new(ADG_TYPE_STROKE,
+                              "local-mode", adg_entity_get_local_mode(entity),
                               "line-dress", dress,
-                              "trail", trail, NULL);
+                              "trail", trail,
+                              "parent", entity, NULL);
+    adg_entity_arrange((AdgEntity *) data->grid);
 }
 
 static void
@@ -897,28 +922,70 @@ arrange_frame(AdgEntity *entity)
     dress = adg_table_style_get_frame_dress(data->table_style);
 
     data->frame = g_object_new(ADG_TYPE_STROKE,
+                               "local-mode", adg_entity_get_local_mode(entity),
                                "line-dress", dress,
-                               "trail", (AdgTrail *) path, NULL);
+                               "trail", (AdgTrail *) path,
+                               "parent", entity, NULL);
+    adg_entity_arrange((AdgEntity *) data->frame);
 }
 
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgTable *table;
+    cairo_set_matrix(cr, adg_entity_ctm(entity));
+
+    propagate((AdgTable *) entity, "render", cr);
+}
+
+static void
+propagate(AdgTable *table, const gchar *detailed_signal, ...)
+{
+    guint signal_id;
+    GQuark detail = 0;
+    va_list var_args, var_copy;
     AdgTablePrivate *data;
     GSList *row_node;
+    AdgTableRow *row;
+    GSList *cell_node;
+    AdgTableCell *cell;
 
-    table = (AdgTable *) entity;
+    if (!g_signal_parse_name(detailed_signal, G_TYPE_FROM_INSTANCE(table),
+                             &signal_id, &detail, FALSE)) {
+        g_assert_not_reached();
+    }
+
+    va_start(var_args, detailed_signal);
     data = table->data;
 
-    if (data->frame != NULL)
-        adg_entity_render((AdgEntity *) data->frame, cr);
+    if (data->frame != NULL) {
+        G_VA_COPY(var_copy, var_args);
+        g_signal_emit_valist(data->frame, signal_id, detail, var_copy);
+    }
 
-    if (data->grid != NULL)
-        adg_entity_render((AdgEntity *) data->grid, cr);
+    if (data->grid != NULL) {
+        G_VA_COPY(var_copy, var_args);
+        g_signal_emit_valist(data->grid, signal_id, detail, var_copy);
+    }
 
-    for (row_node = data->rows; row_node; row_node = row_node->next)
-        row_render(row_node->data, cr);
+    for (row_node = data->rows; row_node; row_node = row_node->next) {
+        row = row_node->data;
+
+        for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
+            cell = cell_node->data;
+
+            if (cell->title != NULL) {
+                G_VA_COPY(var_copy, var_args);
+                g_signal_emit_valist(cell->title, signal_id, detail, var_copy);
+            }
+
+            if (cell->value != NULL) {
+                G_VA_COPY(var_copy, var_args);
+                g_signal_emit_valist(cell->value, signal_id, detail, var_copy);
+            }
+        }
+    }
+
+    va_end(var_args);
 }
 
 static AdgTableRow *
@@ -1010,15 +1077,6 @@ row_arrange(AdgTableRow *row)
     }
 
     row->extents.is_defined = TRUE;
-}
-
-static void
-row_render(AdgTableRow *row, cairo_t *cr)
-{
-    GSList *cell_node;
-
-    for (cell_node = row->cells; cell_node; cell_node = cell_node->next)
-        cell_render(cell_node->data, cr);
 }
 
 static void
@@ -1162,16 +1220,6 @@ cell_arrange(AdgTableCell *cell)
     }
 
     cell->extents.is_defined = TRUE;
-}
-
-static void
-cell_render(AdgTableCell *cell, cairo_t *cr)
-{
-    if (cell->title != NULL)
-        adg_entity_render(cell->title, cr);
-
-    if (cell->value != NULL)
-        adg_entity_render(cell->value, cr);
 }
 
 static void
