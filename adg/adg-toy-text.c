@@ -126,9 +126,6 @@ adg_toy_text_init(AdgToyText *toy_text)
     data->glyphs = NULL;
 
     toy_text->data = data;
-
-    adg_entity_set_local_mode((AdgEntity *) toy_text,
-                              ADG_TRANSFORM_BEFORE_NORMALIZED);
 }
 
 static void
@@ -190,14 +187,18 @@ set_property(GObject *object, guint prop_id,
  * adg_toy_text_new:
  * @label: the label text
  *
- * Creates a new toy text entity using @label as its text
+ * Creates a new toy text entity using @label as its text. The
+ * #AdgEntity:local-mode property is set by default to
+ * #ADG_TRANSFORM_BEFORE_NORMALIZED.
  *
  * Returns: the newly created toy text entity
  **/
 AdgToyText *
 adg_toy_text_new(const gchar *label)
 {
-    return g_object_new(ADG_TYPE_TOY_TEXT, "label", label, NULL);
+    return g_object_new(ADG_TYPE_TOY_TEXT,
+                        "local-mode", ADG_TRANSFORM_BEFORE_NORMALIZED,
+                        "label", label, NULL);
 }
 
 /**
