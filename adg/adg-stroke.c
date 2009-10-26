@@ -274,8 +274,27 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 static void
 local_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->local_changed(entity);
-    adg_entity_set_extents(entity, NULL);
+    AdgMatrix old;
+    const AdgMatrix *new;
+
+    adg_matrix_copy(&old, adg_entity_local_matrix(entity));
+
+    if (PARENT_ENTITY_CLASS->local_changed != NULL)
+        PARENT_ENTITY_CLASS->local_changed(entity);
+
+    new = adg_entity_local_matrix(entity);
+
+    /* For simple translation, avoid the entity invalidation:
+     * translate the extents of the same vector instead */
+    if (old.xx != new->xx || old.yy != new->yy ||
+        old.xy != new->xy || old.yx != new->yx) {
+        adg_entity_invalidate(entity);
+    } else {
+        CpmlExtents *extents = (CpmlExtents *) adg_entity_extents(entity);
+
+        extents->org.x += new->x0 - old.x0;
+        extents->org.y += new->y0 - old.y0;
+    }
 }
 
 static void
