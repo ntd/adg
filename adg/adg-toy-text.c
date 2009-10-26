@@ -127,7 +127,8 @@ adg_toy_text_init(AdgToyText *toy_text)
 
     toy_text->data = data;
 
-    adg_entity_set_normalized((AdgEntity *) toy_text, TRUE);
+    adg_entity_set_local_mode((AdgEntity *) toy_text,
+                              ADG_TRANSFORM_BEFORE_NORMALIZED);
 }
 
 static void

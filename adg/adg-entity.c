@@ -74,7 +74,7 @@ enum {
     PROP_PARENT,
     PROP_GLOBAL_MAP,
     PROP_LOCAL_MAP,
-    PROP_NORMALIZED
+    PROP_LOCAL_MODE
 };
 
 enum {
@@ -160,12 +160,12 @@ adg_entity_class_init(AdgEntityClass *klass)
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
 
-    param = g_param_spec_boolean("normalized",
-                                 P_("Normalized Entity"),
-                                 P_("A normalized entity is insensitive to the scaling of the local matrix, that is its local matrix is normalized before being applied"),
-                                 FALSE,
-                                 G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NORMALIZED, param);
+    param = g_param_spec_enum("local-mode",
+                              P_("Local Transform Mode"),
+                              P_("Define how the local matrix must be applied on the global matrix to get the ctm (current transformation matrix)"),
+                              ADG_TYPE_TRANSFORM_MODE, ADG_TRANSFORM_BEFORE,
+                              G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LOCAL_MODE, param);
 
     /**
      * AdgEntity::parent-set:
@@ -270,7 +270,7 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
-    data->normalized = FALSE;
+    data->local_mode = ADG_TRANSFORM_BEFORE;
     data->hash_styles = NULL;
     cairo_matrix_init_identity(&data->global_matrix);
     cairo_matrix_init_identity(&data->local_matrix);
@@ -321,8 +321,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_LOCAL_MAP:
         g_value_set_boxed(value, &data->local_map);
         break;
-    case PROP_NORMALIZED:
-        g_value_set_boolean(value, data->normalized);
+    case PROP_LOCAL_MODE:
+        g_value_set_enum(value, data->local_mode);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -350,8 +350,8 @@ set_property(GObject *object,
     case PROP_LOCAL_MAP:
         set_local_map(entity, g_value_get_boxed(value));
         break;
-    case PROP_NORMALIZED:
-        data->normalized = g_value_get_boolean(value);
+    case PROP_LOCAL_MODE:
+        data->local_mode = g_value_get_enum(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -577,39 +577,52 @@ adg_entity_transform_local_map(AdgEntity *entity,
 }
 
 /**
- * adg_entity_get_normalized:
+ * adg_entity_get_local_mode:
  * @entity: an #AdgEntity object
  *
- * Gets the normalized state of @entity. Check out the
- * adg_entity_set_normalized() documentation to know what a
- * normalized entity is.
+ * Gets the local mode of @entity. Check out the
+ * adg_entity_set_local_mode() documentation to know what the
+ * local mode is used for.
  *
- * Returns: the normalized state of @entity
+ * Returns: the local mode of @entity
  **/
-gboolean
-adg_entity_get_normalized(AdgEntity *entity)
+AdgTransformMode
+adg_entity_get_local_mode(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_TRANSFORM_NONE);
 
     data = entity->data;
 
-    return data->normalized;
+    return data->local_mode;
 }
 
 /**
- * adg_entity_set_normalized:
+ * adg_entity_set_local_mode:
  * @entity: an #AdgEntity object
- * @normalized: new normalized state
+ * @mode: new transformation mode
  *
- * Sets a new normalized state on @entity. A normalized entity
- * is immune to the scaling of the local matrix: this means
- * the local matrix is normalized with adg_matrix_normalize()
- * before being used.
+ * Sets a new transformation mode on @entity. The #AdgEntity:local-mode
+ * property defines how the local matrix must be applied to the global
+ * matrix to get the current transformation matrix, that is the matrix
+ * returned by the adg_entity_ctm() method.
+ *
+ * The ADG canvas assumes the global matrix will always be applied
+ * above the local one, so valid values for @mode would be
+ * #ADG_TRANSFORM_NONE, #ADG_TRANSFORM_BEFORE (the default for model
+ * based entities such as #AdgStroke and #AdgHatch) and
+ * #ADG_TRANSFORM_BEFORE_NORMALIZED (the default for non model based
+ * entities such as #AdgToyText or #AdgTable).
+ *
+ * Other values are allowed, though it is expected you know what
+ * you are doing. For example, the internal font of an #AdgToyText
+ * is updated only when the global matrix changes: applying the
+ * local matrix after the global one will bring bad rendering
+ * results.
  **/
 void
-adg_entity_set_normalized(AdgEntity *entity, gboolean normalized)
+adg_entity_set_local_mode(AdgEntity *entity, AdgTransformMode mode)
 {
     AdgEntityPrivate *data;
 
@@ -617,7 +630,12 @@ adg_entity_set_normalized(AdgEntity *entity, gboolean normalized)
 
     data = entity->data;
 
-    data->normalized = normalized;
+    if (data->local_mode == mode)
+        return;
+
+    data->local_mode = mode;
+
+    g_object_notify((GObject *) entity, "local-mode");
 }
 
 /**
@@ -1042,9 +1060,6 @@ local_changed(AdgEntity *entity)
         adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
         adg_matrix_transform(matrix, map, ADG_TRANSFORM_AFTER);
     }
-
-    if (data->normalized)
-        adg_matrix_normalize(matrix);
 }
 
 static gboolean
@@ -1115,7 +1130,7 @@ real_arrange(AdgEntity *entity)
 
         /* Update the ctm (current transformation matrix) */
         adg_matrix_copy(ctm, &data->global_matrix);
-        adg_matrix_transform(ctm, &data->local_matrix, ADG_TRANSFORM_BEFORE);
+        adg_matrix_transform(ctm, &data->local_matrix, data->local_mode);
 
         klass->arrange(entity);
     }
