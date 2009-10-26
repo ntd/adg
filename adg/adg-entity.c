@@ -997,7 +997,10 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
         g_object_ref(parent);
 
     data->parent = parent;
+
     g_signal_emit(entity, signals[PARENT_SET], 0, old_parent);
+    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
 
     if (old_parent != NULL)
         g_object_unref(old_parent);
@@ -1057,7 +1060,7 @@ set_global_map(AdgEntity *entity, const AdgMatrix *map)
     else
         adg_matrix_copy(&data->global_map, map);
 
-    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0, &data->global_matrix);
+    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
     return TRUE;
 }
 
@@ -1074,7 +1077,7 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
     else
         adg_matrix_copy(&data->local_map, map);
 
-    g_signal_emit(entity, signals[LOCAL_CHANGED], 0, &data->local_matrix);
+    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
     return TRUE;
 }
 
