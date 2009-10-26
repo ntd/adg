@@ -266,7 +266,7 @@ adg_matrix_normalize(AdgMatrix *matrix)
  **/
 void
 adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
-                     AdgTransformationMode mode)
+                     AdgTransformMode mode)
 {
     AdgMatrix tmp_matrix;
 

@@ -41,7 +41,7 @@
  **/
 
 /**
- * AdgTransformationMode:
+ * AdgTransformMode:
  * @ADG_TRANSFORM_NONE: do not apply any transformation
  * @ADG_TRANSFORM_BEFORE: apply the transformation before the matrix using
  *                        cairo_matrix_multiply(matrix, matrix, transformation)

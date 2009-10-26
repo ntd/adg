@@ -38,7 +38,7 @@ typedef enum {
     ADG_TRANSFORM_AFTER,
     ADG_TRANSFORM_BEFORE_NORMALIZED,
     ADG_TRANSFORM_AFTER_NORMALIZED
-} AdgTransformationMode;
+} AdgTransformMode;
 
 G_END_DECLS
 
