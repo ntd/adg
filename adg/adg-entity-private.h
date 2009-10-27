@@ -30,7 +30,7 @@ struct _AdgEntityPrivate {
     AdgEntity   *parent;
     AdgMatrix    global_map;
     AdgMatrix    local_map;
-    AdgLocalMode local_mode;
+    AdgMixMethod local_method;
     GHashTable  *hash_styles;
 
     AdgMatrix    global_matrix;

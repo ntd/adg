@@ -63,21 +63,29 @@
  **/
 
 /**
- * AdgLocalMode:
- * @ADG_LOCAL_NONE:        local transformations are completely ignored: a
- *                         local matrix request will always return an
- *                         identity matrix
- * @ADG_LOCAL_REGULAR:     combine all the local maps of the parent hierarchy
- *                         in the same way the global matrix is computed
- * @ADG_LOCAL_NORMALIZED:  work in the same way as %ADG_LOCAL_REGULAR,
- *                         but the result is normalized with
- *                         adg_matrix_normalize() before being returned
- * @ADG_LOCAL_MAP:         the local matrix is the local map
- * @ADG_LOCAL_FROM_PARENT: apply the local map above the parent local map,
- *                         ignoring any other ancestors in the hierarchy:
- *                         if the entity has no parent, it returns the
- *                         local map as in %ADG_LOCAL_MAP
+ * AdgMixMethod:
+ * @ADG_MIX_UNDEFINED: undefined method, mainly used to return an
+ *                     error condition
+ * @ADG_MIX_DISABLED:  the maps are completely ignored: the matrix is
+ *                     always set to the identity matrix
+ * @ADG_MIX_NONE:      the matrix is set to the entity map
+ * @ADG_MIX_ANCESTORS: the matrix is computed by applying every map
+ *                     sequentially, starting from the elder ancestor
+ *                     in the hierarchy up to the entity map
+ * @ADG_MIX_ANCESTORS_NORMALIZED:
+ *                     perform the same operations as %ADG_MIX_ANCESTORS
+ *                     but normalize the resulting matrix with
+ *                     adg_matrix_normalize() before returning it
+ * @ADG_MIX_PARENT:    apply the entity map above the parent map,
+ *                     ignoring any other ancestors in the hierarchy;
+ *                     if the entity has no parent, it returns the
+ *                     entity map as in %ADG_MIX_NONE
+ * @ADG_MIX_PARENT_NORMALIZED:
+ *                     perform the same operations as %ADG_MIX_PARENT
+ *                     but normalize the resulting matrix with
+ *                     adg_matrix_normalize() before returning it
  *
- * Specifies how the local matrix, as returned by adg_entity_local_matrix(),
- * should be computed.
+ * Specifies how the maps of an #AdgEntity instance and its ancestors
+ * should be combined to get a matrix. This is usually used by the
+ * adg_entity_local_matrix() method to get the local matrix.
  **/

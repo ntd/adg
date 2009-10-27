@@ -240,8 +240,8 @@ set_property(GObject *object, guint prop_id,
 /**
  * adg_table_new:
  *
- * Creates a new empty table entity. The #AdgEntity:local-mode
- * property is set by default to #ADG_LOCAL_NONE, that is the
+ * Creates a new empty table entity. The #AdgEntity:local-method
+ * property is set by default to #ADG_MIX_DISABLED, that is the
  * table is not subject to any local transformations.
  *
  * Returns: the newly created table entity
@@ -250,7 +250,7 @@ AdgTable *
 adg_table_new(void)
 {
     return g_object_new(ADG_TYPE_TABLE,
-                        "local-mode", ADG_LOCAL_NONE, NULL);
+                        "local-method", ADG_MIX_DISABLED, NULL);
 }
 
 /**
@@ -563,7 +563,7 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
     if (title != NULL) {
         AdgDress dress = adg_table_style_get_title_dress(table_style);
         title_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "local-mode", ADG_LOCAL_FROM_PARENT,
+                                    "local-method", ADG_MIX_PARENT,
                                     "label", title,
                                     "font-dress", dress,
                                     "parent", table, NULL);
@@ -574,7 +574,7 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
     if (value != NULL) {
         AdgDress dress = adg_table_style_get_value_dress(table_style);
         value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "local-mode", ADG_LOCAL_FROM_PARENT,
+                                    "local-method", ADG_MIX_PARENT,
                                     "label", value,
                                     "font-dress", dress,
                                     "parent", table, NULL);
@@ -884,7 +884,7 @@ arrange_grid(AdgEntity *entity)
 
     dress = adg_table_style_get_grid_dress(data->table_style);
     data->grid = g_object_new(ADG_TYPE_STROKE,
-                              "local-mode", ADG_LOCAL_FROM_PARENT,
+                              "local-method", ADG_MIX_PARENT,
                               "line-dress", dress,
                               "trail", trail,
                               "parent", entity, NULL);
@@ -921,7 +921,7 @@ arrange_frame(AdgEntity *entity)
     dress = adg_table_style_get_frame_dress(data->table_style);
 
     data->frame = g_object_new(ADG_TYPE_STROKE,
-                               "local-mode", ADG_LOCAL_FROM_PARENT,
+                               "local-method", ADG_MIX_PARENT,
                                "line-dress", dress,
                                "trail", (AdgTrail *) path,
                                "parent", entity, NULL);

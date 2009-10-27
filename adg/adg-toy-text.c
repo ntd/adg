@@ -188,7 +188,7 @@ set_property(GObject *object, guint prop_id,
  * @label: the label text
  *
  * Creates a new toy text entity using @label as its text. The
- * #AdgEntity:local-mode property is set by default to
+ * #AdgEntity:local-method property is set by default to
  * #ADG_LOCAL_NORMALIZED.
  *
  * Returns: the newly created toy text entity
@@ -197,7 +197,7 @@ AdgToyText *
 adg_toy_text_new(const gchar *label)
 {
     return g_object_new(ADG_TYPE_TOY_TEXT,
-                        "local-mode", ADG_LOCAL_NORMALIZED,
+                        "local-method", ADG_MIX_ANCESTORS_NORMALIZED,
                         "label", label, NULL);
 }
 
