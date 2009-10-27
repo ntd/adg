@@ -135,7 +135,7 @@ needed to generate this drawing.</para>
    <listitem override="disc">Add labeling feature to the models and let AdgDim and children points
    be expressed as references to those labeled points instead of using
    explicit coordinates.</listitem>
-   <listitem>Add AdgToyTable, a container for AdgToyText in a framed environment.</listitem>
+   <listitem override="disc">Add AdgTable, a container for AdgToyText in a framed environment.</listitem>
    <listitem>Add AdgTitleBlock, a complex entity in global space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
    <listitem override="disc">The dressing feature needs more attention: they are still not well
@@ -143,7 +143,7 @@ needed to generate this drawing.</para>
    conflicts: a basic mangling is required.</listitem>
    <listitem>Allow the linear dimension to be decentralized by using the pos point
    as reference and using a dedicated enum instead of a three-state.</listitem>
-   <listitem>Provide a decent demo program to show the progresses so far, including
+   <listitem>Provide a decent demo program to show the progress so far, including
    title block, hatches and various dimensions types: update the website
    with new (and hopefully more impressive) screenshots.</listitem>
 </itemizedlist>
