@@ -93,9 +93,9 @@ void             adg_entity_set_local_map       (AdgEntity       *entity,
 void             adg_entity_transform_local_map (AdgEntity       *entity,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformMode mode);
-AdgTransformMode adg_entity_get_local_mode      (AdgEntity       *entity);
+AdgLocalMode     adg_entity_get_local_mode      (AdgEntity       *entity);
 void             adg_entity_set_local_mode      (AdgEntity       *entity,
-                                                 AdgTransformMode mode);
+                                                 AdgLocalMode     local_mode);
 const CpmlExtents *
                  adg_entity_extents             (AdgEntity       *entity);
 void             adg_entity_set_extents         (AdgEntity       *entity,

@@ -105,6 +105,8 @@ static gboolean         set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static gboolean         set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
+static gboolean         set_local_mode          (AdgEntity       *entity,
+                                                 AdgLocalMode     local_mode);
 static void             real_invalidate         (AdgEntity       *entity);
 static void             real_arrange            (AdgEntity       *entity);
 static void             real_render             (AdgEntity       *entity,
@@ -155,15 +157,15 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     param = g_param_spec_boxed("local-map",
                                P_("Local Map"),
-                               P_("The transformation to be combined with the parent ones to get the local matrix"),
+                               P_("The local transformation that could be used to compute the local matrix in the way specified by the #AdgEntity:local-mode property"),
                                ADG_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
 
     param = g_param_spec_enum("local-mode",
-                              P_("Local Transform Mode"),
-                              P_("Define how the local matrix must be applied on the global matrix to get the ctm (current transformation matrix)"),
-                              ADG_TYPE_TRANSFORM_MODE, ADG_TRANSFORM_BEFORE,
+                              P_("Local Mode"),
+                              P_("Define how the local matrix must be computed"),
+                              ADG_TYPE_LOCAL_MODE, ADG_LOCAL_REGULAR,
                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MODE, param);
 
@@ -270,7 +272,7 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
-    data->local_mode = ADG_TRANSFORM_BEFORE;
+    data->local_mode = ADG_LOCAL_REGULAR;
     data->hash_styles = NULL;
     cairo_matrix_init_identity(&data->global_matrix);
     cairo_matrix_init_identity(&data->local_matrix);
@@ -351,7 +353,7 @@ set_property(GObject *object,
         set_local_map(entity, g_value_get_boxed(value));
         break;
     case PROP_LOCAL_MODE:
-        data->local_mode = g_value_get_enum(value);
+        set_local_mode(entity, g_value_get_enum(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -586,12 +588,12 @@ adg_entity_transform_local_map(AdgEntity *entity,
  *
  * Returns: the local mode of @entity
  **/
-AdgTransformMode
+AdgLocalMode
 adg_entity_get_local_mode(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_TRANSFORM_NONE);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_LOCAL_NONE);
 
     data = entity->data;
 
@@ -601,41 +603,24 @@ adg_entity_get_local_mode(AdgEntity *entity)
 /**
  * adg_entity_set_local_mode:
  * @entity: an #AdgEntity object
- * @mode: new transformation mode
+ * @local_mode: new local mode
  *
- * Sets a new transformation mode on @entity. The #AdgEntity:local-mode
- * property defines how the local matrix must be applied to the global
- * matrix to get the current transformation matrix, that is the matrix
- * returned by the adg_entity_ctm() method.
+ * Sets a new local mode on @entity. The #AdgEntity:local-mode
+ * property defines how the local matrix must be computed:
+ * check out the #AdgLocalMode documentation to know what are
+ * the availables modes and how they affect the local matrix
+ * computation.
  *
- * The ADG canvas assumes the global matrix will always be applied
- * above the local one, so valid values for @mode would be
- * #ADG_TRANSFORM_NONE, #ADG_TRANSFORM_BEFORE (the default for model
- * based entities such as #AdgStroke and #AdgHatch) and
- * #ADG_TRANSFORM_BEFORE_NORMALIZED (the default for non model based
- * entities such as #AdgToyText or #AdgTable).
- *
- * Other values are allowed, though it is expected you know what
- * you are doing. For example, the internal font of an #AdgToyText
- * is updated only when the global matrix changes: applying the
- * local matrix after the global one will bring bad rendering
- * results.
+ * Setting a different local mode emits an #Adgentity::local-changed
+ * signal on @entity.
  **/
 void
-adg_entity_set_local_mode(AdgEntity *entity, AdgTransformMode mode)
+adg_entity_set_local_mode(AdgEntity *entity, AdgLocalMode local_mode)
 {
-    AdgEntityPrivate *data;
-
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    data = entity->data;
-
-    if (data->local_mode == mode)
-        return;
-
-    data->local_mode = mode;
-
-    g_object_notify((GObject *) entity, "local-mode");
+    if (set_local_mode(entity, local_mode))
+        g_object_notify((GObject *) entity, "local-mode");
 }
 
 /**
@@ -900,9 +885,9 @@ adg_entity_global_matrix(AdgEntity *entity)
  * @entity: an #AdgEntity object
  * @matrix: where to store the local matrix
  *
- * Gets the local matrix by combining all the local maps of the
- * @entity hierarchy. The returned value is owned by @entity and
- * should not be changed or freed.
+ * Gets the local matrix of @entity in the way specified by the
+ * #AdgEntity:local-mode property. The returned value is owned
+ * by @entity and should not be changed or freed.
  *
  * Returns: the local matrix or %NULL on errors
  **/
@@ -922,12 +907,18 @@ adg_entity_local_matrix(AdgEntity *entity)
  * adg_entity_ctm:
  * @entity: an #AdgEntity object
  *
- * Gets the current transformation matrix (ctm) of @entity
- * by transforming the local matrix with the global matrix.
+ * Returns the current transformation matrix (ctm) of @entity
+ * by applying the global matrix above the local matrix. This
+ * is roughly equivalent to the following pseudo code:
  *
- * This method is only useful after the #AdgEntity::arrange default
- * handler has been called, that is at the rendering stage or while
- * arranging the entity after the parent method has been chained up.
+ * |[
+ * cairo_matrix_multiply(ctm, local_matrix, global_matrix);
+ * ]|
+ *
+ * This method is only useful inside or after the #AdgEntity::arrange
+ * default signal handler has been called, that is at the arranging
+ * or rendering stage. In the other cases, the returned matrix will
+ * luckely be not up to date.
  *
  * Returns: the current transformation matrix or %NULL on errors
  **/
@@ -964,13 +955,9 @@ adg_entity_invalidate(AdgEntity *entity)
  * adg_entity_arrange:
  * @entity: an #AdgEntity
  *
- * <note><para>
- * This function is only useful in entity implementations.
- * </para></note>
- *
  * Emits the #AdgEntity::arrange signal on @entity and all its children,
  * if any. This function is rarely needed as the arrange call is usually
- * managed by the #AdgEntity::render signal or indirectly by a call to
+ * implicitely called by the #AdgEntity::render signal or iby a call to
  * adg_entity_get_extents().
  **/
 void
@@ -1048,17 +1035,46 @@ static void
 local_changed(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
-    AdgMatrix *map, *matrix;
+    AdgMatrix *matrix;
 
     data = entity->data;
-    map = &data->local_map;
     matrix = &data->local_matrix;
 
-    if (data->parent == NULL) {
-        adg_matrix_copy(matrix, map);
-    } else {
-        adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
-        adg_matrix_transform(matrix, map, ADG_TRANSFORM_AFTER);
+    switch (data->local_mode) {
+    case ADG_LOCAL_NONE:
+        adg_matrix_copy(matrix, adg_matrix_identity());
+        break;
+    case ADG_LOCAL_REGULAR:
+        if (data->parent != NULL) {
+            adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+        } else {
+            adg_matrix_copy(matrix, &data->local_map);
+        }
+        break;
+    case ADG_LOCAL_NORMALIZED:
+        if (data->parent != NULL) {
+            adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+        } else {
+            adg_matrix_copy(matrix, &data->local_map);
+        }
+        adg_matrix_normalize(matrix);
+        break;
+    case ADG_LOCAL_MAP:
+        adg_matrix_copy(matrix, &data->local_map);
+        break;
+    case ADG_LOCAL_FROM_PARENT:
+        if (data->parent != NULL) {
+            adg_entity_get_local_map(data->parent, matrix);
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+        } else {
+            adg_matrix_copy(matrix, &data->local_map);
+        }
+        break;
+    default:
+        g_assert_not_reached();
+        break;
     }
 }
 
@@ -1096,6 +1112,20 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
     return TRUE;
 }
 
+static gboolean
+set_local_mode(AdgEntity *entity, AdgLocalMode local_mode)
+{
+    AdgEntityPrivate *data = entity->data;
+
+    if (data->local_mode == local_mode)
+        return FALSE;
+
+    data->local_mode = local_mode;
+    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+
+    return TRUE;
+}
+
 static void
 real_invalidate(AdgEntity *entity)
 {
@@ -1130,7 +1160,7 @@ real_arrange(AdgEntity *entity)
 
         /* Update the ctm (current transformation matrix) */
         adg_matrix_copy(ctm, &data->global_matrix);
-        adg_matrix_transform(ctm, &data->local_matrix, data->local_mode);
+        adg_matrix_transform(ctm, &data->local_matrix, ADG_TRANSFORM_BEFORE);
 
         klass->arrange(entity);
     }

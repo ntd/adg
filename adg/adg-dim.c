@@ -937,7 +937,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
 
         data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
-                                         "local-mode", ADG_TRANSFORM_BEFORE_NORMALIZED,
+                                         "local-mode", ADG_LOCAL_NORMALIZED,
                                          "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container,
@@ -957,7 +957,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
         data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "local-mode", ADG_TRANSFORM_BEFORE_NORMALIZED,
+                                       "local-mode", ADG_LOCAL_NORMALIZED,
                                        "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.min);
@@ -968,7 +968,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
         data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "local-mode", ADG_TRANSFORM_BEFORE_NORMALIZED,
+                                       "local-mode", ADG_LOCAL_NORMALIZED,
                                        "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.max);
