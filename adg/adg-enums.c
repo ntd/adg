@@ -42,19 +42,42 @@
 
 /**
  * AdgTransformMode:
- * @ADG_TRANSFORM_NONE: do not apply any transformation
- * @ADG_TRANSFORM_BEFORE: apply the transformation before the matrix using
- *                        cairo_matrix_multiply(matrix, matrix, transformation)
- * @ADG_TRANSFORM_AFTER: apply the transformation after the matrix using
- *                       cairo_matrix_multiply(matrix, transformation, matrix)
+ * @ADG_TRANSFORM_NONE:              do not apply any transformation: the
+ *                                   matrix is returned unchanged
+ * @ADG_TRANSFORM_BEFORE:            apply the transformation before the
+ *                                   matrix: the result is equivalent to
+ *                                   cairo_matrix_multiply(matrix, matrix, transformation)
+ * @ADG_TRANSFORM_AFTER:             apply the transformation after the
+ *                                   matrix: the result is equivalent to
+ *                                   cairo_matrix_multiply(matrix, transformation, matrix)
  * @ADG_TRANSFORM_BEFORE_NORMALIZED: same as %ADG_TRANSFORM_BEFORE but
  *                                   normalizing the transformation with
  *                                   adg_matrix_normalize() before applying it
- * @ADG_TRANSFORM_AFTER_NORMALIZED: same as %ADG_TRANSFORM_AFTER but
- *                                  normalizing the transformation with
- *                                  adg_matrix_normalize() before applying it
+ * @ADG_TRANSFORM_AFTER_NORMALIZED:  same as %ADG_TRANSFORM_AFTER but
+ *                                   normalizing the transformation with
+ *                                   adg_matrix_normalize() before applying it
  *
  * Specifies the mode a generic transformation should be applied on
- * a subject matrix. Although used in different places, the function
- * performing the dirty work is always adg_matrix_transform().
+ * a matrix. Although used in different places, the function performing
+ * the dirty work is always adg_matrix_transform().
+ **/
+
+/**
+ * AdgLocalMode:
+ * @ADG_LOCAL_NONE:        local transformations are completely ignored: a
+ *                         local matrix request will always return an
+ *                         identity matrix
+ * @ADG_LOCAL_REGULAR:     combine all the local maps of the parent hierarchy
+ *                         in the same way the global matrix is computed
+ * @ADG_LOCAL_NORMALIZED:  work in the same way as %ADG_LOCAL_REGULAR,
+ *                         but the result is normalized with
+ *                         adg_matrix_normalize() before being returned
+ * @ADG_LOCAL_MAP:         the local matrix is the local map
+ * @ADG_LOCAL_FROM_PARENT: apply the local map above the parent local map,
+ *                         ignoring any other ancestors in the hierarchy:
+ *                         if the entity has no parent, it returns the
+ *                         local map as in %ADG_LOCAL_MAP
+ *
+ * Specifies how the local matrix, as returned by adg_entity_local_matrix(),
+ * should be computed.
  **/

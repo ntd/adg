@@ -40,6 +40,14 @@ typedef enum {
     ADG_TRANSFORM_AFTER_NORMALIZED
 } AdgTransformMode;
 
+typedef enum {
+    ADG_LOCAL_NONE,
+    ADG_LOCAL_REGULAR,
+    ADG_LOCAL_NORMALIZED,
+    ADG_LOCAL_MAP,
+    ADG_LOCAL_FROM_PARENT
+} AdgLocalMode;
+
 G_END_DECLS
 
 
