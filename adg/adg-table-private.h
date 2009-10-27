@@ -34,6 +34,7 @@ typedef struct _AdgTablePrivate AdgTablePrivate;
 struct _AdgTableCell {
     AdgTableRow   *row;
     gdouble        width;
+    gboolean       has_frame;
     AdgEntity     *title;
     AdgEntity     *value;
     CpmlExtents    extents;
@@ -48,6 +49,7 @@ struct _AdgTableRow {
 
 struct _AdgTablePrivate {
     AdgDress       table_dress;
+    gboolean       has_frame;
 
     AdgTableStyle *table_style;
     AdgStroke     *grid;

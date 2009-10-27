@@ -57,6 +57,9 @@ AdgTable *      adg_table_new                   (void);
 AdgDress        adg_table_get_table_dress       (AdgTable       *table);
 void            adg_table_set_table_dress       (AdgTable       *table,
                                                  AdgDress        dress);
+gboolean        adg_table_has_frame             (AdgTable       *table);
+void            adg_table_switch_frame          (AdgTable       *table,
+                                                 gboolean        state);
 guint           adg_table_get_n_rows            (AdgTable       *table);
 
 AdgTableRow *   adg_table_row_new               (AdgTable       *table);
@@ -88,6 +91,9 @@ void            adg_table_cell_set_value        (AdgTableCell   *cell,
                                                  AdgEntity      *value);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
+gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
+void            adg_table_cell_switch_frame     (AdgTableCell   *cell,
+                                                 gboolean        state);
 const CpmlExtents *
                 adg_table_cell_extents          (AdgTableCell   *cell);
 

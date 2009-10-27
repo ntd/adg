@@ -71,7 +71,8 @@
 
 enum {
     PROP_0,
-    PROP_TABLE_DRESS
+    PROP_TABLE_DRESS,
+    PROP_HAS_FRAME
 };
 
 static void             dispose                 (GObject        *object);
@@ -92,6 +93,8 @@ static void             arrange_grid            (AdgEntity      *entity);
 static void             arrange_frame           (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
+static gboolean         switch_frame            (AdgTable       *table,
+                                                 gboolean        state);
 static void             propagate               (AdgTable       *table,
                                                  const gchar    *detailed_signal,
                                                  ...);
@@ -104,6 +107,7 @@ static void             row_free                (AdgTableRow    *row);
 static AdgTableCell *   cell_new                (AdgTableRow    *row,
                                                  AdgTableCell   *before_cell,
                                                  gdouble         width,
+                                                 gboolean        has_frame,
                                                  const gchar    *name,
                                                  AdgEntity      *title,
                                                  AdgEntity      *value);
@@ -148,6 +152,13 @@ adg_table_class_init(AdgTableClass *klass)
                                  ADG_DRESS_TABLE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TABLE_DRESS, param);
+
+    param = g_param_spec_boolean("has-frame",
+                                 P_("Has Frame Flag"),
+                                 P_("If enabled, a frame using the proper dress found in this table style will be drawn around the table extents"),
+                                 TRUE,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_FRAME, param);
 }
 
 static void
@@ -158,6 +169,9 @@ adg_table_init(AdgTable *table)
                                                         AdgTablePrivate);
 
     data->table_dress = ADG_DRESS_TABLE;
+    data->has_frame = TRUE;
+
+    data->table_style = NULL;
     data->grid = NULL;
     data->frame = NULL;
     data->rows = NULL;
@@ -173,6 +187,17 @@ dispose(GObject *object)
 
     invalidate((AdgEntity *) object);
 
+    if (data->grid != NULL) {
+        g_object_unref(data->grid);
+        data->grid = NULL;
+    }
+
+    if (data->frame != NULL) {
+        g_object_unref(data->frame);
+        data->frame = NULL;
+    }
+
+    /* The rows finalization will happen in the finalize() method */
     if (data->rows != NULL)
         g_slist_foreach(data->rows, (GFunc) row_dispose, NULL);
 
@@ -210,6 +235,9 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_TABLE_DRESS:
         g_value_set_int(value, data->table_dress);
         break;
+    case PROP_HAS_FRAME:
+        g_value_set_boolean(value, data->has_frame);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -229,6 +257,9 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_TABLE_DRESS:
         adg_dress_set(&data->table_dress, g_value_get_int(value));
+        break;
+    case PROP_HAS_FRAME:
+        switch_frame(table, g_value_get_boolean(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -298,6 +329,44 @@ adg_table_set_table_dress(AdgTable *table, AdgDress dress)
 
     if (adg_dress_set(&data->table_dress, dress))
         g_object_notify((GObject *) table, "table-dress");
+}
+
+/**
+ * adg_table_has_frame:
+ * @table: an #AdgTable
+ *
+ * Returns the state of the #AdgTable:has-frame property.
+ *
+ * Returns: the current state
+ **/
+gboolean
+adg_table_has_frame(AdgTable *table)
+{
+    AdgTablePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TABLE(table), FALSE);
+
+    data = table->data;
+
+    return data->has_frame;
+}
+
+/**
+ * adg_table_switch_frame:
+ * @table: an #AdgTable
+ * @state: the new state of the frame
+ *
+ * Sets the #AdgTable:has-frame property: %TRUE will draw a
+ * frame around the whole table using the #AdgTableStyle:frame-dress
+ * dress of the table style.
+ **/
+void
+adg_table_switch_frame(AdgTable *table, gboolean state)
+{
+    g_return_if_fail(ADG_IS_TABLE(table));
+
+    if (switch_frame(table, state))
+        g_object_notify((GObject *) table, "has-frame");
 }
 
 /**
@@ -473,9 +542,11 @@ adg_table_get_cell_by_name(AdgTable *table, const gchar *name)
  * @row: a valid #AdgTableRow
  * @width: width of the cell
  *
- * Creates a new cell and appends it at the end of the cells
- * yet present in @row. You can add content to the cell by using
- * adg_table_cell_set_title() and adg_table_cell_set_value().
+ * Creates a new empty cell without a frame and appends it at the
+ * end of the cells yet present in @row. You can add content to the
+ * cell by using adg_table_cell_set_title() and
+ * adg_table_cell_set_value() or enable the frame with
+ * adg_table_cell_switch_frame().
  *
  * A positive @width value specifies the width of this cell in global
  * space: if the width of its content (that is, either the title or the
@@ -497,7 +568,7 @@ adg_table_cell_new(AdgTableRow *row, gdouble width)
     g_return_val_if_fail(row != NULL, NULL);
     g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(row, NULL, width, NULL, NULL, NULL);
+    return cell_new(row, NULL, width, FALSE, NULL, NULL, NULL);
 }
 
 /**
@@ -518,7 +589,7 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
     g_return_val_if_fail(cell->row != NULL, NULL);
     g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(cell->row, cell, width, NULL, NULL, NULL);
+    return cell_new(cell->row, cell, width, FALSE, NULL, NULL, NULL);
 }
 
 /**
@@ -529,10 +600,11 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
  * @title: title to render
  * @value: value to render
  *
- * A convenient function to append a cell to @row with a specific
- * title and value text. The font to use for rendering @title and
- * @value will be picked up from the table style, so be sure to
- * have the correct table dress set before calling this function.
+ * A convenient function to append a framed cell to @row with a
+ * specific title and value text. The font to use for rendering
+ * @title and @value will be picked up from the table style, so
+ * be sure to have the correct table dress set before calling
+ * this function.
  *
  * @row and @width have the same meanings as in adg_table_cell_new():
  * check its documentation for details.
@@ -582,7 +654,7 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
         value_entity = NULL;
     }
 
-    return cell_new(row, NULL, width, name, title_entity, value_entity);
+    return cell_new(row, NULL, width, TRUE, name, title_entity, value_entity);
 }
 
 /**
@@ -737,6 +809,50 @@ adg_table_cell_set_width(AdgTableCell *cell, gdouble width)
 }
 
 /**
+ * adg_table_cell_has_frame:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the frame flag of @cell.
+ *
+ * Returns: the frame flag
+ **/
+gboolean
+adg_table_cell_has_frame(AdgTableCell *cell)
+{
+    g_return_val_if_fail(cell != NULL, FALSE);
+
+    return cell->has_frame;
+}
+
+/**
+ * adg_table_cell_switch_frame:
+ * @cell: a valid #AdgTableCell
+ * @state: the new frame state
+ *
+ * Sets the frame flag of @cell: if @state is %TRUE, a frame around
+ * @cell will be rendered using the #AdgTableStyle:cell-dress dress
+ * of the table style.
+ **/
+void
+adg_table_cell_switch_frame(AdgTableCell *cell, gboolean state)
+{
+    AdgTablePrivate *data;
+
+    g_return_if_fail(cell != NULL);
+
+    if (cell->has_frame == state)
+        return;
+
+    data = cell->row->table->data;
+    cell->has_frame = state;
+
+    if (data->grid != NULL) {
+        g_object_unref(data->grid);
+        data->grid = NULL;
+    }
+}
+
+/**
  * adg_table_cell_extents:
  * @cell: a valid #AdgTableCell
  *
@@ -864,7 +980,7 @@ arrange_grid(AdgEntity *entity)
         for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
             cell = cell_node->data;
 
-            if (cell->title == NULL && cell->value == NULL)
+            if (!cell->has_frame)
                 continue;
 
             cpml_pair_copy(&pair, &cell->extents.org);
@@ -902,7 +1018,7 @@ arrange_frame(AdgEntity *entity)
 
     data = ((AdgTable *) entity)->data;
 
-    if (data->frame != NULL)
+    if (data->frame != NULL || !data->has_frame)
         return;
 
     path = adg_path_new();
@@ -934,6 +1050,24 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_set_matrix(cr, adg_entity_ctm(entity));
 
     propagate((AdgTable *) entity, "render", cr);
+}
+
+static gboolean
+switch_frame(AdgTable *table, gboolean state)
+{
+    AdgTablePrivate *data = table->data;
+
+    if (data->has_frame == state)
+        return FALSE;
+
+    data->has_frame = state;
+
+    if (data->frame != NULL) {
+        g_object_unref(data->frame);
+        data->frame = NULL;
+    }
+
+    return TRUE;
 }
 
 static void
@@ -1094,7 +1228,8 @@ row_free(AdgTableRow *row)
 }
 
 static AdgTableCell *
-cell_new(AdgTableRow *row, AdgTableCell *before_cell, gdouble width,
+cell_new(AdgTableRow *row, AdgTableCell *before_cell,
+         gdouble width, gboolean has_frame,
          const gchar *name, AdgEntity *title, AdgEntity *value)
 {
     AdgTablePrivate *data;
@@ -1116,6 +1251,7 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell, gdouble width,
     new_cell = g_new(AdgTableCell, 1);
     new_cell->row = row;
     new_cell->width = width;
+    new_cell->has_frame = has_frame;
     new_cell->title = title;
     new_cell->value = value;
     new_cell->extents.is_defined = FALSE;
