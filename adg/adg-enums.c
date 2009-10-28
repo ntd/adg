@@ -89,3 +89,18 @@
  * should be combined to get a matrix. This is usually used by the
  * adg_entity_local_matrix() method to get the local matrix.
  **/
+
+/**
+ * AdgProjectionScheme:
+ *
+ * ADG_PROJECTION_UNDEFINED:   there is a single view or the views are not
+ *                             related with a consistent scheme
+ * ADG_PROJECTION_FIRST_ANGLE: the views are generated as if the object were
+ *                             sitting on the paper and, from the front view,
+ *                             it is rolled to the right to show the left
+ *                             side or rolled up to show its bottom
+ * ADG_PROJECTION_THIRD_ANGLE: the views are generated as if the object were
+ *                             a box to be unfolded
+ *
+ * Specifies how the views are positioned relative to each other.
+ **/

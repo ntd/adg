@@ -50,6 +50,12 @@ typedef enum {
     ADG_MIX_PARENT_NORMALIZED
 } AdgMixMethod;
 
+typedef enum {
+    ADG_PROJECTION_UNDEFINED,
+    ADG_PROJECTION_FIRST_ANGLE,
+    ADG_PROJECTION_THIRD_ANGLE
+} AdgProjectionScheme;
+
 G_END_DECLS
 
 
