@@ -29,9 +29,14 @@ G_BEGIN_DECLS
 typedef struct _AdgTitleBlockPrivate AdgTitleBlockPrivate;
 
 struct _AdgTitleBlockPrivate {
-    gchar       *name;
-    gchar       *material;
-    gchar       *treatment;
+    gchar       *title;
+    gchar       *drawing;
+    gchar       *size;
+    gchar       *scale;
+    gchar       *author;
+    gchar       *date;
+    AdgEntity   *logo;
+    AdgEntity   *projection;
 };
 
 G_END_DECLS

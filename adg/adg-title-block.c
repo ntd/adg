@@ -43,15 +43,23 @@
 #include "adg-title-block-private.h"
 #include "adg-intl.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
+
 
 enum {
     PROP_0,
-    PROP_NAME,
-    PROP_MATERIAL,
-    PROP_TREATMENT
+    PROP_TITLE,
+    PROP_DRAWING,
+    PROP_SIZE,
+    PROP_SCALE,
+    PROP_AUTHOR,
+    PROP_DATE,
+    PROP_LOGO,
+    PROP_PROJECTION
 };
 
 
+static void     dispose                 (GObject        *object);
 static void     finalize                (GObject        *object);
 static void     get_property            (GObject        *object,
                                          guint           prop_id,
@@ -61,9 +69,25 @@ static void     set_property            (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
+static gboolean set_title               (AdgTitleBlock  *title_block,
+                                         const gchar    *title);
+static gboolean set_drawing             (AdgTitleBlock  *title_block,
+                                         const gchar    *drawing);
+static gboolean set_size                (AdgTitleBlock  *title_block,
+                                         const gchar    *size);
+static gboolean set_scale               (AdgTitleBlock  *title_block,
+                                         const gchar    *scale);
+static gboolean set_author              (AdgTitleBlock  *title_block,
+                                         const gchar    *author);
+static gboolean set_date                (AdgTitleBlock  *title_block,
+                                         const gchar    *date);
+static gboolean set_logo                (AdgTitleBlock  *title_block,
+                                         AdgEntity      *logo);
+static gboolean set_projection          (AdgTitleBlock  *title_block,
+                                         AdgEntity      *projection);
 
 
-G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE);
 
 
 static void
@@ -76,27 +100,66 @@ adg_title_block_class_init(AdgTitleBlockClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgTitleBlockPrivate));
 
+    gobject_class->dispose = dispose;
+    gobject_class->finalize = finalize;
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
-    gobject_class->finalize = finalize;
 
-    param = g_param_spec_string("name",
-                                P_("Part Name"),
-                                P_("Descriptive name of this part"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NAME, param);
+    param = g_param_spec_string("title",
+                                P_("Title"),
+                                P_("A descriptive title of the drawing"),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_TITLE, param);
 
-    param = g_param_spec_string("material",
-                                P_("Material"),
-                                P_("Material this part is done with"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_MATERIAL, param);
+    param = g_param_spec_string("drawing",
+                                P_("Drawing Name"),
+                                P_("The name of the drawing: the ADG canvas does not make any assumtpion on this text string"),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DRAWING, param);
 
-    param = g_param_spec_string("treatment",
-                                P_("Treatment"),
-                                P_("Treatment this part must receive"),
-                                NULL, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_TREATMENT, param);
+    param = g_param_spec_string("size",
+                                P_("Media Size"),
+                                P_("The media size to be used to print the drawing, usually something like \"A3\" or \"Letter\""),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SIZE, param);
+
+    param = g_param_spec_string("scale",
+                                P_("Scale"),
+                                P_("The scale of the drawing, if it makes sense"),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SCALE, param);
+
+    param = g_param_spec_string("author",
+                                P_("Author"),
+                                P_("Name and last name of the author of the drawing"),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_AUTHOR, param);
+
+    param = g_param_spec_string("date",
+                                P_("Date"),
+                                P_("The date this drawing has been generated: setting it to an empty string will fallback to today in the preferred representation for the current locale"),
+                                NULL,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DATE, param);
+
+    param = g_param_spec_object("logo",
+                                P_("Logo"),
+                                P_("An entity to be displayed in the title block as the logo of the owner: the containing cell has a 1:1 ratio"),
+                                ADG_TYPE_ENTITY,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LOGO, param);
+
+    param = g_param_spec_object("projection",
+                                P_("Projection Scheme"),
+                                P_("The entity usually reserved to identify the projection scheme adopted by this drawing"),
+                                ADG_TYPE_ENTITY,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_PROJECTION, param);
 }
 
 static void
@@ -105,32 +168,52 @@ adg_title_block_init(AdgTitleBlock *title_block)
     AdgTitleBlockPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(title_block,
                                                              ADG_TYPE_TITLE_BLOCK,
                                                              AdgTitleBlockPrivate);
-    data->name = NULL;
-    data->material = NULL;
-    data->treatment = NULL;
+    data->author = NULL;
+    data->title = NULL;
+    data->drawing = NULL;
+    data->size = NULL;
+    data->scale = NULL;
+    data->author = NULL;
+    data->date = NULL;
+    data->projection = NULL;
 
     title_block->data = data;
 }
 
 static void
-finalize(GObject *object)
+dispose(GObject *object)
 {
-    AdgTitleBlock *title_block;
-    AdgTitleBlockPrivate *data;
-    GObjectClass *object_class;
+    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
 
-    title_block = (AdgTitleBlock *) object;
-    data = title_block->data;
-    object_class = (GObjectClass *) adg_title_block_parent_class;
+    if (data->logo != NULL) {
+        g_object_unref(data->logo);
+        data->logo = NULL;
+    }
 
-    g_free(data->name);
-    g_free(data->material);
-    g_free(data->treatment);
+    if (data->projection != NULL) {
+        g_object_unref(data->projection);
+        data->projection = NULL;
+    }
 
-    if (object_class->finalize != NULL)
-        object_class->finalize(object);
+    if (PARENT_OBJECT_CLASS->dispose != NULL)
+        PARENT_OBJECT_CLASS->dispose(object);
 }
 
+static void
+finalize(GObject *object)
+{
+    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
+
+    g_free(data->title);
+    g_free(data->drawing);
+    g_free(data->size);
+    g_free(data->scale);
+    g_free(data->author);
+    g_free(data->date);
+
+    if (PARENT_OBJECT_CLASS->finalize != NULL)
+        PARENT_OBJECT_CLASS->finalize(object);
+}
 
 static void
 get_property(GObject *object,
@@ -139,14 +222,29 @@ get_property(GObject *object,
     AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
 
     switch (prop_id) {
-    case PROP_NAME:
-        g_value_set_string(value, data->name);
+    case PROP_TITLE:
+        g_value_set_string(value, data->title);
         break;
-    case PROP_MATERIAL:
-        g_value_set_string(value, data->material);
+    case PROP_DRAWING:
+        g_value_set_string(value, data->drawing);
         break;
-    case PROP_TREATMENT:
-        g_value_set_string(value, data->treatment);
+    case PROP_SIZE:
+        g_value_set_string(value, data->size);
+        break;
+    case PROP_SCALE:
+        g_value_set_string(value, data->scale);
+        break;
+    case PROP_AUTHOR:
+        g_value_set_string(value, data->author);
+        break;
+    case PROP_DATE:
+        g_value_set_string(value, data->date);
+        break;
+    case PROP_LOGO:
+        g_value_set_object(value, data->logo);
+        break;
+    case PROP_PROJECTION:
+        g_value_set_object(value, data->projection);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -158,20 +256,32 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
+    AdgTitleBlock *title_block = (AdgTitleBlock *) object;
 
     switch (prop_id) {
-    case PROP_NAME:
-        g_free(data->name);
-        data->name = g_value_dup_string(value);
+    case PROP_TITLE:
+        set_title(title_block, g_value_get_string(value));
         break;
-    case PROP_MATERIAL:
-        g_free(data->material);
-        data->material = g_value_dup_string(value);
+    case PROP_DRAWING:
+        set_drawing(title_block, g_value_get_string(value));
         break;
-    case PROP_TREATMENT:
-        g_free(data->treatment);
-        data->treatment = g_value_dup_string(value);
+    case PROP_SIZE:
+        set_size(title_block, g_value_get_string(value));
+        break;
+    case PROP_SCALE:
+        set_scale(title_block, g_value_get_string(value));
+        break;
+    case PROP_AUTHOR:
+        set_author(title_block, g_value_get_string(value));
+        break;
+    case PROP_DATE:
+        set_date(title_block, g_value_get_string(value));
+        break;
+    case PROP_LOGO:
+        set_logo(title_block, g_value_get_object(value));
+        break;
+    case PROP_PROJECTION:
+        set_projection(title_block, g_value_get_object(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -181,18 +291,33 @@ set_property(GObject *object,
 
 
 /**
- * adg_title_block_get_name:
+ * adg_title_block_new:
+ *
+ * Creates a new empty title block entity. The #AdgEntity:local-method
+ * property is set by default to #ADG_MIX_DISABLED, that is the
+ * title block is not subject to any local transformations.
+ *
+ * Returns: the newly created title block entity
+ **/
+AdgTitleBlock *
+adg_title_block_new(void)
+{
+    return g_object_new(ADG_TYPE_TITLE_BLOCK,
+                        "local-method", ADG_MIX_DISABLED, NULL);
+}
+
+/**
+ * adg_title_block_get_title:
  * @title_block: an #AdgTitleBlock entity
  *
- * Gets the descriptive name associated to this title block.
- * The title block name usually represents what is commonly
- * referred as "title of the drawing".
+ * Gets the descriptive title associated to this title block.
+ * The returned string is owned by @title_block and should not
+ * be modifed or freed.
  *
- * Returns: a copy of the title block name: it must be freed
- *          with g_free() when no longer needed
+ * Returns: the title or %NULL on no title or errors
  **/
-gchar *
-adg_title_block_get_name(AdgTitleBlock *title_block)
+const gchar *
+adg_title_block_get_title(AdgTitleBlock *title_block)
 {
     AdgTitleBlockPrivate *data;
 
@@ -200,45 +325,37 @@ adg_title_block_get_name(AdgTitleBlock *title_block)
 
     data = title_block->data;
 
-    return g_strdup(data->name);
+    return data->title;
 }
 
 /**
- * adg_title_block_set_name:
+ * adg_title_block_set_title:
  * @title_block: an #AdgTitleBlock entity
- * @name: the new name
+ * @title: the new title
  *
- * Sets a new name on the title block.
+ * Sets a new title on the title block.
  **/
 void
-adg_title_block_set_name(AdgTitleBlock *title_block, const gchar *name)
+adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
 {
-    AdgTitleBlockPrivate *data;
-
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    data = title_block->data;
-    g_free(data->name);
-    data->name = g_strdup(name);
-
-    g_object_notify((GObject *) title_block, "name");
+    if (set_title(title_block, title))
+        g_object_notify((GObject *) title_block, "title");
 }
 
-
 /**
- * adg_title_block_get_material:
+ * adg_title_block_get_drawing:
  * @title_block: an #AdgTitleBlock entity
  *
- * Gets the material (a descriptive name) associated to this title
- * block. This property is not always significative: on drawings
- * representing more than one part (such as assemblies) the material
- * item has no meaning.
+ * Gets the drawing name, commonly used to specify the file name.
+ * The returned string is owned by @title_block and should not
+ * be modifed or freed.
  *
- * Returns: a copy of the material name: it must be freed
- *          with g_free() when no longer needed
+ * Returns: the drawing name or %NULL on no name or errors
  **/
-gchar *
-adg_title_block_get_material(AdgTitleBlock *title_block)
+const gchar *
+adg_title_block_get_drawing(AdgTitleBlock *title_block)
 {
     AdgTitleBlockPrivate *data;
 
@@ -246,44 +363,38 @@ adg_title_block_get_material(AdgTitleBlock *title_block)
 
     data = title_block->data;
 
-    return g_strdup(data->material);
+    return data->drawing;
 }
 
 /**
- * adg_title_block_set_material:
+ * adg_title_block_set_drawing:
  * @title_block: an #AdgTitleBlock entity
- * @name: the new material
+ * @drawing: the new drawing name
  *
- * Sets a new material on the title block.
+ * Sets a new drawing name on the title block.
  **/
 void
-adg_title_block_set_material(AdgTitleBlock *title_block,
-                             const gchar *material)
+adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
 {
-    AdgTitleBlockPrivate *data;
-
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    data = title_block->data;
-    g_free(data->material);
-    data->material = g_strdup(material);
-    g_object_notify((GObject *) title_block, "material");
+    if (set_drawing(title_block, drawing))
+        g_object_notify((GObject *) title_block, "drawing");
 }
 
-
 /**
- * adg_title_block_get_treatment:
+ * adg_title_block_get_size:
  * @title_block: an #AdgTitleBlock entity
  *
- * Gets the treatment (a descriptive name) associated to this title
- * block. As for :material property, also the treatment
- * should be set only when applicable.
+ * Gets the media size (a descriptive name) where this drawing will
+ * be printed. Usually contains something like "A4" or "Letter".
+ * The returned string is owned by @title_block and should not
+ * be modifed or freed.
  *
- * Returns: a copy of the treatment description: it must be freed
- *          with g_free() when no longer needed
+ * Returns: the size or %NULL on no size or errors
  **/
-gchar *
-adg_title_block_get_treatment(AdgTitleBlock *title_block)
+const gchar *
+adg_title_block_get_size(AdgTitleBlock *title_block)
 {
     AdgTitleBlockPrivate *data;
 
@@ -291,26 +402,370 @@ adg_title_block_get_treatment(AdgTitleBlock *title_block)
 
     data = title_block->data;
 
-    return g_strdup(data->treatment);
+    return data->size;
 }
 
 /**
- * adg_title_block_set_treatment:
+ * adg_title_block_set_size:
  * @title_block: an #AdgTitleBlock entity
- * @name: the new treatment
+ * @size: the new size
  *
- * Sets a new treatment on the title block.
+ * Sets a new size on the title block.
  **/
 void
-adg_title_block_set_treatment(AdgTitleBlock *title_block,
-                              const gchar *treatment)
+adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_size(title_block, size))
+        g_object_notify((GObject *) title_block, "size");
+}
+
+/**
+ * adg_title_block_get_scale:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the scale descriptive name of the drawing.
+ *
+ * Returns: the scale text or %NULL on no scale or errors
+ **/
+const gchar *
+adg_title_block_get_scale(AdgTitleBlock *title_block)
 {
     AdgTitleBlockPrivate *data;
 
-    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
     data = title_block->data;
-    g_free(data->treatment);
-    data->treatment = g_strdup(treatment);
-    g_object_notify((GObject *) title_block, "treatment");
+
+    return data->scale;
+}
+
+/**
+ * adg_title_block_set_scale:
+ * @title_block: an #AdgTitleBlock entity
+ * @scale: the new scale
+ *
+ * Sets a new scale on the title block.
+ **/
+void
+adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_scale(title_block, scale))
+        g_object_notify((GObject *) title_block, "scale");
+}
+
+/**
+ * adg_title_block_get_author:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the author's name of the drawing.
+ *
+ * Returns: the author or %NULL on no author or errors
+ **/
+const gchar *
+adg_title_block_get_author(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->author;
+}
+
+/**
+ * adg_title_block_set_author:
+ * @title_block: an #AdgTitleBlock entity
+ * @author: the new author
+ *
+ * Sets a new author on the title block.
+ **/
+void
+adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_author(title_block, author))
+        g_object_notify((GObject *) title_block, "author");
+}
+
+/**
+ * adg_title_block_get_date:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the date of the rendering set on @title_block.
+ *
+ * Returns: the date or %NULL on no date or errors
+ **/
+const gchar *
+adg_title_block_get_date(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->date;
+}
+
+/**
+ * adg_title_block_set_date:
+ * @title_block: an #AdgTitleBlock entity
+ * @date: the new date
+ *
+ * Sets a new date on the title block. By default the date is set
+ * to %NULL (so no date will be rendered) but setting it to an
+ * empty string (that is, %"") will implicitely set the date to
+ * today, by using the preferred representation for the current
+ * local. This will give a result roughly equivalent to:
+ *
+ * |[
+ * strftime(buffer, sizeof(buffer), "%x", now);
+ * ]|
+ **/
+void
+adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_date(title_block, date))
+        g_object_notify((GObject *) title_block, "date");
+}
+
+/**
+ * adg_title_block_get_logo:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the logo bound to this title block.
+ * The returned object is owned by @title_block and should not
+ * be unreferenced although can be freely modified.
+ *
+ * Returns: the logo or %NULL on no logo or errors
+ **/
+AdgEntity *
+adg_title_block_get_logo(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->logo;
+}
+
+/**
+ * adg_title_block_set_logo:
+ * @title_block: an #AdgTitleBlock entity
+ * @logo: the new logo
+ *
+ * Sets a new logo on the title block. This function will add
+ * a reference to @logo, removing the eventual reference held
+ * to the old logo, hence possibly destroying the old endity.
+ *
+ * The space reserved for the logo is 56x56, so try to keep the
+ * new logo near this size or scale it accordingly.
+ **/
+void
+adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_logo(title_block, logo))
+        g_object_notify((GObject *) title_block, "logo");
+}
+
+/**
+ * adg_title_block_get_projection:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the projection bound to this title block.
+ * The returned object is owned by @title_block and should not
+ * be unreferenced although can be freely modified.
+ *
+ * Returns: the projection or %NULL on no projection or errors
+ **/
+AdgEntity *
+adg_title_block_get_projection(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->projection;
+}
+
+/**
+ * adg_title_block_set_projection:
+ * @title_block: an #AdgTitleBlock entity
+ * @projection: the new projection
+ *
+ * Sets a new projection symbol on the title block. This function
+ * will add a reference to @projection, removing the eventual
+ * reference held to the old symbol, hence possibly destroying
+ * the old endity.
+ *
+ * The space reserved for the projection is 56x56, so try to keep the
+ * new projection near this size or scale it accordingly.
+ **/
+void
+adg_title_block_set_projection(AdgTitleBlock *title_block,
+                               AdgEntity *projection)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_projection(title_block, projection))
+        g_object_notify((GObject *) title_block, "projection");
+}
+
+
+static gboolean
+set_title(AdgTitleBlock *title_block, const gchar *title)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(title, data->title) == 0)
+        return FALSE;
+
+    g_free(data->title);
+    data->title = g_strdup(title);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(drawing, data->drawing) == 0)
+        return FALSE;
+
+    g_free(data->drawing);
+    data->drawing = g_strdup(drawing);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_size(AdgTitleBlock *title_block, const gchar *size)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(size, data->size) == 0)
+        return FALSE;
+
+    g_free(data->size);
+    data->size = g_strdup(size);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_scale(AdgTitleBlock *title_block, const gchar *scale)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(scale, data->scale) == 0)
+        return FALSE;
+
+    g_free(data->scale);
+    data->scale = g_strdup(scale);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_author(AdgTitleBlock *title_block, const gchar *author)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(author, data->author) == 0)
+        return FALSE;
+
+    g_free(data->author);
+    data->author = g_strdup(author);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_date(AdgTitleBlock *title_block, const gchar *date)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (adg_strcmp(date, data->date) == 0)
+        return FALSE;
+
+    g_free(data->date);
+
+    if (date != NULL && date[0] == '\0') {
+        /* The date must be automatically updated */
+        GDate *gdate;
+        char buffer[100] = { 0 };
+
+        gdate = g_date_new();
+        g_date_set_time_t(gdate, time (NULL));
+        g_date_strftime(buffer, sizeof(buffer), "%c", gdate);
+        g_date_free(gdate);
+
+        data->date = g_strdup(buffer);
+    } else {
+        data->date = g_strdup(date);
+    }
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (logo == data->logo)
+        return FALSE;
+
+    if (data->logo != NULL)
+        g_object_unref(data->logo);
+
+    data->logo = logo;
+
+    if (data->logo != NULL)
+        g_object_ref(data->logo);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
+}
+
+static gboolean
+set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
+{
+    AdgTitleBlockPrivate *data = title_block->data;
+
+    if (projection == data->projection)
+        return FALSE;
+
+    if (data->projection != NULL)
+        g_object_unref(data->projection);
+
+    data->projection = projection;
+
+    if (data->projection != NULL)
+        g_object_ref(data->projection);
+
+    adg_entity_invalidate((AdgEntity *) title_block);
+    return TRUE;
 }

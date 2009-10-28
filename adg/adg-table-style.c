@@ -159,9 +159,9 @@ adg_table_style_init(AdgTableStyle *table_style)
     data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->title_dress = ADG_DRESS_TEXT_LIMIT;
     data->value_dress = ADG_DRESS_TEXT_VALUE;
-    data->row_height = 26;
-    data->cell_padding.x = 4;
-    data->cell_padding.y = 4;
+    data->row_height = 30;
+    data->cell_padding.x = 5;
+    data->cell_padding.y = 5;
     data->cell_spacing.x = 0;
     data->cell_spacing.y = 0;
 

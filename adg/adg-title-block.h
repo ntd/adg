@@ -21,7 +21,7 @@
 #ifndef __ADG_TITLE_BLOCK_H__
 #define __ADG_TITLE_BLOCK_H__
 
-#include <adg/adg-entity.h>
+#include <adg/adg-table.h>
 
 
 G_BEGIN_DECLS
@@ -38,27 +38,43 @@ typedef struct _AdgTitleBlockClass   AdgTitleBlockClass;
 
 struct _AdgTitleBlock {
     /*< private >*/
-    AdgEntity            parent;
+    AdgTable             parent;
     gpointer             data;
 };
 
 struct _AdgTitleBlockClass {
     /*< private >*/
-    AdgEntityClass        parent_class;
+    AdgTableClass        parent_class;
 };
 
 
 GType           adg_title_block_get_type        (void) G_GNUC_CONST;
 
-gchar *         adg_title_block_get_name        (AdgTitleBlock  *title_block);
-void            adg_title_block_set_name        (AdgTitleBlock  *title_block,
-                                                 const gchar    *name);
-gchar *         adg_title_block_get_material    (AdgTitleBlock  *title_block);
-void            adg_title_block_set_material    (AdgTitleBlock  *title_block,
-                                                 const gchar    *material);
-gchar *         adg_title_block_get_treatment   (AdgTitleBlock  *title_block);
-void            adg_title_block_set_treatment   (AdgTitleBlock  *title_block,
-                                                 const gchar    *treatment);
+AdgTitleBlock * adg_title_block_new             (void);
+AdgEntity *     adg_title_block_get_logo        (AdgTitleBlock  *title_block);
+void            adg_title_block_set_logo        (AdgTitleBlock  *title_block,
+                                                 AdgEntity      *logo);
+const gchar *   adg_title_block_get_title       (AdgTitleBlock  *title_block);
+void            adg_title_block_set_title       (AdgTitleBlock  *title_block,
+                                                 const gchar    *title);
+const gchar *   adg_title_block_get_drawing     (AdgTitleBlock  *title_block);
+void            adg_title_block_set_drawing     (AdgTitleBlock  *title_block,
+                                                 const gchar    *drawing);
+const gchar *   adg_title_block_get_size        (AdgTitleBlock  *title_block);
+void            adg_title_block_set_size        (AdgTitleBlock  *title_block,
+                                                 const gchar    *size);
+const gchar *   adg_title_block_get_scale       (AdgTitleBlock  *title_block);
+void            adg_title_block_set_scale       (AdgTitleBlock  *title_block,
+                                                 const gchar    *scale);
+const gchar *   adg_title_block_get_author      (AdgTitleBlock  *title_block);
+void            adg_title_block_set_author      (AdgTitleBlock  *title_block,
+                                                 const gchar    *author);
+const gchar *   adg_title_block_get_date        (AdgTitleBlock  *title_block);
+void            adg_title_block_set_date        (AdgTitleBlock  *title_block,
+                                                 const gchar    *date);
+AdgEntity *     adg_title_block_get_projection  (AdgTitleBlock  *title_block);
+void            adg_title_block_set_projection  (AdgTitleBlock  *title_block,
+                                                 AdgEntity      *projection);
 
 G_END_DECLS
 
