@@ -101,10 +101,9 @@ static AdgPath *sample_bottom_path      (const SampleData       *data,
                                          gdouble                 height);
 static AdgPath *sample_path             (const SampleData       *data);
 static void     sample_add_dimensions   (AdgCanvas              *canvas,
-                                         AdgModel               *model,
-                                         const SampleData       *data);
+                                         AdgModel               *model);
 static void     sample_add_stuff        (AdgCanvas              *canvas,
-                                         const SampleData       *data);
+                                         AdgModel               *model);
 
 
 static AdgCanvas *
@@ -143,8 +142,8 @@ sample_canvas(void)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(edges)));
     adg_container_add(container, entity);
 
-    sample_add_dimensions(canvas, ADG_MODEL(shape), &data);
-    sample_add_stuff(canvas, &data);
+    sample_add_dimensions(canvas, ADG_MODEL(shape));
+    sample_add_stuff(canvas, ADG_MODEL(shape));
 
     cairo_matrix_init_translate(&map, 110, 70);
     cairo_matrix_scale(&map, 6.883, 6.883);
@@ -319,8 +318,7 @@ sample_path(const SampleData *data)
 }
 
 static void
-sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
-                      const SampleData *data)
+sample_add_dimensions(AdgCanvas *canvas, AdgModel *model)
 {
     AdgLDim *ldim;
     AdgADim *adim;
@@ -415,22 +413,24 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model,
 }
 
 static void
-sample_add_stuff(AdgCanvas *canvas, const SampleData *data)
+sample_add_stuff(AdgCanvas *canvas, AdgModel *model)
 {
     AdgToyText *toy_text;
     AdgMatrix map;
     AdgTable *table;
     AdgTableRow *row;
+    const AdgPair *pair;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
-    cairo_matrix_init_translate(&map, 0, data->D3 / 2);
+    pair = adg_model_named_pair(model, "D3I");
+    cairo_matrix_init_translate(&map, 0, pair->y);
     adg_entity_set_local_map(ADG_ENTITY(toy_text), &map);
     cairo_matrix_translate(&map, 10, 30 + 30 * 2);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 
     toy_text = adg_toy_text_new("Keep the wheel pressed while dragging the mouse to translate");
-    cairo_matrix_init_translate(&map, 0, data->D3 / 2);
+    cairo_matrix_init_translate(&map, 0, pair->y);
     adg_entity_set_local_map(ADG_ENTITY(toy_text), &map);
     cairo_matrix_init_translate(&map, 10, 50 + 30 * 2);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
