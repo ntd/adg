@@ -95,6 +95,7 @@ static gboolean         is_convex               (const AdgPrimitive
 static void             dup_reversed_pair       (const gchar    *name,
                                                  AdgPair        *pair,
                                                  gpointer        user_data);
+static const gchar *    action_name             (AdgAction       action);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
@@ -920,8 +921,8 @@ clear_operation(AdgPath *path)
     operation = &data->operation;
 
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning(_("%s: a `%d' operation is still active while clearing the path"),
-                  G_STRLOC, operation->action);
+        g_warning(_("%s: a `%s' operation is still active while clearing the path"),
+                  G_STRLOC, action_name(operation->action));
         operation->action = ADG_ACTION_NONE;
     }
 }
@@ -936,15 +937,15 @@ append_operation(AdgPath *path, AdgAction action, ...)
     data = path->data;
 
     if (!data->cp_is_valid) {
-        g_warning(_("%s: requested a `%d' operation on a path without current primitive"),
-                  G_STRLOC, action);
+        g_warning(_("%s: requested a `%s' operation on a path without current primitive"),
+                  G_STRLOC, action_name(action));
         return FALSE;
     }
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning(_("%s: requested a `%d' operation while a `%d' operation is active"),
-                  G_STRLOC, action, operation->action);
+        g_warning(_("%s: requested a `%s' operation while a `%s' operation is active"),
+                  G_STRLOC, action_name(action), action_name(operation->action));
         ADG_MESSAGE("TODO: this is a rude simplification, as a lot of "
                     "actions could be chained up. As an example, a fillet "
                     "followed by a polar chamfer is quite common.");
@@ -969,8 +970,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
         return TRUE;
 
     default:
-        g_warning(_("%s: `%d' operation not recognized"),
-                  G_STRLOC, action);
+        g_warning(_("%s: `%d' operation not recognized"), G_STRLOC, action);
         va_end(var_args);
         return FALSE;
     }
@@ -1018,8 +1018,7 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
         break;
 
     default:
-        g_warning(_("%s: `%d' operation not recognized"),
-                  G_STRLOC, action);
+        g_warning(_("%s: `%d' operation not recognized"), G_STRLOC, action);
         return;
     }
 }
@@ -1162,4 +1161,19 @@ dup_reversed_pair(const gchar *name, AdgPair *pair, gpointer user_data)
     adg_model_set_named_pair(data->model, new_name, &new_pair);
 
     g_free(new_name);
+}
+
+static const gchar *
+action_name(AdgAction action)
+{
+    switch (action) {
+    case ADG_ACTION_NONE:
+        return "NULL";
+    case ADG_ACTION_CHAMFER:
+        return "CHAMFER";
+    case ADG_ACTION_FILLET:
+        return "FILLET";
+    }
+
+    return "undefined";
 }
