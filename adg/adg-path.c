@@ -1077,11 +1077,6 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     data = path->data;
     last = &data->last;
     current_dup = adg_primitive_deep_dup(current);
-
-    /* Force current_dup to point to the original segment so a
-     * CAIRO_PATH_CLOSE_PATH primitive will work as expected */
-    current_dup->segment = current->segment;
-
     last_dup = adg_primitive_deep_dup(last);
     radius = data->operation.data.fillet.radius;
     offset = is_convex(last_dup, current_dup) ? -radius : radius;
