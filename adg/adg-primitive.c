@@ -79,8 +79,12 @@ adg_primitive_dup(const AdgPrimitive *primitive)
  * Duplicates @primitive. This function makes a deep duplication of
  * @primitive, that is it duplicates also the definition data (both
  * <structfield>org</structfield> and <structfield>data</structfield>).
- * The <structfield>segment</structfield> field instead is set to
- * %NULL as the parent segment is not duplicated.
+ *
+ * Furthermore, the new <structfield>segment</structfield> field will
+ * point to a fake duplicated segment with only its first primitive
+ * set (the first primitive of a segment should be a %CAIRO_PATH_MOVE_TO).
+ * This is needed in order to let a %CAIRO_PATH_CLOSE_PATH work as
+ * expected.
  *
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.
@@ -91,31 +95,56 @@ adg_primitive_dup(const AdgPrimitive *primitive)
 AdgPrimitive *
 adg_primitive_deep_dup(const AdgPrimitive *primitive)
 {
-    AdgPrimitive *dest;
-    gsize primitive_size, org_size, data_size;
-    cairo_path_data_t *p_data;
+    const AdgPrimitive *src;
+    AdgPrimitive *dst;
+    gsize primitive_size, org_size, data_size, segment_size;
+    gchar *ptr;
 
+    src = primitive;
     primitive_size = sizeof(AdgPrimitive);
-    org_size = primitive->org == NULL ? 0 : sizeof(cairo_path_data_t);
-    data_size = primitive->data == NULL ?
-        0 : sizeof(cairo_path_data_t) * primitive->data->header.length;
-    dest = (AdgPrimitive *) g_malloc(primitive_size + org_size + data_size);
-    p_data = (cairo_path_data_t *) ((gchar *) dest + primitive_size);
 
-    dest->segment = NULL;
+    if (src->org != NULL)
+        org_size = sizeof(cairo_path_data_t);
+    else
+        org_size = 0;
 
-    if (primitive->org != NULL) {
-        dest->org = p_data;
-        memcpy(p_data, primitive->org, org_size);
-        ++ p_data;
+    if (src->data != NULL)
+        data_size = sizeof(cairo_path_data_t) * src->data->header.length;
+    else
+        data_size = 0;
+
+    if (src->segment != NULL && src->segment->data != NULL)
+        segment_size = sizeof(CpmlSegment) +
+            sizeof(cairo_path_data_t) * src->segment->data[0].header.length;
+    else
+        segment_size = 0;
+
+    dst = g_malloc(primitive_size + org_size + data_size + segment_size);
+    ptr = (gchar *) dst + primitive_size;
+
+    if (org_size > 0) {
+        dst->org = memcpy(ptr, src->org, org_size);
+        ptr += org_size;
     } else {
-        dest->org = NULL;
+        dst->org = NULL;
     }
 
-    if (data_size > 0)
-        dest->data = memcpy(p_data, primitive->data, data_size);
-    else
-        dest->data = NULL;
+    if (data_size > 0) {
+        dst->data = memcpy(ptr, src->data, data_size);
+        ptr += data_size;
+    } else {
+        dst->data = NULL;
+    }
 
-    return dest;
+    if (segment_size > 0) {
+        dst->segment = memcpy(ptr, src->segment, sizeof(CpmlSegment));
+        ptr += sizeof(CpmlSegment);
+        dst->segment->data = memcpy(ptr, src->segment->data,
+                                    sizeof(cairo_path_data_t) *
+                                    src->segment->data[0].header.length);
+    } else {
+        dst->segment = NULL;
+    }
+
+    return dst;
 }
