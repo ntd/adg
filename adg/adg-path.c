@@ -75,8 +75,7 @@ static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
 static CpmlPath *       read_cpml_path          (AdgPath        *path);
 static void             append_primitive        (AdgPath        *path,
                                                  AdgPrimitive   *primitive);
-static gint             needed_pairs            (CpmlPrimitiveType type,
-                                                 gboolean        cp_is_valid);
+static gint             needed_pairs            (CpmlPrimitiveType type);
 static void             clear_operation         (AdgPath        *path);
 static gboolean         append_operation        (AdgPath        *path,
                                                  AdgAction       action,
@@ -84,6 +83,9 @@ static gboolean         append_operation        (AdgPath        *path,
 static void             do_operation            (AdgPath        *path,
                                                  cairo_path_data_t
                                                                 *path_data);
+static void             do_action               (AdgPath        *path,
+                                                 AdgAction       action,
+                                                 AdgPrimitive   *primitive);
 static void             do_chamfer              (AdgPath        *path,
                                                  AdgPrimitive   *current);
 static void             do_fillet               (AdgPath        *path,
@@ -311,7 +313,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     g_return_if_fail(ADG_IS_PATH(path));
 
     data = path->data;
-    length = needed_pairs(type, data->cp_is_valid);
+    length = needed_pairs(type);
     if (length == 0)
         return;
 
@@ -695,6 +697,11 @@ adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
  *
+ * An exception is a chamfer after a %CAIRO_PATH_CLOSE_PATH primitive.
+ * In this case the second primitive is not required: the current close
+ * path is used as first operand while the first primitive of the
+ * current segment is used as second operand.
+ *
  * The chamfer operation requires two lengths: @delta1 specifies the
  * "quantity" to trim on the first primitive while @delta2 is the same
  * applied on the second primitive. The term "quantity" means the length
@@ -721,6 +728,11 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * primitive is required: if the fillet operation is not properly
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
+ *
+ * An exception is a fillet after a %CAIRO_PATH_CLOSE_PATH primitive.
+ * In this case the second primitive is not required: the current close
+ * path is used as first operand while the first primitive of the
+ * current segment is used as second operand.
  **/
 void
 adg_path_fillet(AdgPath *path, gdouble radius)
@@ -881,29 +893,19 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
 }
 
 static gint
-needed_pairs(CpmlPrimitiveType type, gboolean cp_is_valid)
+needed_pairs(CpmlPrimitiveType type)
 {
     switch (type) {
-
     case CAIRO_PATH_CLOSE_PATH:
-        g_return_val_if_fail(cp_is_valid, 0);
         return 1;
-
     case CAIRO_PATH_MOVE_TO:
         return 2;
-
     case CAIRO_PATH_LINE_TO:
-        g_return_val_if_fail(cp_is_valid, 0);
         return 2;
-
     case CAIRO_PATH_ARC_TO:
-        g_return_val_if_fail(cp_is_valid, 0);
         return 3;
-
     case CAIRO_PATH_CURVE_TO:
-        g_return_val_if_fail(cp_is_valid, 0);
         return 4;
-
     default:
         g_return_val_if_reached(0);
     }
@@ -936,7 +938,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
 
     data = path->data;
 
-    if (!data->cp_is_valid) {
+    if (data->last.data == NULL) {
         g_warning(_("%s: requested a `%s' operation on a path without current primitive"),
                   G_STRLOC, action_name(action));
         return FALSE;
@@ -978,6 +980,47 @@ append_operation(AdgPath *path, AdgAction action, ...)
     operation->action = action;
     va_end(var_args);
 
+    if (data->last.data[0].header.type == CAIRO_PATH_CLOSE_PATH) {
+        /* Special case: an action with the close primitive should
+         * be resolved now by changing the close primitive to a
+         * line-to and using it as second operand and use the first
+         * primitive of the current segment as first operand */
+        guint length;
+        cairo_path_data_t *path_data;
+        CpmlSegment segment;
+        CpmlPrimitive current;
+
+        length = data->cpml.array->len;
+
+        /* Ensure the close path primitive is not the only data */
+        g_return_val_if_fail(length > 1, FALSE);
+
+        /* Allocate one more item once for all to accept the
+         * conversion from a close to line-to primitive */
+        data->cpml.array = g_array_set_size(data->cpml.array, length + 1);
+        path_data = (cairo_path_data_t *) data->cpml.array->data;
+        --data->cpml.array->len;
+
+        /* Set segment and current (the first primitive of segment) */
+        cpml_segment_from_cairo(&segment, read_cpml_path(path));
+        while (cpml_segment_next(&segment))
+            ;
+        cpml_primitive_from_segment(&current, &segment);
+
+        /* Convert close path to a line-to primitive */
+        ++data->cpml.array->len;
+        path_data[length - 1].header.type = CAIRO_PATH_LINE_TO;
+        path_data[length - 1].header.length = 2;
+        path_data[length] = *current.org;
+
+        data->last.segment = &segment;
+        data->last.org = &path_data[length - 2];
+        data->last.data = &path_data[length - 1];
+
+        do_action(path, action, &current);
+    }
+
+
     return TRUE;
 }
 
@@ -994,7 +1037,8 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
     action = data->operation.action;
     cpml_segment_from_cairo(&segment, read_cpml_path(path));
 
-    /* Construct the current primitive, that is the primitive to be inserted.
+    /* Construct the current primitive, that is the primitive to be
+     * mixed with the last primitive with the specified operation.
      * Its org is a copy of the end point of the last primitive: it can be
      * modified without affecting anything else. It is expected the operation
      * functions will add to @path the primitives required but NOT to add
@@ -1004,22 +1048,23 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
     current.data = path_data;
     cpml_pair_to_cairo(&data->cp, &current_org);
 
-    switch (action) {
+    do_action(path, action, &current);
+}
 
+static void
+do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
+{
+    switch (action) {
     case ADG_ACTION_NONE:
         return;
-
     case ADG_ACTION_CHAMFER:
-        do_chamfer(path, &current);
+        do_chamfer(path, primitive);
         break;
-
     case ADG_ACTION_FILLET:
-        do_fillet(path, &current);
+        do_fillet(path, primitive);
         break;
-
     default:
-        g_warning(_("%s: `%d' operation not recognized"), G_STRLOC, action);
-        return;
+        g_assert_not_reached();
     }
 }
 
