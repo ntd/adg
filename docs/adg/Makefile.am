@@ -35,6 +35,7 @@ IGNORE_HFILES=		adg.h \
 			adg-hatch-private.h \
 			adg-ldim-private.h \
 			adg-line-style-private.h \
+			adg-logo-private.h \
 			adg-marker-private.h \
 			adg-model-private.h \
 			adg-path-private.h \

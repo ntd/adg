@@ -19,6 +19,7 @@ h_sources=			adg-adim.h \
 				adg-hatch.h \
 				adg-ldim.h \
 				adg-line-style.h \
+				adg-logo.h \
 				adg-marker.h \
 				adg-matrix.h \
 				adg-model.h \
@@ -58,6 +59,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-intl.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
+				adg-logo-private.h \
 				adg-marker-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
@@ -87,6 +89,7 @@ c_sources=			adg-adim.c \
 				adg-hatch.c \
 				adg-ldim.c \
 				adg-line-style.c \
+				adg-logo.c \
 				adg-marker.c \
 				adg-matrix.c \
 				adg-model.c \

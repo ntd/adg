@@ -33,6 +33,7 @@
 #include <adg/adg-fill-style.h>
 #include <adg/adg-hatch.h>
 #include <adg/adg-ldim.h>
+#include <adg/adg-logo.h>
 #include <adg/adg-matrix.h>
 #include <adg/adg-model.h>
 #include <adg/adg-pair.h>

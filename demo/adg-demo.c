@@ -100,6 +100,7 @@ static void     sample_get              (SampleData             *data);
 static AdgPath *sample_bottom_path      (const SampleData       *data,
                                          gdouble                 height);
 static AdgPath *sample_path             (const SampleData       *data);
+static void     sample_add_sheet        (AdgCanvas              *canvas);
 static void     sample_add_dimensions   (AdgCanvas              *canvas,
                                          AdgModel               *model);
 static void     sample_add_stuff        (AdgCanvas              *canvas,
@@ -142,6 +143,7 @@ sample_canvas(void)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(edges)));
     adg_container_add(container, entity);
 
+    sample_add_sheet(canvas);
     sample_add_dimensions(canvas, ADG_MODEL(shape));
     sample_add_stuff(canvas, ADG_MODEL(shape));
 
@@ -315,6 +317,36 @@ sample_path(const SampleData *data)
     adg_model_set_named_pair(model, "D7F", &pair);
 
     return path;
+}
+
+static void
+sample_add_sheet(AdgCanvas *canvas)
+{
+    AdgLogo *logo;
+    AdgMatrix map;
+
+    logo = adg_logo_new();
+    cairo_matrix_init_translate(&map, 10, 10);
+    adg_entity_set_local_map(ADG_ENTITY(logo), &map);
+    cairo_matrix_init_scale(&map, 10, 10);
+    adg_entity_set_global_map(ADG_ENTITY(logo), &map);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(logo));
+
+#if 0
+    AdgTitleBlock *title_block;
+
+    title_block = adg_title_block_new();
+    g_object_set(title_block,
+                 "title", "Sample mechanical part",
+                 "author", "Nicola Fontana",
+                 "date", "",
+                 "drawing", "sample",
+                 "logo"                     AdgEntity*            : Read / Write
+                 "projection"               AdgEntity*            : Read / Write
+                 "scale", "unknown",
+                 "size", "A4",
+                 NULL);
+#endif
 }
 
 static void
