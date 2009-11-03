@@ -44,10 +44,11 @@
 
 enum {
     PROP_0,
-    PROP_LOGO_DRESS,
+    PROP_SYMBOL_DRESS,
     PROP_SCREEN_DRESS,
     PROP_FRAME_DRESS
 };
+
 
 static void             get_property            (GObject        *object,
                                                  guint           param_id,
@@ -85,12 +86,12 @@ adg_logo_class_init(AdgLogoClass *klass)
     entity_class->arrange = arrange;
     entity_class->render = render;
 
-    param = adg_param_spec_dress("logo-dress",
-                                 P_("Logo Dress"),
-                                 P_("The line dress to use for rendering the ADG logo"),
+    param = adg_param_spec_dress("symbol-dress",
+                                 P_("Symbol Dress"),
+                                 P_("The line dress to use for rendering the symbol of the logo"),
                                  ADG_DRESS_LINE,
                                  G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_LOGO_DRESS, param);
+    g_object_class_install_property(gobject_class, PROP_SYMBOL_DRESS, param);
 
     param = adg_param_spec_dress("screen-dress",
                                  P_("Screen Dress"),
@@ -113,7 +114,7 @@ adg_logo_class_init(AdgLogoClass *klass)
      * allows to specify a custom class finalization method */
     data_class = g_new(AdgLogoClassPrivate, 1);
 
-    data_class->logo = NULL;
+    data_class->symbol = NULL;
     data_class->screen = NULL;
     data_class->frame = NULL;
     data_class->extents.is_defined = FALSE;
@@ -124,11 +125,10 @@ adg_logo_class_init(AdgLogoClass *klass)
 static void
 adg_logo_init(AdgLogo *logo)
 {
-    AdgLogoPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(logo,
-                                                         ADG_TYPE_LOGO,
-                                                         AdgLogoPrivate);
+    AdgLogoPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(logo, ADG_TYPE_LOGO,
+                                                       AdgLogoPrivate);
 
-    data->logo_dress = ADG_DRESS_LINE;
+    data->symbol_dress = ADG_DRESS_LINE;
     data->screen_dress = ADG_DRESS_LINE;
     data->frame_dress = ADG_DRESS_LINE;
 
@@ -141,8 +141,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgLogoPrivate *data = ((AdgLogo *) object)->data;
 
     switch (prop_id) {
-    case PROP_LOGO_DRESS:
-        g_value_set_int(value, data->logo_dress);
+    case PROP_SYMBOL_DRESS:
+        g_value_set_int(value, data->symbol_dress);
         break;
     case PROP_SCREEN_DRESS:
         g_value_set_int(value, data->screen_dress);
@@ -167,8 +167,8 @@ set_property(GObject *object, guint prop_id,
     data = logo->data;
 
     switch (prop_id) {
-    case PROP_LOGO_DRESS:
-        adg_dress_set(&data->logo_dress, g_value_get_int(value));
+    case PROP_SYMBOL_DRESS:
+        adg_dress_set(&data->symbol_dress, g_value_get_int(value));
         break;
     case PROP_SCREEN_DRESS:
         adg_dress_set(&data->screen_dress, g_value_get_int(value));
@@ -200,15 +200,15 @@ adg_logo_new(void)
 }
 
 /**
- * adg_logo_get_logo_dress:
+ * adg_logo_get_symbol_dress:
  * @logo: an #AdgLogo
  *
- * Gets the line dress to be used in stroking the logo of @logo.
+ * Gets the line dress to be used in stroking the symbol of @logo.
  *
  * Returns: the requested line dress
  **/
 AdgDress
-adg_logo_get_logo_dress(AdgLogo *logo)
+adg_logo_get_symbol_dress(AdgLogo *logo)
 {
     AdgLogoPrivate *data;
 
@@ -216,25 +216,25 @@ adg_logo_get_logo_dress(AdgLogo *logo)
 
     data = logo->data;
 
-    return data->logo_dress;
+    return data->symbol_dress;
 }
 
 /**
- * adg_logo_set_logo_dress:
+ * adg_logo_set_symbol_dress:
  * @logo: an #AdgLogo
  * @dress: the new #AdgDress to use
  *
- * Sets a new line dress for rendering @logo. The new dress
- * must be a line dress: the check is done by calling
+ * Sets a new line dress for rendering the symbol of @logo. The
+ * new dress must be a line dress: the check is done by calling
  * adg_dress_are_related() with @dress and the old dress as
  * arguments. Check out its documentation for further details.
  *
  * The default dress is a transparent line dress: the rendering
- * callback will stroke the logo using the default color with
+ * callback will stroke the symbol using the default color with
  * a predefined thickness.
  **/
 void
-adg_logo_set_logo_dress(AdgLogo *logo, AdgDress dress)
+adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
 {
     AdgLogoPrivate *data;
 
@@ -242,8 +242,8 @@ adg_logo_set_logo_dress(AdgLogo *logo, AdgDress dress)
 
     data = logo->data;
 
-    if (adg_dress_set(&data->logo_dress, dress))
-        g_object_notify((GObject *) logo, "logo-dress");
+    if (adg_dress_set(&data->symbol_dress, dress))
+        g_object_notify((GObject *) logo, "symbol-dress");
 }
 
 /**
@@ -373,7 +373,7 @@ arrange_class(AdgLogoClass *logo_class)
     data_class = logo_class->data_class;
     extents = &data_class->extents;
 
-    if (data_class->logo == NULL) {
+    if (data_class->symbol == NULL) {
         AdgPath *path = adg_path_new();
 
         adg_path_move_to_explicit(path, 4, 14);
@@ -389,7 +389,7 @@ arrange_class(AdgLogoClass *logo_class)
         adg_path_move_to_explicit(path, 11.5, 12);
         adg_path_line_to_explicit(path, 8, 12);
 
-        data_class->logo = path;
+        data_class->symbol = path;
         extents->is_defined = FALSE;
     }
 
@@ -425,7 +425,7 @@ arrange_class(AdgLogoClass *logo_class)
 
     if (!data_class->extents.is_defined) {
         cpml_extents_add(extents,
-                         adg_trail_extents((AdgTrail *) data_class->logo));
+                         adg_trail_extents((AdgTrail *) data_class->symbol));
         cpml_extents_add(extents,
                          adg_trail_extents((AdgTrail *) data_class->screen));
         cpml_extents_add(extents,
@@ -445,7 +445,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
     cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
 
-    cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->logo);
+    cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);
     if (cairo_path != NULL) {
         cairo_save(cr);
         cairo_set_matrix(cr, adg_entity_ctm(entity));
@@ -453,12 +453,10 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_restore(cr);
 
         cairo_set_line_width(cr, 1.5);
+        adg_entity_apply_dress(entity, data->symbol_dress, cr);
 
-        adg_entity_apply_dress(entity, data->logo_dress, cr);
         cairo_stroke(cr);
     }
-
-    cairo_set_line_width(cr, 0.85);
 
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->screen);
     if (cairo_path != NULL) {
@@ -467,7 +465,9 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
+        cairo_set_line_width(cr, 0.75);
         adg_entity_apply_dress(entity, data->screen_dress, cr);
+
         cairo_stroke(cr);
     }
 
@@ -478,7 +478,9 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
+        cairo_set_line_width(cr, 1);
         adg_entity_apply_dress(entity, data->frame_dress, cr);
+
         cairo_stroke(cr);
     }
 }

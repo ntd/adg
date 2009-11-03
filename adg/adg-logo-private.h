@@ -28,14 +28,14 @@ typedef struct _AdgLogoClassPrivate AdgLogoClassPrivate;
 typedef struct _AdgLogoPrivate      AdgLogoPrivate;
 
 struct _AdgLogoClassPrivate {
-    AdgPath     *logo;
+    AdgPath     *symbol;
     AdgPath     *screen;
     AdgPath     *frame;
     CpmlExtents  extents;
 };
 
 struct _AdgLogoPrivate {
-    AdgDress     logo_dress;
+    AdgDress     symbol_dress;
     AdgDress     screen_dress;
     AdgDress     frame_dress;
 };

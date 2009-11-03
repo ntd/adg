@@ -53,8 +53,8 @@ GType           adg_logo_get_type             (void) G_GNUC_CONST;
 
 AdgLogo *       adg_logo_new                  (void);
 
-AdgDress        adg_logo_get_logo_dress         (AdgLogo        *logo);
-void            adg_logo_set_logo_dress         (AdgLogo        *logo,
+AdgDress        adg_logo_get_symbol_dress       (AdgLogo        *logo);
+void            adg_logo_set_symbol_dress       (AdgLogo        *logo,
                                                  AdgDress        dress);
 AdgDress        adg_logo_get_screen_dress       (AdgLogo        *logo);
 void            adg_logo_set_screen_dress       (AdgLogo        *logo,
