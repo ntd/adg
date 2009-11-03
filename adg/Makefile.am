@@ -28,6 +28,7 @@ h_sources=			adg-adim.h \
 				adg-pattern.h \
 				adg-point.h \
 				adg-primitive.h \
+				adg-projection.h \
 				adg-rdim.h \
 				adg-ruled-fill.h \
 				adg-segment.h \
@@ -63,6 +64,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-marker-private.h \
 				adg-model-private.h \
 				adg-path-private.h \
+				adg-projection-private.h \
 				adg-rdim-private.h \
 				adg-ruled-fill-private.h \
 				adg-stroke-private.h \
@@ -98,6 +100,7 @@ c_sources=			adg-adim.c \
 				adg-pattern.c \
 				adg-point.c \
 				adg-primitive.c \
+				adg-projection.c \
 				adg-rdim.c \
 				adg-ruled-fill.c \
 				adg-segment.c \

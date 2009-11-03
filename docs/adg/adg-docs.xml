@@ -49,6 +49,7 @@
     <chapter id="Populating-special">
       <title>Special entities</title>
       <xi:include href="xml/adg-logo.xml"/>
+      <xi:include href="xml/adg-projection.xml"/>
       <xi:include href="xml/adg-title-block.xml"/>
     </chapter>
     <chapter id="Populating-quoting">
