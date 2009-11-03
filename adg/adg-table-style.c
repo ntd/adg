@@ -127,7 +127,7 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
     param = g_param_spec_double("row-height",
                                 P_("Row Height"),
                                 P_("The fallback row height when not explicitely specified while creating a new row"),
-                                0, G_MAXDOUBLE, 26,
+                                0, G_MAXDOUBLE, 30,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ROW_HEIGHT, param);
 
