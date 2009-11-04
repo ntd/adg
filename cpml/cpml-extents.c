@@ -202,3 +202,23 @@ cpml_extents_pair_is_inside(const CpmlExtents *extents, const CpmlPair *src)
 
     return 1;
 }
+
+/**
+ * cpml_extents_transform:
+ * @extents: the container #CpmlExtents
+ * @matrix: the transformation matrix
+ *
+ * Shortcut to apply a specific transformation matrix to @extents.
+ * It basically convert the <structfield>org</structfield> field
+ * with cairo_matrix_transform_point() and <structfield>size</structfield>
+ * with cairo_matrix_transform_distance().
+ **/
+void
+cpml_extents_transform(CpmlExtents *extents, const cairo_matrix_t *matrix)
+{
+    if (extents->is_defined == 0)
+        return;
+
+    cairo_matrix_transform_point(matrix, &extents->org.x, &extents->org.y);
+    cairo_matrix_transform_distance(matrix, &extents->size.x, &extents->size.y);
+}

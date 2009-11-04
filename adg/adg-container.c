@@ -444,8 +444,7 @@ add_extents(AdgEntity *entity, CpmlExtents *container_extents)
     cpml_extents_copy(&extents, adg_entity_extents(entity));
     adg_entity_get_global_map(entity, &map);
 
-    cairo_matrix_transform_point(&map, &extents.org.x, &extents.org.y);
-    cairo_matrix_transform_distance(&map, &extents.size.x, &extents.size.y);
+    cpml_extents_transform(&extents, &map);
     cpml_extents_add(container_extents, &extents);
 }
 

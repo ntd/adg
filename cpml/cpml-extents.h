@@ -47,6 +47,8 @@ cairo_bool_t    cpml_extents_is_inside          (const CpmlExtents *extents,
                                                  const CpmlExtents *src);
 cairo_bool_t    cpml_extents_pair_is_inside     (const CpmlExtents *extents,
                                                  const CpmlPair    *src);
+void            cpml_extents_transform          (CpmlExtents       *extents,
+                                                 const cairo_matrix_t *matrix);
 
 CAIRO_END_DECLS
 

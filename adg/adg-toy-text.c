@@ -346,9 +346,7 @@ arrange(AdgEntity *entity)
                                         data->num_glyphs, &cairo_extents);
         cpml_extents_from_cairo_text(&extents, &cairo_extents);
         adg_entity_get_local_map(entity, &local);
-        cairo_matrix_transform_point(&local, &extents.org.x, &extents.org.y);
-        cairo_matrix_transform_distance(&local, &extents.size.x, &extents.size.y);
-
+        cpml_extents_transform(&extents, &local);
         adg_entity_set_extents(entity, &extents);
     }
 }
