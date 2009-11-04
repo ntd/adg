@@ -376,18 +376,18 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->symbol == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 4, 19);
-        adg_path_line_to_explicit(path, 12, 11);
-        adg_path_arc_to_explicit(path, 16, 15, 12, 19);
-        adg_path_line_to_explicit(path, 12, 11.5);
+        adg_path_move_to_explicit(path, 3, -5);
+        adg_path_line_to_explicit(path, 11, -13);
+        adg_path_arc_to_explicit(path, 15, -9, 11, -5);
+        adg_path_line_to_explicit(path, 11, -12.5);
 
-        adg_path_move_to_explicit(path, 20, 11);
-        adg_path_arc_to_explicit(path, 16, 15, 20, 19);
-        adg_path_line_to_explicit(path, 20, 17);
-        adg_path_line_to_explicit(path, 19, 17);
+        adg_path_move_to_explicit(path, 19, -13);
+        adg_path_arc_to_explicit(path, 15, -9, 19, -5);
+        adg_path_line_to_explicit(path, 19, -7);
+        adg_path_line_to_explicit(path, 18, -7);
 
-        adg_path_move_to_explicit(path, 11.5, 17);
-        adg_path_line_to_explicit(path, 8, 17);
+        adg_path_move_to_explicit(path, 10.5, -7);
+        adg_path_line_to_explicit(path, 7, -7);
 
         data_class->symbol = path;
         extents->is_defined = FALSE;
@@ -396,12 +396,12 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->screen == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 3, 8);
-        adg_path_line_to_explicit(path, 24, 8);
+        adg_path_move_to_explicit(path, 2, -2);
+        adg_path_line_to_explicit(path, 23, -2);
         adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 24, 22);
+        adg_path_line_to_explicit(path, 23, -16);
         adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 3, 22);
+        adg_path_line_to_explicit(path, 2, -16);
         adg_path_fillet(path, 5);
         adg_path_close(path);
         adg_path_fillet(path, 5);
@@ -413,10 +413,10 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->frame == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 1, 6);
-        adg_path_line_to_explicit(path, 26, 6);
-        adg_path_line_to_explicit(path, 26, 24);
-        adg_path_line_to_explicit(path, 1, 24);
+        adg_path_move_to_explicit(path, 0, 0);
+        adg_path_line_to_explicit(path, 25, 0);
+        adg_path_line_to_explicit(path, 25, -18);
+        adg_path_line_to_explicit(path, 0, -18);
         adg_path_close(path);
 
         data_class->frame = path;
