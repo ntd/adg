@@ -71,7 +71,7 @@ void            adg_table_row_set_height        (AdgTableRow    *row,
 const CpmlExtents *
                 adg_table_row_extents           (AdgTableRow    *row);
 
-AdgTableCell *  adg_table_get_cell_by_name      (AdgTable       *table,
+AdgTableCell *  adg_table_get_cell              (AdgTable       *table,
                                                  const gchar    *name);
 AdgTableCell *  adg_table_cell_new              (AdgTableRow    *row,
                                                  gdouble         width);
@@ -83,12 +83,19 @@ AdgTableCell *  adg_table_cell_new_full         (AdgTableRow    *row,
                                                  const gchar    *title,
                                                  const gchar    *value);
 void            adg_table_cell_delete           (AdgTableCell   *cell);
+const gchar *   adg_table_cell_get_name         (AdgTableCell   *cell);
+void            adg_table_cell_set_name         (AdgTableCell   *cell,
+                                                 const gchar    *name);
 AdgEntity *     adg_table_cell_get_title        (AdgTableCell   *cell);
 void            adg_table_cell_set_title        (AdgTableCell   *cell,
-                                                 AdgEntity      *value);
+                                                 AdgEntity      *title);
+void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
+                                                 const gchar    *title);
 AdgEntity *     adg_table_cell_get_value        (AdgTableCell   *cell);
 void            adg_table_cell_set_value        (AdgTableCell   *cell,
                                                  AdgEntity      *value);
+void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
+                                                 const gchar    *value);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
 gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);

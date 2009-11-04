@@ -111,6 +111,12 @@ static AdgTableCell *   cell_new                (AdgTableRow    *row,
                                                  const gchar    *name,
                                                  AdgEntity      *title,
                                                  AdgEntity      *value);
+static void             cell_set_name           (AdgTableCell   *cell,
+                                                 const gchar    *name);
+static gboolean         cell_set_title          (AdgTableCell   *cell,
+                                                 AdgEntity      *title);
+static gboolean         cell_set_value          (AdgTableCell   *cell,
+                                                 AdgEntity      *value);
 static void             cell_arrange_size       (AdgTableCell   *cell);
 static void             cell_arrange            (AdgTableCell   *cell);
 static void             cell_dispose            (AdgTableCell   *cell);
@@ -184,8 +190,6 @@ static void
 dispose(GObject *object)
 {
     AdgTablePrivate *data = ((AdgTable *) object)->data;
-
-    invalidate((AdgEntity *) object);
 
     if (data->grid != NULL) {
         g_object_unref(data->grid);
@@ -514,16 +518,17 @@ adg_table_row_extents(AdgTableRow *row)
 }
 
 /**
- * adg_table_get_cell_by_name:
+ * adg_table_get_cell:
  * @table: an #AdgTable
  * @name: the name of a cell
  *
- * Gets the cell named @name inside @table.
+ * Gets the cell named @name inside @table. Only named cells can be
+ * retrieved by this method.
  *
  * Returns: the requested cell or %NULL if not found
  **/
 AdgTableCell *
-adg_table_get_cell_by_name(AdgTable *table, const gchar *name)
+adg_table_get_cell(AdgTable *table, const gchar *name)
 {
     AdgTablePrivate *data;
 
@@ -610,9 +615,9 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
  * check its documentation for details.
  *
  * @name is an optional identifier to univoquely access this cell
- * by using adg_table_get_cell_by_name(). The identifier must be
- * univoque: if there is yet a cell with the same name a warning
- * message will be raised and the function will fail.
+ * by using adg_table_get_cell(). The identifier must be univoque:
+ * if there is yet a cell with the same name a warning message will
+ * be raised and the function will fail.
  *
  * Returns: the newly created cell or %NULL on errors
  **/
@@ -620,36 +625,30 @@ AdgTableCell *
 adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
                         const gchar *title, const gchar *value)
 {
-    AdgEntity *table, *title_entity, *value_entity;
+    AdgEntity *table_entity, *title_entity, *value_entity;
     AdgTableStyle *table_style;
+    AdgDress table_dress, font_dress;
 
     g_return_val_if_fail(row != NULL, NULL);
 
-    table = (AdgEntity *) row->table;
-
-    g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
-
-    table_style = (AdgTableStyle *)
-        adg_entity_style(table, adg_table_get_table_dress(row->table));
+    table_entity = (AdgEntity *) row->table;
+    table_dress = adg_table_get_table_dress(row->table);
+    table_style = (AdgTableStyle *) adg_entity_style(table_entity, table_dress);
 
     if (title != NULL) {
-        AdgDress dress = adg_table_style_get_title_dress(table_style);
+        font_dress = adg_table_style_get_title_dress(table_style);
         title_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "local-method", ADG_MIX_PARENT,
                                     "label", title,
-                                    "font-dress", dress,
-                                    "parent", table, NULL);
+                                    "font-dress", font_dress, NULL);
     } else {
         title_entity = NULL;
     }
 
     if (value != NULL) {
-        AdgDress dress = adg_table_style_get_value_dress(table_style);
+        font_dress = adg_table_style_get_value_dress(table_style);
         value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "local-method", ADG_MIX_PARENT,
                                     "label", value,
-                                    "font-dress", dress,
-                                    "parent", table, NULL);
+                                    "font-dress", font_dress, NULL);
     } else {
         value_entity = NULL;
     }
@@ -677,6 +676,50 @@ adg_table_cell_delete(AdgTableCell *cell)
 
     cell_free(cell);
     row->cells = g_slist_remove(row->cells, cell);
+}
+
+/**
+ * adg_table_cell_get_name:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the name assigned to @cell. This function is highly inefficient
+ * as the cell names are stored in a hash table optimized to get a cell
+ * from a name. Getting the name from a cell involves a full hash table
+ * inspection.
+ *
+ * Returns: the name bound of @cell or %NULL on no name or errors
+ **/
+const gchar *
+adg_table_cell_get_name(AdgTableCell *cell)
+{
+    AdgTablePrivate *data;
+
+    g_return_val_if_fail(cell != NULL, NULL);
+
+    data = cell->row->table->data;
+
+    return g_hash_table_find(data->cell_names, value_match, cell);
+}
+
+/**
+ * adg_table_cell_set_name:
+ * @cell: a valid #AdgTableCell
+ * @name: the new name of @cell
+ *
+ * Sets a new name on @cell: this will allow to access @cell by
+ * name at a later time using the adg_table_get_cell() API.
+ **/
+void
+adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
+{
+    AdgTablePrivate *data;
+
+    g_return_if_fail(cell != NULL);
+
+    data = cell->row->table->data;
+
+    cell_set_name(cell, NULL);
+    cell_set_name(cell, name);
 }
 
 /**
@@ -717,21 +760,55 @@ adg_table_cell_set_title(AdgTableCell *cell, AdgEntity *title)
     g_return_if_fail(cell != NULL);
     g_return_if_fail(title == NULL || ADG_IS_ENTITY(title));
 
-    if (title == cell->title)
-        return;
-
-    if (cell->title != NULL)
-        g_object_unref(cell->title);
-
-    cell->title = title;
-
-    if (cell->title != NULL)
-        g_object_ref_sink(cell->title);
-
-    /* Invalidate the whole table if the with of this cell depends
-     * on the cell content */
-    if (cell->width == 0)
+    if (cell_set_title(cell, title))
         adg_entity_invalidate((AdgEntity *) cell->row->table);
+}
+
+/**
+ * adg_table_cell_set_text_title:
+ * @cell: a valid #AdgTableCell
+ * @title: a text string
+ *
+ * Convenient function to set a the title of a cell using an #AdgToyText
+ * entity with the font dress picked from #AdgTable:table-dress with
+ * a call to adg_table_style_get_title_dress().
+ **/
+void
+adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
+{
+    AdgTable *table;
+    AdgEntity *entity;
+    AdgTableStyle *table_style;
+    AdgDress table_dress, font_dress;
+
+    g_return_if_fail(cell != NULL);
+
+    if (title == NULL)
+        adg_table_cell_set_title(cell, NULL);
+
+    if (cell->title != NULL) {
+        const gchar *old_title;
+
+        if (ADG_IS_TOY_TEXT(cell->title))
+            old_title = adg_toy_text_get_label((AdgToyText *) cell->title);
+        else
+            old_title = NULL;
+
+        if (adg_strcmp(title, old_title) == 0)
+            return;
+    }
+
+    table = cell->row->table;
+    table_dress = adg_table_get_table_dress(table);
+    table_style = (AdgTableStyle *) adg_entity_style((AdgEntity *) table,
+                                                     table_dress);
+    font_dress = adg_table_style_get_title_dress(table_style);
+    entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                          "local-method", ADG_MIX_PARENT,
+                          "label", title,
+                          "font-dress", font_dress, NULL);
+
+    adg_table_cell_set_title(cell, entity);
 }
 
 /**
@@ -772,21 +849,55 @@ adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
     g_return_if_fail(cell != NULL);
     g_return_if_fail(value == NULL || ADG_IS_ENTITY(value));
 
-    if (value == cell->value)
-        return;
-
-    if (cell->value != NULL)
-        g_object_unref(cell->value);
-
-    cell->value = value;
-
-    if (cell->value != NULL)
-        g_object_ref_sink(cell->value);
-
-    /* Invalidate the whole table if the with of this cell depends
-     * on the cell content */
-    if (cell->width == 0)
+    if (cell_set_value(cell, value))
         adg_entity_invalidate((AdgEntity *) cell->row->table);
+}
+
+/**
+ * adg_table_cell_set_text_value:
+ * @cell: a valid #AdgTableCell
+ * @value: a text string
+ *
+ * Convenient function to set a the value of a cell using an #AdgToyText
+ * entity with a value font dress picked from #AdgTable:table-dress with
+ * a call to adg_table_style_get_value_dress().
+ **/
+void
+adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
+{
+    AdgTable *table;
+    AdgEntity *entity;
+    AdgTableStyle *table_style;
+    AdgDress table_dress, font_dress;
+
+    g_return_if_fail(cell != NULL);
+
+    if (value == NULL)
+        adg_table_cell_set_value(cell, NULL);
+
+    if (cell->value != NULL) {
+        const gchar *old_value;
+
+        if (ADG_IS_TOY_TEXT(cell->value))
+            old_value = adg_toy_text_get_label((AdgToyText *) cell->value);
+        else
+            old_value = NULL;
+
+        if (adg_strcmp(value, old_value) == 0)
+            return;
+    }
+
+    table = cell->row->table;
+    table_dress = adg_table_get_table_dress(table);
+    table_style = (AdgTableStyle *) adg_entity_style((AdgEntity *) table,
+                                                     table_dress);
+    font_dress = adg_table_style_get_value_dress(table_style);
+    entity = g_object_new(ADG_TYPE_TOY_TEXT,
+                          "local-method", ADG_MIX_PARENT,
+                          "label", value,
+                          "font-dress", font_dress, NULL);
+
+    adg_table_cell_set_value(cell, entity);
 }
 
 /**
@@ -1237,46 +1348,96 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
 
     data = row->table->data;
 
-    if (name != NULL) {
-        if (data->cell_names == NULL) {
-            data->cell_names = g_hash_table_new_full(g_str_hash, g_str_equal,
-                                                     g_free, NULL);
-        } else if (g_hash_table_lookup(data->cell_names, name) != NULL) {
-            g_warning(_("%s: `%s' cell name is yet used"),
-                      G_STRLOC, name);
-            return NULL;
-        }
+    if (name != NULL && data->cell_names != NULL &&
+        g_hash_table_lookup(data->cell_names, name) != NULL) {
+        g_warning(_("%s: `%s' cell name is yet used"), G_STRLOC, name);
+        return NULL;
     }
 
     new_cell = g_new(AdgTableCell, 1);
     new_cell->row = row;
     new_cell->width = width;
     new_cell->has_frame = has_frame;
-    new_cell->title = title;
-    new_cell->value = value;
+    new_cell->title = NULL;
+    new_cell->value = NULL;
     new_cell->extents.is_defined = FALSE;
 
-    if (title != NULL)
-        g_object_ref_sink(title);
-
-    if (value != NULL)
-        g_object_ref_sink(value);
+    cell_set_title(new_cell, title);
+    cell_set_value(new_cell, value);
 
     if (before_cell == NULL) {
         row->cells = g_slist_append(row->cells, new_cell);
     } else {
         GSList *before_node = g_slist_find(row->cells, before_cell);
 
-        /* This MUST be present, otherwise something really bad happened */
+        /* This MUST be not null, otherwise something really bad happened */
         g_assert(before_node != NULL);
 
         row->cells = g_slist_insert_before(row->cells, before_node, new_cell);
     }
 
     if (name != NULL)
-        g_hash_table_insert(data->cell_names, g_strdup(name), new_cell);
+        cell_set_name(new_cell, name);
 
     return new_cell;
+}
+
+static void
+cell_set_name(AdgTableCell *cell, const gchar *name)
+{
+    AdgTablePrivate *data = cell->row->table->data;
+
+    if (data->cell_names == NULL && name == NULL)
+        return;
+
+    if (data->cell_names == NULL)
+        data->cell_names = g_hash_table_new_full(g_str_hash, g_str_equal,
+                                                 g_free, NULL);
+
+    if (name == NULL)
+        g_hash_table_foreach_remove(data->cell_names, value_match, cell);
+    else
+        g_hash_table_insert(data->cell_names, g_strdup(name), cell);
+}
+
+static gboolean
+cell_set_title(AdgTableCell *cell, AdgEntity *title)
+{
+    if (cell->title == title)
+        return FALSE;
+
+    if (cell->title != NULL)
+        g_object_unref(cell->title);
+
+    cell->title = title;
+
+    if (title != NULL) {
+        g_object_ref_sink(title);
+        adg_entity_set_parent(title, (AdgEntity *) cell->row->table);
+        adg_entity_set_local_method(title, ADG_MIX_PARENT);
+    }
+
+    return TRUE;
+}
+
+static gboolean
+cell_set_value(AdgTableCell *cell, AdgEntity *value)
+{
+    if (cell->value == value)
+        return FALSE;
+
+    if (cell->value != NULL)
+        g_object_unref(cell->value);
+
+    cell->value = value;
+
+    if (value != NULL) {
+        g_object_ref_sink(value);
+        adg_entity_set_parent(value, (AdgEntity *) cell->row->table);
+        adg_entity_set_local_method(value, ADG_MIX_PARENT);
+    }
+
+    return TRUE;
 }
 
 static void
@@ -1345,13 +1506,18 @@ cell_arrange(AdgTableCell *cell)
     }
 
     if (cell->value != NULL) {
-        content_size = &adg_entity_extents(cell->value)->size;
+        AdgMatrix global_map;
+        CpmlExtents extents;
+
+        adg_entity_get_global_map(cell->value, &global_map);
+        cpml_extents_copy(&extents, adg_entity_extents(cell->value));
+        cpml_extents_transform(&extents, &global_map);
 
         cairo_matrix_init_translate(&map,
-                                    org->x + (size->x - content_size->x) / 2,
-                                    org->y + size->y - padding->y);
+                                    org->x + (size->x - extents.size.x) / 2,
+                                    org->y + size->y /* - padding->y */);
 
-        adg_entity_set_global_map(cell->value, &map);
+        adg_entity_set_local_map(cell->value, &map);
     }
 
     cell->extents.is_defined = TRUE;
@@ -1360,25 +1526,15 @@ cell_arrange(AdgTableCell *cell)
 static void
 cell_dispose(AdgTableCell *cell)
 {
-    if (cell->title != NULL) {
-        g_object_unref(cell->title);
-        cell->title = NULL;
-    }
-
-    if (cell->value != NULL) {
-        g_object_unref(cell->value);
-        cell->value = NULL;
-    }
+    cell_set_title(cell, NULL);
+    cell_set_value(cell, NULL);
 }
 
 static void
 cell_free(AdgTableCell *cell)
 {
-    AdgTablePrivate *data = cell->row->table->data;
-
-    g_hash_table_foreach_remove(data->cell_names, value_match, cell);
+    cell_set_name(cell, NULL);
     cell_dispose(cell);
-
     g_free(cell);
 }
 
