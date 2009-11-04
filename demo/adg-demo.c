@@ -322,31 +322,29 @@ sample_path(const SampleData *data)
 static void
 sample_add_sheet(AdgCanvas *canvas)
 {
+    AdgTitleBlock *title_block;
     AdgLogo *logo;
     AdgMatrix map;
 
     logo = adg_logo_new();
-    cairo_matrix_init_translate(&map, 10, 10);
-    adg_entity_set_local_map(ADG_ENTITY(logo), &map);
-    cairo_matrix_init_scale(&map, 10, 10);
-    adg_entity_set_global_map(ADG_ENTITY(logo), &map);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(logo));
-
-#if 0
-    AdgTitleBlock *title_block;
-
     title_block = adg_title_block_new();
+
+    cairo_matrix_init_scale(&map, 2, 2);
+    adg_entity_set_global_map(ADG_ENTITY(logo), &map);
+
     g_object_set(title_block,
-                 "title", "Sample mechanical part",
-                 "author", "Nicola Fontana",
+                 "title", "SAMPLE DRAWING",
+                 "author", "NtD",
                  "date", "",
-                 "drawing", "sample",
-                 "logo"                     AdgEntity*            : Read / Write
-                 "projection"               AdgEntity*            : Read / Write
-                 "scale", "unknown",
+                 "drawing", "TEST123",
+                 "logo", logo,
+                 "projection", adg_projection_new(ADG_PROJECTION_THIRD_ANGLE),
+                 "scale", "NONE",
                  "size", "A4",
                  NULL);
-#endif
+    cairo_matrix_init_translate(&map, 800, 600);
+    adg_entity_set_global_map(ADG_ENTITY(title_block), &map);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(title_block));
 }
 
 static void

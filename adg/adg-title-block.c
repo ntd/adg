@@ -44,6 +44,7 @@
 #include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
+#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_title_block_parent_class)
 
 
 enum {
@@ -59,31 +60,32 @@ enum {
 };
 
 
-static void     dispose                 (GObject        *object);
-static void     finalize                (GObject        *object);
-static void     get_property            (GObject        *object,
+static void             dispose         (GObject        *object);
+static void             finalize        (GObject        *object);
+static void             get_property    (GObject        *object,
                                          guint           prop_id,
                                          GValue         *value,
                                          GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
+static void             set_property    (GObject        *object,
                                          guint           prop_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static gboolean set_title               (AdgTitleBlock  *title_block,
+static AdgTable *       get_table       (AdgTitleBlock  *title_block);
+static gboolean         set_title       (AdgTitleBlock  *title_block,
                                          const gchar    *title);
-static gboolean set_drawing             (AdgTitleBlock  *title_block,
+static gboolean         set_drawing     (AdgTitleBlock  *title_block,
                                          const gchar    *drawing);
-static gboolean set_size                (AdgTitleBlock  *title_block,
+static gboolean         set_size        (AdgTitleBlock  *title_block,
                                          const gchar    *size);
-static gboolean set_scale               (AdgTitleBlock  *title_block,
+static gboolean         set_scale       (AdgTitleBlock  *title_block,
                                          const gchar    *scale);
-static gboolean set_author              (AdgTitleBlock  *title_block,
+static gboolean         set_author      (AdgTitleBlock  *title_block,
                                          const gchar    *author);
-static gboolean set_date                (AdgTitleBlock  *title_block,
+static gboolean         set_date        (AdgTitleBlock  *title_block,
                                          const gchar    *date);
-static gboolean set_logo                (AdgTitleBlock  *title_block,
+static gboolean         set_logo        (AdgTitleBlock  *title_block,
                                          AdgEntity      *logo);
-static gboolean set_projection          (AdgTitleBlock  *title_block,
+static gboolean         set_projection  (AdgTitleBlock  *title_block,
                                          AdgEntity      *projection);
 
 
@@ -626,10 +628,75 @@ adg_title_block_set_projection(AdgTitleBlock *title_block,
 }
 
 
+static AdgTable *
+get_table(AdgTitleBlock *title_block)
+{
+    AdgTable *table = (AdgTable *) title_block;
+
+    if (adg_table_get_n_rows(table) == 0) {
+        AdgTableRow *row;
+        AdgTableCell *cell;
+
+        /* First row */
+        row = adg_table_row_new(table);
+
+        cell = adg_table_cell_new(row, 62);
+
+        cell = adg_table_cell_new(row, 200);
+        adg_table_cell_set_name(cell, "title");
+        adg_table_cell_set_text_title(cell, _("TITLE"));
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        /* Second row */
+        row = adg_table_row_new(table);
+
+        cell = adg_table_cell_new(row, 62);
+        adg_table_cell_set_name(cell, "logo");
+
+        cell = adg_table_cell_new(row, 40);
+        adg_table_cell_set_name(cell, "size");
+        adg_table_cell_set_text_title(cell, _("SIZE"));
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        cell = adg_table_cell_new(row, 60);
+        adg_table_cell_set_name(cell, "scale");
+        adg_table_cell_set_text_title(cell, _("SCALE"));
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        cell = adg_table_cell_new(row, 100);
+        adg_table_cell_set_name(cell, "drawing");
+        adg_table_cell_set_text_title(cell, _("DRAWING"));
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        /* Third row */
+        row = adg_table_row_new(table);
+
+        cell = adg_table_cell_new(row, 62);
+        adg_table_cell_set_name(cell, "projection");
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        cell = adg_table_cell_new(row, 100);
+        adg_table_cell_set_name(cell, "author");
+        adg_table_cell_set_text_title(cell, _("AUTHOR"));
+        adg_table_cell_switch_frame(cell, TRUE);
+
+        cell = adg_table_cell_new(row, 100);
+        adg_table_cell_set_name(cell, "date");
+        adg_table_cell_set_text_title(cell, _("DATE"));
+        adg_table_cell_switch_frame(cell, TRUE);
+    }
+
+    return table;
+}
+
 static gboolean
 set_title(AdgTitleBlock *title_block, const gchar *title)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(title, data->title) == 0)
         return FALSE;
@@ -637,14 +704,20 @@ set_title(AdgTitleBlock *title_block, const gchar *title)
     g_free(data->title);
     data->title = g_strdup(title);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "title");
+    adg_table_cell_set_text_value(cell, data->title);
     return TRUE;
 }
 
 static gboolean
 set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(drawing, data->drawing) == 0)
         return FALSE;
@@ -652,14 +725,20 @@ set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
     g_free(data->drawing);
     data->drawing = g_strdup(drawing);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "drawing");
+    adg_table_cell_set_text_value(cell, data->drawing);
     return TRUE;
 }
 
 static gboolean
 set_size(AdgTitleBlock *title_block, const gchar *size)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(size, data->size) == 0)
         return FALSE;
@@ -667,14 +746,20 @@ set_size(AdgTitleBlock *title_block, const gchar *size)
     g_free(data->size);
     data->size = g_strdup(size);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "size");
+    adg_table_cell_set_text_value(cell, data->size);
     return TRUE;
 }
 
 static gboolean
 set_scale(AdgTitleBlock *title_block, const gchar *scale)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(scale, data->scale) == 0)
         return FALSE;
@@ -682,14 +767,20 @@ set_scale(AdgTitleBlock *title_block, const gchar *scale)
     g_free(data->scale);
     data->scale = g_strdup(scale);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "scale");
+    adg_table_cell_set_text_value(cell, data->scale);
     return TRUE;
 }
 
 static gboolean
 set_author(AdgTitleBlock *title_block, const gchar *author)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(author, data->author) == 0)
         return FALSE;
@@ -697,14 +788,20 @@ set_author(AdgTitleBlock *title_block, const gchar *author)
     g_free(data->author);
     data->author = g_strdup(author);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "author");
+    adg_table_cell_set_text_value(cell, data->author);
     return TRUE;
 }
 
 static gboolean
 set_date(AdgTitleBlock *title_block, const gchar *date)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (adg_strcmp(date, data->date) == 0)
         return FALSE;
@@ -718,7 +815,7 @@ set_date(AdgTitleBlock *title_block, const gchar *date)
 
         gdate = g_date_new();
         g_date_set_time_t(gdate, time (NULL));
-        g_date_strftime(buffer, sizeof(buffer), "%c", gdate);
+        g_date_strftime(buffer, sizeof(buffer), "%x", gdate);
         g_date_free(gdate);
 
         data->date = g_strdup(buffer);
@@ -726,14 +823,20 @@ set_date(AdgTitleBlock *title_block, const gchar *date)
         data->date = g_strdup(date);
     }
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "date");
+    adg_table_cell_set_text_value(cell, data->date);
     return TRUE;
 }
 
 static gboolean
 set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (logo == data->logo)
         return FALSE;
@@ -744,16 +847,22 @@ set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
     data->logo = logo;
 
     if (data->logo != NULL)
-        g_object_ref(data->logo);
+        g_object_ref_sink(data->logo);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "logo");
+    adg_table_cell_set_value(cell, data->logo);
     return TRUE;
 }
 
 static gboolean
 set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
 {
-    AdgTitleBlockPrivate *data = title_block->data;
+    AdgTitleBlockPrivate *data;
+    AdgTable *table;
+    AdgTableCell *cell;
+
+    data = title_block->data;
 
     if (projection == data->projection)
         return FALSE;
@@ -764,8 +873,10 @@ set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
     data->projection = projection;
 
     if (data->projection != NULL)
-        g_object_ref(data->projection);
+        g_object_ref_sink(data->projection);
 
-    adg_entity_invalidate((AdgEntity *) title_block);
+    table = get_table(title_block);
+    cell = adg_table_get_cell(table, "projection");
+    adg_table_cell_set_value(cell, data->projection);
     return TRUE;
 }
