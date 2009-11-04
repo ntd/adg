@@ -346,21 +346,21 @@ arrange(AdgEntity *entity)
     AdgProjectionPrivate *data;
     AdgProjectionClass *projection_class;
     AdgProjectionClassPrivate *data_class;
-    CpmlExtents *extents;
+    CpmlExtents extents;
     const AdgMatrix *local;
 
     data = ((AdgProjection *) entity)->data;
     projection_class = ADG_PROJECTION_GET_CLASS(entity);
     data_class = projection_class->data_class;
-    extents = (CpmlExtents *) adg_entity_extents(entity);
     local = adg_entity_local_matrix(entity);
 
     arrange_class(projection_class, data->scheme);
-    cpml_extents_copy(extents, &data_class->extents);
+    cpml_extents_copy(&extents, &data_class->extents);
 
     /* Apply the local matrix to the extents of this projection instance */
-    cpml_pair_transform(&extents->org, local);
-    cpml_vector_transform(&extents->size, local);
+    cpml_pair_transform(&extents.org, local);
+    cpml_vector_transform(&extents.size, local);
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
@@ -389,39 +389,39 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
         break;
     case ADG_PROJECTION_FIRST_ANGLE:
         symbol = adg_path_new();
-        adg_path_move_to_explicit(symbol, 5, 20);
-        adg_path_line_to_explicit(symbol, 25, 25);
-        adg_path_line_to_explicit(symbol, 25, 5);
-        adg_path_line_to_explicit(symbol, 5, 10);
+        adg_path_move_to_explicit(symbol, 4, -19);
+        adg_path_line_to_explicit(symbol, 24, -24);
+        adg_path_line_to_explicit(symbol, 24, -4);
+        adg_path_line_to_explicit(symbol, 4, -9);
         adg_path_close(symbol);
-        adg_path_move_to_explicit(symbol, 50, 15);
-        adg_path_arc_to_explicit(symbol, 30, 15, 50, 15);
-        adg_path_move_to_explicit(symbol, 45, 15);
-        adg_path_arc_to_explicit(symbol, 35, 15, 45, 15);
+        adg_path_move_to_explicit(symbol, 49, -14);
+        adg_path_arc_to_explicit(symbol, 29, -14, 49, -14);
+        adg_path_move_to_explicit(symbol, 44, -14);
+        adg_path_arc_to_explicit(symbol, 34, -14, 44, -14);
 
         axis = adg_path_new();
-        adg_path_move_to_explicit(axis, 1, 15);
-        adg_path_line_to_explicit(axis, 54, 15);
-        adg_path_move_to_explicit(axis, 40, 1);
-        adg_path_line_to_explicit(axis, 40, 29);
+        adg_path_move_to_explicit(axis, 0, -14);
+        adg_path_line_to_explicit(axis, 53, -14);
+        adg_path_move_to_explicit(axis, 39, 0);
+        adg_path_line_to_explicit(axis, 39, -28);
         break;
     case ADG_PROJECTION_THIRD_ANGLE:
         symbol = adg_path_new();
-        adg_path_move_to_explicit(symbol, 30, 20);
-        adg_path_line_to_explicit(symbol, 50, 25);
-        adg_path_line_to_explicit(symbol, 50, 5);
-        adg_path_line_to_explicit(symbol, 30, 10);
+        adg_path_move_to_explicit(symbol, 29, -19);
+        adg_path_line_to_explicit(symbol, 49, -24);
+        adg_path_line_to_explicit(symbol, 49, -4);
+        adg_path_line_to_explicit(symbol, 29, -9);
         adg_path_close(symbol);
-        adg_path_move_to_explicit(symbol, 25, 15);
-        adg_path_arc_to_explicit(symbol, 5, 15, 25, 15);
-        adg_path_move_to_explicit(symbol, 20, 15);
-        adg_path_arc_to_explicit(symbol, 10, 15, 20, 15);
+        adg_path_move_to_explicit(symbol, 24, -14);
+        adg_path_arc_to_explicit(symbol, 4, -14, 24, -14);
+        adg_path_move_to_explicit(symbol, 19, -14);
+        adg_path_arc_to_explicit(symbol, 9, -14, 19, -14);
 
         axis = adg_path_new();
-        adg_path_move_to_explicit(axis, 1, 15);
-        adg_path_line_to_explicit(axis, 54, 15);
-        adg_path_move_to_explicit(axis, 15, 1);
-        adg_path_line_to_explicit(axis, 15, 29);
+        adg_path_move_to_explicit(axis, 0, -14);
+        adg_path_line_to_explicit(axis, 53, -14);
+        adg_path_move_to_explicit(axis, 14, 0);
+        adg_path_line_to_explicit(axis, 14, -28);
         break;
     default:
         g_assert_not_reached();
@@ -432,13 +432,13 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
     data_class->axis = axis;
     data_class->extents.is_defined = FALSE;
 
-    if (symbol != NULL)
-        cpml_extents_add(&data_class->extents,
-                         adg_trail_extents((AdgTrail *) symbol));
-
     if (axis != NULL)
         cpml_extents_add(&data_class->extents,
                          adg_trail_extents((AdgTrail *) axis));
+
+    if (symbol != NULL)
+        cpml_extents_add(&data_class->extents,
+                         adg_trail_extents((AdgTrail *) symbol));
 }
 
 static void
