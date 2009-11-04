@@ -462,6 +462,7 @@ cpml_primitive_extents(const CpmlPrimitive *primitive, CpmlExtents *extents)
         return cpml_curve_extents(primitive, extents);
 
     default:
+        extents->is_defined = 0;
         break;
     }
 }

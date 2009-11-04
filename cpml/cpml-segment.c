@@ -213,8 +213,9 @@ cpml_segment_extents(const CpmlSegment *segment, CpmlExtents *extents)
     CpmlPrimitive primitive;
     CpmlExtents primitive_extents;
 
-    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
     extents->is_defined = 0;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
     do {
         cpml_primitive_extents(&primitive, &primitive_extents);

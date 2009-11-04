@@ -81,6 +81,8 @@ cpml_curve_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 {
     CpmlPair p1, p2, p3, p4;
 
+    extents->is_defined = 0;
+
     cpml_pair_from_cairo(&p1, cpml_primitive_get_point(curve, 0));
     cpml_pair_from_cairo(&p2, cpml_primitive_get_point(curve, 1));
     cpml_pair_from_cairo(&p3, cpml_primitive_get_point(curve, 2));

@@ -198,38 +198,40 @@ void
 cpml_arc_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
 {
     double r, start, end;
-    CpmlPair pair;
+    CpmlPair center, pair;
 
-    if (!cpml_arc_info(arc, NULL, &r, &start, &end))
+    extents->is_defined = 0;
+
+    if (!cpml_arc_info(arc, &center, &r, &start, &end))
         return;
 
     /* Add the right quadrant point if needed */
     if ((start < 0 && end > 0) ||
         (end < M_PI * 2 && start > M_PI * 2)) {
-        pair.x = r;
-        pair.y = 0;
+        pair.x = center.x + r;
+        pair.y = center.y;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the bottom quadrant point if needed */
     if ((start < M_PI_2 && end > M_PI_2) ||
         (end < M_PI_2 * 5 && start > M_PI_2 * 5)) {
-        pair.x = 0;
-        pair.y = r;
+        pair.x = center.x;
+        pair.y = center.y + r;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the left quadrant point if needed */
     if (start < M_PI && end > M_PI) {
-        pair.x = -r;
-        pair.y = 0;
+        pair.x = center.x - r;
+        pair.y = center.y;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the top quadrant point if needed */
     if (start < M_PI_2 * 3 && end > M_PI) {
-        pair.x = 0;
-        pair.y = -r;
+        pair.x = center.x;
+        pair.y = center.y - r;
         cpml_extents_pair_add(extents, &pair);
     }
 
