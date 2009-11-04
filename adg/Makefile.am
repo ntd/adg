@@ -4,6 +4,7 @@ AM_CFLAGS=			-I$(top_srcdir) \
 AM_LDFLAGS=
 PATTERN= # file groups
 h_sources=			adg-adim.h \
+				adg-alignment.h \
 				adg-arrow.h \
 				adg-canvas.h \
 				adg-color-style.h \
@@ -44,6 +45,7 @@ built_h_sources=		$(builddir)/adg-type-builtins.h \
 				$(builddir)/adg-marshal.h \
 				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
+				adg-alignment-private.h \
 				adg-arrow-private.h \
 				adg-canvas-private.h \
 				adg-color-style-private.h \
@@ -75,6 +77,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-toy-text-private.h
 built_private_h_sources= 
 c_sources=			adg-adim.c \
+				adg-alignment.c \
 				adg-arrow.c \
 				adg-canvas.c \
 				adg-color-style.c \

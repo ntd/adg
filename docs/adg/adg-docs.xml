@@ -39,6 +39,7 @@
     <xi:include href="xml/adg-canvas.xml"/>
     <xi:include href="xml/adg-entity.xml"/>
     <xi:include href="xml/adg-container.xml"/>
+    <xi:include href="xml/adg-alignment.xml"/>
     <chapter id="Populating-stock">
       <title>Stock entities</title>
       <xi:include href="xml/adg-stroke.xml"/>

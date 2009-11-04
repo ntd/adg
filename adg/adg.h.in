@@ -22,6 +22,7 @@
 #define __ADG_H__
 
 #include <adg/adg-adim.h>
+#include <adg/adg-alignment.h>
 #include <adg/adg-canvas.h>
 #include <adg/adg-container.h>
 #include <adg/adg-dim.h>

@@ -21,6 +21,7 @@ IGNORE_HFILES=		adg.h \
 			adg-type-builtins.h \
 			adg-marshal.h \
 			adg-adim-private.h \
+			adg-alignment-private.h \
 			adg-arrow-private.h \
 			adg-canvas-private.h \
 			adg-color-style-private.h \
