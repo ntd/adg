@@ -104,6 +104,7 @@ adg_trail_init(AdgTrail *trail)
 
     data->callback = NULL;
     data->user_data = NULL;
+    data->extents.is_defined = FALSE;
 
     trail->data = data;
 }
