@@ -397,8 +397,8 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data->join = join;
     data = line_style->data;
+    data->join = join;
 
     g_object_notify((GObject *) line_style, "join");
 }
