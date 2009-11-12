@@ -36,9 +36,9 @@
 
 #include "adg-alignment.h"
 #include "adg-alignment-private.h"
+#include "adg-entity-private.h"
 #include "adg-intl.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_alignment_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 
 
@@ -56,6 +56,7 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             global_changed          (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static gboolean         set_factor              (AdgAlignment   *alignment,
                                                  const AdgPair  *factor);
@@ -79,6 +80,7 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = global_changed;
     entity_class->arrange = arrange;
 
     param = g_param_spec_boxed("factor",
@@ -234,9 +236,53 @@ adg_alignment_set_factor_explicit(AdgAlignment *alignment,
 
 
 static void
+global_changed(AdgEntity *entity)
+{
+    AdgEntityClass *entity_class;
+    AdgEntityPrivate *entity_data;
+    const CpmlExtents *extents;
+    AdgMatrix *global;
+    AdgPair shift;
+
+    entity_class = g_type_class_ref(ADG_TYPE_ENTITY);
+    entity_data = entity->data;
+    extents = &entity_data->extents;
+    global = &entity_data->global_matrix;
+
+    if (extents->is_defined) {
+        /* The entities are displaced only if the extents are valid */
+        AdgAlignmentPrivate *data = ((AdgAlignment *) entity)->data;
+
+        shift.x = extents->size.x * data->factor.x;
+        shift.y = extents->size.y * data->factor.y;
+    } else {
+        shift.x = 0;
+        shift.y = 0;
+    }
+
+    if (entity_class->global_changed != NULL)
+        entity_class->global_changed(entity);
+
+    g_type_class_unref(entity_class);
+
+    /* The real job: temporarily modify the global matrix
+     * to align the contained entities */
+    global->x0 -= shift.x;
+    global->y0 -= shift.y;
+
+    adg_container_propagate_by_name((AdgContainer *) entity, "global-changed");
+
+    global->x0 += shift.x;
+    global->y0 += shift.y;
+}
+
+static void
 arrange(AdgEntity *entity)
 {
-    /* TODO */
+    PARENT_ENTITY_CLASS->arrange(entity);
+
+    /* Force a recomputation of the children position */
+    adg_entity_global_changed(entity);
 }
 
 static gboolean
