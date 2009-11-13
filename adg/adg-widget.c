@@ -45,6 +45,8 @@
 #include "adg-marshal.h"
 #include "adg-intl.h"
 
+#define PARENT_WIDGET_CLASS  ((GtkWidgetClass *) adg_widget_parent_class)
+
 
 enum {
     PROP_0,
@@ -341,11 +343,9 @@ expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
     AdgWidgetPrivate *data;
     AdgCanvas *canvas;
-    GtkWidgetClass *parent_class;
 
     data = ((AdgWidget *) widget)->data;
     canvas = data->canvas;
-    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
 
     if (canvas != NULL) {
         cairo_t *cr = gdk_cairo_create(widget->window);
@@ -353,20 +353,18 @@ expose_event(GtkWidget *widget, GdkEventExpose *event)
         cairo_destroy(cr);
     }
 
-    if (parent_class->expose_event == NULL)
+    if (PARENT_WIDGET_CLASS->expose_event == NULL)
         return FALSE;
 
-    return parent_class->expose_event(widget, event);
+    return PARENT_WIDGET_CLASS->expose_event(widget, event);
 }
 
 static gboolean
 scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
-    GtkWidgetClass *parent_class;
     AdgWidgetPrivate *data;
     AdgMatrix map, inverted;
 
-    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
     data = ((AdgWidget *) widget)->data;
 
     if ((event->direction == GDK_SCROLL_UP ||
@@ -393,40 +391,34 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
         gtk_widget_queue_draw(widget);
     }
 
-    if (parent_class->scroll_event == NULL)
+    if (PARENT_WIDGET_CLASS->scroll_event == NULL)
         return FALSE;
 
-    return parent_class->scroll_event(widget, event);
+    return PARENT_WIDGET_CLASS->scroll_event(widget, event);
 }
 
 static gboolean
 button_press_event(GtkWidget *widget, GdkEventButton *event)
 {
-    GtkWidgetClass *parent_class;
-    AdgWidgetPrivate *data;
-
-    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
-    data = ((AdgWidget *) widget)->data;
+    AdgWidgetPrivate *data = ((AdgWidget *) widget)->data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
         data->x_event = event->x;
         data->y_event = event->y;
     }
 
-    if (parent_class->button_press_event == NULL)
+    if (PARENT_WIDGET_CLASS->button_press_event == NULL)
         return FALSE;
 
-    return parent_class->button_press_event(widget, event);
+    return PARENT_WIDGET_CLASS->button_press_event(widget, event);
 }
 
 static gboolean
 motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
-    GtkWidgetClass *parent_class;
     AdgWidgetPrivate *data;
     AdgMatrix map, inverted;
 
-    parent_class = (GtkWidgetClass *) adg_widget_parent_class;
     data = ((AdgWidget *) widget)->data;
 
     if ((event->state & GDK_BUTTON2_MASK) > 0 &&
@@ -446,10 +438,10 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
         gtk_widget_queue_draw(widget);
     }
 
-    if (parent_class->motion_notify_event == NULL)
+    if (PARENT_WIDGET_CLASS->motion_notify_event == NULL)
         return FALSE;
 
-    return parent_class->motion_notify_event(widget, event);
+    return PARENT_WIDGET_CLASS->motion_notify_event(widget, event);
 }
 
 static gboolean
