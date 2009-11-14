@@ -46,10 +46,10 @@
  *                                   matrix is returned unchanged
  * @ADG_TRANSFORM_BEFORE:            apply the transformation before the
  *                                   matrix: the result is equivalent to
- *                                   cairo_matrix_multiply(matrix, matrix, transformation)
+ *                                   cairo_matrix_multiply(matrix, transformation, matrix)
  * @ADG_TRANSFORM_AFTER:             apply the transformation after the
  *                                   matrix: the result is equivalent to
- *                                   cairo_matrix_multiply(matrix, transformation, matrix)
+ *                                   cairo_matrix_multiply(matrix, matrix, transformation)
  * @ADG_TRANSFORM_BEFORE_NORMALIZED: same as %ADG_TRANSFORM_BEFORE but
  *                                   normalizing the transformation with
  *                                   adg_matrix_normalize() before applying it

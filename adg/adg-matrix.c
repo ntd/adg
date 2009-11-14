@@ -277,20 +277,22 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
     case ADG_TRANSFORM_NONE:
         break;
     case ADG_TRANSFORM_BEFORE:
-        cairo_matrix_multiply(matrix, matrix, transformation);
+        cairo_matrix_multiply(matrix, transformation, matrix);
         break;
     case ADG_TRANSFORM_AFTER:
-        cairo_matrix_multiply(matrix, transformation, matrix);
+        cairo_matrix_multiply(matrix, matrix, transformation);
         break;
     case ADG_TRANSFORM_BEFORE_NORMALIZED:
         adg_matrix_copy(&tmp_matrix, transformation);
         adg_matrix_normalize(&tmp_matrix);
-        cairo_matrix_multiply(matrix, matrix, &tmp_matrix);
+        cairo_matrix_multiply(matrix, &tmp_matrix, matrix);
         break;
     case ADG_TRANSFORM_AFTER_NORMALIZED:
         adg_matrix_copy(&tmp_matrix, transformation);
         adg_matrix_normalize(&tmp_matrix);
-        cairo_matrix_multiply(matrix, &tmp_matrix, matrix);
+        cairo_matrix_multiply(matrix, matrix, &tmp_matrix);
         break;
+    default:
+        g_assert_not_reached();
     }
 }
