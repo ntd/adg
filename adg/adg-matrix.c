@@ -36,6 +36,7 @@
 
 
 #include "adg-matrix.h"
+#include "adg-intl.h"
 
 #include <string.h>
 #include <math.h>
@@ -135,90 +136,8 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
  * adg_matrix_normalize:
  * @matrix: the source/destination #AdgMatrix
  *
- * Gets rid of the scaling component of a matrix: considering the
- * (0,0) and (1,1) points, this function normalizes @matrix by
- * forcing a %M_SQRT2 distance (that is the distance these points
- * have on the identity matrix). This is done by applying a common
- * factor to the <varname>xx</varname> and <varname>yy</varname>
- * components of @matrix, without considering translations.
- *
- * From the documentation of the
- * <ulink url="http://cairographics.org/manual/cairo-matrix.html#cairo-matrix-t">cairo matrix</ulink>
- * we have:
- *
- * |[
- * x_new = xx * x + xy * y + x0;
- * y_new = yx * x + yy * y + y0.
- * ]|
- *
- * Calling P0 = (0, 0) and P1 = (1, 1), their coordinates in @matrix,
- * applying an arbitrary factor (<varname>k</varname>) on the scaling
- * component, are:
- *
- * |[
- * P0.x = x0;
- * P0.y = y0;
- * P1.x = k * matrix->xx + matrix->xy + x0;
- * P1.y = k * matrix->yx + matrix->yy + y0.
- * ]|
- *
- * Translating @matrix of (-x0, -y0), as I don't care of the translation
- * component (the original translation will be kept intact):
- *
- * |[
- * P0.x = 0;
- * P0.y = 0;
- * P1.x = k * matrix->xx + matrix->xy;
- * P1.y = k * matrix->yx + matrix->yy.
- * ]|
- *
- * Let's force a distance of %2 on the sum of their squared difference,
- * as Pythagoras suggests:
- *
- * |[
- * (P1.x - P0.x)² + (P1.y - P0.y)² = 2.
- * (k matrix->xx + matrix->xy)² + (k matrix->yy + matrix->yx)² = 2.
- * k² matrix->xx² + matrix->xy² + 2 k matrix->xx matrix->xy +
- *     k² matrix->yy² + matrix->yx² + 2 k matrix->yy matrix->yx = 2.
- * k² (matrix->xx² + matrix->yy²) +
- *     2k (matrix->xx matrix->xy + matrix->yy matrix->yx) +
- *     matrix->xy² + matrix->yx² - 2  = 0.
- * ]|
- *
- * Now we'll calculate the <varname>k</varname> factor by calling
- * <varname>a</varname>, <varname>b</varname> and <varname>c</varname>
- * the respective coefficients and using the second degree equation
- * solver, taking only the greater root:
- *
- * |[
- * a = matrix->xx² + matrix->yy²;
- * b = 2 (matrix->xx matrix->xy + matrix->yy matrix->yx);
- * c = matrix->xy² + matrix->yx² - 2;
- *     -b + √(b² - 4ac)
- * k = ----------------.
- *            2a
- * ]|
- *
- * If the discriminant is less than %0 the negative square root is not
- * possible with real numbers, so @matrix is left untouched and
- * %FALSE is returned. Otherwise, once the <varname>k</varname> factor
- * is found, it is applied to the original matrix and %TRUE is returned.
- *
- * As a bonus, in the quite common case the original matrix has a scaling
- * ratio of %1 (that is matrix->xx == matrix->yy) and it is not rotated
- * (matrix->xy and matrix->yx are %0), we have:
- *
- * |[
- * // Shortcut for uniform scaled matrices not rotated:
- * a = 2 matrix->xx²;
- * b = 0;
- * c = -2;
- *     -b + √(b² - 4ac)   √(16 matrix->xx²)       1
- * k = ---------------- = ----------------- = ----------.
- *            2a            4 matrix->xx²     matrix->xx
- * ]|
- *
- * avoiding square root and a lot of multiplications.
+ * Gets rid of the scaling component of a matrix. The algorithm used
+ * has been found sperimentally so it could luckely be plain wrong.
  *
  * Returns: %TRUE on success, %FALSE on errors
  **/
@@ -229,28 +148,26 @@ adg_matrix_normalize(AdgMatrix *matrix)
 
     g_return_val_if_fail(matrix != NULL, FALSE);
 
-    if (matrix->xx == matrix->yy && matrix->xy == 0 && matrix->yx == 0) {
-        /* Common situation: original matrix scaled with a
-         * ratio of 1 and not rotated */
-        k = 1. / matrix->xx;
-    } else {
-        gdouble a, b, c, d;
-
-        a = matrix->xx * matrix->xx + matrix->yy * matrix->yy;
-        b = (matrix->xx * matrix->xy + matrix->yy * matrix->yx) * 2;
-        c = matrix->xy * matrix->xy + matrix->yx * matrix->yx - 2;
-
-        /* Compute and check the discriminant */
-        d = b * b - a * c * 4;
-        if (d < 0)
-            return FALSE;
-
-        k = (sqrt(d) - b) / (a * 2);
+    if (matrix->xx != matrix->yy || matrix->xy != -matrix->yx) {
+        /* TODO: does normalization make sense on these matrices? */
+        g_warning(_("%s: anamorphic matrices not supported"), G_STRLOC);
+        return FALSE;
     }
 
-    /* Apply the normalization factor */
-    matrix->xx *= k;
-    matrix->yy *= k;
+    if (matrix->xy == 0) {
+        k = matrix->xx;
+    } else if (matrix->xx == 0) {
+        k = matrix->xy;
+    } else {
+        k = sqrt(matrix->xx * matrix->xx + matrix->xy * matrix->xy);
+    }
+
+    g_return_val_if_fail(k != 0, FALSE);
+
+    matrix->xx /= k;
+    matrix->xy /= k;
+    matrix->yy /= k;
+    matrix->yx /= k;
 
     return TRUE;
 }
@@ -295,4 +212,19 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
     default:
         g_assert_not_reached();
     }
+}
+
+/**
+ * adg_matrix_dump:
+ * @matrix: an #AdgMatrix
+ *
+ * Dumps the specified @matrix to stdout. Useful for debugging purposes.
+ **/
+void
+adg_matrix_dump(const AdgMatrix *matrix)
+{
+    g_print("[%8.3lf %8.3lf] [%8.3lf]\n"
+            "[%8.3lf %8.3lf] [%8.3lf]\n",
+            matrix->xx, matrix->xy, matrix->x0,
+            matrix->yx, matrix->yy, matrix->y0);
 }

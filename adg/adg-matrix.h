@@ -45,6 +45,7 @@ gboolean        adg_matrix_normalize            (AdgMatrix       *matrix);
 void            adg_matrix_transform            (AdgMatrix       *matrix,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformMode mode);
+void            adg_matrix_dump                 (const AdgMatrix *matrix);
 
 G_END_DECLS
 
