@@ -290,33 +290,35 @@ local_changed(AdgEntity *entity)
         old.xy != new->xy || old.yx != new->yx) {
         adg_entity_invalidate(entity);
     } else {
-        CpmlExtents *extents = (CpmlExtents *) adg_entity_extents(entity);
+        CpmlExtents extents;
 
-        extents->org.x += new->x0 - old.x0;
-        extents->org.y += new->y0 - old.y0;
+        cpml_extents_copy(&extents, adg_entity_extents(entity));
+
+        extents.org.x += new->x0 - old.x0;
+        extents.org.y += new->y0 - old.y0;
+
+        adg_entity_set_extents(entity, &extents);
     }
 }
 
 static void
 arrange(AdgEntity *entity)
 {
-    CpmlExtents *extents = (CpmlExtents *) adg_entity_extents(entity);
+    AdgStroke *stroke;
+    AdgStrokePrivate *data;
+    CpmlExtents extents;
 
-    if (!extents->is_defined) {
-        AdgStroke *stroke;
-        AdgStrokePrivate *data;
-        const AdgMatrix *local;
+    /* Check for cached result */
+    if (adg_entity_extents(entity)->is_defined)
+        return;
 
-        stroke = (AdgStroke *) entity;
-        data = stroke->data;
-        local = adg_entity_local_matrix(entity);
+    stroke = (AdgStroke *) entity;
+    data = stroke->data;
 
-        cpml_extents_copy(extents, adg_trail_extents(data->trail));
+    cpml_extents_copy(&extents, adg_trail_extents(data->trail));
+    cpml_extents_transform(&extents, adg_entity_local_matrix(entity));
 
-        /* Apply the local matrix to the extents */
-        cpml_pair_transform(&extents->org, local);
-        cpml_vector_transform(&extents->size, local);
-    }
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
