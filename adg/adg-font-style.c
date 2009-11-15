@@ -309,6 +309,7 @@ adg_font_style_new(void)
 /**
  * adg_font_style_font:
  * @font_style: an #AdgFontStyle object
+ * @ctm: the current transformation matrix
  *
  * Gets the scaled font of @font_style. The returned font is
  * owned by @font_style and must not be destroyed by the caller.
@@ -321,6 +322,9 @@ adg_font_style_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
     AdgFontStylePrivate *data;
     cairo_font_options_t *options;
     AdgMatrix matrix;
+
+    g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
+    g_return_val_if_fail(ctm != NULL, NULL);
 
     data = font_style->data;
 
