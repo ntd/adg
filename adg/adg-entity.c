@@ -909,15 +909,15 @@ adg_entity_local_matrix(AdgEntity *entity)
  * @entity: an #AdgEntity object
  *
  * Returns the current transformation matrix (ctm) of @entity
- * by applying the global matrix above the local matrix. This
+ * by applying the global matrix after the local matrix. This
  * is roughly equivalent to the following pseudo code:
  *
  * |[
  * cairo_matrix_multiply(ctm, local_matrix, global_matrix);
  * ]|
  *
- * This method is only useful inside or after the #AdgEntity::arrange
- * default signal handler has been called, that is at the arranging
+ * This method is only useful inside the #AdgEntity::arrange and the
+ * #AdgEntity::render default signal handlers, that is at the arranging
  * or rendering stage. In the other cases, the returned matrix will
  * luckely be not up to date.
  *
@@ -1028,7 +1028,7 @@ global_changed(AdgEntity *entity)
         adg_matrix_copy(matrix, map);
     } else {
         adg_matrix_copy(matrix, adg_entity_global_matrix(data->parent));
-        adg_matrix_transform(matrix, map, ADG_TRANSFORM_AFTER);
+        adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
     }
 }
 
@@ -1051,7 +1051,7 @@ local_changed(AdgEntity *entity)
     case ADG_MIX_ANCESTORS:
         if (data->parent != NULL) {
             adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
         }
@@ -1059,7 +1059,7 @@ local_changed(AdgEntity *entity)
     case ADG_MIX_ANCESTORS_NORMALIZED:
         if (data->parent != NULL) {
             adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
         }
@@ -1068,7 +1068,7 @@ local_changed(AdgEntity *entity)
     case ADG_MIX_PARENT:
         if (data->parent != NULL) {
             adg_entity_get_local_map(data->parent, matrix);
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
         }
@@ -1076,7 +1076,7 @@ local_changed(AdgEntity *entity)
     case ADG_MIX_PARENT_NORMALIZED:
         if (data->parent != NULL) {
             adg_entity_get_local_map(data->parent, matrix);
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_AFTER);
+            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
         }
