@@ -305,7 +305,6 @@ arrange(AdgEntity *entity)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
-    AdgMatrix local;
     CpmlExtents extents;
 
     toy_text = (AdgToyText *) entity;
@@ -321,11 +320,10 @@ arrange(AdgEntity *entity)
     if (adg_is_empty(data->label)) {
         /* Undefined label */
         extents.is_defined = FALSE;
-        adg_entity_set_extents(entity, &extents);
+    } else if (data->glyphs != NULL) {
+        /* Cached result */
         return;
-    }
-
-    if (data->glyphs == NULL) {
+    } else {
         cairo_status_t status;
         cairo_text_extents_t cairo_extents;
 
@@ -345,10 +343,9 @@ arrange(AdgEntity *entity)
         cairo_scaled_font_glyph_extents(data->font, data->glyphs,
                                         data->num_glyphs, &cairo_extents);
         cpml_extents_from_cairo_text(&extents, &cairo_extents);
-        adg_entity_get_local_map(entity, &local);
-        cpml_extents_transform(&extents, &local);
-        adg_entity_set_extents(entity, &extents);
     }
+
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
