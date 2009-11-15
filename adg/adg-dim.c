@@ -149,10 +149,10 @@ adg_dim_class_init(AdgDimClass *klass)
     g_object_class_install_property(gobject_class, PROP_LEVEL, param);
 
     param = g_param_spec_enum("outside",
-                                P_("Outside"),
-                                P_("Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), must be extended outside the extension lines (ADG_THREE_STATE_ON) or should be automatically handled depending on the available space"),
-                                ADG_TYPE_THREE_STATE, ADG_THREE_STATE_UNKNOWN,
-                                G_PARAM_READWRITE);
+                              P_("Outside"),
+                              P_("Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), must be extended outside the extension lines (ADG_THREE_STATE_ON) or should be automatically handled depending on the available space"),
+                              ADG_TYPE_THREE_STATE, ADG_THREE_STATE_UNKNOWN,
+                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_OUTSIDE, param);
 
     param = g_param_spec_string("value",
@@ -931,13 +931,14 @@ arrange(AdgEntity *entity)
 
     if (data->quote.container == NULL)
         data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
+                                             "local-method", ADG_MIX_NONE,
                                              "parent", dim, NULL);
 
     if (data->quote.value == NULL) {
         AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
 
         data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
-                                         "local-method", ADG_MIX_ANCESTORS_NORMALIZED,
+                                         "local-method", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container,
@@ -957,7 +958,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
         data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "local-method", ADG_MIX_ANCESTORS_NORMALIZED,
+                                       "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.min);
@@ -968,7 +969,7 @@ arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
         data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
-                                       "local-method", ADG_MIX_ANCESTORS_NORMALIZED,
+                                       "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(data->quote.container, (AdgEntity *) data->quote.max);
@@ -1011,11 +1012,11 @@ arrange(AdgEntity *entity)
                                     shift->y - extents->size.y / 2);
 
         if (min_entity != NULL)
-            adg_entity_set_global_map(min_entity, &map);
+            adg_entity_set_local_map(min_entity, &map);
 
         if (max_entity != NULL) {
             cairo_matrix_translate(&map, 0, -min_extents.size.y - spacing);
-            adg_entity_set_global_map(max_entity, &map);
+            adg_entity_set_local_map(max_entity, &map);
         }
 
         width += shift->x + MAX(min_extents.size.x, max_extents.size.x);
@@ -1024,7 +1025,7 @@ arrange(AdgEntity *entity)
     /* Center and apply the style displacements */
     shift = adg_dim_style_get_quote_shift(data->dim_style);
     cairo_matrix_init_translate(&map, shift->x - width / 2, shift->y);
-    adg_entity_set_global_map(container_entity, &map);
+    adg_entity_set_local_map(container_entity, &map);
 
     adg_entity_arrange(container_entity);
 }
