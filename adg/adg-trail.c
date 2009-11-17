@@ -355,6 +355,7 @@ clear(AdgModel *model)
     data->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cairo_path.data = NULL;
     data->cairo_path.num_data = 0;
+    data->extents.is_defined = FALSE;
 
     if (PARENT_MODEL_CLASS->clear != NULL)
         PARENT_MODEL_CLASS->clear(model);
