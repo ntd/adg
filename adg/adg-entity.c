@@ -113,6 +113,7 @@ static void             real_render             (AdgEntity       *entity,
                                                  cairo_t         *cr);
 
 static guint    signals[LAST_SIGNAL] = { 0 };
+static gboolean show_extents = FALSE;
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED);
@@ -361,6 +362,19 @@ set_property(GObject *object,
     }
 }
 
+
+/**
+ * adg_switch_extents:
+ * @state: new extents state
+ *
+ * Strokes (if @state is %TRUE) a rectangle around every entity to
+ * show their extents. Useful for debugging purposes.
+ **/
+void
+adg_switch_extents(gboolean state)
+{
+    show_extents = state;
+}
 
 /**
  * adg_entity_get_parent:
@@ -1196,6 +1210,17 @@ real_render(AdgEntity *entity, cairo_t *cr)
 
         cairo_save(cr);
         cairo_set_matrix(cr, &data->global_matrix);
+
+        if (show_extents && data->extents.is_defined) {
+            cairo_save(cr);
+            cairo_set_line_width(cr, 1);
+            cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+            cairo_rectangle(cr, data->extents.org.x, data->extents.org.y,
+                            data->extents.size.x, data->extents.size.y);
+            cairo_stroke(cr);
+            cairo_restore(cr);
+        }
+
         klass->render(entity, cr);
         cairo_restore(cr);
     }
