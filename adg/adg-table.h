@@ -22,6 +22,7 @@
 #define __ADG_TABLE_H__
 
 #include <adg/adg-entity.h>
+#include <adg/adg-pair.h>
 
 
 G_BEGIN_DECLS
@@ -94,6 +95,9 @@ void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
 AdgEntity *     adg_table_cell_get_value        (AdgTableCell   *cell);
 void            adg_table_cell_set_value        (AdgTableCell   *cell,
                                                  AdgEntity      *value);
+void            adg_table_cell_set_value_pos    (AdgTableCell   *cell,
+                                                 const AdgPair  *from_factor,
+                                                 const AdgPair  *to_factor);
 void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
                                                  const gchar    *value);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,

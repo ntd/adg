@@ -28,11 +28,25 @@
  * To define a table, you should add to its internal model any number
  * of row using adg_table_row_new() or adg_table_row_new_before().
  *
- * Every row should be segmented with different cells by using
+ * Every row could be segmented with different cells by using
  * adg_table_cell_new() or adg_table_cell_new_before(). Any cell can
  * be filled with a title and a value: the font to be used will be
  * picked up from the #AdgTableStyle got by resolving the
  * #AdgTable:table-dress property.
+ *
+ * The default title is placed at the upper left corner of the cell
+ * while the value is centered up to the bottom edge of the cell.
+ * Anyway, the value position can be customized by using the
+ * adg_table_cell_set_value_pos() method. Anyway, both entities react
+ * to the common map displacements.
+ *
+ * Some convenient functions to easily create title and value entities
+ * with plain text are provided: adg_table_cell_new_full(),
+ * adg_table_cell_set_text_title() and adg_table_cell_set_text_value().
+ * When using these methods keep in mind the underlying #AdgToyText
+ * entities will be displaced accordingly to the
+ * #AdgTableStyle:cell-padding value (not used when setting the
+ * entities throught other APIs).
  **/
 
 /**
@@ -59,6 +73,7 @@
 
 #include "adg-table.h"
 #include "adg-table-private.h"
+#include "adg-alignment.h"
 #include "adg-dress-builtins.h"
 #include "adg-path.h"
 #include "adg-line-style.h"
@@ -117,6 +132,9 @@ static gboolean         cell_set_title          (AdgTableCell   *cell,
                                                  AdgEntity      *title);
 static gboolean         cell_set_value          (AdgTableCell   *cell,
                                                  AdgEntity      *value);
+static void             cell_set_value_pos      (AdgTableCell   *cell,
+                                                 const AdgPair  *from_factor,
+                                                 const AdgPair  *to_factor);
 static void             cell_arrange_size       (AdgTableCell   *cell);
 static void             cell_arrange            (AdgTableCell   *cell);
 static void             cell_dispose            (AdgTableCell   *cell);
@@ -625,35 +643,19 @@ AdgTableCell *
 adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
                         const gchar *title, const gchar *value)
 {
-    AdgEntity *table_entity, *title_entity, *value_entity;
-    AdgTableStyle *table_style;
-    AdgDress table_dress, font_dress;
+    AdgTableCell *cell;
 
     g_return_val_if_fail(row != NULL, NULL);
 
-    table_entity = (AdgEntity *) row->table;
-    table_dress = adg_table_get_table_dress(row->table);
-    table_style = (AdgTableStyle *) adg_entity_style(table_entity, table_dress);
+    cell = cell_new(row, NULL, width, TRUE, name, NULL, NULL);
 
-    if (title != NULL) {
-        font_dress = adg_table_style_get_title_dress(table_style);
-        title_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "label", title,
-                                    "font-dress", font_dress, NULL);
-    } else {
-        title_entity = NULL;
-    }
+    if (title != NULL)
+        adg_table_cell_set_text_title(cell, title);
 
-    if (value != NULL) {
-        font_dress = adg_table_style_get_value_dress(table_style);
-        value_entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                                    "label", value,
-                                    "font-dress", font_dress, NULL);
-    } else {
-        value_entity = NULL;
-    }
+    if (value != NULL)
+        adg_table_cell_set_text_value(cell, value);
 
-    return cell_new(row, NULL, width, TRUE, name, title_entity, value_entity);
+    return cell;
 }
 
 /**
@@ -779,7 +781,9 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
     AdgTable *table;
     AdgEntity *entity;
     AdgTableStyle *table_style;
+    const AdgPair *padding;
     AdgDress table_dress, font_dress;
+    AdgMatrix map;
 
     g_return_if_fail(cell != NULL);
 
@@ -802,11 +806,13 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
     table_dress = adg_table_get_table_dress(table);
     table_style = (AdgTableStyle *) adg_entity_style((AdgEntity *) table,
                                                      table_dress);
+    padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_title_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                          "local-method", ADG_MIX_PARENT,
-                          "label", title,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", title,
                           "font-dress", font_dress, NULL);
+
+    cairo_matrix_init_translate(&map, padding->x, padding->y);
+    adg_entity_set_global_map(entity, &map);
 
     adg_table_cell_set_title(cell, entity);
 }
@@ -854,6 +860,28 @@ adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
 }
 
 /**
+ * adg_table_cell_set_value_pos:
+ * @cell: a valid #AdgTableCell
+ * @from_factor: the alignment factor on the value entity
+ * @to_factor: the alignment factor on the cell
+ *
+ * Sets a new custom position for the value entity of @cell. The
+ * @from_factor specifies the source point (as a fraction of the
+ * value extents) while the @to_factor is the destination point
+ * (specified as a fraction of the cell extents) the source point
+ * must be moved to.
+ **/
+void
+adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
+                             const AdgPair *to_factor)
+{
+    g_return_if_fail(cell != NULL);
+    g_return_if_fail(cell->value != NULL);
+
+    cell_set_value_pos(cell, from_factor, to_factor);
+}
+
+/**
  * adg_table_cell_set_text_value:
  * @cell: a valid #AdgTableCell
  * @value: a text string
@@ -868,7 +896,9 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
     AdgTable *table;
     AdgEntity *entity;
     AdgTableStyle *table_style;
+    const AdgPair *padding;
     AdgDress table_dress, font_dress;
+    AdgMatrix map;
 
     g_return_if_fail(cell != NULL);
 
@@ -891,11 +921,13 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
     table_dress = adg_table_get_table_dress(table);
     table_style = (AdgTableStyle *) adg_entity_style((AdgEntity *) table,
                                                      table_dress);
+    padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_value_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT,
-                          "local-method", ADG_MIX_PARENT,
-                          "label", value,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", value,
                           "font-dress", font_dress, NULL);
+
+    cairo_matrix_init_translate(&map, 0, -padding->y);
+    adg_entity_set_global_map(entity, &map);
 
     adg_table_cell_set_value(cell, entity);
 }
@@ -1192,6 +1224,7 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
     AdgTableRow *row;
     GSList *cell_node;
     AdgTableCell *cell;
+    AdgAlignment *alignment;
 
     if (!g_signal_parse_name(detailed_signal, G_TYPE_FROM_INSTANCE(table),
                              &signal_id, &detail, FALSE)) {
@@ -1218,13 +1251,17 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
             cell = cell_node->data;
 
             if (cell->title != NULL) {
+                alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
+
                 G_VA_COPY(var_copy, var_args);
-                g_signal_emit_valist(cell->title, signal_id, detail, var_copy);
+                g_signal_emit_valist(alignment, signal_id, detail, var_copy);
             }
 
             if (cell->value != NULL) {
+                alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+
                 G_VA_COPY(var_copy, var_args);
-                g_signal_emit_valist(cell->value, signal_id, detail, var_copy);
+                g_signal_emit_valist(alignment, signal_id, detail, var_copy);
             }
         }
     }
@@ -1361,6 +1398,8 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
     new_cell->title = NULL;
     new_cell->value = NULL;
     new_cell->extents.is_defined = FALSE;
+    new_cell->value_factor.x = 0.5;
+    new_cell->value_factor.y = 1;
 
     cell_set_title(new_cell, title);
     cell_set_value(new_cell, value);
@@ -1403,18 +1442,25 @@ cell_set_name(AdgTableCell *cell, const gchar *name)
 static gboolean
 cell_set_title(AdgTableCell *cell, AdgEntity *title)
 {
+    AdgAlignment *alignment;
+
     if (cell->title == title)
         return FALSE;
 
-    if (cell->title != NULL)
-        g_object_unref(cell->title);
+    if (cell->title != NULL) {
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
+        g_object_unref(alignment);
+    }
 
     cell->title = title;
 
     if (title != NULL) {
-        g_object_ref_sink(title);
-        adg_entity_set_parent(title, (AdgEntity *) cell->row->table);
-        adg_entity_set_local_method(title, ADG_MIX_PARENT);
+        alignment = adg_alignment_new_explicit(0, -1);
+        g_object_ref_sink(alignment);
+        adg_entity_set_parent((AdgEntity *) alignment,
+                              (AdgEntity *) cell->row->table);
+
+        adg_container_add((AdgContainer *) alignment, title);
     }
 
     return TRUE;
@@ -1423,58 +1469,84 @@ cell_set_title(AdgTableCell *cell, AdgEntity *title)
 static gboolean
 cell_set_value(AdgTableCell *cell, AdgEntity *value)
 {
+    AdgAlignment *alignment;
+
     if (cell->value == value)
         return FALSE;
 
-    if (cell->value != NULL)
-        g_object_unref(cell->value);
+    if (cell->value != NULL) {
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+        g_object_unref(alignment);
+    }
 
     cell->value = value;
 
     if (value != NULL) {
-        g_object_ref_sink(value);
-        adg_entity_set_parent(value, (AdgEntity *) cell->row->table);
-        adg_entity_set_local_method(value, ADG_MIX_PARENT);
+        alignment = adg_alignment_new_explicit(0.5, 0);
+        g_object_ref_sink(alignment);
+        adg_entity_set_parent((AdgEntity *) alignment,
+                              (AdgEntity *) cell->row->table);
+
+        adg_container_add((AdgContainer *) alignment, value);
     }
 
     return TRUE;
 }
 
 static void
+cell_set_value_pos(AdgTableCell *cell,
+                   const AdgPair *from_factor, const AdgPair *to_factor)
+{
+    AdgAlignment *alignment;
+
+    alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+
+    if (from_factor != NULL)
+        adg_alignment_set_factor(alignment, from_factor);
+
+    if (to_factor != NULL)
+        cell->value_factor = *to_factor;
+}
+
+static void
 cell_arrange_size(AdgTableCell *cell)
 {
-    AdgTableStyle *table_style;
     CpmlVector *size;
+    AdgAlignment *title_alignment, *value_alignment;
 
-    table_style = GET_TABLE_STYLE(cell->row->table);
     size = &cell->extents.size;
 
-    if (cell->title != NULL)
-        adg_entity_arrange(cell->title);
+    if (cell->title != NULL) {
+        title_alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
+        adg_entity_arrange((AdgEntity *) title_alignment);
+    }
 
-    if (cell->value != NULL)
-        adg_entity_arrange(cell->value);
+    if (cell->value != NULL) {
+        value_alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+        adg_entity_arrange((AdgEntity *) value_alignment);
+    }
 
     size->y = cell->row->extents.size.y;
 
     if (cell->width == 0) {
-        const CpmlVector *content_size;
+        AdgTableStyle *table_style = GET_TABLE_STYLE(cell->row->table);
+        const CpmlExtents *extents;
 
-        /* The width depends on the cell content (default: 0) */
+        /* The width depends on the cell content (default = 0) */
         size->x = 0;
 
         if (cell->title != NULL) {
-            content_size = &adg_entity_extents(cell->title)->size;
-            size->x = content_size->x;
+            extents = adg_entity_extents((AdgEntity *) title_alignment);
+            size->x = extents->size.x;
         }
 
         if (cell->value != NULL) {
-            content_size = &adg_entity_extents(cell->value)->size;
-            if (content_size->x > size->x)
-                size->x = content_size->x;
+            extents = adg_entity_extents((AdgEntity *) value_alignment);
+            if (extents->size.x > size->x)
+                size->x = extents->size.x;
         }
 
-        size->x += adg_table_style_get_cell_padding(table_style)->x * 2;
+        size->x += adg_table_style_get_cell_spacing(table_style)->x * 2;
     } else {
         size->x = cell->width;
     }
@@ -1484,43 +1556,32 @@ cell_arrange_size(AdgTableCell *cell)
 static void
 cell_arrange(AdgTableCell *cell)
 {
-    AdgTableStyle *table_style;
-    const AdgPair *padding;
-    const CpmlPair *org;
-    const CpmlVector *size, *content_size;
+    CpmlExtents *extents;
+    AdgAlignment *alignment;
     AdgMatrix map;
 
-    table_style = GET_TABLE_STYLE(cell->row->table);
-    padding = adg_table_style_get_cell_padding(table_style);
-    org = &cell->extents.org;
-    size = &cell->extents.size;
+    extents = &cell->extents;
 
     if (cell->title != NULL) {
-        content_size = &adg_entity_extents(cell->title)->size;
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
 
-        cairo_matrix_init_translate(&map,
-                                    org->x + padding->x,
-                                    org->y + content_size->y + padding->y);
-
-        adg_entity_set_global_map(cell->title, &map);
+        cairo_matrix_init_translate(&map, extents->org.x, extents->org.y);
+        adg_entity_set_global_map((AdgEntity *) alignment, &map);
     }
 
     if (cell->value != NULL) {
-        AdgMatrix global_map;
-        CpmlExtents extents;
+        AdgPair to;
 
-        adg_entity_get_global_map(cell->value, &global_map);
-        cpml_extents_copy(&extents, adg_entity_extents(cell->value));
-        cpml_extents_transform(&extents, &global_map);
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+        to.x = extents->size.x * cell->value_factor.x;
+        to.y = extents->size.y * cell->value_factor.y;
+        cpml_pair_add(&to, &extents->org);
 
-        cairo_matrix_init_translate(&map,
-                                    org->x + (size->x - extents.size.x) / 2,
-                                    org->y + size->y /* - padding->y */);
-
-        adg_entity_set_local_map(cell->value, &map);
+        cairo_matrix_init_translate(&map, to.x, to.y);
+        adg_entity_set_global_map((AdgEntity *) alignment, &map);
     }
 
-    cell->extents.is_defined = TRUE;
+    extents->is_defined = TRUE;
 }
 
 static void

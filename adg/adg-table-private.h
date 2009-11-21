@@ -37,6 +37,7 @@ struct _AdgTableCell {
     gboolean       has_frame;
     AdgEntity     *title;
     AdgEntity     *value;
+    AdgPair        value_factor;
     CpmlExtents    extents;
 };
 
