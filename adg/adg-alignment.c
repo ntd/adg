@@ -240,7 +240,7 @@ global_changed(AdgEntity *entity)
 {
     AdgEntityClass *entity_class;
     AdgEntityPrivate *entity_data;
-    const CpmlExtents *extents;
+    CpmlExtents *extents;
     AdgMatrix *global;
     AdgPair shift;
 
@@ -253,8 +253,10 @@ global_changed(AdgEntity *entity)
         /* The entities are displaced only if the extents are valid */
         AdgAlignmentPrivate *data = ((AdgAlignment *) entity)->data;
 
-        shift.x = extents->size.x * data->factor.x;
-        shift.y = extents->size.y * data->factor.y;
+        cpml_pair_copy(&shift, &extents->size);
+        cpml_pair_mul(&shift, &data->factor);
+
+        cpml_pair_sub(&extents->org, &shift);
     } else {
         shift.x = 0;
         shift.y = 0;
