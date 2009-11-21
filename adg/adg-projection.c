@@ -192,18 +192,14 @@ set_property(GObject *object, guint prop_id,
  * adg_projection_new:
  * @scheme: the scheme represented by this projection
  *
- * Creates a new projection entity. The #AdgEntity:local-method
- * property is set by default to #ADG_MIX_DISABLED, that is the
- * projection is not subject to any local transformations.
+ * Creates a new projection entity representing the selected @scheme.
  *
  * Returns: the newly created projection entity
  **/
 AdgProjection *
 adg_projection_new(AdgProjectionScheme scheme)
 {
-    return g_object_new(ADG_TYPE_PROJECTION,
-                        "local-method", ADG_MIX_DISABLED,
-                        "scheme", scheme, NULL);
+    return g_object_new(ADG_TYPE_PROJECTION, "scheme", scheme, NULL);
 }
 
 /**
@@ -389,39 +385,39 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
         break;
     case ADG_PROJECTION_FIRST_ANGLE:
         symbol = adg_path_new();
-        adg_path_move_to_explicit(symbol, 4, -19);
-        adg_path_line_to_explicit(symbol, 24, -24);
-        adg_path_line_to_explicit(symbol, 24, -4);
-        adg_path_line_to_explicit(symbol, 4, -9);
+        adg_path_move_to_explicit(symbol, 4, 19);
+        adg_path_line_to_explicit(symbol, 24, 24);
+        adg_path_line_to_explicit(symbol, 24, 4);
+        adg_path_line_to_explicit(symbol, 4, 9);
         adg_path_close(symbol);
-        adg_path_move_to_explicit(symbol, 49, -14);
-        adg_path_arc_to_explicit(symbol, 29, -14, 49, -14);
-        adg_path_move_to_explicit(symbol, 44, -14);
-        adg_path_arc_to_explicit(symbol, 34, -14, 44, -14);
+        adg_path_move_to_explicit(symbol, 49, 14);
+        adg_path_arc_to_explicit(symbol, 29, 14, 49, 14);
+        adg_path_move_to_explicit(symbol, 44, 14);
+        adg_path_arc_to_explicit(symbol, 34, 14, 44, 14);
 
         axis = adg_path_new();
-        adg_path_move_to_explicit(axis, 0, -14);
-        adg_path_line_to_explicit(axis, 53, -14);
+        adg_path_move_to_explicit(axis, 0, 14);
+        adg_path_line_to_explicit(axis, 53, 14);
         adg_path_move_to_explicit(axis, 39, 0);
-        adg_path_line_to_explicit(axis, 39, -28);
+        adg_path_line_to_explicit(axis, 39, 28);
         break;
     case ADG_PROJECTION_THIRD_ANGLE:
         symbol = adg_path_new();
-        adg_path_move_to_explicit(symbol, 29, -19);
-        adg_path_line_to_explicit(symbol, 49, -24);
-        adg_path_line_to_explicit(symbol, 49, -4);
-        adg_path_line_to_explicit(symbol, 29, -9);
+        adg_path_move_to_explicit(symbol, 29, 19);
+        adg_path_line_to_explicit(symbol, 49, 24);
+        adg_path_line_to_explicit(symbol, 49, 4);
+        adg_path_line_to_explicit(symbol, 29, 9);
         adg_path_close(symbol);
-        adg_path_move_to_explicit(symbol, 24, -14);
-        adg_path_arc_to_explicit(symbol, 4, -14, 24, -14);
-        adg_path_move_to_explicit(symbol, 19, -14);
-        adg_path_arc_to_explicit(symbol, 9, -14, 19, -14);
+        adg_path_move_to_explicit(symbol, 24, 14);
+        adg_path_arc_to_explicit(symbol, 4, 14, 24, 14);
+        adg_path_move_to_explicit(symbol, 19, 14);
+        adg_path_arc_to_explicit(symbol, 9, 14, 19, 14);
 
         axis = adg_path_new();
-        adg_path_move_to_explicit(axis, 0, -14);
-        adg_path_line_to_explicit(axis, 53, -14);
+        adg_path_move_to_explicit(axis, 0, 14);
+        adg_path_line_to_explicit(axis, 53, 14);
         adg_path_move_to_explicit(axis, 14, 0);
-        adg_path_line_to_explicit(axis, 14, -28);
+        adg_path_line_to_explicit(axis, 14, 28);
         break;
     default:
         g_assert_not_reached();
