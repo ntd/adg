@@ -186,17 +186,14 @@ set_property(GObject *object, guint prop_id,
 /**
  * adg_logo_new:
  *
- * Creates a new logo entity. The #AdgEntity:local-method
- * property is set by default to #ADG_MIX_DISABLED, that is the
- * logo is not subject to any local transformations.
+ * Creates a new logo entity.
  *
  * Returns: the newly created logo entity
  **/
 AdgLogo *
 adg_logo_new(void)
 {
-    return g_object_new(ADG_TYPE_LOGO,
-                        "local-method", ADG_MIX_DISABLED, NULL);
+    return g_object_new(ADG_TYPE_LOGO, NULL);
 }
 
 /**
@@ -376,18 +373,18 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->symbol == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 3, -5);
-        adg_path_line_to_explicit(path, 11, -13);
-        adg_path_arc_to_explicit(path, 15, -9, 11, -5);
-        adg_path_line_to_explicit(path, 11, -12.5);
+        adg_path_move_to_explicit(path, 3, 13);
+        adg_path_line_to_explicit(path, 11, 5);
+        adg_path_arc_to_explicit(path, 15, 9, 11, 13);
+        adg_path_line_to_explicit(path, 11, 5.5);
 
-        adg_path_move_to_explicit(path, 19, -13);
-        adg_path_arc_to_explicit(path, 15, -9, 19, -5);
-        adg_path_line_to_explicit(path, 19, -7);
-        adg_path_line_to_explicit(path, 18, -7);
+        adg_path_move_to_explicit(path, 19, 5);
+        adg_path_arc_to_explicit(path, 15, 9, 19, 13);
+        adg_path_line_to_explicit(path, 19, 11);
+        adg_path_line_to_explicit(path, 18, 11);
 
-        adg_path_move_to_explicit(path, 10.5, -7);
-        adg_path_line_to_explicit(path, 7, -7);
+        adg_path_move_to_explicit(path, 10.5, 11);
+        adg_path_line_to_explicit(path, 7, 11);
 
         data_class->symbol = path;
         extents->is_defined = FALSE;
@@ -396,12 +393,12 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->screen == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 2, -2);
-        adg_path_line_to_explicit(path, 23, -2);
+        adg_path_move_to_explicit(path, 2, 2);
+        adg_path_line_to_explicit(path, 23, 2);
         adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 23, -16);
+        adg_path_line_to_explicit(path, 23, 16);
         adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 2, -16);
+        adg_path_line_to_explicit(path, 2, 16);
         adg_path_fillet(path, 5);
         adg_path_close(path);
         adg_path_fillet(path, 5);
@@ -415,8 +412,8 @@ arrange_class(AdgLogoClass *logo_class)
 
         adg_path_move_to_explicit(path, 0, 0);
         adg_path_line_to_explicit(path, 25, 0);
-        adg_path_line_to_explicit(path, 25, -18);
-        adg_path_line_to_explicit(path, 0, -18);
+        adg_path_line_to_explicit(path, 25, 18);
+        adg_path_line_to_explicit(path, 0, 18);
         adg_path_close(path);
 
         data_class->frame = path;
