@@ -187,6 +187,11 @@ cpml_arc_length(const CpmlPrimitive *arc)
     return r*delta;
 }
 
+/* Hardcoded macro to save a lot of typing and make the
+ * cpml_arc_extents() code clearer */
+#define ANGLE_INCLUDED(d) \
+    ((start < (d) && end > (d)) || (start > (d) && end < (d)))
+
 /**
  * cpml_arc_extents:
  * @arc: the #CpmlPrimitive arc data
@@ -206,30 +211,28 @@ cpml_arc_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
         return;
 
     /* Add the right quadrant point if needed */
-    if ((start < 0 && end > 0) ||
-        (end < M_PI * 2 && start > M_PI * 2)) {
+    if (ANGLE_INCLUDED(0) || ANGLE_INCLUDED(M_PI * 2)) {
         pair.x = center.x + r;
         pair.y = center.y;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the bottom quadrant point if needed */
-    if ((start < M_PI_2 && end > M_PI_2) ||
-        (end < M_PI_2 * 5 && start > M_PI_2 * 5)) {
+    if (ANGLE_INCLUDED(M_PI_2) || ANGLE_INCLUDED(M_PI_2 * 5)) {
         pair.x = center.x;
         pair.y = center.y + r;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the left quadrant point if needed */
-    if (start < M_PI && end > M_PI) {
+    if (ANGLE_INCLUDED(M_PI)) {
         pair.x = center.x - r;
         pair.y = center.y;
         cpml_extents_pair_add(extents, &pair);
     }
 
     /* Add the top quadrant point if needed */
-    if (start < M_PI_2 * 3 && end > M_PI) {
+    if (ANGLE_INCLUDED(M_PI_2 * 3) || ANGLE_INCLUDED(-M_PI_2)) {
         pair.x = center.x;
         pair.y = center.y - r;
         cpml_extents_pair_add(extents, &pair);
@@ -570,16 +573,24 @@ get_angles(const CpmlPair *p, const CpmlPair *center,
          * of a circle: return by convention start=start end=start+2PI */
         *end = *start + M_PI*2;
     } else {
-        /* Calculate the mid and end angle */
+        /* Calculate the mid and end angle: cpml_vector_angle()
+         * returns an angle between -M_PI and M_PI */
         cpml_pair_sub(cpml_pair_copy(&vector, &p[1]), center);
         mid = cpml_vector_angle(&vector);
         cpml_pair_sub(cpml_pair_copy(&vector, &p[2]), center);
         *end = cpml_vector_angle(&vector);
 
         if (*end > *start) {
-            if (mid > *end || mid < *start)
+            /* If the middle angle is outside the start..end range,
+             * the arc should be reversed (that is, start must
+             * be greather than end) */
+            if (mid < *start || mid > *end)
                 *start += M_PI*2;
         } else {
+            /* Here the arc is reversed: if the middle angle is
+             * outside the end..start range, the arc should be
+             * re-reversed to get a straight arc (that is, end
+             * must be greather than start) */
             if (mid < *end || mid > *start)
                 *end += M_PI*2;
         }
