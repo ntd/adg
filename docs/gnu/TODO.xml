@@ -136,7 +136,7 @@ needed to generate this drawing.</para>
    be expressed as references to those labeled points instead of using
    explicit coordinates.</listitem>
    <listitem override="disc">Add AdgTable, a container for AdgToyText in a framed environment.</listitem>
-   <listitem>Add AdgTitleBlock, a complex entity in global space used to frame the
+   <listitem override="disc">Add AdgTitleBlock, a complex entity in global space used to frame the
    sheet and show the general drawing data (title, scale, date and so on).</listitem>
    <listitem override="disc">The dressing feature needs more attention: they are still not well
    polished and always using the "dress" property will likely give name
