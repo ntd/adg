@@ -26,6 +26,7 @@ main(gint argc, gchar **argv)
     GtkWidget *widget;
 
     gtk_init(&argc, &argv);
+    //adg_switch_extents(TRUE);
 
     path = demo_find_data_file("adg-demo.ui");
     if (path == NULL) {
@@ -328,9 +329,9 @@ sample_add_sheet(AdgCanvas *canvas)
     AdgLogo *logo;
     AdgMatrix map;
 
-    logo = adg_logo_new();
     title_block = adg_title_block_new();
 
+    logo = adg_logo_new();
     cairo_matrix_init_scale(&map, 2, 2);
     adg_entity_set_global_map(ADG_ENTITY(logo), &map);
 
@@ -340,12 +341,14 @@ sample_add_sheet(AdgCanvas *canvas)
                  "date", "",
                  "drawing", "TEST123",
                  "logo", logo,
-                 "projection", adg_projection_new(ADG_PROJECTION_THIRD_ANGLE),
+                 "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
                  "scale", "NONE",
                  "size", "A4",
                  NULL);
+
     cairo_matrix_init_translate(&map, 800, 600);
     adg_entity_set_global_map(ADG_ENTITY(title_block), &map);
+
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(title_block));
 }
 
@@ -449,8 +452,6 @@ sample_add_stuff(AdgCanvas *canvas, AdgModel *model)
 {
     AdgToyText *toy_text;
     AdgMatrix map;
-    AdgTable *table;
-    AdgTableRow *row;
     const AdgPair *pair;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
@@ -467,18 +468,6 @@ sample_add_stuff(AdgCanvas *canvas, AdgModel *model)
     cairo_matrix_init_translate(&map, 10, 50 + 30 * 2);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
-
-    table = adg_table_new();
-    cairo_matrix_init_translate(&map, 500, 500);
-    adg_entity_set_global_map(ADG_ENTITY(table), &map);
-    row = adg_table_row_new(table);
-    adg_table_cell_new(row, 40);
-    adg_table_cell_new_full(row, 200, "title", "TITLE", "Title of the drawing");
-    row = adg_table_row_new(table);
-    adg_table_cell_new(row, 40);
-    adg_table_cell_new_full(row, 100, "file", "FILE", "File name");
-    adg_table_cell_new_full(row, 100, "author", "AUTHOR", "Author");
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(table));
 }
 
 
@@ -913,6 +902,7 @@ alignment_canvas(void)
 
     path = non_trivial_model();
     canvas = adg_canvas_new();
+    cairo_matrix_init_scale(&map, 2, 2);
 
     axis = adg_path_new();
     adg_path_move_to_explicit(axis, -15, 0);
@@ -924,34 +914,48 @@ alignment_canvas(void)
     stroke = adg_stroke_new(ADG_TRAIL(axis));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
 
+    /* Original path  */
     alignment = adg_alignment_new_explicit(0, 0);
     stroke = adg_stroke_new(ADG_TRAIL(path));
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
 
+    /* Path scaled in local space */
     alignment = adg_alignment_new_explicit(0.5, 0.5);
     stroke = adg_stroke_new(ADG_TRAIL(path));
+    adg_entity_set_local_map(ADG_ENTITY(stroke), &map);
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
 
     alignment = adg_alignment_new_explicit(1, 1);
     stroke = adg_stroke_new(ADG_TRAIL(path));
+    adg_entity_set_local_map(ADG_ENTITY(stroke), &map);
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
 
-    alignment = adg_alignment_new_explicit(0.25, -0.25);
+    /* Path scaled in global space */
+    alignment = adg_alignment_new_explicit(0, 0);
     stroke = adg_stroke_new(ADG_TRAIL(path));
+    cairo_matrix_init_scale(&map, 2, 2);
+    adg_entity_set_global_map(ADG_ENTITY(stroke), &map);
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
 
-    alignment = adg_alignment_new_explicit(-0.75, 0.25);
+    alignment = adg_alignment_new_explicit(-0.5, -0.5);
     stroke = adg_stroke_new(ADG_TRAIL(path));
+    adg_entity_set_global_map(ADG_ENTITY(stroke), &map);
+    adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
+
+    alignment = adg_alignment_new_explicit(-0.25, -0.25);
+    stroke = adg_stroke_new(ADG_TRAIL(path));
+    adg_entity_set_global_map(ADG_ENTITY(stroke), &map);
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(stroke));
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(alignment));
 
     /* Set a decent start position and zoom */
     cairo_matrix_init_scale(&map, 15, 15);
-    cairo_matrix_translate(&map, 15, 15);
+    cairo_matrix_translate(&map, 20, 20);
     adg_entity_set_local_map(ADG_ENTITY(canvas), &map);
 
     cairo_matrix_init_translate(&map, 20, 20);
