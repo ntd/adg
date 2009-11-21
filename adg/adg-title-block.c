@@ -60,7 +60,6 @@ enum {
 };
 
 
-static void             dispose         (GObject        *object);
 static void             finalize        (GObject        *object);
 static void             get_property    (GObject        *object,
                                          guint           prop_id,
@@ -102,7 +101,6 @@ adg_title_block_class_init(AdgTitleBlockClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgTitleBlockPrivate));
 
-    gobject_class->dispose = dispose;
     gobject_class->finalize = finalize;
     gobject_class->set_property = set_property;
     gobject_class->get_property = get_property;
@@ -180,25 +178,6 @@ adg_title_block_init(AdgTitleBlock *title_block)
     data->projection = NULL;
 
     title_block->data = data;
-}
-
-static void
-dispose(GObject *object)
-{
-    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
-
-    if (data->logo != NULL) {
-        g_object_unref(data->logo);
-        data->logo = NULL;
-    }
-
-    if (data->projection != NULL) {
-        g_object_unref(data->projection);
-        data->projection = NULL;
-    }
-
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
-        PARENT_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -835,23 +814,24 @@ set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
     AdgTitleBlockPrivate *data;
     AdgTable *table;
     AdgTableCell *cell;
+    AdgPair from, to;
 
     data = title_block->data;
 
     if (logo == data->logo)
         return FALSE;
 
-    if (data->logo != NULL)
-        g_object_unref(data->logo);
-
     data->logo = logo;
-
-    if (data->logo != NULL)
-        g_object_ref_sink(data->logo);
+    from.x = 0.5;
+    from.y = 0.5;
+    to.x = 0.5;
+    to.y = 0;
 
     table = get_table(title_block);
     cell = adg_table_get_cell(table, "logo");
     adg_table_cell_set_value(cell, data->logo);
+    adg_table_cell_set_value_pos(cell, &from, &to);
+
     return TRUE;
 }
 
@@ -861,22 +841,21 @@ set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
     AdgTitleBlockPrivate *data;
     AdgTable *table;
     AdgTableCell *cell;
+    AdgPair center;
 
     data = title_block->data;
 
     if (projection == data->projection)
         return FALSE;
 
-    if (data->projection != NULL)
-        g_object_unref(data->projection);
-
     data->projection = projection;
-
-    if (data->projection != NULL)
-        g_object_ref_sink(data->projection);
+    center.x = 0.5;
+    center.y = 0.5;
 
     table = get_table(title_block);
     cell = adg_table_get_cell(table, "projection");
     adg_table_cell_set_value(cell, data->projection);
+    adg_table_cell_set_value_pos(cell, &center, &center);
+
     return TRUE;
 }
