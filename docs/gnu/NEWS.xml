@@ -6,6 +6,26 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.5.4">
+<title>ADG 0.5.4</title>
+
+<para>AdgTable now provides a generic tabular entity customizable with
+AdgTableStyle. It supports unlimited rows with independent cells.</para>
+
+<para>Some new special entities, such as AdgLogo (the official ADG logo)
+and AdgProjection (showing the drawing projection scheme) have
+been implemented.</para>
+
+<para>A bare title block entity, AdgTitleBlock, is now available: it is
+allowed to set its cells content either by using string values or
+custom entities.</para>
+
+<para>AdgAlignment is a new container entity that allows to traslate its
+children of a custom factor of the children boundary box: any
+entity can now be right aligned or centered.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.5.3">
 <title>ADG 0.5.3</title>
 
