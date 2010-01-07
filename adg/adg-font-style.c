@@ -205,7 +205,7 @@ dispose(GObject *object)
     unset_font(font_style);
     unset_face(font_style);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 

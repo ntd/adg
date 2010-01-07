@@ -171,7 +171,7 @@ dispose(GObject *object)
     while (data->children != NULL)
         adg_container_remove(container, (AdgEntity *) data->children->data);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -276,9 +276,16 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
 GSList *
 adg_container_get_children(AdgContainer *container)
 {
+    AdgContainerClass *klass;
+
     g_return_val_if_fail(ADG_IS_CONTAINER(container), NULL);
 
-    return ADG_CONTAINER_GET_CLASS(container)->get_children(container);
+    klass = ADG_CONTAINER_GET_CLASS(container);
+
+    if (klass->get_children == NULL)
+        return NULL;
+
+    return klass->get_children(container);
 }
 
 /**
@@ -407,14 +414,18 @@ adg_container_propagate_valist(AdgContainer *container,
 static void
 global_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->global_changed(entity);
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
     adg_container_propagate_by_name((AdgContainer *) entity, "global-changed");
 }
 
 static void
 local_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
+
     adg_container_propagate_by_name((AdgContainer *) entity, "local-changed");
 }
 

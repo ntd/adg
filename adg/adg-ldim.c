@@ -169,7 +169,7 @@ dispose(GObject *object)
 {
     dispose_markers((AdgLDim *) object);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -453,7 +453,8 @@ local_changed(AdgEntity *entity)
 {
     unset_trail((AdgLDim *) entity);
 
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
@@ -470,7 +471,7 @@ invalidate(AdgEntity *entity)
     data->shift.is_arranged = FALSE;
     unset_trail(ldim);
 
-    if (PARENT_ENTITY_CLASS->invalidate != NULL)
+    if (PARENT_ENTITY_CLASS->invalidate)
         PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
@@ -489,7 +490,8 @@ arrange(AdgEntity *entity)
     gint n;
     CpmlExtents extents;
 
-    PARENT_ENTITY_CLASS->arrange(entity);
+    if (PARENT_ENTITY_CLASS->arrange)
+        PARENT_ENTITY_CLASS->arrange(entity);
 
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) ldim;

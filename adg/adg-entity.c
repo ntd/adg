@@ -300,7 +300,7 @@ dispose(GObject *object)
         data->hash_styles = NULL;
     }
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -1160,12 +1160,10 @@ real_invalidate(AdgEntity *entity)
     AdgEntityPrivate *data = entity->data;
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
-    if (klass->invalidate == NULL) {
-        /* Do not raise any warning if invalidate() is not defined,
-         * assuming entity does not have cache to be cleared */
-    } else {
+    /* Do not raise any warning if invalidate() is not defined,
+     * assuming entity does not have additional cache to be cleared */
+    if (klass->invalidate)
         klass->invalidate(entity);
-    }
 
     data->extents.is_defined = FALSE;
 }
@@ -1175,11 +1173,7 @@ real_arrange(AdgEntity *entity)
 {
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
-    if (klass->arrange == NULL) {
-        /* The arrange() method must be defined */
-        g_warning(_("%s: `arrange' method not implemented for type `%s'"),
-                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
-    } else {
+    if (klass->arrange) {
         AdgEntityPrivate *data;
         AdgMatrix *ctm;
 
@@ -1191,6 +1185,10 @@ real_arrange(AdgEntity *entity)
         adg_matrix_transform(ctm, &data->local_matrix, ADG_TRANSFORM_BEFORE);
 
         klass->arrange(entity);
+    } else {
+        /* The arrange() method must be defined */
+        g_warning(_("%s: `arrange' method not implemented for type `%s'"),
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
     }
 }
 
@@ -1200,11 +1198,7 @@ real_render(AdgEntity *entity, cairo_t *cr)
     AdgEntityPrivate *data = entity->data;
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
-    if (klass->render == NULL) {
-        /* The render method must be defined */
-        g_warning(_("%s: `render' method not implemented for type `%s'"),
-                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
-    } else {
+    if (klass->render) {
         /* Before the rendering, the entity should be arranged */
         g_signal_emit(entity, signals[ARRANGE], 0);
 
@@ -1223,5 +1217,9 @@ real_render(AdgEntity *entity, cairo_t *cr)
 
         klass->render(entity, cr);
         cairo_restore(cr);
+    } else {
+        /* The render method must be defined */
+        g_warning(_("%s: `render' method not implemented for type `%s'"),
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
     }
 }

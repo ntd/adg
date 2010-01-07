@@ -125,7 +125,7 @@ dispose(GObject *object)
 
     adg_stroke_set_trail(stroke, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -279,7 +279,7 @@ local_changed(AdgEntity *entity)
 
     adg_matrix_copy(&old, adg_entity_local_matrix(entity));
 
-    if (PARENT_ENTITY_CLASS->local_changed != NULL)
+    if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
     new = adg_entity_local_matrix(entity);

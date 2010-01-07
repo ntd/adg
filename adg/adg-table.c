@@ -223,7 +223,7 @@ dispose(GObject *object)
     if (data->rows != NULL)
         g_slist_foreach(data->rows, (GFunc) row_dispose, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -244,7 +244,7 @@ finalize(GObject *object)
     if (data->cell_names != NULL)
         g_hash_table_destroy(data->cell_names);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -1017,14 +1017,18 @@ adg_table_cell_extents(AdgTableCell *cell)
 static void
 global_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->global_changed(entity);
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
     propagate((AdgTable *) entity, "global-changed");
 }
 
 static void
 local_changed(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
+
     propagate((AdgTable *) entity, "local-changed");
 }
 

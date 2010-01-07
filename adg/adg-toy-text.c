@@ -143,7 +143,7 @@ finalize(GObject *object)
     unset_font(toy_text);
     unset_glyphs(toy_text);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -292,7 +292,10 @@ global_changed(AdgEntity *entity)
     const AdgMatrix *new;
 
     adg_matrix_copy(&old, adg_entity_global_matrix(entity));
-    PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
     new = adg_entity_global_matrix(entity);
 
     /* If scaling or rotation has changed, invalidate the font */
@@ -309,7 +312,10 @@ local_changed(AdgEntity *entity)
     CpmlExtents extents;
 
     adg_matrix_copy(&old, adg_entity_local_matrix(entity));
-    PARENT_ENTITY_CLASS->local_changed(entity);
+
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
+
     new = adg_entity_local_matrix(entity);
 
     /* If scaling or rotation has changed, invalidate the font */
@@ -335,8 +341,8 @@ invalidate(AdgEntity *entity)
     unset_font((AdgToyText *) entity);
     unset_glyphs((AdgToyText *) entity);
 
-    if (PARENT_ENTITY_CLASS->invalidate != NULL)
-        return PARENT_ENTITY_CLASS->invalidate(entity);
+    if (PARENT_ENTITY_CLASS->invalidate)
+        PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
 static void

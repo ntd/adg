@@ -151,7 +151,7 @@ dispose(GObject *object)
 
     adg_edges_set_source(edges, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -160,7 +160,7 @@ finalize(GObject *object)
 {
     clear_cpml_path((AdgEdges *) object);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -317,7 +317,7 @@ clear(AdgModel *model)
 {
     clear_cpml_path((AdgEdges *) model);
 
-    if (PARENT_MODEL_CLASS->clear != NULL)
+    if (PARENT_MODEL_CLASS->clear)
         PARENT_MODEL_CLASS->clear(model);
 }
 

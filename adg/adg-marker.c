@@ -180,7 +180,7 @@ dispose(GObject *object)
     adg_marker_set_model(marker, NULL);
     adg_marker_set_segment(marker, NULL, 0);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -506,7 +506,8 @@ adg_marker_model(AdgMarker *marker)
         /* Model not found: regenerate it */
         AdgMarkerClass *marker_class = ADG_MARKER_GET_CLASS(marker);
 
-        adg_marker_set_model(marker, marker_class->create_model(marker));
+        if (marker_class->create_model)
+            adg_marker_set_model(marker, marker_class->create_model(marker));
     }
 
     return data->model;
@@ -587,7 +588,8 @@ local_changed(AdgEntity *entity)
 
     adg_entity_set_local_map(entity, &map);
 
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
 }
 
 static void

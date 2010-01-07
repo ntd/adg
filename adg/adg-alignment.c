@@ -281,7 +281,8 @@ global_changed(AdgEntity *entity)
 static void
 arrange(AdgEntity *entity)
 {
-    PARENT_ENTITY_CLASS->arrange(entity);
+    if (PARENT_ENTITY_CLASS->arrange)
+        PARENT_ENTITY_CLASS->arrange(entity);
 
     /* Force a recomputation of the children position */
     adg_entity_global_changed(entity);

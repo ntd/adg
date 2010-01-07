@@ -179,7 +179,7 @@ dispose(GObject *object)
         data->org2 = NULL;
     }
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -535,7 +535,8 @@ local_changed(AdgEntity *entity)
 {
     unset_trail((AdgADim *) entity);
 
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
@@ -554,7 +555,7 @@ invalidate(AdgEntity *entity)
     adg_point_invalidate(data->org1);
     adg_point_invalidate(data->org2);
 
-    if (PARENT_ENTITY_CLASS->invalidate != NULL)
+    if (PARENT_ENTITY_CLASS->invalidate)
         PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
@@ -569,7 +570,8 @@ arrange(AdgEntity *entity)
     AdgPair ref1, ref2, base1, base12, base2;
     AdgPair pair;
 
-    PARENT_ENTITY_CLASS->arrange(entity);
+    if (PARENT_ENTITY_CLASS->arrange)
+        PARENT_ENTITY_CLASS->arrange(entity);
 
     adim = (AdgADim *) entity;
     dim = (AdgDim *) adim;

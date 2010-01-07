@@ -192,7 +192,7 @@ finalize(GObject *object)
     g_free(data->author);
     g_free(data->date);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 

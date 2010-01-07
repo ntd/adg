@@ -324,7 +324,7 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     cairo_matrix_init_translate(&matrix, -extents.org.x, -extents.org.y);
     cairo_pattern_set_matrix(pattern, &matrix);
 
-    if (PARENT_STYLE_CLASS->apply != NULL)
+    if (PARENT_STYLE_CLASS->apply)
         PARENT_STYLE_CLASS->apply(style, entity, cr);
 }
 
@@ -345,7 +345,7 @@ set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
         adg_fill_style_set_pattern(fill_style, NULL);
     }
 
-    if (PARENT_FILL_STYLE_CLASS->set_extents != NULL)
+    if (PARENT_FILL_STYLE_CLASS->set_extents)
         PARENT_FILL_STYLE_CLASS->set_extents(fill_style, &new);
 }
 

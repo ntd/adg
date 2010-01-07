@@ -218,7 +218,7 @@ dispose(GObject *object)
         data->pos = NULL;
     }
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -231,7 +231,7 @@ finalize(GObject *object)
     g_free(data->min);
     g_free(data->max);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -945,10 +945,14 @@ arrange(AdgEntity *entity)
                           (AdgEntity *) data->quote.value);
 
         if (data->value == NULL) {
-            /* Automatically generate the value text */
-            gchar *text = ADG_DIM_GET_CLASS(dim)->default_value(dim);
-            adg_toy_text_set_label(data->quote.value, text);
-            g_free(text);
+            AdgDimClass *klass = ADG_DIM_GET_CLASS(dim);
+
+            if (klass->default_value) {
+                /* Automatically generate the value text */
+                gchar *text = klass->default_value(dim);
+                adg_toy_text_set_label(data->quote.value, text);
+                g_free(text);
+            }
         } else {
             adg_toy_text_set_label(data->quote.value, data->value);
         }
@@ -1035,7 +1039,8 @@ global_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    PARENT_ENTITY_CLASS->global_changed(entity);
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
 
     if (data->quote.container != NULL)
         adg_entity_global_changed((AdgEntity *) data->quote.container);
@@ -1046,7 +1051,8 @@ local_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
 
     if (data->quote.container != NULL)
         adg_entity_local_changed((AdgEntity *) data->quote.container);

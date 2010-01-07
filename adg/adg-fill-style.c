@@ -241,10 +241,15 @@ void
 adg_fill_style_set_extents(AdgFillStyle *fill_style,
                            const CpmlExtents *extents)
 {
+    AdgFillStyleClass *klass;
+
     g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
     g_return_if_fail(extents != NULL);
 
-    ADG_FILL_STYLE_GET_CLASS(fill_style)->set_extents(fill_style, extents);
+    klass = ADG_FILL_STYLE_GET_CLASS(fill_style);
+
+    if (klass->set_extents)
+        klass->set_extents(fill_style, extents);
 }
 
 

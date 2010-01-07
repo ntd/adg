@@ -114,7 +114,7 @@ finalize(GObject *object)
 {
     clear((AdgModel *) object);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -237,9 +237,16 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 CpmlPath *
 adg_trail_get_cpml_path(AdgTrail *trail)
 {
+    AdgTrailClass *klass;
+
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
-    return ADG_TRAIL_GET_CLASS(trail)->get_cpml_path(trail);
+    klass = ADG_TRAIL_GET_CLASS(trail);
+
+    if (klass->get_cpml_path == NULL)
+        return NULL;
+
+    return klass->get_cpml_path(trail);
 }
 
 /**
@@ -357,7 +364,7 @@ clear(AdgModel *model)
     data->cairo_path.num_data = 0;
     data->extents.is_defined = FALSE;
 
-    if (PARENT_MODEL_CLASS->clear != NULL)
+    if (PARENT_MODEL_CLASS->clear)
         PARENT_MODEL_CLASS->clear(model);
 }
 

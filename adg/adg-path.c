@@ -149,7 +149,7 @@ finalize(GObject *object)
     g_array_free(data->cpml.array, TRUE);
     clear_operation(path);
 
-    if (PARENT_OBJECT_CLASS->finalize != NULL)
+    if (PARENT_OBJECT_CLASS->finalize)
         PARENT_OBJECT_CLASS->finalize(object);
 }
 
@@ -819,7 +819,7 @@ clear(AdgModel *model)
 static void
 clear_parent(AdgModel *model)
 {
-    if (PARENT_MODEL_CLASS->clear != NULL)
+    if (PARENT_MODEL_CLASS->clear)
         PARENT_MODEL_CLASS->clear(model);
 }
 
@@ -828,7 +828,7 @@ changed(AdgModel *model)
 {
     clear_parent(model);
 
-    if (PARENT_MODEL_CLASS->changed != NULL)
+    if (PARENT_MODEL_CLASS->changed)
         PARENT_MODEL_CLASS->changed(model);
 }
 

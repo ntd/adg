@@ -120,7 +120,7 @@ dispose(GObject *object)
 {
     dispose_marker((AdgRDim *) object);
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -230,7 +230,8 @@ local_changed(AdgEntity *entity)
 {
     unset_trail((AdgRDim *) entity);
 
-    PARENT_ENTITY_CLASS->local_changed(entity);
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
@@ -246,7 +247,7 @@ invalidate(AdgEntity *entity)
     data->geometry_arranged = FALSE;
     unset_trail(rdim);
 
-    if (PARENT_ENTITY_CLASS->invalidate != NULL)
+    if (PARENT_ENTITY_CLASS->invalidate)
         PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
@@ -263,7 +264,8 @@ arrange(AdgEntity *entity)
     AdgPair ref1, ref2, base;
     AdgPair pair;
 
-    PARENT_ENTITY_CLASS->arrange(entity);
+    if (PARENT_ENTITY_CLASS->arrange)
+        PARENT_ENTITY_CLASS->arrange(entity);
 
     rdim = (AdgRDim *) entity;
     dim = (AdgDim *) rdim;

@@ -236,7 +236,7 @@ dispose(GObject *object)
         adg_model_remove_dependency(model, entity);
     }
 
-    if (PARENT_OBJECT_CLASS->dispose != NULL)
+    if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
 
@@ -393,10 +393,17 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
 const AdgPair *
 adg_model_named_pair(AdgModel *model, const gchar *name)
 {
+    AdgModelClass *klass;
+
     g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
     g_return_val_if_fail(name != NULL, NULL);
 
-    return ADG_MODEL_GET_CLASS(model)->named_pair(model, name);
+    klass = ADG_MODEL_GET_CLASS(model);
+
+    if (klass->named_pair == NULL)
+        return NULL;
+
+    return klass->named_pair(model, name);
 }
 
 /**
