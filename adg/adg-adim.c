@@ -635,8 +635,10 @@ arrange(AdgEntity *entity)
         cairo_matrix_rotate(&map, angle);
         adg_entity_set_global_map(quote_entity, &map);
 
-        adg_entity_get_global_map(quote_entity, &data->quote.global_map);
-        adg_entity_get_local_map(quote_entity, &data->quote.local_map);
+        adg_matrix_copy(&data->quote.global_map,
+                        adg_entity_get_global_map(quote_entity));
+        adg_matrix_copy(&data->quote.local_map,
+                        adg_entity_get_local_map(quote_entity));
     }
 
     /* Signal to the markers (if any) that the path has changed */

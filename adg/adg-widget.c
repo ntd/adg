@@ -455,7 +455,7 @@ get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
     if (canvas == NULL)
         return FALSE;
 
-    adg_entity_get_local_map((AdgEntity *) canvas, map);
+    adg_matrix_copy(map, adg_entity_get_local_map((AdgEntity *) canvas));
     adg_matrix_copy(inverted, map);
 
     return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;

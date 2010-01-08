@@ -81,15 +81,13 @@ AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
 AdgEntity *      adg_entity_get_parent          (AdgEntity       *entity);
 void             adg_entity_set_parent          (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-void             adg_entity_get_global_map      (AdgEntity       *entity,
-                                                 AdgMatrix       *map);
+const AdgMatrix *adg_entity_get_global_map      (AdgEntity       *entity);
 void             adg_entity_set_global_map      (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 void             adg_entity_transform_global_map(AdgEntity       *entity,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformMode mode);
-void             adg_entity_get_local_map       (AdgEntity       *entity,
-                                                 AdgMatrix       *map);
+const AdgMatrix *adg_entity_get_local_map       (AdgEntity       *entity);
 void             adg_entity_set_local_map       (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 void             adg_entity_transform_local_map (AdgEntity       *entity,

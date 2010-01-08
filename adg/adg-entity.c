@@ -444,21 +444,22 @@ adg_entity_get_canvas(AdgEntity *entity)
 /**
  * adg_entity_get_global_map:
  * @entity: an #AdgEntity object
- * @map: where to store the global map
  *
  * Gets the transformation to be used to compute the global matrix
  * of @entity and store it in @map.
+ *
+ * Returns: the global map or %NULL on errors
  **/
-void
-adg_entity_get_global_map(AdgEntity *entity, AdgMatrix *map)
+const AdgMatrix *
+adg_entity_get_global_map(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(map != NULL);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     data = entity->data;
-    adg_matrix_copy(map, &data->global_map);
+
+    return &data->global_map;
 }
 
 /**
@@ -490,10 +491,10 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  * logically equivalent to the following:
  *
  * |[
- * AdgMatrix tmp_map;
- * adg_entity_get_global_map(entity, &tmp_map);
- * adg_matrix_transform(&tmp_map, transformation, mode);
- * adg_entity_set_global_map(entity, &tmp_map);
+ * AdgMatrix map;
+ * adg_matrix_copy(&map, adg_entity_get_global_map(entity));
+ * adg_matrix_transform(&map, transformation, mode);
+ * adg_entity_set_global_map(entity, &map);
  * ]|
  **/
 void
@@ -519,22 +520,22 @@ adg_entity_transform_global_map(AdgEntity *entity,
 /**
  * adg_entity_get_local_map:
  * @entity: an #AdgEntity object
- * @map: where to store the local map
  *
  * Gets the transformation to be used to compute the local matrix
  * of @entity and store it in @map.
+ *
+ * Returns: the local map or %NULL on errors
  **/
-void
-adg_entity_get_local_map(AdgEntity *entity, AdgMatrix *map)
+const AdgMatrix *
+adg_entity_get_local_map(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_return_if_fail(map != NULL);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     data = entity->data;
 
-    adg_matrix_copy(map, &data->local_map);
+    return &data->local_map;
 }
 
 /**
@@ -566,10 +567,10 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  * logically equivalent to the following:
  *
  * |[
- * AdgMatrix tmp_map;
- * adg_entity_get_local_map(entity, &tmp_map);
- * adg_matrix_transform(&tmp_map, transformation, mode);
- * adg_entity_set_local_map(entity, &tmp_map);
+ * AdgMatrix map;
+ * adg_matrix_copy(&map, adg_entity_get_local_map(entity));
+ * adg_matrix_transform(&map, transformation, mode);
+ * adg_entity_set_local_map(entity, &map);
  * ]|
  **/
 void
@@ -1081,7 +1082,7 @@ local_changed(AdgEntity *entity)
         break;
     case ADG_MIX_PARENT:
         if (data->parent != NULL) {
-            adg_entity_get_local_map(data->parent, matrix);
+            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
             adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
@@ -1089,7 +1090,7 @@ local_changed(AdgEntity *entity)
         break;
     case ADG_MIX_PARENT_NORMALIZED:
         if (data->parent != NULL) {
-            adg_entity_get_local_map(data->parent, matrix);
+            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
             adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
