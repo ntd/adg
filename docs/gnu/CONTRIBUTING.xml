@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+
+<chapter id="CONTRIBUTING">
+<title>How to contribute</title>
+<subtitle>How you can help the ADG canvas project</subtitle>
+
+<simplesect id="CONTRIBUTING.joining">
+<title>Join the effort!</title>
+
+<para>The ADG canvas is a free project (as in speech <emphasis>and</emphasis> as in beer): any
+help will be appreciated. This document will show a (non-exhaustive)
+list of ways on how you can contribute to the project. The approach is
+usual informal, so if you have new suggestions feel free to join our
+<ulink url="http://lists.sourceforge.net/lists/listinfo/adg-devel">mailing list</ulink>.</para>
+
+</simplesect>
+
+<simplesect id="CONTRIBUTING.reporting">
+<title>Report any errors and issues or suggest new features</title>
+
+<para>Use the <ulink url="http://dev.entidi.com/p/adg/issues/">bug tracker</ulink> to report
+any bugs you find in the project while using it. The tracker is also
+opened to suggestions or feature requests: just register yourself and
+report whatever you fill useful.</para>
+
+<para>If you want to be up to date with the development status or intend
+to use the ADG canvas seriously, please consider joining the
+<ulink url="http://lists.sourceforge.net/lists/listinfo/adg-devel">mailing list</ulink>.
+This is the main source of information where discussion about the
+future of the project will take place.</para>
+
+</simplesect>
+
+<simplesect id="CONTRIBUTING.localization">
+<title>Translation of the ADG messages</title>
+
+<para>ADG is a library so this is not a big issue. Anyway, as soon as the
+<ulink url="http://dev.entidi.com/p/adg/issues/13/">gettext support</ulink> will be added,
+fill free to translate it and submit the result in any way you fill
+comfortable with. The procedure is pretty straight forward and the
+<ulink url="http://en.wikipedia.org/wiki/GNU_gettext">wikipedia page</ulink> provides a
+good introduction on the gettext usage. This section will be improved
+with further details as soon as the gettext support will be added.</para>
+
+</simplesect>
+
+<simplesect id="CONTRIBUTING.hacking">
+<title>Enhancements, bugs fixing, documentation improvements: patches welcome</title>
+
+<para>Of course, ADG is free software so you are free to modify the code under
+the terms of the <ulink url="http://www.gnu.org/licenses/lgpl-2.1.html">LGPL 2.1</ulink>
+license. You can submit any patch you fill worth the inclusion in the
+mainstream, either on the mailing list or in the bug tracker.</para>
+
+<para>The easiest way to hack the core of the ADG project (plain C language)
+is by following the code close to the place you are hacking, but if you
+want a written down set of rules, the coding style is loosely based on
+the <ulink url="http://www.netbsd.org/docs/kernel/programming.html">kernel normal form</ulink>
+style using a 4 space indentation. The tabs should be expanded to spaces
+and there must not be any trailing spaces at the end of line or empty
+lines at the end of a file (they are a PITA in version control). A
+common way to deal with the latter problem is to enable a
+<ulink url="http://repo.or.cz/w/adg.git/blob/HEAD:/nodist/pre-commit">pre-commit hook</ulink>
+in your own repository:</para>
+
+<informalexample><programlisting language="shell">cd adg
+cp nodist/pre-commit .git/hooks
+chmod 0755 .git/hooks/pre-commit</programlisting></informalexample>
+
+<para>
+The rules used by the API are more rigid and they are strictly tied to the
+<ulink url="http://library.gnome.org/devel/gobject/stable/gtype-conventions.html">GObject</ulink>
+API conventions. The prefixes must be <code>ADG</code>, <code>Adg</code> and <code>adg</code> for the ADG canvas
+and <code>CPML</code>, <code>Cpml</code> and <code>cpml</code> for the cairo path manipulation library. In
+addition, the following suggestions/rules also apply:</para>
+
+<informalexample><programlisting language="c">/* Method emitting "signal-name" */
+void            adg_object_signal_name  (AdgObject      *object,
+                                         /* Additional parameters */);
+
+/* Setter method */
+void            adg_object_set_value    (AdgObject      *object,
+                                         const ValueType value);
+
+/* Getter method */
+const ValueType adg_object_get_value    (AdgObject      *object);
+
+/* Alternative getter method to be used when the previous syntax is
+ * not allowed, such as when the value is dynamically generated */
+void            adg_object_put_value    (AdgObject      *object,
+                                         ValueType      *value);</programlisting></informalexample>
+
+<para>
+For any other non-C contribution (makefiles, translations, bindings,
+documentation, whatever) just follow the surronding text using a bit of
+common sense. When no surrounding text exists, use your preferred style
+and use it consistently.</para>
+
+<para>The project uses <ulink url="http://git-scm.com/">git</ulink> as version control system
+and the main repository is on <ulink url="http://repo.or.cz/w/adg.git">repo.cz</ulink>.
+You can find some other cloned repository around the web, though.</para>
+
+<para>The preferred way to create a patch is by using <command>git format-patch</command> to
+generate the file. A basic usage involves only few steps:</para>
+
+<informalexample><programlisting language="shell">git clone git://repo.or.cz/adg.git
+cd adg
+# Modify and test...
+git commit -a
+# Write the commit message
+git format-patch HEAD^
+# You have just created a proper patch file</programlisting></informalexample>
+
+</simplesect>
+
+</chapter>

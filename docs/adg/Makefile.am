@@ -53,7 +53,8 @@ IGNORE_HFILES=		adg.h \
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/NEWS.xml \
-			$(top_srcdir)/docs/gnu/TODO.xml
+			$(top_srcdir)/docs/gnu/TODO.xml \
+			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
 expand_content_files=
 AM_CPPFLAGS=		-I$(top_srcdir) \
 			@GTK2_CFLAGS@

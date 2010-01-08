@@ -6,7 +6,8 @@ DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk-doc
 BUILT_SOURCES=			ChangeLog \
 				README \
 				NEWS \
-				TODO
+				TODO \
+				CONTRIBUTING
 
 EXTRA_DIST=			ABOUT-NLS \
 				config.rpath \
@@ -32,24 +33,11 @@ ChangeLog:
 	  echo A git checkout is required to generate $@ >&2; \
 	fi
 
-# Update the README from the xml version
+# Autogenerate text docs
 README: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/README.xml
-	@if test -x $(XSLTPROC); then \
-	  $(MSG_GEN)$(XSLTPROC) -o $@ $^; \
-	else \
-	  $(MSG_XSLTERROR) \
-	fi
-
-# Update the NEWS from the xml version
 NEWS: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/NEWS.xml
-	@if test -x $(XSLTPROC); then \
-	  $(MSG_GEN)$(XSLTPROC) -o $@ $^; \
-	else \
-	  $(MSG_XSLTERROR) \
-	fi
-
-# Update the TODO from the xml version
 TODO: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/TODO.xml
+CONTRIBUTING: $(srcdir)/docs/gnu/docbook2txt.xsl $(srcdir)/docs/gnu/CONTRIBUTING.xml
 	@if test -x $(XSLTPROC); then \
 	  $(MSG_GEN)$(XSLTPROC) -o $@ $^; \
 	else \
