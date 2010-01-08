@@ -87,7 +87,7 @@
  *
  * Specifies how the maps of an #AdgEntity instance and its ancestors
  * should be combined to get a matrix. This is usually used by the
- * adg_entity_local_matrix() method to get the local matrix.
+ * adg_entity_get_local_matrix() method to get the local matrix.
  **/
 
 /**

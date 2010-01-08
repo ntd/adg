@@ -525,7 +525,7 @@ arrange(AdgEntity *entity)
         break;
     }
 
-    local = adg_entity_local_matrix(entity);
+    local = adg_entity_get_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_copy(&base1, &data->geometry.base1);
@@ -818,7 +818,7 @@ choose_outside(AdgLDim *ldim)
 
     data = ldim->data;
     quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
-    local = adg_entity_local_matrix((AdgEntity *) ldim);
+    local = adg_entity_get_local_matrix((AdgEntity *) ldim);
     marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
     marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
 

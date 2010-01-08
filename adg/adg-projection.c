@@ -348,7 +348,7 @@ arrange(AdgEntity *entity)
     data = ((AdgProjection *) entity)->data;
     projection_class = ADG_PROJECTION_GET_CLASS(entity);
     data_class = projection_class->data_class;
-    local = adg_entity_local_matrix(entity);
+    local = adg_entity_get_local_matrix(entity);
 
     arrange_class(projection_class, data->scheme);
     cpml_extents_copy(&extents, &data_class->extents);

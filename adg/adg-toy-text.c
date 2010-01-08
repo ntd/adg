@@ -291,12 +291,12 @@ global_changed(AdgEntity *entity)
     AdgMatrix old;
     const AdgMatrix *new;
 
-    adg_matrix_copy(&old, adg_entity_global_matrix(entity));
+    adg_matrix_copy(&old, adg_entity_get_global_matrix(entity));
 
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
-    new = adg_entity_global_matrix(entity);
+    new = adg_entity_get_global_matrix(entity);
 
     /* If scaling or rotation has changed, invalidate the font */
     if (old.xx != new->xx || old.yy != new->yy ||
@@ -311,12 +311,12 @@ local_changed(AdgEntity *entity)
     const AdgMatrix *new;
     CpmlExtents extents;
 
-    adg_matrix_copy(&old, adg_entity_local_matrix(entity));
+    adg_matrix_copy(&old, adg_entity_get_local_matrix(entity));
 
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
-    new = adg_entity_local_matrix(entity);
+    new = adg_entity_get_local_matrix(entity);
 
     /* If scaling or rotation has changed, invalidate the font */
     if (old.xx != new->xx || old.yy != new->yy ||
@@ -388,7 +388,7 @@ arrange(AdgEntity *entity)
         cairo_scaled_font_glyph_extents(data->font, data->glyphs,
                                         data->num_glyphs, &cairo_extents);
         cpml_extents_from_cairo_text(&extents, &cairo_extents);
-        cpml_extents_transform(&extents, adg_entity_local_matrix(entity));
+        cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
 
     }
 

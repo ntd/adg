@@ -351,7 +351,7 @@ arrange(AdgEntity *entity)
     logo_class = ADG_LOGO_GET_CLASS(entity);
     data_class = logo_class->data_class;
     extents = (CpmlExtents *) adg_entity_extents(entity);
-    local = adg_entity_local_matrix(entity);
+    local = adg_entity_get_local_matrix(entity);
 
     arrange_class(logo_class);
     cpml_extents_copy(extents, &data_class->extents);

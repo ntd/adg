@@ -287,7 +287,7 @@ arrange(AdgEntity *entity)
     if (outside == ADG_THREE_STATE_UNKNOWN)
         outside = ADG_THREE_STATE_OFF;
 
-    local = adg_entity_local_matrix(entity);
+    local = adg_entity_get_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
     cpml_pair_copy(&base, &data->point.base);

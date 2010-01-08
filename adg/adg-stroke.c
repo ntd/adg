@@ -277,12 +277,12 @@ local_changed(AdgEntity *entity)
     AdgMatrix old;
     const AdgMatrix *new;
 
-    adg_matrix_copy(&old, adg_entity_local_matrix(entity));
+    adg_matrix_copy(&old, adg_entity_get_local_matrix(entity));
 
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
-    new = adg_entity_local_matrix(entity);
+    new = adg_entity_get_local_matrix(entity);
 
     /* For simple translation, avoid the entity invalidation:
      * translate the extents of the same vector instead */
@@ -316,7 +316,7 @@ arrange(AdgEntity *entity)
     data = stroke->data;
 
     cpml_extents_copy(&extents, adg_trail_extents(data->trail));
-    cpml_extents_transform(&extents, adg_entity_local_matrix(entity));
+    cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
 
     adg_entity_set_extents(entity, &extents);
 }

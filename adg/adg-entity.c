@@ -873,7 +873,7 @@ adg_entity_local_changed(AdgEntity *entity)
 }
 
 /**
- * adg_entity_global_matrix:
+ * adg_entity_get_global_matrix:
  * @entity: an #AdgEntity object
  *
  * Gets the global matrix by combining all the global maps of the
@@ -884,7 +884,7 @@ adg_entity_local_changed(AdgEntity *entity)
  * Returns: the global matrix or %NULL on errors
  **/
 const AdgMatrix *
-adg_entity_global_matrix(AdgEntity *entity)
+adg_entity_get_global_matrix(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
@@ -896,7 +896,7 @@ adg_entity_global_matrix(AdgEntity *entity)
 }
 
 /**
- * adg_entity_local_matrix:
+ * adg_entity_get_local_matrix:
  * @entity: an #AdgEntity object
  * @matrix: where to store the local matrix
  *
@@ -907,7 +907,7 @@ adg_entity_global_matrix(AdgEntity *entity)
  * Returns: the local matrix or %NULL on errors
  **/
 const AdgMatrix *
-adg_entity_local_matrix(AdgEntity *entity)
+adg_entity_get_local_matrix(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
@@ -1041,7 +1041,7 @@ global_changed(AdgEntity *entity)
     if (data->parent == NULL) {
         adg_matrix_copy(matrix, map);
     } else {
-        adg_matrix_copy(matrix, adg_entity_global_matrix(data->parent));
+        adg_matrix_copy(matrix, adg_entity_get_global_matrix(data->parent));
         adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
     }
 }
@@ -1064,7 +1064,7 @@ local_changed(AdgEntity *entity)
         break;
     case ADG_MIX_ANCESTORS:
         if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
+            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
             adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);
@@ -1072,7 +1072,7 @@ local_changed(AdgEntity *entity)
         break;
     case ADG_MIX_ANCESTORS_NORMALIZED:
         if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_local_matrix(data->parent));
+            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
             adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
         } else {
             adg_matrix_copy(matrix, &data->local_map);

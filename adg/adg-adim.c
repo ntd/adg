@@ -588,7 +588,7 @@ arrange(AdgEntity *entity)
         return;
     }
 
-    local = adg_entity_local_matrix(entity);
+    local = adg_entity_get_local_matrix(entity);
 
     /* Apply the local matrix to the relevant points */
     cpml_pair_transform(cpml_pair_copy(&ref1, adg_dim_get_ref1(dim)), local);
