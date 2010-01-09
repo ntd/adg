@@ -275,8 +275,10 @@ adg_entity_init(AdgEntity *entity)
     cairo_matrix_init_identity(&data->local_map);
     data->local_method = ADG_MIX_ANCESTORS;
     data->hash_styles = NULL;
-    cairo_matrix_init_identity(&data->global_matrix);
-    cairo_matrix_init_identity(&data->local_matrix);
+    data->global.is_defined = FALSE;
+    cairo_matrix_init_identity(&data->global.matrix);
+    data->local.is_defined = FALSE;
+    cairo_matrix_init_identity(&data->local.matrix);
     data->extents.is_defined = FALSE;
 
     entity->data = data;
@@ -893,7 +895,7 @@ adg_entity_get_global_matrix(AdgEntity *entity)
 
     data = entity->data;
 
-    return &data->global_matrix;
+    return &data->global.matrix;
 }
 
 /**
@@ -916,7 +918,7 @@ adg_entity_get_local_matrix(AdgEntity *entity)
 
     data = entity->data;
 
-    return &data->local_matrix;
+    return &data->local.matrix;
 }
 
 /**
@@ -1006,7 +1008,7 @@ global_changed(AdgEntity *entity)
 
     data = entity->data;
     map = &data->global_map;
-    matrix = &data->global_matrix;
+    matrix = &data->global.matrix;
 
     if (data->parent == NULL) {
         adg_matrix_copy(matrix, map);
@@ -1023,7 +1025,7 @@ local_changed(AdgEntity *entity)
     AdgMatrix *matrix;
 
     data = entity->data;
-    matrix = &data->local_matrix;
+    matrix = &data->local.matrix;
 
     switch (data->local_method) {
     case ADG_MIX_DISABLED:
@@ -1164,7 +1166,7 @@ real_render(AdgEntity *entity, cairo_t *cr)
         g_signal_emit(entity, signals[ARRANGE], 0);
 
         cairo_save(cr);
-        cairo_set_matrix(cr, &data->global_matrix);
+        cairo_set_matrix(cr, &data->global.matrix);
 
         if (show_extents && data->extents.is_defined) {
             cairo_save(cr);

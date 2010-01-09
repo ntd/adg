@@ -27,15 +27,23 @@ G_BEGIN_DECLS
 typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 struct _AdgEntityPrivate {
-    AdgEntity   *parent;
-    AdgMatrix    global_map;
-    AdgMatrix    local_map;
-    AdgMixMethod local_method;
-    GHashTable  *hash_styles;
+    AdgEntity    *parent;
+    AdgMatrix     global_map;
+    AdgMatrix     local_map;
+    AdgMixMethod  local_method;
+    GHashTable   *hash_styles;
 
-    AdgMatrix    global_matrix;
-    AdgMatrix    local_matrix;
-    CpmlExtents  extents;
+    struct {
+        gboolean  is_defined;
+        AdgMatrix matrix;
+    }             global;
+
+    struct {
+        gboolean  is_defined;
+        AdgMatrix matrix;
+    }             local;
+
+    CpmlExtents   extents;
 };
 
 G_END_DECLS

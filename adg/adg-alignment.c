@@ -246,8 +246,10 @@ global_changed(AdgEntity *entity)
 
     entity_class = g_type_class_ref(ADG_TYPE_ENTITY);
     entity_data = entity->data;
+
+    /* TODO: do not access private members of AdgEntity! */
     extents = &entity_data->extents;
-    global = &entity_data->global_matrix;
+    global = &entity_data->global.matrix;
 
     if (extents->is_defined) {
         /* The entities are displaced only if the extents are valid */
