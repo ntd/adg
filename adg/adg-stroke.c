@@ -286,10 +286,8 @@ local_changed(AdgEntity *entity)
 
     /* For simple translation, avoid the entity invalidation:
      * translate the extents of the same vector instead */
-    if (old.xx != new->xx || old.yy != new->yy ||
-        old.xy != new->xy || old.yx != new->yx) {
-        adg_entity_invalidate(entity);
-    } else {
+    if (old.xx == new->xx && old.yy == new->yy &&
+        old.xy == new->xy && old.yx == new->yx) {
         CpmlExtents extents;
 
         cpml_extents_copy(&extents, adg_entity_extents(entity));
@@ -299,6 +297,8 @@ local_changed(AdgEntity *entity)
 
         adg_entity_set_extents(entity, &extents);
     }
+
+    adg_entity_invalidate(entity);
 }
 
 static void
