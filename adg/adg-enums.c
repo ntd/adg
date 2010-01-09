@@ -69,15 +69,16 @@
  * @ADG_MIX_DISABLED:  the maps are completely ignored: the matrix is
  *                     always set to the identity matrix
  * @ADG_MIX_NONE:      the matrix is set to the entity map
- * @ADG_MIX_ANCESTORS: the matrix is computed by applying every map
- *                     sequentially, starting from the elder ancestor
- *                     in the hierarchy up to the entity map
+ * @ADG_MIX_ANCESTORS: sequentially apply every map on the matrix using
+ *                     %ADG_TRANSFORM_BEFORE #AdgTransformMode, starting
+ *                     from the elder ancestor in the hierarchy
+ *                     (probably an #AdgCanvas) up to the current entity
  * @ADG_MIX_ANCESTORS_NORMALIZED:
  *                     perform the same operations as %ADG_MIX_ANCESTORS
  *                     but normalize the resulting matrix with
  *                     adg_matrix_normalize() before returning it
- * @ADG_MIX_PARENT:    apply the entity map above the parent map,
- *                     ignoring any other ancestors in the hierarchy;
+ * @ADG_MIX_PARENT:    similar to %ADG_MIX_ANCESTORS but taking into account
+ *                     only the parent and ignoring any other ancestors;
  *                     if the entity has no parent, it returns the
  *                     entity map as in %ADG_MIX_NONE
  * @ADG_MIX_PARENT_NORMALIZED:
@@ -86,8 +87,10 @@
  *                     adg_matrix_normalize() before returning it
  *
  * Specifies how the maps of an #AdgEntity instance and its ancestors
- * should be combined to get a matrix. This is usually used by the
- * adg_entity_get_local_matrix() method to get the local matrix.
+ * should be combined to get the matrix. The full logic is implemented
+ * by the #AdgEntity::local-changed default handler to compute the
+ * local matrix, while the global matrix is always computed using the
+ * #ADG_MIX_ANCESTORS method.
  **/
 
 /**

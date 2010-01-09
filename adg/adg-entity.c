@@ -99,14 +99,14 @@ static void             set_property            (GObject         *object,
                                                  GParamSpec      *pspec);
 static gboolean         set_parent              (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-static void             global_changed          (AdgEntity       *entity);
-static void             local_changed           (AdgEntity       *entity);
 static gboolean         set_global_map          (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static gboolean         set_local_map           (AdgEntity       *entity,
                                                  const AdgMatrix *map);
 static gboolean         set_local_method        (AdgEntity       *entity,
                                                  AdgMixMethod     local_method);
+static void             global_changed          (AdgEntity       *entity);
+static void             local_changed           (AdgEntity       *entity);
 static void             real_invalidate         (AdgEntity       *entity);
 static void             real_arrange            (AdgEntity       *entity);
 static void             real_render             (AdgEntity       *entity,
@@ -276,9 +276,9 @@ adg_entity_init(AdgEntity *entity)
     data->local_method = ADG_MIX_ANCESTORS;
     data->hash_styles = NULL;
     data->global.is_defined = FALSE;
-    cairo_matrix_init_identity(&data->global.matrix);
+    adg_matrix_copy(&data->global.matrix, adg_matrix_null());
     data->local.is_defined = FALSE;
-    cairo_matrix_init_identity(&data->local.matrix);
+    adg_matrix_copy(&data->local.matrix, adg_matrix_null());
     data->extents.is_defined = FALSE;
 
     entity->data = data;
@@ -305,7 +305,6 @@ dispose(GObject *object)
     if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
 }
-
 
 static void
 get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
@@ -437,7 +436,7 @@ adg_entity_get_canvas(AdgEntity *entity)
         if (ADG_IS_CANVAS(entity))
             return (AdgCanvas *) entity;
 
-        entity = (AdgEntity *) adg_entity_get_parent(entity);
+        entity = adg_entity_get_parent(entity);
     }
 
     return NULL;
@@ -448,9 +447,9 @@ adg_entity_get_canvas(AdgEntity *entity)
  * @entity: an #AdgEntity object
  *
  * Gets the transformation to be used to compute the global matrix
- * of @entity and store it in @map.
+ * of @entity.
  *
- * Returns: the global map or %NULL on errors
+ * Returns: the requested map or %NULL on errors
  **/
 const AdgMatrix *
 adg_entity_get_global_map(AdgEntity *entity)
@@ -526,7 +525,7 @@ adg_entity_transform_global_map(AdgEntity *entity,
  * Gets the transformation to be used to compute the local matrix
  * of @entity and store it in @map.
  *
- * Returns: the local map or %NULL on errors
+ * Returns: the requested map or %NULL on errors
  **/
 const AdgMatrix *
 adg_entity_get_local_map(AdgEntity *entity)
@@ -879,10 +878,12 @@ adg_entity_local_changed(AdgEntity *entity)
  * adg_entity_get_global_matrix:
  * @entity: an #AdgEntity object
  *
- * Gets the global matrix by combining all the global maps of the
- * @entity hierarchy using the %ADG_MIX_ANCESTORS method. The
- * returned value is owned by @entity and should not be changed
- * or freed.
+ * Gets the current global matrix of @entity. The returned value
+ * is owned by @entity and should not be changed or freed.
+ *
+ * The global matrix is computed in the arrange() phase by
+ * combining all the global maps of the @entity hierarchy using
+ * the %ADG_MIX_ANCESTORS method.
  *
  * Returns: the global matrix or %NULL on errors
  **/
@@ -901,11 +902,13 @@ adg_entity_get_global_matrix(AdgEntity *entity)
 /**
  * adg_entity_get_local_matrix:
  * @entity: an #AdgEntity object
- * @matrix: where to store the local matrix
  *
- * Gets the local matrix of @entity in the way specified by the
- * #AdgEntity:local-method property. The returned value is owned
- * by @entity and should not be changed or freed.
+ * Gets the current local matrix of @entity. The returned value
+ * is owned by @entity and should not be changed or freed.
+ *
+ * The local matrix is computed in the arrange() phase by
+ * combining all the local maps of the @entity hierarchy using
+ * the method specified by the #AdgEntity:local-method property.
  *
  * Returns: the local matrix or %NULL on errors
  **/
@@ -989,10 +992,10 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
         g_object_ref(parent);
 
     data->parent = parent;
+    data->global.is_defined = FALSE;
+    data->local.is_defined = FALSE;
 
     g_signal_emit(entity, signals[PARENT_SET], 0, old_parent);
-    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
-    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
 
     if (old_parent != NULL)
         g_object_unref(old_parent);
@@ -1000,98 +1003,20 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
     return TRUE;
 }
 
-static void
-global_changed(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-    AdgMatrix *map, *matrix;
-
-    data = entity->data;
-    map = &data->global_map;
-    matrix = &data->global.matrix;
-
-    if (data->parent == NULL) {
-        adg_matrix_copy(matrix, map);
-    } else {
-        adg_matrix_copy(matrix, adg_entity_get_global_matrix(data->parent));
-        adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
-    }
-}
-
-static void
-local_changed(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-    AdgMatrix *matrix;
-
-    data = entity->data;
-    matrix = &data->local.matrix;
-
-    switch (data->local_method) {
-    case ADG_MIX_DISABLED:
-        adg_matrix_copy(matrix, adg_matrix_identity());
-        break;
-    case ADG_MIX_NONE:
-        adg_matrix_copy(matrix, &data->local_map);
-        break;
-    case ADG_MIX_ANCESTORS:
-        if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
-        } else {
-            adg_matrix_copy(matrix, &data->local_map);
-        }
-        break;
-    case ADG_MIX_ANCESTORS_NORMALIZED:
-        if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
-        } else {
-            adg_matrix_copy(matrix, &data->local_map);
-        }
-        adg_matrix_normalize(matrix);
-        break;
-    case ADG_MIX_PARENT:
-        if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
-        } else {
-            adg_matrix_copy(matrix, &data->local_map);
-        }
-        break;
-    case ADG_MIX_PARENT_NORMALIZED:
-        if (data->parent != NULL) {
-            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
-            adg_matrix_transform(matrix, &data->local_map, ADG_TRANSFORM_BEFORE);
-        } else {
-            adg_matrix_copy(matrix, &data->local_map);
-        }
-        adg_matrix_normalize(matrix);
-        break;
-    case ADG_MIX_UNDEFINED:
-        g_warning(_("%s: requested to mix the maps using an undefined method"),
-                  G_STRLOC);
-        break;
-    default:
-        g_assert_not_reached();
-        break;
-    }
-}
-
 static gboolean
 set_global_map(AdgEntity *entity, const AdgMatrix *map)
 {
     AdgEntityPrivate *data = entity->data;
 
-    if (map != NULL && adg_matrix_equal(&data->global_map, map))
+    if (map == NULL)
+        map = adg_matrix_identity();
+
+    if (adg_matrix_equal(&data->global_map, map))
         return FALSE;
 
-    if (map == NULL)
-        cairo_matrix_init_identity(&data->global_map);
-    else
-        adg_matrix_copy(&data->global_map, map);
+    adg_matrix_copy(&data->global_map, map);
 
-    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+    data->global.is_defined = FALSE;
     return TRUE;
 }
 
@@ -1100,15 +1025,15 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
 {
     AdgEntityPrivate *data = entity->data;
 
-    if (map != NULL && adg_matrix_equal(&data->local_map, map))
+    if (map == NULL)
+        map = adg_matrix_identity();
+
+    if (adg_matrix_equal(&data->local_map, map))
         return FALSE;
 
-    if (map == NULL)
-        cairo_matrix_init_identity(&data->local_map);
-    else
-        adg_matrix_copy(&data->local_map, map);
+    adg_matrix_copy(&data->local_map, map);
 
-    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+    data->local.is_defined = FALSE;
     return TRUE;
 }
 
@@ -1127,10 +1052,91 @@ set_local_method(AdgEntity *entity, AdgMixMethod local_method)
 }
 
 static void
+global_changed(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+    const AdgMatrix *map;
+    AdgMatrix *matrix;
+
+    data = entity->data;
+    map = &data->global_map;
+    matrix = &data->global.matrix;
+
+    if (data->parent) {
+        adg_matrix_copy(matrix, adg_entity_get_global_matrix(data->parent));
+        adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
+    } else {
+        adg_matrix_copy(matrix, map);
+    }
+}
+
+static void
+local_changed(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+    const AdgMatrix *map;
+    AdgMatrix *matrix;
+
+    data = entity->data;
+    map = &data->local_map;
+    matrix = &data->local.matrix;
+
+    switch (data->local_method) {
+    case ADG_MIX_DISABLED:
+        adg_matrix_copy(matrix, adg_matrix_identity());
+        break;
+    case ADG_MIX_NONE:
+        adg_matrix_copy(matrix, map);
+        break;
+    case ADG_MIX_ANCESTORS:
+        if (data->parent) {
+            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
+            adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
+        } else {
+            adg_matrix_copy(matrix, map);
+        }
+        break;
+    case ADG_MIX_ANCESTORS_NORMALIZED:
+        if (data->parent) {
+            adg_matrix_copy(matrix, adg_entity_get_local_matrix(data->parent));
+            adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
+        } else {
+            adg_matrix_copy(matrix, map);
+        }
+        adg_matrix_normalize(matrix);
+        break;
+    case ADG_MIX_PARENT:
+        if (data->parent) {
+            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
+            adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
+        } else {
+            adg_matrix_copy(matrix, map);
+        }
+        break;
+    case ADG_MIX_PARENT_NORMALIZED:
+        if (data->parent) {
+            adg_matrix_copy(matrix, adg_entity_get_local_map(data->parent));
+            adg_matrix_transform(matrix, map, ADG_TRANSFORM_BEFORE);
+        } else {
+            adg_matrix_copy(matrix, map);
+        }
+        adg_matrix_normalize(matrix);
+        break;
+    case ADG_MIX_UNDEFINED:
+        g_warning(_("%s: requested to mix the maps using an undefined method"),
+                  G_STRLOC);
+        break;
+    default:
+        g_assert_not_reached();
+        break;
+    }
+}
+
+static void
 real_invalidate(AdgEntity *entity)
 {
-    AdgEntityPrivate *data = entity->data;
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
+    AdgEntityPrivate *data = entity->data;
 
     /* Do not raise any warning if invalidate() is not defined,
      * assuming entity does not have additional cache to be cleared */
@@ -1143,12 +1149,29 @@ real_invalidate(AdgEntity *entity)
 static void
 real_arrange(AdgEntity *entity)
 {
-    AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
+    AdgEntityClass *klass;
+    AdgEntityPrivate *data;
+
+    klass = ADG_ENTITY_GET_CLASS(entity);
+    data = entity->data;
+
+    /* Update the global matrix, if required */
+    if (!data->global.is_defined) {
+        data->global.is_defined = TRUE;
+        g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+    }
+
+    /* Update the local matrix, if required */
+    if (!data->local.is_defined) {
+        data->local.is_defined = TRUE;
+        g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+    }
 
     /* The arrange() method must be defined */
     if (klass->arrange == NULL) {
         g_warning(_("%s: `arrange' method not implemented for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
+        data->extents.is_defined = FALSE;
         return;
     }
 
@@ -1158,17 +1181,25 @@ real_arrange(AdgEntity *entity)
 static void
 real_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgEntityPrivate *data = entity->data;
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
-    if (klass->render) {
-        /* Before the rendering, the entity should be arranged */
-        g_signal_emit(entity, signals[ARRANGE], 0);
+    /* The render method must be defined */
+    if (klass->render == NULL) {
+        g_warning(_("%s: `render' method not implemented for type `%s'"),
+                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
+        return;
+    }
 
-        cairo_save(cr);
-        cairo_set_matrix(cr, &data->global.matrix);
+    /* Before the rendering, the entity should be arranged */
+    g_signal_emit(entity, signals[ARRANGE], 0);
 
-        if (show_extents && data->extents.is_defined) {
+    cairo_save(cr);
+    cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
+
+    if (show_extents) {
+        AdgEntityPrivate *data = entity->data;
+
+        if (data->extents.is_defined) {
             cairo_save(cr);
             cairo_set_line_width(cr, 1);
             cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
@@ -1177,12 +1208,8 @@ real_render(AdgEntity *entity, cairo_t *cr)
             cairo_stroke(cr);
             cairo_restore(cr);
         }
-
-        klass->render(entity, cr);
-        cairo_restore(cr);
-    } else {
-        /* The render method must be defined */
-        g_warning(_("%s: `render' method not implemented for type `%s'"),
-                  G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
     }
+
+    klass->render(entity, cr);
+    cairo_restore(cr);
 }
