@@ -385,7 +385,7 @@ adg_switch_extents(gboolean state)
  *
  * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
  **/
-AdgEntity *
+const AdgEntity *
 adg_entity_get_parent(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
@@ -436,7 +436,7 @@ adg_entity_get_canvas(AdgEntity *entity)
         if (ADG_IS_CANVAS(entity))
             return (AdgCanvas *) entity;
 
-        entity = adg_entity_get_parent(entity);
+        entity = (AdgEntity *) adg_entity_get_parent(entity);
     }
 
     return NULL;

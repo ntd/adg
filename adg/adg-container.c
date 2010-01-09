@@ -476,7 +476,7 @@ get_children(AdgContainer *container)
 static void
 add(AdgContainer *container, AdgEntity *entity)
 {
-    AdgEntity *old_parent;
+    const AdgEntity *old_parent;
     AdgContainerPrivate *data;
 
     old_parent = adg_entity_get_parent(entity);
