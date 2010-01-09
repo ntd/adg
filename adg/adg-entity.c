@@ -920,37 +920,6 @@ adg_entity_get_local_matrix(AdgEntity *entity)
 }
 
 /**
- * adg_entity_ctm:
- * @entity: an #AdgEntity object
- *
- * Returns the current transformation matrix (ctm) of @entity
- * by applying the global matrix after the local matrix. This
- * is roughly equivalent to the following pseudo code:
- *
- * |[
- * cairo_matrix_multiply(ctm, local_matrix, global_matrix);
- * ]|
- *
- * This method is only useful inside the #AdgEntity::arrange and the
- * #AdgEntity::render default signal handlers, that is at the arranging
- * or rendering stage. In the other cases, the returned matrix will
- * luckely be not up to date.
- *
- * Returns: the current transformation matrix or %NULL on errors
- **/
-const AdgMatrix *
-adg_entity_ctm(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return &data->ctm;
-}
-
-/**
  * adg_entity_invalidate:
  * @entity: an #AdgEntity
  *
@@ -1174,23 +1143,14 @@ real_arrange(AdgEntity *entity)
 {
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
-    if (klass->arrange) {
-        AdgEntityPrivate *data;
-        AdgMatrix *ctm;
-
-        data = entity->data;
-        ctm = &data->ctm;
-
-        /* Update the ctm (current transformation matrix) */
-        adg_matrix_copy(ctm, &data->global_matrix);
-        adg_matrix_transform(ctm, &data->local_matrix, ADG_TRANSFORM_BEFORE);
-
-        klass->arrange(entity);
-    } else {
-        /* The arrange() method must be defined */
+    /* The arrange() method must be defined */
+    if (klass->arrange == NULL) {
         g_warning(_("%s: `arrange' method not implemented for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(entity)));
+        return;
     }
+
+    klass->arrange(entity);
 }
 
 static void

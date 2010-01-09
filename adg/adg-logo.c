@@ -445,7 +445,7 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);
     if (cairo_path != NULL) {
         cairo_save(cr);
-        cairo_set_matrix(cr, adg_entity_ctm(entity));
+        cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
@@ -458,7 +458,7 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->screen);
     if (cairo_path != NULL) {
         cairo_save(cr);
-        cairo_set_matrix(cr, adg_entity_ctm(entity));
+        cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
@@ -471,7 +471,7 @@ render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->frame);
     if (cairo_path != NULL) {
         cairo_save(cr);
-        cairo_set_matrix(cr, adg_entity_ctm(entity));
+        cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 

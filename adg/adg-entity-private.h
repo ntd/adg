@@ -35,7 +35,6 @@ struct _AdgEntityPrivate {
 
     AdgMatrix    global_matrix;
     AdgMatrix    local_matrix;
-    AdgMatrix    ctm;
     CpmlExtents  extents;
 };
 

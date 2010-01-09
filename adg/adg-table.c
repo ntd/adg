@@ -1194,7 +1194,7 @@ arrange_frame(AdgEntity *entity)
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
-    cairo_set_matrix(cr, adg_entity_ctm(entity));
+    cairo_transform(cr, adg_entity_get_local_matrix(entity));
 
     propagate((AdgTable *) entity, "render", cr);
 }

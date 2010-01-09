@@ -356,10 +356,18 @@ arrange(AdgEntity *entity)
     data = toy_text->data;
 
     if (data->font == NULL) {
-        AdgFontStyle *font_style = (AdgFontStyle *)
-            adg_entity_style(entity, data->font_dress);
+        AdgDress dress;
+        AdgFontStyle *font_style;
+        AdgMatrix ctm;
 
-        data->font = adg_font_style_font(font_style, adg_entity_ctm(entity));
+        dress = data->font_dress;
+        font_style = (AdgFontStyle *) adg_entity_style(entity, dress);
+
+        adg_matrix_copy(&ctm, adg_entity_get_global_matrix(entity));
+        adg_matrix_transform(&ctm, adg_entity_get_local_matrix(entity),
+                             ADG_TRANSFORM_BEFORE);
+
+        data->font = adg_font_style_font(font_style, &ctm);
     }
 
     if (adg_is_empty(data->label)) {
@@ -406,7 +414,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
     if (data->glyphs != NULL) {
         adg_entity_apply_dress(entity, data->font_dress, cr);
-        cairo_set_matrix(cr, adg_entity_ctm(entity));
+        cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }
 }

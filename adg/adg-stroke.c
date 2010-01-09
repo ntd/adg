@@ -334,7 +334,7 @@ render(AdgEntity *entity, cairo_t *cr)
 
     if (cairo_path != NULL) {
         cairo_save(cr);
-        cairo_set_matrix(cr, adg_entity_ctm(entity));
+        cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
