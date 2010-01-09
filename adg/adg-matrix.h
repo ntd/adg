@@ -33,19 +33,20 @@ G_BEGIN_DECLS
 typedef cairo_matrix_t AdgMatrix;
 
 
-GType           adg_matrix_get_type             (void) G_GNUC_CONST;
-const AdgMatrix*adg_matrix_identity             (void) G_GNUC_CONST;
+GType            adg_matrix_get_type            (void) G_GNUC_CONST;
+const AdgMatrix *adg_matrix_identity            (void) G_GNUC_CONST;
+const AdgMatrix *adg_matrix_null                (void) G_GNUC_CONST;
 
-AdgMatrix *     adg_matrix_copy                 (AdgMatrix       *matrix,
+AdgMatrix *      adg_matrix_copy                (AdgMatrix       *matrix,
                                                  const AdgMatrix *src);
-AdgMatrix *     adg_matrix_dup                  (const AdgMatrix *matrix);
-gboolean        adg_matrix_equal                (const AdgMatrix *matrix1,
+AdgMatrix *      adg_matrix_dup                 (const AdgMatrix *matrix);
+gboolean         adg_matrix_equal               (const AdgMatrix *matrix1,
                                                  const AdgMatrix *matrix2);
-gboolean        adg_matrix_normalize            (AdgMatrix       *matrix);
-void            adg_matrix_transform            (AdgMatrix       *matrix,
+gboolean         adg_matrix_normalize           (AdgMatrix       *matrix);
+void             adg_matrix_transform           (AdgMatrix       *matrix,
                                                  const AdgMatrix *transformation,
                                                  AdgTransformMode mode);
-void            adg_matrix_dump                 (const AdgMatrix *matrix);
+void             adg_matrix_dump                (const AdgMatrix *matrix);
 
 G_END_DECLS
 

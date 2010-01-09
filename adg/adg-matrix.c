@@ -58,22 +58,40 @@ adg_matrix_get_type(void)
 /**
  * adg_matrix_identity:
  *
- * A constant identity matrix provided as facility.
+ * A convenient constant providing an identity matrix.
  *
  * Returns: a pointer to the identity matrix
  **/
 const AdgMatrix *
 adg_matrix_identity(void)
 {
-    static AdgMatrix identity_matrix;
-    static gboolean initialized = FALSE;
+    static AdgMatrix *identity_matrix = NULL;
 
-    if (G_UNLIKELY(!initialized)) {
-        cairo_matrix_init_identity(&identity_matrix);
-        initialized = TRUE;
+    if (G_UNLIKELY(identity_matrix == NULL)) {
+        identity_matrix = g_new(AdgMatrix, 1);
+        cairo_matrix_init_identity(identity_matrix);
     }
 
-    return &identity_matrix;
+    return identity_matrix;
+}
+
+/**
+ * adg_matrix_null:
+ *
+ * A convenient constant providing an null matrix, that is a matrix
+ * where all components are 0.
+ *
+ * Returns: a pointer to the null matrix
+ **/
+const AdgMatrix *
+adg_matrix_null(void)
+{
+    static AdgMatrix *null_matrix = NULL;
+
+    if (G_UNLIKELY(null_matrix == NULL))
+        null_matrix = g_new0(AdgMatrix, 1);
+
+    return null_matrix;
 }
 
 /**
