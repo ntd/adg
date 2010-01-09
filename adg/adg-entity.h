@@ -110,10 +110,10 @@ void             adg_entity_set_style           (AdgEntity       *entity,
 void             adg_entity_apply_dress         (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  cairo_t         *cr);
-const AdgMatrix *adg_entity_get_global_matrix   (AdgEntity       *entity);
-const AdgMatrix *adg_entity_get_local_matrix    (AdgEntity       *entity);
 void             adg_entity_global_changed      (AdgEntity       *entity);
 void             adg_entity_local_changed       (AdgEntity       *entity);
+const AdgMatrix *adg_entity_get_global_matrix   (AdgEntity       *entity);
+const AdgMatrix *adg_entity_get_local_matrix    (AdgEntity       *entity);
 void             adg_entity_invalidate          (AdgEntity       *entity);
 void             adg_entity_arrange             (AdgEntity       *entity);
 void             adg_entity_render              (AdgEntity       *entity,
