@@ -78,7 +78,7 @@ void             adg_switch_extents             (gboolean         state);
 GType            adg_entity_get_type            (void) G_GNUC_CONST;
 AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
 
-const AdgEntity *adg_entity_get_parent          (AdgEntity       *entity);
+AdgEntity *      adg_entity_get_parent          (AdgEntity       *entity);
 void             adg_entity_set_parent          (AdgEntity       *entity,
                                                  AdgEntity       *parent);
 const AdgMatrix *adg_entity_get_global_map      (AdgEntity       *entity);
