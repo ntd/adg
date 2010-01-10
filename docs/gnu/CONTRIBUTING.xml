@@ -84,7 +84,9 @@ void            adg_object_signal_name          (AdgObject      *object,
 void            adg_object_set_value            (AdgObject      *object,
                                                  const AdgValue *value);
 
-/* Getter method */
+/* Getter method: if the returned value is an object, the "const"
+ * declaration must be omitted (an object could be referenced or
+ * unreferenced also if read-only) */
 const AdgValue *adg_object_get_value            (AdgObject      *object);
 
 /* Getter method returning scalar values must not be const */
