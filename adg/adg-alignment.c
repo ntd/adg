@@ -22,9 +22,19 @@
  * SECTION:adg-alignment
  * @short_description: Base class for entity that can contain other entities
  *
- * The #AdgAlignment is an entity that can contains more sub-entities.
- * Moreover, it can apply a common transformation to local and/or global
- * maps: see http://adg.entidi.com/tutorial/view/3 for further details.
+ * The #AdgAlignment is an entity that can contains more sub-entities,
+ * much in the same way as the #AdgContainer does, but allowing the
+ * alignment of the content with an arbitrary fraction of the boundaring
+ * box of the content itsself.
+ *
+ * To specify the alignment fraction, use adg_alignment_set_factor() and
+ * related methods or directly set the #AdgAlignment:factor property.
+ * For example, to center the children either in x and y, you can call
+ * adg_alignment_set_factor_explicit(alignment, 0.5, 0.5). To align them
+ * on the right, specify a (0, 1) factor.
+ *
+ * The displacement is done by modifing the global matrix at the end of
+ * the arrange method.
  **/
 
 /**
@@ -36,7 +46,6 @@
 
 #include "adg-alignment.h"
 #include "adg-alignment-private.h"
-#include "adg-entity-private.h"
 #include "adg-intl.h"
 
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
@@ -47,7 +56,6 @@ enum {
     PROP_FACTOR
 };
 
-
 static void             get_property            (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
@@ -56,7 +64,6 @@ static void             set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             global_changed          (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static gboolean         set_factor              (AdgAlignment   *alignment,
                                                  const AdgPair  *factor);
@@ -80,7 +87,6 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    entity_class->global_changed = global_changed;
     entity_class->arrange = arrange;
 
     param = g_param_spec_boxed("factor",
@@ -236,58 +242,35 @@ adg_alignment_set_factor_explicit(AdgAlignment *alignment,
 
 
 static void
-global_changed(AdgEntity *entity)
-{
-    AdgEntityClass *entity_class;
-    AdgEntityPrivate *entity_data;
-    CpmlExtents *extents;
-    AdgMatrix *global;
-    AdgPair shift;
-
-    entity_class = g_type_class_ref(ADG_TYPE_ENTITY);
-    entity_data = entity->data;
-
-    /* TODO: do not access private members of AdgEntity! */
-    extents = &entity_data->extents;
-    global = &entity_data->global.matrix;
-
-    if (extents->is_defined) {
-        /* The entities are displaced only if the extents are valid */
-        AdgAlignmentPrivate *data = ((AdgAlignment *) entity)->data;
-
-        cpml_pair_copy(&shift, &extents->size);
-        cpml_pair_mul(&shift, &data->factor);
-
-        cpml_pair_sub(&extents->org, &shift);
-    } else {
-        shift.x = 0;
-        shift.y = 0;
-    }
-
-    if (entity_class->global_changed != NULL)
-        entity_class->global_changed(entity);
-
-    g_type_class_unref(entity_class);
-
-    /* The real job: temporarily modify the global matrix
-     * to align the contained entities */
-    global->x0 -= shift.x;
-    global->y0 -= shift.y;
-
-    adg_container_propagate_by_name((AdgContainer *) entity, "global-changed");
-
-    global->x0 += shift.x;
-    global->y0 += shift.y;
-}
-
-static void
 arrange(AdgEntity *entity)
 {
+    AdgAlignmentPrivate *data;
+    const CpmlExtents *extents;
+    AdgMatrix shift;
+
     if (PARENT_ENTITY_CLASS->arrange)
         PARENT_ENTITY_CLASS->arrange(entity);
 
-    /* Force a recomputation of the children position */
+    extents = adg_entity_extents(entity);
+
+    /* The children are displaced only if the extents are valid */
+    if (!extents->is_defined)
+        return;
+
+    data = ((AdgAlignment *) entity)->data;
+    cairo_matrix_init_translate(&shift,
+                                -extents->size.x * data->factor.x,
+                                -extents->size.y * data->factor.y);
+
+    /* The real job: modify the global matrix aligning this container
+     * accordingly to the #AdgAlignment:factor property */
+    adg_entity_transform_global_map(entity, &shift, ADG_TRANSFORM_BEFORE);
     adg_entity_global_changed(entity);
+
+    /* Restore the old global map */
+    shift.x0 = -shift.x0;
+    shift.y0 = -shift.y0;
+    adg_entity_transform_global_map(entity, &shift, ADG_TRANSFORM_BEFORE);
 }
 
 static gboolean
