@@ -451,7 +451,7 @@ add_extents(AdgEntity *entity, CpmlExtents *container_extents)
 {
     CpmlExtents extents;
 
-    cpml_extents_copy(&extents, adg_entity_extents(entity));
+    cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
     cpml_extents_transform(&extents, adg_entity_get_global_map(entity));
     cpml_extents_add(container_extents, &extents);

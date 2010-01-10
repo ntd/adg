@@ -323,7 +323,7 @@ local_changed(AdgEntity *entity)
         old.xy != new->xy || old.yx != new->yx)
         unset_font((AdgToyText *) entity);
 
-    cpml_extents_copy(&extents, adg_entity_extents(entity));
+    cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
     if (extents.is_defined) {
         /* Update the extents to the new local map */

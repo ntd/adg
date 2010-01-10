@@ -622,7 +622,7 @@ arrange(AdgEntity *entity)
         adg_matrix_copy(&data->quote.local_map,
                         adg_entity_get_local_map(quote_entity));
 
-        cpml_extents_copy(&quote_extents, adg_entity_extents(quote_entity));
+        cpml_extents_copy(&quote_extents, adg_entity_get_extents(quote_entity));
         cpml_extents_transform(&quote_extents, &map);
         cpml_extents_add(&extents, &quote_extents);
     }
@@ -636,7 +636,7 @@ arrange(AdgEntity *entity)
         adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
         adg_entity_local_changed(marker1_entity);
 
-        cpml_extents_copy(&marker1_extents, adg_entity_extents(marker1_entity));
+        cpml_extents_copy(&marker1_extents, adg_entity_get_extents(marker1_entity));
         cpml_extents_transform(&marker1_extents,
                                adg_entity_get_global_map(marker1_entity));
         cpml_extents_add(&extents, &marker1_extents);
@@ -651,7 +651,7 @@ arrange(AdgEntity *entity)
         adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
         adg_entity_local_changed(marker2_entity);
 
-        cpml_extents_copy(&marker2_extents, adg_entity_extents(marker2_entity));
+        cpml_extents_copy(&marker2_extents, adg_entity_get_extents(marker2_entity));
         cpml_extents_transform(&marker2_extents,
                                adg_entity_get_global_map(marker2_entity));
         cpml_extents_add(&extents, &marker2_extents);
@@ -822,7 +822,7 @@ choose_outside(AdgLDim *ldim)
     marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
     marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
 
-    needed = adg_entity_extents(quote)->size.x + marker1 + marker2;
+    needed = adg_entity_get_extents(quote)->size.x + marker1 + marker2;
     available = data->geometry.distance * local->xx;
 
     return needed > available;

@@ -216,7 +216,7 @@ render(AdgEntity *entity, cairo_t *cr)
         AdgFillStyle *fill_style = (AdgFillStyle *)
             adg_entity_style(entity, data->fill_dress);
 
-        adg_fill_style_set_extents(fill_style, adg_entity_extents(entity));
+        adg_fill_style_set_extents(fill_style, adg_entity_get_extents(entity));
 
         cairo_save(cr);
         cairo_transform(cr, adg_entity_get_local_matrix(entity));

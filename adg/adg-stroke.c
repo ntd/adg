@@ -290,7 +290,7 @@ local_changed(AdgEntity *entity)
         old.xy == new->xy && old.yx == new->yx) {
         CpmlExtents extents;
 
-        cpml_extents_copy(&extents, adg_entity_extents(entity));
+        cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
         extents.org.x += new->x0 - old.x0;
         extents.org.y += new->y0 - old.y0;
@@ -309,7 +309,7 @@ arrange(AdgEntity *entity)
     CpmlExtents extents;
 
     /* Check for cached result */
-    if (adg_entity_extents(entity)->is_defined)
+    if (adg_entity_get_extents(entity)->is_defined)
         return;
 
     stroke = (AdgStroke *) entity;

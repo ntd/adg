@@ -97,7 +97,7 @@ AdgMixMethod     adg_entity_get_local_method    (AdgEntity       *entity);
 void             adg_entity_set_local_method    (AdgEntity       *entity,
                                                  AdgMixMethod     local_method);
 const CpmlExtents *
-                 adg_entity_extents             (AdgEntity       *entity);
+                 adg_entity_get_extents         (AdgEntity       *entity);
 void             adg_entity_set_extents         (AdgEntity       *entity,
                                                  const CpmlExtents *extents);
 AdgStyle *       adg_entity_style               (AdgEntity       *entity,

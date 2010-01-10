@@ -251,7 +251,7 @@ arrange(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->arrange)
         PARENT_ENTITY_CLASS->arrange(entity);
 
-    extents = adg_entity_extents(entity);
+    extents = adg_entity_get_extents(entity);
 
     /* The children are displaced only if the extents are valid */
     if (!extents->is_defined)

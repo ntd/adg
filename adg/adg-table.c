@@ -1051,7 +1051,7 @@ arrange(AdgEntity *entity)
 
     table = (AdgTable *) entity;
     data = table->data;
-    cpml_extents_copy(&extents, adg_entity_extents(entity));
+    cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
     /* Resolve the table style */
     if (data->table_style == NULL)
@@ -1169,7 +1169,7 @@ arrange_frame(AdgEntity *entity)
         return;
 
     path = adg_path_new();
-    extents = adg_entity_extents(entity);
+    extents = adg_entity_get_extents(entity);
 
     cpml_pair_copy(&pair, &extents->org);
     adg_path_move_to(path, &pair);
@@ -1540,12 +1540,12 @@ cell_arrange_size(AdgTableCell *cell)
         size->x = 0;
 
         if (cell->title != NULL) {
-            extents = adg_entity_extents((AdgEntity *) title_alignment);
+            extents = adg_entity_get_extents((AdgEntity *) title_alignment);
             size->x = extents->size.x;
         }
 
         if (cell->value != NULL) {
-            extents = adg_entity_extents((AdgEntity *) value_alignment);
+            extents = adg_entity_get_extents((AdgEntity *) value_alignment);
             if (extents->size.x > size->x)
                 size->x = extents->size.x;
         }

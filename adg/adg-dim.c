@@ -989,7 +989,7 @@ arrange(AdgEntity *entity)
     adg_entity_arrange(container_entity);
 
     /* Basic value */
-    extents = adg_entity_extents(value_entity);
+    extents = adg_entity_get_extents(value_entity);
     width = extents->size.x;
 
     /* Limit values (min and max) */
@@ -1000,11 +1000,11 @@ arrange(AdgEntity *entity)
 
         /* Minimum limit */
         if (min_entity != NULL)
-            cpml_extents_copy(&min_extents, adg_entity_extents(min_entity));
+            cpml_extents_copy(&min_extents, adg_entity_get_extents(min_entity));
 
         /* Maximum limit */
         if (max_entity != NULL)
-            cpml_extents_copy(&max_extents, adg_entity_extents(max_entity));
+            cpml_extents_copy(&max_extents, adg_entity_get_extents(max_entity));
 
         shift = adg_dim_style_get_limits_shift(data->dim_style);
         if (min_entity != NULL && max_entity != NULL)

@@ -640,7 +640,7 @@ adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
 }
 
 /**
- * adg_entity_extents:
+ * adg_entity_get_extents:
  * @entity: an #AdgEntity
  *
  * Gets the bounding box of @entity. The returned struct is
@@ -658,7 +658,7 @@ adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
  * Returns: the bounding box of @entity or %NULL on errors
  **/
 const CpmlExtents *
-adg_entity_extents(AdgEntity *entity)
+adg_entity_get_extents(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
