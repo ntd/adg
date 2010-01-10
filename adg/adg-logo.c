@@ -345,20 +345,19 @@ arrange(AdgEntity *entity)
 {
     AdgLogoClass *logo_class;
     AdgLogoClassPrivate *data_class;
-    CpmlExtents *extents;
     const AdgMatrix *local;
+    CpmlExtents extents;
 
     logo_class = ADG_LOGO_GET_CLASS(entity);
     data_class = logo_class->data_class;
-    extents = (CpmlExtents *) adg_entity_get_extents(entity);
     local = adg_entity_get_local_matrix(entity);
 
     arrange_class(logo_class);
-    cpml_extents_copy(extents, &data_class->extents);
+    cpml_extents_copy(&extents, &data_class->extents);
 
     /* Apply the local matrix to the extents of this logo instance */
-    cpml_pair_transform(&extents->org, local);
-    cpml_vector_transform(&extents->size, local);
+    cpml_extents_transform(&extents, local);
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
