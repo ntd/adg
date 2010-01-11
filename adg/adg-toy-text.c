@@ -367,7 +367,7 @@ arrange(AdgEntity *entity)
         adg_matrix_transform(&ctm, adg_entity_get_local_matrix(entity),
                              ADG_TRANSFORM_BEFORE);
 
-        data->font = adg_font_style_font(font_style, &ctm);
+        data->font = adg_font_style_get_scaled_font(font_style, &ctm);
     }
 
     if (adg_is_empty(data->label)) {

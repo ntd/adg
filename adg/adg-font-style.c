@@ -307,7 +307,7 @@ adg_font_style_new(void)
 }
 
 /**
- * adg_font_style_font:
+ * adg_font_style_get_scaled_font:
  * @font_style: an #AdgFontStyle object
  * @ctm: the current transformation matrix
  *
@@ -317,7 +317,7 @@ adg_font_style_new(void)
  * Returns: the scaled font
  **/
 cairo_scaled_font_t *
-adg_font_style_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
+adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
 {
     AdgFontStylePrivate *data;
     cairo_font_options_t *options;
@@ -732,7 +732,7 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     adg_entity_apply_dress(entity, data->color_dress, cr);
 
     cairo_get_matrix(cr, &ctm);
-    font = adg_font_style_font((AdgFontStyle *) style, &ctm);
+    font = adg_font_style_get_scaled_font((AdgFontStyle *) style, &ctm);
 
     cairo_set_scaled_font(cr, font);
 }
