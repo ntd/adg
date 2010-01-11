@@ -73,7 +73,7 @@ gdouble         adg_table_row_get_height        (AdgTableRow    *row);
 const CpmlExtents *
                 adg_table_row_extents           (AdgTableRow    *row);
 
-AdgTableCell *  adg_table_get_cell              (AdgTable       *table,
+AdgTableCell *  adg_table_cell                  (AdgTable       *table,
                                                  const gchar    *name);
 AdgTableCell *  adg_table_cell_new              (AdgTableRow    *row,
                                                  gdouble         width);

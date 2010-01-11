@@ -684,7 +684,7 @@ set_title(AdgTitleBlock *title_block, const gchar *title)
     data->title = g_strdup(title);
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "title");
+    cell = adg_table_cell(table, "title");
     adg_table_cell_set_text_value(cell, data->title);
     return TRUE;
 }
@@ -705,7 +705,7 @@ set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
     data->drawing = g_strdup(drawing);
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "drawing");
+    cell = adg_table_cell(table, "drawing");
     adg_table_cell_set_text_value(cell, data->drawing);
     return TRUE;
 }
@@ -726,7 +726,7 @@ set_size(AdgTitleBlock *title_block, const gchar *size)
     data->size = g_strdup(size);
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "size");
+    cell = adg_table_cell(table, "size");
     adg_table_cell_set_text_value(cell, data->size);
     return TRUE;
 }
@@ -747,7 +747,7 @@ set_scale(AdgTitleBlock *title_block, const gchar *scale)
     data->scale = g_strdup(scale);
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "scale");
+    cell = adg_table_cell(table, "scale");
     adg_table_cell_set_text_value(cell, data->scale);
     return TRUE;
 }
@@ -768,7 +768,7 @@ set_author(AdgTitleBlock *title_block, const gchar *author)
     data->author = g_strdup(author);
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "author");
+    cell = adg_table_cell(table, "author");
     adg_table_cell_set_text_value(cell, data->author);
     return TRUE;
 }
@@ -803,7 +803,7 @@ set_date(AdgTitleBlock *title_block, const gchar *date)
     }
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "date");
+    cell = adg_table_cell(table, "date");
     adg_table_cell_set_text_value(cell, data->date);
     return TRUE;
 }
@@ -828,7 +828,7 @@ set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
     to.y = 0;
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "logo");
+    cell = adg_table_cell(table, "logo");
     adg_table_cell_set_value(cell, data->logo);
     adg_table_cell_set_value_pos(cell, &from, &to);
 
@@ -853,7 +853,7 @@ set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
     center.y = 0.5;
 
     table = get_table(title_block);
-    cell = adg_table_get_cell(table, "projection");
+    cell = adg_table_cell(table, "projection");
     adg_table_cell_set_value(cell, data->projection);
     adg_table_cell_set_value_pos(cell, &center, &center);
 

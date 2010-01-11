@@ -550,7 +550,7 @@ adg_table_row_extents(AdgTableRow *row)
 }
 
 /**
- * adg_table_get_cell:
+ * adg_table_cell:
  * @table: an #AdgTable
  * @name: the name of a cell
  *
@@ -560,7 +560,7 @@ adg_table_row_extents(AdgTableRow *row)
  * Returns: the requested cell or %NULL if not found
  **/
 AdgTableCell *
-adg_table_get_cell(AdgTable *table, const gchar *name)
+adg_table_cell(AdgTable *table, const gchar *name)
 {
     AdgTablePrivate *data;
 
@@ -647,7 +647,7 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
  * check its documentation for details.
  *
  * @name is an optional identifier to univoquely access this cell
- * by using adg_table_get_cell(). The identifier must be univoque:
+ * by using adg_table_cell(). The identifier must be univoque:
  * if there is yet a cell with the same name a warning message will
  * be raised and the function will fail.
  *
@@ -723,7 +723,7 @@ adg_table_cell_get_name(AdgTableCell *cell)
  * @name: the new name of @cell
  *
  * Sets a new name on @cell: this will allow to access @cell by
- * name at a later time using the adg_table_get_cell() API.
+ * name at a later time using the adg_table_cell() API.
  **/
 void
 adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
