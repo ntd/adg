@@ -53,16 +53,16 @@ GType           adg_projection_get_type         (void) G_GNUC_CONST;
 
 AdgProjection * adg_projection_new              (AdgProjectionScheme scheme);
 
-AdgDress        adg_projection_get_symbol_dress (AdgProjection  *projection);
 void            adg_projection_set_symbol_dress (AdgProjection  *projection,
                                                  AdgDress        dress);
-AdgDress        adg_projection_get_axis_dress   (AdgProjection  *projection);
+AdgDress        adg_projection_get_symbol_dress (AdgProjection  *projection);
 void            adg_projection_set_axis_dress   (AdgProjection  *projection,
                                                  AdgDress        dress);
-AdgProjectionScheme
-                adg_projection_get_scheme       (AdgProjection  *projection);
+AdgDress        adg_projection_get_axis_dress   (AdgProjection  *projection);
 void            adg_projection_set_scheme       (AdgProjection  *projection,
                                                  AdgProjectionScheme scheme);
+AdgProjectionScheme
+                adg_projection_get_scheme       (AdgProjection  *projection);
 
 G_END_DECLS
 

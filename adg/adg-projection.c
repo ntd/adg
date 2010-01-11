@@ -203,26 +203,6 @@ adg_projection_new(AdgProjectionScheme scheme)
 }
 
 /**
- * adg_projection_get_symbol_dress:
- * @projection: an #AdgProjection
- *
- * Gets the line dress to be used in stroking the symbol of @projection.
- *
- * Returns: the requested line dress
- **/
-AdgDress
-adg_projection_get_symbol_dress(AdgProjection *projection)
-{
-    AdgProjectionPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_PROJECTION(projection), ADG_DRESS_UNDEFINED);
-
-    data = projection->data;
-
-    return data->symbol_dress;
-}
-
-/**
  * adg_projection_set_symbol_dress:
  * @projection: an #AdgProjection
  * @dress: the new #AdgDress to use
@@ -250,15 +230,15 @@ adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
 }
 
 /**
- * adg_projection_get_axis_dress:
+ * adg_projection_get_symbol_dress:
  * @projection: an #AdgProjection
  *
- * Gets the line dress to be used in stroking the axis of @projection.
+ * Gets the line dress to be used in stroking the symbol of @projection.
  *
  * Returns: the requested line dress
  **/
 AdgDress
-adg_projection_get_axis_dress(AdgProjection *projection)
+adg_projection_get_symbol_dress(AdgProjection *projection)
 {
     AdgProjectionPrivate *data;
 
@@ -266,7 +246,7 @@ adg_projection_get_axis_dress(AdgProjection *projection)
 
     data = projection->data;
 
-    return data->axis_dress;
+    return data->symbol_dress;
 }
 
 /**
@@ -297,24 +277,23 @@ adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
 }
 
 /**
- * adg_projection_get_scheme:
+ * adg_projection_get_axis_dress:
  * @projection: an #AdgProjection
  *
- * Gets the scheme represented by @projection.
+ * Gets the line dress to be used in stroking the axis of @projection.
  *
- * Returns: the scheme of @projection
+ * Returns: the requested line dress
  **/
-AdgProjectionScheme
-adg_projection_get_scheme(AdgProjection  *projection)
+AdgDress
+adg_projection_get_axis_dress(AdgProjection *projection)
 {
     AdgProjectionPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_PROJECTION(projection),
-                         ADG_PROJECTION_UNDEFINED);
+    g_return_val_if_fail(ADG_IS_PROJECTION(projection), ADG_DRESS_UNDEFINED);
 
     data = projection->data;
 
-    return data->scheme;
+    return data->axis_dress;
 }
 
 /**
@@ -333,6 +312,27 @@ adg_projection_set_scheme(AdgProjection *projection,
 
     if (set_scheme(projection, scheme))
         g_object_notify((GObject *) projection, "scheme");
+}
+
+/**
+ * adg_projection_get_scheme:
+ * @projection: an #AdgProjection
+ *
+ * Gets the scheme represented by @projection.
+ *
+ * Returns: the scheme of @projection
+ **/
+AdgProjectionScheme
+adg_projection_get_scheme(AdgProjection  *projection)
+{
+    AdgProjectionPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PROJECTION(projection),
+                         ADG_PROJECTION_UNDEFINED);
+
+    data = projection->data;
+
+    return data->scheme;
 }
 
 
