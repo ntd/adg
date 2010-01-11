@@ -194,36 +194,6 @@ adg_color_style_new(void)
 }
 
 /**
- * adg_color_style_put_rgb:
- * @color_style: an #AdgColorStyle
- * @r: where to store the red channel value
- * @g: where to store the green channel value
- * @b: where to store the blue channel value
- *
- * Gets the values of the red, green and blue channels of @color_style.
- * Any of the pointer can be %NULL, in which case the value is not returned.
- **/
-void
-adg_color_style_put_rgb(AdgColorStyle *color_style,
-                        gdouble *r, gdouble *g, gdouble *b)
-{
-    AdgColorStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    data = color_style->data;
-
-    if (r != NULL)
-        *r = data->red;
-
-    if (g != NULL)
-        *g = data->green;
-
-    if (b != NULL)
-        *b = data->blue;
-}
-
-/**
  * adg_color_style_set_rgb:
  * @color_style: an #AdgColorStyle
  * @r: the red channel value
@@ -256,24 +226,33 @@ adg_color_style_set_rgb(AdgColorStyle *color_style,
 }
 
 /**
- * adg_color_style_get_alpha:
+ * adg_color_style_put_rgb:
  * @color_style: an #AdgColorStyle
+ * @r: where to store the red channel value
+ * @g: where to store the green channel value
+ * @b: where to store the blue channel value
  *
- * Gets the alpha channel value, where %0 means completely transparent
- * and %1 is fully opaque.
- *
- * Returns: the requested alpha value
+ * Gets the values of the red, green and blue channels of @color_style.
+ * Any of the pointer can be %NULL, in which case the value is not returned.
  **/
-gdouble
-adg_color_style_get_alpha(AdgColorStyle *color_style)
+void
+adg_color_style_put_rgb(AdgColorStyle *color_style,
+                        gdouble *r, gdouble *g, gdouble *b)
 {
     AdgColorStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
+    g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
 
     data = color_style->data;
 
-    return data->alpha;
+    if (r != NULL)
+        *r = data->red;
+
+    if (g != NULL)
+        *g = data->green;
+
+    if (b != NULL)
+        *b = data->blue;
 }
 
 /**
@@ -295,6 +274,27 @@ adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
     data->alpha = alpha;
 
     g_object_notify((GObject *) color_style, "alpha");
+}
+
+/**
+ * adg_color_style_get_alpha:
+ * @color_style: an #AdgColorStyle
+ *
+ * Gets the alpha channel value, where %0 means completely transparent
+ * and %1 is fully opaque.
+ *
+ * Returns: the requested alpha value
+ **/
+gdouble
+adg_color_style_get_alpha(AdgColorStyle *color_style)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
+
+    data = color_style->data;
+
+    return data->alpha;
 }
 
 

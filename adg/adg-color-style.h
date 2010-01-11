@@ -53,17 +53,17 @@ struct _AdgColorStyleClass {
 GType           adg_color_style_get_type        (void) G_GNUC_CONST;
 AdgColorStyle * adg_color_style_new             (void);
 
-void            adg_color_style_put_rgb         (AdgColorStyle  *color_style,
-                                                 gdouble        *r,
-                                                 gdouble        *g,
-                                                 gdouble        *b);
 void            adg_color_style_set_rgb         (AdgColorStyle  *color_style,
                                                  gdouble         r,
                                                  gdouble         g,
                                                  gdouble         b);
-gdouble         adg_color_style_get_alpha       (AdgColorStyle  *color_style);
+void            adg_color_style_put_rgb         (AdgColorStyle  *color_style,
+                                                 gdouble        *r,
+                                                 gdouble        *g,
+                                                 gdouble        *b);
 void            adg_color_style_set_alpha       (AdgColorStyle  *color_style,
                                                  gdouble         alpha);
+gdouble         adg_color_style_get_alpha       (AdgColorStyle  *color_style);
 
 G_END_DECLS
 
