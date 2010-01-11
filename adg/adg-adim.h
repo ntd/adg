@@ -73,8 +73,6 @@ AdgADim *       adg_adim_new_full_from_model    (AdgModel       *model,
                                                  const gchar    *org2,
                                                  const gchar    *pos);
 
-const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
-const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
 void            adg_adim_set_org                (AdgADim        *adim,
                                                  const AdgPair  *org1,
                                                  const AdgPair  *org2);
@@ -87,6 +85,8 @@ void            adg_adim_set_org_from_model     (AdgADim        *adim,
                                                  AdgModel       *model,
                                                  const gchar    *org1,
                                                  const gchar    *org2);
+const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
+const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
 
 G_END_DECLS
 

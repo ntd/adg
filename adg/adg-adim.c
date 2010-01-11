@@ -358,48 +358,6 @@ adg_adim_new_full_from_model(AdgModel *model,
 }
 
 /**
- * adg_adim_get_org1:
- * @adim: an #AdgADim
- *
- * Gets the first origin of @adim. The returned pair is owned by
- * @adim and should not be modified or freed.
- *
- * Returns: a pointer to the internal #AdgPair or %NULL on errors
- **/
-const AdgPair *
-adg_adim_get_org1(AdgADim *adim)
-{
-    AdgADimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
-
-    data = adim->data;
-
-    return adg_point_pair(data->org1);
-}
-
-/**
- * adg_adim_get_org2:
- * @adim: an #AdgADim
- *
- * Gets the second origin of @adim. The returned pair is owned by
- * @adim and should not be modified or freed.
- *
- * Returns: a pointer to the internal #AdgPair or %NULL on errors
- **/
-const AdgPair *
-adg_adim_get_org2(AdgADim *adim)
-{
-    AdgADimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
-
-    data = adim->data;
-
-    return adg_point_pair(data->org2);
-}
-
-/**
  * adg_adim_set_org:
  * @adim: an #AdgADim
  * @org1: the first origin
@@ -527,6 +485,48 @@ adg_adim_set_org_from_model(AdgADim *adim, AdgModel *model,
     }
 
     g_object_thaw_notify(object);
+}
+
+/**
+ * adg_adim_get_org1:
+ * @adim: an #AdgADim
+ *
+ * Gets the first origin of @adim. The returned pair is owned by
+ * @adim and should not be modified or freed.
+ *
+ * Returns: a pointer to the internal #AdgPair or %NULL on errors
+ **/
+const AdgPair *
+adg_adim_get_org1(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
+
+    data = adim->data;
+
+    return adg_point_pair(data->org1);
+}
+
+/**
+ * adg_adim_get_org2:
+ * @adim: an #AdgADim
+ *
+ * Gets the second origin of @adim. The returned pair is owned by
+ * @adim and should not be modified or freed.
+ *
+ * Returns: a pointer to the internal #AdgPair or %NULL on errors
+ **/
+const AdgPair *
+adg_adim_get_org2(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
+
+    data = adim->data;
+
+    return adg_point_pair(data->org2);
 }
 
 
