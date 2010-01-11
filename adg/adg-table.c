@@ -307,26 +307,6 @@ adg_table_new(void)
 }
 
 /**
- * adg_table_get_table_dress:
- * @table: an #AdgTable
- *
- * Gets the table dress to be used in rendering @table.
- *
- * Returns: the current table dress
- **/
-AdgDress
-adg_table_get_table_dress(AdgTable *table)
-{
-    AdgTablePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TABLE(table), ADG_DRESS_UNDEFINED);
-
-    data = table->data;
-
-    return data->table_dress;
-}
-
-/**
  * adg_table_set_table_dress:
  * @table: an #AdgTable
  * @dress: the new #AdgDress to use
@@ -354,23 +334,23 @@ adg_table_set_table_dress(AdgTable *table, AdgDress dress)
 }
 
 /**
- * adg_table_has_frame:
+ * adg_table_get_table_dress:
  * @table: an #AdgTable
  *
- * Returns the state of the #AdgTable:has-frame property.
+ * Gets the table dress to be used in rendering @table.
  *
- * Returns: the current state
+ * Returns: the current table dress
  **/
-gboolean
-adg_table_has_frame(AdgTable *table)
+AdgDress
+adg_table_get_table_dress(AdgTable *table)
 {
     AdgTablePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_TABLE(table), FALSE);
+    g_return_val_if_fail(ADG_IS_TABLE(table), ADG_DRESS_UNDEFINED);
 
     data = table->data;
 
-    return data->has_frame;
+    return data->table_dress;
 }
 
 /**
@@ -389,6 +369,26 @@ adg_table_switch_frame(AdgTable *table, gboolean new_state)
 
     if (switch_frame(table, new_state))
         g_object_notify((GObject *) table, "has-frame");
+}
+
+/**
+ * adg_table_has_frame:
+ * @table: an #AdgTable
+ *
+ * Returns the state of the #AdgTable:has-frame property.
+ *
+ * Returns: the current state
+ **/
+gboolean
+adg_table_has_frame(AdgTable *table)
+{
+    AdgTablePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TABLE(table), FALSE);
+
+    data = table->data;
+
+    return data->has_frame;
 }
 
 /**
@@ -552,31 +552,6 @@ adg_table_row_get_extents(AdgTableRow *row)
 }
 
 /**
- * adg_table_cell:
- * @table: an #AdgTable
- * @name: the name of a cell
- *
- * Gets the cell named @name inside @table. Only named cells can be
- * retrieved by this method.
- *
- * Returns: the requested cell or %NULL if not found
- **/
-AdgTableCell *
-adg_table_cell(AdgTable *table, const gchar *name)
-{
-    AdgTablePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
-
-    data = table->data;
-
-    if (data->cell_names == NULL)
-        return NULL;
-
-    return g_hash_table_lookup(data->cell_names, name);
-}
-
-/**
  * adg_table_cell_new:
  * @row: a valid #AdgTableRow
  * @width: width of the cell
@@ -675,6 +650,31 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
 }
 
 /**
+ * adg_table_cell:
+ * @table: an #AdgTable
+ * @name: the name of a cell
+ *
+ * Gets the cell named @name inside @table. Only named cells can be
+ * retrieved by this method.
+ *
+ * Returns: the requested cell or %NULL if not found
+ **/
+AdgTableCell *
+adg_table_cell(AdgTable *table, const gchar *name)
+{
+    AdgTablePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
+
+    data = table->data;
+
+    if (data->cell_names == NULL)
+        return NULL;
+
+    return g_hash_table_lookup(data->cell_names, name);
+}
+
+/**
  * adg_table_cell_delete:
  * @cell: a valid #AdgTableCell
  *
@@ -694,6 +694,27 @@ adg_table_cell_delete(AdgTableCell *cell)
 
     cell_free(cell);
     row->cells = g_slist_remove(row->cells, cell);
+}
+
+/**
+ * adg_table_cell_set_name:
+ * @cell: a valid #AdgTableCell
+ * @name: the new name of @cell
+ *
+ * Sets a new name on @cell: this will allow to access @cell by
+ * name at a later time using the adg_table_cell() API.
+ **/
+void
+adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
+{
+    AdgTablePrivate *data;
+
+    g_return_if_fail(cell != NULL);
+
+    data = cell->row->table->data;
+
+    cell_set_name(cell, NULL);
+    cell_set_name(cell, name);
 }
 
 /**
@@ -717,27 +738,6 @@ adg_table_cell_get_name(AdgTableCell *cell)
     data = cell->row->table->data;
 
     return g_hash_table_find(data->cell_names, value_match, cell);
-}
-
-/**
- * adg_table_cell_set_name:
- * @cell: a valid #AdgTableCell
- * @name: the new name of @cell
- *
- * Sets a new name on @cell: this will allow to access @cell by
- * name at a later time using the adg_table_cell() API.
- **/
-void
-adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
-{
-    AdgTablePrivate *data;
-
-    g_return_if_fail(cell != NULL);
-
-    data = cell->row->table->data;
-
-    cell_set_name(cell, NULL);
-    cell_set_name(cell, name);
 }
 
 /**
@@ -984,22 +984,6 @@ adg_table_cell_get_width(AdgTableCell *cell)
 }
 
 /**
- * adg_table_cell_has_frame:
- * @cell: a valid #AdgTableCell
- *
- * Gets the frame flag of @cell.
- *
- * Returns: the frame flag
- **/
-gboolean
-adg_table_cell_has_frame(AdgTableCell *cell)
-{
-    g_return_val_if_fail(cell != NULL, FALSE);
-
-    return cell->has_frame;
-}
-
-/**
  * adg_table_cell_switch_frame:
  * @cell: a valid #AdgTableCell
  * @new_state: the new frame state
@@ -1025,6 +1009,22 @@ adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
         g_object_unref(data->grid);
         data->grid = NULL;
     }
+}
+
+/**
+ * adg_table_cell_has_frame:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the frame flag of @cell.
+ *
+ * Returns: the frame flag
+ **/
+gboolean
+adg_table_cell_has_frame(AdgTableCell *cell)
+{
+    g_return_val_if_fail(cell != NULL, FALSE);
+
+    return cell->has_frame;
 }
 
 /**

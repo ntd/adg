@@ -55,12 +55,12 @@ GType           adg_table_get_type              (void) G_GNUC_CONST;
 
 AdgTable *      adg_table_new                   (void);
 
-AdgDress        adg_table_get_table_dress       (AdgTable       *table);
 void            adg_table_set_table_dress       (AdgTable       *table,
                                                  AdgDress        dress);
-gboolean        adg_table_has_frame             (AdgTable       *table);
+AdgDress        adg_table_get_table_dress       (AdgTable       *table);
 void            adg_table_switch_frame          (AdgTable       *table,
                                                  gboolean        new_state);
+gboolean        adg_table_has_frame             (AdgTable       *table);
 guint           adg_table_get_n_rows            (AdgTable       *table);
 
 AdgTableRow *   adg_table_row_new               (AdgTable       *table);
@@ -73,8 +73,6 @@ gdouble         adg_table_row_get_height        (AdgTableRow    *row);
 const CpmlExtents *
                 adg_table_row_get_extents       (AdgTableRow    *row);
 
-AdgTableCell *  adg_table_cell                  (AdgTable       *table,
-                                                 const gchar    *name);
 AdgTableCell *  adg_table_cell_new              (AdgTableRow    *row,
                                                  gdouble         width);
 AdgTableCell *  adg_table_cell_new_before       (AdgTableCell   *cell,
@@ -84,10 +82,12 @@ AdgTableCell *  adg_table_cell_new_full         (AdgTableRow    *row,
                                                  const gchar    *name,
                                                  const gchar    *title,
                                                  const gchar    *value);
+AdgTableCell *  adg_table_cell                  (AdgTable       *table,
+                                                 const gchar    *name);
 void            adg_table_cell_delete           (AdgTableCell   *cell);
-const gchar *   adg_table_cell_get_name         (AdgTableCell   *cell);
 void            adg_table_cell_set_name         (AdgTableCell   *cell,
                                                  const gchar    *name);
+const gchar *   adg_table_cell_get_name         (AdgTableCell   *cell);
 void            adg_table_cell_set_title        (AdgTableCell   *cell,
                                                  AdgEntity      *title);
 void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
@@ -104,9 +104,9 @@ void            adg_table_cell_set_value_pos    (AdgTableCell   *cell,
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
 gdouble         adg_table_cell_get_width        (AdgTableCell   *cell);
-gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
 void            adg_table_cell_switch_frame     (AdgTableCell   *cell,
                                                  gboolean        new_state);
+gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
 const CpmlExtents *
                 adg_table_cell_get_extents      (AdgTableCell   *cell);
 
