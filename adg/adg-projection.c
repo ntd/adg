@@ -430,11 +430,11 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
 
     if (axis != NULL)
         cpml_extents_add(&data_class->extents,
-                         adg_trail_extents((AdgTrail *) axis));
+                         adg_trail_get_extents((AdgTrail *) axis));
 
     if (symbol != NULL)
         cpml_extents_add(&data_class->extents,
-                         adg_trail_extents((AdgTrail *) symbol));
+                         adg_trail_get_extents((AdgTrail *) symbol));
 }
 
 static void

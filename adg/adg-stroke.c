@@ -315,7 +315,7 @@ arrange(AdgEntity *entity)
     stroke = (AdgStroke *) entity;
     data = stroke->data;
 
-    cpml_extents_copy(&extents, adg_trail_extents(data->trail));
+    cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
 
     adg_entity_set_extents(entity, &extents);

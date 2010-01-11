@@ -290,7 +290,7 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
 }
 
 /**
- * adg_trail_extents:
+ * adg_trail_get_extents:
  * @trail: an #AdgTrail
  *
  * Gets the extents of @trail. The returned pointer is owned by
@@ -299,7 +299,7 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
  * Returns: the requested extents or %NULL on errors
  **/
 const CpmlExtents *
-adg_trail_extents(AdgTrail *trail)
+adg_trail_get_extents(AdgTrail *trail)
 {
     AdgTrailPrivate *data;
 

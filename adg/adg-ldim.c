@@ -602,7 +602,7 @@ arrange(AdgEntity *entity)
     }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-    cpml_extents_copy(&extents, adg_trail_extents(data->trail));
+    cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
 
     if (quote != NULL) {
         /* Update global and local map of the quote container */

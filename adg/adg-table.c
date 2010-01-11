@@ -1174,7 +1174,7 @@ arrange_grid(AdgEntity *entity)
         }
     }
 
-    if (!adg_trail_extents(trail)->is_defined)
+    if (!adg_trail_get_extents(trail)->is_defined)
         return;
 
     dress = adg_table_style_get_grid_dress(data->table_style);

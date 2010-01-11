@@ -55,19 +55,17 @@ struct _AdgTrailClass {
 };
 
 
-GType           adg_trail_get_type              (void) G_GNUC_CONST;
-AdgTrail *      adg_trail_new                   (AdgTrailCallback callback,
+GType               adg_trail_get_type          (void) G_GNUC_CONST;
+AdgTrail *          adg_trail_new               (AdgTrailCallback callback,
                                                  gpointer         user_data);
 
-const cairo_path_t *
-                adg_trail_get_cairo_path        (AdgTrail        *trail);
-CpmlPath *      adg_trail_get_cpml_path         (AdgTrail        *trail);
-gboolean        adg_trail_get_segment           (AdgTrail        *trail,
+const cairo_path_t *adg_trail_get_cairo_path    (AdgTrail        *trail);
+CpmlPath *          adg_trail_get_cpml_path     (AdgTrail        *trail);
+gboolean            adg_trail_get_segment       (AdgTrail        *trail,
                                                  AdgSegment      *segment,
                                                  guint            n);
-const CpmlExtents *
-                adg_trail_extents               (AdgTrail        *trail);
-void            adg_trail_dump                  (AdgTrail        *trail);
+const CpmlExtents * adg_trail_get_extents       (AdgTrail        *trail);
+void                adg_trail_dump              (AdgTrail        *trail);
 
 G_END_DECLS
 

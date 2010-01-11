@@ -421,11 +421,11 @@ arrange_class(AdgLogoClass *logo_class)
 
     if (!data_class->extents.is_defined) {
         cpml_extents_add(extents,
-                         adg_trail_extents((AdgTrail *) data_class->symbol));
+                         adg_trail_get_extents((AdgTrail *) data_class->symbol));
         cpml_extents_add(extents,
-                         adg_trail_extents((AdgTrail *) data_class->screen));
+                         adg_trail_get_extents((AdgTrail *) data_class->screen));
         cpml_extents_add(extents,
-                         adg_trail_extents((AdgTrail *) data_class->frame));
+                         adg_trail_get_extents((AdgTrail *) data_class->frame));
     }
 }
 
