@@ -42,12 +42,12 @@ AdgDress        adg_dress_new                   (const gchar    *name,
 AdgDress        adg_dress_new_full              (const gchar    *name,
                                                  AdgStyle       *fallback,
                                                  GType           ancestor_type);
+AdgDress        adg_dress_from_name             (const gchar    *name);
 gboolean        adg_dress_set                   (AdgDress       *dress,
                                                  AdgDress        src);
 gboolean        adg_dress_are_related           (AdgDress        dress1,
                                                  AdgDress        dress2);
-const gchar *   adg_dress_name                  (AdgDress        dress);
-AdgDress        adg_dress_from_name             (const gchar    *name);
+const gchar *   adg_dress_get_name              (AdgDress        dress);
 GType           adg_dress_get_ancestor_type     (AdgDress        dress);
 AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
 void            adg_dress_set_fallback          (AdgDress        dress,

@@ -812,7 +812,7 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 
         g_warning(_("%s: `%s' is not compatible with `%s' for `%s' dress"),
                   G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(style)),
-                  g_type_name(ancestor_type), adg_dress_name(dress));
+                  g_type_name(ancestor_type), adg_dress_get_name(dress));
 
         return;
     }

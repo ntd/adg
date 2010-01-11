@@ -165,6 +165,21 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
 }
 
 /**
+ * adg_dress_from_name:
+ * @name: the name of a dress
+ *
+ * Gets the dress bound to a @name string. No warnings are raised
+ * if the dress is not found.
+ *
+ * Returns: the #AdgDress code or #ADG_DRESS_UNDEFINED if not found
+ **/
+AdgDress
+adg_dress_from_name(const gchar *name)
+{
+    return quark_to_dress(g_quark_try_string(name));
+}
+
+/**
  * adg_dress_are_related:
  * @dress1: an #AdgDress
  * @dress2: another #AdgDress
@@ -213,11 +228,11 @@ adg_dress_set(AdgDress *dress, AdgDress src)
         const gchar *dress_name;
         const gchar *src_name;
 
-        dress_name = adg_dress_name(*dress);
+        dress_name = adg_dress_get_name(*dress);
         if (dress_name == NULL)
             dress_name = "UNDEFINED";
 
-        src_name = adg_dress_name(src);
+        src_name = adg_dress_get_name(src);
         if (src_name == NULL)
             src_name = "UNDEFINED";
 
@@ -233,7 +248,7 @@ adg_dress_set(AdgDress *dress, AdgDress src)
 }
 
 /**
- * adg_dress_name:
+ * adg_dress_get_name:
  * @dress: an #AdgDress
  *
  * Gets the name associated to @dress. No warnings are raised if
@@ -242,27 +257,12 @@ adg_dress_set(AdgDress *dress, AdgDress src)
  * Returns: the requested name or %NULL if not found
  **/
 const gchar *
-adg_dress_name(AdgDress dress)
+adg_dress_get_name(AdgDress dress)
 {
     if (dress <= 0 || dress >= array_len())
         return NULL;
 
     return g_quark_to_string(array_lookup(dress)->quark);
-}
-
-/**
- * adg_dress_from_name:
- * @name: the name of a dress
- *
- * Gets the dress bound to a @name string. No warnings are raised
- * if the dress is not found.
- *
- * Returns: the #AdgDress code or #ADG_DRESS_UNDEFINED if not found
- **/
-AdgDress
-adg_dress_from_name(const gchar *name)
-{
-    return quark_to_dress(g_quark_try_string(name));
 }
 
 /**
@@ -344,7 +344,7 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
     if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
         g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
                   G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(fallback)),
-                  g_type_name(data->ancestor_type), adg_dress_name(dress));
+                  g_type_name(data->ancestor_type), adg_dress_get_name(dress));
         return;
     }
 
@@ -399,7 +399,7 @@ quark_to_dress(GQuark quark)
 static void
 dress_to_string(const GValue *src, GValue *dst)
 {
-    g_value_set_string(dst, adg_dress_name(g_value_get_int(src)));
+    g_value_set_string(dst, adg_dress_get_name(g_value_get_int(src)));
 }
 
 static void
