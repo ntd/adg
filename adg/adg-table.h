@@ -88,11 +88,11 @@ void            adg_table_cell_delete           (AdgTableCell   *cell);
 const gchar *   adg_table_cell_get_name         (AdgTableCell   *cell);
 void            adg_table_cell_set_name         (AdgTableCell   *cell,
                                                  const gchar    *name);
-AdgEntity *     adg_table_cell_get_title        (AdgTableCell   *cell);
 void            adg_table_cell_set_title        (AdgTableCell   *cell,
                                                  AdgEntity      *title);
 void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
                                                  const gchar    *title);
+AdgEntity *     adg_table_cell_title            (AdgTableCell   *cell);
 void            adg_table_cell_set_value        (AdgTableCell   *cell,
                                                  AdgEntity      *value);
 void            adg_table_cell_set_text_value   (AdgTableCell   *cell,

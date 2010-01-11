@@ -741,23 +741,6 @@ adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
 }
 
 /**
- * adg_table_cell_get_title:
- * @cell: a valid #AdgTableCell
- *
- * Gets the current title of @cell. The returned string is owned
- * by @cell and must not be modified or freed.
- *
- * Returns: the title entity or %NULL for undefined title
- **/
-AdgEntity *
-adg_table_cell_get_title(AdgTableCell *cell)
-{
-    g_return_val_if_fail(cell != NULL, NULL);
-
-    return cell->title;
-}
-
-/**
  * adg_table_cell_set_title:
  * @cell: a valid #AdgTableCell
  * @title: the new title entity
@@ -831,6 +814,23 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
     adg_entity_set_global_map(entity, &map);
 
     adg_table_cell_set_title(cell, entity);
+}
+
+/**
+ * adg_table_cell_title:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the current title of @cell. The returned string is owned
+ * by @cell and must not be modified or freed.
+ *
+ * Returns: the title entity or %NULL for undefined title
+ **/
+AdgEntity *
+adg_table_cell_title(AdgTableCell *cell)
+{
+    g_return_val_if_fail(cell != NULL, NULL);
+
+    return cell->title;
 }
 
 /**
