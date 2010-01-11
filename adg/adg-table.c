@@ -534,7 +534,7 @@ adg_table_row_get_height(AdgTableRow *row)
 }
 
 /**
- * adg_table_row_extents:
+ * adg_table_row_get_extents:
  * @row: a valid #AdgTableRow
  *
  * Gets the extents of @row. This function is useful only after the
@@ -544,7 +544,7 @@ adg_table_row_get_height(AdgTableRow *row)
  * Returns: the extents of @row or %NULL on errors
  **/
 const CpmlExtents *
-adg_table_row_extents(AdgTableRow *row)
+adg_table_row_get_extents(AdgTableRow *row)
 {
     g_return_val_if_fail(row != NULL, NULL);
 
