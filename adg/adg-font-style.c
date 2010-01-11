@@ -366,26 +366,6 @@ adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
 }
 
 /**
- * adg_font_style_get_color_dress:
- * @font_style: an #AdgFontStyle
- *
- * Gets the color dress used by @font_style.
- *
- * Returns: the current color dress
- **/
-AdgDress
-adg_font_style_get_color_dress(AdgFontStyle *font_style)
-{
-    AdgFontStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), ADG_DRESS_UNDEFINED);
-
-    data = font_style->data;
-
-    return data->color_dress;
-}
-
-/**
  * adg_font_style_set_color_dress:
  * @font_style: an #AdgFontStyle
  * @dress: the new color dress to use
@@ -414,6 +394,42 @@ adg_font_style_set_color_dress(AdgFontStyle *font_style, AdgDress dress)
 }
 
 /**
+ * adg_font_style_get_color_dress:
+ * @font_style: an #AdgFontStyle
+ *
+ * Gets the color dress used by @font_style.
+ *
+ * Returns: the current color dress
+ **/
+AdgDress
+adg_font_style_get_color_dress(AdgFontStyle *font_style)
+{
+    AdgFontStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), ADG_DRESS_UNDEFINED);
+
+    data = font_style->data;
+
+    return data->color_dress;
+}
+
+/**
+ * adg_font_style_set_family:
+ * @font_style: an #AdgFontStyle object
+ * @family: the new family
+ *
+ * Sets a new family.
+ **/
+void
+adg_font_style_set_family(AdgFontStyle *font_style, const gchar *family)
+{
+    g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
+
+    if (set_family(font_style, family))
+        g_object_notify((GObject *) font_style, "family");
+}
+
+/**
  * adg_font_style_get_family:
  * @font_style: an #AdgFontStyle object
  *
@@ -435,19 +451,20 @@ adg_font_style_get_family(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_family:
+ * adg_font_style_set_slant:
  * @font_style: an #AdgFontStyle object
- * @family: the new family
+ * @slant: the new slant
  *
- * Sets a new family.
+ * Sets a new slant variant on @font_style.
  **/
 void
-adg_font_style_set_family(AdgFontStyle *font_style, const gchar *family)
+adg_font_style_set_slant(AdgFontStyle *font_style,
+                         cairo_font_slant_t slant)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_family(font_style, family))
-        g_object_notify((GObject *) font_style, "family");
+    if (set_slant(font_style, slant))
+        g_object_notify((GObject *) font_style, "slant");
 }
 
 /**
@@ -472,20 +489,20 @@ adg_font_style_get_slant(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_slant:
+ * adg_font_style_set_weight:
  * @font_style: an #AdgFontStyle object
- * @slant: the new slant
+ * @weight: the new weight
  *
- * Sets a new slant variant on @font_style.
+ * Sets a new weight variant on @font_style.
  **/
 void
-adg_font_style_set_slant(AdgFontStyle *font_style,
-                         cairo_font_slant_t slant)
+adg_font_style_set_weight(AdgFontStyle *font_style,
+                          cairo_font_weight_t weight)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_slant(font_style, slant))
-        g_object_notify((GObject *) font_style, "slant");
+    if (set_weight(font_style, weight))
+        g_object_notify((GObject *) font_style, "weight");
 }
 
 /**
@@ -510,20 +527,19 @@ adg_font_style_get_weight(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_weight:
+ * adg_font_style_set_size:
  * @font_style: an #AdgFontStyle object
- * @weight: the new weight
+ * @size: the new size
  *
- * Sets a new weight variant on @font_style.
+ * Sets a new size (in global space) on @font_style.
  **/
 void
-adg_font_style_set_weight(AdgFontStyle *font_style,
-                          cairo_font_weight_t weight)
+adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_weight(font_style, weight))
-        g_object_notify((GObject *) font_style, "weight");
+    if (set_size(font_style, size))
+        g_object_notify((GObject *) font_style, "size");
 }
 
 /**
@@ -547,19 +563,20 @@ adg_font_style_get_size(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_size:
+ * adg_font_style_set_antialias:
  * @font_style: an #AdgFontStyle object
- * @size: the new size
+ * @antialias: the new antialias mode
  *
- * Sets a new size (in global space) on @font_style.
+ * Sets a new antialias mode.
  **/
 void
-adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
+adg_font_style_set_antialias(AdgFontStyle *font_style,
+                             cairo_antialias_t antialias)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_size(font_style, size))
-        g_object_notify((GObject *) font_style, "size");
+    if (set_antialias(font_style, antialias))
+        g_object_notify((GObject *) font_style, "antialias");
 }
 
 /**
@@ -584,20 +601,20 @@ adg_font_style_get_antialias(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_antialias:
+ * adg_font_style_set_subpixel_order:
  * @font_style: an #AdgFontStyle object
- * @antialias: the new antialias mode
+ * @subpixel_order: the new subpixel order mode
  *
- * Sets a new antialias mode.
+ * Sets a new subpixel order mode.
  **/
 void
-adg_font_style_set_antialias(AdgFontStyle *font_style,
-                             cairo_antialias_t antialias)
+adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
+                                  cairo_subpixel_order_t subpixel_order)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_antialias(font_style, antialias))
-        g_object_notify((GObject *) font_style, "antialias");
+    if (set_subpixel_order(font_style, subpixel_order))
+        g_object_notify((GObject *) font_style, "subpixel-order");
 }
 
 /**
@@ -624,20 +641,20 @@ adg_font_style_get_subpixel_order(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_subpixel_order:
+ * adg_font_style_set_hint_style:
  * @font_style: an #AdgFontStyle object
- * @subpixel_order: the new subpixel order mode
+ * @hint_style: the new hint style mode
  *
- * Sets a new subpixel order mode.
+ * Sets a new hint style mode.
  **/
 void
-adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
-                                  cairo_subpixel_order_t subpixel_order)
+adg_font_style_set_hint_style(AdgFontStyle *font_style,
+                              cairo_hint_style_t hint_style)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_subpixel_order(font_style, subpixel_order))
-        g_object_notify((GObject *) font_style, "subpixel-order");
+    if (set_hint_style(font_style, hint_style))
+        g_object_notify((GObject *) font_style, "hint-style");
 }
 
 /**
@@ -663,20 +680,20 @@ adg_font_style_get_hint_style(AdgFontStyle *font_style)
 }
 
 /**
- * adg_font_style_set_hint_style:
+ * adg_font_style_set_hint_metrics:
  * @font_style: an #AdgFontStyle object
- * @hint_style: the new hint style mode
+ * @hint_metrics: the new hint metrics state
  *
- * Sets a new hint style mode.
+ * Sets a new hint metrics state.
  **/
 void
-adg_font_style_set_hint_style(AdgFontStyle *font_style,
-                              cairo_hint_style_t hint_style)
+adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
+                                cairo_hint_metrics_t hint_metrics)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
 
-    if (set_hint_style(font_style, hint_style))
-        g_object_notify((GObject *) font_style, "hint-style");
+    if (set_hint_metrics(font_style, hint_metrics))
+        g_object_notify((GObject *) font_style, "hint-metrics");
 }
 
 /**
@@ -698,23 +715,6 @@ adg_font_style_get_hint_metrics(AdgFontStyle *font_style)
     data = font_style->data;
 
     return data->hint_metrics;
-}
-
-/**
- * adg_font_style_set_hint_metrics:
- * @font_style: an #AdgFontStyle object
- * @hint_metrics: the new hint metrics state
- *
- * Sets a new hint metrics state.
- **/
-void
-adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
-                                cairo_hint_metrics_t hint_metrics)
-{
-    g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
-
-    if (set_hint_metrics(font_style, hint_metrics))
-        g_object_notify((GObject *) font_style, "hint-metrics");
 }
 
 
