@@ -50,9 +50,9 @@ struct _AdgArrowClass {
 
 GType           adg_arrow_get_type              (void) G_GNUC_CONST;
 
-gdouble         adg_arrow_get_angle             (AdgArrow       *arrow);
 void            adg_arrow_set_angle             (AdgArrow       *arrow,
                                                  gdouble         angle);
+gdouble         adg_arrow_get_angle             (AdgArrow       *arrow);
 
 G_END_DECLS
 

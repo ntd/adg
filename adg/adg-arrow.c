@@ -141,6 +141,23 @@ set_property(GObject *object,
 
 
 /**
+ * adg_arrow_set_angle:
+ * @arrow: an #AdgArrow
+ * @angle: the new angle
+ *
+ * Sets a new angle: @angle will be the new opening angle of @arrow.
+ * Changing the arrow angle will invalidate @arrow.
+ **/
+void
+adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_ARROW(arrow));
+
+    if (set_angle(arrow, angle))
+        g_object_notify((GObject *) arrow, "angle");
+}
+
+/**
  * adg_arrow_get_angle:
  * @arrow: an #AdgArrow
  *
@@ -160,22 +177,6 @@ adg_arrow_get_angle(AdgArrow *arrow)
     return data->angle;
 }
 
-/**
- * adg_arrow_set_angle:
- * @arrow: an #AdgArrow
- * @angle: the new angle
- *
- * Sets a new angle: @angle will be the new opening angle of @arrow.
- * Changing the arrow angle will invalidate @arrow.
- **/
-void
-adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
-{
-    g_return_if_fail(ADG_IS_ARROW(arrow));
-
-    if (set_angle(arrow, angle))
-        g_object_notify((GObject *) arrow, "angle");
-}
 
 static void
 arrange(AdgEntity *entity)
