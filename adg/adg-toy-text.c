@@ -204,26 +204,6 @@ adg_toy_text_new(const gchar *label)
 }
 
 /**
- * adg_toy_text_get_font_dress:
- * @toy_text: an #AdgToyText
- *
- * Gets the font dress to be used in rendering @toy_text.
- *
- * Returns: the current font dress
- **/
-AdgDress
-adg_toy_text_get_font_dress(AdgToyText *toy_text)
-{
-    AdgToyTextPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TOY_TEXT(toy_text), ADG_DRESS_UNDEFINED);
-
-    data = toy_text->data;
-
-    return data->font_dress;
-}
-
-/**
  * adg_toy_text_set_font_dress:
  * @toy_text: an #AdgToyText
  * @dress: the new #AdgDress to use
@@ -247,6 +227,43 @@ adg_toy_text_set_font_dress(AdgToyText *toy_text, AdgDress dress)
 }
 
 /**
+ * adg_toy_text_get_font_dress:
+ * @toy_text: an #AdgToyText
+ *
+ * Gets the font dress to be used in rendering @toy_text.
+ *
+ * Returns: the current font dress
+ **/
+AdgDress
+adg_toy_text_get_font_dress(AdgToyText *toy_text)
+{
+    AdgToyTextPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TOY_TEXT(toy_text), ADG_DRESS_UNDEFINED);
+
+    data = toy_text->data;
+
+    return data->font_dress;
+}
+
+/**
+ * adg_toy_text_set_label:
+ * @toy_text: an #AdgToyText
+ * @label: the label text
+ *
+ * Sets a new label for @toy_text. @label can be also %NULL,
+ * in which case will be treated as an empty string.
+ **/
+void
+adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
+{
+    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
+
+    if (set_label(toy_text, label))
+        g_object_notify((GObject *) toy_text, "label");
+}
+
+/**
  * adg_toy_text_get_label:
  * @toy_text: an #AdgToyText
  *
@@ -265,23 +282,6 @@ adg_toy_text_get_label(AdgToyText *toy_text)
     data = toy_text->data;
 
     return data->label;
-}
-
-/**
- * adg_toy_text_set_label:
- * @toy_text: an #AdgToyText
- * @label: the label text
- *
- * Sets a new label for @toy_text. @label can be also %NULL,
- * in which case will be treated as an empty string.
- **/
-void
-adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
-{
-    g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
-
-    if (set_label(toy_text, label))
-        g_object_notify((GObject *) toy_text, "label");
 }
 
 
