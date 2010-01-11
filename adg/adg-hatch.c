@@ -152,26 +152,6 @@ adg_hatch_new(AdgTrail *trail)
 }
 
 /**
- * adg_hatch_get_fill_dress:
- * @hatch: an #AdgHatch
- *
- * Gets the line dress to be used in rendering @hatch.
- *
- * Returns: the current line dress
- **/
-AdgDress
-adg_hatch_get_fill_dress(AdgHatch *hatch)
-{
-    AdgHatchPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_HATCH(hatch), ADG_DRESS_UNDEFINED);
-
-    data = hatch->data;
-
-    return data->fill_dress;
-}
-
-/**
  * adg_hatch_set_fill_dress:
  * @hatch: an #AdgHatch
  * @dress: the new #AdgDress to use
@@ -196,6 +176,26 @@ adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
 
     if (adg_dress_set(&data->fill_dress, dress))
         g_object_notify((GObject *) hatch, "fill-dress");
+}
+
+/**
+ * adg_hatch_get_fill_dress:
+ * @hatch: an #AdgHatch
+ *
+ * Gets the line dress to be used in rendering @hatch.
+ *
+ * Returns: the current line dress
+ **/
+AdgDress
+adg_hatch_get_fill_dress(AdgHatch *hatch)
+{
+    AdgHatchPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_HATCH(hatch), ADG_DRESS_UNDEFINED);
+
+    data = hatch->data;
+
+    return data->fill_dress;
 }
 
 

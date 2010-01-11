@@ -52,9 +52,9 @@ GType           adg_hatch_get_type              (void) G_GNUC_CONST;
 
 AdgHatch *      adg_hatch_new                   (AdgTrail       *trail);
 
-AdgDress        adg_hatch_get_fill_dress        (AdgHatch       *hatch);
 void            adg_hatch_set_fill_dress        (AdgHatch       *hatch,
                                                  AdgDress        dress);
+AdgDress        adg_hatch_get_fill_dress        (AdgHatch       *hatch);
 
 G_END_DECLS
 
