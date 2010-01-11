@@ -48,7 +48,7 @@
  * @user_data: the general purpose pointer set by adg_trail_new()
  *
  * This is the callback used to generate the #CpmlPath and it is
- * called directly by adg_trail_get_cpml_path(). The caller owns
+ * called directly by adg_trail_cpml_path(). The caller owns
  * the returned path, that is the finalization of the returned
  * #CpmlPath should be made by the caller when appropriate.
  *
@@ -154,7 +154,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * owned by @trail and must be considered read-only.
  *
  * This function gets the #CpmlPath of @trail by calling
- * adg_trail_get_cpml_path() and converts its %CAIRO_PATH_ARC_TO
+ * adg_trail_cpml_path() and converts its %CAIRO_PATH_ARC_TO
  * primitives, not recognized by cairo, into approximated Bézier
  * curves primitives (%CAIRO_PATH_CURVE_TO). The conversion is
  * cached, so any furter request is O(1). This cache is cleared
@@ -191,7 +191,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     if (cairo_path->data != NULL)
         return cairo_path;
 
-    src = adg_trail_get_cpml_path(trail);
+    src = adg_trail_cpml_path(trail);
     dst = g_array_sized_new(FALSE, FALSE,
                             sizeof(cairo_path_data_t), src->num_data);
 
@@ -213,7 +213,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 }
 
 /**
- * adg_trail_get_cpml_path:
+ * adg_trail_cpml_path:
  * @trail: an #AdgTrail
  *
  * Gets the CPML path structure defined by @trail. The returned
@@ -235,7 +235,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * Returns: a pointer to the #CpmlPath or %NULL on errors
  **/
 CpmlPath *
-adg_trail_get_cpml_path(AdgTrail *trail)
+adg_trail_cpml_path(AdgTrail *trail)
 {
     AdgTrailClass *klass;
 
@@ -256,7 +256,7 @@ adg_trail_get_cpml_path(AdgTrail *trail)
  * @n: the segment number to retrieve, where %1 is the first segment
  *
  * Convenient function to get a segment from @trail. The segment is
- * got from the CPML path: check out adg_trail_get_cpml_path() for
+ * got from the CPML path: check out adg_trail_cpml_path() for
  * further information.
  *
  * Returns: %TRUE on success or %FALSE on errors
@@ -276,7 +276,7 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
         return FALSE;
     }
 
-    cpml_path = adg_trail_get_cpml_path(trail);
+    cpml_path = adg_trail_cpml_path(trail);
 
     cpml_segment_from_cairo(segment, cpml_path);
     for (cnt = 1; cnt < n; ++cnt)
@@ -312,7 +312,7 @@ adg_trail_get_extents(AdgTrail *trail)
         CpmlSegment segment;
         CpmlExtents extents;
 
-        cpml_path = adg_trail_get_cpml_path(trail);
+        cpml_path = adg_trail_cpml_path(trail);
 
         if (cpml_segment_from_cairo(&segment, cpml_path))
             do {
