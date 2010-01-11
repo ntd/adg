@@ -240,6 +240,24 @@ adg_widget_new(AdgCanvas *canvas)
 
 
 /**
+ * adg_widget_set_canvas:
+ * @widget: an #AdgWidget
+ * @canvas: the new #AdgCanvas
+ *
+ * Sets a new canvas on @widget. The old canvas, if presents, is
+ * unreferenced.
+ **/
+void
+adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
+{
+    g_return_if_fail(ADG_IS_WIDGET(widget));
+
+    set_canvas(widget, canvas);
+
+    g_object_notify((GObject *) widget, "canvas");
+}
+
+/**
  * adg_widget_get_canvas:
  * @widget: an #AdgWidget
  *
@@ -260,21 +278,24 @@ adg_widget_get_canvas(AdgWidget *widget)
 }
 
 /**
- * adg_widget_set_canvas:
+ * adg_widget_set_factor:
  * @widget: an #AdgWidget
- * @canvas: the new #AdgCanvas
+ * @factor: the new zoom factor
  *
- * Sets a new canvas on @widget. The old canvas, if presents, is
- * unreferenced.
+ * Sets a new zoom factor to @widget. If the factor is less than
+ * 1, it will be clamped to 1.
  **/
 void
-adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
+adg_widget_set_factor(AdgWidget *widget, gdouble factor)
 {
+    AdgWidgetPrivate *data;
+
     g_return_if_fail(ADG_IS_WIDGET(widget));
 
-    set_canvas(widget, canvas);
+    data = widget->data;
+    data->factor = CLAMP(factor, 1., G_MAXDOUBLE);
 
-    g_object_notify((GObject *) widget, "canvas");
+    g_object_notify((GObject *) widget, "factor");
 }
 
 /**
@@ -298,27 +319,6 @@ adg_widget_get_factor(AdgWidget *widget)
     data = widget->data;
 
     return data->factor;
-}
-
-/**
- * adg_widget_set_factor:
- * @widget: an #AdgWidget
- * @factor: the new zoom factor
- *
- * Sets a new zoom factor to @widget. If the factor is less than
- * 1, it will be clamped to 1.
- **/
-void
-adg_widget_set_factor(AdgWidget *widget, gdouble factor)
-{
-    AdgWidgetPrivate *data;
-
-    g_return_if_fail(ADG_IS_WIDGET(widget));
-
-    data = widget->data;
-    data->factor = CLAMP(factor, 1., G_MAXDOUBLE);
-
-    g_object_notify((GObject *) widget, "factor");
 }
 
 

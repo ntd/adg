@@ -56,12 +56,12 @@ GType                   adg_widget_get_type     (void) G_GNUC_CONST;
 
 GtkWidget *             adg_widget_new          (AdgCanvas      *canvas);
 
-AdgCanvas *             adg_widget_get_canvas   (AdgWidget      *widget);
 void                    adg_widget_set_canvas   (AdgWidget      *widget,
                                                  AdgCanvas      *canvas);
-gdouble                 adg_widget_get_factor   (AdgWidget      *widget);
+AdgCanvas *             adg_widget_get_canvas   (AdgWidget      *widget);
 void                    adg_widget_set_factor   (AdgWidget      *widget,
                                                  gdouble         factor);
+gdouble                 adg_widget_get_factor   (AdgWidget      *widget);
 
 G_END_DECLS
 
