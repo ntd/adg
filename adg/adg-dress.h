@@ -49,9 +49,9 @@ gboolean        adg_dress_are_related           (AdgDress        dress1,
                                                  AdgDress        dress2);
 const gchar *   adg_dress_get_name              (AdgDress        dress);
 GType           adg_dress_get_ancestor_type     (AdgDress        dress);
-AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
 void            adg_dress_set_fallback          (AdgDress        dress,
                                                  AdgStyle       *fallback);
+AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
 gboolean        adg_dress_style_is_compatible   (AdgDress        dress,
                                                  AdgStyle       *style);
 

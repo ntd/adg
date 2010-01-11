@@ -288,28 +288,6 @@ adg_dress_get_ancestor_type(AdgDress dress)
 }
 
 /**
- * adg_dress_get_fallback:
- * @dress: an #AdgDress
- *
- * Gets the fallback style associated to @dress. No warnings
- * are raised if the dress is not found.
- *
- * Returns: the requested #AdgStyle derived instance or %NULL if not set
- **/
-AdgStyle *
-adg_dress_get_fallback(AdgDress dress)
-{
-    AdgDressPrivate *data;
-
-    if (dress <= 0 || dress >= array_len())
-        return NULL;
-
-    data = array_lookup(dress);
-
-    return data->fallback;
-}
-
-/**
  * adg_dress_set_fallback:
  * @dress: an #AdgDress
  * @fallback: the new fallback style
@@ -355,6 +333,28 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 
     if (data->fallback != NULL)
         g_object_ref(data->fallback);
+}
+
+/**
+ * adg_dress_get_fallback:
+ * @dress: an #AdgDress
+ *
+ * Gets the fallback style associated to @dress. No warnings
+ * are raised if the dress is not found.
+ *
+ * Returns: the requested #AdgStyle derived instance or %NULL if not set
+ **/
+AdgStyle *
+adg_dress_get_fallback(AdgDress dress)
+{
+    AdgDressPrivate *data;
+
+    if (dress <= 0 || dress >= array_len())
+        return NULL;
+
+    data = array_lookup(dress);
+
+    return data->fallback;
 }
 
 /**
