@@ -152,26 +152,6 @@ set_property(GObject *object,
 
 
 /**
- * adg_fill_style_get_pattern:
- * @fill_style: an #AdgFillStyle
- *
- * Gets the current pattern binded to @fill_style.
- *
- * Returns: the current pattern
- **/
-AdgPattern *
-adg_fill_style_get_pattern(AdgFillStyle *fill_style)
-{
-    AdgFillStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_FILL_STYLE(fill_style), NULL);
-
-    data = fill_style->data;
-
-    return data->pattern;
-}
-
-/**
  * adg_fill_style_set_pattern:
  * @fill_style: an #AdgFillStyle
  * @pattern: the new pattern
@@ -194,19 +174,15 @@ adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
 }
 
 /**
- * adg_fill_style_get_extents:
+ * adg_fill_style_get_pattern:
  * @fill_style: an #AdgFillStyle
- * @extents: where to store the extents
  *
- * Stores a copy of the extents of @fill_style in @extents.
- * This struct specifies the maximum portion (in global space)
- * this fill style should be applied: it will clamped by the
- * entities as needed.
+ * Gets the current pattern binded to @fill_style.
  *
- * Returns: the extents of @fill_style or %NULL on errors
+ * Returns: the current pattern
  **/
-const CpmlExtents *
-adg_fill_style_get_extents(AdgFillStyle *fill_style)
+AdgPattern *
+adg_fill_style_get_pattern(AdgFillStyle *fill_style)
 {
     AdgFillStylePrivate *data;
 
@@ -214,7 +190,7 @@ adg_fill_style_get_extents(AdgFillStyle *fill_style)
 
     data = fill_style->data;
 
-    return &data->extents;
+    return data->pattern;
 }
 
 /**
@@ -251,6 +227,30 @@ adg_fill_style_set_extents(AdgFillStyle *fill_style,
 
     if (klass->set_extents)
         klass->set_extents(fill_style, extents);
+}
+
+/**
+ * adg_fill_style_get_extents:
+ * @fill_style: an #AdgFillStyle
+ * @extents: where to store the extents
+ *
+ * Stores a copy of the extents of @fill_style in @extents.
+ * This struct specifies the maximum portion (in global space)
+ * this fill style should be applied: it will clamped by the
+ * entities as needed.
+ *
+ * Returns: the extents of @fill_style or %NULL on errors
+ **/
+const CpmlExtents *
+adg_fill_style_get_extents(AdgFillStyle *fill_style)
+{
+    AdgFillStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_FILL_STYLE(fill_style), NULL);
+
+    data = fill_style->data;
+
+    return &data->extents;
 }
 
 
