@@ -108,7 +108,7 @@ gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
 void            adg_table_cell_switch_frame     (AdgTableCell   *cell,
                                                  gboolean        new_state);
 const CpmlExtents *
-                adg_table_cell_extents          (AdgTableCell   *cell);
+                adg_table_cell_get_extents      (AdgTableCell   *cell);
 
 G_END_DECLS
 

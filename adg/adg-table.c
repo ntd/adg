@@ -1028,7 +1028,7 @@ adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
 }
 
 /**
- * adg_table_cell_extents:
+ * adg_table_cell_get_extents:
  * @cell: a valid #AdgTableCell
  *
  * Gets the extents of @cell. This function is useful only after the
@@ -1038,7 +1038,7 @@ adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
  * Returns: the extents of @cell or %NULL on errors
  **/
 const CpmlExtents *
-adg_table_cell_extents(AdgTableCell *cell)
+adg_table_cell_get_extents(AdgTableCell *cell)
 {
     g_return_val_if_fail(cell != NULL, NULL);
 
