@@ -188,26 +188,6 @@ adg_stroke_new(AdgTrail *trail)
 }
 
 /**
- * adg_stroke_get_line_dress:
- * @stroke: an #AdgStroke
- *
- * Gets the line dress to be used in rendering @stroke.
- *
- * Returns: the current line dress
- **/
-AdgDress
-adg_stroke_get_line_dress(AdgStroke *stroke)
-{
-    AdgStrokePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_STROKE(stroke), ADG_DRESS_UNDEFINED);
-
-    data = stroke->data;
-
-    return data->line_dress;
-}
-
-/**
  * adg_stroke_set_line_dress:
  * @stroke: an #AdgStroke
  * @dress: the new #AdgDress to use
@@ -235,6 +215,42 @@ adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
 }
 
 /**
+ * adg_stroke_get_line_dress:
+ * @stroke: an #AdgStroke
+ *
+ * Gets the line dress to be used in rendering @stroke.
+ *
+ * Returns: the current line dress
+ **/
+AdgDress
+adg_stroke_get_line_dress(AdgStroke *stroke)
+{
+    AdgStrokePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_STROKE(stroke), ADG_DRESS_UNDEFINED);
+
+    data = stroke->data;
+
+    return data->line_dress;
+}
+
+/**
+ * adg_stroke_set_trail:
+ * @stroke: an #AdgStroke
+ * @trail: the new #AdgTrail to bind
+ *
+ * Sets @trail as the new trail to be stroked by @stroke.
+ **/
+void
+adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
+{
+    g_return_if_fail(ADG_IS_STROKE(stroke));
+
+    if (set_trail(stroke, trail))
+        g_object_notify((GObject *) stroke, "trail");
+}
+
+/**
  * adg_stroke_get_trail:
  * @stroke: an #AdgStroke
  *
@@ -252,22 +268,6 @@ adg_stroke_get_trail(AdgStroke *stroke)
     data = stroke->data;
 
     return data->trail;
-}
-
-/**
- * adg_stroke_set_trail:
- * @stroke: an #AdgStroke
- * @trail: the new #AdgTrail to bind
- *
- * Sets @trail as the new trail to be stroked by @stroke.
- **/
-void
-adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
-{
-    g_return_if_fail(ADG_IS_STROKE(stroke));
-
-    if (set_trail(stroke, trail))
-        g_object_notify((GObject *) stroke, "trail");
 }
 
 
