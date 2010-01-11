@@ -288,6 +288,22 @@ adg_title_block_new(void)
 }
 
 /**
+ * adg_title_block_set_title:
+ * @title_block: an #AdgTitleBlock entity
+ * @title: the new title
+ *
+ * Sets a new title on the title block.
+ **/
+void
+adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
+{
+    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
+
+    if (set_title(title_block, title))
+        g_object_notify((GObject *) title_block, "title");
+}
+
+/**
  * adg_title_block_get_title:
  * @title_block: an #AdgTitleBlock entity
  *
@@ -310,19 +326,19 @@ adg_title_block_get_title(AdgTitleBlock *title_block)
 }
 
 /**
- * adg_title_block_set_title:
+ * adg_title_block_set_drawing:
  * @title_block: an #AdgTitleBlock entity
- * @title: the new title
+ * @drawing: the new drawing name
  *
- * Sets a new title on the title block.
+ * Sets a new drawing name on the title block.
  **/
 void
-adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
+adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
 {
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    if (set_title(title_block, title))
-        g_object_notify((GObject *) title_block, "title");
+    if (set_drawing(title_block, drawing))
+        g_object_notify((GObject *) title_block, "drawing");
 }
 
 /**
@@ -348,19 +364,19 @@ adg_title_block_get_drawing(AdgTitleBlock *title_block)
 }
 
 /**
- * adg_title_block_set_drawing:
+ * adg_title_block_set_size:
  * @title_block: an #AdgTitleBlock entity
- * @drawing: the new drawing name
+ * @size: the new size
  *
- * Sets a new drawing name on the title block.
+ * Sets a new size on the title block.
  **/
 void
-adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
+adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
 {
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    if (set_drawing(title_block, drawing))
-        g_object_notify((GObject *) title_block, "drawing");
+    if (set_size(title_block, size))
+        g_object_notify((GObject *) title_block, "size");
 }
 
 /**
@@ -387,19 +403,19 @@ adg_title_block_get_size(AdgTitleBlock *title_block)
 }
 
 /**
- * adg_title_block_set_size:
+ * adg_title_block_set_scale:
  * @title_block: an #AdgTitleBlock entity
- * @size: the new size
+ * @scale: the new scale
  *
- * Sets a new size on the title block.
+ * Sets a new scale on the title block.
  **/
 void
-adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
+adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
 {
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    if (set_size(title_block, size))
-        g_object_notify((GObject *) title_block, "size");
+    if (set_scale(title_block, scale))
+        g_object_notify((GObject *) title_block, "scale");
 }
 
 /**
@@ -423,19 +439,19 @@ adg_title_block_get_scale(AdgTitleBlock *title_block)
 }
 
 /**
- * adg_title_block_set_scale:
+ * adg_title_block_set_author:
  * @title_block: an #AdgTitleBlock entity
- * @scale: the new scale
+ * @author: the new author
  *
- * Sets a new scale on the title block.
+ * Sets a new author on the title block.
  **/
 void
-adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
+adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
 {
     g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
 
-    if (set_scale(title_block, scale))
-        g_object_notify((GObject *) title_block, "scale");
+    if (set_author(title_block, author))
+        g_object_notify((GObject *) title_block, "author");
 }
 
 /**
@@ -456,42 +472,6 @@ adg_title_block_get_author(AdgTitleBlock *title_block)
     data = title_block->data;
 
     return data->author;
-}
-
-/**
- * adg_title_block_set_author:
- * @title_block: an #AdgTitleBlock entity
- * @author: the new author
- *
- * Sets a new author on the title block.
- **/
-void
-adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
-{
-    g_return_if_fail(ADG_IS_TITLE_BLOCK(title_block));
-
-    if (set_author(title_block, author))
-        g_object_notify((GObject *) title_block, "author");
-}
-
-/**
- * adg_title_block_get_date:
- * @title_block: an #AdgTitleBlock entity
- *
- * Gets the date of the rendering set on @title_block.
- *
- * Returns: the date or %NULL on no date or errors
- **/
-const gchar *
-adg_title_block_get_date(AdgTitleBlock *title_block)
-{
-    AdgTitleBlockPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
-
-    data = title_block->data;
-
-    return data->date;
 }
 
 /**
@@ -516,6 +496,26 @@ adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
 
     if (set_date(title_block, date))
         g_object_notify((GObject *) title_block, "date");
+}
+
+/**
+ * adg_title_block_get_date:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the date of the rendering set on @title_block.
+ *
+ * Returns: the date or %NULL on no date or errors
+ **/
+const gchar *
+adg_title_block_get_date(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->date;
 }
 
 /**

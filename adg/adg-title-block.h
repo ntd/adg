@@ -54,24 +54,24 @@ AdgTitleBlock * adg_title_block_new             (void);
 void            adg_title_block_set_logo        (AdgTitleBlock  *title_block,
                                                  AdgEntity      *logo);
 AdgEntity *     adg_title_block_logo            (AdgTitleBlock  *title_block);
-const gchar *   adg_title_block_get_title       (AdgTitleBlock  *title_block);
 void            adg_title_block_set_title       (AdgTitleBlock  *title_block,
                                                  const gchar    *title);
-const gchar *   adg_title_block_get_drawing     (AdgTitleBlock  *title_block);
+const gchar *   adg_title_block_get_title       (AdgTitleBlock  *title_block);
 void            adg_title_block_set_drawing     (AdgTitleBlock  *title_block,
                                                  const gchar    *drawing);
-const gchar *   adg_title_block_get_size        (AdgTitleBlock  *title_block);
+const gchar *   adg_title_block_get_drawing     (AdgTitleBlock  *title_block);
 void            adg_title_block_set_size        (AdgTitleBlock  *title_block,
                                                  const gchar    *size);
-const gchar *   adg_title_block_get_scale       (AdgTitleBlock  *title_block);
+const gchar *   adg_title_block_get_size        (AdgTitleBlock  *title_block);
 void            adg_title_block_set_scale       (AdgTitleBlock  *title_block,
                                                  const gchar    *scale);
-const gchar *   adg_title_block_get_author      (AdgTitleBlock  *title_block);
+const gchar *   adg_title_block_get_scale       (AdgTitleBlock  *title_block);
 void            adg_title_block_set_author      (AdgTitleBlock  *title_block,
                                                  const gchar    *author);
-const gchar *   adg_title_block_get_date        (AdgTitleBlock  *title_block);
+const gchar *   adg_title_block_get_author      (AdgTitleBlock  *title_block);
 void            adg_title_block_set_date        (AdgTitleBlock  *title_block,
                                                  const gchar    *date);
+const gchar *   adg_title_block_get_date        (AdgTitleBlock  *title_block);
 void            adg_title_block_set_projection  (AdgTitleBlock  *title_block,
                                                  AdgEntity      *projection);
 AdgEntity *     adg_title_block_projection      (AdgTitleBlock  *title_block);
