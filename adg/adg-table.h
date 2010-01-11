@@ -69,6 +69,7 @@ void            adg_table_row_delete            (AdgTableRow    *row);
 guint           adg_table_row_get_n_cells       (const AdgTableRow *row);
 void            adg_table_row_set_height        (AdgTableRow    *row,
                                                  gdouble         height);
+gdouble         adg_table_row_get_height        (AdgTableRow    *row);
 const CpmlExtents *
                 adg_table_row_extents           (AdgTableRow    *row);
 

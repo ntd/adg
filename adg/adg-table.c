@@ -518,6 +518,20 @@ adg_table_row_set_height(AdgTableRow *row, gdouble height)
 }
 
 /**
+ * adg_table_row_get_height:
+ * @row: a valid #AdgTableRow
+ *
+ * Gets the height of @row.
+ **/
+gdouble
+adg_table_row_get_height(AdgTableRow *row)
+{
+    g_return_val_if_fail(row != NULL, 0.);
+
+    return row->height;
+}
+
+/**
  * adg_table_row_extents:
  * @row: a valid #AdgTableRow
  *
