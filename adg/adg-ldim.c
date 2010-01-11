@@ -388,13 +388,13 @@ adg_ldim_has_extension1(AdgLDim *ldim)
 /**
  * adg_ldim_switch_extension1:
  * @ldim: an #AdgLDim entity
- * @state: the new state
+ * @new_state: the new state
  *
- * Shows (if @state is %TRUE) or hide (if @state is %FALSE) the first
- * extension line of @ldim.
+ * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
+ * the first extension line of @ldim.
  **/
 void
-adg_ldim_switch_extension1(AdgLDim *ldim, gboolean state)
+adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
 {
     AdgLDimPrivate *data;
 
@@ -402,8 +402,10 @@ adg_ldim_switch_extension1(AdgLDim *ldim, gboolean state)
 
     data = ldim->data;
 
-    data->has_extension1 = state;
-    g_object_notify((GObject *) ldim, "has-extension1");
+    if (data->has_extension1 != new_state) {
+        data->has_extension1 = new_state;
+        g_object_notify((GObject *) ldim, "has-extension1");
+    }
 }
 
 /**
@@ -429,13 +431,13 @@ adg_ldim_has_extension2(AdgLDim *ldim)
 /**
  * adg_ldim_switch_extension2:
  * @ldim: an #AdgLDim entity
- * @state: the new state
+ * @new_state: the new new_state
  *
- * Shows (if @state is %TRUE) or hide (if @state is %FALSE) the second
- * extension line of @ldim.
+ * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
+ * the second extension line of @ldim.
  **/
 void
-adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
+adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
 {
     AdgLDimPrivate *data;
 
@@ -443,8 +445,10 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean state)
 
     data = ldim->data;
 
-    data->has_extension2 = state;
-    g_object_notify((GObject *) ldim, "has-extension2");
+    if (data->has_extension2 != new_state) {
+        data->has_extension2 = new_state;
+        g_object_notify((GObject *) ldim, "has-extension2");
+    }
 }
 
 

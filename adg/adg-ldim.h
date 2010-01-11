@@ -74,10 +74,10 @@ void            adg_ldim_set_direction          (AdgLDim        *ldim,
                                                  gdouble         direction);
 gboolean        adg_ldim_has_extension1         (AdgLDim        *ldim);
 void            adg_ldim_switch_extension1      (AdgLDim        *ldim,
-                                                 gboolean        state);
+                                                 gboolean        new_state);
 gboolean        adg_ldim_has_extension2         (AdgLDim        *ldim);
 void            adg_ldim_switch_extension2      (AdgLDim        *ldim,
-                                                 gboolean        state);
+                                                 gboolean        new_state);
 
 G_END_DECLS
 
