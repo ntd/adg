@@ -83,9 +83,15 @@ void            adg_object_signal_name          (AdgObject      *object,
 /* Generic setter method */
 void            adg_object_set_value            (AdgObject      *object,
                                                  const AdgValue *value);
+/* Setter method for boolean values */
+void            adg_object_switch_boolean_value (AdgObject      *object,
+                                                 gboolean       *new_state);
 
 /* Generic getter method */
 const AdgValue *adg_object_get_value            (AdgObject      *object);
+
+/* Getter method for boolean values */
+gboolean        adg_object_has_boolean_value    (AdgObject      *object);
 
 /* Getter method for reference counted values: an object could be
  * referenced and unreferenced also if read-only, so no const needed */
