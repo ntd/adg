@@ -326,26 +326,6 @@ set_property(GObject *object, guint prop_id,
 
 
 /**
- * adg_dim_get_dim_dress:
- * @dim: an #AdgDim
- *
- * Gets the dimension dress to be used in rendering @dim.
- *
- * Returns: the current dimension dress
- **/
-AdgDress
-adg_dim_get_dim_dress(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_DRESS_UNDEFINED);
-
-    data = dim->data;
-
-    return data->dim_dress;
-}
-
-/**
  * adg_dim_set_dim_dress:
  * @dim: an #AdgDim
  * @dress: the new #AdgDress to use
@@ -368,45 +348,23 @@ adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 }
 
 /**
- * adg_dim_get_ref1:
+ * adg_dim_get_dim_dress:
  * @dim: an #AdgDim
  *
- * Gets the ref1 coordinates. The returned pair is internally owned
- * and must not be freed or modified.
+ * Gets the dimension dress to be used in rendering @dim.
  *
- * Returns: the ref1 coordinates
+ * Returns: the current dimension dress
  **/
-const AdgPair *
-adg_dim_get_ref1(AdgDim *dim)
+AdgDress
+adg_dim_get_dim_dress(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_DRESS_UNDEFINED);
 
     data = dim->data;
 
-    return adg_point_pair(data->ref1);
-}
-
-/**
- * adg_dim_get_ref2:
- * @dim: an #AdgDim
- *
- * Gets the ref2 coordinates. The returned pair is internally owned
- * and must not be freed or modified.
- *
- * Returns: the ref2 coordinates
- **/
-const AdgPair *
-adg_dim_get_ref2(AdgDim *dim)
-{
-    AdgDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
-
-    data = dim->data;
-
-    return adg_point_pair(data->ref2);
+    return data->dim_dress;
 }
 
 /**
@@ -541,16 +499,16 @@ adg_dim_set_ref_from_model(AdgDim *dim, AdgModel *model,
 }
 
 /**
- * adg_dim_get_pos:
+ * adg_dim_get_ref1:
  * @dim: an #AdgDim
  *
- * Gets the position coordinates. The returned pair is internally owned
+ * Gets the ref1 coordinates. The returned pair is internally owned
  * and must not be freed or modified.
  *
- * Returns: the pos coordinates
+ * Returns: the ref1 coordinates
  **/
 const AdgPair *
-adg_dim_get_pos(AdgDim *dim)
+adg_dim_get_ref1(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -558,7 +516,28 @@ adg_dim_get_pos(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_pair(data->pos);
+    return adg_point_pair(data->ref1);
+}
+
+/**
+ * adg_dim_get_ref2:
+ * @dim: an #AdgDim
+ *
+ * Gets the ref2 coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
+ *
+ * Returns: the ref2 coordinates
+ **/
+const AdgPair *
+adg_dim_get_ref2(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+
+    return adg_point_pair(data->ref2);
 }
 
 /**
@@ -634,23 +613,24 @@ adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
 }
 
 /**
- * adg_dim_get_level:
+ * adg_dim_get_pos:
  * @dim: an #AdgDim
  *
- * Gets the level of this dimension.
+ * Gets the position coordinates. The returned pair is internally owned
+ * and must not be freed or modified.
  *
- * Returns: the level value
+ * Returns: the pos coordinates
  **/
-gdouble
-adg_dim_get_level(AdgDim *dim)
+const AdgPair *
+adg_dim_get_pos(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
     data = dim->data;
 
-    return data->level;
+    return adg_point_pair(data->pos);
 }
 
 /**
@@ -676,24 +656,23 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
 }
 
 /**
- * adg_dim_get_outside:
+ * adg_dim_get_level:
  * @dim: an #AdgDim
  *
- * Gets the state of the #AdgDim:outside property: check the property
- * documentation for further details.
+ * Gets the level of this dimension.
  *
- * Returns: the current flag state
+ * Returns: the level value
  **/
-AdgThreeState
-adg_dim_get_outside(AdgDim *dim)
+gdouble
+adg_dim_get_level(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_THREE_STATE_UNKNOWN);
+    g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
     data = dim->data;
 
-    return data->outside;
+    return data->level;
 }
 
 /**
@@ -718,6 +697,46 @@ adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
 }
 
 /**
+ * adg_dim_get_outside:
+ * @dim: an #AdgDim
+ *
+ * Gets the state of the #AdgDim:outside property: check the property
+ * documentation for further details.
+ *
+ * Returns: the current flag state
+ **/
+AdgThreeState
+adg_dim_get_outside(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), ADG_THREE_STATE_UNKNOWN);
+
+    data = dim->data;
+
+    return data->outside;
+}
+
+/**
+ * adg_dim_set_value:
+ * @dim: an #AdgDim
+ * @value: the value text
+ *
+ * Explicitely sets the text to use as value. If @value is %NULL or
+ * was never set, an automatic text is calculated using the format
+ * specified in the current #AdgDimStyle and getting its value by
+ * calling the default_value() virtual method.
+ **/
+void
+adg_dim_set_value(AdgDim *dim, const gchar *value)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (set_value(dim, value))
+        g_object_notify((GObject *) dim, "value");
+}
+
+/**
  * adg_dim_get_value:
  * @dim: an #AdgDim
  *
@@ -739,22 +758,38 @@ adg_dim_get_value(AdgDim *dim)
 }
 
 /**
- * adg_dim_set_value:
+ * adg_dim_set_limits:
  * @dim: an #AdgDim
- * @value: the value text
+ * @min: the new minumum value
+ * @max: the new maximum value
  *
- * Explicitely sets the text to use as value. If @value is %NULL or
- * was never set, an automatic text is calculated using the format
- * specified in the current #AdgDimStyle and getting its value by
- * calling the default_value() virtual method.
+ * Shortcut to set both the limits at once.
  **/
 void
-adg_dim_set_value(AdgDim *dim, const gchar *value)
+adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_value(dim, value))
-        g_object_notify((GObject *) dim, "value");
+    g_object_freeze_notify((GObject *) dim);
+    adg_dim_set_min(dim, min);
+    adg_dim_set_max(dim, max);
+    g_object_thaw_notify((GObject *) dim);
+}
+
+/**
+ * adg_dim_set_min:
+ * @dim: an #AdgDim
+ * @min: the new minimum limit
+ *
+ * Sets the minimum value. Use %NULL as @min to disable it.
+ **/
+void
+adg_dim_set_min(AdgDim *dim, const gchar *min)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (set_min(dim, min))
+        g_object_notify((GObject *) dim, "value-min");
 }
 
 /**
@@ -779,19 +814,19 @@ adg_dim_get_min(AdgDim *dim)
 }
 
 /**
- * adg_dim_set_min:
+ * adg_dim_set_max:
  * @dim: an #AdgDim
- * @min: the new minimum limit
+ * @max: the new maximum value
  *
- * Sets the minimum value. Use %NULL as @min to disable it.
+ * Sets the maximum value. Use %NULL as @max to disable it.
  **/
 void
-adg_dim_set_min(AdgDim *dim, const gchar *min)
+adg_dim_set_max(AdgDim *dim, const gchar *max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_min(dim, min))
-        g_object_notify((GObject *) dim, "value-min");
+    if (set_max(dim, max))
+        g_object_notify((GObject *) dim, "value-max");
 }
 
 /**
@@ -813,41 +848,6 @@ adg_dim_get_max(AdgDim *dim)
     data = dim->data;
 
     return data->max;
-}
-
-/**
- * adg_dim_set_max:
- * @dim: an #AdgDim
- * @max: the new maximum value
- *
- * Sets the maximum value. Use %NULL as @max to disable it.
- **/
-void
-adg_dim_set_max(AdgDim *dim, const gchar *max)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (set_max(dim, max))
-        g_object_notify((GObject *) dim, "value-max");
-}
-
-/**
- * adg_dim_set_limits:
- * @dim: an #AdgDim
- * @min: the new minumum value
- * @max: the new maximum value
- *
- * Shortcut to set both the limits at once.
- **/
-void
-adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
-{
-    g_return_if_fail(ADG_IS_DIM(dim));
-
-    g_object_freeze_notify((GObject *) dim);
-    adg_dim_set_min(dim, min);
-    adg_dim_set_max(dim, max);
-    g_object_thaw_notify((GObject *) dim);
 }
 
 /**

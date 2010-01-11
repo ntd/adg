@@ -58,8 +58,6 @@ GType           adg_dim_get_type                (void) G_GNUC_CONST;
 AdgDress        adg_dim_get_dim_dress           (AdgDim         *dim);
 void            adg_dim_set_dim_dress           (AdgDim         *dim,
                                                  AdgDress        dress);
-const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
-const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
 void            adg_dim_set_ref                 (AdgDim         *dim,
                                                  const AdgPair  *ref1,
                                                  const AdgPair  *ref2);
@@ -72,7 +70,8 @@ void            adg_dim_set_ref_from_model      (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *ref1,
                                                  const gchar    *ref2);
-const AdgPair * adg_dim_get_pos                 (AdgDim         *dim);
+const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
+const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
 void            adg_dim_set_pos                 (AdgDim         *dim,
                                                  const AdgPair  *pos);
 void            adg_dim_set_pos_explicit        (AdgDim         *dim,
@@ -81,24 +80,25 @@ void            adg_dim_set_pos_explicit        (AdgDim         *dim,
 void            adg_dim_set_pos_from_model      (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *pos);
-gdouble         adg_dim_get_level               (AdgDim         *dim);
+const AdgPair * adg_dim_get_pos                 (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);
-AdgThreeState   adg_dim_get_outside             (AdgDim         *dim);
+gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_outside             (AdgDim         *dim,
                                                  AdgThreeState   outside);
-const gchar *   adg_dim_get_value               (AdgDim         *dim);
+AdgThreeState   adg_dim_get_outside             (AdgDim         *dim);
 void            adg_dim_set_value               (AdgDim         *dim,
                                                  const gchar    *value);
-const gchar *   adg_dim_get_min                 (AdgDim         *dim);
-void            adg_dim_set_min                 (AdgDim         *dim,
-                                                 const gchar    *min);
-const gchar *   adg_dim_get_max                 (AdgDim         *dim);
-void            adg_dim_set_max                 (AdgDim         *dim,
-                                                 const gchar    *max);
+const gchar *   adg_dim_get_value               (AdgDim         *dim);
 void            adg_dim_set_limits              (AdgDim         *dim,
                                                  const gchar    *min,
                                                  const gchar    *max);
+void            adg_dim_set_min                 (AdgDim         *dim,
+                                                 const gchar    *min);
+const gchar *   adg_dim_get_min                 (AdgDim         *dim);
+void            adg_dim_set_max                 (AdgDim         *dim,
+                                                 const gchar    *max);
+const gchar *   adg_dim_get_max                 (AdgDim         *dim);
 gdouble         adg_dim_quote_angle             (AdgDim         *dim,
                                                  gdouble         angle);
 AdgContainer *  adg_dim_get_quote               (AdgDim         *dim);
