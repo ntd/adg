@@ -118,7 +118,12 @@ void            adg_object_set_value_from_model (AdgADim        *adim,
 </programlisting></informalexample>
 
 <para>
-For any other non-C contribution (makefiles, translations, bindings,
+The method should be grouped by argument, that is methods working on the
+same subject should be adjacents. The constructors must be the first ones
+while the helper methods for signal emission should be the last ones.
+It is preferable to keep the setter before the getter in the list.</para>
+
+<para>For any other non-C contribution (makefiles, translations, bindings,
 documentation, whatever) just follow the surronding text using a bit of
 common sense. When no surrounding text exists, use your preferred style
 and use it consistently.</para>
