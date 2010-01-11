@@ -303,7 +303,7 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
 }
 
 /**
- * adg_model_dependencies:
+ * adg_model_get_dependencies:
  * @model: an #AdgModel
  *
  * Gets the list of entities dependending on @model. This list
@@ -312,7 +312,7 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
  * Returns: a #GSList of dependencies or %NULL on error
  **/
 const GSList *
-adg_model_dependencies(AdgModel *model)
+adg_model_get_dependencies(AdgModel *model)
 {
     AdgModelPrivate *data;
 

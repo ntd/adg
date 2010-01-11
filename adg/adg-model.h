@@ -69,7 +69,7 @@ void            adg_model_add_dependency        (AdgModel         *model,
                                                  AdgEntity        *entity);
 void            adg_model_remove_dependency     (AdgModel         *model,
                                                  AdgEntity        *entity);
-const GSList *  adg_model_dependencies          (AdgModel         *model);
+const GSList *  adg_model_get_dependencies      (AdgModel         *model);
 void            adg_model_foreach_dependency    (AdgModel         *model,
                                                  AdgEntityCallback callback,
                                                  gpointer          user_data);
