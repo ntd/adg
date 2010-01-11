@@ -72,9 +72,9 @@ void            adg_title_block_set_author      (AdgTitleBlock  *title_block,
 const gchar *   adg_title_block_get_date        (AdgTitleBlock  *title_block);
 void            adg_title_block_set_date        (AdgTitleBlock  *title_block,
                                                  const gchar    *date);
-AdgEntity *     adg_title_block_get_projection  (AdgTitleBlock  *title_block);
 void            adg_title_block_set_projection  (AdgTitleBlock  *title_block,
                                                  AdgEntity      *projection);
+AdgEntity *     adg_title_block_projection      (AdgTitleBlock  *title_block);
 
 G_END_DECLS
 

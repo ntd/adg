@@ -562,28 +562,6 @@ adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
 }
 
 /**
- * adg_title_block_get_projection:
- * @title_block: an #AdgTitleBlock entity
- *
- * Gets the projection bound to this title block.
- * The returned object is owned by @title_block and should not
- * be unreferenced although can be freely modified.
- *
- * Returns: the projection or %NULL on no projection or errors
- **/
-AdgEntity *
-adg_title_block_get_projection(AdgTitleBlock *title_block)
-{
-    AdgTitleBlockPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
-
-    data = title_block->data;
-
-    return data->projection;
-}
-
-/**
  * adg_title_block_set_projection:
  * @title_block: an #AdgTitleBlock entity
  * @projection: the new projection
@@ -604,6 +582,28 @@ adg_title_block_set_projection(AdgTitleBlock *title_block,
 
     if (set_projection(title_block, projection))
         g_object_notify((GObject *) title_block, "projection");
+}
+
+/**
+ * adg_title_block_projection:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the projection bound to this title block.
+ * The returned object is owned by @title_block and should not
+ * be unreferenced although can be freely modified.
+ *
+ * Returns: the projection or %NULL on no projection or errors
+ **/
+AdgEntity *
+adg_title_block_projection(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->projection;
 }
 
 
