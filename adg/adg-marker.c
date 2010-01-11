@@ -297,7 +297,7 @@ adg_marker_get_n_segment(AdgMarker *marker)
  *
  * Returns: the segment or %NULL on errors
  **/
-AdgSegment *
+const AdgSegment *
 adg_marker_get_segment(AdgMarker *marker)
 {
     AdgMarkerPrivate *data;
@@ -481,39 +481,6 @@ adg_marker_set_size(AdgMarker *marker, gdouble size)
 }
 
 /**
- * adg_marker_model:
- * @marker: an #AdgMarker
- *
- * <note><para>
- * This function is only useful in marker implementations.
- * </para></note>
- *
- * Gets the model of @marker. If the model is not found, it is
- * automatically created by calling the create_model() virtual method.
- *
- * Returns: the current model owned by @marker or %NULL on errors
- **/
-AdgModel *
-adg_marker_model(AdgMarker *marker)
-{
-    AdgMarkerPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
-
-    data = marker->data;
-
-    if (data->model == NULL) {
-        /* Model not found: regenerate it */
-        AdgMarkerClass *marker_class = ADG_MARKER_GET_CLASS(marker);
-
-        if (marker_class->create_model)
-            adg_marker_set_model(marker, marker_class->create_model(marker));
-    }
-
-    return data->model;
-}
-
-/**
  * adg_marker_get_model:
  * @marker: an #AdgMarker
  *
@@ -559,6 +526,39 @@ adg_marker_set_model(AdgMarker *marker, AdgModel *model)
 
     if (set_model(marker, model))
         g_object_notify((GObject *) marker, "model");
+}
+
+/**
+ * adg_marker_model:
+ * @marker: an #AdgMarker
+ *
+ * <note><para>
+ * This function is only useful in marker implementations.
+ * </para></note>
+ *
+ * Gets the model of @marker. If the model is not found, it is
+ * automatically created by calling the create_model() virtual method.
+ *
+ * Returns: the current model owned by @marker or %NULL on errors
+ **/
+AdgModel *
+adg_marker_model(AdgMarker *marker)
+{
+    AdgMarkerPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
+
+    data = marker->data;
+
+    if (data->model == NULL) {
+        /* Model not found: regenerate it */
+        AdgMarkerClass *marker_class = ADG_MARKER_GET_CLASS(marker);
+
+        if (marker_class->create_model)
+            adg_marker_set_model(marker, marker_class->create_model(marker));
+    }
+
+    return data->model;
 }
 
 
