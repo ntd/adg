@@ -109,7 +109,7 @@ static void             arrange_frame           (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gboolean         switch_frame            (AdgTable       *table,
-                                                 gboolean        state);
+                                                 gboolean        new_state);
 static void             propagate               (AdgTable       *table,
                                                  const gchar    *detailed_signal,
                                                  ...);
@@ -376,18 +376,18 @@ adg_table_has_frame(AdgTable *table)
 /**
  * adg_table_switch_frame:
  * @table: an #AdgTable
- * @state: the new state of the frame
+ * @new_state: the new state of the frame
  *
  * Sets the #AdgTable:has-frame property: %TRUE will draw a
  * frame around the whole table using the #AdgTableStyle:frame-dress
  * dress of the table style.
  **/
 void
-adg_table_switch_frame(AdgTable *table, gboolean state)
+adg_table_switch_frame(AdgTable *table, gboolean new_state)
 {
     g_return_if_fail(ADG_IS_TABLE(table));
 
-    if (switch_frame(table, state))
+    if (switch_frame(table, new_state))
         g_object_notify((GObject *) table, "has-frame");
 }
 
@@ -970,24 +970,24 @@ adg_table_cell_has_frame(AdgTableCell *cell)
 /**
  * adg_table_cell_switch_frame:
  * @cell: a valid #AdgTableCell
- * @state: the new frame state
+ * @new_state: the new frame state
  *
- * Sets the frame flag of @cell: if @state is %TRUE, a frame around
+ * Sets the frame flag of @cell: if @new_state is %TRUE, a frame around
  * @cell will be rendered using the #AdgTableStyle:cell-dress dress
  * of the table style.
  **/
 void
-adg_table_cell_switch_frame(AdgTableCell *cell, gboolean state)
+adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
 {
     AdgTablePrivate *data;
 
     g_return_if_fail(cell != NULL);
 
-    if (cell->has_frame == state)
+    if (cell->has_frame == new_state)
         return;
 
     data = cell->row->table->data;
-    cell->has_frame = state;
+    cell->has_frame = new_state;
 
     if (data->grid != NULL) {
         g_object_unref(data->grid);
@@ -1200,14 +1200,14 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gboolean
-switch_frame(AdgTable *table, gboolean state)
+switch_frame(AdgTable *table, gboolean new_state)
 {
     AdgTablePrivate *data = table->data;
 
-    if (data->has_frame == state)
+    if (data->has_frame == new_state)
         return FALSE;
 
-    data->has_frame = state;
+    data->has_frame = new_state;
 
     if (data->frame != NULL) {
         g_object_unref(data->frame);
