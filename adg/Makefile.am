@@ -2,7 +2,10 @@ MSG_GEN=			echo '  GEN   '$@;
 AM_CFLAGS=			-I$(top_srcdir) \
 				-I$(top_builddir)
 AM_LDFLAGS=
-PATTERN= # file groups
+PATTERN=
+
+
+# file groups
 h_sources=			adg-adim.h \
 				adg-alignment.h \
 				adg-arrow.h \
@@ -163,8 +166,6 @@ libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
 adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
-	$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
-
 adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
 	$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 
