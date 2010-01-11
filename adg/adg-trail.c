@@ -250,10 +250,10 @@ adg_trail_cpml_path(AdgTrail *trail)
 }
 
 /**
- * adg_trail_get_segment:
+ * adg_trail_put_segment:
  * @trail: an #AdgTrail
+ * @n_segment: the segment to retrieve, where %1 is the first segment
  * @segment: the destination #AdgSegment
- * @n: the segment number to retrieve, where %1 is the first segment
  *
  * Convenient function to get a segment from @trail. The segment is
  * got from the CPML path: check out adg_trail_cpml_path() for
@@ -262,7 +262,7 @@ adg_trail_cpml_path(AdgTrail *trail)
  * Returns: %TRUE on success or %FALSE on errors
  **/
 gboolean
-adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
+adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
 {
     CpmlPath *cpml_path;
     guint cnt;
@@ -270,7 +270,7 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
     g_return_val_if_fail(segment != NULL, FALSE);
 
-    if (n == 0) {
+    if (n_segment == 0) {
         g_warning("%s: requested undefined segment for type `%s'",
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return FALSE;
@@ -279,10 +279,10 @@ adg_trail_get_segment(AdgTrail *trail, AdgSegment *segment, guint n)
     cpml_path = adg_trail_cpml_path(trail);
 
     cpml_segment_from_cairo(segment, cpml_path);
-    for (cnt = 1; cnt < n; ++cnt)
+    for (cnt = 1; cnt < n_segment; ++cnt)
         if (!cpml_segment_next(segment)) {
             g_warning("%s: segment `%u' out of range for type `%s'",
-                      G_STRLOC, n, g_type_name(G_OBJECT_TYPE(trail)));
+                      G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
             return FALSE;
         }
 

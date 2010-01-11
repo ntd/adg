@@ -787,7 +787,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
                           sin2angle, -cos2angle, 0, 0);
     }
 
-    adg_trail_get_segment((AdgTrail *) path, &segment, 1);
+    adg_trail_put_segment((AdgTrail *) path, 1, &segment);
     dup_segment = adg_segment_deep_dup(&segment);
 
     cpml_segment_reverse(dup_segment);

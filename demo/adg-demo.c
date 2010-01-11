@@ -717,7 +717,7 @@ operations_chamfer(const AdgPath *model, gdouble delta1, gdouble delta2)
     CpmlPair org;
 
     path = adg_path_new();
-    adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
+    adg_trail_put_segment(ADG_TRAIL(model), 1, &segment);
     cpml_primitive_from_segment(&primitive, &segment);
     cpml_pair_from_cairo(&org, primitive.org);
 
@@ -740,7 +740,7 @@ operations_fillet(const AdgPath *model, gdouble radius)
     CpmlPair org;
 
     path = adg_path_new();
-    adg_trail_get_segment(ADG_TRAIL(model), &segment, 1);
+    adg_trail_put_segment(ADG_TRAIL(model), 1, &segment);
     cpml_primitive_from_segment(&primitive, &segment);
     cpml_pair_from_cairo(&org, primitive.org);
 

@@ -340,7 +340,7 @@ get_cpml_path(AdgTrail *trail)
         CpmlSegment segment;
         GSList *vertices;
 
-        adg_trail_get_segment(data->source, &segment, 1);
+        adg_trail_put_segment(data->source, 1, &segment);
         vertices = get_vertices(&segment, 0.01);
         vertices = optimize_vertices(vertices);
         data->cpml.array = build_array(vertices);

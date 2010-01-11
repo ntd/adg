@@ -61,9 +61,9 @@ AdgTrail *          adg_trail_new               (AdgTrailCallback callback,
 
 const cairo_path_t *adg_trail_get_cairo_path    (AdgTrail        *trail);
 CpmlPath *          adg_trail_cpml_path         (AdgTrail        *trail);
-gboolean            adg_trail_get_segment       (AdgTrail        *trail,
-                                                 AdgSegment      *segment,
-                                                 guint            n);
+gboolean            adg_trail_put_segment       (AdgTrail        *trail,
+                                                 guint            n_segment,
+                                                 AdgSegment      *segment);
 const CpmlExtents * adg_trail_get_extents       (AdgTrail        *trail);
 void                adg_trail_dump              (AdgTrail        *trail);
 

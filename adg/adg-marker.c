@@ -398,8 +398,8 @@ adg_marker_backup_segment(AdgMarker *marker)
         g_free(data->backup_segment);
 
         /* Backup the segment, if a segment to backup exists */
-        if (adg_trail_get_segment(data->trail,
-                                  &data->segment, data->n_segment))
+        if (adg_trail_put_segment(data->trail, data->n_segment,
+                                  &data->segment))
             data->backup_segment = adg_segment_deep_dup(&data->segment);
     }
 }
@@ -667,7 +667,7 @@ set_n_segment(AdgMarker *marker, guint n_segment)
         return TRUE;
     }
 
-    return adg_trail_get_segment(data->trail, &data->segment, n_segment);
+    return adg_trail_put_segment(data->trail, n_segment, &data->segment);
 }
 
 static gboolean
