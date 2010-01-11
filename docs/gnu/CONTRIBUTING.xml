@@ -80,19 +80,22 @@ addition, the following suggestions/rules also apply:</para>
 void            adg_object_signal_name          (AdgObject      *object,
                                                  /* Other parameters */);
 
-/* Setter method */
+/* Generic setter method */
 void            adg_object_set_value            (AdgObject      *object,
                                                  const AdgValue *value);
 
-/* Getter method: if the returned value is an object, the "const"
- * declaration must be omitted (an object could be referenced or
- * unreferenced also if read-only) */
+/* Generic getter method */
 const AdgValue *adg_object_get_value            (AdgObject      *object);
 
-/* Getter method returning scalar values must not be const */
-double          adg_object_get_double_value     (AdgObject      *object);
+/* Getter method for reference counted values: an object could be
+ * referenced and unreferenced also if read-only, so no const needed */
+AdgObject *     adg_object_get_object           (AdgObject      *object);
 
-/* Alternative getter method to be used when the previous syntax is
+/* Getter method returning scalar values must not be const:
+ * they are passed by value */
+ScalarType      adg_object_get_scalar_value     (AdgObject      *object);
+
+/* Alternative getter method to be used when the generic syntax is
  * not allowed, such as when the value is dynamically generated */
 void            adg_object_put_value            (AdgObject      *object,
                                                  AdgValue       *value);
