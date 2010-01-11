@@ -519,6 +519,31 @@ adg_entity_transform_global_map(AdgEntity *entity,
 }
 
 /**
+ * adg_entity_get_global_matrix:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the current global matrix of @entity. The returned value
+ * is owned by @entity and should not be changed or freed.
+ *
+ * The global matrix is computed in the arrange() phase by
+ * combining all the global maps of the @entity hierarchy using
+ * the %ADG_MIX_ANCESTORS method.
+ *
+ * Returns: the global matrix or %NULL on errors
+ **/
+const AdgMatrix *
+adg_entity_get_global_matrix(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+
+    data = entity->data;
+
+    return &data->global.matrix;
+}
+
+/**
  * adg_entity_get_local_map:
  * @entity: an #AdgEntity object
  *
@@ -640,6 +665,31 @@ adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
 }
 
 /**
+ * adg_entity_get_local_matrix:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the current local matrix of @entity. The returned value
+ * is owned by @entity and should not be changed or freed.
+ *
+ * The local matrix is computed in the arrange() phase by
+ * combining all the local maps of the @entity hierarchy using
+ * the method specified by the #AdgEntity:local-method property.
+ *
+ * Returns: the local matrix or %NULL on errors
+ **/
+const AdgMatrix *
+adg_entity_get_local_matrix(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+
+    data = entity->data;
+
+    return &data->local.matrix;
+}
+
+/**
  * adg_entity_get_extents:
  * @entity: an #AdgEntity
  *
@@ -694,48 +744,6 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
         data->extents.is_defined = FALSE;
     else
         cpml_extents_copy(&data->extents, extents);
-}
-
-/**
- * adg_entity_style:
- * @entity: an #AdgEntity
- * @dress: the dress of the style to get
- *
- * Gets the style to be used for @entity. @dress specifies which
- * "family" of style to get.
- *
- * The following sequence of checks is performed to get the proper
- * style, stopping at the first succesfull result:
- *
- * <orderedlist>
- * <listitem>check if the style is directly overriden by this entity,
- *           as returned by adg_entity_get_style();</listitem>
- * <listitem>check if @entity has a parent, in which case returns the
- *           adg_entity_style() of the parent;</listitem>
- * <listitem>returns the main style with adg_dress_get_fallback().</listitem>
- * </orderedlist>
- *
- * Returns: the requested style or %NULL for transparent dresses or errors
- **/
-AdgStyle *
-adg_entity_style(AdgEntity *entity, AdgDress dress)
-{
-    AdgStyle *style;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    style = adg_entity_get_style(entity, dress);
-
-    if (style == NULL) {
-        AdgEntityPrivate *data = entity->data;
-
-        if (data->parent != NULL)
-            style = adg_entity_style(data->parent, dress);
-        else
-            style = adg_dress_get_fallback(dress);
-    }
-
-    return style;
 }
 
 /**
@@ -822,6 +830,48 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 }
 
 /**
+ * adg_entity_style:
+ * @entity: an #AdgEntity
+ * @dress: the dress of the style to get
+ *
+ * Gets the style to be used for @entity. @dress specifies which
+ * "family" of style to get.
+ *
+ * The following sequence of checks is performed to get the proper
+ * style, stopping at the first succesfull result:
+ *
+ * <orderedlist>
+ * <listitem>check if the style is directly overriden by this entity,
+ *           as returned by adg_entity_get_style();</listitem>
+ * <listitem>check if @entity has a parent, in which case returns the
+ *           adg_entity_style() of the parent;</listitem>
+ * <listitem>returns the main style with adg_dress_get_fallback().</listitem>
+ * </orderedlist>
+ *
+ * Returns: the requested style or %NULL for transparent dresses or errors
+ **/
+AdgStyle *
+adg_entity_style(AdgEntity *entity, AdgDress dress)
+{
+    AdgStyle *style;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+
+    style = adg_entity_get_style(entity, dress);
+
+    if (style == NULL) {
+        AdgEntityPrivate *data = entity->data;
+
+        if (data->parent != NULL)
+            style = adg_entity_style(data->parent, dress);
+        else
+            style = adg_dress_get_fallback(dress);
+    }
+
+    return style;
+}
+
+/**
  * adg_entity_apply_dress:
  * @entity: an #AdgEntity
  * @dress: the dress style to apply
@@ -872,56 +922,6 @@ adg_entity_local_changed(AdgEntity *entity)
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
     g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
-}
-
-/**
- * adg_entity_get_global_matrix:
- * @entity: an #AdgEntity object
- *
- * Gets the current global matrix of @entity. The returned value
- * is owned by @entity and should not be changed or freed.
- *
- * The global matrix is computed in the arrange() phase by
- * combining all the global maps of the @entity hierarchy using
- * the %ADG_MIX_ANCESTORS method.
- *
- * Returns: the global matrix or %NULL on errors
- **/
-const AdgMatrix *
-adg_entity_get_global_matrix(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return &data->global.matrix;
-}
-
-/**
- * adg_entity_get_local_matrix:
- * @entity: an #AdgEntity object
- *
- * Gets the current local matrix of @entity. The returned value
- * is owned by @entity and should not be changed or freed.
- *
- * The local matrix is computed in the arrange() phase by
- * combining all the local maps of the @entity hierarchy using
- * the method specified by the #AdgEntity:local-method property.
- *
- * Returns: the local matrix or %NULL on errors
- **/
-const AdgMatrix *
-adg_entity_get_local_matrix(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return &data->local.matrix;
 }
 
 /**
