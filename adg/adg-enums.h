@@ -26,6 +26,14 @@
 
 G_BEGIN_DECLS
 
+/* This header file should follow this (inconsistent) style to cope
+ * with glib-mkenums. At the time of writing, the regex used is
+ * /\s*typedef\s+enum\s*({)?.../.
+ *
+ * Check the sources for up to date information and further details:
+ * http://git.gnome.org/browse/glib/tree/gobject/glib-mkenums.in
+ */
+
 typedef enum {
     ADG_THREE_STATE_OFF,
     ADG_THREE_STATE_ON,
