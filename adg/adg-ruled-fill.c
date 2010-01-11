@@ -188,6 +188,26 @@ set_property(GObject *object,
 
 
 /**
+ * adg_ruled_fill_set_line_dress:
+ * @ruled_fill: an #AdgRuledFill object
+ * @dress: the new line dress
+ *
+ * Sets a new line dress on @ruled_fill.
+ **/
+void
+adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
+{
+    AdgRuledFillPrivate *data;
+
+    g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
+
+    data = ruled_fill->data;
+
+    if (adg_dress_set(&data->line_dress, dress))
+        g_object_notify((GObject *) ruled_fill, "line-dress");
+}
+
+/**
  * adg_ruled_fill_get_line_dress:
  * @ruled_fill: an #AdgRuledFill object
  *
@@ -208,23 +228,19 @@ adg_ruled_fill_get_line_dress(AdgRuledFill *ruled_fill)
 }
 
 /**
- * adg_ruled_fill_set_line_dress:
- * @ruled_fill: an #AdgRuledFill object
- * @dress: the new line dress
+ * adg_ruled_fill_set_spacing:
+ * @ruled_fill: an #AdgRuledFill
+ * @spacing: the new spacing
  *
- * Sets a new line dress on @ruled_fill.
+ * Sets a new spacing on @ruled_fill.
  **/
 void
-adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
+adg_ruled_fill_set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
 {
-    AdgRuledFillPrivate *data;
-
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
 
-    data = ruled_fill->data;
-
-    if (adg_dress_set(&data->line_dress, dress))
-        g_object_notify((GObject *) ruled_fill, "line-dress");
+    if (set_spacing(ruled_fill, spacing))
+        g_object_notify((GObject *) ruled_fill, "spacing");
 }
 
 /**
@@ -248,19 +264,19 @@ adg_ruled_fill_get_spacing(AdgRuledFill *ruled_fill)
 }
 
 /**
- * adg_ruled_fill_set_spacing:
+ * adg_ruled_fill_set_angle:
  * @ruled_fill: an #AdgRuledFill
- * @spacing: the new spacing
+ * @angle: the new angle
  *
- * Sets a new spacing on @ruled_fill.
+ * Sets a new angle on @ruled_fill.
  **/
 void
-adg_ruled_fill_set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
+adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 {
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
 
-    if (set_spacing(ruled_fill, spacing))
-        g_object_notify((GObject *) ruled_fill, "spacing");
+    if (set_angle(ruled_fill, angle))
+        g_object_notify((GObject *) ruled_fill, "angle");
 }
 
 /**
@@ -281,22 +297,6 @@ adg_ruled_fill_get_angle(AdgRuledFill *ruled_fill)
     data = ruled_fill->data;
 
     return data->angle;
-}
-
-/**
- * adg_ruled_fill_set_angle:
- * @ruled_fill: an #AdgRuledFill
- * @angle: the new angle
- *
- * Sets a new angle on @ruled_fill.
- **/
-void
-adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
-{
-    g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-
-    if (set_angle(ruled_fill, angle))
-        g_object_notify((GObject *) ruled_fill, "angle");
 }
 
 
