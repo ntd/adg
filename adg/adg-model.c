@@ -381,7 +381,7 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
 }
 
 /**
- * adg_model_named_pair:
+ * adg_model_get_named_pair:
  * @model: an #AdgModel
  * @name: the name of the pair to get
  *
@@ -391,7 +391,7 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
  * Returns: the requested #AdgPair or %NULL if not found
  **/
 const AdgPair *
-adg_model_named_pair(AdgModel *model, const gchar *name)
+adg_model_get_named_pair(AdgModel *model, const gchar *name)
 {
     AdgModelClass *klass;
 

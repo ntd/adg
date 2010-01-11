@@ -168,7 +168,7 @@ adg_point_pair(AdgPoint *point)
             return NULL;
         }
 
-        pair = adg_model_named_pair(point->model, point->name);
+        pair = adg_model_get_named_pair(point->model, point->name);
 
         if (pair == NULL) {
             g_warning(_("%s: `%s' named pair not found in `%s' model instance"),

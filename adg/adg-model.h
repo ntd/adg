@@ -76,7 +76,7 @@ void            adg_model_foreach_dependency    (AdgModel         *model,
 void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
-const AdgPair * adg_model_named_pair            (AdgModel         *model,
+const AdgPair * adg_model_get_named_pair        (AdgModel         *model,
                                                  const gchar      *name);
 void            adg_model_foreach_named_pair    (AdgModel         *model,
                                                  AdgNamedPairCallback callback,

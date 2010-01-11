@@ -455,7 +455,7 @@ sample_add_stuff(AdgCanvas *canvas, AdgModel *model)
     const AdgPair *pair;
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
-    pair = adg_model_named_pair(model, "D3I");
+    pair = adg_model_get_named_pair(model, "D3I");
     cairo_matrix_init_translate(&map, 0, pair->y);
     adg_entity_set_local_map(ADG_ENTITY(toy_text), &map);
     cairo_matrix_init_translate(&map, 10, 30 + 30 * 2);
