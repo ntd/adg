@@ -103,6 +103,7 @@ void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
                                                  const gchar    *value);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
+gdouble         adg_table_cell_get_width        (AdgTableCell   *cell);
 gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
 void            adg_table_cell_switch_frame     (AdgTableCell   *cell,
                                                  gboolean        new_state);

@@ -522,6 +522,8 @@ adg_table_row_set_height(AdgTableRow *row, gdouble height)
  * @row: a valid #AdgTableRow
  *
  * Gets the height of @row.
+ *
+ * Returns: the requested height or %0 on errors
  **/
 gdouble
 adg_table_row_get_height(AdgTableRow *row)
@@ -963,6 +965,22 @@ adg_table_cell_set_width(AdgTableCell *cell, gdouble width)
     cell->width = width;
 
     adg_entity_invalidate((AdgEntity *) cell->row->table);
+}
+
+/**
+ * adg_table_cell_get_width:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the width of @cell.
+ *
+ * Returns: the requested width or %0 on errors
+ **/
+gdouble
+adg_table_cell_get_width(AdgTableCell *cell)
+{
+    g_return_val_if_fail(cell != NULL, 0.);
+
+    return cell->width;
 }
 
 /**
