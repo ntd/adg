@@ -503,6 +503,26 @@ adg_dim_style_use_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
 }
 
 /**
+ * adg_dim_style_set_color_dress:
+ * @dim_style: an #AdgDimStyle object
+ * @dress: the new color dress
+ *
+ * Sets a new color dress on @dim_style.
+ **/
+void
+adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (adg_dress_set(&data->color_dress, dress))
+        g_object_notify((GObject *) dim_style, "color-dress");
+}
+
+/**
  * adg_dim_style_get_color_dress:
  * @dim_style: an #AdgDimStyle object
  *
@@ -526,14 +546,14 @@ adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_color_dress:
+ * adg_dim_style_set_value_dress:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new color dress
+ * @dress: the new basic value font style
  *
- * Sets a new color dress on @dim_style.
+ * Sets a new dress on @dim_style for the basic value.
  **/
 void
-adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -541,8 +561,8 @@ adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) dim_style, "color-dress");
+    if (adg_dress_set(&data->value_dress, dress))
+        g_object_notify((GObject *) dim_style, "value-dress");
 }
 
 /**
@@ -567,14 +587,14 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_value_dress:
+ * adg_dim_style_set_min_dress:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new basic value font style
+ * @dress: the new lower limit dress
  *
- * Sets a new dress on @dim_style for the basic value.
+ * Sets a new dress on @dim_style for the lower limit value.
  **/
 void
-adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -582,8 +602,8 @@ adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->value_dress, dress))
-        g_object_notify((GObject *) dim_style, "value-dress");
+    if (adg_dress_set(&data->min_dress, dress))
+        g_object_notify((GObject *) dim_style, "min-dress");
 }
 
 /**
@@ -607,14 +627,14 @@ adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_min_dress:
+ * adg_dim_style_set_max_dress:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new lower limit dress
+ * @dress: the new upper limit dress
  *
- * Sets a new dress on @dim_style for the lower limit value.
+ * Sets a new dress on @dim_style for the upper limit value.
  **/
 void
-adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -622,8 +642,8 @@ adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->min_dress, dress))
-        g_object_notify((GObject *) dim_style, "min-dress");
+    if (adg_dress_set(&data->max_dress, dress))
+        g_object_notify((GObject *) dim_style, "max-dress");
 }
 
 /**
@@ -647,14 +667,14 @@ adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_max_dress:
+ * adg_dim_style_set_line_dress:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new upper limit dress
+ * @dress: the new line dress
  *
- * Sets a new dress on @dim_style for the upper limit value.
+ * Sets a new line dress on @dim_style.
  **/
 void
-adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     AdgDimStylePrivate *data;
 
@@ -662,8 +682,8 @@ adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 
     data = dim_style->data;
 
-    if (adg_dress_set(&data->max_dress, dress))
-        g_object_notify((GObject *) dim_style, "max-dress");
+    if (adg_dress_set(&data->line_dress, dress))
+        g_object_notify((GObject *) dim_style, "line-dress");
 }
 
 /**
@@ -688,23 +708,23 @@ adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_line_dress:
+ * adg_dim_style_set_from_offset:
  * @dim_style: an #AdgDimStyle object
- * @dress: the new line dress
+ * @offset: the new offset
  *
- * Sets a new line dress on @dim_style.
+ * Sets a new "from-offset" value.
  **/
 void
-adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
+adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 {
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
+    data->from_offset = offset;
 
-    if (adg_dress_set(&data->line_dress, dress))
-        g_object_notify((GObject *) dim_style, "line-dress");
+    g_object_notify((GObject *) dim_style, "from-offset");
 }
 
 /**
@@ -729,23 +749,23 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_from_offset:
+ * adg_dim_style_set_to_offset:
  * @dim_style: an #AdgDimStyle object
  * @offset: the new offset
  *
- * Sets a new "from-offset" value.
+ * Sets a new "to-offset" value.
  **/
 void
-adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
+adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 {
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
-    data->from_offset = offset;
+    data->to_offset = offset;
 
-    g_object_notify((GObject *) dim_style, "from-offset");
+    g_object_notify((GObject *) dim_style, "to-offset");
 }
 
 /**
@@ -770,23 +790,23 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_to_offset:
+ * adg_dim_style_set_beyond:
  * @dim_style: an #AdgDimStyle object
- * @offset: the new offset
+ * @length: the new length
  *
- * Sets a new "to-offset" value.
+ * Sets a new "beyond" value.
  **/
 void
-adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
+adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble length)
 {
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
-    data->to_offset = offset;
+    data->beyond = length;
 
-    g_object_notify((GObject *) dim_style, "to-offset");
+    g_object_notify((GObject *) dim_style, "beyond");
 }
 
 /**
@@ -811,23 +831,23 @@ adg_dim_style_get_beyond(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_beyond:
+ * adg_dim_style_set_baseline_spacing:
  * @dim_style: an #AdgDimStyle object
- * @length: the new length
+ * @spacing: the new spacing
  *
- * Sets a new "beyond" value.
+ * Sets a new "baseline-spacing" value.
  **/
 void
-adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble length)
+adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
     AdgDimStylePrivate *data;
 
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
     data = dim_style->data;
-    data->beyond = length;
+    data->baseline_spacing = spacing;
 
-    g_object_notify((GObject *) dim_style, "beyond");
+    g_object_notify((GObject *) dim_style, "baseline-spacing");
 }
 
 /**
@@ -852,46 +872,6 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_baseline_spacing:
- * @dim_style: an #AdgDimStyle object
- * @spacing: the new spacing
- *
- * Sets a new "baseline-spacing" value.
- **/
-void
-adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-    data->baseline_spacing = spacing;
-
-    g_object_notify((GObject *) dim_style, "baseline-spacing");
-}
-
-/**
- * adg_dim_style_get_limits_spacing:
- * @dim_style: an #AdgDimStyle object
- *
- * Gets the distance (in global space) between the limits/tolerances.
- *
- * Returns: the requested spacing
- **/
-gdouble
-adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
-
-    data = dim_style->data;
-
-    return data->limits_spacing;
-}
-
-/**
  * adg_dim_style_set_limits_spacing:
  * @dim_style: an #AdgDimStyle object
  * @spacing: the new spacing
@@ -912,24 +892,23 @@ adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
 }
 
 /**
- * adg_dim_style_get_quote_shift:
+ * adg_dim_style_get_limits_spacing:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the smooth displacement of the quote. The returned pointer refers
- * to an internal allocated struct and must not be modified or freed.
+ * Gets the distance (in global space) between the limits/tolerances.
  *
- * Returns: the requested shift
+ * Returns: the requested spacing
  **/
-const AdgPair *
-adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
+gdouble
+adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
     data = dim_style->data;
 
-    return &data->quote_shift;
+    return data->limits_spacing;
 }
 
 /**
@@ -954,6 +933,43 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 }
 
 /**
+ * adg_dim_style_get_quote_shift:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the smooth displacement of the quote. The returned pointer refers
+ * to an internal allocated struct and must not be modified or freed.
+ *
+ * Returns: the requested shift
+ **/
+const AdgPair *
+adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+
+    data = dim_style->data;
+
+    return &data->quote_shift;
+}
+
+/**
+ * adg_dim_style_set_limits_shift:
+ * @dim_style: an #AdgDimStyle object
+ * @shift: the new displacement
+ *
+ * Sets a new #AdgDimStyle:limits-shift value.
+ **/
+void
+adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+{
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    set_limits_shift(dim_style, shift);
+    g_object_notify((GObject *) dim_style, "limits-shift");
+}
+
+/**
  * adg_dim_style_get_limits_shift:
  * @dim_style: an #AdgDimStyle object
  *
@@ -975,19 +991,19 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_limits_shift:
+ * adg_dim_style_set_number_format:
  * @dim_style: an #AdgDimStyle object
- * @shift: the new displacement
+ * @format: the new format to adopt
  *
- * Sets a new #AdgDimStyle:limits-shift value.
+ * Sets a new "number-format" value.
  **/
 void
-adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    set_limits_shift(dim_style, shift);
-    g_object_notify((GObject *) dim_style, "limits-shift");
+    set_number_format(dim_style, format);
+    g_object_notify((GObject *) dim_style, "number-format");
 }
 
 /**
@@ -1013,19 +1029,19 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_set_number_format:
+ * adg_dim_style_set_number_tag:
  * @dim_style: an #AdgDimStyle object
- * @format: the new format to adopt
+ * @tag: the new tag
  *
- * Sets a new "number-format" value.
+ * Sets a new "number-tag" value.
  **/
 void
-adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
+adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    set_number_format(dim_style, format);
-    g_object_notify((GObject *) dim_style, "number-format");
+    set_number_tag(dim_style, tag);
+    g_object_notify((GObject *) dim_style, "number-tag");
 }
 
 /**
@@ -1048,22 +1064,6 @@ adg_dim_style_get_number_tag(AdgDimStyle *dim_style)
     data = dim_style->data;
 
     return data->number_tag;
-}
-
-/**
- * adg_dim_style_set_number_tag:
- * @dim_style: an #AdgDimStyle object
- * @tag: the new tag
- *
- * Sets a new "number-tag" value.
- **/
-void
-adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
-{
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    set_number_tag(dim_style, tag);
-    g_object_notify((GObject *) dim_style, "number-tag");
 }
 
 
