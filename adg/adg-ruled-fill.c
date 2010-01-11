@@ -304,12 +304,13 @@ static void
 apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
-    cairo_pattern_t *pattern;
-    CpmlExtents extents;
+    AdgPattern *pattern;
+    const CpmlExtents *extents;
     cairo_matrix_t matrix;
 
     fill_style = (AdgFillStyle *) style;
     pattern = adg_fill_style_get_pattern(fill_style);
+    extents = adg_fill_style_get_extents(fill_style);
 
     if (pattern == NULL) {
         pattern = create_pattern((AdgRuledFill *) style, entity, cr);
@@ -320,8 +321,7 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
         cairo_pattern_destroy(pattern);
     }
 
-    adg_fill_style_get_extents(fill_style, &extents);
-    cairo_matrix_init_translate(&matrix, -extents.org.x, -extents.org.y);
+    cairo_matrix_init_translate(&matrix, -extents->org.x, -extents->org.y);
     cairo_pattern_set_matrix(pattern, &matrix);
 
     if (PARENT_STYLE_CLASS->apply)
@@ -333,7 +333,7 @@ set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
 {
     CpmlExtents old, new;
 
-    adg_fill_style_get_extents(fill_style, &old);
+    cpml_extents_copy(&old, adg_fill_style_get_extents(fill_style));
 
     /* The pattern is invalidated (and thus regenerated) only
      * when the new extents are wider than the old ones */
@@ -381,7 +381,7 @@ static cairo_pattern_t *
 create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
-    CpmlExtents extents;
+    const CpmlExtents *extents;
     AdgRuledFillPrivate *data;
     AdgStyle *line_style;
     cairo_pattern_t *pattern;
@@ -390,17 +390,17 @@ create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
     cairo_t *context;
 
     fill_style = (AdgFillStyle *) ruled_fill;
-    adg_fill_style_get_extents(fill_style, &extents);
+    extents = adg_fill_style_get_extents(fill_style);
 
     /* Check for valid extents */
-    if (!extents.is_defined)
+    if (!extents->is_defined)
         return NULL;
 
     data = ruled_fill->data;
     line_style = adg_entity_style(entity, data->line_dress);
     surface = cairo_surface_create_similar(cairo_get_target(cr),
                                            CAIRO_CONTENT_COLOR_ALPHA,
-                                           extents.size.x, extents.size.y);
+                                           extents->size.x, extents->size.y);
     pattern = cairo_pattern_create_for_surface(surface);
 
     /* The pattern holds a reference to the surface, so the
@@ -412,7 +412,7 @@ create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
 
     context = cairo_create(surface);
     adg_style_apply(line_style, entity, context);
-    draw_lines(&spacing, &extents.size, context);
+    draw_lines(&spacing, &extents->size, context);
     cairo_destroy(context);
 
     return pattern;

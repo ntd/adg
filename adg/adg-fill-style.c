@@ -202,18 +202,19 @@ adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
  * This struct specifies the maximum portion (in global space)
  * this fill style should be applied: it will clamped by the
  * entities as needed.
+ *
+ * Returns: the extents of @fill_style or %NULL on errors
  **/
-void
-adg_fill_style_get_extents(AdgFillStyle *fill_style, CpmlExtents *extents)
+const CpmlExtents *
+adg_fill_style_get_extents(AdgFillStyle *fill_style)
 {
     AdgFillStylePrivate *data;
 
-    g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
-    g_return_if_fail(extents != NULL);
+    g_return_val_if_fail(ADG_IS_FILL_STYLE(fill_style), NULL);
 
     data = fill_style->data;
 
-    cpml_extents_copy(extents, &data->extents);
+    return &data->extents;
 }
 
 /**

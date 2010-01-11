@@ -58,8 +58,8 @@ GType           adg_fill_style_get_type         (void) G_GNUC_CONST;
 AdgPattern *    adg_fill_style_get_pattern      (AdgFillStyle   *fill_style);
 void            adg_fill_style_set_pattern      (AdgFillStyle   *fill_style,
                                                  AdgPattern     *pattern);
-void            adg_fill_style_get_extents      (AdgFillStyle   *fill_style,
-                                                 CpmlExtents    *extents);
+const CpmlExtents *
+                adg_fill_style_get_extents      (AdgFillStyle   *fill_style);
 void            adg_fill_style_set_extents      (AdgFillStyle   *fill_style,
                                                  const CpmlExtents *extents);
 
