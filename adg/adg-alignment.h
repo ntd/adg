@@ -56,13 +56,13 @@ AdgAlignment *  adg_alignment_new               (const AdgPair  *factor);
 AdgAlignment *  adg_alignment_new_explicit      (gdouble         x_factor,
                                                  gdouble         y_factor);
 
-const AdgPair * adg_alignment_get_factor        (AdgAlignment   *alignment);
 void            adg_alignment_set_factor        (AdgAlignment   *alignment,
                                                  const AdgPair  *factor);
 void            adg_alignment_set_factor_explicit
                                                 (AdgAlignment   *alignment,
                                                  gdouble         x_factor,
                                                  gdouble         y_factor);
+const AdgPair * adg_alignment_get_factor        (AdgAlignment   *alignment);
 
 G_END_DECLS
 

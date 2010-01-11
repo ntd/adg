@@ -177,27 +177,6 @@ adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
 }
 
 /**
- * adg_alignment_get_factor:
- * @alignment: an #AdgAlignment container
- *
- * Gets the value of the #AdgAlignment:factor property. The returned
- * pair is owned by @alignment and must not be modified or freed.
- *
- * Returns: the factor pair
- **/
-const AdgPair *
-adg_alignment_get_factor(AdgAlignment *alignment)
-{
-    AdgAlignmentPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ALIGNMENT(alignment), NULL);
-
-    data = alignment->data;
-
-    return &data->factor;
-}
-
-/**
  * adg_alignment_set_factor:
  * @alignment: an #AdgAlignment container
  * @factor: the new factor
@@ -238,6 +217,27 @@ adg_alignment_set_factor_explicit(AdgAlignment *alignment,
     factor.y = y_factor;
 
     adg_alignment_set_factor(alignment, &factor);
+}
+
+/**
+ * adg_alignment_get_factor:
+ * @alignment: an #AdgAlignment container
+ *
+ * Gets the value of the #AdgAlignment:factor property. The returned
+ * pair is owned by @alignment and must not be modified or freed.
+ *
+ * Returns: the factor pair
+ **/
+const AdgPair *
+adg_alignment_get_factor(AdgAlignment *alignment)
+{
+    AdgAlignmentPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ALIGNMENT(alignment), NULL);
+
+    data = alignment->data;
+
+    return &data->factor;
 }
 
 
