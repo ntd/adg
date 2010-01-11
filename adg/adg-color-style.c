@@ -194,7 +194,7 @@ adg_color_style_new(void)
 }
 
 /**
- * adg_color_style_get_rgb:
+ * adg_color_style_put_rgb:
  * @color_style: an #AdgColorStyle
  * @r: where to store the red channel value
  * @g: where to store the green channel value
@@ -204,7 +204,7 @@ adg_color_style_new(void)
  * Any of the pointer can be %NULL, in which case the value is not returned.
  **/
 void
-adg_color_style_get_rgb(AdgColorStyle *color_style,
+adg_color_style_put_rgb(AdgColorStyle *color_style,
                         gdouble *r, gdouble *g, gdouble *b)
 {
     AdgColorStylePrivate *data;
