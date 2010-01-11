@@ -67,7 +67,7 @@ for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 API: the 0.7.0 release will probably be a beta release.</para>
 
 <itemizedlist mark="circle">
-   <listitem>Provide a document with API guidelines take it as the holy bible!
+   <listitem override="disc">Provide a document with API guidelines take it as the holy bible!
    All the APIs must comply with the rules of this document.</listitem>
    <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
    should come from the CPML library (and there the TODO items are
