@@ -54,23 +54,23 @@ struct _AdgMarkerClass {
 
 GType             adg_marker_get_type             (void) G_GNUC_CONST;
 
-AdgTrail *        adg_marker_get_trail          (AdgMarker      *marker);
-guint             adg_marker_get_n_segment      (AdgMarker      *marker);
-const AdgSegment *adg_marker_get_segment        (AdgMarker      *marker);
 void              adg_marker_set_segment        (AdgMarker      *marker,
                                                  AdgTrail       *trail,
                                                  guint           n_segment);
-const AdgSegment *adg_marker_get_backup_segment (AdgMarker      *marker);
+AdgTrail *        adg_marker_get_trail          (AdgMarker      *marker);
+guint             adg_marker_get_n_segment      (AdgMarker      *marker);
+const AdgSegment *adg_marker_get_segment        (AdgMarker      *marker);
 void              adg_marker_backup_segment     (AdgMarker      *marker);
-gdouble           adg_marker_get_pos            (AdgMarker      *marker);
+const AdgSegment *adg_marker_get_backup_segment (AdgMarker      *marker);
 void              adg_marker_set_pos            (AdgMarker      *marker,
                                                  gdouble         pos);
-gdouble           adg_marker_get_size           (AdgMarker      *marker);
+gdouble           adg_marker_get_pos            (AdgMarker      *marker);
 void              adg_marker_set_size           (AdgMarker      *marker,
                                                  gdouble         size);
-AdgModel *        adg_marker_get_model          (AdgMarker      *marker);
+gdouble           adg_marker_get_size           (AdgMarker      *marker);
 void              adg_marker_set_model          (AdgMarker      *marker,
                                                  AdgModel       *model);
+AdgModel *        adg_marker_get_model          (AdgMarker      *marker);
 AdgModel *        adg_marker_model              (AdgMarker      *marker);
 
 G_END_DECLS
