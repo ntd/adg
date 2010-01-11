@@ -234,26 +234,6 @@ adg_line_style_new(void)
 }
 
 /**
- * adg_line_style_get_color_dress:
- * @line_style: an #AdgLineStyle
- *
- * Gets the color dress used by @line_style.
- *
- * Returns: the current color dress
- **/
-AdgDress
-adg_line_style_get_color_dress(AdgLineStyle *line_style)
-{
-    AdgLineStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), ADG_DRESS_UNDEFINED);
-
-    data = line_style->data;
-
-    return data->color_dress;
-}
-
-/**
  * adg_line_style_set_color_dress:
  * @line_style: an #AdgLineStyle
  * @dress: the new color dress to use
@@ -282,23 +262,23 @@ adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
 }
 
 /**
- * adg_line_style_get_width:
- * @line_style: an #AdgLineStyle object
+ * adg_line_style_get_color_dress:
+ * @line_style: an #AdgLineStyle
  *
- * Gets the line thickness value (in global space).
+ * Gets the color dress used by @line_style.
  *
- * Returns: the requested width
+ * Returns: the current color dress
  **/
-gdouble
-adg_line_style_get_width(AdgLineStyle *line_style)
+AdgDress
+adg_line_style_get_color_dress(AdgLineStyle *line_style)
 {
     AdgLineStylePrivate *data;
 
-    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
+    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), ADG_DRESS_UNDEFINED);
 
     data = line_style->data;
 
-    return data->width;
+    return data->color_dress;
 }
 
 /**
@@ -319,6 +299,46 @@ adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
     data->width = width;
 
     g_object_notify((GObject *) line_style, "width");
+}
+
+/**
+ * adg_line_style_get_width:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the line thickness value (in global space).
+ *
+ * Returns: the requested width
+ **/
+gdouble
+adg_line_style_get_width(AdgLineStyle *line_style)
+{
+    AdgLineStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
+
+    data = line_style->data;
+
+    return data->width;
+}
+
+/**
+ * adg_line_style_set_cap:
+ * @line_style: an #AdgLineStyle object
+ * @cap: the new cap mode
+ *
+ * Sets a new line cap mode.
+ **/
+void
+adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
+{
+    AdgLineStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
+
+    data = line_style->data;
+    data->cap = cap;
+
+    g_object_notify((GObject *) line_style, "cap");
 }
 
 /**
@@ -343,23 +363,23 @@ adg_line_style_get_cap(AdgLineStyle *line_style)
 }
 
 /**
- * adg_line_style_set_cap:
+ * adg_line_style_set_join:
  * @line_style: an #AdgLineStyle object
- * @cap: the new cap mode
+ * @join: the new join mode
  *
- * Sets a new line cap mode.
+ * Sets a new line join mode.
  **/
 void
-adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
+adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
 {
     AdgLineStylePrivate *data;
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
     data = line_style->data;
-    data->cap = cap;
+    data->join = join;
 
-    g_object_notify((GObject *) line_style, "cap");
+    g_object_notify((GObject *) line_style, "join");
 }
 
 /**
@@ -384,23 +404,24 @@ adg_line_style_get_join(AdgLineStyle *line_style)
 }
 
 /**
- * adg_line_style_set_join:
+ * adg_line_style_set_miter_limit:
  * @line_style: an #AdgLineStyle object
- * @join: the new join mode
+ * @miter_limit: the new miter limit
  *
- * Sets a new line join mode.
+ * Sets a new miter limit value.
  **/
 void
-adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
+adg_line_style_set_miter_limit(AdgLineStyle *line_style,
+                               gdouble miter_limit)
 {
     AdgLineStylePrivate *data;
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
     data = line_style->data;
-    data->join = join;
+    data->miter_limit = miter_limit;
 
-    g_object_notify((GObject *) line_style, "join");
+    g_object_notify((GObject *) line_style, "miter-limit");
 }
 
 /**
@@ -425,24 +446,24 @@ adg_line_style_get_miter_limit(AdgLineStyle *line_style)
 }
 
 /**
- * adg_line_style_set_miter_limit:
+ * adg_line_style_set_antialias:
  * @line_style: an #AdgLineStyle object
- * @miter_limit: the new miter limit
+ * @antialias: the new antialias mode
  *
- * Sets a new miter limit value.
+ * Sets a new antialias mode.
  **/
 void
-adg_line_style_set_miter_limit(AdgLineStyle *line_style,
-                               gdouble miter_limit)
+adg_line_style_set_antialias(AdgLineStyle *line_style,
+                             cairo_antialias_t antialias)
 {
     AdgLineStylePrivate *data;
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
     data = line_style->data;
-    data->miter_limit = miter_limit;
+    data->antialias = antialias;
 
-    g_object_notify((GObject *) line_style, "miter-limit");
+    g_object_notify((GObject *) line_style, "antialias");
 }
 
 /**
@@ -466,26 +487,6 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
     return data->antialias;
 }
 
-/**
- * adg_line_style_set_antialias:
- * @line_style: an #AdgLineStyle object
- * @antialias: the new antialias mode
- *
- * Sets a new antialias mode.
- **/
-void
-adg_line_style_set_antialias(AdgLineStyle *line_style,
-                             cairo_antialias_t antialias)
-{
-    AdgLineStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-
-    data = line_style->data;
-    data->antialias = antialias;
-
-    g_object_notify((GObject *) line_style, "antialias");
-}
 
 static void
 apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
