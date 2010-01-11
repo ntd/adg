@@ -378,46 +378,6 @@ adg_switch_extents(gboolean state)
 }
 
 /**
- * adg_entity_get_parent:
- * @entity: an #AdgEntity
- *
- * Gets the parent of @entity.
- *
- * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
- **/
-AdgEntity *
-adg_entity_get_parent(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return data->parent;
-}
-
-/**
- * adg_entity_set_parent:
- * @entity: an #AdgEntity
- * @parent: the parent entity
- *
- * <note><para>
- * This function is only useful in entity implementations.
- * </para></note>
- *
- * Sets a new parent on @entity.
- **/
-void
-adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
-{
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_parent(entity, parent))
-        g_object_notify((GObject *) entity, "parent");
-}
-
-/**
  * adg_entity_get_canvas:
  * @entity: an #AdgEntity
  *
@@ -443,16 +403,35 @@ adg_entity_get_canvas(AdgEntity *entity)
 }
 
 /**
- * adg_entity_get_global_map:
- * @entity: an #AdgEntity object
+ * adg_entity_set_parent:
+ * @entity: an #AdgEntity
+ * @parent: the parent entity
  *
- * Gets the transformation to be used to compute the global matrix
- * of @entity.
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
  *
- * Returns: the requested map or %NULL on errors
+ * Sets a new parent on @entity.
  **/
-const AdgMatrix *
-adg_entity_get_global_map(AdgEntity *entity)
+void
+adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    if (set_parent(entity, parent))
+        g_object_notify((GObject *) entity, "parent");
+}
+
+/**
+ * adg_entity_get_parent:
+ * @entity: an #AdgEntity
+ *
+ * Gets the parent of @entity.
+ *
+ * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
+ **/
+AdgEntity *
+adg_entity_get_parent(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
@@ -460,7 +439,7 @@ adg_entity_get_global_map(AdgEntity *entity)
 
     data = entity->data;
 
-    return &data->global_map;
+    return data->parent;
 }
 
 /**
@@ -519,6 +498,27 @@ adg_entity_transform_global_map(AdgEntity *entity,
 }
 
 /**
+ * adg_entity_get_global_map:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the transformation to be used to compute the global matrix
+ * of @entity.
+ *
+ * Returns: the requested map or %NULL on errors
+ **/
+const AdgMatrix *
+adg_entity_get_global_map(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+
+    data = entity->data;
+
+    return &data->global_map;
+}
+
+/**
  * adg_entity_get_global_matrix:
  * @entity: an #AdgEntity object
  *
@@ -541,27 +541,6 @@ adg_entity_get_global_matrix(AdgEntity *entity)
     data = entity->data;
 
     return &data->global.matrix;
-}
-
-/**
- * adg_entity_get_local_map:
- * @entity: an #AdgEntity object
- *
- * Gets the transformation to be used to compute the local matrix
- * of @entity and store it in @map.
- *
- * Returns: the requested map or %NULL on errors
- **/
-const AdgMatrix *
-adg_entity_get_local_map(AdgEntity *entity)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
-
-    data = entity->data;
-
-    return &data->local_map;
 }
 
 /**
@@ -620,48 +599,24 @@ adg_entity_transform_local_map(AdgEntity *entity,
 }
 
 /**
- * adg_entity_get_local_method:
+ * adg_entity_get_local_map:
  * @entity: an #AdgEntity object
  *
- * Gets the local mix method of @entity. Check out the
- * adg_entity_set_local_method() documentation to know what the
- * local method is used for.
+ * Gets the transformation to be used to compute the local matrix
+ * of @entity and store it in @map.
  *
- * Returns: the local method of @entity or %ADG_MIX_UNDEFINED on errors
+ * Returns: the requested map or %NULL on errors
  **/
-AdgMixMethod
-adg_entity_get_local_method(AdgEntity *entity)
+const AdgMatrix *
+adg_entity_get_local_map(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_MIX_UNDEFINED);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
     data = entity->data;
 
-    return data->local_method;
-}
-
-/**
- * adg_entity_set_local_method:
- * @entity: an #AdgEntity object
- * @local_method: new method
- *
- * Sets a new local mix method on @entity. The
- * #AdgEntity:local-method property defines how the local
- * matrix must be computed: check out the #AdgMixMethod
- * documentation to know what are the availables methods
- * and how they affect the local matrix computation.
- *
- * Setting a different local method emits an #Adgentity::local-changed
- * signal on @entity.
- **/
-void
-adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
-{
-    g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_local_method(entity, local_method))
-        g_object_notify((GObject *) entity, "local-method");
+    return &data->local_map;
 }
 
 /**
@@ -690,33 +645,48 @@ adg_entity_get_local_matrix(AdgEntity *entity)
 }
 
 /**
- * adg_entity_get_extents:
- * @entity: an #AdgEntity
+ * adg_entity_set_local_method:
+ * @entity: an #AdgEntity object
+ * @local_method: new method
  *
- * Gets the bounding box of @entity. The returned struct is
- * owned by @entity and should not modified or freed.
+ * Sets a new local mix method on @entity. The
+ * #AdgEntity:local-method property defines how the local
+ * matrix must be computed: check out the #AdgMixMethod
+ * documentation to know what are the availables methods
+ * and how they affect the local matrix computation.
  *
- * This struct specifies the surface portion (in global space
- * of @entity) occupied by the entity without taking into
- * account rendering properties such as line thickness or caps.
- *
- * The #AdgEntity::arrange signal should be emitted before
- * this call (either explicitely trought adg_entity_arrange()
- * or implicitely with adg_entity_render()) in order to get
- * an up to date boundary box.
- *
- * Returns: the bounding box of @entity or %NULL on errors
+ * Setting a different local method emits an #Adgentity::local-changed
+ * signal on @entity.
  **/
-const CpmlExtents *
-adg_entity_get_extents(AdgEntity *entity)
+void
+adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    if (set_local_method(entity, local_method))
+        g_object_notify((GObject *) entity, "local-method");
+}
+
+/**
+ * adg_entity_get_local_method:
+ * @entity: an #AdgEntity object
+ *
+ * Gets the local mix method of @entity. Check out the
+ * adg_entity_set_local_method() documentation to know what the
+ * local method is used for.
+ *
+ * Returns: the local method of @entity or %ADG_MIX_UNDEFINED on errors
+ **/
+AdgMixMethod
+adg_entity_get_local_method(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_MIX_UNDEFINED);
 
     data = entity->data;
 
-    return &data->extents;
+    return data->local_method;
 }
 
 /**
@@ -747,19 +717,25 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
 }
 
 /**
- * adg_entity_get_style:
+ * adg_entity_get_extents:
  * @entity: an #AdgEntity
- * @dress: the dress of the style to get
  *
- * Gets the overriden @dress style from @entity. This is a kind
- * of accessor function: to get the style to be used for rendering
- * purpose, use adg_entity_style() instead.
+ * Gets the bounding box of @entity. The returned struct is
+ * owned by @entity and should not modified or freed.
  *
- * Returns: the requested style or %NULL if the @dress style
- *          is not overriden
+ * This struct specifies the surface portion (in global space
+ * of @entity) occupied by the entity without taking into
+ * account rendering properties such as line thickness or caps.
+ *
+ * The #AdgEntity::arrange signal should be emitted before
+ * this call (either explicitely trought adg_entity_arrange()
+ * or implicitely with adg_entity_render()) in order to get
+ * an up to date boundary box.
+ *
+ * Returns: the bounding box of @entity or %NULL on errors
  **/
-AdgStyle *
-adg_entity_get_style(AdgEntity *entity, AdgDress dress)
+const CpmlExtents *
+adg_entity_get_extents(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
@@ -767,10 +743,7 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
 
     data = entity->data;
 
-    if (data->hash_styles == NULL)
-        return NULL;
-
-    return g_hash_table_lookup(data->hash_styles, GINT_TO_POINTER(dress));
+    return &data->extents;
 }
 
 /**
@@ -827,6 +800,33 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 
     g_object_ref(style);
     g_hash_table_replace(data->hash_styles, p_dress, style);
+}
+
+/**
+ * adg_entity_get_style:
+ * @entity: an #AdgEntity
+ * @dress: the dress of the style to get
+ *
+ * Gets the overriden @dress style from @entity. This is a kind
+ * of accessor function: to get the style to be used for rendering
+ * purpose, use adg_entity_style() instead.
+ *
+ * Returns: the requested style or %NULL if the @dress style
+ *          is not overriden
+ **/
+AdgStyle *
+adg_entity_get_style(AdgEntity *entity, AdgDress dress)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
+
+    data = entity->data;
+
+    if (data->hash_styles == NULL)
+        return NULL;
+
+    return g_hash_table_lookup(data->hash_styles, GINT_TO_POINTER(dress));
 }
 
 /**
