@@ -519,28 +519,6 @@ adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
 }
 
 /**
- * adg_title_block_get_logo:
- * @title_block: an #AdgTitleBlock entity
- *
- * Gets the logo bound to this title block.
- * The returned object is owned by @title_block and should not
- * be unreferenced although can be freely modified.
- *
- * Returns: the logo or %NULL on no logo or errors
- **/
-AdgEntity *
-adg_title_block_get_logo(AdgTitleBlock *title_block)
-{
-    AdgTitleBlockPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
-
-    data = title_block->data;
-
-    return data->logo;
-}
-
-/**
  * adg_title_block_set_logo:
  * @title_block: an #AdgTitleBlock entity
  * @logo: the new logo
@@ -559,6 +537,28 @@ adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
 
     if (set_logo(title_block, logo))
         g_object_notify((GObject *) title_block, "logo");
+}
+
+/**
+ * adg_title_block_logo:
+ * @title_block: an #AdgTitleBlock entity
+ *
+ * Gets the logo bound to this title block.
+ * The returned object is owned by @title_block and should not
+ * be unreferenced although can be freely modified.
+ *
+ * Returns: the logo or %NULL on no logo or errors
+ **/
+AdgEntity *
+adg_title_block_logo(AdgTitleBlock *title_block)
+{
+    AdgTitleBlockPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
+
+    data = title_block->data;
+
+    return data->logo;
 }
 
 /**
