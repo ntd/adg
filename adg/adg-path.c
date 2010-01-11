@@ -169,7 +169,7 @@ adg_path_new(void)
 }
 
 /**
- * adg_path_current_point:
+ * adg_path_get_current_point:
  * @path: an #AdgPath
  *
  * Gets the current point of @path, which is conceptually the
@@ -186,7 +186,7 @@ adg_path_new(void)
  * Returns: the current point or %NULL on no current point set or errors
  **/
 const AdgPair *
-adg_path_current_point(AdgPath *path)
+adg_path_get_current_point(AdgPath *path)
 {
     AdgPathPrivate *data;
 
