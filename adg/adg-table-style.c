@@ -256,6 +256,26 @@ adg_table_style_new(void)
 }
 
 /**
+ * adg_table_style_set_color_dress:
+ * @table_style: an #AdgTableStyle object
+ * @dress: the new color dress
+ *
+ * Sets a new color dress on @table_style.
+ **/
+void
+adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
+{
+    AdgTableStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
+
+    data = table_style->data;
+
+    if (adg_dress_set(&data->color_dress, dress))
+        g_object_notify((GObject *) table_style, "color-dress");
+}
+
+/**
  * adg_table_style_get_color_dress:
  * @table_style: an #AdgTableStyle object
  *
@@ -279,14 +299,14 @@ adg_table_style_get_color_dress(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_color_dress:
+ * adg_table_style_set_frame_dress:
  * @table_style: an #AdgTableStyle object
- * @dress: the new color dress
+ * @dress: the new line dress
  *
- * Sets a new color dress on @table_style.
+ * Sets a new line dress on @table_style for rendering the frames.
  **/
 void
-adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
+adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     AdgTableStylePrivate *data;
 
@@ -294,8 +314,8 @@ adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
 
     data = table_style->data;
 
-    if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) table_style, "color-dress");
+    if (adg_dress_set(&data->frame_dress, dress))
+        g_object_notify((GObject *) table_style, "frame-dress");
 }
 
 /**
@@ -320,14 +340,14 @@ adg_table_style_get_frame_dress(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_frame_dress:
+ * adg_table_style_set_grid_dress:
  * @table_style: an #AdgTableStyle object
  * @dress: the new line dress
  *
- * Sets a new line dress on @table_style for rendering the frames.
+ * Sets a new line dress on @table_style for rendering the grids.
  **/
 void
-adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
+adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     AdgTableStylePrivate *data;
 
@@ -335,8 +355,8 @@ adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
 
     data = table_style->data;
 
-    if (adg_dress_set(&data->frame_dress, dress))
-        g_object_notify((GObject *) table_style, "frame-dress");
+    if (adg_dress_set(&data->grid_dress, dress))
+        g_object_notify((GObject *) table_style, "grid-dress");
 }
 
 /**
@@ -361,14 +381,14 @@ adg_table_style_get_grid_dress(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_grid_dress:
+ * adg_table_style_set_title_dress:
  * @table_style: an #AdgTableStyle object
- * @dress: the new line dress
+ * @dress: the new font dress
  *
- * Sets a new line dress on @table_style for rendering the grids.
+ * Sets a new font dress on @table_style for rendering cell titles.
  **/
 void
-adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
+adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     AdgTableStylePrivate *data;
 
@@ -376,8 +396,8 @@ adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
 
     data = table_style->data;
 
-    if (adg_dress_set(&data->grid_dress, dress))
-        g_object_notify((GObject *) table_style, "grid-dress");
+    if (adg_dress_set(&data->title_dress, dress))
+        g_object_notify((GObject *) table_style, "title-dress");
 }
 
 /**
@@ -402,14 +422,14 @@ adg_table_style_get_title_dress(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_title_dress:
+ * adg_table_style_set_value_dress:
  * @table_style: an #AdgTableStyle object
  * @dress: the new font dress
  *
- * Sets a new font dress on @table_style for rendering cell titles.
+ * Sets a new font dress on @table_style for rendering cell values.
  **/
 void
-adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
+adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     AdgTableStylePrivate *data;
 
@@ -417,8 +437,8 @@ adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
 
     data = table_style->data;
 
-    if (adg_dress_set(&data->title_dress, dress))
-        g_object_notify((GObject *) table_style, "title-dress");
+    if (adg_dress_set(&data->value_dress, dress))
+        g_object_notify((GObject *) table_style, "value-dress");
 }
 
 /**
@@ -440,46 +460,6 @@ adg_table_style_get_value_dress(AdgTableStyle *table_style)
     data = table_style->data;
 
     return data->value_dress;
-}
-
-/**
- * adg_table_style_set_value_dress:
- * @table_style: an #AdgTableStyle object
- * @dress: the new font dress
- *
- * Sets a new font dress on @table_style for rendering cell values.
- **/
-void
-adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
-{
-    AdgTableStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-
-    data = table_style->data;
-
-    if (adg_dress_set(&data->value_dress, dress))
-        g_object_notify((GObject *) table_style, "value-dress");
-}
-
-/**
- * adg_table_style_get_row_height:
- * @table_style: an #AdgTableStyle object
- *
- * Gets the row height fallback value.
- *
- * Returns: the fallback row height or %0 on errors
- **/
-gdouble
-adg_table_style_get_row_height(AdgTableStyle *table_style)
-{
-    AdgTableStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_TABLE_STYLE(table_style), 0);
-
-    data = table_style->data;
-
-    return data->row_height;
 }
 
 /**
@@ -510,6 +490,48 @@ adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble row_height)
 }
 
 /**
+ * adg_table_style_get_row_height:
+ * @table_style: an #AdgTableStyle object
+ *
+ * Gets the row height fallback value.
+ *
+ * Returns: the fallback row height or %0 on errors
+ **/
+gdouble
+adg_table_style_get_row_height(AdgTableStyle *table_style)
+{
+    AdgTableStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TABLE_STYLE(table_style), 0);
+
+    data = table_style->data;
+
+    return data->row_height;
+}
+
+/**
+ * adg_table_style_set_cell_padding:
+ * @table_style: an #AdgTableStyle object
+ * @cell_padding: the new padding values
+ *
+ * Sets new #AdgTableStyle:cell-padding values.
+ **/
+void
+adg_table_style_set_cell_padding(AdgTableStyle *table_style,
+                                 const AdgPair *cell_padding)
+{
+    AdgTableStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
+    g_return_if_fail(cell_padding != NULL);
+
+    data = table_style->data;
+    cpml_pair_copy(&data->cell_padding, cell_padding);
+
+    g_object_notify((GObject *) table_style, "cell-padding");
+}
+
+/**
  * adg_table_style_get_cell_padding:
  * @table_style: an #AdgTableStyle object
  *
@@ -536,25 +558,25 @@ adg_table_style_get_cell_padding(AdgTableStyle *table_style)
 }
 
 /**
- * adg_table_style_set_cell_padding:
+ * adg_table_style_set_cell_spacing:
  * @table_style: an #AdgTableStyle object
- * @cell_padding: the new padding values
+ * @cell_spacing: the new spacing values
  *
- * Sets new #AdgTableStyle:cell-padding values.
+ * Sets new #AdgTableStyle:cell-spacing values.
  **/
 void
-adg_table_style_set_cell_padding(AdgTableStyle *table_style,
-                                 const AdgPair *cell_padding)
+adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
+                                 const AdgPair *cell_spacing)
 {
     AdgTableStylePrivate *data;
 
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_return_if_fail(cell_padding != NULL);
+    g_return_if_fail(cell_spacing != NULL);
 
     data = table_style->data;
-    cpml_pair_copy(&data->cell_padding, cell_padding);
+    cpml_pair_copy(&data->cell_spacing, cell_spacing);
 
-    g_object_notify((GObject *) table_style, "cell-padding");
+    g_object_notify((GObject *) table_style, "cell-spacing");
 }
 
 /**
@@ -581,28 +603,6 @@ adg_table_style_get_cell_spacing(AdgTableStyle *table_style)
     data = table_style->data;
 
     return &data->cell_spacing;
-}
-
-/**
- * adg_table_style_set_cell_spacing:
- * @table_style: an #AdgTableStyle object
- * @cell_spacing: the new spacing values
- *
- * Sets new #AdgTableStyle:cell-spacing values.
- **/
-void
-adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
-                                 const AdgPair *cell_spacing)
-{
-    AdgTableStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_return_if_fail(cell_spacing != NULL);
-
-    data = table_style->data;
-    cpml_pair_copy(&data->cell_spacing, cell_spacing);
-
-    g_object_notify((GObject *) table_style, "cell-spacing");
 }
 
 
