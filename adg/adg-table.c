@@ -834,23 +834,6 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
 }
 
 /**
- * adg_table_cell_get_value:
- * @cell: a valid #AdgTableCell
- *
- * Gets the current value of @cell. The returned string is owned
- * by @cell and must not be modified or freed.
- *
- * Returns: the value entity or %NULL for undefined value
- **/
-AdgEntity *
-adg_table_cell_get_value(AdgTableCell *cell)
-{
-    g_return_val_if_fail(cell != NULL, NULL);
-
-    return cell->value;
-}
-
-/**
  * adg_table_cell_set_value:
  * @cell: a valid #AdgTableCell
  * @value: the new value entity
@@ -873,28 +856,6 @@ adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
 
     if (cell_set_value(cell, value))
         adg_entity_invalidate((AdgEntity *) cell->row->table);
-}
-
-/**
- * adg_table_cell_set_value_pos:
- * @cell: a valid #AdgTableCell
- * @from_factor: the alignment factor on the value entity
- * @to_factor: the alignment factor on the cell
- *
- * Sets a new custom position for the value entity of @cell. The
- * @from_factor specifies the source point (as a fraction of the
- * value extents) while the @to_factor is the destination point
- * (specified as a fraction of the cell extents) the source point
- * must be moved to.
- **/
-void
-adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
-                             const AdgPair *to_factor)
-{
-    g_return_if_fail(cell != NULL);
-    g_return_if_fail(cell->value != NULL);
-
-    cell_set_value_pos(cell, from_factor, to_factor);
 }
 
 /**
@@ -946,6 +907,45 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
     adg_entity_set_global_map(entity, &map);
 
     adg_table_cell_set_value(cell, entity);
+}
+
+/**
+ * adg_table_cell_value:
+ * @cell: a valid #AdgTableCell
+ *
+ * Gets the current value of @cell. The returned string is owned
+ * by @cell and must not be modified or freed.
+ *
+ * Returns: the value entity or %NULL for undefined value
+ **/
+AdgEntity *
+adg_table_cell_value(AdgTableCell *cell)
+{
+    g_return_val_if_fail(cell != NULL, NULL);
+
+    return cell->value;
+}
+
+/**
+ * adg_table_cell_set_value_pos:
+ * @cell: a valid #AdgTableCell
+ * @from_factor: the alignment factor on the value entity
+ * @to_factor: the alignment factor on the cell
+ *
+ * Sets a new custom position for the value entity of @cell. The
+ * @from_factor specifies the source point (as a fraction of the
+ * value extents) while the @to_factor is the destination point
+ * (specified as a fraction of the cell extents) the source point
+ * must be moved to.
+ **/
+void
+adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
+                             const AdgPair *to_factor)
+{
+    g_return_if_fail(cell != NULL);
+    g_return_if_fail(cell->value != NULL);
+
+    cell_set_value_pos(cell, from_factor, to_factor);
 }
 
 /**

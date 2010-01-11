@@ -93,14 +93,14 @@ void            adg_table_cell_set_title        (AdgTableCell   *cell,
                                                  AdgEntity      *title);
 void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
                                                  const gchar    *title);
-AdgEntity *     adg_table_cell_get_value        (AdgTableCell   *cell);
 void            adg_table_cell_set_value        (AdgTableCell   *cell,
                                                  AdgEntity      *value);
+void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
+                                                 const gchar    *value);
+AdgEntity *     adg_table_cell_value            (AdgTableCell   *cell);
 void            adg_table_cell_set_value_pos    (AdgTableCell   *cell,
                                                  const AdgPair  *from_factor,
                                                  const AdgPair  *to_factor);
-void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
-                                                 const gchar    *value);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
 gdouble         adg_table_cell_get_width        (AdgTableCell   *cell);
