@@ -69,15 +69,15 @@ AdgLDim *       adg_ldim_new_full_from_model    (AdgModel       *model,
                                                  const gchar    *pos,
                                                  gdouble         direction);
 
-gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_set_direction          (AdgLDim        *ldim,
                                                  gdouble         direction);
-gboolean        adg_ldim_has_extension1         (AdgLDim        *ldim);
+gdouble         adg_ldim_get_direction          (AdgLDim        *ldim);
 void            adg_ldim_switch_extension1      (AdgLDim        *ldim,
                                                  gboolean        new_state);
-gboolean        adg_ldim_has_extension2         (AdgLDim        *ldim);
+gboolean        adg_ldim_has_extension1         (AdgLDim        *ldim);
 void            adg_ldim_switch_extension2      (AdgLDim        *ldim,
                                                  gboolean        new_state);
+gboolean        adg_ldim_has_extension2         (AdgLDim        *ldim);
 
 G_END_DECLS
 

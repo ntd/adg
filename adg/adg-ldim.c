@@ -326,26 +326,6 @@ adg_ldim_new_full_from_model(AdgModel *model,
 }
 
 /**
- * adg_ldim_get_direction:
- * @ldim: an #AdgLDim entity
- *
- * Gets the direction where @ldim will extend.
- *
- * Returns: the direction angle in radians
- **/
-gdouble
-adg_ldim_get_direction(AdgLDim *ldim)
-{
-    AdgLDimPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_LDIM(ldim), 0);
-
-    data = ldim->data;
-
-    return data->direction;
-}
-
-/**
  * adg_ldim_set_direction:
  * @ldim: an #AdgLDim entity
  * @direction: an angle value, in radians
@@ -366,23 +346,23 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 }
 
 /**
- * adg_ldim_has_extension1:
+ * adg_ldim_get_direction:
  * @ldim: an #AdgLDim entity
  *
- * Checks if @ldim should render also the first extension line.
+ * Gets the direction where @ldim will extend.
  *
- * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ * Returns: the direction angle in radians
  **/
-gboolean
-adg_ldim_has_extension1(AdgLDim *ldim)
+gdouble
+adg_ldim_get_direction(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
 
-    g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
+    g_return_val_if_fail(ADG_IS_LDIM(ldim), 0);
 
     data = ldim->data;
 
-    return data->has_extension1;
+    return data->direction;
 }
 
 /**
@@ -409,15 +389,15 @@ adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
 }
 
 /**
- * adg_ldim_has_extension2:
+ * adg_ldim_has_extension1:
  * @ldim: an #AdgLDim entity
  *
- * Checks if @ldim should render also the second extension line.
+ * Checks if @ldim should render also the first extension line.
  *
  * Returns: %TRUE on first extension line presents, %FALSE otherwise
  **/
 gboolean
-adg_ldim_has_extension2(AdgLDim *ldim)
+adg_ldim_has_extension1(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
 
@@ -425,7 +405,7 @@ adg_ldim_has_extension2(AdgLDim *ldim)
 
     data = ldim->data;
 
-    return data->has_extension2;
+    return data->has_extension1;
 }
 
 /**
@@ -449,6 +429,26 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
         data->has_extension2 = new_state;
         g_object_notify((GObject *) ldim, "has-extension2");
     }
+}
+
+/**
+ * adg_ldim_has_extension2:
+ * @ldim: an #AdgLDim entity
+ *
+ * Checks if @ldim should render also the second extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_ldim_has_extension2(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
+
+    data = ldim->data;
+
+    return data->has_extension2;
 }
 
 
