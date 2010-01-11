@@ -197,26 +197,6 @@ adg_logo_new(void)
 }
 
 /**
- * adg_logo_get_symbol_dress:
- * @logo: an #AdgLogo
- *
- * Gets the line dress to be used in stroking the symbol of @logo.
- *
- * Returns: the requested line dress
- **/
-AdgDress
-adg_logo_get_symbol_dress(AdgLogo *logo)
-{
-    AdgLogoPrivate *data;
-
-    g_return_val_if_fail(ADG_IS_LOGO(logo), ADG_DRESS_UNDEFINED);
-
-    data = logo->data;
-
-    return data->symbol_dress;
-}
-
-/**
  * adg_logo_set_symbol_dress:
  * @logo: an #AdgLogo
  * @dress: the new #AdgDress to use
@@ -244,15 +224,15 @@ adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
 }
 
 /**
- * adg_logo_get_screen_dress:
+ * adg_logo_get_symbol_dress:
  * @logo: an #AdgLogo
  *
- * Gets the line dress to be used in stroking the screen shape of @logo.
+ * Gets the line dress to be used in stroking the symbol of @logo.
  *
  * Returns: the requested line dress
  **/
 AdgDress
-adg_logo_get_screen_dress(AdgLogo *logo)
+adg_logo_get_symbol_dress(AdgLogo *logo)
 {
     AdgLogoPrivate *data;
 
@@ -260,7 +240,7 @@ adg_logo_get_screen_dress(AdgLogo *logo)
 
     data = logo->data;
 
-    return data->screen_dress;
+    return data->symbol_dress;
 }
 
 /**
@@ -292,15 +272,15 @@ adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
 }
 
 /**
- * adg_logo_get_frame_dress:
+ * adg_logo_get_screen_dress:
  * @logo: an #AdgLogo
  *
- * Gets the line dress to be used in stroking the frame of @logo.
+ * Gets the line dress to be used in stroking the screen shape of @logo.
  *
  * Returns: the requested line dress
  **/
 AdgDress
-adg_logo_get_frame_dress(AdgLogo *logo)
+adg_logo_get_screen_dress(AdgLogo *logo)
 {
     AdgLogoPrivate *data;
 
@@ -308,7 +288,7 @@ adg_logo_get_frame_dress(AdgLogo *logo)
 
     data = logo->data;
 
-    return data->frame_dress;
+    return data->screen_dress;
 }
 
 /**
@@ -337,6 +317,26 @@ adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
 
     if (adg_dress_set(&data->frame_dress, dress))
         g_object_notify((GObject *) logo, "frame-dress");
+}
+
+/**
+ * adg_logo_get_frame_dress:
+ * @logo: an #AdgLogo
+ *
+ * Gets the line dress to be used in stroking the frame of @logo.
+ *
+ * Returns: the requested line dress
+ **/
+AdgDress
+adg_logo_get_frame_dress(AdgLogo *logo)
+{
+    AdgLogoPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LOGO(logo), ADG_DRESS_UNDEFINED);
+
+    data = logo->data;
+
+    return data->frame_dress;
 }
 
 
