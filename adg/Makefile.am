@@ -22,6 +22,7 @@ h_sources=			adg-adim.h \
 				adg-dress-builtins.h \
 				adg-edges.h \
 				adg-entity.h \
+				adg-enums.h \
 				adg-fill-style.h \
 				adg-font-style.h \
 				adg-hatch.h \
@@ -62,7 +63,6 @@ private_h_sources=		adg-adim-private.h \
 				adg-dress-private.h \
 				adg-edges-private.h \
 				adg-entity-private.h \
-				adg-enums.h \
 				adg-fill-style-private.h \
 				adg-font-style-private.h \
 				adg-hatch-private.h \
