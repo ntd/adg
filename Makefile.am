@@ -20,6 +20,8 @@ EXTRA_DIST=			ABOUT-NLS \
 				INSTALL \
 				m4/ChangeLog \
 				adg.doap \
+				cpml.pc.in \
+				adg.pc.in \
 				$(BUILT_SOURCES)
 
 SUBDIRS=			cpml \
@@ -27,6 +29,10 @@ SUBDIRS=			cpml \
 				demo \
 				docs \
 				po
+
+pkgconfigdir=			$(libdir)/pkgconfig
+pkgconfig_DATA =		cpml.pc \
+				adg.pc
 
 # Creating ChangeLog files from git log:
 # idea stolen from cairo/build/Makefile.am.changelog

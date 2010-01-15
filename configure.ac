@@ -44,20 +44,25 @@ AC_ARG_ENABLE([gtk2],
               [AS_HELP_STRING([--enable-gtk2],
                               [include GKT+2 specific widgets @<:@default=check@:>@])],
               [],[enable_gtk2=check])
+ADG_REQUIRES=''
 AS_IF([test "x$enable_gtk2" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= 2.12.0],
-                         [enable_gtk2=yes],
+                         [enable_gtk2=yes
+			  ADG_OPTIONAL_REQUIRES=',gtk+-2.0 >= 2.12.0'],
                          [AS_IF([test "x$enable_gtk2" = "xyes"],
                                 [AC_MSG_ERROR([$GTK2_PKG_ERRORS but GTK+2 support requested])],
                                 [enable_gtk2=no])])])
 AM_CONDITIONAL([HAVE_GTK2],[test "x$enable_gtk2" = "xyes"])
 
+AC_SUBST([ADG_OPTIONAL_REQUIRES])
 
 # Final step
 
 SHAVE_INIT([],[enable])
 AC_CONFIG_FILES([shave
                  shave-libtool
+		 cpml.pc
+		 adg.pc
                  Makefile
                  cpml/Makefile
                  adg/Makefile

@@ -22,6 +22,8 @@ Makefile.in
 /libtool
 /stamp-h*
 /config.h
+/adg.pc
+/cpml.pc
 .deps/
 Makefile
 
