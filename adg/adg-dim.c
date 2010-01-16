@@ -908,6 +908,46 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
 
 
 static void
+global_changed(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (data->quote.entity != NULL)
+        adg_entity_global_changed((AdgEntity *) data->quote.entity);
+}
+
+static void
+local_changed(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->local_changed)
+        PARENT_ENTITY_CLASS->local_changed(entity);
+
+    if (data->quote.entity != NULL)
+        adg_entity_local_changed((AdgEntity *) data->quote.entity);
+}
+
+static void
+invalidate(AdgEntity *entity)
+{
+    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->invalidate)
+        PARENT_ENTITY_CLASS->invalidate(entity);
+
+    if (data->quote.entity != NULL)
+        adg_entity_invalidate((AdgEntity *) data->quote.entity);
+
+    adg_point_invalidate(data->ref1);
+    adg_point_invalidate(data->ref2);
+    adg_point_invalidate(data->pos);
+}
+
+static void
 arrange(AdgEntity *entity)
 {
     AdgDim *dim;
@@ -921,6 +961,9 @@ arrange(AdgEntity *entity)
     const CpmlExtents *extents;
     AdgMatrix map;
     const AdgPair *shift;
+
+    if (PARENT_ENTITY_CLASS->arrange)
+        PARENT_ENTITY_CLASS->arrange(entity);
 
     dim = (AdgDim *) entity;
     data = dim->data;
@@ -1037,43 +1080,6 @@ arrange(AdgEntity *entity)
     adg_entity_set_local_map(quote_entity, &map);
 
     adg_entity_arrange(quote_entity);
-}
-
-static void
-global_changed(AdgEntity *entity)
-{
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
-
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
-
-    if (data->quote.entity != NULL)
-        adg_entity_global_changed((AdgEntity *) data->quote.entity);
-}
-
-static void
-local_changed(AdgEntity *entity)
-{
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
-
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
-
-    if (data->quote.entity != NULL)
-        adg_entity_local_changed((AdgEntity *) data->quote.entity);
-}
-
-static void
-invalidate(AdgEntity *entity)
-{
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
-
-    if (data->quote.entity != NULL)
-        adg_entity_invalidate((AdgEntity *) data->quote.entity);
-
-    adg_point_invalidate(data->ref1);
-    adg_point_invalidate(data->ref2);
-    adg_point_invalidate(data->pos);
 }
 
 static gchar *
