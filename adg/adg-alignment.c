@@ -93,7 +93,7 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
                                P_("Factor"),
                                P_("Portion of extents, either in x and y, the content will be displaced: a (0.5, 0.5) factor means the origin is the middle point of the extents"),
                                ADG_TYPE_PAIR,
-                               G_PARAM_WRITABLE);
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 }
 
