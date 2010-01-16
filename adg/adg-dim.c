@@ -201,9 +201,9 @@ dispose(GObject *object)
 {
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
-    if (data->quote.container != NULL) {
-        g_object_unref(data->quote.container);
-        data->quote.container = NULL;
+    if (data->quote.entity != NULL) {
+        g_object_unref(data->quote.entity);
+        data->quote.entity = NULL;
     }
     if (data->ref1 != NULL) {
         adg_point_destroy(data->ref1);
@@ -858,13 +858,13 @@ adg_dim_get_max(AdgDim *dim)
  * This function is only useful in new dimension implementations.
  * </para></note>
  *
- * Gets the quote container, if any. This function is valid only
- * after the #AdgDim implementation of the arrange() virtual method
- * has been called.
+ * Gets the quote entity, if any. This function is valid only after
+ * the #AdgDim implementation of the arrange() virtual method has
+ * been called.
  *
- * Returns: the quote container
+ * Returns: the quote entity
  **/
-AdgContainer *
+AdgAlignment *
 adg_dim_get_quote(AdgDim *dim)
 {
     AdgDimPrivate *data;
@@ -873,7 +873,7 @@ adg_dim_get_quote(AdgDim *dim)
 
     data = dim->data;
 
-    return data->quote.container;
+    return data->quote.entity;
 }
 
 /**
@@ -912,7 +912,8 @@ arrange(AdgEntity *entity)
 {
     AdgDim *dim;
     AdgDimPrivate *data;
-    AdgEntity *container_entity;
+    AdgEntity *quote_entity;
+    AdgContainer *quote_container;
     AdgEntity *value_entity;
     AdgEntity *min_entity;
     AdgEntity *max_entity;
@@ -929,10 +930,16 @@ arrange(AdgEntity *entity)
         data->dim_style = (AdgDimStyle *)
             adg_entity_style(entity, data->dim_dress);
 
-    if (data->quote.container == NULL)
-        data->quote.container = g_object_new(ADG_TYPE_CONTAINER,
-                                             "local-method", ADG_MIX_NONE,
-                                             "parent", dim, NULL);
+    if (data->quote.entity == NULL) {
+        AdgPair factor = { 0.5, 0 };
+        data->quote.entity = g_object_new(ADG_TYPE_ALIGNMENT,
+                                          "local-method", ADG_MIX_NONE,
+                                          "factor", &factor,
+                                          "parent", dim, NULL);
+    }
+
+    quote_entity = (AdgEntity *) data->quote.entity;
+    quote_container = (AdgContainer *) data->quote.entity;
 
     if (data->quote.value == NULL) {
         AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
@@ -941,8 +948,7 @@ arrange(AdgEntity *entity)
                                          "local-method", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
 
-        adg_container_add(data->quote.container,
-                          (AdgEntity *) data->quote.value);
+        adg_container_add(quote_container, (AdgEntity *) data->quote.value);
 
         if (data->value == NULL) {
             AdgDimClass *klass = ADG_DIM_GET_CLASS(dim);
@@ -965,7 +971,7 @@ arrange(AdgEntity *entity)
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
-        adg_container_add(data->quote.container, (AdgEntity *) data->quote.min);
+        adg_container_add(quote_container, (AdgEntity *) data->quote.min);
         adg_toy_text_set_label(data->quote.min, data->min);
     }
 
@@ -976,17 +982,16 @@ arrange(AdgEntity *entity)
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
-        adg_container_add(data->quote.container, (AdgEntity *) data->quote.max);
+        adg_container_add(quote_container, (AdgEntity *) data->quote.max);
         adg_toy_text_set_label(data->quote.max, data->max);
     }
 
-    container_entity = (AdgEntity *) data->quote.container;
     value_entity = (AdgEntity *) data->quote.value;
     min_entity = (AdgEntity *) data->quote.min;
     max_entity = (AdgEntity *) data->quote.max;
 
-    /* Propagate the arrange signal to the quote container */
-    adg_entity_arrange(container_entity);
+    /* Propagate the arrange signal to the quote */
+    adg_entity_arrange(quote_entity);
 
     /* Basic value */
     extents = adg_entity_get_extents(value_entity);
@@ -1026,12 +1031,12 @@ arrange(AdgEntity *entity)
         width += shift->x + MAX(min_extents.size.x, max_extents.size.x);
     }
 
-    /* Center and apply the style displacements */
+    /* Apply the style displacements */
     shift = adg_dim_style_get_quote_shift(data->dim_style);
-    cairo_matrix_init_translate(&map, shift->x - width / 2, shift->y);
-    adg_entity_set_local_map(container_entity, &map);
+    cairo_matrix_init_translate(&map, shift->x, shift->y);
+    adg_entity_set_local_map(quote_entity, &map);
 
-    adg_entity_arrange(container_entity);
+    adg_entity_arrange(quote_entity);
 }
 
 static void
@@ -1042,8 +1047,8 @@ global_changed(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
-    if (data->quote.container != NULL)
-        adg_entity_global_changed((AdgEntity *) data->quote.container);
+    if (data->quote.entity != NULL)
+        adg_entity_global_changed((AdgEntity *) data->quote.entity);
 }
 
 static void
@@ -1054,8 +1059,8 @@ local_changed(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
-    if (data->quote.container != NULL)
-        adg_entity_local_changed((AdgEntity *) data->quote.container);
+    if (data->quote.entity != NULL)
+        adg_entity_local_changed((AdgEntity *) data->quote.entity);
 }
 
 static void
@@ -1063,8 +1068,8 @@ invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    if (data->quote.container != NULL)
-        adg_entity_invalidate((AdgEntity *) data->quote.container);
+    if (data->quote.entity != NULL)
+        adg_entity_invalidate((AdgEntity *) data->quote.entity);
 
     adg_point_invalidate(data->ref1);
     adg_point_invalidate(data->ref2);

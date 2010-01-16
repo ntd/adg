@@ -485,7 +485,7 @@ arrange(AdgEntity *entity)
     AdgLDim *ldim;
     AdgDim *dim;
     AdgLDimPrivate *data;
-    AdgContainer *quote;
+    AdgAlignment *quote;
     AdgDimStyle *dim_style;
     gboolean outside;
     const AdgMatrix *local;
@@ -605,7 +605,7 @@ arrange(AdgEntity *entity)
     cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
 
     if (quote != NULL) {
-        /* Update global and local map of the quote container */
+        /* Update global and local map of the quote */
         AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix map;

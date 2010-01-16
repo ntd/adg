@@ -257,7 +257,7 @@ arrange(AdgEntity *entity)
     AdgRDim *rdim;
     AdgDim *dim;
     AdgRDimPrivate *data;
-    AdgContainer *quote;
+    AdgAlignment *quote;
     AdgDimStyle *dim_style;
     gboolean outside;
     const AdgMatrix *local;

@@ -565,7 +565,7 @@ arrange(AdgEntity *entity)
     AdgADim *adim;
     AdgDim *dim;
     AdgADimPrivate *data;
-    AdgContainer *quote;
+    AdgAlignment *quote;
     const AdgMatrix *local;
     AdgPair ref1, ref2, base1, base12, base2;
     AdgPair pair;
@@ -622,7 +622,7 @@ arrange(AdgEntity *entity)
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
     if (quote != NULL) {
-        /* Update global and local map of the quote container */
+        /* Update global and local map of the quote */
         AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix map;

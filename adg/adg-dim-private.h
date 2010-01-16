@@ -47,7 +47,7 @@ struct _AdgDimPrivate {
     AdgDimStyle         *dim_style;
 
     struct {
-        AdgContainer    *container;
+        AdgAlignment    *entity;
         AdgToyText      *value;
         AdgToyText      *min;
         AdgToyText      *max;

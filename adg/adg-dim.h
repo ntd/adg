@@ -21,7 +21,7 @@
 #ifndef __ADG_DIM_H__
 #define __ADG_DIM_H__
 
-#include <adg/adg-container.h>
+#include <adg/adg-alignment.h>
 #include <adg/adg-model.h>
 #include <adg/adg-enums.h>
 
@@ -101,7 +101,7 @@ void            adg_dim_set_max                 (AdgDim         *dim,
 const gchar *   adg_dim_get_max                 (AdgDim         *dim);
 gdouble         adg_dim_quote_angle             (AdgDim         *dim,
                                                  gdouble         angle);
-AdgContainer *  adg_dim_get_quote               (AdgDim         *dim);
+AdgAlignment *  adg_dim_get_quote               (AdgDim         *dim);
 
 G_END_DECLS
 
