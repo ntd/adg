@@ -87,6 +87,9 @@ gdouble         adg_dim_get_level               (AdgDim         *dim);
 void            adg_dim_set_outside             (AdgDim         *dim,
                                                  AdgThreeState   outside);
 AdgThreeState   adg_dim_get_outside             (AdgDim         *dim);
+void            adg_dim_set_centered            (AdgDim         *dim,
+                                                 AdgThreeState   centered);
+AdgThreeState   adg_dim_get_centered            (AdgDim         *dim);
 void            adg_dim_set_value               (AdgDim         *dim,
                                                  const gchar    *value);
 const gchar *   adg_dim_get_value               (AdgDim         *dim);

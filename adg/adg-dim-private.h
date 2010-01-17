@@ -40,6 +40,7 @@ struct _AdgDimPrivate {
     AdgPoint            *pos;
     gdouble              level;
     AdgThreeState        outside;
+    AdgThreeState        centered;
     gchar               *value;
     gchar               *min;
     gchar               *max;
