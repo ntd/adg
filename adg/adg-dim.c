@@ -53,7 +53,7 @@ enum {
     PROP_POS,
     PROP_LEVEL,
     PROP_OUTSIDE,
-    PROP_CENTERED,
+    PROP_DETACHED,
     PROP_VALUE,
     PROP_MIN,
     PROP_MAX
@@ -156,12 +156,12 @@ adg_dim_class_init(AdgDimClass *klass)
                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_OUTSIDE, param);
 
-    param = g_param_spec_enum("centered",
-                              P_("Centered"),
-                              P_("Where the quote must be positioned: in the middle of the base line (ADG_THREE_STATE_ON), near the pos point (ADG_THREE_STATE_OFF) or should be automatically deducted depending on the available space"),
+    param = g_param_spec_enum("detached",
+                              P_("Detached Quote"),
+                              P_("Where the quote must be positioned: in the middle of the base line (ADG_THREE_STATE_OFF), near the pos point (ADG_THREE_STATE_ON) or should be automatically deducted depending on the available space"),
                               ADG_TYPE_THREE_STATE, ADG_THREE_STATE_UNKNOWN,
                               G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_CENTERED, param);
+    g_object_class_install_property(gobject_class, PROP_DETACHED, param);
 
     param = g_param_spec_string("value",
                                 P_("Basic Value"),
@@ -197,7 +197,7 @@ adg_dim_init(AdgDim *dim)
     data->pos = NULL;
     data->level = 1;
     data->outside = ADG_THREE_STATE_UNKNOWN;
-    data->centered = ADG_THREE_STATE_UNKNOWN;
+    data->detached = ADG_THREE_STATE_UNKNOWN;
     data->value = NULL;
     data->min = NULL;
     data->max = NULL;
@@ -268,8 +268,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     case PROP_OUTSIDE:
         g_value_set_enum(value, data->outside);
         break;
-    case PROP_CENTERED:
-        g_value_set_enum(value, data->centered);
+    case PROP_DETACHED:
+        g_value_set_enum(value, data->detached);
         break;
     case PROP_VALUE:
         g_value_set_string(value, data->value);
@@ -321,8 +321,8 @@ set_property(GObject *object, guint prop_id,
     case PROP_OUTSIDE:
         data->outside = g_value_get_enum(value);
         break;
-    case PROP_CENTERED:
-        data->centered = g_value_get_enum(value);
+    case PROP_DETACHED:
+        data->detached = g_value_get_enum(value);
         break;
     case PROP_VALUE:
         set_value(dim, g_value_get_string(value));
@@ -733,41 +733,41 @@ adg_dim_get_outside(AdgDim *dim)
 }
 
 /**
- * adg_dim_set_centered:
+ * adg_dim_set_detached:
  * @dim: an #AdgDim
- * @centered: the new centered state
+ * @detached: the new detached state
  *
- * Sets a new state for the #AdgDim:centered flag: check the property
+ * Sets a new state for the #AdgDim:detached flag: check the property
  * documentation for further details.
  *
- * This is used by dimensions where the centering of the quote is
- * applicable. In the other cases (such as with #AdgRDim dimensions)
- * the property is not used.
+ * This is used only by dimensions where detaching has meaning.
+ * In some cases, such as with #AdgRDim dimensions, this property is
+ * not used.
  **/
 void
-adg_dim_set_centered(AdgDim *dim, AdgThreeState centered)
+adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
 {
     AdgDimPrivate *data;
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
     data = dim->data;
-    data->centered = centered;
+    data->detached = detached;
 
-    g_object_notify((GObject *) dim, "centered");
+    g_object_notify((GObject *) dim, "detached");
 }
 
 /**
- * adg_dim_get_centered:
+ * adg_dim_get_detached:
  * @dim: an #AdgDim
  *
- * Gets the state of the #AdgDim:centered property: check the property
+ * Gets the state of the #AdgDim:detached property: check the property
  * documentation for further details.
  *
  * Returns: the current flag state
  **/
 AdgThreeState
-adg_dim_get_centered(AdgDim *dim)
+adg_dim_get_detached(AdgDim *dim)
 {
     AdgDimPrivate *data;
 
@@ -775,7 +775,7 @@ adg_dim_get_centered(AdgDim *dim)
 
     data = dim->data;
 
-    return data->centered;
+    return data->detached;
 }
 
 /**
