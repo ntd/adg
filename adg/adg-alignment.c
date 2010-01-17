@@ -244,9 +244,12 @@ adg_alignment_get_factor(AdgAlignment *alignment)
 static void
 arrange(AdgEntity *entity)
 {
-    AdgAlignmentPrivate *data;
     const CpmlExtents *extents;
-    AdgMatrix shift;
+    AdgMatrix old_map;
+
+    adg_matrix_copy(&old_map, adg_entity_get_global_map(entity));
+    adg_entity_set_global_map(entity, adg_matrix_identity());
+    adg_entity_global_changed(entity);
 
     if (PARENT_ENTITY_CLASS->arrange)
         PARENT_ENTITY_CLASS->arrange(entity);
@@ -254,23 +257,26 @@ arrange(AdgEntity *entity)
     extents = adg_entity_get_extents(entity);
 
     /* The children are displaced only if the extents are valid */
-    if (!extents->is_defined)
-        return;
+    if (extents->is_defined) {
+        AdgAlignmentPrivate *data;
+        AdgMatrix map;
 
-    data = ((AdgAlignment *) entity)->data;
-    cairo_matrix_init_translate(&shift,
-                                -extents->size.x * data->factor.x,
-                                -extents->size.y * data->factor.y);
+        data = ((AdgAlignment *) entity)->data;
+        cairo_matrix_init_translate(&map,
+                                    -extents->size.x * data->factor.x,
+                                    -extents->size.y * data->factor.y);
+        adg_matrix_transform(&map, &old_map, ADG_TRANSFORM_AFTER);
 
-    /* The real job: modify the global matrix aligning this container
-     * accordingly to the #AdgAlignment:factor property */
-    adg_entity_transform_global_map(entity, &shift, ADG_TRANSFORM_BEFORE);
-    adg_entity_global_changed(entity);
+        adg_entity_set_global_map(entity, &map);
+        adg_entity_global_changed(entity);
 
-    /* Restore the old global map */
-    shift.x0 = -shift.x0;
-    shift.y0 = -shift.y0;
-    adg_entity_transform_global_map(entity, &shift, ADG_TRANSFORM_BEFORE);
+        /* Here there is room for improvements: this second arrange()
+         * phase could probably be avoided... */
+        if (PARENT_ENTITY_CLASS->arrange)
+            PARENT_ENTITY_CLASS->arrange(entity);
+    }
+
+    adg_entity_set_global_map(entity, &old_map);
 }
 
 static gboolean
