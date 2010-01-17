@@ -203,7 +203,7 @@ void
 adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
                      AdgTransformMode mode)
 {
-    AdgMatrix tmp_matrix;
+    AdgMatrix normalized;
 
     g_return_if_fail(matrix != NULL);
     g_return_if_fail(transformation != NULL);
@@ -218,14 +218,14 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
         cairo_matrix_multiply(matrix, matrix, transformation);
         break;
     case ADG_TRANSFORM_BEFORE_NORMALIZED:
-        adg_matrix_copy(&tmp_matrix, transformation);
-        adg_matrix_normalize(&tmp_matrix);
-        cairo_matrix_multiply(matrix, &tmp_matrix, matrix);
+        adg_matrix_copy(&normalized, transformation);
+        adg_matrix_normalize(&normalized);
+        cairo_matrix_multiply(matrix, &normalized, matrix);
         break;
     case ADG_TRANSFORM_AFTER_NORMALIZED:
-        adg_matrix_copy(&tmp_matrix, transformation);
-        adg_matrix_normalize(&tmp_matrix);
-        cairo_matrix_multiply(matrix, matrix, &tmp_matrix);
+        adg_matrix_copy(&normalized, transformation);
+        adg_matrix_normalize(&normalized);
+        cairo_matrix_multiply(matrix, matrix, &normalized);
         break;
     default:
         g_assert_not_reached();
