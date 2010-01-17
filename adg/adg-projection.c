@@ -343,19 +343,16 @@ arrange(AdgEntity *entity)
     AdgProjectionClass *projection_class;
     AdgProjectionClassPrivate *data_class;
     CpmlExtents extents;
-    const AdgMatrix *local;
 
     data = ((AdgProjection *) entity)->data;
     projection_class = ADG_PROJECTION_GET_CLASS(entity);
     data_class = projection_class->data_class;
-    local = adg_entity_get_local_matrix(entity);
 
     arrange_class(projection_class, data->scheme);
     cpml_extents_copy(&extents, &data_class->extents);
 
-    /* Apply the local matrix to the extents of this projection instance */
-    cpml_pair_transform(&extents.org, local);
-    cpml_vector_transform(&extents.size, local);
+    cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
+    cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
     adg_entity_set_extents(entity, &extents);
 }
 

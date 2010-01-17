@@ -957,13 +957,8 @@ arrange(AdgEntity *entity)
     AdgEntity *value_entity;
     AdgEntity *min_entity;
     AdgEntity *max_entity;
-    gdouble width;
-    const CpmlExtents *extents;
-    AdgMatrix map;
     const AdgPair *shift;
-
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    AdgMatrix map;
 
     dim = (AdgDim *) entity;
     data = dim->data;
@@ -993,7 +988,9 @@ arrange(AdgEntity *entity)
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.value);
 
-        if (data->value == NULL) {
+        if (data->value) {
+            adg_toy_text_set_label(data->quote.value, data->value);
+        } else {
             AdgDimClass *klass = ADG_DIM_GET_CLASS(dim);
 
             if (klass->default_value) {
@@ -1002,8 +999,6 @@ arrange(AdgEntity *entity)
                 adg_toy_text_set_label(data->quote.value, text);
                 g_free(text);
             }
-        } else {
-            adg_toy_text_set_label(data->quote.value, data->value);
         }
     }
 
@@ -1032,52 +1027,55 @@ arrange(AdgEntity *entity)
     value_entity = (AdgEntity *) data->quote.value;
     min_entity = (AdgEntity *) data->quote.min;
     max_entity = (AdgEntity *) data->quote.max;
+    shift = adg_dim_style_get_quote_shift(data->dim_style);
 
-    /* Propagate the arrange signal to the quote */
-    adg_entity_arrange(quote_entity);
+    adg_entity_set_global_map(quote_entity, adg_matrix_identity());
+    adg_entity_global_changed(quote_entity);
 
-    /* Basic value */
-    extents = adg_entity_get_extents(value_entity);
-    width = extents->size.x;
+    cairo_matrix_init_translate(&map, shift->x, shift->y);
+    adg_entity_set_global_map(value_entity, &map);
+    adg_entity_arrange(value_entity);
 
     /* Limit values (min and max) */
     if (min_entity != NULL || max_entity != NULL) {
-        CpmlExtents min_extents = { 0 };
-        CpmlExtents max_extents = { 0 };
-        gdouble spacing = 0;
+        const CpmlExtents *extents = adg_entity_get_extents(value_entity);
+        //CpmlExtents min_extents = { 0 };
+        //CpmlExtents max_extents = { 0 };
+        const AdgPair *limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
 
-        /* Minimum limit */
+#if 0
         if (min_entity != NULL)
             cpml_extents_copy(&min_extents, adg_entity_get_extents(min_entity));
 
-        /* Maximum limit */
         if (max_entity != NULL)
             cpml_extents_copy(&max_extents, adg_entity_get_extents(max_entity));
 
-        shift = adg_dim_style_get_limits_shift(data->dim_style);
         if (min_entity != NULL && max_entity != NULL)
             spacing = adg_dim_style_get_limits_spacing(data->dim_style);
 
-        cairo_matrix_init_translate(&map, width + shift->x,
+        cairo_matrix_init_translate(&map,
+                                    extents->size.x +
+                                     shift->x + limit_shift->x,
                                     (spacing + min_extents.size.y +
-                                     max_extents.size.y) / 2 +
-                                    shift->y - extents->size.y / 2);
+                                     max_extents.size.y - extents->size.y) / 2 +
+                                     shift->y + limit_shift->y);
+#endif
+        cairo_matrix_init_translate(&map, extents->size.x + limits_shift->x,
+                                    -extents->size.y / 2 + limits_shift->y);
 
-        if (min_entity != NULL)
-            adg_entity_set_local_map(min_entity, &map);
-
-        if (max_entity != NULL) {
-            cairo_matrix_translate(&map, 0, -min_extents.size.y - spacing);
-            adg_entity_set_local_map(max_entity, &map);
+        if (min_entity != NULL) {
+            adg_entity_set_global_map(min_entity, &map);
+            adg_entity_arrange(min_entity);
+            extents = adg_entity_get_extents(min_entity);
+            map.y0 -= extents->size.y +
+                adg_dim_style_get_limits_spacing(data->dim_style);
         }
 
-        width += shift->x + MAX(min_extents.size.x, max_extents.size.x);
+        if (max_entity != NULL) {
+            adg_entity_set_global_map(max_entity, &map);
+            adg_entity_arrange(max_entity);
+        }
     }
-
-    /* Apply the style displacements */
-    shift = adg_dim_style_get_quote_shift(data->dim_style);
-    cairo_matrix_init_translate(&map, shift->x, shift->y);
-    adg_entity_set_local_map(quote_entity, &map);
 
     adg_entity_arrange(quote_entity);
 }

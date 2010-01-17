@@ -507,12 +507,14 @@ arrange(AdgEntity *entity)
     update_entities(ldim);
 
     /* Check for cached result */
+#if 0
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
         AdgEntity *quote_entity = (AdgEntity *) quote;
         adg_entity_set_global_map(quote_entity, &data->quote.global_map);
         adg_entity_set_local_map(quote_entity, &data->quote.local_map);
         return;
     }
+#endif
 
     dim_style = GET_DIM_STYLE(dim);
 
@@ -605,11 +607,10 @@ arrange(AdgEntity *entity)
     cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
 
     if (quote != NULL) {
-        /* Update global and local map of the quote */
+        /* Update the global map of the quote */
         AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix map;
-        CpmlExtents quote_extents;
 
         quote_entity = (AdgEntity *) quote;
         angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
@@ -620,45 +621,30 @@ arrange(AdgEntity *entity)
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, angle);
         adg_entity_set_global_map(quote_entity, &map);
+        adg_entity_invalidate(quote_entity);
+        adg_entity_arrange(quote_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
-        adg_matrix_copy(&data->quote.global_map,
+        /*adg_matrix_copy(&data->quote.global_map,
                         adg_entity_get_global_map(quote_entity));
         adg_matrix_copy(&data->quote.local_map,
-                        adg_entity_get_local_map(quote_entity));
-
-        cpml_extents_copy(&quote_extents, adg_entity_get_extents(quote_entity));
-        cpml_extents_transform(&quote_extents, &map);
-        cpml_extents_add(&extents, &quote_extents);
+                        adg_entity_get_local_map(quote_entity));*/
     }
 
     if (data->marker1 != NULL) {
-        AdgEntity *marker1_entity;
-        CpmlExtents marker1_extents;
-
-        marker1_entity = (AdgEntity *) data->marker1;
-
+        AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
         adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
+        adg_entity_arrange(marker1_entity);
         adg_entity_local_changed(marker1_entity);
-
-        cpml_extents_copy(&marker1_extents, adg_entity_get_extents(marker1_entity));
-        cpml_extents_transform(&marker1_extents,
-                               adg_entity_get_global_map(marker1_entity));
-        cpml_extents_add(&extents, &marker1_extents);
+        cpml_extents_add(&extents, adg_entity_get_extents(marker1_entity));
     }
 
     if (data->marker2 != NULL) {
-        AdgEntity *marker2_entity;
-        CpmlExtents marker2_extents;
-
-        marker2_entity = (AdgEntity *) data->marker2;
-
+        AdgEntity *marker2_entity = (AdgEntity *) data->marker2;
         adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
         adg_entity_local_changed(marker2_entity);
-
-        cpml_extents_copy(&marker2_extents, adg_entity_get_extents(marker2_entity));
-        cpml_extents_transform(&marker2_extents,
-                               adg_entity_get_global_map(marker2_entity));
-        cpml_extents_add(&extents, &marker2_extents);
+        adg_entity_arrange(marker2_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(marker2_entity));
     }
 
     adg_entity_set_extents(entity, &extents);

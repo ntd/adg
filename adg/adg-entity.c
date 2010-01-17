@@ -1193,14 +1193,13 @@ real_render(AdgEntity *entity, cairo_t *cr)
     /* Before the rendering, the entity should be arranged */
     g_signal_emit(entity, signals[ARRANGE], 0);
 
-    cairo_save(cr);
-    cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
 
     if (show_extents) {
         AdgEntityPrivate *data = entity->data;
 
         if (data->extents.is_defined) {
             cairo_save(cr);
+            cairo_identity_matrix(cr);
             cairo_set_line_width(cr, 1);
             cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
             cairo_rectangle(cr, data->extents.org.x, data->extents.org.y,
@@ -1210,6 +1209,8 @@ real_render(AdgEntity *entity, cairo_t *cr)
         }
     }
 
+    cairo_save(cr);
+    cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
     klass->render(entity, cr);
     cairo_restore(cr);
 }

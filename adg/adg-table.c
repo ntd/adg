@@ -1127,6 +1127,7 @@ arrange(AdgEntity *entity)
     }
 
     extents.is_defined = TRUE;
+    cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
     adg_entity_set_extents(entity, &extents);
 
     arrange_grid(entity);

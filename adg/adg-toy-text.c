@@ -288,51 +288,19 @@ adg_toy_text_get_label(AdgToyText *toy_text)
 static void
 global_changed(AdgEntity *entity)
 {
-    AdgMatrix old;
-    const AdgMatrix *new;
-
-    adg_matrix_copy(&old, adg_entity_get_global_matrix(entity));
-
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
-    new = adg_entity_get_global_matrix(entity);
-
-    /* If scaling or rotation has changed, invalidate the font */
-    if (old.xx != new->xx || old.yy != new->yy ||
-        old.xy != new->xy || old.yx != new->yx)
-        unset_font((AdgToyText *) entity);
+    adg_entity_invalidate(entity);
 }
 
 static void
 local_changed(AdgEntity *entity)
 {
-    AdgMatrix old;
-    const AdgMatrix *new;
-    CpmlExtents extents;
-
-    adg_matrix_copy(&old, adg_entity_get_local_matrix(entity));
-
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
-    new = adg_entity_get_local_matrix(entity);
-
-    /* If scaling or rotation has changed, invalidate the font */
-    if (old.xx != new->xx || old.yy != new->yy ||
-        old.xy != new->xy || old.yx != new->yx)
-        unset_font((AdgToyText *) entity);
-
-    cpml_extents_copy(&extents, adg_entity_get_extents(entity));
-
-    if (extents.is_defined) {
-        /* Update the extents to the new local map */
-        cairo_matrix_invert(&old);
-        cpml_extents_transform(&extents, &old);
-        cpml_extents_transform(&extents, new);
-
-        adg_entity_set_extents(entity, &extents);
-    }
+    adg_entity_invalidate(entity);
 }
 
 static void
@@ -397,6 +365,7 @@ arrange(AdgEntity *entity)
                                         data->num_glyphs, &cairo_extents);
         cpml_extents_from_cairo_text(&extents, &cairo_extents);
         cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
+        cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
 
     }
 

@@ -58,6 +58,7 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             global_changed          (AdgEntity      *entity);
 static void             local_changed           (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
@@ -86,6 +87,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = global_changed;
     entity_class->local_changed = local_changed;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -272,31 +274,19 @@ adg_stroke_get_trail(AdgStroke *stroke)
 
 
 static void
+global_changed(AdgEntity *entity)
+{
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
+    adg_entity_invalidate(entity);
+}
+
+static void
 local_changed(AdgEntity *entity)
 {
-    AdgMatrix old;
-    const AdgMatrix *new;
-
-    adg_matrix_copy(&old, adg_entity_get_local_matrix(entity));
-
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
-
-    new = adg_entity_get_local_matrix(entity);
-
-    /* For simple translation, avoid the entity invalidation:
-     * translate the extents of the same vector instead */
-    if (old.xx == new->xx && old.yy == new->yy &&
-        old.xy == new->xy && old.yx == new->yx) {
-        CpmlExtents extents;
-
-        cpml_extents_copy(&extents, adg_entity_get_extents(entity));
-
-        extents.org.x += new->x0 - old.x0;
-        extents.org.y += new->y0 - old.y0;
-
-        adg_entity_set_extents(entity, &extents);
-    }
 
     adg_entity_invalidate(entity);
 }
@@ -317,6 +307,7 @@ arrange(AdgEntity *entity)
 
     cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
+    cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
 
     adg_entity_set_extents(entity, &extents);
 }
