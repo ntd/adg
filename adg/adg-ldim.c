@@ -507,14 +507,11 @@ arrange(AdgEntity *entity)
     update_entities(ldim);
 
     /* Check for cached result */
-#if 0
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
         AdgEntity *quote_entity = (AdgEntity *) quote;
         adg_entity_set_global_map(quote_entity, &data->quote.global_map);
-        adg_entity_set_local_map(quote_entity, &data->quote.local_map);
         return;
     }
-#endif
 
     dim_style = GET_DIM_STYLE(dim);
 
@@ -625,10 +622,8 @@ arrange(AdgEntity *entity)
         adg_entity_arrange(quote_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
-        /*adg_matrix_copy(&data->quote.global_map,
+        adg_matrix_copy(&data->quote.global_map,
                         adg_entity_get_global_map(quote_entity));
-        adg_matrix_copy(&data->quote.local_map,
-                        adg_entity_get_local_map(quote_entity));*/
     }
 
     if (data->marker1 != NULL) {
