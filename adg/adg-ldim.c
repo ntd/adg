@@ -611,8 +611,6 @@ arrange(AdgEntity *entity)
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, angle);
         adg_entity_set_global_map(quote_entity, &map);
-        adg_entity_invalidate(quote_entity);
-        adg_entity_arrange(quote_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
         adg_matrix_copy(&data->quote.global_map,
