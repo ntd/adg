@@ -69,7 +69,9 @@ static gchar *          default_value           (AdgDim         *dim);
 static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
-static gboolean         choose_outside          (AdgLDim        *ldim);
+static void             choose_flags            (AdgLDim        *ldim,
+                                                 gboolean       *to_outside,
+                                                 gboolean       *to_detach);
 static void             unset_trail             (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
 static CpmlPath *       trail_callback          (AdgTrail       *trail,
@@ -487,7 +489,7 @@ arrange(AdgEntity *entity)
     AdgLDimPrivate *data;
     AdgAlignment *quote;
     AdgDimStyle *dim_style;
-    gboolean outside;
+    gboolean to_outside, to_detach;
     const AdgMatrix *local;
     AdgPair ref1, ref2, base1, base2;
     AdgPair pair;
@@ -513,21 +515,9 @@ arrange(AdgEntity *entity)
         return;
     }
 
+    choose_flags(ldim, &to_outside, &to_detach);
+
     dim_style = GET_DIM_STYLE(dim);
-
-    switch (adg_dim_get_outside(dim)) {
-    case ADG_THREE_STATE_OFF:
-        outside = FALSE;
-        break;
-    case ADG_THREE_STATE_ON:
-        outside = TRUE;
-        break;
-    case ADG_THREE_STATE_UNKNOWN:
-    default:
-        outside = choose_outside(ldim);
-        break;
-    }
-
     local = adg_entity_get_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
     cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
@@ -560,7 +550,8 @@ arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
     /* Calculate the outside segments */
-    if (outside) {
+    /* TODO: take into account when the to_detach flag is ON */
+    if (to_outside) {
         gdouble beyond;
         CpmlVector vector;
 
@@ -603,8 +594,10 @@ arrange(AdgEntity *entity)
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
     cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
 
+    /* TODO: use the to_detach flag to center the quote on the base line
+     * (when FALSE) or align in on the "pos" coordinates (when TRUE) */
     if (quote != NULL) {
-        /* Update the global map of the quote */
+        /* Center the quote in the middle of the base line */
         AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix map;
@@ -628,7 +621,7 @@ arrange(AdgEntity *entity)
 
     if (data->marker1 != NULL) {
         AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
-        adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
+        adg_marker_set_segment(data->marker1, data->trail, to_outside ? 2 : 1);
         adg_entity_arrange(marker1_entity);
         adg_entity_local_changed(marker1_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(marker1_entity));
@@ -636,7 +629,7 @@ arrange(AdgEntity *entity)
 
     if (data->marker2 != NULL) {
         AdgEntity *marker2_entity = (AdgEntity *) data->marker2;
-        adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
+        adg_marker_set_segment(data->marker2, data->trail, to_outside ? 3 : 1);
         adg_entity_local_changed(marker2_entity);
         adg_entity_arrange(marker2_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(marker2_entity));
@@ -792,25 +785,66 @@ update_entities(AdgLDim *ldim)
         data->marker2 = adg_dim_style_marker2_new(dim_style);
 }
 
-static gboolean
-choose_outside(AdgLDim *ldim)
+static void
+choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 {
+    AdgDim *dim;
+    AdgThreeState outside, detached;
     AdgLDimPrivate *data;
     AdgEntity *quote;
     const AdgMatrix *local;
-    gdouble marker1, marker2;
-    gdouble needed, available;
+    gdouble available_space, markers_space, quote_space;
+
+    dim = (AdgDim *) ldim;
+    outside = adg_dim_get_outside(dim);
+    detached = adg_dim_get_detached(dim);
+
+    *to_outside = outside == ADG_THREE_STATE_ON;
+    *to_detach = detached == ADG_THREE_STATE_ON;
+
+    /* On explicit flags, no further investigation is required */
+    if (outside != ADG_THREE_STATE_UNKNOWN &&
+        detached != ADG_THREE_STATE_UNKNOWN)
+        return;
 
     data = ldim->data;
     quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
-    marker1 = data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1);
-    marker2 = data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2);
+    available_space = data->geometry.distance * local->xx;
 
-    needed = adg_entity_get_extents(quote)->size.x + marker1 + marker2;
-    available = data->geometry.distance * local->xx;
+    if (outside == ADG_THREE_STATE_ON)
+        markers_space = 0;
+    else
+        markers_space =
+            (data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1)) +
+            (data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2));
 
-    return needed > available;
+    /* Leave at least 0.25 marker_space between the markers */
+    if (detached == ADG_THREE_STATE_ON)
+        quote_space = markers_space * 0.25;
+    else
+        quote_space = adg_entity_get_extents(quote)->size.x;
+
+    if (outside == ADG_THREE_STATE_UNKNOWN &&
+        detached == ADG_THREE_STATE_UNKNOWN) {
+        /* Both flags need to be choosed */
+        if (quote_space + markers_space < available_space) {
+            *to_detach = FALSE;
+            *to_outside = FALSE;
+        } else if (quote_space < available_space) {
+            *to_detach = FALSE;
+            *to_outside = TRUE;
+        } else {
+            *to_detach = TRUE;
+            *to_outside = markers_space * 1.25 > available_space;
+        }
+    } else if (outside == ADG_THREE_STATE_UNKNOWN) {
+        /* Only the outside flag may be guessed */
+        *to_outside = quote_space + markers_space > available_space;
+    } else {
+        /* Only the detached flag may be guessed */
+        *to_detach = quote_space + markers_space > available_space;
+    }
 }
 
 static void
