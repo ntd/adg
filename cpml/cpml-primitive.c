@@ -122,8 +122,7 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 void
 cpml_primitive_reset(CpmlPrimitive *primitive)
 {
-    primitive->org = &primitive->segment->data[1];
-    primitive->data = primitive->segment->data + 2;
+    cpml_primitive_from_segment(primitive, primitive->segment);
 }
 
 /**
