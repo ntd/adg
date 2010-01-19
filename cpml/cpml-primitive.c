@@ -145,6 +145,11 @@ cpml_primitive_next(CpmlPrimitive *primitive)
     if (new_data - primitive->segment->data >= primitive->segment->num_data)
         return 0;
 
+    /* TODO: this is a temporary workaround to be removed as soon as
+     * the issue #21 will be resolved */
+    if (new_data->header.type == CAIRO_PATH_MOVE_TO)
+        return 0;
+
     primitive->org = cpml_primitive_get_point(primitive, -1);
     primitive->data = new_data;
 
