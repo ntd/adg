@@ -241,6 +241,9 @@ sample_path(const SampleData *data)
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D3I", &pair);
 
+    pair.x = data->A;
+    adg_model_set_named_pair(model, "East", &pair);
+
     adg_path_chamfer(path, CHAMFER, CHAMFER);
 
     pair.x = data->A - data->B + data->LD3;
@@ -401,30 +404,30 @@ sample_add_dimensions(AdgCanvas *canvas, AdgModel *model)
 
     /* EAST */
 
-    ldim = adg_ldim_new_full_from_model(model, "D3F_Y", "-D3F_Y", "D7F",
+    ldim = adg_ldim_new_full_from_model(model, "D3F_Y", "-D3F_Y", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 5);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "D6F", "-D6F", "D7F",
+    ldim = adg_ldim_new_full_from_model(model, "D6F", "-D6F", "-East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "D4F", "-D4F", "D7F",
+    ldim = adg_ldim_new_full_from_model(model, "D4F", "-D4F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_level(ADG_DIM(ldim), 3);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "D5F", "-D5F", "D7F",
+    ldim = adg_ldim_new_full_from_model(model, "D5F", "-D5F", "-East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "D7F", "-D7F", "D7F",
+    ldim = adg_ldim_new_full_from_model(model, "D7F", "-D7F", "East",
                                         ADG_DIR_RIGHT);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
