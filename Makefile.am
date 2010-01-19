@@ -18,6 +18,7 @@ EXTRA_DIST=			ABOUT-NLS \
 				COPYING \
 				ChangeLog-0.2.1 \
 				INSTALL \
+				THANKS \
 				m4/ChangeLog \
 				adg.doap \
 				cpml.pc.in \
