@@ -107,7 +107,7 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 
     /* Also, the segment APIs ensure that @segment is prepended by
      * only one CAIRO_PATH_MOVE_TO */
-    primitive->data = segment->data + 2;
+    primitive->data = segment->data + segment->data[0].header.length;
 
     return primitive;
 }
