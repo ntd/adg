@@ -1029,13 +1029,10 @@ arrange(AdgEntity *entity)
         data->dim_style = (AdgDimStyle *)
             adg_entity_style(entity, data->dim_dress);
 
-    if (data->quote.entity == NULL) {
-        AdgPair factor = { 0.5, 0 };
+    if (data->quote.entity == NULL)
         data->quote.entity = g_object_new(ADG_TYPE_ALIGNMENT,
                                           "local-method", ADG_MIX_NONE,
-                                          "factor", &factor,
                                           "parent", dim, NULL);
-    }
 
     quote_entity = (AdgEntity *) data->quote.entity;
     quote_container = (AdgContainer *) data->quote.entity;
