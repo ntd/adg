@@ -6,6 +6,24 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.5.5">
+<title>ADG 0.5.5</title>
+
+<para>The quote of linear dimensions can be freely positioned using the
+AdgDim:pos property. By default, ADG keeps the quote inside the
+extension lines if there is enough room, otherwise displaces it
+to the "pos" coordinates.</para>
+
+<para>A document describing how to contribute to the project has been
+added. A general description of the API conventions used by is
+also provided.</para>
+
+<para>A lot of bug fixing and code clean up. A bug in the installation
+has been solved and support for pkg-config has been added. This
+will probably be the last release of the 0.5 branch.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.5.4">
 <title>ADG 0.5.4</title>
 
