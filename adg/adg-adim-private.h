@@ -72,7 +72,6 @@ struct _AdgADimPrivate {
     }                    shift;
 
     struct {
-        AdgMatrix        local_map;
         AdgMatrix        global_map;
     }                    quote;
 
