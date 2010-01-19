@@ -481,6 +481,7 @@ invalidate(AdgEntity *entity)
         PARENT_ENTITY_CLASS->invalidate(entity);
 }
 
+/* TODO: split the following crap in more manageable functions */
 static void
 arrange(AdgEntity *entity)
 {
@@ -527,30 +528,31 @@ arrange(AdgEntity *entity)
     cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
     cpml_pair_transform(&base1, local);
+    cpml_pair_add(&base1, &data->shift.base);
     cpml_pair_transform(&base2, local);
+    cpml_pair_add(&base2, &data->shift.base);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &ref1), &data->shift.from);
+    cpml_pair_copy(&pair, &ref1);
+    cpml_pair_add(&pair, &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
-    cpml_pair_copy(&pair, &base1);
-    cpml_pair_add(&pair, &data->shift.base);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
+    cpml_pair_to_cairo(&base1, &data->cpml.data[1]);
 
+    cpml_pair_copy(&pair, &base1);
     cpml_pair_add(&pair, &data->shift.to);
     cpml_pair_to_cairo(&pair, &data->cpml.data[15]);
 
-    cpml_pair_add(cpml_pair_copy(&pair, &ref2), &data->shift.from);
+    cpml_pair_copy(&pair, &ref2);
+    cpml_pair_add(&pair, &data->shift.from);
     cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
-    cpml_pair_copy(&pair, &base2);
-    cpml_pair_add(&pair, &data->shift.base);
-    cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
+    cpml_pair_to_cairo(&base2, &data->cpml.data[3]);
 
+    cpml_pair_copy(&pair, &base2);
     cpml_pair_add(&pair, &data->shift.to);
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
     /* Calculate the outside segments */
-    /* TODO: take into account when the to_detach flag is ON */
     if (to_outside) {
         gdouble beyond;
         CpmlVector vector;
@@ -575,47 +577,119 @@ arrange(AdgEntity *entity)
         cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
 
         data->cpml.data[2].header.length = 2;
-        data->cpml.data[10].header.length = 2;
         n = 10;
     } else {
         data->cpml.data[2].header.length = 10;
         n = 2;
     }
 
+    data->cpml.data[10].header.length = 2;
+    extents.is_defined = FALSE;
+
+    /* Add the quote */
+    if (quote != NULL) {
+        AdgEntity *quote_entity;
+        gdouble angle;
+        AdgPair middle, factor;
+        AdgMatrix map;
+
+        quote_entity = (AdgEntity *) quote;
+        angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
+        middle.x = (base1.x + base2.x) / 2;
+        middle.y = (base1.y + base2.y) / 2;
+        factor.x = factor.y = 0;
+
+        if (to_detach) {
+            /* Detached quote: position the quote at "pos" */
+            AdgPair p_line, p_quote;
+            gdouble same_sd, opposite_sd, quote_size;
+            gint n_side;
+            cairo_path_data_t *to_extend;
+
+            /* Set "pair" to the properly converted "pos" coordinates */
+            cpml_pair_copy(&pair, adg_dim_get_pos(dim));
+            cpml_pair_transform(&pair, local);
+            cpml_pair_add(&pair, &data->shift.base);
+
+            /* Taking "middle" as the reference, check if the quote
+             * is on the _left_ or on the _right_ side. This is got
+             * by checking if (pos-middle) is closer to the quote
+             * vector or to the negated quote vector by using an
+             * algorithm based on the squared distances. */
+            p_line.x = pair.x - middle.x;
+            p_line.y = pair.y - middle.y;
+            cpml_vector_from_angle(&p_quote, angle);
+
+            same_sd = cpml_pair_squared_distance(&p_quote, &p_line);
+            cpml_pair_negate(&p_quote);
+            opposite_sd = cpml_pair_squared_distance(&p_quote, &p_line);
+            quote_size = adg_entity_get_extents(quote_entity)->size.x;
+
+            /* Properly align the quote, depending on its side */
+            if (same_sd > opposite_sd) {
+                factor.x = 1;
+            } else {
+                factor.x = 0;
+                cpml_pair_negate(&p_quote);
+            }
+
+            cpml_vector_set_length(&p_quote, quote_size);
+            cpml_pair_add(&p_quote, &pair);
+
+            /* Extends the base line to include the "p_quote" pair,
+             * that is underline a detached quote */
+            if (cpml_pair_squared_distance(&p_quote, &base1) >
+                cpml_pair_squared_distance(&p_quote, &base2))
+                n_side = 2;
+            else
+                n_side = 1;
+
+            if (to_outside) {
+                to_extend = &data->cpml.data[n_side == 1 ? 7 : 9];
+            } else {
+                to_extend = &data->cpml.data[9];
+                cpml_pair_to_cairo(&middle, &data->cpml.data[9]);
+                cpml_pair_to_cairo(n_side == 1 ? &base1 : &base2,
+                                   &data->cpml.data[11]);
+                data->cpml.data[2].header.length = 6;
+                n = 10;
+            }
+
+            cpml_pair_from_cairo(&p_line, to_extend);
+
+            /* Extend the base line only if needed */
+            if (cpml_pair_squared_distance(&p_quote, &middle) >
+                cpml_pair_squared_distance(&p_line, &middle))
+                cpml_pair_to_cairo(&p_quote, to_extend);
+        } else {
+            /* Center the quote in the middle of the base line */
+            factor.x = 0.5;
+            cpml_pair_copy(&pair, &middle);
+        }
+
+        adg_alignment_set_factor(quote, &factor);
+        cairo_matrix_init_translate(&map, pair.x, pair.y);
+        cairo_matrix_rotate(&map, angle);
+        adg_entity_set_global_map(quote_entity, &map);
+        adg_entity_arrange(quote_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
+
+        adg_matrix_copy(&data->quote.global_map,
+                        adg_entity_get_global_map(quote_entity));
+    }
+
     /* Play with header lengths to show or hide the extension lines */
     if (data->has_extension1) {
         data->cpml.data[14].header.length = data->has_extension2 ? 2 : 6;
     } else {
+        data->cpml.data[14].header.length = 2;
         data->cpml.data[n].header.length += 4;
         if (!data->has_extension2)
             data->cpml.data[n].header.length += 4;
     }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-    cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
-
-    /* TODO: use the to_detach flag to center the quote on the base line
-     * (when FALSE) or align in on the "pos" coordinates (when TRUE) */
-    if (quote != NULL) {
-        /* Center the quote in the middle of the base line */
-        AdgEntity *quote_entity;
-        gdouble angle;
-        AdgMatrix map;
-
-        quote_entity = (AdgEntity *) quote;
-        angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
-
-        pair.x = (data->cpml.data[1].point.x + data->cpml.data[3].point.x) / 2;
-        pair.y = (data->cpml.data[1].point.y + data->cpml.data[3].point.y) / 2;
-
-        cairo_matrix_init_translate(&map, pair.x, pair.y);
-        cairo_matrix_rotate(&map, angle);
-        adg_entity_set_global_map(quote_entity, &map);
-        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
-
-        adg_matrix_copy(&data->quote.global_map,
-                        adg_entity_get_global_map(quote_entity));
-    }
+    cpml_extents_add(&extents, adg_trail_get_extents(data->trail));
 
     if (data->marker1 != NULL) {
         AdgEntity *marker1_entity = (AdgEntity *) data->marker1;

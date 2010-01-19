@@ -39,9 +39,9 @@ G_BEGIN_DECLS
  * [6]  = LINE_TO
  * [7]  = first outside line end
  * [8]  = MOVE_TO
- * [9]  = second outside line start
+ * [9]  = second outside line end
  * [10] = LINE_TO
- * [11] = second outside line end
+ * [11] = second outside line start
  * [12] = MOVE_TO
  * [13] = first extension line start
  * [14] = LINE_TO
