@@ -59,7 +59,6 @@ struct _AdgRDimPrivate {
     }                    shift;
 
     struct {
-        AdgMatrix        local_map;
         AdgMatrix        global_map;
     }                    quote;
 

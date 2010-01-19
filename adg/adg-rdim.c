@@ -101,7 +101,6 @@ adg_rdim_init(AdgRDim *rdim)
     data->geometry_arranged = FALSE;
     data->radius = -1.;
     data->shift.base.x = data->shift.base.y = 0;
-    cairo_matrix_init_identity(&data->quote.local_map);
     cairo_matrix_init_identity(&data->quote.global_map);
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
@@ -278,7 +277,6 @@ arrange(AdgEntity *entity)
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
         AdgEntity *quote_entity = (AdgEntity *) quote;
         adg_entity_set_global_map(quote_entity, &data->quote.global_map);
-        adg_entity_set_local_map(quote_entity, &data->quote.local_map);
         return;
     }
 
@@ -319,14 +317,14 @@ arrange(AdgEntity *entity)
         quote_entity = (AdgEntity *) quote;
         cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
 
+        adg_alignment_set_factor_explicit(quote, 1, 0);
+
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, data->angle);
         adg_entity_set_global_map(quote_entity, &map);
 
         adg_matrix_copy(&data->quote.global_map,
                         adg_entity_get_global_map(quote_entity));
-        adg_matrix_copy(&data->quote.local_map,
-                        adg_entity_get_local_map(quote_entity));
     }
 
     if (data->marker != NULL) {
