@@ -102,9 +102,10 @@ adg_trail_init(AdgTrail *trail)
     data->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cairo_path.data = NULL;
     data->cairo_path.num_data = 0;
-
     data->callback = NULL;
     data->user_data = NULL;
+
+    data->in_construction = FALSE;
     data->extents.is_defined = FALSE;
 
     trail->data = data;
@@ -164,7 +165,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * <important>
  * <title>TODO</title>
  * <itemizedlist>
- * <listitem>Actually, the arcs are approximated to Bézier using the
+ * <listitem>Actually, the arcs are approximated with Bézier using the
  *           hardcoded max angle of PI/2. This should be customizable
  *           by adding, for instance, a property to the #AdgTrail class
  *           with a default value of PI/2.</listitem>
@@ -219,12 +220,12 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  *
  * Gets the CPML path structure defined by @trail. The returned
  * value is managed by the #AdgTrail implementation, that is this
- * method simply calls the #AdgTrailClass::get_cpml_path() virtual
- * function that any trail instance must implement.
+ * function directly calls the #AdgTrailClass::get_cpml_path()
+ * virtual method that any trail instance must have.
  *
  * Whenever used internally by the ADG project, the returned path
  * is (by convention) owned by @trail and so it should not be freed.
- * Anyway, it is allowed to modify it as long as its size is
+ * Anyway, callers are allowed to modify it as long as its size is
  * retained and its data contains a valid path: this is needed to
  * let the #AdgMarker infrastructure work properly (the markers
  * should be able to modify the trail where they are applied).
@@ -239,15 +240,27 @@ CpmlPath *
 adg_trail_cpml_path(AdgTrail *trail)
 {
     AdgTrailClass *klass;
+    AdgTrailPrivate *data;
+    CpmlPath *cpml_path;
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
     klass = ADG_TRAIL_GET_CLASS(trail);
-
     if (klass->get_cpml_path == NULL)
         return NULL;
 
-    return klass->get_cpml_path(trail);
+    data = trail->data;
+    if (data->in_construction) {
+        g_warning(_("%s: you cannot access the path from the callback you provided to build it"),
+                  G_STRLOC);
+        return NULL;
+    }
+
+    data->in_construction = TRUE;
+    cpml_path = klass->get_cpml_path(trail);
+    data->in_construction = FALSE;
+
+    return cpml_path;
 }
 
 /**
