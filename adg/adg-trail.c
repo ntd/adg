@@ -58,6 +58,7 @@
 
 #include "adg-trail.h"
 #include "adg-trail-private.h"
+#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
 #define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
@@ -271,7 +272,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
     g_return_val_if_fail(segment != NULL, FALSE);
 
     if (n_segment == 0) {
-        g_warning("%s: requested undefined segment for type `%s'",
+        g_warning(_("%s: requested undefined segment for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return FALSE;
     }
@@ -281,7 +282,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
     cpml_segment_from_cairo(segment, cpml_path);
     for (cnt = 1; cnt < n_segment; ++cnt)
         if (!cpml_segment_next(segment)) {
-            g_warning("%s: segment `%u' out of range for type `%s'",
+            g_warning(_("%s: segment %u is out of range for type `%s'"),
                       G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
             return FALSE;
         }
@@ -343,7 +344,7 @@ adg_trail_dump(AdgTrail *trail)
     g_return_if_fail(cairo_path != NULL);
 
     if (!cpml_segment_from_cairo(&segment, cairo_path)) {
-        g_warning("Invalid path data to dump!\n");
+        g_warning(_("%s: Invalid path data to dump!"), G_STRLOC);
     } else {
         do {
             cpml_segment_dump(&segment);
@@ -374,7 +375,7 @@ get_cpml_path(AdgTrail *trail)
     AdgTrailPrivate *data = trail->data;
 
     if (data->callback == NULL) {
-        g_warning("%s: callback not defined for instance of type `%s'",
+        g_warning(_("%s: callback not defined for instance of type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return NULL;
     }
