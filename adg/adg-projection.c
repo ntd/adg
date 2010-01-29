@@ -417,7 +417,7 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
         adg_path_line_to_explicit(axis, 14, 28);
         break;
     default:
-        g_assert_not_reached();
+        g_return_if_reached();
         break;
     }
 

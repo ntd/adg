@@ -228,7 +228,7 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
         cairo_matrix_multiply(matrix, matrix, &normalized);
         break;
     default:
-        g_assert_not_reached();
+        g_return_if_reached();
     }
 }
 

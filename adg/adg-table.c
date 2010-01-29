@@ -1265,7 +1265,7 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
 
     if (!g_signal_parse_name(detailed_signal, G_TYPE_FROM_INSTANCE(table),
                              &signal_id, &detail, FALSE)) {
-        g_assert_not_reached();
+        g_return_if_reached();
     }
 
     va_start(var_args, detailed_signal);
@@ -1325,7 +1325,7 @@ row_new(AdgTable *table, AdgTableRow *before_row)
         GSList *before_node = g_slist_find(data->rows, before_row);
 
         /* This MUST be present, otherwise something really bad happened */
-        g_assert(before_node != NULL);
+        g_return_val_if_fail(before_node != NULL, NULL);
 
         data->rows = g_slist_insert_before(data->rows, before_node, new_row);
     }
@@ -1447,7 +1447,7 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
         GSList *before_node = g_slist_find(row->cells, before_cell);
 
         /* This MUST be not null, otherwise something really bad happened */
-        g_assert(before_node != NULL);
+        g_return_val_if_fail(before_node != NULL, NULL);
 
         row->cells = g_slist_insert_before(row->cells, before_node, new_cell);
     }

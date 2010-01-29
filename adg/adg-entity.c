@@ -1127,7 +1127,7 @@ local_changed(AdgEntity *entity)
                   G_STRLOC);
         break;
     default:
-        g_assert_not_reached();
+        g_return_if_reached();
         break;
     }
 }

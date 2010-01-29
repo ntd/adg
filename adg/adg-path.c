@@ -1064,7 +1064,7 @@ do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
         do_fillet(path, primitive);
         break;
     default:
-        g_assert_not_reached();
+        g_return_if_reached();
     }
 }
 
