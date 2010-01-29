@@ -35,11 +35,11 @@ typedef struct _AdgPoint  AdgPoint;
 
 GType           adg_point_get_type              (void) G_GNUC_CONST;
 
-AdgPoint *      adg_point_copy                  (AdgPoint       *point,
-                                                 const AdgPoint *src);
 AdgPoint *      adg_point_new                   (void);
 AdgPoint *      adg_point_dup                   (const AdgPoint *point);
 void            adg_point_destroy               (AdgPoint       *point);
+void            adg_point_copy                  (AdgPoint       *point,
+                                                 const AdgPoint *src);
 void            adg_point_set_pair              (AdgPoint       *point,
                                                  const AdgPair  *pair);
 void            adg_point_set_pair_explicit     (AdgPoint       *point,

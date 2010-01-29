@@ -67,32 +67,6 @@ adg_point_get_type(void)
 }
 
 /**
- * adg_point_copy:
- * @point: an #AdgPoint
- * @src: the source point to copy
- *
- * Copies @src into @point. If @point was linked to a named pair, the
- * reference to the old model is dropped. Similary, if @src is linked
- * to a model, a new reference to this new model is added.
- *
- * Returns: @point or %NULL on error
- **/
-AdgPoint *
-adg_point_copy(AdgPoint *point, const AdgPoint *src)
-{
-    g_return_val_if_fail(point != NULL, NULL);
-    g_return_val_if_fail(src != NULL, NULL);
-
-    if (src->model != NULL)
-        g_object_ref(src->model);
-
-    if (point->model != NULL)
-        g_object_unref(point->model);
-
-    return memcpy(point, src, sizeof(AdgPoint));
-}
-
-/**
  * adg_point_dup:
  * @point: an #AdgPoint structure
  *
@@ -147,6 +121,30 @@ adg_point_destroy(AdgPoint *point)
     adg_point_set_pair_from_model(point, NULL, NULL);
 
     g_free(point);
+}
+
+/**
+ * adg_point_copy:
+ * @point: an #AdgPoint
+ * @src: the source point to copy
+ *
+ * Copies @src into @point. If @point was linked to a named pair, the
+ * reference to the old model is dropped. Similary, if @src is linked
+ * to a model, a new reference to this new model is added.
+ **/
+void
+adg_point_copy(AdgPoint *point, const AdgPoint *src)
+{
+    g_return_if_fail(point != NULL);
+    g_return_if_fail(src != NULL);
+
+    if (src->model != NULL)
+        g_object_ref(src->model);
+
+    if (point->model != NULL)
+        g_object_unref(point->model);
+
+    memcpy(point, src, sizeof(AdgPoint));
 }
 
 /**
