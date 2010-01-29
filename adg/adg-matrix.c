@@ -241,6 +241,8 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
 void
 adg_matrix_dump(const AdgMatrix *matrix)
 {
+    g_return_if_fail(matrix != NULL);
+
     g_print("[%8.3lf %8.3lf] [%8.3lf]\n"
             "[%8.3lf %8.3lf] [%8.3lf]\n",
             matrix->xx, matrix->xy, matrix->x0,
