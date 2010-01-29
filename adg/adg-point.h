@@ -33,23 +33,23 @@ G_BEGIN_DECLS
 typedef struct _AdgPoint  AdgPoint;
 
 
-GType           adg_point_get_type      (void) G_GNUC_CONST;
+GType           adg_point_get_type              (void) G_GNUC_CONST;
 
-AdgPoint *      adg_point_copy          (AdgPoint       *point,
-                                         const AdgPoint *src);
-AdgPoint *      adg_point_new           (void);
-AdgPoint *      adg_point_dup           (const AdgPoint *point);
-void            adg_point_destroy       (AdgPoint       *point);
-const AdgPair * adg_point_pair          (AdgPoint       *point);
-void            adg_point_set           (AdgPoint       *point,
-                                         const AdgPair  *pair);
-void            adg_point_set_explicit  (AdgPoint       *point,
-                                         gdouble         x,
-                                         gdouble         y);
-void            adg_point_set_from_model(AdgPoint       *point,
-                                         AdgModel       *model,
-                                         const gchar    *name);
-void            adg_point_invalidate    (AdgPoint       *point);
+AdgPoint *      adg_point_copy                  (AdgPoint       *point,
+                                                 const AdgPoint *src);
+AdgPoint *      adg_point_new                   (void);
+AdgPoint *      adg_point_dup                   (const AdgPoint *point);
+void            adg_point_destroy               (AdgPoint       *point);
+void            adg_point_set_pair              (AdgPoint       *point,
+                                                 const AdgPair  *pair);
+void            adg_point_set_pair_explicit     (AdgPoint       *point,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_point_set_pair_from_model   (AdgPoint       *point,
+                                                 AdgModel       *model,
+                                                 const gchar    *name);
+const AdgPair * adg_point_get_pair              (AdgPoint       *point);
+void            adg_point_invalidate            (AdgPoint       *point);
 
 G_END_DECLS
 

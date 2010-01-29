@@ -385,7 +385,7 @@ adg_adim_set_org(AdgADim *adim, const AdgPair *org1, const AdgPair *org2)
         if (data->org1 == NULL)
             data->org1 = adg_point_new();
 
-        adg_point_set(data->org1, org1);
+        adg_point_set_pair(data->org1, org1);
 
         g_object_notify(object, "org1");
     }
@@ -394,7 +394,7 @@ adg_adim_set_org(AdgADim *adim, const AdgPair *org1, const AdgPair *org2)
         if (data->org2 == NULL)
             data->org2 = adg_point_new();
 
-        adg_point_set(data->org2, org2);
+        adg_point_set_pair(data->org2, org2);
 
         g_object_notify(object, "org2");
     }
@@ -470,7 +470,7 @@ adg_adim_set_org_from_model(AdgADim *adim, AdgModel *model,
         if (data->org1 == NULL)
             data->org1 = adg_point_new();
 
-        adg_point_set_from_model(data->org1, model, org1);
+        adg_point_set_pair_from_model(data->org1, model, org1);
 
         g_object_notify(object, "org1");
     }
@@ -479,7 +479,7 @@ adg_adim_set_org_from_model(AdgADim *adim, AdgModel *model,
         if (data->org2 == NULL)
             data->org2 = adg_point_new();
 
-        adg_point_set_from_model(data->org2, model, org2);
+        adg_point_set_pair_from_model(data->org2, model, org2);
 
         g_object_notify(object, "org2");
     }
@@ -505,7 +505,7 @@ adg_adim_get_org1(AdgADim *adim)
 
     data = adim->data;
 
-    return adg_point_pair(data->org1);
+    return adg_point_get_pair(data->org1);
 }
 
 /**
@@ -526,7 +526,7 @@ adg_adim_get_org2(AdgADim *adim)
 
     data = adim->data;
 
-    return adg_point_pair(data->org2);
+    return adg_point_get_pair(data->org2);
 }
 
 
@@ -850,8 +850,8 @@ get_info(AdgADim *adim, CpmlVector vector[],
     ref1 = adg_dim_get_ref1(dim);
     ref2 = adg_dim_get_ref2(dim);
 
-    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), adg_point_pair(data->org1));
-    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), adg_point_pair(data->org2));
+    cpml_pair_sub(cpml_pair_copy(&vector[0], ref1), adg_point_get_pair(data->org1));
+    cpml_pair_sub(cpml_pair_copy(&vector[2], ref2), adg_point_get_pair(data->org2));
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0)

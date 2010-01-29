@@ -25,12 +25,12 @@
  * @short_description: A struct holding x, y coordinates
  *                     (either named or explicit)
  *
- * AdgPoint is an opaque structure that manages 2D coordinates, either
- * set explicitely throught adg_point_set() and adg_point_set_explicit()
- * or taken from a model with adg_point_set_from_model(). It can be
- * thought as an #AdgPair on steroid, because it adds named pair
- * support to a simple pair, thus enabling coordinates depending
- * on #AdgModel instances.
+ * AdgPoint is an opaque structure that manages 2D coordinates,
+ * either set explicitely throught adg_point_set_pair() and
+ * adg_point_set_pair_explicit() or taken from a model with
+ * adg_point_set_pair_from_model(). It can be thought as an
+ * #AdgPair on steroid, because it adds named pair support to
+ * a simple pair, enabling coordinates depending on #AdgModel.
  **/
 
 /**
@@ -75,7 +75,7 @@ adg_point_get_type(void)
  * reference to the old model is dropped. Similary, if @src is linked
  * to a model, a new reference to this new model is added.
  *
- * Returns: @point
+ * Returns: @point or %NULL on error
  **/
 AdgPoint *
 adg_point_copy(AdgPoint *point, const AdgPoint *src)
@@ -99,6 +99,9 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
  * Duplicates @point. This operation also adds a new reference
  * to the internal model if @point is linked to a named pair.
  *
+ * The returned value should be freed with adg_point_destroy()
+ * when no longer needed.
+ *
  * Returns: the duplicated #AdgPoint struct or %NULL on errors
  **/
 AdgPoint *
@@ -117,6 +120,9 @@ adg_point_dup(const AdgPoint *point)
  *
  * Creates a new empty #AdgPoint. The returned pointer
  * should be freed with adg_point_destroy() when no longer needed.
+ *
+ * The returned value should be freed with adg_point_destroy()
+ * when no longer needed.
  *
  * Returns: a newly created #AdgPoint
  **/
@@ -138,55 +144,13 @@ adg_point_destroy(AdgPoint *point)
 {
     g_return_if_fail(point != NULL);
 
-    adg_point_set_from_model(point, NULL, NULL);
+    adg_point_set_pair_from_model(point, NULL, NULL);
 
     g_free(point);
 }
 
 /**
- * adg_point_pair:
- * @point: an #AdgPoint
- *
- * #AdgPoint is an evolution of the pair concept, but internally the
- * relevant data is still stored in an #AdgPair struct. This function
- * gets this struct, optionally updating the internal value from the
- * linked named pair if necessary.
- *
- * Returns: the pair of @point
- **/
-const AdgPair *
-adg_point_pair(AdgPoint *point)
-{
-    g_return_val_if_fail(point != NULL, NULL);
-
-    if (!point->is_uptodate) {
-        const AdgPair *pair;
-
-        if (point->model == NULL) {
-            /* A point with explicit coordinates not up to date
-             * is an unexpected condition */
-            g_warning(_("%s: trying to get a pair from an undefined point"),
-                      G_STRLOC);
-            return NULL;
-        }
-
-        pair = adg_model_get_named_pair(point->model, point->name);
-
-        if (pair == NULL) {
-            g_warning(_("%s: `%s' named pair not found in `%s' model instance"),
-                      G_STRLOC, point->name,
-                      g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
-            return NULL;
-        }
-
-        cpml_pair_copy(&point->pair, pair);
-    }
-
-    return (AdgPair *) point;
-}
-
-/**
- * adg_point_set:
+ * adg_point_set_pair:
  * @point: an #AdgPoint
  * @pair: the #AdgPair to use
  *
@@ -195,30 +159,30 @@ adg_point_pair(AdgPoint *point)
  * dropped before setting the pair.
  **/
 void
-adg_point_set(AdgPoint *point, const AdgPair *pair)
+adg_point_set_pair(AdgPoint *point, const AdgPair *pair)
 {
     g_return_if_fail(point != NULL);
     g_return_if_fail(pair != NULL);
 
-    adg_point_set_explicit(point, pair->x, pair->y);
+    adg_point_set_pair_explicit(point, pair->x, pair->y);
 }
 
 /**
- * adg_point_set_explicit:
+ * adg_point_set_pair_explicit:
  * @point: an #AdgPoint
  * @x: the x coordinate of the point
  * @y: the y coordinate of the point
  *
- * Works in the same way of adg_point_set() but accept direct numbers
+ * Works in the same way of adg_point_set_pair() but accept direct numbers
  * instead of an #AdgPair structure.
  **/
 void
-adg_point_set_explicit(AdgPoint *point, gdouble x, gdouble y)
+adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
 {
     g_return_if_fail(point != NULL);
 
     /* Unlink the named pair dependency, if any */
-    adg_point_set_from_model(point, NULL, NULL);
+    adg_point_set_pair_from_model(point, NULL, NULL);
 
     point->pair.x = x;
     point->pair.y = y;
@@ -226,7 +190,7 @@ adg_point_set_explicit(AdgPoint *point, gdouble x, gdouble y)
 }
 
 /**
- * adg_point_set_from_model:
+ * adg_point_set_pair_from_model:
  * @point: an #AdgPoint
  * @model: the #AdgModel
  * @name: the id of a named pair in @model
@@ -240,7 +204,8 @@ adg_point_set_explicit(AdgPoint *point, gdouble x, gdouble y)
  * between @point and the named pair is dropped.
  **/
 void
-adg_point_set_from_model(AdgPoint *point, AdgModel *model, const gchar *name)
+adg_point_set_pair_from_model(AdgPoint *point,
+                              AdgModel *model, const gchar *name)
 {
     g_return_if_fail(point != NULL);
     g_return_if_fail(model == NULL || name != NULL);
@@ -273,6 +238,48 @@ adg_point_set_from_model(AdgPoint *point, AdgModel *model, const gchar *name)
         point->model = model;
         point->name = g_strdup(name);
     }
+}
+
+/**
+ * adg_point_get_pair:
+ * @point: an #AdgPoint
+ *
+ * #AdgPoint is an evolution of the pair concept, but internally the
+ * relevant data is still stored in an #AdgPair struct. This function
+ * gets this struct, optionally updating the internal value from the
+ * linked named pair if necessary.
+ *
+ * Returns: the pair of @point
+ **/
+const AdgPair *
+adg_point_get_pair(AdgPoint *point)
+{
+    g_return_val_if_fail(point != NULL, NULL);
+
+    if (!point->is_uptodate) {
+        const AdgPair *pair;
+
+        if (point->model == NULL) {
+            /* A point with explicit coordinates not up to date
+             * is an unexpected condition */
+            g_warning(_("%s: trying to get a pair from an undefined point"),
+                      G_STRLOC);
+            return NULL;
+        }
+
+        pair = adg_model_get_named_pair(point->model, point->name);
+
+        if (pair == NULL) {
+            g_warning(_("%s: `%s' named pair not found in `%s' model instance"),
+                      G_STRLOC, point->name,
+                      g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
+            return NULL;
+        }
+
+        cpml_pair_copy(&point->pair, pair);
+    }
+
+    return (AdgPair *) point;
 }
 
 /**

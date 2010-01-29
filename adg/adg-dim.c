@@ -411,7 +411,7 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
         if (data->ref1 == NULL)
             data->ref1 = adg_point_new();
 
-        adg_point_set(data->ref1, ref1);
+        adg_point_set_pair(data->ref1, ref1);
 
         g_object_notify(object, "ref1");
     }
@@ -420,7 +420,7 @@ adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
         if (data->ref2 == NULL)
             data->ref2 = adg_point_new();
 
-        adg_point_set(data->ref2, ref2);
+        adg_point_set_pair(data->ref2, ref2);
 
         g_object_notify(object, "ref2");
     }
@@ -496,7 +496,7 @@ adg_dim_set_ref_from_model(AdgDim *dim, AdgModel *model,
         if (data->ref1 == NULL)
             data->ref1 = adg_point_new();
 
-        adg_point_set_from_model(data->ref1, model, ref1);
+        adg_point_set_pair_from_model(data->ref1, model, ref1);
 
         g_object_notify(object, "ref1");
     }
@@ -505,7 +505,7 @@ adg_dim_set_ref_from_model(AdgDim *dim, AdgModel *model,
         if (data->ref2 == NULL)
             data->ref2 = adg_point_new();
 
-        adg_point_set_from_model(data->ref2, model, ref2);
+        adg_point_set_pair_from_model(data->ref2, model, ref2);
 
         g_object_notify(object, "ref2");
     }
@@ -531,7 +531,7 @@ adg_dim_get_ref1(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_pair(data->ref1);
+    return adg_point_get_pair(data->ref1);
 }
 
 /**
@@ -552,7 +552,7 @@ adg_dim_get_ref2(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_pair(data->ref2);
+    return adg_point_get_pair(data->ref2);
 }
 
 /**
@@ -575,7 +575,7 @@ adg_dim_set_pos(AdgDim *dim, const AdgPair *pos)
     if (data->pos == NULL)
         data->pos = adg_point_new();
 
-    adg_point_set(data->pos, pos);
+    adg_point_set_pair(data->pos, pos);
 
     g_object_notify((GObject *) dim, "pos");
 }
@@ -622,7 +622,7 @@ adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
     if (data->pos == NULL)
         data->pos = adg_point_new();
 
-    adg_point_set_from_model(data->pos, model, pos);
+    adg_point_set_pair_from_model(data->pos, model, pos);
 
     g_object_notify((GObject *) dim, "pos");
 }
@@ -645,7 +645,7 @@ adg_dim_get_pos(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_pair(data->pos);
+    return adg_point_get_pair(data->pos);
 }
 
 /**
