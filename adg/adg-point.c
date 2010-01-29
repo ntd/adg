@@ -157,6 +157,8 @@ adg_point_destroy(AdgPoint *point)
 const AdgPair *
 adg_point_pair(AdgPoint *point)
 {
+    g_return_val_if_fail(point != NULL, NULL);
+
     if (!point->is_uptodate) {
         const AdgPair *pair;
 
@@ -241,19 +243,17 @@ void
 adg_point_set_from_model(AdgPoint *point, AdgModel *model, const gchar *name)
 {
     g_return_if_fail(point != NULL);
+    g_return_if_fail(model == NULL || name != NULL);
 
     /* Check if unlinking a yet unlinked point */
     if (model == NULL && point->model == NULL)
         return;
 
-    /* Ensure the name is not NULL if the model is specified */
-    if (model != NULL) {
-        g_return_if_fail(name != NULL);
-    }
-
-    /* Check if the named pair is different from the old one */
-    if (model == point->model && strcmp(point->name, name) == 0)
+    /* Return if the named pair is not changed */
+    if (model == point->model &&
+        (model == NULL || strcmp(point->name, name) == 0)) {
         return;
+    }
 
     if (model != NULL)
         g_object_ref(model);
