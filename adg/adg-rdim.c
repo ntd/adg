@@ -407,10 +407,12 @@ update_geometry(AdgRDim *rdim)
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);
-    cpml_pair_sub(cpml_pair_copy(&vector, ref2), ref1);
+    cpml_pair_copy(&vector, ref2);
+    cpml_pair_sub(&vector, ref1);
     if (cpml_pair_squared_distance(pos, ref1) <
-        cpml_pair_squared_distance(pos, ref2))
+        cpml_pair_squared_distance(pos, ref2)) {
         cpml_pair_negate(&vector);
+    }
 
     /* radius */
     data->radius = cpml_pair_distance(&vector, NULL);

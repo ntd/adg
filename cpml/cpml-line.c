@@ -169,11 +169,13 @@ cpml_line_near_pos(const CpmlPrimitive *line, const CpmlPair *pair)
     cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
     cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
 
-    cpml_pair_sub(cpml_pair_copy(&normal, &p[1]), &p[2]);
+    cpml_pair_copy(&normal, &p[1]);
+    cpml_pair_sub(&normal, &p[2]);
     cpml_vector_normal(&normal);
 
     cpml_pair_copy(&p[2], pair);
-    cpml_pair_add(cpml_pair_copy(&p[3], pair), &normal);
+    cpml_pair_copy(&p[3], pair);
+    cpml_pair_add(&p[3], &normal);
 
     /* Ensure to return 0 if intersection() fails */
     pos = 0;
@@ -258,8 +260,10 @@ intersection(const CpmlPair *p, CpmlPair *dest, double *get_factor)
     CpmlVector v[2];
     double factor;
 
-    cpml_pair_sub(cpml_pair_copy(&v[0], &p[1]), &p[0]);
-    cpml_pair_sub(cpml_pair_copy(&v[1], &p[3]), &p[2]);
+    cpml_pair_copy(&v[0], &p[1]);
+    cpml_pair_sub(&v[0], &p[0]);
+    cpml_pair_copy(&v[1], &p[3]);
+    cpml_pair_sub(&v[1], &p[2]);
     factor = v[0].x * v[1].y - v[0].y * v[1].x;
 
     /* Check for equal slopes (the lines are parallel) */

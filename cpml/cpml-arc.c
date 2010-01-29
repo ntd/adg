@@ -539,8 +539,10 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     }
 
     /* Translate the 3 points of -p0, to simplify the formula */
-    cpml_pair_sub(cpml_pair_copy(&b, &p[1]), &p[0]);
-    cpml_pair_sub(cpml_pair_copy(&c, &p[2]), &p[0]);
+    cpml_pair_copy(&b, &p[1]);
+    cpml_pair_sub(&b, &p[0]);
+    cpml_pair_copy(&c, &p[2]);
+    cpml_pair_sub(&c, &p[0]);
 
     /* Check for division by 0, that is the case where the 3 given points
      * are laying on a straight line and there is no fitting circle */
@@ -565,7 +567,8 @@ get_angles(const CpmlPair *p, const CpmlPair *center,
     double mid;
 
     /* Calculate the starting angle */
-    cpml_pair_sub(cpml_pair_copy(&vector, &p[0]), center);
+    cpml_pair_copy(&vector, &p[0]);
+    cpml_pair_sub(&vector, center);
     *start = cpml_vector_angle(&vector);
 
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
@@ -575,9 +578,11 @@ get_angles(const CpmlPair *p, const CpmlPair *center,
     } else {
         /* Calculate the mid and end angle: cpml_vector_angle()
          * returns an angle between -M_PI and M_PI */
-        cpml_pair_sub(cpml_pair_copy(&vector, &p[1]), center);
+        cpml_pair_copy(&vector, &p[1]);
+        cpml_pair_sub(&vector, center);
         mid = cpml_vector_angle(&vector);
-        cpml_pair_sub(cpml_pair_copy(&vector, &p[2]), center);
+        cpml_pair_copy(&vector, &p[2]);
+        cpml_pair_sub(&vector, center);
         *end = cpml_vector_angle(&vector);
 
         if (*end > *start) {

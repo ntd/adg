@@ -71,13 +71,11 @@ static CpmlPair fallback_pair = { 0, 0 };
  * @src: the source #CpmlPair
  *
  * Copies @src in @pair.
- *
- * Return value: @pair
  **/
-CpmlPair *
+void
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
-    return memcpy(pair, src, sizeof(CpmlPair));
+    memcpy(pair, src, sizeof(CpmlPair));
 }
 
 /**
@@ -85,17 +83,14 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * @pair: the destination #CpmlPair
  * @path_data: the original path data point
  *
- * Gets @pair from a #cairo_path_data_t struct. @path_data should contains
+ * Sets @pair from a #cairo_path_data_t struct. @path_data should contains
  * a point data: it is up to the caller to be sure @path_data is valid.
- *
- * Return value: @pair
  **/
-CpmlPair *
+void
 cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
 {
     pair->x = path_data->point.x;
     pair->y = path_data->point.y;
-    return pair;
 }
 
 
@@ -331,38 +326,27 @@ cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
  *
  * Calculates the coordinates of the point far %1 from the origin
  * in the @angle direction. The result is stored in @vector.
- *
- * Return value: @vector
  **/
-CpmlVector *
+void
 cpml_vector_from_angle(CpmlVector *vector, double angle)
 {
     /* Check for common conditions */
     if (angle == -M_PI_2) {
         vector->x = 0;
         vector->y = -1;
-        return vector;
-    }
-    if (angle == M_PI_2) {
+    } else if (angle == M_PI_2) {
         vector->x = 0;
         vector->y = +1;
-        return vector;
-    }
-    if (angle == M_PI || angle == -M_PI) {
+    } else if (angle == M_PI || angle == -M_PI) {
         vector->x = -1;
         vector->y = 0;
-        return vector;
-    }
-    if (angle == 0) {
+    } else if (angle == 0) {
         vector->x = +1;
         vector->y = 0;
-        return vector;
+    } else {
+        vector->x = cos(angle);
+        vector->y = sin(angle);
     }
-
-    vector->x = cos(angle);
-    vector->y = sin(angle);
-
-    return vector;
 }
 
 /**

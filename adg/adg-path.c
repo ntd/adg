@@ -1143,20 +1143,23 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     cpml_primitive_vector_at(last_dup, &vector, pos);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
-    cpml_pair_sub(cpml_pair_copy(&p[0], &center), &vector);
+    cpml_pair_copy(&p[0], &center);
+    cpml_pair_sub(&p[0], &vector);
 
     /* Compute the mid point of the fillet */
     cpml_pair_from_cairo(&vector, current->org);
     cpml_pair_sub(&vector, &center);
     cpml_vector_set_length(&vector, radius);
-    cpml_pair_add(cpml_pair_copy(&p[1], &center), &vector);
+    cpml_pair_copy(&p[1], &center);
+    cpml_pair_add(&p[1], &vector);
 
     /* Compute the end point of the fillet */
     pos = cpml_primitive_near_pos(current_dup, &center);
     cpml_primitive_vector_at(current_dup, &vector, pos);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
-    cpml_pair_sub(cpml_pair_copy(&p[2], &center), &vector);
+    cpml_pair_copy(&p[2], &center);
+    cpml_pair_sub(&p[2], &vector);
 
     g_free(current_dup);
     g_free(last_dup);

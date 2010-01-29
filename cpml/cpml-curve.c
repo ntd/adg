@@ -494,10 +494,12 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_from_cairo(&p3, &curve->data[3]);
 
     /* v0 = p1-p0 */
-    cpml_pair_sub(cpml_pair_copy(&v0, &p1), &p0);
+    cpml_pair_copy(&v0, &p1);
+    cpml_pair_sub(&v0, &p0);
 
     /* v3 = p3-p2 */
-    cpml_pair_sub(cpml_pair_copy(&v3, &p3), &p2);
+    cpml_pair_copy(&v3, &p3);
+    cpml_pair_sub(&v3, &p2);
 
     /* pm = point in C(m) offseted the requested @offset distance */
     cpml_curve_vector_at_time(curve, &vm, m);
@@ -507,12 +509,14 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_add(&pm, &vm);
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
-    cpml_vector_set_length(cpml_pair_copy(&vtmp, &v0), offset);
+    cpml_pair_copy(&vtmp, &v0);
+    cpml_vector_set_length(&vtmp, offset);
     cpml_vector_normal(&vtmp);
     cpml_pair_add(&p0, &vtmp);
 
     /* p3 = p3 + normal of v3 of @offset magnitude, as done for p0 */
-    cpml_vector_set_length(cpml_pair_copy(&vtmp, &v3), offset);
+    cpml_pair_copy(&vtmp, &v3);
+    cpml_vector_set_length(&vtmp, offset);
     cpml_vector_normal(&vtmp);
     cpml_pair_add(&p3, &vtmp);
 
