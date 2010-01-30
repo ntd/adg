@@ -17,7 +17,7 @@ HFILE_GLOB=		$(top_srcdir)/adg/*.h \
 CFILE_GLOB=		$(top_srcdir)/adg/*.c \
 			$(top_builddir)/adg/*.c
 IGNORE_HFILES=		adg.h \
-			adg-intl.h \
+			adg-internal.h \
 			adg-type-builtins.h \
 			adg-marshal.h \
 			adg-adim-private.h \
