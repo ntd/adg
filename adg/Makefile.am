@@ -10,7 +10,8 @@ PATTERN=
 
 
 # file groups
-h_sources=			adg-adim.h \
+h_sources=			adg.h \
+				adg-adim.h \
 				adg-alignment.h \
 				adg-arrow.h \
 				adg-canvas.h \
@@ -49,8 +50,7 @@ h_sources=			adg-adim.h \
 				adg-trail.h \
 				adg-toy-text.h \
 				adg-util.h
-built_h_sources=		$(builddir)/adg-type-builtins.h \
-				$(builddir)/adg.h
+built_h_sources=		$(builddir)/adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
 				adg-arrow-private.h \
@@ -125,8 +125,7 @@ built_c_sources=		$(builddir)/adg-type-builtins.c \
 				$(builddir)/adg-marshal.c
 EXTRA_DIST=			adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
-				adg-marshal.genmarshal \
-				adg.h.in
+				adg-marshal.genmarshal
 if HAVE_GTK2
 AM_CFLAGS+=			@GTK2_CFLAGS@
 AM_LDFLAGS+=			@GTK2_LIBS@
@@ -182,10 +181,3 @@ adg-marshal.c: adg-marshal.genmarshal
 
 adg-marshal.h: adg-marshal.genmarshal
 	$(genmarshal_to_h)
-
-# Regenerate the adg.h header file: forcing a dependency on config.log
-# is an easy way to invalidate this file whenever a ./configure is recall
-$(builddir)/adg.h: adg.h.in $(top_builddir)/config.log
-	$(MSG_GEN)rm -f $@.tmp
-	sed -e '$(PATTERN)' $< > $@.tmp
-	mv $@.tmp $@

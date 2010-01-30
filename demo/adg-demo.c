@@ -1,4 +1,5 @@
 #include <adg/adg.h>
+#include <adg/adg-widget.h>
 #include <math.h>
 
 #include "demo.h"
