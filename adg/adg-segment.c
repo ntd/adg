@@ -37,8 +37,8 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-segment.h"
-
 #include <string.h>
 
 

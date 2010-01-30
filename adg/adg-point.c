@@ -40,9 +40,8 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-point.h"
-#include "adg-intl.h"
-
 #include <string.h>
 
 

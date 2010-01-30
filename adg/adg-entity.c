@@ -58,13 +58,13 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-entity.h"
 #include "adg-entity-private.h"
 #include "adg-canvas.h"
 #include "adg-font-style.h"
 #include "adg-dim-style.h"
 #include "adg-marshal.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 

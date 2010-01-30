@@ -4,13 +4,12 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-(test -f $srcdir/configure.ac && test -f $srcdir/adg/adg.h) ||
-{
-        echo -n "**Error**: Directory "\`$srcdir\'" does not look like the"
-        echo " top-level adg directory"
-        exit 1
-}
+if test ! -f $srcdir/configure.ac -o ! -f $srcdir/adg/adg.h; then
+    echo "**Error**: '$srcdir' does not look like the top-level adg directory"
+    exit 1
+fi
 
-pushd $srcdir
-autoreconf -is -Wall
-popd
+cd $srcdir
+glib-gettextize -f || exit $?
+autoreconf -is -Wall || exit $?
+./configure "$@" && echo "Now type 'make' to compile $PROJECT."

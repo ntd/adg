@@ -33,9 +33,9 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-fill-style.h"
 #include "adg-fill-style-private.h"
-#include "adg-intl.h"
 
 #define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_fill_style_parent_class)
 

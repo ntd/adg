@@ -34,10 +34,10 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
 #include "adg-dress-builtins.h"
-#include "adg-intl.h"
 
 #define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_line_style_parent_class)
 

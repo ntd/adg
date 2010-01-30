@@ -22,7 +22,6 @@
 #define __ADG_WIDGET_H__
 
 #include <gtk/gtk.h>
-#include <adg/adg-canvas.h>
 
 
 G_BEGIN_DECLS

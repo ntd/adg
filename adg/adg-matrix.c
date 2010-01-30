@@ -35,9 +35,8 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-matrix.h"
-#include "adg-intl.h"
-
 #include <string.h>
 #include <math.h>
 

@@ -65,7 +65,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-fill-style-private.h \
 				adg-font-style-private.h \
 				adg-hatch-private.h \
-				adg-intl.h \
+				adg-internal.h \
 				adg-ldim-private.h \
 				adg-line-style-private.h \
 				adg-logo-private.h \

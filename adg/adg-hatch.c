@@ -34,11 +34,11 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"
 #include "adg-dress-builtins.h"
 #include "adg-fill-style.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_hatch_parent_class)
 

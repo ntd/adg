@@ -47,10 +47,10 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-edges.h"
 #include "adg-edges-private.h"
 #include "adg-pair.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
 #define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)

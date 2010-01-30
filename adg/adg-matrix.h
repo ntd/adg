@@ -18,6 +18,11 @@
  */
 
 
+#if !defined (__ADG_H__)
+#error "Only <adg/adg.h> can be included directly."
+#endif
+
+
 #ifndef __ADG_MATRIX_H__
 #define __ADG_MATRIX_H__
 

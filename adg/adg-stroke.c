@@ -33,11 +33,11 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
 #include "adg-dress-builtins.h"
 #include "adg-line-style.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)

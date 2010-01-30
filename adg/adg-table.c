@@ -71,6 +71,7 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-table.h"
 #include "adg-table-private.h"
 #include "adg-alignment.h"
@@ -78,7 +79,6 @@
 #include "adg-path.h"
 #include "adg-line-style.h"
 #include "adg-toy-text.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_table_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)

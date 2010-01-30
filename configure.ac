@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT([ADG],[0.5.5],[ntd at entidi.it],[adg],[http://adg.entidi.com/])
+AC_INIT([ADG],[0.5.5],[http://dev.entidi.com/p/adg/],
+        [adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -11,7 +12,7 @@ AM_INIT_AUTOMAKE([1.6])
 
 AC_PROG_CC
 AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
+LT_INIT
 PKG_PROG_PKG_CONFIG
 AC_PATH_PROG([XSLTPROC],[xsltproc],[/usr/bin/xsltproc])
 AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums],[/usr/bin/glib-mkenums])
@@ -27,8 +28,13 @@ AC_FUNC_ALLOCA
 
 # I18n
 
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.15])
+GETTEXT_PACKAGE="adg-$PACKAGE_VERSION"
+AC_SUBST([GETTEXT_PACKAGE])
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["$GETTEXT_PACKAGE"],
+                   [Define to the domain used by gettext.])
+ALL_LINGUAS=""
+AM_GLIB_GNU_GETTEXT
+GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 
 
 # Check required packages
@@ -53,8 +59,8 @@ AS_IF([test "x$enable_gtk2" != "xno"],
                                 [AC_MSG_ERROR([$GTK2_PKG_ERRORS but GTK+2 support requested])],
                                 [enable_gtk2=no])])])
 AM_CONDITIONAL([HAVE_GTK2],[test "x$enable_gtk2" = "xyes"])
-
 AC_SUBST([ADG_OPTIONAL_REQUIRES])
+
 
 # Final step
 

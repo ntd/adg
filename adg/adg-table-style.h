@@ -18,6 +18,11 @@
  */
 
 
+#if !defined (__ADG_H__)
+#error "Only <adg/adg.h> can be included directly."
+#endif
+
+
 #ifndef __ADG_TABLE_STYLE_H__
 #define __ADG_TABLE_STYLE_H__
 

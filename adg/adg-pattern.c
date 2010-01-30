@@ -35,6 +35,7 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-pattern.h"
 
 

@@ -49,10 +49,10 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-model.h"
 #include "adg-model-private.h"
 #include "adg-marshal.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
 

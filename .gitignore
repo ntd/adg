@@ -9,6 +9,7 @@
 /config.rpath
 /config.sub
 /missing
+/mkinstalldirs
 /depcomp
 /install-sh
 /ltmain.sh

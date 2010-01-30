@@ -33,6 +33,7 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-style.h"
 
 

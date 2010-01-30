@@ -34,10 +34,10 @@
  * Use its public methods instead.
  **/
 
+#include "adg-internal.h"
 #include "adg-container.h"
 #include "adg-container-private.h"
 #include "adg-marshal.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)

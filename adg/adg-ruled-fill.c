@@ -35,10 +35,10 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-ruled-fill.h"
 #include "adg-ruled-fill-private.h"
 #include "adg-dress-builtins.h"
-#include "adg-intl.h"
 #include <math.h>
 
 #define PARENT_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)

@@ -33,13 +33,13 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-dim.h"
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
 #include "adg-dress-builtins.h"
 #include "adg-toy-text.h"
 #include "adg-type-builtins.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)

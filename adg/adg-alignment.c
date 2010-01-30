@@ -44,9 +44,10 @@
  * Use its public methods instead.
  **/
 
+
+#include "adg-internal.h"
 #include "adg-alignment.h"
 #include "adg-alignment-private.h"
-#include "adg-intl.h"
 
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 

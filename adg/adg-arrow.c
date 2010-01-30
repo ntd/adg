@@ -34,10 +34,10 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-arrow.h"
 #include "adg-arrow-private.h"
 #include "adg-path.h"
-#include "adg-intl.h"
 
 
 enum {

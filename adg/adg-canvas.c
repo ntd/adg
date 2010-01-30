@@ -37,9 +37,9 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
-#include "adg-intl.h"
 
 
 G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);

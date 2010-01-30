@@ -34,12 +34,12 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-table-style.h"
 #include "adg-table-style-private.h"
 #include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
-#include "adg-intl.h"
 #include "adg-util.h"
 
 

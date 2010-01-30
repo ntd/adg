@@ -30,6 +30,7 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-dress-builtins.h"
 #include "adg-color-style.h"
 #include "adg-line-style.h"

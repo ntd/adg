@@ -39,9 +39,9 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-title-block.h"
 #include "adg-title-block-private.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_title_block_parent_class)

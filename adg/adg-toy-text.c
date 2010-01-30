@@ -36,11 +36,11 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
 #include "adg-dress-builtins.h"
 #include "adg-font-style.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_toy_text_parent_class)

@@ -33,11 +33,11 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-rdim.h"
 #include "adg-rdim-private.h"
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_rdim_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)

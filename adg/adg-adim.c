@@ -33,10 +33,11 @@
  **/
 
 
+#include <gtk/gtk.h>
+#include "adg-internal.h"
 #include "adg-adim.h"
 #include "adg-adim-private.h"
 #include "adg-dim-private.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)

@@ -36,9 +36,9 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-color-style.h"
 #include "adg-color-style-private.h"
-#include "adg-intl.h"
 
 #define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_color_style_parent_class)
 

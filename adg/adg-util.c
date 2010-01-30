@@ -101,6 +101,7 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-util.h"
 #include <string.h>
 #include <limits.h>

@@ -34,11 +34,11 @@
  **/
 
 
+#include "adg-internal.h"
 #include "adg-projection.h"
 #include "adg-projection-private.h"
 #include "adg-line-style.h"
 #include "adg-dress-builtins.h"
-#include "adg-intl.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_projection_parent_class)
 

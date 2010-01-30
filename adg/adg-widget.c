@@ -40,10 +40,11 @@
  **/
 
 
+#include "adg-internal.h"
+#include "adg-canvas.h"
 #include "adg-widget.h"
 #include "adg-widget-private.h"
 #include "adg-marshal.h"
-#include "adg-intl.h"
 
 #define PARENT_WIDGET_CLASS  ((GtkWidgetClass *) adg_widget_parent_class)
 
