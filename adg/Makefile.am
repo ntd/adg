@@ -50,7 +50,6 @@ h_sources=			adg-adim.h \
 				adg-toy-text.h \
 				adg-util.h
 built_h_sources=		$(builddir)/adg-type-builtins.h \
-				$(builddir)/adg-marshal.h \
 				$(builddir)/adg.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
@@ -82,7 +81,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
 				adg-toy-text-private.h
-built_private_h_sources= 
+built_private_h_sources=	$(builddir)/adg-marshal.h
 c_sources=			adg-adim.c \
 				adg-alignment.c \
 				adg-arrow.c \
@@ -148,7 +147,10 @@ endif
 
 
 # targets
-BUILT_SOURCES=			$(built_h_sources)
+BUILT_SOURCES=			$(built_h_sources) \
+				$(built_private_h_sources)
+#				built_c_sources are properly tracked
+#				by nodist_libadg_la_SOURCES
 CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
