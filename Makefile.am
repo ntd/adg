@@ -29,7 +29,8 @@ SUBDIRS=			cpml \
 				adg \
 				demo \
 				docs \
-				po
+				po \
+				po-properties
 
 pkgconfigdir=			$(libdir)/pkgconfig
 pkgconfig_DATA =		cpml.pc \

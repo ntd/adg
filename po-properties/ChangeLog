@@ -1,0 +1,6 @@
+2010-01-31  Nicola Fontana  <ntd@entidi.it>
+
+	New directory, got from a merge between gtk+/po-properties (current
+	HEAD) and adg/po with some minor modification, such as updating
+	Makefile.in.in similarily to adg/po/Makefile.in.in but keeping the
+	modification needed for po-properties.
