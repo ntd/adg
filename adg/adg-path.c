@@ -420,6 +420,7 @@ adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
     AdgPathPrivate *data;
 
     g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(cpml_path != NULL);
 
     data = path->data;
 
