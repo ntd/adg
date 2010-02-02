@@ -357,7 +357,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  *
  * Appends @primitive to @path. The primitive to add is considered the
  * continuation of the current path so the <structfield>org</structfield>
- * component of @primitive is not used. Anyway the current poins is
+ * component of @primitive is not used. Anyway the current point is
  * checked against it: they must be equal or the function will fail
  * without further processing.
  **/
@@ -369,6 +369,7 @@ adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(primitive != NULL);
+    g_return_if_fail(primitive->org != NULL);
 
     data = path->data;
 
