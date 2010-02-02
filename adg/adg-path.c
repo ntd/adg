@@ -649,6 +649,7 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
     AdgPair p[3];
 
     g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(center != NULL);
 
     data = path->data;
     cpml_vector_from_angle(&p[0], start);
