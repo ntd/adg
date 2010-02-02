@@ -309,6 +309,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     gint length, cnt;
     cairo_path_data_t org;
     cairo_path_data_t *path_data;
+    const AdgPair *pair;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
@@ -328,8 +329,16 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     path_data->header.length = length;
 
     for (cnt = 1; cnt < length; ++ cnt) {
+        pair = va_arg(var_args, AdgPair *);
+        if (pair == NULL) {
+            g_free(primitive.data);
+            g_warning(_("%s: null pair caught while parsing arguments"),
+                      G_STRLOC);
+            return;
+        }
+
         ++ path_data;
-        cpml_pair_to_cairo(va_arg(var_args, AdgPair *), path_data);
+        cpml_pair_to_cairo(pair, path_data);
     }
 
     /* Terminate the creation of the temporary primitive */
