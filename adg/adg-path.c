@@ -774,6 +774,8 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     AdgSegment segment, *dup_segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(vector != NULL);
+    g_return_if_fail(vector->x != 0 || vector->y != 0);
 
     data.model = (AdgModel *) path;
 
