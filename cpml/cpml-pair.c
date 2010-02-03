@@ -115,7 +115,7 @@ cpml_pair_negate(CpmlPair *pair)
  * because one coordinate is 0, 0 is returned and no transformation is
  * performed.
  *
- * Return value: 1 on success, 0 on errors
+ * Returns: 1 on success, 0 on errors
  **/
 cairo_bool_t
 cpml_pair_invert(CpmlPair *pair)
@@ -183,7 +183,7 @@ cpml_pair_mul(CpmlPair *pair, const CpmlPair *src)
  * because of a division by 0, 0 is returned and no transformation
  * is performed.
  *
- * Return value: 1 on success, 0 on errors
+ * Returns: 1 on success, 0 on errors
  **/
 cairo_bool_t
 cpml_pair_div(CpmlPair *pair, const CpmlPair *src)
@@ -221,7 +221,7 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
  * @from or @to could be %NULL, in which case the fallback (0, 0) pair
  * will be used.
  *
- * Return value: the squared distance
+ * Returns: the squared distance
  **/
 double
 cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
@@ -258,7 +258,7 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * IBM Journal of Research and Development 27 (6): 577–581
  * http://www.research.ibm.com/journal/rd/276/ibmrd2706P.pdf
  *
- * Return value: the distance
+ * Returns: the distance
  **/
 double
 cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
@@ -389,7 +389,7 @@ cpml_vector_set_length(CpmlVector *vector, double length)
  * Gets the angle of @vector, in radians. If @vector is (0, 0),
  * 0 is returned.
  *
- * Return value: the angle in radians, a value between -M_PI and M_PI
+ * Returns: the angle in radians, a value between -M_PI and M_PI
  **/
 double
 cpml_vector_angle(const CpmlVector *vector)

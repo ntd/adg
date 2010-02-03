@@ -49,7 +49,7 @@
  * cairo path is a valid operation and must return the start point of
  * the source segment.
  *
- * Return value: 2
+ * Returns: 2
  **/
 int
 cpml_close_type_get_npoints(void)
@@ -101,7 +101,7 @@ cpml_close_vector_at(const CpmlPrimitive *close,
  * Returns the pos value of the point on @close nearest to @pair.
  * The returned value is always between 0 and 1.
  *
- * Return value: the pos value, always between 0 and 1
+ * Returns: the pos value, always between 0 and 1
  **/
 double
 cpml_close_near_pos(const CpmlPrimitive *close, const CpmlPair *pair)

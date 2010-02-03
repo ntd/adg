@@ -92,7 +92,7 @@ static void             arc_to_curve    (CpmlPrimitive  *curve,
  *
  * Returns the number of point needed to properly specify an arc primitive.
  *
- * Return value: 3
+ * Returns: 3
  **/
 int
 cpml_arc_type_get_npoints(void)
@@ -129,7 +129,7 @@ cpml_arc_type_get_npoints(void)
  * { -M_PI < value < 3*M_PI } inclusive instead of the usual
  * { -M_PI < value < M_PI } range.
  *
- * Return value: 1 if the function worked succesfully, 0 on errors
+ * Returns: 1 if the function worked succesfully, 0 on errors
  **/
 cairo_bool_t
 cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
@@ -170,7 +170,7 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
  *
  * Given the @arc primitive, returns its length.
  *
- * Return value: the requested length or 0 on errors
+ * Returns: the requested length or 0 on errors
  **/
 double
 cpml_arc_length(const CpmlPrimitive *arc)
@@ -323,7 +323,7 @@ cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
  * </itemizedlist>
  * </important>
  *
- * Return value: the pos value, always between 0 and 1
+ * Returns: the pos value, always between 0 and 1
  **/
 double
 cpml_arc_near_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
@@ -356,8 +356,8 @@ cpml_arc_near_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections found (max 2)
- *               or 0 if the primitives do not intersect
+ * Returns: the number of intersections found (max 2)
+ *          or 0 if the primitives do not intersect
  **/
 int
 cpml_arc_intersection(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
@@ -388,8 +388,8 @@ cpml_arc_intersection(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections found (max 2)
- *               or 0 if the primitives do not intersect
+ * Returns: the number of intersections found (max 2)
+ *          or 0 if the primitives do not intersect
  **/
 int
 cpml_arc_intersection_with_line(const CpmlPrimitive *arc,

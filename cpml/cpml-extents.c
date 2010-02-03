@@ -54,7 +54,7 @@
  *
  * Copies @src in @extents.
  *
- * Return value: @extents
+ * Returns: @extents
  **/
 CpmlExtents *
 cpml_extents_copy(CpmlExtents *extents, const CpmlExtents *src)

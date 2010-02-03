@@ -39,7 +39,7 @@
  *
  * Returns the number of point needed to properly specify a curve primitive.
  *
- * Return value: 4
+ * Returns: 4
  **/
 int
 cpml_curve_type_get_npoints(void)
@@ -61,7 +61,7 @@ cpml_curve_type_get_npoints(void)
  * </itemizedlist>
  * </important>
  *
- * Return value: the requested length
+ * Returns: the requested length
  **/
 double
 cpml_curve_length(const CpmlPrimitive *curve)
@@ -245,7 +245,7 @@ cpml_curve_vector_at(const CpmlPrimitive *curve,
  * </itemizedlist>
  * </important>
  *
- * Return value: the pos value, always between 0 and 1
+ * Returns: the pos value, always between 0 and 1
  **/
 double
 cpml_curve_near_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
@@ -279,7 +279,7 @@ cpml_curve_near_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections found (max 4)
+ * Returns: the number of intersections found (max 4)
  *               or 0 if the primitives do not intersect
  **/
 int
@@ -313,8 +313,8 @@ cpml_curve_intersection(const CpmlPrimitive *curve,
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections found (max 4)
- *               or 0 if the primitives do not intersect
+ * Returns: the number of intersections found (max 4)
+ *          or 0 if the primitives do not intersect
  **/
 int
 cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
@@ -347,8 +347,8 @@ cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
  * </itemizedlist>
  * </important>
  *
- * Return value: the number of intersections found (max 4)
- *               or 0 if the primitives do not intersect
+ * Returns: the number of intersections found (max 4)
+ *          or 0 if the primitives do not intersect
  **/
 int
 cpml_curve_intersection_with_line(const CpmlPrimitive *curve,

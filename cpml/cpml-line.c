@@ -46,7 +46,7 @@ static cairo_bool_t     intersection            (const CpmlPair *p,
  *
  * Returns the number of point needed to properly specify a line primitive.
  *
- * Return value: 2
+ * Returns: 2
  **/
 int
 cpml_line_type_get_npoints(void)
@@ -61,7 +61,7 @@ cpml_line_type_get_npoints(void)
  * Given the @line primitive, returns the distance between its
  * start and end points.
  *
- * Return value: the requested distance, that is the @line length
+ * Returns: the requested distance, that is the @line length
  **/
 double
 cpml_line_length(const CpmlPrimitive *line)
@@ -157,7 +157,7 @@ cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
  * projection on @line, as this is when the point is closer to
  * a line primitive.
  *
- * Return value: the pos value, always between 0 and 1
+ * Returns: the pos value, always between 0 and 1
  **/
 double
 cpml_line_near_pos(const CpmlPrimitive *line, const CpmlPair *pair)
@@ -205,8 +205,8 @@ cpml_line_near_pos(const CpmlPrimitive *line, const CpmlPair *pair)
  * further processing. If @line and @line2 are cohincident,
  * their intersections are not considered.
  *
- * Return value: the number of intersections found (max 1)
- *               or 0 if the primitives do not intersect
+ * Returns: the number of intersections found (max 1)
+ *          or 0 if the primitives do not intersect
  **/
 int
 cpml_line_intersection(const CpmlPrimitive *line, const CpmlPrimitive *line2,

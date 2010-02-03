@@ -112,7 +112,7 @@ static void             reshape                 (CpmlSegment       *segment);
  * Also, the first primitive must be a %CAIRO_PATH_MOVE_TO, so no
  * dependency on the cairo context is needed.
  *
- * Return value: 1 on success, 0 on errors
+ * Returns: 1 on success, 0 on errors
  **/
 cairo_bool_t
 cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
@@ -136,7 +136,7 @@ cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
  *
  * Makes a shallow copy of @src into @segment.
  *
- * Return value: @segment or %NULL on errors
+ * Returns: @segment or %NULL on errors
  **/
 CpmlSegment *
 cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
@@ -168,7 +168,7 @@ cpml_segment_reset(CpmlSegment *segment)
  *
  * Modifies @segment to point to the next segment of the source cairo path.
  *
- * Return value: 1 on success, 0 if no next segment found or errors
+ * Returns: 1 on success, 0 if no next segment found or errors
  **/
 cairo_bool_t
 cpml_segment_next(CpmlSegment *segment)
@@ -443,7 +443,7 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * scanned for intersections with any primitive in @segment2. This
  * means @segment has a higher precedence over @segment2.
  *
- * Return value: the number of intersections found
+ * Returns: the number of intersections found
  **/
 int
 cpml_segment_intersection(const CpmlSegment *segment,
@@ -524,7 +524,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * the CpmlSegment structure accordling. One, and only one,
  * %CAIRO_PATH_MOVE_TO primitive is left.
  *
- * Return value: 1 on success, 0 on no leading MOVE_TOs or on errors
+ * Returns: 1 on success, 0 on no leading MOVE_TOs or on errors
  **/
 static cairo_bool_t
 normalize(CpmlSegment *segment)
@@ -544,7 +544,7 @@ normalize(CpmlSegment *segment)
  * the <structname>CpmlSegment</structname> structure accordling.
  * One, and only one, %CAIRO_PATH_MOVE_TO primitive is left.
  *
- * Return value: 1 on success, 0 on no leading MOVE_TOs or on empty path
+ * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
  **/
 static cairo_bool_t
 ensure_one_move_to(CpmlSegment *segment)

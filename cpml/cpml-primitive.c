@@ -78,7 +78,7 @@ static void     dump_cairo_point        (const cairo_path_data_t *path_data);
  * Copies @src in @primitive. This is a shallow copy: the internal fields
  * of @primitive refer to the same memory as the original @src primitive.
  *
- * Return value: @primitive
+ * Returns: @primitive
  **/
 CpmlPrimitive *
 cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
@@ -93,7 +93,7 @@ cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
  *
  * Initializes @primitive to the first primitive of @segment.
  *
- * Return value: @primitive
+ * Returns: @primitive
  **/
 CpmlPrimitive *
 cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
@@ -134,7 +134,7 @@ cpml_primitive_reset(CpmlPrimitive *primitive)
  * source segment. If there are no more primitives, @primitive is
  * not changed and 0 is returned.
  *
- * Return value: 1 on success, 0 if no next primitive found or errors
+ * Returns: 1 on success, 0 if no next primitive found or errors
  **/
 cairo_bool_t
 cpml_primitive_next(CpmlPrimitive *primitive)
@@ -164,7 +164,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  * It is similar to cpml_primitive_type_get_npoints() but using
  * a @primitive instance instead of a type.
  *
- * Return value: the number of points or -1 on errors
+ * Returns: the number of points or -1 on errors
  **/
 int
 cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
@@ -191,8 +191,8 @@ cpml_primitive_get_npoints(const CpmlPrimitive *primitive)
  * of a close path is a valid operation and must returns the start
  * of the segment.
  *
- * Return value: a pointer to the requested point (in cairo format)
- *               or %NULL if the point is outside the valid range
+ * Returns: a pointer to the requested point (in cairo format)
+ *          or %NULL if the point is outside the valid range
  **/
 cairo_path_data_t *
 cpml_primitive_get_point(const CpmlPrimitive *primitive, int npoint)
@@ -338,7 +338,7 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
  * If the intersections are more than @max, only the first @max pairs
  * are stored in @dest.
  *
- * Return value: the number of intersections found
+ * Returns: the number of intersections found
  **/
 int
 cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
@@ -373,7 +373,7 @@ cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
  * its own implementation.
  * </para></note>
  *
- * Return value: the number of points or -1 on errors
+ * Returns: the number of points or -1 on errors
  **/
 int
 cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
@@ -412,7 +412,7 @@ cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
  * its own implementation.
  * </para></note>
  *
- * Return value: the requested length or 0 on errors
+ * Returns: the requested length or 0 on errors
  **/
 double
 cpml_primitive_length(const CpmlPrimitive *primitive)
@@ -578,7 +578,7 @@ cpml_primitive_vector_at(const CpmlPrimitive *primitive,
  * its own implementation.
  * </para></note>
  *
- * Return value: the requested pos value between 0 and 1 or -1 on errors
+ * Returns: the requested pos value between 0 and 1 or -1 on errors
  **/
 double
 cpml_primitive_near_pos(const CpmlPrimitive *primitive, const CpmlPair *pair)
@@ -624,8 +624,8 @@ cpml_primitive_near_pos(const CpmlPrimitive *primitive, const CpmlPair *pair)
  * </itemizedlist>
  * </important>
  *
- * Return value: 1 on success, 0 if the end vector of @primitive
- *               and the start vector of @primitive2 are parallel
+ * Returns: 1 on success, 0 if the end vector of @primitive
+ *          and the start vector of @primitive2 are parallel
  **/
 cairo_bool_t
 cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
@@ -691,8 +691,8 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * and @primitive swapped.
  * </para></note>
  *
- * Return value: the number of intersection points found or 0 if the
- *               primitives do not intersect
+ * Returns: the number of intersection points found or 0 if the
+ *          primitives do not intersect
  **/
 int
 cpml_primitive_intersection(const CpmlPrimitive *primitive,
