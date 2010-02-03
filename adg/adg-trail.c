@@ -179,7 +179,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 {
     AdgTrailPrivate *data;
     cairo_path_t *cairo_path;
-    CpmlPath *src;
+    CpmlPath *cpml_path;
     GArray *dst;
     const cairo_path_data_t *p_src;
     int i;
@@ -193,13 +193,16 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     if (cairo_path->data != NULL)
         return cairo_path;
 
-    src = adg_trail_cpml_path(trail);
+    cpml_path = adg_trail_cpml_path(trail);
+    if (cpml_path_is_empty(cpml_path))
+        return NULL;
+
     dst = g_array_sized_new(FALSE, FALSE,
-                            sizeof(cairo_path_data_t), src->num_data);
+                            sizeof(cairo_path_data_t), cpml_path->num_data);
 
     /* Cycle the CpmlPath and convert arcs to Bézier curves */
-    for (i = 0; i < src->num_data; i += p_src->header.length) {
-        p_src = (const cairo_path_data_t *) src->data + i;
+    for (i = 0; i < cpml_path->num_data; i += p_src->header.length) {
+        p_src = (const cairo_path_data_t *) cpml_path->data + i;
 
         if (p_src->header.type == CAIRO_PATH_ARC_TO)
             dst = arc_to_curves(dst, p_src);
@@ -291,16 +294,17 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
     }
 
     cpml_path = adg_trail_cpml_path(trail);
-    if (cpml_path == NULL || cpml_path->data == NULL || cpml_path->num_data == 0)
+    if (cpml_path_is_empty(cpml_path))
         return FALSE;
 
     cpml_segment_from_cairo(segment, cpml_path);
-    for (cnt = 1; cnt < n_segment; ++cnt)
+    for (cnt = 1; cnt < n_segment; ++cnt) {
         if (!cpml_segment_next(segment)) {
             g_warning(_("%s: segment %u is out of range for type `%s'"),
                       G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
             return FALSE;
         }
+    }
 
     return TRUE;
 }
@@ -329,12 +333,13 @@ adg_trail_get_extents(AdgTrail *trail)
         CpmlExtents extents;
 
         cpml_path = adg_trail_cpml_path(trail);
-
-        if (cpml_segment_from_cairo(&segment, cpml_path))
+        if (!cpml_path_is_empty(cpml_path) &&
+            cpml_segment_from_cairo(&segment, cpml_path)) {
             do {
                 cpml_segment_extents(&segment, &extents);
                 cpml_extents_add(&data->extents, &extents);
             } while (cpml_segment_next(&segment));
+        }
     }
 
     return &data->extents;
