@@ -766,6 +766,9 @@ adg_path_fillet(AdgPath *path, gdouble radius)
  * @vector) to mirror the segment is applied on all its points.
  * The result is then reversed with cpml_segment_reverse() and
  * appended to the original path with adg_path_append_segment().
+ *
+ * For convenience, if @vector is %NULL the path is reversed
+ * around the x axis (y=0).
  **/
 void
 adg_path_reflect(AdgPath *path, const CpmlVector *vector)
@@ -774,8 +777,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     AdgSegment segment, *dup_segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(vector != NULL);
-    g_return_if_fail(vector->x != 0 || vector->y != 0);
+    g_return_if_fail(vector == NULL || vector->x != 0 || vector->y != 0);
 
     data.model = (AdgModel *) path;
 
@@ -801,8 +803,16 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
                           sin2angle, -cos2angle, 0, 0);
     }
 
-    adg_trail_put_segment((AdgTrail *) path, 1, &segment);
+    if (!adg_trail_put_segment((AdgTrail *) path, 1, &segment))
+        return;
+
+    /* No need to reverse an empty segment */
+    if (segment.num_data == 0 || segment.num_data == 0)
+        return;
+
     dup_segment = adg_segment_deep_dup(&segment);
+    if (dup_segment == NULL)
+        return;
 
     cpml_segment_reverse(dup_segment);
     cpml_segment_transform(dup_segment, &data.matrix);
