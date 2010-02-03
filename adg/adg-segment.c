@@ -94,12 +94,15 @@ AdgSegment *
 adg_segment_deep_dup(const AdgSegment *segment)
 {
     AdgSegment *dest;
+    int num_data;
     gsize segment_size, data_size;
     cairo_path_data_t *p_data;
 
+    g_return_val_if_fail(segment != NULL, NULL);
+
+    num_data = segment->num_data;
     segment_size = sizeof(AdgSegment);
-    data_size = segment->data == NULL ?
-        0 : sizeof(cairo_path_data_t) * segment->num_data;
+    data_size = segment->data ? sizeof(cairo_path_data_t) * num_data : 0;
     dest = (AdgSegment *) g_malloc(segment_size + data_size);
     p_data = (cairo_path_data_t *) ((gchar *) dest + segment_size);
 
@@ -107,7 +110,7 @@ adg_segment_deep_dup(const AdgSegment *segment)
 
     if (data_size > 0) {
         dest->data = memcpy(p_data, segment->data, data_size);
-        dest->num_data = segment->num_data;
+        dest->num_data = num_data;
     } else {
         dest->data = NULL;
         dest->num_data = 0;
