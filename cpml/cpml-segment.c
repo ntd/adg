@@ -59,6 +59,16 @@
  **/
 
 /**
+ * cpml_path_is_empty:
+ * @cpml_path: a #CpmlPath (or a #cairo_path_t) pointer
+ *
+ * Checks whether @cpml_path is empty. An invalid path is considered
+ * as an empty path.
+ *
+ * Returns: %1 if the path is empty or invalid, %0 otherwise
+ */
+
+/**
  * CpmlSegment:
  * @path:     the source #CpmlPath struct
  * @data:     the data points of the segment; the first primitive

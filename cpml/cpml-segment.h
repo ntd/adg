@@ -26,6 +26,12 @@
 
 CAIRO_BEGIN_DECLS
 
+
+#define cpml_path_is_empty(cpml_path) \
+    ((cpml_path) == NULL || (cpml_path)->data == NULL || \
+     (cpml_path)->num_data <= 0)
+
+
 typedef cairo_path_t CpmlPath;
 typedef struct _CpmlSegment CpmlSegment;
 
