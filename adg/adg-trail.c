@@ -291,6 +291,8 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
     }
 
     cpml_path = adg_trail_cpml_path(trail);
+    if (cpml_path == NULL || cpml_path->data == NULL || cpml_path->num_data == 0)
+        return FALSE;
 
     cpml_segment_from_cairo(segment, cpml_path);
     for (cnt = 1; cnt < n_segment; ++cnt)
