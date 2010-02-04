@@ -148,11 +148,13 @@ set_property(GObject *object,
  *
  * Creates a new alignment container with the specified factor.
  *
- * Returns: the newly created alignment
+ * Returns: the newly created alignment or %NULL on errors
  **/
 AdgAlignment *
 adg_alignment_new(const AdgPair *factor)
 {
+    g_return_val_if_fail(factor != NULL, NULL);
+
     return g_object_new(ADG_TYPE_ALIGNMENT, "factor", factor, NULL);
 }
 
@@ -193,7 +195,7 @@ void
 adg_alignment_set_factor(AdgAlignment*alignment, const AdgPair *factor)
 {
     g_return_if_fail(ADG_IS_ALIGNMENT(alignment));
-    g_return_if_fail(factor != NULL);
+    /* The factor == NULL condition is handled by set_factor() */
 
     if (set_factor(alignment, factor))
         g_object_notify((GObject *) alignment, "factor");
@@ -283,7 +285,11 @@ arrange(AdgEntity *entity)
 static gboolean
 set_factor(AdgAlignment *alignment, const AdgPair *factor)
 {
-    AdgAlignmentPrivate *data = alignment->data;
+    AdgAlignmentPrivate *data;
+
+    g_return_val_if_fail(factor != NULL, FALSE);
+
+    data = alignment->data;
 
     if (adg_pair_equal(&data->factor, factor))
         return FALSE;
