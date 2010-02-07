@@ -3,10 +3,11 @@ mkenums_to_c=			$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 mkenums_to_h=			$(mkenums_to_c)
 genmarshal_to_c=		$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $< > $@
 genmarshal_to_h=		$(MSG_GEN)$(GLIB_GENMARSHAL) --header --prefix=adg_marshal $< > $@
-AM_CFLAGS=			-I$(top_srcdir) \
+
+AM_CFLAGS=			@ADG_CFLAGS@ \
+				-I$(top_srcdir) \
 				-I$(top_builddir)
-AM_LDFLAGS=
-PATTERN=
+AM_LDFLAGS=			@ADG_LIBS@
 
 
 # file groups
@@ -127,21 +128,9 @@ EXTRA_DIST=			adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
 				adg-marshal.genmarshal
 if HAVE_GTK2
-AM_CFLAGS+=			@GTK2_CFLAGS@
-AM_LDFLAGS+=			@GTK2_LIBS@
 h_sources+=			adg-widget.h
 private_h_sources+=		adg-widget-private.h
 c_sources+=			adg-widget.c
-PATTERN+=			/\/\* if GTK2 \*\//d;/\/\* endif GTK2 \*\//d;
-
-else
-
-AM_CFLAGS+=			@GOBJECT2_CFLAGS@ \
-				@CAIRO_CFLAGS@
-AM_LDFLAGS+=			@GOBJECT2_LIBS@ \
-				@GTK2_LIBS@
-PATTERN+=			/\/\* if GTK2 \*\//,/\/\* endif GTK2 \*\//d;
-
 endif
 
 

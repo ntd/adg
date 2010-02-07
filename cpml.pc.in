@@ -5,7 +5,9 @@ includedir=@includedir@
 
 Name: CPML
 Description: Cairo Path Manipulation Library
-Requires: cairo
 Version: @VERSION@
+URL: http://adg.entidi.com
+
+Requires: @CPML_REQUIRES@
 Libs: -L${libdir} -lcpml
 Cflags:

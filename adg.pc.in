@@ -8,6 +8,6 @@ Description: Automatic Drawing Generation, a GObject base cairo canvas
 Version: @VERSION@
 URL: http://adg.entidi.com
 
-Requires: cpml >= @VERSION@,gobject-2.0 >= 2.4.0@ADG_OPTIONAL_REQUIRES@
+Requires: cpml >= @VERSION@,@ADG_REQUIRES@
 Libs: -L${libdir} -ladg
 Cflags:

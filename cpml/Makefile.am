@@ -1,8 +1,6 @@
-## Process this file with automake to produce Makefile.in
-
-AM_CFLAGS=			@CAIRO_CFLAGS@ \
+AM_CFLAGS=			@CPML_CFLAGS@ \
 				-I$(top_srcdir)
-AM_LDFLAGS=			@CAIRO_LIBS@
+AM_LDFLAGS=			@CPML_LIBS@
 
 
 # file groups

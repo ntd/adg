@@ -45,7 +45,7 @@ AC_DEFINE([GETTEXT_PACKAGE],[["]AC_PACKAGE_TARNAME-adg_api_version["]],
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
-AC_OUTPUT_COMMANDS([case "$CONFIG_FILES" in *po-properties/Makefile.in*)
+AC_OUTPUT_COMMANDS([case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
         sed -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
       esac])
 
@@ -63,19 +63,33 @@ AC_ARG_ENABLE([gtk2],
               [AS_HELP_STRING([--enable-gtk2],
                               [include GKT+2 specific widgets @<:@default=check@:>@])],
               [],[enable_gtk2=check])
-ADG_REQUIRES=''
-AS_IF([test "x$enable_gtk2" != "xno"],
+AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= gtk_prereq],
-                         [enable_gtk2=yes
-                          ADG_OPTIONAL_REQUIRES=',gtk+-2.0 >= gtk_prereq'],
-                         [AS_IF([test "x$enable_gtk2" = "xyes"],
+                         [enable_gtk2=yes],
+                         [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([$GTK2_PKG_ERRORS but GTK+2 support requested])],
                                 [enable_gtk2=no])])])
-AM_CONDITIONAL([HAVE_GTK2],[test "x$enable_gtk2" = "xyes"])
-AC_SUBST([ADG_OPTIONAL_REQUIRES])
+AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
 
 
 # Final step
+
+CPML_REQUIRES='cairo >= cairo_prereq'
+CPML_CFLAGS="${CAIRO_CFLAGS}"
+CPML_LIBS="${CAIRO_LIBS}"
+AS_IF([test "x${enable_gtk2}" = "xyes"],
+      [ADG_REQUIRES='gtk+-2.0 >= gtk_prereq'
+       ADG_CFLAGS="${GTK2_CFLAGS}"
+       ADG_LIBS="${GTK2_LIBS}"],
+      [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
+       ADG_CFLAGS="${GOBJECT2_CFLAGS} ${CAIRO_CFLAGS}"
+       ADG_LIBS="${GOBJECT2_LIBS} ${CAIRO_LIBS}"])
+AC_SUBST([CPML_REQUIRES])
+AC_SUBST([CPML_CFLAGS])
+AC_SUBST([CPML_LIBS])
+AC_SUBST([ADG_REQUIRES])
+AC_SUBST([ADG_CFLAGS])
+AC_SUBST([ADG_LIBS])
 
 SHAVE_INIT([],[enable])
 AC_CONFIG_FILES([shave
@@ -92,5 +106,15 @@ AC_CONFIG_FILES([shave
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml
                  po/Makefile.in
-                 po-properties/Makefile.in])
+                 po-properties/Makefile.in
+		 tests/Makefile])
 AC_OUTPUT
+
+
+# Report
+
+echo ""
+echo "                CPML library to use: internal"
+echo " AdgWidget support (requires GTK+2): ${enable_gtk2}"
+echo "                Build API reference: ${enable_gtk_doc}"
+echo ""

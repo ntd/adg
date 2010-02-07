@@ -33,7 +33,6 @@
  **/
 
 
-#include <gtk/gtk.h>
 #include "adg-internal.h"
 #include "adg-adim.h"
 #include "adg-adim-private.h"
