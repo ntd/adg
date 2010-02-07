@@ -105,8 +105,7 @@ AC_CONFIG_FILES([shave
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml
                  docs/adg/Makefile
-                 docs/adg/bookinfo.xml
-		 tests/Makefile])
+                 docs/adg/bookinfo.xml])
 AC_OUTPUT
 
 
