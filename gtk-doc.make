@@ -11,7 +11,7 @@ GTKDOC_RUN = $(LIBTOOL) --mode=execute
 else
 GTKDOC_CC = $(CC) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 GTKDOC_LD = $(CC) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
-GTKDOC_RUN = sh -c
+GTKDOC_RUN =
 endif
 
 # We set GPATH here; this gives us semantics for GNU make
@@ -30,8 +30,9 @@ EXTRA_DIST = 				\
 	$(DOC_MODULE)-sections.txt	\
 	$(DOC_MODULE)-overrides.txt
 
-DOC_STAMPS=scan-build.stamp sgml-build.stamp html-build.stamp \
-	   $(srcdir)/sgml.stamp $(srcdir)/html.stamp
+DOC_STAMPS=scan-build.stamp sgml-build.stamp html-build.stamp pdf-build.stamp \
+	$(srcdir)/sgml.stamp $(srcdir)/html.stamp  \
+	$(srcdir)/pdf.stamp
 
 SCANOBJ_FILES = 		 \
 	$(DOC_MODULE).args 	 \
@@ -48,12 +49,23 @@ REPORT_FILES = \
 CLEANFILES = $(SCANOBJ_FILES) $(REPORT_FILES) $(DOC_STAMPS)
 
 if ENABLE_GTK_DOC
-all-local: html-build.stamp
+if GTK_DOC_BUILD_HTML
+HTML_BUILD_STAMP=html-build.stamp
+else
+HTML_BUILD_STAMP=
+endif
+if GTK_DOC_BUILD_PDF
+PDF_BUILD_STAMP=pdf-build.stamp
+else
+PDF_BUILD_STAMP=
+endif
+
+all-local: $(HTML_BUILD_STAMP) $(PDF_BUILD_STAMP)
 else
 all-local:
 endif
 
-docs: html-build.stamp
+docs: $(HTML_BUILD_STAMP) $(PDF_BUILD_STAMP)
 
 $(REPORT_FILES): sgml-build.stamp
 
@@ -62,9 +74,9 @@ $(REPORT_FILES): sgml-build.stamp
 scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
 	@echo 'gtk-doc: Scanning header files'
 	@-chmod -R u+w $(srcdir)
-	cd $(srcdir) && \
+	@cd $(srcdir) && \
 	  gtkdoc-scan --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR) --ignore-headers="$(IGNORE_HFILES)" $(SCAN_OPTIONS) $(EXTRA_HFILES)
-	if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null 2>&1 ; then \
+	@if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null 2>&1 ; then \
 	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" RUN="$(GTKDOC_RUN)" CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS)" LDFLAGS="$(GTKDOC_LIBS) $(LDFLAGS)" gtkdoc-scangobj $(SCANGOBJ_OPTIONS) --module=$(DOC_MODULE) --output-dir=$(srcdir) ; \
 	else \
 	    cd $(srcdir) ; \
@@ -72,19 +84,19 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
                test -f $$i || touch $$i ; \
 	    done \
 	fi
-	touch scan-build.stamp
+	@touch scan-build.stamp
 
 $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
 	@true
 
 #### xml ####
 
-sgml-build.stamp: $(DOC_MODULE)-decl.txt $(HFILE_GLOB) $(CFILE_GLOB) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt $(expand_content_files)
+sgml-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt $(expand_content_files)
 	@echo 'gtk-doc: Building XML'
 	@-chmod -R u+w $(srcdir)
-	cd $(srcdir) && \
+	@cd $(srcdir) && \
 	gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR) --output-format=xml --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) $(MKDB_OPTIONS)
-	touch sgml-build.stamp
+	@touch sgml-build.stamp
 
 sgml.stamp: sgml-build.stamp
 	@true
@@ -94,18 +106,37 @@ sgml.stamp: sgml-build.stamp
 html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
 	@echo 'gtk-doc: Building HTML'
 	@-chmod -R u+w $(srcdir)
-	rm -rf $(srcdir)/html
-	mkdir $(srcdir)/html
-	mkhtml_options=""; \
+	@rm -rf $(srcdir)/html
+	@mkdir $(srcdir)/html
+	@mkhtml_options=""; \
 	gtkdoc-mkhtml 2>&1 --help | grep  >/dev/null "\-\-path"; \
 	if test "$(?)" = "0"; then \
 	  mkhtml_options=--path="$(srcdir)"; \
-	fi
-	cd $(srcdir)/html && gtkdoc-mkhtml $(mkhtml_options) $(MKHTML_OPTIONS) $(DOC_MODULE) ../$(DOC_MAIN_SGML_FILE)
-	test "x$(HTML_IMAGES)" = "x" || ( cd $(srcdir) && cp $(HTML_IMAGES) html )
+	fi; \
+	cd $(srcdir)/html && gtkdoc-mkhtml $$mkhtml_options $(MKHTML_OPTIONS) $(DOC_MODULE) ../$(DOC_MAIN_SGML_FILE)
+	@test "x$(HTML_IMAGES)" = "x" || ( cd $(srcdir) && cp $(HTML_IMAGES) html )
 	@echo 'gtk-doc: Fixing cross-references'
-	cd $(srcdir) && gtkdoc-fixxref --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
-	touch html-build.stamp
+	@cd $(srcdir) && gtkdoc-fixxref --module=$(DOC_MODULE) --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
+	@touch html-build.stamp
+
+#### pdf ####
+
+pdf-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+	@echo 'gtk-doc: Building PDF'
+	@-chmod -R u+w $(srcdir)
+	@rm -rf $(srcdir)/$(DOC_MODULE).pdf
+	@mkpdf_imgdirs=""; \
+	if test "x$(HTML_IMAGES)" != "x"; then \
+	  for img in $(HTML_IMAGES); do \
+	    part=`dirname $$img`; \
+	    echo $$mkpdf_imgdirs | grep >/dev/null "\-\-imgdir=$$part "; \
+	    if test $$? != 0; then \
+	      mkpdf_imgdirs="$$mkpdf_imgdirs --imgdir=$$part"; \
+	    fi; \
+	  done; \
+	fi; \
+	cd $(srcdir) && gtkdoc-mkpdf --path="$(abs_srcdir)" $$mkpdf_imgdirs $(DOC_MODULE) $(DOC_MAIN_SGML_FILE) $(MKPDF_OPTIONS)
+	@touch pdf-build.stamp
 
 ##############
 
@@ -115,14 +146,14 @@ clean-local:
 
 distclean-local:
 	cd $(srcdir) && \
-	  rm -rf xml $(REPORT_FILES) \
+	  rm -rf xml $(REPORT_FILES) $(DOC_MODULE).pdf \
 	         $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 
 maintainer-clean-local: clean
 	cd $(srcdir) && rm -rf html
 
 install-data-local:
-	installfiles=`echo $(srcdir)/html/*`; \
+	@installfiles=`echo $(srcdir)/html/*`; \
 	if test "$$installfiles" = '$(srcdir)/html/*'; \
 	then echo '-- Nothing to install' ; \
 	else \
@@ -142,12 +173,11 @@ install-data-local:
 	    mv -f $${installdir}/$(DOC_MODULE).devhelp \
 	      $${installdir}/$(DOC_MODULE)-$(DOC_MODULE_VERSION).devhelp; \
 	  fi; \
-	  ! which gtkdoc-rebase >/dev/null 2>&1 || \
-	    gtkdoc-rebase --relative --dest-dir=$(DESTDIR) --html-dir=$${installdir} ; \
+	  $(GTKDOC_REBASE) --relative --dest-dir=$(DESTDIR) --html-dir=$${installdir}; \
 	fi
 
 uninstall-local:
-	if test -n "$(DOC_MODULE_VERSION)"; then \
+	@if test -n "$(DOC_MODULE_VERSION)"; then \
 	  installdir="$(DESTDIR)$(TARGET_DIR)-$(DOC_MODULE_VERSION)"; \
 	else \
 	  installdir="$(DESTDIR)$(TARGET_DIR)"; \
@@ -168,10 +198,10 @@ endif
 dist-hook: dist-check-gtkdoc dist-hook-local
 	mkdir $(distdir)/html
 	cp $(srcdir)/html/* $(distdir)/html
+	-cp $(srcdir)/$(DOC_MODULE).pdf $(distdir)/ 2> /dev/null
 	-cp $(srcdir)/$(DOC_MODULE).types $(distdir)/
 	-cp $(srcdir)/$(DOC_MODULE)-sections.txt $(distdir)/
 	cd $(distdir) && rm -f $(DISTCLEANFILES)
-	! which gtkdoc-rebase >/dev/null 2>&1 || \
-	  gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
+	$(GTKDOC_REBASE) --online --relative --html-dir=$(distdir)/html
 
 .PHONY : dist-hook-local docs
