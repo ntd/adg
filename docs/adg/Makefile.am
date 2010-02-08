@@ -1,6 +1,9 @@
-## Process this file with automake to produce Makefile.in
+GTKDOC_CFLAGS=		@ADG_CFLAGS@ \
+			-I$(top_srcdir) \
+			-I$(top_builddir)
+GTKDOC_LIBS=		@ADG_LIBS@ \
+			$(top_builddir)/adg/libadg.la
 
-AUTOMAKE_OPTIONS=	1.6
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=		$(abs_top_srcdir)/adg
@@ -12,10 +15,8 @@ MKDB_OPTIONS=		--sgml-mode \
 			--output-format=xml
 MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=
-HFILE_GLOB=		$(top_srcdir)/adg/*.h \
-			$(top_builddir)/adg/*.h
-CFILE_GLOB=		$(top_srcdir)/adg/*.c \
-			$(top_builddir)/adg/*.c
+HFILE_GLOB=		$(top_srcdir)/adg/*.h
+CFILE_GLOB=		$(top_srcdir)/adg/*.c
 IGNORE_HFILES=		adg.h \
 			adg-internal.h \
 			adg-type-builtins.h \
@@ -47,8 +48,8 @@ IGNORE_HFILES=		adg.h \
 			adg-table-private.h \
 			adg-table-style-private.h \
 			adg-title-block-private.h \
-			adg-trail-private.h \
 			adg-toy-text-private.h \
+			adg-trail-private.h \
 			adg-widget-private.h
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
@@ -56,10 +57,6 @@ content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/TODO.xml \
 			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
 expand_content_files=
-AM_CPPFLAGS=		-I$(top_srcdir) \
-			@GTK2_CFLAGS@
-GTKDOC_LIBS=		$(top_builddir)/adg/libadg.la \
-			@GTK2_LIBS@
 
 include $(top_srcdir)/gtk-doc.make
 
