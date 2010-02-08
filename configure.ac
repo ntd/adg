@@ -10,13 +10,12 @@ m4_define([gtk_prereq],[2.12.0])
 # Initialization
 
 AC_PREREQ([2.59])
-AC_INIT([Automatic Drawing Generation],
-        [adg_version],[http://dev.entidi.com/p/adg/],
-        [adg],[http://adg.entidi.com/])
+AC_INIT([Automatic Drawing Generation],m4_expand([adg_version]),
+        [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([1.6])
+AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
 
 
 # Check for programs
@@ -100,13 +99,13 @@ AC_CONFIG_FILES([shave
                  cpml/Makefile
                  adg/Makefile
                  demo/Makefile
-                 docs/Makefile
-                 docs/adg/Makefile
-                 docs/adg/bookinfo.xml
-                 docs/cpml/Makefile
-                 docs/cpml/bookinfo.xml
                  po/Makefile.in
                  po-properties/Makefile.in
+                 docs/Makefile
+                 docs/cpml/Makefile
+                 docs/cpml/bookinfo.xml
+                 docs/adg/Makefile
+                 docs/adg/bookinfo.xml
 		 tests/Makefile])
 AC_OUTPUT
 
@@ -114,7 +113,10 @@ AC_OUTPUT
 # Report
 
 echo ""
-echo "                CPML library to use: internal"
+echo 'ADG canvas adg_version will be built with the following options:'
+echo "----------------------------------------------------------"
+echo '                  API compatibility: adg_api_version'
+echo '                CPML library to use: internal (cpml-adg_version)'
 echo " AdgWidget support (requires GTK+2): ${enable_gtk2}"
 echo "                Build API reference: ${enable_gtk_doc}"
 echo ""
