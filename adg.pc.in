@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: ADG
-Description: Automatic Drawing Generation, a GObject base cairo canvas
+Description: Automatic Drawing Generation, a GObject based cairo canvas
 Version: @VERSION@
 URL: http://adg.entidi.com
 
