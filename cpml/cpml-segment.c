@@ -457,10 +457,10 @@ cpml_segment_intersection(const CpmlSegment *segment,
     total = 0;
 
     do {
-        partial = cpml_primitive_intersection_with_segment(&portion,
-                                                           segment2,
-                                                           dest + total,
-                                                           max - total);
+        partial = cpml_primitive_put_intersections_with_segment(&portion,
+                                                                segment2,
+                                                                dest + total,
+                                                                max - total);
         total += partial;
     } while (total < max && cpml_primitive_next(&portion));
 

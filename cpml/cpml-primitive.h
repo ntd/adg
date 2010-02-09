@@ -54,7 +54,7 @@ void    cpml_primitive_to_cairo         (const CpmlPrimitive    *primitive,
                                          cairo_t                *cr);
 void    cpml_primitive_dump             (const CpmlPrimitive    *primitive,
                                          cairo_bool_t            org_also);
-int     cpml_primitive_intersection_with_segment
+int     cpml_primitive_put_intersections_with_segment
                                         (const CpmlPrimitive    *primitive,
                                          const CpmlSegment      *segment,
                                          CpmlPair               *dest,

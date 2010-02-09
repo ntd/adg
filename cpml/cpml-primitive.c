@@ -326,7 +326,7 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 }
 
 /**
- * cpml_primitive_intersection_with_segment:
+ * cpml_primitive_put_intersections_with_segment:
  * @primitive: a #CpmlPrimitive
  * @segment:   a #CpmlSegment
  * @dest:      the destination vector of #CpmlPair
@@ -341,9 +341,9 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
  * Returns: the number of intersections found
  **/
 int
-cpml_primitive_intersection_with_segment(const CpmlPrimitive *primitive,
-                                         const CpmlSegment *segment,
-                                         CpmlPair *dest, int max)
+cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
+                                              const CpmlSegment *segment,
+                                              CpmlPair *dest, int max)
 {
     CpmlPrimitive portion;
     int found;
