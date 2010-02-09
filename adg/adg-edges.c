@@ -440,7 +440,7 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
          * must always be skipped */
         if (old.x != 0 || old.y != 0) {
             cpml_vector_set_length(&old, 1);
-            cpml_primitive_vector_at(&primitive, &new, 0);
+            cpml_primitive_put_vector_at(&primitive, 0, &new);
             cpml_vector_set_length(&new, 1);
 
             /* Vertical vectors are always added, as they represent
@@ -455,7 +455,7 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
             }
         }
 
-        cpml_primitive_vector_at(&primitive, &old, 1);
+        cpml_primitive_put_vector_at(&primitive, 1, &old);
     } while (cpml_primitive_next(&primitive));
 
     return g_slist_reverse(vertices);

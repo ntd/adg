@@ -520,12 +520,12 @@ cpml_primitive_put_pair_at(const CpmlPrimitive *primitive, double pos,
 }
 
 /**
- * cpml_primitive_vector_at:
+ * cpml_primitive_put_vector_at:
  * @primitive: a #CpmlPrimitive
- * @vector:    the destination #CpmlVector
  * @pos:       the position value
+ * @vector:    the destination #CpmlVector
  *
- * Abstracts the vector_at() family functions by providing a common
+ * Abstracts the put_vector_at() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
  *
  * It gets the steepness of the point at position @pos on @primitive.
@@ -540,25 +540,25 @@ cpml_primitive_put_pair_at(const CpmlPrimitive *primitive, double pos,
  * </para></note>
  **/
 void
-cpml_primitive_vector_at(const CpmlPrimitive *primitive,
-                         CpmlVector *vector, double pos)
+cpml_primitive_put_vector_at(const CpmlPrimitive *primitive, double pos,
+                             CpmlVector *vector)
 {
     switch (primitive->data->header.type) {
 
     case CAIRO_PATH_LINE_TO:
-        cpml_line_vector_at(primitive, vector, pos);
+        cpml_line_put_vector_at(primitive, pos, vector);
         break;
 
     case CAIRO_PATH_ARC_TO:
-        cpml_arc_vector_at(primitive, vector, pos);
+        cpml_arc_put_vector_at(primitive, pos, vector);
         break;
 
     case CAIRO_PATH_CURVE_TO:
-        cpml_curve_vector_at(primitive, vector, pos);
+        cpml_curve_put_vector_at(primitive, pos, vector);
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
-        cpml_close_vector_at(primitive, vector, pos);
+        cpml_close_put_vector_at(primitive, pos, vector);
         break;
 
     default:

@@ -1164,7 +1164,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
 
     /* Compute the start point of the fillet */
     pos = cpml_primitive_near_pos(last_dup, &center);
-    cpml_primitive_vector_at(last_dup, &vector, pos);
+    cpml_primitive_put_vector_at(last_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
     cpml_pair_copy(&p[0], &center);
@@ -1179,7 +1179,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
 
     /* Compute the end point of the fillet */
     pos = cpml_primitive_near_pos(current_dup, &center);
-    cpml_primitive_vector_at(current_dup, &vector, pos);
+    cpml_primitive_put_vector_at(current_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
     cpml_pair_copy(&p[2], &center);
@@ -1205,8 +1205,8 @@ is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
     CpmlVector v1, v2;
     gdouble angle1, angle2;
 
-    cpml_primitive_vector_at(primitive1, &v1, -1);
-    cpml_primitive_vector_at(primitive2, &v2, 0);
+    cpml_primitive_put_vector_at(primitive1, -1, &v1);
+    cpml_primitive_put_vector_at(primitive2, 0, &v2);
 
     /* Probably there is a smarter way to get this without trygonometry */
     angle1 = cpml_vector_angle(&v1);

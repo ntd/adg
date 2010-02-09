@@ -77,7 +77,7 @@ cpml_close_put_pair_at(const CpmlPrimitive *close, double pos, CpmlPair *pair)
 }
 
 /**
- * cpml_close_vector_at:
+ * cpml_close_put_vector_at:
  * @close:  the #CpmlPrimitive close data
  * @vector: the destination vector
  * @pos:    the position value
@@ -87,10 +87,10 @@ cpml_close_put_pair_at(const CpmlPrimitive *close, double pos, CpmlPair *pair)
  * @pos is not used.
  **/
 void
-cpml_close_vector_at(const CpmlPrimitive *close,
-                     CpmlVector *vector, double pos)
+cpml_close_put_vector_at(const CpmlPrimitive *close, double pos,
+                         CpmlVector *vector)
 {
-    cpml_line_vector_at(close, vector, pos);
+    cpml_line_put_vector_at(close, pos, vector);
 }
 
 /**

@@ -273,10 +273,10 @@ cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
 }
 
 /**
- * cpml_segment_vector_at:
+ * cpml_segment_put_vector_at:
  * @segment: a #CpmlSegment
- * @vector:  the destination #CpmlVector
  * @pos:     the position value
+ * @vector:  the destination #CpmlVector
  *
  * Gets the steepness of the point lying on @segment at position
  * @pos. @pos is an homogeneous factor where %0 is the start point,
@@ -293,8 +293,8 @@ cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
  * </important>
  **/
 void
-cpml_segment_vector_at(const CpmlSegment *segment,
-                       CpmlVector *vector, double pos)
+cpml_segment_put_vector_at(const CpmlSegment *segment, double pos,
+                           CpmlVector *vector)
 {
     CpmlPrimitive primitive;
 
@@ -302,14 +302,14 @@ cpml_segment_vector_at(const CpmlSegment *segment,
 
     /* Handle the common cases: start and end points */
     if (pos == 0) {
-        cpml_primitive_vector_at(&primitive, vector, 0);
+        cpml_primitive_put_vector_at(&primitive, 0, vector);
         return;
     }
 
     if (pos == 1) {
         while (cpml_primitive_next(&primitive))
             ;
-        cpml_primitive_vector_at(&primitive, vector, 1);
+        cpml_primitive_put_vector_at(&primitive, 1, vector);
         return;
     }
 }

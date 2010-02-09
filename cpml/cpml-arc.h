@@ -39,9 +39,9 @@ void    cpml_arc_put_extents            (const CpmlPrimitive    *arc,
 void    cpml_arc_put_pair_at            (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlPair               *pair);
-void    cpml_arc_vector_at              (const CpmlPrimitive    *arc,
-                                         CpmlVector             *vector,
-                                         double                  pos);
+void    cpml_arc_put_vector_at          (const CpmlPrimitive    *arc,
+                                         double                  pos,
+                                         CpmlVector             *vector);
 double  cpml_arc_near_pos               (const CpmlPrimitive    *arc,
                                          const CpmlPair         *pair);
 int     cpml_arc_intersection           (const CpmlPrimitive    *arc,

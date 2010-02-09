@@ -121,7 +121,7 @@ cpml_line_put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
 }
 
 /**
- * cpml_line_vector_at:
+ * cpml_line_put_vector_at:
  * @line:   the #CpmlPrimitive line data
  * @vector: the destination vector
  * @pos:    the position value
@@ -134,7 +134,8 @@ cpml_line_put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
  * @vector = endpoint(@line) - startpoint(@line).
  **/
 void
-cpml_line_vector_at(const CpmlPrimitive *line, CpmlVector *vector, double pos)
+cpml_line_put_vector_at(const CpmlPrimitive *line, double pos,
+                        CpmlVector *vector)
 {
     cairo_path_data_t *p1, *p2;
 
@@ -243,7 +244,7 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     p1 = cpml_primitive_get_point(line, 0);
     p2 = cpml_primitive_get_point(line, -1);
 
-    cpml_line_vector_at(line, &normal, 0.);
+    cpml_line_put_vector_at(line, 0, &normal);
     cpml_vector_normal(&normal);
     cpml_vector_set_length(&normal, offset);
 

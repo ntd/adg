@@ -281,10 +281,10 @@ cpml_arc_put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
 }
 
 /**
- * cpml_arc_vector_at:
+ * cpml_arc_put_vector_at:
  * @arc:    the #CpmlPrimitive arc data
- * @vector: the destination vector
  * @pos:    the position value
+ * @vector: the destination vector
  *
  * Given an @arc, finds the slope at position @pos (where 0 is
  * the start and 1 is the end) and stores the result in @vector.
@@ -293,7 +293,8 @@ cpml_arc_put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
  * arc is quite trivial.
  **/
 void
-cpml_arc_vector_at(const CpmlPrimitive *arc, CpmlVector *vector, double pos)
+cpml_arc_put_vector_at(const CpmlPrimitive *arc, double pos,
+                       CpmlVector *vector)
 {
     double start, end, angle;
 

@@ -63,9 +63,9 @@ void    cpml_segment_put_extents        (const CpmlSegment      *segment,
 void    cpml_segment_put_pair_at        (const CpmlSegment      *segment,
                                          double                  pos,
                                          CpmlPair               *pair);
-void    cpml_segment_vector_at          (const CpmlSegment      *segment,
-                                         CpmlVector             *vector,
-                                         double                  pos);
+void    cpml_segment_put_vector_at      (const CpmlSegment      *segment,
+                                         double                  pos,
+                                         CpmlVector             *vector);
 
 void    cpml_segment_reverse            (CpmlSegment            *segment);
 void    cpml_segment_transform          (CpmlSegment            *segment,

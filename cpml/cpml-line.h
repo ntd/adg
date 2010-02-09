@@ -33,9 +33,9 @@ void    cpml_line_put_extents           (const CpmlPrimitive    *line,
 void    cpml_line_put_pair_at           (const CpmlPrimitive    *line,
                                          double                  pos,
                                          CpmlPair               *pair);
-void    cpml_line_vector_at             (const CpmlPrimitive    *line,
-                                         CpmlVector             *vector,
-                                         double                  pos);
+void    cpml_line_put_vector_at         (const CpmlPrimitive    *line,
+                                         double                  pos,
+                                         CpmlVector             *vector);
 double  cpml_line_near_pos              (const CpmlPrimitive    *line,
                                          const CpmlPair         *pair);
 int     cpml_line_intersection          (const CpmlPrimitive    *line,

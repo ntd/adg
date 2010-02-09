@@ -575,7 +575,7 @@ local_changed(AdgEntity *entity)
         return;
 
     cpml_segment_put_pair_at(&data->segment, data->pos, &pair);
-    cpml_segment_vector_at(&data->segment, &vector, data->pos);
+    cpml_segment_put_vector_at(&data->segment, data->pos, &vector);
     cpml_vector_set_length(&vector, data->size);
 
     if (data->pos > 0.5) {

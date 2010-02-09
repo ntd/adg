@@ -202,10 +202,10 @@ cpml_curve_vector_at_time(const CpmlPrimitive *curve,
 }
 
 /**
- * cpml_curve_vector_at:
+ * cpml_curve_put_vector_at:
  * @curve:  the #CpmlPrimitive curve data
- * @vector: the destination vector
  * @pos:    the position value
+ * @vector: the destination vector
  *
  * Given the @curve Bézier cubic, finds the slope at position @pos
  * (where 0 is the start and 1 is the end) and stores the result
@@ -225,8 +225,8 @@ cpml_curve_vector_at_time(const CpmlPrimitive *curve,
  * </important>
  **/
 void
-cpml_curve_vector_at(const CpmlPrimitive *curve,
-                     CpmlVector *vector, double pos)
+cpml_curve_put_vector_at(const CpmlPrimitive *curve, double pos,
+                         CpmlVector *vector)
 {
 }
 
