@@ -30,7 +30,8 @@ SUBDIRS=			cpml \
 				demo \
 				docs \
 				po \
-				po-properties
+				po-properties \
+				tests
 
 pkgconfigdir=			$(libdir)/pkgconfig
 pkgconfig_DATA =		cpml.pc \
