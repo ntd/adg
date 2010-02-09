@@ -231,7 +231,7 @@ cpml_curve_put_vector_at(const CpmlPrimitive *curve, double pos,
 }
 
 /**
- * cpml_curve_near_pos:
+ * cpml_curve_get_closest_pos:
  * @curve: the #CpmlPrimitive curve data
  * @pair:  the coordinates of the subject point
  *
@@ -248,7 +248,7 @@ cpml_curve_put_vector_at(const CpmlPrimitive *curve, double pos,
  * Returns: the pos value, always between 0 and 1
  **/
 double
-cpml_curve_near_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
+cpml_curve_get_closest_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
 {
     /* TODO */
 

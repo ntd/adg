@@ -94,7 +94,7 @@ cpml_close_put_vector_at(const CpmlPrimitive *close, double pos,
 }
 
 /**
- * cpml_close_near_pos:
+ * cpml_close_get_closest_pos:
  * @close: the #CpmlPrimitive close data
  * @pair: the coordinates of the subject point
  *
@@ -104,9 +104,9 @@ cpml_close_put_vector_at(const CpmlPrimitive *close, double pos,
  * Returns: the pos value, always between 0 and 1
  **/
 double
-cpml_close_near_pos(const CpmlPrimitive *close, const CpmlPair *pair)
+cpml_close_get_closest_pos(const CpmlPrimitive *close, const CpmlPair *pair)
 {
-    return cpml_line_near_pos(close, pair);
+    return cpml_line_get_closest_pos(close, pair);
 }
 
 /**

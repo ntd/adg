@@ -42,7 +42,7 @@ void    cpml_curve_vector_at_time       (const CpmlPrimitive    *curve,
 void    cpml_curve_put_vector_at        (const CpmlPrimitive    *curve,
                                          double                  pos,
                                          CpmlVector             *vector);
-double  cpml_curve_near_pos             (const CpmlPrimitive    *curve,
+double  cpml_curve_get_closest_pos      (const CpmlPrimitive    *curve,
                                          const CpmlPair         *pair);
 int     cpml_curve_intersection         (const CpmlPrimitive    *curve,
                                          const CpmlPrimitive    *curve2,

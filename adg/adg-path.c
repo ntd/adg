@@ -1163,7 +1163,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     }
 
     /* Compute the start point of the fillet */
-    pos = cpml_primitive_near_pos(last_dup, &center);
+    pos = cpml_primitive_get_closest_pos(last_dup, &center);
     cpml_primitive_put_vector_at(last_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
@@ -1178,7 +1178,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     cpml_pair_add(&p[1], &vector);
 
     /* Compute the end point of the fillet */
-    pos = cpml_primitive_near_pos(current_dup, &center);
+    pos = cpml_primitive_get_closest_pos(current_dup, &center);
     cpml_primitive_put_vector_at(current_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);

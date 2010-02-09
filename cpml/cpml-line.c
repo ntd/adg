@@ -147,7 +147,7 @@ cpml_line_put_vector_at(const CpmlPrimitive *line, double pos,
 }
 
 /**
- * cpml_line_near_pos:
+ * cpml_line_get_closest_pos:
  * @line: the #CpmlPrimitive line data
  * @pair: the coordinates of the subject point
  *
@@ -161,7 +161,7 @@ cpml_line_put_vector_at(const CpmlPrimitive *line, double pos,
  * Returns: the pos value, always between 0 and 1
  **/
 double
-cpml_line_near_pos(const CpmlPrimitive *line, const CpmlPair *pair)
+cpml_line_get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
 {
     CpmlPair p[4];
     CpmlVector normal;

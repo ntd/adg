@@ -33,7 +33,7 @@ void    cpml_close_put_pair_at          (const CpmlPrimitive    *close,
 void    cpml_close_put_vector_at        (const CpmlPrimitive    *close,
                                          double                  pos,
                                          CpmlVector             *vector);
-double  cpml_close_near_pos             (const CpmlPrimitive    *close,
+double  cpml_close_get_closest_pos      (const CpmlPrimitive    *close,
                                          const CpmlPair         *pair);
 void    cpml_close_offset               (CpmlPrimitive          *close,
                                          double                  offset);

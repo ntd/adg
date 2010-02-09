@@ -567,7 +567,7 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive, double pos,
 }
 
 /**
- * cpml_primitive_near_pos:
+ * cpml_primitive_get_closest_pos:
  * @primitive: a #CpmlPrimitive
  * @pair:      the coordinates of the subject point
  *
@@ -582,21 +582,22 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive, double pos,
  * Returns: the requested pos value between 0 and 1 or -1 on errors
  **/
 double
-cpml_primitive_near_pos(const CpmlPrimitive *primitive, const CpmlPair *pair)
+cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
+                               const CpmlPair *pair)
 {
     switch (primitive->data->header.type) {
 
     case CAIRO_PATH_LINE_TO:
-        return cpml_line_near_pos(primitive, pair);
+        return cpml_line_get_closest_pos(primitive, pair);
 
     case CAIRO_PATH_ARC_TO:
-        return cpml_arc_near_pos(primitive, pair);
+        return cpml_arc_get_closest_pos(primitive, pair);
 
     case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_near_pos(primitive, pair);
+        return cpml_curve_get_closest_pos(primitive, pair);
 
     case CAIRO_PATH_CLOSE_PATH:
-        return cpml_close_near_pos(primitive, pair);
+        return cpml_close_get_closest_pos(primitive, pair);
 
     default:
         break;

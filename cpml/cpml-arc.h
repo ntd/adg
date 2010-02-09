@@ -42,7 +42,7 @@ void    cpml_arc_put_pair_at            (const CpmlPrimitive    *arc,
 void    cpml_arc_put_vector_at          (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlVector             *vector);
-double  cpml_arc_near_pos               (const CpmlPrimitive    *arc,
+double  cpml_arc_get_closest_pos        (const CpmlPrimitive    *arc,
                                          const CpmlPair         *pair);
 int     cpml_arc_intersection           (const CpmlPrimitive    *arc,
                                          const CpmlPrimitive    *arc2,

@@ -310,7 +310,7 @@ cpml_arc_put_vector_at(const CpmlPrimitive *arc, double pos,
 }
 
 /**
- * cpml_arc_near_pos:
+ * cpml_arc_get_closest_pos:
  * @arc: the #CpmlPrimitive arc data
  * @pair: the coordinates of the subject point
  *
@@ -327,7 +327,7 @@ cpml_arc_put_vector_at(const CpmlPrimitive *arc, double pos,
  * Returns: the pos value, always between 0 and 1
  **/
 double
-cpml_arc_near_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
+cpml_arc_get_closest_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
 {
     /* TODO */
 

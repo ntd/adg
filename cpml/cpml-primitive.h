@@ -71,7 +71,7 @@ void    cpml_primitive_put_pair_at      (const CpmlPrimitive    *primitive,
 void    cpml_primitive_put_vector_at    (const CpmlPrimitive    *primitive,
                                          double                  pos,
                                          CpmlVector             *vector);
-double  cpml_primitive_near_pos         (const CpmlPrimitive    *primitive,
+double  cpml_primitive_get_closest_pos  (const CpmlPrimitive    *primitive,
                                          const CpmlPair         *pair);
 cairo_bool_t
         cpml_primitive_join             (CpmlPrimitive          *primitive,
