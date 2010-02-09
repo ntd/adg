@@ -96,7 +96,7 @@ cpml_line_put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
 }
 
 /**
- * cpml_line_pair_at:
+ * cpml_line_put_pair_at:
  * @line: the #CpmlPrimitive line data
  * @pair: the destination pair
  * @pos:  the position value
@@ -109,7 +109,7 @@ cpml_line_put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
  * coordinates are interpolated.
  **/
 void
-cpml_line_pair_at(const CpmlPrimitive *line, CpmlPair *pair, double pos)
+cpml_line_put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
 {
     cairo_path_data_t *p1, *p2;
 

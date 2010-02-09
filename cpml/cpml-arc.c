@@ -248,10 +248,10 @@ cpml_arc_put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
 }
 
 /**
- * cpml_arc_pair_at:
+ * cpml_arc_put_pair_at:
  * @arc:  the #CpmlPrimitive arc data
- * @pair: the destination #CpmlPair
  * @pos:  the position value
+ * @pair: the destination #CpmlPair
  *
  * Given an @arc, finds the coordinates at position @pos (where 0 is
  * the start and 1 is the end) and stores the result in @pair.
@@ -260,7 +260,7 @@ cpml_arc_put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
  * arc is quite trivial.
  **/
 void
-cpml_arc_pair_at(const CpmlPrimitive *arc, CpmlPair *pair, double pos)
+cpml_arc_put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
 {
     if (pos == 0.) {
         cpml_pair_from_cairo(pair, arc->org);

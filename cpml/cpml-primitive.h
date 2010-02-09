@@ -65,9 +65,9 @@ int     cpml_primitive_type_get_npoints (CpmlPrimitiveType       type);
 double  cpml_primitive_get_length       (const CpmlPrimitive    *primitive);
 void    cpml_primitive_put_extents      (const CpmlPrimitive    *primitive,
                                          CpmlExtents            *extents);
-void    cpml_primitive_pair_at          (const CpmlPrimitive    *primitive,
-                                         CpmlPair               *pair,
-                                         double                  pos);
+void    cpml_primitive_put_pair_at      (const CpmlPrimitive    *primitive,
+                                         double                  pos,
+                                         CpmlPair               *pair);
 void    cpml_primitive_vector_at        (const CpmlPrimitive    *primitive,
                                          CpmlVector             *vector,
                                          double                  pos);

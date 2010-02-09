@@ -60,9 +60,9 @@ cairo_bool_t
 double  cpml_segment_get_length         (const CpmlSegment      *segment);
 void    cpml_segment_put_extents        (const CpmlSegment      *segment,
                                          CpmlExtents            *extents);
-void    cpml_segment_pair_at            (const CpmlSegment      *segment,
-                                         CpmlPair               *pair,
-                                         double                  pos);
+void    cpml_segment_put_pair_at        (const CpmlSegment      *segment,
+                                         double                  pos,
+                                         CpmlPair               *pair);
 void    cpml_segment_vector_at          (const CpmlSegment      *segment,
                                          CpmlVector             *vector,
                                          double                  pos);

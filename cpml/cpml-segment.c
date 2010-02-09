@@ -234,10 +234,10 @@ cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
 }
 
 /**
- * cpml_segment_pair_at:
+ * cpml_segment_put_pair_at:
  * @segment: a #CpmlSegment
- * @pair:    the destination #CpmlPair
  * @pos:     the position value
+ * @pair:    the destination #CpmlPair
  *
  * Gets the coordinates of the point lying on @segment at position
  * @pos. @pos is an homogeneous factor where %0 is the start point,
@@ -254,7 +254,8 @@ cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
  * </important>
  **/
 void
-cpml_segment_pair_at(const CpmlSegment *segment, CpmlPair *pair, double pos)
+cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
+                         CpmlPair *pair)
 {
     CpmlPrimitive primitive;
 
@@ -262,12 +263,12 @@ cpml_segment_pair_at(const CpmlSegment *segment, CpmlPair *pair, double pos)
 
     /* Handle the common cases: start and end points */
     if (pos == 0)
-        return cpml_primitive_pair_at(&primitive, pair, 0);
+        return cpml_primitive_put_pair_at(&primitive, 0, pair);
 
     if (pos == 1) {
         while (cpml_primitive_next(&primitive))
             ;
-        return cpml_primitive_pair_at(&primitive, pair, 1);
+        return cpml_primitive_put_pair_at(&primitive, 1, pair);
     }
 }
 

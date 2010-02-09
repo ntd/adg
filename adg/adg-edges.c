@@ -450,7 +450,7 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
                 cpml_pair_squared_distance(&old, &new) > threshold) {
                 AdgPair pair;
 
-                cpml_primitive_pair_at(&primitive, &pair, 0);
+                cpml_primitive_put_pair_at(&primitive, 0, &pair);
                 vertices = g_slist_prepend(vertices, adg_pair_dup(&pair));
             }
         }

@@ -574,7 +574,7 @@ local_changed(AdgEntity *entity)
     if (data->trail == NULL)
         return;
 
-    cpml_segment_pair_at(&data->segment, &pair, data->pos);
+    cpml_segment_put_pair_at(&data->segment, data->pos, &pair);
     cpml_segment_vector_at(&data->segment, &vector, data->pos);
     cpml_vector_set_length(&vector, data->size);
 

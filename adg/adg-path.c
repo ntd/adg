@@ -1122,11 +1122,11 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
     }
 
     /* Change the end point of the last primitive */
-    cpml_primitive_pair_at(last, &pair, 1. - delta1 / len1);
+    cpml_primitive_put_pair_at(last, 1. - delta1 / len1, &pair);
     cpml_pair_to_cairo(&pair, cpml_primitive_get_point(last, -1));
 
     /* Change the start point of the current primitive */
-    cpml_primitive_pair_at(current, &pair, delta2 / len2);
+    cpml_primitive_put_pair_at(current, delta2 / len2, &pair);
     cpml_pair_to_cairo(&pair, cpml_primitive_get_point(current, 0));
 
     /* Add the chamfer line */

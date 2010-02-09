@@ -58,10 +58,10 @@ cpml_close_type_get_npoints(void)
 }
 
 /**
- * cpml_close_pair_at:
+ * cpml_close_put_pair_at:
  * @close: the #CpmlPrimitive close data
- * @pair: the destination pair
  * @pos:  the position value
+ * @pair: the destination pair
  *
  * Given the @close path virtual primitive, finds the coordinates
  * at position @pos (where 0 is the start and 1 is the end) and
@@ -71,9 +71,9 @@ cpml_close_type_get_npoints(void)
  * coordinates are interpolated.
  **/
 void
-cpml_close_pair_at(const CpmlPrimitive *close, CpmlPair *pair, double pos)
+cpml_close_put_pair_at(const CpmlPrimitive *close, double pos, CpmlPair *pair)
 {
-    cpml_line_pair_at(close, pair, pos);
+    cpml_line_put_pair_at(close, pos, pair);
 }
 
 /**

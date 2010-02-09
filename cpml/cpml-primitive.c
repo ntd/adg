@@ -473,12 +473,12 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
 }
 
 /**
- * cpml_primitive_pair_at:
+ * cpml_primitive_put_pair_at:
  * @primitive: a #CpmlPrimitive
- * @pair:      the destination #CpmlPair
  * @pos:       the position value
+ * @pair:      the destination #CpmlPair
  *
- * Abstracts the pair_at() family functions by providing a common
+ * Abstracts the put_pair_at() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
  *
  * It gets the coordinates of the point lying on @primitive
@@ -493,25 +493,25 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * </para></note>
  **/
 void
-cpml_primitive_pair_at(const CpmlPrimitive *primitive,
-                       CpmlPair *pair, double pos)
+cpml_primitive_put_pair_at(const CpmlPrimitive *primitive, double pos,
+                           CpmlPair *pair)
 {
     switch (primitive->data->header.type) {
 
     case CAIRO_PATH_LINE_TO:
-        cpml_line_pair_at(primitive, pair, pos);
+        cpml_line_put_pair_at(primitive, pos, pair);
         break;
 
     case CAIRO_PATH_ARC_TO:
-        cpml_arc_pair_at(primitive, pair, pos);
+        cpml_arc_put_pair_at(primitive, pos, pair);
         break;
 
     case CAIRO_PATH_CURVE_TO:
-        cpml_curve_pair_at(primitive, pair, pos);
+        cpml_curve_put_pair_at(primitive, pos, pair);
         break;
 
     case CAIRO_PATH_CLOSE_PATH:
-        cpml_close_pair_at(primitive, pair, pos);
+        cpml_close_put_pair_at(primitive, pos, pair);
         break;
 
     default:

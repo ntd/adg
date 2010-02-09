@@ -132,10 +132,10 @@ cpml_curve_pair_at_time(const CpmlPrimitive *curve, CpmlPair *pair, double t)
 }
 
 /**
- * cpml_curve_pair_at:
+ * cpml_curve_put_pair_at:
  * @curve: the #CpmlPrimitive curve data
- * @pair:  the destination #CpmlPair
  * @pos:   the position value
+ * @pair:  the destination #CpmlPair
  *
  * Given the @curve Bézier cubic, finds the coordinates at position
  * @pos (where 0 is the start and 1 is the end) and stores the result
@@ -155,7 +155,7 @@ cpml_curve_pair_at_time(const CpmlPrimitive *curve, CpmlPair *pair, double t)
  * </important>
  **/
 void
-cpml_curve_pair_at(const CpmlPrimitive *curve, CpmlPair *pair, double pos)
+cpml_curve_put_pair_at(const CpmlPrimitive *curve, double pos, CpmlPair *pair)
 {
 }
 
