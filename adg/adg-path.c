@@ -1104,7 +1104,7 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
     data = path->data;
     last = &data->last;
     delta1 = data->operation.data.chamfer.delta1;
-    len1 = cpml_primitive_length(last);
+    len1 = cpml_primitive_get_length(last);
 
     if (delta1 >= len1) {
         g_warning(_("%s: first chamfer delta of `%lf' is greather than the available `%lf' length"),
@@ -1113,7 +1113,7 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
     }
 
     delta2 = data->operation.data.chamfer.delta2;
-    len2 = cpml_primitive_length(current);
+    len2 = cpml_primitive_get_length(current);
 
     if (delta2 >= len2) {
         g_warning(_("%s: second chamfer delta of `%lf' is greather than the available `%lf' length"),

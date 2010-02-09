@@ -187,7 +187,7 @@ cpml_segment_next(CpmlSegment *segment)
 
 
 /**
- * cpml_segment_length:
+ * cpml_segment_get_length:
  * @segment: a #CpmlSegment
  *
  * Gets the whole length of @segment.
@@ -195,7 +195,7 @@ cpml_segment_next(CpmlSegment *segment)
  * Returns: the requested length
  **/
 double
-cpml_segment_length(const CpmlSegment *segment)
+cpml_segment_get_length(const CpmlSegment *segment)
 {
     CpmlPrimitive primitive;
     double length;
@@ -204,7 +204,7 @@ cpml_segment_length(const CpmlSegment *segment)
     length = 0;
 
     do {
-        length += cpml_primitive_length(&primitive);
+        length += cpml_primitive_get_length(&primitive);
     } while (cpml_primitive_next(&primitive));
 
     return length;

@@ -55,7 +55,7 @@ cpml_line_type_get_npoints(void)
 }
 
 /**
- * cpml_line_length:
+ * cpml_line_get_length:
  * @line: the #CpmlPrimitive line data
  *
  * Given the @line primitive, returns the distance between its
@@ -64,7 +64,7 @@ cpml_line_type_get_npoints(void)
  * Returns: the requested distance, that is the @line length
  **/
 double
-cpml_line_length(const CpmlPrimitive *line)
+cpml_line_get_length(const CpmlPrimitive *line)
 {
     CpmlPair p1, p2;
 

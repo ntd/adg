@@ -400,7 +400,7 @@ cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
 }
 
 /**
- * cpml_primitive_length:
+ * cpml_primitive_get_length:
  * @primitive: a #CpmlPrimitive
  *
  * Abstracts the length() family functions by providing a common
@@ -415,19 +415,19 @@ cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
  * Returns: the requested length or 0 on errors
  **/
 double
-cpml_primitive_length(const CpmlPrimitive *primitive)
+cpml_primitive_get_length(const CpmlPrimitive *primitive)
 {
     switch (primitive->data->header.type) {
 
     case CAIRO_PATH_LINE_TO:
     case CAIRO_PATH_CLOSE_PATH:
-        return cpml_line_length(primitive);
+        return cpml_line_get_length(primitive);
 
     case CAIRO_PATH_ARC_TO:
-        return cpml_arc_length(primitive);
+        return cpml_arc_get_length(primitive);
 
     case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_length(primitive);
+        return cpml_curve_get_length(primitive);
 
     default:
         break;

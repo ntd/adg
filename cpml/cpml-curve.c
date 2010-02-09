@@ -48,7 +48,7 @@ cpml_curve_type_get_npoints(void)
 }
 
 /**
- * cpml_curve_length:
+ * cpml_curve_get_length:
  * @curve: the #CpmlPrimitive curve data
  *
  * Given the @curve primitive, returns the approximated length of
@@ -64,7 +64,7 @@ cpml_curve_type_get_npoints(void)
  * Returns: the requested length
  **/
 double
-cpml_curve_length(const CpmlPrimitive *curve)
+cpml_curve_get_length(const CpmlPrimitive *curve)
 {
     return 0.;
 }
