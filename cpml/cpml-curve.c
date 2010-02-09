@@ -70,14 +70,14 @@ cpml_curve_get_length(const CpmlPrimitive *curve)
 }
 
 /**
- * cpml_curve_extents:
+ * cpml_curve_put_extents:
  * @curve: the #CpmlPrimitive curve data
  * @extents: where to store the extents
  *
  * Given a @curve primitive, returns its boundary box in @extents.
  **/
 void
-cpml_curve_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
+cpml_curve_put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 {
     CpmlPair p1, p2, p3, p4;
 

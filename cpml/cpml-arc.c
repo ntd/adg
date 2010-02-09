@@ -188,19 +188,19 @@ cpml_arc_get_length(const CpmlPrimitive *arc)
 }
 
 /* Hardcoded macro to save a lot of typing and make the
- * cpml_arc_extents() code clearer */
+ * cpml_arc_put_extents() code clearer */
 #define ANGLE_INCLUDED(d) \
     ((start < (d) && end > (d)) || (start > (d) && end < (d)))
 
 /**
- * cpml_arc_extents:
+ * cpml_arc_put_extents:
  * @arc: the #CpmlPrimitive arc data
  * @extents: where to store the extents
  *
  * Given an @arc primitive, returns its boundary box in @extents.
  **/
 void
-cpml_arc_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
+cpml_arc_put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
 {
     double r, start, end;
     CpmlPair center, pair;

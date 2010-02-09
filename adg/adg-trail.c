@@ -336,7 +336,7 @@ adg_trail_get_extents(AdgTrail *trail)
         if (!cpml_path_is_empty(cpml_path) &&
             cpml_segment_from_cairo(&segment, cpml_path)) {
             do {
-                cpml_segment_extents(&segment, &extents);
+                cpml_segment_put_extents(&segment, &extents);
                 cpml_extents_add(&data->extents, &extents);
             } while (cpml_segment_next(&segment));
         }

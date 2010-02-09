@@ -75,14 +75,14 @@ cpml_line_get_length(const CpmlPrimitive *line)
 }
 
 /**
- * cpml_line_extents:
+ * cpml_line_put_extents:
  * @line: the #CpmlPrimitive line data
  * @extents: where to store the extents
  *
  * Given a @line primitive, returns its boundary box in @extents.
  **/
 void
-cpml_line_extents(const CpmlPrimitive *line, CpmlExtents *extents)
+cpml_line_put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
 {
     CpmlPair p1, p2;
 

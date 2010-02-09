@@ -34,7 +34,7 @@ cairo_bool_t
                                          double                 *start,
                                          double                 *end);
 double  cpml_arc_get_length             (const CpmlPrimitive    *arc);
-void    cpml_arc_extents                (const CpmlPrimitive    *arc,
+void    cpml_arc_put_extents            (const CpmlPrimitive    *arc,
                                          CpmlExtents            *extents);
 void    cpml_arc_pair_at                (const CpmlPrimitive    *arc,
                                          CpmlPair               *pair,

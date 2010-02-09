@@ -437,7 +437,7 @@ cpml_primitive_get_length(const CpmlPrimitive *primitive)
 }
 
 /**
- * cpml_primitive_extents:
+ * cpml_primitive_put_extents:
  * @primitive: a #CpmlPrimitive
  * @extents: where to store the extents
  *
@@ -451,19 +451,20 @@ cpml_primitive_get_length(const CpmlPrimitive *primitive)
  * </para></note>
  **/
 void
-cpml_primitive_extents(const CpmlPrimitive *primitive, CpmlExtents *extents)
+cpml_primitive_put_extents(const CpmlPrimitive *primitive,
+                           CpmlExtents *extents)
 {
     switch (primitive->data->header.type) {
 
     case CAIRO_PATH_LINE_TO:
     case CAIRO_PATH_CLOSE_PATH:
-        return cpml_line_extents(primitive, extents);
+        return cpml_line_put_extents(primitive, extents);
 
     case CAIRO_PATH_ARC_TO:
-        return cpml_arc_extents(primitive, extents);
+        return cpml_arc_put_extents(primitive, extents);
 
     case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_extents(primitive, extents);
+        return cpml_curve_put_extents(primitive, extents);
 
     default:
         extents->is_defined = 0;
