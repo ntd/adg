@@ -18,7 +18,7 @@
  */
 
 
-#if !defined (__ADG_H__)
+#if !defined(__ADG_H__)
 #error "Only <adg/adg.h> can be included directly."
 #endif
 
