@@ -20,9 +20,6 @@
 #ifndef __CPML_ARC_H__
 #define __CPML_ARC_H__
 
-#include <cpml/cpml-primitive.h>
-#include <cpml/cpml-util.h>
-
 
 CAIRO_BEGIN_DECLS
 

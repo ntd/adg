@@ -1,5 +1,5 @@
-/* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008, 2009  Nicola Fontana <ntd at entidi.it>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007,2008,2009 Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,29 +17,17 @@
  * Boston, MA  02110-1301, USA.
  */
 
-#ifndef __CPML_UTIL_H__
-#define __CPML_UTIL_H__
+/*
+ * This header is included by every .c files of the library to
+ * enable the inclusion of the internal headers and initialize
+ * some common stuff.
+ */
 
+#ifndef __CPML_INTERNAL_H__
+#define __CPML_INTERNAL_H__
 
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#define CPML_GNUC_CONST    __attribute__((__const__))
-#else
-#define CPML_GNUC_CONST
-#endif
+#include <cairo.h>
+#include "cpml-util.h"
+#include "cpml-pair.h"
 
-#ifndef CAIRO_PATH_ARC_TO
-#define CAIRO_PATH_ARC_TO       100
-#undef  CAIRO_HAS_ARC_SUPPORT
-#else
-#define CAIRO_HAS_ARC_SUPPORT   1
-#endif
-
-
-CAIRO_BEGIN_DECLS
-
-double          cpml_angle              (double         angle);
-
-CAIRO_END_DECLS
-
-
-#endif /* __CPML_UTIL_H__ */
+#endif /* __CPML_INTERNAL_H__ */

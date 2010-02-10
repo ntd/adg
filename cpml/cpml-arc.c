@@ -62,9 +62,11 @@
  **/
 
 
+#include "cpml-internal.h"
+#include "cpml-extents.h"
+#include "cpml-segment.h"
+#include "cpml-primitive.h"
 #include "cpml-arc.h"
-#include "cpml-pair.h"
-
 #include <stdlib.h>
 #include <math.h>
 

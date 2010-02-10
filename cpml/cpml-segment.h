@@ -20,9 +20,6 @@
 #ifndef __CPML_SEGMENT_H__
 #define __CPML_SEGMENT_H__
 
-#include <cairo.h>
-#include <cpml/cpml-extents.h>
-
 
 CAIRO_BEGIN_DECLS
 

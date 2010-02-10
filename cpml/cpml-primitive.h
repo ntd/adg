@@ -20,9 +20,6 @@
 #ifndef __CPML_PRIMITIVE_H__
 #define __CPML_PRIMITIVE_H__
 
-#include <cpml/cpml-segment.h>
-#include <cpml/cpml-pair.h>
-
 
 CAIRO_BEGIN_DECLS
 

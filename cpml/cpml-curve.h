@@ -20,9 +20,6 @@
 #ifndef __CPML_CURVE_H__
 #define __CPML_CURVE_H__
 
-#include <cpml/cpml-primitive.h>
-#include <cpml/cpml-util.h>
-
 
 CAIRO_BEGIN_DECLS
 

@@ -20,8 +20,6 @@
 #ifndef __CPML_EXTENTS_H__
 #define __CPML_EXTENTS_H__
 
-#include <cpml/cpml-pair.h>
-
 
 CAIRO_BEGIN_DECLS
 

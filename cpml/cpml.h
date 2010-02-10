@@ -20,13 +20,14 @@
 #ifndef __CPML_H__
 #define __CPML_H__
 
+#include <cairo.h>
+#include <cpml/cpml-util.h>
+#include <cpml/cpml-pair.h>
+#include <cpml/cpml-extents.h>
+#include <cpml/cpml-segment.h>
+#include <cpml/cpml-primitive.h>
+#include <cpml/cpml-line.h>
 #include <cpml/cpml-arc.h>
 #include <cpml/cpml-curve.h>
-#include <cpml/cpml-extents.h>
-#include <cpml/cpml-line.h>
-#include <cpml/cpml-pair.h>
-#include <cpml/cpml-primitive.h>
-#include <cpml/cpml-segment.h>
-#include <cpml/cpml-util.h>
 
 #endif /* __CPML_H__ */

@@ -15,7 +15,8 @@ cpml_h_sources=			cpml.h \
 				cpml-segment.h \
 				cpml-util.h
 cpml_built_h_sources=
-cpml_private_h_sources=		cpml-alloca.h
+cpml_private_h_sources=		cpml-alloca.h \
+				cpml-internal.h
 cpml_built_private_h_sources=
 cpml_c_sources=			cpml-arc.c \
 				cpml-close.c \

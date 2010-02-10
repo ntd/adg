@@ -55,8 +55,7 @@
  **/
 
 
-#include "cpml-pair.h"
-
+#include "cpml-internal.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>

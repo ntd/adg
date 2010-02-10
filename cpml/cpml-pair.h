@@ -20,8 +20,6 @@
 #ifndef __CPML_PAIR_H__
 #define __CPML_PAIR_H__
 
-#include <cairo.h>
-
 
 CAIRO_BEGIN_DECLS
 

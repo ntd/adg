@@ -82,11 +82,12 @@
  **/
 
 
+#include "cpml-internal.h"
+#include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
 #include "cpml-line.h"
 #include "cpml-curve.h"
-#include "cpml-pair.h"
 #include "cpml-alloca.h"
 
 #include <stdio.h>

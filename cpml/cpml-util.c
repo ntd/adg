@@ -28,7 +28,7 @@
  **/
 
 
-#include "cpml-util.h"
+#include "cpml-internal.h"
 #include <math.h>
 
 
