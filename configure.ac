@@ -101,6 +101,7 @@ AC_CONFIG_FILES([shave
                  demo/Makefile
                  po/Makefile.in
                  po-properties/Makefile.in
+		 tests/Makefile
                  docs/Makefile
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml
