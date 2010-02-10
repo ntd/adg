@@ -36,9 +36,9 @@ void    cpml_curve_pair_at_time         (const CpmlPrimitive    *curve,
 void    cpml_curve_put_pair_at          (const CpmlPrimitive    *curve,
                                          double                  pos,
                                          CpmlPair               *pair);
-void    cpml_curve_vector_at_time       (const CpmlPrimitive    *curve,
-                                         CpmlVector             *vector,
-                                         double                  t);
+void    cpml_curve_put_vector_at_time   (const CpmlPrimitive    *curve,
+                                         double                  t,
+                                         CpmlVector             *vector);
 void    cpml_curve_put_vector_at        (const CpmlPrimitive    *curve,
                                          double                  pos,
                                          CpmlVector             *vector);

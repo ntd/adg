@@ -160,7 +160,7 @@ cpml_curve_put_pair_at(const CpmlPrimitive *curve, double pos, CpmlPair *pair)
 }
 
 /**
- * cpml_curve_vector_at_time:
+ * cpml_curve_put_vector_at_time:
  * @curve:  the #CpmlPrimitive curve data
  * @vector: the destination vector
  * @t:      the "time" value
@@ -174,8 +174,8 @@ cpml_curve_put_pair_at(const CpmlPrimitive *curve, double pos, CpmlPair *pair)
  * allowed.
  **/
 void
-cpml_curve_vector_at_time(const CpmlPrimitive *curve,
-                          CpmlVector *vector, double t)
+cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
+                              double t, CpmlVector *vector)
 {
     cairo_path_data_t *p1, *p2, *p3, *p4;
     CpmlPair p21, p32, p43;
@@ -209,10 +209,10 @@ cpml_curve_vector_at_time(const CpmlPrimitive *curve,
  *
  * Given the @curve Bézier cubic, finds the slope at position @pos
  * (where 0 is the start and 1 is the end) and stores the result
- * in @vector. It is similar to cpml_curve_vector_at_time() but the
- * @pos value is evenly distribuited, that is 0.5 is exactly the
- * mid point. If you do not need this feature, use
- * cpml_curve_vector_at_time() as it is considerable faster.
+ * in @vector. It is similar to cpml_curve_put_vector_at_time()
+ * but the @pos value is evenly distribuited, that is 0.5 is
+ * exactly the mid point. If you do not need this feature, use
+ * cpml_curve_put_vector_at_time() as it is considerable faster.
  *
  * @pos must be inside the range 0 .. 1, as interpolating is not
  * allowed.
@@ -502,7 +502,7 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_sub(&v3, &p2);
 
     /* pm = point in C(m) offseted the requested @offset distance */
-    cpml_curve_vector_at_time(curve, &vm, m);
+    cpml_curve_put_vector_at_time(curve, m, &vm);
     cpml_vector_set_length(&vm, offset);
     cpml_vector_normal(&vm);
     cpml_curve_pair_at_time(curve, &pm, m);
