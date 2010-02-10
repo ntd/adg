@@ -30,9 +30,9 @@ int     cpml_curve_type_get_npoints     (void) CPML_GNUC_CONST;
 double  cpml_curve_get_length           (const CpmlPrimitive    *curve);
 void    cpml_curve_put_extents          (const CpmlPrimitive    *curve,
                                          CpmlExtents            *extents);
-void    cpml_curve_pair_at_time         (const CpmlPrimitive    *curve,
-                                         CpmlPair               *pair,
-                                         double                  t);
+void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
+                                         double                  t,
+                                         CpmlPair               *pair);
 void    cpml_curve_put_pair_at          (const CpmlPrimitive    *curve,
                                          double                  pos,
                                          CpmlPair               *pair);

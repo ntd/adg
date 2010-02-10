@@ -95,10 +95,10 @@ cpml_curve_put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 }
 
 /**
- * cpml_curve_pair_at_time:
+ * cpml_curve_put_pair_at_time:
  * @curve: the #CpmlPrimitive curve data
- * @pair:  the destination pair
  * @t:     the "time" value
+ * @pair:  the destination pair
  *
  * Given the @curve Bézier cubic, finds the coordinates at time @t
  * (where 0 is the start and 1 is the end) and stores the result
@@ -109,7 +109,8 @@ cpml_curve_put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
  * cubic curves is not allowed.
  **/
 void
-cpml_curve_pair_at_time(const CpmlPrimitive *curve, CpmlPair *pair, double t)
+cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
+                            CpmlPair *pair)
 {
     cairo_path_data_t *p1, *p2, *p3, *p4;
     double t_2, t_3, t1, t1_2, t1_3;
@@ -139,9 +140,9 @@ cpml_curve_pair_at_time(const CpmlPrimitive *curve, CpmlPair *pair, double t)
  *
  * Given the @curve Bézier cubic, finds the coordinates at position
  * @pos (where 0 is the start and 1 is the end) and stores the result
- * in @pair. It is similar to cpml_curve_pair_at_time() but the @pos
+ * in @pair. It is similar to cpml_curve_put_pair_at_time() but the @pos
  * value is evenly distribuited, that is 0.5 is exactly the mid point.
- * If you do not need this feature, use cpml_curve_pair_at_time()
+ * If you do not need this feature, use cpml_curve_put_pair_at_time()
  * as it is considerable faster.
  *
  * The relation 0 < @pos < 1 must be satisfied, as interpolating on
@@ -162,8 +163,8 @@ cpml_curve_put_pair_at(const CpmlPrimitive *curve, double pos, CpmlPair *pair)
 /**
  * cpml_curve_put_vector_at_time:
  * @curve:  the #CpmlPrimitive curve data
- * @vector: the destination vector
  * @t:      the "time" value
+ * @vector: the destination vector
  *
  * Given the @curve Bézier cubic, finds the slope at time @t
  * (where 0 is the start and 1 is the end) and stores the result
@@ -505,7 +506,7 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_curve_put_vector_at_time(curve, m, &vm);
     cpml_vector_set_length(&vm, offset);
     cpml_vector_normal(&vm);
-    cpml_curve_pair_at_time(curve, &pm, m);
+    cpml_curve_put_pair_at_time(curve, m, &pm);
     cpml_pair_add(&pm, &vm);
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
