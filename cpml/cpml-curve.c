@@ -256,12 +256,12 @@ cpml_curve_get_closest_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
 }
 
 /**
- * cpml_curve_intersection:
+ * cpml_curve_put_intersections:
  * @curve:  the first curve
  * @curve2: the second curve
- * @dest:   a vector of #CpmlPair
  * @max:    maximum number of intersections to return
  *          (that is, the size of @dest)
+ * @dest:   a vector of #CpmlPair
  *
  * Given two Bézier cubic curves (@curve and @curve2), gets their
  * intersection points and store the result in @dest. Because two
@@ -283,20 +283,20 @@ cpml_curve_get_closest_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
  *               or 0 if the primitives do not intersect
  **/
 int
-cpml_curve_intersection(const CpmlPrimitive *curve,
-                        const CpmlPrimitive *curve2,
-                        CpmlPair *dest, int max)
+cpml_curve_put_intersections(const CpmlPrimitive *curve,
+                             const CpmlPrimitive *curve2,
+                             int max, CpmlPair *dest)
 {
     return 0;
 }
 
 /**
- * cpml_curve_intersection_with_arc:
+ * cpml_curve_put_intersections_with_arc:
  * @curve: a curve
  * @arc:   an arc
- * @dest:  a vector of #CpmlPair
  * @max:   maximum number of intersections to return
  *         (that is, the size of @dest)
+ * @dest:  a vector of #CpmlPair
  *
  * Given a Bézier cubic @curve and an @arc, gets their intersection
  * points and store the result in @dest. Because an arc and a cubic
@@ -317,20 +317,20 @@ cpml_curve_intersection(const CpmlPrimitive *curve,
  *          or 0 if the primitives do not intersect
  **/
 int
-cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
-                                 const CpmlPrimitive *arc,
-                                 CpmlPair *dest, int max)
+cpml_curve_put_intersections_with_arc(const CpmlPrimitive *curve,
+                                      const CpmlPrimitive *arc,
+                                      int max, CpmlPair *dest)
 {
     return 0;
 }
 
 /**
- * cpml_curve_intersection_with_line:
+ * cpml_curve_put_intersections_with_line:
  * @curve: a curve
  * @line:  a line
- * @dest:  a vector of #CpmlPair
  * @max:   maximum number of intersections to return
  *         (that is, the size of @dest)
+ * @dest:  a vector of #CpmlPair
  *
  * Given a Bézier cubic @curve and a @line, gets their intersection
  * points and store the result in @dest. Because a line and a cubic
@@ -351,9 +351,9 @@ cpml_curve_intersection_with_arc(const CpmlPrimitive *curve,
  *          or 0 if the primitives do not intersect
  **/
 int
-cpml_curve_intersection_with_line(const CpmlPrimitive *curve,
-                                  const CpmlPrimitive *line,
-                                  CpmlPair *dest, int max)
+cpml_curve_put_intersections_with_line(const CpmlPrimitive *curve,
+                                       const CpmlPrimitive *line,
+                                       int max, CpmlPair *dest)
 {
     return 0;
 }

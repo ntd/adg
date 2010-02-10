@@ -372,7 +372,7 @@ intersections(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
     cpml_segment_from_cairo(&segment2, path);
 
     while (cpml_segment_next(&segment2)) {
-        cpml_segment_intersection(&segment1, &segment2, &intersection, 1);
+        cpml_segment_put_intersections(&segment1, &segment2, 1, &intersection);
 
         cairo_arc(cr, intersection.x, intersection.y, 2.5, 0, 2 * M_PI);
         cairo_fill(cr);

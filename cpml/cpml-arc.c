@@ -335,12 +335,12 @@ cpml_arc_get_closest_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
 }
 
 /**
- * cpml_arc_intersection:
+ * cpml_arc_put_intersections:
  * @arc:  the first arc
  * @arc2: the second arc
- * @dest: a vector of #CpmlPair
  * @max:  maximum number of intersections to return
  *        (that is, the size of @dest)
+ * @dest: a vector of #CpmlPair
  *
  * Given two arcs (@arc and @arc2), gets their intersection points
  * and store the result in @dest. Keep in mind two arcs can have
@@ -361,19 +361,19 @@ cpml_arc_get_closest_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
  *          or 0 if the primitives do not intersect
  **/
 int
-cpml_arc_intersection(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
-                      CpmlPair *dest, int max)
+cpml_arc_put_intersections(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
+                           int max, CpmlPair *dest)
 {
     return 0;
 }
 
 /**
- * cpml_arc_intersection_with_line:
+ * cpml_arc_put_intersections_with_line:
  * @arc:  an arc
  * @line: a line
- * @dest: a vector of #CpmlPair
  * @max:  maximum number of intersections to return
  *        (that is, the size of @dest)
+ * @dest: a vector of #CpmlPair
  *
  * Given an @arc and a @line, gets their intersection points
  * and store the result in @dest. Keep in mind an arc and a
@@ -393,9 +393,9 @@ cpml_arc_intersection(const CpmlPrimitive *arc, const CpmlPrimitive *arc2,
  *          or 0 if the primitives do not intersect
  **/
 int
-cpml_arc_intersection_with_line(const CpmlPrimitive *arc,
-                                const CpmlPrimitive *line,
-                                CpmlPair *dest, int max)
+cpml_arc_put_intersections_with_line(const CpmlPrimitive *arc,
+                                     const CpmlPrimitive *line,
+                                     int max, CpmlPair *dest)
 {
     return 0;
 }

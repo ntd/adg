@@ -76,10 +76,10 @@ double  cpml_primitive_get_closest_pos  (const CpmlPrimitive    *primitive,
 cairo_bool_t
         cpml_primitive_join             (CpmlPrimitive          *primitive,
                                          CpmlPrimitive          *primitive2);
-int     cpml_primitive_intersection     (const CpmlPrimitive    *primitive,
+int     cpml_primitive_put_intersections(const CpmlPrimitive    *primitive,
                                          const CpmlPrimitive    *primitive2,
-                                         CpmlPair               *dest,
-                                         int                     max);
+                                         int                     max,
+                                         CpmlPair               *dest);
 void    cpml_primitive_offset           (CpmlPrimitive          *primitive,
                                          double                  offset);
 

@@ -430,11 +430,11 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 }
 
 /**
- * cpml_segment_intersection:
+ * cpml_segment_put_intersections:
  * @segment:  the first #CpmlSegment
  * @segment2: the second #CpmlSegment
- * @dest:     the destination vector of #CpmlPair
  * @max:      maximum number of intersections to return
+ * @dest:     the destination vector of #CpmlPair
  *
  * Computes the intersections between @segment and @segment2 and
  * returns the found points in @dest. If the intersections are more
@@ -447,9 +447,9 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * Returns: the number of intersections found
  **/
 int
-cpml_segment_intersection(const CpmlSegment *segment,
-                          const CpmlSegment *segment2,
-                          CpmlPair *dest, int max)
+cpml_segment_put_intersections(const CpmlSegment *segment,
+                               const CpmlSegment *segment2,
+                               int max, CpmlPair *dest)
 {
     CpmlPrimitive portion;
     int partial, total;

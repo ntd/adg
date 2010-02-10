@@ -70,10 +70,10 @@ void    cpml_segment_put_vector_at      (const CpmlSegment      *segment,
 void    cpml_segment_reverse            (CpmlSegment            *segment);
 void    cpml_segment_transform          (CpmlSegment            *segment,
                                          const cairo_matrix_t   *matrix);
-int     cpml_segment_intersection       (const CpmlSegment      *segment,
+int     cpml_segment_put_intersections  (const CpmlSegment      *segment,
                                          const CpmlSegment      *segment2,
-                                         CpmlPair               *dest,
-                                         int                     max);
+                                         int                     max,
+                                         CpmlPair               *dest);
 void    cpml_segment_offset             (CpmlSegment            *segment,
                                          double                  offset);
 

@@ -44,14 +44,15 @@ void    cpml_arc_put_vector_at          (const CpmlPrimitive    *arc,
                                          CpmlVector             *vector);
 double  cpml_arc_get_closest_pos        (const CpmlPrimitive    *arc,
                                          const CpmlPair         *pair);
-int     cpml_arc_intersection           (const CpmlPrimitive    *arc,
+int     cpml_arc_put_intersections      (const CpmlPrimitive    *arc,
                                          const CpmlPrimitive    *arc2,
-                                         CpmlPair               *dest,
-                                         int                     max);
-int     cpml_arc_intersection_with_line (const CpmlPrimitive    *arc,
+                                         int                     max,
+                                         CpmlPair               *dest);
+int     cpml_arc_put_intersections_with_line
+                                        (const CpmlPrimitive    *arc,
                                          const CpmlPrimitive    *line,
-                                         CpmlPair               *dest,
-                                         int                     max);
+                                         int                     max,
+                                         CpmlPair               *dest);
 void    cpml_arc_offset                 (CpmlPrimitive          *arc,
                                          double                  offset);
 void    cpml_arc_to_cairo               (const CpmlPrimitive    *arc,

@@ -192,12 +192,12 @@ cpml_line_get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
 }
 
 /**
- * cpml_line_intersection:
+ * cpml_line_put_intersections:
  * @line:  the first line
  * @line2: the second line
- * @dest:  a vector of #CpmlPair
  * @max:   maximum number of intersections to return
  *         (that is, the size of @dest)
+ * @dest:  a vector of #CpmlPair
  *
  * Given two lines (@line and @line2), gets their intersection point
  * and store the result in @dest.
@@ -210,8 +210,9 @@ cpml_line_get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
  *          or 0 if the primitives do not intersect
  **/
 int
-cpml_line_intersection(const CpmlPrimitive *line, const CpmlPrimitive *line2,
-                       CpmlPair *dest, int max)
+cpml_line_put_intersections(const CpmlPrimitive *line,
+                            const CpmlPrimitive *line2,
+                            int max, CpmlPair *dest)
 {
     CpmlPair p[4];
 

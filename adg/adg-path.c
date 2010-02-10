@@ -1153,8 +1153,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
      * the last and current primitives offseted by radius */
     cpml_primitive_offset(current_dup, offset);
     cpml_primitive_offset(last_dup, offset);
-    if (cpml_primitive_intersection(current_dup, last_dup,
-                                    &center, 1) == 0) {
+    if (cpml_primitive_put_intersections(current_dup, last_dup, 1, &center) == 0) {
         g_warning(_("%s: fillet with radius of `%lf' is not applicable here"),
                   G_STRLOC, radius);
         g_free(current_dup);

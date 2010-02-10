@@ -38,10 +38,10 @@ void    cpml_line_put_vector_at         (const CpmlPrimitive    *line,
                                          CpmlVector             *vector);
 double  cpml_line_get_closest_pos       (const CpmlPrimitive    *line,
                                          const CpmlPair         *pair);
-int     cpml_line_intersection          (const CpmlPrimitive    *line,
+int     cpml_line_put_intersections     (const CpmlPrimitive    *line,
                                          const CpmlPrimitive    *line2,
-                                         CpmlPair               *dest,
-                                         int                     max);
+                                         int                     max,
+                                         CpmlPair               *dest);
 void    cpml_line_offset                (CpmlPrimitive          *line,
                                          double                  offset);
 
