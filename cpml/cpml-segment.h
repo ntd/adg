@@ -17,6 +17,12 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
+#if !defined(__CPML_H__)
+#error "Only <cpml/cpml.h> can be included directly."
+#endif
+
+
 #ifndef __CPML_SEGMENT_H__
 #define __CPML_SEGMENT_H__
 

@@ -26,6 +26,8 @@
 #ifndef __CPML_INTERNAL_H__
 #define __CPML_INTERNAL_H__
 
+#define __CPML_H__
+
 #include <cairo.h>
 #include "cpml-util.h"
 #include "cpml-pair.h"

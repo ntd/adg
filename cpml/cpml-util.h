@@ -17,9 +17,14 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
+#if !defined(__CPML_H__)
+#error "Only <cpml/cpml.h> can be included directly."
+#endif
+
+
 #ifndef __CPML_UTIL_H__
 #define __CPML_UTIL_H__
-
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
 #define CPML_GNUC_CONST    __attribute__((__const__))
