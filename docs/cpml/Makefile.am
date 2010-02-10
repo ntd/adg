@@ -13,7 +13,8 @@ HFILE_GLOB=		$(top_srcdir)/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/cpml/*.c
 IGNORE_HFILES=		cpml.h \
 			cpml-alloca.h \
-			cpml-internal.h
+			cpml-internal.h \
+			cpml-primitive-private.h
 HTML_IMAGES=
 content_files=
 expand_content_files=
