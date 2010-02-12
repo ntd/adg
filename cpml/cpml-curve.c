@@ -88,9 +88,6 @@ _cpml_curve_get_class(void)
  * (where 0 is the start and 1 is the end) and stores the result
  * in @pair. Keep in mind @t is not homogeneous, so 0.5 does not
  * necessarily means the mid point.
- *
- * The relation 0 < @t < 1 must be satisfied, as interpolating on
- * cubic curves is not allowed.
  **/
 void
 cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
@@ -126,9 +123,6 @@ cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
  * (where 0 is the start and 1 is the end) and stores the result
  * in @vector. Keep in mind @t is not homogeneous, so 0.5
  * does not necessarily means the mid point.
- *
- * @t must be inside the range 0 .. 1, as interpolating is not
- * allowed.
  **/
 void
 cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
