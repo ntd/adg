@@ -481,39 +481,22 @@ cpml_primitive_put_pair_at(const CpmlPrimitive *primitive, double pos,
  * It gets the steepness of the point at position @pos on @primitive.
  * @pos is an homogeneous factor where 0 is the start point, 1 the
  * end point, 0.5 the mid point and so on.
- * The relation 0 < @pos < 1 should be satisfied, although some
- * primitives accept value outside this range.
+ * @pos can be less than 0 or greater than %1, in which case the
+ * coordinates of @pair are interpolated.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
+ * On errors, that is if the steepness cannot be calculated for
+ * some reason, this function does nothing.
  **/
 void
 cpml_primitive_put_vector_at(const CpmlPrimitive *primitive, double pos,
                              CpmlVector *vector)
 {
-    switch (primitive->data->header.type) {
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
 
-    case CAIRO_PATH_LINE_TO:
-        cpml_line_put_vector_at(primitive, pos, vector);
-        break;
+    if (class_data == NULL || class_data->put_vector_at == NULL)
+        return;
 
-    case CAIRO_PATH_ARC_TO:
-        cpml_arc_put_vector_at(primitive, pos, vector);
-        break;
-
-    case CAIRO_PATH_CURVE_TO:
-        cpml_curve_put_vector_at(primitive, pos, vector);
-        break;
-
-    case CAIRO_PATH_CLOSE_PATH:
-        cpml_close_put_vector_at(primitive, pos, vector);
-        break;
-
-    default:
-        break;
-    }
+    class_data->put_vector_at(primitive, pos, vector);
 }
 
 /**

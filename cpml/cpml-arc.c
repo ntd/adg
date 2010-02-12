@@ -87,6 +87,9 @@ static void             put_extents     (const CpmlPrimitive    *arc,
 static void             put_pair_at     (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlPair               *pair);
+static void             put_vector_at   (const CpmlPrimitive    *arc,
+                                         double                  pos,
+                                         CpmlVector             *vector);
 static cairo_bool_t     get_center      (const CpmlPair         *p,
                                          CpmlPair               *dest);
 static void             get_angles      (const CpmlPair         *p,
@@ -111,7 +114,7 @@ _cpml_arc_get_class(void)
             get_length,
             put_extents,
             put_pair_at,
-            NULL,
+            put_vector_at,
             NULL,
             NULL,
             NULL,
@@ -186,35 +189,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/**
- * cpml_arc_put_vector_at:
- * @arc:    the #CpmlPrimitive arc data
- * @pos:    the position value
- * @vector: the destination vector
- *
- * Given an @arc, finds the slope at position @pos (where 0 is
- * the start and 1 is the end) and stores the result in @vector.
- *
- * @pos can also be outside the 0..1 limit, as interpolating on an
- * arc is quite trivial.
- **/
-void
-cpml_arc_put_vector_at(const CpmlPrimitive *arc, double pos,
-                       CpmlVector *vector)
-{
-    double start, end, angle;
-
-    if (!cpml_arc_info(arc, NULL, NULL, &start, &end))
-        return;
-
-    angle = (end-start)*pos + start;
-    cpml_vector_from_angle(vector, angle);
-    cpml_vector_normal(vector);
-
-    if (start > end)
-        cpml_pair_negate(vector);
 }
 
 /**
@@ -516,6 +490,22 @@ put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
         cpml_vector_set_length(pair, r);
         cpml_pair_add(pair, &center);
     }
+}
+
+static void
+put_vector_at(const CpmlPrimitive *arc, double pos, CpmlVector *vector)
+{
+    double start, end, angle;
+
+    if (!cpml_arc_info(arc, NULL, NULL, &start, &end))
+        return;
+
+    angle = (end-start)*pos + start;
+    cpml_vector_from_angle(vector, angle);
+    cpml_vector_normal(vector);
+
+    if (start > end)
+        cpml_pair_negate(vector);
 }
 
 static cairo_bool_t

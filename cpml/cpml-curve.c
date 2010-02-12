@@ -36,6 +36,7 @@
  *           the bounding box of the control polygon and this will likely
  *           include some empty space: there is room for improvements;</listitem>
  * <listitem>the put_pair_at() method must be implemented;</listitem>
+ * <listitem>the put_vector_at() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
  **/
@@ -155,35 +156,6 @@ cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
 
     vector->x = 3 * t1_2 * p21.x + 6 * t1 * t * p32.x + 3 * t_2 * p43.x;
     vector->y = 3 * t1_2 * p21.y + 6 * t1 * t * p32.y + 3 * t_2 * p43.y;
-}
-
-/**
- * cpml_curve_put_vector_at:
- * @curve:  the #CpmlPrimitive curve data
- * @pos:    the position value
- * @vector: the destination vector
- *
- * Given the @curve Bézier cubic, finds the slope at position @pos
- * (where 0 is the start and 1 is the end) and stores the result
- * in @vector. It is similar to cpml_curve_put_vector_at_time()
- * but the @pos value is evenly distribuited, that is 0.5 is
- * exactly the mid point. If you do not need this feature, use
- * cpml_curve_put_vector_at_time() as it is considerable faster.
- *
- * @pos must be inside the range 0 .. 1, as interpolating is not
- * allowed.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- **/
-void
-cpml_curve_put_vector_at(const CpmlPrimitive *curve, double pos,
-                         CpmlVector *vector)
-{
 }
 
 /**

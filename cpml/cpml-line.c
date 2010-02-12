@@ -61,6 +61,9 @@ static void             put_extents     (const CpmlPrimitive    *line,
 static void             put_pair_at     (const CpmlPrimitive    *line,
                                          double                  pos,
                                          CpmlPair               *pair);
+static void             put_vector_at   (const CpmlPrimitive    *line,
+                                         double                  pos,
+                                         CpmlVector             *vector);
 static cairo_bool_t     intersection    (const CpmlPair         *p,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
@@ -77,7 +80,7 @@ _cpml_line_get_class(void)
             get_length,
             put_extents,
             put_pair_at,
-            NULL,
+            put_vector_at,
             NULL,
             NULL,
             NULL,
@@ -100,7 +103,7 @@ _cpml_close_get_class(void)
             get_length,
             put_extents,
             put_pair_at,
-            NULL,
+            put_vector_at,
             NULL,
             NULL,
             NULL,
@@ -112,32 +115,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_put_vector_at:
- * @line:   the #CpmlPrimitive line data
- * @vector: the destination vector
- * @pos:    the position value
- *
- * Gets the slope on @line at the position @pos. Being the
- * line a straight segment, the vector is always the same, so
- * @pos is not used. Mathematically speaking, the equation
- * performed is:
- *
- * @vector = endpoint(@line) - startpoint(@line).
- **/
-void
-cpml_line_put_vector_at(const CpmlPrimitive *line, double pos,
-                        CpmlVector *vector)
-{
-    cairo_path_data_t *p1, *p2;
-
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
-
-    vector->x = p2->point.x - p1->point.x;
-    vector->y = p2->point.y - p1->point.y;
-}
 
 /**
  * cpml_line_get_closest_pos:
@@ -238,7 +215,7 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     p1 = cpml_primitive_get_point(line, 0);
     p2 = cpml_primitive_get_point(line, -1);
 
-    cpml_line_put_vector_at(line, 0, &normal);
+    put_vector_at(line, 0, &normal);
     cpml_vector_normal(&normal);
     cpml_vector_set_length(&normal, offset);
 
@@ -246,23 +223,6 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     p1->point.y += normal.y;
     p2->point.x += normal.x;
     p2->point.y += normal.y;
-}
-
-/**
- * cpml_close_put_vector_at:
- * @close:  the #CpmlPrimitive close data
- * @vector: the destination vector
- * @pos:    the position value
- *
- * Gets the slope on @close at the position @pos. Being the
- * close a straight line, the vector is always the same, so
- * @pos is not used.
- **/
-void
-cpml_close_put_vector_at(const CpmlPrimitive *close, double pos,
-                         CpmlVector *vector)
-{
-    cpml_line_put_vector_at(close, pos, vector);
 }
 
 /**
@@ -332,6 +292,18 @@ put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
 
     pair->x = p1->point.x + (p2->point.x - p1->point.x) * pos;
     pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
+}
+
+static void
+put_vector_at(const CpmlPrimitive *line, double pos, CpmlVector *vector)
+{
+    cairo_path_data_t *p1, *p2;
+
+    p1 = cpml_primitive_get_point(line, 0);
+    p2 = cpml_primitive_get_point(line, -1);
+
+    vector->x = p2->point.x - p1->point.x;
+    vector->y = p2->point.y - p1->point.y;
 }
 
 static cairo_bool_t
