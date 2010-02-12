@@ -84,6 +84,9 @@
 static double           get_length      (const CpmlPrimitive    *arc);
 static void             put_extents     (const CpmlPrimitive    *arc,
                                          CpmlExtents            *extents);
+static void             put_pair_at     (const CpmlPrimitive    *arc,
+                                         double                  pos,
+                                         CpmlPair               *pair);
 static cairo_bool_t     get_center      (const CpmlPair         *p,
                                          CpmlPair               *dest);
 static void             get_angles      (const CpmlPair         *p,
@@ -107,7 +110,7 @@ _cpml_arc_get_class(void)
             "arc", 3,
             get_length,
             put_extents,
-            NULL,
+            put_pair_at,
             NULL,
             NULL,
             NULL,
@@ -183,39 +186,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/**
- * cpml_arc_put_pair_at:
- * @arc:  the #CpmlPrimitive arc data
- * @pos:  the position value
- * @pair: the destination #CpmlPair
- *
- * Given an @arc, finds the coordinates at position @pos (where 0 is
- * the start and 1 is the end) and stores the result in @pair.
- *
- * @pos can also be outside the 0..1 limit, as interpolating on an
- * arc is quite trivial.
- **/
-void
-cpml_arc_put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
-{
-    if (pos == 0.) {
-        cpml_pair_from_cairo(pair, arc->org);
-    } else if (pos == 1.) {
-        cpml_pair_from_cairo(pair, &arc->data[2]);
-    } else {
-        CpmlPair center;
-        double r, start, end, angle;
-
-        if (!cpml_arc_info(arc, &center, &r, &start, &end))
-            return;
-
-        angle = (end-start)*pos + start;
-        cpml_vector_from_angle(pair, angle);
-        cpml_vector_set_length(pair, r);
-        cpml_pair_add(pair, &center);
-    }
 }
 
 /**
@@ -527,6 +497,26 @@ put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
     cpml_extents_pair_add(extents, &pair);
 }
 
+static void
+put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
+{
+    if (pos == 0.) {
+        cpml_pair_from_cairo(pair, arc->org);
+    } else if (pos == 1.) {
+        cpml_pair_from_cairo(pair, &arc->data[2]);
+    } else {
+        CpmlPair center;
+        double r, start, end, angle;
+
+        if (!cpml_arc_info(arc, &center, &r, &start, &end))
+            return;
+
+        angle = (end-start)*pos + start;
+        cpml_vector_from_angle(pair, angle);
+        cpml_vector_set_length(pair, r);
+        cpml_pair_add(pair, &center);
+    }
+}
 
 static cairo_bool_t
 get_center(const CpmlPair *p, CpmlPair *dest)

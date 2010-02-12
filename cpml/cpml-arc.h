@@ -35,9 +35,6 @@ cairo_bool_t
                                          double                 *r,
                                          double                 *start,
                                          double                 *end);
-void    cpml_arc_put_pair_at            (const CpmlPrimitive    *arc,
-                                         double                  pos,
-                                         CpmlPair               *pair);
 void    cpml_arc_put_vector_at          (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlVector             *vector);

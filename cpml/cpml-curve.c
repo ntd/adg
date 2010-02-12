@@ -35,6 +35,7 @@
  * <listitem>actually the put_extents() method is implemented by computing
  *           the bounding box of the control polygon and this will likely
  *           include some empty space: there is room for improvements;</listitem>
+ * <listitem>the put_pair_at() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
  **/
@@ -112,34 +113,6 @@ cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
               + 3 * t1 * t_2 * p3->point.x + t_3 * p4->point.x;
     pair->y = t1_3 * p1->point.y + 3 * t1_2 * t * p2->point.y
               + 3 * t1 * t_2 * p3->point.y + t_3 * p4->point.y;
-}
-
-/**
- * cpml_curve_put_pair_at:
- * @curve: the #CpmlPrimitive curve data
- * @pos:   the position value
- * @pair:  the destination #CpmlPair
- *
- * Given the @curve Bézier cubic, finds the coordinates at position
- * @pos (where 0 is the start and 1 is the end) and stores the result
- * in @pair. It is similar to cpml_curve_put_pair_at_time() but the @pos
- * value is evenly distribuited, that is 0.5 is exactly the mid point.
- * If you do not need this feature, use cpml_curve_put_pair_at_time()
- * as it is considerable faster.
- *
- * The relation 0 < @pos < 1 must be satisfied, as interpolating on
- * cubic curves is not allowed.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- **/
-void
-cpml_curve_put_pair_at(const CpmlPrimitive *curve, double pos, CpmlPair *pair)
-{
 }
 
 /**

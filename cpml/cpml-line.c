@@ -58,6 +58,9 @@
 static double           get_length      (const CpmlPrimitive    *line);
 static void             put_extents     (const CpmlPrimitive    *line,
                                          CpmlExtents            *extents);
+static void             put_pair_at     (const CpmlPrimitive    *line,
+                                         double                  pos,
+                                         CpmlPair               *pair);
 static cairo_bool_t     intersection    (const CpmlPair         *p,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
@@ -73,7 +76,7 @@ _cpml_line_get_class(void)
             "line", 2,
             get_length,
             put_extents,
-            NULL,
+            put_pair_at,
             NULL,
             NULL,
             NULL,
@@ -96,7 +99,7 @@ _cpml_close_get_class(void)
             "close", 2,
             get_length,
             put_extents,
-            NULL,
+            put_pair_at,
             NULL,
             NULL,
             NULL,
@@ -109,31 +112,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_put_pair_at:
- * @line: the #CpmlPrimitive line data
- * @pair: the destination pair
- * @pos:  the position value
- *
- * Given the @line line, finds the coordinates at position @pos
- * (where 0 is the start and 1 is the end) and stores the result
- * in @pair.
- *
- * @pos can be less than 0 or greater than 1, in which case the
- * coordinates are interpolated.
- **/
-void
-cpml_line_put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
-{
-    cairo_path_data_t *p1, *p2;
-
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
-
-    pair->x = p1->point.x + (p2->point.x - p1->point.x) * pos;
-    pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
-}
 
 /**
  * cpml_line_put_vector_at:
@@ -270,26 +248,6 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
     p2->point.y += normal.y;
 }
 
-
-/**
- * cpml_close_put_pair_at:
- * @close: the #CpmlPrimitive close data
- * @pos:  the position value
- * @pair: the destination pair
- *
- * Given the @close path virtual primitive, finds the coordinates
- * at position @pos (where 0 is the start and 1 is the end) and
- * stores the result in @pair.
- *
- * @pos can be less than 0 or greater than 1, in which case the
- * coordinates are interpolated.
- **/
-void
-cpml_close_put_pair_at(const CpmlPrimitive *close, double pos, CpmlPair *pair)
-{
-    cpml_line_put_pair_at(close, pos, pair);
-}
-
 /**
  * cpml_close_put_vector_at:
  * @close:  the #CpmlPrimitive close data
@@ -362,6 +320,18 @@ put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
 
     cpml_extents_pair_add(extents, &p1);
     cpml_extents_pair_add(extents, &p2);
+}
+
+static void
+put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
+{
+    cairo_path_data_t *p1, *p2;
+
+    p1 = cpml_primitive_get_point(line, 0);
+    p2 = cpml_primitive_get_point(line, -1);
+
+    pair->x = p1->point.x + (p2->point.x - p1->point.x) * pos;
+    pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
 }
 
 static cairo_bool_t

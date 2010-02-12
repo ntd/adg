@@ -421,10 +421,11 @@ cpml_primitive_get_length(const CpmlPrimitive *primitive)
  *
  * Abstracts the extents() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
- * The function stores in @extents the bounding box of @primitive.
  *
- * On errors, that is if the primitive is undefined or if the
- * put_extents() method is not defined, this function does nothing.
+ * This function stores in @extents the bounding box of @primitive.
+ *
+ * On errors, that is if the extents cannot be calculated for some
+ * reason, this function does nothing.
  **/
 void
 cpml_primitive_put_extents(const CpmlPrimitive *primitive,
@@ -450,39 +451,22 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * It gets the coordinates of the point lying on @primitive
  * at position @pos. @pos is an homogeneous factor where 0 is the
  * start point, 1 the end point, 0.5 the mid point and so on.
- * The relation 0 < @pos < 1 should be satisfied, although some
- * primitives accept value outside this range.
+ * @pos can be less than 0 or greater than %1, in which case the
+ * coordinates of @pair are interpolated.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
+ * On errors, that is if the coordinates cannot be calculated for
+ * some reason, this function does nothing.
  **/
 void
 cpml_primitive_put_pair_at(const CpmlPrimitive *primitive, double pos,
                            CpmlPair *pair)
 {
-    switch (primitive->data->header.type) {
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
 
-    case CAIRO_PATH_LINE_TO:
-        cpml_line_put_pair_at(primitive, pos, pair);
-        break;
+    if (class_data == NULL || class_data->put_pair_at == NULL)
+        return;
 
-    case CAIRO_PATH_ARC_TO:
-        cpml_arc_put_pair_at(primitive, pos, pair);
-        break;
-
-    case CAIRO_PATH_CURVE_TO:
-        cpml_curve_put_pair_at(primitive, pos, pair);
-        break;
-
-    case CAIRO_PATH_CLOSE_PATH:
-        cpml_close_put_pair_at(primitive, pos, pair);
-        break;
-
-    default:
-        break;
-    }
+    class_data->put_pair_at(primitive, pos, pair);
 }
 
 /**

@@ -29,9 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-void    cpml_close_put_pair_at          (const CpmlPrimitive    *close,
-                                         double                  pos,
-                                         CpmlPair               *pair);
 void    cpml_close_put_vector_at        (const CpmlPrimitive    *close,
                                          double                  pos,
                                          CpmlVector             *vector);
