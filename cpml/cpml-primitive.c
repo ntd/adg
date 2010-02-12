@@ -401,11 +401,6 @@ cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
  * way to access the underlying primitive-specific implementation.
  * The function returns the length of @primitive.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
- *
  * Returns: the requested length or 0 on errors
  **/
 double
@@ -428,31 +423,19 @@ cpml_primitive_get_length(const CpmlPrimitive *primitive)
  * way to access the underlying primitive-specific implementation.
  * The function stores in @extents the bounding box of @primitive.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
+ * On errors, that is if the primitive is undefined or if the
+ * put_extents() method is not defined, this function does nothing.
  **/
 void
 cpml_primitive_put_extents(const CpmlPrimitive *primitive,
                            CpmlExtents *extents)
 {
-    switch (primitive->data->header.type) {
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
 
-    case CAIRO_PATH_LINE_TO:
-    case CAIRO_PATH_CLOSE_PATH:
-        return cpml_line_put_extents(primitive, extents);
+    if (class_data == NULL || class_data->put_extents == NULL)
+        return;
 
-    case CAIRO_PATH_ARC_TO:
-        return cpml_arc_put_extents(primitive, extents);
-
-    case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_put_extents(primitive, extents);
-
-    default:
-        extents->is_defined = 0;
-        break;
-    }
+    class_data->put_extents(primitive, extents);
 }
 
 /**

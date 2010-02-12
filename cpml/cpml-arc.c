@@ -76,8 +76,14 @@
  * this influence the arc quality (the default value is got from cairo) */
 #define ARC_MAX_ANGLE   M_PI_2
 
+/* Macro to save typing and make put_extents() code cleaner */
+#define ANGLE_INCLUDED(d) \
+    ((start < (d) && end > (d)) || (start > (d) && end < (d)))
+
 
 static double           get_length      (const CpmlPrimitive    *arc);
+static void             put_extents     (const CpmlPrimitive    *arc,
+                                         CpmlExtents            *extents);
 static cairo_bool_t     get_center      (const CpmlPair         *p,
                                          CpmlPair               *dest);
 static void             get_angles      (const CpmlPair         *p,
@@ -100,7 +106,7 @@ _cpml_arc_get_class(void)
         static _CpmlPrimitiveClass class_data = {
             "arc", 3,
             get_length,
-            NULL,
+            put_extents,
             NULL,
             NULL,
             NULL,
@@ -177,66 +183,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/* Hardcoded macro to save a lot of typing and make the
- * cpml_arc_put_extents() code clearer */
-#define ANGLE_INCLUDED(d) \
-    ((start < (d) && end > (d)) || (start > (d) && end < (d)))
-
-/**
- * cpml_arc_put_extents:
- * @arc: the #CpmlPrimitive arc data
- * @extents: where to store the extents
- *
- * Given an @arc primitive, returns its boundary box in @extents.
- **/
-void
-cpml_arc_put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
-{
-    double r, start, end;
-    CpmlPair center, pair;
-
-    extents->is_defined = 0;
-
-    if (!cpml_arc_info(arc, &center, &r, &start, &end))
-        return;
-
-    /* Add the right quadrant point if needed */
-    if (ANGLE_INCLUDED(0) || ANGLE_INCLUDED(M_PI * 2)) {
-        pair.x = center.x + r;
-        pair.y = center.y;
-        cpml_extents_pair_add(extents, &pair);
-    }
-
-    /* Add the bottom quadrant point if needed */
-    if (ANGLE_INCLUDED(M_PI_2) || ANGLE_INCLUDED(M_PI_2 * 5)) {
-        pair.x = center.x;
-        pair.y = center.y + r;
-        cpml_extents_pair_add(extents, &pair);
-    }
-
-    /* Add the left quadrant point if needed */
-    if (ANGLE_INCLUDED(M_PI)) {
-        pair.x = center.x - r;
-        pair.y = center.y;
-        cpml_extents_pair_add(extents, &pair);
-    }
-
-    /* Add the top quadrant point if needed */
-    if (ANGLE_INCLUDED(M_PI_2 * 3) || ANGLE_INCLUDED(-M_PI_2)) {
-        pair.x = center.x;
-        pair.y = center.y - r;
-        cpml_extents_pair_add(extents, &pair);
-    }
-
-    /* Add the start point */
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, 0));
-    cpml_extents_pair_add(extents, &pair);
-
-    /* Add the end point */
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, -1));
-    cpml_extents_pair_add(extents, &pair);
 }
 
 /**
@@ -532,6 +478,55 @@ get_length(const CpmlPrimitive *arc)
 
     return r*delta;
 }
+
+static void
+put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
+{
+    double r, start, end;
+    CpmlPair center, pair;
+
+    extents->is_defined = 0;
+
+    if (!cpml_arc_info(arc, &center, &r, &start, &end))
+        return;
+
+    /* Add the right quadrant point if needed */
+    if (ANGLE_INCLUDED(0) || ANGLE_INCLUDED(M_PI * 2)) {
+        pair.x = center.x + r;
+        pair.y = center.y;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the bottom quadrant point if needed */
+    if (ANGLE_INCLUDED(M_PI_2) || ANGLE_INCLUDED(M_PI_2 * 5)) {
+        pair.x = center.x;
+        pair.y = center.y + r;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the left quadrant point if needed */
+    if (ANGLE_INCLUDED(M_PI)) {
+        pair.x = center.x - r;
+        pair.y = center.y;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the top quadrant point if needed */
+    if (ANGLE_INCLUDED(M_PI_2 * 3) || ANGLE_INCLUDED(-M_PI_2)) {
+        pair.x = center.x;
+        pair.y = center.y - r;
+        cpml_extents_pair_add(extents, &pair);
+    }
+
+    /* Add the start point */
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, 0));
+    cpml_extents_pair_add(extents, &pair);
+
+    /* Add the end point */
+    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, -1));
+    cpml_extents_pair_add(extents, &pair);
+}
+
 
 static cairo_bool_t
 get_center(const CpmlPair *p, CpmlPair *dest)

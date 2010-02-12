@@ -32,6 +32,9 @@
  * <title>TODO</title>
  * <itemizedlist>
  * <listitem>the get_length() method must be implemented;</listitem>
+ * <listitem>actually the put_extents() method is implemented by computing
+ *           the bounding box of the control polygon and this will likely
+ *           include some empty space: there is room for improvements;</listitem>
  * </itemizedlist>
  * </important>
  **/
@@ -45,6 +48,10 @@
 #include "cpml-curve.h"
 
 
+static void             put_extents     (const CpmlPrimitive    *curve,
+                                         CpmlExtents            *extents);
+
+
 const _CpmlPrimitiveClass *
 _cpml_curve_get_class(void)
 {
@@ -54,7 +61,7 @@ _cpml_curve_get_class(void)
         static _CpmlPrimitiveClass class_data = {
             "curve", 4,
             NULL,
-            NULL,
+            put_extents,
             NULL,
             NULL,
             NULL,
@@ -68,31 +75,6 @@ _cpml_curve_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_curve_put_extents:
- * @curve: the #CpmlPrimitive curve data
- * @extents: where to store the extents
- *
- * Given a @curve primitive, returns its boundary box in @extents.
- **/
-void
-cpml_curve_put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
-{
-    CpmlPair p1, p2, p3, p4;
-
-    extents->is_defined = 0;
-
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(curve, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(curve, 1));
-    cpml_pair_from_cairo(&p3, cpml_primitive_get_point(curve, 2));
-    cpml_pair_from_cairo(&p4, cpml_primitive_get_point(curve, 3));
-
-    cpml_extents_pair_add(extents, &p1);
-    cpml_extents_pair_add(extents, &p2);
-    cpml_extents_pair_add(extents, &p3);
-    cpml_extents_pair_add(extents, &p4);
-}
 
 /**
  * cpml_curve_put_pair_at_time:
@@ -553,4 +535,23 @@ cpml_curve_offset(CpmlPrimitive *curve, double offset)
     cpml_pair_to_cairo(&p1, &curve->data[1]);
     cpml_pair_to_cairo(&p2, &curve->data[2]);
     cpml_pair_to_cairo(&p3, &curve->data[3]);
+}
+
+
+static void
+put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
+{
+    CpmlPair p1, p2, p3, p4;
+
+    extents->is_defined = 0;
+
+    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(curve, 0));
+    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(curve, 1));
+    cpml_pair_from_cairo(&p3, cpml_primitive_get_point(curve, 2));
+    cpml_pair_from_cairo(&p4, cpml_primitive_get_point(curve, 3));
+
+    cpml_extents_pair_add(extents, &p1);
+    cpml_extents_pair_add(extents, &p2);
+    cpml_extents_pair_add(extents, &p3);
+    cpml_extents_pair_add(extents, &p4);
 }

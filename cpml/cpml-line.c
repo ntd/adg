@@ -56,6 +56,8 @@
 
 
 static double           get_length      (const CpmlPrimitive    *line);
+static void             put_extents     (const CpmlPrimitive    *line,
+                                         CpmlExtents            *extents);
 static cairo_bool_t     intersection    (const CpmlPair         *p,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
@@ -70,7 +72,7 @@ _cpml_line_get_class(void)
         static _CpmlPrimitiveClass class_data = {
             "line", 2,
             get_length,
-            NULL,
+            put_extents,
             NULL,
             NULL,
             NULL,
@@ -93,7 +95,7 @@ _cpml_close_get_class(void)
         static _CpmlPrimitiveClass class_data = {
             "close", 2,
             get_length,
-            NULL,
+            put_extents,
             NULL,
             NULL,
             NULL,
@@ -107,27 +109,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_put_extents:
- * @line: the #CpmlPrimitive line data
- * @extents: where to store the extents
- *
- * Given a @line primitive, returns its boundary box in @extents.
- **/
-void
-cpml_line_put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
-{
-    CpmlPair p1, p2;
-
-    extents->is_defined = 0;
-
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
-
-    cpml_extents_pair_add(extents, &p1);
-    cpml_extents_pair_add(extents, &p2);
-}
 
 /**
  * cpml_line_put_pair_at:
@@ -367,6 +348,20 @@ get_length(const CpmlPrimitive *line)
     cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
 
     return cpml_pair_distance(&p1, &p2);
+}
+
+static void
+put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
+{
+    CpmlPair p1, p2;
+
+    extents->is_defined = 0;
+
+    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
+
+    cpml_extents_pair_add(extents, &p1);
+    cpml_extents_pair_add(extents, &p2);
 }
 
 static cairo_bool_t
