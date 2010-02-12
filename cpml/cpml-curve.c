@@ -37,6 +37,7 @@
  *           include some empty space: there is room for improvements;</listitem>
  * <listitem>the put_pair_at() method must be implemented;</listitem>
  * <listitem>the put_vector_at() method must be implemented;</listitem>
+ * <listitem>the get_closest_pos() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
  **/
@@ -150,31 +151,6 @@ cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
 
     vector->x = 3 * t1_2 * p21.x + 6 * t1 * t * p32.x + 3 * t_2 * p43.x;
     vector->y = 3 * t1_2 * p21.y + 6 * t1 * t * p32.y + 3 * t_2 * p43.y;
-}
-
-/**
- * cpml_curve_get_closest_pos:
- * @curve: the #CpmlPrimitive curve data
- * @pair:  the coordinates of the subject point
- *
- * Returns the pos value of the point on @curve nearest to @pair.
- * The returned value is always between 0 and 1.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the pos value, always between 0 and 1
- **/
-double
-cpml_curve_get_closest_pos(const CpmlPrimitive *curve, const CpmlPair *pair)
-{
-    /* TODO */
-
-    return 0;
 }
 
 /**

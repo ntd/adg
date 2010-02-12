@@ -35,8 +35,6 @@ cairo_bool_t
                                          double                 *r,
                                          double                 *start,
                                          double                 *end);
-double  cpml_arc_get_closest_pos        (const CpmlPrimitive    *arc,
-                                         const CpmlPair         *pair);
 int     cpml_arc_put_intersections      (const CpmlPrimitive    *arc,
                                          const CpmlPrimitive    *arc2,
                                          int                     max,

@@ -64,6 +64,8 @@ static void             put_pair_at     (const CpmlPrimitive    *line,
 static void             put_vector_at   (const CpmlPrimitive    *line,
                                          double                  pos,
                                          CpmlVector             *vector);
+static double           get_closest_pos (const CpmlPrimitive    *line,
+                                         const CpmlPair         *pair);
 static cairo_bool_t     intersection    (const CpmlPair         *p,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
@@ -81,7 +83,7 @@ _cpml_line_get_class(void)
             put_extents,
             put_pair_at,
             put_vector_at,
-            NULL,
+            get_closest_pos,
             NULL,
             NULL,
             NULL
@@ -104,7 +106,7 @@ _cpml_close_get_class(void)
             put_extents,
             put_pair_at,
             put_vector_at,
-            NULL,
+            get_closest_pos,
             NULL,
             NULL,
             NULL
@@ -115,51 +117,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_get_closest_pos:
- * @line: the #CpmlPrimitive line data
- * @pair: the coordinates of the subject point
- *
- * Returns the pos value of the point on @line nearest to @pair.
- * The returned value is always between 0 and 1.
- *
- * The point nearest to @pair is got by finding the its
- * projection on @line, as this is when the point is closer to
- * a line primitive.
- *
- * Returns: the pos value, always between 0 and 1
- **/
-double
-cpml_line_get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
-{
-    CpmlPair p[4];
-    CpmlVector normal;
-    double pos;
-
-    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
-
-    cpml_pair_copy(&normal, &p[1]);
-    cpml_pair_sub(&normal, &p[2]);
-    cpml_vector_normal(&normal);
-
-    cpml_pair_copy(&p[2], pair);
-    cpml_pair_copy(&p[3], pair);
-    cpml_pair_add(&p[3], &normal);
-
-    /* Ensure to return 0 if intersection() fails */
-    pos = 0;
-    intersection(p, NULL, &pos);
-
-    /* Clamp the result to 0..1 */
-    if (pos < 0)
-        pos = 0;
-    else if (pos > 1.)
-        pos = 1.;
-
-    return pos;
-}
 
 /**
  * cpml_line_put_intersections:
@@ -226,22 +183,6 @@ cpml_line_offset(CpmlPrimitive *line, double offset)
 }
 
 /**
- * cpml_close_get_closest_pos:
- * @close: the #CpmlPrimitive close data
- * @pair: the coordinates of the subject point
- *
- * Returns the pos value of the point on @close nearest to @pair.
- * The returned value is always between 0 and 1.
- *
- * Returns: the pos value, always between 0 and 1
- **/
-double
-cpml_close_get_closest_pos(const CpmlPrimitive *close, const CpmlPair *pair)
-{
-    return cpml_line_get_closest_pos(close, pair);
-}
-
-/**
  * cpml_close_offset:
  * @close:  the #CpmlPrimitive close data
  * @offset: distance for the computed parallel close
@@ -304,6 +245,37 @@ put_vector_at(const CpmlPrimitive *line, double pos, CpmlVector *vector)
 
     vector->x = p2->point.x - p1->point.x;
     vector->y = p2->point.y - p1->point.y;
+}
+
+static double
+get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
+{
+    CpmlPair p[4];
+    CpmlVector normal;
+    double pos;
+
+    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
+
+    cpml_pair_copy(&normal, &p[1]);
+    cpml_pair_sub(&normal, &p[2]);
+    cpml_vector_normal(&normal);
+
+    cpml_pair_copy(&p[2], pair);
+    cpml_pair_copy(&p[3], pair);
+    cpml_pair_add(&p[3], &normal);
+
+    /* Ensure to return 0 if intersection() fails */
+    pos = 0;
+    intersection(p, NULL, &pos);
+
+    /* Clamp the result to 0..1 */
+    if (pos < 0)
+        pos = 0;
+    else if (pos > 1.)
+        pos = 1.;
+
+    return pos;
 }
 
 static cairo_bool_t

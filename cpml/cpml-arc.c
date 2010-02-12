@@ -59,6 +59,13 @@
  * arc is met. The latter provided a more powerful (and more complex)
  * approach as it allows to specify the number of curves to use and do
  * not need a cairo context.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>the get_closest_pos() method must be implemented;</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 
 
@@ -189,31 +196,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/**
- * cpml_arc_get_closest_pos:
- * @arc: the #CpmlPrimitive arc data
- * @pair: the coordinates of the subject point
- *
- * Returns the pos value of the point on @arc nearest to @pair.
- * The returned value is always between 0 and 1.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the pos value, always between 0 and 1
- **/
-double
-cpml_arc_get_closest_pos(const CpmlPrimitive *arc, const CpmlPair *pair)
-{
-    /* TODO */
-
-    return 0;
 }
 
 /**

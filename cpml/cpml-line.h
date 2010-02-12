@@ -29,8 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-double  cpml_line_get_closest_pos       (const CpmlPrimitive    *line,
-                                         const CpmlPair         *pair);
 int     cpml_line_put_intersections     (const CpmlPrimitive    *line,
                                          const CpmlPrimitive    *line2,
                                          int                     max,

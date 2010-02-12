@@ -505,38 +505,20 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive, double pos,
  * @pair:      the coordinates of the subject point
  *
  * Returns the pos value of the point on @primitive nearest to @pair.
- * The returned value is always between 0 and 1 or -1 in case of errors.
+ * The returned value is always clamped between %0 and %1.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
- *
- * Returns: the requested pos value between 0 and 1 or -1 on errors
+ * Returns: the requested pos value between %0 and %1, or %-1 on errors
  **/
 double
 cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
                                const CpmlPair *pair)
 {
-    switch (primitive->data->header.type) {
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
 
-    case CAIRO_PATH_LINE_TO:
-        return cpml_line_get_closest_pos(primitive, pair);
+    if (class_data == NULL || class_data->get_closest_pos == NULL)
+        return -1;
 
-    case CAIRO_PATH_ARC_TO:
-        return cpml_arc_get_closest_pos(primitive, pair);
-
-    case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_get_closest_pos(primitive, pair);
-
-    case CAIRO_PATH_CLOSE_PATH:
-        return cpml_close_get_closest_pos(primitive, pair);
-
-    default:
-        break;
-    }
-
-    return -1.;
+    return class_data->get_closest_pos(primitive, pair);
 }
 
 /**

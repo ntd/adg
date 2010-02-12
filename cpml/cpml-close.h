@@ -29,8 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-double  cpml_close_get_closest_pos      (const CpmlPrimitive    *close,
-                                         const CpmlPair         *pair);
 void    cpml_close_offset               (CpmlPrimitive          *close,
                                          double                  offset);
 
