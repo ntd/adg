@@ -27,6 +27,13 @@
  * No validation is made on the input so use the following methods
  * only when you are sure the <varname>primitive</varname> argument
  * is effectively a cubic Bézier curve.
+ *
+ * <important>
+ * <title>TODO</title>
+ * <itemizedlist>
+ * <listitem>the get_length() method must be implemented;</listitem>
+ * </itemizedlist>
+ * </important>
  **/
 
 
@@ -61,28 +68,6 @@ _cpml_curve_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_curve_get_length:
- * @curve: the #CpmlPrimitive curve data
- *
- * Given the @curve primitive, returns the approximated length of
- * the Bézier curve.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the requested length
- **/
-double
-cpml_curve_get_length(const CpmlPrimitive *curve)
-{
-    return 0.;
-}
 
 /**
  * cpml_curve_put_extents:

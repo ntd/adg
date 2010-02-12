@@ -55,9 +55,10 @@
 #include <stdlib.h>
 
 
-static cairo_bool_t     intersection            (const CpmlPair *p,
-                                                 CpmlPair       *dest,
-                                                 double         *get_factor);
+static double           get_length      (const CpmlPrimitive    *line);
+static cairo_bool_t     intersection    (const CpmlPair         *p,
+                                         CpmlPair               *dest,
+                                         double                 *get_factor);
 
 
 const _CpmlPrimitiveClass *
@@ -68,7 +69,7 @@ _cpml_line_get_class(void)
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
             "line", 2,
-            NULL,
+            get_length,
             NULL,
             NULL,
             NULL,
@@ -91,7 +92,7 @@ _cpml_close_get_class(void)
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
             "close", 2,
-            NULL,
+            get_length,
             NULL,
             NULL,
             NULL,
@@ -106,26 +107,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_get_length:
- * @line: the #CpmlPrimitive line data
- *
- * Given the @line primitive, returns the distance between its
- * start and end points.
- *
- * Returns: the requested distance, that is the @line length
- **/
-double
-cpml_line_get_length(const CpmlPrimitive *line)
-{
-    CpmlPair p1, p2;
-
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
-
-    return cpml_pair_distance(&p1, &p2);
-}
 
 /**
  * cpml_line_put_extents:
@@ -376,6 +357,17 @@ cpml_close_offset(CpmlPrimitive *close, double offset)
     cpml_line_offset(close, offset);
 }
 
+
+static double
+get_length(const CpmlPrimitive *line)
+{
+    CpmlPair p1, p2;
+
+    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
+
+    return cpml_pair_distance(&p1, &p2);
+}
 
 static cairo_bool_t
 intersection(const CpmlPair *p, CpmlPair *dest, double *get_factor)

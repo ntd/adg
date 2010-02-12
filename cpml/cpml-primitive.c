@@ -71,7 +71,9 @@
 
 
 static const _CpmlPrimitiveClass *
-                get_class               (CpmlPrimitiveType        type);
+                get_class_from_type     (CpmlPrimitiveType        type);
+static const _CpmlPrimitiveClass *
+                get_class               (const CpmlPrimitive     *primitive);
 static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 
 
@@ -383,7 +385,7 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
 int
 cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(type);
+    const _CpmlPrimitiveClass *class_data = get_class_from_type(type);
 
     if (class_data == NULL)
         return -1;
@@ -409,23 +411,12 @@ cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
 double
 cpml_primitive_get_length(const CpmlPrimitive *primitive)
 {
-    switch (primitive->data->header.type) {
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
 
-    case CAIRO_PATH_LINE_TO:
-    case CAIRO_PATH_CLOSE_PATH:
-        return cpml_line_get_length(primitive);
+    if (class_data == NULL || class_data->get_length == NULL)
+        return 0;
 
-    case CAIRO_PATH_ARC_TO:
-        return cpml_arc_get_length(primitive);
-
-    case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_get_length(primitive);
-
-    default:
-        break;
-    }
-
-    return 0.;
+    return class_data->get_length(primitive);
 }
 
 /**
@@ -800,7 +791,7 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
 
 
 static const _CpmlPrimitiveClass *
-get_class(CpmlPrimitiveType type)
+get_class_from_type(CpmlPrimitiveType type)
 {
     switch (type) {
     case CAIRO_PATH_LINE_TO:
@@ -816,6 +807,12 @@ get_class(CpmlPrimitiveType type)
     }
 
     return NULL;
+}
+
+static const _CpmlPrimitiveClass *
+get_class(const CpmlPrimitive *primitive)
+{
+    return get_class_from_type(primitive->data->header.type);
 }
 
 static void

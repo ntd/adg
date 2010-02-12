@@ -29,7 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-double  cpml_line_get_length            (const CpmlPrimitive    *line);
 void    cpml_line_put_extents           (const CpmlPrimitive    *line,
                                          CpmlExtents            *extents);
 void    cpml_line_put_pair_at           (const CpmlPrimitive    *line,

@@ -77,17 +77,18 @@
 #define ARC_MAX_ANGLE   M_PI_2
 
 
-static cairo_bool_t     get_center      (const CpmlPair *p,
-                                         CpmlPair       *dest);
-static void             get_angles      (const CpmlPair *p,
-                                         const CpmlPair *center,
-                                         double         *start,
-                                         double         *end);
-static void             arc_to_curve    (CpmlPrimitive  *curve,
-                                         const CpmlPair *center,
-                                         double          r,
-                                         double          start,
-                                         double          end);
+static double           get_length      (const CpmlPrimitive    *arc);
+static cairo_bool_t     get_center      (const CpmlPair         *p,
+                                         CpmlPair               *dest);
+static void             get_angles      (const CpmlPair         *p,
+                                         const CpmlPair         *center,
+                                         double                 *start,
+                                         double                 *end);
+static void             arc_to_curve    (CpmlPrimitive          *curve,
+                                         const CpmlPair         *center,
+                                         double                  r,
+                                         double                  start,
+                                         double                  end);
 
 
 const _CpmlPrimitiveClass *
@@ -98,7 +99,7 @@ _cpml_arc_get_class(void)
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
             "arc", 3,
-            NULL,
+            get_length,
             NULL,
             NULL,
             NULL,
@@ -176,29 +177,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/**
- * cpml_arc_get_length:
- * @arc:  the #CpmlPrimitive arc data
- *
- * Given the @arc primitive, returns its length.
- *
- * Returns: the requested length or 0 on errors
- **/
-double
-cpml_arc_get_length(const CpmlPrimitive *arc)
-{
-    double r, start, end, delta;
-
-    if (!cpml_arc_info(arc, NULL, &r, &start, &end) || start == end)
-        return 0.;
-
-    delta = end - start;
-    if (delta < 0)
-        delta += M_PI*2;
-
-    return r*delta;
 }
 
 /* Hardcoded macro to save a lot of typing and make the
@@ -539,6 +517,21 @@ cpml_arc_to_curves(const CpmlPrimitive *arc, CpmlSegment *segment,
     }
 }
 
+
+static double
+get_length(const CpmlPrimitive *arc)
+{
+    double r, start, end, delta;
+
+    if (!cpml_arc_info(arc, NULL, &r, &start, &end) || start == end)
+        return 0.;
+
+    delta = end - start;
+    if (delta < 0)
+        delta += M_PI*2;
+
+    return r*delta;
+}
 
 static cairo_bool_t
 get_center(const CpmlPair *p, CpmlPair *dest)

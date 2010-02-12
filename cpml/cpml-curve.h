@@ -29,7 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-double  cpml_curve_get_length           (const CpmlPrimitive    *curve);
 void    cpml_curve_put_extents          (const CpmlPrimitive    *curve,
                                          CpmlExtents            *extents);
 void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
