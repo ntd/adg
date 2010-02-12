@@ -34,21 +34,33 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-primitive-private.h"
 #include "cpml-curve.h"
 
 
-/**
- * cpml_curve_type_get_npoints:
- *
- * Returns the number of point needed to properly specify a curve primitive.
- *
- * Returns: 4
- **/
-int
-cpml_curve_type_get_npoints(void)
+const _CpmlPrimitiveClass *
+_cpml_curve_get_class(void)
 {
-    return 4;
+    static _CpmlPrimitiveClass *p_class = NULL;
+
+    if (p_class == NULL) {
+        static _CpmlPrimitiveClass class_data = {
+            "curve", 4,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+        };
+        p_class = &class_data;
+    }
+
+    return p_class;
 }
+
 
 /**
  * cpml_curve_get_length:

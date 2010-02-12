@@ -66,6 +66,7 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-primitive-private.h"
 #include "cpml-arc.h"
 #include <stdlib.h>
 #include <math.h>
@@ -89,18 +90,29 @@ static void             arc_to_curve    (CpmlPrimitive  *curve,
                                          double          end);
 
 
-/**
- * cpml_arc_type_get_npoints:
- *
- * Returns the number of point needed to properly specify an arc primitive.
- *
- * Returns: 3
- **/
-int
-cpml_arc_type_get_npoints(void)
+const _CpmlPrimitiveClass *
+_cpml_arc_get_class(void)
 {
-    return 3;
+    static _CpmlPrimitiveClass *p_class = NULL;
+
+    if (p_class == NULL) {
+        static _CpmlPrimitiveClass class_data = {
+            "arc", 3,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+        };
+        p_class = &class_data;
+    }
+
+    return p_class;
 }
+
 
 /**
  * cpml_arc_info:

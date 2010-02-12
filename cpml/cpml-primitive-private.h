@@ -25,7 +25,7 @@
 CAIRO_BEGIN_DECLS
 
 /**
- * CpmlPrimitiveClass:
+ * _CpmlPrimitiveClass:
  * @name:              descriptive name of the primitive type. This name
  *                     will be used for debugging purpose and while
  *                     dumping the primitive data.
@@ -52,9 +52,9 @@ CAIRO_BEGIN_DECLS
  * global variable. This will abstract the primitives and allows to
  * access them throught the cpml_primitive_...() APIs.
  */
-typedef struct _CpmlPrimitiveClass CpmlPrimitiveClass;
+typedef struct __CpmlPrimitiveClass _CpmlPrimitiveClass;
 
-struct _CpmlPrimitiveClass {
+struct __CpmlPrimitiveClass {
     const char   *name;
     int           n_points;
 
@@ -78,6 +78,13 @@ struct _CpmlPrimitiveClass {
     cairo_bool_t (*join)                (CpmlPrimitive          *primitive,
                                          CpmlPrimitive          *primitive2);
 };
+
+
+const _CpmlPrimitiveClass * _cpml_line_get_class  (void) CPML_GNUC_CONST;
+const _CpmlPrimitiveClass * _cpml_arc_get_class   (void) CPML_GNUC_CONST;
+const _CpmlPrimitiveClass * _cpml_curve_get_class (void) CPML_GNUC_CONST;
+const _CpmlPrimitiveClass * _cpml_close_get_class (void) CPML_GNUC_CONST;
+
 
 CAIRO_END_DECLS
 

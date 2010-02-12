@@ -35,6 +35,7 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-primitive-private.h"
 #include "cpml-line.h"
 #include <stdlib.h>
 
@@ -44,18 +45,29 @@ static cairo_bool_t     intersection            (const CpmlPair *p,
                                                  double         *get_factor);
 
 
-/**
- * cpml_line_type_get_npoints:
- *
- * Returns the number of point needed to properly specify a line primitive.
- *
- * Returns: 2
- **/
-int
-cpml_line_type_get_npoints(void)
+const _CpmlPrimitiveClass *
+_cpml_line_get_class(void)
 {
-    return 2;
+    static _CpmlPrimitiveClass *p_class = NULL;
+
+    if (p_class == NULL) {
+        static _CpmlPrimitiveClass class_data = {
+            "line", 2,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+        };
+        p_class = &class_data;
+    }
+
+    return p_class;
 }
+
 
 /**
  * cpml_line_get_length:

@@ -60,6 +60,7 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-primitive-private.h"
 #include "cpml-line.h"
 #include "cpml-arc.h"
 #include "cpml-curve.h"
@@ -69,6 +70,8 @@
 #include <stdio.h>
 
 
+static const _CpmlPrimitiveClass *
+                get_class               (CpmlPrimitiveType        type);
 static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 
 
@@ -380,25 +383,12 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
 int
 cpml_primitive_type_get_npoints(CpmlPrimitiveType type)
 {
-    switch (type) {
+    const _CpmlPrimitiveClass *class_data = get_class(type);
 
-    case CAIRO_PATH_LINE_TO:
-        return cpml_line_type_get_npoints();
+    if (class_data == NULL)
+        return -1;
 
-    case CAIRO_PATH_ARC_TO:
-        return cpml_arc_type_get_npoints();
-
-    case CAIRO_PATH_CURVE_TO:
-        return cpml_curve_type_get_npoints();
-
-    case CAIRO_PATH_CLOSE_PATH:
-        return cpml_close_type_get_npoints();
-
-    default:
-        break;
-    }
-
-    return -1;
+    return class_data->n_points;
 }
 
 /**
@@ -806,6 +796,26 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
     default:
         break;
     }
+}
+
+
+static const _CpmlPrimitiveClass *
+get_class(CpmlPrimitiveType type)
+{
+    switch (type) {
+    case CAIRO_PATH_LINE_TO:
+        return _cpml_line_get_class();
+    case CAIRO_PATH_ARC_TO:
+        return _cpml_arc_get_class();
+    case CAIRO_PATH_CURVE_TO:
+        return _cpml_curve_get_class();
+    case CAIRO_PATH_CLOSE_PATH:
+        return _cpml_close_get_class();
+    default:
+        break;
+    }
+
+    return NULL;
 }
 
 static void

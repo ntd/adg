@@ -38,27 +38,34 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-primitive-private.h"
 #include "cpml-close.h"
 #include "cpml-line.h"
 
 
-/**
- * cpml_close_type_get_npoints:
- *
- * Returns the number of points needed to properly specify a close primitive.
- * This is a bit tricky: the close path primitive can be specified with
- * a single point but it has an implicit second point, the start point
- * of the source segment. This means retrieving a second point from a
- * cairo path is a valid operation and must return the start point of
- * the source segment.
- *
- * Returns: 2
- **/
-int
-cpml_close_type_get_npoints(void)
+const _CpmlPrimitiveClass *
+_cpml_close_get_class(void)
 {
-    return 2;
+    static _CpmlPrimitiveClass *p_class = NULL;
+
+    if (p_class == NULL) {
+        static _CpmlPrimitiveClass class_data = {
+            "close", 2,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL,
+            NULL
+        };
+        p_class = &class_data;
+    }
+
+    return p_class;
 }
+
 
 /**
  * cpml_close_put_pair_at:
