@@ -98,6 +98,8 @@ static void             put_pair_at     (const CpmlPrimitive    *arc,
 static void             put_vector_at   (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlVector             *vector);
+static void             offset          (CpmlPrimitive          *arc,
+                                         double                  offset);
 static cairo_bool_t     get_center      (const CpmlPair         *p,
                                          CpmlPair               *dest);
 static void             get_angles      (const CpmlPair         *p,
@@ -125,7 +127,7 @@ _cpml_arc_get_class(void)
             put_vector_at,
             NULL,
             NULL,
-            NULL,
+            offset,
             NULL
         };
         p_class = &class_data;
@@ -197,50 +199,6 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     }
 
     return 1;
-}
-
-/**
- * cpml_arc_offset:
- * @arc:    the #CpmlPrimitive arc data
- * @offset: distance for the computed parallel arc
- *
- * Given an @arc, this function computes the parallel arc at
- * distance @offset. The three points needed to build the
- * new arc are returned in the @arc data (substituting the
- * previous ones.
- **/
-void
-cpml_arc_offset(CpmlPrimitive *arc, double offset)
-{
-    CpmlPair p[3], center;
-    double r;
-
-    cpml_pair_from_cairo(&p[0], arc->org);
-    cpml_pair_from_cairo(&p[1], &arc->data[1]);
-    cpml_pair_from_cairo(&p[2], &arc->data[2]);
-
-    if (!get_center(p, &center))
-        return;
-
-    r = cpml_pair_distance(&p[0], &center) + offset;
-
-    /* Offset the three points by calculating their vector from the center,
-     * setting the new radius as length and readding the center */
-    cpml_pair_sub(&p[0], &center);
-    cpml_pair_sub(&p[1], &center);
-    cpml_pair_sub(&p[2], &center);
-
-    cpml_vector_set_length(&p[0], r);
-    cpml_vector_set_length(&p[1], r);
-    cpml_vector_set_length(&p[2], r);
-
-    cpml_pair_add(&p[0], &center);
-    cpml_pair_add(&p[1], &center);
-    cpml_pair_add(&p[2], &center);
-
-    cpml_pair_to_cairo(&p[0], arc->org);
-    cpml_pair_to_cairo(&p[1], &arc->data[1]);
-    cpml_pair_to_cairo(&p[2], &arc->data[2]);
 }
 
 /**
@@ -423,6 +381,40 @@ put_vector_at(const CpmlPrimitive *arc, double pos, CpmlVector *vector)
 
     if (start > end)
         cpml_pair_negate(vector);
+}
+
+static void
+offset(CpmlPrimitive *arc, double offset)
+{
+    CpmlPair p[3], center;
+    double r;
+
+    cpml_pair_from_cairo(&p[0], arc->org);
+    cpml_pair_from_cairo(&p[1], &arc->data[1]);
+    cpml_pair_from_cairo(&p[2], &arc->data[2]);
+
+    if (!get_center(p, &center))
+        return;
+
+    r = cpml_pair_distance(&p[0], &center) + offset;
+
+    /* Offset the three points by calculating their vector from the center,
+     * setting the new radius as length and readding the center */
+    cpml_pair_sub(&p[0], &center);
+    cpml_pair_sub(&p[1], &center);
+    cpml_pair_sub(&p[2], &center);
+
+    cpml_vector_set_length(&p[0], r);
+    cpml_vector_set_length(&p[1], r);
+    cpml_vector_set_length(&p[2], r);
+
+    cpml_pair_add(&p[0], &center);
+    cpml_pair_add(&p[1], &center);
+    cpml_pair_add(&p[2], &center);
+
+    cpml_pair_to_cairo(&p[0], arc->org);
+    cpml_pair_to_cairo(&p[1], &arc->data[1]);
+    cpml_pair_to_cairo(&p[2], &arc->data[2]);
 }
 
 static cairo_bool_t

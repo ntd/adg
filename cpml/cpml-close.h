@@ -27,12 +27,4 @@
 #define __CPML_CLOSE_H__
 
 
-CAIRO_BEGIN_DECLS
-
-void    cpml_close_offset               (CpmlPrimitive          *close,
-                                         double                  offset);
-
-CAIRO_END_DECLS
-
-
 #endif /* __CPML_CLOSE_H__ */

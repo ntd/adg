@@ -80,10 +80,10 @@ size_t          cpml_primitive_put_intersections
                                             const CpmlPrimitive *primitive2,
                                             size_t               n_dest,
                                             CpmlPair            *dest);
-cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
-                                            CpmlPrimitive       *primitive2);
 void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
                                             double               offset);
+cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
+                                            CpmlPrimitive       *primitive2);
 
 CAIRO_END_DECLS
 

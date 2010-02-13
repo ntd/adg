@@ -586,6 +586,29 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
 }
 
 /**
+ * cpml_primitive_offset:
+ * @primitive: a #CpmlPrimitive
+ * @offset: distance for the computed offset primitive
+ *
+ * Given a primitive, computes the same (or approximated) parallel
+ * primitive distant @offset from the original one and returns
+ * the result by changing @primitive.
+ *
+ * On errors, that is if the offset primitive cannot be calculated
+ * for some reason, this function does nothing.
+ **/
+void
+cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
+{
+    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+
+    if (class_data == NULL || class_data->offset == NULL)
+        return;
+
+    return class_data->offset(primitive, offset);
+}
+
+/**
  * cpml_primitive_join:
  * @primitive: the first #CpmlPrimitive
  * @primitive2: the second #CpmlPrimitive
@@ -640,46 +663,6 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     cpml_pair_to_cairo(&joint, start2);
 
     return 1;
-}
-
-/**
- * cpml_primitive_offset:
- * @primitive: a #CpmlPrimitive
- * @offset: distance for the computed offset primitive
- *
- * Given a primitive, computes the same (or approximated) parallel
- * primitive distant @offset from the original one and returns
- * the result by changing @primitive.
- *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
- **/
-void
-cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
-{
-    switch (primitive->data->header.type) {
-
-    case CAIRO_PATH_LINE_TO:
-        cpml_line_offset(primitive, offset);
-        break;
-
-    case CAIRO_PATH_ARC_TO:
-        cpml_arc_offset(primitive, offset);
-        break;
-
-    case CAIRO_PATH_CURVE_TO:
-        cpml_curve_offset(primitive, offset);
-        break;
-
-    case CAIRO_PATH_CLOSE_PATH:
-        cpml_close_offset(primitive, offset);
-        break;
-
-    default:
-        break;
-    }
 }
 
 

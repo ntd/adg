@@ -70,6 +70,8 @@ static size_t   put_intersections       (const CpmlPrimitive    *line,
                                          const CpmlPrimitive    *primitive,
                                          size_t                  n_dest,
                                          CpmlPair               *dest);
+static void     offset                  (CpmlPrimitive          *line,
+                                         double                  offset);
 static cairo_bool_t
                 intersection            (const CpmlPair         *p1_4,
                                          CpmlPair               *dest,
@@ -90,7 +92,7 @@ _cpml_line_get_class(void)
             put_vector_at,
             get_closest_pos,
             put_intersections,
-            NULL,
+            offset,
             NULL
         };
         p_class = &class_data;
@@ -113,57 +115,13 @@ _cpml_close_get_class(void)
             put_vector_at,
             get_closest_pos,
             put_intersections,
-            NULL,
+            offset,
             NULL
         };
         p_class = &class_data;
     }
 
     return p_class;
-}
-
-
-/**
- * cpml_line_offset:
- * @line:   the #CpmlPrimitive line data
- * @offset: distance for the computed parallel line
- *
- * Given a line segment specified by the @line primitive data,
- * computes the parallel line distant @offset from the original one
- * and returns the result by changing @line.
- **/
-void
-cpml_line_offset(CpmlPrimitive *line, double offset)
-{
-    cairo_path_data_t *p1, *p2;
-    CpmlVector normal;
-
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
-
-    put_vector_at(line, 0, &normal);
-    cpml_vector_normal(&normal);
-    cpml_vector_set_length(&normal, offset);
-
-    p1->point.x += normal.x;
-    p1->point.y += normal.y;
-    p2->point.x += normal.x;
-    p2->point.y += normal.y;
-}
-
-/**
- * cpml_close_offset:
- * @close:  the #CpmlPrimitive close data
- * @offset: distance for the computed parallel close
- *
- * Given a close segment specified by the @close primitive data,
- * computes the parallel close distant @offset from the original one
- * and returns the result by changing @close.
- **/
-void
-cpml_close_offset(CpmlPrimitive *close, double offset)
-{
-    cpml_line_offset(close, offset);
 }
 
 
@@ -262,6 +220,25 @@ put_intersections(const CpmlPrimitive *line, const CpmlPrimitive *primitive,
     cpml_pair_from_cairo(&p1_4[3], cpml_primitive_get_point(primitive, -1));
 
     return intersection(p1_4, dest, NULL) ? 1 : 0;
+}
+
+static void
+offset(CpmlPrimitive *line, double offset)
+{
+    cairo_path_data_t *p1, *p2;
+    CpmlVector normal;
+
+    p1 = cpml_primitive_get_point(line, 0);
+    p2 = cpml_primitive_get_point(line, -1);
+
+    put_vector_at(line, 0, &normal);
+    cpml_vector_normal(&normal);
+    cpml_vector_set_length(&normal, offset);
+
+    p1->point.x += normal.x;
+    p1->point.y += normal.y;
+    p2->point.x += normal.x;
+    p2->point.y += normal.y;
 }
 
 static cairo_bool_t

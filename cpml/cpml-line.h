@@ -27,12 +27,4 @@
 #define __CPML_LINE_H__
 
 
-CAIRO_BEGIN_DECLS
-
-void    cpml_line_offset                (CpmlPrimitive          *line,
-                                         double                  offset);
-
-CAIRO_END_DECLS
-
-
 #endif /* __CPML_LINE_H__ */

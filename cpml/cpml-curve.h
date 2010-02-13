@@ -35,8 +35,6 @@ void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
 void    cpml_curve_put_vector_at_time   (const CpmlPrimitive    *curve,
                                          double                  t,
                                          CpmlVector             *vector);
-void    cpml_curve_offset               (CpmlPrimitive          *curve,
-                                         double                  offset);
 
 CAIRO_END_DECLS
 
