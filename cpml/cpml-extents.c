@@ -99,10 +99,10 @@ cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
     if (src->is_defined == 0)
         return;
 
-    cpml_pair_copy(&pair, &src->org);
-    cpml_extents_pair_add(extents, &pair);
+    pair.x = src->org.x + src->size.x;
+    pair.y = src->org.y + src->size.y;
 
-    cpml_pair_add(&pair, &src->size);
+    cpml_extents_pair_add(extents, &src->org);
     cpml_extents_pair_add(extents, &pair);
 }
 
@@ -169,8 +169,10 @@ cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
     if (ps.x < pe.x || ps.y < pe.y)
         return 0;
 
-    cpml_pair_add(&pe, &extents->size);
-    cpml_pair_add(&ps, &src->size);
+    pe.x += extents->size.x;
+    pe.y += extents->size.y;
+    ps.x += extents->size.x;
+    ps.y += extents->size.y;
 
     if (ps.x > pe.x || ps.y > pe.y)
         return 0;

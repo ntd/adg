@@ -372,7 +372,9 @@ put_pair_at(const CpmlPrimitive *arc, double pos, CpmlPair *pair)
         angle = (end-start)*pos + start;
         cpml_vector_from_angle(pair, angle);
         cpml_vector_set_length(pair, r);
-        cpml_pair_add(pair, &center);
+
+        pair->x += center.x;
+        pair->y += center.y;
     }
 }
 
@@ -388,8 +390,10 @@ put_vector_at(const CpmlPrimitive *arc, double pos, CpmlVector *vector)
     cpml_vector_from_angle(vector, angle);
     cpml_vector_normal(vector);
 
-    if (start > end)
-        cpml_pair_negate(vector);
+    if (start > end) {
+        vector->x = -vector->x;
+        vector->y = -vector->y;
+    }
 }
 
 static void
@@ -409,17 +413,23 @@ offset(CpmlPrimitive *arc, double offset)
 
     /* Offset the three points by calculating their vector from the center,
      * setting the new radius as length and readding the center */
-    cpml_pair_sub(&p[0], &center);
-    cpml_pair_sub(&p[1], &center);
-    cpml_pair_sub(&p[2], &center);
+    p[0].x -= center.x;
+    p[0].y -= center.y;
+    p[1].x -= center.x;
+    p[1].y -= center.y;
+    p[2].x -= center.x;
+    p[2].y -= center.y;
 
     cpml_vector_set_length(&p[0], r);
     cpml_vector_set_length(&p[1], r);
     cpml_vector_set_length(&p[2], r);
 
-    cpml_pair_add(&p[0], &center);
-    cpml_pair_add(&p[1], &center);
-    cpml_pair_add(&p[2], &center);
+    p[0].x += center.x;
+    p[0].y += center.y;
+    p[1].x += center.x;
+    p[1].y += center.y;
+    p[2].x += center.x;
+    p[2].y += center.y;
 
     cpml_pair_to_cairo(&p[0], arc->org);
     cpml_pair_to_cairo(&p[1], &arc->data[1]);
@@ -440,10 +450,10 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     }
 
     /* Translate the 3 points of -p0, to simplify the formula */
-    cpml_pair_copy(&b, &p[1]);
-    cpml_pair_sub(&b, &p[0]);
-    cpml_pair_copy(&c, &p[2]);
-    cpml_pair_sub(&c, &p[0]);
+    b.x = p[1].x - p[0].x;
+    b.y = p[1].y - p[0].y;
+    c.x = p[2].x - p[0].x;
+    c.y = p[2].y - p[0].y;
 
     /* Check for division by 0, that is the case where the 3 given points
      * are laying on a straight line and there is no fitting circle */
@@ -468,8 +478,8 @@ get_angles(const CpmlPair *p, const CpmlPair *center,
     double mid;
 
     /* Calculate the starting angle */
-    cpml_pair_copy(&vector, &p[0]);
-    cpml_pair_sub(&vector, center);
+    vector.x = p[0].x - center->x;
+    vector.y = p[0].y - center->y;
     *start = cpml_vector_angle(&vector);
 
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
@@ -479,11 +489,11 @@ get_angles(const CpmlPair *p, const CpmlPair *center,
     } else {
         /* Calculate the mid and end angle: cpml_vector_angle()
          * returns an angle between -M_PI and M_PI */
-        cpml_pair_copy(&vector, &p[1]);
-        cpml_pair_sub(&vector, center);
+        vector.x = p[1].x - center->x;
+        vector.y = p[1].y - center->y;
         mid = cpml_vector_angle(&vector);
-        cpml_pair_copy(&vector, &p[2]);
-        cpml_pair_sub(&vector, center);
+        vector.x = p[2].x - center->x;
+        vector.y = p[2].y - center->y;
         *end = cpml_vector_angle(&vector);
 
         if (*end > *start) {

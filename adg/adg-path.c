@@ -659,9 +659,12 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
     cpml_vector_set_length(&p[1], r);
     cpml_vector_set_length(&p[2], r);
 
-    cpml_pair_add(&p[0], center);
-    cpml_pair_add(&p[1], center);
-    cpml_pair_add(&p[2], center);
+    p[0].x += center->x;
+    p[0].y += center->y;
+    p[1].x += center->x;
+    p[1].y += center->y;
+    p[2].x += center->x;
+    p[2].y += center->y;
 
     if (!data->cp_is_valid)
         adg_path_append(path, CPML_MOVE, &p[0]);
@@ -1165,23 +1168,24 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     cpml_primitive_put_vector_at(last_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
-    cpml_pair_copy(&p[0], &center);
-    cpml_pair_sub(&p[0], &vector);
+    p[0].x = center.x - vector.x;
+    p[0].y = center.y - vector.y;
 
     /* Compute the mid point of the fillet */
     cpml_pair_from_cairo(&vector, current->org);
-    cpml_pair_sub(&vector, &center);
+    vector.x -= center.x;
+    vector.y -= center.y;
     cpml_vector_set_length(&vector, radius);
-    cpml_pair_copy(&p[1], &center);
-    cpml_pair_add(&p[1], &vector);
+    p[1].x = center.x + vector.x;
+    p[1].y = center.y + vector.y;
 
     /* Compute the end point of the fillet */
     pos = cpml_primitive_get_closest_pos(current_dup, &center);
     cpml_primitive_put_vector_at(current_dup, pos, &vector);
     cpml_vector_set_length(&vector, offset);
     cpml_vector_normal(&vector);
-    cpml_pair_copy(&p[2], &center);
-    cpml_pair_sub(&p[2], &vector);
+    p[2].x = center.x - vector.x;
+    p[2].y = center.y - vector.y;
 
     g_free(current_dup);
     g_free(last_dup);

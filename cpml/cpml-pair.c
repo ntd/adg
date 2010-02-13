@@ -43,11 +43,11 @@
  * @x: the x component of the vector
  * @y: the y component of the vector
  *
- * Another name for #CpmlPair. It is used to clarify when a function expects
- * a pair or a vector.
+ * Another name for #CpmlPair. It is used to clarify when a function
+ * expects a generic pair (usually coordinates) or a vector.
  *
  * A vector represents a line starting from the origin (0,0) and ending
- * to the given coordinates pair. Vectors are useful to define directions
+ * to the given coordinates pair. Vectors are useful to define direction
  * and length at once. Keep in mind the cairo default coordinates system
  * is not problably what you expect: the x axis increases at right
  * (as usual) but the y axis increases at down (the reverse of a usual
@@ -64,19 +64,6 @@ static CpmlPair fallback_pair = { 0, 0 };
 
 
 /**
- * cpml_pair_copy:
- * @pair: the destination #CpmlPair
- * @src: the source #CpmlPair
- *
- * Copies @src in @pair.
- **/
-void
-cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
-{
-    memcpy(pair, src, sizeof(CpmlPair));
-}
-
-/**
  * cpml_pair_from_cairo:
  * @pair: the destination #CpmlPair
  * @path_data: the original path data point
@@ -91,107 +78,17 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
     pair->y = path_data->point.y;
 }
 
-
 /**
- * cpml_pair_negate:
- * @pair: a #CpmlPair
+ * cpml_pair_copy:
+ * @pair: the destination #CpmlPair
+ * @src: the source #CpmlPair
  *
- * Negates the coordinates of @pair.
+ * Copies @src in @pair.
  **/
 void
-cpml_pair_negate(CpmlPair *pair)
+cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
-    pair->x = - pair->x;
-    pair->y = - pair->y;
-}
-
-/**
- * cpml_pair_invert:
- * @pair: a #CpmlPair
- *
- * Inverts (1/x) the coordinates of @pair. If @pair cannot be inverted
- * because one coordinate is 0, 0 is returned and no transformation is
- * performed.
- *
- * Returns: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_pair_invert(CpmlPair *pair)
-{
-    if (pair->x == 0 || pair->y == 0)
-        return 0;
-
-    pair->x = 1. / pair->x;
-    pair->y = 1. / pair->y;
-    return 1;
-}
-
-/**
- * cpml_pair_add:
- * @pair: the destination #CpmlPair
- * @src:  the source pair to add
- *
- * Adds @src to @pair and stores the result in @pair. In other words,
- * @pair = @pair + @src.
- **/
-void
-cpml_pair_add(CpmlPair *pair, const CpmlPair *src)
-{
-    pair->x += src->x;
-    pair->y += src->y;
-}
-
-/**
- * cpml_pair_sub:
- * @pair: the destination #CpmlPair
- * @src:  the source pair to subtract
- *
- * Subtracts @src from @pair and stores the result in @pair. In other words,
- * @pair = @pair - @src.
- **/
-void
-cpml_pair_sub(CpmlPair *pair, const CpmlPair *src)
-{
-    pair->x -= src->x;
-    pair->y -= src->y;
-}
-
-/**
- * cpml_pair_mul:
- * @pair: the destination #CpmlPair
- * @src:  the source pair factor
- *
- * Multiplies the x coordinate of @pair by the @src x factor and the
- * y coordinate by the @src y factor.
- **/
-void
-cpml_pair_mul(CpmlPair *pair, const CpmlPair *src)
-{
-    pair->x *= src->x;
-    pair->y *= src->y;
-}
-
-/**
- * cpml_pair_div:
- * @pair: the destination #CpmlPair
- * @src:  the source pair divisor
- *
- * Divides the x coordinate of @pair by the @src x divisor and the
- * y coordinate by the @src y divisor. If @pair cannot be divided
- * because of a division by 0, 0 is returned and no transformation
- * is performed.
- *
- * Returns: 1 on success, 0 on errors
- **/
-cairo_bool_t
-cpml_pair_div(CpmlPair *pair, const CpmlPair *src)
-{
-    if (src->x == 0 || src->y == 0)
-        return 0;
-
-    pair->x /= src->x;
-    pair->y /= src->y;
-    return 1;
+    memcpy(pair, src, sizeof(CpmlPair));
 }
 
 /**

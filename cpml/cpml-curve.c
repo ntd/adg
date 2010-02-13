@@ -339,31 +339,34 @@ offset(CpmlPrimitive *curve, double offset)
     cpml_pair_from_cairo(&p3, &curve->data[3]);
 
     /* v0 = p1-p0 */
-    cpml_pair_copy(&v0, &p1);
-    cpml_pair_sub(&v0, &p0);
+    v0.x = p1.x - p0.x;
+    v0.y = p1.y - p0.y;
 
     /* v3 = p3-p2 */
-    cpml_pair_copy(&v3, &p3);
-    cpml_pair_sub(&v3, &p2);
+    v3.x = p3.x - p2.x;
+    v3.y = p3.y - p2.y;
 
     /* pm = point in C(m) offseted the requested @offset distance */
     cpml_curve_put_vector_at_time(curve, m, &vm);
     cpml_vector_set_length(&vm, offset);
     cpml_vector_normal(&vm);
     cpml_curve_put_pair_at_time(curve, m, &pm);
-    cpml_pair_add(&pm, &vm);
+    pm.x += vm.x;
+    pm.y += vm.y;
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
     cpml_pair_copy(&vtmp, &v0);
     cpml_vector_set_length(&vtmp, offset);
     cpml_vector_normal(&vtmp);
-    cpml_pair_add(&p0, &vtmp);
+    p0.x += vtmp.x;
+    p0.y += vtmp.y;
 
     /* p3 = p3 + normal of v3 of @offset magnitude, as done for p0 */
     cpml_pair_copy(&vtmp, &v3);
     cpml_vector_set_length(&vtmp, offset);
     cpml_vector_normal(&vtmp);
-    cpml_pair_add(&p3, &vtmp);
+    p3.x += vtmp.x;
+    p3.y += vtmp.y;
 
     if (v0.x*v3.y == v3.x*v0.y) {
         /* Inconsistent equations: use the alternative approach */

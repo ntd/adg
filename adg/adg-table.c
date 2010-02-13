@@ -1610,9 +1610,8 @@ cell_arrange(AdgTableCell *cell)
         AdgPair to;
 
         alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
-        to.x = extents->size.x * cell->value_factor.x;
-        to.y = extents->size.y * cell->value_factor.y;
-        cpml_pair_add(&to, &extents->org);
+        to.x = extents->size.x * cell->value_factor.x + extents->org.x;
+        to.y = extents->size.y * cell->value_factor.y + extents->org.y;
 
         cairo_matrix_init_translate(&map, to.x, to.y);
         adg_entity_set_global_map((AdgEntity *) alignment, &map);

@@ -293,7 +293,8 @@ arrange(AdgEntity *entity)
     cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
     cpml_pair_transform(&base, local);
-    cpml_pair_add(&base, &data->shift.base);
+    base.x += data->shift.base.x;
+    base.y += data->shift.base.y;
 
     /* baseline start */
     cpml_pair_to_cairo(&base, &data->cpml.data[1]);
@@ -407,11 +408,12 @@ update_geometry(AdgRDim *rdim)
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);
-    cpml_pair_copy(&vector, ref2);
-    cpml_pair_sub(&vector, ref1);
+    vector.x = ref2->x - ref1->x;
+    vector.y = ref2->y - ref1->y;
     if (cpml_pair_squared_distance(pos, ref1) <
         cpml_pair_squared_distance(pos, ref2)) {
-        cpml_pair_negate(&vector);
+        vector.x = -vector.x;
+        vector.y = -vector.y;
     }
 
     /* radius */
@@ -423,7 +425,8 @@ update_geometry(AdgRDim *rdim)
     /* point.base */
     cpml_pair_copy(&data->point.base, &vector);
     cpml_vector_set_length(&data->point.base, pos_distance);
-    cpml_pair_add(&data->point.base, ref1);
+    data->point.base.x += ref1->x;
+    data->point.base.y += ref1->y;
 
     /* shift.base */
     cpml_pair_copy(&data->shift.base, &vector);

@@ -431,8 +431,10 @@ draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
 
     /* Revert spacings if needed to inspect only the x >= 0 cases */
     cpml_pair_copy(&step, spacing);
-    if (spacing->x < 0 || (spacing->x == 0 && spacing->y < 0))
-        cpml_pair_negate(&step);
+    if (spacing->x < 0 || (spacing->x == 0 && spacing->y < 0)) {
+        step.x = -step.x;
+        step.y = -step.y;
+    }
 
     p1.x = step.x / 2;
     p2.y = step.y / 2;
@@ -457,8 +459,10 @@ draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
             }
             cairo_move_to(cr, p1.x, p1.y);
             cairo_line_to(cr, p2.x, p2.y);
-            cpml_pair_add(&p1, &step1);
-            cpml_pair_add(&p2, &step2);
+            p1.x += step1.x;
+            p1.y += step1.y;
+            p2.x += step2.x;
+            p2.y += step2.y;
         }
     }
 
@@ -473,8 +477,10 @@ draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
             }
             cairo_move_to(cr, p1.x, p1.y);
             cairo_line_to(cr, p2.x, p2.y);
-            cpml_pair_add(&p1, &step1);
-            cpml_pair_add(&p2, &step2);
+            p1.x += step1.x;
+            p1.y += step1.y;
+            p2.x += step2.x;
+            p2.y += step2.y;
         }
     }
 

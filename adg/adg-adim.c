@@ -602,30 +602,32 @@ arrange(AdgEntity *entity)
     cpml_pair_transform(&base2, local);
 
     /* Combine points and global shifts to build the path */
-    cpml_pair_copy(&pair, &ref1);
-    cpml_pair_add(&pair, &data->shift.from1);
+    pair.x = ref1.x + data->shift.from1.x;
+    pair.y = ref1.y + data->shift.from1.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[6]);
 
-    cpml_pair_copy(&pair, &base1);
-    cpml_pair_add(&pair, &data->shift.base1);
+    pair.x = base1.x + data->shift.base1.x;
+    pair.y = base1.y + data->shift.base1.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[1]);
 
-    cpml_pair_add(&pair, &data->shift.to1);
+    pair.x += data->shift.to1.x;
+    pair.y += data->shift.to1.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[8]);
 
-    cpml_pair_copy(&pair, &base12);
-    cpml_pair_add(&pair, &data->shift.base12);
+    pair.x = base12.x + data->shift.base12.x;
+    pair.y = base12.y + data->shift.base12.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[3]);
 
-    cpml_pair_copy(&pair, &ref2);
-    cpml_pair_add(&pair, &data->shift.from2);
+    pair.x = ref2.x + data->shift.from2.x;
+    pair.y = ref2.y + data->shift.from2.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[10]);
 
-    cpml_pair_copy(&pair, &base2);
-    cpml_pair_add(&pair, &data->shift.base2);
+    pair.x = base2.x + data->shift.base2.x;
+    pair.y = base2.y + data->shift.base2.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[4]);
 
-    cpml_pair_add(&pair, &data->shift.to2);
+    pair.x += data->shift.to2.x;
+    pair.y += data->shift.to2.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[12]);
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
@@ -782,18 +784,18 @@ update_geometry(AdgADim *adim)
 
     /* point.base1 */
     cpml_vector_set_length(&vector[0], distance);
-    cpml_pair_copy(&data->point.base1, &vector[0]);
-    cpml_pair_add(&data->point.base1, &center);
+    data->point.base1.x = vector[0].x + center.x;
+    data->point.base1.y = vector[0].y + center.y;
 
     /* point.base2 */
     cpml_vector_set_length(&vector[2], distance);
-    cpml_pair_copy(&data->point.base2, &vector[2]);
-    cpml_pair_add(&data->point.base2, &center);
+    data->point.base2.x = vector[2].x + center.x;
+    data->point.base2.y = vector[2].y + center.y;
 
     /* point.base12 */
     cpml_vector_set_length(&vector[1], distance);
-    cpml_pair_copy(&data->point.base12, &vector[1]);
-    cpml_pair_add(&data->point.base12, &center);
+    data->point.base12.x = vector[1].x + center.x;
+    data->point.base12.y = vector[1].y + center.y;
 
     data->geometry_arranged = TRUE;
 }
@@ -856,17 +858,20 @@ get_info(AdgADim *adim, CpmlVector vector[],
     AdgDim *dim;
     AdgADimPrivate *data;
     const AdgPair *ref1, *ref2;
+    const AdgPair *org1, *org2;
     gdouble factor;
 
     dim = (AdgDim *) adim;
     data = adim->data;
     ref1 = adg_dim_get_ref1(dim);
     ref2 = adg_dim_get_ref2(dim);
+    org1 = adg_point_get_pair(data->org1);
+    org2 = adg_point_get_pair(data->org2);
 
-    cpml_pair_copy(&vector[0], ref1);
-    cpml_pair_sub(&vector[0], adg_point_get_pair(data->org1));
-    cpml_pair_copy(&vector[2], ref2);
-    cpml_pair_sub(&vector[2], adg_point_get_pair(data->org2));
+    vector[0].x = ref1->x - org1->x;
+    vector[0].y = ref1->y - org1->y;
+    vector[2].x = ref2->x - org2->x;
+    vector[2].y = ref2->y - org2->y;
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0)

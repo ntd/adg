@@ -528,28 +528,30 @@ arrange(AdgEntity *entity)
     cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
     cpml_pair_transform(&base1, local);
-    cpml_pair_add(&base1, &data->shift.base);
+    base1.x += data->shift.base.x;
+    base1.y += data->shift.base.y;
     cpml_pair_transform(&base2, local);
-    cpml_pair_add(&base2, &data->shift.base);
+    base2.x += data->shift.base.x;
+    base2.y += data->shift.base.y;
 
-    cpml_pair_copy(&pair, &ref1);
-    cpml_pair_add(&pair, &data->shift.from);
+    pair.x = ref1.x + data->shift.from.x;
+    pair.y = ref1.y + data->shift.from.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
 
     cpml_pair_to_cairo(&base1, &data->cpml.data[1]);
 
-    cpml_pair_copy(&pair, &base1);
-    cpml_pair_add(&pair, &data->shift.to);
+    pair.x = base1.x + data->shift.to.x;
+    pair.y = base1.y + data->shift.to.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[15]);
 
-    cpml_pair_copy(&pair, &ref2);
-    cpml_pair_add(&pair, &data->shift.from);
+    pair.x = ref2.x + data->shift.from.x;
+    pair.y = ref2.y + data->shift.from.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
 
     cpml_pair_to_cairo(&base2, &data->cpml.data[3]);
 
-    cpml_pair_copy(&pair, &base2);
-    cpml_pair_add(&pair, &data->shift.to);
+    pair.x = base2.x + data->shift.to.x;
+    pair.y = base2.y + data->shift.to.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
     /* Calculate the outside segments */
@@ -561,19 +563,22 @@ arrange(AdgEntity *entity)
         cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
 
         cpml_pair_from_cairo(&vector, &data->cpml.data[3]);
-        cpml_pair_sub(&vector, &pair);
+        vector.x -= pair.x;
+        vector.y -= pair.y;
         cpml_vector_set_length(&vector, beyond);
 
         cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
         cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
 
-        cpml_pair_sub(&pair, &vector);
+        pair.x -= vector.x;
+        pair.y -= vector.y;
         cpml_pair_to_cairo(&pair, &data->cpml.data[7]);
 
         cpml_pair_from_cairo(&pair, &data->cpml.data[3]);
         cpml_pair_to_cairo(&pair, &data->cpml.data[11]);
 
-        cpml_pair_add(&pair, &vector);
+        pair.x += vector.x;
+        pair.y += vector.y;
         cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
 
         data->cpml.data[2].header.length = 2;
@@ -609,7 +614,8 @@ arrange(AdgEntity *entity)
             /* Set "pair" to the properly converted "pos" coordinates */
             cpml_pair_copy(&pair, adg_dim_get_pos(dim));
             cpml_pair_transform(&pair, local);
-            cpml_pair_add(&pair, &data->shift.base);
+            pair.x += data->shift.base.x;
+            pair.y += data->shift.base.y;
 
             /* Taking "middle" as the reference, check if the quote
              * is on the _left_ or on the _right_ side. This is got
@@ -621,7 +627,8 @@ arrange(AdgEntity *entity)
             cpml_vector_from_angle(&p_quote, angle);
 
             same_sd = cpml_pair_squared_distance(&p_quote, &p_line);
-            cpml_pair_negate(&p_quote);
+            p_quote.x = -p_quote.x;
+            p_quote.y = -p_quote.y;
             opposite_sd = cpml_pair_squared_distance(&p_quote, &p_line);
             quote_size = adg_entity_get_extents(quote_entity)->size.x;
 
@@ -630,11 +637,13 @@ arrange(AdgEntity *entity)
                 factor.x = 1;
             } else {
                 factor.x = 0;
-                cpml_pair_negate(&p_quote);
+                p_quote.x = -p_quote.x;
+                p_quote.y = -p_quote.y;
             }
 
             cpml_vector_set_length(&p_quote, quote_size);
-            cpml_pair_add(&p_quote, &pair);
+            p_quote.x += pair.x;
+            p_quote.y += pair.y;
 
             /* Extends the base line to include the "p_quote" pair,
              * that is underline a detached quote */

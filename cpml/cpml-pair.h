@@ -37,21 +37,10 @@ struct _CpmlPair {
 };
 
 
-void            cpml_pair_copy                  (CpmlPair       *pair,
-                                                 const CpmlPair *src);
 void            cpml_pair_from_cairo            (CpmlPair       *pair,
                                                  const cairo_path_data_t
                                                                 *path_data);
-
-void            cpml_pair_negate                (CpmlPair       *pair);
-cairo_bool_t    cpml_pair_invert                (CpmlPair       *pair);
-void            cpml_pair_add                   (CpmlPair       *pair,
-                                                 const CpmlPair *src);
-void            cpml_pair_sub                   (CpmlPair       *pair,
-                                                 const CpmlPair *src);
-void            cpml_pair_mul                   (CpmlPair       *pair,
-                                                 const CpmlPair *src);
-cairo_bool_t    cpml_pair_div                   (CpmlPair       *pair,
+void            cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
 void            cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t
@@ -66,7 +55,6 @@ void            cpml_pair_to_cairo              (const CpmlPair *pair,
 
 void            cpml_vector_from_angle          (CpmlVector     *vector,
                                                  double          angle);
-
 void            cpml_vector_set_length          (CpmlVector     *vector,
                                                  double          length);
 double          cpml_vector_angle               (const CpmlVector
@@ -75,7 +63,6 @@ void            cpml_vector_normal              (CpmlVector     *vector);
 void            cpml_vector_transform           (CpmlVector     *vector,
                                                  const cairo_matrix_t
                                                                 *matrix);
-
 
 CAIRO_END_DECLS
 
