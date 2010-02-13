@@ -35,15 +35,6 @@ cairo_bool_t
                                          double                 *r,
                                          double                 *start,
                                          double                 *end);
-int     cpml_arc_put_intersections      (const CpmlPrimitive    *arc,
-                                         const CpmlPrimitive    *arc2,
-                                         int                     max,
-                                         CpmlPair               *dest);
-int     cpml_arc_put_intersections_with_line
-                                        (const CpmlPrimitive    *arc,
-                                         const CpmlPrimitive    *line,
-                                         int                     max,
-                                         CpmlPair               *dest);
 void    cpml_arc_offset                 (CpmlPrimitive          *arc,
                                          double                  offset);
 void    cpml_arc_to_cairo               (const CpmlPrimitive    *arc,

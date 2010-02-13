@@ -69,9 +69,9 @@ struct __CpmlPrimitiveClass {
                                          CpmlVector             *vector);
     double       (*get_closest_pos)     (const CpmlPrimitive    *primitive,
                                          const CpmlPair         *pair);
-    int          (*put_intersections)   (const CpmlPrimitive    *primitive,
+    size_t       (*put_intersections)   (const CpmlPrimitive    *primitive,
                                          const CpmlPrimitive    *primitive2,
-                                         int                     max,
+                                         size_t                  n_dest,
                                          CpmlPair               *dest);
     void         (*offset)              (CpmlPrimitive          *primitive,
                                          double                  offset);

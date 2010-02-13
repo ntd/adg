@@ -434,12 +434,12 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * cpml_segment_put_intersections:
  * @segment:  the first #CpmlSegment
  * @segment2: the second #CpmlSegment
- * @max:      maximum number of intersections to return
+ * @n_dest:   maximum number of intersections to return
  * @dest:     the destination vector of #CpmlPair
  *
  * Computes the intersections between @segment and @segment2 and
  * returns the found points in @dest. If the intersections are more
- * than @max, only the first @max pairs are stored in @dest.
+ * than @n_dest, only the first @n_dest pairs are stored in @dest.
  *
  * To get the job done, the primitives of @segment are sequentially
  * scanned for intersections with any primitive in @segment2. This
@@ -447,13 +447,13 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  *
  * Returns: the number of intersections found
  **/
-int
+size_t
 cpml_segment_put_intersections(const CpmlSegment *segment,
                                const CpmlSegment *segment2,
-                               int max, CpmlPair *dest)
+                               size_t n_dest, CpmlPair *dest)
 {
     CpmlPrimitive portion;
-    int partial, total;
+    size_t partial, total;
 
     cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
     total = 0;
@@ -461,10 +461,10 @@ cpml_segment_put_intersections(const CpmlSegment *segment,
     do {
         partial = cpml_primitive_put_intersections_with_segment(&portion,
                                                                 segment2,
-                                                                dest + total,
-                                                                max - total);
+                                                                n_dest - total,
+                                                                dest + total);
         total += partial;
-    } while (total < max && cpml_primitive_next(&portion));
+    } while (total < n_dest && cpml_primitive_next(&portion));
 
     return total;
 }

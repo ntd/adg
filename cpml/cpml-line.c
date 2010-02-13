@@ -55,18 +55,23 @@
 #include <stdlib.h>
 
 
-static double           get_length      (const CpmlPrimitive    *line);
-static void             put_extents     (const CpmlPrimitive    *line,
+static double   get_length              (const CpmlPrimitive    *line);
+static void     put_extents             (const CpmlPrimitive    *line,
                                          CpmlExtents            *extents);
-static void             put_pair_at     (const CpmlPrimitive    *line,
+static void     put_pair_at             (const CpmlPrimitive    *line,
                                          double                  pos,
                                          CpmlPair               *pair);
-static void             put_vector_at   (const CpmlPrimitive    *line,
+static void     put_vector_at           (const CpmlPrimitive    *line,
                                          double                  pos,
                                          CpmlVector             *vector);
-static double           get_closest_pos (const CpmlPrimitive    *line,
+static double   get_closest_pos         (const CpmlPrimitive    *line,
                                          const CpmlPair         *pair);
-static cairo_bool_t     intersection    (const CpmlPair         *p,
+static size_t   put_intersections       (const CpmlPrimitive    *line,
+                                         const CpmlPrimitive    *primitive,
+                                         size_t                  n_dest,
+                                         CpmlPair               *dest);
+static cairo_bool_t
+                intersection            (const CpmlPair         *p1_4,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
 
@@ -84,7 +89,7 @@ _cpml_line_get_class(void)
             put_pair_at,
             put_vector_at,
             get_closest_pos,
-            NULL,
+            put_intersections,
             NULL,
             NULL
         };
@@ -107,7 +112,7 @@ _cpml_close_get_class(void)
             put_pair_at,
             put_vector_at,
             get_closest_pos,
-            NULL,
+            put_intersections,
             NULL,
             NULL
         };
@@ -117,42 +122,6 @@ _cpml_close_get_class(void)
     return p_class;
 }
 
-
-/**
- * cpml_line_put_intersections:
- * @line:  the first line
- * @line2: the second line
- * @max:   maximum number of intersections to return
- *         (that is, the size of @dest)
- * @dest:  a vector of #CpmlPair
- *
- * Given two lines (@line and @line2), gets their intersection point
- * and store the result in @dest.
- *
- * If @max is 0, the function returns 0 immediately without any
- * further processing. If @line and @line2 are cohincident,
- * their intersections are not considered.
- *
- * Returns: the number of intersections found (max 1)
- *          or 0 if the primitives do not intersect
- **/
-int
-cpml_line_put_intersections(const CpmlPrimitive *line,
-                            const CpmlPrimitive *line2,
-                            int max, CpmlPair *dest)
-{
-    CpmlPair p[4];
-
-    if (max == 0)
-        return 0;
-
-    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
-    cpml_pair_from_cairo(&p[2], cpml_primitive_get_point(line2, 0));
-    cpml_pair_from_cairo(&p[3], cpml_primitive_get_point(line2, -1));
-
-    return intersection(p, dest, NULL) ? 1 : 0;
-}
 
 /**
  * cpml_line_offset:
@@ -250,24 +219,24 @@ put_vector_at(const CpmlPrimitive *line, double pos, CpmlVector *vector)
 static double
 get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
 {
-    CpmlPair p[4];
+    CpmlPair p1_4[4];
     CpmlVector normal;
     double pos;
 
-    cpml_pair_from_cairo(&p[0], cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p[1], cpml_primitive_get_point(line, -1));
+    cpml_pair_from_cairo(&p1_4[0], cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p1_4[1], cpml_primitive_get_point(line, -1));
 
-    cpml_pair_copy(&normal, &p[1]);
-    cpml_pair_sub(&normal, &p[2]);
+    cpml_pair_copy(&normal, &p1_4[1]);
+    cpml_pair_sub(&normal, &p1_4[2]);
     cpml_vector_normal(&normal);
 
-    cpml_pair_copy(&p[2], pair);
-    cpml_pair_copy(&p[3], pair);
-    cpml_pair_add(&p[3], &normal);
+    cpml_pair_copy(&p1_4[2], pair);
+    cpml_pair_copy(&p1_4[3], pair);
+    cpml_pair_add(&p1_4[3], &normal);
 
     /* Ensure to return 0 if intersection() fails */
     pos = 0;
-    intersection(p, NULL, &pos);
+    intersection(p1_4, NULL, &pos);
 
     /* Clamp the result to 0..1 */
     if (pos < 0)
@@ -278,28 +247,45 @@ get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
     return pos;
 }
 
+static size_t
+put_intersections(const CpmlPrimitive *line, const CpmlPrimitive *primitive,
+                  size_t n_dest, CpmlPair *dest)
+{
+    CpmlPair p1_4[4];
+
+    if (n_dest == 0)
+        return 0;
+
+    cpml_pair_from_cairo(&p1_4[0], cpml_primitive_get_point(line, 0));
+    cpml_pair_from_cairo(&p1_4[1], cpml_primitive_get_point(line, -1));
+    cpml_pair_from_cairo(&p1_4[2], cpml_primitive_get_point(primitive, 0));
+    cpml_pair_from_cairo(&p1_4[3], cpml_primitive_get_point(primitive, -1));
+
+    return intersection(p1_4, dest, NULL) ? 1 : 0;
+}
+
 static cairo_bool_t
-intersection(const CpmlPair *p, CpmlPair *dest, double *get_factor)
+intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
 {
     CpmlVector v[2];
     double factor;
 
-    cpml_pair_copy(&v[0], &p[1]);
-    cpml_pair_sub(&v[0], &p[0]);
-    cpml_pair_copy(&v[1], &p[3]);
-    cpml_pair_sub(&v[1], &p[2]);
+    cpml_pair_copy(&v[0], &p1_4[1]);
+    cpml_pair_sub(&v[0], &p1_4[0]);
+    cpml_pair_copy(&v[1], &p1_4[3]);
+    cpml_pair_sub(&v[1], &p1_4[2]);
     factor = v[0].x * v[1].y - v[0].y * v[1].x;
 
     /* Check for equal slopes (the lines are parallel) */
     if (factor == 0)
         return 0;
 
-    factor = ((p[0].y - p[2].y) * v[1].x -
-              (p[0].x - p[2].x) * v[1].y) / factor;
+    factor = ((p1_4[0].y - p1_4[2].y) * v[1].x -
+              (p1_4[0].x - p1_4[2].x) * v[1].y) / factor;
 
     if (dest != NULL) {
-        dest->x = p[0].x + v[0].x * factor;
-        dest->y = p[0].y + v[0].y * factor;
+        dest->x = p1_4[0].x + v[0].x * factor;
+        dest->y = p1_4[0].y + v[0].y * factor;
     }
 
     if (get_factor != NULL)

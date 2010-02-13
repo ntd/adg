@@ -35,20 +35,6 @@ void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
 void    cpml_curve_put_vector_at_time   (const CpmlPrimitive    *curve,
                                          double                  t,
                                          CpmlVector             *vector);
-int     cpml_curve_put_intersections    (const CpmlPrimitive    *curve,
-                                         const CpmlPrimitive    *curve2,
-                                         int                     max,
-                                         CpmlPair               *dest);
-int     cpml_curve_put_intersections_with_arc
-                                        (const CpmlPrimitive    *curve,
-                                         const CpmlPrimitive    *arc,
-                                         int                     max,
-                                         CpmlPair               *dest);
-int     cpml_curve_put_intersections_with_line
-                                        (const CpmlPrimitive    *curve,
-                                         const CpmlPrimitive    *line,
-                                         int                     max,
-                                         CpmlPair               *dest);
 void    cpml_curve_offset               (CpmlPrimitive          *curve,
                                          double                  offset);
 

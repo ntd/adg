@@ -38,6 +38,7 @@
  * <listitem>the put_pair_at() method must be implemented;</listitem>
  * <listitem>the put_vector_at() method must be implemented;</listitem>
  * <listitem>the get_closest_pos() method must be implemented;</listitem>
+ * <listitem>the put_intersections() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
  **/
@@ -151,109 +152,6 @@ cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
 
     vector->x = 3 * t1_2 * p21.x + 6 * t1 * t * p32.x + 3 * t_2 * p43.x;
     vector->y = 3 * t1_2 * p21.y + 6 * t1 * t * p32.y + 3 * t_2 * p43.y;
-}
-
-/**
- * cpml_curve_put_intersections:
- * @curve:  the first curve
- * @curve2: the second curve
- * @max:    maximum number of intersections to return
- *          (that is, the size of @dest)
- * @dest:   a vector of #CpmlPair
- *
- * Given two Bézier cubic curves (@curve and @curve2), gets their
- * intersection points and store the result in @dest. Because two
- * curves can have 4 intersections, @dest MUST be at least an array
- * of 4 #CpmlPair.
- *
- * If @max is 0, the function returns 0 immediately without any
- * further processing. If @curve and @curve2 are cohincident,
- * their intersections are not considered.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the number of intersections found (max 4)
- *               or 0 if the primitives do not intersect
- **/
-int
-cpml_curve_put_intersections(const CpmlPrimitive *curve,
-                             const CpmlPrimitive *curve2,
-                             int max, CpmlPair *dest)
-{
-    return 0;
-}
-
-/**
- * cpml_curve_put_intersections_with_arc:
- * @curve: a curve
- * @arc:   an arc
- * @max:   maximum number of intersections to return
- *         (that is, the size of @dest)
- * @dest:  a vector of #CpmlPair
- *
- * Given a Bézier cubic @curve and an @arc, gets their intersection
- * points and store the result in @dest. Because an arc and a cubic
- * curve can have up to 4 intersections, @dest MUST be at least an
- * array of 4 #CpmlPair.
- *
- * If @max is 0, the function returns 0 immediately without any
- * further processing.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the number of intersections found (max 4)
- *          or 0 if the primitives do not intersect
- **/
-int
-cpml_curve_put_intersections_with_arc(const CpmlPrimitive *curve,
-                                      const CpmlPrimitive *arc,
-                                      int max, CpmlPair *dest)
-{
-    return 0;
-}
-
-/**
- * cpml_curve_put_intersections_with_line:
- * @curve: a curve
- * @line:  a line
- * @max:   maximum number of intersections to return
- *         (that is, the size of @dest)
- * @dest:  a vector of #CpmlPair
- *
- * Given a Bézier cubic @curve and a @line, gets their intersection
- * points and store the result in @dest. Because a line and a cubic
- * curve can have up to 4 intersections, @dest MUST be at least an
- * array of 4 #CpmlPair.
- *
- * If @max is 0, the function returns 0 immediately without any
- * further processing.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>To be implemented...</listitem>
- * </itemizedlist>
- * </important>
- *
- * Returns: the number of intersections found (max 4)
- *          or 0 if the primitives do not intersect
- **/
-int
-cpml_curve_put_intersections_with_line(const CpmlPrimitive *curve,
-                                       const CpmlPrimitive *line,
-                                       int max, CpmlPair *dest)
-{
-    return 0;
 }
 
 /**

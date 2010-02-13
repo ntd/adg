@@ -29,10 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-int     cpml_line_put_intersections     (const CpmlPrimitive    *line,
-                                         const CpmlPrimitive    *line2,
-                                         int                     max,
-                                         CpmlPair               *dest);
 void    cpml_line_offset                (CpmlPrimitive          *line,
                                          double                  offset);
 

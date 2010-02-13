@@ -53,11 +53,11 @@ void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
                                             cairo_t             *cr);
 void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
                                             cairo_bool_t         org_also);
-int             cpml_primitive_put_intersections_with_segment
+size_t          cpml_primitive_put_intersections_with_segment
                                            (const CpmlPrimitive *primitive,
                                             const CpmlSegment   *segment,
-                                            CpmlPair            *dest,
-                                            int                  max);
+                                            size_t               n_dest,
+                                            CpmlPair            *dest);
 
 /* To be implemented by the primitives */
 size_t          cpml_primitive_type_get_n_points
@@ -75,13 +75,13 @@ void            cpml_primitive_put_vector_at
 double          cpml_primitive_get_closest_pos
                                            (const CpmlPrimitive *primitive,
                                             const CpmlPair      *pair);
-cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
-                                            CpmlPrimitive       *primitive2);
-int             cpml_primitive_put_intersections
+size_t          cpml_primitive_put_intersections
                                            (const CpmlPrimitive *primitive,
                                             const CpmlPrimitive *primitive2,
-                                            int                  max,
+                                            size_t               n_dest,
                                             CpmlPair            *dest);
+cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
+                                            CpmlPrimitive       *primitive2);
 void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
                                             double               offset);
 
