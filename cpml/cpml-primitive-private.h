@@ -56,7 +56,7 @@ typedef struct __CpmlPrimitiveClass _CpmlPrimitiveClass;
 
 struct __CpmlPrimitiveClass {
     const char   *name;
-    int           n_points;
+    size_t        n_points;
 
     double       (*get_length)          (const CpmlPrimitive    *primitive);
     void         (*put_extents)         (const CpmlPrimitive    *primitive,

@@ -20,7 +20,6 @@
 #ifndef __CPML_H__
 #define __CPML_H__
 
-#include <cairo.h>
 #include <cpml/cpml-util.h>
 #include <cpml/cpml-pair.h>
 #include <cpml/cpml-extents.h>

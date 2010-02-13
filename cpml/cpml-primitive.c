@@ -171,9 +171,9 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  * It is similar to cpml_primitive_type_get_n_points() but using
  * a @primitive instance instead of a type.
  *
- * Returns: the number of points or -1 on errors
+ * Returns: the number of points or %0 on errors
  **/
-int
+size_t
 cpml_primitive_get_n_points(const CpmlPrimitive *primitive)
 {
     return cpml_primitive_type_get_n_points(primitive->data->header.type);
@@ -204,7 +204,7 @@ cpml_primitive_get_n_points(const CpmlPrimitive *primitive)
 cairo_path_data_t *
 cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
 {
-    int n_points;
+    size_t n_points;
 
     /* For a start point request, simply return the origin
      * without further checking */
@@ -217,7 +217,7 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
         return &primitive->segment->data[1];
 
     n_points = cpml_primitive_get_n_points(primitive);
-    if (n_points < 0)
+    if (n_points == 0)
         return NULL;
 
     /* If n_point is negative, consider it as a negative index from the end */
@@ -286,12 +286,13 @@ void
 cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 {
     const cairo_path_data_t *data;
-    int type, n, n_points;
+    int type;
+    size_t n, n_points;
 
     data = primitive->data;
     type = data->header.type;
     n_points = cpml_primitive_get_n_points(primitive);
-    if (n_points < 0) {
+    if (n_points == 0) {
         printf("Unhandled primitive type (%d)\n", type);
         return;
     }
@@ -380,15 +381,15 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
  * its own implementation.
  * </para></note>
  *
- * Returns: the number of points or -1 on errors
+ * Returns: the number of points or %0 on errors
  **/
-int
+size_t
 cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 {
     const _CpmlPrimitiveClass *class_data = get_class_from_type(type);
 
     if (class_data == NULL)
-        return -1;
+        return 0;
 
     return class_data->n_points;
 }

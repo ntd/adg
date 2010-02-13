@@ -28,8 +28,6 @@
 
 #define __CPML_H__
 
-#include <stdlib.h>
-#include <cairo.h>
 #include "cpml-util.h"
 #include "cpml-pair.h"
 

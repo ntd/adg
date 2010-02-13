@@ -606,7 +606,7 @@ reshape(CpmlSegment *segment)
 
     while (new_num_data < num_data) {
         /* A primitive is considered valid if it has at least one point */
-        if (cpml_primitive_type_get_n_points(data->header.type) <= 0)
+        if (cpml_primitive_type_get_n_points(data->header.type) == 0)
             break;
 
         length = data->header.length;
