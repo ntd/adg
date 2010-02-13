@@ -384,11 +384,6 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
  *
  * Gets the number of points required to identify the @type primitive.
  *
- * <note><para>
- * This function is primitive dependent, that is every primitive has
- * its own implementation.
- * </para></note>
- *
  * Returns: the number of points or %0 on errors
  **/
 size_t
@@ -540,26 +535,21 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * Finds the intersection points between the given primitives and
  * returns the result in @dest. The size of @dest should be enough
  * to store @n_dest #CpmlPair. The maximum number of intersections
- * is dependent from the type of the primitive involved in the
+ * is dependent on the type of the primitive involved in the
  * operation. If there are at least one Bézier curve involved, up to
- * 4 intersections could be returned. Otherwise, if there is an arc
- * the intersections will be 2 at maximum. For line line primitives,
- * there is only 1 point (or obviously 0 if the lines do not intersect).
+ * %4 intersections could be returned. Otherwise, if there is an arc
+ * the intersections will be %2 at maximum. For line primitives, there
+ * is only %1 point (or %0 if the lines are parallel).
  *
  * <note>
  * <para>
- * This function is primitive dependent: every new primitive must
- * expose API to get intersections with any other primitive type
- * (excluding #CPML_CLOSE, as it is converted to a line primitive).
- * </para>
- * <para>
- * The convention used by CPML is that a primitive should
- * expose only intersection APIs dealing with lower complexity
- * primitives. This is required to avoid double functions:
- * you will have only a cpml_curve_put_intersections_with_line()
- * function, not a cpml_line_put_intersections_with_curve(), as
- * the latter is easily reproduced by calling the former with
- * @primitive2 and @primitive swapped.
+ * The convention used by the CPML library is that a primitive should
+ * implement only the intersection algorithms with lower degree
+ * primitives. This is required to avoid code duplication: intersection
+ * between arc and Bézier curves must be implemented by #CPML_CURVE and
+ * intersection between lines and arcs must be implemented by #CPML_ARC.
+ * cpml_primitive_put_intersections() will take care of swapping the
+ * arguments if they are not properly ordered.
  * </para>
  * </note>
  *
