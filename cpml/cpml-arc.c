@@ -262,7 +262,7 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
 {
     CpmlPair center;
     double r, start, end;
-    int n_curves;
+    size_t n_curves;
     double step, angle;
     CpmlPrimitive curve;
     cairo_path_data_t data[4];
@@ -303,7 +303,7 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
  **/
 void
 cpml_arc_to_curves(const CpmlPrimitive *arc, CpmlSegment *segment,
-                   int n_curves)
+                   size_t n_curves)
 {
     CpmlPair center;
     double r, start, end;
