@@ -63,9 +63,9 @@ adg_pair_get_type(void)
  *           when no longer needed.
  **/
 AdgPair *
-adg_pair_dup(const AdgPair * pair)
+adg_pair_dup(const AdgPair *pair)
 {
-    /* g_memdup() yet returns NULL if pair is NULL */
+    /* g_memdup() returns NULL if pair is NULL */
     return g_memdup(pair, sizeof(AdgPair));
 }
 
