@@ -43,10 +43,10 @@ struct _CpmlPrimitive {
 
 size_t          cpml_primitive_type_get_n_points
                                            (CpmlPrimitiveType    type);
-CpmlPrimitive * cpml_primitive_copy        (CpmlPrimitive       *primitive,
-                                            const CpmlPrimitive *src);
 CpmlPrimitive * cpml_primitive_from_segment(CpmlPrimitive       *primitive,
                                             CpmlSegment         *segment);
+void            cpml_primitive_copy        (CpmlPrimitive       *primitive,
+                                            const CpmlPrimitive *src);
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
 cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
 size_t          cpml_primitive_get_n_points(const CpmlPrimitive *primitive);

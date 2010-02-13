@@ -104,22 +104,6 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 }
 
 /**
- * cpml_primitive_copy:
- * @primitive: the destination #CpmlPrimitive
- * @src: the source #CpmlPrimitive
- *
- * Copies @src in @primitive. This is a shallow copy: the internal fields
- * of @primitive refer to the same memory as the original @src primitive.
- *
- * Returns: @primitive
- **/
-CpmlPrimitive *
-cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
-{
-    return memcpy(primitive, src, sizeof(CpmlPrimitive));
-}
-
-/**
  * cpml_primitive_from_segment:
  * @primitive: the destination #CpmlPrimitive struct
  * @segment: the source segment
@@ -143,6 +127,20 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
     primitive->data = segment->data + segment->data[0].header.length;
 
     return primitive;
+}
+
+/**
+ * cpml_primitive_copy:
+ * @primitive: the destination #CpmlPrimitive
+ * @src: the source #CpmlPrimitive
+ *
+ * Copies @src in @primitive. This is a shallow copy: the internal fields
+ * of @primitive refer to the same memory as the original @src primitive.
+ **/
+void
+cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
+{
+    memcpy(primitive, src, sizeof(CpmlPrimitive));
 }
 
 /**
