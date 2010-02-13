@@ -26,5 +26,6 @@
 #ifndef __CPML_LINE_H__
 #define __CPML_LINE_H__
 
+#define CPML_LINE       CAIRO_PATH_LINE_TO
 
 #endif /* __CPML_LINE_H__ */

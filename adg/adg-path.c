@@ -43,10 +43,9 @@
  * As an example, following the rule of the less surprise, some
  * cairo functions guess the current point when it is not defined,
  * while the #AdgPath methods trigger a warning without other effect.
- * Furthermore, after cairo_path_close_path() a %CAIRO_PATH_MOVE_TO
- * primitive to the starting point of the segment is automatically
- * added by cairo; in ADG, after an adg_path_close() the current
- * point is simply unset.
+ * Furthermore, after cairo_path_close_path() a #CPML_MOVE primitive
+ * to the starting point of the segment is automatically added by
+ * cairo; in ADG, after an adg_path_close() the current point is unset.
  **/
 
 /**
@@ -278,7 +277,7 @@ adg_path_over_primitive(AdgPath *path)
  * reserve more cairo_path_data_t structs than what is needed by the
  * primitive.
  *
- * This function accepts also the special %CAIRO_PATH_ARC_TO primitive.
+ * This function accepts also the special #CPML_ARC primitive.
  *
  * If @path has no current point while the requested primitive needs it,
  * a warning message will be triggered without other effect.
@@ -441,7 +440,7 @@ adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
 void
 adg_path_move_to(AdgPath *path, const AdgPair *pair)
 {
-    adg_path_append(path, CAIRO_PATH_MOVE_TO, pair);
+    adg_path_append(path, CPML_MOVE, pair);
 }
 
 /**
@@ -461,7 +460,7 @@ adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
     p.x = x;
     p.y = y;
 
-    adg_path_append(path, CAIRO_PATH_MOVE_TO, &p);
+    adg_path_append(path, CPML_MOVE, &p);
 }
 
 /**
@@ -478,7 +477,7 @@ adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
 void
 adg_path_line_to(AdgPath *path, const AdgPair *pair)
 {
-    adg_path_append(path, CAIRO_PATH_LINE_TO, pair);
+    adg_path_append(path, CPML_LINE, pair);
 }
 
 /**
@@ -498,7 +497,7 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
     p.x = x;
     p.y = y;
 
-    adg_path_append(path, CAIRO_PATH_LINE_TO, &p);
+    adg_path_append(path, CPML_LINE, &p);
 }
 
 /**
@@ -516,7 +515,7 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
 void
 adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
 {
-    adg_path_append(path, CAIRO_PATH_ARC_TO, throught, pair);
+    adg_path_append(path, CPML_ARC, throught, pair);
 }
 
 /**
@@ -541,7 +540,7 @@ adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
     p[1].x = x2;
     p[1].y = y2;
 
-    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[0], &p[1]);
+    adg_path_append(path, CPML_ARC, &p[0], &p[1]);
 }
 
 /**
@@ -562,7 +561,7 @@ void
 adg_path_curve_to(AdgPath *path, const AdgPair *control1,
                   const AdgPair *control2, const AdgPair *pair)
 {
-    adg_path_append(path, CAIRO_PATH_CURVE_TO, control1, control2, pair);
+    adg_path_append(path, CPML_CURVE, control1, control2, pair);
 }
 
 /**
@@ -591,7 +590,7 @@ adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
     p[2].x = x3;
     p[2].y = y3;
 
-    adg_path_append(path, CAIRO_PATH_CURVE_TO, &p[0], &p[1], &p[2]);
+    adg_path_append(path, CPML_CURVE, &p[0], &p[1], &p[2]);
 }
 
 /**
@@ -615,7 +614,7 @@ adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
 void
 adg_path_close(AdgPath *path)
 {
-    adg_path_append(path, CAIRO_PATH_CLOSE_PATH);
+    adg_path_append(path, CPML_CLOSE);
 }
 
 /**
@@ -636,10 +635,10 @@ adg_path_close(AdgPath *path)
  *
  * By explicitely setting the whole arc data, the start point could be
  * different from the current point. In this case, if @path has no
- * current point before the call a %CAIRO_PATH_MOVE_TO to the start
- * point of the arc will be automatically prepended to the arc.
- * If @path has a current point, a %CAIRO_PATH_LINE_TO to the start
- * point of the arc will be used instead of the "move to" primitive.
+ * current point before the call a #CPML_MOVE to the start point of
+ * the arc will be automatically prepended to the arc. If @path has a
+ * current point, a #CPML_LINE to the start point of the arc will be
+ * used instead of the "move to" primitive.
  **/
 void
 adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
@@ -665,11 +664,11 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
     cpml_pair_add(&p[2], center);
 
     if (!data->cp_is_valid)
-        adg_path_append(path, CAIRO_PATH_MOVE_TO, &p[0]);
+        adg_path_append(path, CPML_MOVE, &p[0]);
     else if (p[0].x != data->cp.x || p[0].y != data->cp.y)
-        adg_path_append(path, CAIRO_PATH_LINE_TO, &p[0]);
+        adg_path_append(path, CPML_LINE, &p[0]);
 
-    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
+    adg_path_append(path, CPML_ARC, &p[1], &p[2]);
 }
 
 /**
@@ -709,10 +708,10 @@ adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
  *
- * An exception is a chamfer after a %CAIRO_PATH_CLOSE_PATH primitive.
- * In this case the second primitive is not required: the current close
- * path is used as first operand while the first primitive of the
- * current segment is used as second operand.
+ * An exception is a chamfer after a #CPML_CLOSE primitive. In this case,
+ * the second primitive is not required: the current close path is used
+ * as first operand while the first primitive of the current segment is
+ * used as second operand.
  *
  * The chamfer operation requires two lengths: @delta1 specifies the
  * "quantity" to trim on the first primitive while @delta2 is the same
@@ -741,10 +740,10 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
  *
- * An exception is a fillet after a %CAIRO_PATH_CLOSE_PATH primitive.
- * In this case the second primitive is not required: the current close
- * path is used as first operand while the first primitive of the
- * current segment is used as second operand.
+ * An exception is a fillet after a #CPML_CLOSE primitive. In this case,
+ * the second primitive is not required: the current close path is used
+ * as first operand while the first primitive of the current segment is
+ * used as second operand.
  **/
 void
 adg_path_fillet(AdgPath *path, gdouble radius)
@@ -816,7 +815,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 
     cpml_segment_reverse(dup_segment);
     cpml_segment_transform(dup_segment, &data.matrix);
-    dup_segment->data[0].header.type = CAIRO_PATH_LINE_TO;
+    dup_segment->data[0].header.type = CPML_LINE;
 
     adg_path_append_segment(path, dup_segment);
 
@@ -920,15 +919,15 @@ static gint
 needed_pairs(CpmlPrimitiveType type)
 {
     switch (type) {
-    case CAIRO_PATH_CLOSE_PATH:
+    case CPML_CLOSE:
         return 1;
-    case CAIRO_PATH_MOVE_TO:
+    case CPML_MOVE:
         return 2;
-    case CAIRO_PATH_LINE_TO:
+    case CPML_LINE:
         return 2;
-    case CAIRO_PATH_ARC_TO:
+    case CPML_ARC:
         return 3;
-    case CAIRO_PATH_CURVE_TO:
+    case CPML_CURVE:
         return 4;
     default:
         g_return_val_if_reached(0);
@@ -1004,7 +1003,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
     operation->action = action;
     va_end(var_args);
 
-    if (data->last.data[0].header.type == CAIRO_PATH_CLOSE_PATH) {
+    if (data->last.data[0].header.type == CPML_CLOSE) {
         /* Special case: an action with the close primitive should
          * be resolved now by changing the close primitive to a
          * line-to and using it as second operand and use the first
@@ -1033,7 +1032,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
 
         /* Convert close path to a line-to primitive */
         ++data->cpml.array->len;
-        path_data[length - 1].header.type = CAIRO_PATH_LINE_TO;
+        path_data[length - 1].header.type = CPML_LINE;
         path_data[length - 1].header.length = 2;
         path_data[length] = *current.org;
 
@@ -1131,7 +1130,7 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
 
     /* Add the chamfer line */
     data->operation.action = ADG_ACTION_NONE;
-    adg_path_append(path, CAIRO_PATH_LINE_TO, &pair);
+    adg_path_append(path, CPML_LINE, &pair);
 }
 
 static void
@@ -1195,7 +1194,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
 
     /* Add the fillet arc */
     data->operation.action = ADG_ACTION_NONE;
-    adg_path_append(path, CAIRO_PATH_ARC_TO, &p[1], &p[2]);
+    adg_path_append(path, CPML_ARC, &p[1], &p[2]);
 }
 
 static gboolean

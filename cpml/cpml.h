@@ -26,6 +26,7 @@
 #include <cpml/cpml-segment.h>
 #include <cpml/cpml-primitive.h>
 #include <cpml/cpml-line.h>
+#include <cpml/cpml-close.h>
 #include <cpml/cpml-arc.h>
 #include <cpml/cpml-curve.h>
 

@@ -24,7 +24,7 @@
  * @title: CpmlArc
  * @short_description: Manipulation of circular arcs
  *
- * The following functions manipulate #CAIRO_PATH_ARC_TO #CpmlPrimitive.
+ * The following functions manipulate #CPML_ARC #CpmlPrimitive.
  * No validation is made on the input so use the following methods
  * only when you are sure the <varname>primitive</varname> argument
  * is effectively an arc-to.
@@ -46,7 +46,7 @@
  * </para>
  * </important>
  *
- * Using these CPML APIs you are free to use #CAIRO_PATH_ARC_TO whenever
+ * Using these CPML APIs you are free to use #CPML_ARC whenever
  * you want but, if you are directly accessing the struct fields, you
  * are responsible of converting arcs to curves before passing them
  * to cairo. In other words, do not directly feed #CpmlPath struct to
@@ -69,6 +69,15 @@
  * </important>
  **/
 
+/**
+ * CPML_ARC:
+ *
+ * The type code used to identify "arc-to" primitives.
+ * This is expected to be defined by cairo whenever (and if) cairo
+ * will support arc primitives. Actually (cairo-1.8.8) it is resolved
+ * to an harcoded constant (%100).
+ **/
+
 
 #include "cpml-internal.h"
 #include "cpml-extents.h"
@@ -76,7 +85,7 @@
 #include "cpml-primitive.h"
 #include "cpml-primitive-private.h"
 #include "cpml-arc.h"
-#include <stdlib.h>
+#include "cpml-curve.h"
 #include <math.h>
 
 
@@ -509,7 +518,7 @@ arc_to_curve(CpmlPrimitive *curve, const CpmlPair *center,
 
     h = 4./3. * tan((end-start) / 4.);
 
-    curve->data[0].header.type = CAIRO_PATH_CURVE_TO;
+    curve->data[0].header.type = CPML_CURVE;
     curve->data[0].header.length = 4;
     curve->data[1].point.x = center->x + r_cos1 - h*r_sin1;
     curve->data[1].point.y = center->y + r_sin1 + h*r_cos1;

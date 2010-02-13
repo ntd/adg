@@ -26,8 +26,8 @@
  *
  * A primitive is an atomic geometric element found inside #CpmlSegment.
  * The available primitives are the same defined by #cairo_path_data_type_t
- * with the additional %CAIRO_PATH_ARC_TO type (check #CpmlPrimitiveType
- * for further information) and without %CAIRO_PATH_MOVE_TO as it is not
+ * with the additional #CPML_ARC type (check #CpmlPrimitiveType
+ * for further information) and without #CPML_MOVE as it is not
  * considered a primitive and it is managed in different way: the move-to
  * primitives are only used to define the origin of a segment.
  **/
@@ -38,7 +38,7 @@
  * This is another name for #cairo_path_data_type_t type. Although
  * phisically they are the same struct, #CpmlPrimitiveType conceptually
  * embodies an important difference: it can be used to specify the
- * special %CAIRO_PATH_ARC_TO primitive. This is not a native cairo
+ * special #CPML_ARC primitive. This is not a native cairo
  * primitive and having two different types is a good way to make clear
  * when a function expect or not embedded arc-to primitives.
  **/
@@ -55,6 +55,14 @@
  * the underlying #CpmlPath struct).
  **/
 
+/**
+ * CPML_MOVE:
+ *
+ * An operation that denotes a current point movement internally used to
+ * keep track of the starting point of a primitive.
+ * It is equivalent to the %CAIRO_PATH_MOVE_TO cairo constant.
+ **/
+
 
 #include "cpml-internal.h"
 #include "cpml-extents.h"
@@ -65,7 +73,6 @@
 #include "cpml-arc.h"
 #include "cpml-curve.h"
 #include "cpml-close.h"
-#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -107,13 +114,13 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
     primitive->segment = segment;
 
-    /* The first element of a CpmlSegment is always a CAIRO_PATH_MOVE_TO,
+    /* The first element of a CpmlSegment is always a CPML_MOVE,
      * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
      * so the origin is in the second data item */
     primitive->org = &segment->data[1];
 
     /* Also, the segment APIs ensure that @segment is prepended by
-     * only one CAIRO_PATH_MOVE_TO */
+     * only one CPML_MOVE */
     primitive->data = segment->data + segment->data[0].header.length;
 
     return primitive;
@@ -154,7 +161,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
 
     /* TODO: this is a temporary workaround to be removed as soon as
      * the issue #21 will be resolved */
-    if (new_data->header.type == CAIRO_PATH_MOVE_TO)
+    if (new_data->header.type == CPML_MOVE)
         return 0;
 
     primitive->org = cpml_primitive_get_point(primitive, -1);
@@ -191,7 +198,7 @@ cpml_primitive_get_n_points(const CpmlPrimitive *primitive)
  * so that -1 is the end point, -2 the point before the end point
  * and so on.
  *
- * %CAIRO_PATH_CLOSE_PATH is managed in a special way: if @n_point
+ * #CPML_CLOSE is managed in a special way: if @n_point
  * is -1 or 1 and @primitive is a close-path, this function cycles
  * the source #CpmlSegment and returns the first point. This is
  * needed because requesting the end point (or the second point)
@@ -211,8 +218,8 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
     if (n_point == 0)
         return primitive->org;
 
-    /* The CAIRO_PATH_CLOSE_PATH special case */
-    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH &&
+    /* The CPML_CLOSE special case */
+    if (primitive->data->header.type == CPML_CLOSE &&
         (n_point == 1 || n_point == -1))
         return &primitive->segment->data[1];
 
@@ -237,12 +244,12 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
  * @cr: the destination cairo context
  *
  * Renders a single @primitive to the @cr cairo context.
- * As a special case, if the primitive is a #CAIRO_PATH_CLOSE_PATH,
- * an equivalent line is rendered, because a close path left alone
+ * As a special case, if the primitive is a #CPML_CLOSE, an
+ * equivalent line is rendered, because a close path left alone
  * is not renderable.
  *
- * Also a #CAIRO_PATH_ARC_TO primitive is treated specially, as it
- * is not natively supported by cairo and has its own rendering API.
+ * Also a #CPML_ARC primitive is treated specially, as it is not
+ * natively supported by cairo and has its own rendering API.
  **/
 void
 cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
@@ -254,12 +261,12 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
 
     switch (primitive->data->header.type) {
 
-    case CAIRO_PATH_CLOSE_PATH:
+    case CPML_CLOSE:
         path_data = cpml_primitive_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
         break;
 
-    case CAIRO_PATH_ARC_TO:
+    case CPML_ARC:
         cpml_arc_to_cairo(primitive, cr);
         break;
 
@@ -278,8 +285,8 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
  * @org_also:  whether to output also the origin coordinates
  *
  * Dumps info on the specified @primitive to stdout: useful for
- * debugging purposes. If @org_also is 1, a %CAIRO_PATH_MOVE_TO
- * to the origin is prepended to the data otherwise the
+ * debugging purposes. If @org_also is 1, a #CPML_MOVE to the
+ * origin is prepended to the data otherwise the
  * <structfield>org</structfield> field is not used.
  **/
 void
@@ -306,19 +313,19 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 
     switch (type) {
 
-    case CAIRO_PATH_LINE_TO:
+    case CPML_LINE:
         printf("Line to ");
         break;
 
-    case CAIRO_PATH_ARC_TO:
+    case CPML_ARC:
         printf("Arc to ");
         break;
 
-    case CAIRO_PATH_CURVE_TO:
+    case CPML_CURVE:
         printf("Curve to ");
         break;
 
-    case CAIRO_PATH_CLOSE_PATH:
+    case CPML_CLOSE:
         printf("Path close");
         break;
 
@@ -539,19 +546,22 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * the intersections will be 2 at maximum. For line line primitives,
  * there is only 1 point (or obviously 0 if the lines do not intersect).
  *
- * <note><para>
+ * <note>
+ * <para>
  * This function is primitive dependent: every new primitive must
  * expose API to get intersections with any other primitive type
- * (excluding %CAIRO_PATH_CLOSE_PATH, as it is converted to a line
- * primitive).</para>
- * <para>The convention used by CPML is that a primitive should
+ * (excluding #CPML_CLOSE, as it is converted to a line primitive).
+ * </para>
+ * <para>
+ * The convention used by CPML is that a primitive should
  * expose only intersection APIs dealing with lower complexity
  * primitives. This is required to avoid double functions:
  * you will have only a cpml_curve_put_intersections_with_line()
  * function, not a cpml_line_put_intersections_with_curve(), as
  * the latter is easily reproduced by calling the former with
  * @primitive2 and @primitive swapped.
- * </para></note>
+ * </para>
+ * </note>
  *
  * Returns: the number of intersection points found or 0 if the
  *          primitives do not intersect or on errors
@@ -648,12 +658,12 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
 
     line1.org = cpml_primitive_get_point(primitive, -2);
     line1.data = data1;
-    data1[0].header.type = CAIRO_PATH_LINE_TO;
+    data1[0].header.type = CPML_LINE;
     data1[1] = *end1;
 
     line2.org = start2;
     line2.data = data2;
-    data2[0].header.type = CAIRO_PATH_LINE_TO;
+    data2[0].header.type = CPML_LINE;
     data2[1] = *cpml_primitive_get_point(primitive2, 1);
 
     if (!cpml_primitive_put_intersections(&line1, &line2, 1, &joint))
@@ -670,13 +680,13 @@ static const _CpmlPrimitiveClass *
 get_class_from_type(CpmlPrimitiveType type)
 {
     switch (type) {
-    case CAIRO_PATH_LINE_TO:
+    case CPML_LINE:
         return _cpml_line_get_class();
-    case CAIRO_PATH_ARC_TO:
+    case CPML_ARC:
         return _cpml_arc_get_class();
-    case CAIRO_PATH_CURVE_TO:
+    case CPML_CURVE:
         return _cpml_curve_get_class();
-    case CAIRO_PATH_CLOSE_PATH:
+    case CPML_CLOSE:
         return _cpml_close_get_class();
     default:
         break;

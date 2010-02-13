@@ -42,24 +42,6 @@
  * glib-2.18.3 in <filename>glib/gmacros.h</filename>.
  **/
 
-/**
- * CAIRO_HAS_ARC_SUPPORT:
- *
- * Defined to 1 if cairo has arc support. Actually (cairo-1.8.8) cairo
- * does not have arc support so it is expected this define will be always
- * undefined.
- **/
-
-/**
- * CAIRO_PATH_ARC_TO:
- *
- * The code of an arc-to primitive. This is expected to be defined by
- * cairo whenever (and if) cairo will support arc primitives. Actually
- * it resolves to an harcoded %100 constant.
- *
- * Check out the #CpmlArc section for further information.
- **/
-
 
 /**
  * cpml_angle:

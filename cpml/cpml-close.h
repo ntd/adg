@@ -26,5 +26,6 @@
 #ifndef __CPML_CLOSE_H__
 #define __CPML_CLOSE_H__
 
+#define CPML_CLOSE      CAIRO_PATH_CLOSE_PATH
 
 #endif /* __CPML_CLOSE_H__ */

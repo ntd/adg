@@ -128,11 +128,11 @@ adg_adim_init(AdgADim *adim)
     cairo_path_data_t move_to, line_to, arc_to;
 
     data = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM, AdgADimPrivate);
-    move_to.header.type = CAIRO_PATH_MOVE_TO;
+    move_to.header.type = CPML_MOVE;
     move_to.header.length = 2;
-    line_to.header.type = CAIRO_PATH_LINE_TO;
+    line_to.header.type = CPML_LINE;
     line_to.header.length = 2;
-    arc_to.header.type = CAIRO_PATH_ARC_TO;
+    arc_to.header.type = CPML_ARC;
     arc_to.header.length = 3;
 
     data->org1 = NULL;

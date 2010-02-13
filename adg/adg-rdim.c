@@ -91,9 +91,9 @@ adg_rdim_init(AdgRDim *rdim)
     cairo_path_data_t move_to, line_to;
 
     data = G_TYPE_INSTANCE_GET_PRIVATE(rdim, ADG_TYPE_RDIM, AdgRDimPrivate);
-    move_to.header.type = CAIRO_PATH_MOVE_TO;
+    move_to.header.type = CPML_MOVE;
     move_to.header.length = 2;
-    line_to.header.type = CAIRO_PATH_LINE_TO;
+    line_to.header.type = CPML_LINE;
     line_to.header.length = 2;
 
     data->trail = NULL;

@@ -24,11 +24,19 @@
  * @title: CpmlLine
  * @short_description: APIs manipulating straight lines
  *
- * The following functions manipulate %CAIRO_PATH_LINE_TO #CpmlPrimitive.
+ * The following functions manipulate #CPML_LINE #CpmlPrimitive.
  * No validation is made on the input so use the following methods
  * only when you are sure the <varname>primitive</varname> argument
- * is effectively a straingt line.
+ * is effectively a straight line.
  **/
+
+/**
+ * CPML_LINE:
+ *
+ * The type code used to identify "line-to" primitives.
+ * It is equivalent to the %CAIRO_PATH_LINE_TO cairo constant.
+ **/
+
 
 /**
  * SECTION:cpml-close
@@ -36,13 +44,20 @@
  * @title: CpmlClose
  * @short_description: Straigth line used to close cyclic segments
  *
- * The following functions manipulate %CAIRO_PATH_CLOSE_PATH
- * #CpmlPrimitive. No validation is made on the input so use the
- * following methods only when you are sure the
- * <varname>primitive</varname> argument is effectively a close path.
+ * The following functions manipulate #CPML_CLOSE #CpmlPrimitive.
+ * No validation is made on the input so use the following methods
+ * only when you are sure the <varname>primitive</varname> argument
+ * is effectively a close path.
  *
  * This primitive management is almost identical to straight lines,
  * but taking properly start and end points.
+ **/
+
+/**
+ * CPML_CLOSE:
+ *
+ * The type code used to identify "close" primitives.
+ * It is equivalent to the %CAIRO_PATH_CLOSE_PATH cairo constant.
  **/
 
 
@@ -52,7 +67,6 @@
 #include "cpml-primitive.h"
 #include "cpml-primitive-private.h"
 #include "cpml-line.h"
-#include <stdlib.h>
 
 
 static double   get_length              (const CpmlPrimitive    *line);

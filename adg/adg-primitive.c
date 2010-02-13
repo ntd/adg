@@ -82,9 +82,8 @@ adg_primitive_dup(const AdgPrimitive *primitive)
  *
  * Furthermore, the new <structfield>segment</structfield> field will
  * point to a fake duplicated segment with only its first primitive
- * set (the first primitive of a segment should be a %CAIRO_PATH_MOVE_TO).
- * This is needed in order to let a %CAIRO_PATH_CLOSE_PATH work as
- * expected.
+ * set (the first primitive of a segment should be a #CPML_MOVE).
+ * This is needed in order to let a #CPML_CLOSE work as expected.
  *
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.

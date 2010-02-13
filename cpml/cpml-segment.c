@@ -28,7 +28,7 @@
  * A segment is a single contiguous line got from a cairo path. The
  * CPML library relies on one assumption to let the data be independent
  * from the current point (and thus from the cairo context): any segment
- * MUST be preceded by at least one %CAIRO_PATH_MOVE_TO primitive.
+ * MUST be preceded by at least one #CPML_MOVE primitive.
  * This means a valid segment in cairo could be rejected by CPML.
  *
  * #CpmlSegment provides an unobtrusive way to access a cairo path.
@@ -52,10 +52,10 @@
  *
  * This is another name for the #cairo_path_t type. Although phisically
  * they are the same struct, #CpmlPath conceptually embodies an important
- * difference: it is a cairo path that can embed %CAIRO_PATH_ARC_TO
- * primitives. This is not a native cairo primitive and having two
- * different data types is a good way to make clear when a function
- * expect or not embedded arc-to primitives.
+ * difference: it is a cairo path that can embed #CPML_ARC primitives.
+ * This is not a native cairo primitive and having two different data
+ * types is a good way to make clear when a function expect or not
+ * embedded arc-to primitives.
  **/
 
 /**
@@ -72,7 +72,7 @@
  * CpmlSegment:
  * @path:     the source #CpmlPath struct
  * @data:     the data points of the segment; the first primitive
- *            will always be a %CAIRO_PATH_MOVE_TO
+ *            will always be a #CPML_MOVE
  * @num_data: size of @data
  *
  * This is an unobtrusive struct to identify a segment inside a
@@ -104,13 +104,13 @@ static void             reshape                 (CpmlSegment       *segment);
  * @path: the source #CpmlPath
  *
  * Builds a CpmlSegment from a #CpmlPath structure. This operation
- * involves stripping the leading %CAIRO_PATH_MOVE_TO primitives and
- * setting the internal segment structure accordling. A pointer to the
+ * involves stripping the leading #CPML_MOVE primitives and setting
+ * the internal segment structure accordling. A pointer to the
  * source cairo path is kept.
  *
  * This function will fail if @path is null, empty or if its
  * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
- * Also, the first primitive must be a %CAIRO_PATH_MOVE_TO, so no
+ * Also, the first primitive must be a #CPML_MOVE, so no
  * dependency on the cairo context is needed.
  *
  * Returns: 1 on success, 0 on errors
@@ -322,9 +322,9 @@ cpml_segment_put_vector_at(const CpmlSegment *segment, double pos,
  * @cr: the destination cairo context
  *
  * Appends the path of @segment to @cr. The segment is "flattened",
- * that is %CAIRO_PATH_ARC_TO primitives are approximated by one
- * or more %CAIRO_PATH_CURVE_TO using cpml_arc_to_cairo(). Check
- * its documentation for further details.
+ * that is #CPML_ARC primitives are approximated by one or more
+ * #CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
+ * for further details.
  **/
 void
 cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
@@ -398,7 +398,7 @@ cpml_segment_reverse(CpmlSegment *segment)
 	n += n_point - 1;
     }
 
-    data[0].header.type = CAIRO_PATH_MOVE_TO;
+    data[0].header.type = CPML_MOVE;
     data[0].header.length = 2;
     data[1].point.x = end_x;
     data[1].point.y = end_y;
@@ -522,9 +522,8 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * normalize:
  * @segment: a #CpmlSegment
  *
- * Strips the leading %CAIRO_PATH_MOVE_TO primitives, updating
- * the CpmlSegment structure accordling. One, and only one,
- * %CAIRO_PATH_MOVE_TO primitive is left.
+ * Strips the leading #CPML_MOVE primitives, updating the #CpmlSegment
+ * structure accordingly. One, and only one, #CPML_MOVE primitive is left.
  *
  * Returns: 1 on success, 0 on no leading MOVE_TOs or on errors
  **/
@@ -542,9 +541,9 @@ normalize(CpmlSegment *segment)
  * ensure_one_move_to:
  * @segment: a #CpmlSegment
  *
- * Strips the leading %CAIRO_PATH_MOVE_TO primitives, updating
- * the <structname>CpmlSegment</structname> structure accordling.
- * One, and only one, %CAIRO_PATH_MOVE_TO primitive is left.
+ * Strips the leading #CPML_MOVE primitives, updating the
+ * <structname>CpmlSegment</structname> structure accordingly.
+ * One, and only one, #CPML_MOVE primitive is left.
  *
  * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
  **/
@@ -557,13 +556,13 @@ ensure_one_move_to(CpmlSegment *segment)
     new_data = segment->data;
 
     /* Check for at least one move to */
-    if (new_data->header.type != CAIRO_PATH_MOVE_TO)
+    if (new_data->header.type != CPML_MOVE)
         return 0;
 
     new_num_data = segment->num_data;
     length = 0;
 
-    /* Strip the leading CAIRO_PATH_MOVE_TO, leaving only the last one */
+    /* Strip the leading CPML_MOVE, leaving only the last one */
     do {
         new_data += length;
         new_num_data -= length;
@@ -572,7 +571,7 @@ ensure_one_move_to(CpmlSegment *segment)
         /* Check for end of cairo path data */
         if (length >= new_num_data)
             return 0;
-    } while (new_data[length].header.type == CAIRO_PATH_MOVE_TO);
+    } while (new_data[length].header.type == CPML_MOVE);
 
     segment->data = new_data;
     segment->num_data = new_num_data;
@@ -586,8 +585,8 @@ ensure_one_move_to(CpmlSegment *segment)
  *
  * Looks for the segment termination and modify the
  * <structfield>num_data</structfield> field of @segment accordling.
- * @segment must have only one leading %CAIRO_PATH_MOVE_TO and
- * it is supposed to be non-empty, conditions yet imposed by the
+ * @segment must have only one leading #CPML_MOVE and it is supposed
+ * to be non-empty, conditions yet imposed by the
  * ensure_one_move_to() function.
  **/
 static void

@@ -29,6 +29,9 @@
 
 CAIRO_BEGIN_DECLS
 
+#define CPML_MOVE       CAIRO_PATH_MOVE_TO
+
+
 typedef struct _CpmlPrimitive CpmlPrimitive;
 typedef cairo_path_data_type_t CpmlPrimitiveType;
 

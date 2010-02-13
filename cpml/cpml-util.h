@@ -36,14 +36,6 @@
 #define CPML_GNUC_CONST
 #endif
 
-#ifndef CAIRO_PATH_ARC_TO
-#define CAIRO_PATH_ARC_TO       100
-#undef  CAIRO_HAS_ARC_SUPPORT
-#else
-#define CAIRO_HAS_ARC_SUPPORT   1
-#endif
-
-
 CAIRO_BEGIN_DECLS
 
 double          cpml_angle              (double         angle);

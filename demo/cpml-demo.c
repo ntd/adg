@@ -313,7 +313,7 @@ arc3p(cairo_t *cr, double x1, double y1,
     arc.org = &p[0];
     arc.data = &p[1];
 
-    p[1].header.type = CAIRO_PATH_ARC_TO;
+    p[1].header.type = CPML_ARC;
     p[1].header.length = 3;
 
     p[0].point.x = x1;
@@ -529,7 +529,7 @@ piston_callback(cairo_t *cr)
     cpml_segment_transform(&segment, &matrix);
 
     /* Join the mirrored path to the old path... */
-    path->data[0].header.type = CAIRO_PATH_LINE_TO;
+    path->data[0].header.type = CPML_LINE;
     cairo_append_path(cr, path);
     cairo_path_destroy(path);
 

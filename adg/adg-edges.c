@@ -506,9 +506,9 @@ build_array(const GSList *vertices)
     const GSList *vertex, *vertex2;
     const AdgPair *pair, *pair2;
 
-    line[0].header.type = CAIRO_PATH_MOVE_TO;
+    line[0].header.type = CPML_MOVE;
     line[0].header.length = 2;
-    line[2].header.type = CAIRO_PATH_LINE_TO;
+    line[2].header.type = CPML_LINE;
     line[2].header.length = 2;
 
     array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));

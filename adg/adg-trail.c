@@ -156,11 +156,11 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * owned by @trail and must be considered read-only.
  *
  * This function gets the #CpmlPath of @trail by calling
- * adg_trail_cpml_path() and converts its %CAIRO_PATH_ARC_TO
- * primitives, not recognized by cairo, into approximated Bézier
- * curves primitives (%CAIRO_PATH_CURVE_TO). The conversion is
- * cached, so any furter request is O(1). This cache is cleared
- * only by the adg_model_clear() method.
+ * adg_trail_cpml_path() and converts its #CPML_ARC primitives,
+ * not recognized by cairo, into approximated Bézier curves
+ * primitives (#CPML_CURVE). The conversion is cached, so any further
+ * request is O(1). This cache is cleared only by the
+ * adg_model_clear() method.
  *
  * <important>
  * <title>TODO</title>
@@ -204,7 +204,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     for (i = 0; i < cpml_path->num_data; i += p_src->header.length) {
         p_src = (const cairo_path_data_t *) cpml_path->data + i;
 
-        if (p_src->header.type == CAIRO_PATH_ARC_TO)
+        if (p_src->header.type == CPML_ARC)
             dst = arc_to_curves(dst, p_src);
         else
             dst = g_array_append_vals(dst, p_src, p_src->header.length);

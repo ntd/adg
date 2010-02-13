@@ -29,6 +29,9 @@
 
 CAIRO_BEGIN_DECLS
 
+#define CPML_CURVE      CAIRO_PATH_CURVE_TO
+
+
 void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
                                          double                  t,
                                          CpmlPair               *pair);

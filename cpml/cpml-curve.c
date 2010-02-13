@@ -17,13 +17,14 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 /**
  * SECTION:cpml-curve
  * @Section_Id:CpmlCurve
  * @title: CpmlCurve
  * @short_description: Bézier cubic curve primitive management
  *
- * The following functions manipulate %CAIRO_PATH_CURVE_TO #CpmlPrimitive.
+ * The following functions manipulate #CPML_CURVE #CpmlPrimitive.
  * No validation is made on the input so use the following methods
  * only when you are sure the <varname>primitive</varname> argument
  * is effectively a cubic Bézier curve.
@@ -179,6 +180,13 @@
  * </para>
  * </refsect2>
  * <para>
+ **/
+
+/**
+ * CPML_CURVE:
+ *
+ * The type code used to identify "curve-to" primitives.
+ * It is equivalent to the %CAIRO_PATH_CURVE_TO cairo constant.
  **/
 
 
