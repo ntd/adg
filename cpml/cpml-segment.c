@@ -59,16 +59,6 @@
  **/
 
 /**
- * cpml_path_is_empty:
- * @cpml_path: a #CpmlPath (or a #cairo_path_t) pointer
- *
- * Checks whether @cpml_path is empty. An invalid path is considered
- * as an empty path.
- *
- * Returns: %1 if the path is empty or invalid, %0 otherwise
- */
-
-/**
  * CpmlSegment:
  * @path:     the source #CpmlPath struct
  * @data:     the data points of the segment; the first primitive
@@ -136,18 +126,21 @@ cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
  * @src: the source segment to copy
  *
  * Makes a shallow copy of @src into @segment.
- *
- * Returns: @segment or %NULL on errors
  **/
-CpmlSegment *
+void
 cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 {
-    if (segment == NULL || src == NULL)
-        return NULL;
-
-    return memcpy(segment, src, sizeof(CpmlSegment));
+    memcpy(segment, src, sizeof(CpmlSegment));
 }
 
+/**
+ * cpml_path_is_empty:
+ * @cpml_path: a #CpmlPath (or a #cairo_path_t) pointer
+ *
+ * Checks if @cpml_path is empty. An invalid path is considered empty.
+ *
+ * Returns: %1 if the path is empty or invalid, %0 otherwise
+ **/
 
 /**
  * cpml_segment_reset:
@@ -185,7 +178,6 @@ cpml_segment_next(CpmlSegment *segment)
 
     return normalize(segment);
 }
-
 
 /**
  * cpml_segment_get_length:
@@ -315,121 +307,6 @@ cpml_segment_put_vector_at(const CpmlSegment *segment, double pos,
     }
 }
 
-
-/**
- * cpml_segment_to_cairo:
- * @segment: a #CpmlSegment
- * @cr: the destination cairo context
- *
- * Appends the path of @segment to @cr. The segment is "flattened",
- * that is #CPML_ARC primitives are approximated by one or more
- * #CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
- * for further details.
- **/
-void
-cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
-{
-    CpmlPrimitive primitive;
-
-    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
-
-    do {
-        cpml_primitive_to_cairo(&primitive, cr);
-    } while (cpml_primitive_next(&primitive));
-}
-
-/**
- * cpml_segment_dump:
- * @segment: a #CpmlSegment
- *
- * Dumps the specified @segment to stdout. Useful for debugging purposes.
- **/
-void
-cpml_segment_dump(const CpmlSegment *segment)
-{
-    CpmlPrimitive primitive;
-    cairo_bool_t first_call = 1;
-
-    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
-
-    do {
-        cpml_primitive_dump(&primitive, first_call);
-        first_call = 0;
-    } while (cpml_primitive_next(&primitive));
-}
-
-
-/**
- * cpml_segment_reverse:
- * @segment: a #CpmlSegment
- *
- * Reverses @segment in-place. The resulting rendering will be the same,
- * but with the primitives generated in reverse order.
- **/
-void
-cpml_segment_reverse(CpmlSegment *segment)
-{
-    cairo_path_data_t *data, *dst_data;
-    size_t data_size;
-    double end_x, end_y;
-    int n, num_points, n_point;
-    const cairo_path_data_t *src_data;
-
-    data_size = sizeof(cairo_path_data_t) * segment->num_data;
-    data = cpml_alloca(data_size);
-    end_x = segment->data[1].point.x;
-    end_y = segment->data[1].point.y;
-
-    for (n = 2; n < segment->num_data; ++n) {
-        src_data = segment->data + n;
-	num_points = src_data->header.length;
-
-        dst_data = data + segment->num_data - n - num_points + 2;
-        dst_data->header.type = src_data->header.type;
-        dst_data->header.length = num_points;
-
-	for (n_point = 1; n_point < num_points; ++n_point) {
-            dst_data[num_points - n_point].point.x = end_x;
-            dst_data[num_points - n_point].point.y = end_y;
-            end_x = src_data[n_point].point.x;
-            end_y = src_data[n_point].point.y;
-        }
-
-	n += n_point - 1;
-    }
-
-    data[0].header.type = CPML_MOVE;
-    data[0].header.length = 2;
-    data[1].point.x = end_x;
-    data[1].point.y = end_y;
-    memcpy(segment->data, data, data_size);
-}
-
-/**
- * cpml_segment_transform:
- * @segment: a #CpmlSegment
- * @matrix: the matrix to be applied
- *
- * Applies @matrix on all the points of @segment.
- **/
-void
-cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
-{
-    cairo_path_data_t *data;
-    int n, n_point, num_points;
-
-    data = segment->data;
-
-    for (n = 0; n < segment->num_data; n += num_points) {
-        num_points = data->header.length;
-        ++data;
-        for (n_point = 1; n_point < num_points; ++n_point) {
-            cairo_matrix_transform_point(matrix, &data->point.x, &data->point.y);
-            ++data;
-        }
-    }
-}
-
 /**
  * cpml_segment_put_intersections:
  * @segment:  the first #CpmlSegment
@@ -517,6 +394,120 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
         first_cycle = 0;
     } while (cpml_primitive_next(&primitive));
 }
+
+/**
+ * cpml_segment_transform:
+ * @segment: a #CpmlSegment
+ * @matrix: the matrix to be applied
+ *
+ * Applies @matrix on all the points of @segment.
+ **/
+void
+cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
+{
+    cairo_path_data_t *data;
+    int n, n_point, num_points;
+
+    data = segment->data;
+
+    for (n = 0; n < segment->num_data; n += num_points) {
+        num_points = data->header.length;
+        ++data;
+        for (n_point = 1; n_point < num_points; ++n_point) {
+            cairo_matrix_transform_point(matrix, &data->point.x, &data->point.y);
+            ++data;
+        }
+    }
+}
+
+/**
+ * cpml_segment_reverse:
+ * @segment: a #CpmlSegment
+ *
+ * Reverses @segment in-place. The resulting rendering will be the same,
+ * but with the primitives generated in reverse order.
+ **/
+void
+cpml_segment_reverse(CpmlSegment *segment)
+{
+    cairo_path_data_t *data, *dst_data;
+    size_t data_size;
+    double end_x, end_y;
+    int n, num_points, n_point;
+    const cairo_path_data_t *src_data;
+
+    data_size = sizeof(cairo_path_data_t) * segment->num_data;
+    data = cpml_alloca(data_size);
+    end_x = segment->data[1].point.x;
+    end_y = segment->data[1].point.y;
+
+    for (n = 2; n < segment->num_data; ++n) {
+        src_data = segment->data + n;
+	num_points = src_data->header.length;
+
+        dst_data = data + segment->num_data - n - num_points + 2;
+        dst_data->header.type = src_data->header.type;
+        dst_data->header.length = num_points;
+
+	for (n_point = 1; n_point < num_points; ++n_point) {
+            dst_data[num_points - n_point].point.x = end_x;
+            dst_data[num_points - n_point].point.y = end_y;
+            end_x = src_data[n_point].point.x;
+            end_y = src_data[n_point].point.y;
+        }
+
+	n += n_point - 1;
+    }
+
+    data[0].header.type = CPML_MOVE;
+    data[0].header.length = 2;
+    data[1].point.x = end_x;
+    data[1].point.y = end_y;
+    memcpy(segment->data, data, data_size);
+}
+
+/**
+ * cpml_segment_to_cairo:
+ * @segment: a #CpmlSegment
+ * @cr: the destination cairo context
+ *
+ * Appends the path of @segment to @cr. The segment is "flattened",
+ * that is #CPML_ARC primitives are approximated by one or more
+ * #CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
+ * for further details.
+ **/
+void
+cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
+{
+    CpmlPrimitive primitive;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+
+    do {
+        cpml_primitive_to_cairo(&primitive, cr);
+    } while (cpml_primitive_next(&primitive));
+}
+
+/**
+ * cpml_segment_dump:
+ * @segment: a #CpmlSegment
+ *
+ * Dumps the specified @segment to stdout. Useful for debugging purposes.
+ **/
+void
+cpml_segment_dump(const CpmlSegment *segment)
+{
+    CpmlPrimitive primitive;
+    cairo_bool_t first_call = 1;
+
+    cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
+
+    do {
+        cpml_primitive_dump(&primitive, first_call);
+        first_call = 0;
+    } while (cpml_primitive_next(&primitive));
+}
+
 
 /**
  * normalize:
