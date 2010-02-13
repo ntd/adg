@@ -85,6 +85,25 @@ static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 
 
 /**
+ * cpml_primitive_type_get_n_points:
+ * @type: a primitive type
+ *
+ * Gets the number of points required to identify the @type primitive.
+ *
+ * Returns: the number of points or %0 on errors
+ **/
+size_t
+cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
+{
+    const _CpmlPrimitiveClass *class_data = get_class_from_type(type);
+
+    if (class_data == NULL)
+        return 0;
+
+    return class_data->n_points;
+}
+
+/**
  * cpml_primitive_copy:
  * @primitive: the destination #CpmlPrimitive
  * @src: the source #CpmlPrimitive
@@ -236,165 +255,6 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
         return NULL;
 
     return n_point == 0 ? primitive->org : &primitive->data[n_point];
-}
-
-/**
- * cpml_primitive_to_cairo:
- * @primitive: a #CpmlPrimitive
- * @cr: the destination cairo context
- *
- * Renders a single @primitive to the @cr cairo context.
- * As a special case, if the primitive is a #CPML_CLOSE, an
- * equivalent line is rendered, because a close path left alone
- * is not renderable.
- *
- * Also a #CPML_ARC primitive is treated specially, as it is not
- * natively supported by cairo and has its own rendering API.
- **/
-void
-cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
-{
-    cairo_path_t path;
-    cairo_path_data_t *path_data;
-
-    cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
-
-    switch (primitive->data->header.type) {
-
-    case CPML_CLOSE:
-        path_data = cpml_primitive_get_point(primitive, -1);
-        cairo_line_to(cr, path_data->point.x, path_data->point.y);
-        break;
-
-    case CPML_ARC:
-        cpml_arc_to_cairo(primitive, cr);
-        break;
-
-    default:
-        path.status = CAIRO_STATUS_SUCCESS;
-        path.data = primitive->data;
-        path.num_data = primitive->data->header.length;
-        cairo_append_path(cr, &path);
-        break;
-    }
-}
-
-/**
- * cpml_primitive_dump:
- * @primitive: a #CpmlPrimitive
- * @org_also:  whether to output also the origin coordinates
- *
- * Dumps info on the specified @primitive to stdout: useful for
- * debugging purposes. If @org_also is 1, a #CPML_MOVE to the
- * origin is prepended to the data otherwise the
- * <structfield>org</structfield> field is not used.
- **/
-void
-cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
-{
-    const cairo_path_data_t *data;
-    int type;
-    size_t n, n_points;
-
-    data = primitive->data;
-    type = data->header.type;
-    n_points = cpml_primitive_get_n_points(primitive);
-    if (n_points == 0) {
-        printf("Unhandled primitive type (%d)\n", type);
-        return;
-    }
-
-    /* Dump the origin movement, if requested */
-    if (org_also) {
-        printf("Move to ");
-        dump_cairo_point(primitive->org);
-        printf("\n");
-    }
-
-    switch (type) {
-
-    case CPML_LINE:
-        printf("Line to ");
-        break;
-
-    case CPML_ARC:
-        printf("Arc to ");
-        break;
-
-    case CPML_CURVE:
-        printf("Curve to ");
-        break;
-
-    case CPML_CLOSE:
-        printf("Path close");
-        break;
-
-    default:
-        printf("Unknown primitive (type = %d)", type);
-        break;
-    }
-
-    for (n = 1; n < n_points; ++n)
-        dump_cairo_point(cpml_primitive_get_point(primitive, n));
-
-    printf("\n");
-}
-
-/**
- * cpml_primitive_put_intersections_with_segment:
- * @primitive: a #CpmlPrimitive
- * @segment:   a #CpmlSegment
- * @n_dest:    maximum number of intersection pairs to return
- * @dest:      the destination buffer of #CpmlPair
- *
- * Computes the intersections between @segment and @primitive by
- * sequentially scanning the primitives in @segment and looking
- * for their intersections with @primitive.
- *
- * If the intersections are more than @n_dest, only the first
- * @n_dest pairs are stored.
- *
- * Returns: the number of intersections found
- **/
-size_t
-cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
-                                              const CpmlSegment *segment,
-                                              size_t n_dest, CpmlPair *dest)
-{
-    CpmlPrimitive portion;
-    size_t found;
-
-    cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
-    found = 0;
-
-    while (found < n_dest) {
-        found += cpml_primitive_put_intersections(&portion, primitive,
-                                                  n_dest-found, dest+found);
-        if (!cpml_primitive_next(&portion))
-            break;
-    }
-
-    return found;
-}
-
-
-/**
- * cpml_primitive_type_get_n_points:
- * @type: a primitive type
- *
- * Gets the number of points required to identify the @type primitive.
- *
- * Returns: the number of points or %0 on errors
- **/
-size_t
-cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
-{
-    const _CpmlPrimitiveClass *class_data = get_class_from_type(type);
-
-    if (class_data == NULL)
-        return 0;
-
-    return class_data->n_points;
 }
 
 /**
@@ -586,6 +446,43 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
 }
 
 /**
+ * cpml_primitive_put_intersections_with_segment:
+ * @primitive: a #CpmlPrimitive
+ * @segment:   a #CpmlSegment
+ * @n_dest:    maximum number of intersection pairs to return
+ * @dest:      the destination buffer of #CpmlPair
+ *
+ * Computes the intersections between @segment and @primitive by
+ * sequentially scanning the primitives in @segment and looking
+ * for their intersections with @primitive.
+ *
+ * If the intersections are more than @n_dest, only the first
+ * @n_dest pairs are stored.
+ *
+ * Returns: the number of intersections found
+ **/
+size_t
+cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
+                                              const CpmlSegment *segment,
+                                              size_t n_dest, CpmlPair *dest)
+{
+    CpmlPrimitive portion;
+    size_t found;
+
+    cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
+    found = 0;
+
+    while (found < n_dest) {
+        found += cpml_primitive_put_intersections(&portion, primitive,
+                                                  n_dest-found, dest+found);
+        if (!cpml_primitive_next(&portion))
+            break;
+    }
+
+    return found;
+}
+
+/**
  * cpml_primitive_offset:
  * @primitive: a #CpmlPrimitive
  * @offset: distance for the computed offset primitive
@@ -663,6 +560,108 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     cpml_pair_to_cairo(&joint, start2);
 
     return 1;
+}
+
+/**
+ * cpml_primitive_to_cairo:
+ * @primitive: a #CpmlPrimitive
+ * @cr: the destination cairo context
+ *
+ * Renders a single @primitive to the @cr cairo context.
+ * As a special case, if the primitive is a #CPML_CLOSE, an
+ * equivalent line is rendered, because a close path left alone
+ * is not renderable.
+ *
+ * Also a #CPML_ARC primitive is treated specially, as it is not
+ * natively supported by cairo and has its own rendering API.
+ **/
+void
+cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
+{
+    cairo_path_t path;
+    cairo_path_data_t *path_data;
+
+    cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
+
+    switch (primitive->data->header.type) {
+
+    case CPML_CLOSE:
+        path_data = cpml_primitive_get_point(primitive, -1);
+        cairo_line_to(cr, path_data->point.x, path_data->point.y);
+        break;
+
+    case CPML_ARC:
+        cpml_arc_to_cairo(primitive, cr);
+        break;
+
+    default:
+        path.status = CAIRO_STATUS_SUCCESS;
+        path.data = primitive->data;
+        path.num_data = primitive->data->header.length;
+        cairo_append_path(cr, &path);
+        break;
+    }
+}
+
+/**
+ * cpml_primitive_dump:
+ * @primitive: a #CpmlPrimitive
+ * @org_also:  whether to output also the origin coordinates
+ *
+ * Dumps info on the specified @primitive to stdout: useful for
+ * debugging purposes. If @org_also is 1, a #CPML_MOVE to the
+ * origin is prepended to the data otherwise the
+ * <structfield>org</structfield> field is not used.
+ **/
+void
+cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
+{
+    const cairo_path_data_t *data;
+    int type;
+    size_t n, n_points;
+
+    data = primitive->data;
+    type = data->header.type;
+    n_points = cpml_primitive_get_n_points(primitive);
+    if (n_points == 0) {
+        printf("Unhandled primitive type (%d)\n", type);
+        return;
+    }
+
+    /* Dump the origin movement, if requested */
+    if (org_also) {
+        printf("Move to ");
+        dump_cairo_point(primitive->org);
+        printf("\n");
+    }
+
+    switch (type) {
+
+    case CPML_LINE:
+        printf("Line to ");
+        break;
+
+    case CPML_ARC:
+        printf("Arc to ");
+        break;
+
+    case CPML_CURVE:
+        printf("Curve to ");
+        break;
+
+    case CPML_CLOSE:
+        printf("Path close");
+        break;
+
+    default:
+        printf("Unknown primitive (type = %d)", type);
+        break;
+    }
+
+    for (n = 1; n < n_points; ++n)
+        dump_cairo_point(cpml_primitive_get_point(primitive, n));
+
+    printf("\n");
 }
 
 
