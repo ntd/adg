@@ -17,7 +17,7 @@ improvements must be reflected in the demo programs, where applicable.</para>
 to implement.</para>
 
 <itemizedlist mark="circle">
-   <listitem>Hide the CPML APIs accessible from the CpmlPrimitive interface: use
+   <listitem override="disc">Hide the CPML APIs accessible from the CpmlPrimitive interface: use
    a private struct of function pointers to delegate the job to the
    different primitives.</listitem>
    <listitem>Check if the decentralization of the quote is applicable to the angular
