@@ -616,46 +616,28 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 {
     const cairo_path_data_t *data;
     int type;
+    const _CpmlPrimitiveClass *class_data;
     size_t n, n_points;
 
     data = primitive->data;
     type = data->header.type;
-    n_points = cpml_primitive_get_n_points(primitive);
-    if (n_points == 0) {
-        printf("Unhandled primitive type (%d)\n", type);
+    class_data = get_class_from_type(type);
+
+    if (class_data == NULL) {
+        printf("Unknown primitive type (%d)\n", type);
         return;
     }
 
-    /* Dump the origin movement, if requested */
+    /* Dump the origin, if requested */
     if (org_also) {
-        printf("Move to ");
+        printf("move to ");
         dump_cairo_point(primitive->org);
         printf("\n");
     }
 
-    switch (type) {
+    printf("%s ", class_data->name);
 
-    case CPML_LINE:
-        printf("Line to ");
-        break;
-
-    case CPML_ARC:
-        printf("Arc to ");
-        break;
-
-    case CPML_CURVE:
-        printf("Curve to ");
-        break;
-
-    case CPML_CLOSE:
-        printf("Path close");
-        break;
-
-    default:
-        printf("Unknown primitive (type = %d)", type);
-        break;
-    }
-
+    n_points = cpml_primitive_get_n_points(primitive);
     for (n = 1; n < n_points; ++n)
         dump_cairo_point(cpml_primitive_get_point(primitive, n));
 

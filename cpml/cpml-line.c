@@ -99,7 +99,7 @@ _cpml_line_get_class(void)
 
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
-            "line", 2,
+            "line to", 2,
             get_length,
             put_extents,
             put_pair_at,

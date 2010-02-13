@@ -211,7 +211,7 @@ _cpml_curve_get_class(void)
 
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
-            "curve", 4,
+            "curve to", 4,
             NULL,
             put_extents,
             NULL,

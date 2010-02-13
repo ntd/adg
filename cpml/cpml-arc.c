@@ -129,7 +129,7 @@ _cpml_arc_get_class(void)
 
     if (p_class == NULL) {
         static _CpmlPrimitiveClass class_data = {
-            "arc", 3,
+            "arc to", 3,
             get_length,
             put_extents,
             put_pair_at,
