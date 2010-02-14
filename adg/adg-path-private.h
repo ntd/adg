@@ -26,14 +26,14 @@
 
 G_BEGIN_DECLS
 
-typedef struct _AdgNamedPairData AdgNamedPairData;
+typedef struct _AdgNamedPair     AdgNamedPair;
 typedef enum   _AdgAction        AdgAction;
 typedef struct _AdgOperation     AdgOperation;
 typedef struct _AdgPathPrivate   AdgPathPrivate;
 
-struct _AdgNamedPairData {
-    AdgMatrix    matrix;
-    AdgModel    *model;
+struct _AdgNamedPair {
+    const gchar *name;
+    AdgPair      pair;
 };
 
 enum _AdgAction {

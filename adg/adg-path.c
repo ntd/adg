@@ -93,10 +93,12 @@ static gboolean         is_convex               (const AdgPrimitive
                                                                 *primitive1,
                                                  const AdgPrimitive
                                                                 *primitive2);
-static void             dup_reversed_pair       (const gchar    *name,
+static const gchar *    action_name             (AdgAction       action);
+static void             get_named_pair          (const gchar    *name,
                                                  AdgPair        *pair,
                                                  gpointer        user_data);
-static const gchar *    action_name             (AdgAction       action);
+static void             dup_reverse_named_pairs (AdgModel       *model,
+                                                 const AdgMatrix*matrix);
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
@@ -775,16 +777,17 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 void
 adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 {
-    AdgNamedPairData data;
+    AdgModel *model;
+    AdgMatrix matrix;
     AdgSegment segment, *dup_segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(vector == NULL || vector->x != 0 || vector->y != 0);
 
-    data.model = (AdgModel *) path;
+    model = (AdgModel *) path;
 
     if (vector == NULL) {
-        cairo_matrix_init_scale(&data.matrix, 1, -1);
+        cairo_matrix_init_scale(&matrix, 1, -1);
     } else {
         CpmlVector slope;
         gdouble cos2angle, sin2angle;
@@ -801,7 +804,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
         sin2angle = 2. * vector->x * vector->y;
         cos2angle = 2. * vector->x * vector->x - 1;
 
-        cairo_matrix_init(&data.matrix, cos2angle, sin2angle,
+        cairo_matrix_init(&matrix, cos2angle, sin2angle,
                           sin2angle, -cos2angle, 0, 0);
     }
 
@@ -817,14 +820,14 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
         return;
 
     cpml_segment_reverse(dup_segment);
-    cpml_segment_transform(dup_segment, &data.matrix);
+    cpml_segment_transform(dup_segment, &matrix);
     dup_segment->data[0].header.type = CPML_LINE;
 
     adg_path_append_segment(path, dup_segment);
 
     g_free(dup_segment);
 
-    adg_model_foreach_named_pair(data.model, dup_reversed_pair, &data);
+    dup_reverse_named_pairs(model, &matrix);
 }
 
 
@@ -1220,23 +1223,6 @@ is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
     return angle2-angle1 > M_PI;
 }
 
-static void
-dup_reversed_pair(const gchar *name, AdgPair *pair, gpointer user_data)
-{
-    AdgNamedPairData *data;
-    gchar *new_name;
-    AdgPair new_pair;
-
-    data = (AdgNamedPairData *) user_data;
-    new_name = g_strdup_printf("-%s", name);
-    cpml_pair_copy(&new_pair, pair);
-
-    cpml_pair_transform(&new_pair, &data->matrix);
-    adg_model_set_named_pair(data->model, new_name, &new_pair);
-
-    g_free(new_name);
-}
-
 static const gchar *
 action_name(AdgAction action)
 {
@@ -1250,4 +1236,46 @@ action_name(AdgAction action)
     }
 
     return "undefined";
+}
+
+static void
+get_named_pair(const gchar *name, AdgPair *pair, gpointer user_data)
+{
+    GSList **named_pairs;
+    AdgNamedPair *named_pair;
+
+    named_pairs = user_data;
+
+    named_pair = g_new(AdgNamedPair, 1);
+    named_pair->name = name;
+    named_pair->pair = *pair;
+
+    *named_pairs = g_slist_prepend(*named_pairs, named_pair);
+}
+
+static void
+dup_reverse_named_pairs(AdgModel *model, const AdgMatrix *matrix)
+{
+    AdgNamedPair *old_named_pair;
+    AdgNamedPair named_pair;
+    GSList *named_pairs;
+
+    /* Populate named_pairs with all the named pairs of model */
+    named_pairs = NULL;
+    adg_model_foreach_named_pair(model, get_named_pair, &named_pairs);
+
+    /* Readd the pairs applying the reversing transformation matrix to
+     * their coordinates and prepending a "-" to their name */
+    while (named_pairs) {
+        old_named_pair = named_pairs->data;
+
+        named_pair.name = g_strdup_printf("-%s", old_named_pair->name);
+        named_pair.pair = old_named_pair->pair;
+        cpml_pair_transform(&named_pair.pair, matrix);
+
+        adg_model_set_named_pair(model, named_pair.name, &named_pair.pair);
+
+        g_free((gpointer) named_pair.name);
+        named_pairs = g_slist_delete_link(named_pairs, named_pairs);
+    }
 }
