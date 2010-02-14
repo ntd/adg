@@ -21,12 +21,15 @@ AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
 # Check for programs
 
 AC_PROG_CC
-AC_DISABLE_STATIC
-LT_INIT
 PKG_PROG_PKG_CONFIG
 AC_PATH_PROG([XSLTPROC],[xsltproc],[/usr/bin/xsltproc])
 AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums],[/usr/bin/glib-mkenums])
 AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
+
+m4_ifdef([LT_INIT],
+	 [LT_INIT([disable-static])],
+	 [AC_DISABLE_STATIC
+	  AC_PROG_LIBTOOL])
 
 
 # Check for functions
