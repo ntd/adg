@@ -7,7 +7,8 @@ LDADD=			$(top_builddir)/adg/libadg.la
 
 # file groups
 if HAVE_TEST_FRAMEWORK
-test_programs=		properties
+test_programs=		properties \
+			adg-model
 endif
 
 
