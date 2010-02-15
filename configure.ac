@@ -69,9 +69,24 @@ AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= gtk_prereq],
                          [enable_gtk2=yes],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
-                                [AC_MSG_ERROR([$GTK2_PKG_ERRORS but GTK+2 support requested])],
+                                [AC_MSG_ERROR([$GTK2_PKG_ERRORS and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
+
+
+# Check for optional GLib test framework
+
+AC_ARG_ENABLE([test_framework],
+              [AS_HELP_STRING([--enable-test-framework],
+                              [enable GLib test framework @<:@default=check@:>@])],
+              [],[enable_test_framework=check])
+AS_IF([test "x${enable_test_framework}" != "xno"],
+      [PKG_CHECK_EXISTS([glib-2.0 >= 2.16.0],
+                        [enable_test_framework=yes],
+                        [AS_IF([test "x${enable_test_framework}" = "xyes"],
+                               [AC_MSG_ERROR([The test framework needs glib2-2.16.0 or later])],
+                               [enable_test_framework=no])])])
+AM_CONDITIONAL([HAVE_TEST_FRAMEWORK],[test "x${enable_test_framework}" = "xyes"])
 
 
 # Final step
@@ -104,7 +119,7 @@ AC_CONFIG_FILES([shave
                  demo/Makefile
                  po/Makefile.in
                  po-properties/Makefile.in
-		 tests/Makefile
+                 tests/Makefile
                  docs/Makefile
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml
@@ -122,4 +137,5 @@ echo '                  API compatibility: adg_api_version'
 echo '                CPML library to use: internal (cpml-adg_version)'
 echo " AdgWidget support (requires GTK+2): ${enable_gtk2}"
 echo "                Build API reference: ${enable_gtk_doc}"
+echo "             Test framework support: ${enable_test_framework}"
 echo ""

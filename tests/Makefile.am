@@ -6,7 +6,9 @@ LDADD=			$(top_builddir)/adg/libadg.la
 
 
 # file groups
+if HAVE_TEST_FRAMEWORK
 test_programs=		properties
+endif
 
 
 # targets
