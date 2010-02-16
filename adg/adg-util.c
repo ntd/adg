@@ -98,13 +98,17 @@
 #include <limits.h>
 
 
+#if GLIB_CHECK_VERSION(2, 16, 0)
+#else
 /**
  * adg_strcmp:
  * @s1: first string to compare
  * @s2: second string to compare
  *
- * A strcmp() function guarded against %NULL values. It works in the
- * same way exept for the following situations:
+ * A strcmp() function guarded against %NULL values. If glib-2.16.0 or
+ * greather is used, adg_strcmp() will be an alias for g_strcmp0.
+ * Otherwise the function will behave in the same way as strcmp() with
+ * the following exceptions:
  *
  * <itemizedlist>
  * <listitem><code>s1 == NULL && s2 == NULL</code>: returns %0;</listitem>
@@ -130,6 +134,7 @@ adg_strcmp(const gchar *s1, const gchar *s2)
 
     return strcmp(s1, s2);
 }
+#endif
 
 /**
  * adg_is_empty:
