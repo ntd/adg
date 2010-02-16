@@ -35,8 +35,6 @@
 #define ADG_DIR_UP              (M_PI_2 * 3.)
 
 #define ADG_FORWARD_DECL(id)    typedef struct _##id id
-#define ADG_MESSAGE(message)    g_message("file `%s' at line %d: %s", \
-                                          __FILE__, __LINE__, #message)
 
 
 G_BEGIN_DECLS

@@ -91,15 +91,6 @@
  * ]|
  **/
 
-/**
- * ADG_MESSAGE:
- * @message: the message string
- *
- * A convenient function to output debug information. It is similar
- * to g_message() but prepends @message with some text specifying
- * the position where this function has been called.
- **/
-
 
 #include "adg-internal.h"
 #include "adg-util.h"

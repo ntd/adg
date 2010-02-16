@@ -977,9 +977,10 @@ append_operation(AdgPath *path, AdgAction action, ...)
     if (operation->action != ADG_ACTION_NONE) {
         g_warning(_("%s: requested a `%s' operation while a `%s' operation is active"),
                   G_STRLOC, action_name(action), action_name(operation->action));
-        ADG_MESSAGE("TODO: this is a rude simplification, as a lot of "
-                    "actions could be chained up. As an example, a fillet "
-                    "followed by a polar chamfer is quite common.");
+        /* TODO: this is a rude simplification, as a lot of actions
+         * could be chained up. As an example, a fillet followed by
+         * a polar chamfer is quite common.
+         */
         return FALSE;
     }
 
