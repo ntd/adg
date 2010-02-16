@@ -14,8 +14,8 @@ if HAVE_TEST_FRAMEWORK
 
 test_programs+=		properties
 
-test_programs+=		adg-model
-adg_model_SOURCES=	adg-model.c \
+test_programs+=		test-model
+test_model_SOURCES=	test-model.c \
 			$(test_internals)
 
 endif
