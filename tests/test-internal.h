@@ -17,36 +17,19 @@
  * Boston, MA  02110-1301, USA.
  */
 
-/*
- * This header is included by every .c files of the library to
- * enable the inclusion of the internal headers and initialize
- * some common stuff.
- */
 
-#ifndef __ADG_INTERNAL_H__
-#define __ADG_INTERNAL_H__
+#ifndef __TEST_INIT_H__
+#define __TEST_INIT_H__
 
-#define G_LOG_DOMAIN  "adg"
-
-#include "config.h"
+#include <adg/adg.h>
 
 
-#ifdef ENABLE_NLS
+G_BEGIN_DECLS
 
-#include <glib/gi18n-lib.h>
-#define P_(String) dgettext(GETTEXT_PACKAGE "-properties",String)
+void            test_init               (int            *p_argc,
+                                         char          **p_argv[]);
 
-#else /* !ENABLE_NLS */
+G_END_DECLS
 
-#define _(String)               (String)
-#define P_(String)              (String)
-#define Q_(String)              (String)
-#define N_(String)              (String)
-#define C_(Context,String)      (String)
-#define NC_(Context, String)    (String)
 
-#endif
-
-#define __ADG_H__
-
-#endif /* __ADG_INTERNAL_H__ */
+#endif /* __TEST_INIT_H__ */

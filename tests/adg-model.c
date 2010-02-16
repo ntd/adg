@@ -18,8 +18,7 @@
  */
 
 
-#include <adg/adg.h>
-#include <stdlib.h>
+#include "test-internal.h"
 
 
 static void
@@ -28,6 +27,7 @@ test_named_pair(void)
     AdgModel *model;
     AdgPair pair;
     const AdgPair *got_pair;
+
 
     model = ADG_MODEL(adg_path_new());
     pair.x = -1234;
@@ -56,15 +56,10 @@ test_dependency(void)
     AdgEntity *entity;
     const GSList *dependencies;
 
+
     model = ADG_MODEL(adg_path_new());
     entity = ADG_ENTITY(adg_logo_new());
 
-    /* Temporarily disable these test to let make check pass:
-     * it is known to fail because of a test framework issue
-     * present in glib up to 2.22.4. Here it is the link:
-     * http://mail.gnome.org/archives/gtk-app-devel-list/2010-February/msg00045.html
-     */
-#if 0
     g_object_set(model, "dependency", NULL, NULL);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
@@ -72,7 +67,6 @@ test_dependency(void)
     adg_model_add_dependency(model, NULL);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
-#endif
 
     adg_model_add_dependency(model, entity);
     dependencies = adg_model_get_dependencies(model);
@@ -91,11 +85,10 @@ test_dependency(void)
 int
 main(int argc, char *argv[])
 {
-    g_test_init(&argc, &argv, NULL);
-    g_type_init();
+    test_init(&argc, &argv);
 
-    g_test_add_func("/adg/AdgModel/named-pair", test_named_pair);
-    g_test_add_func("/adg/AdgModel/dependency", test_dependency);
+    g_test_add_func("/adg/model/named-pair", test_named_pair);
+    g_test_add_func("/adg/model/dependency", test_dependency);
 
     return g_test_run();
 }
