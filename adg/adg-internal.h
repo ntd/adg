@@ -28,6 +28,9 @@
 
 #include "config.h"
 
+#define G_LOG_DOMAIN  "adg"
+
+
 #ifdef ENABLE_NLS
 
 #include <glib/gi18n-lib.h>
