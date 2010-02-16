@@ -12,8 +12,6 @@ test_internals=		test-internal.c \
 
 if HAVE_TEST_FRAMEWORK
 
-test_programs+=		properties
-
 test_programs+=		test-model
 test_model_SOURCES=	test-model.c \
 			$(test_internals)
