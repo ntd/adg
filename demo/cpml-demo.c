@@ -1,3 +1,4 @@
+#include <config.h>
 #include <cpml/cpml.h>
 #include <gtk/gtk.h>
 #include <math.h>
@@ -5,6 +6,8 @@
 #include "demo.h"
 
 
+static void     parse_args              (gint           *p_argc,
+                                         gchar         **p_argv[]);
 static cairo_path_t *
                 duplicate_and_stroke    (cairo_t        *cr);
 static void     stroke_and_destroy      (cairo_t        *cr,
@@ -104,7 +107,7 @@ main(gint argc, gchar **argv)
     GError *error;
     GtkWidget *window;
 
-    gtk_init(&argc, &argv);
+    parse_args(&argc, &argv);
 
     path = demo_find_data_file("cpml-demo.ui");
     if (path == NULL) {
@@ -152,6 +155,41 @@ main(gint argc, gchar **argv)
     gtk_main();
 
     return 0;
+}
+
+
+/**********************************************
+ * Command line options parser
+ **********************************************/
+
+static void
+version(void)
+{
+    g_print("cpml-demo " PACKAGE_VERSION "\n");
+    exit(0);
+}
+
+static void
+parse_args(gint *p_argc, gchar **p_argv[])
+{
+    GError *error = NULL;
+    GOptionEntry entries[] = {
+        {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, version,
+         "Display version information", NULL},
+        {NULL}
+    };
+
+    gtk_init_with_args(p_argc, p_argv, "- CPML demonstration program",
+                       entries, NULL, &error);
+
+    if (error != NULL) {
+        gint error_code = error->code;
+
+        g_printerr("%s\n", error->message);
+
+        g_error_free(error);
+        exit(error_code);
+    }
 }
 
 
