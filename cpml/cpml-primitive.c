@@ -430,7 +430,7 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
     n_points = cpml_primitive_get_n_points(primitive);
     n_points2 = cpml_primitive_get_n_points(primitive2);
 
-    if (n_points == -1 || n_points2 == -1)
+    if (n_points == 0 || n_points2 == 0)
         return 0;
 
     /* Primitives reordering: the first must be the more complex one */
