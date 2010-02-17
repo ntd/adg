@@ -1,10 +1,18 @@
+#include <config.h>
 #include <adg/adg.h>
 #include <adg/adg-widget.h>
 #include <math.h>
 
+/* Required for i18n */
+#undef G_LOG_DOMAIN
+#include <adg/adg-internal.h>
+
 #include "demo.h"
 
 
+static void             parse_args              (gint           *p_argc,
+                                                 gchar         **p_argv[],
+                                                 gboolean       *show_extents);
 static AdgCanvas *      sample_canvas           (void);
 static AdgCanvas *      operations_canvas       (void);
 static AdgCanvas *      mapping_canvas          (void);
@@ -16,18 +24,18 @@ static void             to_png                  (AdgWidget      *widget,
 static void             to_ps                   (AdgWidget      *widget,
                                                  GtkWidget      *caller);
 
-
 int
 main(gint argc, gchar **argv)
 {
+    gboolean show_extents;
     gchar *path;
     GtkBuilder *builder;
     GError *error;
     GtkWidget *window;
     GtkWidget *widget;
 
-    gtk_init(&argc, &argv);
-    //adg_switch_extents(TRUE);
+    parse_args(&argc, &argv, &show_extents);
+    adg_switch_extents(show_extents);
 
     path = demo_find_data_file("adg-demo.ui");
     if (path == NULL) {
@@ -80,7 +88,43 @@ main(gint argc, gchar **argv)
 }
 
 
-static AdgPath *        non_trivial_model       (void);
+/**********************************************
+ * Command line options parser
+ **********************************************/
+
+static void
+version(void)
+{
+    g_print("adg-demo " PACKAGE_VERSION "\n");
+    exit(0);
+}
+
+static void
+parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
+{
+    GError *error = NULL;
+    GOptionEntry entries[] = {
+        {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, version,
+         "Display version information", NULL},
+        {"show-extents", 'E', 0, G_OPTION_ARG_NONE, NULL,
+         "Show the boundary boxes of every entity", NULL},
+        {NULL}
+    };
+
+    entries[1].arg_data = show_extents;
+    *show_extents = FALSE;
+    gtk_init_with_args(p_argc, p_argv, "- ADG demonstration program",
+                       entries, GETTEXT_PACKAGE, &error);
+
+    if (error != NULL) {
+        gint error_code = error->code;
+
+        g_printerr("%s\n", error->message);
+
+        g_error_free(error);
+        exit(error_code);
+    }
+}
 
 
 /**********************************************
@@ -100,6 +144,7 @@ struct _SampleData {
     gdouble LD2, LD3, LD5, LD6, LD7;
 };
 
+static AdgPath *non_trivial_model       (void);
 static void     sample_get              (SampleData             *data);
 static AdgPath *sample_bottom_path      (const SampleData       *data,
                                          gdouble                 height);
