@@ -37,7 +37,7 @@ application provides the following benefits:</para>
 <simplesect id="README.design">
 <title>Design overview</title>
 
-<para>The project grew up arond the <ulink url="http://www.gtk.org/">GObject</ulink> library: the
+<para>The project grew up around the <ulink url="http://www.gtk.org/">GObject</ulink> library: the
 ADG canvas is developed in plain C using the object-oriented approach
 supplied by GObject.</para>
 
@@ -70,11 +70,10 @@ integrated in a single application.</para>
    <listitem><ulink url="http://www.gtk.org/">gtk+</ulink> 2.8.0 or later, needed by the demo program</listitem>
 </itemizedlist>
 
-<para>These packages should be properly installed prior to build the ADG.
-They can be found on nearly every decent Unix-like system, although the
-required versions could be quite recent. The ADG is mainly developed on
-GNU/Linux systems but its dependecies are known to be platform independent,
-so a porting to other systems should be quite easy (if not automatic).</para>
+<para>These packages should be installed prior to build the ADG: they should
+be provided by nearly every decent unix-like system. The ADG is mainly
+developed on GNU/Linux systems but its dependecies are known to be cross
+platform so a porting should be quite easy (if not automatic).</para>
 </simplesect>
 
 
