@@ -1,3 +1,6 @@
+## Make happy automake < 1.10
+builddir=			.
+
 MSG_GEN=			echo '  GEN   '$@;
 mkenums_to_c=			$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 mkenums_to_h=			$(mkenums_to_c)
