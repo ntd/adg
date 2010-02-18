@@ -159,14 +159,14 @@ libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
 libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
-adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
+$(builddir)/adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
 	$(mkenums_to_c)
 
-adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
+$(builddir)/adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
 	$(mkenums_to_h)
 
-adg-marshal.c: adg-marshal.genmarshal
+$(builddir)/adg-marshal.c: adg-marshal.genmarshal
 	$(genmarshal_to_c)
 
-adg-marshal.h: adg-marshal.genmarshal
+$(builddir)/adg-marshal.h: adg-marshal.genmarshal
 	$(genmarshal_to_h)
