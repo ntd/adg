@@ -13,9 +13,7 @@ BUILT_SOURCES=			ChangeLog \
 				TODO \
 				CONTRIBUTING
 
-EXTRA_DIST=			ABOUT-NLS \
-				config.rpath \
-				COPYING \
+EXTRA_DIST=			COPYING \
 				ChangeLog-0.2.1 \
 				INSTALL \
 				THANKS \
