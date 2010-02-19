@@ -60,6 +60,7 @@
 #include "adg-path.h"
 #include "adg-path-private.h"
 #include "adg-primitive.h"
+#include <string.h>
 #include <math.h>
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
