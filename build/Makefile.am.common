@@ -1,0 +1,9 @@
+srcdir=@srcdir@
+abs_srcdir=@abs_srcdir@
+top_srcdir=@top_srcdir@
+abs_top_srcdir=@abs_top_srcdir@
+builddir=@builddir@
+abs_builddir=@abs_builddir@
+abs_top_builddir=@abs_top_builddir@
+
+MSG_GEN=echo '  GEN   '$@;
