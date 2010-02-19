@@ -5,7 +5,7 @@ xslt_to_doc=			@if test -x $(XSLTPROC); then \
 				else \
 				  echo ' *WARN  libxslt-1.0.19 or later is required in order to generate '$@; \
 				fi
-ACLOCAL_AMFLAGS=		-I m4
+ACLOCAL_AMFLAGS=		-I build
 DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk-doc
 
 BUILT_SOURCES=			ChangeLog \

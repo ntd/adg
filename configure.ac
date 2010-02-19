@@ -14,7 +14,7 @@ AC_INIT([Automatic Drawing Generation],adg_version,
         [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([build])
 AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
 
 
