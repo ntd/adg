@@ -1549,18 +1549,23 @@ static void
 cell_arrange_size(AdgTableCell *cell)
 {
     CpmlVector *size;
-    AdgAlignment *title_alignment, *value_alignment;
+    AdgAlignment *title_alignment;
+    AdgAlignment *value_alignment;
 
     size = &cell->extents.size;
 
     if (cell->title != NULL) {
         title_alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
         adg_entity_arrange((AdgEntity *) title_alignment);
+    } else {
+        title_alignment = NULL;
     }
 
     if (cell->value != NULL) {
         value_alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
         adg_entity_arrange((AdgEntity *) value_alignment);
+    } else {
+        value_alignment = NULL;
     }
 
     size->y = cell->row->extents.size.y;
@@ -1572,12 +1577,12 @@ cell_arrange_size(AdgTableCell *cell)
         /* The width depends on the cell content (default = 0) */
         size->x = 0;
 
-        if (cell->title != NULL) {
+        if (title_alignment != NULL) {
             extents = adg_entity_get_extents((AdgEntity *) title_alignment);
             size->x = extents->size.x;
         }
 
-        if (cell->value != NULL) {
+        if (value_alignment != NULL) {
             extents = adg_entity_get_extents((AdgEntity *) value_alignment);
             if (extents->size.x > size->x)
                 size->x = extents->size.x;
