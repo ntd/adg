@@ -10,7 +10,7 @@ m4_define([gtk_prereq],[2.12.0])
 # Initialization
 
 AC_PREREQ([2.59])
-AC_INIT([Automatic Drawing Generation],m4_expand([adg_version]),
+AC_INIT([Automatic Drawing Generation],adg_version,
         [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([config.h])
@@ -41,9 +41,9 @@ AC_FUNC_ALLOCA
 
 # I18n
 
-AC_SUBST([GETTEXT_PACKAGE],[adg-adg_api_version])
-AC_DEFINE([GETTEXT_PACKAGE],[["]AC_PACKAGE_TARNAME-adg_api_version["]],
-                   [Define to the domain used by gettext.])
+AC_SUBST([GETTEXT_PACKAGE],adg-adg_api_version)
+AC_DEFINE([GETTEXT_PACKAGE],"AC_PACKAGE_TARNAME-adg_api_version",
+	  [Define to the domain used by gettext.])
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
@@ -54,9 +54,9 @@ AC_OUTPUT_COMMANDS([case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
 
 # Check for required packages
 
-GTK_DOC_CHECK([gtkdoc_prereq])
-PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= gobject_prereq])
-PKG_CHECK_MODULES([CAIRO],[cairo >= cairo_prereq])
+GTK_DOC_CHECK(gtkdoc_prereq)
+PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
+PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 
 
 # Check for optional GTK+2 support
@@ -66,7 +66,7 @@ AC_ARG_ENABLE([gtk2],
                               [include GKT+2 specific widgets @<:@default=check@:>@])],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
-      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= gtk_prereq],
+      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
                          [enable_gtk2=yes],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([$GTK2_PKG_ERRORS and GTK+2 support requested])],
