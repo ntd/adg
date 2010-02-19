@@ -95,7 +95,7 @@ static void             reshape                 (CpmlSegment       *segment);
  *
  * Builds a CpmlSegment from a #CpmlPath structure. This operation
  * involves stripping the leading #CPML_MOVE primitives and setting
- * the internal segment structure accordling. A pointer to the
+ * the internal segment structure accordingly. A pointer to the
  * source cairo path is kept.
  *
  * This function will fail if @path is null, empty or if its
@@ -575,7 +575,7 @@ ensure_one_move_to(CpmlSegment *segment)
  * @segment: a #CpmlSegment
  *
  * Looks for the segment termination and modify the
- * <structfield>num_data</structfield> field of @segment accordling.
+ * <structfield>num_data</structfield> field of @segment accordingly.
  * @segment must have only one leading #CPML_MOVE and it is supposed
  * to be non-empty, conditions yet imposed by the
  * ensure_one_move_to() function.
