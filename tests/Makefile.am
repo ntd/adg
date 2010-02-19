@@ -1,3 +1,5 @@
+include $(top_srcdir)/build/Makefile.am.common
+
 AM_CFLAGS=		-g @ADG_CFLAGS@ \
 			-I$(top_srcdir) \
 			-I$(top_builddir)

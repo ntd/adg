@@ -1,4 +1,5 @@
-MSG_GEN=			echo '  GEN   '$@;
+include $(top_srcdir)/build/Makefile.am.common
+
 xslt_to_doc=			@if test -x $(XSLTPROC); then \
 				  $(MSG_GEN)$(XSLTPROC) -o $@ $^; \
 				else \

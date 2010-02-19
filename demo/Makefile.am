@@ -1,9 +1,11 @@
+include $(top_srcdir)/build/Makefile.am.common
+
 AM_CFLAGS=		@ADG_CFLAGS@ \
 			-I$(top_srcdir) \
 			-I$(top_builddir)
 AM_LDFLAGS=		@ADG_LIBS@
 AM_CPPFLAGS=		-DPKGDATADIR='"$(pkgdatadir)"' \
-			-DSOURCEDIR='"$(abs_srcdir)"'
+			-DSOURCEDIR='"$(abs_top_srcdir)/demo"'
 LDADD=			$(top_builddir)/adg/libadg.la
 
 

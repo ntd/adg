@@ -1,3 +1,5 @@
+include $(top_srcdir)/build/Makefile.am.common
+
 AM_CFLAGS=			@CPML_CFLAGS@ \
 				-I$(top_srcdir)
 AM_LDFLAGS=			@CPML_LIBS@

@@ -1,3 +1,5 @@
+include $(top_srcdir)/build/Makefile.am.common
+
 GTKDOC_CFLAGS=		@ADG_CFLAGS@ \
 			-I$(top_srcdir) \
 			-I$(top_builddir)

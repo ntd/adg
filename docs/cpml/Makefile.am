@@ -1,3 +1,5 @@
+include $(top_srcdir)/build/Makefile.am.common
+
 DOC_MODULE=		cpml
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=		$(abs_top_srcdir)/cpml
