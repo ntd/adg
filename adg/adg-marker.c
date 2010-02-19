@@ -54,6 +54,7 @@
 #include "adg-internal.h"
 #include "adg-marker.h"
 #include "adg-marker-private.h"
+#include <string.h>
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
