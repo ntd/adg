@@ -167,14 +167,12 @@ cairo_bool_t
 cpml_primitive_next(CpmlPrimitive *primitive)
 {
     cairo_path_data_t *new_data;
+    const cairo_path_data_t *end_data;
 
     new_data = primitive->data + primitive->data->header.length;
-    if (new_data - primitive->segment->data >= primitive->segment->num_data)
-        return 0;
+    end_data = primitive->segment->data + primitive->segment->num_data;
 
-    /* TODO: this is a temporary workaround to be removed as soon as
-     * the issue #21 will be resolved */
-    if (new_data->header.type == CPML_MOVE)
+    if (new_data >= end_data)
         return 0;
 
     primitive->org = cpml_primitive_get_point(primitive, -1);
