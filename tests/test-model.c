@@ -60,6 +60,7 @@ test_dependency(void)
     model = ADG_MODEL(adg_path_new());
     entity = ADG_ENTITY(adg_logo_new());
 
+    /* Checking the reaction on invalid dependency */
     g_object_set(model, "dependency", NULL, NULL);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
@@ -68,7 +69,18 @@ test_dependency(void)
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
 
+    /* Adding and removing using the usual APIs */
     adg_model_add_dependency(model, entity);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies != NULL);
+    g_assert(dependencies->data == entity);
+
+    adg_model_remove_dependency(model, entity);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies == NULL);
+
+    /* Adding and removing using GObject properties */
+    g_object_set(model, "dependency", entity, NULL);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies != NULL);
     g_assert(dependencies->data == entity);
