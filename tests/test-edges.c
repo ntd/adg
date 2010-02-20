@@ -21,44 +21,62 @@
 #include "test-internal.h"
 
 
+static int junk[10] = { 0 };
+
+
 static void
 test_source(void)
 {
     AdgEdges *edges;
-    AdgTrail *trail;
+    AdgTrail *valid_trail, *invalid_trail;
     AdgTrail *source;
 
     edges = adg_edges_new();
-    trail = ADG_TRAIL(adg_path_new());
+    valid_trail = ADG_TRAIL(adg_path_new());
+    invalid_trail = (AdgTrail *) junk;
 
-    g_object_set(edges, "source", NULL, NULL);
+    /* Using the public APIs */
+    adg_edges_set_source(edges, valid_trail);
     source = adg_edges_get_source(edges);
-    g_assert(source == NULL);
+    g_assert(source == valid_trail);
 
-    adg_edges_set_source(edges, trail);
+    adg_edges_set_source(edges, invalid_trail);
     source = adg_edges_get_source(edges);
-    g_assert(source == trail);
+    g_assert(source == valid_trail);
 
     adg_edges_set_source(edges, NULL);
     source = adg_edges_get_source(edges);
     g_assert(source == NULL);
 
-    g_object_unref(edges);
-    g_object_unref(trail);
-}
+    /* Using GObject property methods */
+    g_object_set(edges, "source", valid_trail, NULL);
+    g_object_get(edges, "source", &source, NULL);
+    g_assert(source == valid_trail);
 
+    g_object_set(edges, "source", invalid_trail, NULL);
+    g_object_get(edges, "source", &source, NULL);
+    g_assert(source == valid_trail);
+
+    g_object_set(edges, "source", NULL, NULL);
+    g_object_get(edges, "source", &source, NULL);
+    g_assert(source == NULL);
+
+    g_object_unref(edges);
+    g_object_unref(valid_trail);
+}
 
 static void
 test_critical_angle(void)
 {
     AdgEdges *edges;
-    gdouble critical_angle;
     gdouble valid_value, invalid_value;
+    gdouble critical_angle;
 
     edges = adg_edges_new();
     valid_value = G_PI / 10;
     invalid_value = G_PI + 1;
 
+    /* Using the public APIs */
     adg_edges_set_critical_angle(edges, valid_value);
     critical_angle = adg_edges_get_critical_angle(edges);
     g_assert_cmpfloat(critical_angle, ==, valid_value);
@@ -67,12 +85,13 @@ test_critical_angle(void)
     critical_angle = adg_edges_get_critical_angle(edges);
     g_assert_cmpfloat(critical_angle, !=, invalid_value);
 
+    /* Using GObject property methods */
     g_object_set(edges, "critical-angle", valid_value, NULL);
-    critical_angle = adg_edges_get_critical_angle(edges);
+    g_object_get(edges, "critical-angle", &critical_angle, NULL);
     g_assert_cmpfloat(critical_angle, ==, valid_value);
 
     g_object_set(edges, "critical-angle", invalid_value, NULL);
-    critical_angle = adg_edges_get_critical_angle(edges);
+    g_object_get(edges, "critical-angle", &critical_angle, NULL);
     g_assert_cmpfloat(critical_angle, !=, invalid_value);
 
     g_object_unref(edges);
