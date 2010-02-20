@@ -703,8 +703,8 @@ arrange(AdgEntity *entity)
     if (data->marker1 != NULL) {
         AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
         adg_marker_set_segment(data->marker1, data->trail, to_outside ? 2 : 1);
-        adg_entity_arrange(marker1_entity);
         adg_entity_local_changed(marker1_entity);
+        adg_entity_arrange(marker1_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(marker1_entity));
     }
 
