@@ -5,5 +5,6 @@ abs_top_srcdir=@abs_top_srcdir@
 builddir=@builddir@
 abs_builddir=@abs_builddir@
 abs_top_builddir=@abs_top_builddir@
+pkgconfigdir=$(libdir)/pkgconfig
 
 MSG_GEN=echo '  GEN   '$@;

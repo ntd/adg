@@ -30,6 +30,7 @@ cpml_c_sources=			cpml-arc.c \
 				cpml-segment.c \
 				cpml-util.c
 cpml_built_c_sources=
+cpml_pkgconfig_file=		cpml.pc
 
 # targets
 BUILT_SOURCES=			$(cpml_built_h_sources) \
@@ -49,3 +50,5 @@ libcpml_la_SOURCES=		$(cpml_h_sources) \
 				$(cpml_built_private_h_sources) \
 				$(cpml_c_sources) \
 				$(cpml_built_c_sources)
+pkgconfig_DATA=			$(cpml_pkgconfig_file)
+EXTRA_DIST=			$(cpml_pkgconfig_file).in
