@@ -74,4 +74,3 @@ AC_DEFUN([SHAVE_INIT],
   AC_SUBST(V)
   AC_SUBST(Q)
 ])
-
