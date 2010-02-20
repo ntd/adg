@@ -21,6 +21,9 @@
 #include "test-internal.h"
 
 
+static int junk[10] = { 0 };
+
+
 static void
 test_named_pair(void)
 {
@@ -53,44 +56,51 @@ static void
 test_dependency(void)
 {
     AdgModel *model;
-    AdgEntity *entity;
+    AdgEntity *valid_entity, *invalid_entity;
     const GSList *dependencies;
 
-
     model = ADG_MODEL(adg_path_new());
-    entity = ADG_ENTITY(adg_logo_new());
+    valid_entity = ADG_ENTITY(adg_logo_new());
+    invalid_entity = (AdgEntity *) junk;
 
-    /* Checking the reaction on invalid dependency */
-    g_object_set(model, "dependency", NULL, NULL);
-    dependencies = adg_model_get_dependencies(model);
-    g_assert(dependencies == NULL);
-
+    /* Using the public APIs */
     adg_model_add_dependency(model, NULL);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
 
-    /* Adding and removing using the usual APIs */
-    adg_model_add_dependency(model, entity);
-    dependencies = adg_model_get_dependencies(model);
-    g_assert(dependencies != NULL);
-    g_assert(dependencies->data == entity);
-
-    adg_model_remove_dependency(model, entity);
+    adg_model_add_dependency(model, invalid_entity);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
 
-    /* Adding and removing using GObject properties */
-    g_object_set(model, "dependency", entity, NULL);
+    adg_model_add_dependency(model, valid_entity);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies != NULL);
-    g_assert(dependencies->data == entity);
+    g_assert(dependencies->data == valid_entity);
 
-    adg_model_remove_dependency(model, entity);
+    adg_model_remove_dependency(model, valid_entity);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies == NULL);
+
+    /* Using GObject property methods */
+    g_object_set(model, "dependency", NULL, NULL);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies == NULL);
+
+    g_object_set(model, "dependency", invalid_entity, NULL);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies == NULL);
+
+    g_object_set(model, "dependency", valid_entity, NULL);
+    dependencies = adg_model_get_dependencies(model);
+    g_assert(dependencies != NULL);
+    g_assert(dependencies->data == valid_entity);
+
+    adg_model_remove_dependency(model, valid_entity);
     dependencies = adg_model_get_dependencies(model);
     g_assert(dependencies == NULL);
 
     g_object_unref(model);
-    g_object_unref(entity);
+    g_object_unref(valid_entity);
 }
 
 
