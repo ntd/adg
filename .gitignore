@@ -1,20 +1,16 @@
 # ./autogen.sh
 /configure
-/ABOUT-NLS
 /INSTALL
 /aclocal.m4
 /autom4te.cache/
 /config.h.in
 /config.guess
-/config.rpath
 /config.sub
 /missing
 /mkinstalldirs
 /depcomp
 /install-sh
 /ltmain.sh
-/shave
-/shave-libtool
 Makefile.in
 
 # ./configure

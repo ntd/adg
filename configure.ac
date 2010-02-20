@@ -108,9 +108,9 @@ AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_CFLAGS])
 AC_SUBST([ADG_LIBS])
 
-SHAVE_INIT([],[enable])
-AC_CONFIG_FILES([shave
-                 shave-libtool
+SHAVE_INIT([build],[enable])
+AC_CONFIG_FILES([build/shave
+                 build/shave-libtool
                  cpml.pc
                  adg.pc
                  Makefile
