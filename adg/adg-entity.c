@@ -981,6 +981,8 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
     AdgEntityPrivate *data;
     AdgEntity *old_parent;
 
+    g_return_val_if_fail(parent == NULL || ADG_IS_ENTITY(parent), FALSE);
+
     data = entity->data;
     old_parent = data->parent;
 
