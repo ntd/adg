@@ -18,6 +18,10 @@ test_programs+=		test-model
 test_model_SOURCES=	test-model.c \
 			$(test_internals)
 
+test_programs+=		test-edges
+test_edges_SOURCES=	test-edges.c \
+			$(test_internals)
+
 endif
 
 
