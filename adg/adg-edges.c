@@ -362,6 +362,8 @@ set_source(AdgEdges *edges, AdgTrail *source)
     AdgEntity *entity;
     AdgEdgesPrivate *data;
 
+    g_return_val_if_fail(source == NULL || ADG_IS_TRAIL(source), FALSE);
+
     entity = (AdgEntity *) edges;
     data = edges->data;
 
