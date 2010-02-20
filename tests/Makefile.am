@@ -22,6 +22,10 @@ test_programs+=		test-edges
 test_edges_SOURCES=	test-edges.c \
 			$(test_internals)
 
+test_programs+=		test-entity
+test_entity_SOURCES=	test-entity.c \
+			$(test_internals)
+
 endif
 
 
