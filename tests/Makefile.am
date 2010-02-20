@@ -29,4 +29,4 @@ endif
 
 
 # targets
-noinst_PROGRAMS=	$(TEST_PROGS)
+check_PROGRAMS=		$(TEST_PROGS)
