@@ -138,7 +138,7 @@ endif
 
 # targets
 pkgconfig_DATA=			$(pkgconfig_file)
-EXTRA_DIST=			$(pkgconfig_file).in \
+EXTRA_DIST+=			$(pkgconfig_file).in \
 				$(template_sources)
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)

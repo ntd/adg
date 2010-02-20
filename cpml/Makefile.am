@@ -51,4 +51,4 @@ libcpml_la_SOURCES=		$(cpml_h_sources) \
 				$(cpml_c_sources) \
 				$(cpml_built_c_sources)
 pkgconfig_DATA=			$(cpml_pkgconfig_file)
-EXTRA_DIST=			$(cpml_pkgconfig_file).in
+EXTRA_DIST+=			$(cpml_pkgconfig_file).in

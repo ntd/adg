@@ -18,6 +18,45 @@ AC_CONFIG_MACRO_DIR([build])
 AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
 
 
+# Check for host information
+
+AC_CANONICAL_HOST
+case "${host}" in
+  *-*-linux*)
+    guessed_host=linux
+    ;;
+  *-*-freebsd*)
+    guessed_host=freebsd
+    ;;
+  *-*-mingw*)
+    guessed_host=mingw
+    ;;
+  *-*-solaris*)
+    guessed_host=solaris
+    ;;
+  *-*-darwin*)
+    guessed_host=darwin
+    ;;
+  *-*-beos*)
+    guessed_host=beos
+    ;;
+  *-*-cygwin*)
+    guessed_host=cygwin
+    ;;
+  *-*-minix)
+    guessed_host=minix
+    ;;
+  *-*-aix*)
+    guessed_host=aix
+    ;;
+  *)
+    guessed_host=unknown
+    ;;
+esac
+AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
+AM_CONDITIONAL([OS_WIN32],[test "${guessed_host}" == "mingw" -o "${guessed_host}" == "cygwin"])
+
+
 # Check for programs
 
 AC_PROG_CC
@@ -25,6 +64,8 @@ PKG_PROG_PKG_CONFIG
 AC_PATH_PROG([XSLTPROC],[xsltproc],[/usr/bin/xsltproc])
 AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums],[/usr/bin/glib-mkenums])
 AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
+AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
+AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 
 m4_ifdef([LT_INIT],
 	 [LT_INIT([disable-static])],
