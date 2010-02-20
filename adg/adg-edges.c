@@ -125,7 +125,7 @@ adg_edges_class_init(AdgEdgesClass *klass)
                                 P_("The angle that defines which corner generates an edge (if the corner angle is greater than this critical angle) and which edge is ignored"),
                                 0, G_PI, G_PI / 45,
                                 G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_SOURCE, param);
+    g_object_class_install_property(gobject_class, PROP_CRITICAL_ANGLE, param);
 }
 
 static void
