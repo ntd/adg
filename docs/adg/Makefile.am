@@ -60,7 +60,7 @@ content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
 expand_content_files=
 
-include $(top_srcdir)/gtk-doc.make
+include $(top_srcdir)/build/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE).types \
 			$(DOC_MODULE)-sections.txt

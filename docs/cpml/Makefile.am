@@ -21,6 +21,6 @@ HTML_IMAGES=
 content_files=
 expand_content_files=
 
-include $(top_srcdir)/gtk-doc.make
+include $(top_srcdir)/build/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE)-sections.txt
