@@ -12,6 +12,7 @@ AM_LDFLAGS=			@ADG_LIBS@
 
 
 # file groups
+pkgconfig_file=			adg.pc
 h_sources=			adg.h \
 				adg-adim.h \
 				adg-alignment.h \
@@ -125,7 +126,7 @@ c_sources=			adg-adim.c \
 				adg-util.c
 built_c_sources=		$(builddir)/adg-type-builtins.c \
 				$(builddir)/adg-marshal.c
-EXTRA_DIST=			adg-type-builtins.c.mkenums \
+template_sources=		adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
 				adg-marshal.genmarshal
 if HAVE_GTK2
@@ -136,6 +137,9 @@ endif
 
 
 # targets
+pkgconfig_DATA=			$(pkgconfig_file)
+EXTRA_DIST=			$(pkgconfig_file).in \
+				$(template_sources)
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)
 #				built_c_sources are properly tracked

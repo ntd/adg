@@ -19,7 +19,6 @@ Makefile.in
 /libtool
 /stamp-h*
 /config.h
-/adg.pc
 .deps/
 Makefile
 

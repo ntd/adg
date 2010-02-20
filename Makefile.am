@@ -19,7 +19,6 @@ EXTRA_DIST=			COPYING \
 				INSTALL \
 				THANKS \
 				adg.doap \
-				adg.pc.in \
 				$(BUILT_SOURCES)
 
 SUBDIRS=			cpml \
@@ -30,8 +29,6 @@ SUBDIRS=			cpml \
 				po-properties \
 				tests
 
-pkgconfigdir=			$(libdir)/pkgconfig
-pkgconfig_DATA =		adg.pc
 
 # Creating ChangeLog files from git log:
 # idea stolen from cairo/build/Makefile.am.changelog

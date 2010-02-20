@@ -111,10 +111,10 @@ AC_SUBST([ADG_LIBS])
 SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
                  build/shave-libtool
-                 adg.pc
                  Makefile
                  cpml/cpml.pc
                  cpml/Makefile
+                 adg/adg.pc
                  adg/Makefile
                  demo/Makefile
                  po/Makefile.in
