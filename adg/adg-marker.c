@@ -609,8 +609,20 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
     data = marker->data;
     entity = (AdgEntity *) marker;
 
-    if (trail == data->trail && n_segment == data->n_segment)
-        return FALSE;
+    /* Do not try to cache results! Although @trail and @n_segment
+     * could be the same, the internal CpmlSegment could change.
+     * This is the case when AdgLDim arranges the layout and changes
+     * the path data (to force outside arrows for example) reusing
+     * the same CpmlPath. In other words, do not do this:
+     *
+     * if (trail == data->trail && n_segment == data->n_segment)
+     *     return FALSE;
+     *
+     * Incidentally, on a 64 bit platform this issue has been never
+     * exposed. Avoiding the cache will solve the issue 33:
+     *
+     * http://dev.entidi.com/p/adg/issues/33/
+     */
 
     if (data->trail != NULL) {
         /* Restore the original segment in the old trail */
