@@ -130,6 +130,11 @@ AS_IF([test "x${enable_test_framework}" != "xno"],
 AM_CONDITIONAL([HAVE_TEST_FRAMEWORK],[test "x${enable_test_framework}" = "xyes"])
 
 
+# Check for compiler characteristics
+
+AC_C_CONST
+
+
 # Final step
 
 CPML_REQUIRES='cairo >= cairo_prereq'
