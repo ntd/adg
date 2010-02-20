@@ -175,7 +175,7 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_SOURCE:
-        g_value_set_object(value, &data->source);
+        g_value_set_object(value, data->source);
         break;
     case PROP_CRITICAL_ANGLE:
         g_value_set_double(value, adg_edges_get_critical_angle(edges));
