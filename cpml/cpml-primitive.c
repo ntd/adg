@@ -109,10 +109,8 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
  * @segment: the source segment
  *
  * Initializes @primitive to the first primitive of @segment.
- *
- * Returns: @primitive
  **/
-CpmlPrimitive *
+void
 cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
     primitive->segment = segment;
@@ -120,13 +118,11 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
     /* The first element of a CpmlSegment is always a CPML_MOVE,
      * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
      * so the origin is in the second data item */
-    primitive->org = &segment->data[1];
+    primitive->org = segment->data + 1;
 
     /* Also, the segment APIs ensure that @segment is prepended by
      * only one CPML_MOVE */
-    primitive->data = segment->data + segment->data[0].header.length;
-
-    return primitive;
+    primitive->data = segment->data + segment->data->header.length;
 }
 
 /**
