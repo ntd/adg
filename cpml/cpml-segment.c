@@ -78,9 +78,6 @@
 #include "cpml-primitive.h"
 #include "cpml-line.h"
 #include "cpml-curve.h"
-#include "cpml-alloca.h"
-
-#include <stdio.h>
 #include <string.h>
 
 static cairo_bool_t     normalize               (CpmlSegment       *segment);
@@ -447,7 +444,7 @@ cpml_segment_reverse(CpmlSegment *segment)
     const cairo_path_data_t *src_data;
 
     data_size = sizeof(cairo_path_data_t) * segment->num_data;
-    data = cpml_alloca(data_size);
+    data = malloc(data_size);
     end_x = segment->data[1].point.x;
     end_y = segment->data[1].point.y;
 
@@ -459,7 +456,7 @@ cpml_segment_reverse(CpmlSegment *segment)
         src_data = segment->data + n;
         n_points = cpml_primitive_type_get_n_points(src_data->header.type);
         length = src_data->header.length;
-	n += length;
+        n += length;
         dst_data = data + segment->num_data - n + data->header.length;
         dst_data->header.type = src_data->header.type;
         dst_data->header.length = length;
@@ -471,16 +468,18 @@ cpml_segment_reverse(CpmlSegment *segment)
             end_y = src_data[n_point].point.y;
         }
 
-	/* Copy also the embedded data, if any */
-	if (n_points < length) {
+        /* Copy also the embedded data, if any */
+        if (n_points < length) {
             size_t size = (length - n_points) * sizeof(cairo_path_data_t);
             memcpy(dst_data + n_points, src_data + n_points, size);
-	}
+        }
     }
 
     data[1].point.x = end_x;
     data[1].point.y = end_y;
     memcpy(segment->data, data, data_size);
+
+    free(data);
 }
 
 /**
@@ -575,7 +574,7 @@ ensure_one_leading_move(CpmlSegment *segment)
             return 0;
 
         /* Check if this is the last CPML_MOVE */
-	if (new_data[move_length].header.type != CPML_MOVE)
+        if (new_data[move_length].header.type != CPML_MOVE)
             break;
 
         new_data += move_length;

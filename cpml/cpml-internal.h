@@ -30,5 +30,6 @@
 
 #include "cpml-util.h"
 #include "cpml-pair.h"
+#include <stdlib.h>
 
 #endif /* __CPML_INTERNAL_H__ */

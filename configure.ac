@@ -73,13 +73,6 @@ m4_ifdef([LT_INIT],
 	  AC_PROG_LIBTOOL])
 
 
-# Check for functions
-
-dnl Alloca is required by cpml, so it should be removed
-dnl in case the adg and cpml libraries will be splitted
-AC_FUNC_ALLOCA
-
-
 # I18n
 
 AC_SUBST([GETTEXT_PACKAGE],adg-adg_api_version)

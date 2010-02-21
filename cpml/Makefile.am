@@ -17,8 +17,7 @@ cpml_h_sources=			cpml.h \
 				cpml-segment.h \
 				cpml-util.h
 cpml_built_h_sources=
-cpml_private_h_sources=		cpml-alloca.h \
-				cpml-internal.h \
+cpml_private_h_sources=		cpml-internal.h \
 				cpml-primitive-private.h
 cpml_built_private_h_sources=
 cpml_c_sources=			cpml-arc.c \
@@ -43,7 +42,6 @@ libcpml_include_DATA=		$(cpml_h_sources) \
 
 lib_LTLIBRARIES= 		libcpml.la
 libcpml_la_LDFLAGS=		-release @PACKAGE_VERSION@
-libcpml_la_LIBADD=		$(LTALLOCA)
 libcpml_la_SOURCES=		$(cpml_h_sources) \
 				$(cpml_built_h_sources) \
 				$(cpml_private_h_sources) \
