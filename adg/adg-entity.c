@@ -448,8 +448,8 @@ adg_entity_get_parent(AdgEntity *entity)
  * @map: the new map
  *
  * Sets the new global transformation of @entity to @map:
- * the old map is discarded. If @map is %NULL an identity
- * matrix is implied.
+ * the old map is discarded. If @map is %NULL, the global
+ * map is left unchanged.
  **/
 void
 adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
@@ -549,8 +549,8 @@ adg_entity_get_global_matrix(AdgEntity *entity)
  * @map: the new map
  *
  * Sets the new local transformation of @entity to @map:
- * the old map is discarded. If @map is %NULL an identity
- * matrix is implied.
+ * the old map is discarded. If @map is %NULL, the local
+ * map is left unchanged.
  **/
 void
 adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
@@ -1008,10 +1008,11 @@ set_parent(AdgEntity *entity, AdgEntity *parent)
 static gboolean
 set_global_map(AdgEntity *entity, const AdgMatrix *map)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
 
-    if (map == NULL)
-        map = adg_matrix_identity();
+    g_return_val_if_fail(map != NULL, FALSE);
+
+    data = entity->data;
 
     if (adg_matrix_equal(&data->global_map, map))
         return FALSE;
@@ -1025,7 +1026,11 @@ set_global_map(AdgEntity *entity, const AdgMatrix *map)
 static gboolean
 set_local_map(AdgEntity *entity, const AdgMatrix *map)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(map != NULL, FALSE);
+
+    data = entity->data;
 
     if (map == NULL)
         map = adg_matrix_identity();
