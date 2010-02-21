@@ -28,7 +28,7 @@ G_BEGIN_DECLS
 
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
-gpointer        adg_test_invalid_pointer        (void) G_GNUC_CONST;
+const gpointer  adg_test_invalid_pointer        (void) G_GNUC_CONST;
 
 G_END_DECLS
 
