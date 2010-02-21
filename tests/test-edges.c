@@ -22,7 +22,7 @@
 
 
 static void
-test_source(void)
+_adg_test_source(void)
 {
     AdgEdges *edges;
     AdgTrail *valid_trail, *invalid_trail;
@@ -63,7 +63,7 @@ test_source(void)
 }
 
 static void
-test_critical_angle(void)
+_adg_test_critical_angle(void)
 {
     AdgEdges *edges;
     gdouble valid_value, invalid_value;
@@ -100,8 +100,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/edges/source", test_source);
-    g_test_add_func("/adg/edges/critical-angle", test_critical_angle);
+    g_test_add_func("/adg/edges/source", _adg_test_source);
+    g_test_add_func("/adg/edges/critical-angle", _adg_test_critical_angle);
 
     return g_test_run();
 }

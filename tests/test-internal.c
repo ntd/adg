@@ -22,8 +22,8 @@
 
 
 static void
-null_handler(const gchar *log_domain, GLogLevelFlags log_level,
-             const gchar *message, gpointer user_data)
+_adg_null_handler(const gchar *log_domain, GLogLevelFlags log_level,
+                  const gchar *message, gpointer user_data)
 {
 }
 
@@ -46,7 +46,7 @@ adg_test_init(int *p_argc, char **p_argv[])
      * tested this approach and it works) but that function
      * will pull in a glib-2.22 dependency... */
     g_log_set_always_fatal(0);
-    g_log_set_default_handler(null_handler, NULL);
+    g_log_set_default_handler(_adg_null_handler, NULL);
 }
 
 gpointer

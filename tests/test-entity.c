@@ -22,7 +22,7 @@
 
 
 static void
-test_parent(void)
+_adg_test_parent(void)
 {
     AdgEntity *entity;
     AdgEntity *valid_container, *invalid_container;
@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/entity/parent", test_parent);
+    g_test_add_func("/adg/entity/parent", _adg_test_parent);
 
     return g_test_run();
 }

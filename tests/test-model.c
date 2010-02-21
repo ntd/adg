@@ -22,7 +22,7 @@
 
 
 static void
-test_named_pair(void)
+_adg_test_named_pair(void)
 {
     AdgModel *model;
     AdgPair pair;
@@ -49,7 +49,7 @@ test_named_pair(void)
 }
 
 static void
-test_dependency(void)
+_adg_test_dependency(void)
 {
     AdgModel *model;
     AdgEntity *valid_entity, *invalid_entity;
@@ -105,8 +105,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/model/named-pair", test_named_pair);
-    g_test_add_func("/adg/model/dependency", test_dependency);
+    g_test_add_func("/adg/model/named-pair", _adg_test_named_pair);
+    g_test_add_func("/adg/model/dependency", _adg_test_dependency);
 
     return g_test_run();
 }
