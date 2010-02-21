@@ -66,7 +66,7 @@ test_parent(void)
 int
 main(int argc, char *argv[])
 {
-    test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
     g_test_add_func("/adg/entity/parent", test_parent);
 

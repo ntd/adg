@@ -98,7 +98,7 @@ test_critical_angle(void)
 int
 main(int argc, char *argv[])
 {
-    test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
     g_test_add_func("/adg/edges/source", test_source);
     g_test_add_func("/adg/edges/critical-angle", test_critical_angle);

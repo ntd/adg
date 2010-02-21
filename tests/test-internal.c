@@ -29,7 +29,7 @@ null_handler(const gchar *log_domain, GLogLevelFlags log_level,
 
 
 void
-test_init(int *p_argc, char **p_argv[])
+adg_test_init(int *p_argc, char **p_argv[])
 {
     g_type_init();
     g_test_init(p_argc, p_argv, NULL);
