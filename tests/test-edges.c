@@ -21,9 +21,6 @@
 #include "test-internal.h"
 
 
-static int junk[10] = { 0 };
-
-
 static void
 test_source(void)
 {
@@ -33,7 +30,7 @@ test_source(void)
 
     edges = adg_edges_new();
     valid_trail = ADG_TRAIL(adg_path_new());
-    invalid_trail = (AdgTrail *) junk;
+    invalid_trail = adg_test_invalid_pointer();
 
     /* Using the public APIs */
     adg_edges_set_source(edges, valid_trail);

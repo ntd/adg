@@ -48,3 +48,10 @@ test_init(int *p_argc, char **p_argv[])
     g_log_set_always_fatal(0);
     g_log_set_default_handler(null_handler, NULL);
 }
+
+gpointer
+adg_test_invalid_pointer(void)
+{
+    static int junk[10] = { 0 };
+    return junk;
+}

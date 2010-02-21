@@ -21,9 +21,6 @@
 #include "test-internal.h"
 
 
-static int junk[10] = { 0 };
-
-
 static void
 test_parent(void)
 {
@@ -33,7 +30,7 @@ test_parent(void)
 
     entity = ADG_ENTITY(adg_logo_new());
     valid_container = ADG_ENTITY(adg_container_new());
-    invalid_container = (AdgEntity *) junk;
+    invalid_container = adg_test_invalid_pointer();
 
     /* Using the public APIs */
     adg_entity_set_parent(entity, valid_container);

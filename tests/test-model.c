@@ -21,16 +21,12 @@
 #include "test-internal.h"
 
 
-static int junk[10] = { 0 };
-
-
 static void
 test_named_pair(void)
 {
     AdgModel *model;
     AdgPair pair;
     const AdgPair *got_pair;
-
 
     model = ADG_MODEL(adg_path_new());
     pair.x = -1234;
@@ -61,7 +57,7 @@ test_dependency(void)
 
     model = ADG_MODEL(adg_path_new());
     valid_entity = ADG_ENTITY(adg_logo_new());
-    invalid_entity = (AdgEntity *) junk;
+    invalid_entity = adg_test_invalid_pointer();
 
     /* Using the public APIs */
     adg_model_add_dependency(model, NULL);
