@@ -150,3 +150,42 @@ adg_is_empty(const gchar *str)
 {
     return str == NULL || str[0] == '\0';
 }
+
+/**
+ * adg_enum_report_invalid:
+ * @enum_type: a #GEnum based type
+ * @value: the enum value to check
+ *
+ * Checks if @value is a valid @enum_type value and generates
+ * a warning if it is not a valid value.
+ *
+ * Returns: %TRUE if @value is invalid, %FALSE if it is valid
+ **/
+gboolean
+adg_enum_report_invalid(GType enum_type, int value)
+{
+    GEnumClass *enum_class;
+    gboolean found;
+
+    enum_class = g_type_class_ref(enum_type);
+    g_return_val_if_fail(enum_class != NULL, FALSE);
+
+    found = FALSE;
+    if (value >= enum_class->minimum && value <= enum_class->maximum) {
+        GEnumValue *enum_value;
+        guint n;
+
+        for (n = 0; !found && n < enum_class->n_values; ++n) {
+            enum_value = enum_class->values + n;
+            found = value == enum_value->value;
+        }
+    }
+
+    g_type_class_unref(enum_class);
+
+    if (!found)
+        g_warning(_("%s: trying to set the invalid `%d' value on a `%s' type"),
+                  G_STRLOC, value, g_type_name(enum_type));
+
+    return !found;
+}

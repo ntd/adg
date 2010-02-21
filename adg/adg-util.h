@@ -26,7 +26,7 @@
 #ifndef __ADG_UTIL_H__
 #define __ADG_UTIL_H__
 
-#include <glib.h>
+#include <glib-object.h>
 #include <math.h>
 
 #define ADG_DIR_RIGHT           0.
@@ -47,6 +47,8 @@ gint            adg_strcmp              (const gchar    *s1,
 #endif
 
 gboolean        adg_is_empty            (const gchar    *str);
+gboolean        adg_enum_report_invalid (GType           enum_type,
+                                         int             value);
 
 G_END_DECLS
 
