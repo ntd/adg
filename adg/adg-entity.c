@@ -1047,7 +1047,12 @@ set_local_map(AdgEntity *entity, const AdgMatrix *map)
 static gboolean
 set_local_method(AdgEntity *entity, AdgMixMethod local_method)
 {
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data;
+
+    if (adg_enum_report_invalid(ADG_TYPE_MIX_METHOD, local_method))
+        return FALSE;
+
+    data = entity->data;
 
     if (data->local_method == local_method)
         return FALSE;
