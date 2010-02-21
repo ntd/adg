@@ -39,8 +39,8 @@
 #include "adg-container-private.h"
 #include "adg-marshal.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
+#define _ADG_PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
+#define _ADG_PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
 
 
 enum {
@@ -55,26 +55,26 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
-static void             set_property            (GObject        *object,
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             global_changed          (AdgEntity      *entity);
-static void             local_changed           (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             add_extents             (AdgEntity      *entity,
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_add_extents        (AdgEntity      *entity,
                                                  CpmlExtents    *container_extents);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static GSList *         get_children            (AdgContainer   *container);
-static void             add                     (AdgContainer   *container,
+static GSList *         _adg_get_children       (AdgContainer   *container);
+static void             _adg_add                (AdgContainer   *container,
                                                  AdgEntity      *entity);
-static void             remove                  (AdgContainer   *container,
+static void             _adg_remove             (AdgContainer   *container,
                                                  AdgEntity      *entity);
 
-static guint signals[LAST_SIGNAL] = { 0 };
+static guint _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY);
@@ -92,18 +92,18 @@ adg_container_class_init(AdgContainerClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgContainerPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
-    klass->get_children = get_children;
-    klass->add = add;
-    klass->remove = remove;
+    klass->get_children = _adg_get_children;
+    klass->add = _adg_add;
+    klass->remove = _adg_remove;
 
     param = g_param_spec_object("child",
                                 P_("Child"),
@@ -119,13 +119,13 @@ adg_container_class_init(AdgContainerClass *klass)
      * Adds @entity to @container. @entity must not be inside another
      * container or the operation will fail.
      **/
-    signals[ADD] = g_signal_new("add",
-                                G_OBJECT_CLASS_TYPE(gobject_class),
-                                G_SIGNAL_RUN_FIRST,
-                                G_STRUCT_OFFSET(AdgContainerClass, add),
-                                NULL, NULL,
-                                adg_marshal_VOID__OBJECT,
-                                G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[ADD] = g_signal_new("add",
+                                     G_OBJECT_CLASS_TYPE(gobject_class),
+                                     G_SIGNAL_RUN_FIRST,
+                                     G_STRUCT_OFFSET(AdgContainerClass, add),
+                                     NULL, NULL,
+                                     adg_marshal_VOID__OBJECT,
+                                     G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgContainer::remove:
@@ -134,13 +134,13 @@ adg_container_class_init(AdgContainerClass *klass)
      *
      * Removes @entity from @container.
      **/
-    signals[REMOVE] = g_signal_new("remove",
-                                   G_OBJECT_CLASS_TYPE(gobject_class),
-                                   G_SIGNAL_RUN_FIRST,
-                                   G_STRUCT_OFFSET(AdgContainerClass, remove),
-                                   NULL, NULL,
-                                   adg_marshal_VOID__OBJECT,
-                                   G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[REMOVE] = g_signal_new("remove",
+                                        G_OBJECT_CLASS_TYPE(gobject_class),
+                                        G_SIGNAL_RUN_FIRST,
+                                        G_STRUCT_OFFSET(AdgContainerClass, remove),
+                                        NULL, NULL,
+                                        adg_marshal_VOID__OBJECT,
+                                        G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 }
 
 static void
@@ -156,7 +156,7 @@ adg_container_init(AdgContainer *container)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgContainer *container;
     AdgContainerPrivate *data;
@@ -171,13 +171,13 @@ dispose(GObject *object)
     while (data->children != NULL)
         adg_container_remove(container, (AdgEntity *) data->children->data);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_PARENT_OBJECT_CLASS->dispose)
+        _ADG_PARENT_OBJECT_CLASS->dispose(object);
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object,
+                  guint prop_id, const GValue *value, GParamSpec *pspec)
 {
     AdgContainer *container = (AdgContainer *) object;
 
@@ -224,7 +224,7 @@ adg_container_add(AdgContainer *container, AdgEntity *entity)
     g_return_if_fail(ADG_IS_CONTAINER(container));
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(container, signals[ADD], 0, entity);
+    g_signal_emit(container, _adg_signals[ADD], 0, entity);
 }
 
 /**
@@ -258,7 +258,7 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
     g_return_if_fail(ADG_IS_CONTAINER(container));
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(container, signals[REMOVE], 0, entity);
+    g_signal_emit(container, _adg_signals[REMOVE], 0, entity);
 }
 
 /**
@@ -412,55 +412,55 @@ adg_container_propagate_valist(AdgContainer *container,
 
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_PARENT_ENTITY_CLASS->global_changed)
+        _ADG_PARENT_ENTITY_CLASS->global_changed(entity);
 
     adg_container_propagate_by_name((AdgContainer *) entity, "global-changed");
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_PARENT_ENTITY_CLASS->local_changed)
+        _ADG_PARENT_ENTITY_CLASS->local_changed(entity);
 
     adg_container_propagate_by_name((AdgContainer *) entity, "local-changed");
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "invalidate");
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgContainer *container = (AdgContainer *) entity;
     CpmlExtents extents = { 0 };
 
     adg_container_propagate_by_name(container, "arrange", NULL);
-    adg_container_foreach(container, G_CALLBACK(add_extents), &extents);
+    adg_container_foreach(container, G_CALLBACK(_adg_add_extents), &extents);
     adg_entity_set_extents(entity, &extents);
 }
 
 static void
-add_extents(AdgEntity *entity, CpmlExtents *container_extents)
+_adg_add_extents(AdgEntity *entity, CpmlExtents *container_extents)
 {
     cpml_extents_add(container_extents, adg_entity_get_extents(entity));
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     adg_container_propagate_by_name((AdgContainer *) entity, "render", cr);
 }
 
 
 static GSList *
-get_children(AdgContainer *container)
+_adg_get_children(AdgContainer *container)
 {
     AdgContainerPrivate *data = container->data;
 
@@ -469,7 +469,7 @@ get_children(AdgContainer *container)
 }
 
 static void
-add(AdgContainer *container, AdgEntity *entity)
+_adg_add(AdgContainer *container, AdgEntity *entity)
 {
     const AdgEntity *old_parent;
     AdgContainerPrivate *data;
@@ -493,7 +493,7 @@ add(AdgContainer *container, AdgEntity *entity)
 }
 
 static void
-remove(AdgContainer *container, AdgEntity *entity)
+_adg_remove(AdgContainer *container, AdgEntity *entity)
 {
     AdgContainerPrivate *data;
     GSList *node;
