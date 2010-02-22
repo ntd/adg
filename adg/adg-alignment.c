@@ -153,8 +153,6 @@ set_property(GObject *object,
 AdgAlignment *
 adg_alignment_new(const AdgPair *factor)
 {
-    g_return_val_if_fail(factor != NULL, NULL);
-
     return g_object_new(ADG_TYPE_ALIGNMENT, "factor", factor, NULL);
 }
 
