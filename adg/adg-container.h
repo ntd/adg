@@ -54,7 +54,7 @@ struct _AdgContainerClass {
 
     /*< public >*/
     /* Virtual Table */
-    GSList *    (*get_children)                 (AdgContainer   *container);
+    GSList *    (*children)                     (AdgContainer   *container);
     void        (*add)                          (AdgContainer   *container,
                                                  AdgEntity      *entity);
     void        (*remove)                       (AdgContainer   *container,
@@ -65,7 +65,7 @@ struct _AdgContainerClass {
 GType           adg_container_get_type          (void) G_GNUC_CONST;
 
 AdgContainer *  adg_container_new               (void);
-GSList *        adg_container_get_children      (AdgContainer    *container);
+GSList *        adg_container_children          (AdgContainer    *container);
 void            adg_container_add               (AdgContainer    *container,
                                                  AdgEntity       *entity);
 void            adg_container_remove            (AdgContainer    *container,

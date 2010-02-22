@@ -68,7 +68,7 @@ static void             _adg_add_extents        (AdgEntity      *entity,
                                                  CpmlExtents    *container_extents);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static GSList *         _adg_get_children       (AdgContainer   *container);
+static GSList *         _adg_children           (AdgContainer   *container);
 static void             _adg_add                (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             _adg_remove             (AdgContainer   *container,
@@ -101,7 +101,7 @@ adg_container_class_init(AdgContainerClass *klass)
     entity_class->arrange = _adg_arrange;
     entity_class->render = _adg_render;
 
-    klass->get_children = _adg_get_children;
+    klass->children = _adg_children;
     klass->add = _adg_add;
     klass->remove = _adg_remove;
 
@@ -262,7 +262,7 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
 }
 
 /**
- * adg_container_get_children:
+ * adg_container_children:
  * @container: an #AdgContainer
  *
  * Gets the children list of @container. This list must be manually
@@ -274,7 +274,7 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
  * Returns: a newly allocated #GSList or %NULL empty list or on errors
  **/
 GSList *
-adg_container_get_children(AdgContainer *container)
+adg_container_children(AdgContainer *container)
 {
     AdgContainerClass *klass;
 
@@ -282,10 +282,10 @@ adg_container_get_children(AdgContainer *container)
 
     klass = ADG_CONTAINER_GET_CLASS(container);
 
-    if (klass->get_children == NULL)
+    if (klass->children == NULL)
         return NULL;
 
-    return klass->get_children(container);
+    return klass->children(container);
 }
 
 /**
@@ -310,7 +310,7 @@ adg_container_foreach(AdgContainer *container,
     g_return_if_fail(ADG_IS_CONTAINER(container));
     g_return_if_fail(callback != NULL);
 
-    children = adg_container_get_children(container);
+    children = adg_container_children(container);
 
     while (children != NULL) {
         if (children->data != NULL)
@@ -398,7 +398,7 @@ adg_container_propagate_valist(AdgContainer *container,
 
     g_return_if_fail(ADG_IS_CONTAINER(container));
 
-    children = adg_container_get_children(container);
+    children = adg_container_children(container);
 
     while (children != NULL) {
         if (children->data != NULL) {
@@ -460,7 +460,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
 
 static GSList *
-_adg_get_children(AdgContainer *container)
+_adg_children(AdgContainer *container)
 {
     AdgContainerPrivate *data = container->data;
 
