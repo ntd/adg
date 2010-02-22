@@ -73,7 +73,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/alignment/child", _adg_alignment_factor);
+    g_test_add_func("/adg/alignment/factor", _adg_alignment_factor);
 
     return g_test_run();
 }
