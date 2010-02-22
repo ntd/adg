@@ -59,6 +59,10 @@ _adg_test_dependency(void)
     valid_entity = ADG_ENTITY(adg_logo_new());
     invalid_entity = adg_test_invalid_pointer();
 
+    /* There is no need to add a reference to keep valid_entity alive:
+     * the AdgModel implementation does not sink the dependencies, so
+     * at least one reference will be left */
+
     /* Using the public APIs */
     adg_model_add_dependency(model, NULL);
     dependencies = adg_model_get_dependencies(model);
