@@ -108,7 +108,8 @@ adg_container_class_init(AdgContainerClass *klass)
     param = g_param_spec_object("child",
                                 P_("Child"),
                                 P_("Can be used to add a new child to the container"),
-                                ADG_TYPE_ENTITY, G_PARAM_WRITABLE);
+                                ADG_TYPE_ENTITY,
+                                G_PARAM_WRITABLE);
     g_object_class_install_property(gobject_class, PROP_CHILD, param);
 
     /**

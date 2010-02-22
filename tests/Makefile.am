@@ -25,6 +25,10 @@ TEST_PROGS+=		test-entity
 test_entity_SOURCES=	test-entity.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-container
+test_container_SOURCES=	test-container.c \
+			$(test_internals)
+
 endif
 
 
