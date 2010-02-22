@@ -29,6 +29,10 @@ TEST_PROGS+=		test-container
 test_container_SOURCES=	test-container.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-alignment
+test_alignment_SOURCES=	test-alignment.c \
+			$(test_internals)
+
 endif
 
 
