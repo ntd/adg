@@ -41,6 +41,8 @@
 #include <adg/adg-table-style.h>
 #include <adg/adg-dim-style.h>
 #include <adg/adg-fill-style.h>
+#include <adg/adg-dress.h>
+#include <adg/adg-dress-builtins.h>
 
 #include <adg/adg-entity.h>
 #include <adg/adg-stroke.h>
