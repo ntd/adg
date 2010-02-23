@@ -37,6 +37,10 @@ TEST_PROGS+=		test-stroke
 test_stroke_SOURCES=	test-stroke.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-hatch
+test_hatch_SOURCES=	test-hatch.c \
+			$(test_internals)
+
 endif
 
 
