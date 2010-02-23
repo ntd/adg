@@ -141,7 +141,7 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
         g_value_set_int(value, data->line_dress);
         break;
     case PROP_TRAIL:
-        g_value_set_object(value, &data->trail);
+        g_value_set_object(value, data->trail);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
