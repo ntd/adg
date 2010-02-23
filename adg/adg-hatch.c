@@ -140,14 +140,13 @@ set_property(GObject *object, guint prop_id,
  * @trail: the #AdgTrail to hatch
  *
  * Creates a new hatch entity.
+ * @trail can be %NULL, in which case an empty hatch is created.
  *
  * Returns: the newly created hatch entity
  **/
 AdgHatch *
 adg_hatch_new(AdgTrail *trail)
 {
-    g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
-
     return g_object_new(ADG_TYPE_HATCH, "trail", trail, NULL);
 }
 
