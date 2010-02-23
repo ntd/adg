@@ -26,8 +26,7 @@ SUBDIRS=			cpml \
 				demo \
 				docs \
 				po \
-				po-properties \
-				tests
+				po-properties
 
 
 # Creating ChangeLog files from git log:

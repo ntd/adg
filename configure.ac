@@ -155,10 +155,10 @@ AC_CONFIG_FILES([build/shave
                  cpml/Makefile
                  adg/adg.pc
                  adg/Makefile
+                 adg/tests/Makefile
                  demo/Makefile
                  po/Makefile.in
                  po-properties/Makefile.in
-                 tests/Makefile
                  docs/Makefile
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml

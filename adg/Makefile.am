@@ -1,5 +1,7 @@
 include $(top_srcdir)/build/Makefile.am.common
 
+SUBDIRS=			tests
+
 mkenums_to_c=			$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 mkenums_to_h=			$(mkenums_to_c)
 genmarshal_to_c=		$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $< > $@
