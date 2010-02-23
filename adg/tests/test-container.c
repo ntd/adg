@@ -89,7 +89,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/container/child", _adg_container_child);
+    adg_test_add_func("/adg/container/child", _adg_container_child);
 
     return g_test_run();
 }

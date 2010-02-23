@@ -107,8 +107,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/model/named-pair", _adg_test_named_pair);
-    g_test_add_func("/adg/model/dependency", _adg_test_dependency);
+    adg_test_add_func("/adg/model/named-pair", _adg_test_named_pair);
+    adg_test_add_func("/adg/model/dependency", _adg_test_dependency);
 
     return g_test_run();
 }

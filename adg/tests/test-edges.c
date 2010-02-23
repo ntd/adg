@@ -100,8 +100,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/edges/source", _adg_test_source);
-    g_test_add_func("/adg/edges/critical-angle", _adg_test_critical_angle);
+    adg_test_add_func("/adg/edges/source", _adg_test_source);
+    adg_test_add_func("/adg/edges/critical-angle", _adg_test_critical_angle);
 
     return g_test_run();
 }
