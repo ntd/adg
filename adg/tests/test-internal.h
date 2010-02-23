@@ -29,6 +29,8 @@ G_BEGIN_DECLS
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
 const gpointer  adg_test_invalid_pointer        (void) G_GNUC_CONST;
+void            adg_test_add_func               (const char     *testpath,
+                                                 void (*test_func)(void));
 
 G_END_DECLS
 

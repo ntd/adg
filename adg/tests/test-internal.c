@@ -22,32 +22,13 @@
 #include "test-internal.h"
 
 
-static void
-_adg_null_handler(const gchar *log_domain, GLogLevelFlags log_level,
-                  const gchar *message, gpointer user_data)
-{
-}
-
-
 void
 adg_test_init(int *p_argc, char **p_argv[])
 {
     g_type_init();
     g_test_init(p_argc, p_argv, NULL);
-
-    /* Shut up all the library messages apart G_LOG_LEVEL_ERROR
-     * (always fatal by design): on my opinion a failing test
-     * is a test that ends unexpectedly, not the one properly
-     * reacting to invalid values.
-     *
-     * For some unknown reason, g_log_set_fatal_mask("adg", 0)
-     * does not work: the domain seems to be ignored. A better
-     * way would be to use g_test_log_set_fatal_handler() and
-     * provide a callback that ignores the "adg" domain (I've
-     * tested this approach and it works) but that function
-     * will pull in a glib-2.22 dependency... */
     g_log_set_always_fatal(0);
-    g_log_set_default_handler(_adg_null_handler, NULL);
+    g_test_bug_base("http://dev.entidi.com/p/adg/issues/%s/");
 }
 
 const gpointer
@@ -55,4 +36,38 @@ adg_test_invalid_pointer(void)
 {
     static int junk[10] = { 0 };
     return junk;
+}
+
+static void
+_adg_log_handler(const gchar *log_domain, GLogLevelFlags log_level,
+                 const gchar *message, gpointer user_data)
+{
+}
+
+static void
+_adg_test_func(gconstpointer user_data)
+{
+    void (*test_func)(void);
+    GLogFunc previous_handler;
+
+    test_func = user_data;
+
+    /* Run a test in a forked environment, without showing log messages */
+    previous_handler = g_log_set_default_handler(_adg_log_handler, NULL);
+    if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDOUT|
+                            G_TEST_TRAP_SILENCE_STDERR)) {
+        test_func();
+        exit(0);
+    }
+    g_log_set_default_handler(previous_handler, NULL);
+
+    /* On failed test, rerun it without hiding the log messages */
+    if (!g_test_trap_has_passed())
+        test_func();
+}
+
+void
+adg_test_add_func(const char *testpath, void (*test_func)(void))
+{
+    g_test_add_data_func(testpath, test_func, _adg_test_func);
 }
