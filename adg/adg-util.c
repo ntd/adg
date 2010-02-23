@@ -137,7 +137,7 @@ adg_strcmp(const gchar *s1, const gchar *s2)
 #endif
 
 /**
- * adg_is_empty:
+ * adg_is_string_empty:
  * @str: the subject string
  *
  * Checks if @str is an empty string, that is if is %NULL or if
@@ -146,7 +146,7 @@ adg_strcmp(const gchar *s1, const gchar *s2)
  * Returns: %TRUE if @str is an empty string, %FALSE otherwise
  **/
 gboolean
-adg_is_empty(const gchar *str)
+adg_is_string_empty(const gchar *str)
 {
     return str == NULL || str[0] == '\0';
 }

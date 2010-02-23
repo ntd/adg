@@ -46,7 +46,7 @@ gint            adg_strcmp              (const gchar    *s1,
                                          const gchar    *s2);
 #endif
 
-gboolean        adg_is_empty            (const gchar    *str);
+gboolean        adg_is_string_empty     (const gchar    *str);
 gboolean        adg_is_enum_value       (int             value,
                                          GType           enum_type);
 

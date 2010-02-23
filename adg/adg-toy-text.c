@@ -338,7 +338,7 @@ arrange(AdgEntity *entity)
         data->font = adg_font_style_get_scaled_font(font_style, &ctm);
     }
 
-    if (adg_is_empty(data->label)) {
+    if (adg_is_string_empty(data->label)) {
         /* Undefined label */
         extents.is_defined = FALSE;
     } else if (data->glyphs != NULL) {
