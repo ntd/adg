@@ -339,6 +339,8 @@ set_trail(AdgStroke *stroke, AdgTrail *trail)
     AdgEntity *entity;
     AdgStrokePrivate *data;
 
+    g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
+
     entity = (AdgEntity *) stroke;
     data = stroke->data;
 
