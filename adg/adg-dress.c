@@ -66,6 +66,8 @@ static void             dress_to_string         (const GValue   *src,
 static void             string_to_dress         (const GValue   *src,
                                                  GValue         *dst);
 static void             param_class_init        (GParamSpecClass*klass);
+static gboolean         dress_is_valid          (AdgDress        dress);
+static gboolean         dress_is_valid_with_log (AdgDress        dress);
 static gboolean         value_validate          (GParamSpec     *spec,
                                                  GValue         *value);
 
@@ -150,7 +152,7 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
     dress = quark_to_dress(quark);
 
     if (dress > 0) {
-        g_warning("%s: `%s' name yet used by the `%d' dress",
+        g_warning(_("%s: the `%s' name is yet used by the `%d' dress"),
                   G_STRLOC, name, dress);
         return ADG_DRESS_UNDEFINED;
     }
@@ -237,8 +239,8 @@ adg_dress_set(AdgDress *dress, AdgDress src)
         if (src_name == NULL)
             src_name = "UNDEFINED";
 
-        g_warning("%s: `%d' (%s) and `%d' (%s) dresses are not related",
-                  G_STRLOC, *dress, dress_name, src, src_name);
+        g_warning(_("%s: `%d' (%s) cannot be replaced with `%d' (%s) because these dresses are not related"),
+                  G_STRLOC, src, src_name, *dress, dress_name);
 
         return FALSE;
     }
@@ -260,7 +262,7 @@ adg_dress_set(AdgDress *dress, AdgDress src)
 const gchar *
 adg_dress_get_name(AdgDress dress)
 {
-    if (dress <= 0 || dress >= array_len())
+    if (!dress_is_valid(dress))
         return NULL;
 
     return g_quark_to_string(array_lookup(dress)->quark);
@@ -271,16 +273,17 @@ adg_dress_get_name(AdgDress dress)
  * @dress: an #AdgDress
  *
  * Gets the base type that should be present in every #AdgStyle
- * acceptable by @dress.
+ * acceptable by @dress.  No warnings are raised if @dress
+ * is not found.
  *
- * Returns: the ancestor type
+ * Returns: the ancestor type or %0 on errors
  **/
 GType
 adg_dress_get_ancestor_type(AdgDress dress)
 {
     AdgDressPrivate *data;
 
-    if (dress <= 0 || dress >= array_len())
+    if (!dress_is_valid(dress))
         return 0;
 
     data = array_lookup(dress);
@@ -309,10 +312,8 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 {
     AdgDressPrivate *data;
 
-    if (dress <= 0 || dress >= array_len()) {
-        g_warning("%s: `%d' dress undefined", G_STRLOC, dress);
+    if (!dress_is_valid_with_log(dress))
         return;
-    }
 
     data = array_lookup(dress);
 
@@ -321,9 +322,10 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 
     /* Check if the new fallback style is compatible with this dress */
     if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
-        g_warning("%s: `%s' is not compatible with `%s' for `%s' dress",
-                  G_STRLOC, g_type_name(G_TYPE_FROM_INSTANCE(fallback)),
-                  g_type_name(data->ancestor_type), adg_dress_get_name(dress));
+        g_warning(_("%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' has been provided"),
+                  G_STRLOC, dress, adg_dress_get_name(dress),
+                  g_type_name(data->ancestor_type),
+                  g_type_name(G_TYPE_FROM_INSTANCE(fallback)));
         return;
     }
 
@@ -350,7 +352,7 @@ adg_dress_get_fallback(AdgDress dress)
 {
     AdgDressPrivate *data;
 
-    if (dress <= 0 || dress >= array_len())
+    if (!dress_is_valid(dress))
         return NULL;
 
     data = array_lookup(dress);
@@ -450,6 +452,23 @@ param_class_init(GParamSpecClass *klass)
 }
 
 static gboolean
+dress_is_valid(AdgDress dress)
+{
+    return dress > 0 && dress < array_len();
+}
+
+static gboolean
+dress_is_valid_with_log(AdgDress dress)
+{
+    if (!dress_is_valid(dress)) {
+        g_warning(_("%s: the dress `%d' is undefined"), G_STRLOC, dress);
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
+static gboolean
 value_validate(GParamSpec *spec, GValue *value)
 {
     AdgParamSpecDress *fspec;
@@ -484,10 +503,8 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 {
     AdgParamSpecDress *fspec;
 
-    if (dress <= 0 || dress >= array_len()) {
-        g_warning("%s: `%d' dress undefined", G_STRLOC, dress);
+    if (!dress_is_valid_with_log(dress))
         return NULL;
-    }
 
     fspec = g_param_spec_internal(ADG_TYPE_PARAM_SPEC_DRESS,
                                   name, nick, blurb, flags);
