@@ -49,6 +49,7 @@ gint            adg_strcmp              (const gchar    *s1,
 gboolean        adg_is_string_empty     (const gchar    *str);
 gboolean        adg_is_enum_value       (int             value,
                                          GType           enum_type);
+gboolean        adg_is_boolean_value    (gboolean        value);
 
 G_END_DECLS
 

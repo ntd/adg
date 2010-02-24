@@ -158,7 +158,7 @@ adg_is_string_empty(const gchar *str)
  *
  * Checks if @value is a valid @enum_type value.
  *
- * Returns: %TRUE if @value is valid, %FALSE otherwise
+ * Returns: %TRUE if @value is a valid @enum_type, %FALSE otherwise
  **/
 gboolean
 adg_is_enum_value(int value, GType enum_type)
@@ -184,4 +184,19 @@ adg_is_enum_value(int value, GType enum_type)
     g_type_class_unref(enum_class);
 
     return found;
+}
+
+/**
+ * adg_is_boolean_value:
+ * @value: the gboolean value to check
+ *
+ * Checks if @value is a valid #gboolean value, that is if it is %TRUE
+ * or %FALSE. No other values are accepted.
+ *
+ * Returns: %TRUE if @value is a valid #gboolean, %FALSE otherwise
+ **/
+gboolean
+adg_is_boolean_value(gboolean value)
+{
+    return value == TRUE || value == FALSE;
 }
