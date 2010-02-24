@@ -49,6 +49,10 @@ TEST_PROGS+=		test-table
 test_table_SOURCES=	test-table.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-logo
+test_logo_SOURCES=	test-logo.c \
+			$(test_internals)
+
 endif
 
 
