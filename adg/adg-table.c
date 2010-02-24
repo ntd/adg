@@ -1237,6 +1237,8 @@ switch_frame(AdgTable *table, gboolean new_state)
 {
     AdgTablePrivate *data = table->data;
 
+    g_return_val_if_fail(adg_is_boolean_value(new_state), FALSE);
+
     if (data->has_frame == new_state)
         return FALSE;
 
