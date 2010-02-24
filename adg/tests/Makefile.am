@@ -41,6 +41,10 @@ TEST_PROGS+=		test-hatch
 test_hatch_SOURCES=	test-hatch.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-toy-text
+test_toy_text_SOURCES=	test-toy-text.c \
+			$(test_internals)
+
 endif
 
 
