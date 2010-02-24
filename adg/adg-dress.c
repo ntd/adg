@@ -66,6 +66,7 @@ static void             dress_to_string         (const GValue   *src,
 static void             string_to_dress         (const GValue   *src,
                                                  GValue         *dst);
 static void             param_class_init        (GParamSpecClass*klass);
+static const gchar *    _adg_dress_name         (AdgDress        dress);
 static gboolean         dress_is_valid          (AdgDress        dress);
 static gboolean         dress_is_valid_with_log (AdgDress        dress);
 static gboolean         value_validate          (GParamSpec     *spec,
@@ -226,22 +227,10 @@ adg_dress_set(AdgDress *dress, AdgDress src)
     if (*dress == src)
         return FALSE;
 
-    if (*dress != ADG_DRESS_UNDEFINED &&
-        !adg_dress_are_related(*dress, src)) {
-        const gchar *dress_name;
-        const gchar *src_name;
-
-        dress_name = adg_dress_get_name(*dress);
-        if (dress_name == NULL)
-            dress_name = "UNDEFINED";
-
-        src_name = adg_dress_get_name(src);
-        if (src_name == NULL)
-            src_name = "UNDEFINED";
-
+    if (*dress != ADG_DRESS_UNDEFINED && !adg_dress_are_related(*dress, src)) {
         g_warning(_("%s: `%d' (%s) cannot be replaced with `%d' (%s) because these dresses are not related"),
-                  G_STRLOC, src, src_name, *dress, dress_name);
-
+                  G_STRLOC, src, _adg_dress_name(src),
+                  *dress, _adg_dress_name(*dress));
         return FALSE;
     }
 
@@ -323,7 +312,7 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
     /* Check if the new fallback style is compatible with this dress */
     if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
         g_warning(_("%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' has been provided"),
-                  G_STRLOC, dress, adg_dress_get_name(dress),
+                  G_STRLOC, dress, _adg_dress_name(dress),
                   g_type_name(data->ancestor_type),
                   g_type_name(G_TYPE_FROM_INSTANCE(fallback)));
         return;
@@ -449,6 +438,18 @@ param_class_init(GParamSpecClass *klass)
 {
     klass->value_type = ADG_TYPE_DRESS;
     klass->value_validate = value_validate;
+}
+
+static const gchar *
+_adg_dress_name(AdgDress dress)
+{
+    const gchar *name = adg_dress_get_name(dress);
+
+    if (name == NULL) {
+        name = _("(UNDEFINED)");
+    }
+
+    return name;
 }
 
 static gboolean
