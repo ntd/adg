@@ -53,6 +53,10 @@ TEST_PROGS+=		test-logo
 test_logo_SOURCES=	test-logo.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-projection
+test_projection_SOURCES=test-projection.c \
+			$(test_internals)
+
 endif
 
 
