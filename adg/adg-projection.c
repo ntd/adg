@@ -193,6 +193,9 @@ set_property(GObject *object, guint prop_id,
  * @scheme: the scheme represented by this projection
  *
  * Creates a new projection entity representing the selected @scheme.
+ * If @scheme is invalid, a projection symbol without a scheme is
+ * returned, that is #AdgProjection:scheme is set to
+ * #ADG_PROJECTION_UNDEFINED, and a warning is raised.
  *
  * Returns: the newly created projection entity
  **/
@@ -479,7 +482,12 @@ render(AdgEntity *entity, cairo_t *cr)
 static gboolean
 set_scheme(AdgProjection *projection, AdgProjectionScheme scheme)
 {
-    AdgProjectionPrivate *data = projection->data;
+    AdgProjectionPrivate *data;
+
+    g_return_val_if_fail(adg_is_enum_value(scheme, ADG_TYPE_PROJECTION_SCHEME),
+                         FALSE);
+
+    data = projection->data;
 
     if (data->scheme == scheme)
         return FALSE;
