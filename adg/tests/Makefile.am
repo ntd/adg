@@ -45,6 +45,10 @@ TEST_PROGS+=		test-toy-text
 test_toy_text_SOURCES=	test-toy-text.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-table
+test_table_SOURCES=	test-table.c \
+			$(test_internals)
+
 endif
 
 
