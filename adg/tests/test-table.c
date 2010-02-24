@@ -21,7 +21,10 @@
 #include "test-internal.h"
 
 
-static void _adg_test_table_dress(void) { AdgTable *table;
+static void
+_adg_test_table_dress(void)
+{
+    AdgTable *table;
     AdgDress valid_dress, incompatible_dress;
     AdgDress table_dress;
 
@@ -96,7 +99,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_func("/adg/table/table-dress", _adg_test_table_dress);
-    adg_test_add_func("/adg/table/has_frame", _adg_test_has_frame);
+    adg_test_add_func("/adg/table/has-frame", _adg_test_has_frame);
 
     return g_test_run();
 }
