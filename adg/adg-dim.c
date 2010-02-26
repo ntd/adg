@@ -78,6 +78,10 @@ static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
 static gboolean set_dim_dress           (AdgDim         *dim,
                                          AdgDress        dress);
+static gboolean set_outside             (AdgDim         *dim,
+                                         AdgThreeState   outside);
+static gboolean set_detached            (AdgDim         *dim,
+                                         AdgThreeState   detached);
 static gboolean set_value               (AdgDim         *dim,
                                          const gchar    *value);
 static gboolean set_min                 (AdgDim         *dim,
@@ -170,14 +174,14 @@ adg_dim_class_init(AdgDimClass *klass)
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE, param);
 
-    param = g_param_spec_string("value-min",
+    param = g_param_spec_string("min",
                                 P_("Minimum Value or Low Tolerance"),
                                 P_("The minimum value allowed or the lowest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MIN, param);
 
-    param = g_param_spec_string("value-max",
+    param = g_param_spec_string("max",
                                 P_("Maximum Value or High Tolerance"),
                                 P_("The maximum value allowed or the highest tolerance from value (depending of the dimension style): set to NULL to suppress"),
                                 NULL,
@@ -319,10 +323,10 @@ set_property(GObject *object, guint prop_id,
         data->level = g_value_get_double(value);
         break;
     case PROP_OUTSIDE:
-        data->outside = g_value_get_enum(value);
+        set_outside(dim, g_value_get_enum(value));
         break;
     case PROP_DETACHED:
-        data->detached = g_value_get_enum(value);
+        set_detached(dim, g_value_get_enum(value));
         break;
     case PROP_VALUE:
         set_value(dim, g_value_get_string(value));
@@ -701,14 +705,10 @@ adg_dim_get_level(AdgDim *dim)
 void
 adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-    data->outside = outside;
-
-    g_object_notify((GObject *) dim, "outside");
+    if (set_outside(dim, outside))
+        g_object_notify((GObject *) dim, "outside");
 }
 
 /**
@@ -747,14 +747,10 @@ adg_dim_get_outside(AdgDim *dim)
 void
 adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-    data->detached = detached;
-
-    g_object_notify((GObject *) dim, "detached");
+    if (set_detached(dim, detached))
+        g_object_notify((GObject *) dim, "detached");
 }
 
 /**
@@ -850,7 +846,7 @@ adg_dim_set_min(AdgDim *dim, const gchar *min)
     g_return_if_fail(ADG_IS_DIM(dim));
 
     if (set_min(dim, min))
-        g_object_notify((GObject *) dim, "value-min");
+        g_object_notify((GObject *) dim, "min");
 }
 
 /**
@@ -887,7 +883,7 @@ adg_dim_set_max(AdgDim *dim, const gchar *max)
     g_return_if_fail(ADG_IS_DIM(dim));
 
     if (set_max(dim, max))
-        g_object_notify((GObject *) dim, "value-max");
+        g_object_notify((GObject *) dim, "max");
 }
 
 /**
@@ -1168,6 +1164,42 @@ set_dim_dress(AdgDim *dim, AdgDress dress)
     }
 
     return FALSE;
+}
+
+static gboolean
+set_outside(AdgDim *dim, AdgThreeState outside)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(adg_is_enum_value(outside, ADG_TYPE_THREE_STATE),
+                         FALSE);
+
+    data = dim->data;
+
+    if (data->outside == outside)
+        return FALSE;
+
+    data->outside = outside;
+
+    return TRUE;
+}
+
+static gboolean
+set_detached(AdgDim *dim, AdgThreeState detached)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(adg_is_enum_value(detached, ADG_TYPE_THREE_STATE),
+                         FALSE);
+
+    data = dim->data;
+
+    if (data->detached == detached)
+        return FALSE;
+
+    data->detached = detached;
+
+    return TRUE;
 }
 
 static gboolean
