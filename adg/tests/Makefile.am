@@ -57,6 +57,11 @@ TEST_PROGS+=		test-projection
 test_projection_SOURCES=test-projection.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-title-block
+test_title_block_SOURCES= \
+			test-title-block.c \
+			$(test_internals)
+
 endif
 
 
