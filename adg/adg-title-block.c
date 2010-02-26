@@ -816,6 +816,8 @@ set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
     AdgTableCell *cell;
     AdgPair from, to;
 
+    g_return_val_if_fail(logo == NULL || ADG_IS_ENTITY(logo), FALSE);
+
     data = title_block->data;
 
     if (logo == data->logo)
@@ -842,6 +844,9 @@ set_projection(AdgTitleBlock *title_block, AdgEntity *projection)
     AdgTable *table;
     AdgTableCell *cell;
     AdgPair center;
+
+    g_return_val_if_fail(projection == NULL || ADG_IS_ENTITY(projection),
+                         FALSE);
 
     data = title_block->data;
 
