@@ -4,8 +4,8 @@ SUBDIRS=			tests
 
 mkenums_to_c=			$(MSG_GEN)$(GLIB_MKENUMS) --template $^ > $@
 mkenums_to_h=			$(mkenums_to_c)
-genmarshal_to_c=		$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $< > $@
-genmarshal_to_h=		$(MSG_GEN)$(GLIB_GENMARSHAL) --header --prefix=adg_marshal $< > $@
+genmarshal_to_c=		$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $^ > $@
+genmarshal_to_h=		$(MSG_GEN)$(GLIB_GENMARSHAL) --header --prefix=adg_marshal $^ > $@
 
 AM_CFLAGS=			@ADG_CFLAGS@ \
 				-I$(top_srcdir) \
