@@ -11,5 +11,11 @@ fi
 
 cd $srcdir
 glib-gettextize -f || exit $?
+
+# autoreconf interaction with libtool has been broken for ages:
+# explicitely calling libtoolize avoid some problems
+libtoolize --automake || exit $?
+
 autoreconf -is -Wall || exit $?
+
 ./configure "$@" && echo "Now type 'make' to compile $PROJECT."
