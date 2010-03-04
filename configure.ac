@@ -67,10 +67,11 @@ AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 
-m4_ifdef([LT_INIT],
-	 [LT_INIT([disable-static])],
-	 [AC_DISABLE_STATIC
-	  AC_PROG_LIBTOOL])
+m4_define([lt_init],LT_INIT)
+m4_if(LT_INIT,[LT_INIT],m4_undefine([lt_init]))
+m4_ifdef([lt_init],
+         [lt_init([disable-static]) m4_undefine([lt_init])],
+         [AC_DISABLE_STATIC AC_PROG_LIBTOOL])
 
 
 # I18n
