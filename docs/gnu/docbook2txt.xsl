@@ -36,7 +36,9 @@
 <xsl:template match="ulink"><xsl:value-of select="."/> (<xsl:value-of select="@url"/>)</xsl:template>
 
 <xsl:template match="programlisting">
-   % <xsl:value-of select="str:replace(., '&#10;', '&#10;   % ')"/>
+------------------------------------------------------------------
+<xsl:value-of select="."/>
+------------------------------------------------------------------
 <xsl:text>
 </xsl:text>
 </xsl:template>
