@@ -171,12 +171,13 @@ AC_OUTPUT
 
 # Report
 
-echo ""
-echo 'ADG canvas adg_version will be built with the following options:'
-echo "----------------------------------------------------------"
-echo '                  API compatibility: adg_api_version'
-echo '                CPML library to use: internal (cpml-adg_version)'
-echo " AdgWidget support (requires GTK+2): ${enable_gtk2}"
-echo "                Build API reference: ${enable_gtk_doc}"
-echo "             Test framework support: ${enable_test_framework}"
-echo ""
+AC_MSG_NOTICE([generating report
+
+ADG canvas adg_version will be built with the following options:
+----------------------------------------------------------
+                  API compatibility: adg_api_version
+                CPML library to use: internal (cpml-adg_version)
+ AdgWidget support (requires GTK+2): ${enable_gtk2}
+                Build API reference: ${enable_gtk_doc}
+             Test framework support: ${enable_test_framework}
+])
