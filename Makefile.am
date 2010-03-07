@@ -1,7 +1,7 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 xslt_to_doc=			@if test -x $(XSLTPROC); then \
-				  $(MSG_GEN)$(XSLTPROC) --novalid -o $@ $^; \
+				  $(MSG_GEN)$(XSLTPROC) --novalid -o $@ $?; \
 				else \
 				  echo ' *WARN  libxslt-1.0.19 or later is required in order to generate '$@; \
 				fi
