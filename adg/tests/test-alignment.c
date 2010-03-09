@@ -27,6 +27,7 @@ _adg_alignment_factor(void)
     AdgAlignment *alignment;
     AdgPair null_factor, identity_factor;
     const AdgPair *factor;
+    AdgPair *factor_dup;
 
     alignment = adg_alignment_new(NULL);
     null_factor.x = 0;
@@ -53,16 +54,19 @@ _adg_alignment_factor(void)
 
     /* Using GObject property methods */
     g_object_set(alignment, "factor", &identity_factor, NULL);
-    g_object_get(alignment, "factor", &factor, NULL);
-    g_assert(adg_pair_equal(factor, &identity_factor));
+    g_object_get(alignment, "factor", &factor_dup, NULL);
+    g_assert(adg_pair_equal(factor_dup, &identity_factor));
+    g_free(factor_dup);
 
     g_object_set(alignment, "factor", NULL, NULL);
-    g_object_get(alignment, "factor", &factor, NULL);
-    g_assert(adg_pair_equal(factor, &identity_factor));
+    g_object_get(alignment, "factor", &factor_dup, NULL);
+    g_assert(adg_pair_equal(factor_dup, &identity_factor));
+    g_free(factor_dup);
 
     g_object_set(alignment, "factor", &null_factor, NULL);
-    g_object_get(alignment, "factor", &factor, NULL);
-    g_assert(adg_pair_equal(factor, &null_factor));
+    g_object_get(alignment, "factor", &factor_dup, NULL);
+    g_assert(adg_pair_equal(factor_dup, &null_factor));
+    g_free(factor_dup);
 
     g_object_unref(alignment);
 }
