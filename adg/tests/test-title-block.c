@@ -27,6 +27,7 @@ _adg_test_author(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *author;
+    gchar *author_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -47,16 +48,18 @@ _adg_test_author(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "author", valid_text, NULL);
-    g_object_get(title_block, "author", &author, NULL);
-    g_assert_cmpstr(author, ==, valid_text);
+    g_object_get(title_block, "author", &author_dup, NULL);
+    g_assert_cmpstr(author_dup, ==, valid_text);
+    g_free(author_dup);
 
     g_object_set(title_block, "author", latin1_text, NULL);
-    g_object_get(title_block, "author", &author, NULL);
-    g_assert_cmpstr(author, ==, latin1_text);
+    g_object_get(title_block, "author", &author_dup, NULL);
+    g_assert_cmpstr(author_dup, ==, latin1_text);
+    g_free(author_dup);
 
     g_object_set(title_block, "author", NULL, NULL);
-    g_object_get(title_block, "author", &author, NULL);
-    g_assert(author == NULL);
+    g_object_get(title_block, "author", &author_dup, NULL);
+    g_assert(author_dup == NULL);
 
     g_object_unref(title_block);
 }
@@ -67,6 +70,7 @@ _adg_test_date(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *date;
+    gchar *date_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -87,16 +91,18 @@ _adg_test_date(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "date", valid_text, NULL);
-    g_object_get(title_block, "date", &date, NULL);
-    g_assert_cmpstr(date, ==, valid_text);
+    g_object_get(title_block, "date", &date_dup, NULL);
+    g_assert_cmpstr(date_dup, ==, valid_text);
+    g_free(date_dup);
 
     g_object_set(title_block, "date", latin1_text, NULL);
-    g_object_get(title_block, "date", &date, NULL);
-    g_assert_cmpstr(date, ==, latin1_text);
+    g_object_get(title_block, "date", &date_dup, NULL);
+    g_assert_cmpstr(date_dup, ==, latin1_text);
+    g_free(date_dup);
 
     g_object_set(title_block, "date", NULL, NULL);
-    g_object_get(title_block, "date", &date, NULL);
-    g_assert(date == NULL);
+    g_object_get(title_block, "date", &date_dup, NULL);
+    g_assert(date_dup == NULL);
 
     g_object_unref(title_block);
 }
@@ -107,6 +113,7 @@ _adg_test_drawing(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *drawing;
+    gchar *drawing_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -127,16 +134,18 @@ _adg_test_drawing(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "drawing", valid_text, NULL);
-    g_object_get(title_block, "drawing", &drawing, NULL);
-    g_assert_cmpstr(drawing, ==, valid_text);
+    g_object_get(title_block, "drawing", &drawing_dup, NULL);
+    g_assert_cmpstr(drawing_dup, ==, valid_text);
+    g_free(drawing_dup);
 
     g_object_set(title_block, "drawing", latin1_text, NULL);
-    g_object_get(title_block, "drawing", &drawing, NULL);
-    g_assert_cmpstr(drawing, ==, latin1_text);
+    g_object_get(title_block, "drawing", &drawing_dup, NULL);
+    g_assert_cmpstr(drawing_dup, ==, latin1_text);
+    g_free(drawing_dup);
 
     g_object_set(title_block, "drawing", NULL, NULL);
-    g_object_get(title_block, "drawing", &drawing, NULL);
-    g_assert(drawing == NULL);
+    g_object_get(title_block, "drawing", &drawing_dup, NULL);
+    g_assert(drawing_dup == NULL);
 
     g_object_unref(title_block);
 }
@@ -145,8 +154,7 @@ static void
 _adg_test_logo(void)
 {
     AdgTitleBlock *title_block;
-    AdgEntity *valid_entity, *invalid_entity;
-    AdgEntity *logo;
+    AdgEntity *valid_entity, *invalid_entity, *logo;
 
     title_block = adg_title_block_new();
     valid_entity = ADG_ENTITY(adg_hatch_new(NULL));
@@ -169,10 +177,12 @@ _adg_test_logo(void)
     g_object_set(title_block, "logo", valid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == valid_entity);
+    g_object_unref(logo);
 
     g_object_set(title_block, "logo", invalid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == valid_entity);
+    g_object_unref(logo);
 
     g_object_set(title_block, "logo", NULL, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
@@ -186,8 +196,7 @@ static void
 _adg_test_projection(void)
 {
     AdgTitleBlock *title_block;
-    AdgEntity *valid_entity, *invalid_entity;
-    AdgEntity *projection;
+    AdgEntity *valid_entity, *invalid_entity, *projection;
 
     title_block = adg_title_block_new();
     valid_entity = ADG_ENTITY(adg_hatch_new(NULL));
@@ -210,10 +219,12 @@ _adg_test_projection(void)
     g_object_set(title_block, "projection", valid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
     g_assert(projection == valid_entity);
+    g_object_unref(projection);
 
     g_object_set(title_block, "projection", invalid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
     g_assert(projection == valid_entity);
+    g_object_unref(projection);
 
     g_object_set(title_block, "projection", NULL, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
@@ -229,6 +240,7 @@ _adg_test_scale(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *scale;
+    gchar *scale_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -249,16 +261,18 @@ _adg_test_scale(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "scale", valid_text, NULL);
-    g_object_get(title_block, "scale", &scale, NULL);
-    g_assert_cmpstr(scale, ==, valid_text);
+    g_object_get(title_block, "scale", &scale_dup, NULL);
+    g_assert_cmpstr(scale_dup, ==, valid_text);
+    g_free(scale_dup);
 
     g_object_set(title_block, "scale", latin1_text, NULL);
-    g_object_get(title_block, "scale", &scale, NULL);
-    g_assert_cmpstr(scale, ==, latin1_text);
+    g_object_get(title_block, "scale", &scale_dup, NULL);
+    g_assert_cmpstr(scale_dup, ==, latin1_text);
+    g_free(scale_dup);
 
     g_object_set(title_block, "scale", NULL, NULL);
-    g_object_get(title_block, "scale", &scale, NULL);
-    g_assert(scale == NULL);
+    g_object_get(title_block, "scale", &scale_dup, NULL);
+    g_assert(scale_dup == NULL);
 
     g_object_unref(title_block);
 }
@@ -269,6 +283,7 @@ _adg_test_size(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *size;
+    gchar *size_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -289,16 +304,18 @@ _adg_test_size(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "size", valid_text, NULL);
-    g_object_get(title_block, "size", &size, NULL);
-    g_assert_cmpstr(size, ==, valid_text);
+    g_object_get(title_block, "size", &size_dup, NULL);
+    g_assert_cmpstr(size_dup, ==, valid_text);
+    g_free(size_dup);
 
     g_object_set(title_block, "size", latin1_text, NULL);
-    g_object_get(title_block, "size", &size, NULL);
-    g_assert_cmpstr(size, ==, latin1_text);
+    g_object_get(title_block, "size", &size_dup, NULL);
+    g_assert_cmpstr(size_dup, ==, latin1_text);
+    g_free(size_dup);
 
     g_object_set(title_block, "size", NULL, NULL);
-    g_object_get(title_block, "size", &size, NULL);
-    g_assert(size == NULL);
+    g_object_get(title_block, "size", &size_dup, NULL);
+    g_assert(size_dup == NULL);
 
     g_object_unref(title_block);
 }
@@ -309,6 +326,7 @@ _adg_test_title(void)
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
     const gchar *title;
+    gchar *title_dup;
 
     title_block = adg_title_block_new();
     valid_text = "This is some text...";
@@ -329,16 +347,18 @@ _adg_test_title(void)
 
     /* Using GObject property methods */
     g_object_set(title_block, "title", valid_text, NULL);
-    g_object_get(title_block, "title", &title, NULL);
-    g_assert_cmpstr(title, ==, valid_text);
+    g_object_get(title_block, "title", &title_dup, NULL);
+    g_assert_cmpstr(title_dup, ==, valid_text);
+    g_free(title_dup);
 
     g_object_set(title_block, "title", latin1_text, NULL);
-    g_object_get(title_block, "title", &title, NULL);
-    g_assert_cmpstr(title, ==, latin1_text);
+    g_object_get(title_block, "title", &title_dup, NULL);
+    g_assert_cmpstr(title_dup, ==, latin1_text);
+    g_free(title_dup);
 
     g_object_set(title_block, "title", NULL, NULL);
-    g_object_get(title_block, "title", &title, NULL);
-    g_assert(title == NULL);
+    g_object_get(title_block, "title", &title_dup, NULL);
+    g_assert(title_dup == NULL);
 
     g_object_unref(title_block);
 }
