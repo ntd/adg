@@ -99,10 +99,12 @@ _adg_test_trail(void)
     g_object_set(stroke, "trail", valid_trail, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
     g_assert(trail == valid_trail);
+    g_object_unref(trail);
 
     g_object_set(stroke, "trail", invalid_trail, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
     g_assert(trail == valid_trail);
+    g_object_unref(trail);
 
     g_object_set(stroke, "trail", NULL, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
