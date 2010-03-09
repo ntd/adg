@@ -49,10 +49,12 @@ _adg_test_source(void)
     g_object_set(edges, "source", valid_trail, NULL);
     g_object_get(edges, "source", &source, NULL);
     g_assert(source == valid_trail);
+    g_object_unref(source);
 
     g_object_set(edges, "source", invalid_trail, NULL);
     g_object_get(edges, "source", &source, NULL);
     g_assert(source == valid_trail);
+    g_object_unref(source);
 
     g_object_set(edges, "source", NULL, NULL);
     g_object_get(edges, "source", &source, NULL);
