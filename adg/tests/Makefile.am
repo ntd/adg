@@ -62,6 +62,10 @@ test_title_block_SOURCES= \
 			test-title-block.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-dim
+test_dim_SOURCES=	test-dim.c \
+			$(test_internals)
+
 endif
 
 
