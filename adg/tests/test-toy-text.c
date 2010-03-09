@@ -68,6 +68,7 @@ _adg_test_label(void)
     AdgToyText *toy_text;
     const gchar *valid_text, *latin1_text;
     const gchar *label;
+    gchar *label_dup;
 
     toy_text = adg_toy_text_new(NULL);
     valid_text = "This is some text...";
@@ -88,16 +89,18 @@ _adg_test_label(void)
 
     /* Using GObject property methods */
     g_object_set(toy_text, "label", valid_text, NULL);
-    g_object_get(toy_text, "label", &label, NULL);
-    g_assert_cmpstr(label, ==, valid_text);
+    g_object_get(toy_text, "label", &label_dup, NULL);
+    g_assert_cmpstr(label_dup, ==, valid_text);
+    g_free(label_dup);
 
     g_object_set(toy_text, "label", latin1_text, NULL);
-    g_object_get(toy_text, "label", &label, NULL);
-    g_assert_cmpstr(label, ==, latin1_text);
+    g_object_get(toy_text, "label", &label_dup, NULL);
+    g_assert_cmpstr(label_dup, ==, latin1_text);
+    g_free(label_dup);
 
     g_object_set(toy_text, "label", NULL, NULL);
-    g_object_get(toy_text, "label", &label, NULL);
-    g_assert(label == NULL);
+    g_object_get(toy_text, "label", &label_dup, NULL);
+    g_assert(label_dup == NULL);
 
     g_object_unref(toy_text);
 }
