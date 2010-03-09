@@ -26,6 +26,7 @@
 #ifndef __ADG_DIM_H__
 #define __ADG_DIM_H__
 
+#include <adg/adg-point.h>
 #include <adg/adg-alignment.h>
 #include <adg/adg-model.h>
 #include <adg/adg-enums.h>
@@ -63,29 +64,39 @@ GType           adg_dim_get_type                (void) G_GNUC_CONST;
 AdgDress        adg_dim_get_dim_dress           (AdgDim         *dim);
 void            adg_dim_set_dim_dress           (AdgDim         *dim,
                                                  AdgDress        dress);
-void            adg_dim_set_ref                 (AdgDim         *dim,
-                                                 const AdgPair  *ref1,
+void            adg_dim_set_ref1                (AdgDim         *dim,
+                                                 const AdgPoint *ref1);
+void            adg_dim_set_ref1_explicit       (AdgDim         *dim,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_dim_set_ref1_from_pair      (AdgDim         *dim,
                                                  const AdgPair  *ref2);
-void            adg_dim_set_ref_explicit        (AdgDim         *dim,
-                                                 gdouble         ref1_x,
-                                                 gdouble         ref1_y,
-                                                 gdouble         ref2_x,
-                                                 gdouble         ref2_y);
-void            adg_dim_set_ref_from_model      (AdgDim         *dim,
+void            adg_dim_set_ref1_from_model     (AdgDim         *dim,
                                                  AdgModel       *model,
-                                                 const gchar    *ref1,
+                                                 const gchar    *ref1);
+AdgPoint *      adg_dim_get_ref1                (AdgDim         *dim);
+void            adg_dim_set_ref2                (AdgDim         *dim,
+                                                 const AdgPoint *ref2);
+void            adg_dim_set_ref2_explicit       (AdgDim         *dim,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_dim_set_ref2_from_pair      (AdgDim         *dim,
+                                                 const AdgPair  *ref2);
+void            adg_dim_set_ref2_from_model     (AdgDim         *dim,
+                                                 AdgModel       *model,
                                                  const gchar    *ref2);
-const AdgPair * adg_dim_get_ref1                (AdgDim         *dim);
-const AdgPair * adg_dim_get_ref2                (AdgDim         *dim);
+AdgPoint *      adg_dim_get_ref2                (AdgDim         *dim);
 void            adg_dim_set_pos                 (AdgDim         *dim,
-                                                 const AdgPair  *pos);
+                                                 const AdgPoint *pos);
 void            adg_dim_set_pos_explicit        (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
+void            adg_dim_set_pos_from_pair       (AdgDim         *dim,
+                                                 const AdgPair  *pos);
 void            adg_dim_set_pos_from_model      (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *pos);
-const AdgPair * adg_dim_get_pos                 (AdgDim         *dim);
+AdgPoint *      adg_dim_get_pos                 (AdgDim         *dim);
 void            adg_dim_set_level               (AdgDim         *dim,
                                                  gdouble         level);
 gdouble         adg_dim_get_level               (AdgDim         *dim);

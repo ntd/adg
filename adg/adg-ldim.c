@@ -224,9 +224,11 @@ set_property(GObject *object,
  * adg_ldim_new:
  *
  * Creates a new - undefined - linear dimension. You must, at least,
- * define the reference points with adg_dim_set_ref(), the dimension
- * direction with adg_ldim_set_direction() and the position reference
- * using adg_dim_set_pos().
+ * define the start of the dimension in #AdgDim:ref1, the end in
+ * #AdgDim:ref2 and the position of the quote in #AdgDim:pos using
+ * any valid #AdgDim method. The director of the dimension (that is,
+ * if it is horizontal, vertical or oblique at a specific angle)
+ * should be specified with adg_ldim_set_direction().
  *
  * Returns: the newly created linear dimension entity
  **/
@@ -258,8 +260,9 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     ldim = g_object_new(ADG_TYPE_LDIM, "direction", direction, NULL);
     dim = (AdgDim *) ldim;
 
-    adg_dim_set_ref(dim, ref1, ref2);
-    adg_dim_set_pos(dim, pos);
+    adg_dim_set_ref1_from_pair(dim, ref1);
+    adg_dim_set_ref2_from_pair(dim, ref2);
+    adg_dim_set_pos_from_pair(dim, pos);
 
     return ldim;
 }
@@ -321,7 +324,8 @@ adg_ldim_new_full_from_model(AdgModel *model,
     ldim = g_object_new(ADG_TYPE_LDIM, "direction", direction, NULL);
     dim = (AdgDim *) ldim;
 
-    adg_dim_set_ref_from_model(dim, model, ref1, ref2);
+    adg_dim_set_ref1_from_model(dim, model, ref1);
+    adg_dim_set_ref2_from_model(dim, model, ref2);
     adg_dim_set_pos_from_model(dim, model, pos);
 
     return ldim;
@@ -520,8 +524,8 @@ arrange(AdgEntity *entity)
 
     dim_style = GET_DIM_STYLE(dim);
     local = adg_entity_get_local_matrix(entity);
-    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
-    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
+    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
+    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base1, &data->geometry.base1);
     cpml_pair_copy(&base2, &data->geometry.base2);
 
@@ -612,7 +616,7 @@ arrange(AdgEntity *entity)
             cairo_path_data_t *to_extend;
 
             /* Set "pair" to the properly converted "pos" coordinates */
-            cpml_pair_copy(&pair, adg_dim_get_pos(dim));
+            cpml_pair_copy(&pair, adg_point_get_pair(adg_dim_get_pos(dim)));
             cpml_pair_transform(&pair, local);
             pair.x += data->shift.base.x;
             pair.y += data->shift.base.y;
@@ -786,9 +790,9 @@ update_geometry(AdgLDim *ldim)
         return;
 
     dim = (AdgDim *) ldim;
-    ref1 = adg_dim_get_ref1(dim);
-    ref2 = adg_dim_get_ref2(dim);
-    pos = adg_dim_get_pos(dim);
+    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
+    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
+    pos = adg_point_get_pair(adg_dim_get_pos(dim));
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);
     cpml_vector_normal(&baseline);

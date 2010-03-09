@@ -78,6 +78,12 @@ static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
 static gboolean set_dim_dress           (AdgDim         *dim,
                                          AdgDress        dress);
+static gboolean set_ref1                (AdgDim         *dim,
+                                         const AdgPoint *ref1);
+static gboolean set_ref2                (AdgDim         *dim,
+                                         const AdgPoint *ref2);
+static gboolean set_pos                 (AdgDim         *dim,
+                                         const AdgPoint *pos);
 static gboolean set_outside             (AdgDim         *dim,
                                          AdgThreeState   outside);
 static gboolean set_detached            (AdgDim         *dim,
@@ -88,6 +94,8 @@ static gboolean set_min                 (AdgDim         *dim,
                                          const gchar    *min);
 static gboolean set_max                 (AdgDim         *dim,
                                          const gchar    *max);
+static gboolean set_point               (AdgPoint      **point,
+                                         const AdgPoint *new_point);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -141,7 +149,7 @@ adg_dim_class_init(AdgDimClass *klass)
 
     param = g_param_spec_boxed("pos",
                                P_("Position"),
-                               P_("The reference position in local space of the quote: it will be combined with \"level\" to get the real quote position"),
+                               P_("The reference position of the quote: it will be combined with \"level\" to get the real quote position"),
                                ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_POS, param);
@@ -305,19 +313,13 @@ set_property(GObject *object, guint prop_id,
         set_dim_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
-        if (data->ref1 != NULL)
-            adg_point_destroy(data->ref1);
-        data->ref1 = g_value_dup_boxed(value);
+        set_ref1(dim, g_value_get_boxed(value));
         break;
     case PROP_REF2:
-        if (data->ref2 != NULL)
-            adg_point_destroy(data->ref2);
-        data->ref2 = g_value_dup_boxed(value);
+        set_ref2(dim, g_value_get_boxed(value));
         break;
     case PROP_POS:
-        if (data->pos != NULL)
-            adg_point_destroy(data->pos);
-        data->pos = g_value_dup_boxed(value);
+        set_pos(dim, g_value_get_boxed(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -387,146 +389,104 @@ adg_dim_get_dim_dress(AdgDim *dim)
 }
 
 /**
- * adg_dim_set_ref:
+ * adg_dim_set_ref1:
  * @dim: an #AdgDim
- * @ref1: the ref1 coordinates
- * @ref2: the ref2 coordinates
+ * @ref1: the new point to use as first reference
  *
- * Sets the #AdgDim:ref1 and #AdgDim:ref2 reference points
- * using @ref1 and @ref2 pairs.  @ref1 or @ref2 could be
- * %NULL (but not both), in which case only the non-null
- * reference point is changed.
+ * Sets the #AdgDim:ref1 property to @ref1. The old point
+ * is silently discarded, unreferencing its model if that
+ * point was bound to a named pair (hence, possibly destroying
+ * the model if this was the last reference).
+ *
+ * @ref1 can be %NULL, in which case the point is unset.
  **/
 void
-adg_dim_set_ref(AdgDim *dim, const AdgPair *ref1, const AdgPair *ref2)
+adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
 {
-    GObject *object;
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_return_if_fail(ref1 != NULL || ref2 != NULL);
 
-    data = dim->data;
-    object = (GObject *) dim;
-
-    g_object_freeze_notify(object);
-
-    if (ref1 != NULL) {
-        if (data->ref1 == NULL)
-            data->ref1 = adg_point_new();
-
-        adg_point_set_pair(data->ref1, ref1);
-
-        g_object_notify(object, "ref1");
-    }
-
-    if (ref2 != NULL) {
-        if (data->ref2 == NULL)
-            data->ref2 = adg_point_new();
-
-        adg_point_set_pair(data->ref2, ref2);
-
-        g_object_notify(object, "ref2");
-    }
-
-    g_object_thaw_notify(object);
+    if (set_ref1(dim, ref1))
+        g_object_notify((GObject *) dim, "ref1");
 }
 
 /**
- * adg_dim_set_ref_explicit:
+ * adg_dim_set_ref1_explicit:
  * @dim: an #AdgDim
- * @ref1_x: x coordinate of ref1
- * @ref1_y: y coordinate of ref1
- * @ref2_x: x coordinate of ref2
- * @ref2_y: y coordinate of ref2
+ * @x: x coordinate of the first reference point
+ * @y: y coordinate of the first reference point
  *
- * Works in the same way as adg_dim_set_ref() but using
- * explicit coordinates instead of #AdgPair args. The
- * notable difference is that, by using gdouble values,
- * you can't set only a single reference point.
+ * Sets the #AdgDim:ref1 property to the (@x, @y) explicit
+ * coordinates. The old point is silently discarded,
+ * unreferencing its model if that point was bound to a named
+ * pair (hence, possibly destroying the model if this was the
+ * last reference).
  **/
 void
-adg_dim_set_ref_explicit(AdgDim *dim,
-                         gdouble ref1_x, gdouble ref1_y,
-                         gdouble ref2_x, gdouble ref2_y)
+adg_dim_set_ref1_explicit(AdgDim *dim, gdouble x, gdouble y)
 {
-    AdgPair ref1, ref2;
+    AdgPoint *point = adg_point_new();
 
-    ref1.x = ref1_x;
-    ref1.y = ref1_y;
-    ref2.x = ref2_x;
-    ref2.y = ref2_y;
+    adg_point_set_pair_explicit(point, x, y);
+    adg_dim_set_ref1(dim, point);
 
-    adg_dim_set_ref(dim, &ref1, &ref2);
+    adg_point_destroy(point);
 }
 
 /**
- * adg_dim_set_ref_from_model:
+ * adg_dim_set_ref1_from_pair:
+ * @dim: an #AdgDim
+ * @ref1: the coordinates pair of the first reference point
+ *
+ * Convenient function to set the #AdgDim:ref1 property using a
+ * pair instead of explicit coordinates.
+ **/
+void
+adg_dim_set_ref1_from_pair(AdgDim *dim, const AdgPair *ref1)
+{
+    g_return_if_fail(ref1 != NULL);
+
+    adg_dim_set_ref1_explicit(dim, ref1->x, ref1->y);
+}
+
+/**
+ * adg_dim_set_ref1_from_model:
  * @dim: an #AdgDim
  * @model: the source #AdgModel
- * @ref1: name of the pair in @model to use as ref1
- * @ref2: name of the pair in @model to use as ref2
+ * @ref1: a named pair in @model
  *
- * Sets #AdgDim:ref1 and #AdgDim:ref2 properties by linking
- * them to the @ref1 and @ref2 named pairs in @model. @ref1
- * or @ref2 could be %NULL (but not both), in which case
- * only the non-null reference point is changed.
+ * Binds #AdgDim:ref1 to the @ref1 named pair of @model. If @model
+ * is %NULL, the point will be unset. In any case, the old point
+ * is silently discarded, unreferencing its model if that point
+ * was bound to a named pair (hence, possibly destroying the model
+ * if this was the last reference).
  *
- * Using this function twice you can also link the reference
- * points to named pairs taken from different models:
- *
- * |[
- * adg_dim_set_ref_from_model(dim, model1, ref1, NULL);
- * adg_dim_set_ref_from_model(dim, model2, NULL, ref2);
- * ]|
+ * The assignment is lazy so @ref1 could be not be present in @model.
+ * Anyway, at the first access to this point an error will be raised
+ * if the named pair is still missing.
  **/
 void
-adg_dim_set_ref_from_model(AdgDim *dim, AdgModel *model,
-                           const gchar *ref1, const gchar *ref2)
+adg_dim_set_ref1_from_model(AdgDim *dim, AdgModel *model, const gchar *ref1)
 {
-    GObject *object;
-    AdgDimPrivate *data;
+    AdgPoint *point = adg_point_new();
 
-    g_return_if_fail(ADG_IS_DIM(dim));
-    g_return_if_fail(ADG_IS_MODEL(model));
-    g_return_if_fail(ref1 != NULL || ref2 != NULL);
+    adg_point_set_pair_from_model(point, model, ref1);
+    adg_dim_set_ref1(dim, point);
 
-    object = (GObject *) dim;
-    data = dim->data;
-
-    g_object_freeze_notify(object);
-
-    if (ref1 != NULL) {
-        if (data->ref1 == NULL)
-            data->ref1 = adg_point_new();
-
-        adg_point_set_pair_from_model(data->ref1, model, ref1);
-
-        g_object_notify(object, "ref1");
-    }
-
-    if (ref2 != NULL) {
-        if (data->ref2 == NULL)
-            data->ref2 = adg_point_new();
-
-        adg_point_set_pair_from_model(data->ref2, model, ref2);
-
-        g_object_notify(object, "ref2");
-    }
-
-    g_object_thaw_notify(object);
+    adg_point_destroy(point);
 }
 
 /**
  * adg_dim_get_ref1:
  * @dim: an #AdgDim
  *
- * Gets the ref1 coordinates. The returned pair is internally owned
- * and must not be freed or modified.
+ * Gets the #AdgDim:ref1 point. The returned point is internally owned
+ * and must not be freed or modified. Anyway, it is not const because
+ * adg_point_get_pair() must be able to modify the internal cache of
+ * the returned point.
  *
- * Returns: the ref1 coordinates
+ * Returns: the first reference point
  **/
-const AdgPair *
+AdgPoint *
 adg_dim_get_ref1(AdgDim *dim)
 {
     AdgDimPrivate *data;
@@ -535,19 +495,108 @@ adg_dim_get_ref1(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_get_pair(data->ref1);
+    return data->ref1;
+}
+
+/**
+ * adg_dim_set_ref2:
+ * @dim: an #AdgDim
+ * @ref2: the new point to use as second reference
+ *
+ * Sets the #AdgDim:ref2 property to @ref2. The old point
+ * is silently discarded, unreferencing its model if that
+ * point was bound to a named pair (hence, possibly destroying
+ * the model if it was the last reference).
+ *
+ * @ref2 can be %NULL, in which case the point is unset.
+ **/
+void
+adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
+{
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    if (set_ref2(dim, ref2))
+        g_object_notify((GObject *) dim, "ref2");
+}
+
+/**
+ * adg_dim_set_ref2_explicit:
+ * @dim: an #AdgDim
+ * @x: x coordinate of the second reference point
+ * @y: y coordinate of the second reference point
+ *
+ * Sets the #AdgDim:ref2 property to the (@x, @y) explicit
+ * coordinates. The old point is silently discarded,
+ * unreferencing its model if that point was bound to a named
+ * pair (hence, possibly destroying the model if this was the
+ * last reference).
+ **/
+void
+adg_dim_set_ref2_explicit(AdgDim *dim, gdouble x, gdouble y)
+{
+    AdgPoint *point = adg_point_new();
+
+    adg_point_set_pair_explicit(point, x, y);
+    adg_dim_set_ref2(dim, point);
+
+    adg_point_destroy(point);
+}
+
+/**
+ * adg_dim_set_ref2_from_pair:
+ * @dim: an #AdgDim
+ * @ref2: the coordinates pair of the second reference point
+ *
+ * Convenient function to set the #AdgDim:ref2 property using a
+ * pair instead of explicit coordinates.
+ **/
+void
+adg_dim_set_ref2_from_pair(AdgDim *dim, const AdgPair *ref2)
+{
+    g_return_if_fail(ref2 != NULL);
+
+    adg_dim_set_ref2_explicit(dim, ref2->x, ref2->y);
+}
+
+/**
+ * adg_dim_set_ref2_from_model:
+ * @dim: an #AdgDim
+ * @model: the source #AdgModel
+ * @ref2: a named pair in @model
+ *
+ * Binds #AdgDim:ref2 to the @ref2 named pair of @model. If @model
+ * is %NULL, the point will be unset. In any case, the old point
+ * is silently discarded, unreferencing its model if that point
+ * was bound to a named pair (hence, possibly destroying the model
+ * if this was the last reference).
+ *
+ * The assignment is lazy so @ref2 could be not be present in @model.
+ * Anyway, at the first access to this point an error will be raised
+ * if the named pair is still missing.
+ **/
+void
+adg_dim_set_ref2_from_model(AdgDim *dim, AdgModel *model, const gchar *ref2)
+{
+    AdgPoint *point = adg_point_new();
+
+    adg_point_set_pair_from_model(point, model, ref2);
+    adg_dim_set_ref2(dim, point);
+
+    adg_point_destroy(point);
 }
 
 /**
  * adg_dim_get_ref2:
  * @dim: an #AdgDim
  *
- * Gets the ref2 coordinates. The returned pair is internally owned
- * and must not be freed or modified.
+ * Gets the #AdgDim:ref2 point. The returned point is internally owned
+ * and must not be freed or modified. Anyway, it is not const because
+ * adg_point_get_pair() must be able to modify the internal cache of
+ * the returned point.
  *
- * Returns: the ref2 coordinates
+ * Returns: the second reference point
  **/
-const AdgPair *
+AdgPoint *
 adg_dim_get_ref2(AdgDim *dim)
 {
     AdgDimPrivate *data;
@@ -556,91 +605,108 @@ adg_dim_get_ref2(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_get_pair(data->ref2);
+    return data->ref2;
 }
 
 /**
  * adg_dim_set_pos:
  * @dim: an #AdgDim
- * @pos: the pos coordinates
+ * @pos: the new point to use as position
  *
- * Sets a new #AdgDim:pos position.
+ * Sets the #AdgDim:pos property to @pos. The old point
+ * is silently discarded, unreferencing its model if that
+ * point was bound to a named pair (hence, possibly destroying
+ * the model if it was the last reference).
+ *
+ * @pos can be %NULL, in which case the point is unset.
  **/
 void
-adg_dim_set_pos(AdgDim *dim, const AdgPair *pos)
+adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_return_if_fail(pos != NULL);
 
-    data = dim->data;
-
-    if (data->pos == NULL)
-        data->pos = adg_point_new();
-
-    adg_point_set_pair(data->pos, pos);
-
-    g_object_notify((GObject *) dim, "pos");
+    if (set_pos(dim, pos))
+        g_object_notify((GObject *) dim, "pos");
 }
 
 /**
  * adg_dim_set_pos_explicit:
  * @dim: an #AdgDim
- * @pos_x: x coordinate of pos
- * @pos_y: y coordinate of pos
+ * @x: x coordinate of the position
+ * @y: y coordinate of the position
  *
- * Shortcut to set #AdgDim:pos using explicit coordinates.
+ * Sets the #AdgDim:pos property to the (@x, @y) explicit
+ * coordinates. The old point is silently discarded,
+ * unreferencing its model if that point was bound to a named
+ * pair (hence, possibly destroying the model if this was the
+ * last reference).
  **/
 void
 adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
 {
-    AdgPair pos;
+    AdgPoint *point = adg_point_new();
 
-    pos.x = x;
-    pos.y = y;
+    adg_point_set_pair_explicit(point, x, y);
+    adg_dim_set_pos(dim, point);
 
-    adg_dim_set_pos(dim, &pos);
+    adg_point_destroy(point);
+}
+
+/**
+ * adg_dim_set_pos_from_pair:
+ * @dim: an #AdgDim
+ * @pos: the coordinates pair of the position point
+ *
+ * Convenient function to set the #AdgDim:pos property using a
+ * pair instead of explicit coordinates.
+ **/
+void
+adg_dim_set_pos_from_pair(AdgDim *dim, const AdgPair *pos)
+{
+    g_return_if_fail(pos != NULL);
+
+    adg_dim_set_pos_explicit(dim, pos->x, pos->y);
 }
 
 /**
  * adg_dim_set_pos_from_model:
  * @dim: an #AdgDim
  * @model: the source #AdgModel
- * @ref1: name of the pair in @model to use as pos
+ * @pos: a named pair in @model
  *
- * Sets #AdgDim:pos by linking it to the @pos named pair
- * in @model.
+ * Binds #AdgDim:pos to the @pos named pair of @model. If @model
+ * is %NULL, the point will be unset. In any case, the old point
+ * is silently discarded, unreferencing its model if that point
+ * was bound to a named pair (hence, possibly destroying the model
+ * if this was the last reference).
+ *
+ * The assignment is lazy so @pos could be not be present in @model.
+ * Anyway, at the first access to this point an error will be raised
+ * if the named pair is still missing.
  **/
 void
 adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
 {
-    AdgDimPrivate *data;
+    AdgPoint *point = adg_point_new();
 
-    g_return_if_fail(ADG_IS_DIM(dim));
-    g_return_if_fail(ADG_IS_MODEL(model));
-    g_return_if_fail(pos != NULL);
+    adg_point_set_pair_from_model(point, model, pos);
+    adg_dim_set_pos(dim, point);
 
-    data = dim->data;
-
-    if (data->pos == NULL)
-        data->pos = adg_point_new();
-
-    adg_point_set_pair_from_model(data->pos, model, pos);
-
-    g_object_notify((GObject *) dim, "pos");
+    adg_point_destroy(point);
 }
 
 /**
  * adg_dim_get_pos:
  * @dim: an #AdgDim
  *
- * Gets the position coordinates. The returned pair is internally owned
- * and must not be freed or modified.
+ * Gets the #AdgDim:pos point. The returned point is internally owned
+ * and must not be freed or modified. Anyway, it is not const because
+ * adg_point_get_pair() must be able to modify the internal cache of
+ * the returned point.
  *
- * Returns: the pos coordinates
+ * Returns: the position point
  **/
-const AdgPair *
+AdgPoint *
 adg_dim_get_pos(AdgDim *dim)
 {
     AdgDimPrivate *data;
@@ -649,7 +715,7 @@ adg_dim_get_pos(AdgDim *dim)
 
     data = dim->data;
 
-    return adg_point_get_pair(data->pos);
+    return data->pos;
 }
 
 /**
@@ -1167,6 +1233,30 @@ set_dim_dress(AdgDim *dim, AdgDress dress)
 }
 
 static gboolean
+set_ref1(AdgDim *dim, const AdgPoint *ref1)
+{
+    AdgDimPrivate *data = dim->data;
+
+    return set_point(&data->ref1, ref1);
+}
+
+static gboolean
+set_ref2(AdgDim *dim, const AdgPoint *ref2)
+{
+    AdgDimPrivate *data = dim->data;
+
+    return set_point(&data->ref2, ref2);
+}
+
+static gboolean
+set_pos(AdgDim *dim, const AdgPoint *pos)
+{
+    AdgDimPrivate *data = dim->data;
+
+    return set_point(&data->pos, pos);
+}
+
+static gboolean
 set_outside(AdgDim *dim, AdgThreeState outside)
 {
     AdgDimPrivate *data;
@@ -1256,6 +1346,26 @@ set_max(AdgDim *dim, const gchar *max)
     if (data->quote.max != NULL) {
         g_object_unref(data->quote.max);
         data->quote.max = NULL;
+    }
+
+    return TRUE;
+}
+
+static gboolean
+set_point(AdgPoint **point, const AdgPoint *new_point)
+{
+    if ((*point == new_point) ||
+        (*point && new_point && adg_point_equal(*point, new_point)))
+        return FALSE;
+
+    if (*point == NULL)
+        *point = adg_point_new();
+
+    if (new_point) {
+        adg_point_copy(*point, new_point);
+    } else {
+        adg_point_destroy(*point);
+        *point = NULL;
     }
 
     return TRUE;

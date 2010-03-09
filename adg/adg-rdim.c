@@ -128,9 +128,9 @@ dispose(GObject *object)
  * adg_rdim_new:
  *
  * Creates a new uninitialized radial dimension. To be useful, you
- * need at least define the center of the arc to quote (ref1) and
- * a point on the arc (ref2) with adg_dim_set_ref() and the
- * position of the quote with adg_dim_set_pos().
+ * need at least define the center of the arc to quote in #AdgDim:ref1,
+ * a point on the arc in #AdgDim:ref2 and the position of the quote
+ * in #AdgDim:pos using any valid #AdgDim method.
  *
  * Returns: a newly created quote
  **/
@@ -161,8 +161,9 @@ adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
     rdim = adg_rdim_new();
     dim = (AdgDim *) rdim;
 
-    adg_dim_set_ref(dim, center, radius);
-    adg_dim_set_pos(dim, pos);
+    adg_dim_set_ref1_from_pair(dim, center);
+    adg_dim_set_ref2_from_pair(dim, radius);
+    adg_dim_set_pos_from_pair(dim, pos);
 
     return rdim;
 }
@@ -217,7 +218,8 @@ adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,
 {
     AdgDim *dim = g_object_new(ADG_TYPE_RDIM, NULL);
 
-    adg_dim_set_ref_from_model(dim, model, center, radius);
+    adg_dim_set_ref1_from_model(dim, model, center);
+    adg_dim_set_ref2_from_model(dim, model, radius);
     adg_dim_set_pos_from_model(dim, model, pos);
 
     return (AdgRDim *) dim;
@@ -286,8 +288,8 @@ arrange(AdgEntity *entity)
         outside = ADG_THREE_STATE_OFF;
 
     local = adg_entity_get_local_matrix(entity);
-    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
-    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
+    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
+    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base, &data->point.base);
 
     cpml_pair_transform(&ref1, local);
@@ -402,9 +404,9 @@ update_geometry(AdgRDim *rdim)
 
     dim = (AdgDim *) rdim;
     dim_style = GET_DIM_STYLE(rdim);
-    ref1 = adg_dim_get_ref1(dim);
-    ref2 = adg_dim_get_ref2(dim);
-    pos = adg_dim_get_pos(dim);
+    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
+    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
+    pos = adg_point_get_pair(adg_dim_get_pos(dim));
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);

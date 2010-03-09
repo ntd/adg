@@ -251,6 +251,17 @@ set_property(GObject *object, guint prop_id,
  *
  * Returns: the newly created angular dimension entity
  **/
+/**
+ * adg_adim_new:
+ *
+ * Creates a new - undefined - angular dimension. You must, at least,
+ * define the first line by setting #AdgADim:org1 (start point) and
+ * #AdgDim:ref1 (end point), the second line by setting #AdgADim:org2
+ * (start point) and #AdgDim:ref2 (end point) and the position of
+ * the quote with #AdgDim:pos.
+ *
+ * Returns: the newly created angular dimension entity
+ **/
 AdgADim *
 adg_adim_new(void)
 {
@@ -280,9 +291,10 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     adim = g_object_new(ADG_TYPE_ADIM, NULL);
     dim = (AdgDim *) adim;
 
-    adg_dim_set_ref(dim, ref1, ref2);
+    adg_dim_set_ref1_from_pair(dim, ref1);
+    adg_dim_set_ref2_from_pair(dim, ref2);
+    adg_dim_set_pos_from_pair(dim, pos);
     adg_adim_set_org(adim, org1, org2);
-    adg_dim_set_pos(dim, pos);
 
     return adim;
 }
@@ -350,7 +362,8 @@ adg_adim_new_full_from_model(AdgModel *model,
     adim = g_object_new(ADG_TYPE_ADIM, NULL);
     dim = (AdgDim *) adim;
 
-    adg_dim_set_ref_from_model(dim, model, ref1, ref2);
+    adg_dim_set_ref1_from_model(dim, model, ref1);
+    adg_dim_set_ref2_from_model(dim, model, ref2);
     adg_dim_set_pos_from_model(dim, model, pos);
     adg_adim_set_org_from_model(adim, model, org1, org2);
 
@@ -588,8 +601,8 @@ arrange(AdgEntity *entity)
     }
 
     local = adg_entity_get_local_matrix(entity);
-    cpml_pair_copy(&ref1, adg_dim_get_ref1(dim));
-    cpml_pair_copy(&ref2, adg_dim_get_ref2(dim));
+    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
+    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base1, &data->point.base1);
     cpml_pair_copy(&base12, &data->point.base12);
     cpml_pair_copy(&base2, &data->point.base2);
@@ -863,8 +876,8 @@ get_info(AdgADim *adim, CpmlVector vector[],
 
     dim = (AdgDim *) adim;
     data = adim->data;
-    ref1 = adg_dim_get_ref1(dim);
-    ref2 = adg_dim_get_ref2(dim);
+    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
+    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
     org1 = adg_point_get_pair(data->org1);
     org2 = adg_point_get_pair(data->org2);
 
@@ -882,7 +895,7 @@ get_info(AdgADim *adim, CpmlVector vector[],
 
     center->x = ref1->x + vector[0].x * factor;
     center->y = ref1->y + vector[0].y * factor;
-    *distance = cpml_pair_distance(center, adg_dim_get_pos(dim));
+    *distance = cpml_pair_distance(center, adg_point_get_pair(adg_dim_get_pos(dim)));
     data->angle1 = cpml_vector_angle(&vector[0]);
     data->angle2 = cpml_vector_angle(&vector[2]);
     while (data->angle2 < data->angle1)
