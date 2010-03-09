@@ -52,6 +52,7 @@ struct _AdgPoint {
     gboolean     is_uptodate;
 };
 
+
 GType
 adg_point_get_type(void)
 {
@@ -67,10 +68,10 @@ adg_point_get_type(void)
 
 /**
  * adg_point_dup:
- * @point: an #AdgPoint structure
+ * @src: an #AdgPoint structure
  *
- * Duplicates @point. This operation also adds a new reference
- * to the internal model if @point is linked to a named pair.
+ * Duplicates @src. This operation also adds a new reference
+ * to the internal model if @src is linked to a named pair.
  *
  * The returned value should be freed with adg_point_destroy()
  * when no longer needed.
@@ -78,14 +79,19 @@ adg_point_get_type(void)
  * Returns: the duplicated #AdgPoint struct or %NULL on errors
  **/
 AdgPoint *
-adg_point_dup(const AdgPoint *point)
+adg_point_dup(const AdgPoint *src)
 {
-    g_return_val_if_fail(point != NULL, NULL);
+    AdgPoint *point;
 
-    if (point->model != NULL)
-        g_object_ref(point->model);
+    g_return_val_if_fail(src != NULL, NULL);
 
-    return g_memdup(point, sizeof(AdgPoint));
+    if (src->model)
+        g_object_ref(src->model);
+
+    point = g_memdup(src, sizeof(AdgPoint));
+    point->name = g_strdup(src->name);
+
+    return point;
 }
 
 /**
@@ -139,11 +145,14 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
 
     if (src->model != NULL)
         g_object_ref(src->model);
-
     if (point->model != NULL)
         g_object_unref(point->model);
 
+    if (point->name != NULL)
+        g_free(point->name);
+
     memcpy(point, src, sizeof(AdgPoint));
+    point->name = g_strdup(src->name);
 }
 
 /**
@@ -197,8 +206,8 @@ adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
  * new reference is added to @model while the previous model (if any)
  * is unreferenced.
  *
- * It is allowed to use %NULL as @model, in which case the link
- * between @point and the named pair is dropped.
+ * It is allowed to use %NULL as @model, in which case the possible
+ * link between @point and the named pair is dropped.
  **/
 void
 adg_point_set_pair_from_model(AdgPoint *point,
