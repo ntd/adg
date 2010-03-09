@@ -54,8 +54,7 @@ _adg_test_func(gconstpointer user_data)
 
     /* Run a test in a forked environment, without showing log messages */
     previous_handler = g_log_set_default_handler(_adg_log_handler, NULL);
-    if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDOUT|
-                            G_TEST_TRAP_SILENCE_STDERR)) {
+    if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDERR)) {
         test_func();
         exit(0);
     }
