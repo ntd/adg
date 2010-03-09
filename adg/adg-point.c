@@ -304,3 +304,38 @@ adg_point_invalidate(AdgPoint *point)
     if (point->model != NULL)
         point->is_uptodate = FALSE;
 }
+
+/**
+ * adg_point_equal:
+ * @point1: the first point to compare
+ * @point2: the second point to compare
+ *
+ * Compares @point1 and @point2 and returns %TRUE if the points are
+ * equals. The comparison is made by matching also where the points
+ * are bound. If you want to compare only the coordinates, use
+ * adg_pair_equal() directly on their pairs:
+ *
+ * |[
+ * adg_pair_equal(adg_point_get_pair(point1), adg_point_get_pair(point2));
+ * ]|
+ *
+ * Returns: %TRUE if @point1 is equal to @point2, %FALSE otherwise
+ **/
+gboolean
+adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)
+{
+    g_return_val_if_fail(point1 != NULL, FALSE);
+    g_return_val_if_fail(point2 != NULL, FALSE);
+
+    /* Check if the points are not bound to the same model
+     * or if only one of the two points is explicit */
+    if (point1->model != point2->model)
+        return FALSE;
+
+    /* Handle points bound to named pairs */
+    if (point1->model)
+        return adg_strcmp(point1->name, point2->name) == 0;
+
+    /* Handle points with explicit coordinates */
+    return adg_pair_equal(&point1->pair, &point2->pair);
+}

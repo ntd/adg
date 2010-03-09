@@ -55,6 +55,8 @@ void            adg_point_set_pair_from_model   (AdgPoint       *point,
                                                  const gchar    *name);
 const AdgPair * adg_point_get_pair              (AdgPoint       *point);
 void            adg_point_invalidate            (AdgPoint       *point);
+gboolean        adg_point_equal                 (const AdgPoint *point1,
+                                                 const AdgPoint *point2);
 
 G_END_DECLS
 
