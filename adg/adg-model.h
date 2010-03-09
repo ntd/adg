@@ -81,6 +81,11 @@ void            adg_model_foreach_dependency    (AdgModel         *model,
 void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
+void            adg_model_set_named_pair_explicit
+                                                (AdgModel         *model,
+                                                 const gchar      *name,
+                                                 gdouble           x,
+                                                 gdouble           y);
 const AdgPair * adg_model_get_named_pair        (AdgModel         *model,
                                                  const gchar      *name);
 void            adg_model_foreach_named_pair    (AdgModel         *model,

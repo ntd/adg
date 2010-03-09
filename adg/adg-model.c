@@ -381,6 +381,34 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
 }
 
 /**
+ * adg_model_set_named_pair_explicit:
+ * @model: an #AdgModel
+ * @name: the name to associate to the pair
+ * @x: the x coordinate of the point
+ * @y: the y coordinate of the point
+ *
+ * <note><para>
+ * This function is only useful in model definitions, such as
+ * inside an #AdgTrailCallback function or while constructing
+ * an #AdgPath instance.
+ * </para></note>
+ *
+ * Convenient wrapper on adg_model_set_named_pair() that accepts
+ * explicit coordinates.
+ **/
+void
+adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
+                                  gdouble x, gdouble y)
+{
+    AdgPair pair;
+
+    pair.x = x;
+    pair.y = y;
+
+    adg_model_set_named_pair(model, name, &pair);
+}
+
+/**
  * adg_model_get_named_pair:
  * @model: an #AdgModel
  * @name: the name of the pair to get
