@@ -70,6 +70,10 @@ TEST_PROGS+=		test-ldim
 test_ldim_SOURCES=	test-ldim.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-adim
+test_adim_SOURCES=	test-adim.c \
+			$(test_internals)
+
 endif
 
 
