@@ -67,8 +67,25 @@ adg_point_get_type(void)
 }
 
 /**
+ * adg_point_new:
+ *
+ * Creates a new empty #AdgPoint. The returned pointer
+ * should be freed with adg_point_destroy() when no longer needed.
+ *
+ * The returned value should be freed with adg_point_destroy()
+ * when no longer needed.
+ *
+ * Returns: a newly created #AdgPoint
+ **/
+AdgPoint *
+adg_point_new(void)
+{
+    return g_new0(AdgPoint, 1);
+}
+
+/**
  * adg_point_dup:
- * @src: an #AdgPoint structure
+ * @src: an #AdgPoint
  *
  * Duplicates @src. This operation also adds a new reference
  * to the internal model if @src is linked to a named pair.
@@ -92,40 +109,6 @@ adg_point_dup(const AdgPoint *src)
     point->name = g_strdup(src->name);
 
     return point;
-}
-
-/**
- * adg_point_new:
- *
- * Creates a new empty #AdgPoint. The returned pointer
- * should be freed with adg_point_destroy() when no longer needed.
- *
- * The returned value should be freed with adg_point_destroy()
- * when no longer needed.
- *
- * Returns: a newly created #AdgPoint
- **/
-AdgPoint *
-adg_point_new(void)
-{
-    return g_new0(AdgPoint, 1);
-}
-
-/**
- * adg_point_destroy:
- * @point: an #AdgPoint
- *
- * Destroys the @point instance, unreferencing the internal model if
- * @point is linked to a named pair.
- **/
-void
-adg_point_destroy(AdgPoint *point)
-{
-    g_return_if_fail(point != NULL);
-
-    adg_point_set_pair_from_model(point, NULL, NULL);
-
-    g_free(point);
 }
 
 /**
@@ -153,6 +136,61 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
 
     memcpy(point, src, sizeof(AdgPoint));
     point->name = g_strdup(src->name);
+}
+
+/**
+ * adg_point_set:
+ * @p_point: a pointer to an #AdgPoint
+ * @new_point: the new point to assign
+ *
+ * Convenient method to assign @new_point to the #AdgPoint pointed
+ * by @p_point. This is useful while implementing #AdgPoint
+ * property setters.
+ *
+ * At the end *@p_point will be set to @new_point, allocating a new
+ * #AdgPoint or destroying the previous one when necessary. It is
+ * allowed to use %NULL as @new_point to unset *@p_point.
+ *
+ * Returns: %TRUE if the pointer pointed by @p_point has been changed,
+ *          %FALSE otherwise
+ **/
+gboolean
+adg_point_set(AdgPoint **p_point, const AdgPoint *new_point)
+{
+    g_return_val_if_fail(p_point != NULL, FALSE);
+
+    if ((*p_point == new_point) ||
+        (*p_point && new_point && adg_point_equal(*p_point, new_point)))
+        return FALSE;
+
+    if (*p_point == NULL)
+        *p_point = adg_point_new();
+
+    if (new_point) {
+        adg_point_copy(*p_point, new_point);
+    } else {
+        adg_point_destroy(*p_point);
+        *p_point = NULL;
+    }
+
+    return TRUE;
+}
+
+/**
+ * adg_point_destroy:
+ * @point: an #AdgPoint
+ *
+ * Destroys the @point instance, unreferencing the internal model if
+ * @point is linked to a named pair.
+ **/
+void
+adg_point_destroy(AdgPoint *point)
+{
+    g_return_if_fail(point != NULL);
+
+    adg_point_set_pair_from_model(point, NULL, NULL);
+
+    g_free(point);
 }
 
 /**
