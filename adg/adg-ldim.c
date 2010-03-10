@@ -66,6 +66,8 @@ static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
+static gboolean         set_direction           (AdgLDim        *ldim,
+                                                 gdouble         direction);
 static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
@@ -109,7 +111,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     param = g_param_spec_double("direction",
                                 P_("Direction"),
                                 P_("The inclination angle of the extension lines"),
-                                -G_MAXDOUBLE, G_MAXDOUBLE, ADG_DIR_RIGHT,
+                                -G_PI, G_PI, ADG_DIR_RIGHT,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_DIRECTION, param);
 
@@ -138,7 +140,7 @@ adg_ldim_init(AdgLDim *ldim)
     line_to.header.type = CPML_LINE;
     line_to.header.length = 2;
 
-    data->direction = 0;
+    data->direction = ADG_DIR_RIGHT;
     data->has_extension1 = TRUE;
     data->has_extension2 = TRUE;
 
@@ -201,11 +203,15 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgLDimPrivate *data = ((AdgLDim *) object)->data;
+    AdgLDim *ldim;
+    AdgLDimPrivate *data;
+
+    ldim = (AdgLDim *) object;
+    data = ldim->data;
 
     switch (prop_id) {
     case PROP_DIRECTION:
-        data->direction = g_value_get_double(value);
+        set_direction(ldim, g_value_get_double(value));
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -337,18 +343,15 @@ adg_ldim_new_full_from_model(AdgModel *model,
  * @direction: an angle value, in radians
  *
  * Sets the direction angle where to extend @ldim.
+ * @direction is normalized by cpml_angle() before being used.
  **/
 void
 adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 {
-    AdgLDimPrivate *data;
-
     g_return_if_fail(ADG_IS_LDIM(ldim));
 
-    data = ldim->data;
-    data->direction = direction;
-
-    g_object_notify((GObject *) ldim, "direction");
+    if (set_direction(ldim, direction))
+        g_object_notify((GObject *) ldim, "direction");
 }
 
 /**
@@ -774,6 +777,21 @@ default_value(AdgDim *dim)
     update_geometry(ldim);
 
     return g_strdup_printf(format, data->geometry.distance);
+}
+
+static gboolean
+set_direction(AdgLDim *ldim, gdouble direction)
+{
+    AdgLDimPrivate *data = ldim->data;
+
+    direction = cpml_angle(direction);
+
+    if (data->direction == direction)
+        return FALSE;
+
+    data->direction = direction;
+
+    return TRUE;
 }
 
 static void

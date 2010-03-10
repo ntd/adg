@@ -30,9 +30,9 @@
 #include <math.h>
 
 #define ADG_DIR_RIGHT           0.
-#define ADG_DIR_DOWN            M_PI_2
-#define ADG_DIR_LEFT            M_PI
-#define ADG_DIR_UP              (M_PI_2 * 3.)
+#define ADG_DIR_DOWN            G_PI_2
+#define ADG_DIR_LEFT            G_PI
+#define ADG_DIR_UP              -G_PI_2
 
 #define ADG_FORWARD_DECL(id)    typedef struct _##id id
 
