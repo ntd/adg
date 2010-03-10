@@ -385,6 +385,7 @@ adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
     AdgLDimPrivate *data;
 
     g_return_if_fail(ADG_IS_LDIM(ldim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
 
     data = ldim->data;
 
@@ -428,6 +429,7 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
     AdgLDimPrivate *data;
 
     g_return_if_fail(ADG_IS_LDIM(ldim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
 
     data = ldim->data;
 
