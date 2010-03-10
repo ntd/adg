@@ -219,14 +219,10 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_ORG1:
-        if (data->org1 != NULL)
-            adg_point_destroy(data->org1);
-        data->org1 = g_value_dup_boxed(value);
+        adg_point_set(&data->org1, g_value_get_boxed(value));
         break;
     case PROP_ORG2:
-        if (data->org2 != NULL)
-            adg_point_destroy(data->org2);
-        data->org2 = g_value_dup_boxed(value);
+        adg_point_set(&data->org2, g_value_get_boxed(value));
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -245,20 +241,10 @@ set_property(GObject *object, guint prop_id,
  * adg_adim_new:
  *
  * Creates a new - undefined - angular dimension. You must, at least,
- * define the reference points with adg_dim_set_ref(), the origins of
- * the lines ending with the reference points with adg_adim_set_org()
- * and the reference for positioning the quote with adg_dim_set_pos().
- *
- * Returns: the newly created angular dimension entity
- **/
-/**
- * adg_adim_new:
- *
- * Creates a new - undefined - angular dimension. You must, at least,
  * define the first line by setting #AdgADim:org1 (start point) and
  * #AdgDim:ref1 (end point), the second line by setting #AdgADim:org2
  * (start point) and #AdgDim:ref2 (end point) and the position of
- * the quote with #AdgDim:pos.
+ * the quote in #AdgDim:pos.
  *
  * Returns: the newly created angular dimension entity
  **/
@@ -276,7 +262,7 @@ adg_adim_new(void)
  * @org2: second origin point
  *
  * Creates a new angular dimension, specifing all the needed
- * properties in one shot.
+ * properties in one shot using #AdgPair.
  *
  * Returns: the newly created angular dimension entity
  **/
@@ -294,7 +280,8 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     adg_dim_set_ref1_from_pair(dim, ref1);
     adg_dim_set_ref2_from_pair(dim, ref2);
     adg_dim_set_pos_from_pair(dim, pos);
-    adg_adim_set_org(adim, org1, org2);
+    adg_adim_set_org1_from_pair(adim, org1);
+    adg_adim_set_org2_from_pair(adim, org2);
 
     return adim;
 }
@@ -365,151 +352,115 @@ adg_adim_new_full_from_model(AdgModel *model,
     adg_dim_set_ref1_from_model(dim, model, ref1);
     adg_dim_set_ref2_from_model(dim, model, ref2);
     adg_dim_set_pos_from_model(dim, model, pos);
-    adg_adim_set_org_from_model(adim, model, org1, org2);
+    adg_adim_set_org1_from_model(adim, model, org1);
+    adg_adim_set_org2_from_model(adim, model, org2);
 
     return adim;
 }
 
 /**
- * adg_adim_set_org:
+ * adg_adim_set_org1:
  * @adim: an #AdgADim
- * @org1: the first origin
- * @org2: the second origin
+ * @org1: the new point to use as first reference
  *
- * Sets at once the two origins on @adim. One of @org1 or @org2
- * (but not both) could be %NULL, in which case only the non-null
- * origin is set.
+ * Sets the #AdgADim:org1 property to @org1. The old point
+ * is silently discarded, unreferencing its model if that
+ * point was bound to a named pair (hence, possibly destroying
+ * the model if this was the last reference).
+ *
+ * @org1 can be %NULL, in which case the point is unset.
  **/
 void
-adg_adim_set_org(AdgADim *adim, const AdgPair *org1, const AdgPair *org2)
+adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
 {
-    GObject *object;
     AdgADimPrivate *data;
 
     g_return_if_fail(ADG_IS_ADIM(adim));
-    g_return_if_fail(org1 != NULL || org2 != NULL);
 
-    object = (GObject *) adim;
     data = adim->data;
 
-    g_object_freeze_notify(object);
-
-    if (org1 != NULL) {
-        if (data->org1 == NULL)
-            data->org1 = adg_point_new();
-
-        adg_point_set_pair(data->org1, org1);
-
-        g_object_notify(object, "org1");
-    }
-
-    if (org2 != NULL) {
-        if (data->org2 == NULL)
-            data->org2 = adg_point_new();
-
-        adg_point_set_pair(data->org2, org2);
-
-        g_object_notify(object, "org2");
-    }
-
-    g_object_thaw_notify(object);
+    if (adg_point_set(&data->org1, org1))
+        g_object_notify((GObject *) adim, "org1");
 }
 
 /**
- * adg_adim_set_org_explicit:
+ * adg_adim_set_org1_explicit:
  * @adim: an #AdgADim
- * @org1_x: x coordinate of org1
- * @org1_y: y coordinate of org1
- * @org2_x: x coordinate of org2
- * @org2_y: y coordinate of org2
+ * @x: x coordinate of the first reference point
+ * @y: y coordinate of the first reference point
  *
- * Works in the same way as adg_adim_set_org() but using
- * explicit coordinates instead of #AdgPair args. The
- * notable difference is that, by using gdouble values,
- * you can't set only a single origin point.
+ * Sets the #AdgADim:org1 property to the (@x, @y) explicit
+ * coordinates. The old point is silently discarded,
+ * unreferencing its model if that point was bound to a named
+ * pair (hence, possibly destroying the model if this was the
+ * last reference).
  **/
 void
-adg_adim_set_org_explicit(AdgADim *adim,
-                          gdouble org1_x, gdouble org1_y,
-                          gdouble org2_x, gdouble org2_y)
+adg_adim_set_org1_explicit(AdgADim *adim, gdouble x, gdouble y)
 {
-    AdgPair org1, org2;
+    AdgPoint *point = adg_point_new();
 
-    org1.x = org1_x;
-    org1.y = org1_y;
-    org2.x = org2_x;
-    org2.y = org2_y;
+    adg_point_set_pair_explicit(point, x, y);
+    adg_adim_set_org1(adim, point);
 
-    adg_adim_set_org(adim, &org1, &org2);
+    adg_point_destroy(point);
 }
 
 /**
- * adg_adim_set_org_from_model:
+ * adg_adim_set_org1_from_pair:
+ * @adim: an #AdgADim
+ * @org1: the coordinates pair of the first reference point
+ *
+ * Convenient function to set the #AdgADim:org1 property using a
+ * pair instead of explicit coordinates.
+ **/
+void
+adg_adim_set_org1_from_pair(AdgADim *adim, const AdgPair *org1)
+{
+    g_return_if_fail(org1 != NULL);
+
+    adg_adim_set_org1_explicit(adim, org1->x, org1->y);
+}
+
+/**
+ * adg_adim_set_org1_from_model:
  * @adim: an #AdgADim
  * @model: the source #AdgModel
- * @org1: name of the pair in @model to use as org1
- * @org2: name of the pair in @model to use as org2
+ * @org1: a named pair in @model
  *
- * Sets #AdgADim:org1 and #AdgADim:org2 properties by linking
- * them to the @org1 and @org2 named pairs in @model. @org1
- * or @org2 could be %NULL (but not both), in which case
- * only the non-null origin point is changed.
+ * Binds #AdgADim:org1 to the @org1 named pair of @model. If @model
+ * is %NULL, the point will be unset. In any case, the old point
+ * is silently discarded, unreferencing its model if that point
+ * was bound to a named pair (hence, possibly destroying the model
+ * if this was the last reference).
  *
- * Using this function twice you can also link the origin
- * points to named pairs taken from different models:
- *
- * |[
- * adg_adim_set_org_from_model(adim, model1, org1, NULL);
- * adg_adim_set_org_from_model(adim, model2, NULL, org2);
- * ]|
+ * The assignment is lazy so @org1 could be not be present in @model.
+ * Anyway, at the first access to this point an error will be raised
+ * if the named pair is still missing.
  **/
 void
-adg_adim_set_org_from_model(AdgADim *adim, AdgModel *model,
-                            const gchar *org1, const gchar *org2)
+adg_adim_set_org1_from_model(AdgADim *adim, AdgModel *model, const gchar *org1)
 {
-    GObject *object;
-    AdgADimPrivate *data;
+    AdgPoint *point = adg_point_new();
 
-    g_return_if_fail(ADG_IS_ADIM(adim));
-    g_return_if_fail(ADG_IS_MODEL(model));
-    g_return_if_fail(org1 != NULL || org2 != NULL);
+    adg_point_set_pair_from_model(point, model, org1);
+    adg_adim_set_org1(adim, point);
 
-    object = (GObject *) adim;
-    data = adim->data;
-
-    g_object_freeze_notify(object);
-
-    if (org1 != NULL) {
-        if (data->org1 == NULL)
-            data->org1 = adg_point_new();
-
-        adg_point_set_pair_from_model(data->org1, model, org1);
-
-        g_object_notify(object, "org1");
-    }
-
-    if (org2 != NULL) {
-        if (data->org2 == NULL)
-            data->org2 = adg_point_new();
-
-        adg_point_set_pair_from_model(data->org2, model, org2);
-
-        g_object_notify(object, "org2");
-    }
-
-    g_object_thaw_notify(object);
+    adg_point_destroy(point);
 }
 
 /**
  * adg_adim_get_org1:
  * @adim: an #AdgADim
  *
- * Gets the first origin of @adim. The returned pair is owned by
- * @adim and should not be modified or freed.
+ * Gets the #AdgADim:org1 point. The returned point is internally owned
+ * and must not be freed or modified. Anyway, it is not const because
+ * adg_point_get_pair() must be able to modify the internal cache of
+ * the returned point.
  *
- * Returns: a pointer to the internal #AdgPair or %NULL on errors
+ * Returns: the first reference point
  **/
-const AdgPair *
+AdgPoint *
 adg_adim_get_org1(AdgADim *adim)
 {
     AdgADimPrivate *data;
@@ -518,19 +469,112 @@ adg_adim_get_org1(AdgADim *adim)
 
     data = adim->data;
 
-    return adg_point_get_pair(data->org1);
+    return data->org1;
+}
+
+/**
+ * adg_adim_set_org2:
+ * @adim: an #AdgADim
+ * @org2: the new point to use as first reference
+ *
+ * Sets the #AdgADim:org2 property to @org2. The old point
+ * is silently discarded, unreferencing its model if that
+ * point was bound to a named pair (hence, possibly destroying
+ * the model if this was the last reference).
+ *
+ * @org2 can be %NULL, in which case the point is unset.
+ **/
+void
+adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
+{
+    AdgADimPrivate *data;
+
+    g_return_if_fail(ADG_IS_ADIM(adim));
+
+    data = adim->data;
+
+    if (adg_point_set(&data->org2, org2))
+        g_object_notify((GObject *) adim, "org2");
+}
+
+/**
+ * adg_adim_set_org2_explicit:
+ * @adim: an #AdgADim
+ * @x: x coordinate of the first reference point
+ * @y: y coordinate of the first reference point
+ *
+ * Sets the #AdgADim:org2 property to the (@x, @y) explicit
+ * coordinates. The old point is silently discarded,
+ * unreferencing its model if that point was bound to a named
+ * pair (hence, possibly destroying the model if this was the
+ * last reference).
+ **/
+void
+adg_adim_set_org2_explicit(AdgADim *adim, gdouble x, gdouble y)
+{
+    AdgPoint *point = adg_point_new();
+
+    adg_point_set_pair_explicit(point, x, y);
+    adg_adim_set_org2(adim, point);
+
+    adg_point_destroy(point);
+}
+
+/**
+ * adg_adim_set_org2_from_pair:
+ * @adim: an #AdgADim
+ * @org2: the coordinates pair of the first reference point
+ *
+ * Convenient function to set the #AdgADim:org2 property using a
+ * pair instead of explicit coordinates.
+ **/
+void
+adg_adim_set_org2_from_pair(AdgADim *adim, const AdgPair *org2)
+{
+    g_return_if_fail(org2 != NULL);
+
+    adg_adim_set_org2_explicit(adim, org2->x, org2->y);
+}
+
+/**
+ * adg_adim_set_org2_from_model:
+ * @adim: an #AdgADim
+ * @model: the source #AdgModel
+ * @org2: a named pair in @model
+ *
+ * Binds #AdgADim:org2 to the @org2 named pair of @model. If @model
+ * is %NULL, the point will be unset. In any case, the old point
+ * is silently discarded, unreferencing its model if that point
+ * was bound to a named pair (hence, possibly destroying the model
+ * if this was the last reference).
+ *
+ * The assignment is lazy so @org2 could be not be present in @model.
+ * Anyway, at the first access to this point an error will be raised
+ * if the named pair is still missing.
+ **/
+void
+adg_adim_set_org2_from_model(AdgADim *adim, AdgModel *model, const gchar *org2)
+{
+    AdgPoint *point = adg_point_new();
+
+    adg_point_set_pair_from_model(point, model, org2);
+    adg_adim_set_org2(adim, point);
+
+    adg_point_destroy(point);
 }
 
 /**
  * adg_adim_get_org2:
  * @adim: an #AdgADim
  *
- * Gets the second origin of @adim. The returned pair is owned by
- * @adim and should not be modified or freed.
+ * Gets the #AdgADim:org2 point. The returned point is internally owned
+ * and must not be freed or modified. Anyway, it is not const because
+ * adg_point_get_pair() must be able to modify the internal cache of
+ * the returned point.
  *
- * Returns: a pointer to the internal #AdgPair or %NULL on errors
+ * Returns: the first reference point
  **/
-const AdgPair *
+AdgPoint *
 adg_adim_get_org2(AdgADim *adim)
 {
     AdgADimPrivate *data;
@@ -539,7 +583,7 @@ adg_adim_get_org2(AdgADim *adim)
 
     data = adim->data;
 
-    return adg_point_get_pair(data->org2);
+    return data->org2;
 }
 
 

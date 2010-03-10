@@ -77,21 +77,28 @@ AdgADim *       adg_adim_new_full_from_model    (AdgModel       *model,
                                                  const gchar    *org1,
                                                  const gchar    *org2,
                                                  const gchar    *pos);
-
-void            adg_adim_set_org                (AdgADim        *adim,
-                                                 const AdgPair  *org1,
-                                                 const AdgPair  *org2);
-void            adg_adim_set_org_explicit       (AdgADim        *adim,
-                                                 gdouble         org1_x,
-                                                 gdouble         org1_y,
-                                                 gdouble         org2_x,
-                                                 gdouble         org2_y);
-void            adg_adim_set_org_from_model     (AdgADim        *adim,
+void            adg_adim_set_org1               (AdgADim        *adim,
+                                                 const AdgPoint *org1);
+void            adg_adim_set_org1_explicit      (AdgADim        *adim,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_adim_set_org1_from_pair     (AdgADim        *adim,
+                                                 const AdgPair  *org1);
+void            adg_adim_set_org1_from_model    (AdgADim        *adim,
                                                  AdgModel       *model,
-                                                 const gchar    *org1,
+                                                 const gchar    *org1);
+AdgPoint *      adg_adim_get_org1               (AdgADim        *adim);
+void            adg_adim_set_org2               (AdgADim        *adim,
+                                                 const AdgPoint *org2);
+void            adg_adim_set_org2_explicit      (AdgADim        *adim,
+                                                 gdouble         x,
+                                                 gdouble         y);
+void            adg_adim_set_org2_from_pair     (AdgADim        *adim,
+                                                 const AdgPair  *org2);
+void            adg_adim_set_org2_from_model    (AdgADim        *adim,
+                                                 AdgModel       *model,
                                                  const gchar    *org2);
-const AdgPair * adg_adim_get_org1               (AdgADim        *adim);
-const AdgPair * adg_adim_get_org2               (AdgADim        *adim);
+AdgPoint *      adg_adim_get_org2               (AdgADim        *adim);
 
 G_END_DECLS
 
