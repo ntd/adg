@@ -126,14 +126,14 @@ adg_dim_class_init(AdgDimClass *klass)
     g_object_class_install_property(gobject_class, PROP_DIM_DRESS, param);
 
     param = g_param_spec_boxed("ref1",
-                               P_("Reference 1"),
+                               P_("First Reference"),
                                P_("First reference point of the dimension"),
                                ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_REF1, param);
 
     param = g_param_spec_boxed("ref2",
-                               P_("Reference 2"),
+                               P_("Second Reference"),
                                P_("Second reference point of the dimension"),
                                ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
