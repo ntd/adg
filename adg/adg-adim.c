@@ -190,10 +190,10 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 
     switch (prop_id) {
     case PROP_ORG1:
-        g_value_set_boxed(value, &data->org1);
+        g_value_set_boxed(value, data->org1);
         break;
     case PROP_ORG2:
-        g_value_set_boxed(value, &data->org2);
+        g_value_set_boxed(value, data->org2);
         break;
     case PROP_HAS_EXTENSION1:
         g_value_set_boolean(value, data->has_extension1);
