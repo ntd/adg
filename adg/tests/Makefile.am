@@ -66,6 +66,10 @@ TEST_PROGS+=		test-dim
 test_dim_SOURCES=	test-dim.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-ldim
+test_ldim_SOURCES=	test-ldim.c \
+			$(test_internals)
+
 endif
 
 
