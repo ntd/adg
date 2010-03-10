@@ -78,12 +78,6 @@ static gchar *  default_value           (AdgDim         *dim);
 static gdouble  quote_angle             (gdouble         angle);
 static gboolean set_dim_dress           (AdgDim         *dim,
                                          AdgDress        dress);
-static gboolean set_ref1                (AdgDim         *dim,
-                                         const AdgPoint *ref1);
-static gboolean set_ref2                (AdgDim         *dim,
-                                         const AdgPoint *ref2);
-static gboolean set_pos                 (AdgDim         *dim,
-                                         const AdgPoint *pos);
 static gboolean set_outside             (AdgDim         *dim,
                                          AdgThreeState   outside);
 static gboolean set_detached            (AdgDim         *dim,
@@ -94,8 +88,6 @@ static gboolean set_min                 (AdgDim         *dim,
                                          const gchar    *min);
 static gboolean set_max                 (AdgDim         *dim,
                                          const gchar    *max);
-static gboolean set_point               (AdgPoint      **point,
-                                         const AdgPoint *new_point);
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -313,13 +305,13 @@ set_property(GObject *object, guint prop_id,
         set_dim_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
-        set_ref1(dim, g_value_get_boxed(value));
+        adg_point_set(&data->ref1, g_value_get_boxed(value));
         break;
     case PROP_REF2:
-        set_ref2(dim, g_value_get_boxed(value));
+        adg_point_set(&data->ref2, g_value_get_boxed(value));
         break;
     case PROP_POS:
-        set_pos(dim, g_value_get_boxed(value));
+        adg_point_set(&data->pos, g_value_get_boxed(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -403,9 +395,13 @@ adg_dim_get_dim_dress(AdgDim *dim)
 void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_ref1(dim, ref1))
+    data = dim->data;
+
+    if (adg_point_set(&data->ref1, ref1))
         g_object_notify((GObject *) dim, "ref1");
 }
 
@@ -513,9 +509,13 @@ adg_dim_get_ref1(AdgDim *dim)
 void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_ref2(dim, ref2))
+    data = dim->data;
+
+    if (adg_point_set(&data->ref2, ref2))
         g_object_notify((GObject *) dim, "ref2");
 }
 
@@ -623,9 +623,13 @@ adg_dim_get_ref2(AdgDim *dim)
 void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
 {
+    AdgDimPrivate *data;
+
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_pos(dim, pos))
+    data = dim->data;
+
+    if (adg_point_set(&data->pos, pos))
         g_object_notify((GObject *) dim, "pos");
 }
 
@@ -1233,30 +1237,6 @@ set_dim_dress(AdgDim *dim, AdgDress dress)
 }
 
 static gboolean
-set_ref1(AdgDim *dim, const AdgPoint *ref1)
-{
-    AdgDimPrivate *data = dim->data;
-
-    return set_point(&data->ref1, ref1);
-}
-
-static gboolean
-set_ref2(AdgDim *dim, const AdgPoint *ref2)
-{
-    AdgDimPrivate *data = dim->data;
-
-    return set_point(&data->ref2, ref2);
-}
-
-static gboolean
-set_pos(AdgDim *dim, const AdgPoint *pos)
-{
-    AdgDimPrivate *data = dim->data;
-
-    return set_point(&data->pos, pos);
-}
-
-static gboolean
 set_outside(AdgDim *dim, AdgThreeState outside)
 {
     AdgDimPrivate *data;
@@ -1346,26 +1326,6 @@ set_max(AdgDim *dim, const gchar *max)
     if (data->quote.max != NULL) {
         g_object_unref(data->quote.max);
         data->quote.max = NULL;
-    }
-
-    return TRUE;
-}
-
-static gboolean
-set_point(AdgPoint **point, const AdgPoint *new_point)
-{
-    if ((*point == new_point) ||
-        (*point && new_point && adg_point_equal(*point, new_point)))
-        return FALSE;
-
-    if (*point == NULL)
-        *point = adg_point_new();
-
-    if (new_point) {
-        adg_point_copy(*point, new_point);
-    } else {
-        adg_point_destroy(*point);
-        *point = NULL;
     }
 
     return TRUE;

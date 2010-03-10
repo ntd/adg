@@ -70,7 +70,7 @@ void            adg_dim_set_ref1_explicit       (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_dim_set_ref1_from_pair      (AdgDim         *dim,
-                                                 const AdgPair  *ref2);
+                                                 const AdgPair  *ref1);
 void            adg_dim_set_ref1_from_model     (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *ref1);
