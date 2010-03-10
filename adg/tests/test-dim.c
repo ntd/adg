@@ -304,16 +304,16 @@ _adg_test_pos(void)
     g_assert(adg_point_equal(pos, model_point));
 
     /* Using GObject property methods */
-    adg_dim_set_pos_explicit(dim, 0, 0);
+    g_object_set(dim, "pos", origin, NULL);
     g_object_get(dim, "pos", &pos, NULL);
     g_assert(adg_point_equal(pos, origin));
     adg_point_destroy(pos);
 
-    adg_dim_set_pos(dim, NULL);
+    g_object_set(dim, "pos", NULL, NULL);
     g_object_get(dim, "pos", &pos, NULL);
     g_assert(pos == NULL);
 
-    adg_dim_set_pos(dim, explicit_point);
+    g_object_set(dim, "pos", explicit_point, NULL);
     g_object_get(dim, "pos", &pos, NULL);
     g_assert(adg_point_equal(pos, explicit_point));
     adg_point_destroy(pos);
@@ -325,7 +325,7 @@ _adg_test_pos(void)
     g_assert(adg_point_get_pair(pos) == NULL);
     adg_point_destroy(pos);
 
-    adg_dim_set_pos_from_model(dim, model, "named-pair");
+    g_object_set(dim, "pos", model_point, NULL);
     g_object_get(dim, "pos", &pos, NULL);
     g_assert(adg_point_equal(pos, model_point));
     adg_point_destroy(pos);
@@ -388,16 +388,16 @@ _adg_test_ref1(void)
     g_assert(adg_point_equal(ref1, model_point));
 
     /* Using GObject property methods */
-    adg_dim_set_ref1_explicit(dim, 0, 0);
+    g_object_set(dim, "ref1", origin, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
     g_assert(adg_point_equal(ref1, origin));
     adg_point_destroy(ref1);
 
-    adg_dim_set_ref1(dim, NULL);
+    g_object_set(dim, "ref1", NULL, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
     g_assert(ref1 == NULL);
 
-    adg_dim_set_ref1(dim, explicit_point);
+    g_object_set(dim, "ref1", explicit_point, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
     g_assert(adg_point_equal(ref1, explicit_point));
     adg_point_destroy(ref1);
@@ -409,7 +409,7 @@ _adg_test_ref1(void)
     g_assert(adg_point_get_pair(ref1) == NULL);
     adg_point_destroy(ref1);
 
-    adg_dim_set_ref1_from_model(dim, model, "named-pair");
+    g_object_set(dim, "ref1", model_point, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
     g_assert(adg_point_equal(ref1, model_point));
     adg_point_destroy(ref1);
@@ -472,16 +472,16 @@ _adg_test_ref2(void)
     g_assert(adg_point_equal(ref2, model_point));
 
     /* Using GObject property methods */
-    adg_dim_set_ref2_explicit(dim, 0, 0);
+    g_object_set(dim, "ref2", origin, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
     g_assert(adg_point_equal(ref2, origin));
     adg_point_destroy(ref2);
 
-    adg_dim_set_ref2(dim, NULL);
+    g_object_set(dim, "ref2", NULL, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
     g_assert(ref2 == NULL);
 
-    adg_dim_set_ref2(dim, explicit_point);
+    g_object_set(dim, "ref2", explicit_point, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
     g_assert(adg_point_equal(ref2, explicit_point));
     adg_point_destroy(ref2);
@@ -493,7 +493,7 @@ _adg_test_ref2(void)
     g_assert(adg_point_get_pair(ref2) == NULL);
     adg_point_destroy(ref2);
 
-    adg_dim_set_ref2_from_model(dim, model, "named-pair");
+    g_object_set(dim, "ref2", model_point, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
     g_assert(adg_point_equal(ref2, model_point));
     adg_point_destroy(ref2);
