@@ -55,6 +55,9 @@ struct _AdgArrowClass {
 
 GType           adg_arrow_get_type              (void) G_GNUC_CONST;
 
+AdgArrow *      adg_arrow_new                   (void);
+AdgArrow *      adg_arrow_new_with_trail        (AdgTrail       *trail,
+                                                 gdouble         pos);
 void            adg_arrow_set_angle             (AdgArrow       *arrow,
                                                  gdouble         angle);
 gdouble         adg_arrow_get_angle             (AdgArrow       *arrow);
