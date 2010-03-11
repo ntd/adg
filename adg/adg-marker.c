@@ -657,6 +657,8 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
     AdgMarkerPrivate *data;
     AdgEntity *entity;
 
+    g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
+
     data = marker->data;
     entity = (AdgEntity *) marker;
 
@@ -764,6 +766,8 @@ static gboolean
 set_model(AdgMarker *marker, AdgModel *model)
 {
     AdgMarkerPrivate *data = marker->data;
+
+    g_return_val_if_fail(model == NULL || ADG_IS_MODEL(model), FALSE);
 
     if (model == data->model)
         return FALSE;
