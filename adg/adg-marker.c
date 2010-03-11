@@ -244,24 +244,28 @@ set_property(GObject *object,
 
 
 /**
- * adg_marker_set_segment:
+ * adg_marker_set_trail:
  * @marker: an #AdgMarker
- * @trail: the #AdgTrail
- * @n_segment: a segment index
+ * @trail: the new trail to use
  *
- * Sets the new segment where the marker should be applied. The weak
- * reference to the old trail (if an old trail was present) is dropped
- * while a new weak reference is added to @trail. If @trail is destroyed,
- * the weak reference callback will automatically unset #AdgMarker:trai
- * and will set #AdgMarker:n-segment to %0.
+ * Sets the #AdgMarker:trail property to @trail. It is allowed to pass
+ * %NULL to unset the current trail.
+ *
+ * The #AdgMarker:n-segment property is silently set to %0: if you
+ * want to set both properties at once (as usually requested to
+ * refer to a specific segment), adg_marker_set_segment() should
+ * be more convenient.
  **/
 void
-adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
+adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
 
-    if (set_segment(marker, trail, n_segment))
-        g_object_notify((GObject *) marker, "trail");
+    if (set_segment(marker, trail, 0)) {
+        GObject *object = (GObject *) marker;
+        g_object_notify(object, "trail");
+        g_object_notify(object, "n-segment");
+    }
 }
 
 /**
@@ -285,6 +289,29 @@ adg_marker_get_trail(AdgMarker *marker)
 }
 
 /**
+ * adg_marker_set_n_segment:
+ * @marker: an #AdgMarker
+ * @n_segment: the new segment index
+ *
+ * Sets the #AdgMarker:n-segment property to @n_segment. The trail
+ * is unchanged. If you want to set both properties at once (as
+ * usually requested to refer to a specific segment),
+ * adg_marker_set_segment() should be more convenient.
+ **/
+void
+adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
+{
+    AdgMarkerPrivate *data;
+
+    g_return_if_fail(ADG_IS_MARKER(marker));
+
+    data = marker->data;
+
+    if (set_segment(marker, data->trail, 0))
+        g_object_notify((GObject *) marker, "n-segment");
+}
+
+/**
  * adg_marker_get_n_segment:
  * @marker: an #AdgMarker
  *
@@ -303,6 +330,30 @@ adg_marker_get_n_segment(AdgMarker *marker)
     data = marker->data;
 
     return data->n_segment;
+}
+
+/**
+ * adg_marker_set_segment:
+ * @marker: an #AdgMarker
+ * @trail: the #AdgTrail
+ * @n_segment: a segment index
+ *
+ * Sets a new segment where the marker should be applied at once. The weak
+ * reference to the old trail (if an old trail was present) is dropped
+ * while a new weak reference is added to @trail. If @trail is destroyed,
+ * the weak reference callback will automatically unset #AdgMarker:trail
+ * and will set #AdgMarker:n-segment to %0.
+ **/
+void
+adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
+{
+    g_return_if_fail(ADG_IS_MARKER(marker));
+
+    if (set_segment(marker, trail, n_segment)) {
+        GObject *object = (GObject *) marker;
+        g_object_notify(object, "trail");
+        g_object_notify(object, "n-segment");
+    }
 }
 
 /**

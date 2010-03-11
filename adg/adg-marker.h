@@ -59,11 +59,15 @@ struct _AdgMarkerClass {
 
 GType             adg_marker_get_type             (void) G_GNUC_CONST;
 
+void              adg_marker_set_trail          (AdgMarker      *marker,
+                                                 AdgTrail       *trail);
+AdgTrail *        adg_marker_get_trail          (AdgMarker      *marker);
+void              adg_marker_set_n_segment      (AdgMarker      *marker,
+                                                 guint           n_segment);
+guint             adg_marker_get_n_segment      (AdgMarker      *marker);
 void              adg_marker_set_segment        (AdgMarker      *marker,
                                                  AdgTrail       *trail,
                                                  guint           n_segment);
-AdgTrail *        adg_marker_get_trail          (AdgMarker      *marker);
-guint             adg_marker_get_n_segment      (AdgMarker      *marker);
 const AdgSegment *adg_marker_get_segment        (AdgMarker      *marker);
 void              adg_marker_backup_segment     (AdgMarker      *marker);
 const AdgSegment *adg_marker_get_backup_segment (AdgMarker      *marker);
