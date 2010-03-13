@@ -74,6 +74,10 @@ TEST_PROGS+=		test-adim
 test_adim_SOURCES=	test-adim.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-marker
+test_marker_SOURCES=	test-marker.c \
+			$(test_internals)
+
 endif
 
 
