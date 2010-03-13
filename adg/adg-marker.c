@@ -81,11 +81,13 @@ static void             set_property            (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
-static gboolean         set_segment             (AdgMarker      *marker,
-                                                 AdgTrail       *trail,
-                                                 guint           n_segment);
+static gboolean         set_trail               (AdgMarker      *marker,
+                                                 AdgTrail       *trail);
 static void             unset_trail             (AdgMarker      *marker);
 static gboolean         set_n_segment           (AdgMarker      *marker,
+                                                 guint           n_segment);
+static gboolean         set_segment             (AdgMarker      *marker,
+                                                 AdgTrail       *trail,
                                                  guint           n_segment);
 static gboolean         set_pos                 (AdgMarker      *marker,
                                                  gdouble         pos);
@@ -138,7 +140,7 @@ adg_marker_class_init(AdgMarkerClass *klass)
                                 P_("Position"),
                                 P_("The position ratio inside the segment where to put the marker (0 means the start point while 1 means the end point)"),
                                 0, 1, 0,
-                                G_PARAM_READWRITE);
+                                G_PARAM_READWRITE|G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_POS, param);
 
     param = g_param_spec_double("size",
@@ -222,7 +224,7 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_TRAIL:
-        set_segment(marker, g_value_get_object(value), 1);
+        set_trail(marker, g_value_get_object(value));
         break;
     case PROP_N_SEGMENT:
         set_n_segment(marker, g_value_get_uint(value));
@@ -251,21 +253,19 @@ set_property(GObject *object,
  * Sets the #AdgMarker:trail property to @trail. It is allowed to pass
  * %NULL to unset the current trail.
  *
- * The #AdgMarker:n-segment property is silently set to %0: if you
- * want to set both properties at once (as usually requested to
- * refer to a specific segment), adg_marker_set_segment() should
- * be more convenient.
+ * This method could fail unexpectedly if the segment index specified
+ * by the #AdgMarker:n-segment property is not present inside the new
+ * segment: if you want to set a new segment it is more convenient to
+ * change both properties (#AdgMarker:trail and #AdgMarker:n-segment)
+ * at once with adg_marker_set_segment().
  **/
 void
 adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
 
-    if (set_segment(marker, trail, 0)) {
-        GObject *object = (GObject *) marker;
-        g_object_notify(object, "trail");
-        g_object_notify(object, "n-segment");
-    }
+    if (set_trail(marker, trail))
+        g_object_notify((GObject *) marker, "trail");
 }
 
 /**
@@ -307,7 +307,7 @@ adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
 
     data = marker->data;
 
-    if (set_segment(marker, data->trail, 0))
+    if (set_n_segment(marker, n_segment))
         g_object_notify((GObject *) marker, "n-segment");
 }
 
@@ -652,10 +652,31 @@ invalidate(AdgEntity *entity)
 
 
 static gboolean
+set_trail(AdgMarker *marker, AdgTrail *trail)
+{
+    AdgMarkerPrivate *data = marker->data;
+    return set_segment(marker, trail, data->n_segment);
+}
+
+static void
+unset_trail(AdgMarker *marker)
+{
+    set_segment(marker, NULL, 0);
+}
+
+static gboolean
+set_n_segment(AdgMarker *marker, guint n_segment)
+{
+    AdgMarkerPrivate *data = marker->data;
+    return set_segment(marker, data->trail, n_segment);
+}
+
+static gboolean
 set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 {
     AdgMarkerPrivate *data;
     AdgEntity *entity;
+    AdgSegment segment = { 0 };
 
     g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
 
@@ -677,63 +698,35 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
      * http://dev.entidi.com/p/adg/issues/33/
      */
 
+    if (trail) {
+        /* Validate the new segment, but only if n_segment is specified */
+        if (n_segment > 0 && !adg_trail_put_segment(trail, n_segment, &segment))
+            return FALSE;
+
+        g_object_weak_ref((GObject *) trail,
+                          (GWeakNotify) unset_trail, marker);
+        adg_model_add_dependency((AdgModel *) trail, entity);
+    }
+
     if (data->trail != NULL) {
-        /* Restore the original segment in the old trail */
-        set_n_segment(marker, 0);
+        /* Disconnect the old trail */
+        if (data->backup_segment != NULL) {
+            /* Restore the original segment in the old trail */
+            adg_segment_deep_copy(&data->segment, data->backup_segment);
+            g_free(data->backup_segment);
+            data->backup_segment = NULL;
+        }
 
         g_object_weak_unref((GObject *) data->trail,
                             (GWeakNotify) unset_trail, marker);
         adg_model_remove_dependency((AdgModel *) data->trail, entity);
     }
 
+    cpml_segment_copy(&data->segment, &segment);
     data->trail = trail;
-    data->n_segment = 0;
-
-    if (data->trail != NULL) {
-        g_object_weak_ref((GObject *) data->trail,
-                          (GWeakNotify) unset_trail, marker);
-        adg_model_add_dependency((AdgModel *) data->trail, entity);
-
-        set_n_segment(marker, n_segment);
-    }
-
-    return TRUE;
-}
-
-static void
-unset_trail(AdgMarker *marker)
-{
-    AdgMarkerPrivate *data = marker->data;
-
-    if (data->trail != NULL)
-        set_segment(marker, NULL, 0);
-}
-
-static gboolean
-set_n_segment(AdgMarker *marker, guint n_segment)
-{
-    AdgMarkerPrivate *data = marker->data;
-
-    if (n_segment == data->n_segment)
-        return FALSE;
-
-    if (data->backup_segment != NULL) {
-        /* Restore the original segment, if any */
-        if (data->trail != NULL)
-            adg_segment_deep_copy(&data->segment, data->backup_segment);
-
-        g_free(data->backup_segment);
-        data->backup_segment = NULL;
-    }
-
     data->n_segment = n_segment;
 
-    if (n_segment == 0) {
-        memset(&data->segment, 0, sizeof(data->segment));
-        return TRUE;
-    }
-
-    return adg_trail_put_segment(data->trail, n_segment, &data->segment);
+    return TRUE;
 }
 
 static gboolean
@@ -758,6 +751,9 @@ static gboolean
 set_size(AdgMarker *marker, gdouble size)
 {
     AdgMarkerPrivate *data = marker->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(size >= 0, FALSE);
 
     if (size == data->size)
         return FALSE;
