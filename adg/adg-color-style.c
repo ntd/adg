@@ -63,6 +63,8 @@ static void             set_property    (GObject        *object,
 static void             apply           (AdgStyle       *style,
                                          AdgEntity      *entity,
                                          cairo_t        *cr);
+static gboolean         set_channel     (gdouble        *channel,
+                                         gdouble         value);
 
 
 G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE);
@@ -162,16 +164,16 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_RED:
-        data->red = g_value_get_double(value);
+        set_channel(&data->red, g_value_get_double(value));
         break;
     case PROP_GREEN:
-        data->green = g_value_get_double(value);
+        set_channel(&data->green, g_value_get_double(value));
         break;
     case PROP_BLUE:
-        data->blue = g_value_get_double(value);
+        set_channel(&data->blue, g_value_get_double(value));
         break;
     case PROP_ALPHA:
-        data->alpha = g_value_get_double(value);
+        set_channel(&data->alpha, g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -194,6 +196,132 @@ adg_color_style_new(void)
 }
 
 /**
+ * adg_color_style_set_red:
+ * @color_style: an #AdgColorStyle
+ * @red: the new value
+ *
+ * Sets a new value for the red channel, where %0 means no red and
+ * %1 is full red.
+ **/
+void
+adg_color_style_set_red(AdgColorStyle *color_style, gdouble red)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
+
+    data = color_style->data;
+
+    if (set_channel(&data->red, red))
+        g_object_notify((GObject *) color_style, "red");
+}
+
+/**
+ * adg_color_style_get_red:
+ * @color_style: an #AdgColorStyle
+ *
+ * Gets the current value of the red channel, where %0 means no red and
+ * %1 is full red.
+ *
+ * Returns: the requested red value
+ **/
+gdouble
+adg_color_style_get_red(AdgColorStyle *color_style)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
+
+    data = color_style->data;
+
+    return data->red;
+}
+
+/**
+ * adg_color_style_set_green:
+ * @color_style: an #AdgColorStyle
+ * @green: the new value
+ *
+ * Sets a new value for the green channel, where %0 means no green and
+ * %1 is full green.
+ **/
+void
+adg_color_style_set_green(AdgColorStyle *color_style, gdouble green)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
+
+    data = color_style->data;
+
+    if (set_channel(&data->green, green))
+        g_object_notify((GObject *) color_style, "green");
+}
+
+/**
+ * adg_color_style_get_green:
+ * @color_style: an #AdgColorStyle
+ *
+ * Gets the current value of the green channel, where %0 means no green and
+ * %1 is full green.
+ *
+ * Returns: the requested green value
+ **/
+gdouble
+adg_color_style_get_green(AdgColorStyle *color_style)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
+
+    data = color_style->data;
+
+    return data->green;
+}
+
+/**
+ * adg_color_style_set_blue:
+ * @color_style: an #AdgColorStyle
+ * @blue: the new value
+ *
+ * Sets a new value for the blue channel, where %0 means no blue and
+ * %1 is full blue.
+ **/
+void
+adg_color_style_set_blue(AdgColorStyle *color_style, gdouble blue)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
+
+    data = color_style->data;
+
+    if (set_channel(&data->blue, blue))
+        g_object_notify((GObject *) color_style, "blue");
+}
+
+/**
+ * adg_color_style_get_blue:
+ * @color_style: an #AdgColorStyle
+ *
+ * Gets the current value of the blue channel, where %0 means no blue and
+ * %1 is full blue.
+ *
+ * Returns: the requested blue value
+ **/
+gdouble
+adg_color_style_get_blue(AdgColorStyle *color_style)
+{
+    AdgColorStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
+
+    data = color_style->data;
+
+    return data->blue;
+}
+
+/**
  * adg_color_style_set_rgb:
  * @color_style: an #AdgColorStyle
  * @r: the red channel value
@@ -204,7 +332,7 @@ adg_color_style_new(void)
  **/
 void
 adg_color_style_set_rgb(AdgColorStyle *color_style,
-                        gdouble r, gdouble g, gdouble b)
+                        gdouble red, gdouble green, gdouble blue)
 {
     GObject *object;
     AdgColorStylePrivate *data;
@@ -214,15 +342,9 @@ adg_color_style_set_rgb(AdgColorStyle *color_style,
     object = (GObject *) color_style;
     data = color_style->data;
 
-    data->red = r;
-    data->green = g;
-    data->blue = b;
-
-    g_object_freeze_notify(object);
-    g_object_notify(object, "red");
-    g_object_notify(object, "green");
-    g_object_notify(object, "blue");
-    g_object_thaw_notify(object);
+    data->red = red;
+    data->green = green;
+    data->blue = blue;
 }
 
 /**
@@ -271,9 +393,9 @@ adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
 
     data = color_style->data;
-    data->alpha = alpha;
 
-    g_object_notify((GObject *) color_style, "alpha");
+    if (set_channel(&data->alpha, alpha))
+        g_object_notify((GObject *) color_style, "alpha");
 }
 
 /**
@@ -308,4 +430,16 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     else
         cairo_set_source_rgba(cr, data->red, data->green, data->blue,
                               data->alpha);
+}
+
+static gboolean
+set_channel(gdouble *channel, gdouble value)
+{
+    g_return_val_if_fail(value >= 0 && value <=1, FALSE);
+
+    if (*channel == value)
+        return FALSE;
+
+    *channel = value;
+    return TRUE;
 }

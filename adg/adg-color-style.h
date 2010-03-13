@@ -58,14 +58,23 @@ struct _AdgColorStyleClass {
 GType           adg_color_style_get_type        (void) G_GNUC_CONST;
 AdgColorStyle * adg_color_style_new             (void);
 
+void            adg_color_style_set_red         (AdgColorStyle  *color_style,
+                                                 gdouble         red);
+gdouble         adg_color_style_get_red         (AdgColorStyle  *color_style);
+void            adg_color_style_set_green       (AdgColorStyle  *color_style,
+                                                 gdouble         green);
+gdouble         adg_color_style_get_green       (AdgColorStyle  *color_style);
+void            adg_color_style_set_blue        (AdgColorStyle  *color_style,
+                                                 gdouble         blue);
+gdouble         adg_color_style_get_blue        (AdgColorStyle  *color_style);
 void            adg_color_style_set_rgb         (AdgColorStyle  *color_style,
-                                                 gdouble         r,
-                                                 gdouble         g,
-                                                 gdouble         b);
+                                                 gdouble         red,
+                                                 gdouble         green,
+                                                 gdouble         blue);
 void            adg_color_style_put_rgb         (AdgColorStyle  *color_style,
-                                                 gdouble        *r,
-                                                 gdouble        *g,
-                                                 gdouble        *b);
+                                                 gdouble        *red,
+                                                 gdouble        *green,
+                                                 gdouble        *blue);
 void            adg_color_style_set_alpha       (AdgColorStyle  *color_style,
                                                  gdouble         alpha);
 gdouble         adg_color_style_get_alpha       (AdgColorStyle  *color_style);
