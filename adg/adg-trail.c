@@ -276,16 +276,23 @@ adg_trail_cpml_path(AdgTrail *trail)
  * got from the CPML path: check out adg_trail_cpml_path() for
  * further information.
  *
+ * When the segment is not found, either because @n_segment is out
+ * of range or because there is still no path bound to @trail, this
+ * function will return %FALSE leaving @segment untouched. If the
+ * segment is found and @segment is not %NULL, the resulting segment
+ * is copied in @segment.
+ *
  * Returns: %TRUE on success or %FALSE on errors
  **/
 gboolean
 adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
 {
     CpmlPath *cpml_path;
+    gboolean found;
+    AdgSegment iterator;
     guint cnt;
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
-    g_return_val_if_fail(segment != NULL, FALSE);
 
     if (n_segment == 0) {
         g_warning(_("%s: requested undefined segment for type `%s'"),
@@ -294,19 +301,20 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
     }
 
     cpml_path = adg_trail_cpml_path(trail);
-    if (cpml_path_is_empty(cpml_path))
-        return FALSE;
+    found = !cpml_path_is_empty(cpml_path) &&
+        cpml_segment_from_cairo(&iterator, cpml_path);
 
-    cpml_segment_from_cairo(segment, cpml_path);
-    for (cnt = 1; cnt < n_segment; ++cnt) {
-        if (!cpml_segment_next(segment)) {
-            g_warning(_("%s: segment %u is out of range for type `%s'"),
-                      G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
-            return FALSE;
-        }
-    }
+    for (cnt = 1; found && cnt < n_segment; ++cnt)
+        found = cpml_segment_next(&iterator);
 
-    return TRUE;
+    if (found && segment)
+        memcpy(segment, &iterator, sizeof(AdgSegment));
+
+    if (!found)
+        g_warning(_("%s: segment %u is out of range for type `%s'"),
+                  G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
+
+    return found;
 }
 
 /**
