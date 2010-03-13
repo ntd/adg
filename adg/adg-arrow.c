@@ -90,7 +90,7 @@ adg_arrow_class_init(AdgArrowClass *klass)
     param = g_param_spec_double("angle",
                                 P_("Arrow Angle"),
                                 P_("The opening angle of the arrow"),
-                                0, G_PI*2, G_PI/6,
+                                -G_PI, G_PI, G_PI / 6,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANGLE, param);
 }
@@ -264,6 +264,8 @@ static gboolean
 set_angle(AdgArrow *arrow, gdouble angle)
 {
     AdgArrowPrivate *data = arrow->data;
+
+    angle = cpml_angle(angle);
 
     if (angle == data->angle)
         return FALSE;
