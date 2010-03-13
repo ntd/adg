@@ -78,6 +78,10 @@ TEST_PROGS+=		test-marker
 test_marker_SOURCES=	test-marker.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-arrow
+test_arrow_SOURCES=	test-arrow.c \
+			$(test_internals)
+
 endif
 
 
