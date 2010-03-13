@@ -70,7 +70,7 @@ static void             set_property            (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
-static void             set_canvas              (AdgWidget       *widget,
+static gboolean         set_canvas              (AdgWidget       *widget,
                                                  AdgCanvas       *canvas);
 static gboolean         expose_event            (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
@@ -268,9 +268,8 @@ adg_widget_set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 {
     g_return_if_fail(ADG_IS_WIDGET(widget));
 
-    set_canvas(widget, canvas);
-
-    g_object_notify((GObject *) widget, "canvas");
+    if (set_canvas(widget, canvas))
+        g_object_notify((GObject *) widget, "canvas");
 }
 
 /**
@@ -338,10 +337,14 @@ adg_widget_get_factor(AdgWidget *widget)
 }
 
 
-static void
+static gboolean
 set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 {
-    AdgWidgetPrivate *data = widget->data;
+    AdgWidgetPrivate *data;
+
+    g_return_val_if_fail(canvas == NULL || ADG_IS_CANVAS(canvas), FALSE);
+
+    data = widget->data;
 
     if (data->canvas != NULL)
         g_object_unref(data->canvas);
@@ -352,6 +355,8 @@ set_canvas(AdgWidget *widget, AdgCanvas *canvas)
         g_object_ref(data->canvas);
 
     g_signal_emit(widget, signals[CANVAS_CHANGED], 0);
+
+    return TRUE;
 }
 
 static gboolean
