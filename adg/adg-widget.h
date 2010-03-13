@@ -53,7 +53,9 @@ struct _AdgWidgetClass {
 
 GType                   adg_widget_get_type     (void) G_GNUC_CONST;
 
-GtkWidget *             adg_widget_new          (AdgCanvas      *canvas);
+GtkWidget *             adg_widget_new          (void);
+GtkWidget *             adg_widget_new_with_canvas
+                                                (AdgCanvas      *canvas);
 
 void                    adg_widget_set_canvas   (AdgWidget      *widget,
                                                  AdgCanvas      *canvas);

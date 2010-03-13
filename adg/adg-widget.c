@@ -225,20 +225,35 @@ set_property(GObject *object,
 
 /**
  * adg_widget_new:
- * @path: the #AdgPath to stroke
  *
- * Creates a new #AdgWidget.
+ * Creates a new empty #AdgWidget. The widget is useful only after
+ * an #AdgCanvas has been added either using the #AdgWidget:canvas
+ * property or with adg_widget_set_canvas().
  *
  * Returns: the newly created widget
  **/
 GtkWidget *
-adg_widget_new(AdgCanvas *canvas)
+adg_widget_new(void)
+{
+    return g_object_new(ADG_TYPE_WIDGET, NULL);
+}
+
+/**
+ * adg_widget_new_with_canvas:
+ * @canvas: the #AdgCanvas shown by this widget
+ *
+ * Creates a new #AdgWidget and sets the #AdgWidget:canvas property
+ * to @canvas.
+ *
+ * Returns: the newly created widget
+ **/
+GtkWidget *
+adg_widget_new_with_canvas(AdgCanvas *canvas)
 {
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
 
     return g_object_new(ADG_TYPE_WIDGET, "canvas", canvas, NULL);
 }
-
 
 /**
  * adg_widget_set_canvas:
