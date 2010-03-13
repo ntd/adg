@@ -160,9 +160,9 @@ adg_arrow_new(void)
  * @trail: the #AdgTrail where the arrow should be added
  * @pos: the position ratio on @trail
  *
- * Creates a new arrow on @trail at position @pos, where @pos is
- * a ratio of the @trail length (%0 is the start point, %1 the end
- * point, %0.5 the middle point and so on).
+ * Creates a new arrow on the first segment on @trail at position
+ * @pos, where @pos is a ratio of the @trail length (being %0 the
+ * start point, %1 the end point, %0.5 the middle point and so on).
  *
  * Returns: the newly created arrow entity
  **/
@@ -171,6 +171,7 @@ adg_arrow_new_with_trail(AdgTrail *trail, gdouble pos)
 {
     return g_object_new(ADG_TYPE_ARROW,
                         "trail", trail,
+                        "n-segment", 1,
                         "pos", pos,
                         NULL);
 }
