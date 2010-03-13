@@ -739,7 +739,12 @@ set_n_segment(AdgMarker *marker, guint n_segment)
 static gboolean
 set_pos(AdgMarker *marker, gdouble pos)
 {
-    AdgMarkerPrivate *data = marker->data;
+    AdgMarkerPrivate *data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(pos >= 0 && pos <= 1, FALSE);
+
+    data = marker->data;
 
     if (pos == data->pos)
         return FALSE;
