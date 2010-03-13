@@ -72,6 +72,8 @@ static void             set_property            (GObject         *object,
                                                  GParamSpec      *pspec);
 static gboolean         set_canvas              (AdgWidget       *widget,
                                                  AdgCanvas       *canvas);
+static gboolean         set_factor              (AdgWidget       *widget,
+                                                 gdouble          factor);
 static gboolean         expose_event            (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
 static gboolean         scroll_event            (GtkWidget       *widget,
@@ -181,15 +183,12 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
     AdgWidgetPrivate *data = ((AdgWidget *) object)->data;
 
     switch (prop_id) {
-
     case PROP_CANVAS:
         g_value_set_object(value, data->canvas);
         break;
-
     case PROP_FACTOR:
         g_value_set_double(value, data->factor);
         break;
-
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -200,22 +199,15 @@ static void
 set_property(GObject *object,
              guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-    AdgWidget *widget;
-    AdgWidgetPrivate *data;
-
-    widget = (AdgWidget *) object;
-    data = widget->data;
+    AdgWidget *widget = (AdgWidget *) object;
 
     switch (prop_id) {
-
     case PROP_CANVAS:
         set_canvas(widget, g_value_get_object(value));
         break;
-
     case PROP_FACTOR:
-        data->factor = g_value_get_double(value);
+        set_factor(widget, g_value_get_double(value));
         break;
-
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -303,14 +295,10 @@ adg_widget_get_canvas(AdgWidget *widget)
 void
 adg_widget_set_factor(AdgWidget *widget, gdouble factor)
 {
-    AdgWidgetPrivate *data;
-
     g_return_if_fail(ADG_IS_WIDGET(widget));
 
-    data = widget->data;
-    data->factor = CLAMP(factor, 1., G_MAXDOUBLE);
-
-    g_object_notify((GObject *) widget, "factor");
+    if (set_factor(widget, factor))
+        g_object_notify((GObject *) widget, "factor");
 }
 
 /**
@@ -346,16 +334,34 @@ set_canvas(AdgWidget *widget, AdgCanvas *canvas)
 
     data = widget->data;
 
-    if (data->canvas != NULL)
+    if (data->canvas == canvas)
+        return FALSE;
+
+    if (canvas)
+        g_object_ref(canvas);
+
+    if (data->canvas)
         g_object_unref(data->canvas);
 
     data->canvas = canvas;
-
-    if (canvas != NULL)
-        g_object_ref(data->canvas);
-
     g_signal_emit(widget, signals[CANVAS_CHANGED], 0);
+    return TRUE;
+}
 
+static gboolean
+set_factor(AdgWidget *widget, gdouble factor)
+{
+    AdgWidgetPrivate *data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(factor >= 1, FALSE);
+
+    data = widget->data;
+
+    if (data->factor == factor)
+        return FALSE;
+
+    data->factor = factor;
     return TRUE;
 }
 
