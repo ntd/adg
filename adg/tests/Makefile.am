@@ -95,6 +95,10 @@ TEST_PROGS+=		test-line-style
 test_line_style_SOURCES=test-line-style.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-fill-style
+test_fill_style_SOURCES=test-fill-style.c \
+			$(test_internals)
+
 endif
 
 
