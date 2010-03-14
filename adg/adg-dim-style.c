@@ -77,7 +77,19 @@ static void             set_property            (GObject        *object,
 static void             apply                   (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
-static void             set_limits_shift        (AdgDimStyle    *dim_style,
+static gboolean         set_from_offset         (AdgDimStyle    *dim_style,
+                                                 gdouble         offset);
+static gboolean         set_to_offset           (AdgDimStyle    *dim_style,
+                                                 gdouble         offset);
+static gboolean         set_baseline_spacing    (AdgDimStyle    *dim_style,
+                                                 gdouble         spacing);
+static gboolean         set_limits_spacing      (AdgDimStyle    *dim_style,
+                                                 gdouble         spacing);
+static gboolean         set_beyond              (AdgDimStyle    *dim_style,
+                                                 gdouble         beyond);
+static gboolean         set_quote_shift         (AdgDimStyle    *dim_style,
+                                                 const AdgPair  *shift);
+static gboolean         set_limits_shift        (AdgDimStyle    *dim_style,
                                                  const AdgPair  *shift);
 static void             set_number_format       (AdgDimStyle    *dim_style,
                                                  const gchar    *format);
@@ -126,38 +138,38 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     g_object_class_install_property(gobject_class, PROP_MARKER2, param);
 
     param = adg_param_spec_dress("color-dress",
-                                  P_("Color Dress"),
-                                  P_("Color dress for the whole dimension"),
-                                  ADG_DRESS_COLOR_DIMENSION,
-                                  G_PARAM_READWRITE);
+                                 P_("Color Dress"),
+                                 P_("Color dress for the whole dimension"),
+                                 ADG_DRESS_COLOR_DIMENSION,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = adg_param_spec_dress("value-dress",
-                                  P_("Value Dress"),
-                                  P_("Font dress for the nominal value of the dimension"),
-                                  ADG_DRESS_TEXT_VALUE,
-                                  G_PARAM_READWRITE);
+                                 P_("Value Dress"),
+                                 P_("Font dress for the nominal value of the dimension"),
+                                 ADG_DRESS_TEXT_VALUE,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
     param = adg_param_spec_dress("min-dress",
-                                  P_("Minimum Limit Dress"),
-                                  P_("Font dress for the lower limit value"),
-                                  ADG_DRESS_TEXT_LIMIT,
-                                  G_PARAM_READWRITE);
+                                 P_("Minimum Limit Dress"),
+                                 P_("Font dress for the lower limit value"),
+                                 ADG_DRESS_TEXT_LIMIT,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MIN_DRESS, param);
 
     param = adg_param_spec_dress("max-dress",
-                                  P_("Maximum Limit Dress"),
-                                  P_("Font dress for the upper limit value"),
-                                  ADG_DRESS_TEXT_LIMIT,
-                                  G_PARAM_READWRITE);
+                                 P_("Maximum Limit Dress"),
+                                 P_("Font dress for the upper limit value"),
+                                 ADG_DRESS_TEXT_LIMIT,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MAX_DRESS, param);
 
     param = adg_param_spec_dress("line-dress",
-                                  P_("Line Dress"),
-                                  P_("Line dress for the baseline and the extension lines"),
-                                  ADG_DRESS_LINE_THINNER,
-                                  G_PARAM_READWRITE);
+                                 P_("Line Dress"),
+                                 P_("Line dress for the baseline and the extension lines"),
+                                 ADG_DRESS_LINE_THINNER,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
     param = g_param_spec_double("from-offset",
@@ -198,27 +210,29 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
                                P_("Used to specify a smooth displacement (in global space) of the quote by taking as reference the perfect compact position (the middle of the baseline on common linear dimension, for instance)"),
-                               ADG_TYPE_PAIR, G_PARAM_READWRITE);
+                               ADG_TYPE_PAIR,
+                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT, param);
 
     param = g_param_spec_boxed("limits-shift",
                                P_("Limits Shift"),
                                P_("Used to specify a smooth displacement (in global space) for the limits/tolerances by taking as reference the perfect compact position"),
-                               ADG_TYPE_PAIR, G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_LIMITS_SHIFT,
-                                    param);
+                               ADG_TYPE_PAIR,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LIMITS_SHIFT, param);
 
     param = g_param_spec_string("number-format",
                                 P_("Number Format"),
                                 P_("The format (in printf style) of the numeric component of the basic value"),
-                                "%-.7g", G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_NUMBER_FORMAT,
-                                    param);
+                                "%-.7g",
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_NUMBER_FORMAT, param);
 
     param = g_param_spec_string("number-tag",
                                 P_("Number Tag"),
                                 P_("The tag to substitute inside the basic value pattern"),
-                                "<>", G_PARAM_READWRITE);
+                                "<>",
+                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_TAG, param);
 }
 
@@ -358,22 +372,22 @@ set_property(GObject *object,
         adg_dress_set(&data->line_dress, g_value_get_int(value));
         break;
     case PROP_FROM_OFFSET:
-        data->from_offset = g_value_get_double(value);
+        set_from_offset(dim_style, g_value_get_double(value));
         break;
     case PROP_TO_OFFSET:
-        data->to_offset = g_value_get_double(value);
+        set_to_offset(dim_style, g_value_get_double(value));
         break;
     case PROP_BEYOND:
-        data->beyond = g_value_get_double(value);
+        set_beyond(dim_style, g_value_get_double(value));
         break;
     case PROP_BASELINE_SPACING:
-        data->baseline_spacing = g_value_get_double(value);
+        set_baseline_spacing(dim_style, g_value_get_double(value));
         break;
     case PROP_LIMITS_SPACING:
-        data->limits_spacing = g_value_get_double(value);
+        set_limits_spacing(dim_style, g_value_get_double(value));
         break;
     case PROP_QUOTE_SHIFT:
-        cpml_pair_copy(&data->quote_shift, g_value_get_boxed(value));
+        set_quote_shift(dim_style, g_value_get_boxed(value));
         break;
     case PROP_LIMITS_SHIFT:
         set_limits_shift(dim_style, g_value_get_boxed(value));
@@ -712,19 +726,15 @@ adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @offset: the new offset
  *
- * Sets a new "from-offset" value.
+ * Sets a new value in the #AdgDimStyle:from-offset property.
  **/
 void
 adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    data = dim_style->data;
-    data->from_offset = offset;
-
-    g_object_notify((GObject *) dim_style, "from-offset");
+    if (set_from_offset(dim_style, offset))
+        g_object_notify((GObject *) dim_style, "from-offset");
 }
 
 /**
@@ -753,19 +763,15 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @offset: the new offset
  *
- * Sets a new "to-offset" value.
+ * Sets a new value in the #AdgDimStyle:to-offset property.
  **/
 void
 adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    data = dim_style->data;
-    data->to_offset = offset;
-
-    g_object_notify((GObject *) dim_style, "to-offset");
+    if (set_to_offset(dim_style, offset))
+        g_object_notify((GObject *) dim_style, "to-offset");
 }
 
 /**
@@ -792,21 +798,17 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 /**
  * adg_dim_style_set_beyond:
  * @dim_style: an #AdgDimStyle object
- * @length: the new length
+ * @beyond: the new length
  *
- * Sets a new "beyond" value.
+ * Sets a new value in the #AdgDimStyle:beyond property.
  **/
 void
-adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble length)
+adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble beyond)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    data = dim_style->data;
-    data->beyond = length;
-
-    g_object_notify((GObject *) dim_style, "beyond");
+    if (set_beyond(dim_style, beyond))
+        g_object_notify((GObject *) dim_style, "beyond");
 }
 
 /**
@@ -835,19 +837,15 @@ adg_dim_style_get_beyond(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @spacing: the new spacing
  *
- * Sets a new "baseline-spacing" value.
+ * Sets a new value in the #AdgDimStyle:baseline-spacing value.
  **/
 void
 adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    data = dim_style->data;
-    data->baseline_spacing = spacing;
-
-    g_object_notify((GObject *) dim_style, "baseline-spacing");
+    if (set_baseline_spacing(dim_style, spacing))
+        g_object_notify((GObject *) dim_style, "baseline-spacing");
 }
 
 /**
@@ -881,14 +879,10 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    data = dim_style->data;
-    data->limits_spacing = spacing;
-
-    g_object_notify((GObject *) dim_style, "limits-spacing");
+    if (set_limits_spacing(dim_style, spacing))
+        g_object_notify((GObject *) dim_style, "limits-spacing");
 }
 
 /**
@@ -921,15 +915,10 @@ adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(shift != NULL);
 
-    data = dim_style->data;
-    cpml_pair_copy(&data->quote_shift, shift);
-
-    g_object_notify((GObject *) dim_style, "quote-shift");
+    if (set_quote_shift(dim_style, shift))
+        g_object_notify((GObject *) dim_style, "quote-shift");
 }
 
 /**
@@ -965,8 +954,8 @@ adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
 
-    set_limits_shift(dim_style, shift);
-    g_object_notify((GObject *) dim_style, "limits-shift");
+    if (set_limits_shift(dim_style, shift))
+        g_object_notify((GObject *) dim_style, "limits-shift");
 }
 
 /**
@@ -995,7 +984,7 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @format: the new format to adopt
  *
- * Sets a new "number-format" value.
+ * Sets a new value in the #AdgDimStyle:number-format property.
  **/
 void
 adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
@@ -1033,7 +1022,7 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @tag: the new tag
  *
- * Sets a new "number-tag" value.
+ * Sets a new value in the #AdgDimStyle:number-tag property.
  **/
 void
 adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
@@ -1075,12 +1064,113 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     adg_entity_apply_dress(entity, data->color_dress, cr);
 }
 
-static void
-set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+static gboolean
+set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 {
     AdgDimStylePrivate *data = dim_style->data;
 
-    cpml_pair_copy(&data->limits_shift, shift);
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(offset >= 0, FALSE);
+
+    if (data->from_offset == offset)
+        return FALSE;
+
+    data->from_offset = offset;
+    return TRUE;
+}
+
+static gboolean
+set_to_offset(AdgDimStyle *dim_style, gdouble offset)
+{
+    AdgDimStylePrivate *data = dim_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(offset >= 0, FALSE);
+
+    if (data->to_offset == offset)
+        return FALSE;
+
+    data->to_offset = offset;
+    return TRUE;
+}
+
+static gboolean
+set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
+{
+    AdgDimStylePrivate *data = dim_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(spacing >= 0, FALSE);
+
+    if (data->baseline_spacing == spacing)
+        return FALSE;
+
+    data->baseline_spacing = spacing;
+    return TRUE;
+}
+
+static gboolean
+set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
+{
+    AdgDimStylePrivate *data = dim_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(spacing >= 0, FALSE);
+
+    if (data->limits_spacing == spacing)
+        return FALSE;
+
+    data->limits_spacing = spacing;
+    return TRUE;
+}
+
+static gboolean
+set_beyond(AdgDimStyle *dim_style, gdouble beyond)
+{
+    AdgDimStylePrivate *data = dim_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(beyond >= 0, FALSE);
+
+    if (data->beyond == beyond)
+        return FALSE;
+
+    data->beyond = beyond;
+    return TRUE;
+}
+
+static gboolean
+set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(shift != NULL, FALSE);
+
+    data = dim_style->data;
+
+    if (adg_pair_equal(&data->quote_shift, shift))
+        return FALSE;
+
+    data->quote_shift = *shift;
+
+    return TRUE;
+}
+
+static gboolean
+set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(shift != NULL, FALSE);
+
+    data = dim_style->data;
+
+    if (adg_pair_equal(&data->limits_shift, shift))
+        return FALSE;
+
+    data->limits_shift = *shift;
+
+    return TRUE;
 }
 
 static void
