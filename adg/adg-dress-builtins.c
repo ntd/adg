@@ -459,9 +459,9 @@ _adg_dress_dimension(void)
         AdgMarker *arrow = g_object_new(ADG_TYPE_ARROW, NULL);
         AdgStyle *fallback = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
 
-        adg_dim_style_use_marker1((AdgDimStyle *) fallback, arrow);
+        adg_dim_style_set_marker1((AdgDimStyle *) fallback, arrow);
         adg_marker_set_pos(arrow, 1);
-        adg_dim_style_use_marker2((AdgDimStyle *) fallback, arrow);
+        adg_dim_style_set_marker2((AdgDimStyle *) fallback, arrow);
 
         dress = adg_dress_new("dimension", fallback);
         g_object_unref(fallback);

@@ -394,11 +394,11 @@ set_property(GObject *object,
 /**
  * adg_dim_style_new:
  *
- * Constructs a new dimension style initialized with default params.
+ * Constructs a new empty dimension style initialized with default params.
  *
- * Returns: a new dimension style
+ * Returns: a newly created dimension style
  **/
-AdgStyle *
+AdgDimStyle *
 adg_dim_style_new(void)
 {
     return g_object_new(ADG_TYPE_DIM_STYLE, NULL);
@@ -449,7 +449,7 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_use_marker1:
+ * adg_dim_style_set_marker1:
  * @dim_style: an #AdgStyle
  * @marker: an #AdgMarker derived entity
  *
@@ -462,7 +462,7 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
  * uses its property values and does not add any references to @marker.
  **/
 void
-adg_dim_style_use_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
+adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
 {
     AdgDimStylePrivate *data;
 
@@ -476,7 +476,7 @@ adg_dim_style_use_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
 }
 
 /**
- * adg_dim_style_use_marker2:
+ * adg_dim_style_set_marker2:
  * @dim_style: an #AdgStyle
  * @marker: an #AdgMarker derived entity
  *
@@ -489,7 +489,7 @@ adg_dim_style_use_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
  * uses its property values and does not add any references to @marker.
  **/
 void
-adg_dim_style_use_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
+adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
 {
     AdgDimStylePrivate *data;
 
