@@ -65,6 +65,10 @@ static void             set_property    (GObject        *object,
 static void             apply           (AdgStyle       *style,
                                          AdgEntity      *entity,
                                          cairo_t        *cr);
+static gboolean         set_width       (AdgLineStyle   *line_style,
+                                         gdouble         width);
+static gboolean         set_miter_limit (AdgLineStyle   *line_style,
+                                         gdouble         miter_limit);
 
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
@@ -189,14 +193,18 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
+    AdgLineStyle *line_style;
+    AdgLineStylePrivate *data;
+
+    line_style = (AdgLineStyle *) object;
+    data = line_style->data;
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
         adg_dress_set(&data->color_dress, g_value_get_int(value));
         break;
     case PROP_WIDTH:
-        data->width = g_value_get_double(value);
+        set_width(line_style, g_value_get_double(value));
         break;
     case PROP_CAP:
         data->cap = g_value_get_int(value);
@@ -205,7 +213,7 @@ set_property(GObject *object, guint prop_id,
         data->join = g_value_get_int(value);
         break;
     case PROP_MITER_LIMIT:
-        data->miter_limit = g_value_get_double(value);
+        set_miter_limit(line_style, g_value_get_double(value));
         break;
     case PROP_ANTIALIAS:
         data->antialias = g_value_get_int(value);
@@ -291,14 +299,10 @@ adg_line_style_get_color_dress(AdgLineStyle *line_style)
 void
 adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
 {
-    AdgLineStylePrivate *data;
-
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data = line_style->data;
-    data->width = width;
-
-    g_object_notify((GObject *) line_style, "width");
+    if (set_width(line_style, width))
+        g_object_notify((GObject *) line_style, "width");
 }
 
 /**
@@ -411,17 +415,12 @@ adg_line_style_get_join(AdgLineStyle *line_style)
  * Sets a new miter limit value.
  **/
 void
-adg_line_style_set_miter_limit(AdgLineStyle *line_style,
-                               gdouble miter_limit)
+adg_line_style_set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
 {
-    AdgLineStylePrivate *data;
-
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data = line_style->data;
-    data->miter_limit = miter_limit;
-
-    g_object_notify((GObject *) line_style, "miter-limit");
+    if (set_miter_limit(line_style, miter_limit))
+        g_object_notify((GObject *) line_style, "miter-limit");
 }
 
 /**
@@ -505,4 +504,36 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 
         cairo_set_dash(cr, data->dashes, data->num_dashes, data->dash_offset);
     }
+}
+
+static gboolean
+set_width(AdgLineStyle *line_style, gdouble width)
+{
+    AdgLineStylePrivate *data = line_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(width >= 0, FALSE);
+
+    if (width == data->width)
+        return FALSE;
+
+    data->width = width;
+
+    return TRUE;
+}
+
+static gboolean
+set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
+{
+    AdgLineStylePrivate *data = line_style->data;
+
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(miter_limit >= 0, FALSE);
+
+    if (miter_limit == data->miter_limit)
+        return FALSE;
+
+    data->miter_limit = miter_limit;
+
+    return TRUE;
 }
