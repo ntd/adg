@@ -91,6 +91,10 @@ test_color_style_SOURCES= \
 			test-color-style.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-line-style
+test_line_style_SOURCES=test-line-style.c \
+			$(test_internals)
+
 endif
 
 
