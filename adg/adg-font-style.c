@@ -298,9 +298,9 @@ set_property(GObject *object,
  *
  * Constructs a new font style initialized with default params.
  *
- * Returns: a new font style
+ * Returns: a newly created font style
  **/
-AdgStyle *
+AdgFontStyle *
 adg_font_style_new(void)
 {
     return g_object_new(ADG_TYPE_FONT_STYLE, NULL);

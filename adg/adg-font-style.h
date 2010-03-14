@@ -55,8 +55,7 @@ struct _AdgFontStyleClass {
 
 
 GType           adg_font_style_get_type         (void) G_GNUC_CONST;
-AdgStyle *      adg_font_style_new              (void);
-
+AdgFontStyle *  adg_font_style_new              (void);
 cairo_scaled_font_t *
                 adg_font_style_get_scaled_font  (AdgFontStyle    *font_style,
                                                  const AdgMatrix *ctm);
