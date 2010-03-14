@@ -99,6 +99,10 @@ TEST_PROGS+=		test-fill-style
 test_fill_style_SOURCES=test-fill-style.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-font-style
+test_font_style_SOURCES=test-font-style.c \
+			$(test_internals)
+
 endif
 
 
