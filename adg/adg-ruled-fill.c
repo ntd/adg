@@ -188,6 +188,19 @@ set_property(GObject *object,
 
 
 /**
+ * adg_ruled_fill_new:
+ *
+ * Constructs a new empty ruled fill style initialized with default params.
+ *
+ * Returns: a newly created ruled fill style
+ **/
+AdgRuledFill *
+adg_ruled_fill_new(void)
+{
+    return g_object_new(ADG_TYPE_RULED_FILL, NULL);
+}
+
+/**
  * adg_ruled_fill_set_line_dress:
  * @ruled_fill: an #AdgRuledFill object
  * @dress: the new line dress

@@ -56,7 +56,7 @@ struct _AdgRuledFillClass {
 
 
 GType           adg_ruled_fill_get_type         (void) G_GNUC_CONST;
-
+AdgRuledFill *  adg_ruled_fill_new              (void);
 void            adg_ruled_fill_set_line_dress   (AdgRuledFill   *ruled_fill,
                                                  AdgDress        dress);
 AdgDress        adg_ruled_fill_get_line_dress   (AdgRuledFill   *ruled_fill);
