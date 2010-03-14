@@ -785,6 +785,9 @@ set_size(AdgFontStyle *font_style, gdouble size)
 {
     AdgFontStylePrivate *data = font_style->data;
 
+    /* A better approach would be to use the GParamSpec of this property */
+    g_return_val_if_fail(size >= 0, FALSE);
+
     if (size == data->size)
         return FALSE;
 
