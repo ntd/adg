@@ -103,6 +103,10 @@ TEST_PROGS+=		test-font-style
 test_font_style_SOURCES=test-font-style.c \
 			$(test_internals)
 
+TEST_PROGS+=		test-dim-style
+test_dim_style_SOURCES=	test-dim-style.c \
+			$(test_internals)
+
 endif
 
 
