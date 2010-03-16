@@ -97,7 +97,7 @@ static void             set_number_tag          (AdgDimStyle    *dim_style,
                                                  const gchar    *tag);
 static AdgMarker *      marker_new              (const AdgMarkerData
                                                                 *marker_data);
-static void             use_marker              (AdgMarkerData  *marker_data,
+static gboolean         set_marker              (AdgMarkerData  *marker_data,
                                                  AdgMarker      *marker);
 static void             free_marker             (AdgMarkerData  *marker_data);
 
@@ -351,10 +351,10 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_MARKER1:
-        use_marker(&data->marker1, g_value_get_object(value));
+        set_marker(&data->marker1, g_value_get_object(value));
         break;
     case PROP_MARKER2:
-        use_marker(&data->marker2, g_value_get_object(value));
+        set_marker(&data->marker2, g_value_get_object(value));
         break;
     case PROP_COLOR_DRESS:
         adg_dress_set(&data->color_dress, g_value_get_int(value));
@@ -419,14 +419,44 @@ adg_dim_style_new(void)
 }
 
 /**
+ * adg_dim_style_set_marker1:
+ * @dim_style: an #AdgStyle
+ * @marker: an #AdgMarker derived entity
+ *
+ * Uses @marker as entity template to generate a new marker entity
+ * when a call to adg_dim_style_marker1_new() is made. It is allowed
+ * to pass %NULL as @marker, in which case the template data of the
+ * first marker are unset.
+ *
+ * This method duplicates internally the property values of @marker,
+ * so any further change to @marker does not affect @dim_style anymore.
+ * This also means @marker could be destroyed without problems after
+ * this call because @dim_style uses only its property values and does
+ * not add any references to @marker.
+ **/
+void
+adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+
+    data = dim_style->data;
+
+    if (set_marker(&data->marker1, marker))
+        g_object_notify((GObject *) dim_style, "marker1");
+}
+
+/**
  * adg_dim_style_marker1_new:
  * @dim_style: an #AdgDimStyle
  *
- * Creates a new #AdgMarker entity accordling to the template marker
- * stored with the #AdgDimStyle:marker1 property of @dim_style.
+ * Creates a new marker entity by cloning the #AdgMarker:marker1
+ * object. The returned entity should be unreferenced with
+ * g_object_unref() when no longer needed.
  *
- * Returns: a newly created #AdgMarker derived entity or %NULL if
- *          @dim_style has the #AdgDimStyle:marker1 property unset
+ * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker1
+ *          property is not set or on errors
  **/
 AdgMarker *
 adg_dim_style_marker1_new(AdgDimStyle *dim_style)
@@ -441,66 +471,20 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
 }
 
 /**
- * adg_dim_style_marker2_new:
- * @dim_style: an #AdgDimStyle
- *
- * Creates a new #AdgMarker entity accordling to the template marker
- * stored with the #AdgDimStyle:marker2 property of @dim_style.
- *
- * Returns: a newly created #AdgMarker derived entity or %NULL if
- *          @dim_style has the #AdgDimStyle:marker2 property unset
- **/
-AdgMarker *
-adg_dim_style_marker2_new(AdgDimStyle *dim_style)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
-
-    data = dim_style->data;
-
-    return marker_new(&data->marker2);
-}
-
-/**
- * adg_dim_style_set_marker1:
- * @dim_style: an #AdgStyle
- * @marker: an #AdgMarker derived entity
- *
- * Uses @marker as entity template to generate a new marker entity
- * when a call to adg_dim_style_marker1_new() is made.
- *
- * This method duplicates internally the property values of @marker,
- * so any further change to @marker does not affect @dim_style anymore.
- * This also means @marker could be destroyed because @dim_style only
- * uses its property values and does not add any references to @marker.
- **/
-void
-adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
-
-    data = dim_style->data;
-
-    use_marker(&data->marker1, marker);
-    g_object_notify((GObject *) dim_style, "marker1");
-}
-
-/**
  * adg_dim_style_set_marker2:
  * @dim_style: an #AdgStyle
  * @marker: an #AdgMarker derived entity
  *
  * Uses @marker as entity template to generate a new marker entity
- * when a call to adg_dim_style_marker2_new() is made.
+ * when a call to adg_dim_style_marker2_new() is made. It is allowed
+ * to pass %NULL as @marker, in which case the template data of the
+ * second marker are unset.
  *
  * This method duplicates internally the property values of @marker,
  * so any further change to @marker does not affect @dim_style anymore.
- * This also means @marker could be destroyed because @dim_style only
- * uses its property values and does not add any references to @marker.
+ * This also means @marker could be destroyed without problems after
+ * this call because @dim_style uses only its property values and does
+ * not add any references to @marker.
  **/
 void
 adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
@@ -512,8 +496,31 @@ adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
 
     data = dim_style->data;
 
-    use_marker(&data->marker2, marker);
-    g_object_notify((GObject *) dim_style, "marker2");
+    if (set_marker(&data->marker2, marker))
+        g_object_notify((GObject *) dim_style, "marker2");
+}
+
+/**
+ * adg_dim_style_marker2_new:
+ * @dim_style: an #AdgDimStyle
+ *
+ * Creates a new marker entity by cloning the #AdgMarker:marker2
+ * object. The returned entity should be unreferenced with
+ * g_object_unref() when no longer needed.
+ *
+ * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker2
+ *          property is not set or on errors
+ **/
+AdgMarker *
+adg_dim_style_marker2_new(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+
+    data = dim_style->data;
+
+    return marker_new(&data->marker2);
 }
 
 /**
@@ -1202,42 +1209,45 @@ marker_new(const AdgMarkerData *marker_data)
                          marker_data->parameters);
 }
 
-static void
-use_marker(AdgMarkerData *marker_data, AdgMarker *marker)
+static gboolean
+set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
 {
-    GObject *object;
-    GParamSpec **specs;
-    GParamSpec *spec;
-    GParameter *parameter;
-    guint n;
+    g_return_val_if_fail(marker == NULL || ADG_IS_MARKER(marker), FALSE);
 
     /* Free the previous marker data, if any */
     free_marker(marker_data);
 
-    if (marker == NULL)
-        return;
+    if (marker) {
+        GObject *object;
+        GParamSpec **specs;
+        GParamSpec *spec;
+        GParameter *parameter;
+        guint n;
 
-    object = (GObject *) marker;
-    specs = g_object_class_list_properties(G_OBJECT_GET_CLASS(marker),
-                                           &marker_data->n_parameters);
+        object = (GObject *) marker;
+        specs = g_object_class_list_properties(G_OBJECT_GET_CLASS(marker),
+                                               &marker_data->n_parameters);
 
-    marker_data->type = G_TYPE_FROM_INSTANCE(marker);
-    marker_data->parameters = g_new0(GParameter, marker_data->n_parameters);
+        marker_data->type = G_TYPE_FROM_INSTANCE(marker);
+        marker_data->parameters = g_new0(GParameter, marker_data->n_parameters);
 
-    for (n = 0; n < marker_data->n_parameters; ++n) {
-        spec = specs[n];
-        parameter = &marker_data->parameters[n];
+        for (n = 0; n < marker_data->n_parameters; ++n) {
+            spec = specs[n];
+            parameter = &marker_data->parameters[n];
 
-        /* Using intern strings because GParameter:name is const.
-         * GObject properties are internally managed using non-static
-         * GQuark, so g_intern_string() is the way to go */
-        parameter->name = g_intern_string(spec->name);
+            /* Using intern strings because GParameter:name is const.
+             * GObject properties are internally managed using non-static
+             * GQuark, so g_intern_string() is the way to go */
+            parameter->name = g_intern_string(spec->name);
 
-        g_value_init(&parameter->value, spec->value_type);
-        g_object_get_property(object, spec->name, &parameter->value);
+            g_value_init(&parameter->value, spec->value_type);
+            g_object_get_property(object, spec->name, &parameter->value);
+        }
+
+        g_free(specs);
     }
 
-    g_free(specs);
+    return TRUE;
 }
 
 static void
