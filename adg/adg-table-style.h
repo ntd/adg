@@ -58,7 +58,7 @@ struct _AdgTableStyleClass {
 
 
 GType           adg_table_style_get_type          (void) G_GNUC_CONST;
-AdgStyle *      adg_table_style_new               (void);
+AdgTableStyle * adg_table_style_new               (void);
 
 void            adg_table_style_set_color_dress (AdgTableStyle  *table_style,
                                                  AdgDress        dress);
@@ -76,13 +76,13 @@ void            adg_table_style_set_value_dress (AdgTableStyle  *table_style,
                                                  AdgDress        dress);
 AdgDress        adg_table_style_get_value_dress (AdgTableStyle  *table_style);
 void            adg_table_style_set_row_height  (AdgTableStyle  *table_style,
-                                                 gdouble         row_height);
+                                                 gdouble         height);
 gdouble         adg_table_style_get_row_height  (AdgTableStyle  *table_style);
 void            adg_table_style_set_cell_padding(AdgTableStyle  *table_style,
-                                                 const AdgPair  *cell_padding);
+                                                 const AdgPair  *padding);
 const AdgPair * adg_table_style_get_cell_padding(AdgTableStyle  *table_style);
 void            adg_table_style_set_cell_spacing(AdgTableStyle  *table_style,
-                                                 const AdgPair  *cell_spacing);
+                                                 const AdgPair  *spacing);
 const AdgPair * adg_table_style_get_cell_spacing(AdgTableStyle  *table_style);
 
 G_END_DECLS
