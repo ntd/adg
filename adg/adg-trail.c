@@ -59,6 +59,7 @@
 #include "adg-internal.h"
 #include "adg-trail.h"
 #include "adg-trail-private.h"
+#include <string.h>
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
 #define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
