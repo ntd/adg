@@ -2,11 +2,10 @@ include $(top_srcdir)/build/Makefile.am.common
 
 SUBDIRS=			tests
 
-mkenums_to_c=			$(MSG_GEN)$(GLIB_MKENUMS) --template $? > $@
-mkenums_to_h=			$(mkenums_to_c)
-genmarshal_to_c=		$(MSG_GEN)$(GLIB_GENMARSHAL) --body --prefix=adg_marshal $? > $@
-genmarshal_to_h=		$(MSG_GEN)$(GLIB_GENMARSHAL) --header --prefix=adg_marshal $? > $@
-
+mkenums_command=		$(MSG_GEN) ; \
+				$(GLIB_MKENUMS) --template
+genmarshal_command=		$(MSG_GEN) ; \
+				$(GLIB_GENMARSHAL) --prefix=adg_marshal
 AM_CFLAGS=			@ADG_CFLAGS@ \
 				-I$(top_srcdir) \
 				-I$(top_builddir)
@@ -167,13 +166,13 @@ libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
 $(builddir)/adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
-	$(mkenums_to_c)
+	$(mkenums_command) adg-type-builtins.c.mkenums adg-enums.h > $@
 
 $(builddir)/adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
-	$(mkenums_to_h)
+	$(mkenums_command) adg-type-builtins.h.mkenums adg-enums.h > $@
 
 $(builddir)/adg-marshal.c: adg-marshal.genmarshal
-	$(genmarshal_to_c)
+	$(genmarshal_command) --body adg-marshal.genmarshal > $@
 
 $(builddir)/adg-marshal.h: adg-marshal.genmarshal
-	$(genmarshal_to_h)
+	$(genmarshal_command) --header adg-marshal.genmarshal > $@
