@@ -60,33 +60,33 @@ enum {
 };
 
 
-static void     dispose                 (GObject        *object);
-static void     finalize                (GObject        *object);
-static void     get_property            (GObject        *object,
+static void     _adg_dispose            (GObject        *object);
+static void     _adg_finalize           (GObject        *object);
+static void     _adg_get_property       (GObject        *object,
                                          guint           param_id,
                                          GValue         *value,
                                          GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
+static void     _adg_set_property       (GObject        *object,
                                          guint           param_id,
                                          const GValue   *value,
                                          GParamSpec     *pspec);
-static void     global_changed          (AdgEntity      *entity);
-static void     local_changed           (AdgEntity      *entity);
-static void     invalidate              (AdgEntity      *entity);
-static void     arrange                 (AdgEntity      *entity);
-static gchar *  default_value           (AdgDim         *dim);
-static gdouble  quote_angle             (gdouble         angle);
-static gboolean set_dim_dress           (AdgDim         *dim,
+static void     _adg_global_changed     (AdgEntity      *entity);
+static void     _adg_local_changed      (AdgEntity      *entity);
+static void     _adg_invalidate         (AdgEntity      *entity);
+static void     _adg_arrange            (AdgEntity      *entity);
+static gchar *  _adg_default_value      (AdgDim         *dim);
+static gdouble  _adg_quote_angle        (gdouble         angle);
+static gboolean _adg_set_dim_dress      (AdgDim         *dim,
                                          AdgDress        dress);
-static gboolean set_outside             (AdgDim         *dim,
+static gboolean _adg_set_outside        (AdgDim         *dim,
                                          AdgThreeState   outside);
-static gboolean set_detached            (AdgDim         *dim,
+static gboolean _adg_set_detached       (AdgDim         *dim,
                                          AdgThreeState   detached);
-static gboolean set_value               (AdgDim         *dim,
+static gboolean _adg_set_value          (AdgDim         *dim,
                                          const gchar    *value);
-static gboolean set_min                 (AdgDim         *dim,
+static gboolean _adg_set_min            (AdgDim         *dim,
                                          const gchar    *min);
-static gboolean set_max                 (AdgDim         *dim,
+static gboolean _adg_set_max            (AdgDim         *dim,
                                          const gchar    *max);
 
 
@@ -105,18 +105,18 @@ adg_dim_class_init(AdgDimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgDimPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
 
-    klass->quote_angle = quote_angle;
-    klass->default_value = default_value;
+    klass->quote_angle = _adg_quote_angle;
+    klass->default_value = _adg_default_value;
 
     param = adg_param_spec_dress("dim-dress",
                                  P_("Dimension Dress"),
@@ -210,7 +210,7 @@ adg_dim_init(AdgDim *dim)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
@@ -236,7 +236,7 @@ dispose(GObject *object)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
@@ -249,7 +249,8 @@ finalize(GObject *object)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgDimPrivate *data = ((AdgDim *) object)->data;
 
@@ -291,8 +292,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgDim *dim;
     AdgDimPrivate *data;
@@ -302,7 +303,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
-        set_dim_dress(dim, g_value_get_int(value));
+        _adg_set_dim_dress(dim, g_value_get_int(value));
         break;
     case PROP_REF1:
         adg_point_set(&data->ref1, g_value_get_boxed(value));
@@ -317,19 +318,19 @@ set_property(GObject *object, guint prop_id,
         data->level = g_value_get_double(value);
         break;
     case PROP_OUTSIDE:
-        set_outside(dim, g_value_get_enum(value));
+        _adg_set_outside(dim, g_value_get_enum(value));
         break;
     case PROP_DETACHED:
-        set_detached(dim, g_value_get_enum(value));
+        _adg_set_detached(dim, g_value_get_enum(value));
         break;
     case PROP_VALUE:
-        set_value(dim, g_value_get_string(value));
+        _adg_set_value(dim, g_value_get_string(value));
         break;
     case PROP_MIN:
-        set_min(dim, g_value_get_string(value));
+        _adg_set_min(dim, g_value_get_string(value));
         break;
     case PROP_MAX:
-        set_max(dim, g_value_get_string(value));
+        _adg_set_max(dim, g_value_get_string(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -356,7 +357,7 @@ adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_dim_dress(dim, dress))
+    if (_adg_set_dim_dress(dim, dress))
         g_object_notify((GObject *) dim, "dim-dress");
 }
 
@@ -777,7 +778,7 @@ adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_outside(dim, outside))
+    if (_adg_set_outside(dim, outside))
         g_object_notify((GObject *) dim, "outside");
 }
 
@@ -819,7 +820,7 @@ adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_detached(dim, detached))
+    if (_adg_set_detached(dim, detached))
         g_object_notify((GObject *) dim, "detached");
 }
 
@@ -859,7 +860,7 @@ adg_dim_set_value(AdgDim *dim, const gchar *value)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_value(dim, value))
+    if (_adg_set_value(dim, value))
         g_object_notify((GObject *) dim, "value");
 }
 
@@ -915,7 +916,7 @@ adg_dim_set_min(AdgDim *dim, const gchar *min)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_min(dim, min))
+    if (_adg_set_min(dim, min))
         g_object_notify((GObject *) dim, "min");
 }
 
@@ -952,7 +953,7 @@ adg_dim_set_max(AdgDim *dim, const gchar *max)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    if (set_max(dim, max))
+    if (_adg_set_max(dim, max))
         g_object_notify((GObject *) dim, "max");
 }
 
@@ -1035,7 +1036,7 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
 
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
@@ -1047,7 +1048,7 @@ global_changed(AdgEntity *entity)
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
@@ -1059,7 +1060,7 @@ local_changed(AdgEntity *entity)
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
@@ -1075,7 +1076,7 @@ invalidate(AdgEntity *entity)
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgDim *dim;
     AdgDimPrivate *data;
@@ -1205,7 +1206,7 @@ arrange(AdgEntity *entity)
 }
 
 static gchar *
-default_value(AdgDim *dim)
+_adg_default_value(AdgDim *dim)
 {
     g_warning("AdgDim::default_value not implemented for `%s'",
               g_type_name(G_TYPE_FROM_INSTANCE(dim)));
@@ -1213,7 +1214,7 @@ default_value(AdgDim *dim)
 }
 
 static gdouble
-quote_angle(gdouble angle)
+_adg_quote_angle(gdouble angle)
 {
     angle = cpml_angle(angle);
 
@@ -1224,7 +1225,7 @@ quote_angle(gdouble angle)
 }
 
 static gboolean
-set_dim_dress(AdgDim *dim, AdgDress dress)
+_adg_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     AdgDimPrivate *data = dim->data;
 
@@ -1237,7 +1238,7 @@ set_dim_dress(AdgDim *dim, AdgDress dress)
 }
 
 static gboolean
-set_outside(AdgDim *dim, AdgThreeState outside)
+_adg_set_outside(AdgDim *dim, AdgThreeState outside)
 {
     AdgDimPrivate *data;
 
@@ -1255,7 +1256,7 @@ set_outside(AdgDim *dim, AdgThreeState outside)
 }
 
 static gboolean
-set_detached(AdgDim *dim, AdgThreeState detached)
+_adg_set_detached(AdgDim *dim, AdgThreeState detached)
 {
     AdgDimPrivate *data;
 
@@ -1273,7 +1274,7 @@ set_detached(AdgDim *dim, AdgThreeState detached)
 }
 
 static gboolean
-set_value(AdgDim *dim, const gchar *value)
+_adg_set_value(AdgDim *dim, const gchar *value)
 {
     AdgDimPrivate *data;
 
@@ -1294,7 +1295,7 @@ set_value(AdgDim *dim, const gchar *value)
 }
 
 static gboolean
-set_min(AdgDim *dim, const gchar *min)
+_adg_set_min(AdgDim *dim, const gchar *min)
 {
     AdgDimPrivate *data = dim->data;
 
@@ -1313,7 +1314,7 @@ set_min(AdgDim *dim, const gchar *min)
 }
 
 static gboolean
-set_max(AdgDim *dim, const gchar *max)
+_adg_set_max(AdgDim *dim, const gchar *max)
 {
     AdgDimPrivate *data = dim->data;
 
