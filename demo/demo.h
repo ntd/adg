@@ -3,6 +3,10 @@
 
 #include <gtk/gtk.h>
 
+/* Required for i18n */
+#undef G_LOG_DOMAIN
+#include <adg/adg-internal.h>
+
 
 G_BEGIN_DECLS
 

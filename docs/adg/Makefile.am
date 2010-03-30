@@ -4,7 +4,7 @@ GTKDOC_CFLAGS=		@ADG_CFLAGS@ \
 			-I$(top_srcdir) \
 			-I$(top_builddir)
 GTKDOC_LIBS=		@ADG_LIBS@ \
-			$(top_builddir)/src/adg/libadg.la
+			$(top_builddir)/src/adg/libadg-1.la
 
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml

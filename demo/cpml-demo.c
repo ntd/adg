@@ -1,9 +1,6 @@
-#include <config.h>
-#include <cpml/cpml.h>
-#include <gtk/gtk.h>
-#include <math.h>
-
 #include "demo.h"
+#include <cpml.h>
+#include <math.h>
 
 
 static void     parse_args              (gint           *p_argc,

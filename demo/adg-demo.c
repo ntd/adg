@@ -1,11 +1,6 @@
-#include <config.h>
-#include <adg/adg.h>
-#include <adg/adg-widget.h>
+#include <adg.h>
+#include <adg-gtk.h>
 #include <math.h>
-
-/* Required for i18n */
-#undef G_LOG_DOMAIN
-#include <adg/adg-internal.h>
 
 #include "demo.h"
 

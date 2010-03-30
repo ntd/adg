@@ -4,7 +4,7 @@ AM_CFLAGS=			-g @ADG_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 AM_LDFLAGS=			@ADG_LIBS@
-LDADD=				$(top_builddir)/src/adg/libadg.la
+LDADD=				$(top_builddir)/src/adg/libadg-1.la
 
 
 # file groups

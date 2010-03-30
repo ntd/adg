@@ -21,7 +21,7 @@
 #ifndef __ADG_PATH_PRIVATE_H__
 #define __ADG_PATH_PRIVATE_H__
 
-#include <adg/adg-pair.h>
+#include "adg-pair.h"
 
 
 G_BEGIN_DECLS

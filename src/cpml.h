@@ -17,17 +17,18 @@
  * Boston, MA  02110-1301, USA.
  */
 
+
 #ifndef __CPML_H__
 #define __CPML_H__
 
-#include <cpml/cpml-util.h>
-#include <cpml/cpml-pair.h>
-#include <cpml/cpml-extents.h>
-#include <cpml/cpml-segment.h>
-#include <cpml/cpml-primitive.h>
-#include <cpml/cpml-line.h>
-#include <cpml/cpml-close.h>
-#include <cpml/cpml-arc.h>
-#include <cpml/cpml-curve.h>
+#include "cpml/cpml-util.h"
+#include "cpml/cpml-pair.h"
+#include "cpml/cpml-extents.h"
+#include "cpml/cpml-segment.h"
+#include "cpml/cpml-primitive.h"
+#include "cpml/cpml-line.h"
+#include "cpml/cpml-close.h"
+#include "cpml/cpml-arc.h"
+#include "cpml/cpml-curve.h"
 
 #endif /* __CPML_H__ */

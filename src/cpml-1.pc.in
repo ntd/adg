@@ -9,5 +9,5 @@ Version: @VERSION@
 URL: http://adg.entidi.com
 
 Requires: @CPML_REQUIRES@
-Libs: -L${libdir} -lcpml
-Cflags:
+Libs: -L${libdir} -lcpml-1
+Cflags: -I${includedir}/adg-1

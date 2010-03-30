@@ -6,7 +6,7 @@ AM_CFLAGS=		@ADG_CFLAGS@ \
 AM_LDFLAGS=		@ADG_LIBS@
 AM_CPPFLAGS=		-DPKGDATADIR='"$(pkgdatadir)"' \
 			-DSOURCEDIR='"$(abs_top_srcdir)/demo"'
-LDADD=			$(top_builddir)/src/adg/libadg.la
+LDADD=			$(top_builddir)/src/adg/libadg-1.la
 
 
 if HAVE_GTK2

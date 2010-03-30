@@ -19,14 +19,14 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_STYLE_H__
 #define __ADG_STYLE_H__
 
-#include <adg/adg-entity.h>
+#include "adg-entity.h"
 
 
 G_BEGIN_DECLS

@@ -19,15 +19,15 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_POINT_H__
 #define __ADG_POINT_H__
 
-#include <adg/adg-pair.h>
-#include <adg/adg-model.h>
+#include "adg-pair.h"
+#include "adg-model.h"
 
 
 G_BEGIN_DECLS

@@ -19,14 +19,14 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_HATCH_H__
 #define __ADG_HATCH_H__
 
-#include <adg/adg-stroke.h>
+#include "adg-stroke.h"
 
 
 G_BEGIN_DECLS

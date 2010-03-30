@@ -6,8 +6,7 @@ AM_LDFLAGS=			@CPML_LIBS@
 
 
 # file groups
-cpml_h_sources=			cpml.h \
-				cpml-arc.h \
+h_sources=			cpml-arc.h \
 				cpml-curve.h \
 				cpml-extents.h \
 				cpml-line.h \
@@ -16,11 +15,11 @@ cpml_h_sources=			cpml.h \
 				cpml-primitive.h \
 				cpml-segment.h \
 				cpml-util.h
-cpml_built_h_sources=
-cpml_private_h_sources=		cpml-internal.h \
+built_h_sources=
+private_h_sources=		cpml-internal.h \
 				cpml-primitive-private.h
-cpml_built_private_h_sources=
-cpml_c_sources=			cpml-arc.c \
+built_private_h_sources=
+c_sources=			cpml-arc.c \
 				cpml-curve.c \
 				cpml-extents.c \
 				cpml-line.c \
@@ -28,25 +27,22 @@ cpml_c_sources=			cpml-arc.c \
 				cpml-primitive.c \
 				cpml-segment.c \
 				cpml-util.c
-cpml_built_c_sources=
-cpml_pkgconfig_file=		cpml.pc
+built_c_sources=
 
 # targets
-BUILT_SOURCES=			$(cpml_built_h_sources) \
-				$(cpml_built_private_h_sources) \
-				$(cpml_built_c_sources)
+BUILT_SOURCES=			$(built_h_sources) \
+				$(built_private_h_sources) \
+				$(built_c_sources)
 
-libcpml_includedir=		$(includedir)/cpml
-libcpml_include_DATA=		$(cpml_h_sources) \
-				$(cpml_built_h_sources)
+cpml_includedir=		$(includedir)/adg-1/cpml
+cpml_include_DATA=		$(h_sources) \
+				$(built_h_sources)
 
-lib_LTLIBRARIES= 		libcpml.la
-libcpml_la_LDFLAGS=		-release @PACKAGE_VERSION@
-libcpml_la_SOURCES=		$(cpml_h_sources) \
-				$(cpml_built_h_sources) \
-				$(cpml_private_h_sources) \
-				$(cpml_built_private_h_sources) \
-				$(cpml_c_sources) \
-				$(cpml_built_c_sources)
-pkgconfig_DATA=			$(cpml_pkgconfig_file)
-EXTRA_DIST=			$(cpml_pkgconfig_file).in
+lib_LTLIBRARIES= 		libcpml-1.la
+libcpml_1_la_LDFLAGS=
+libcpml_1_la_SOURCES=		$(h_sources) \
+				$(built_h_sources) \
+				$(private_h_sources) \
+				$(built_private_h_sources) \
+				$(c_sources) \
+				$(built_c_sources)

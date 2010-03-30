@@ -19,14 +19,14 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_MATRIX_H__
 #define __ADG_MATRIX_H__
 
-#include <adg/adg-enums.h>
+#include "adg-enums.h"
 #include <cairo.h>
 
 

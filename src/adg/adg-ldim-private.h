@@ -21,8 +21,8 @@
 #ifndef __ADG_LDIM_PRIVATE_H__
 #define __ADG_LDIM_PRIVATE_H__
 
-#include <adg-trail.h>
-#include <adg-marker.h>
+#include "adg-trail.h"
+#include "adg-marker.h"
 
 
 G_BEGIN_DECLS

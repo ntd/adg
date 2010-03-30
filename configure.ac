@@ -154,9 +154,9 @@ AC_CONFIG_FILES([build/shave
                  build/shave-libtool
                  Makefile
                  src/Makefile
-                 src/cpml/cpml.pc
+                 src/cpml-1.pc
                  src/cpml/Makefile
-                 src/adg/adg.pc
+                 src/adg-1.pc
                  src/adg/Makefile
                  src/adg/tests/Makefile
                  demo/Makefile

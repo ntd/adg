@@ -19,14 +19,14 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_SEGMENT_H__
 #define __ADG_SEGMENT_H__
 
-#include <cpml/cpml.h>
+#include <cpml.h>
 #include <glib-object.h>
 
 

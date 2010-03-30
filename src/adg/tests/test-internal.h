@@ -21,7 +21,7 @@
 #ifndef __TEST_INIT_H__
 #define __TEST_INIT_H__
 
-#include <adg/adg.h>
+#include <adg.h>
 
 
 G_BEGIN_DECLS

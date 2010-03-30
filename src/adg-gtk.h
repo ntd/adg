@@ -18,21 +18,9 @@
  */
 
 
-#ifndef __ADG_ARROW_PRIVATE_H__
-#define __ADG_ARROW_PRIVATE_H__
+#ifndef __ADG_GTK_H__
+#define __ADG_GTK_H__
 
-#include "adg-style.h"
+#include "adg/adg-widget.h"
 
-
-G_BEGIN_DECLS
-
-typedef struct _AdgArrowPrivate AdgArrowPrivate;
-
-struct _AdgArrowPrivate {
-    gdouble      angle;
-};
-
-G_END_DECLS
-
-
-#endif /* __ADG_ARROW_PRIVATE_H__ */
+#endif /* __ADG_GTK_H__ */

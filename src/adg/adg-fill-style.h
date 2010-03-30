@@ -19,16 +19,16 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_FILL_STYLE_H__
 #define __ADG_FILL_STYLE_H__
 
-#include <adg/adg-style.h>
-#include <adg/adg-pattern.h>
-#include <cpml/cpml-extents.h>
+#include "adg-style.h"
+#include "adg-pattern.h"
+#include <cpml.h>
 
 
 G_BEGIN_DECLS

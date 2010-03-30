@@ -19,14 +19,14 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_ARROW_H__
 #define __ADG_ARROW_H__
 
-#include <adg/adg-marker.h>
+#include "adg-marker.h"
 
 
 G_BEGIN_DECLS

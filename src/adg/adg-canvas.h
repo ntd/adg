@@ -19,15 +19,15 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_CANVAS_H__
 #define __ADG_CANVAS_H__
 
-#include <adg/adg-container.h>
-#include <adg/adg-style.h>
+#include "adg-container.h"
+#include "adg-style.h"
 
 
 G_BEGIN_DECLS

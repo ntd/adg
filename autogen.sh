@@ -4,7 +4,7 @@
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
-if test ! -f $srcdir/configure.ac -o ! -f $srcdir/src/adg/adg.h; then
+if test ! -f $srcdir/configure.ac -o ! -f $srcdir/src/adg.h; then
     echo "**Error**: '$srcdir' does not look like the top-level adg directory"
     exit 1
 fi

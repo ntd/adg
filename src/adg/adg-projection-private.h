@@ -19,7 +19,7 @@
 #ifndef __ADG_PROJECTION_PRIVATE_H__
 #define __ADG_PROJECTION_PRIVATE_H__
 
-#include <adg/adg-path.h>
+#include "adg-path.h"
 
 
 G_BEGIN_DECLS

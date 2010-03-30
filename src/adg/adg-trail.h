@@ -19,17 +19,17 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_TRAIL_H__
 #define __ADG_TRAIL_H__
 
-#include <adg/adg-model.h>
-#include <adg/adg-primitive.h>
-#include <adg/adg-segment.h>
-#include <cpml/cpml.h>
+#include "adg-model.h"
+#include "adg-primitive.h"
+#include "adg-segment.h"
+#include <cpml.h>
 
 
 G_BEGIN_DECLS

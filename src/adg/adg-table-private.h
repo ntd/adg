@@ -21,8 +21,8 @@
 #ifndef __ADG_TABLE_PRIVATE_H__
 #define __ADG_TABLE_PRIVATE_H__
 
-#include <adg/adg-table-style.h>
-#include <adg/adg-stroke.h>
+#include "adg-table-style.h"
+#include "adg-stroke.h"
 
 
 G_BEGIN_DECLS

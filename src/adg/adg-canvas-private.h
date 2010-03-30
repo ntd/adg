@@ -21,7 +21,7 @@
 #ifndef __ADG_CANVAS_PRIVATE_H__
 #define __ADG_CANVAS_PRIVATE_H__
 
-#include <adg/adg-style.h>
+#include "adg-style.h"
 
 
 G_BEGIN_DECLS

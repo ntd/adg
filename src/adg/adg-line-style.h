@@ -19,15 +19,15 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_LINE_STYLE_H__
 #define __ADG_LINE_STYLE_H__
 
-#include <adg/adg-style.h>
-#include <adg/adg-dress.h>
+#include "adg-style.h"
+#include "adg-dress.h"
 
 
 G_BEGIN_DECLS

@@ -19,17 +19,17 @@
 
 
 #if !defined(__ADG_H__)
-#error "Only <adg/adg.h> can be included directly."
+#error "Only <adg.h> can be included directly."
 #endif
 
 
 #ifndef __ADG_DIM_H__
 #define __ADG_DIM_H__
 
-#include <adg/adg-point.h>
-#include <adg/adg-alignment.h>
-#include <adg/adg-model.h>
-#include <adg/adg-enums.h>
+#include "adg-point.h"
+#include "adg-alignment.h"
+#include "adg-model.h"
+#include "adg-enums.h"
 
 
 G_BEGIN_DECLS

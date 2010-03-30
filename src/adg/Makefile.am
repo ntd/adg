@@ -13,9 +13,7 @@ AM_LDFLAGS=			@ADG_LIBS@
 
 
 # file groups
-pkgconfig_file=			adg.pc
-h_sources=			adg.h \
-				adg-adim.h \
+h_sources=			adg-adim.h \
 				adg-alignment.h \
 				adg-arrow.h \
 				adg-canvas.h \
@@ -138,31 +136,29 @@ endif
 
 
 # targets
-pkgconfig_DATA=			$(pkgconfig_file)
-EXTRA_DIST=			$(pkgconfig_file).in \
-				$(template_sources)
+EXTRA_DIST=			$(template_sources)
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)
 #				built_c_sources are properly tracked
-#				by nodist_libadg_la_SOURCES
+#				by nodist_libadg_1_la_SOURCES
 CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
 
-libadg_includedir=		$(includedir)/adg
-libadg_include_DATA=		$(h_sources) \
+adg_includedir=			$(includedir)/adg-1/adg
+adg_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
-lib_LTLIBRARIES= 		libadg.la
-libadg_la_LDFLAGS=		-release @PACKAGE_VERSION@
-libadg_la_SOURCES=		$(h_sources) \
+lib_LTLIBRARIES= 		libadg-1.la
+libadg_1_la_LDFLAGS=
+libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
 				$(c_sources)
-nodist_libadg_la_SOURCES=	$(built_h_sources) \
+nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_la_LIBADD=		$(top_builddir)/src/cpml/libcpml.la
-libadg_la_DEPENDENCIES=		$(top_builddir)/src/cpml/libcpml.la
+libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la
+libadg_1_la_DEPENDENCIES=	$(top_builddir)/src/cpml/libcpml-1.la
 
 
 adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h
