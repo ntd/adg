@@ -14,7 +14,6 @@ FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/src/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/src/cpml/*.c
 IGNORE_HFILES=		cpml.h \
-			cpml-alloca.h \
 			cpml-internal.h \
 			cpml-primitive-private.h
 HTML_IMAGES=
