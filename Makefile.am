@@ -24,8 +24,7 @@ EXTRA_DIST=			COPYING \
 				adg.doap \
 				$(BUILT_SOURCES)
 
-SUBDIRS=			cpml \
-				adg \
+SUBDIRS=			src \
 				demo \
 				docs \
 				po \

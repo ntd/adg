@@ -1,12 +1,12 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 AM_CFLAGS=		@ADG_CFLAGS@ \
-			-I$(top_srcdir) \
-			-I$(top_builddir)
+			-I$(top_srcdir)/src \
+			-I$(top_builddir)/src
 AM_LDFLAGS=		@ADG_LIBS@
 AM_CPPFLAGS=		-DPKGDATADIR='"$(pkgdatadir)"' \
 			-DSOURCEDIR='"$(abs_top_srcdir)/demo"'
-LDADD=			$(top_builddir)/adg/libadg.la
+LDADD=			$(top_builddir)/src/adg/libadg.la
 
 
 if HAVE_GTK2

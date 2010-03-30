@@ -7,8 +7,8 @@ mkenums_command=		$(MSG_GEN) ; \
 genmarshal_command=		$(MSG_GEN) ; \
 				$(GLIB_GENMARSHAL) --prefix=adg_marshal
 AM_CFLAGS=			@ADG_CFLAGS@ \
-				-I$(top_srcdir) \
-				-I$(top_builddir)
+				-I$(top_srcdir)/src \
+				-I$(top_builddir)/src
 AM_LDFLAGS=			@ADG_LIBS@
 
 
@@ -85,7 +85,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-title-block-private.h \
 				adg-trail-private.h \
 				adg-toy-text-private.h
-built_private_h_sources=	$(builddir)/adg-marshal.h
+built_private_h_sources=	adg-marshal.h
 c_sources=			adg-adim.c \
 				adg-alignment.c \
 				adg-arrow.c \
@@ -125,8 +125,8 @@ c_sources=			adg-adim.c \
 				adg-trail.c \
 				adg-toy-text.c \
 				adg-util.c
-built_c_sources=		$(builddir)/adg-type-builtins.c \
-				$(builddir)/adg-marshal.c
+built_c_sources=		adg-type-builtins.c \
+				adg-marshal.c
 template_sources=		adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
 				adg-marshal.genmarshal
@@ -161,8 +161,8 @@ libadg_la_SOURCES=		$(h_sources) \
 nodist_libadg_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
-libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
+libadg_la_LIBADD=		$(top_builddir)/src/cpml/libcpml.la
+libadg_la_DEPENDENCIES=		$(top_builddir)/src/cpml/libcpml.la
 
 
 adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h

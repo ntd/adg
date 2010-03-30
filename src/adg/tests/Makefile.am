@@ -1,10 +1,10 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 AM_CFLAGS=			-g @ADG_CFLAGS@ \
-				-I$(top_srcdir) \
-				-I$(top_builddir)
+				-I$(top_srcdir)/src \
+				-I$(top_builddir)/src
 AM_LDFLAGS=			@ADG_LIBS@
-LDADD=				$(top_builddir)/adg/libadg.la
+LDADD=				$(top_builddir)/src/adg/libadg.la
 
 
 # file groups

@@ -153,11 +153,12 @@ SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
                  build/shave-libtool
                  Makefile
-                 cpml/cpml.pc
-                 cpml/Makefile
-                 adg/adg.pc
-                 adg/Makefile
-                 adg/tests/Makefile
+                 src/Makefile
+                 src/cpml/cpml.pc
+                 src/cpml/Makefile
+                 src/adg/adg.pc
+                 src/adg/Makefile
+                 src/adg/tests/Makefile
                  demo/Makefile
                  po/Makefile.in
                  po-properties/Makefile.in

@@ -4,11 +4,11 @@ GTKDOC_CFLAGS=		@ADG_CFLAGS@ \
 			-I$(top_srcdir) \
 			-I$(top_builddir)
 GTKDOC_LIBS=		@ADG_LIBS@ \
-			$(top_builddir)/adg/libadg.la
+			$(top_builddir)/src/adg/libadg.la
 
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(abs_top_srcdir)/adg
+DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
@@ -17,8 +17,8 @@ MKDB_OPTIONS=		--sgml-mode \
 			--output-format=xml
 MKHTML_OPTIONS=		--path=$(abs_builddir)
 FIXXREF_OPTIONS=
-HFILE_GLOB=		$(top_srcdir)/adg/*.h
-CFILE_GLOB=		$(top_srcdir)/adg/*.c
+HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
+CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
 IGNORE_HFILES=		adg.h \
 			adg-internal.h \
 			adg-type-builtins.h \
