@@ -54,7 +54,7 @@ h_sources=			adg.h \
 				adg-trail.h \
 				adg-toy-text.h \
 				adg-util.h
-built_h_sources=		$(builddir)/adg-type-builtins.h
+built_h_sources=		adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
 				adg-arrow-private.h \
@@ -165,14 +165,14 @@ libadg_la_LIBADD=		$(top_builddir)/cpml/libcpml.la
 libadg_la_DEPENDENCIES=		$(top_builddir)/cpml/libcpml.la
 
 
-$(builddir)/adg-type-builtins.c: adg-type-builtins.c.mkenums adg-enums.h
-	$(mkenums_command) adg-type-builtins.c.mkenums adg-enums.h > $@
+adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h
+	$(mkenums_command) $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h > $@
 
-$(builddir)/adg-type-builtins.h: adg-type-builtins.h.mkenums adg-enums.h
-	$(mkenums_command) adg-type-builtins.h.mkenums adg-enums.h > $@
+adg-type-builtins.h: $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h
+	$(mkenums_command) $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h > $@
 
-$(builddir)/adg-marshal.c: adg-marshal.genmarshal
-	$(genmarshal_command) --body adg-marshal.genmarshal > $@
+adg-marshal.c: $(srcdir)/adg-marshal.genmarshal
+	$(genmarshal_command) --body $(srcdir)/adg-marshal.genmarshal > $@
 
-$(builddir)/adg-marshal.h: adg-marshal.genmarshal
-	$(genmarshal_command) --header adg-marshal.genmarshal > $@
+adg-marshal.h: $(srcdir)/adg-marshal.genmarshal
+	$(genmarshal_command) --header $(srcdir)/adg-marshal.genmarshal > $@
