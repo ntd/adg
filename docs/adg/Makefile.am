@@ -1,14 +1,15 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-GTKDOC_CFLAGS=		@ADG_CFLAGS@ \
-			-I$(top_srcdir) \
-			-I$(top_builddir)
-GTKDOC_LIBS=		@ADG_LIBS@ \
-			$(top_builddir)/src/adg/libadg-1.la
+GTKDOC_CFLAGS=		@ADG_GTK_CFLAGS@ \
+			-I$(top_srcdir)
+GTKDOC_LIBS=		@ADG_GTK_LIBS@ \
+			$(top_builddir)/src/adg/libadg-1.la \
+			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
 
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg
+DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg \
+			$(abs_top_srcdir)/src/adg-gtk
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections

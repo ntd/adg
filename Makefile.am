@@ -24,11 +24,13 @@ EXTRA_DIST=			COPYING \
 				adg.doap \
 				$(BUILT_SOURCES)
 
-SUBDIRS=			src \
-				demo \
-				docs \
-				po \
-				po-properties
+SUBDIRS=			src
+if HAVE_GTK2
+SUBDIRS+=			demo
+endif
+SUBDIRS+=			po \
+				po-properties \
+				docs
 
 
 # Creating ChangeLog files from git log:

@@ -18,8 +18,8 @@
  */
 
 
-#include "test-internal.h"
-#include <adg/adg-widget.h>
+#include <test-internal.h>
+#include <adg-gtk.h>
 
 
 static void

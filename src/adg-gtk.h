@@ -21,6 +21,6 @@
 #ifndef __ADG_GTK_H__
 #define __ADG_GTK_H__
 
-#include "adg/adg-widget.h"
+#include "adg-gtk/adg-widget.h"
 
 #endif /* __ADG_GTK_H__ */

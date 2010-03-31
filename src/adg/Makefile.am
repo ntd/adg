@@ -128,11 +128,6 @@ built_c_sources=		adg-type-builtins.c \
 template_sources=		adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
 				adg-marshal.genmarshal
-if HAVE_GTK2
-h_sources+=			adg-widget.h
-private_h_sources+=		adg-widget-private.h
-c_sources+=			adg-widget.c
-endif
 
 
 # targets

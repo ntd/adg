@@ -81,10 +81,6 @@ TEST_PROGS+=			test-arrow
 test_arrow_SOURCES=		test-arrow.c \
 				$(test_internals)
 
-TEST_PROGS+=			test-widget
-test_widget_SOURCES=		test-widget.c \
-				$(test_internals)
-
 TEST_PROGS+=			test-color-style
 test_color_style_SOURCES=	test-color-style.c \
 				$(test_internals)
@@ -113,4 +109,4 @@ endif
 
 
 # targets
-check_PROGRAMS=		$(TEST_PROGS)
+check_PROGRAMS=			$(TEST_PROGS)

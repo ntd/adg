@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: adg-gtk
+Description: Selection of GTK+ widgets for the ADG canvas
+Version: @VERSION@
+URL: http://adg.entidi.com
+
+Requires: adg-1 >= @VERSION@,@ADG_GTK_REQUIRES@
+Libs: -L${libdir} -ladg-gtk-1
+Cflags:

@@ -135,13 +135,16 @@ AC_C_CONST
 CPML_REQUIRES='cairo >= cairo_prereq'
 CPML_CFLAGS="${CAIRO_CFLAGS}"
 CPML_LIBS="${CAIRO_LIBS}"
+ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
+ADG_CFLAGS="${GOBJECT2_CFLAGS} ${CPML_CFLAGS}"
+ADG_LIBS="${GOBJECT2_LIBS} ${CPML_LIBS}"
 AS_IF([test "x${enable_gtk2}" = "xyes"],
-      [ADG_REQUIRES='gtk+-2.0 >= gtk_prereq'
-       ADG_CFLAGS="${GTK2_CFLAGS}"
-       ADG_LIBS="${GTK2_LIBS}"],
-      [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
-       ADG_CFLAGS="${GOBJECT2_CFLAGS} ${CAIRO_CFLAGS}"
-       ADG_LIBS="${GOBJECT2_LIBS} ${CAIRO_LIBS}"])
+      [ADG_GTK_REQUIRES='gtk+-2.0 >= gtk_prereq'
+       ADG_GTK_CFLAGS="${GTK2_CFLAGS} ${CPML_CFLAGS}"
+       ADG_GTK_LIBS="${GTK2_LIBS} ${CPML_LIBS}"
+       AC_SUBST([ADG_GTK_REQUIRES])
+       AC_SUBST([ADG_GTK_CFLAGS])
+       AC_SUBST([ADG_GTK_LIBS])])
 AC_SUBST([CPML_REQUIRES])
 AC_SUBST([CPML_CFLAGS])
 AC_SUBST([CPML_LIBS])
@@ -159,6 +162,9 @@ AC_CONFIG_FILES([build/shave
                  src/adg-1.pc
                  src/adg/Makefile
                  src/adg/tests/Makefile
+                 src/adg-gtk-1.pc
+                 src/adg-gtk/Makefile
+                 src/adg-gtk/tests/Makefile
                  demo/Makefile
                  po/Makefile.in
                  po-properties/Makefile.in
