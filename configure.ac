@@ -66,9 +66,25 @@ AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
                          [enable_gtk2=yes],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
-                                [AC_MSG_ERROR([$GTK2_PKG_ERRORS and GTK+2 support requested])],
+                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
+
+
+# Check for optional glade support
+
+AC_ARG_ENABLE([glade],
+              [AS_HELP_STRING([--enable-glade],
+			      [install glade catalog file @<:@default=check@:>@])],
+              [],[enable_glade=check])
+AS_IF([test "x${enable_glade}" != "xno"],
+      [PKG_CHECK_MODULES([GLADE],[gladeui-1.0],
+                         [enable_glade=yes
+			 AC_SUBST([GLADE_CATALOGDIR],$(${PKG_CONFIG} --variable=catalogdir gladeui-1.0))],
+                         [AS_IF([test "x${enable_glade}" = "xyes"],
+                                [AC_MSG_ERROR([${GLADE_PKG_ERRORS} and glade support requested])],
+                                [enable_glade=no])])])
+AM_CONDITIONAL([HAVE_GLADE],[test "x${enable_glade}" = "xyes"])
 
 
 # Check for optional GLib test framework
@@ -145,7 +161,8 @@ ADG canvas adg_version will be built with the following options:
 ----------------------------------------------------------
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
- AdgWidget support (requires GTK+2): ${enable_gtk2}
+           GTK+2 additional widgets: ${enable_gtk2}
+	     Install glade catalogs: ${enable_glade}
                 Build API reference: ${enable_gtk_doc}
              Test framework support: ${enable_test_framework}
 ])

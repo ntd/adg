@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<glade-catalog name="adg" library="adg-gtk" version="0.6" depends="gtk+"
+               supports="gtkbuilder" domain="adg-1.0" book="adg">
+
+  <glade-widget-classes>
+    <glade-widget-class name="AdgWidget" generic-name="canvas"
+                        title="ADG canvas surface"/>
+  </glade-widget-classes>
+
+  <glade-widget-group name="ADG" title="ADG canvas widgets">
+    <default-palette-state expanded="False"/>
+    <glade-widget-class-ref name="AdgWidget"/>
+  </glade-widget-group>
+
+</glade-catalog>
