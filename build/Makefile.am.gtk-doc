@@ -45,7 +45,7 @@ CLEANFILES = $(SCANOBJ_FILES) $(REPORT_FILES) $(DOC_STAMPS)
 
 # Multiple source directories support:
 # the --source-dir option must be specified for every directory
-SOURCE_DIR_OPTIONS=$(DOC_SOURCE_DIR,%,--source-dir=%)
+SOURCE_DIR_OPTIONS=$(DOC_SOURCE_DIR:%=--source-dir=%)
 
 if ENABLE_GTK_DOC
 if GTK_DOC_BUILD_HTML
