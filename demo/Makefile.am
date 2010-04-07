@@ -10,7 +10,6 @@ LDADD=			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
 
 
 if HAVE_GTK2
-
 bin_PROGRAMS=		adg-demo \
 			cpml-demo
 adg_demo_SOURCES=	adg-demo.c \
@@ -19,8 +18,9 @@ adg_demo_SOURCES=	adg-demo.c \
 cpml_demo_SOURCES=	cpml-demo.c \
 			demo.c \
 			demo.h
-
 dist_pkgdata_DATA=	adg-demo.ui \
-			cpml-demo.ui
-
+			cpml-demo.ui \
+			adg-64.png
 endif
+
+EXTRA_DIST=		adg-demo.ui.in

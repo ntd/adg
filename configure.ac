@@ -155,6 +155,7 @@ AC_CONFIG_FILES([build/shave
                  src/adg-gtk/Makefile
                  src/adg-gtk/tests/Makefile
                  demo/Makefile
+                 demo/adg-demo.ui
                  po/Makefile.in
                  po-properties/Makefile.in
                  docs/Makefile
