@@ -9,7 +9,10 @@ xml2txt_command=		$(MSG_GEN) ; \
 				fi ; \
 				$(XSLTPROC) --novalid -o $@ $(xml2txt_stylesheet)
 ACLOCAL_AMFLAGS=		-I build
-DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk-doc
+DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk2 \
+				--enable-gtk-doc \
+				--enable-glade \
+				--enable-test-framework
 
 BUILT_SOURCES=			ChangeLog \
 				README \

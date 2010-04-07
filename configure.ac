@@ -9,7 +9,9 @@ m4_define([gtk_prereq],[2.12.0])
 
 # Initialization
 
-AC_PREREQ([2.59])
+dnl autoconf 2.60 implements datarootdir, required by ADG
+dnl to help overcoming the hardcoded glade catalogdir
+AC_PREREQ([2.60])
 AC_INIT([Automatic Drawing Generation],adg_version,
         [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
@@ -21,6 +23,7 @@ AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
 # Check for programs
 
 AC_PROG_CC
+AC_PROG_SED
 PKG_PROG_PKG_CONFIG
 AC_PATH_PROG([XSLTPROC],[xsltproc],[/usr/bin/xsltproc])
 AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums],[/usr/bin/glib-mkenums])
@@ -45,7 +48,7 @@ ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 AC_OUTPUT_COMMANDS([case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
-        sed -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
+        ${SED} -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
       esac])
 
 
@@ -75,16 +78,25 @@ AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
 
 AC_ARG_ENABLE([glade],
               [AS_HELP_STRING([--enable-glade],
-			      [install glade catalog file @<:@default=check@:>@])],
+                              [install glade catalog file @<:@default=check@:>@])],
               [],[enable_glade=check])
 AS_IF([test "x${enable_glade}" != "xno"],
       [PKG_CHECK_MODULES([GLADE],[gladeui-1.0],
-                         [enable_glade=yes
-			 AC_SUBST([GLADE_CATALOGDIR],$(${PKG_CONFIG} --variable=catalogdir gladeui-1.0))],
+                         [enable_glade=yes],
                          [AS_IF([test "x${enable_glade}" = "xyes"],
                                 [AC_MSG_ERROR([${GLADE_PKG_ERRORS} and glade support requested])],
                                 [enable_glade=no])])])
 AM_CONDITIONAL([HAVE_GLADE],[test "x${enable_glade}" = "xyes"])
+AS_IF([test "x${enable_glade}" == "xyes"],
+      [AC_MSG_CHECKING([for the glade catalog path])
+       gladeroot=`${PKG_CONFIG} --variable=datarootdir gladeui-1.0`
+       AS_IF([test "x${gladeroot}" == "x"],
+             [GLADE_CATALOGDIR="\${datarootdir}/glade3/catalogs}"],
+             [gladecatalog=`${PKG_CONFIG} --variable=catalogdir gladeui-1.0`
+              GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|\$\{datarootdir\}|" -`])
+       AC_SUBST([GLADE_CATALOGDIR])
+       AC_MSG_RESULT(${GLADE_CATALOGDIR})])
+
 
 
 # Check for optional GLib test framework
@@ -162,7 +174,7 @@ ADG canvas adg_version will be built with the following options:
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
            GTK+2 additional widgets: ${enable_gtk2}
-	     Install glade catalogs: ${enable_glade}
+             Install glade catalogs: ${enable_glade}
                 Build API reference: ${enable_gtk_doc}
              Test framework support: ${enable_test_framework}
 ])

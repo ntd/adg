@@ -2,8 +2,10 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+datarootdir=@datarootdir@
+catalogdir=@GLADE_CATALOGDIR@
 
-Name: adg-gtk
+Name: ADG-GTK
 Description: Selection of GTK+ widgets for the ADG canvas
 Version: @VERSION@
 URL: http://adg.entidi.com
