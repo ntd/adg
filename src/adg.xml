@@ -3,13 +3,13 @@
                supports="gtkbuilder" domain="adg-1.0" book="adg">
 
   <glade-widget-classes>
-    <glade-widget-class name="AdgWidget" generic-name="canvas"
-                        title="ADG canvas surface"/>
+    <glade-widget-class name="AdgGtkArea" generic-name="canvas"
+                        title="ADG canvas drawing area"/>
   </glade-widget-classes>
 
   <glade-widget-group name="ADG" title="ADG canvas widgets">
     <default-palette-state expanded="False"/>
-    <glade-widget-class-ref name="AdgWidget"/>
+    <glade-widget-class-ref name="AdgGtkArea"/>
   </glade-widget-group>
 
 </glade-catalog>

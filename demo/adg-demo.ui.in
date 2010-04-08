@@ -13,7 +13,7 @@
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="AdgWidget" id="mainCanvas">
+          <object class="AdgGtkArea" id="mainCanvas">
             <property name="visible">True</property>
           </object>
           <packing>

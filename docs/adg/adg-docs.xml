@@ -88,7 +88,7 @@
   <part id="gtk">
     <title>GTK+ support</title>
     <xi:include href="xml/adg-gtk-util.xml"/>
-    <xi:include href="xml/adg-widget.xml"/>
+    <xi:include href="xml/adg-gtk-area.xml"/>
   </part>
 
   <chapter id="Hierarchy">

@@ -54,7 +54,7 @@ IGNORE_HFILES=		adg.h \
 			adg-title-block-private.h \
 			adg-toy-text-private.h \
 			adg-trail-private.h \
-			adg-widget-private.h \
+			adg-gtk-area-private.h \
 			test-internal.h
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \

@@ -29,6 +29,8 @@
 #define G_LOG_DOMAIN  "adg-gtk"
 
 #include "config.h"
+#include <gtk/gtk.h>
+#include <adg.h>
 
 
 #ifdef ENABLE_NLS

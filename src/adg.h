@@ -21,6 +21,8 @@
 #ifndef __ADG_H__
 #define __ADG_H__
 
+#include <glib-object.h>
+
 #include "adg/adg-pair.h"
 #include "adg/adg-matrix.h"
 #include "adg/adg-pattern.h"

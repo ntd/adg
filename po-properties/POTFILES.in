@@ -38,4 +38,4 @@ src/adg/adg-title-block.c
 src/adg/adg-toy-text.c
 src/adg/adg-trail.c
 src/adg/adg-util.c
-src/adg-gtk/adg-widget.c
+src/adg-gtk/adg-gtk-area.c

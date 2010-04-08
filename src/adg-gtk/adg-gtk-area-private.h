@@ -18,17 +18,17 @@
  */
 
 
-#ifndef __ADG_WIDGET_PRIVATE_H__
-#define __ADG_WIDGET_PRIVATE_H__
+#ifndef __ADG_GTK_AREA_PRIVATE_H__
+#define __ADG_GTK_AREA_PRIVATE_H__
 
 #include <glib.h>
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgWidgetPrivate AdgWidgetPrivate;
+typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
 
-struct _AdgWidgetPrivate {
+struct _AdgGtkAreaPrivate {
     AdgCanvas   *canvas;
     gdouble      factor;
     gdouble      x_event;
@@ -38,4 +38,4 @@ struct _AdgWidgetPrivate {
 G_END_DECLS
 
 
-#endif /* __ADG_WIDGET_PRIVATE_H__ */
+#endif /* __ADG_GTK_AREA_PRIVATE_H__ */

@@ -9,13 +9,13 @@ AM_LDFLAGS=			@ADG_GTK_LIBS@
 
 # file groups
 h_sources=			adg-gtk-util.h \
-				adg-widget.h
+				adg-gtk-area.h
 built_h_sources=
 private_h_sources=		adg-gtk-internal.h \
-				adg-widget-private.h
+				adg-gtk-area-private.h
 built_private_h_sources=
 c_sources=			adg-gtk-util.c \
-				adg-widget.c
+				adg-gtk-area.c
 built_c_sources=
 
 

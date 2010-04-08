@@ -1,4 +1,3 @@
-#include <adg.h>
 #include <adg-gtk.h>
 #include <math.h>
 
@@ -19,7 +18,7 @@ struct _AdgPart {
     gdouble LD2, LD3, LD5, LD6, LD7;
 };
 
-static AdgWidget *_adg_widget = NULL;
+static AdgGtkArea *_adg_area = NULL;
 
 
 static void
@@ -490,7 +489,7 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response)
     if (surface) {
         cairo_t *cr = cairo_create(surface);
         cairo_surface_destroy(surface);
-        adg_entity_render(ADG_ENTITY(adg_widget_get_canvas(_adg_widget)), cr);
+        adg_entity_render(ADG_ENTITY(adg_gtk_area_get_canvas(_adg_area)), cr);
         cairo_show_page(cr);
         if (callback)
             callback(surface, file);
@@ -575,8 +574,8 @@ _adg_main_window(GtkBuilder *builder)
     g_assert(button_about != NULL);
     button_quit = (GtkWidget *) gtk_builder_get_object(builder, "mainQuit");
     g_assert(button_quit != NULL);
-    _adg_widget = (AdgWidget *) gtk_builder_get_object(builder, "mainCanvas");
-    g_assert(ADG_IS_WIDGET(_adg_widget));
+    _adg_area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
+    g_assert(ADG_GTK_IS_AREA(_adg_area));
 
     g_signal_connect(window, "delete-event",
                      G_CALLBACK(gtk_main_quit), NULL);
@@ -592,7 +591,7 @@ _adg_main_window(GtkBuilder *builder)
     g_signal_connect(button_quit, "clicked",
                      G_CALLBACK(gtk_main_quit), NULL);
 
-    adg_widget_set_canvas(_adg_widget, _adg_build_canvas());
+    adg_gtk_area_set_canvas(_adg_area, _adg_build_canvas());
 
     return window;
 }

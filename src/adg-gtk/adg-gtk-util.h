@@ -26,8 +26,6 @@
 #ifndef __ADG_GTK_UTIL_H__
 #define __ADG_GTK_UTIL_H__
 
-#include <gtk/gtk.h>
-
 
 G_BEGIN_DECLS
 

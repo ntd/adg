@@ -21,7 +21,10 @@
 #ifndef __ADG_GTK_H__
 #define __ADG_GTK_H__
 
+#include <adg.h>
+#include <gtk/gtk.h>
+
 #include "adg-gtk/adg-gtk-util.h"
-#include "adg-gtk/adg-widget.h"
+#include "adg-gtk/adg-gtk-area.h"
 
 #endif /* __ADG_GTK_H__ */

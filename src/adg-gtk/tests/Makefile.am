@@ -10,8 +10,8 @@ LDADD=				$(top_builddir)/src/adg/tests/test-internal.$(OBJEXT) \
 
 if HAVE_TEST_FRAMEWORK
 
-TEST_PROGS+=			test-widget
-test_widget_SOURCES=		test-widget.c
+TEST_PROGS+=			test-gtk-area
+test_gtk_area_SOURCES=		test-gtk-area.c
 
 endif
 
