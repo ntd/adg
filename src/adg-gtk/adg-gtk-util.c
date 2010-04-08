@@ -18,10 +18,38 @@
  */
 
 
-#ifndef __ADG_GTK_H__
-#define __ADG_GTK_H__
+/**
+ * SECTION:adg-gtk-util
+ * @Section_Id:gtk-utilities
+ * @title: GTK+ utilities
+ * @short_description: Assorted macros and backward compatible fallbacks
+ *
+ * Collection of macros and functions that do not fit inside any other topic.
+ **/
 
-#include "adg-gtk/adg-gtk-util.h"
-#include "adg-gtk/adg-widget.h"
 
-#endif /* __ADG_GTK_H__ */
+#include "adg-gtk-internal.h"
+#include "adg-gtk-util.h"
+
+
+#if GTK_CHECK_VERSION(2, 14, 0)
+#else
+
+/**
+ * gtk_widget_get_window:
+ * @widget: a #GtkWidget
+ *
+ * Returns the widget's window if it is realized, %NULL otherwise.
+ * This is an API fallback for GTK+ prior to 2.14.
+ *
+ * Return value: @widget's window.
+ **/
+GdkWindow *
+gtk_widget_get_window(GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), NULL);
+
+  return widget->window;
+}
+
+#endif

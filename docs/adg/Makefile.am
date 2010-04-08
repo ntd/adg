@@ -36,6 +36,7 @@ IGNORE_HFILES=		adg.h \
 			adg-edges-private.h \
 			adg-entity-private.h \
 			adg-fill-style-private.h \
+			adg-gtk-internal.h \
 			adg-font-style-private.h \
 			adg-hatch-private.h \
 			adg-ldim-private.h \

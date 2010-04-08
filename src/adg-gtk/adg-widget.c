@@ -375,7 +375,7 @@ expose_event(GtkWidget *widget, GdkEventExpose *event)
     canvas = data->canvas;
 
     if (canvas != NULL) {
-        cairo_t *cr = gdk_cairo_create(widget->window);
+        cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
         adg_entity_render((AdgEntity *) canvas, cr);
         cairo_destroy(cr);
     }

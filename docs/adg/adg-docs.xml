@@ -70,7 +70,6 @@
 
   <part id="Rendering">
     <title>The rendering process</title>
-    <xi:include href="xml/adg-widget.xml"/>
     <xi:include href="xml/adg-dress.xml"/>
     <xi:include href="xml/adg-dress-builtins.xml"/>
     <chapter id="Rendering-style">
@@ -84,6 +83,12 @@
       <xi:include href="xml/adg-dim-style.xml"/>
       <xi:include href="xml/adg-table-style.xml"/>
     </chapter>
+  </part>
+
+  <part id="gtk">
+    <title>GTK+ support</title>
+    <xi:include href="xml/adg-gtk-util.xml"/>
+    <xi:include href="xml/adg-widget.xml"/>
   </part>
 
   <chapter id="Hierarchy">

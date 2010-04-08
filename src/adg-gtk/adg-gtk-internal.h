@@ -17,11 +17,36 @@
  * Boston, MA  02110-1301, USA.
  */
 
+/*
+ * This header is included by every .c files of adg-gtk to
+ * enable the inclusion of the internal headers and initialize
+ * some common stuff.
+ */
 
-#ifndef __ADG_GTK_H__
+#ifndef __ADG_GTK_INTERNAL_H__
+#define __ADG_GTK_INTERNAL_H__
+
+#define G_LOG_DOMAIN  "adg-gtk"
+
+#include "config.h"
+
+
+#ifdef ENABLE_NLS
+
+#include <glib/gi18n-lib.h>
+#define P_(String) dgettext(GETTEXT_PACKAGE "-properties",String)
+
+#else /* !ENABLE_NLS */
+
+#define _(String)               (String)
+#define P_(String)              (String)
+#define Q_(String)              (String)
+#define N_(String)              (String)
+#define C_(Context,String)      (String)
+#define NC_(Context, String)    (String)
+
+#endif
+
 #define __ADG_GTK_H__
 
-#include "adg-gtk/adg-gtk-util.h"
-#include "adg-gtk/adg-widget.h"
-
-#endif /* __ADG_GTK_H__ */
+#endif /* __ADG_GTK_INTERNAL_H__ */

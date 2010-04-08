@@ -18,10 +18,25 @@
  */
 
 
-#ifndef __ADG_GTK_H__
-#define __ADG_GTK_H__
+#if !defined(__ADG_GTK_H__)
+#error "Only <adg-gtk.h> can be included directly."
+#endif
 
-#include "adg-gtk/adg-gtk-util.h"
-#include "adg-gtk/adg-widget.h"
 
-#endif /* __ADG_GTK_H__ */
+#ifndef __ADG_GTK_UTIL_H__
+#define __ADG_GTK_UTIL_H__
+
+#include <gtk/gtk.h>
+
+
+G_BEGIN_DECLS
+
+#if GTK_CHECK_VERSION(2, 14, 0)
+#else
+GdkWindow *     gtk_widget_get_window   (GtkWidget      *widget);
+#endif
+
+G_END_DECLS
+
+
+#endif /* __ADG_GTK_UTIL_H__ */

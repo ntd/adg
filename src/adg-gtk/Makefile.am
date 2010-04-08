@@ -8,11 +8,14 @@ AM_LDFLAGS=			@ADG_GTK_LIBS@
 
 
 # file groups
-h_sources=			adg-widget.h
+h_sources=			adg-gtk-util.h \
+				adg-widget.h
 built_h_sources=
-private_h_sources=		adg-widget-private.h
+private_h_sources=		adg-gtk-internal.h \
+				adg-widget-private.h
 built_private_h_sources=
-c_sources=			adg-widget.c
+c_sources=			adg-gtk-util.c \
+				adg-widget.c
 built_c_sources=
 
 
@@ -23,8 +26,8 @@ CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
 
-adggtk_includedir=		$(includedir)/adg-1/adg-gtk
-adggtk_include_DATA=		$(h_sources) \
+adg_gtk_includedir=		$(includedir)/adg-1/adg-gtk
+adg_gtk_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libadg-gtk-1.la
