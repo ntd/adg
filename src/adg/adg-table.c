@@ -1227,7 +1227,10 @@ arrange_frame(AdgEntity *entity)
 static void
 render(AdgEntity *entity, cairo_t *cr)
 {
+    AdgTablePrivate *data = ((AdgTable *) entity)->data;
+
     cairo_transform(cr, adg_entity_get_local_matrix(entity));
+    adg_style_apply((AdgStyle *) data->table_style, entity, cr);
 
     propagate((AdgTable *) entity, "render", cr);
 }
