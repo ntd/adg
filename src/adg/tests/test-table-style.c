@@ -162,8 +162,8 @@ _adg_frame_dress(void)
     AdgDress frame_dress;
 
     table_style = adg_table_style_new();
-    valid_dress_1 = ADG_DRESS_LINE_MEDIUM;
-    valid_dress_2 = ADG_DRESS_LINE_THINNER;
+    valid_dress_1 = ADG_DRESS_LINE_DIMENSION;
+    valid_dress_2 = ADG_DRESS_LINE_STROKE;
     incompatible_dress = ADG_DRESS_TEXT;
 
     /* Using the public APIs */
@@ -203,8 +203,8 @@ _adg_grid_dress(void)
     AdgDress grid_dress;
 
     table_style = adg_table_style_new();
-    valid_dress_1 = ADG_DRESS_LINE_MEDIUM;
-    valid_dress_2 = ADG_DRESS_LINE_THINNER;
+    valid_dress_1 = ADG_DRESS_LINE;
+    valid_dress_2 = ADG_DRESS_LINE_DIMENSION;
     incompatible_dress = ADG_DRESS_TEXT;
 
     /* Using the public APIs */
@@ -287,7 +287,7 @@ _adg_title_dress(void)
     table_style = adg_table_style_new();
     valid_dress_1 = ADG_DRESS_TEXT;
     valid_dress_2 = ADG_DRESS_TEXT_VALUE;
-    incompatible_dress = ADG_DRESS_LINE_THICK;
+    incompatible_dress = ADG_DRESS_LINE_HATCH;
 
     /* Using the public APIs */
     adg_table_style_set_title_dress(table_style, valid_dress_1);
@@ -328,7 +328,7 @@ _adg_value_dress(void)
     table_style = adg_table_style_new();
     valid_dress_1 = ADG_DRESS_TEXT;
     valid_dress_2 = ADG_DRESS_TEXT_VALUE;
-    incompatible_dress = ADG_DRESS_LINE_THICK;
+    incompatible_dress = ADG_DRESS_LINE;
 
     /* Using the public APIs */
     adg_table_style_set_value_dress(table_style, valid_dress_1);

@@ -50,8 +50,9 @@
 /**
  * ADG_DRESS_COLOR:
  *
- * The default builtin #AdgDress color. This is a transparent dress
- * without a fallback style.
+ * The default builtin #AdgDress color.
+ * This is a pass-through dress, that is it does not change
+ * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -68,11 +69,35 @@ _adg_dress_color(void)
 }
 
 /**
+ * ADG_DRESS_COLOR_BACKGROUND:
+ *
+ * The default builtin #AdgDress color to be used as the #AdgCanvas
+ * background. The fallback style is a full opaque white.
+ *
+ * This dress will be resolved to an #AdgColorStyle instance.
+ **/
+AdgDress
+_adg_dress_color_background(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
+                                          "blue", 1., "green", 1.,
+                                          "red", 1., NULL);
+
+        dress = adg_dress_new("color-background", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
  * ADG_DRESS_COLOR_STROKE:
  *
  * The default builtin #AdgDress color for #AdgStroke entities.
- * The fallback style is the default implementation of #AdgColor
- * (that is %black).
+ * The fallback style is a full opaque black.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -95,7 +120,7 @@ _adg_dress_color_stroke(void)
  * ADG_DRESS_COLOR_DIMENSION:
  *
  * The builtin #AdgDress color used by default in #AdgDimStyle.
- * The fallback style is a %0.75 red.
+ * The fallback style is a %0.25 blue at %0.5 opacity.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -106,7 +131,8 @@ _adg_dress_color_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "red", 0.667, NULL);
+                                          "blue", 0.25,
+                                          "alpha", 0.5, NULL);
 
         dress = adg_dress_new("color-dimension", fallback);
         g_object_unref(fallback);
@@ -116,10 +142,35 @@ _adg_dress_color_dimension(void)
 }
 
 /**
+ * ADG_DRESS_COLOR_TABLE:
+ *
+ * The builtin #AdgDress color used by default for rendering
+ * #AdgTable and derived objects. The fallback style is a
+ * full opaque %0.4 red
+ *
+ * This dress will be resolved to an #AdgColorStyle instance.
+ **/
+AdgDress
+_adg_dress_color_table(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
+                                          "red", 0.4, NULL);
+
+        dress = adg_dress_new("color-table", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
  * ADG_DRESS_COLOR_HATCH:
  *
- * The default builtin #AdgDress color for #AdgHatch entities.
- * The fallback style is a %0.5 blue.
+ * The builtin #AdgDress color used by default in #AdgHatch entities.
+ * The fallback style is a full opaque %0.25 gray.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -130,7 +181,9 @@ _adg_dress_color_hatch(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "blue", 0.333, NULL);
+                                          "red", 0.25,
+                                          "green", 0.25,
+                                          "blue", 0.25, NULL);
 
         dress = adg_dress_new("color-hatch", fallback);
         g_object_unref(fallback);
@@ -142,8 +195,9 @@ _adg_dress_color_hatch(void)
 /**
  * ADG_DRESS_LINE:
  *
- * The default builtin #AdgDress line. This is a transparent dress
- * without a fallback style.
+ * The default builtin #AdgDress line.
+ * This is a pass-through dress, that is it does not change
+ * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -160,24 +214,26 @@ _adg_dress_line(void)
 }
 
 /**
- * ADG_DRESS_LINE_MEDIUM:
+ * ADG_DRESS_LINE_STROKE:
  *
- * The default generic builtin #AdgDress line type: it is used by
- * default for rendering #AdgStroke entities. The fallback style
- * is a default line with a thickness of %1.5.
+ * The builtin #AdgDress line type to be used by default
+ * for rendering #AdgStroke entities. The fallback style is
+ * a line with #ADG_DRESS_COLOR_STROKE color and a thickness
+ * of %1.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_medium(void)
+_adg_dress_line_stroke(void)
 {
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_STROKE,
                                           "width", 1.5, NULL);
 
-        dress = adg_dress_new("line-medium", fallback);
+        dress = adg_dress_new("line-stroke", fallback);
         g_object_unref(fallback);
     }
 
@@ -185,65 +241,17 @@ _adg_dress_line_medium(void)
 }
 
 /**
- * ADG_DRESS_LINE_THIN:
+ * ADG_DRESS_LINE_DIMENSION:
  *
- * A generic builtin #AdgDress line type for thin lines.
- * The fallback style is a default line with a thickness of %1.
- *
- * This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_thin(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 1., NULL);
-
-        dress = adg_dress_new("line-thin", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_THICK:
- *
- * A generic builtin #AdgDress line type for thick lines.
- * The fallback style is a default line with a thickness of %2.
+ * The builtin #AdgDress line type used by default
+ * for rendering base and extension lines of dimensions.
+ * The fallback style is a line with a thickness of %0.75
+ * and a pass-through color dress.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_thick(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 2., NULL);
-
-        dress = adg_dress_new("line-thick", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_THINNER:
- *
- * A generic builtin #AdgDress line type for really thin lines:
- * it is used by default for rendering base and extension lines
- * of dimension entities. The fallback style is a default line
- * with a thickness of %0.75.
- *
- * This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_thinner(void)
+_adg_dress_line_dimension(void)
 {
     static AdgDress dress = 0;
 
@@ -251,31 +259,7 @@ _adg_dress_line_thinner(void)
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
                                           "width", 0.75, NULL);
 
-        dress = adg_dress_new("line-thinner", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_THICKER:
- *
- * A generic builtin #AdgDress line type for really thick lines.
- * The fallback style is a default line with a thickness of %2.5.
- *
- * This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_thicker(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 2.5, NULL);
-
-        dress = adg_dress_new("line-thicker", fallback);
+        dress = adg_dress_new("line-dimension", fallback);
         g_object_unref(fallback);
     }
 
@@ -286,8 +270,8 @@ _adg_dress_line_thicker(void)
  * ADG_DRESS_LINE_HATCH:
  *
  * The builtin #AdgDress line type used by the default #AdgRuledFill
- * style implementation. The fallback style is a default line with
- * a thickness of %1 and an #ADG_DRESS_COLOR_HATCH color dress.
+ * style implementation. The fallback style is a line with
+ * #ADG_DRESS_COLOR_HATCH color and a thickness of %1.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -297,13 +281,9 @@ _adg_dress_line_hatch(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgLineStyle *thin_style;
-        AdgStyle *fallback;
-
-        thin_style = (AdgLineStyle *) adg_dress_get_fallback(ADG_DRESS_LINE_THIN);
-        fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                "width", adg_line_style_get_width(thin_style),
-                                "color-dress", ADG_DRESS_COLOR_HATCH, NULL);
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_HATCH,
+                                          "width", 1., NULL);
 
         dress = adg_dress_new("line-hatch", fallback);
         g_object_unref(fallback);
@@ -313,16 +293,16 @@ _adg_dress_line_hatch(void)
 }
 
 /**
- * ADG_DRESS_LINE_GRID:
+ * ADG_DRESS_LINE_TABLE:
  *
- * The builtin #AdgDress line type used for rendering grids of
- * #AdgTable entities. The fallback style is a default line with
- * a thickness of %1 and no antialiasing.
+ * The builtin #AdgDress line type used for rendering #AdgTable.
+ * The fallback style is a line with a thickness of %1 and a
+ * pass-through color dress, rendered without antialiasing.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_grid(void)
+_adg_dress_line_table(void)
 {
     static AdgDress dress = 0;
 
@@ -331,33 +311,7 @@ _adg_dress_line_grid(void)
                                           "antialias", CAIRO_ANTIALIAS_NONE,
                                           "width", 1., NULL);
 
-        dress = adg_dress_new("line-grid", fallback);
-        g_object_unref(fallback);
-    }
-
-    return dress;
-}
-
-/**
- * ADG_DRESS_LINE_FRAME:
- *
- * The builtin #AdgDress line type used for rendering frames of
- * #AdgTable entities. The fallback style is a default line with
- * a thickness of %2 and no antialiasing.
- *
- * This dress will be resolved to an #AdgLineStyle instance.
- **/
-AdgDress
-_adg_dress_line_frame(void)
-{
-    static AdgDress dress = 0;
-
-    if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "antialias", CAIRO_ANTIALIAS_NONE,
-                                          "width", 2., NULL);
-
-        dress = adg_dress_new("line-frame", fallback);
+        dress = adg_dress_new("line-table", fallback);
         g_object_unref(fallback);
     }
 
@@ -368,7 +322,7 @@ _adg_dress_line_frame(void)
  * ADG_DRESS_TEXT:
  *
  * The default builtin #AdgDress font. The fallback style is
- * %Sans %14.
+ * a %Sans %14 font with a pass-through color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
@@ -392,8 +346,9 @@ _adg_dress_text(void)
 /**
  * ADG_DRESS_TEXT_VALUE:
  *
- * The builtin #AdgDress font used to render the nominal value of a
- * dimension. The fallback style is %Sans %12 %bold.
+ * The builtin #AdgDress font used for rendering the nominal
+ * value of a dimension. The fallback style is %Sans %12 %bold
+ * with a pass-through color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
@@ -420,7 +375,7 @@ _adg_dress_text_value(void)
  *
  * The builtin #AdgDress font used to render the limits of either
  * the min and max values of a dimension. The fallback style
- * is a %Sans %8.
+ * is a %Sans %8 with a pass-through color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
@@ -444,9 +399,9 @@ _adg_dress_text_limit(void)
 /**
  * ADG_DRESS_DIMENSION:
  *
- * The default builtin #AdgDress for dimensioning. The fallback
+ * The default builtin #AdgDress for dimensions. The fallback
  * style is the default #AdgDimStyle implementation with #AdgArrow
- * as markers on both sides.
+ * as marker on both sides.
  *
  * This dress will be resolved to an #AdgDimStyle instance.
  **/
@@ -474,8 +429,9 @@ _adg_dress_dimension(void)
 /**
  * ADG_DRESS_FILL:
  *
- * The default builtin #AdgDress for filling. This is a transparent
- * dress without a fallback style.
+ * The default builtin #AdgDress for filling.
+ * This is a pass-through dress, that is it does not change
+ * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgFillStyle derived instance.
  **/
@@ -494,7 +450,7 @@ _adg_dress_fill(void)
 /**
  * ADG_DRESS_FILL_HATCH:
  *
- * The default builtin #AdgDress used by #AdgHatch instances.
+ * The builtin dress used by default  by #AdgHatch instances.
  * The fallback style is the default implementation of the
  * #AdgRuledFill instance.
  *
@@ -510,8 +466,7 @@ _adg_dress_fill_hatch(void)
                                           "line-dress", ADG_DRESS_LINE_HATCH,
                                           NULL);
 
-        dress = adg_dress_new_full("fill-hatch", fallback,
-                                   ADG_TYPE_FILL_STYLE);
+        dress = adg_dress_new_full("fill-hatch", fallback, ADG_TYPE_FILL_STYLE);
         g_object_unref(fallback);
     }
 

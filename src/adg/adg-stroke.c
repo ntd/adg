@@ -95,7 +95,7 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     param = adg_param_spec_dress("line-dress",
                                  P_("Line Dress"),
                                  P_("The dress to use for stroking this entity"),
-                                 ADG_DRESS_LINE_MEDIUM,
+                                 ADG_DRESS_LINE_STROKE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
@@ -114,7 +114,7 @@ adg_stroke_init(AdgStroke *stroke)
                                                          ADG_TYPE_STROKE,
                                                          AdgStrokePrivate);
 
-    data->line_dress = ADG_DRESS_LINE_MEDIUM;
+    data->line_dress = ADG_DRESS_LINE_STROKE;
     data->trail = NULL;
 
     stroke->data = data;

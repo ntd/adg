@@ -71,7 +71,7 @@ _adg_test_dim_dress(void)
 
     dim = ADG_DIM(adg_adim_new());
     valid_dress = ADG_DRESS_DIMENSION;
-    incompatible_dress = ADG_DRESS_LINE_GRID;
+    incompatible_dress = ADG_DRESS_LINE;
 
     /* Using the public APIs */
     adg_dim_set_dim_dress(dim, valid_dress);

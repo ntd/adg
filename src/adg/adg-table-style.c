@@ -98,21 +98,21 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
                                  P_("Color dress for the whole tableension"),
-                                 ADG_DRESS_COLOR,
+                                 ADG_DRESS_COLOR_TABLE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
     param = adg_param_spec_dress("grid-dress",
                                  P_("Grid Dress"),
                                  P_("Line dress to use while rendering the grid of the table"),
-                                 ADG_DRESS_LINE_GRID,
+                                 ADG_DRESS_LINE_TABLE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_GRID_DRESS, param);
 
     param = adg_param_spec_dress("frame-dress",
                                  P_("Frame Dress"),
                                  P_("Line dress to use while drawing the table frame"),
-                                 ADG_DRESS_LINE_FRAME,
+                                 ADG_DRESS_LINE_TABLE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FRAME_DRESS, param);
 
@@ -160,9 +160,9 @@ adg_table_style_init(AdgTableStyle *table_style)
     data = G_TYPE_INSTANCE_GET_PRIVATE(table_style, ADG_TYPE_TABLE_STYLE,
                                        AdgTableStylePrivate);
 
-    data->color_dress = ADG_DRESS_COLOR;
-    data->grid_dress = ADG_DRESS_LINE_GRID;
-    data->frame_dress = ADG_DRESS_LINE_FRAME;
+    data->color_dress = ADG_DRESS_COLOR_TABLE,
+    data->grid_dress = ADG_DRESS_LINE_TABLE;
+    data->frame_dress = ADG_DRESS_LINE_TABLE;
     data->title_dress = ADG_DRESS_TEXT_LIMIT;
     data->value_dress = ADG_DRESS_TEXT_VALUE;
     data->row_height = 30;
