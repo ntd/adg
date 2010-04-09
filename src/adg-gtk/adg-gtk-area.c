@@ -71,7 +71,9 @@ static gboolean         set_canvas              (AdgGtkArea      *area,
                                                  AdgCanvas       *canvas);
 static gboolean         set_factor              (AdgGtkArea      *area,
                                                  gdouble          factor);
-static gboolean         expose_event            (GtkWidget       *widget,
+static void             _adg_size_request       (GtkWidget       *widget,
+                                                 GtkRequisition  *requisition);
+static gboolean         _adg_expose_event       (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
 static gboolean         scroll_event            (GtkWidget       *widget,
                                                  GdkEventScroll  *event);
@@ -107,7 +109,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    widget_class->expose_event = expose_event;
+    widget_class->size_request = _adg_size_request;
+    widget_class->expose_event = _adg_expose_event;
     widget_class->scroll_event = scroll_event;
     widget_class->button_press_event = button_press_event;
     widget_class->motion_notify_event = motion_notify_event;
@@ -362,8 +365,38 @@ set_factor(AdgGtkArea *area, gdouble factor)
     return TRUE;
 }
 
+static void
+_adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
+{
+    AdgGtkAreaPrivate *data;
+    AdgCanvas *canvas;
+    AdgEntity *entity;
+    const CpmlExtents *extents;
+    AdgMatrix map;
+
+    data = ((AdgGtkArea *) widget)->data;
+    canvas = data->canvas;
+
+    if (canvas == NULL)
+        return;
+
+    entity = (AdgEntity *) canvas;
+
+    adg_entity_arrange(entity);
+    extents = adg_entity_get_extents(entity);
+
+    if (extents == NULL || !extents->is_defined)
+        return;
+
+    cairo_matrix_init_translate(&map, -extents->org.x, -extents->org.y);
+    adg_entity_set_global_map(entity, &map);
+
+    requisition->width = extents->size.x;
+    requisition->height = extents->size.y;
+}
+
 static gboolean
-expose_event(GtkWidget *widget, GdkEventExpose *event)
+_adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
