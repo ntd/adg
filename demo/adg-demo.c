@@ -246,7 +246,7 @@ _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
                  "size", "A4",
                  NULL);
 
-    cairo_matrix_init_translate(&map, 800, 600);
+    cairo_matrix_init_translate(&map, 300, 150);
     adg_entity_set_global_map(ADG_ENTITY(title_block), &map);
 
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(title_block));
@@ -410,9 +410,7 @@ _adg_build_canvas(void)
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(shape));
     _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(shape));
 
-    cairo_matrix_init_translate(&map, 110, 70);
-    cairo_matrix_scale(&map, 6.883, 6.883);
-    cairo_matrix_translate(&map, 0, 10);
+    cairo_matrix_init_scale(&map, 7, 7);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
     return canvas;
