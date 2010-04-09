@@ -40,9 +40,8 @@
 G_BEGIN_DECLS
 
 #if GLIB_CHECK_VERSION(2, 16, 0)
-#define         adg_strcmp              g_strcmp0
 #else
-gint            adg_strcmp              (const gchar    *s1,
+gint            g_strcmp0               (const gchar    *s1,
                                          const gchar    *s2);
 #endif
 

@@ -407,7 +407,7 @@ set_label(AdgToyText *toy_text, const gchar *label)
     AdgToyTextPrivate *data = toy_text->data;
 
     /* Check if the new label differs from the current label */
-    if (adg_strcmp(label, data->label) == 0)
+    if (g_strcmp0(label, data->label) == 0)
         return FALSE;
 
     g_free(data->label);

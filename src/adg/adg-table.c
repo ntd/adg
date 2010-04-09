@@ -797,7 +797,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
         else
             old_title = NULL;
 
-        if (adg_strcmp(title, old_title) == 0)
+        if (g_strcmp0(title, old_title) == 0)
             return;
     }
 
@@ -890,7 +890,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
         else
             old_value = NULL;
 
-        if (adg_strcmp(value, old_value) == 0)
+        if (g_strcmp0(value, old_value) == 0)
             return;
     }
 

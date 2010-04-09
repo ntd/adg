@@ -101,38 +101,27 @@
 #if GLIB_CHECK_VERSION(2, 16, 0)
 #else
 /**
- * adg_strcmp:
- * @s1: first string to compare
- * @s2: second string to compare
+ * g_strcmp0:
+ * @str1: a C string or %NULL
+ * @str2: another C string or %NULL
  *
- * A strcmp() function guarded against %NULL values. If glib-2.16.0 or
- * greather is used, adg_strcmp() will be an alias for g_strcmp0.
- * Otherwise the function will behave in the same way as strcmp() with
- * the following exceptions:
+ * Compares @str1 and @str2 like strcmp(). Handles %NULL
+ * gracefully by sorting it before non-%NULL strings.
+ * This is a backward compatibility fallback for GLib
+ * prior to 2.16.0
  *
- * <itemizedlist>
- * <listitem><code>s1 == NULL && s2 == NULL</code>: returns %0;</listitem>
- * <listitem><code>s1 == NULL</code>: returns %INT_MIN;</listitem>
- * <listitem><code>s2 == NULL</code>: returns %INT_MAX.</listitem>
- * </itemizedlist>
- *
- * Returns: %0 if @s1 matches @s2, a value less than %0 if @s1 is less
- *          than @s2 or greather than %0 if @s1 is greather than @s2
- **/
-gint
-adg_strcmp(const gchar *s1, const gchar *s2)
+ * Returns: -1, 0 or 1, if @str1 is <, == or > than @str2.
+ */
+int
+g_strcmp0(const char *str1, const char *str2)
 {
-    /* This will also catch the NULL == NULL case */
-    if (s1 == s2)
-        return 0;
+    if (!str1)
+        return -(str1 != str2);
 
-    if (s1 == NULL)
-        return INT_MIN;
+    if (!str2)
+        return str1 != str2;
 
-    if (s2 == NULL)
-        return INT_MAX;
-
-    return strcmp(s1, s2);
+    return strcmp(str1, str2);
 }
 #endif
 

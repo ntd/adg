@@ -742,7 +742,7 @@ set_family(AdgFontStyle *font_style, const gchar *family)
 {
     AdgFontStylePrivate *data = font_style->data;
 
-    if (adg_strcmp(family, data->family) == 0)
+    if (g_strcmp0(family, data->family) == 0)
         return FALSE;
 
     g_free(data->family);

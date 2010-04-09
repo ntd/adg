@@ -372,7 +372,7 @@ adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)
 
     /* Handle points bound to named pairs */
     if (point1->model)
-        return adg_strcmp(point1->name, point2->name) == 0;
+        return g_strcmp0(point1->name, point2->name) == 0;
 
     /* Handle points with explicit coordinates */
     return adg_pair_equal(&point1->pair, &point2->pair);

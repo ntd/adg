@@ -1280,7 +1280,7 @@ _adg_set_value(AdgDim *dim, const gchar *value)
 
     data = dim->data;
 
-    if (adg_strcmp(value, data->value) == 0)
+    if (g_strcmp0(value, data->value) == 0)
         return FALSE;
 
     g_free(data->value);
@@ -1299,7 +1299,7 @@ _adg_set_min(AdgDim *dim, const gchar *min)
 {
     AdgDimPrivate *data = dim->data;
 
-    if (adg_strcmp(min, data->min) == 0)
+    if (g_strcmp0(min, data->min) == 0)
         return FALSE;
 
     g_free(data->min);
@@ -1318,7 +1318,7 @@ _adg_set_max(AdgDim *dim, const gchar *max)
 {
     AdgDimPrivate *data = dim->data;
 
-    if (adg_strcmp(max, data->max) == 0)
+    if (g_strcmp0(max, data->max) == 0)
         return FALSE;
 
     g_free(data->max);

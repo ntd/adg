@@ -677,7 +677,7 @@ set_title(AdgTitleBlock *title_block, const gchar *title)
 
     data = title_block->data;
 
-    if (adg_strcmp(title, data->title) == 0)
+    if (g_strcmp0(title, data->title) == 0)
         return FALSE;
 
     g_free(data->title);
@@ -698,7 +698,7 @@ set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
 
     data = title_block->data;
 
-    if (adg_strcmp(drawing, data->drawing) == 0)
+    if (g_strcmp0(drawing, data->drawing) == 0)
         return FALSE;
 
     g_free(data->drawing);
@@ -719,7 +719,7 @@ set_size(AdgTitleBlock *title_block, const gchar *size)
 
     data = title_block->data;
 
-    if (adg_strcmp(size, data->size) == 0)
+    if (g_strcmp0(size, data->size) == 0)
         return FALSE;
 
     g_free(data->size);
@@ -740,7 +740,7 @@ set_scale(AdgTitleBlock *title_block, const gchar *scale)
 
     data = title_block->data;
 
-    if (adg_strcmp(scale, data->scale) == 0)
+    if (g_strcmp0(scale, data->scale) == 0)
         return FALSE;
 
     g_free(data->scale);
@@ -761,7 +761,7 @@ set_author(AdgTitleBlock *title_block, const gchar *author)
 
     data = title_block->data;
 
-    if (adg_strcmp(author, data->author) == 0)
+    if (g_strcmp0(author, data->author) == 0)
         return FALSE;
 
     g_free(data->author);
@@ -782,7 +782,7 @@ set_date(AdgTitleBlock *title_block, const gchar *date)
 
     data = title_block->data;
 
-    if (adg_strcmp(date, data->date) == 0)
+    if (g_strcmp0(date, data->date) == 0)
         return FALSE;
 
     g_free(data->date);
