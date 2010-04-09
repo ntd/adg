@@ -146,13 +146,16 @@ set_property(GObject *object,
  *
  * Creates a new undefined arrow entity. The position must be defined
  * by setting the #AdgMarker:trail and #AdgMarker:pos properties.
+ * By default, an arrow as #AdgEntity:local-method set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity
  **/
 AdgArrow *
 adg_arrow_new(void)
 {
-    return g_object_new(ADG_TYPE_ARROW, NULL);
+    return g_object_new(ADG_TYPE_ARROW,
+                        "local-method", ADG_MIX_PARENT,
+                        NULL);
 }
 
 /**
@@ -163,6 +166,7 @@ adg_arrow_new(void)
  * Creates a new arrow on the first segment on @trail at position
  * @pos, where @pos is a ratio of the @trail length (being %0 the
  * start point, %1 the end point, %0.5 the middle point and so on).
+ * By default, an arrow as #AdgEntity:local-method set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity
  **/
@@ -170,6 +174,7 @@ AdgArrow *
 adg_arrow_new_with_trail(AdgTrail *trail, gdouble pos)
 {
     return g_object_new(ADG_TYPE_ARROW,
+                        "local-method", ADG_MIX_PARENT,
                         "trail", trail,
                         "n-segment", 1,
                         "pos", pos,

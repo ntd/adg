@@ -400,8 +400,8 @@ _adg_dress_text_limit(void)
  * ADG_DRESS_DIMENSION:
  *
  * The default builtin #AdgDress for dimensions. The fallback
- * style is the default #AdgDimStyle implementation with #AdgArrow
- * as marker on both sides.
+ * style is the default #AdgDimStyle implementation with
+ * #AdgArrow markers (as returned by adg_arrow_new() on both sides.
  *
  * This dress will be resolved to an #AdgDimStyle instance.
  **/
@@ -411,7 +411,7 @@ _adg_dress_dimension(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgMarker *arrow = g_object_new(ADG_TYPE_ARROW, NULL);
+        AdgMarker *arrow = (AdgMarker *) adg_arrow_new();
         AdgStyle *fallback = g_object_new(ADG_TYPE_DIM_STYLE, NULL);
 
         adg_dim_style_set_marker1((AdgDimStyle *) fallback, arrow);
