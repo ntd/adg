@@ -60,13 +60,14 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             _adg_global_changed     (AdgEntity      *entity);
 static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
-static gboolean         set_direction           (AdgLDim        *ldim,
+static gboolean         _adg_set_direction           (AdgLDim        *ldim,
                                                  gdouble         direction);
 static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
@@ -101,6 +102,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
+    entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
@@ -211,7 +213,7 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_DIRECTION:
-        set_direction(ldim, g_value_get_double(value));
+        _adg_set_direction(ldim, g_value_get_double(value));
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -350,7 +352,7 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 {
     g_return_if_fail(ADG_IS_LDIM(ldim));
 
-    if (set_direction(ldim, direction))
+    if (_adg_set_direction(ldim, direction))
         g_object_notify((GObject *) ldim, "direction");
 }
 
@@ -462,6 +464,21 @@ adg_ldim_has_extension2(AdgLDim *ldim)
     return data->has_extension2;
 }
 
+
+static void
+_adg_global_changed(AdgEntity *entity)
+{
+    AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (data->marker1 != NULL)
+        adg_entity_global_changed((AdgEntity *) data->marker1);
+
+    if (data->marker2 != NULL)
+        adg_entity_global_changed((AdgEntity *) data->marker2);
+}
 
 static void
 local_changed(AdgEntity *entity)
@@ -780,7 +797,7 @@ default_value(AdgDim *dim)
 }
 
 static gboolean
-set_direction(AdgLDim *ldim, gdouble direction)
+_adg_set_direction(AdgLDim *ldim, gdouble direction)
 {
     AdgLDimPrivate *data = ldim->data;
 
@@ -874,20 +891,26 @@ update_shift(AdgLDim *ldim)
 static void
 update_entities(AdgLDim *ldim)
 {
+    AdgEntity *entity;
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
 
+    entity = (AdgEntity *) ldim;
     data = ldim->data;
     dim_style = GET_DIM_STYLE(ldim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, ldim);
 
-    if (data->marker1 == NULL)
+    if (data->marker1 == NULL) {
         data->marker1 = adg_dim_style_marker1_new(dim_style);
+        adg_entity_set_parent((AdgEntity *) data->marker1, entity);
+    }
 
-    if (data->marker2 == NULL)
+    if (data->marker2 == NULL) {
         data->marker2 = adg_dim_style_marker2_new(dim_style);
+        adg_entity_set_parent((AdgEntity *) data->marker2, entity);
+    }
 }
 
 static void

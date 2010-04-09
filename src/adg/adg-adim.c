@@ -60,7 +60,8 @@ static void             set_property            (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             local_changed           (AdgEntity      *entity);
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
@@ -99,7 +100,8 @@ adg_adim_class_init(AdgADimClass *klass)
     gobject_class->get_property = get_property;
     gobject_class->set_property = set_property;
 
-    entity_class->local_changed = local_changed;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -588,7 +590,22 @@ adg_adim_get_org2(AdgADim *adim)
 
 
 static void
-local_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
+{
+    AdgADimPrivate *data = ((AdgADim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (data->marker1 != NULL)
+        adg_entity_global_changed((AdgEntity *) data->marker1);
+
+    if (data->marker2 != NULL)
+        adg_entity_global_changed((AdgEntity *) data->marker2);
+}
+
+static void
+_adg_local_changed(AdgEntity *entity)
 {
     unset_trail((AdgADim *) entity);
 
@@ -860,20 +877,26 @@ update_geometry(AdgADim *adim)
 static void
 update_entities(AdgADim *adim)
 {
+    AdgEntity *entity;
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
 
+    entity = (AdgEntity *) adim;
     data = adim->data;
     dim_style = GET_DIM_STYLE(adim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, adim);
 
-    if (data->marker1 == NULL)
+    if (data->marker1 == NULL) {
         data->marker1 = adg_dim_style_marker1_new(dim_style);
+        adg_entity_set_parent((AdgEntity *) data->marker1, entity);
+    }
 
-    if (data->marker2 == NULL)
+    if (data->marker2 == NULL) {
         data->marker2 = adg_dim_style_marker2_new(dim_style);
+        adg_entity_set_parent((AdgEntity *) data->marker2, entity);
+    }
 }
 
 static void

@@ -44,7 +44,8 @@
 
 
 static void             dispose                 (GObject        *object);
-static void             local_changed           (AdgEntity      *entity);
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
@@ -76,7 +77,8 @@ adg_rdim_class_init(AdgRDimClass *klass)
 
     gobject_class->dispose = dispose;
 
-    entity_class->local_changed = local_changed;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
     entity_class->invalidate = invalidate;
     entity_class->arrange = arrange;
     entity_class->render = render;
@@ -227,7 +229,19 @@ adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,
 
 
 static void
-local_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
+{
+    AdgRDimPrivate *data = ((AdgRDim *) entity)->data;
+
+    if (PARENT_ENTITY_CLASS->global_changed)
+        PARENT_ENTITY_CLASS->global_changed(entity);
+
+    if (data->marker != NULL)
+        adg_entity_global_changed((AdgEntity *) data->marker);
+}
+
+static void
+_adg_local_changed(AdgEntity *entity)
 {
     unset_trail((AdgRDim *) entity);
 
@@ -440,17 +454,21 @@ update_geometry(AdgRDim *rdim)
 static void
 update_entities(AdgRDim *rdim)
 {
+    AdgEntity *entity;
     AdgRDimPrivate *data;
     AdgDimStyle *dim_style;
 
+    entity = (AdgEntity *) rdim;
     data = rdim->data;
     dim_style = GET_DIM_STYLE(rdim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, rdim);
 
-    if (data->marker == NULL)
+    if (data->marker == NULL) {
         data->marker = adg_dim_style_marker2_new(dim_style);
+        adg_entity_set_parent((AdgEntity *) data->marker, entity);
+    }
 }
 
 static void
