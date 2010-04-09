@@ -105,6 +105,10 @@ TEST_PROGS+=			test-table-style
 test_table_style_SOURCES=	test-table-style.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-canvas
+test_canvas_SOURCES=		test-canvas.c \
+				$(test_internals)
+
 endif
 
 
