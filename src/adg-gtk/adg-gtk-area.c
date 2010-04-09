@@ -43,6 +43,7 @@
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
 
+#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_gtk_area_parent_class)
 #define PARENT_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
@@ -58,36 +59,36 @@ enum {
 };
 
 
-static void             dispose                 (GObject         *object);
-static void             get_property            (GObject         *object,
+static void             _adg_dispose            (GObject         *object);
+static void             _adg_get_property       (GObject         *object,
                                                  guint            prop_id,
                                                  GValue          *value,
                                                  GParamSpec      *pspec);
-static void             set_property            (GObject         *object,
+static void             _adg_set_property       (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
-static gboolean         set_canvas              (AdgGtkArea      *area,
+static gboolean         _adg_set_canvas         (AdgGtkArea      *area,
                                                  AdgCanvas       *canvas);
-static gboolean         set_factor              (AdgGtkArea      *area,
+static gboolean         _adg_set_factor         (AdgGtkArea      *area,
                                                  gdouble          factor);
 static void             _adg_size_request       (GtkWidget       *widget,
                                                  GtkRequisition  *requisition);
 static gboolean         _adg_expose_event       (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
-static gboolean         scroll_event            (GtkWidget       *widget,
+static gboolean         _adg_scroll_event       (GtkWidget       *widget,
                                                  GdkEventScroll  *event);
-static gboolean         button_press_event      (GtkWidget       *widget,
+static gboolean         _adg_button_press_event (GtkWidget       *widget,
                                                  GdkEventButton  *event);
-static gboolean         motion_notify_event     (GtkWidget       *widget,
+static gboolean         _adg_motion_notify_event(GtkWidget       *widget,
                                                  GdkEventMotion  *event);
-static gboolean         get_local_map           (GtkWidget       *widget,
+static gboolean         _adg_get_local_map      (GtkWidget       *widget,
                                                  AdgMatrix       *map,
                                                  AdgMatrix       *inverted);
-static void             set_local_map           (GtkWidget       *widget,
+static void             _adg_set_local_map      (GtkWidget       *widget,
                                                  const AdgMatrix *map);
 
-static guint signals[LAST_SIGNAL] = { 0 };
+static guint _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
@@ -105,15 +106,15 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgGtkAreaPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
     widget_class->size_request = _adg_size_request;
     widget_class->expose_event = _adg_expose_event;
-    widget_class->scroll_event = scroll_event;
-    widget_class->button_press_event = button_press_event;
-    widget_class->motion_notify_event = motion_notify_event;
+    widget_class->scroll_event = _adg_scroll_event;
+    widget_class->button_press_event = _adg_button_press_event;
+    widget_class->motion_notify_event = _adg_motion_notify_event;
 
     param = g_param_spec_object("canvas",
                                 P_("Canvas"),
@@ -135,12 +136,13 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
      *
      * Emitted when the #AdgGtkArea has a new canvas.
      **/
-    signals[CANVAS_CHANGED] = g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
-                                           G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                           G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
-                                           NULL, NULL,
-                                           g_cclosure_marshal_VOID__VOID,
-                                           G_TYPE_NONE, 0);
+    _adg_signals[CANVAS_CHANGED] =
+        g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
+                     NULL, NULL,
+                     g_cclosure_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 }
 
 static void
@@ -165,7 +167,7 @@ adg_gtk_area_init(AdgGtkArea *area)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) object)->data;
 
@@ -174,11 +176,13 @@ dispose(GObject *object)
         data->canvas = NULL;
     }
 
-    G_OBJECT_CLASS(adg_gtk_area_parent_class)->dispose(object);
+    if (PARENT_OBJECT_CLASS->dispose)
+        PARENT_OBJECT_CLASS->dispose(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) object)->data;
 
@@ -196,17 +200,17 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgGtkArea *area = (AdgGtkArea *) object;
 
     switch (prop_id) {
     case PROP_CANVAS:
-        set_canvas(area, g_value_get_object(value));
+        _adg_set_canvas(area, g_value_get_object(value));
         break;
     case PROP_FACTOR:
-        set_factor(area, g_value_get_double(value));
+        _adg_set_factor(area, g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -260,7 +264,7 @@ adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
 
-    if (set_canvas(area, canvas))
+    if (_adg_set_canvas(area, canvas))
         g_object_notify((GObject *) area, "canvas");
 }
 
@@ -297,7 +301,7 @@ adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
 
-    if (set_factor(area, factor))
+    if (_adg_set_factor(area, factor))
         g_object_notify((GObject *) area, "factor");
 }
 
@@ -326,7 +330,7 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
 
 
 static gboolean
-set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
+_adg_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
 {
     AdgGtkAreaPrivate *data;
 
@@ -344,12 +348,12 @@ set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
         g_object_unref(data->canvas);
 
     data->canvas = canvas;
-    g_signal_emit(area, signals[CANVAS_CHANGED], 0);
+    g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
     return TRUE;
 }
 
 static gboolean
-set_factor(AdgGtkArea *area, gdouble factor)
+_adg_set_factor(AdgGtkArea *area, gdouble factor)
 {
     AdgGtkAreaPrivate *data;
 
@@ -417,7 +421,7 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 }
 
 static gboolean
-scroll_event(GtkWidget *widget, GdkEventScroll *event)
+_adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
     AdgGtkAreaPrivate *data;
     AdgMatrix map, inverted;
@@ -426,7 +430,7 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
 
     if ((event->direction == GDK_SCROLL_UP ||
          event->direction == GDK_SCROLL_DOWN) &&
-        get_local_map(widget, &map, &inverted)) {
+        _adg_get_local_map(widget, &map, &inverted)) {
         double factor, x, y;
 
         if (event->direction == GDK_SCROLL_UP) {
@@ -443,7 +447,7 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
         cairo_matrix_scale(&map, factor, factor);
         cairo_matrix_translate(&map, x/factor - x, y/factor - y);
 
-        set_local_map(widget, &map);
+        _adg_set_local_map(widget, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -455,7 +459,7 @@ scroll_event(GtkWidget *widget, GdkEventScroll *event)
 }
 
 static gboolean
-button_press_event(GtkWidget *widget, GdkEventButton *event)
+_adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
 {
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) widget)->data;
 
@@ -471,7 +475,7 @@ button_press_event(GtkWidget *widget, GdkEventButton *event)
 }
 
 static gboolean
-motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
+_adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
     AdgGtkAreaPrivate *data;
     AdgMatrix map, inverted;
@@ -479,7 +483,7 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
     data = ((AdgGtkArea *) widget)->data;
 
     if ((event->state & GDK_BUTTON2_MASK) > 0 &&
-        get_local_map(widget, &map, &inverted)) {
+        _adg_get_local_map(widget, &map, &inverted)) {
         double x, y;
 
         x = event->x - data->x_event;
@@ -490,7 +494,7 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
         data->x_event = event->x;
         data->y_event = event->y;
 
-        set_local_map(widget, &map);
+        _adg_set_local_map(widget, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -502,7 +506,7 @@ motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 }
 
 static gboolean
-get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
+_adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
@@ -519,7 +523,7 @@ get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
 }
 
 static void
-set_local_map(GtkWidget *widget, const AdgMatrix *map)
+_adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
