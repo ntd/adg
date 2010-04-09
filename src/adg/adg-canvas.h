@@ -58,9 +58,12 @@ struct _AdgCanvasClass {
 };
 
 
-GType                    adg_canvas_get_type            (void) G_GNUC_CONST;
+GType           adg_canvas_get_type            (void) G_GNUC_CONST;
 
-AdgCanvas *              adg_canvas_new                 (void);
+AdgCanvas *     adg_canvas_new                 (void);
+void            adg_canvas_set_background_dress(AdgCanvas       *canvas,
+                                                AdgDress         dress);
+AdgDress        adg_canvas_get_background_dress(AdgCanvas       *canvas);
 
 G_END_DECLS
 
