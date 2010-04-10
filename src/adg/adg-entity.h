@@ -26,7 +26,6 @@
 #ifndef __ADG_ENTITY_H__
 #define __ADG_ENTITY_H__
 
-#include "adg-util.h"
 #include "adg-matrix.h"
 #include <cpml.h>
 

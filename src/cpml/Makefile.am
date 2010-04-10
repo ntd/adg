@@ -14,7 +14,7 @@ h_sources=			cpml-arc.h \
 				cpml-pair.h \
 				cpml-primitive.h \
 				cpml-segment.h \
-				cpml-util.h
+				cpml-utils.h
 built_h_sources=
 private_h_sources=		cpml-internal.h \
 				cpml-primitive-private.h
@@ -26,7 +26,7 @@ c_sources=			cpml-arc.c \
 				cpml-pair.c \
 				cpml-primitive.c \
 				cpml-segment.c \
-				cpml-util.c
+				cpml-utils.c
 built_c_sources=
 
 # targets

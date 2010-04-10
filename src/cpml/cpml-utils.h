@@ -23,8 +23,8 @@
 #endif
 
 
-#ifndef __CPML_UTIL_H__
-#define __CPML_UTIL_H__
+#ifndef __CPML_UTILS_H__
+#define __CPML_UTILS_H__
 
 /* Required include files */
 #include <stdlib.h>
@@ -43,4 +43,4 @@ double          cpml_angle              (double         angle);
 CAIRO_END_DECLS
 
 
-#endif /* __CPML_UTIL_H__ */
+#endif /* __CPML_UTILS_H__ */

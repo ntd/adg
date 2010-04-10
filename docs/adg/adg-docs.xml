@@ -14,7 +14,7 @@
 
   <part id="Core">
     <title>ADG core reference</title>
-    <xi:include href="xml/adg-util.xml"/>
+    <xi:include href="xml/adg-utils.xml"/>
     <xi:include href="xml/adg-enums.xml"/>
     <chapter id="Core-gboxed">
       <title>GBoxed types</title>
@@ -87,7 +87,7 @@
 
   <part id="gtk">
     <title>GTK+ support</title>
-    <xi:include href="xml/adg-gtk-util.xml"/>
+    <xi:include href="xml/adg-gtk-utils.xml"/>
     <xi:include href="xml/adg-gtk-area.xml"/>
   </part>
 

@@ -27,8 +27,10 @@
 #define __ADG_INTERNAL_H__
 
 #define G_LOG_DOMAIN  "adg"
+#define __ADG_H__
 
 #include "config.h"
+#include "adg-utils.h"
 
 
 #ifdef ENABLE_NLS
@@ -46,7 +48,5 @@
 #define NC_(Context, String)    (String)
 
 #endif
-
-#define __ADG_H__
 
 #endif /* __ADG_INTERNAL_H__ */

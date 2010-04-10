@@ -23,8 +23,8 @@
 #endif
 
 
-#ifndef __ADG_GTK_UTIL_H__
-#define __ADG_GTK_UTIL_H__
+#ifndef __ADG_GTK_UTILS_H__
+#define __ADG_GTK_UTILS_H__
 
 
 G_BEGIN_DECLS
@@ -37,4 +37,4 @@ GdkWindow *     gtk_widget_get_window   (GtkWidget      *widget);
 G_END_DECLS
 
 
-#endif /* __ADG_GTK_UTIL_H__ */
+#endif /* __ADG_GTK_UTILS_H__ */

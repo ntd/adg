@@ -28,7 +28,7 @@
 
 #define __CPML_H__
 
-#include "cpml-util.h"
+#include "cpml-utils.h"
 #include "cpml-pair.h"
 #include <stdlib.h>
 

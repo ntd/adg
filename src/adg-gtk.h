@@ -24,7 +24,7 @@
 #include <adg.h>
 #include <gtk/gtk.h>
 
-#include "adg-gtk/adg-gtk-util.h"
+#include "adg-gtk/adg-gtk-utils.h"
 #include "adg-gtk/adg-gtk-area.h"
 
 #endif /* __ADG_GTK_H__ */

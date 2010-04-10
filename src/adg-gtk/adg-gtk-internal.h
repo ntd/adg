@@ -27,10 +27,12 @@
 #define __ADG_GTK_INTERNAL_H__
 
 #define G_LOG_DOMAIN  "adg-gtk"
+#define __ADG_GTK_H__
 
 #include "config.h"
 #include <gtk/gtk.h>
 #include <adg.h>
+#include "adg-gtk-utils.h"
 
 
 #ifdef ENABLE_NLS
@@ -48,7 +50,5 @@
 #define NC_(Context, String)    (String)
 
 #endif
-
-#define __ADG_GTK_H__
 
 #endif /* __ADG_GTK_INTERNAL_H__ */

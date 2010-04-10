@@ -6,7 +6,7 @@
 
   <part id="Core">
     <title>Core reference</title>
-    <xi:include href="xml/cpml-util.xml"/>
+    <xi:include href="xml/cpml-utils.xml"/>
     <xi:include href="xml/cpml-pair.xml"/>
   </part>
 

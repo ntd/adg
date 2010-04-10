@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:adg-util
+ * SECTION:adg-utils
  * @Section_Id:utilities
  * @title: Utilities
  * @short_description: Assorted macros and functions
@@ -93,7 +93,7 @@
 
 
 #include "adg-internal.h"
-#include "adg-util.h"
+#include "adg-utils.h"
 #include <string.h>
 #include <limits.h>
 

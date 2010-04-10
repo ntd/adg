@@ -51,7 +51,7 @@ h_sources=			adg-adim.h \
 				adg-title-block.h \
 				adg-trail.h \
 				adg-toy-text.h \
-				adg-util.h
+				adg-utils.h
 built_h_sources=		adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
@@ -122,7 +122,7 @@ c_sources=			adg-adim.c \
 				adg-title-block.c \
 				adg-trail.c \
 				adg-toy-text.c \
-				adg-util.c
+				adg-utils.c
 built_c_sources=		adg-type-builtins.c \
 				adg-marshal.c
 template_sources=		adg-type-builtins.c.mkenums \

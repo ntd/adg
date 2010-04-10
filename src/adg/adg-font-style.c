@@ -38,7 +38,6 @@
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
 #include "adg-dress-builtins.h"
-#include "adg-util.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_font_style_parent_class)
 

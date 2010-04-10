@@ -41,7 +41,6 @@
 #include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
-#include "adg-util.h"
 
 
 enum {

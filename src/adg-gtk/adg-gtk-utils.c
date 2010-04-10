@@ -18,39 +18,38 @@
  */
 
 
-#if !defined(__ADG_H__)
-#error "Only <adg.h> can be included directly."
-#endif
+/**
+ * SECTION:adg-gtk-utils
+ * @Section_Id:gtk-utilities
+ * @title: GTK+ utilities
+ * @short_description: Assorted macros and backward compatible fallbacks
+ *
+ * Collection of macros and functions that do not fit inside any other topic.
+ **/
 
 
-#ifndef __ADG_UTIL_H__
-#define __ADG_UTIL_H__
-
-#include <glib-object.h>
-#include <math.h>
-
-#define ADG_DIR_RIGHT           0.
-#define ADG_DIR_DOWN            G_PI_2
-#define ADG_DIR_LEFT            G_PI
-#define ADG_DIR_UP              -G_PI_2
-
-#define ADG_FORWARD_DECL(id)    typedef struct _##id id
+#include "adg-gtk-internal.h"
+#include "adg-gtk-utils.h"
 
 
-G_BEGIN_DECLS
-
-#if GLIB_CHECK_VERSION(2, 16, 0)
+#if GTK_CHECK_VERSION(2, 14, 0)
 #else
-gint            g_strcmp0               (const gchar    *s1,
-                                         const gchar    *s2);
+
+/**
+ * gtk_widget_get_window:
+ * @widget: a #GtkWidget
+ *
+ * Returns the widget's window if it is realized, %NULL otherwise.
+ * This is an API fallback for GTK+ prior to 2.14.
+ *
+ * Return value: @widget's window.
+ **/
+GdkWindow *
+gtk_widget_get_window(GtkWidget *widget)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), NULL);
+
+  return widget->window;
+}
+
 #endif
-
-gboolean        adg_is_string_empty     (const gchar    *str);
-gboolean        adg_is_enum_value       (int             value,
-                                         GType           enum_type);
-gboolean        adg_is_boolean_value    (gboolean        value);
-
-G_END_DECLS
-
-
-#endif /* __ADG_UTIL_H__ */

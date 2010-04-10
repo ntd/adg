@@ -19,7 +19,7 @@
 
 
 /**
- * SECTION:cpml-util
+ * SECTION:cpml-utils
  * @Section_Id:utilities
  * @title: Utilities
  * @short_description: Assorted macros and functions

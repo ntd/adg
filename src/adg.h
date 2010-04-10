@@ -23,6 +23,7 @@
 
 #include <glib-object.h>
 
+#include "adg/adg-utils.h"
 #include "adg/adg-pair.h"
 #include "adg/adg-matrix.h"
 #include "adg/adg-pattern.h"
