@@ -227,15 +227,10 @@ adg_dress_set(AdgDress *dress, AdgDress src)
     if (*dress == src)
         return FALSE;
 
-    if (*dress != ADG_DRESS_UNDEFINED && !adg_dress_are_related(*dress, src)) {
-        g_warning(_("%s: `%d' (%s) cannot be replaced with `%d' (%s) because these dresses are not related"),
-                  G_STRLOC, src, _adg_dress_name(src),
-                  *dress, _adg_dress_name(*dress));
+    if (*dress != ADG_DRESS_UNDEFINED && !adg_dress_are_related(*dress, src))
         return FALSE;
-    }
 
     *dress = src;
-
     return TRUE;
 }
 
@@ -405,7 +400,7 @@ typedef struct _AdgParamSpecDress AdgParamSpecDress;
 
 struct _AdgParamSpecDress {
     GParamSpecInt parent;
-    AdgDress     source_dress;
+    AdgDress      source_dress;
 };
 
 
@@ -426,8 +421,8 @@ _adg_param_spec_dress_get_type(void)
             0,
         };
 
-        type = g_type_register_static(G_TYPE_PARAM_INT,
-                                      "AdgParamSpecDress", &info, 0);
+        type = g_type_register_static(G_TYPE_PARAM_INT, "AdgParamSpecDress",
+                                      &info, 0);
     }
 
     return type;
@@ -473,16 +468,22 @@ static gboolean
 value_validate(GParamSpec *spec, GValue *value)
 {
     AdgParamSpecDress *fspec;
-    AdgDress dress, new_dress;
+    AdgDress *dress;
+    AdgDress wanted_dress;
 
     fspec = (AdgParamSpecDress *) spec;
-    dress = value->data[0].v_int;
-    new_dress = ADG_DRESS_UNDEFINED;
+    dress = &value->data[0].v_int;
+    wanted_dress = *dress;
 
-    adg_dress_set(&new_dress, dress);
-    value->data[0].v_int = new_dress;
+    /* Fallback to the source dress, returned in case of errors */
+    *dress = fspec->source_dress;
 
-    return dress != new_dress;
+    /* This method will fail (that is, it leaves *dress untouched)
+     * if the current *dress value (source_dress) and wanted_dress
+     * are not related */
+    adg_dress_set(dress, wanted_dress);
+
+    return *dress != wanted_dress;
 }
 
 
