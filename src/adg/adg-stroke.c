@@ -161,7 +161,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        adg_dress_set(&data->line_dress, g_value_get_int(value));
+        data->line_dress = g_value_get_int(value);
         break;
     case PROP_TRAIL:
         set_trail(stroke, (AdgTrail *) g_value_get_object(value));
@@ -205,14 +205,8 @@ adg_stroke_new(AdgTrail *trail)
 void
 adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
 {
-    AdgStrokePrivate *data;
-
     g_return_if_fail(ADG_IS_STROKE(stroke));
-
-    data = stroke->data;
-
-    if (adg_dress_set(&data->line_dress, dress))
-        g_object_notify((GObject *) stroke, "line-dress");
+    g_object_set((GObject *) stroke, "line-dress", dress, NULL);
 }
 
 /**
