@@ -356,19 +356,19 @@ set_property(GObject *object,
         set_marker(&data->marker2, g_value_get_object(value));
         break;
     case PROP_COLOR_DRESS:
-        adg_dress_set(&data->color_dress, g_value_get_int(value));
+        data->color_dress = g_value_get_int(value);
         break;
     case PROP_VALUE_DRESS:
-        adg_dress_set(&data->value_dress, g_value_get_int(value));
+        data->value_dress = g_value_get_int(value);
         break;
     case PROP_MIN_DRESS:
-        adg_dress_set(&data->min_dress, g_value_get_int(value));
+        data->min_dress = g_value_get_int(value);
         break;
     case PROP_MAX_DRESS:
-        adg_dress_set(&data->max_dress, g_value_get_int(value));
+        data->max_dress = g_value_get_int(value);
         break;
     case PROP_LINE_DRESS:
-        adg_dress_set(&data->line_dress, g_value_get_int(value));
+        data->line_dress = g_value_get_int(value);
         break;
     case PROP_FROM_OFFSET:
         set_from_offset(dim_style, g_value_get_double(value));
@@ -532,14 +532,8 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) dim_style, "color-dress");
+    g_object_set((GObject *) dim_style, "color-dress", dress, NULL);
 }
 
 /**
@@ -575,14 +569,8 @@ adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->value_dress, dress))
-        g_object_notify((GObject *) dim_style, "value-dress");
+    g_object_set((GObject *) dim_style, "value-dress", dress, NULL);
 }
 
 /**
@@ -616,14 +604,8 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->min_dress, dress))
-        g_object_notify((GObject *) dim_style, "min-dress");
+    g_object_set((GObject *) dim_style, "min-dress", dress, NULL);
 }
 
 /**
@@ -656,14 +638,8 @@ adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->max_dress, dress))
-        g_object_notify((GObject *) dim_style, "max-dress");
+    g_object_set((GObject *) dim_style, "max-dress", dress, NULL);
 }
 
 /**
@@ -696,14 +672,8 @@ adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (adg_dress_set(&data->line_dress, dress))
-        g_object_notify((GObject *) dim_style, "line-dress");
+    g_object_set((GObject *) dim_style, "line-dress", dress, NULL);
 }
 
 /**
@@ -1066,7 +1036,6 @@ static void
 apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgDimStylePrivate *data = ((AdgDimStyle *) style)->data;
-
     adg_entity_apply_dress(entity, data->color_dress, cr);
 }
 
