@@ -201,7 +201,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        adg_dress_set(&data->color_dress, g_value_get_int(value));
+        data->color_dress = g_value_get_int(value);
         break;
     case PROP_WIDTH:
         set_width(line_style, g_value_get_double(value));
@@ -259,14 +259,8 @@ adg_line_style_new(void)
 void
 adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
 {
-    AdgLineStylePrivate *data;
-
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-
-    data = line_style->data;
-
-    if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) line_style, "color-dress");
+    g_object_set((GObject *) line_style, "color-dress", dress, NULL);
 }
 
 /**
