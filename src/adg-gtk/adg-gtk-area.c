@@ -24,11 +24,23 @@
  *                     an #AdgCanvas entity
  *
  * This is a #GtkDrawingArea derived object that provides an easy way
- * to show an ADG based canvas. Its default implementation reacts to
- * some mouse events: if you drag the mouse while keeping the wheel
- * pressed, the canvas will be translated; if the mouse wheel is rotated,
- * the canvas will be scaled up or down (accordingly to the wheel
- * direction) by the factor specified in the #AdgGtkArea:factor property.
+ * to show an ADG based canvas. The associated canvas can be set
+ * directly with the adg_gtk_area_new_with_canvas() constructor
+ * function or by using adg_gtk_area_set_canvas().
+ *
+ * The default minimum size of this widget will depend on the canvas
+ * content. The global matrix of the #AdgCanvas will be adjusted to
+ * expose the drawing in the proper position. The empty space around
+ * the drawing can be changed by setting the #AdgGtkArea:top-margin,
+ * #AdgGtkArea:right-margin, #AdgGtkArea:bottom-margin and
+ * #AdgGtkArea:left-margin properties or by using the equivalent
+ * setter methods.
+ *
+ * The default implementation reacts to some mouse events: if you drag
+ * the mouse keeping the wheel pressed the canvas will be translated;
+ * if the mouse wheel is rotated the canvas will be scaled up or down
+ * (accordingly to the wheel direction) by the factor specified in the
+ * #AdgGtkArea:factor property.
  **/
 
 /**
@@ -619,7 +631,7 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     cairo_matrix_init_translate(&map,
                                 -extents->org.x + data->left_padding,
                                 -extents->org.y + data->top_padding);
-    adg_entity_set_global_map(entity, &map);
+    adg_entity_transform_global_map(entity, &map, ADG_TRANSFORM_AFTER);
 
     requisition->width = extents->size.x +
         data->left_padding + data->right_padding;
