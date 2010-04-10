@@ -131,7 +131,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_BACKGROUND_DRESS:
-        adg_dress_set(&data->background_dress, g_value_get_int(value));
+        data->background_dress = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -158,22 +158,14 @@ adg_canvas_new(void)
  * @canvas: an #AdgCanvas
  * @dress: the new #AdgDress to use
  *
- * Sets a new background dress for rendering @canvas. The new
- * dress must be a color dress: this check is done by calling
- * adg_dress_are_related() with @dress and the previous dress
- * as arguments.
+ * Sets a new background dress for rendering @canvas: the new
+ * dress must be a color dress.
  **/
 void
 adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
 {
-    AdgCanvasPrivate *data;
-
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-
-    data = canvas->data;
-
-    if (adg_dress_set(&data->background_dress, dress))
-        g_object_notify((GObject *) canvas, "background-dress");
+    g_object_set((GObject *) canvas, "background-dress", dress, NULL);
 }
 
 /**
