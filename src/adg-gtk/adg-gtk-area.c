@@ -47,10 +47,16 @@
 #define PARENT_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
+G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
+
 enum {
     PROP_0,
     PROP_CANVAS,
-    PROP_FACTOR
+    PROP_FACTOR,
+    PROP_TOP_PADDING,
+    PROP_RIGHT_PADDING,
+    PROP_BOTTOM_PADDING,
+    PROP_LEFT_PADDING
 };
 
 enum {
@@ -88,10 +94,7 @@ static gboolean         _adg_get_local_map      (GtkWidget       *widget,
 static void             _adg_set_local_map      (GtkWidget       *widget,
                                                  const AdgMatrix *map);
 
-static guint _adg_signals[LAST_SIGNAL] = { 0 };
-
-
-G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
@@ -130,6 +133,34 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
+    param = g_param_spec_double("top-padding",
+                                P_("Top Padding"),
+                                P_("The padding (in identity space) to leave empty above the canvas while showing the widget the first time"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_TOP_PADDING, param);
+
+    param = g_param_spec_double("right-padding",
+                                P_("Right Padding"),
+                                P_("The padding (in identity space) to leave empty at the right of the canvas while showing the widget the first time"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_RIGHT_PADDING, param);
+
+    param = g_param_spec_double("bottom-padding",
+                                P_("Bottom Padding"),
+                                P_("The padding (in identity space) to leave empty below the canvas while showing the widget the first time"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_BOTTOM_PADDING, param);
+
+    param = g_param_spec_double("left-padding",
+                                P_("Left Padding"),
+                                P_("The padding (in identity space) to leave empty at the left of the canvas while showing the widget the first time"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LEFT_PADDING, param);
+
     /**
      * AdgGtkArea::canvas-changed:
      * @area: an #AdgGtkArea
@@ -154,6 +185,11 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->canvas = NULL;
     data->factor = 1.05;
+    data->top_padding = 15;
+    data->right_padding = 15;
+    data->bottom_padding = 15;
+    data->left_padding = 15;
+
     data->x_event = 0;
     data->y_event = 0;
 
@@ -193,6 +229,18 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_FACTOR:
         g_value_set_double(value, data->factor);
         break;
+    case PROP_TOP_PADDING:
+        g_value_set_double(value, data->top_padding);
+        break;
+    case PROP_RIGHT_PADDING:
+        g_value_set_double(value, data->right_padding);
+        break;
+    case PROP_BOTTOM_PADDING:
+        g_value_set_double(value, data->bottom_padding);
+        break;
+    case PROP_LEFT_PADDING:
+        g_value_set_double(value, data->left_padding);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -203,7 +251,11 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgGtkArea *area = (AdgGtkArea *) object;
+    AdgGtkArea *area;
+    AdgGtkAreaPrivate *data;
+
+    area = (AdgGtkArea *) object;
+    data = area->data;
 
     switch (prop_id) {
     case PROP_CANVAS:
@@ -211,6 +263,18 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_FACTOR:
         _adg_set_factor(area, g_value_get_double(value));
+        break;
+    case PROP_TOP_PADDING:
+        data->top_padding = g_value_get_double(value);
+        break;
+    case PROP_RIGHT_PADDING:
+        data->right_padding = g_value_get_double(value);
+        break;
+    case PROP_BOTTOM_PADDING:
+        data->bottom_padding = g_value_get_double(value);
+        break;
+    case PROP_LEFT_PADDING:
+        data->left_padding = g_value_get_double(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -324,8 +388,168 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
 
     data = area->data;
-
     return data->factor;
+}
+
+/**
+ * adg_gtk_area_set_top_padding:
+ * @area: an #AdgGtkArea
+ * @value: the new padding, in identity space
+ *
+ * Changes the top padding of @area by setting #AdgGtkArea:top-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_gtk_area_set_top_padding(AdgGtkArea *area, gdouble value)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set((GObject *) area, "top-padding", value, NULL);
+}
+
+/**
+ * adg_gtk_area_get_top_padding:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the top padding (in identity space) of @area.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_gtk_area_get_top_padding(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->top_padding;
+}
+
+/**
+ * adg_gtk_area_set_right_padding:
+ * @area: an #AdgGtkArea
+ * @value: the new padding, in identity space
+ *
+ * Changes the right padding of @area by setting #AdgGtkArea:right-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_gtk_area_set_right_padding(AdgGtkArea *area, gdouble value)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set((GObject *) area, "right-padding", value, NULL);
+}
+
+/**
+ * adg_gtk_area_get_right_padding:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the right padding (in identity space) of @area.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_gtk_area_get_right_padding(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->right_padding;
+}
+
+
+/**
+ * adg_gtk_area_set_bottom_padding:
+ * @area: an #AdgGtkArea
+ * @value: the new padding, in identity space
+ *
+ * Changes the bottom padding of @area by setting #AdgGtkArea:bottom-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_gtk_area_set_bottom_padding(AdgGtkArea *area, gdouble value)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set((GObject *) area, "bottom-padding", value, NULL);
+}
+
+/**
+ * adg_gtk_area_get_bottom_padding:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the bottom padding (in identity space) of @area.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_gtk_area_get_bottom_padding(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->bottom_padding;
+}
+
+/**
+ * adg_gtk_area_set_left_padding:
+ * @area: an #AdgGtkArea
+ * @value: the new padding, in identity space
+ *
+ * Changes the left padding of @area by setting #AdgGtkArea:left-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_gtk_area_set_left_padding(AdgGtkArea *area, gdouble value)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set((GObject *) area, "left-padding", value, NULL);
+}
+
+/**
+ * adg_gtk_area_get_left_padding:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the left padding (in identity space) of @area.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_gtk_area_get_left_padding(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->left_padding;
+}
+
+
+/**
+ * adg_gtk_area_set_paddings:
+ * @area: an #AdgGtkArea
+ * @top: top padding, in identity space
+ * @right: right padding, in identity space
+ * @bottom: bottom padding, in identity space
+ * @left: left padding, in identity space
+ *
+ * Convenient function to set all the paddings at once.
+ **/
+void
+adg_gtk_area_set_paddings(AdgGtkArea *area, gdouble top, gdouble right,
+                          gdouble bottom, gdouble left)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set((GObject *) area,
+                 "top-padding", top,
+                 "right-padding", right,
+                 "bottom-padding", bottom,
+                 "left-padding", left,
+                 NULL);
 }
 
 
@@ -392,11 +616,15 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     if (extents == NULL || !extents->is_defined)
         return;
 
-    cairo_matrix_init_translate(&map, -extents->org.x, -extents->org.y);
+    cairo_matrix_init_translate(&map,
+                                -extents->org.x + data->left_padding,
+                                -extents->org.y + data->top_padding);
     adg_entity_set_global_map(entity, &map);
 
-    requisition->width = extents->size.x;
-    requisition->height = extents->size.y;
+    requisition->width = extents->size.x +
+        data->left_padding + data->right_padding;
+    requisition->height = extents->size.y +
+        data->top_padding + data->bottom_padding;
 }
 
 static gboolean

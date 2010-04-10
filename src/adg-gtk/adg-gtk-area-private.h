@@ -31,8 +31,9 @@ typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
 struct _AdgGtkAreaPrivate {
     AdgCanvas   *canvas;
     gdouble      factor;
-    gdouble      x_event;
-    gdouble      y_event;
+    gdouble      top_padding, right_padding, bottom_padding, left_padding;
+
+    gdouble      x_event, y_event;
 };
 
 G_END_DECLS

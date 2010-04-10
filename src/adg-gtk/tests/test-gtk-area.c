@@ -114,6 +114,134 @@ _adg_test_factor(void)
     g_object_unref(area);
 }
 
+static void
+_adg_test_top_padding(void)
+{
+    AdgGtkArea *area;
+    gdouble valid_value_1, valid_value_2;
+    gdouble top_padding;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_set_top_padding(area, valid_value_1);
+    top_padding = adg_gtk_area_get_top_padding(area);
+    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+
+    adg_gtk_area_set_paddings(area, valid_value_2, 0, 0, 0);
+    top_padding = adg_gtk_area_get_top_padding(area);
+    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(area, "top-padding", valid_value_1, NULL);
+    g_object_get(area, "top-padding", &top_padding, NULL);
+    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+
+    g_object_set(area, "top-padding", valid_value_2, NULL);
+    g_object_get(area, "top-padding", &top_padding, NULL);
+    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+
+    g_object_unref(area);
+}
+
+static void
+_adg_test_right_padding(void)
+{
+    AdgGtkArea *area;
+    gdouble valid_value_1, valid_value_2;
+    gdouble right_padding;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_set_right_padding(area, valid_value_1);
+    right_padding = adg_gtk_area_get_right_padding(area);
+    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+
+    adg_gtk_area_set_paddings(area, 0, valid_value_2, 0, 0);
+    right_padding = adg_gtk_area_get_right_padding(area);
+    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(area, "right-padding", valid_value_1, NULL);
+    g_object_get(area, "right-padding", &right_padding, NULL);
+    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+
+    g_object_set(area, "right-padding", valid_value_2, NULL);
+    g_object_get(area, "right-padding", &right_padding, NULL);
+    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+
+    g_object_unref(area);
+}
+
+static void
+_adg_test_bottom_padding(void)
+{
+    AdgGtkArea *area;
+    gdouble valid_value_1, valid_value_2;
+    gdouble bottom_padding;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_set_bottom_padding(area, valid_value_1);
+    bottom_padding = adg_gtk_area_get_bottom_padding(area);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+
+    adg_gtk_area_set_paddings(area, 0, 0, valid_value_2, 0);
+    bottom_padding = adg_gtk_area_get_bottom_padding(area);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(area, "bottom-padding", valid_value_1, NULL);
+    g_object_get(area, "bottom-padding", &bottom_padding, NULL);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+
+    g_object_set(area, "bottom-padding", valid_value_2, NULL);
+    g_object_get(area, "bottom-padding", &bottom_padding, NULL);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+
+    g_object_unref(area);
+}
+
+static void
+_adg_test_left_padding(void)
+{
+    AdgGtkArea *area;
+    gdouble valid_value_1, valid_value_2;
+    gdouble left_padding;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_set_left_padding(area, valid_value_1);
+    left_padding = adg_gtk_area_get_left_padding(area);
+    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+
+    adg_gtk_area_set_paddings(area, 0, 0, 0, valid_value_2);
+    left_padding = adg_gtk_area_get_left_padding(area);
+    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(area, "left-padding", valid_value_1, NULL);
+    g_object_get(area, "left-padding", &left_padding, NULL);
+    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+
+    g_object_set(area, "left-padding", valid_value_2, NULL);
+    g_object_get(area, "left-padding", &left_padding, NULL);
+    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+
+    g_object_unref(area);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -122,6 +250,10 @@ main(int argc, char *argv[])
 
     adg_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
     adg_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
+    adg_test_add_func("/adg/gtk/area/top-padding", _adg_test_top_padding);
+    adg_test_add_func("/adg/gtk/area/right-padding", _adg_test_right_padding);
+    adg_test_add_func("/adg/gtk/area/bottom-padding", _adg_test_bottom_padding);
+    adg_test_add_func("/adg/gtk/area/left-padding", _adg_test_left_padding);
 
     return g_test_run();
 }
