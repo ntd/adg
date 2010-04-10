@@ -76,8 +76,6 @@ static void     _adg_invalidate         (AdgEntity      *entity);
 static void     _adg_arrange            (AdgEntity      *entity);
 static gchar *  _adg_default_value      (AdgDim         *dim);
 static gdouble  _adg_quote_angle        (gdouble         angle);
-static gboolean _adg_set_dim_dress      (AdgDim         *dim,
-                                         AdgDress        dress);
 static gboolean _adg_set_outside        (AdgDim         *dim,
                                          AdgThreeState   outside);
 static gboolean _adg_set_detached       (AdgDim         *dim,
@@ -303,7 +301,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
-        _adg_set_dim_dress(dim, g_value_get_int(value));
+        data->dim_dress = g_value_get_int(value);
         break;
     case PROP_REF1:
         adg_point_set(&data->ref1, g_value_get_boxed(value));
@@ -356,9 +354,7 @@ void
 adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-
-    if (_adg_set_dim_dress(dim, dress))
-        g_object_notify((GObject *) dim, "dim-dress");
+    g_object_set((GObject *) dim, "dim-dress", dress, NULL);
 }
 
 /**
@@ -1222,19 +1218,6 @@ _adg_quote_angle(gdouble angle)
         angle = cpml_angle(angle + G_PI);
 
     return angle;
-}
-
-static gboolean
-_adg_set_dim_dress(AdgDim *dim, AdgDress dress)
-{
-    AdgDimPrivate *data = dim->data;
-
-    if (adg_dress_set(&data->dim_dress, dress)) {
-        data->dim_style = NULL;
-        return TRUE;
-    }
-
-    return FALSE;
 }
 
 static gboolean
