@@ -68,8 +68,6 @@ static void     invalidate              (AdgEntity      *entity);
 static void     arrange                 (AdgEntity      *entity);
 static void     render                  (AdgEntity      *entity,
                                          cairo_t        *cr);
-static gboolean set_font_dress          (AdgToyText     *toy_text,
-                                         AdgDress        dress);
 static gboolean set_label               (AdgToyText     *toy_text,
                                          const gchar    *label);
 static void     unset_font              (AdgToyText     *toy_text);
@@ -169,11 +167,16 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyText *toy_text;
+    AdgToyTextPrivate *data;
+
+    toy_text = (AdgToyText *) object;
+    data = toy_text->data;
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
-        set_font_dress(toy_text, g_value_get_int(value));
+        data->font_dress = g_value_get_int(value);
+        unset_font(toy_text);
         break;
     case PROP_LABEL:
         set_label(toy_text, g_value_get_string(value));
@@ -221,9 +224,7 @@ void
 adg_toy_text_set_font_dress(AdgToyText *toy_text, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
-
-    if (set_font_dress(toy_text, dress))
-        g_object_notify((GObject *) toy_text, "font-dress");
+    g_object_set((GObject *) toy_text, "font-dress", dress, NULL);
 }
 
 /**
@@ -386,19 +387,6 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }
-}
-
-static gboolean
-set_font_dress(AdgToyText *toy_text, AdgDress dress)
-{
-    AdgToyTextPrivate *data = toy_text->data;
-
-    if (adg_dress_set(&data->font_dress, dress)) {
-        unset_font(toy_text);
-        return TRUE;
-    }
-
-    return FALSE;
 }
 
 static gboolean
