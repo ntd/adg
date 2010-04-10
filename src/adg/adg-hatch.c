@@ -126,7 +126,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FILL_DRESS:
-        adg_dress_set(&data->fill_dress, g_value_get_int(value));
+        data->fill_dress = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -167,14 +167,8 @@ adg_hatch_new(AdgTrail *trail)
 void
 adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
 {
-    AdgHatchPrivate *data;
-
     g_return_if_fail(ADG_IS_HATCH(hatch));
-
-    data = hatch->data;
-
-    if (adg_dress_set(&data->fill_dress, dress))
-        g_object_notify((GObject *) hatch, "fill-dress");
+    g_object_set((GObject *) hatch, "fill-dress", dress, NULL);
 }
 
 /**
