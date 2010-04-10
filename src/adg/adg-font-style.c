@@ -259,7 +259,7 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        adg_dress_set(&data->color_dress, g_value_get_int(value));
+        data->color_dress = g_value_get_int(value);
         break;
     case PROP_FAMILY:
         set_family(font_style, g_value_get_string(value));
@@ -382,14 +382,8 @@ adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
 void
 adg_font_style_set_color_dress(AdgFontStyle *font_style, AdgDress dress)
 {
-    AdgFontStylePrivate *data;
-
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
-
-    data = font_style->data;
-
-    if (adg_dress_set(&data->color_dress, dress))
-        g_object_notify((GObject *) font_style, "color-dress");
+    g_object_set((GObject *) font_style, "color-dress", dress, NULL);
 }
 
 /**
