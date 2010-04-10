@@ -172,7 +172,7 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        adg_dress_set(&data->line_dress, g_value_get_int(value));
+        data->line_dress = g_value_get_int(value);
         break;
     case PROP_SPACING:
         set_spacing(ruled_fill, g_value_get_double(value));
@@ -210,14 +210,8 @@ adg_ruled_fill_new(void)
 void
 adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
 {
-    AdgRuledFillPrivate *data;
-
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-
-    data = ruled_fill->data;
-
-    if (adg_dress_set(&data->line_dress, dress))
-        g_object_notify((GObject *) ruled_fill, "line-dress");
+    g_object_set((GObject *) ruled_fill, "line-dress", dress, NULL);
 }
 
 /**
