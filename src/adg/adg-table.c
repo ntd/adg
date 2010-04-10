@@ -278,7 +278,7 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
-        adg_dress_set(&data->table_dress, g_value_get_int(value));
+        data->table_dress = g_value_get_int(value);
         break;
     case PROP_HAS_FRAME:
         switch_frame(table, g_value_get_boolean(value));
@@ -323,14 +323,8 @@ adg_table_new(void)
 void
 adg_table_set_table_dress(AdgTable *table, AdgDress dress)
 {
-    AdgTablePrivate *data;
-
     g_return_if_fail(ADG_IS_TABLE(table));
-
-    data = table->data;
-
-    if (adg_dress_set(&data->table_dress, dress))
-        g_object_notify((GObject *) table, "table-dress");
+    g_object_set((GObject *) table, "table-dress", dress, NULL);
 }
 
 /**
