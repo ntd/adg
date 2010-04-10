@@ -173,10 +173,10 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
-        adg_dress_set(&data->symbol_dress, g_value_get_int(value));
+        data->symbol_dress = g_value_get_int(value);
         break;
     case PROP_AXIS_DRESS:
-        adg_dress_set(&data->axis_dress, g_value_get_int(value));
+        data->axis_dress = g_value_get_int(value);
         break;
     case PROP_SCHEME:
         set_scheme(projection, g_value_get_enum(value));
@@ -222,14 +222,8 @@ adg_projection_new(AdgProjectionScheme scheme)
 void
 adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
 {
-    AdgProjectionPrivate *data;
-
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-
-    data = projection->data;
-
-    if (adg_dress_set(&data->symbol_dress, dress))
-        g_object_notify((GObject *) projection, "symbol-dress");
+    g_object_set((GObject *) projection, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -269,14 +263,8 @@ adg_projection_get_symbol_dress(AdgProjection *projection)
 void
 adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
 {
-    AdgProjectionPrivate *data;
-
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-
-    data = projection->data;
-
-    if (adg_dress_set(&data->axis_dress, dress))
-        g_object_notify((GObject *) projection, "axis-dress");
+    g_object_set((GObject *) projection, "axis-dress", dress, NULL);
 }
 
 /**
