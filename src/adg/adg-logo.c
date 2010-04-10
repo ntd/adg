@@ -168,13 +168,13 @@ set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
-        adg_dress_set(&data->symbol_dress, g_value_get_int(value));
+        data->symbol_dress = g_value_get_int(value);
         break;
     case PROP_SCREEN_DRESS:
-        adg_dress_set(&data->screen_dress, g_value_get_int(value));
+        data->screen_dress = g_value_get_int(value);
         break;
     case PROP_FRAME_DRESS:
-        adg_dress_set(&data->frame_dress, g_value_get_int(value));
+        data->frame_dress = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -213,14 +213,8 @@ adg_logo_new(void)
 void
 adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
 {
-    AdgLogoPrivate *data;
-
     g_return_if_fail(ADG_IS_LOGO(logo));
-
-    data = logo->data;
-
-    if (adg_dress_set(&data->symbol_dress, dress))
-        g_object_notify((GObject *) logo, "symbol-dress");
+    g_object_set((GObject *) logo, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -261,14 +255,8 @@ adg_logo_get_symbol_dress(AdgLogo *logo)
 void
 adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
 {
-    AdgLogoPrivate *data;
-
     g_return_if_fail(ADG_IS_LOGO(logo));
-
-    data = logo->data;
-
-    if (adg_dress_set(&data->screen_dress, dress))
-        g_object_notify((GObject *) logo, "screen-dress");
+    g_object_set((GObject *) logo, "screen-dress", dress, NULL);
 }
 
 /**
@@ -309,14 +297,8 @@ adg_logo_get_screen_dress(AdgLogo *logo)
 void
 adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
 {
-    AdgLogoPrivate *data;
-
     g_return_if_fail(ADG_IS_LOGO(logo));
-
-    data = logo->data;
-
-    if (adg_dress_set(&data->frame_dress, dress))
-        g_object_notify((GObject *) logo, "frame-dress");
+    g_object_set((GObject *) logo, "frame-dress", dress, NULL);
 }
 
 /**
