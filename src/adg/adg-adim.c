@@ -594,6 +594,8 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgADimPrivate *data = ((AdgADim *) entity)->data;
 
+    unset_trail((AdgADim *) entity);
+
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
