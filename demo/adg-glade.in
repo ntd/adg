@@ -1,0 +1,5 @@
+#!/bin/sh
+
+GLADE_CATALOG_PATH=@abs_src_builddir@/src/ \
+GLADE_MODULE_PATH=@abs_top_builddir@/src/adg-gtk/.libs/ \
+    @GLADE3@ $@

@@ -31,6 +31,7 @@ AC_PATH_PROG([GLIB_MKENUMS],[glib-mkenums],[/usr/bin/glib-mkenums])
 AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
+AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 
 AC_MSG_CHECKING([which libtool initialization strategy to adopt])
 AC_MSG_RESULT([m4_ifset([LT_INIT],[LT-INIT],[AC-PROG-LIBTOOL])])
@@ -44,7 +45,7 @@ m4_ifset([LT_INIT],
 
 AC_SUBST([GETTEXT_PACKAGE],adg-adg_api_version)
 AC_DEFINE([GETTEXT_PACKAGE],"AC_PACKAGE_TARNAME-adg_api_version",
-	  [Define to the domain used by gettext.])
+          [Define to the domain used by gettext.])
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
@@ -164,6 +165,7 @@ AC_CONFIG_FILES([build/shave
                  docs/cpml/bookinfo.xml
                  docs/adg/Makefile
                  docs/adg/bookinfo.xml])
+AC_CONFIG_FILES([demo/adg-glade],[chmod +x demo/adg-glade])
 AC_OUTPUT
 
 
