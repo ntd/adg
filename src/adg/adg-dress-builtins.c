@@ -293,16 +293,17 @@ _adg_dress_line_hatch(void)
 }
 
 /**
- * ADG_DRESS_LINE_TABLE:
+ * ADG_DRESS_LINE_GRID:
  *
- * The builtin #AdgDress line type used for rendering #AdgTable.
+ * The builtin #AdgDress line type used for rendering the grid
+ * of #AdgTable entities, that is the frame of the cells.
  * The fallback style is a line with a thickness of %1 and a
  * pass-through color dress, rendered without antialiasing.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_table(void)
+_adg_dress_line_grid(void)
 {
     static AdgDress dress = 0;
 
@@ -311,7 +312,34 @@ _adg_dress_line_table(void)
                                           "antialias", CAIRO_ANTIALIAS_NONE,
                                           "width", 1., NULL);
 
-        dress = adg_dress_new("line-table", fallback);
+        dress = adg_dress_new("line-grid", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_FRAME:
+ *
+ * The builtin #AdgDress line type used for rendering the frame
+ * of #AdgTable entities, that is the frame around the whole table.
+ * The fallback style is a line with a thickness of %2 and a
+ * pass-through color dress, rendered without antialiasing.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ **/
+AdgDress
+_adg_dress_line_frame(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "antialias", CAIRO_ANTIALIAS_NONE,
+                                          "width", 2., NULL);
+
+        dress = adg_dress_new("line-frame", fallback);
         g_object_unref(fallback);
     }
 

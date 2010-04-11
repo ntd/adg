@@ -42,7 +42,8 @@ G_BEGIN_DECLS
 #define ADG_DRESS_LINE_STROKE           (_adg_dress_line_stroke())
 #define ADG_DRESS_LINE_DIMENSION        (_adg_dress_line_dimension())
 #define ADG_DRESS_LINE_HATCH            (_adg_dress_line_hatch())
-#define ADG_DRESS_LINE_TABLE            (_adg_dress_line_table())
+#define ADG_DRESS_LINE_GRID             (_adg_dress_line_grid())
+#define ADG_DRESS_LINE_FRAME            (_adg_dress_line_frame())
 #define ADG_DRESS_TEXT                  (_adg_dress_text())
 #define ADG_DRESS_TEXT_VALUE            (_adg_dress_text_value())
 #define ADG_DRESS_TEXT_LIMIT            (_adg_dress_text_limit())
@@ -62,7 +63,8 @@ AdgDress        _adg_dress_line                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_stroke          (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_dimension       (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_hatch           (void) G_GNUC_CONST;
-AdgDress        _adg_dress_line_table           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_line_grid            (void) G_GNUC_CONST;
+AdgDress        _adg_dress_line_frame           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_value           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_text_limit           (void) G_GNUC_CONST;
