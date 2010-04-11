@@ -726,7 +726,17 @@ arrange(AdgEntity *entity)
     }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-    cpml_extents_add(&extents, adg_trail_get_extents(data->trail));
+
+    if (data->trail) {
+        const AdgMatrix *global;
+        CpmlExtents trail_extents;
+
+        global = adg_entity_get_global_matrix(entity);
+        cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
+
+        cpml_extents_transform(&trail_extents, global);
+        cpml_extents_add(&extents, &trail_extents);
+    }
 
     if (data->marker1 != NULL) {
         AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
