@@ -470,6 +470,8 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
 
+    unset_trail((AdgLDim *) entity);
+
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
