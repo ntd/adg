@@ -30,7 +30,7 @@ _adg_test_axis_dress(void)
 
     projection = adg_projection_new(ADG_PROJECTION_FIRST_ANGLE);
     valid_dress_1 = ADG_DRESS_LINE_HATCH;
-    valid_dress_2 = ADG_DRESS_LINE_TABLE;
+    valid_dress_2 = ADG_DRESS_LINE_FRAME;
     incompatible_dress = ADG_DRESS_COLOR_STROKE;
 
     /* Using the public APIs */

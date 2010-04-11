@@ -29,7 +29,7 @@ _adg_test_line_dress(void)
     AdgDress line_dress;
 
     stroke = adg_stroke_new(NULL);
-    valid_dress_1 = ADG_DRESS_LINE_TABLE;
+    valid_dress_1 = ADG_DRESS_LINE_GRID;
     valid_dress_2 = ADG_DRESS_LINE_DIMENSION;
     incompatible_dress = ADG_DRESS_TEXT_VALUE;
 
