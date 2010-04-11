@@ -105,7 +105,8 @@ static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static void             arrange                 (AdgEntity      *entity);
 static void             arrange_grid            (AdgEntity      *entity);
-static void             arrange_frame           (AdgEntity      *entity);
+static void             arrange_frame           (AdgEntity      *entity,
+                                                 const CpmlExtents *extents);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gboolean         switch_frame            (AdgTable       *table,
@@ -209,18 +210,18 @@ dispose(GObject *object)
 {
     AdgTablePrivate *data = ((AdgTable *) object)->data;
 
-    if (data->grid != NULL) {
+    if (data->grid) {
         g_object_unref(data->grid);
         data->grid = NULL;
     }
 
-    if (data->frame != NULL) {
+    if (data->frame) {
         g_object_unref(data->frame);
         data->frame = NULL;
     }
 
     /* The rows finalization will happen in the finalize() method */
-    if (data->rows != NULL)
+    if (data->rows)
         g_slist_foreach(data->rows, (GFunc) row_dispose, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose)
@@ -236,12 +237,12 @@ finalize(GObject *object)
     table = (AdgTable *) object;
     data = table->data;
 
-    if (data->rows != NULL) {
+    if (data->rows) {
         g_slist_foreach(data->rows, (GFunc) row_free, NULL);
         g_slist_free(data->rows);
     }
 
-    if (data->cell_names != NULL)
+    if (data->cell_names)
         g_hash_table_destroy(data->cell_names);
 
     if (PARENT_OBJECT_CLASS->finalize)
@@ -303,7 +304,8 @@ AdgTable *
 adg_table_new(void)
 {
     return g_object_new(ADG_TYPE_TABLE,
-                        "local-method", ADG_MIX_DISABLED, NULL);
+                        "local-method", ADG_MIX_DISABLED,
+                        NULL);
 }
 
 /**
@@ -634,10 +636,10 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
 
     cell = cell_new(row, NULL, width, TRUE, name, NULL, NULL);
 
-    if (title != NULL)
+    if (title)
         adg_table_cell_set_text_title(cell, title);
 
-    if (value != NULL)
+    if (value)
         adg_table_cell_set_text_value(cell, value);
 
     return cell;
@@ -783,7 +785,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
     if (title == NULL)
         adg_table_cell_set_title(cell, NULL);
 
-    if (cell->title != NULL) {
+    if (cell->title) {
         const gchar *old_title;
 
         if (ADG_IS_TOY_TEXT(cell->title))
@@ -876,7 +878,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
     if (value == NULL)
         adg_table_cell_set_value(cell, NULL);
 
-    if (cell->value != NULL) {
+    if (cell->value) {
         const gchar *old_value;
 
         if (ADG_IS_TOY_TEXT(cell->value))
@@ -999,7 +1001,7 @@ adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
     data = cell->row->table->data;
     cell->has_frame = new_state;
 
-    if (data->grid != NULL) {
+    if (data->grid) {
         g_object_unref(data->grid);
         data->grid = NULL;
     }
@@ -1069,7 +1071,7 @@ arrange(AdgEntity *entity)
 {
     AdgTable *table;
     AdgTablePrivate *data;
-    CpmlExtents extents;
+    CpmlExtents extents = { 0 };
     const AdgPair *spacing;
     GSList *row_node;
     AdgTableRow *row;
@@ -1077,25 +1079,15 @@ arrange(AdgEntity *entity)
 
     table = (AdgTable *) entity;
     data = table->data;
-    cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
     /* Resolve the table style */
     if (data->table_style == NULL)
         data->table_style = (AdgTableStyle *)
             adg_entity_style(entity, data->table_dress);
 
-    if (extents.is_defined) {
-        if (data->grid != NULL)
-            adg_entity_arrange((AdgEntity *) data->grid);
-        if (data->frame != NULL)
-            adg_entity_arrange((AdgEntity *) data->frame);
-        return;
-    }
-
     spacing = adg_table_style_get_cell_spacing(data->table_style);
-    extents.size.x = 0;
-    extents.size.y = 0;
 
+    /* Compute the size of the table */
     for (row_node = data->rows; row_node; row_node = row_node->next) {
         row = row_node->data;
 
@@ -1106,26 +1098,27 @@ arrange(AdgEntity *entity)
         extents.size.y += row->extents.size.y;
     }
 
-    /* TODO: update the org according to the table alignments */
-
+    /* Arrange the layout of the table components */
     y = extents.org.y + spacing->y;
     for (row_node = data->rows; row_node; row_node = row_node->next) {
         row = row_node->data;
 
         row->extents.org.x = extents.org.x;
         row->extents.org.y = y;
+        row->extents.size.x = extents.size.x;
 
         row_arrange(row);
 
         y += row->extents.size.y + spacing->y;
     }
 
+    arrange_grid(entity);
+    arrange_frame(entity, &extents);
+
     extents.is_defined = TRUE;
     cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
+    cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
     adg_entity_set_extents(entity, &extents);
-
-    arrange_grid(entity);
-    arrange_frame(entity);
 }
 
 static void
@@ -1142,7 +1135,7 @@ arrange_grid(AdgEntity *entity)
 
     data = ((AdgTable *) entity)->data;
 
-    if (data->grid != NULL)
+    if (data->grid)
         return;
 
     path = adg_path_new();
@@ -1174,29 +1167,29 @@ arrange_grid(AdgEntity *entity)
 
     dress = adg_table_style_get_grid_dress(data->table_style);
     data->grid = g_object_new(ADG_TYPE_STROKE,
-                              "local-method", ADG_MIX_PARENT,
                               "line-dress", dress,
                               "trail", trail,
-                              "parent", entity, NULL);
+                              "parent", entity,
+                              NULL);
     adg_entity_arrange((AdgEntity *) data->grid);
 }
 
 static void
-arrange_frame(AdgEntity *entity)
+arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
 {
     AdgTablePrivate *data;
     AdgPath *path;
-    const CpmlExtents *extents;
+    AdgTrail *trail;
     AdgPair pair;
     AdgDress dress;
 
     data = ((AdgTable *) entity)->data;
 
-    if (data->frame != NULL || !data->has_frame)
+    if (data->frame || !data->has_frame)
         return;
 
     path = adg_path_new();
-    extents = adg_entity_get_extents(entity);
+    trail = (AdgTrail *) path;
 
     cpml_pair_copy(&pair, &extents->org);
     adg_path_move_to(path, &pair);
@@ -1209,12 +1202,11 @@ arrange_frame(AdgEntity *entity)
     adg_path_close(path);
 
     dress = adg_table_style_get_frame_dress(data->table_style);
-
     data->frame = g_object_new(ADG_TYPE_STROKE,
-                               "local-method", ADG_MIX_PARENT,
                                "line-dress", dress,
-                               "trail", (AdgTrail *) path,
-                               "parent", entity, NULL);
+                               "trail", trail,
+                               "parent", entity,
+                               NULL);
     adg_entity_arrange((AdgEntity *) data->frame);
 }
 
@@ -1241,7 +1233,7 @@ switch_frame(AdgTable *table, gboolean new_state)
 
     data->has_frame = new_state;
 
-    if (data->frame != NULL) {
+    if (data->frame) {
         g_object_unref(data->frame);
         data->frame = NULL;
     }
@@ -1270,12 +1262,12 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
     va_start(var_args, detailed_signal);
     data = table->data;
 
-    if (data->frame != NULL) {
+    if (data->frame) {
         G_VA_COPY(var_copy, var_args);
         g_signal_emit_valist(data->frame, signal_id, detail, var_copy);
     }
 
-    if (data->grid != NULL) {
+    if (data->grid) {
         G_VA_COPY(var_copy, var_args);
         g_signal_emit_valist(data->grid, signal_id, detail, var_copy);
     }
@@ -1286,16 +1278,14 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
         for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
             cell = cell_node->data;
 
-            if (cell->title != NULL) {
+            if (cell->title) {
                 alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
-
                 G_VA_COPY(var_copy, var_args);
                 g_signal_emit_valist(alignment, signal_id, detail, var_copy);
             }
 
-            if (cell->value != NULL) {
+            if (cell->value) {
                 alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
-
                 G_VA_COPY(var_copy, var_args);
                 g_signal_emit_valist(alignment, signal_id, detail, var_copy);
             }
@@ -1421,8 +1411,8 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
 
     data = row->table->data;
 
-    if (name != NULL && data->cell_names != NULL &&
-        g_hash_table_lookup(data->cell_names, name) != NULL) {
+    if (name && data->cell_names &&
+        g_hash_table_lookup(data->cell_names, name)) {
         g_warning(_("%s: `%s' cell name is yet used"), G_STRLOC, name);
         return NULL;
     }
@@ -1451,7 +1441,7 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
         row->cells = g_slist_insert_before(row->cells, before_node, new_cell);
     }
 
-    if (name != NULL)
+    if (name)
         cell_set_name(new_cell, name);
 
     return new_cell;
@@ -1483,14 +1473,14 @@ cell_set_title(AdgTableCell *cell, AdgEntity *title)
     if (cell->title == title)
         return FALSE;
 
-    if (cell->title != NULL) {
+    if (cell->title) {
         alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
         g_object_unref(alignment);
     }
 
     cell->title = title;
 
-    if (title != NULL) {
+    if (title) {
         alignment = adg_alignment_new_explicit(0, -1);
         g_object_ref_sink(alignment);
         adg_entity_set_parent((AdgEntity *) alignment,
@@ -1510,14 +1500,14 @@ cell_set_value(AdgTableCell *cell, AdgEntity *value)
     if (cell->value == value)
         return FALSE;
 
-    if (cell->value != NULL) {
+    if (cell->value) {
         alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
         g_object_unref(alignment);
     }
 
     cell->value = value;
 
-    if (value != NULL) {
+    if (value) {
         alignment = adg_alignment_new_explicit(0.5, 0);
         g_object_ref_sink(alignment);
         adg_entity_set_parent((AdgEntity *) alignment,
@@ -1537,10 +1527,10 @@ cell_set_value_pos(AdgTableCell *cell,
 
     alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
 
-    if (from_factor != NULL)
+    if (from_factor)
         adg_alignment_set_factor(alignment, from_factor);
 
-    if (to_factor != NULL)
+    if (to_factor)
         cell->value_factor = *to_factor;
 }
 
@@ -1553,14 +1543,14 @@ cell_arrange_size(AdgTableCell *cell)
 
     size = &cell->extents.size;
 
-    if (cell->title != NULL) {
+    if (cell->title) {
         title_alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
         adg_entity_arrange((AdgEntity *) title_alignment);
     } else {
         title_alignment = NULL;
     }
 
-    if (cell->value != NULL) {
+    if (cell->value) {
         value_alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
         adg_entity_arrange((AdgEntity *) value_alignment);
     } else {
@@ -1576,12 +1566,12 @@ cell_arrange_size(AdgTableCell *cell)
         /* The width depends on the cell content (default = 0) */
         size->x = 0;
 
-        if (title_alignment != NULL) {
+        if (title_alignment) {
             extents = adg_entity_get_extents((AdgEntity *) title_alignment);
             size->x = extents->size.x;
         }
 
-        if (value_alignment != NULL) {
+        if (value_alignment) {
             extents = adg_entity_get_extents((AdgEntity *) value_alignment);
             if (extents->size.x > size->x)
                 size->x = extents->size.x;
@@ -1603,14 +1593,14 @@ cell_arrange(AdgTableCell *cell)
 
     extents = &cell->extents;
 
-    if (cell->title != NULL) {
+    if (cell->title) {
         alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
 
         cairo_matrix_init_translate(&map, extents->org.x, extents->org.y);
         adg_entity_set_global_map((AdgEntity *) alignment, &map);
     }
 
-    if (cell->value != NULL) {
+    if (cell->value) {
         AdgPair to;
 
         alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
