@@ -1212,11 +1212,10 @@ real_render(AdgEntity *entity, cairo_t *cr)
         if (data->extents.is_defined) {
             cairo_save(cr);
             cairo_identity_matrix(cr);
-            cairo_set_line_width(cr, 1);
-            cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
+            cairo_set_source_rgba(cr, 0.25, 0.25, 0.25, 0.25);
             cairo_rectangle(cr, data->extents.org.x, data->extents.org.y,
                             data->extents.size.x, data->extents.size.y);
-            cairo_stroke(cr);
+            cairo_fill(cr);
             cairo_restore(cr);
         }
     }
