@@ -42,8 +42,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="mainSaveAs">
-                <property name="label">gtk-save-as</property>
+              <object class="GtkToggleButton" id="mainEdit">
+                <property name="label">gtk-edit</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -56,8 +56,8 @@
               </packing>
             </child>
             <child>
-              <object class="GtkToggleButton" id="mainEdit">
-                <property name="label">gtk-edit</property>
+              <object class="GtkButton" id="mainSaveAs">
+                <property name="label">gtk-save-as</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
