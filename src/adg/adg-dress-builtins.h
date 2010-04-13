@@ -37,7 +37,7 @@ G_BEGIN_DECLS
 #define ADG_DRESS_COLOR_STROKE          (_adg_dress_color_stroke())
 #define ADG_DRESS_COLOR_DIMENSION       (_adg_dress_color_dimension())
 #define ADG_DRESS_COLOR_HATCH           (_adg_dress_color_hatch())
-#define ADG_DRESS_COLOR_TABLE           (_adg_dress_color_table())
+#define ADG_DRESS_COLOR_ANNOTATION      (_adg_dress_color_annotation())
 #define ADG_DRESS_LINE                  (_adg_dress_line())
 #define ADG_DRESS_LINE_STROKE           (_adg_dress_line_stroke())
 #define ADG_DRESS_LINE_DIMENSION        (_adg_dress_line_dimension())
@@ -58,7 +58,7 @@ AdgDress        _adg_dress_color_background     (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_stroke         (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_dimension      (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_hatch          (void) G_GNUC_CONST;
-AdgDress        _adg_dress_color_table          (void) G_GNUC_CONST;
+AdgDress        _adg_dress_color_annotation     (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_stroke          (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_dimension       (void) G_GNUC_CONST;

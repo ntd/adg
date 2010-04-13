@@ -111,8 +111,8 @@ _adg_color_dress(void)
     AdgDress color_dress;
 
     dim_style = adg_dim_style_new();
-    valid_dress_1 = ADG_DRESS_COLOR_DIMENSION;
-    valid_dress_2 = ADG_DRESS_COLOR_HATCH;
+    valid_dress_1 = ADG_DRESS_COLOR_ANNOTATION;
+    valid_dress_2 = ADG_DRESS_COLOR;
     incompatible_dress = ADG_DRESS_FONT_LIMIT;
 
     /* Using the public APIs */

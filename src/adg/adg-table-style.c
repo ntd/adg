@@ -96,8 +96,8 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
 
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
-                                 P_("Color dress for the whole tableension"),
-                                 ADG_DRESS_COLOR_TABLE,
+                                 P_("Fallback color dress, used when no specific dresses are selected"),
+                                 ADG_DRESS_COLOR_ANNOTATION,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);
 
@@ -159,7 +159,7 @@ adg_table_style_init(AdgTableStyle *table_style)
     data = G_TYPE_INSTANCE_GET_PRIVATE(table_style, ADG_TYPE_TABLE_STYLE,
                                        AdgTableStylePrivate);
 
-    data->color_dress = ADG_DRESS_COLOR_TABLE,
+    data->color_dress = ADG_DRESS_COLOR_ANNOTATION,
     data->grid_dress = ADG_DRESS_LINE_GRID;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->title_dress = ADG_DRESS_FONT_LIMIT;

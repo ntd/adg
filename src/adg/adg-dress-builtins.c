@@ -142,16 +142,16 @@ _adg_dress_color_dimension(void)
 }
 
 /**
- * ADG_DRESS_COLOR_TABLE:
+ * ADG_DRESS_COLOR_ANNOTATION:
  *
- * The builtin #AdgDress color used by default for rendering
- * #AdgTable and derived objects. The fallback style is a
- * full opaque %0.4 red
+ * The builtin #AdgDress color used for rendering helper entities
+ * such as #AdgToyText, #AdgTable and #AdgTitleBlock. The fallback
+ * style is a full opaque %0.4 red
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
 AdgDress
-_adg_dress_color_table(void)
+_adg_dress_color_annotation(void)
 {
     static AdgDress dress = 0;
 
@@ -159,7 +159,7 @@ _adg_dress_color_table(void)
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
                                           "red", 0.4, NULL);
 
-        dress = adg_dress_new("color-table", fallback);
+        dress = adg_dress_new("color-annotation", fallback);
         g_object_unref(fallback);
     }
 
