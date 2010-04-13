@@ -372,6 +372,35 @@ _adg_dress_font(void)
 }
 
 /**
+ * ADG_DRESS_FONT_TEXT:
+ *
+ * The builtin #AdgDress font used by default for rendering
+ * common text such as #AdgToyText or the value of #AdgTable
+ * entities. The fallback style is %Sans %12 %bold with an
+ * #ADG_DRESS_COLOR_ANNOTATION color dress.
+ *
+ * This dress will be resolved to an #AdgFontStyle instance.
+ **/
+AdgDress
+_adg_dress_font_text(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_ANNOTATION,
+                                          "family", "Sans",
+                                          "weight", CAIRO_FONT_WEIGHT_BOLD,
+                                          "size", 12., NULL);
+
+        dress = adg_dress_new("font-text", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
  * ADG_DRESS_FONT_VALUE:
  *
  * The builtin #AdgDress font used for rendering the nominal
