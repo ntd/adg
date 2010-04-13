@@ -113,7 +113,7 @@ _adg_color_dress(void)
     dim_style = adg_dim_style_new();
     valid_dress_1 = ADG_DRESS_COLOR_DIMENSION;
     valid_dress_2 = ADG_DRESS_COLOR_HATCH;
-    incompatible_dress = ADG_DRESS_TEXT_LIMIT;
+    incompatible_dress = ADG_DRESS_FONT_LIMIT;
 
     /* Using the public APIs */
     adg_dim_style_set_color_dress(dim_style, valid_dress_1);
@@ -409,8 +409,8 @@ _adg_max_dress(void)
     AdgDress max_dress;
 
     dim_style = adg_dim_style_new();
-    valid_dress_1 = ADG_DRESS_TEXT;
-    valid_dress_2 = ADG_DRESS_TEXT_LIMIT;
+    valid_dress_1 = ADG_DRESS_FONT;
+    valid_dress_2 = ADG_DRESS_FONT_LIMIT;
     incompatible_dress = ADG_DRESS_FILL_HATCH;
 
     /* Using the public APIs */
@@ -450,8 +450,8 @@ _adg_min_dress(void)
     AdgDress min_dress;
 
     dim_style = adg_dim_style_new();
-    valid_dress_1 = ADG_DRESS_TEXT;
-    valid_dress_2 = ADG_DRESS_TEXT_LIMIT;
+    valid_dress_1 = ADG_DRESS_FONT;
+    valid_dress_2 = ADG_DRESS_FONT_LIMIT;
     incompatible_dress = ADG_DRESS_FILL_HATCH;
 
     /* Using the public APIs */
@@ -664,8 +664,8 @@ _adg_value_dress(void)
     AdgDress value_dress;
 
     dim_style = adg_dim_style_new();
-    valid_dress_1 = ADG_DRESS_TEXT;
-    valid_dress_2 = ADG_DRESS_TEXT_LIMIT;
+    valid_dress_1 = ADG_DRESS_FONT;
+    valid_dress_2 = ADG_DRESS_FONT_LIMIT;
     incompatible_dress = ADG_DRESS_FILL_HATCH;
 
     /* Using the public APIs */

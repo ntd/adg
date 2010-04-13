@@ -347,7 +347,7 @@ _adg_dress_line_frame(void)
 }
 
 /**
- * ADG_DRESS_TEXT:
+ * ADG_DRESS_FONT:
  *
  * The default builtin #AdgDress font. The fallback style is
  * a %Sans %14 font with a pass-through color dress.
@@ -355,7 +355,7 @@ _adg_dress_line_frame(void)
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
 AdgDress
-_adg_dress_text(void)
+_adg_dress_font(void)
 {
     static AdgDress dress = 0;
 
@@ -364,7 +364,7 @@ _adg_dress_text(void)
                                           "family", "Serif",
                                           "size", 14., NULL);
 
-        dress = adg_dress_new("text", fallback);
+        dress = adg_dress_new("font", fallback);
         g_object_unref(fallback);
     }
 
@@ -372,7 +372,7 @@ _adg_dress_text(void)
 }
 
 /**
- * ADG_DRESS_TEXT_VALUE:
+ * ADG_DRESS_FONT_VALUE:
  *
  * The builtin #AdgDress font used for rendering the nominal
  * value of a dimension. The fallback style is %Sans %12 %bold
@@ -381,7 +381,7 @@ _adg_dress_text(void)
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
 AdgDress
-_adg_dress_text_value(void)
+_adg_dress_font_value(void)
 {
     static AdgDress dress = 0;
 
@@ -391,7 +391,7 @@ _adg_dress_text_value(void)
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
                                           "size", 12., NULL);
 
-        dress = adg_dress_new("text-value", fallback);
+        dress = adg_dress_new("font-value", fallback);
         g_object_unref(fallback);
     }
 
@@ -399,7 +399,7 @@ _adg_dress_text_value(void)
 }
 
 /**
- * ADG_DRESS_TEXT_LIMIT:
+ * ADG_DRESS_FONT_LIMIT:
  *
  * The builtin #AdgDress font used to render the limits of either
  * the min and max values of a dimension. The fallback style
@@ -408,7 +408,7 @@ _adg_dress_text_value(void)
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
 AdgDress
-_adg_dress_text_limit(void)
+_adg_dress_font_limit(void)
 {
     static AdgDress dress = 0;
 
@@ -417,7 +417,7 @@ _adg_dress_text_limit(void)
                                           "family", "Sans",
                                           "size", 8., NULL);
 
-        dress = adg_dress_new("text-limit", fallback);
+        dress = adg_dress_new("font-limit", fallback);
         g_object_unref(fallback);
     }
 

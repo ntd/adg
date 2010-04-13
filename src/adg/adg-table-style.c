@@ -118,14 +118,14 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
     param = adg_param_spec_dress("title-dress",
                                  P_("Title Dress"),
                                  P_("Font dress to use for titles"),
-                                 ADG_DRESS_TEXT_LIMIT,
+                                 ADG_DRESS_FONT_LIMIT,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TITLE_DRESS, param);
 
     param = adg_param_spec_dress("value-dress",
                                  P_("Value Dress"),
                                  P_("Font dress to use for values inside the cells"),
-                                 ADG_DRESS_TEXT_VALUE,
+                                 ADG_DRESS_FONT_VALUE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
@@ -162,8 +162,8 @@ adg_table_style_init(AdgTableStyle *table_style)
     data->color_dress = ADG_DRESS_COLOR_TABLE,
     data->grid_dress = ADG_DRESS_LINE_GRID;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
-    data->title_dress = ADG_DRESS_TEXT_LIMIT;
-    data->value_dress = ADG_DRESS_TEXT_VALUE;
+    data->title_dress = ADG_DRESS_FONT_LIMIT;
+    data->value_dress = ADG_DRESS_FONT_VALUE;
     data->row_height = 30;
     data->cell_padding.x = 5;
     data->cell_padding.y = 5;

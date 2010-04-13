@@ -31,7 +31,7 @@ _adg_test_fill_dress(void)
     hatch = adg_hatch_new(NULL);
     valid_dress_1 = ADG_DRESS_FILL;
     valid_dress_2 = ADG_DRESS_FILL_HATCH;
-    incompatible_dress = ADG_DRESS_TEXT_VALUE;
+    incompatible_dress = ADG_DRESS_FONT_VALUE;
 
     /* Using the public APIs */
     adg_hatch_set_fill_dress(hatch, valid_dress_1);

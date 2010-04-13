@@ -93,7 +93,7 @@ _adg_test_color_dress(void)
     line_style = adg_line_style_new();
     valid_dress_1 = ADG_DRESS_COLOR_DIMENSION;
     valid_dress_2 = ADG_DRESS_COLOR_HATCH;
-    incompatible_dress = ADG_DRESS_TEXT_LIMIT;
+    incompatible_dress = ADG_DRESS_FONT_LIMIT;
 
     /* Using the public APIs */
     adg_line_style_set_color_dress(line_style, valid_dress_1);

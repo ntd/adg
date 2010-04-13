@@ -102,7 +102,7 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     param = adg_param_spec_dress("font-dress",
                                  P_("Font Dress"),
                                  P_("The font dress to use for rendering this text"),
-                                 ADG_DRESS_TEXT,
+                                 ADG_DRESS_FONT,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FONT_DRESS, param);
 
@@ -121,7 +121,7 @@ adg_toy_text_init(AdgToyText *toy_text)
                                                           ADG_TYPE_TOY_TEXT,
                                                           AdgToyTextPrivate);
 
-    data->font_dress = ADG_DRESS_TEXT;
+    data->font_dress = ADG_DRESS_FONT;
     data->label = NULL;
     data->glyphs = NULL;
 

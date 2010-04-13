@@ -31,7 +31,7 @@ _adg_test_line_dress(void)
     stroke = adg_stroke_new(NULL);
     valid_dress_1 = ADG_DRESS_LINE_GRID;
     valid_dress_2 = ADG_DRESS_LINE_DIMENSION;
-    incompatible_dress = ADG_DRESS_TEXT_VALUE;
+    incompatible_dress = ADG_DRESS_FONT_VALUE;
 
     /* Using the public APIs */
     adg_stroke_set_line_dress(stroke, valid_dress_1);

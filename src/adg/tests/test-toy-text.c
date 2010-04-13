@@ -29,8 +29,8 @@ _adg_test_font_dress(void)
     AdgDress font_dress;
 
     toy_text = adg_toy_text_new(NULL);
-    valid_dress_1 = ADG_DRESS_TEXT_VALUE;
-    valid_dress_2 = ADG_DRESS_TEXT_LIMIT;
+    valid_dress_1 = ADG_DRESS_FONT_VALUE;
+    valid_dress_2 = ADG_DRESS_FONT_LIMIT;
     incompatible_dress = ADG_DRESS_LINE;
 
     /* Using the public APIs */
