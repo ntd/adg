@@ -328,8 +328,11 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
         cairo_pattern_destroy(pattern);
     }
 
-    cairo_matrix_init_translate(&matrix, -extents->org.x, -extents->org.y);
-    cairo_pattern_set_matrix(pattern, &matrix);
+    /* The extents are yet in identity space, so the ctm should be
+     * reset to avoid using local and global maps twice: only the
+     * translation (also in identity space) is applied */
+    cairo_matrix_init_translate(&matrix, extents->org.x, extents->org.y);
+    cairo_set_matrix(cr, &matrix);
 
     if (PARENT_STYLE_CLASS->apply)
         PARENT_STYLE_CLASS->apply(style, entity, cr);
@@ -410,8 +413,8 @@ create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
                                            extents->size.x, extents->size.y);
     pattern = cairo_pattern_create_for_surface(surface);
 
-    /* The pattern holds a reference to the surface, so the
-     * surface should be unreferenced once */
+    /* The pattern holds a reference to the surface, so
+     * there is no need to hold another reference here */
     cairo_surface_destroy(surface);
 
     spacing.x = cos(data->angle) * data->spacing;
