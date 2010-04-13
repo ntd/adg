@@ -401,16 +401,44 @@ _adg_dress_font_text(void)
 }
 
 /**
- * ADG_DRESS_FONT_VALUE:
+ * ADG_DRESS_FONT_ANNOTATION:
  *
- * The builtin #AdgDress font used for rendering the nominal
- * value of a dimension. The fallback style is %Sans %12 %bold
- * with a pass-through color dress.
+ * The builtin #AdgDress font used for rendering auxiliary text,
+ * such as the titles on #AdgTable entities. The fallback style
+ * is a %Sans %8 with an #ADG_DRESS_COLOR_ANNOTATION color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
 AdgDress
-_adg_dress_font_value(void)
+_adg_dress_font_annotation(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_ANNOTATION,
+                                          "family", "Sans",
+                                          "size", 8., NULL);
+
+        dress = adg_dress_new("font-annotation", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_FONT_QUOTE_TEXT:
+ *
+ * The builtin #AdgDress font used for rendering regular text
+ * on dimension entities, such as the nominal value and the
+ * notes of a quote. The fallback style is %Sans %12 %bold with
+ * a pass-through color dress.
+ *
+ * This dress will be resolved to an #AdgFontStyle instance.
+ **/
+AdgDress
+_adg_dress_font_quote_text(void)
 {
     static AdgDress dress = 0;
 
@@ -420,7 +448,7 @@ _adg_dress_font_value(void)
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
                                           "size", 12., NULL);
 
-        dress = adg_dress_new("font-value", fallback);
+        dress = adg_dress_new("font-quote-text", fallback);
         g_object_unref(fallback);
     }
 
@@ -428,16 +456,17 @@ _adg_dress_font_value(void)
 }
 
 /**
- * ADG_DRESS_FONT_LIMIT:
+ * ADG_DRESS_FONT_QUOTE_ANNOTATION:
  *
- * The builtin #AdgDress font used to render the limits of either
- * the min and max values of a dimension. The fallback style
- * is a %Sans %8 with a pass-through color dress.
+ * The builtin #AdgDress font used for rendering auxiliary text
+ * on dimension entities, such as the min and max limits of a
+ * quote. The fallback style is a %Sans %8 with a pass-through
+ * color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
  **/
 AdgDress
-_adg_dress_font_limit(void)
+_adg_dress_font_quote_annotation(void)
 {
     static AdgDress dress = 0;
 
@@ -446,7 +475,7 @@ _adg_dress_font_limit(void)
                                           "family", "Sans",
                                           "size", 8., NULL);
 
-        dress = adg_dress_new("font-limit", fallback);
+        dress = adg_dress_new("font-quote-annotation", fallback);
         g_object_unref(fallback);
     }
 

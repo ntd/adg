@@ -46,8 +46,9 @@ G_BEGIN_DECLS
 #define ADG_DRESS_LINE_FRAME            (_adg_dress_line_frame())
 #define ADG_DRESS_FONT                  (_adg_dress_font())
 #define ADG_DRESS_FONT_TEXT             (_adg_dress_font_text())
-#define ADG_DRESS_FONT_VALUE            (_adg_dress_font_value())
-#define ADG_DRESS_FONT_LIMIT            (_adg_dress_font_limit())
+#define ADG_DRESS_FONT_ANNOTATION       (_adg_dress_font_annotation())
+#define ADG_DRESS_FONT_QUOTE_TEXT       (_adg_dress_font_quote_text())
+#define ADG_DRESS_FONT_QUOTE_ANNOTATION (_adg_dress_font_quote_annotation())
 #define ADG_DRESS_DIMENSION             (_adg_dress_dimension())
 #define ADG_DRESS_FILL                  (_adg_dress_fill())
 #define ADG_DRESS_FILL_HATCH            (_adg_dress_fill_hatch())
@@ -68,8 +69,9 @@ AdgDress        _adg_dress_line_grid            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_frame           (void) G_GNUC_CONST;
 AdgDress        _adg_dress_font                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_font_text            (void) G_GNUC_CONST;
-AdgDress        _adg_dress_font_value           (void) G_GNUC_CONST;
-AdgDress        _adg_dress_font_limit           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_font_annotation      (void) G_GNUC_CONST;
+AdgDress        _adg_dress_font_quote_text      (void) G_GNUC_CONST;
+AdgDress        _adg_dress_font_quote_annotation(void) G_GNUC_CONST;
 AdgDress        _adg_dress_dimension            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_fill                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_fill_hatch           (void) G_GNUC_CONST;

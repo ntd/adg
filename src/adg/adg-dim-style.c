@@ -146,21 +146,21 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = adg_param_spec_dress("value-dress",
                                  P_("Value Dress"),
                                  P_("Font dress for the nominal value of the dimension"),
-                                 ADG_DRESS_FONT_VALUE,
+                                 ADG_DRESS_FONT_QUOTE_TEXT,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE_DRESS, param);
 
     param = adg_param_spec_dress("min-dress",
                                  P_("Minimum Limit Dress"),
                                  P_("Font dress for the lower limit value"),
-                                 ADG_DRESS_FONT_LIMIT,
+                                 ADG_DRESS_FONT_QUOTE_ANNOTATION,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MIN_DRESS, param);
 
     param = adg_param_spec_dress("max-dress",
                                  P_("Maximum Limit Dress"),
                                  P_("Font dress for the upper limit value"),
-                                 ADG_DRESS_FONT_LIMIT,
+                                 ADG_DRESS_FONT_QUOTE_ANNOTATION,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MAX_DRESS, param);
 
@@ -249,9 +249,9 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->marker2.n_parameters = 0;
     data->marker2.parameters = NULL;
     data->color_dress = ADG_DRESS_COLOR_DIMENSION;
-    data->value_dress = ADG_DRESS_FONT_VALUE;
-    data->min_dress = ADG_DRESS_FONT_LIMIT;
-    data->max_dress = ADG_DRESS_FONT_LIMIT;
+    data->value_dress = ADG_DRESS_FONT_QUOTE_TEXT;
+    data->min_dress = ADG_DRESS_FONT_QUOTE_ANNOTATION;
+    data->max_dress = ADG_DRESS_FONT_QUOTE_ANNOTATION;
     data->line_dress = ADG_DRESS_LINE_DIMENSION;
     data->marker_dress = ADG_DRESS_UNDEFINED;
     data->from_offset = 6;

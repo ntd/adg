@@ -285,8 +285,8 @@ _adg_title_dress(void)
     AdgDress title_dress;
 
     table_style = adg_table_style_new();
-    valid_dress_1 = ADG_DRESS_FONT;
-    valid_dress_2 = ADG_DRESS_FONT_VALUE;
+    valid_dress_1 = ADG_DRESS_FONT_QUOTE_TEXT;
+    valid_dress_2 = ADG_DRESS_FONT_TEXT;
     incompatible_dress = ADG_DRESS_LINE_HATCH;
 
     /* Using the public APIs */
@@ -327,7 +327,7 @@ _adg_value_dress(void)
 
     table_style = adg_table_style_new();
     valid_dress_1 = ADG_DRESS_FONT_TEXT;
-    valid_dress_2 = ADG_DRESS_FONT_LIMIT;
+    valid_dress_2 = ADG_DRESS_FONT_QUOTE_ANNOTATION;
     incompatible_dress = ADG_DRESS_LINE;
 
     /* Using the public APIs */

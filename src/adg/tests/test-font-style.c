@@ -62,7 +62,7 @@ _adg_test_color_dress(void)
     font_style = adg_font_style_new();
     valid_dress_1 = ADG_DRESS_COLOR_DIMENSION;
     valid_dress_2 = ADG_DRESS_COLOR_HATCH;
-    incompatible_dress = ADG_DRESS_FONT_LIMIT;
+    incompatible_dress = ADG_DRESS_FONT_QUOTE_TEXT;
 
     /* Using the public APIs */
     adg_font_style_set_color_dress(font_style, valid_dress_1);
