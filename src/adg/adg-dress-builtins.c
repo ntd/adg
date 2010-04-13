@@ -167,15 +167,15 @@ _adg_dress_color_annotation(void)
 }
 
 /**
- * ADG_DRESS_COLOR_HATCH:
+ * ADG_DRESS_COLOR_FILL:
  *
- * The builtin #AdgDress color used by default in #AdgHatch entities.
- * The fallback style is a full opaque %0.25 gray.
+ * The builtin #AdgDress color used by default by #AdgFillStyle
+ * based styles. The fallback style is a full opaque %0.25 gray.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
 AdgDress
-_adg_dress_color_hatch(void)
+_adg_dress_color_fill(void)
 {
     static AdgDress dress = 0;
 
@@ -185,7 +185,7 @@ _adg_dress_color_hatch(void)
                                           "green", 0.25,
                                           "blue", 0.25, NULL);
 
-        dress = adg_dress_new("color-hatch", fallback);
+        dress = adg_dress_new("color-fill", fallback);
         g_object_unref(fallback);
     }
 
@@ -267,25 +267,25 @@ _adg_dress_line_dimension(void)
 }
 
 /**
- * ADG_DRESS_LINE_HATCH:
+ * ADG_DRESS_LINE_FILL:
  *
- * The builtin #AdgDress line type used by the default #AdgRuledFill
- * style implementation. The fallback style is a line with
- * #ADG_DRESS_COLOR_HATCH color and a thickness of %1.
+ * The builtin #AdgDress line type used by #AdgFillStyle
+ * based styles. The fallback style is a line with
+ * #ADG_DRESS_COLOR_FILL color and a thickness of %1.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
 AdgDress
-_adg_dress_line_hatch(void)
+_adg_dress_line_fill(void)
 {
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "color-dress", ADG_DRESS_COLOR_HATCH,
+                                          "color-dress", ADG_DRESS_COLOR_FILL,
                                           "width", 1., NULL);
 
-        dress = adg_dress_new("line-hatch", fallback);
+        dress = adg_dress_new("line-fill", fallback);
         g_object_unref(fallback);
     }
 
@@ -536,7 +536,7 @@ _adg_dress_fill(void)
 /**
  * ADG_DRESS_FILL_HATCH:
  *
- * The builtin dress used by default  by #AdgHatch instances.
+ * The builtin dress used by default by #AdgHatch instances.
  * The fallback style is the default implementation of the
  * #AdgRuledFill instance.
  *
@@ -549,7 +549,7 @@ _adg_dress_fill_hatch(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_RULED_FILL,
-                                          "line-dress", ADG_DRESS_LINE_HATCH,
+                                          "line-dress", ADG_DRESS_LINE_FILL,
                                           NULL);
 
         dress = adg_dress_new_full("fill-hatch", fallback, ADG_TYPE_FILL_STYLE);

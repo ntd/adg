@@ -111,7 +111,7 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
 
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
-                                 P_("The color dress to bind to this font style"),
+                                 P_("The fallback color dress to bind to this style"),
                                  ADG_DRESS_COLOR,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_COLOR_DRESS, param);

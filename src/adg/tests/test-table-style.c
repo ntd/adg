@@ -287,7 +287,7 @@ _adg_title_dress(void)
     table_style = adg_table_style_new();
     valid_dress_1 = ADG_DRESS_FONT_QUOTE_TEXT;
     valid_dress_2 = ADG_DRESS_FONT_TEXT;
-    incompatible_dress = ADG_DRESS_LINE_HATCH;
+    incompatible_dress = ADG_DRESS_LINE_FILL;
 
     /* Using the public APIs */
     adg_table_style_set_title_dress(table_style, valid_dress_1);

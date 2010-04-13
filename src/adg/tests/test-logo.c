@@ -30,7 +30,7 @@ _adg_test_frame_dress(void)
 
     logo = adg_logo_new();
     valid_dress_1 = ADG_DRESS_LINE_STROKE;
-    valid_dress_2 = ADG_DRESS_LINE_HATCH;
+    valid_dress_2 = ADG_DRESS_LINE_FILL;
     incompatible_dress = ADG_DRESS_COLOR;
 
     /* Using the public APIs */
@@ -71,7 +71,7 @@ _adg_test_screen_dress(void)
 
     logo = adg_logo_new();
     valid_dress_1 = ADG_DRESS_LINE_STROKE;
-    valid_dress_2 = ADG_DRESS_LINE_HATCH;
+    valid_dress_2 = ADG_DRESS_LINE_FILL;
     incompatible_dress = ADG_DRESS_COLOR;
 
     /* Using the public APIs */
@@ -112,7 +112,7 @@ _adg_test_symbol_dress(void)
 
     logo = adg_logo_new();
     valid_dress_1 = ADG_DRESS_LINE_STROKE;
-    valid_dress_2 = ADG_DRESS_LINE_HATCH;
+    valid_dress_2 = ADG_DRESS_LINE_FILL;
     incompatible_dress = ADG_DRESS_COLOR;
 
     /* Using the public APIs */

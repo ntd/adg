@@ -29,7 +29,7 @@ _adg_test_axis_dress(void)
     AdgDress axis_dress;
 
     projection = adg_projection_new(ADG_PROJECTION_FIRST_ANGLE);
-    valid_dress_1 = ADG_DRESS_LINE_HATCH;
+    valid_dress_1 = ADG_DRESS_LINE_GRID;
     valid_dress_2 = ADG_DRESS_LINE_FRAME;
     incompatible_dress = ADG_DRESS_COLOR_STROKE;
 
@@ -113,7 +113,7 @@ _adg_test_symbol_dress(void)
     projection = adg_projection_new(ADG_PROJECTION_UNDEFINED);
     valid_dress_1 = ADG_DRESS_LINE;
     valid_dress_2 = ADG_DRESS_LINE_STROKE;
-    incompatible_dress = ADG_DRESS_COLOR_DIMENSION;
+    incompatible_dress = ADG_DRESS_COLOR_FILL;
 
     /* Using the public APIs */
     adg_projection_set_symbol_dress(projection, valid_dress_1);

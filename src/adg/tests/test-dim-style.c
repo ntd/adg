@@ -280,7 +280,7 @@ _adg_line_dress(void)
     AdgDress line_dress;
 
     dim_style = adg_dim_style_new();
-    valid_dress_1 = ADG_DRESS_LINE_HATCH;
+    valid_dress_1 = ADG_DRESS_LINE_FILL;
     valid_dress_2 = ADG_DRESS_LINE;
     incompatible_dress = ADG_DRESS_COLOR;
 

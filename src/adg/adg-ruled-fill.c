@@ -105,7 +105,7 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
     param = adg_param_spec_dress("line-dress",
                                   P_("Line Dress"),
                                   P_("Dress to be used for rendering the lines"),
-                                  ADG_DRESS_LINE_HATCH,
+                                  ADG_DRESS_LINE_FILL,
                                   G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
@@ -131,7 +131,7 @@ adg_ruled_fill_init(AdgRuledFill *ruled_fill)
                                                             ADG_TYPE_RULED_FILL,
                                                             AdgRuledFillPrivate);
 
-    data->line_dress = ADG_DRESS_LINE_HATCH;
+    data->line_dress = ADG_DRESS_LINE_FILL;
     data->angle = G_PI_4;
     data->spacing = 16;
 
