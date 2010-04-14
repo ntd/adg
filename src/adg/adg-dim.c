@@ -1159,37 +1159,33 @@ _adg_arrange(AdgEntity *entity)
 
     /* Limit values (min and max) */
     if (min_entity != NULL || max_entity != NULL) {
-        const CpmlExtents *extents = adg_entity_get_extents(value_entity);
-        //CpmlExtents min_extents = { 0 };
-        //CpmlExtents max_extents = { 0 };
-        const AdgPair *limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
+        const CpmlExtents *extents;
+        const AdgPair *limits_shift;
+        AdgMatrix unglobal;
 
-#if 0
-        if (min_entity != NULL)
-            cpml_extents_copy(&min_extents, adg_entity_get_extents(min_entity));
+        extents = adg_entity_get_extents(value_entity);
+        limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
 
-        if (max_entity != NULL)
-            cpml_extents_copy(&max_extents, adg_entity_get_extents(max_entity));
-
-        if (min_entity != NULL && max_entity != NULL)
-            spacing = adg_dim_style_get_limits_spacing(data->dim_style);
-
-        cairo_matrix_init_translate(&map,
-                                    extents->size.x +
-                                     shift->x + limit_shift->x,
-                                    (spacing + min_extents.size.y +
-                                     max_extents.size.y - extents->size.y) / 2 +
-                                     shift->y + limit_shift->y);
-#endif
         cairo_matrix_init_translate(&map, extents->size.x + limits_shift->x,
                                     -extents->size.y / 2 + limits_shift->y);
 
+        adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
+        cairo_matrix_invert(&unglobal);
+        cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
+
         if (min_entity != NULL) {
+            AdgPair offset;
+
             adg_entity_set_global_map(min_entity, &map);
             adg_entity_arrange(min_entity);
             extents = adg_entity_get_extents(min_entity);
-            map.y0 -= extents->size.y +
-                adg_dim_style_get_limits_spacing(data->dim_style);
+
+            offset.x = 0;
+            offset.y = -extents->size.y - adg_dim_style_get_limits_spacing(data->dim_style);
+            cairo_matrix_transform_distance(&unglobal, &offset.x, &offset.y);
+
+            map.x0 += offset.x;
+            map.y0 += offset.y;
         }
 
         if (max_entity != NULL) {
