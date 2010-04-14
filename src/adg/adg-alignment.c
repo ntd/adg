@@ -260,12 +260,15 @@ arrange(AdgEntity *entity)
     /* The children are displaced only if the extents are valid */
     if (extents->is_defined) {
         AdgAlignmentPrivate *data;
-        AdgMatrix map;
+        AdgMatrix unglobal, map;
 
         data = ((AdgAlignment *) entity)->data;
+        adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
+        cairo_matrix_invert(&unglobal);
         cairo_matrix_init_translate(&map,
                                     -extents->size.x * data->factor.x,
                                     -extents->size.y * data->factor.y);
+        cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
         adg_matrix_transform(&map, &old_map, ADG_TRANSFORM_AFTER);
 
         adg_entity_set_global_map(entity, &map);
