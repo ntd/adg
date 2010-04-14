@@ -92,6 +92,8 @@ static gboolean         _adg_set_factor         (AdgGtkArea      *area,
                                                  gdouble          factor);
 static void             _adg_size_request       (GtkWidget       *widget,
                                                  GtkRequisition  *requisition);
+static void             _adg_size_allocate      (GtkWidget       *widget,
+                                                 GtkAllocation   *allocation);
 static gboolean         _adg_expose_event       (GtkWidget       *widget,
                                                  GdkEventExpose  *event);
 static gboolean         _adg_scroll_event       (GtkWidget       *widget,
@@ -126,6 +128,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     gobject_class->set_property = _adg_set_property;
 
     widget_class->size_request = _adg_size_request;
+    widget_class->size_allocate = _adg_size_allocate;
     widget_class->expose_event = _adg_expose_event;
     widget_class->scroll_event = _adg_scroll_event;
     widget_class->button_press_event = _adg_button_press_event;
@@ -612,7 +615,6 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     AdgCanvas *canvas;
     AdgEntity *entity;
     const CpmlExtents *extents;
-    AdgMatrix map;
 
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
@@ -621,22 +623,79 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
         return;
 
     entity = (AdgEntity *) canvas;
-
     adg_entity_arrange(entity);
     extents = adg_entity_get_extents(entity);
 
     if (extents == NULL || !extents->is_defined)
         return;
 
-    cairo_matrix_init_translate(&map,
-                                -extents->org.x + data->left_padding,
-                                -extents->org.y + data->top_padding);
-    adg_entity_transform_global_map(entity, &map, ADG_TRANSFORM_AFTER);
+    requisition->width =
+        extents->size.x + data->left_padding + data->right_padding;
+    requisition->height =
+        extents->size.y + data->top_padding + data->bottom_padding;
+}
 
-    requisition->width = extents->size.x +
-        data->left_padding + data->right_padding;
-    requisition->height = extents->size.y +
-        data->top_padding + data->bottom_padding;
+static void
+_adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
+{
+    AdgGtkAreaPrivate *data;
+    AdgCanvas *canvas;
+    AdgEntity *entity;
+    const CpmlExtents *extents;
+    AdgPair org, padding, ratio;
+    gdouble factor;
+    AdgMatrix map;
+
+    if (PARENT_WIDGET_CLASS->size_allocate)
+        PARENT_WIDGET_CLASS->size_allocate(widget, allocation);
+
+    data = ((AdgGtkArea *) widget)->data;
+    canvas = data->canvas;
+
+    if (canvas == NULL)
+        return;
+
+    entity = (AdgEntity *) canvas;
+    extents = adg_entity_get_extents(entity);
+
+    if (extents == NULL || !extents->is_defined ||
+        extents->size.x <= 0 || extents->size.y <= 0)
+        return;
+
+    padding.x = data->left_padding + data->right_padding;
+    padding.y = data->top_padding + data->bottom_padding;
+
+    /* Check if the allocated space is enough:
+     * if not, there is no much we can do... */
+    if (allocation->width <= padding.x || allocation->height <= padding.y)
+        return;
+
+    ratio.x = (allocation->width - padding.x) / extents->size.x;
+    ratio.y = (allocation->height - padding.y) / extents->size.y;
+    factor = MIN(ratio.x, ratio.y);
+    org.x = allocation->width - extents->size.x * factor;
+    org.y = allocation->height - extents->size.y * factor;
+
+    /* Now org contains the new paddings: they should be scaled
+     * accordingly to the original paddings. If the original
+     * paddings are not specified (== 0), the additional space
+     * is distributed equally among both sides. */
+    if (padding.x == 0)
+        org.x /= 2;
+    else
+        org.x *= data->left_padding / padding.x;
+
+    if (padding.y == 0)
+        org.y /= 2;
+    else
+        org.y *= data->bottom_padding / padding.y;
+
+    org.x -= extents->org.x;
+    org.y -= extents->org.y;
+
+    cairo_matrix_init_scale(&map, factor, factor);
+    cairo_matrix_translate(&map, org.x, org.y);
+    adg_entity_transform_global_map(entity, &map, ADG_TRANSFORM_AFTER);
 }
 
 static gboolean
