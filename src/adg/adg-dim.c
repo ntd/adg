@@ -45,6 +45,8 @@
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
 
 
+G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
+
 enum {
     PROP_0,
     PROP_DIM_DRESS,
@@ -86,9 +88,6 @@ static gboolean _adg_set_min            (AdgDim         *dim,
                                          const gchar    *min);
 static gboolean _adg_set_max            (AdgDim         *dim,
                                          const gchar    *max);
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
 
 
 static void

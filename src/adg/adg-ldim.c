@@ -43,6 +43,8 @@
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
+G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
+
 enum {
     PROP_0,
     PROP_DIRECTION,
@@ -72,16 +74,13 @@ static gboolean         _adg_set_direction           (AdgLDim        *ldim,
 static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
 static void             update_entities         (AdgLDim        *ldim);
-static void             choose_flags            (AdgLDim        *ldim,
+static void             _adg_choose_flags       (AdgLDim        *ldim,
                                                  gboolean       *to_outside,
                                                  gboolean       *to_detach);
 static void             unset_trail             (AdgLDim        *ldim);
 static void             dispose_markers         (AdgLDim        *ldim);
 static CpmlPath *       trail_callback          (AdgTrail       *trail,
                                                  gpointer        user_data);
-
-
-G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
 
 
 static void
@@ -544,7 +543,7 @@ arrange(AdgEntity *entity)
         return;
     }
 
-    choose_flags(ldim, &to_outside, &to_detach);
+    _adg_choose_flags(ldim, &to_outside, &to_detach);
 
     dim_style = GET_DIM_STYLE(dim);
     local = adg_entity_get_local_matrix(entity);
@@ -926,13 +925,14 @@ update_entities(AdgLDim *ldim)
 }
 
 static void
-choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
+_adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 {
     AdgDim *dim;
     AdgThreeState outside, detached;
     AdgLDimPrivate *data;
     AdgEntity *quote;
-    const AdgMatrix *local;
+    const AdgMatrix *local, *global;
+    gdouble local_factor, global_factor;
     gdouble available_space, markers_space, quote_space;
 
     dim = (AdgDim *) ldim;
@@ -950,20 +950,27 @@ choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
     data = ldim->data;
     quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
-    available_space = data->geometry.distance * local->xx;
+    global = adg_entity_get_global_matrix((AdgEntity *) ldim);
+    local_factor = (local->xx + local->yy) / 2;
+    global_factor = (global->xx + global->yy) / 2;
+    available_space = data->geometry.distance * local_factor * global_factor;
 
-    if (outside == ADG_THREE_STATE_ON)
-        markers_space = 0;
-    else
-        markers_space =
-            (data->marker1 == NULL ? 0 : adg_marker_get_size(data->marker1)) +
-            (data->marker2 == NULL ? 0 : adg_marker_get_size(data->marker2));
+    markers_space = 0;
+    if (outside != ADG_THREE_STATE_ON) {
+        if (data->marker1)
+            markers_space += adg_marker_get_size(data->marker1);
+        if (data->marker2)
+            markers_space += adg_marker_get_size(data->marker2);
 
-    /* Leave at least 0.25 marker_space between the markers */
-    if (detached == ADG_THREE_STATE_ON)
+        markers_space *= global_factor;
+    }
+
+    if (detached == ADG_THREE_STATE_ON) {
+        /* Leave at least 0.25 markers_space between the markers */
         quote_space = markers_space * 0.25;
-    else
+    } else {
         quote_space = adg_entity_get_extents(quote)->size.x;
+    }
 
     if (outside == ADG_THREE_STATE_UNKNOWN &&
         detached == ADG_THREE_STATE_UNKNOWN) {
