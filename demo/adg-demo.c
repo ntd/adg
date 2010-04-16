@@ -546,9 +546,9 @@ _adg_data_window(GtkBuilder *builder)
     GtkWidget *button_close;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndData");
-    g_assert(window != NULL);
+    g_assert(GTK_IS_DIALOG(window));
     button_close = (GtkWidget *) gtk_builder_get_object(builder, "dataClose");
-    g_assert(button_close != NULL);
+    g_assert(GTK_IS_BUTTON(button_close));
 
     g_signal_connect(window, "delete-event",
                      G_CALLBACK(gtk_widget_hide), NULL);
@@ -587,7 +587,7 @@ _adg_about_window(GtkBuilder *builder)
     GtkWidget *window;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndAbout");
-    g_assert(window != NULL);
+    g_assert(GTK_IS_ABOUT_DIALOG(window));
 
     g_signal_connect(window, "response",
                      G_CALLBACK(gtk_widget_hide), NULL);
@@ -602,23 +602,22 @@ _adg_main_window(GtkBuilder *builder)
     GtkWidget *button_edit, *button_save_as, *button_about, *button_quit;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
-    g_assert(window != NULL);
-
+    g_assert(GTK_IS_WINDOW(window));
     button_edit = (GtkWidget *) gtk_builder_get_object(builder, "mainEdit");
-    g_assert(button_edit != NULL);
+    g_assert(GTK_IS_BUTTON(button_edit));
     button_save_as = (GtkWidget *) gtk_builder_get_object(builder, "mainSaveAs");
-    g_assert(button_save_as != NULL);
+    g_assert(GTK_IS_BUTTON(button_save_as));
     button_about = (GtkWidget *) gtk_builder_get_object(builder, "mainAbout");
-    g_assert(button_about != NULL);
+    g_assert(GTK_IS_BUTTON(button_about));
     button_quit = (GtkWidget *) gtk_builder_get_object(builder, "mainQuit");
-    g_assert(button_quit != NULL);
+    g_assert(GTK_IS_BUTTON(button_quit));
     _adg_area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
     g_assert(ADG_GTK_IS_AREA(_adg_area));
 
     g_signal_connect(window, "delete-event",
                      G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect_swapped(button_edit, "clicked",
-                             G_CALLBACK(gtk_widget_show),
+                             G_CALLBACK(gtk_dialog_run),
                              _adg_data_window(builder));
     g_signal_connect_swapped(button_save_as, "clicked",
                              G_CALLBACK(gtk_dialog_run),
