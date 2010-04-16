@@ -93,14 +93,18 @@
       </object>
     </child>
   </object>
-  <object class="GtkWindow" id="wndData">
+  <object class="GtkDialog" id="wndData">
     <property name="border_width">6</property>
     <property name="title" translatable="yes">Change part data</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
     <property name="destroy_with_parent">True</property>
+    <property name="type_hint">dialog</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="transient_for">wndMain</property>
-    <child>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
       <object class="GtkVBox" id="dataBox">
         <property name="visible">True</property>
         <property name="orientation">vertical</property>
@@ -517,7 +521,6 @@
                     <property name="label" translatable="yes">Cham_fered head</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                   </object>
@@ -533,7 +536,6 @@
                     <property name="label" translatable="yes">_Rounded head</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
@@ -787,7 +789,6 @@
                     <property name="label" translatable="yes">Groove machining</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="draw_indicator">True</property>
                   </object>
                   <packing>
@@ -821,11 +822,8 @@
             <property name="position">2</property>
           </packing>
         </child>
-        <child>
+        <child internal-child="action_area">
           <object class="GtkHButtonBox" id="dataButtons">
-            <property name="visible">True</property>
-            <property name="border_width">6</property>
-            <property name="spacing">12</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="dataApply">
@@ -834,6 +832,7 @@
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
                 <property name="receives_default">True</property>
+                <property name="has_default">True</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -861,8 +860,6 @@
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="has_default">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_stock">True</property>
               </object>
@@ -919,9 +916,6 @@ Boston, MA  02110-1301, USA.</property>
       <object class="GtkVBox" id="aboutBox">
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
-        <child>
-          <placeholder/>
-        </child>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="aboutButtons">
             <property name="layout_style">end</property>
@@ -1084,7 +1078,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="label" translatable="yes">PNG _image</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="tooltip_text">.png</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
@@ -1101,7 +1094,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="label" translatable="yes">PDF _document</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="tooltip_text">.pdf</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
@@ -1118,7 +1110,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="label" translatable="yes">PostScript _file</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="receives_default">False</property>
                     <property name="tooltip_text">.ps</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
@@ -1148,7 +1139,6 @@ Boston, MA  02110-1301, USA.</property>
         </child>
         <child internal-child="action_area">
           <object class="GtkHButtonBox" id="saveAsButtons">
-            <property name="visible">True</property>
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="saveAsCancel">
@@ -1189,9 +1179,5 @@ Boston, MA  02110-1301, USA.</property>
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="-6">saveAsCancel</action-widget>
-      <action-widget response="-5">saveAsSave</action-widget>
-    </action-widgets>
   </object>
 </interface>
