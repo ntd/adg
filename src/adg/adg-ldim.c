@@ -518,7 +518,7 @@ arrange(AdgEntity *entity)
     AdgAlignment *quote;
     AdgDimStyle *dim_style;
     gboolean to_outside, to_detach;
-    const AdgMatrix *local;
+    const AdgMatrix *global, *local;
     AdgPair ref1, ref2, base1, base2;
     AdgPair pair;
     gint n;
@@ -546,6 +546,7 @@ arrange(AdgEntity *entity)
     _adg_choose_flags(ldim, &to_outside, &to_detach);
 
     dim_style = GET_DIM_STYLE(dim);
+    global = adg_entity_get_global_matrix(entity);
     local = adg_entity_get_local_matrix(entity);
     cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
     cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
@@ -658,6 +659,7 @@ arrange(AdgEntity *entity)
             p_quote.y = -p_quote.y;
             opposite_sd = cpml_pair_squared_distance(&p_quote, &p_line);
             quote_size = adg_entity_get_extents(quote_entity)->size.x;
+            quote_size /= (global->xx + global->yy) / 2;
 
             /* Properly align the quote, depending on its side */
             if (same_sd > opposite_sd) {
@@ -727,10 +729,8 @@ arrange(AdgEntity *entity)
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
     if (data->trail) {
-        const AdgMatrix *global;
         CpmlExtents trail_extents;
 
-        global = adg_entity_get_global_matrix(entity);
         cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
 
         cpml_extents_transform(&trail_extents, global);
