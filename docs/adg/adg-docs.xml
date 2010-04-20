@@ -98,6 +98,7 @@
 
   <index id="Index">
     <title>Index</title>
+    <xi:include href="xml/api-index-full.xml"/>
   </index>
 
 </book>
