@@ -2,7 +2,7 @@ include $(top_srcdir)/build/Makefile.am.common
 
 AM_CFLAGS=			@CPML_CFLAGS@ \
 				-I$(top_srcdir)
-AM_LDFLAGS=			@CPML_LIBS@
+LDADD=				@CPML_LIBS@
 
 
 # file groups
@@ -39,6 +39,7 @@ cpml_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libcpml-1.la
+# Placeholder for versioning support...
 libcpml_1_la_LDFLAGS=
 libcpml_1_la_SOURCES=		$(h_sources) \
 				$(built_h_sources) \

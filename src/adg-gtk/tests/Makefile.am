@@ -3,8 +3,8 @@ include $(top_srcdir)/build/Makefile.am.common
 AM_CFLAGS=			-g @ADG_GTK_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_srcdir)/src/adg/tests
-AM_LDFLAGS=			@ADG_GTK_LIBS@
-LDADD=				$(top_builddir)/src/adg/tests/test-internal.$(OBJEXT) \
+LDADD=				@ADG_GTK_LIBS@ \
+				$(top_builddir)/src/adg/tests/test-internal.$(OBJEXT) \
 				$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
 
 

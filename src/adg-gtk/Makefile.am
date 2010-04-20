@@ -4,7 +4,8 @@ SUBDIRS=			tests
 
 AM_CFLAGS=			@ADG_GTK_CFLAGS@ \
 				-I$(top_srcdir)/src
-AM_LDFLAGS=			@ADG_GTK_LIBS@
+LDADD=				@ADG_GTK_LIBS@ \
+				$(top_builddir)/src/adg/libadg-1.la
 
 
 # file groups
@@ -31,6 +32,7 @@ adg_gtk_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libadg-gtk-1.la
+# Placeholder for versioning support...
 libadg_gtk_1_la_LDFLAGS=
 libadg_gtk_1_la_SOURCES=	$(h_sources) \
 				$(private_h_sources) \

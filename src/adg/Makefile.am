@@ -9,7 +9,8 @@ genmarshal_command=		$(MSG_GEN) ; \
 AM_CFLAGS=			@ADG_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-AM_LDFLAGS=			@ADG_LIBS@
+LDADD=				@ADG_LIBS@ \
+				$(top_builddir)/src/cpml/libcpml-1.la
 
 
 # file groups
@@ -145,6 +146,7 @@ adg_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libadg-1.la
+# Placeholder for versioning support...
 libadg_1_la_LDFLAGS=
 libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
