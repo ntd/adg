@@ -18,8 +18,6 @@ struct _AdgPart {
     gdouble LD2, LD3, LD5, LD6, LD7;
 };
 
-static AdgGtkArea *_adg_area = NULL;
-
 
 static void
 _adg_version(void)
@@ -56,7 +54,7 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
 }
 
 static void
-_adg_part_init_data(AdgPart *part)
+_adg_part_init(AdgPart *part)
 {
     part->A = 52.3;
     part->B = 20.6;
@@ -411,29 +409,25 @@ _adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
 }
 
 static AdgCanvas *
-_adg_build_canvas(void)
+_adg_canvas_init(AdgCanvas *canvas, const AdgPart *part)
 {
-    AdgPart part;
-    AdgCanvas *canvas;
     AdgContainer *container;
     AdgPath *bottom, *shape;
     AdgEdges *edges;
     AdgEntity *entity;
     AdgMatrix map;
 
-    _adg_part_init_data(&part);
-    canvas = adg_canvas_new();
     container = (AdgContainer *) canvas;
 
-    bottom = _adg_part_hole(&part, part.LHOLE + 2);
+    bottom = _adg_part_hole(part, part->LHOLE + 2);
     adg_path_reflect(bottom, NULL);
     adg_path_close(bottom);
 
-    shape = _adg_part_shape(&part);
+    shape = _adg_part_shape(part);
     adg_path_reflect(shape, NULL);
     adg_path_close(shape);
-    adg_path_move_to_explicit(shape, part.LHOLE + 2, part.D1 / 2);
-    adg_path_line_to_explicit(shape, part.LHOLE + 2, -part.D1 / 2);
+    adg_path_move_to_explicit(shape, part->LHOLE + 2, part->D1 / 2);
+    adg_path_line_to_explicit(shape, part->LHOLE + 2, -part->D1 / 2);
 
     edges = adg_edges_new_with_source(ADG_TRAIL(shape));
 
@@ -472,7 +466,8 @@ _adg_group_get_active(GtkRadioButton *radio_group)
 }
 
 static void
-_adg_save_as_response(GtkWidget *window, GtkResponseType response)
+_adg_save_as_response(GtkWidget *window, GtkResponseType response,
+                      AdgCanvas *canvas)
 {
     gchar *file, *suffix;
     GtkRadioButton *type_radio;
@@ -503,7 +498,7 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response)
 
     if (strcmp(suffix, ".png") == 0) {
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
-        surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
+        surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, 800, 600);
         callback = (gpointer) cairo_surface_write_to_png;
 #endif
     } else if (strcmp(suffix, ".pdf") == 0) {
@@ -527,7 +522,7 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response)
     if (surface) {
         cairo_t *cr = cairo_create(surface);
         cairo_surface_destroy(surface);
-        adg_entity_render(ADG_ENTITY(adg_gtk_area_get_canvas(_adg_area)), cr);
+        adg_entity_render(ADG_ENTITY(canvas), cr);
         cairo_show_page(cr);
         if (callback)
             callback(surface, file);
@@ -540,26 +535,47 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response)
 }
 
 static GtkWidget *
-_adg_data_window(GtkBuilder *builder)
+_adg_about_window(GtkBuilder *builder)
+{
+    GtkWidget *window;
+
+    window = (GtkWidget *) gtk_builder_get_object(builder, "wndAbout");
+    g_assert(GTK_IS_ABOUT_DIALOG(window));
+
+    g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
+
+    return window;
+}
+
+/* A one-time signal that set the USER_POS and USER_SIZE flags, so the
+ * last window position is retained */
+static void
+_adg_keep_upos(GtkWindow *window)
+{
+    gtk_window_set_geometry_hints(window, GTK_WIDGET(window), NULL,
+                                  GDK_HINT_USER_POS | GDK_HINT_USER_SIZE);
+    g_signal_handlers_disconnect_by_func(window, _adg_keep_upos, NULL);
+}
+
+static GtkWidget *
+_adg_edit_window(GtkBuilder *builder, AdgPart *part)
 {
     GtkWidget *window;
     GtkWidget *button_close;
 
-    window = (GtkWidget *) gtk_builder_get_object(builder, "wndData");
+    window = (GtkWidget *) gtk_builder_get_object(builder, "wndEdit");
     g_assert(GTK_IS_DIALOG(window));
-    button_close = (GtkWidget *) gtk_builder_get_object(builder, "dataClose");
+    button_close = (GtkWidget *) gtk_builder_get_object(builder, "editClose");
     g_assert(GTK_IS_BUTTON(button_close));
 
-    g_signal_connect(window, "delete-event",
-                     G_CALLBACK(gtk_widget_hide), NULL);
-    g_signal_connect_swapped(button_close, "clicked",
-                             G_CALLBACK(gtk_widget_hide), window);
+    g_signal_connect(window, "show", G_CALLBACK(_adg_keep_upos), NULL);
+    g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
 
     return window;
 }
 
 static GtkWidget *
-_adg_save_as_window(GtkBuilder *builder)
+_adg_save_as_window(GtkBuilder *builder, AdgCanvas *canvas)
 {
     GtkWidget *window;
     GtkWidget *type_group, *button_save;
@@ -573,24 +589,8 @@ _adg_save_as_window(GtkBuilder *builder)
 
     g_object_set_data(G_OBJECT(window), "type-group", type_group);
 
-    g_signal_connect(window, "delete-event",
-                     G_CALLBACK(gtk_true), NULL);
     g_signal_connect(window, "response",
-                     G_CALLBACK(_adg_save_as_response), NULL);
-
-    return window;
-}
-
-static GtkWidget *
-_adg_about_window(GtkBuilder *builder)
-{
-    GtkWidget *window;
-
-    window = (GtkWidget *) gtk_builder_get_object(builder, "wndAbout");
-    g_assert(GTK_IS_ABOUT_DIALOG(window));
-
-    g_signal_connect(window, "response",
-                     G_CALLBACK(gtk_widget_hide), NULL);
+                     G_CALLBACK(_adg_save_as_response), canvas);
 
     return window;
 }
@@ -599,9 +599,15 @@ static GtkWidget *
 _adg_main_window(GtkBuilder *builder)
 {
     GtkWidget *window;
+    AdgPart *part;
+    AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_about, *button_quit;
+    AdgGtkArea *adg_area;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
+    part = g_new(AdgPart, 1);
+    canvas = adg_canvas_new();
+
     g_assert(GTK_IS_WINDOW(window));
     button_edit = (GtkWidget *) gtk_builder_get_object(builder, "mainEdit");
     g_assert(GTK_IS_BUTTON(button_edit));
@@ -611,24 +617,25 @@ _adg_main_window(GtkBuilder *builder)
     g_assert(GTK_IS_BUTTON(button_about));
     button_quit = (GtkWidget *) gtk_builder_get_object(builder, "mainQuit");
     g_assert(GTK_IS_BUTTON(button_quit));
-    _adg_area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
-    g_assert(ADG_GTK_IS_AREA(_adg_area));
+    adg_area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
+    g_assert(ADG_GTK_IS_AREA(adg_area));
 
-    g_signal_connect(window, "delete-event",
-                     G_CALLBACK(gtk_main_quit), NULL);
+    _adg_part_init(part);
+    _adg_canvas_init(canvas, part);
+    adg_gtk_area_set_canvas(adg_area, canvas);
+
     g_signal_connect_swapped(button_edit, "clicked",
                              G_CALLBACK(gtk_dialog_run),
-                             _adg_data_window(builder));
+                             _adg_edit_window(builder, part));
     g_signal_connect_swapped(button_save_as, "clicked",
                              G_CALLBACK(gtk_dialog_run),
-                             _adg_save_as_window(builder));
+                             _adg_save_as_window(builder, canvas));
     g_signal_connect_swapped(button_about, "clicked",
                              G_CALLBACK(gtk_dialog_run),
                              _adg_about_window(builder));
-    g_signal_connect(button_quit, "clicked",
-                     G_CALLBACK(gtk_main_quit), NULL);
-
-    adg_gtk_area_set_canvas(_adg_area, _adg_build_canvas());
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect_swapped(window, "destroy", G_CALLBACK(g_free), part);
 
     return window;
 }
