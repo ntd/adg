@@ -78,6 +78,7 @@
 #include "cpml-primitive.h"
 #include "cpml-line.h"
 #include "cpml-curve.h"
+#include "cpml-close.h"
 #include <string.h>
 
 static cairo_bool_t     normalize               (CpmlSegment       *segment);
@@ -407,19 +408,26 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
 void
 cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 {
+    CpmlPrimitive primitive;
     cairo_path_data_t *data;
-    int n, n_point, num_points;
+    size_t n_points;
 
-    data = segment->data;
+    cpml_primitive_from_segment(&primitive, segment);
+    cairo_matrix_transform_point(matrix, &(primitive.org)->point.x,
+                                 &(primitive.org)->point.y);
 
-    for (n = 0; n < segment->num_data; n += num_points) {
-        num_points = data->header.length;
-        ++data;
-        for (n_point = 1; n_point < num_points; ++n_point) {
-            cairo_matrix_transform_point(matrix, &data->point.x, &data->point.y);
-            ++data;
+    do {
+        data = primitive.data;
+        if (data->header.type != CPML_CLOSE) {
+            n_points = cpml_primitive_get_n_points(&primitive);
+
+            while (--n_points > 0) {
+                ++data;
+                cairo_matrix_transform_point(matrix,
+                                             &data->point.x, &data->point.y);
+            }
         }
-    }
+    } while (cpml_primitive_next(&primitive));
 }
 
 /**
