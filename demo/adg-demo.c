@@ -11,11 +11,17 @@
 typedef struct _AdgPart AdgPart;
 
 struct _AdgPart {
-    gdouble A, B, C;
-    gdouble DHOLE, LHOLE;
-    gdouble D1, D2, D3, D4, D5, D6, D7;
-    gdouble RD34, RD56;
-    gdouble LD2, LD3, LD5, LD6, LD7;
+    gdouble     A, B, C;
+    gdouble     DHOLE, LHOLE;
+    gdouble     D1, D2, D3, D4, D5, D6, D7;
+    gdouble     RD34, RD56;
+    gdouble     LD2, LD3, LD5, LD6, LD7;
+
+    AdgGtkArea *area;
+    GHashTable *widgets;
+    GtkButton  *apply, *reset;
+
+    AdgPath    *shape;
 };
 
 
@@ -54,36 +60,11 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
 }
 
 static void
-_adg_part_init(AdgPart *part)
+_adg_draw_hole(AdgPath *path, const AdgPart *part, gdouble height)
 {
-    part->A = 52.3;
-    part->B = 20.6;
-    part->C = 2;
-    part->DHOLE = 2;
-    part->LHOLE = 3;
-    part->D1 = 9.3;
-    part->D2 = 6.5;
-    part->D3 = 11.9;
-    part->D4 = 6.5;
-    part->D5 = 4.5;
-    part->D6 = 7.2;
-    part->D7 = 3;
-    part->RD34 = 1;
-    part->LD2 = 7;
-    part->LD3 = 3.5;
-    part->LD5 = 5;
-    part->LD6 = 1;
-    part->LD7 = 0.5;
-}
-
-static AdgPath *
-_adg_part_hole(const AdgPart *part, gdouble height)
-{
-    AdgPath *path;
     AdgModel *model;
     AdgPair pair;
 
-    path = adg_path_new();
     model = ADG_MODEL(path);
 
     pair.x = part->LHOLE;
@@ -106,20 +87,17 @@ _adg_part_hole(const AdgPart *part, gdouble height)
     pair.x = height;
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D1F", &pair);
-
-    return path;
 }
 
-static AdgPath *
-_adg_part_shape(const AdgPart *part)
+static void
+_adg_draw_shape(AdgPath *path, const AdgPart *part)
 {
-    AdgPath *path;
     AdgModel *model;
     AdgPair pair, tmp;
     const AdgPrimitive *primitive;
 
     pair.x = part->A - part->B - part->LD2;
-    path = _adg_part_hole(part, pair.x);
+    _adg_draw_hole(path, part, pair.x);
     model = ADG_MODEL(path);
 
     pair.x += (part->D1 - part->D2) / 2;
@@ -234,7 +212,162 @@ _adg_part_shape(const AdgPart *part)
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D7F", &pair);
 
-    return path;
+    adg_path_reflect(path, NULL);
+    adg_path_close(path);
+    adg_path_move_to_explicit(path, part->LHOLE + 2, part->D1 / 2);
+    adg_path_line_to_explicit(path, part->LHOLE + 2, -part->D1 / 2);
+}
+
+static void
+_adg_part_lock(AdgPart *part)
+{
+    gtk_widget_set_sensitive(GTK_WIDGET(part->apply), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(part->reset), FALSE);
+}
+
+static void
+_adg_part_unlock(AdgPart *part)
+{
+    gtk_widget_set_sensitive(GTK_WIDGET(part->apply), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(part->reset), TRUE);
+}
+
+static void
+_adg_part_link(AdgPart *part, gpointer data, GObject *widget)
+{
+    g_assert(GTK_IS_WIDGET(widget));
+    g_object_ref(widget);
+    g_hash_table_insert(part->widgets, data, widget);
+
+    if (GTK_IS_SPIN_BUTTON(widget)) {
+        GtkSpinButton *spin_button = GTK_SPIN_BUTTON(widget);
+        gtk_adjustment_value_changed(gtk_spin_button_get_adjustment(spin_button));
+    }
+
+    g_signal_connect_swapped(widget, "changed",
+                             G_CALLBACK(_adg_part_unlock), part);
+}
+
+static void
+_adg_part_ui_to_data_double(AdgPart *part, gdouble *data)
+{
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+
+    g_assert(GTK_IS_WIDGET(widget));
+
+    *data = gtk_spin_button_get_value(GTK_SPIN_BUTTON(widget));
+}
+
+static void
+_adg_part_data_to_ui_double(AdgPart *part, gdouble *data)
+{
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+
+    g_assert(GTK_IS_WIDGET(widget));
+
+    gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), *data);
+}
+
+static void
+_adg_part_data_to_ui(AdgPart *part)
+{
+    _adg_part_data_to_ui_double(part, &part->A);
+    _adg_part_data_to_ui_double(part, &part->B);
+    _adg_part_data_to_ui_double(part, &part->C);
+    _adg_part_data_to_ui_double(part, &part->DHOLE);
+    _adg_part_data_to_ui_double(part, &part->LHOLE);
+    _adg_part_data_to_ui_double(part, &part->D1);
+    _adg_part_data_to_ui_double(part, &part->D2);
+    _adg_part_data_to_ui_double(part, &part->LD2);
+    _adg_part_data_to_ui_double(part, &part->D3);
+    _adg_part_data_to_ui_double(part, &part->LD3);
+    _adg_part_data_to_ui_double(part, &part->D4);
+    //_adg_part_data_to_ui_double(part, &part->D5);
+    _adg_part_data_to_ui_double(part, &part->D6);
+    //_adg_part_data_to_ui_double(part, &part->LD6);
+    _adg_part_data_to_ui_double(part, &part->D7);
+    //_adg_part_data_to_ui_double(part, &part->LD7);
+    _adg_part_lock(part);
+}
+
+static void
+_adg_part_ui_to_data(AdgPart *part)
+{
+    _adg_part_ui_to_data_double(part, &part->A);
+    _adg_part_ui_to_data_double(part, &part->B);
+    _adg_part_ui_to_data_double(part, &part->C);
+    _adg_part_ui_to_data_double(part, &part->DHOLE);
+    _adg_part_ui_to_data_double(part, &part->LHOLE);
+    _adg_part_ui_to_data_double(part, &part->D1);
+    _adg_part_ui_to_data_double(part, &part->D2);
+    _adg_part_ui_to_data_double(part, &part->LD2);
+    _adg_part_ui_to_data_double(part, &part->D3);
+    _adg_part_ui_to_data_double(part, &part->LD3);
+    _adg_part_ui_to_data_double(part, &part->D4);
+    //_adg_part_ui_to_data_double(part, &part->D5);
+    _adg_part_ui_to_data_double(part, &part->D6);
+    //_adg_part_ui_to_data_double(part, &part->LD6);
+    _adg_part_ui_to_data_double(part, &part->D7);
+    //_adg_part_ui_to_data_double(part, &part->LD7);
+
+    _adg_part_lock(part);
+
+    adg_model_clear(ADG_MODEL(part->shape));
+    _adg_draw_shape(part->shape, part);
+    adg_model_changed(ADG_MODEL(part->shape));
+    gtk_widget_queue_draw(GTK_WIDGET(part->area));
+}
+
+static AdgPart *
+_adg_part_new(GtkBuilder *builder)
+{
+    AdgPart *part;
+
+    part = g_new0(AdgPart, 1);
+    part->widgets = g_hash_table_new_full(g_direct_hash, g_direct_equal,
+                                          NULL, g_object_unref);
+    part->area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
+    part->apply = (GtkButton *) gtk_builder_get_object(builder, "editApply");
+    part->reset = (GtkButton *) gtk_builder_get_object(builder, "editReset");
+    part->shape = adg_path_new();
+
+    g_assert(ADG_GTK_IS_AREA(part->area));
+    g_assert(GTK_IS_BUTTON(part->apply));
+    g_assert(GTK_IS_BUTTON(part->reset));
+
+    _adg_part_link(part, &part->A, gtk_builder_get_object(builder, "editA"));
+    _adg_part_link(part, &part->B, gtk_builder_get_object(builder, "editB"));
+    _adg_part_link(part, &part->C, gtk_builder_get_object(builder, "editC"));
+    _adg_part_link(part, &part->DHOLE, gtk_builder_get_object(builder, "editDHOLE"));
+    _adg_part_link(part, &part->LHOLE, gtk_builder_get_object(builder, "editLHOLE"));
+    _adg_part_link(part, &part->D1, gtk_builder_get_object(builder, "editD1"));
+    _adg_part_link(part, &part->D2, gtk_builder_get_object(builder, "editD2"));
+    _adg_part_link(part, &part->LD2, gtk_builder_get_object(builder, "editLD2"));
+    _adg_part_link(part, &part->D3, gtk_builder_get_object(builder, "editD3"));
+    _adg_part_link(part, &part->LD3, gtk_builder_get_object(builder, "editLD3"));
+    _adg_part_link(part, &part->D4, gtk_builder_get_object(builder, "editD4"));
+    //_adg_part_link(part, &part->D5, gtk_builder_get_object(builder, "editD5"));
+    _adg_part_link(part, &part->D6, gtk_builder_get_object(builder, "editD6"));
+    //_adg_part_link(part, &part->LD6, gtk_builder_get_object(builder, "editLD6"));
+    _adg_part_link(part, &part->D7, gtk_builder_get_object(builder, "editD7"));
+    //_adg_part_link(part, &part->LD7, gtk_builder_get_object(builder, "editLD7"));
+
+    part->D5 = 4.5;
+    part->RD34 = 1;
+    part->LD5 = 5;
+    part->LD6 = 1;
+    part->LD7 = 0.5;
+
+    _adg_part_ui_to_data(part);
+
+    return part;
+}
+
+static void
+_adg_part_destroy(AdgPart *part)
+{
+    g_hash_table_destroy(part->widgets);
+    g_free(part);
 }
 
 static void
@@ -409,40 +542,33 @@ _adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
 }
 
 static AdgCanvas *
-_adg_canvas_init(AdgCanvas *canvas, const AdgPart *part)
+_adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
 {
     AdgContainer *container;
-    AdgPath *bottom, *shape;
+    AdgPath *hatch;
     AdgEdges *edges;
     AdgEntity *entity;
     AdgMatrix map;
 
     container = (AdgContainer *) canvas;
 
-    bottom = _adg_part_hole(part, part->LHOLE + 2);
-    adg_path_reflect(bottom, NULL);
-    adg_path_close(bottom);
-
-    shape = _adg_part_shape(part);
-    adg_path_reflect(shape, NULL);
-    adg_path_close(shape);
-    adg_path_move_to_explicit(shape, part->LHOLE + 2, part->D1 / 2);
-    adg_path_line_to_explicit(shape, part->LHOLE + 2, -part->D1 / 2);
-
-    edges = adg_edges_new_with_source(ADG_TRAIL(shape));
-
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(shape)));
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
     adg_container_add(container, entity);
 
-    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(bottom)));
+    hatch = adg_path_new();
+    _adg_draw_hole(hatch, part, part->LHOLE + 2);
+    adg_path_reflect(hatch, NULL);
+    adg_path_close(hatch);
+    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(hatch)));
     adg_container_add(container, entity);
 
+    edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(edges)));
     adg_container_add(container, entity);
 
     _adg_demo_canvas_add_sheet(canvas);
-    _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(shape));
-    _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(shape));
+    _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
+    _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
     cairo_matrix_init_scale(&map, 7, 7);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
@@ -547,8 +673,15 @@ _adg_about_window(GtkBuilder *builder)
     return window;
 }
 
-/* A one-time signal that set the USER_POS and USER_SIZE flags, so the
- * last window position is retained */
+/**
+ * _adg_keep_upos:
+ * @window: the subject #GtkWindow
+ *
+ * A one-time signal that set the #GDK_HINT_USER_POS and
+ * #GDK_HINT_USER_SIZE flags so the last window position is retained.
+ *
+ * It should be connected to the #GtkWindow::show signal of @window.
+ **/
 static void
 _adg_keep_upos(GtkWindow *window)
 {
@@ -561,13 +694,14 @@ static GtkWidget *
 _adg_edit_window(GtkBuilder *builder, AdgPart *part)
 {
     GtkWidget *window;
-    GtkWidget *button_close;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndEdit");
     g_assert(GTK_IS_DIALOG(window));
-    button_close = (GtkWidget *) gtk_builder_get_object(builder, "editClose");
-    g_assert(GTK_IS_BUTTON(button_close));
 
+    g_signal_connect_swapped(part->apply, "clicked",
+                             G_CALLBACK(_adg_part_ui_to_data), part);
+    g_signal_connect_swapped(part->reset, "clicked",
+                             G_CALLBACK(_adg_part_data_to_ui), part);
     g_signal_connect(window, "show", G_CALLBACK(_adg_keep_upos), NULL);
     g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
 
@@ -602,11 +736,13 @@ _adg_main_window(GtkBuilder *builder)
     AdgPart *part;
     AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_about, *button_quit;
-    AdgGtkArea *adg_area;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
-    part = g_new(AdgPart, 1);
+    part = _adg_part_new(builder);
     canvas = adg_canvas_new();
+
+    _adg_canvas_init(canvas, part);
+    adg_gtk_area_set_canvas(part->area, canvas);
 
     g_assert(GTK_IS_WINDOW(window));
     button_edit = (GtkWidget *) gtk_builder_get_object(builder, "mainEdit");
@@ -617,12 +753,6 @@ _adg_main_window(GtkBuilder *builder)
     g_assert(GTK_IS_BUTTON(button_about));
     button_quit = (GtkWidget *) gtk_builder_get_object(builder, "mainQuit");
     g_assert(GTK_IS_BUTTON(button_quit));
-    adg_area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
-    g_assert(ADG_GTK_IS_AREA(adg_area));
-
-    _adg_part_init(part);
-    _adg_canvas_init(canvas, part);
-    adg_gtk_area_set_canvas(adg_area, canvas);
 
     g_signal_connect_swapped(button_edit, "clicked",
                              G_CALLBACK(gtk_dialog_run),
@@ -635,7 +765,8 @@ _adg_main_window(GtkBuilder *builder)
                              _adg_about_window(builder));
     g_signal_connect(button_quit, "clicked", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect_swapped(window, "destroy", G_CALLBACK(g_free), part);
+    g_signal_connect_swapped(window, "destroy",
+                             G_CALLBACK(_adg_part_destroy), part);
 
     return window;
 }

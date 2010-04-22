@@ -177,8 +177,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD1</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -205,7 +203,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editA">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjA</property>
                     <property name="digits">1</property>
@@ -252,7 +249,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editB">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjB</property>
                     <property name="digits">1</property>
@@ -284,7 +280,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD2</property>
                     <property name="digits">1</property>
@@ -318,7 +313,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editLD2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLD2</property>
                     <property name="digits">1</property>
@@ -365,7 +359,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD3</property>
                     <property name="digits">1</property>
@@ -382,7 +375,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD4">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD4</property>
                     <property name="digits">1</property>
@@ -416,7 +408,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editLD3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLD3</property>
                     <property name="digits">1</property>
@@ -492,7 +483,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD6">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD6</property>
                     <property name="digits">1</property>
@@ -522,7 +512,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editC">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjC</property>
                     <property name="digits">1</property>
@@ -554,7 +543,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD7">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD7</property>
                     <property name="digits">1</property>
@@ -622,7 +610,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjRD6</property>
                     <property name="numeric">True</property>
@@ -672,12 +659,11 @@ Boston, MA  02110-1301, USA.</property>
                 <property name="n_columns">5</property>
                 <property name="row_spacing">6</property>
                 <child>
-                  <object class="GtkSpinButton" id="editDHole">
+                  <object class="GtkSpinButton" id="editDHOLE">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
-                    <property name="adjustment">adjDHole</property>
+                    <property name="adjustment">adjDHOLE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                   </object>
@@ -687,7 +673,7 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="editDHoleLabel">
+                  <object class="GtkLabel" id="editDHOLELabel">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
                     <property name="xpad">12</property>
@@ -700,12 +686,11 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="editLHole">
+                  <object class="GtkSpinButton" id="editLHOLE">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
-                    <property name="adjustment">adjLHole</property>
+                    <property name="adjustment">adjLHOLE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                   </object>
@@ -715,13 +700,13 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="editLHoleLabel">
+                  <object class="GtkLabel" id="editLHOLELabel">
                     <property name="visible">True</property>
                     <property name="xalign">0</property>
                     <property name="xpad">12</property>
                     <property name="label" translatable="yes">Hole depth:</property>
                     <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLHole</property>
+                    <property name="mnemonic_widget">editLHOLE</property>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -750,7 +735,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjDGroove</property>
                     <property name="digits">1</property>
@@ -786,7 +770,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjZGroove</property>
                     <property name="digits">1</property>
@@ -822,7 +805,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="invisible_char">&#x25CF;</property>
                     <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLGroove</property>
                     <property name="digits">1</property>
@@ -932,7 +914,7 @@ Boston, MA  02110-1301, USA.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-7">editClose</action-widget>
+      <action-widget response="-4">editClose</action-widget>
     </action-widgets>
   </object>
   <object class="GtkFileChooserDialog" id="wndSaveAs">
@@ -1075,119 +1057,121 @@ Boston, MA  02110-1301, USA.</property>
     </action-widgets>
   </object>
   <object class="GtkAdjustment" id="adjA">
-    <property name="value">62.3</property>
     <property name="lower">20</property>
     <property name="upper">180</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">62.3</property>
   </object>
   <object class="GtkAdjustment" id="adjB">
-    <property name="value">20.6</property>
     <property name="lower">10</property>
     <property name="upper">100</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">20.6</property>
   </object>
   <object class="GtkAdjustment" id="adjC">
-    <property name="value">2</property>
     <property name="lower">0.5</property>
     <property name="upper">10</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">2</property>
   </object>
   <object class="GtkAdjustment" id="adjD1">
-    <property name="value">9.3</property>
     <property name="lower">4</property>
     <property name="upper">25</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">9.3</property>
   </object>
   <object class="GtkAdjustment" id="adjD2">
-    <property name="value">6.5</property>
     <property name="lower">2</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">6.5</property>
   </object>
   <object class="GtkAdjustment" id="adjLD2">
-    <property name="value">7</property>
     <property name="lower">2</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">7</property>
   </object>
   <object class="GtkAdjustment" id="adjD3">
-    <property name="value">11.9</property>
     <property name="lower">5</property>
     <property name="upper">25</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">11.9</property>
   </object>
   <object class="GtkAdjustment" id="adjLD3">
-    <property name="value">3.5</property>
     <property name="lower">1</property>
     <property name="upper">50</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">3.5</property>
   </object>
   <object class="GtkAdjustment" id="adjD4">
-    <property name="value">6.5</property>
     <property name="lower">2</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">6.5</property>
   </object>
   <object class="GtkAdjustment" id="adjD6">
-    <property name="value">7.2</property>
     <property name="lower">4</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">7.2</property>
   </object>
   <object class="GtkAdjustment" id="adjRD6">
-    <property name="value">25</property>
     <property name="lower">10</property>
     <property name="upper">200</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
+    <property name="value">25</property>
   </object>
   <object class="GtkAdjustment" id="adjD7">
-    <property name="value">2</property>
     <property name="upper">10</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">2</property>
   </object>
-  <object class="GtkAdjustment" id="adjDHole">
-    <property name="value">1</property>
+  <object class="GtkAdjustment" id="adjDHOLE">
     <property name="lower">0.1</property>
     <property name="upper">15</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">2</property>
   </object>
-  <object class="GtkAdjustment" id="adjLHole">
-    <property name="value">3</property>
+  <object class="GtkAdjustment" id="adjLHOLE">
     <property name="lower">1</property>
     <property name="upper">50</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">3</property>
   </object>
   <object class="GtkAdjustment" id="adjDGroove">
     <property name="lower">2</property>
     <property name="upper">24</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">8.5</property>
   </object>
   <object class="GtkAdjustment" id="adjLGroove">
     <property name="lower">0.1</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">1</property>
   </object>
   <object class="GtkAdjustment" id="adjZGroove">
-    <property name="value">20</property>
     <property name="lower">0.5</property>
     <property name="upper">50</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
+    <property name="value">23</property>
   </object>
 </interface>
