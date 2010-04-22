@@ -84,6 +84,7 @@ static void     remove_dependency       (AdgModel       *model,
 static const AdgPair *
                 named_pair              (AdgModel       *model,
                                          const gchar    *name);
+static void     _adg_clear              (AdgModel       *model);
 static void     set_named_pair          (AdgModel       *model,
                                          const gchar    *name,
                                          const AdgPair  *pair);
@@ -235,6 +236,9 @@ dispose(GObject *object)
         entity = (AdgEntity *) data->dependencies->data;
         adg_model_remove_dependency(model, entity);
     }
+
+    if (data->named_pairs)
+        _adg_clear(model);
 
     if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -529,6 +533,15 @@ remove_dependency(AdgModel *model, AdgEntity *entity)
 
     data->dependencies = g_slist_delete_link(data->dependencies, node);
     g_object_unref(entity);
+}
+
+static void
+_adg_clear(AdgModel *model)
+{
+    AdgModelPrivate *data = model->data;
+
+    g_hash_table_destroy(data->named_pairs);
+    data->named_pairs = NULL;
 }
 
 static void
