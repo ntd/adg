@@ -957,6 +957,10 @@ clear_operation(AdgPath *path)
                   G_STRLOC, action_name(operation->action));
         operation->action = ADG_ACTION_NONE;
     }
+
+    data->cp_is_valid = FALSE;
+    data->last.data = NULL;
+    data->over.data = NULL;
 }
 
 static gboolean
