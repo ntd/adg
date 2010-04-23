@@ -292,9 +292,11 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
+    AdgEntity *entity;
     AdgDim *dim;
     AdgDimPrivate *data;
 
+    entity = (AdgEntity *) object;
     dim = (AdgDim *) object;
     data = dim->data;
 
@@ -303,13 +305,13 @@ _adg_set_property(GObject *object, guint prop_id,
         data->dim_dress = g_value_get_int(value);
         break;
     case PROP_REF1:
-        adg_point_set(&data->ref1, g_value_get_boxed(value));
+        adg_entity_point_set(entity, &data->ref1, g_value_get_boxed(value));
         break;
     case PROP_REF2:
-        adg_point_set(&data->ref2, g_value_get_boxed(value));
+        adg_entity_point_set(entity, &data->ref2, g_value_get_boxed(value));
         break;
     case PROP_POS:
-        adg_point_set(&data->pos, g_value_get_boxed(value));
+        adg_entity_point_set(entity, &data->pos, g_value_get_boxed(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -391,14 +393,8 @@ adg_dim_get_dim_dress(AdgDim *dim)
 void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
-
-    data = dim->data;
-
-    if (adg_point_set(&data->ref1, ref1))
-        g_object_notify((GObject *) dim, "ref1");
+    g_object_set((GObject *) dim, "ref1", ref1, NULL);
 }
 
 /**
@@ -505,14 +501,8 @@ adg_dim_get_ref1(AdgDim *dim)
 void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
-
-    data = dim->data;
-
-    if (adg_point_set(&data->ref2, ref2))
-        g_object_notify((GObject *) dim, "ref2");
+    g_object_set((GObject *) dim, "ref2", ref2, NULL);
 }
 
 /**
@@ -619,14 +609,8 @@ adg_dim_get_ref2(AdgDim *dim)
 void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
 {
-    AdgDimPrivate *data;
-
     g_return_if_fail(ADG_IS_DIM(dim));
-
-    data = dim->data;
-
-    if (adg_point_set(&data->pos, pos))
-        g_object_notify((GObject *) dim, "pos");
+    g_object_set((GObject *) dim, "pos", pos, NULL);
 }
 
 /**
