@@ -11,17 +11,21 @@
 typedef struct _AdgPart AdgPart;
 
 struct _AdgPart {
+    /* Raw data */
     gdouble     A, B, C;
     gdouble     DHOLE, LHOLE;
     gdouble     D1, D2, D3, D4, D5, D6, D7;
     gdouble     RD34, RD56;
     gdouble     LD2, LD3, LD5, LD6, LD7;
 
+    /* User interface widgets */
     AdgGtkArea *area;
     GHashTable *widgets;
     GtkButton  *apply, *reset;
 
-    AdgPath    *shape;
+    /* Models */
+    AdgPath    *shape, *hatch;
+    AdgEdges   *edges;
 };
 
 
@@ -60,7 +64,7 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
 }
 
 static void
-_adg_draw_hole(AdgPath *path, const AdgPart *part, gdouble height)
+_adg_define_hole(AdgPath *path, const AdgPart *part, gdouble height)
 {
     AdgModel *model;
     AdgPair pair;
@@ -90,14 +94,22 @@ _adg_draw_hole(AdgPath *path, const AdgPart *part, gdouble height)
 }
 
 static void
-_adg_draw_shape(AdgPath *path, const AdgPart *part)
+_adg_define_hatch(AdgPath *path, const AdgPart *part)
+{
+    _adg_define_hole(path, part, part->LHOLE + 2);
+    adg_path_reflect(path, NULL);
+    adg_path_close(path);
+}
+
+static void
+_adg_define_shape(AdgPath *path, const AdgPart *part)
 {
     AdgModel *model;
     AdgPair pair, tmp;
     const AdgPrimitive *primitive;
 
     pair.x = part->A - part->B - part->LD2;
-    _adg_draw_hole(path, part, pair.x);
+    _adg_define_hole(path, part, pair.x);
     model = ADG_MODEL(path);
 
     pair.x += (part->D1 - part->D2) / 2;
@@ -313,8 +325,17 @@ _adg_part_ui_to_data(AdgPart *part)
     _adg_part_lock(part);
 
     adg_model_clear(ADG_MODEL(part->shape));
-    _adg_draw_shape(part->shape, part);
+    _adg_define_shape(part->shape, part);
     adg_model_changed(ADG_MODEL(part->shape));
+
+    adg_model_clear(ADG_MODEL(part->hatch));
+    _adg_define_hatch(part->hatch, part);
+    adg_model_changed(ADG_MODEL(part->hatch));
+
+    adg_model_clear(ADG_MODEL(part->edges));
+    adg_model_changed(ADG_MODEL(part->edges));
+
+    //adg_entity_invalidate(ADG_ENTITY(adg_gtk_area_get_canvas(part->area)));
     gtk_widget_queue_draw(GTK_WIDGET(part->area));
 }
 
@@ -330,6 +351,8 @@ _adg_part_new(GtkBuilder *builder)
     part->apply = (GtkButton *) gtk_builder_get_object(builder, "editApply");
     part->reset = (GtkButton *) gtk_builder_get_object(builder, "editReset");
     part->shape = adg_path_new();
+    part->hatch = adg_path_new();
+    part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
 
     g_assert(ADG_GTK_IS_AREA(part->area));
     g_assert(GTK_IS_BUTTON(part->apply));
@@ -545,8 +568,6 @@ static AdgCanvas *
 _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
 {
     AdgContainer *container;
-    AdgPath *hatch;
-    AdgEdges *edges;
     AdgEntity *entity;
     AdgMatrix map;
 
@@ -555,15 +576,10 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
     adg_container_add(container, entity);
 
-    hatch = adg_path_new();
-    _adg_draw_hole(hatch, part, part->LHOLE + 2);
-    adg_path_reflect(hatch, NULL);
-    adg_path_close(hatch);
-    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(hatch)));
+    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hatch)));
     adg_container_add(container, entity);
 
-    edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(edges)));
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
     adg_container_add(container, entity);
 
     _adg_demo_canvas_add_sheet(canvas);
