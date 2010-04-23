@@ -40,8 +40,18 @@
  **/
 
 /**
- * AdgNamedPairCallback:
- * @name: an arbitrary name
+ * AdgDependencyFunc:
+ * @model: the #AdgModel
+ * @entity: the #AdgEntity dependent on @model
+ * @user_data: a general purpose pointer
+ *
+ * Callback used by adg_model_foreach_dependency().
+ **/
+
+/**
+ * AdgNamedPairFunc:
+ * @model: the #AdgModel
+ * @name: the name of the named pair
  * @pair: an #AdgPair
  * @user_data: a general purpose pointer
  *
@@ -52,6 +62,7 @@
 #include "adg-internal.h"
 #include "adg-model.h"
 #include "adg-model-private.h"
+#include "adg-entity.h"
 #include "adg-marshal.h"
 
 #define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
@@ -89,8 +100,14 @@ static void     set_named_pair          (AdgModel       *model,
                                          const gchar    *name,
                                          const AdgPair  *pair);
 static void     changed                 (AdgModel       *model);
+static void     _adg_named_pair_wrapper (gpointer        key,
+                                         gpointer        value,
+                                         gpointer        user_data);
+static void     _adg_invalidate_wrapper (AdgModel       *model,
+                                         AdgEntity      *entity,
+                                         gpointer        user_data);
 
-static guint signals[LAST_SIGNAL] = { 0 };
+static guint    _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
@@ -131,13 +148,13 @@ adg_model_class_init(AdgModelClass *klass)
      * Adds @entity to @model. After that @entity will depend on @model,
      * that is #AdgModel::changed on @model will invalidate @entity.
      **/
-    signals[ADD_DEPENDENCY] = g_signal_new("add-dependency",
-                                           G_OBJECT_CLASS_TYPE(gobject_class),
-                                           G_SIGNAL_RUN_FIRST,
-                                           G_STRUCT_OFFSET(AdgModelClass, add_dependency),
-                                           NULL, NULL,
-                                           adg_marshal_VOID__OBJECT,
-                                           G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[ADD_DEPENDENCY] = g_signal_new("add-dependency",
+                                                G_OBJECT_CLASS_TYPE(gobject_class),
+                                                G_SIGNAL_RUN_FIRST,
+                                                G_STRUCT_OFFSET(AdgModelClass, add_dependency),
+                                                NULL, NULL,
+                                                adg_marshal_VOID__OBJECT,
+                                                G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgModel::remove-dependency:
@@ -147,13 +164,13 @@ adg_model_class_init(AdgModelClass *klass)
      * Removes the @entity from @model, that is @entity will not depend
      * on @model anymore.
      **/
-    signals[REMOVE_DEPENDENCY] = g_signal_new("remove-dependency",
-                                              G_OBJECT_CLASS_TYPE(gobject_class),
-                                              G_SIGNAL_RUN_FIRST,
-                                              G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
-                                              NULL, NULL,
-                                              adg_marshal_VOID__OBJECT,
-                                              G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[REMOVE_DEPENDENCY] = g_signal_new("remove-dependency",
+                                                   G_OBJECT_CLASS_TYPE(gobject_class),
+                                                   G_SIGNAL_RUN_FIRST,
+                                                   G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
+                                                   NULL, NULL,
+                                                   adg_marshal_VOID__OBJECT,
+                                                   G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgModel::set-named-pair:
@@ -171,14 +188,14 @@ adg_model_class_init(AdgModelClass *klass)
      * its data are updated with @pair. If it is not found, a new
      * named pair is created using @name and @pair.
      **/
-    signals[SET_NAMED_PAIR] = g_signal_new("set-named-pair",
-                                           G_OBJECT_CLASS_TYPE(gobject_class),
-                                           G_SIGNAL_RUN_FIRST,
-                                           G_STRUCT_OFFSET(AdgModelClass, set_named_pair),
-                                           NULL, NULL,
-                                           adg_marshal_VOID__STRING_POINTER,
-                                           G_TYPE_NONE, 2,
-                                           G_TYPE_STRING, G_TYPE_POINTER);
+    _adg_signals[SET_NAMED_PAIR] = g_signal_new("set-named-pair",
+                                                G_OBJECT_CLASS_TYPE(gobject_class),
+                                                G_SIGNAL_RUN_FIRST,
+                                                G_STRUCT_OFFSET(AdgModelClass, set_named_pair),
+                                                NULL, NULL,
+                                                adg_marshal_VOID__STRING_POINTER,
+                                                G_TYPE_NONE, 2,
+                                                G_TYPE_STRING, G_TYPE_POINTER);
 
     /**
      * AdgModel::clear:
@@ -186,12 +203,12 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Removes any cached information from @model.
      **/
-    signals[CLEAR] = g_signal_new("clear", ADG_TYPE_MODEL,
-                                  G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                  G_STRUCT_OFFSET(AdgModelClass, clear),
-                                  NULL, NULL,
-                                  adg_marshal_VOID__VOID,
-                                  G_TYPE_NONE, 0);
+    _adg_signals[CLEAR] = g_signal_new("clear", ADG_TYPE_MODEL,
+                                       G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                                       G_STRUCT_OFFSET(AdgModelClass, clear),
+                                       NULL, NULL,
+                                       adg_marshal_VOID__VOID,
+                                       G_TYPE_NONE, 0);
 
     /**
      * AdgModel::changed:
@@ -200,12 +217,12 @@ adg_model_class_init(AdgModelClass *klass)
      * Notificates that the model has changed. By default, all the
      * dependent entities are invalidated.
      **/
-    signals[CHANGED] = g_signal_new("changed", ADG_TYPE_MODEL,
-                                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                     G_STRUCT_OFFSET(AdgModelClass, changed),
-                                     NULL, NULL,
-                                     adg_marshal_VOID__VOID,
-                                     G_TYPE_NONE, 0);
+    _adg_signals[CHANGED] = g_signal_new("changed", ADG_TYPE_MODEL,
+                                         G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                                         G_STRUCT_OFFSET(AdgModelClass, changed),
+                                         NULL, NULL,
+                                         adg_marshal_VOID__VOID,
+                                         G_TYPE_NONE, 0);
 }
 
 static void
@@ -278,7 +295,7 @@ adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(model, signals[ADD_DEPENDENCY], 0, entity);
+    g_signal_emit(model, _adg_signals[ADD_DEPENDENCY], 0, entity);
 }
 
 /**
@@ -303,7 +320,7 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(model, signals[REMOVE_DEPENDENCY], 0, entity);
+    g_signal_emit(model, _adg_signals[REMOVE_DEPENDENCY], 0, entity);
 }
 
 /**
@@ -336,7 +353,7 @@ adg_model_get_dependencies(AdgModel *model)
  * Invokes @callback on each entity linked to @model.
  **/
 void
-adg_model_foreach_dependency(AdgModel *model, AdgEntityCallback callback,
+adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
                              gpointer user_data)
 {
     AdgModelPrivate *data;
@@ -349,11 +366,11 @@ adg_model_foreach_dependency(AdgModel *model, AdgEntityCallback callback,
     data = model->data;
     dependency = data->dependencies;
 
-    while (dependency != NULL) {
+    while (dependency) {
         entity = dependency->data;
 
         if (entity != NULL && ADG_IS_ENTITY(entity))
-            callback(entity, user_data);
+            callback(model, entity, user_data);
 
         dependency = dependency->next;
     }
@@ -381,7 +398,7 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(name != NULL);
 
-    g_signal_emit(model, signals[SET_NAMED_PAIR], 0, name, pair);
+    g_signal_emit(model, _adg_signals[SET_NAMED_PAIR], 0, name, pair);
 }
 
 /**
@@ -449,10 +466,11 @@ adg_model_get_named_pair(AdgModel *model, const gchar *name)
  * or to duplicate a transformed version of every named pair.
  **/
 void
-adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairCallback callback,
+adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairFunc callback,
                              gpointer user_data)
 {
     AdgModelPrivate *data;
+    AdgWrapperHelper helper;
 
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(callback != NULL);
@@ -462,7 +480,11 @@ adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairCallback callback,
     if (data->named_pairs == NULL)
         return;
 
-    g_hash_table_foreach(data->named_pairs, (GHFunc) callback, user_data);
+    helper.callback = callback;
+    helper.model = model;
+    helper.user_data = user_data;
+
+    g_hash_table_foreach(data->named_pairs, _adg_named_pair_wrapper, &helper);
 }
 
 /**
@@ -480,7 +502,7 @@ adg_model_clear(AdgModel *model)
 {
     g_return_if_fail(ADG_IS_MODEL(model));
 
-    g_signal_emit(model, signals[CLEAR], 0);
+    g_signal_emit(model, _adg_signals[CLEAR], 0);
 }
 
 /**
@@ -498,7 +520,7 @@ adg_model_changed(AdgModel *model)
 {
     g_return_if_fail(ADG_IS_MODEL(model));
 
-    g_signal_emit(model, signals[CHANGED], 0);
+    g_signal_emit(model, _adg_signals[CHANGED], 0);
 }
 
 
@@ -589,7 +611,25 @@ static void
 changed(AdgModel *model)
 {
     /* Invalidate all the entities dependent on this model */
-    adg_model_foreach_dependency(model,
-                                 (AdgEntityCallback) adg_entity_invalidate,
-                                 NULL);
+    adg_model_foreach_dependency(model, _adg_invalidate_wrapper, NULL);
+}
+
+static void
+_adg_named_pair_wrapper(gpointer key, gpointer value, gpointer user_data)
+{
+    const gchar *name;
+    AdgPair *pair;
+    AdgWrapperHelper *helper;
+
+    name = key;
+    pair = value;
+    helper = user_data;
+
+    helper->callback(helper->model, name, pair, helper->user_data);
+}
+
+static void
+_adg_invalidate_wrapper(AdgModel *model, AdgEntity *entity, gpointer user_data)
+{
+    adg_entity_invalidate(entity);
 }

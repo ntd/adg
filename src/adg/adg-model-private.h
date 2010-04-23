@@ -25,10 +25,17 @@
 G_BEGIN_DECLS
 
 typedef struct _AdgModelPrivate  AdgModelPrivate;
+typedef struct _AdgWrapperHelper AdgWrapperHelper;
 
 struct _AdgModelPrivate {
-    GSList      *dependencies;
-    GHashTable  *named_pairs;
+    GSList     *dependencies;
+    GHashTable *named_pairs;
+};
+
+struct _AdgWrapperHelper {
+    AdgNamedPairFunc callback;
+    AdgModel        *model;
+    gpointer         user_data;
 };
 
 G_END_DECLS

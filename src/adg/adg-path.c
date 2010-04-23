@@ -59,6 +59,7 @@
 #include "adg-internal.h"
 #include "adg-path.h"
 #include "adg-path-private.h"
+#include "adg-matrix.h"
 #include "adg-primitive.h"
 #include <string.h>
 #include <math.h>
@@ -95,7 +96,8 @@ static gboolean         is_convex               (const AdgPrimitive
                                                  const AdgPrimitive
                                                                 *primitive2);
 static const gchar *    action_name             (AdgAction       action);
-static void             get_named_pair          (const gchar    *name,
+static void             get_named_pair          (AdgModel       *model,
+                                                 const gchar    *name,
                                                  AdgPair        *pair,
                                                  gpointer        user_data);
 static void             dup_reverse_named_pairs (AdgModel       *model,
@@ -1245,7 +1247,8 @@ action_name(AdgAction action)
 }
 
 static void
-get_named_pair(const gchar *name, AdgPair *pair, gpointer user_data)
+get_named_pair(AdgModel *model, const gchar *name,
+               AdgPair *pair, gpointer user_data)
 {
     GSList **named_pairs;
     AdgNamedPair *named_pair;

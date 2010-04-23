@@ -26,7 +26,6 @@
 #ifndef __ADG_MODEL_H__
 #define __ADG_MODEL_H__
 
-#include "adg-entity.h"
 #include "adg-pair.h"
 
 
@@ -39,10 +38,19 @@ G_BEGIN_DECLS
 #define ADG_IS_MODEL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_MODEL))
 #define ADG_MODEL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_MODEL, AdgModelClass))
 
+
+/* Forward declarations */
+ADG_FORWARD_DECL(AdgEntity);
+
 typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
-typedef void (*AdgNamedPairCallback) (const gchar *name, AdgPair *pair,
-                                      gpointer user_data);
+typedef void    (*AdgDependencyFunc)            (AdgModel       *model,
+                                                 AdgEntity      *entity,
+                                                 gpointer        user_data);
+typedef void    (*AdgNamedPairFunc)             (AdgModel       *model,
+                                                 const gchar    *name,
+                                                 AdgPair        *pair,
+                                                 gpointer        user_data);
 
 struct _AdgModel {
     /*< private >*/
@@ -76,7 +84,7 @@ void            adg_model_remove_dependency     (AdgModel         *model,
                                                  AdgEntity        *entity);
 const GSList *  adg_model_get_dependencies      (AdgModel         *model);
 void            adg_model_foreach_dependency    (AdgModel         *model,
-                                                 AdgEntityCallback callback,
+                                                 AdgDependencyFunc callback,
                                                  gpointer          user_data);
 void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const gchar      *name,
@@ -89,7 +97,7 @@ void            adg_model_set_named_pair_explicit
 const AdgPair * adg_model_get_named_pair        (AdgModel         *model,
                                                  const gchar      *name);
 void            adg_model_foreach_named_pair    (AdgModel         *model,
-                                                 AdgNamedPairCallback callback,
+                                                 AdgNamedPairFunc  callback,
                                                  gpointer          user_data);
 void            adg_model_clear                 (AdgModel         *model);
 void            adg_model_changed               (AdgModel         *model);
