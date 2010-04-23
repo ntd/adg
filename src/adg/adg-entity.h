@@ -48,7 +48,6 @@ G_BEGIN_DECLS
 ADG_FORWARD_DECL(AdgStyle);
 typedef gint                     AdgDress;
 
-
 typedef struct _AdgEntity        AdgEntity;
 typedef struct _AdgEntityClass   AdgEntityClass;
 typedef void (*AdgEntityCallback) (AdgEntity *entity, gpointer user_data);
@@ -84,7 +83,6 @@ void             adg_switch_extents             (gboolean         state);
 
 GType            adg_entity_get_type            (void) G_GNUC_CONST;
 AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
-
 void             adg_entity_set_parent          (AdgEntity       *entity,
                                                  AdgEntity       *parent);
 AdgEntity *      adg_entity_get_parent          (AdgEntity       *entity);
@@ -125,6 +123,9 @@ void             adg_entity_invalidate          (AdgEntity       *entity);
 void             adg_entity_arrange             (AdgEntity       *entity);
 void             adg_entity_render              (AdgEntity       *entity,
                                                  cairo_t         *cr);
+gboolean         adg_entity_point_set           (AdgEntity       *entity,
+                                                 AdgPoint       **p_point,
+                                                 const AdgPoint  *new_point);
 
 G_END_DECLS
 
