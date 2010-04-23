@@ -34,6 +34,8 @@ G_BEGIN_DECLS
 
 #define ADG_TYPE_POINT                  (adg_point_get_type())
 
+/* Forward declaration */
+ADG_FORWARD_DECL(AdgStyle);
 
 typedef struct _AdgPoint  AdgPoint;
 
@@ -42,11 +44,11 @@ GType           adg_point_get_type              (void) G_GNUC_CONST;
 
 AdgPoint *      adg_point_new                   (void);
 AdgPoint *      adg_point_dup                   (const AdgPoint *src);
+void            adg_point_destroy               (AdgPoint       *point);
 void            adg_point_copy                  (AdgPoint       *point,
                                                  const AdgPoint *src);
 gboolean        adg_point_set                   (AdgPoint      **p_point,
                                                  const AdgPoint *new_point);
-void            adg_point_destroy               (AdgPoint       *point);
 void            adg_point_set_pair              (AdgPoint       *point,
                                                  const AdgPair  *pair);
 void            adg_point_set_pair_explicit     (AdgPoint       *point,
@@ -56,6 +58,8 @@ void            adg_point_set_pair_from_model   (AdgPoint       *point,
                                                  AdgModel       *model,
                                                  const gchar    *name);
 const AdgPair * adg_point_get_pair              (AdgPoint       *point);
+AdgModel *      adg_point_get_model             (AdgPoint       *point);
+const gchar *   adg_point_get_name              (AdgPoint       *point);
 void            adg_point_invalidate            (AdgPoint       *point);
 gboolean        adg_point_equal                 (const AdgPoint *point1,
                                                  const AdgPoint *point2);

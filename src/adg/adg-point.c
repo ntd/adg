@@ -112,6 +112,23 @@ adg_point_dup(const AdgPoint *src)
 }
 
 /**
+ * adg_point_destroy:
+ * @point: an #AdgPoint
+ *
+ * Destroys the @point instance, unreferencing the internal model if
+ * @point is linked to a named pair.
+ **/
+void
+adg_point_destroy(AdgPoint *point)
+{
+    g_return_if_fail(point != NULL);
+
+    adg_point_set_pair_from_model(point, NULL, NULL);
+
+    g_free(point);
+}
+
+/**
  * adg_point_copy:
  * @point: an #AdgPoint
  * @src: the source point to copy
@@ -174,23 +191,6 @@ adg_point_set(AdgPoint **p_point, const AdgPoint *new_point)
     }
 
     return TRUE;
-}
-
-/**
- * adg_point_destroy:
- * @point: an #AdgPoint
- *
- * Destroys the @point instance, unreferencing the internal model if
- * @point is linked to a named pair.
- **/
-void
-adg_point_destroy(AdgPoint *point)
-{
-    g_return_if_fail(point != NULL);
-
-    adg_point_set_pair_from_model(point, NULL, NULL);
-
-    g_free(point);
 }
 
 /**
@@ -290,8 +290,8 @@ adg_point_set_pair_from_model(AdgPoint *point,
  *
  * #AdgPoint is an evolution of the pair concept, but internally the
  * relevant data is still stored in an #AdgPair struct. This function
- * gets this struct, optionally updating the internal value from the
- * linked named pair if necessary.
+ * gets this struct, updating the internal value from the linked
+ * named pair if needed.
  *
  * Returns: the pair of @point
  **/
@@ -324,6 +324,40 @@ adg_point_get_pair(AdgPoint *point)
     }
 
     return (AdgPair *) point;
+}
+
+/**
+ * adg_point_get_model:
+ * @point: an #AdgPoint
+ *
+ * Gets the source model of the named pair bound to @point, or
+ * returns %NULL if @point is an explicit pair. The returned
+ * value is owned by @point.
+ *
+ * Returns: an #AdgModel or %NULL
+ **/
+AdgModel *
+adg_point_get_model(AdgPoint *point)
+{
+    g_return_val_if_fail(point != NULL, NULL);
+    return point->model;
+}
+
+/**
+ * adg_point_get_name:
+ * @point: an #AdgPoint
+ *
+ * Gets the name of the named pair bound to @point, or returns
+ * %NULL if @point is an explicit pair. The returned value is
+ * owned by @point and should not be modified or freed.
+ *
+ * Returns: the name of the named pair or %NULL
+ **/
+const gchar *
+adg_point_get_name(AdgPoint *point)
+{
+    g_return_val_if_fail(point != NULL, NULL);
+    return point->name;
 }
 
 /**
