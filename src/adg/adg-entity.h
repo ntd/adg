@@ -124,9 +124,9 @@ void             adg_entity_invalidate          (AdgEntity       *entity);
 void             adg_entity_arrange             (AdgEntity       *entity);
 void             adg_entity_render              (AdgEntity       *entity,
                                                  cairo_t         *cr);
-gboolean         adg_entity_point_set           (AdgEntity       *entity,
-                                                 AdgPoint       **p_point,
-                                                 const AdgPoint  *new_point);
+AdgPoint *       adg_entity_point               (AdgEntity       *entity,
+                                                 AdgPoint        *old_point,
+                                                 AdgPoint        *new_point);
 
 G_END_DECLS
 

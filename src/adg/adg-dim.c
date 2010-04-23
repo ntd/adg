@@ -209,24 +209,25 @@ adg_dim_init(AdgDim *dim)
 static void
 _adg_dispose(GObject *object)
 {
-    AdgDimPrivate *data = ((AdgDim *) object)->data;
+    AdgEntity *entity;
+    AdgDimPrivate *data;
+
+    entity = (AdgEntity *) object;
+    data = ((AdgDim *) object)->data;
 
     if (data->quote.entity != NULL) {
         g_object_unref(data->quote.entity);
         data->quote.entity = NULL;
     }
-    if (data->ref1 != NULL) {
-        adg_point_destroy(data->ref1);
-        data->ref1 = NULL;
-    }
-    if (data->ref2 != NULL) {
-        adg_point_destroy(data->ref2);
-        data->ref2 = NULL;
-    }
-    if (data->pos != NULL) {
-        adg_point_destroy(data->pos);
-        data->pos = NULL;
-    }
+
+    if (data->ref1 != NULL)
+        data->ref1 = adg_entity_point(entity, data->ref1, NULL);
+
+    if (data->ref2 != NULL)
+        data->ref2 = adg_entity_point(entity, data->ref2, NULL);
+
+    if (data->pos != NULL)
+        data->pos = adg_entity_point(entity, data->pos, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -305,13 +306,16 @@ _adg_set_property(GObject *object, guint prop_id,
         data->dim_dress = g_value_get_int(value);
         break;
     case PROP_REF1:
-        adg_entity_point_set(entity, &data->ref1, g_value_get_boxed(value));
+        data->ref1 = adg_entity_point(entity, data->ref1,
+                                      g_value_get_boxed(value));
         break;
     case PROP_REF2:
-        adg_entity_point_set(entity, &data->ref2, g_value_get_boxed(value));
+        data->ref2 = adg_entity_point(entity, data->ref2,
+                                      g_value_get_boxed(value));
         break;
     case PROP_POS:
-        adg_entity_point_set(entity, &data->pos, g_value_get_boxed(value));
+        data->pos = adg_entity_point(entity, data->pos,
+                                     g_value_get_boxed(value));
         break;
     case PROP_LEVEL:
         data->level = g_value_get_double(value);
@@ -388,7 +392,7 @@ adg_dim_get_dim_dress(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @ref1 can be %NULL, in which case the point is unset.
+ * @ref1 can be %NULL, in which case the point is destroyed.
  **/
 void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
@@ -496,7 +500,7 @@ adg_dim_get_ref1(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if it was the last reference).
  *
- * @ref2 can be %NULL, in which case the point is unset.
+ * @ref2 can be %NULL, in which case the point is destroyed.
  **/
 void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
@@ -604,7 +608,7 @@ adg_dim_get_ref2(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if it was the last reference).
  *
- * @pos can be %NULL, in which case the point is unset.
+ * @pos can be %NULL, in which case the point is destroyed.
  **/
 void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)

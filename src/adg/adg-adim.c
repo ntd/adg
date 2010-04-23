@@ -164,22 +164,19 @@ adg_adim_init(AdgADim *adim)
 static void
 dispose(GObject *object)
 {
-    AdgADim *adim;
+    AdgEntity *entity;
     AdgADimPrivate *data;
 
-    adim = (AdgADim *) object;
-    data = adim->data;
+    entity = (AdgEntity *) object;
+    data = ((AdgADim *) object)->data;
 
     dispose_markers((AdgADim *) object);
 
-    if (data->org1 != NULL) {
-        adg_point_destroy(data->org1);
-        data->org1 = NULL;
-    }
-    if (data->org2 != NULL) {
-        adg_point_destroy(data->org2);
-        data->org2 = NULL;
-    }
+    if (data->org1 != NULL)
+        data->org1 = adg_entity_point(entity, data->org1, NULL);
+
+    if (data->org2 != NULL)
+        data->org2 = adg_entity_point(entity, data->org2, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
@@ -213,18 +210,20 @@ static void
 set_property(GObject *object, guint prop_id,
              const GValue *value, GParamSpec *pspec)
 {
-    AdgADim *adim;
+    AdgEntity *entity;
     AdgADimPrivate *data;
 
-    adim = (AdgADim *) object;
-    data = adim->data;
+    entity = (AdgEntity *) object;
+    data = ((AdgADim *) object)->data;
 
     switch (prop_id) {
     case PROP_ORG1:
-        adg_point_set(&data->org1, g_value_get_boxed(value));
+        data->org1 = adg_entity_point(entity, data->org1,
+                                      g_value_get_boxed(value));
         break;
     case PROP_ORG2:
-        adg_point_set(&data->org2, g_value_get_boxed(value));
+        data->org2 = adg_entity_point(entity, data->org2,
+                                      g_value_get_boxed(value));
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -370,19 +369,13 @@ adg_adim_new_full_from_model(AdgModel *model,
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @org1 can be %NULL, in which case the point is unset.
+ * @org1 can be %NULL, in which case the point is destroyed.
  **/
 void
 adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
 {
-    AdgADimPrivate *data;
-
     g_return_if_fail(ADG_IS_ADIM(adim));
-
-    data = adim->data;
-
-    if (adg_point_set(&data->org1, org1))
-        g_object_notify((GObject *) adim, "org1");
+    g_object_set((GObject *) adim, "org1", org1, NULL);
 }
 
 /**
@@ -484,19 +477,13 @@ adg_adim_get_org1(AdgADim *adim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @org2 can be %NULL, in which case the point is unset.
+ * @org2 can be %NULL, in which case the point is destroyed.
  **/
 void
 adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
 {
-    AdgADimPrivate *data;
-
     g_return_if_fail(ADG_IS_ADIM(adim));
-
-    data = adim->data;
-
-    if (adg_point_set(&data->org2, org2))
-        g_object_notify((GObject *) adim, "org2");
+    g_object_set((GObject *) adim, "org2", org2, NULL);
 }
 
 /**

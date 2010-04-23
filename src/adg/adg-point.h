@@ -47,8 +47,6 @@ AdgPoint *      adg_point_dup                   (const AdgPoint *src);
 void            adg_point_destroy               (AdgPoint       *point);
 void            adg_point_copy                  (AdgPoint       *point,
                                                  const AdgPoint *src);
-gboolean        adg_point_set                   (AdgPoint      **p_point,
-                                                 const AdgPoint *new_point);
 void            adg_point_set_pair              (AdgPoint       *point,
                                                  const AdgPair  *pair);
 void            adg_point_set_pair_explicit     (AdgPoint       *point,
@@ -57,6 +55,7 @@ void            adg_point_set_pair_explicit     (AdgPoint       *point,
 void            adg_point_set_pair_from_model   (AdgPoint       *point,
                                                  AdgModel       *model,
                                                  const gchar    *name);
+void            adg_point_unset                 (AdgPoint       *point);
 const AdgPair * adg_point_get_pair              (AdgPoint       *point);
 AdgModel *      adg_point_get_model             (AdgPoint       *point);
 const gchar *   adg_point_get_name              (AdgPoint       *point);

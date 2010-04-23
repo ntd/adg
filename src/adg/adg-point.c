@@ -123,8 +123,7 @@ adg_point_destroy(AdgPoint *point)
 {
     g_return_if_fail(point != NULL);
 
-    adg_point_set_pair_from_model(point, NULL, NULL);
-
+    adg_point_unset(point);
     g_free(point);
 }
 
@@ -133,9 +132,10 @@ adg_point_destroy(AdgPoint *point)
  * @point: an #AdgPoint
  * @src: the source point to copy
  *
- * Copies @src into @point. If @point was linked to a named pair, the
- * reference to the old model is dropped. Similary, if @src is linked
- * to a model, a new reference to this new model is added.
+ * Copies @src into @point. If the old content of @point was linked
+ * to the named pair of a model, the reference to that model is
+ * dropped. Similary, if @src is a named pair, a new reference to
+ * the new model is added.
  **/
 void
 adg_point_copy(AdgPoint *point, const AdgPoint *src)
@@ -145,6 +145,7 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
 
     if (src->model != NULL)
         g_object_ref(src->model);
+
     if (point->model != NULL)
         g_object_unref(point->model);
 
@@ -153,44 +154,6 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
 
     memcpy(point, src, sizeof(AdgPoint));
     point->name = g_strdup(src->name);
-}
-
-/**
- * adg_point_set:
- * @p_point: a pointer to an #AdgPoint
- * @new_point: the new point to assign
- *
- * Convenient method to assign @new_point to the #AdgPoint pointed
- * by @p_point. This is useful while implementing #AdgPoint
- * property setters.
- *
- * At the end *@p_point will be set to @new_point, allocating a new
- * #AdgPoint or destroying the previous one when necessary. It is
- * allowed to use %NULL as @new_point to unset *@p_point.
- *
- * Returns: %TRUE if the pointer pointed by @p_point has been changed,
- *          %FALSE otherwise
- **/
-gboolean
-adg_point_set(AdgPoint **p_point, const AdgPoint *new_point)
-{
-    g_return_val_if_fail(p_point != NULL, FALSE);
-
-    if ((*p_point == new_point) ||
-        (*p_point && new_point && adg_point_equal(*p_point, new_point)))
-        return FALSE;
-
-    if (*p_point == NULL)
-        *p_point = adg_point_new();
-
-    if (new_point) {
-        adg_point_copy(*p_point, new_point);
-    } else {
-        adg_point_destroy(*p_point);
-        *p_point = NULL;
-    }
-
-    return TRUE;
 }
 
 /**
@@ -225,9 +188,7 @@ adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
 {
     g_return_if_fail(point != NULL);
 
-    /* Unlink the named pair dependency, if any */
-    adg_point_set_pair_from_model(point, NULL, NULL);
-
+    adg_point_unset(point);
     point->pair.x = x;
     point->pair.y = y;
     point->is_uptodate = TRUE;
@@ -240,48 +201,61 @@ adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
  * @name: the id of a named pair in @model
  *
  * Links the @name named pair of @model to @point, so any subsequent
- * call to adg_point_update() will read the named pair content. A
- * new reference is added to @model while the previous model (if any)
+ * call to adg_point_get_pair() will return the named pair value.
+ * A new reference is added to @model while the previous model (if any)
  * is unreferenced.
- *
- * It is allowed to use %NULL as @model, in which case the possible
- * link between @point and the named pair is dropped.
  **/
 void
 adg_point_set_pair_from_model(AdgPoint *point,
                               AdgModel *model, const gchar *name)
 {
     g_return_if_fail(point != NULL);
-    g_return_if_fail(model == NULL || name != NULL);
+    g_return_if_fail(ADG_IS_MODEL(model));
+    g_return_if_fail(name != NULL);
 
-    /* Check if unlinking a yet unlinked point */
-    if (model == NULL && point->model == NULL)
+    /* Return if the new named pair is the same of the old one */
+    if (model == point->model && strcmp(point->name, name) == 0)
         return;
 
-    /* Return if the named pair is not changed */
-    if (model == point->model &&
-        (model == NULL || strcmp(point->name, name) == 0)) {
-        return;
-    }
+    g_object_ref(model);
 
-    if (model != NULL)
-        g_object_ref(model);
-
-    if (point->model != NULL) {
+    if (point->model) {
         /* Remove the old named pair */
         g_object_unref(point->model);
         g_free(point->name);
-        point->model = NULL;
-        point->name = NULL;
     }
 
+    /* Set the new named pair */
     point->is_uptodate = FALSE;
+    point->model = model;
+    point->name = g_strdup(name);
+}
 
-    if (model != NULL) {
-        /* Set the new named pair */
-        point->model = model;
-        point->name = g_strdup(name);
+/**
+ * adg_point_unset:
+ * @point: a pointer to an #AdgPoint
+ *
+ * Unsets @point by resetting the internal "is_updated" flag.
+ * This also means @point is unlinked from the model if it is
+ * a named pair. In any cases, after this call the content of
+ * @point is undefined, that is calling adg_point_get_pair()
+ * raises an error.
+ **/
+void
+adg_point_unset(AdgPoint *point)
+{
+    g_return_if_fail(point != NULL);
+
+    if (point->model) {
+        /* Remove the old named pair */
+        g_object_unref(point->model);
+        g_free(point->name);
     }
+
+    /* Set the new named pair */
+    point->is_uptodate = FALSE;
+    point->model = NULL;
+    point->name = NULL;
 }
 
 /**
@@ -321,6 +295,7 @@ adg_point_get_pair(AdgPoint *point)
         }
 
         cpml_pair_copy(&point->pair, pair);
+        point->is_uptodate = TRUE;
     }
 
     return (AdgPair *) point;
@@ -373,7 +348,7 @@ adg_point_invalidate(AdgPoint *point)
 {
     g_return_if_fail(point != NULL);
 
-    if (point->model != NULL)
+    if (point->model)
         point->is_uptodate = FALSE;
 }
 
@@ -391,13 +366,18 @@ adg_point_invalidate(AdgPoint *point)
  * adg_pair_equal(adg_point_get_pair(point1), adg_point_get_pair(point2));
  * ]|
  *
+ * %NULL values are handled gracefully.
+ *
  * Returns: %TRUE if @point1 is equal to @point2, %FALSE otherwise
  **/
 gboolean
 adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)
 {
-    g_return_val_if_fail(point1 != NULL, FALSE);
-    g_return_val_if_fail(point2 != NULL, FALSE);
+    if (point1 == point2)
+        return TRUE;
+
+    if (point1 == NULL || point2 == NULL)
+        return FALSE;
 
     /* Check if the points are not bound to the same model
      * or if only one of the two points is explicit */
