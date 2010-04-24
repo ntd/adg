@@ -83,7 +83,7 @@ static void             local_changed           (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
 static gboolean         set_trail               (AdgMarker      *marker,
                                                  AdgTrail       *trail);
-static void             unset_trail             (AdgMarker      *marker);
+static void             _adg_unset_trail        (AdgMarker      *marker);
 static gboolean         set_n_segment           (AdgMarker      *marker,
                                                  guint           n_segment);
 static gboolean         set_segment             (AdgMarker      *marker,
@@ -338,11 +338,13 @@ adg_marker_get_n_segment(AdgMarker *marker)
  * @trail: the #AdgTrail
  * @n_segment: a segment index
  *
- * Sets a new segment where the marker should be applied at once. The weak
- * reference to the old trail (if an old trail was present) is dropped
- * while a new weak reference is added to @trail. If @trail is destroyed,
- * the weak reference callback will automatically unset #AdgMarker:trail
- * and will set #AdgMarker:n-segment to %0.
+ * Sets a new segment where the marker should be applied at once.
+ * A dependency between @trail and @marker is added, so when @trail
+ * changes @marker is invalidated.
+ *
+ * A callback is added to #AdgTrail::remove-dependency so manually
+ * removing the dependency (such as when @trail is destroyed) will
+ * unlink @marker from it.
  **/
 void
 adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
@@ -659,9 +661,19 @@ set_trail(AdgMarker *marker, AdgTrail *trail)
 }
 
 static void
-unset_trail(AdgMarker *marker)
+_adg_unset_trail(AdgMarker *marker)
 {
-    set_segment(marker, NULL, 0);
+    AdgMarkerPrivate *data = marker->data;
+
+    if (data->trail && data->backup_segment) {
+        /* Restore the original segment in the old trail */
+        adg_segment_deep_copy(&data->segment, data->backup_segment);
+        g_free(data->backup_segment);
+        data->backup_segment = NULL;
+    }
+
+    data->trail = NULL;
+    data->n_segment = 0;
 }
 
 static gboolean
@@ -675,13 +687,15 @@ static gboolean
 set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 {
     AdgMarkerPrivate *data;
-    AdgEntity *entity;
     AdgSegment segment = { 0 };
 
     g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
 
+    /* Segment validation, but only if n_segment is specified */
+    if (trail && n_segment > 0 && !adg_trail_put_segment(trail, n_segment, &segment))
+        return FALSE;
+
     data = marker->data;
-    entity = (AdgEntity *) marker;
 
     /* Do not try to cache results! Although @trail and @n_segment
      * could be the same, the internal CpmlSegment could change.
@@ -698,32 +712,22 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
      * http://dev.entidi.com/p/adg/issues/33/
      */
 
-    if (trail) {
-        /* Validate the new segment, but only if n_segment is specified */
-        if (n_segment > 0 && !adg_trail_put_segment(trail, n_segment, &segment))
-            return FALSE;
+    if (trail != data->trail) {
+        AdgEntity *entity = (AdgEntity *) marker;
 
-        g_object_weak_ref((GObject *) trail,
-                          (GWeakNotify) unset_trail, marker);
-        adg_model_add_dependency((AdgModel *) trail, entity);
-    }
+        if (data->trail)
+            adg_model_remove_dependency((AdgModel *) data->trail, entity);
 
-    if (data->trail != NULL) {
-        /* Disconnect the old trail */
-        if (data->backup_segment != NULL) {
-            /* Restore the original segment in the old trail */
-            adg_segment_deep_copy(&data->segment, data->backup_segment);
-            g_free(data->backup_segment);
-            data->backup_segment = NULL;
+        data->trail = trail;
+
+        if (trail) {
+            adg_model_add_dependency((AdgModel *) trail, entity);
+            g_signal_connect_swapped(trail, "remove-dependency",
+                                     G_CALLBACK(_adg_unset_trail), marker);
         }
-
-        g_object_weak_unref((GObject *) data->trail,
-                            (GWeakNotify) unset_trail, marker);
-        adg_model_remove_dependency((AdgModel *) data->trail, entity);
     }
 
     cpml_segment_copy(&data->segment, &segment);
-    data->trail = trail;
     data->n_segment = n_segment;
 
     return TRUE;
@@ -773,15 +777,16 @@ set_model(AdgMarker *marker, AdgModel *model)
     if (model == data->model)
         return FALSE;
 
+    if (model)
+        g_object_ref((GObject *) model);
+
     if (data->model != NULL)
         g_object_unref((GObject *) data->model);
 
     data->model = model;
 
-    if (data->model != NULL) {
-        g_object_ref((GObject *) data->model);
+    if (model)
         adg_entity_local_changed((AdgEntity *) marker);
-    }
 
     return TRUE;
 }
