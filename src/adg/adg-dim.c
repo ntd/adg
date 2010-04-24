@@ -1047,15 +1047,17 @@ _adg_invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
+    if (data->quote.entity)
+        adg_entity_invalidate((AdgEntity *) data->quote.entity);
+    if (data->ref1)
+        adg_point_invalidate(data->ref1);
+    if (data->ref2)
+        adg_point_invalidate(data->ref2);
+    if (data->pos)
+        adg_point_invalidate(data->pos);
+
     if (PARENT_ENTITY_CLASS->invalidate)
         PARENT_ENTITY_CLASS->invalidate(entity);
-
-    if (data->quote.entity != NULL)
-        adg_entity_invalidate((AdgEntity *) data->quote.entity);
-
-    adg_point_invalidate(data->ref1);
-    adg_point_invalidate(data->ref2);
-    adg_point_invalidate(data->pos);
 }
 
 static void
