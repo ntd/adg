@@ -215,18 +215,18 @@ _adg_dispose(GObject *object)
     entity = (AdgEntity *) object;
     data = ((AdgDim *) object)->data;
 
-    if (data->quote.entity != NULL) {
+    if (data->quote.entity) {
         g_object_unref(data->quote.entity);
         data->quote.entity = NULL;
     }
 
-    if (data->ref1 != NULL)
+    if (data->ref1)
         data->ref1 = adg_entity_point(entity, data->ref1, NULL);
 
-    if (data->ref2 != NULL)
+    if (data->ref2)
         data->ref2 = adg_entity_point(entity, data->ref2, NULL);
 
-    if (data->pos != NULL)
+    if (data->pos)
         data->pos = adg_entity_point(entity, data->pos, NULL);
 
     if (PARENT_OBJECT_CLASS->dispose)
@@ -1026,7 +1026,7 @@ _adg_global_changed(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
-    if (data->quote.entity != NULL)
+    if (data->quote.entity)
         adg_entity_global_changed((AdgEntity *) data->quote.entity);
 }
 
@@ -1038,7 +1038,7 @@ _adg_local_changed(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->local_changed)
         PARENT_ENTITY_CLASS->local_changed(entity);
 
-    if (data->quote.entity != NULL)
+    if (data->quote.entity)
         adg_entity_local_changed((AdgEntity *) data->quote.entity);
 }
 
@@ -1047,6 +1047,10 @@ _adg_invalidate(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
+    if (data->quote.value) {
+        g_object_unref(data->quote.value);
+        data->quote.value = NULL;
+    }
     if (data->quote.entity)
         adg_entity_invalidate((AdgEntity *) data->quote.entity);
     if (data->ref1)
@@ -1112,7 +1116,7 @@ _adg_arrange(AdgEntity *entity)
         }
     }
 
-    if (data->quote.min == NULL && data->min != NULL) {
+    if (data->quote.min == NULL && data->min) {
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
         data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
@@ -1123,7 +1127,7 @@ _adg_arrange(AdgEntity *entity)
         adg_toy_text_set_label(data->quote.min, data->min);
     }
 
-    if (data->quote.max == NULL && data->max != NULL) {
+    if (data->quote.max == NULL && data->max) {
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
         data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
@@ -1147,7 +1151,7 @@ _adg_arrange(AdgEntity *entity)
     adg_entity_arrange(value_entity);
 
     /* Limit values (min and max) */
-    if (min_entity != NULL || max_entity != NULL) {
+    if (min_entity || max_entity) {
         const CpmlExtents *extents;
         const AdgPair *limits_shift;
         AdgMatrix unglobal;
@@ -1162,7 +1166,7 @@ _adg_arrange(AdgEntity *entity)
         cairo_matrix_invert(&unglobal);
         cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
 
-        if (min_entity != NULL) {
+        if (min_entity) {
             AdgPair offset;
 
             adg_entity_set_global_map(min_entity, &map);
@@ -1177,7 +1181,7 @@ _adg_arrange(AdgEntity *entity)
             map.y0 += offset.y;
         }
 
-        if (max_entity != NULL) {
+        if (max_entity) {
             adg_entity_set_global_map(max_entity, &map);
             adg_entity_arrange(max_entity);
         }
@@ -1254,7 +1258,7 @@ _adg_set_value(AdgDim *dim, const gchar *value)
     g_free(data->value);
     data->value = g_strdup(value);
 
-    if (data->quote.value != NULL) {
+    if (data->quote.value) {
         g_object_unref(data->quote.value);
         data->quote.value = NULL;
     }
@@ -1273,7 +1277,7 @@ _adg_set_min(AdgDim *dim, const gchar *min)
     g_free(data->min);
     data->min = g_strdup(min);
 
-    if (data->quote.min != NULL) {
+    if (data->quote.min) {
         g_object_unref(data->quote.min);
         data->quote.min = NULL;
     }
@@ -1292,7 +1296,7 @@ _adg_set_max(AdgDim *dim, const gchar *max)
     g_free(data->max);
     data->max = g_strdup(max);
 
-    if (data->quote.max != NULL) {
+    if (data->quote.max) {
         g_object_unref(data->quote.max);
         data->quote.max = NULL;
     }
