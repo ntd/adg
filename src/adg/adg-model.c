@@ -247,8 +247,8 @@ dispose(GObject *object)
     data = model->data;
 
     /* Remove all the dependencies from the model: this will emit
-     * a "remove" signal for every dependency and will drop all the
-     * references from those entities to this model */
+     * a "remove-dependency" signal for every dependency, dropping
+     * all references from those entities to this model */
     while (data->dependencies != NULL) {
         entity = (AdgEntity *) data->dependencies->data;
         adg_model_remove_dependency(model, entity);
@@ -545,8 +545,9 @@ remove_dependency(AdgModel *model, AdgEntity *entity)
     node = g_slist_find(data->dependencies, entity);
 
     if (node == NULL) {
-        g_warning("%s: attempting to remove an entity with type %s "
-                  "from a model of type %s, but the entity is not present.",
+        g_warning("%s: attempting to remove the dependency on an entity "
+                  "with type %s from a model of type %s, but the entity "
+                  "is yet not present",
                   G_STRLOC,
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(model)));
