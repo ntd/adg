@@ -25,6 +25,12 @@
  * The #AdgContainer is an entity that can contains more sub-entities.
  * Moreover, it can apply a common transformation to local and/or global
  * maps: see http://adg.entidi.com/tutorial/view/3 for further details.
+ *
+ * Adding an entity to a container will make a circular dependency
+ * between the two objects. The container will also add a weak reference
+ * to the child entity to intercept when the entity is manually
+ * destroyed (usually by calling g_object_unref()) and remove the child
+ * reference from the internal children list.
  **/
 
 /**
@@ -42,6 +48,8 @@
 #define _ADG_PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
 #define _ADG_PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
 
+
+G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -65,7 +73,7 @@ static void             _adg_local_changed      (AdgEntity      *entity);
 static void             _adg_invalidate         (AdgEntity      *entity);
 static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_add_extents        (AdgEntity      *entity,
-                                                 CpmlExtents    *container_extents);
+                                                 CpmlExtents    *extents);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static GSList *         _adg_children           (AdgContainer   *container);
@@ -73,11 +81,10 @@ static void             _adg_add                (AdgContainer   *container,
                                                  AdgEntity      *entity);
 static void             _adg_remove             (AdgContainer   *container,
                                                  AdgEntity      *entity);
+static void             _adg_remove_from_list   (gpointer        container,
+                                                 GObject        *entity);
 
-static guint _adg_signals[LAST_SIGNAL] = { 0 };
-
-
-G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY);
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
@@ -367,7 +374,7 @@ adg_container_propagate_by_name(AdgContainer *container,
 
     if (!g_signal_parse_name(detailed_signal, G_TYPE_FROM_INSTANCE(container),
                              &signal_id, &detail, FALSE)) {
-        g_warning("%s: signal `%s' is invalid for instance `%p'",
+        g_warning(_("%s: signal `%s' is invalid for instance `%p'"),
                   G_STRLOC, detailed_signal, container);
         return;
     }
@@ -448,9 +455,9 @@ _adg_arrange(AdgEntity *entity)
 }
 
 static void
-_adg_add_extents(AdgEntity *entity, CpmlExtents *container_extents)
+_adg_add_extents(AdgEntity *entity, CpmlExtents *extents)
 {
-    cpml_extents_add(container_extents, adg_entity_get_extents(entity));
+    cpml_extents_add(extents, adg_entity_get_extents(entity));
 }
 
 static void
@@ -477,9 +484,9 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
 
     old_parent = adg_entity_get_parent(entity);
     if (old_parent != NULL) {
-        g_warning("Attempting to add an entity with type %s to a container "
-                  "of type %s, but the entity is already inside a container "
-                  "of type %s.",
+        g_warning(_("Attempting to add an entity with type %s to a container "
+                    "of type %s, but the entity is already inside a container "
+                    "of type %s."),
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(container)),
                   g_type_name(G_OBJECT_TYPE(old_parent)));
@@ -491,6 +498,14 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
 
     g_object_ref_sink(entity);
     adg_entity_set_parent(entity, (AdgEntity *) container);
+    g_object_weak_ref((GObject *) entity, _adg_remove_from_list, container);
+}
+
+static void
+_adg_remove_from_list(gpointer container, GObject *entity)
+{
+    AdgContainerPrivate *data = ((AdgContainer *) container)->data;
+    data->children = g_slist_remove(data->children, entity);
 }
 
 static void
@@ -503,13 +518,14 @@ _adg_remove(AdgContainer *container, AdgEntity *entity)
     node = g_slist_find(data->children, entity);
 
     if (node == NULL) {
-        g_warning("Attempting to remove an entity with type %s from a "
-                  "container of type %s, but the entity is not present.",
+        g_warning(_("Attempting to remove an entity with type %s from a "
+                    "container of type %s, but the entity is not present"),
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(container)));
         return;
     }
 
+    g_object_weak_unref((GObject *) entity, _adg_remove_from_list, container);
     data->children = g_slist_delete_link(data->children, node);
     adg_entity_set_parent(entity, NULL);
     g_object_unref(entity);

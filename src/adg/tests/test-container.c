@@ -22,7 +22,7 @@
 
 
 static void
-_adg_container_child(void)
+_adg_property_child(void)
 {
     AdgContainer *container;
     AdgEntity *valid_entity, *invalid_entity;
@@ -83,13 +83,53 @@ _adg_container_child(void)
     g_object_unref(valid_entity);
 }
 
+static void
+_adg_misc(void)
+{
+    AdgContainer *container;
+    AdgEntity *entity1, *entity2;
+    GSList *children;
+
+    container = adg_container_new();
+    entity1 = ADG_ENTITY(adg_toy_text_new("Testing..."));
+    entity2 = ADG_ENTITY(adg_title_block_new());
+
+    children = adg_container_children(container);
+    g_assert(children == NULL);
+
+    adg_container_add(container, entity1);
+    children = adg_container_children(container);
+    g_assert(children != NULL);
+    g_assert_cmpint(g_slist_length(children), ==, 1);
+    g_slist_free(children);
+
+    adg_container_add(container, entity2);
+    children = adg_container_children(container);
+    g_assert(children != NULL);
+    g_assert_cmpint(g_slist_length(children), ==, 2);
+    g_slist_free(children);
+
+    g_object_unref(entity1);
+    children = adg_container_children(container);
+    g_assert(children != NULL);
+    g_assert_cmpint(g_slist_length(children), ==, 1);
+    g_slist_free(children);
+
+    g_object_unref(entity2);
+    children = adg_container_children(container);
+    g_assert(children == NULL);
+
+    g_object_unref(container);
+}
+
 
 int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/container/child", _adg_container_child);
+    adg_test_add_func("/adg/container/property/child", _adg_property_child);
+    adg_test_add_func("/adg/container/misc", _adg_misc);
 
     return g_test_run();
 }
