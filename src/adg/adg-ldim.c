@@ -69,7 +69,7 @@ static void             arrange                 (AdgEntity      *entity);
 static void             render                  (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          default_value           (AdgDim         *dim);
-static gboolean         _adg_set_direction           (AdgLDim        *ldim,
+static gboolean         _adg_set_direction      (AdgLDim        *ldim,
                                                  gdouble         direction);
 static void             update_geometry         (AdgLDim        *ldim);
 static void             update_shift            (AdgLDim        *ldim);
@@ -474,10 +474,10 @@ _adg_global_changed(AdgEntity *entity)
     if (PARENT_ENTITY_CLASS->global_changed)
         PARENT_ENTITY_CLASS->global_changed(entity);
 
-    if (data->marker1 != NULL)
+    if (data->marker1)
         adg_entity_global_changed((AdgEntity *) data->marker1);
 
-    if (data->marker2 != NULL)
+    if (data->marker2)
         adg_entity_global_changed((AdgEntity *) data->marker2);
 }
 
@@ -620,7 +620,7 @@ arrange(AdgEntity *entity)
     extents.is_defined = FALSE;
 
     /* Add the quote */
-    if (quote != NULL) {
+    if (quote) {
         AdgEntity *quote_entity;
         gdouble angle;
         AdgPair middle, factor;
@@ -737,7 +737,7 @@ arrange(AdgEntity *entity)
         cpml_extents_add(&extents, &trail_extents);
     }
 
-    if (data->marker1 != NULL) {
+    if (data->marker1) {
         AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
         adg_marker_set_segment(data->marker1, data->trail, to_outside ? 2 : 1);
         adg_entity_local_changed(marker1_entity);
@@ -745,7 +745,7 @@ arrange(AdgEntity *entity)
         cpml_extents_add(&extents, adg_entity_get_extents(marker1_entity));
     }
 
-    if (data->marker2 != NULL) {
+    if (data->marker2) {
         AdgEntity *marker2_entity = (AdgEntity *) data->marker2;
         adg_marker_set_segment(data->marker2, data->trail, to_outside ? 3 : 1);
         adg_entity_local_changed(marker2_entity);
@@ -773,10 +773,10 @@ render(AdgEntity *entity, cairo_t *cr)
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
 
-    if (data->marker1 != NULL)
+    if (data->marker1)
         adg_entity_render((AdgEntity *) data->marker1, cr);
 
-    if (data->marker2 != NULL)
+    if (data->marker2)
         adg_entity_render((AdgEntity *) data->marker2, cr);
 
     adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
@@ -999,7 +999,7 @@ unset_trail(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->trail != NULL)
+    if (data->trail)
         adg_model_clear((AdgModel *) data->trail);
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
@@ -1010,17 +1010,17 @@ dispose_markers(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->trail != NULL) {
+    if (data->trail) {
         g_object_unref(data->trail);
         data->trail = NULL;
     }
 
-    if (data->marker1 != NULL) {
+    if (data->marker1) {
         g_object_unref(data->marker1);
         data->marker1 = NULL;
     }
 
-    if (data->marker2 != NULL) {
+    if (data->marker2) {
         g_object_unref(data->marker2);
         data->marker2 = NULL;
     }
