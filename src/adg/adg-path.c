@@ -76,7 +76,6 @@ static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
 static CpmlPath *       read_cpml_path          (AdgPath        *path);
 static void             append_primitive        (AdgPath        *path,
                                                  AdgPrimitive   *primitive);
-static gint             needed_pairs            (CpmlPrimitiveType type);
 static void             clear_operation         (AdgPath        *path);
 static gboolean         append_operation        (AdgPath        *path,
                                                  AdgAction       action,
@@ -318,7 +317,14 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     g_return_if_fail(ADG_IS_PATH(path));
 
     data = path->data;
-    length = needed_pairs(type);
+
+    if (type == CPML_CLOSE)
+        length = 1;
+    else if (type == CPML_MOVE)
+        length = 2;
+    else
+        length = cpml_primitive_type_get_n_points(type);
+
     if (length == 0)
         return;
 
@@ -922,27 +928,6 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
 
     /* Invalidate cairo_path: should be recomputed */
     clear_parent((AdgModel *) path);
-}
-
-static gint
-needed_pairs(CpmlPrimitiveType type)
-{
-    switch (type) {
-    case CPML_CLOSE:
-        return 1;
-    case CPML_MOVE:
-        return 2;
-    case CPML_LINE:
-        return 2;
-    case CPML_ARC:
-        return 3;
-    case CPML_CURVE:
-        return 4;
-    default:
-        g_return_val_if_reached(0);
-    }
-
-    return 0;
 }
 
 static void
