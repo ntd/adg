@@ -222,7 +222,7 @@ _adg_dispose(GObject *object)
 {
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) object)->data;
 
-    if (data->canvas != NULL) {
+    if (data->canvas) {
         g_object_unref(data->canvas);
         data->canvas = NULL;
     }
@@ -707,8 +707,8 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
 
-    if (canvas != NULL) {
-        cairo_t *cr = gdk_cairo_create(gtk_widget_get_window(widget));
+    if (canvas && event->window) {
+        cairo_t *cr = gdk_cairo_create(event->window);
         adg_entity_render((AdgEntity *) canvas, cr);
         cairo_destroy(cr);
     }
@@ -830,6 +830,6 @@ _adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
 
-    if (canvas != NULL)
+    if (canvas)
         adg_entity_set_local_map((AdgEntity *) canvas, map);
 }
