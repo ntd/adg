@@ -11,17 +11,18 @@
 
 <para>The build system has done a huge step toward portability: the
 requirements are less restrictive and the overall implementation
-is cleaner and quite well defined.</para>
+is cleaner and well defined.</para>
 
 <para>The API has been exercised by API-Sanity-Autotest that helped to
-discover some problem: check out issue #23 for more details.</para>
+discover some problems: check out issue #23 for details.</para>
 
-<para>A test framework based on glib-2.16 has being added. It is still
+<para>A test framework based on glib-2.16 has been added. It is still
 under development but yet fully working.</para>
 
 <para>The CPML API has been cleaned up by using an internal struct of
 function pointers to delegate the job to the different primitives.
-The public symbols have been reduced from 105 to 70.</para>
+The public symbols of the CPML library have been reduced from 105
+to 70.</para>
 
 </simplesect>
 
