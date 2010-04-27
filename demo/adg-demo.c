@@ -690,20 +690,26 @@ _adg_about_window(GtkBuilder *builder)
 }
 
 /**
- * _adg_keep_upos:
- * @window: the subject #GtkWindow
+ * _adg_window_hide:
+ * @window: a #GtkWindow
  *
- * A one-time signal that set the #GDK_HINT_USER_POS and
- * #GDK_HINT_USER_SIZE flags so the last window position is retained.
+ * A convenient function that hides @window storing the current position
+ * so any subsequent call to gtk_widget_show() will hopefully reopen
+ * the window at this position.
  *
- * It should be connected to the #GtkWindow::show signal of @window.
+ * It is useful to connect this callback to a #GtkDialog::response signal.
  **/
 static void
-_adg_keep_upos(GtkWindow *window)
+_adg_window_hide(GtkWindow *window)
 {
-    gtk_window_set_geometry_hints(window, GTK_WIDGET(window), NULL,
-                                  GDK_HINT_USER_POS | GDK_HINT_USER_SIZE);
-    g_signal_handlers_disconnect_by_func(window, _adg_keep_upos, NULL);
+    gint x, y;
+
+    g_return_if_fail(GTK_IS_WINDOW(window));
+
+    gtk_window_get_position(window, &x, &y);
+    gtk_widget_hide((GtkWidget *) window);
+    gtk_window_set_position(window, GTK_WIN_POS_NONE);
+    gtk_window_move(window, x, y);
 }
 
 static GtkWidget *
@@ -714,12 +720,13 @@ _adg_edit_window(GtkBuilder *builder, AdgPart *part)
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndEdit");
     g_assert(GTK_IS_DIALOG(window));
 
+    gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_MOUSE);
+
     g_signal_connect_swapped(part->apply, "clicked",
                              G_CALLBACK(_adg_part_ui_to_data), part);
     g_signal_connect_swapped(part->reset, "clicked",
                              G_CALLBACK(_adg_part_data_to_ui), part);
-    g_signal_connect(window, "show", G_CALLBACK(_adg_keep_upos), NULL);
-    g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
+    g_signal_connect(window, "response", G_CALLBACK(_adg_window_hide), NULL);
 
     return window;
 }
