@@ -229,7 +229,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     param = g_param_spec_string("number-tag",
                                 P_("Number Tag"),
-                                P_("The tag to substitute inside the basic value pattern"),
+                                P_("The tag to substitute inside the value template string"),
                                 "<>",
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_TAG, param);
@@ -998,7 +998,7 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
  * @dim_style: an #AdgDimStyle object
  * @tag: the new tag
  *
- * Sets a new value in the #AdgDimStyle:number-tag property.
+ * Sets a new tag in the #AdgDimStyle:number-tag property.
  **/
 void
 adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
@@ -1013,9 +1013,12 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
  * adg_dim_style_get_number_tag:
  * @dim_style: an #AdgDimStyle object
  *
- * Gets the number tag to substitute while building the basic value. The
- * returned pointer refers to internally managed text that must not be
- * modified or freed.
+ * Gets the number tag of @dim_style. This tag will be used while
+ * generating the set values of the dimensions bound to this style:
+ * check the #AdgDim:value documentation for further details.
+ *
+ * The returned pointer refers to internally managed text that
+ * must not be modified or freed.
  *
  * Returns: the requested tag
  **/

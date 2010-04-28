@@ -166,7 +166,7 @@ adg_dim_class_init(AdgDimClass *klass)
 
     param = g_param_spec_string("value",
                                 P_("Basic Value"),
-                                P_("The theoretically exact value for this quote: set to NULL to automatically get the default value"),
+                                P_("The template string to be used for generating the set value of the quote"),
                                 NULL,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_VALUE, param);
@@ -837,6 +837,10 @@ adg_dim_get_detached(AdgDim *dim)
  * was never set, an automatic text is calculated using the format
  * specified in the current #AdgDimStyle and getting its value by
  * calling the default_value() virtual method.
+ *
+ * Inside the template string, the "<>" tag (or whatever specified
+ * by the #AdgDimStyle:number-tag property) is substituted with the
+ * string returned by the default_value() virtual method.
  **/
 void
 adg_dim_set_value(AdgDim *dim, const gchar *value)
@@ -1094,26 +1098,31 @@ _adg_arrange(AdgEntity *entity)
     quote_container = (AdgContainer *) data->quote.entity;
 
     if (data->quote.value == NULL) {
-        AdgDress dress = adg_dim_style_get_value_dress(data->dim_style);
+        AdgDimClass *klass;
+        AdgDress dress;
+        const gchar *tag;
+        gchar *value;
+        gchar *text;
+
+        klass = ADG_DIM_GET_CLASS(dim);
+        dress = adg_dim_style_get_value_dress(data->dim_style);
+        tag = adg_dim_style_get_number_tag(data->dim_style);
+        value = klass->default_value ? klass->default_value(dim) : NULL;
 
         data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
                                          "local-method", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
-
         adg_container_add(quote_container, (AdgEntity *) data->quote.value);
 
-        if (data->value) {
-            adg_toy_text_set_label(data->quote.value, data->value);
-        } else {
-            AdgDimClass *klass = ADG_DIM_GET_CLASS(dim);
+        if (data->value)
+            text = adg_string_replace(data->value, tag, value);
+        else
+            text = g_strdup(value);
 
-            if (klass->default_value) {
-                /* Automatically generate the value text */
-                gchar *text = klass->default_value(dim);
-                adg_toy_text_set_label(data->quote.value, text);
-                g_free(text);
-            }
-        }
+        g_free(value);
+
+        adg_toy_text_set_label(data->quote.value, text);
+        g_free(text);
     }
 
     if (data->quote.min == NULL && data->min) {
