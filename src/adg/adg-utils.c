@@ -28,30 +28,6 @@
  **/
 
 /**
- * ADG_DIR_RIGHT:
- *
- * Symbolic constant for the right direction (in radians).
- **/
-
-/**
- * ADG_DIR_DOWN:
- *
- * Symbolic constant for the down direction (in radians).
- **/
-
-/**
- * ADG_DIR_LEFT:
- *
- * Symbolic constant for the left direction (in radians).
- **/
-
-/**
- * ADG_DIR_UP:
- *
- * Symbolic constant for the up direction (in radians).
- **/
-
-/**
  * ADG_FORWARD_DECL:
  * @id: The name of a struct
  *
@@ -88,6 +64,41 @@
  * struct _type {
  * ...
  * };
+ * ]|
+ **/
+
+/**
+ * ADG_DIR_RIGHT:
+ *
+ * Symbolic constant for the right direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_DOWN:
+ *
+ * Symbolic constant for the down direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_LEFT:
+ *
+ * Symbolic constant for the left direction (in radians).
+ **/
+
+/**
+ * ADG_DIR_UP:
+ *
+ * Symbolic constant for the up direction (in radians).
+ **/
+
+/**
+ * ADG_UTF8_DIAMETER:
+ *
+ * String constant that embeds a UTF-8 encoded diameter (U+2300).
+ * It can be used to prefix diameter quotes, such as:
+ *
+ * |[
+ * adg_dim_set_value(dim, ADG_UTF8_DIAMETER "<>");
  * ]|
  **/
 

@@ -29,12 +29,14 @@
 #include <glib-object.h>
 #include <math.h>
 
+#define ADG_FORWARD_DECL(id)    typedef struct _##id id
+
 #define ADG_DIR_RIGHT           0.
 #define ADG_DIR_DOWN            G_PI_2
 #define ADG_DIR_LEFT            G_PI
 #define ADG_DIR_UP              -G_PI_2
 
-#define ADG_FORWARD_DECL(id)    typedef struct _##id id
+#define ADG_UTF8_DIAMETER       "\xE2\x8C\x80"
 
 
 G_BEGIN_DECLS
