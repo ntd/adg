@@ -497,27 +497,30 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adg_dim_set_level(ADG_DIM(adim), 1.5);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
 
-
     /* EAST */
     ldim = adg_ldim_new_full_from_model(model, "D6F", "-D6F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D4F", "-D4F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_level(ADG_DIM(ldim), 3);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D5F", "-D5F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D7F", "-D7F", "East",
                                         ADG_DIR_RIGHT);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
 
@@ -526,22 +529,26 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D1I", "-D1I", "-West",
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "+0.05", "-0.05");
     adg_dim_set_level(ADG_DIM(ldim), 3);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D2I", "-D2I", "-West",
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "DHOLE", "-DHOLE", "-West",
                                         ADG_DIR_LEFT);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
 
