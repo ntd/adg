@@ -49,6 +49,9 @@ gboolean        adg_is_string_empty     (const gchar    *str);
 gboolean        adg_is_enum_value       (int             value,
                                          GType           enum_type);
 gboolean        adg_is_boolean_value    (gboolean        value);
+gchar *         adg_string_replace      (const gchar    *str,
+                                         const gchar    *from,
+                                         const gchar    *to);
 
 G_END_DECLS
 

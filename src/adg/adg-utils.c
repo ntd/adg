@@ -189,3 +189,47 @@ adg_is_boolean_value(gboolean value)
 {
     return value == TRUE || value == FALSE;
 }
+
+/**
+ * adg_string_replace:
+ * @str: the original string
+ * @from: the substring to replace
+ * @to: the replacement string
+ *
+ * Replaces @from with @to inside @str and returns the result as a
+ * newly allocated string.
+ *
+ * @str and @from must be non-null valid C strings while @to can be
+ * %NULL, in which case an empty string ("") will be implied.
+ *
+ * Returns: a newly allocated string to be freed with g_free() or
+ *          %NULL on errors
+ **/
+gchar *
+adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
+{
+    gchar *result;
+    int from_len;
+    gchar *ptr, *old_result;
+
+    g_return_val_if_fail(str != NULL, NULL);
+    g_return_val_if_fail(from != NULL, NULL);
+
+    from_len = strlen(from);
+
+    g_return_val_if_fail(from_len > 0, NULL);
+
+    if (to == NULL)
+        to = "";
+
+    result = g_strdup(str);
+
+    while ((ptr = strstr(result, from)) != NULL) {
+        *ptr = '\0';
+        old_result = result;
+        result = g_strconcat(old_result, to, ptr + from_len, NULL);
+        g_free(old_result);
+    }
+
+    return result;
+}
