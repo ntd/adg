@@ -43,7 +43,23 @@
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)
 
 
+G_DEFINE_TYPE(AdgRDim, adg_rdim, ADG_TYPE_DIM);
+
+enum {
+    PROP_0,
+    PROP_VALUE
+};
+
+
 static void             dispose                 (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
 static void             _adg_global_changed     (AdgEntity      *entity);
 static void             _adg_local_changed      (AdgEntity      *entity);
 static void             invalidate              (AdgEntity      *entity);
@@ -59,15 +75,13 @@ static CpmlPath *       trail_callback          (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
-G_DEFINE_TYPE(AdgRDim, adg_rdim, ADG_TYPE_DIM);
-
-
 static void
 adg_rdim_class_init(AdgRDimClass *klass)
 {
     GObjectClass *gobject_class;
     AdgEntityClass *entity_class;
     AdgDimClass *dim_class;
+    GParamSpec *param, *old_param;
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
@@ -76,6 +90,8 @@ adg_rdim_class_init(AdgRDimClass *klass)
     g_type_class_add_private(klass, sizeof(AdgRDimPrivate));
 
     gobject_class->dispose = dispose;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
     entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = _adg_local_changed;
@@ -84,6 +100,16 @@ adg_rdim_class_init(AdgRDimClass *klass)
     entity_class->render = render;
 
     dim_class->default_value = default_value;
+
+    /* Override #AdgDim:value to prepend "R "
+     * to the default set value template string */
+    old_param = g_object_class_find_property(gobject_class, "value");
+    param = g_param_spec_string(old_param->name,
+                                g_param_spec_get_nick(old_param),
+                                g_param_spec_get_blurb(old_param),
+                                "R <>",
+                                old_param->flags);
+    g_object_class_install_property(gobject_class, PROP_VALUE, param);
 }
 
 static void
@@ -123,6 +149,34 @@ dispose(GObject *object)
 
     if (PARENT_OBJECT_CLASS->dispose)
         PARENT_OBJECT_CLASS->dispose(object);
+}
+
+static void
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
+{
+    switch (prop_id) {
+    case PROP_VALUE:
+        g_value_set_string(value, adg_dim_get_value((AdgDim *) object));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
+{
+    switch (prop_id) {
+    case PROP_VALUE:
+        adg_dim_set_value((AdgDim *) object, g_value_get_string(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
 }
 
 
