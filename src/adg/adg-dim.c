@@ -165,10 +165,10 @@ adg_dim_class_init(AdgDimClass *klass)
     g_object_class_install_property(gobject_class, PROP_DETACHED, param);
 
     param = g_param_spec_string("value",
-                                P_("Basic Value"),
+                                P_("Value Template"),
                                 P_("The template string to be used for generating the set value of the quote"),
                                 NULL,
-                                G_PARAM_READWRITE);
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_VALUE, param);
 
     param = g_param_spec_string("min",
@@ -199,9 +199,13 @@ adg_dim_init(AdgDim *dim)
     data->level = 1;
     data->outside = ADG_THREE_STATE_UNKNOWN;
     data->detached = ADG_THREE_STATE_UNKNOWN;
-    data->value = NULL;
     data->min = NULL;
     data->max = NULL;
+
+#if 0
+    /* These ones are G_PARAM_CONSTRUCT, so initialized by GObject */
+    data->value = NULL
+#endif
 
     dim->data = data;
 }
