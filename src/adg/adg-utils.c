@@ -102,6 +102,18 @@
  * ]|
  **/
 
+/**
+ * ADG_UTF8_DEGREE:
+ *
+ * String constant that embeds a UTF-8 encoded degree symbol (U+00B0).
+ * It is used to suffix by the default implementation of #AdgADim to
+ * suffix the set value, but can be also used manually:
+ *
+ * |[
+ * adg_dim_set_value(dim, "<>" ADG_UTF8_DEGREE);
+ * ]|
+ **/
+
 
 #include "adg-internal.h"
 #include "adg-utils.h"
