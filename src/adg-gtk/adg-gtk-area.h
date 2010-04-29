@@ -64,23 +64,6 @@ AdgCanvas *     adg_gtk_area_get_canvas         (AdgGtkArea     *area);
 void            adg_gtk_area_set_factor         (AdgGtkArea     *area,
                                                  gdouble         factor);
 gdouble         adg_gtk_area_get_factor         (AdgGtkArea     *area);
-void            adg_gtk_area_set_top_padding    (AdgGtkArea     *area,
-                                                 gdouble         value);
-gdouble         adg_gtk_area_get_top_padding    (AdgGtkArea     *area);
-void            adg_gtk_area_set_right_padding  (AdgGtkArea     *area,
-                                                 gdouble         value);
-gdouble         adg_gtk_area_get_right_padding  (AdgGtkArea     *area);
-void            adg_gtk_area_set_bottom_padding (AdgGtkArea     *area,
-                                                 gdouble         value);
-gdouble         adg_gtk_area_get_bottom_padding (AdgGtkArea     *area);
-void            adg_gtk_area_set_left_padding   (AdgGtkArea     *area,
-                                                 gdouble         value);
-gdouble         adg_gtk_area_get_left_padding   (AdgGtkArea     *area);
-void            adg_gtk_area_set_paddings       (AdgGtkArea     *area,
-                                                 gdouble         top,
-                                                 gdouble         right,
-                                                 gdouble         bottom,
-                                                 gdouble         left);
 
 G_END_DECLS
 
