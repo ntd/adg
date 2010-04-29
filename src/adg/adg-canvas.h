@@ -58,12 +58,29 @@ struct _AdgCanvasClass {
 };
 
 
-GType           adg_canvas_get_type            (void) G_GNUC_CONST;
+GType           adg_canvas_get_type             (void) G_GNUC_CONST;
 
-AdgCanvas *     adg_canvas_new                 (void);
-void            adg_canvas_set_background_dress(AdgCanvas       *canvas,
-                                                AdgDress         dress);
-AdgDress        adg_canvas_get_background_dress(AdgCanvas       *canvas);
+AdgCanvas *     adg_canvas_new                  (void);
+void            adg_canvas_set_background_dress (AdgCanvas      *canvas,
+                                                 AdgDress        dress);
+AdgDress        adg_canvas_get_background_dress (AdgCanvas      *canvas);
+void            adg_canvas_set_top_margin       (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_top_margin       (AdgCanvas      *canvas);
+void            adg_canvas_set_right_margin     (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_right_margin     (AdgCanvas      *canvas);
+void            adg_canvas_set_bottom_margin    (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_bottom_margin    (AdgCanvas      *canvas);
+void            adg_canvas_set_left_margin      (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_left_margin      (AdgCanvas      *canvas);
+void            adg_canvas_set_margins          (AdgCanvas      *canvas,
+                                                 gdouble         top,
+                                                 gdouble         right,
+                                                 gdouble         bottom,
+                                                 gdouble         left);
 
 G_END_DECLS
 

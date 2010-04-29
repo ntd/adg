@@ -30,6 +30,7 @@ typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 struct _AdgCanvasPrivate {
     AdgDress    background_dress;
+    gdouble     top_margin, right_margin, bottom_margin, left_margin;
 };
 
 G_END_DECLS
