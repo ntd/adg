@@ -29,10 +29,12 @@ G_BEGIN_DECLS
 typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
 
 struct _AdgGtkAreaPrivate {
-    AdgCanvas   *canvas;
-    gdouble      factor;
+    AdgCanvas    *canvas;
+    gdouble       factor;
 
-    gdouble      x_event, y_event;
+    gdouble       x_event, y_event;
+    GtkAllocation src_allocation;
+    gdouble       src_factor;
 };
 
 G_END_DECLS

@@ -167,6 +167,7 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->x_event = 0;
     data->y_event = 0;
+    data->src_factor = 0;
 
     area->data = data;
 
@@ -371,14 +372,26 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     requisition->height = extents->size.y;
 }
 
+/**
+ * _adg_size_allocate:
+ * @widget: an #AdgGtkArea widget
+ * @allocation: the new allocation struct
+ *
+ * Scales the drawing accordingly to the new allocation. The current
+ * implementation could be probably cleaned up: the actual approach
+ * keeps the top left point in the canvas at a fixed position while
+ * a better alogorithm would keep the point in the canvas at the
+ * center of old widget in the center of the new widget, padding the
+ * canvas as necessary.
+ **/
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
     AdgEntity *entity;
-    const CpmlExtents *extents;
-    AdgPair org, ratio;
+    GtkAllocation *src_allocation;
+    AdgPair ratio;
     gdouble factor;
     AdgMatrix map;
 
@@ -391,32 +404,51 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     if (canvas == NULL)
         return;
 
-    entity = (AdgEntity *) canvas;
-    extents = adg_entity_get_extents(entity);
-
-    if (extents == NULL || !extents->is_defined ||
-        extents->size.x <= 0 || extents->size.y <= 0)
-        return;
-
     /* Check if the allocated space is enough:
      * if not, there is no much we can do... */
-    if (allocation->width <= 0 || allocation->height <= 0)
-        return;
+    g_return_if_fail(allocation->width > 0 && allocation->height > 0);
 
-    ratio.x = allocation->width / extents->size.x;
-    ratio.y = allocation->height / extents->size.y;
-    factor = MIN(ratio.x, ratio.y);
-    org.x = allocation->width - extents->size.x * factor;
-    org.y = allocation->height - extents->size.y * factor;
+    entity = (AdgEntity *) canvas;
+    src_allocation = &data->src_allocation;
 
-    org.x /= 2;
-    org.y /= 2;
-    org.x -= extents->org.x;
-    org.y -= extents->org.y;
+    adg_matrix_copy(&map, adg_entity_get_global_map(entity));
 
-    cairo_matrix_init_scale(&map, factor, factor);
-    cairo_matrix_translate(&map, org.x, org.y);
-    adg_entity_transform_global_map(entity, &map, ADG_TRANSFORM_AFTER);
+    if (data->src_factor <= 0) {
+        /* First allocation */
+        const CpmlExtents *extents = adg_entity_get_extents(entity);
+
+        if (extents == NULL || !extents->is_defined ||
+            extents->size.x <= 0 || extents->size.y <= 0)
+            return;
+
+        ratio.x = (gdouble) allocation->width / extents->size.x;
+        ratio.y = (gdouble) allocation->height / extents->size.y;
+        factor = MIN(ratio.x, ratio.y);
+
+        map.x0 = allocation->width - extents->size.x * factor;
+        map.y0 = allocation->height - extents->size.y * factor;
+        map.x0 /= 2;
+        map.y0 /= 2;
+        map.x0 -= extents->org.x;
+        map.y0 -= extents->org.y;
+
+        *src_allocation = *allocation;
+        src_allocation->x = map.x0;
+        src_allocation->y = map.y0;
+        data->src_factor = factor;
+    } else {
+        /* Scaling with reference to the first allocation */
+        ratio.x = data->src_factor * allocation->width / src_allocation->width;
+        ratio.y = data->src_factor * allocation->height / src_allocation->height;
+
+        factor = MIN(ratio.x, ratio.y);
+
+        map.x0 = src_allocation->x * factor;
+        map.y0 = src_allocation->y * factor;
+    }
+
+    map.xx = map.yy = factor;
+    adg_entity_set_global_map(entity, &map);
 }
 
 static gboolean
