@@ -325,7 +325,8 @@ _adg_dress_line_grid(void)
  * The builtin #AdgDress line type used for rendering the frame
  * of #AdgTable entities, that is the frame around the whole table.
  * The fallback style is a line with a thickness of %2 and a
- * pass-through color dress, rendered without antialiasing.
+ * #ADG_DRESS_COLOR_ANNOTATION color dress, rendered without
+ * antialiasing.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -336,6 +337,7 @@ _adg_dress_line_frame(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                          "color-dress", ADG_DRESS_COLOR_ANNOTATION,
                                           "antialias", CAIRO_ANTIALIAS_NONE,
                                           "width", 2., NULL);
 
