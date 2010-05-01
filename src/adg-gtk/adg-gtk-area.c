@@ -55,8 +55,8 @@
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_gtk_area_parent_class)
-#define PARENT_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
 G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
@@ -82,10 +82,6 @@ static void             _adg_set_property       (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
-static gboolean         _adg_set_canvas         (AdgGtkArea      *area,
-                                                 AdgCanvas       *canvas);
-static gboolean         _adg_set_factor         (AdgGtkArea      *area,
-                                                 gdouble          factor);
 static void             _adg_size_request       (GtkWidget       *widget,
                                                  GtkRequisition  *requisition);
 static void             _adg_size_allocate      (GtkWidget       *widget,
@@ -191,8 +187,8 @@ _adg_dispose(GObject *object)
         data->canvas = NULL;
     }
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -220,16 +216,23 @@ _adg_set_property(GObject *object, guint prop_id,
 {
     AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
+    AdgCanvas *canvas;
 
     area = (AdgGtkArea *) object;
     data = area->data;
 
     switch (prop_id) {
     case PROP_CANVAS:
-        _adg_set_canvas(area, g_value_get_object(value));
+        canvas = g_value_get_object(value);
+        if (canvas)
+            g_object_ref(canvas);
+        if (data->canvas)
+            g_object_unref(data->canvas);
+        data->canvas = canvas;
+        g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
         break;
     case PROP_FACTOR:
-        _adg_set_factor(area, g_value_get_double(value));
+        data->factor = g_value_get_double(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -282,9 +285,7 @@ void
 adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-
-    if (_adg_set_canvas(area, canvas))
-        g_object_notify((GObject *) area, "canvas");
+    g_object_set((GObject *) area, "canvas", canvas, NULL);
 }
 
 /**
@@ -319,9 +320,7 @@ void
 adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-
-    if (_adg_set_factor(area, factor))
-        g_object_notify((GObject *) area, "factor");
+    g_object_set((GObject *) area, "factor", factor, NULL);
 }
 
 /**
@@ -346,46 +345,6 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
     return data->factor;
 }
 
-
-static gboolean
-_adg_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
-{
-    AdgGtkAreaPrivate *data;
-
-    g_return_val_if_fail(canvas == NULL || ADG_IS_CANVAS(canvas), FALSE);
-
-    data = area->data;
-
-    if (data->canvas == canvas)
-        return FALSE;
-
-    if (canvas)
-        g_object_ref(canvas);
-
-    if (data->canvas)
-        g_object_unref(data->canvas);
-
-    data->canvas = canvas;
-    g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
-    return TRUE;
-}
-
-static gboolean
-_adg_set_factor(AdgGtkArea *area, gdouble factor)
-{
-    AdgGtkAreaPrivate *data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(factor >= 1, FALSE);
-
-    data = area->data;
-
-    if (data->factor == factor)
-        return FALSE;
-
-    data->factor = factor;
-    return TRUE;
-}
 
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
@@ -423,8 +382,8 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     gdouble factor;
     AdgMatrix map;
 
-    if (PARENT_WIDGET_CLASS->size_allocate)
-        PARENT_WIDGET_CLASS->size_allocate(widget, allocation);
+    if (_ADG_OLD_WIDGET_CLASS->size_allocate)
+        _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
 
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
@@ -475,10 +434,10 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
         cairo_destroy(cr);
     }
 
-    if (PARENT_WIDGET_CLASS->expose_event == NULL)
+    if (_ADG_OLD_WIDGET_CLASS->expose_event == NULL)
         return FALSE;
 
-    return PARENT_WIDGET_CLASS->expose_event(widget, event);
+    return _ADG_OLD_WIDGET_CLASS->expose_event(widget, event);
 }
 
 static gboolean
@@ -513,10 +472,10 @@ _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
         gtk_widget_queue_draw(widget);
     }
 
-    if (PARENT_WIDGET_CLASS->scroll_event == NULL)
+    if (_ADG_OLD_WIDGET_CLASS->scroll_event == NULL)
         return FALSE;
 
-    return PARENT_WIDGET_CLASS->scroll_event(widget, event);
+    return _ADG_OLD_WIDGET_CLASS->scroll_event(widget, event);
 }
 
 static gboolean
@@ -529,10 +488,10 @@ _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
         data->y_event = event->y;
     }
 
-    if (PARENT_WIDGET_CLASS->button_press_event == NULL)
+    if (_ADG_OLD_WIDGET_CLASS->button_press_event == NULL)
         return FALSE;
 
-    return PARENT_WIDGET_CLASS->button_press_event(widget, event);
+    return _ADG_OLD_WIDGET_CLASS->button_press_event(widget, event);
 }
 
 static gboolean
@@ -560,10 +519,10 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
         gtk_widget_queue_draw(widget);
     }
 
-    if (PARENT_WIDGET_CLASS->motion_notify_event == NULL)
+    if (_ADG_OLD_WIDGET_CLASS->motion_notify_event == NULL)
         return FALSE;
 
-    return PARENT_WIDGET_CLASS->motion_notify_event(widget, event);
+    return _ADG_OLD_WIDGET_CLASS->motion_notify_event(widget, event);
 }
 
 static gboolean
