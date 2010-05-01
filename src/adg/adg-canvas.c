@@ -41,7 +41,8 @@
 #include "adg-dress-builtins.h"
 #include "adg-color-style.h"
 
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
 
 
 G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
@@ -50,6 +51,7 @@ enum {
     PROP_0,
     PROP_BACKGROUND_DRESS,
     PROP_FRAME_DRESS,
+    PROP_TITLE_BLOCK,
     PROP_TOP_MARGIN,
     PROP_RIGHT_MARGIN,
     PROP_BOTTOM_MARGIN,
@@ -62,6 +64,7 @@ enum {
 };
 
 
+static void             _adg_dispose            (GObject        *object);
 static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
@@ -70,6 +73,9 @@ static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
 static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -87,9 +93,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgCanvasPrivate));
 
+    gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
     entity_class->arrange = _adg_arrange;
     entity_class->render = _adg_render;
 
@@ -106,6 +116,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                  ADG_DRESS_LINE_FRAME,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FRAME_DRESS, param);
+
+    param = g_param_spec_object("title-block",
+                                P_("Title Block"),
+                                P_("The title block to assign to this canvas"),
+                                ADG_TYPE_TITLE_BLOCK,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_TITLE_BLOCK, param);
 
     param = g_param_spec_double("top-margin",
                                 P_("Top Margin"),
@@ -180,6 +197,7 @@ adg_canvas_init(AdgCanvas *canvas)
 
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
+    data->title_block = NULL;
     data->top_margin = 15;
     data->right_margin = 15;
     data->bottom_margin = 15;
@@ -194,6 +212,21 @@ adg_canvas_init(AdgCanvas *canvas)
 }
 
 static void
+_adg_dispose(GObject *object)
+{
+    AdgCanvasPrivate *data = ((AdgCanvas *) object)->data;
+
+    if (data->title_block) {
+        g_object_unref(data->title_block);
+        data->title_block = NULL;
+    }
+
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
+}
+
+
+static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
@@ -205,6 +238,9 @@ _adg_get_property(GObject *object, guint prop_id,
         break;
     case PROP_FRAME_DRESS:
         g_value_set_int(value, data->frame_dress);
+        break;
+    case PROP_TITLE_BLOCK:
+        g_value_set_object(value, data->title_block);
         break;
     case PROP_TOP_MARGIN:
         g_value_set_double(value, data->top_margin);
@@ -245,6 +281,7 @@ _adg_set_property(GObject *object, guint prop_id,
 {
     AdgCanvas *canvas;
     AdgCanvasPrivate *data;
+    AdgTitleBlock *title_block;
 
     canvas = (AdgCanvas *) object;
     data = canvas->data;
@@ -255,6 +292,17 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_FRAME_DRESS:
         data->frame_dress = g_value_get_int(value);
+        break;
+    case PROP_TITLE_BLOCK:
+        title_block = g_value_get_object(value);
+        if (title_block) {
+            g_object_ref(title_block);
+            adg_entity_set_parent((AdgEntity *) title_block,
+                                  (AdgEntity *) canvas);
+        }
+        if (data->title_block)
+            g_object_unref(data->title_block);
+        data->title_block = title_block;
         break;
     case PROP_TOP_MARGIN:
         data->top_margin = g_value_get_double(value);
@@ -370,6 +418,51 @@ adg_canvas_get_frame_dress(AdgCanvas *canvas)
 
     data = canvas->data;
     return data->frame_dress;
+}
+
+/**
+ * adg_canvas_set_title_block:
+ * @canvas: an #AdgCanvas
+ * @title_block: a title block
+ *
+ * Sets the #AdgCanvas:title-block property of @canvas to @title_block.
+ *
+ * Although a title block entity could be added to @canvas in the usual
+ * way, that is using the adg_container_add() method, assigning a title
+ * block with adg_canvas_set_title_block() is somewhat different:
+ *
+ * - @title_block will be automatically attached to the bottom right
+ *   corner of to the @canvas frame (this could be accomplished in the
+ *   usual way too, by resetting the right and bottom paddings);
+ * - the @title_block boundary box is not taken into account while
+ *   computing the extents of @canvas.
+ **/
+void
+adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(title_block == NULL || ADG_IS_TITLE_BLOCK(title_block));
+    g_object_set((GObject *) canvas, "title-block", title_block, NULL);
+}
+
+/**
+ * adg_canvas_get_title_block:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the #AdgTitleBlock object of @canvas: check
+ * adg_canvas_set_title_block() for details.
+ *
+ * Returns: the title block object or %NULL
+ **/
+AdgTitleBlock *
+adg_canvas_get_title_block(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
+
+    data = canvas->data;
+    return data->title_block;
 }
 
 /**
@@ -731,26 +824,92 @@ adg_canvas_set_paddings(AdgCanvas *canvas, gdouble top, gdouble right,
 
 
 static void
+_adg_global_changed(AdgEntity *entity)
+{
+    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
+
+    if (data->title_block)
+        adg_entity_global_changed((AdgEntity *) data->title_block);
+}
+
+static void
+_adg_local_changed(AdgEntity *entity)
+{
+    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
+
+    if (data->title_block)
+        adg_entity_local_changed((AdgEntity *) data->title_block);
+}
+
+static void
+_adg_invalidate(AdgEntity *entity)
+{
+    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
+
+    if (data->title_block)
+        adg_entity_invalidate((AdgEntity *) data->title_block);
+}
+
+static void
 _adg_arrange(AdgEntity *entity)
 {
+    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
     CpmlExtents extents;
 
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange)
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
-    if (extents.is_defined) {
-        AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    /* The extents should be defined, otherwise there is no drawing */
+    g_return_if_fail(extents.is_defined);
 
-        extents.org.x -= data->left_margin + data->left_padding;
-        extents.org.y -= data->top_margin + data->top_padding;
-        extents.size.x += data->left_margin + data->left_padding;
-        extents.size.x += data->right_margin + data->right_padding;
-        extents.size.y += data->top_margin + data->top_padding;
-        extents.size.y += data->bottom_margin + data->bottom_padding;
+    extents.org.x -= data->left_margin + data->left_padding;
+    extents.org.y -= data->top_margin + data->top_padding;
+    extents.size.x += data->left_margin + data->left_padding;
+    extents.size.x += data->right_margin + data->right_padding;
+    extents.size.y += data->top_margin + data->top_padding;
+    extents.size.y += data->bottom_margin + data->bottom_padding;
+    adg_entity_set_extents(entity, &extents);
 
-        adg_entity_set_extents(entity, &extents);
+    if (data->title_block) {
+        AdgEntity *title_block_entity;
+        const CpmlExtents *title_block_extents;
+        AdgPair shift;
+
+        title_block_entity = (AdgEntity *) data->title_block;
+        adg_entity_arrange(title_block_entity);
+        title_block_extents = adg_entity_get_extents(title_block_entity);
+
+        shift.x = extents.org.x + extents.size.x - title_block_extents->org.x
+            - title_block_extents->size.x - data->right_margin;
+        shift.y = extents.org.y + extents.size.y - title_block_extents->org.y
+            - title_block_extents->size.y - data->bottom_margin;
+
+        /* The following block could be optimized by skipping tiny shift,
+         * usually left by mathematical roundings */
+        if (shift.x != 0 || shift.y != 0) {
+            AdgMatrix unglobal, map;
+            adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
+            cairo_matrix_invert(&unglobal);
+
+            cairo_matrix_transform_distance(&unglobal, &shift.x, &shift.y);
+            cairo_matrix_init_translate(&map, shift.x, shift.y);
+            adg_entity_transform_global_map(title_block_entity, &map,
+                                            ADG_TRANSFORM_AFTER);
+
+            adg_entity_global_changed(title_block_entity);
+            adg_entity_arrange(title_block_entity);
+        }
     }
 }
 
@@ -791,6 +950,9 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     cairo_restore(cr);
 
-    if (PARENT_ENTITY_CLASS->render)
-        PARENT_ENTITY_CLASS->render(entity, cr);
+    if (data->title_block)
+        adg_entity_render((AdgEntity *) data->title_block, cr);
+
+    if (_ADG_OLD_ENTITY_CLASS->render)
+        _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }

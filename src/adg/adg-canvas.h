@@ -27,6 +27,7 @@
 #define __ADG_CANVAS_H__
 
 #include "adg-container.h"
+#include "adg-title-block.h"
 #include "adg-style.h"
 
 
@@ -67,6 +68,9 @@ AdgDress        adg_canvas_get_background_dress (AdgCanvas      *canvas);
 void            adg_canvas_set_frame_dress      (AdgCanvas      *canvas,
                                                  AdgDress        dress);
 AdgDress        adg_canvas_get_frame_dress      (AdgCanvas      *canvas);
+void            adg_canvas_set_title_block      (AdgCanvas      *canvas,
+                                                 AdgTitleBlock  *title_block);
+AdgTitleBlock * adg_canvas_get_title_block      (AdgCanvas      *canvas);
 void            adg_canvas_set_top_margin       (AdgCanvas      *canvas,
                                                  gdouble         value);
 gdouble         adg_canvas_get_top_margin       (AdgCanvas      *canvas);

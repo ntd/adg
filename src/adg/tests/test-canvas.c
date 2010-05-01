@@ -104,6 +104,58 @@ _adg_test_frame_dress(void)
 }
 
 static void
+_adg_test_title_block(void)
+{
+    AdgCanvas *canvas;
+    AdgTitleBlock *valid_title_block, *invalid_title_block, *title_block;
+
+    canvas = adg_canvas_new();
+    valid_title_block = ADG_TITLE_BLOCK(adg_title_block_new());
+    invalid_title_block = adg_test_invalid_pointer();
+
+    g_object_ref(valid_title_block);
+
+    /* Using the public APIs */
+    adg_canvas_set_title_block(canvas, NULL);
+    title_block = adg_canvas_get_title_block(canvas);
+    g_assert(title_block == NULL);
+
+    adg_canvas_set_title_block(canvas, valid_title_block);
+    title_block = adg_canvas_get_title_block(canvas);
+    g_assert(title_block == valid_title_block);
+
+    adg_canvas_set_title_block(canvas, invalid_title_block);
+    title_block = adg_canvas_get_title_block(canvas);
+    g_assert(title_block == valid_title_block);
+
+    adg_canvas_set_title_block(canvas, NULL);
+    title_block = adg_canvas_get_title_block(canvas);
+    g_assert(title_block == NULL);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "title-block", NULL, NULL);
+    g_object_get(canvas, "title-block", &title_block, NULL);
+    g_assert(title_block == NULL);
+
+    g_object_set(canvas, "title-block", valid_title_block, NULL);
+    g_object_get(canvas, "title-block", &title_block, NULL);
+    g_assert(title_block == valid_title_block);
+    g_object_unref(title_block);
+
+    g_object_set(canvas, "title-block", invalid_title_block, NULL);
+    g_object_get(canvas, "title-block", &title_block, NULL);
+    g_assert(title_block == valid_title_block);
+    g_object_unref(title_block);
+
+    g_object_set(canvas, "title-block", NULL, NULL);
+    g_object_get(canvas, "title-block", &title_block, NULL);
+    g_assert(title_block == NULL);
+
+    g_object_unref(canvas);
+    g_object_unref(valid_title_block);
+}
+
+static void
 _adg_test_top_margin(void)
 {
     AdgCanvas *canvas;
@@ -408,6 +460,8 @@ main(int argc, char *argv[])
                       _adg_test_background_dress);
     adg_test_add_func("/adg/canvas/property/frame-dress",
                       _adg_test_frame_dress);
+    adg_test_add_func("/adg/canvas/property/title-block",
+                      _adg_test_title_block);
     adg_test_add_func("/adg/canvas/property/top-margin",
                       _adg_test_top_margin);
     adg_test_add_func("/adg/canvas/property/right-margin",

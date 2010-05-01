@@ -29,11 +29,12 @@ G_BEGIN_DECLS
 typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 struct _AdgCanvasPrivate {
-    AdgDress    background_dress;
-    AdgDress    frame_dress;
-    gdouble     top_margin, right_margin, bottom_margin, left_margin;
-    gdouble     has_frame;
-    gdouble     top_padding, right_padding, bottom_padding, left_padding;
+    AdgDress       background_dress;
+    AdgDress       frame_dress;
+    AdgTitleBlock *title_block;
+    gdouble        top_margin, right_margin, bottom_margin, left_margin;
+    gboolean       has_frame;
+    gdouble        top_padding, right_padding, bottom_padding, left_padding;
 };
 
 G_END_DECLS
