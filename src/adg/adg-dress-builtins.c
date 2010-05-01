@@ -120,7 +120,7 @@ _adg_dress_color_stroke(void)
  * ADG_DRESS_COLOR_DIMENSION:
  *
  * The builtin #AdgDress color used by default in #AdgDimStyle.
- * The fallback style is a %0.25 blue at %0.5 opacity.
+ * The fallback style is a somewhat full opaque blue.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -131,8 +131,10 @@ _adg_dress_color_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "blue", 0.25,
-                                          "alpha", 0.5, NULL);
+                                          "red", 0.,
+                                          "green", 0.4,
+                                          "blue", 0.6,
+                                          NULL);
 
         dress = adg_dress_new("color-dimension", fallback);
         g_object_unref(fallback);
@@ -146,7 +148,7 @@ _adg_dress_color_dimension(void)
  *
  * The builtin #AdgDress color used for rendering helper entities
  * such as #AdgToyText, #AdgTable and #AdgTitleBlock. The fallback
- * style is a full opaque %0.4 red
+ * style is a full opaque greenish variant.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
  **/
@@ -157,7 +159,10 @@ _adg_dress_color_annotation(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
-                                          "red", 0.4, NULL);
+                                          "red", 0.4,
+                                          "green", 0.4,
+                                          "blue", 0.2,
+                                          NULL);
 
         dress = adg_dress_new("color-annotation", fallback);
         g_object_unref(fallback);
