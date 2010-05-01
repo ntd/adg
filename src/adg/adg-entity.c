@@ -1259,13 +1259,14 @@ real_render(AdgEntity *entity, cairo_t *cr)
 
     if (show_extents) {
         AdgEntityPrivate *data = entity->data;
+        CpmlExtents *extents = &data->extents;
 
-        if (data->extents.is_defined) {
+        if (extents->is_defined) {
             cairo_save(cr);
             cairo_identity_matrix(cr);
             cairo_set_source_rgba(cr, 0.15, 0.15, 0.15, 0.15);
-            cairo_rectangle(cr, data->extents.org.x, data->extents.org.y,
-                            data->extents.size.x, data->extents.size.y);
+            cairo_rectangle(cr, extents->org.x, extents->org.y,
+                            extents->size.x, extents->size.y);
             cairo_fill(cr);
             cairo_restore(cr);
         }
