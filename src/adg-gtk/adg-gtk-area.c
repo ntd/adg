@@ -570,15 +570,18 @@ static gboolean
 _adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
 {
     AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
+    AdgEntity *entity;
 
     data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
-    if (canvas == NULL)
+    entity = (AdgEntity *) data->canvas;
+    if (entity == NULL)
         return FALSE;
 
-    adg_matrix_copy(map, adg_entity_get_local_map((AdgEntity *) canvas));
-    adg_matrix_copy(inverted, map);
+    adg_matrix_copy(map, adg_entity_get_local_map(entity));
+
+    /* The inverted map is subject to the global matrix */
+    adg_matrix_copy(inverted, adg_entity_get_global_matrix(entity));
+    adg_matrix_transform(inverted, map, ADG_TRANSFORM_BEFORE);
 
     return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;
 }
@@ -587,11 +590,11 @@ static void
 _adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
 {
     AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
+    AdgEntity *entity;
 
     data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
+    entity = (AdgEntity *) data->canvas;
 
-    if (canvas)
-        adg_entity_set_local_map((AdgEntity *) canvas, map);
+    if (entity)
+        adg_entity_set_local_map(entity, map);
 }
