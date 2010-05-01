@@ -335,7 +335,6 @@ _adg_part_ui_to_data(AdgPart *part)
     adg_model_clear(ADG_MODEL(part->edges));
     adg_model_changed(ADG_MODEL(part->edges));
 
-    //adg_entity_invalidate(ADG_ENTITY(adg_gtk_area_get_canvas(part->area)));
     gtk_widget_queue_draw(GTK_WIDGET(part->area));
 }
 
@@ -417,10 +416,7 @@ _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
                  "size", "A4",
                  NULL);
 
-    cairo_matrix_init_translate(&map, 300, 150);
-    adg_entity_set_global_map(ADG_ENTITY(title_block), &map);
-
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(title_block));
+    adg_canvas_set_title_block(canvas, title_block);
 }
 
 static void
@@ -702,7 +698,7 @@ _adg_about_window(GtkBuilder *builder)
  *
  * A convenient function that hides @window storing the current position
  * so any subsequent call to gtk_widget_show() will hopefully reopen
- * the window at this position.
+ * the window at the same position.
  *
  * It is useful to connect this callback to a #GtkDialog::response signal.
  **/
