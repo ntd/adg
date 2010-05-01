@@ -33,6 +33,7 @@ struct _AdgCanvasPrivate {
     AdgDress    frame_dress;
     gdouble     top_margin, right_margin, bottom_margin, left_margin;
     gdouble     has_frame;
+    gdouble     top_padding, right_padding, bottom_padding, left_padding;
 };
 
 G_END_DECLS

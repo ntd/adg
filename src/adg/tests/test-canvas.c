@@ -229,17 +229,160 @@ _adg_test_has_frame(void)
     g_object_unref(canvas);
 }
 
+static void
+_adg_test_top_padding(void)
+{
+    AdgCanvas *canvas;
+    gdouble valid_value_1, valid_value_2;
+    gdouble top_padding;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_canvas_set_top_padding(canvas, valid_value_1);
+    top_padding = adg_canvas_get_top_padding(canvas);
+    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+
+    adg_canvas_set_paddings(canvas, valid_value_2, 0, 0, 0);
+    top_padding = adg_canvas_get_top_padding(canvas);
+    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "top-padding", valid_value_1, NULL);
+    g_object_get(canvas, "top-padding", &top_padding, NULL);
+    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+
+    g_object_set(canvas, "top-padding", valid_value_2, NULL);
+    g_object_get(canvas, "top-padding", &top_padding, NULL);
+    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+
+    g_object_unref(canvas);
+}
+
+static void
+_adg_test_right_padding(void)
+{
+    AdgCanvas *canvas;
+    gdouble valid_value_1, valid_value_2;
+    gdouble right_padding;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_canvas_set_right_padding(canvas, valid_value_1);
+    right_padding = adg_canvas_get_right_padding(canvas);
+    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+
+    adg_canvas_set_paddings(canvas, 0, valid_value_2, 0, 0);
+    right_padding = adg_canvas_get_right_padding(canvas);
+    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "right-padding", valid_value_1, NULL);
+    g_object_get(canvas, "right-padding", &right_padding, NULL);
+    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+
+    g_object_set(canvas, "right-padding", valid_value_2, NULL);
+    g_object_get(canvas, "right-padding", &right_padding, NULL);
+    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+
+    g_object_unref(canvas);
+}
+
+static void
+_adg_test_bottom_padding(void)
+{
+    AdgCanvas *canvas;
+    gdouble valid_value_1, valid_value_2;
+    gdouble bottom_padding;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_canvas_set_bottom_padding(canvas, valid_value_1);
+    bottom_padding = adg_canvas_get_bottom_padding(canvas);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+
+    adg_canvas_set_paddings(canvas, 0, 0, valid_value_2, 0);
+    bottom_padding = adg_canvas_get_bottom_padding(canvas);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "bottom-padding", valid_value_1, NULL);
+    g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+
+    g_object_set(canvas, "bottom-padding", valid_value_2, NULL);
+    g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
+    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+
+    g_object_unref(canvas);
+}
+
+static void
+_adg_test_left_padding(void)
+{
+    AdgCanvas *canvas;
+    gdouble valid_value_1, valid_value_2;
+    gdouble left_padding;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    valid_value_1 = 4321;
+    valid_value_2 = 1234;
+
+    /* Using the public APIs */
+    adg_canvas_set_left_padding(canvas, valid_value_1);
+    left_padding = adg_canvas_get_left_padding(canvas);
+    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+
+    adg_canvas_set_paddings(canvas, 0, 0, 0, valid_value_2);
+    left_padding = adg_canvas_get_left_padding(canvas);
+    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "left-padding", valid_value_1, NULL);
+    g_object_get(canvas, "left-padding", &left_padding, NULL);
+    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+
+    g_object_set(canvas, "left-padding", valid_value_2, NULL);
+    g_object_get(canvas, "left-padding", &left_padding, NULL);
+    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+
+    g_object_unref(canvas);
+}
+
+
 int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/canvas/background-dress", _adg_test_background_dress);
-    adg_test_add_func("/adg/canvas/top-margin", _adg_test_top_margin);
-    adg_test_add_func("/adg/canvas/right-margin", _adg_test_right_margin);
-    adg_test_add_func("/adg/canvas/bottom-margin", _adg_test_bottom_margin);
-    adg_test_add_func("/adg/canvas/left-margin", _adg_test_left_margin);
-    adg_test_add_func("/adg/canvas/has-frame", _adg_test_has_frame);
+    adg_test_add_func("/adg/canvas/property/background-dress",
+                      _adg_test_background_dress);
+    adg_test_add_func("/adg/canvas/property/top-margin",
+                      _adg_test_top_margin);
+    adg_test_add_func("/adg/canvas/property/right-margin",
+                      _adg_test_right_margin);
+    adg_test_add_func("/adg/canvas/property/bottom-margin",
+                      _adg_test_bottom_margin);
+    adg_test_add_func("/adg/canvas/property/left-margin",
+                      _adg_test_left_margin);
+    adg_test_add_func("/adg/canvas/property/has-frame",
+                      _adg_test_has_frame);
+    adg_test_add_func("/adg/canvas/property/top-padding",
+                      _adg_test_top_padding);
+    adg_test_add_func("/adg/canvas/property/right-padding",
+                      _adg_test_right_padding);
+    adg_test_add_func("/adg/canvas/property/bottom-padding",
+                      _adg_test_bottom_padding);
+    adg_test_add_func("/adg/canvas/property/left-padding",
+                      _adg_test_left_padding);
 
     return g_test_run();
 }

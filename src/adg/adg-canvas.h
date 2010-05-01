@@ -87,6 +87,23 @@ void            adg_canvas_set_margins          (AdgCanvas      *canvas,
 void            adg_canvas_switch_frame         (AdgCanvas      *canvas,
                                                  gboolean        new_state);
 gboolean        adg_canvas_has_frame            (AdgCanvas      *canvas);
+void            adg_canvas_set_top_padding      (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_top_padding      (AdgCanvas      *canvas);
+void            adg_canvas_set_right_padding    (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_right_padding    (AdgCanvas      *canvas);
+void            adg_canvas_set_bottom_padding   (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_bottom_padding   (AdgCanvas      *canvas);
+void            adg_canvas_set_left_padding     (AdgCanvas      *canvas,
+                                                 gdouble         value);
+gdouble         adg_canvas_get_left_padding     (AdgCanvas      *canvas);
+void            adg_canvas_set_paddings         (AdgCanvas      *canvas,
+                                                 gdouble         top,
+                                                 gdouble         right,
+                                                 gdouble         bottom,
+                                                 gdouble         left);
 
 G_END_DECLS
 

@@ -54,7 +54,11 @@ enum {
     PROP_RIGHT_MARGIN,
     PROP_BOTTOM_MARGIN,
     PROP_LEFT_MARGIN,
-    PROP_HAS_FRAME
+    PROP_HAS_FRAME,
+    PROP_TOP_PADDING,
+    PROP_RIGHT_PADDING,
+    PROP_BOTTOM_PADDING,
+    PROP_LEFT_PADDING
 };
 
 
@@ -105,28 +109,28 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 
     param = g_param_spec_double("top-margin",
                                 P_("Top Margin"),
-                                P_("The margin (in identity space) to leave empty above the drawing"),
+                                P_("The margin (in identity space) to leave above the frame"),
                                 G_MINDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOP_MARGIN, param);
 
     param = g_param_spec_double("right-margin",
                                 P_("Right Margin"),
-                                P_("The margin (in identity space) to leave empty at the right of the drawing"),
+                                P_("The margin (in identity space) to leave empty at the right of the frame"),
                                 G_MINDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RIGHT_MARGIN, param);
 
     param = g_param_spec_double("bottom-margin",
                                 P_("Bottom Margin"),
-                                P_("The margin (in identity space) to leave empty below the drawing"),
+                                P_("The margin (in identity space) to leave empty below the frame"),
                                 G_MINDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BOTTOM_MARGIN, param);
 
     param = g_param_spec_double("left-margin",
                                 P_("Left Margin"),
-                                P_("The margin (in identity space) to leave empty at the left of the drawing"),
+                                P_("The margin (in identity space) to leave empty at the left of the frame"),
                                 G_MINDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_MARGIN, param);
@@ -137,6 +141,34 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                  TRUE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_HAS_FRAME, param);
+
+    param = g_param_spec_double("top-padding",
+                                P_("Top Padding"),
+                                P_("The padding (in identity space) to leave empty above between the drawing and the frame"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_TOP_PADDING, param);
+
+    param = g_param_spec_double("right-padding",
+                                P_("Right Padding"),
+                                P_("The padding (in identity space) to leave empty at the right between the drawing and the frame"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_RIGHT_PADDING, param);
+
+    param = g_param_spec_double("bottom-padding",
+                                P_("Bottom Padding"),
+                                P_("The padding (in identity space) to leave empty below between the drawing and the frame"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_BOTTOM_PADDING, param);
+
+    param = g_param_spec_double("left-padding",
+                                P_("Left Padding"),
+                                P_("The padding (in identity space) to leave empty at the left between the drawing and the frame"),
+                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_LEFT_PADDING, param);
 }
 
 static void
@@ -153,6 +185,10 @@ adg_canvas_init(AdgCanvas *canvas)
     data->bottom_margin = 15;
     data->left_margin = 15;
     data->has_frame = TRUE;
+    data->top_padding = 15;
+    data->right_padding = 15;
+    data->bottom_padding = 15;
+    data->left_padding = 15;
 
     canvas->data = data;
 }
@@ -184,6 +220,18 @@ _adg_get_property(GObject *object, guint prop_id,
         break;
     case PROP_HAS_FRAME:
         g_value_set_boolean(value, data->has_frame);
+        break;
+    case PROP_TOP_PADDING:
+        g_value_set_double(value, data->top_padding);
+        break;
+    case PROP_RIGHT_PADDING:
+        g_value_set_double(value, data->right_padding);
+        break;
+    case PROP_BOTTOM_PADDING:
+        g_value_set_double(value, data->bottom_padding);
+        break;
+    case PROP_LEFT_PADDING:
+        g_value_set_double(value, data->left_padding);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -222,6 +270,18 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_HAS_FRAME:
         data->has_frame = g_value_get_boolean(value);
+        break;
+    case PROP_TOP_PADDING:
+        data->top_padding = g_value_get_double(value);
+        break;
+    case PROP_RIGHT_PADDING:
+        data->right_padding = g_value_get_double(value);
+        break;
+    case PROP_BOTTOM_PADDING:
+        data->bottom_padding = g_value_get_double(value);
+        break;
+    case PROP_LEFT_PADDING:
+        data->left_padding = g_value_get_double(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -509,6 +569,166 @@ adg_canvas_has_frame(AdgCanvas *canvas)
     return data->has_frame;
 }
 
+/**
+ * adg_canvas_set_top_padding:
+ * @canvas: an #AdgCanvas
+ * @value: the new padding, in identity space
+ *
+ * Changes the top padding of @canvas by setting #AdgCanvas:top-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "top-padding", value, NULL);
+}
+
+/**
+ * adg_canvas_get_top_padding:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the top padding (in identity space) of @canvas.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_canvas_get_top_padding(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
+
+    data = canvas->data;
+    return data->top_padding;
+}
+
+/**
+ * adg_canvas_set_right_padding:
+ * @canvas: an #AdgCanvas
+ * @value: the new padding, in identity space
+ *
+ * Changes the right padding of @canvas by setting #AdgCanvas:right-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "right-padding", value, NULL);
+}
+
+/**
+ * adg_canvas_get_right_padding:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the right padding (in identity space) of @canvas.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_canvas_get_right_padding(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
+
+    data = canvas->data;
+    return data->right_padding;
+}
+
+
+/**
+ * adg_canvas_set_bottom_padding:
+ * @canvas: an #AdgCanvas
+ * @value: the new padding, in identity space
+ *
+ * Changes the bottom padding of @canvas by setting #AdgCanvas:bottom-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "bottom-padding", value, NULL);
+}
+
+/**
+ * adg_canvas_get_bottom_padding:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the bottom padding (in identity space) of @canvas.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_canvas_get_bottom_padding(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
+
+    data = canvas->data;
+    return data->bottom_padding;
+}
+
+/**
+ * adg_canvas_set_left_padding:
+ * @canvas: an #AdgCanvas
+ * @value: the new padding, in identity space
+ *
+ * Changes the left padding of @canvas by setting #AdgCanvas:left-padding
+ * to @value. Negative values are allowed.
+ **/
+void
+adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "left-padding", value, NULL);
+}
+
+/**
+ * adg_canvas_get_left_padding:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the left padding (in identity space) of @canvas.
+ *
+ * Returns: the requested padding or %0 on error
+ **/
+gdouble
+adg_canvas_get_left_padding(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
+
+    data = canvas->data;
+    return data->left_padding;
+}
+
+/**
+ * adg_canvas_set_paddings:
+ * @canvas: an #AdgCanvas
+ * @top: top padding, in identity space
+ * @right: right padding, in identity space
+ * @bottom: bottom padding, in identity space
+ * @left: left padding, in identity space
+ *
+ * Convenient function to set all the paddings at once.
+ **/
+void
+adg_canvas_set_paddings(AdgCanvas *canvas, gdouble top, gdouble right,
+                          gdouble bottom, gdouble left)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas,
+                 "top-padding", top,
+                 "right-padding", right,
+                 "bottom-padding", bottom,
+                 "left-padding", left,
+                 NULL);
+}
+
 
 static void
 _adg_arrange(AdgEntity *entity)
@@ -523,10 +743,12 @@ _adg_arrange(AdgEntity *entity)
     if (extents.is_defined) {
         AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
 
-        extents.org.x -= data->left_margin;
-        extents.org.y -= data->top_margin;
-        extents.size.x += data->left_margin + data->right_margin;
-        extents.size.y += data->top_margin + data->bottom_margin;
+        extents.org.x -= data->left_margin + data->left_padding;
+        extents.org.y -= data->top_margin + data->top_padding;
+        extents.size.x += data->left_margin + data->left_padding;
+        extents.size.x += data->right_margin + data->right_padding;
+        extents.size.y += data->top_margin + data->top_padding;
+        extents.size.y += data->bottom_margin + data->bottom_padding;
 
         adg_entity_set_extents(entity, &extents);
     }
