@@ -22,7 +22,7 @@
  * SECTION:adg-canvas
  * @short_description: The drawing container
  *
- * This object is the toplevel entity of an ADG drawing. It can be
+ * The canvas is the toplevel entity of an ADG drawing. It can be
  * bound to a GTK+ widget, such as #AdgGtkArea, or manually rendered
  * to a custom surface.
  **/
@@ -43,13 +43,18 @@
 
 #define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
 
+
+G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
+
 enum {
     PROP_0,
     PROP_BACKGROUND_DRESS,
+    PROP_FRAME_DRESS,
     PROP_TOP_MARGIN,
     PROP_RIGHT_MARGIN,
     PROP_BOTTOM_MARGIN,
-    PROP_LEFT_MARGIN
+    PROP_LEFT_MARGIN,
+    PROP_HAS_FRAME
 };
 
 
@@ -64,9 +69,6 @@ static void             _adg_set_property       (GObject        *object,
 static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-
-
-G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
 
 
 static void
@@ -93,6 +95,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                  ADG_DRESS_COLOR_BACKGROUND,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BACKGROUND_DRESS, param);
+
+    param = adg_param_spec_dress("frame-dress",
+                                 P_("Frame Dress"),
+                                 P_("Line dress to use while drawing the frame around the canvas"),
+                                 ADG_DRESS_LINE_FRAME,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FRAME_DRESS, param);
 
     param = g_param_spec_double("top-margin",
                                 P_("Top Margin"),
@@ -121,6 +130,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                 G_MINDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_MARGIN, param);
+
+    param = g_param_spec_boolean("has-frame",
+                                 P_("Has Frame Flag"),
+                                 P_("If enabled, a frame using the frame dress will be drawn around the canvas extents, taking into account the margins"),
+                                 TRUE,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_FRAME, param);
 }
 
 static void
@@ -131,10 +147,12 @@ adg_canvas_init(AdgCanvas *canvas)
                                                          AdgCanvasPrivate);
 
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
+    data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->top_margin = 15;
     data->right_margin = 15;
     data->bottom_margin = 15;
     data->left_margin = 15;
+    data->has_frame = TRUE;
 
     canvas->data = data;
 }
@@ -149,6 +167,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_BACKGROUND_DRESS:
         g_value_set_int(value, data->background_dress);
         break;
+    case PROP_FRAME_DRESS:
+        g_value_set_int(value, data->frame_dress);
+        break;
     case PROP_TOP_MARGIN:
         g_value_set_double(value, data->top_margin);
         break;
@@ -160,6 +181,9 @@ _adg_get_property(GObject *object, guint prop_id,
         break;
     case PROP_LEFT_MARGIN:
         g_value_set_double(value, data->left_margin);
+        break;
+    case PROP_HAS_FRAME:
+        g_value_set_boolean(value, data->has_frame);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -181,6 +205,9 @@ _adg_set_property(GObject *object, guint prop_id,
     case PROP_BACKGROUND_DRESS:
         data->background_dress = g_value_get_int(value);
         break;
+    case PROP_FRAME_DRESS:
+        data->background_dress = g_value_get_int(value);
+        break;
     case PROP_TOP_MARGIN:
         data->top_margin = g_value_get_double(value);
         break;
@@ -192,6 +219,9 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_LEFT_MARGIN:
         data->left_margin = g_value_get_double(value);
+        break;
+    case PROP_HAS_FRAME:
+        data->has_frame = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -246,6 +276,40 @@ adg_canvas_get_background_dress(AdgCanvas *canvas)
     data = canvas->data;
 
     return data->background_dress;
+}
+
+/**
+ * adg_canvas_set_frame_dress:
+ * @canvas: an #AdgCanvas
+ * @dress: the new #AdgDress to use
+ *
+ * Sets the #AdgCanvas:frame-dress property of @canvas to @dress:
+ * the new dress must be a line dress.
+ **/
+void
+adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "frame-dress", dress, NULL);
+}
+
+/**
+ * adg_canvas_get_frame_dress:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the frame dress to be used in rendering the border of @canvas.
+ *
+ * Returns: the current frame dress
+ **/
+AdgDress
+adg_canvas_get_frame_dress(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), ADG_DRESS_UNDEFINED);
+
+    data = canvas->data;
+    return data->frame_dress;
 }
 
 /**
@@ -385,7 +449,6 @@ adg_canvas_get_left_margin(AdgCanvas *canvas)
     return data->left_margin;
 }
 
-
 /**
  * adg_canvas_set_margins:
  * @canvas: an #AdgCanvas
@@ -407,6 +470,43 @@ adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
                  "bottom-margin", bottom,
                  "left-margin", left,
                  NULL);
+}
+
+/**
+ * adg_canvas_switch_frame:
+ * @canvas: an #AdgCanvas
+ * @new_state: the new flag status
+ *
+ * Sets a new status on the #AdgCanvas:has-frame property: %TRUE
+ * means a border around the canvas extents (less the margins)
+ * should be rendered.
+ **/
+void
+adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set((GObject *) canvas, "has-frame", new_state, NULL);
+}
+
+/**
+ * adg_canvas_has_frame:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the current status of the #AdgCanvas:has-frame property,
+ * that is whether a border around the canvas extents (less the
+ * margins) should be rendered (%TRUE) or not (%FALSE).
+ *
+ * Returns: the current status of the frame flag
+ **/
+gboolean
+adg_canvas_has_frame(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), FALSE);
+
+    data = canvas->data;
+    return data->has_frame;
 }
 
 
@@ -435,10 +535,39 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgCanvasPrivate *data;
+    const CpmlExtents *extents;
 
+    data = ((AdgCanvas *) entity)->data;
+    extents = adg_entity_get_extents(entity);
+
+    cairo_save(cr);
+
+    /* Background fill */
+    cairo_identity_matrix(cr);
+    cairo_rectangle(cr, extents->org.x, extents->org.y,
+                    extents->size.x, extents->size.y);
     adg_entity_apply_dress(entity, data->background_dress, cr);
-    cairo_paint(cr);
+    cairo_fill(cr);
+
+    /* Frame line */
+    if (data->has_frame) {
+        CpmlExtents frame;
+        cpml_extents_copy(&frame, extents);
+
+        frame.org.x += data->left_margin;
+        frame.org.y += data->top_margin;
+        frame.size.x -= data->left_margin + data->right_margin;
+        frame.size.y -= data->top_margin + data->bottom_margin;
+
+        cairo_rectangle(cr, frame.org.x, frame.org.y,
+                        frame.size.x, frame.size.y);
+        cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
+        adg_entity_apply_dress(entity, data->frame_dress, cr);
+        cairo_stroke(cr);
+    }
+
+    cairo_restore(cr);
 
     if (PARENT_ENTITY_CLASS->render)
         PARENT_ENTITY_CLASS->render(entity, cr);

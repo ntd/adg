@@ -190,6 +190,44 @@ _adg_test_left_margin(void)
     g_object_unref(canvas);
 }
 
+static void
+_adg_test_has_frame(void)
+{
+    AdgCanvas *canvas;
+    gboolean invalid_boolean;
+    gboolean has_frame;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    invalid_boolean = (gboolean) 1234;
+
+    /* Using the public APIs */
+    adg_canvas_switch_frame(canvas, FALSE);
+    has_frame = adg_canvas_has_frame(canvas);
+    g_assert(!has_frame);
+
+    adg_canvas_switch_frame(canvas, invalid_boolean);
+    has_frame = adg_canvas_has_frame(canvas);
+    g_assert(!has_frame);
+
+    adg_canvas_switch_frame(canvas, TRUE);
+    has_frame = adg_canvas_has_frame(canvas);
+    g_assert(has_frame);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "has-frame", FALSE, NULL);
+    g_object_get(canvas, "has-frame", &has_frame, NULL);
+    g_assert(!has_frame);
+
+    g_object_set(canvas, "has-frame", invalid_boolean, NULL);
+    g_object_get(canvas, "has-frame", &has_frame, NULL);
+    g_assert(!has_frame);
+
+    g_object_set(canvas, "has-frame", TRUE, NULL);
+    g_object_get(canvas, "has-frame", &has_frame, NULL);
+    g_assert(has_frame);
+
+    g_object_unref(canvas);
+}
 
 int
 main(int argc, char *argv[])
@@ -201,6 +239,7 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/canvas/right-margin", _adg_test_right_margin);
     adg_test_add_func("/adg/canvas/bottom-margin", _adg_test_bottom_margin);
     adg_test_add_func("/adg/canvas/left-margin", _adg_test_left_margin);
+    adg_test_add_func("/adg/canvas/has-frame", _adg_test_has_frame);
 
     return g_test_run();
 }
