@@ -254,7 +254,7 @@ _adg_set_property(GObject *object, guint prop_id,
         data->background_dress = g_value_get_int(value);
         break;
     case PROP_FRAME_DRESS:
-        data->background_dress = g_value_get_int(value);
+        data->frame_dress = g_value_get_int(value);
         break;
     case PROP_TOP_MARGIN:
         data->top_margin = g_value_get_double(value);

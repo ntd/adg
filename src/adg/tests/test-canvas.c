@@ -63,6 +63,47 @@ _adg_test_background_dress(void)
 }
 
 static void
+_adg_test_frame_dress(void)
+{
+    AdgCanvas *canvas;
+    AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
+    AdgDress frame_dress;
+
+    canvas = adg_canvas_new();
+    valid_dress_1 = ADG_DRESS_LINE_DIMENSION;
+    valid_dress_2 = ADG_DRESS_LINE_FILL;
+    incompatible_dress = ADG_DRESS_FONT;
+
+    /* Using the public APIs */
+    adg_canvas_set_frame_dress(canvas, valid_dress_1);
+    frame_dress = adg_canvas_get_frame_dress(canvas);
+    g_assert_cmpint(frame_dress, ==, valid_dress_1);
+
+    adg_canvas_set_frame_dress(canvas, incompatible_dress);
+    frame_dress = adg_canvas_get_frame_dress(canvas);
+    g_assert_cmpint(frame_dress, ==, valid_dress_1);
+
+    adg_canvas_set_frame_dress(canvas, valid_dress_2);
+    frame_dress = adg_canvas_get_frame_dress(canvas);
+    g_assert_cmpint(frame_dress, ==, valid_dress_2);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "frame-dress", valid_dress_1, NULL);
+    g_object_get(canvas, "frame-dress", &frame_dress, NULL);
+    g_assert_cmpint(frame_dress, ==, valid_dress_1);
+
+    g_object_set(canvas, "frame-dress", incompatible_dress, NULL);
+    g_object_get(canvas, "frame-dress", &frame_dress, NULL);
+    g_assert_cmpint(frame_dress, ==, valid_dress_1);
+
+    g_object_set(canvas, "frame-dress", valid_dress_2, NULL);
+    g_object_get(canvas, "frame-dress", &frame_dress, NULL);
+    g_assert_cmpint(frame_dress, ==, valid_dress_2);
+
+    g_object_unref(canvas);
+}
+
+static void
 _adg_test_top_margin(void)
 {
     AdgCanvas *canvas;
@@ -365,6 +406,8 @@ main(int argc, char *argv[])
 
     adg_test_add_func("/adg/canvas/property/background-dress",
                       _adg_test_background_dress);
+    adg_test_add_func("/adg/canvas/property/frame-dress",
+                      _adg_test_frame_dress);
     adg_test_add_func("/adg/canvas/property/top-margin",
                       _adg_test_top_margin);
     adg_test_add_func("/adg/canvas/property/right-margin",
