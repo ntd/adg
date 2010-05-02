@@ -352,7 +352,7 @@ arrange(AdgEntity *entity)
         return;
     }
 
-    dim_style = GET_DIM_STYLE(dim);
+    dim_style = _ADG_GET_DIM_STYLE(dim);
     outside = adg_dim_get_outside(dim);
     if (outside == ADG_THREE_STATE_UNKNOWN)
         outside = ADG_THREE_STATE_OFF;
@@ -421,7 +421,7 @@ render(AdgEntity *entity, cairo_t *cr)
     rdim = (AdgRDim *) entity;
     dim = (AdgDim *) entity;
     data = rdim->data;
-    dim_style = GET_DIM_STYLE(dim);
+    dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
 
@@ -448,7 +448,7 @@ default_value(AdgDim *dim)
 
     rdim = (AdgRDim *) dim;
     data = rdim->data;
-    dim_style = GET_DIM_STYLE(dim);
+    dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
     update_geometry(rdim);
@@ -473,7 +473,7 @@ update_geometry(AdgRDim *rdim)
         return;
 
     dim = (AdgDim *) rdim;
-    dim_style = GET_DIM_STYLE(rdim);
+    dim_style = _ADG_GET_DIM_STYLE(rdim);
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
     pos = adg_point_get_pair(adg_dim_get_pos(dim));
@@ -516,7 +516,7 @@ update_entities(AdgRDim *rdim)
 
     entity = (AdgEntity *) rdim;
     data = rdim->data;
-    dim_style = GET_DIM_STYLE(rdim);
+    dim_style = _ADG_GET_DIM_STYLE(rdim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, rdim);

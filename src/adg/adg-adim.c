@@ -761,7 +761,7 @@ render(AdgEntity *entity, cairo_t *cr)
     adim = (AdgADim *) entity;
     dim = (AdgDim *) entity;
     data = adim->data;
-    dim_style = GET_DIM_STYLE(dim);
+    dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
 
@@ -792,7 +792,7 @@ default_value(AdgDim *dim)
 
     adim = (AdgADim *) dim;
     data = adim->data;
-    dim_style = GET_DIM_STYLE(dim);
+    dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
     update_geometry(adim);
@@ -827,7 +827,7 @@ update_geometry(AdgADim *adim)
         return;
     }
 
-    dim_style = GET_DIM_STYLE(adim);
+    dim_style = _ADG_GET_DIM_STYLE(adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
@@ -891,7 +891,7 @@ update_entities(AdgADim *adim)
 
     entity = (AdgEntity *) adim;
     data = adim->data;
-    dim_style = GET_DIM_STYLE(adim);
+    dim_style = _ADG_GET_DIM_STYLE(adim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(trail_callback, adim);
