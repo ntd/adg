@@ -259,7 +259,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->beyond = 20;
     data->baseline_spacing = 30;
     data->limits_spacing = 1;
-    data->quote_shift.x = 0;
+    data->quote_shift.x = 4;
     data->quote_shift.y = -4;
     data->limits_shift.x = +2;
     data->limits_shift.y = -2;

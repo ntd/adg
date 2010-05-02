@@ -1159,7 +1159,7 @@ _adg_arrange(AdgEntity *entity)
     adg_entity_set_global_map(quote_entity, adg_matrix_identity());
     adg_entity_global_changed(quote_entity);
 
-    cairo_matrix_init_translate(&map, shift->x, shift->y);
+    cairo_matrix_init_translate(&map, 0, shift->y);
     adg_entity_set_global_map(value_entity, &map);
     adg_entity_arrange(value_entity);
 
