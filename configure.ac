@@ -2,7 +2,7 @@ m4_define([adg_version],[0.5.6])
 m4_define([adg_api_version],[1.0])
 
 m4_define([gtkdoc_prereq],[1.9])
-m4_define([gobject_prereq],[2.4.0])
+m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
 m4_define([gtk_prereq],[2.12.0])
 
