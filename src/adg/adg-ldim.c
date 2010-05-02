@@ -39,8 +39,8 @@
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_ldim_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_ldim_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
 G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
@@ -53,33 +53,33 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
-static void             get_property            (GObject        *object,
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             _adg_global_changed     (AdgEntity      *entity);
-static void             local_changed           (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gchar *          default_value           (AdgDim         *dim);
+static gchar *          _adg_default_value      (AdgDim         *dim);
 static gboolean         _adg_set_direction      (AdgLDim        *ldim,
                                                  gdouble         direction);
-static void             update_geometry         (AdgLDim        *ldim);
-static void             update_shift            (AdgLDim        *ldim);
-static void             update_entities         (AdgLDim        *ldim);
+static void             _adg_update_geometry    (AdgLDim        *ldim);
+static void             _adg_update_shift       (AdgLDim        *ldim);
+static void             _adg_update_entities    (AdgLDim        *ldim);
 static void             _adg_choose_flags       (AdgLDim        *ldim,
                                                  gboolean       *to_outside,
                                                  gboolean       *to_detach);
-static void             unset_trail             (AdgLDim        *ldim);
-static void             dispose_markers         (AdgLDim        *ldim);
-static CpmlPath *       trail_callback          (AdgTrail       *trail,
+static void             _adg_unset_trail        (AdgLDim        *ldim);
+static void             _adg_dispose_markers    (AdgLDim        *ldim);
+static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
@@ -97,17 +97,17 @@ adg_ldim_class_init(AdgLDimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgLDimPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
     entity_class->global_changed = _adg_global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
-    dim_class->default_value = default_value;
+    dim_class->default_value = _adg_default_value;
 
     param = g_param_spec_double("direction",
                                 P_("Direction"),
@@ -170,17 +170,17 @@ adg_ldim_init(AdgLDim *ldim)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
-    dispose_markers((AdgLDim *) object);
+    _adg_dispose_markers((AdgLDim *) object);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgLDimPrivate *data = ((AdgLDim *) object)->data;
 
@@ -201,8 +201,8 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *data;
@@ -469,10 +469,10 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
 
-    unset_trail((AdgLDim *) entity);
+    _adg_unset_trail((AdgLDim *) entity);
 
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     if (data->marker1)
         adg_entity_global_changed((AdgEntity *) data->marker1);
@@ -482,16 +482,16 @@ _adg_global_changed(AdgEntity *entity)
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
-    unset_trail((AdgLDim *) entity);
+    _adg_unset_trail((AdgLDim *) entity);
 
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *data;
@@ -499,18 +499,18 @@ invalidate(AdgEntity *entity)
     ldim = (AdgLDim *) entity;
     data = ldim->data;
 
-    dispose_markers(ldim);
+    _adg_dispose_markers(ldim);
     data->geometry.is_arranged = FALSE;
     data->shift.is_arranged = FALSE;
-    unset_trail(ldim);
+    _adg_unset_trail(ldim);
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
 /* TODO: split the following crap in more manageable functions */
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgLDim *ldim;
     AdgDim *dim;
@@ -524,17 +524,17 @@ arrange(AdgEntity *entity)
     gint n;
     CpmlExtents extents;
 
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange)
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) ldim;
     data = ldim->data;
     quote = adg_dim_get_quote(dim);
 
-    update_geometry(ldim);
-    update_shift(ldim);
-    update_entities(ldim);
+    _adg_update_geometry(ldim);
+    _adg_update_shift(ldim);
+    _adg_update_entities(ldim);
 
     /* Check for cached result */
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
@@ -757,7 +757,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLDim *ldim;
     AdgDim *dim;
@@ -790,7 +790,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gchar *
-default_value(AdgDim *dim)
+_adg_default_value(AdgDim *dim)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *data;
@@ -802,7 +802,7 @@ default_value(AdgDim *dim)
     dim_style = GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    update_geometry(ldim);
+    _adg_update_geometry(ldim);
 
     return g_strdup_printf(format, data->geometry.distance);
 }
@@ -823,7 +823,7 @@ _adg_set_direction(AdgLDim *ldim, gdouble direction)
 }
 
 static void
-update_geometry(AdgLDim *ldim)
+_adg_update_geometry(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDim *dim;
@@ -866,7 +866,7 @@ update_geometry(AdgLDim *ldim)
 }
 
 static void
-update_shift(AdgLDim *ldim)
+_adg_update_shift(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
@@ -900,7 +900,7 @@ update_shift(AdgLDim *ldim)
 }
 
 static void
-update_entities(AdgLDim *ldim)
+_adg_update_entities(AdgLDim *ldim)
 {
     AdgEntity *entity;
     AdgLDimPrivate *data;
@@ -911,7 +911,7 @@ update_entities(AdgLDim *ldim)
     dim_style = GET_DIM_STYLE(ldim);
 
     if (data->trail == NULL)
-        data->trail = adg_trail_new(trail_callback, ldim);
+        data->trail = adg_trail_new(_adg_trail_callback, ldim);
 
     if (data->marker1 == NULL) {
         data->marker1 = adg_dim_style_marker1_new(dim_style);
@@ -995,7 +995,7 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 }
 
 static void
-unset_trail(AdgLDim *ldim)
+_adg_unset_trail(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
@@ -1006,7 +1006,7 @@ unset_trail(AdgLDim *ldim)
 }
 
 static void
-dispose_markers(AdgLDim *ldim)
+_adg_dispose_markers(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
@@ -1027,7 +1027,7 @@ dispose_markers(AdgLDim *ldim)
 }
 
 static CpmlPath *
-trail_callback(AdgTrail *trail, gpointer user_data)
+_adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
     AdgLDim *ldim;
     AdgLDimPrivate *data;
