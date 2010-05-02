@@ -634,10 +634,14 @@ _adg_arrange(AdgEntity *entity)
 
         if (to_detach) {
             /* Detached quote: position the quote at "pos" */
-            AdgPair p_line, p_quote;
+            const AdgPair *quote_shift;
+            CpmlVector vector;
+            AdgPair tmp_pair, quote_end;
             gdouble same_sd, opposite_sd, quote_size;
             gint n_side;
             cairo_path_data_t *to_extend;
+
+            quote_shift = adg_dim_style_get_quote_shift(dim_style);
 
             /* Set "pair" to the properly converted "pos" coordinates */
             cpml_pair_copy(&pair, adg_point_get_pair(adg_dim_get_pos(dim)));
@@ -650,14 +654,14 @@ _adg_arrange(AdgEntity *entity)
              * by checking if (pos-middle) is closer to the quote
              * vector or to the negated quote vector by using an
              * algorithm based on the squared distances. */
-            p_line.x = pair.x - middle.x;
-            p_line.y = pair.y - middle.y;
-            cpml_vector_from_angle(&p_quote, angle);
+            tmp_pair.x = pair.x - middle.x;
+            tmp_pair.y = pair.y - middle.y;
+            cpml_vector_from_angle(&vector, angle);
 
-            same_sd = cpml_pair_squared_distance(&p_quote, &p_line);
-            p_quote.x = -p_quote.x;
-            p_quote.y = -p_quote.y;
-            opposite_sd = cpml_pair_squared_distance(&p_quote, &p_line);
+            same_sd = cpml_pair_squared_distance(&vector, &tmp_pair);
+            vector.x = -vector.x;
+            vector.y = -vector.y;
+            opposite_sd = cpml_pair_squared_distance(&vector, &tmp_pair);
             quote_size = adg_entity_get_extents(quote_entity)->size.x;
             quote_size /= (global->xx + global->yy) / 2;
 
@@ -666,18 +670,24 @@ _adg_arrange(AdgEntity *entity)
                 factor.x = 1;
             } else {
                 factor.x = 0;
-                p_quote.x = -p_quote.x;
-                p_quote.y = -p_quote.y;
+                vector.x = -vector.x;
+                vector.y = -vector.y;
             }
 
-            cpml_vector_set_length(&p_quote, quote_size);
-            p_quote.x += pair.x;
-            p_quote.y += pair.y;
+            /* Add the quote displacement */
+            cpml_vector_set_length(&vector, quote_shift->x);
+            pair.x += vector.x;
+            pair.y += vector.y;
 
-            /* Extends the base line to include the "p_quote" pair,
-             * that is underline a detached quote */
-            if (cpml_pair_squared_distance(&p_quote, &base1) >
-                cpml_pair_squared_distance(&p_quote, &base2))
+            /* Calculate the end point (on the base line) of the quote */
+            cpml_vector_set_length(&vector, quote_size);
+            quote_end.x = pair.x + vector.x;
+            quote_end.y = pair.y + vector.y;
+
+            /* Extends the base line to include the "quote_end" pair,
+             * so a detached quote is properly underlined */
+            if (cpml_pair_squared_distance(&quote_end, &base1) >
+                cpml_pair_squared_distance(&quote_end, &base2))
                 n_side = 2;
             else
                 n_side = 1;
@@ -693,12 +703,12 @@ _adg_arrange(AdgEntity *entity)
                 n = 10;
             }
 
-            cpml_pair_from_cairo(&p_line, to_extend);
+            cpml_pair_from_cairo(&tmp_pair, to_extend);
 
             /* Extend the base line only if needed */
-            if (cpml_pair_squared_distance(&p_quote, &middle) >
-                cpml_pair_squared_distance(&p_line, &middle))
-                cpml_pair_to_cairo(&p_quote, to_extend);
+            if (cpml_pair_squared_distance(&quote_end, &middle) >
+                cpml_pair_squared_distance(&tmp_pair, &middle))
+                cpml_pair_to_cairo(&quote_end, to_extend);
         } else {
             /* Center the quote in the middle of the base line */
             factor.x = 0.5;
