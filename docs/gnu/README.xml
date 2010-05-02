@@ -65,12 +65,15 @@ integrated in a single application.</para>
 <para>The ADG library has the following dependencies:</para>
 
 <itemizedlist>
-   <listitem><ulink url="http://www.gtk.org/">glib</ulink> 2.10.1 or later</listitem>
-   <listitem><ulink url="http://cairographics.org/">cairo</ulink> 1.7.4 or later</listitem>
-   <listitem><ulink url="http://www.gtk.org/">gtk+</ulink> 2.8.0 or later, needed by the demo program</listitem>
+   <listitem><ulink url="http://www.gtk.org/">glib</ulink> 2.10.1 or later (required)</listitem>
+   <listitem><ulink url="http://cairographics.org/">cairo</ulink> 1.7.4 or later (required)</listitem>
+   <listitem><ulink url="http://www.gtk.org/">gtk+</ulink> 2.12.0 or later (optional), needed by
+   the <command>adg-demo</command> program</listitem>
+   <listitem><ulink url="http://www.gtk.org/gtk-doc/">gtk-doc</ulink> 1.9 or later (optional),
+   used to regenerate the API documentation</listitem>
 </itemizedlist>
 
-<para>These packages should be installed prior to build the ADG: they should
+<para>The required packages must be installed prior the ADG building: they should
 be provided by nearly every decent unix-like system. The ADG is mainly
 developed on GNU/Linux systems but its dependecies are known to be cross
 platform so a porting should be quite easy (if not automatic).</para>
@@ -87,23 +90,22 @@ for managing free software projects.</para>
    <listitem>Download the ADG tarball and put it somewhere in your file system,
    where you have write access (your home directory is a good candidate).
    You can browse the old releases or get the latest tarball from
-   <ulink url="http://sourceforge.net/project/showfiles.php?group_id=185095">sourceforge</ulink>.
+   <ulink url="http://sourceforge.net/projects/adg/files/">sourceforge</ulink>.
    </listitem>
-   <listitem>Unpack the tarball: use the version you downloaded in the previous step
-   instead of 0.3.2:
-<programlisting>tar -xjvf adg-0.3.2.tar.bz2</programlisting></listitem>
+   <listitem>Unpack the tarball. Use the version you downloaded in the previous step
+   instead of 0.6.0:
+<programlisting>tar xjvf adg-0.6.0.tar.bz2</programlisting></listitem>
    <listitem>Configure the build. You can set different options while configuring:
    check the output of <code>./configure --help</code> to get all the available options.
    Furthermore, the INSTALL file gives you a detailed description of
    the common options.
-<programlisting>cd adg-0.3.2
+<programlisting>cd adg-0.6.0
 ./configure</programlisting></listitem>
    <listitem>Build the ADG library.
 <programlisting>make</programlisting>
    Once the building has finished, you are able to run the demo program
-   without installing anything. Just try them out:
-<programlisting>./demo/adg-demo
-./demo/ldim</programlisting></listitem>
+   without installing anything. Just try it out:
+<programlisting>./demo/adg-demo</programlisting></listitem>
    <listitem>Install the ADG library on your system. You must have root privileges
    to do that or you have to configure a target directory (the <code>--prefix</code>
    option in configure) that is user-writable.
@@ -113,8 +115,8 @@ for managing free software projects.</para>
 <programlisting>sudo make install</programlisting></listitem>
    <listitem>You can uninstall the ADG whenever you want by typing:
 <programlisting>make uninstall</programlisting>
-   from inside the ADG build directory. Just be sure to have the same
-   privileges you had while installing it.</listitem>
+   from inside the ADG build directory (or <code>sudo make uninstall</code>). Just
+   be sure to have the same privileges you had when installing it.</listitem>
 </orderedlist>
 </simplesect>
 
