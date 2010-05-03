@@ -203,7 +203,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editA">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjA</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -249,7 +248,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editB">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjB</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -280,7 +278,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD2</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -313,7 +310,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editLD2">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLD2</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -359,7 +355,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD3</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -375,7 +370,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD4">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD4</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -408,7 +402,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editLD3">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLD3</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -444,7 +437,6 @@ Boston, MA  02110-1301, USA.</property>
                 <property name="label" translatable="yes">&lt;b&gt;Body data&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="single_line_mode">True</property>
-                <property name="track_visited_links">False</property>
               </object>
             </child>
           </object>
@@ -483,7 +475,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD6">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD6</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -512,7 +503,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editC">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjC</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -543,7 +533,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editD7">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjD7</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -610,7 +599,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjRD6</property>
                     <property name="numeric">True</property>
                   </object>
@@ -636,7 +624,6 @@ Boston, MA  02110-1301, USA.</property>
                 <property name="label" translatable="yes">&lt;b&gt;Head data&lt;/b&gt;</property>
                 <property name="use_markup">True</property>
                 <property name="single_line_mode">True</property>
-                <property name="track_visited_links">False</property>
               </object>
             </child>
           </object>
@@ -662,7 +649,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editDHOLE">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjDHOLE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -689,7 +675,6 @@ Boston, MA  02110-1301, USA.</property>
                   <object class="GtkSpinButton" id="editLHOLE">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLHOLE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -735,7 +720,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjDGroove</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -770,7 +754,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjZGroove</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
@@ -805,7 +788,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="caps_lock_warning">False</property>
                     <property name="adjustment">adjLGroove</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
