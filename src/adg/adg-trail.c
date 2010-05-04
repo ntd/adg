@@ -205,7 +205,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     for (i = 0; i < cpml_path->num_data; i += p_src->header.length) {
         p_src = (const cairo_path_data_t *) cpml_path->data + i;
 
-        if (p_src->header.type == CPML_ARC)
+        if ((CpmlPrimitiveType) p_src->header.type == CPML_ARC)
             dst = arc_to_curves(dst, p_src);
         else
             dst = g_array_append_vals(dst, p_src, p_src->header.length);

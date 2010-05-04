@@ -29,13 +29,6 @@
 
 CAIRO_BEGIN_DECLS
 
-#ifdef CAIRO_PATH_ARC_TO
-#define CPML_ARC        CAIRO_PATH_ARC_TO
-#else
-#define CPML_ARC        100
-#endif
-
-
 cairo_bool_t
         cpml_arc_info                   (const CpmlPrimitive    *arc,
                                          CpmlPair               *center,

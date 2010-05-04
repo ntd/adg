@@ -24,7 +24,7 @@
  * @title: CpmlArc
  * @short_description: Manipulation of circular arcs
  *
- * The following functions manipulate #CPML_ARC #CpmlPrimitive.
+ * The following functions manipulate %CPML_ARC #CpmlPrimitive.
  * No validation is made on the input so use the following methods
  * only when you are sure the <varname>primitive</varname> argument
  * is effectively an arc-to.
@@ -46,7 +46,7 @@
  * </para>
  * </important>
  *
- * Using these CPML APIs you are free to use #CPML_ARC whenever
+ * Using these CPML APIs you are free to use %CPML_ARC whenever
  * you want but, if you are directly accessing the struct fields, you
  * are responsible of converting arcs to curves before passing them
  * to cairo. In other words, do not directly feed #CpmlPath struct to
@@ -67,15 +67,6 @@
  * <listitem>the put_intersections() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
- **/
-
-/**
- * CPML_ARC:
- *
- * The type code used to identify "arc-to" primitives.
- * This is expected to be defined by cairo whenever (and if) cairo
- * will support arc primitives. Actually (cairo-1.8.8) it is resolved
- * to an harcoded constant (%100).
  **/
 
 

@@ -9,8 +9,6 @@ LDADD=				@CPML_LIBS@
 h_sources=			cpml-arc.h \
 				cpml-curve.h \
 				cpml-extents.h \
-				cpml-line.h \
-				cpml-close.h \
 				cpml-pair.h \
 				cpml-primitive.h \
 				cpml-segment.h \

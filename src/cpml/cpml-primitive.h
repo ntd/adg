@@ -26,14 +26,22 @@
 #ifndef __CPML_PRIMITIVE_H__
 #define __CPML_PRIMITIVE_H__
 
+#ifndef CAIRO_PATH_ARC_TO
+#define CAIRO_PATH_ARC_TO 100
+#endif
+
 
 CAIRO_BEGIN_DECLS
 
-#define CPML_MOVE       CAIRO_PATH_MOVE_TO
-
-
 typedef struct _CpmlPrimitive CpmlPrimitive;
-typedef cairo_path_data_type_t CpmlPrimitiveType;
+
+typedef enum {
+    CPML_MOVE   = CAIRO_PATH_MOVE_TO,
+    CPML_LINE   = CAIRO_PATH_LINE_TO,
+    CPML_CURVE  = CAIRO_PATH_CURVE_TO,
+    CPML_CLOSE  = CAIRO_PATH_CLOSE_PATH,
+    CPML_ARC    = CAIRO_PATH_ARC_TO
+} CpmlPrimitiveType;
 
 struct _CpmlPrimitive {
     CpmlSegment       *segment;
