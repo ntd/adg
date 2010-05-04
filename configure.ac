@@ -49,9 +49,11 @@ AC_DEFINE([GETTEXT_PACKAGE],"AC_PACKAGE_TARNAME-adg_api_version",
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
-AC_OUTPUT_COMMANDS([case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
+AC_CONFIG_COMMANDS([default],
+                   [case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
         ${SED} -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
-      esac])
+    esac],
+		   [SED="${SED}"])
 
 
 # Check for required packages
