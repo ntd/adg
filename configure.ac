@@ -36,8 +36,9 @@ AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 AC_MSG_CHECKING([which libtool initialization strategy to adopt])
 AC_MSG_RESULT([m4_ifset([LT_INIT],[LT-INIT],[AC-PROG-LIBTOOL])])
 m4_ifset([LT_INIT],
-         [LT_INIT([disable-static])],
+         [LT_INIT([disable-static win32-dll])],
          [AC_DISABLE_STATIC
+	  AC_LIBTOOL_WIN32_DLL
           AC_PROG_LIBTOOL])
 
 

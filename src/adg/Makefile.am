@@ -2,16 +2,6 @@ include $(top_srcdir)/build/Makefile.am.common
 
 SUBDIRS=			tests
 
-mkenums_command=		$(MSG_GEN) ; \
-				$(GLIB_MKENUMS) --template
-genmarshal_command=		$(MSG_GEN) ; \
-				$(GLIB_GENMARSHAL) --prefix=adg_marshal
-AM_CFLAGS=			@ADG_CFLAGS@ \
-				-I$(top_srcdir)/src \
-				-I$(top_builddir)/src
-LDADD=				@ADG_LIBS@ \
-				$(top_builddir)/src/cpml/libcpml-1.la
-
 
 # file groups
 h_sources=			adg-adim.h \
@@ -146,17 +136,24 @@ adg_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libadg-1.la
-# Placeholder for versioning support...
-libadg_1_la_LDFLAGS=
 libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
 				$(c_sources)
 nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la
-libadg_1_la_DEPENDENCIES=	$(top_builddir)/src/cpml/libcpml-1.la
+libadg_1_la_CFLAGS=		$(ADG_CFLAGS) \
+				-I$(top_srcdir)/src \
+				-I$(top_builddir)/src
+libadg_1_la_LDFLAGS=		-no-undefined
+libadg_1_la_LIBADD=		$(ADG_LIBS) \
+				$(top_builddir)/src/cpml/libcpml-1.la
 
+
+mkenums_command=		$(MSG_GEN) ; \
+				$(GLIB_MKENUMS) --template
+genmarshal_command=		$(MSG_GEN) ; \
+				$(GLIB_GENMARSHAL) --prefix=adg_marshal
 
 adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h
 	$(mkenums_command) $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h > $@
