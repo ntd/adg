@@ -10,7 +10,8 @@
 
 G_BEGIN_DECLS
 
-gchar *         demo_find_data_file     (const gchar    *file);
+gchar *         demo_find_data_file     (const gchar    *file,
+                                         const gchar    *caller);
 
 G_END_DECLS
 

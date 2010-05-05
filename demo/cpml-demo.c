@@ -106,7 +106,7 @@ main(gint argc, gchar **argv)
 
     parse_args(&argc, &argv);
 
-    path = demo_find_data_file("cpml-demo.ui");
+    path = demo_find_data_file("cpml-demo.ui", argv[0]);
     if (path == NULL) {
         g_print("cpml-demo.ui not found!\n");
         return 1;

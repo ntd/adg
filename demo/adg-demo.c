@@ -810,7 +810,7 @@ main(gint argc, gchar **argv)
     _adg_parse_args(&argc, &argv, &show_extents);
     adg_switch_extents(show_extents);
 
-    path = demo_find_data_file("adg-demo.ui");
+    path = demo_find_data_file("adg-demo.ui", argv[0]);
     if (path == NULL) {
         g_print("adg-demo.ui not found!\n");
         return 1;
