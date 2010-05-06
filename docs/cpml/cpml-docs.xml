@@ -15,11 +15,9 @@
     <xi:include href="xml/cpml-segment.xml"/>
     <xi:include href="xml/cpml-primitive.xml"/>
     <chapter id="Constructs-primitives">
-      <title>Primitive types</title>
-      <xi:include href="xml/cpml-line.xml"/>
+      <title>Special primitive types</title>
       <xi:include href="xml/cpml-arc.xml"/>
       <xi:include href="xml/cpml-curve.xml"/>
-      <xi:include href="xml/cpml-close.xml"/>
     </chapter>
     <xi:include href="xml/cpml-extents.xml"/>
   </part>

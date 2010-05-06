@@ -25,6 +25,7 @@ EXTRA_DIST=			COPYING \
 				INSTALL \
 				THANKS \
 				adg.doap \
+				build/configure-mingw32 \
 				$(BUILT_SOURCES)
 
 SUBDIRS=			src

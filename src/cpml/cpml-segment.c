@@ -28,7 +28,7 @@
  * A segment is a single contiguous line got from a cairo path. The
  * CPML library relies on one assumption to let the data be independent
  * from the current point (and thus from the cairo context): any segment
- * MUST be preceded by at least one #CPML_MOVE primitive.
+ * MUST be preceded by at least one %CPML_MOVE primitive.
  * This means a valid segment in cairo could be rejected by CPML.
  *
  * #CpmlSegment provides an unobtrusive way to access a cairo path.
@@ -52,7 +52,7 @@
  *
  * This is another name for the #cairo_path_t type. Although phisically
  * they are the same struct, #CpmlPath conceptually embodies an important
- * difference: it is a cairo path that can embed #CPML_ARC primitives.
+ * difference: it is a cairo path that can embed %CPML_ARC primitives.
  * This is not a native cairo primitive and having two different data
  * types is a good way to make clear when a function expect or not
  * embedded arc-to primitives.
@@ -62,7 +62,7 @@
  * CpmlSegment:
  * @path:     the source #CpmlPath struct
  * @data:     the data points of the segment; the first primitive
- *            will always be a #CPML_MOVE
+ *            will always be a %CPML_MOVE
  * @num_data: size of @data
  *
  * This is an unobtrusive struct to identify a segment inside a
@@ -76,9 +76,7 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
-#include "cpml-line.h"
 #include "cpml-curve.h"
-#include "cpml-close.h"
 #include <string.h>
 
 static cairo_bool_t     normalize               (CpmlSegment       *segment);
@@ -92,15 +90,15 @@ static cairo_bool_t     reshape                 (CpmlSegment       *segment);
  * @path: the source #CpmlPath
  *
  * Builds a CpmlSegment from a #CpmlPath structure. This operation
- * involves stripping the duplicate #CPML_MOVE primitives at the
+ * involves stripping the duplicate %CPML_MOVE primitives at the
  * start of the path and setting <structfield>num_data</structfield>
  * field to the end of the contiguous line, that is when another
- * #CPML_MOVE primitive is found or at the end of the path.
+ * %CPML_MOVE primitive is found or at the end of the path.
  * A pointer to the source cairo path is kept though.
  *
  * This function will fail if @path is null, empty or if its
  * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
- * Also, the first primitive must be a #CPML_MOVE, so no
+ * Also, the first primitive must be a %CPML_MOVE, so no
  * dependency on the cairo context is needed.
  *
  * Returns: 1 on success, 0 on errors
@@ -418,7 +416,7 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 
     do {
         data = primitive.data;
-        if (data->header.type != CPML_CLOSE) {
+        if (data->header.type != CAIRO_PATH_CLOSE_PATH) {
             n_points = cpml_primitive_get_n_points(&primitive);
 
             while (--n_points > 0) {
@@ -457,7 +455,7 @@ cpml_segment_reverse(CpmlSegment *segment)
     end_y = segment->data[1].point.y;
 
     n = segment->data->header.length;
-    data->header.type = CPML_MOVE;
+    data->header.type = CAIRO_PATH_CLOSE_PATH;
     data->header.length = n;
 
     while (n < segment->num_data) {
@@ -496,8 +494,8 @@ cpml_segment_reverse(CpmlSegment *segment)
  * @cr: the destination cairo context
  *
  * Appends the path of @segment to @cr. The segment is "flattened",
- * that is #CPML_ARC primitives are approximated by one or more
- * #CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
+ * that is %CPML_ARC primitives are approximated by one or more
+ * %CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
  * for further details.
  **/
 void
@@ -554,9 +552,9 @@ normalize(CpmlSegment *segment)
  * ensure_one_leading_move:
  * @segment: a #CpmlSegment
  *
- * Strips the leading #CPML_MOVE primitives, updating the
+ * Strips the leading %CPML_MOVE primitives, updating the
  * <structname>CpmlSegment</structname> structure accordingly.
- * One, and only one, #CPML_MOVE primitive is left.
+ * One, and only one, %CPML_MOVE primitive is left.
  *
  * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
  **/
@@ -567,7 +565,7 @@ ensure_one_leading_move(CpmlSegment *segment)
     int new_num_data, move_length;
 
     /* Check for at least one move to */
-    if (segment->data->header.type != CPML_MOVE)
+    if (segment->data->header.type != CAIRO_PATH_MOVE_TO)
         return 0;
 
     new_data = segment->data;
@@ -577,12 +575,12 @@ ensure_one_leading_move(CpmlSegment *segment)
         move_length = new_data->header.length;
 
         /* Check for the end of cairo path data, that is when
-         * @segment is composed by only CPML_MOVE */
+         * @segment is composed by only CAIRO_PATH_MOVE_TO */
         if (new_num_data <= move_length)
             return 0;
 
-        /* Check if this is the last CPML_MOVE */
-        if (new_data[move_length].header.type != CPML_MOVE)
+        /* Check if this is the last CAIRO_PATH_MOVE_TO */
+        if (new_data[move_length].header.type != CAIRO_PATH_MOVE_TO)
             break;
 
         new_data += move_length;
@@ -600,9 +598,9 @@ ensure_one_leading_move(CpmlSegment *segment)
  * @segment: a #CpmlSegment
  *
  * Looks for the segment termination, that is the end of the underlying
- * cairo path or a #CPML_MOVE operation. <structfield>num_data</structfield>
+ * cairo path or a %CPML_MOVE operation. <structfield>num_data</structfield>
  * field is modified to properly point to the end of @segment.
- * @segment must have only one leading #CPML_MOVE and it is supposed
+ * @segment must have only one leading %CPML_MOVE and it is supposed
  * to be non-empty, conditions yet imposed by the ensure_one_leading_move().
  *
  * This function also checks that all the components of @segment
@@ -630,7 +628,7 @@ reshape(CpmlSegment *segment)
         if (trailing_data < 0)
             return 0;
 
-        if (trailing_data == 0 || data->header.type == CPML_MOVE)
+        if (trailing_data == 0 || data->header.type == CAIRO_PATH_MOVE_TO)
             break;
 
         /* Ensure that all the components are valid primitives */

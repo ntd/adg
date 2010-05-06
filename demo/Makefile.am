@@ -4,7 +4,8 @@ AM_CFLAGS=			@ADG_GTK_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 AM_CPPFLAGS=			-DPKGDATADIR='"$(pkgdatadir)"' \
-				-DSOURCEDIR='"$(abs_top_srcdir)/demo"'
+				-DDEMOSRCDIR='"$(abs_srcdir)"' \
+				-DDEMOBUILDDIR='"$(abs_builddir)"'
 LDADD=				@ADG_GTK_LIBS@ \
 				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(top_builddir)/src/adg/libadg-1.la \

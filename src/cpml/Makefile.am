@@ -1,16 +1,10 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-AM_CFLAGS=			@CPML_CFLAGS@ \
-				-I$(top_srcdir)
-LDADD=				@CPML_LIBS@
-
 
 # file groups
 h_sources=			cpml-arc.h \
 				cpml-curve.h \
 				cpml-extents.h \
-				cpml-line.h \
-				cpml-close.h \
 				cpml-pair.h \
 				cpml-primitive.h \
 				cpml-segment.h \
@@ -39,11 +33,13 @@ cpml_include_DATA=		$(h_sources) \
 				$(built_h_sources)
 
 lib_LTLIBRARIES= 		libcpml-1.la
-# Placeholder for versioning support...
-libcpml_1_la_LDFLAGS=
 libcpml_1_la_SOURCES=		$(h_sources) \
 				$(built_h_sources) \
 				$(private_h_sources) \
 				$(built_private_h_sources) \
 				$(c_sources) \
 				$(built_c_sources)
+libcpml_1_la_CFLAGS=		$(CPML_CFLAGS) \
+				-I$(top_srcdir)
+libcpml_1_la_LDFLAGS=		-no-undefined
+libcpml_1_la_LIBADD=		$(CPML_LIBS)

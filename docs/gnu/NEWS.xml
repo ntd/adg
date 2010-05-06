@@ -6,6 +6,30 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.0">
+<title>ADG 0.6.0</title>
+
+<para>The portability of the build system has been improved: the ADG project
+now builds out of the box on FreeBSD, OpenSolaris, MinGW32 and GNU/Linux.</para>
+
+<para>The adg-demo program has been rewritten almost from scratch to provide
+a nice example of what the ADG should be used for. The rendering has
+been cleaned up and the model-view interaction now works: changing the
+data on the edit dialog changes the drawing (this is what the ADG has
+been developed for). The GTK+ widget, although not shining, is fairly
+usable and light years ahead of the previous version.</para>
+
+<para>The canvas now has custom paddings and margins, a background dress and
+the ability to accept an AdgTitleBlock entity.</para>
+
+<para>The project tree has been rearranged in three different subprojects:
+CPML (mathematical stuff above cairo), ADG (the canvas above CPML) and
+ADG-GTK (user interface helpers above ADG and GTK+).</para>
+
+<para>Support for glade-3 has been added: if enabled, ADG-GTK will try to
+install its catalog in the proper glade directory.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.5.6">
 <title>ADG 0.5.6</title>
 

@@ -1,4 +1,4 @@
-m4_define([adg_version],[0.5.6])
+m4_define([adg_version],[0.6.0])
 m4_define([adg_api_version],[1.0])
 
 m4_define([gtkdoc_prereq],[1.9])
@@ -36,8 +36,9 @@ AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 AC_MSG_CHECKING([which libtool initialization strategy to adopt])
 AC_MSG_RESULT([m4_ifset([LT_INIT],[LT-INIT],[AC-PROG-LIBTOOL])])
 m4_ifset([LT_INIT],
-         [LT_INIT([disable-static])],
+         [LT_INIT([disable-static win32-dll])],
          [AC_DISABLE_STATIC
+	  AC_LIBTOOL_WIN32_DLL
           AC_PROG_LIBTOOL])
 
 
@@ -49,9 +50,11 @@ AC_DEFINE([GETTEXT_PACKAGE],"AC_PACKAGE_TARNAME-adg_api_version",
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
-AC_OUTPUT_COMMANDS([case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
+AC_CONFIG_COMMANDS([default],
+                   [case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
         ${SED} -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
-      esac])
+    esac],
+		   [SED="${SED}"])
 
 
 # Check for required packages
