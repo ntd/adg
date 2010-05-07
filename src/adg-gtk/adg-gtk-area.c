@@ -377,12 +377,16 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
  * @widget: an #AdgGtkArea widget
  * @allocation: the new allocation struct
  *
- * Scales the drawing accordingly to the new allocation. The current
- * implementation could be probably cleaned up: the actual approach
- * keeps the top left point in the canvas at a fixed position while
- * a better alogorithm would keep the point in the canvas at the
- * center of old widget in the center of the new widget, padding the
- * canvas as necessary.
+ * Scales the drawing according to the new allocation.
+ *
+ * The current implementation translates the drawing as a user would
+ * expect: keep the point in the center of the #AdgCanvas at the
+ * center of the new #AdgGtkArea.
+ *
+ * The scaling is not that easy, though. The drawing is scaled up to
+ * the edges of the widget. Anyway, if the model matrix changes (that is,
+ * if the model is translated or scaled), the algorithm behaves as if
+ * the model matrix was not changed.
  **/
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
@@ -443,8 +447,10 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 
         factor = MIN(ratio.x, ratio.y);
 
-        map.x0 = src_allocation->x * factor;
-        map.y0 = src_allocation->y * factor;
+        map.x0 = src_allocation->x * factor +
+            (allocation->width - src_allocation->width * factor) / 2;
+        map.y0 = src_allocation->y * factor +
+            (allocation->height - src_allocation->height * factor) / 2;
     }
 
     map.xx = map.yy = factor;
