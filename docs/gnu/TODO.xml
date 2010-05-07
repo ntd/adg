@@ -75,7 +75,7 @@ API: the 0.7.0 release will probably be a beta release.</para>
    <listitem>Create a separate project called adg-lua to host the lua bindings for
    the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
    <listitem>Add italian localization.</listitem>
-   <listitem>Try to cross compile and build a windows binary package. Check out
+   <listitem override="disc">Try to cross compile and build a windows binary package. Check out
    <ulink url="http://ricardo.ecn.wfu.edu/~cottrell/cross-gtk/">Allin suggestions</ulink>
    for hints.</listitem>
    <listitem override="disc">Implement a decent "make check" target, basing the check programs on
@@ -146,7 +146,7 @@ needed to generate this drawing.</para>
    <listitem override="disc">Sanitize the ADG APIs: the public functions must cope with invalid
    arguments without segmentation faults (without crossing the limits of
    the C language and of the common sense).</listitem>
-   <listitem>Provide a decent demo program to show the progress so far, including
+   <listitem override="disc">Provide a decent demo program to show the progress so far, including
    title block, hatches and various dimensions types: update the website
    with new (and hopefully more impressive) screenshots.</listitem>
 </itemizedlist>
