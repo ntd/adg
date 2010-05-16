@@ -821,7 +821,7 @@ main(gint argc, gchar **argv)
     gtk_builder_add_from_file(builder, path, &error);
 
     if (error != NULL) {
-        g_critical(error->message);
+        g_critical("%s", error->message);
         g_error_free(error);
         return 2;
     }
