@@ -3,9 +3,7 @@ include $(top_srcdir)/build/Makefile.am.common
 AM_CFLAGS=			@GTK2_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-AM_CPPFLAGS=			-DPKGDATADIR='"$(pkgdatadir)"' \
-				-DDEMOSRCDIR='"$(abs_srcdir)"' \
-				-DDEMOBUILDDIR='"$(abs_builddir)"'
+AM_CPPFLAGS=			-DPKGDATADIR='"$(pkgdatadir)"'
 
 
 if HAVE_GTK2

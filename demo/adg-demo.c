@@ -1,8 +1,7 @@
-#include <adg-gtk.h>
-#include <math.h>
-
 #include "demo.h"
 
+#include <adg-gtk.h>
+#include <math.h>
 
 #define SQRT3   1.732050808
 #define CHAMFER 0.3
