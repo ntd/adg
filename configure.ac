@@ -76,7 +76,9 @@ AC_ARG_ENABLE([gtk2],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes],
+                         [enable_gtk2=yes
+                          DLLDIR=`${PKG_CONFIG} --variable=prefix gtk+-2.0`/bin
+                          AC_SUBST([DLLDIR])],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
@@ -137,6 +139,7 @@ AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
 SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
                  build/shave-libtool
+                 build/adg.nsi
                  Makefile
                  src/Makefile
                  src/cpml-1.pc

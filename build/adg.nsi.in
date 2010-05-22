@@ -1,0 +1,128 @@
+; NSIS installer
+; Check http://nsis.sourceforge.net/ for details
+
+!define DEMODIR "@abs_top_builddir@/demo/"
+!define LIBDIR "@abs_top_builddir@/src/"
+!define DLLDIR "@DLLDIR@"
+
+!addincludedir "@abs_top_srcdir@/build"
+!include "MUI2.nsh"
+!include "EnvVarUpdate.nsh"
+
+; General -------------------------------------------------------
+
+Name "@PACKAGE_NAME@ @PACKAGE_VERSION@"
+OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-win32.exe"
+SetCompressor /SOLID lzma
+InstallDir "$PROGRAMFILES\@ADG_API_PACKAGE@"
+InstallDirRegKey HKLM "Software\@ADG_API_PACKAGE@" ""
+RequestExecutionLevel highest
+
+; Interface settings --------------------------------------------
+
+!define MUI_ABORTWARNING
+!define MUI_COMPONENTSPAGE_SMALLDESC
+
+; Pages ---------------------------------------------------------
+
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_LICENSE "@abs_top_srcdir@/COPYING"
+!insertmacro MUI_PAGE_COMPONENTS
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!insertmacro MUI_PAGE_FINISH
+
+!insertmacro MUI_UNPAGE_WELCOME
+!insertmacro MUI_UNPAGE_INSTFILES
+!insertmacro MUI_UNPAGE_FINISH
+
+; Languages -----------------------------------------------------
+
+!insertmacro MUI_LANGUAGE "English"
+!insertmacro MUI_LANGUAGE "Italian"
+
+; Sections ------------------------------------------------------
+
+Section "ADG canvas" SecBase
+  SectionIn RO
+  SetOutPath "$INSTDIR"
+
+  File "${DEMODIR}/.libs/adg-demo.exe"
+  File "${DEMODIR}/adg-demo.ui"
+  File "@abs_top_srcdir@/demo/adg-64.png"
+
+  SetOutPath "$INSTDIR\bin"
+  ; Development library: "${DLLDIR}/libintllibpangowin32-1.0-*.dll"
+  File "${DLLDIR}/libglib-2.0-*.dll"
+  ; Not used: "${DLLDIR}/libgmodule-2.0-*.dll"
+  File "${DLLDIR}/libgobject-2.0-*.dll"
+  File "${DLLDIR}/libcairo-*.dll"
+  File "${DLLDIR}/libpango-1.0-*.dll"
+  File "${DLLDIR}/libpangocairo-1.0-*.dll"
+  ; System library: "${DLLDIR}/libgdi32-*.dll"
+  File "${DLLDIR}/libpangowin32-1.0-*.dll"
+  File "${DLLDIR}/libgdk_pixbuf-2.0-*.dll"
+  ; Not used: "${DLLDIR}/libgio-2.0-*.dll"
+  File "${DLLDIR}/libatk-1.0-*.dll"
+  File "${DLLDIR}/libgdk-win32-2.0-*.dll"
+  File "${DLLDIR}/libgtk-win32-2.0-*.dll"
+  File "${LIBDIR}/cpml/.libs/libcpml-1-*.dll"
+  File "${LIBDIR}/adg/.libs/libadg-1-*.dll"
+  File "${LIBDIR}/adg-gtk/.libs/libadg-gtk-1-*.dll"
+
+  WriteRegStr SHCTX "Software\@ADG_API_PACKAGE@" "" "$INSTDIR"
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+
+SectionEnd
+
+Section "Support for languages" SecLanguages
+
+  SetOutPath "$INSTDIR\share"
+
+SectionEnd
+
+; Descriptions --------------------------------------------------
+
+LangString DESC_SecBase ${LANG_ENGLISH} "Base installation for running the demo program."
+LangString DESC_SecBase ${LANG_ITALIAN} "Installazione di base per eseguire il programma dimostrativo."
+LangString DESC_SecLanguages ${LANG_ENGLISH} "Enable support for languages other than english."
+LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue diverse dall'inglese."
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+; Uninstaller ---------------------------------------------------
+
+Section "Uninstall"
+
+  Delete "$INSTDIR\adg-64.png"
+  Delete "$INSTDIR\adg-demo.ui"
+  Delete "$INSTDIR\adg-demo.exe"
+  Delete "$INSTDIR\bin\libadg-gtk-1-*.dll"
+  Delete "$INSTDIR\bin\libadg-1-*.dll"
+  Delete "$INSTDIR\bin\libcpml-1-*.dll"
+
+  Delete "$INSTDIR\bin\libgtk-win32-2.0-*.dll"
+  Delete "$INSTDIR\bin\libgdk-win32-2.0-*.dll"
+  Delete "$INSTDIR\bin\libatk-1.0-*.dll"
+  Delete "$INSTDIR\bin\libgdk_pixbuf-2.0-*.dll"
+  Delete "$INSTDIR\bin\libpangowin32-1.0-*.dll"
+  Delete "$INSTDIR\bin\libpangocairo-1.0-*.dll"
+  Delete "$INSTDIR\bin\libpango-1.0-*.dll"
+  Delete "$INSTDIR\bin\libcairo-*.dll"
+  Delete "$INSTDIR\bin\libgobject-2.0-*.dll"
+  Delete "$INSTDIR\bin\libglib-2.0-*.dll"
+
+  Delete "$INSTDIR\Uninstall.exe"
+
+  RMDir "$INSTDIR\bin"
+  RMDir "$INSTDIR\share"
+  RMDir "$INSTDIR"
+
+  DeleteRegKey /ifempty SHCTX "Software\@ADG_API_PACKAGE@"
+  ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
+
+SectionEnd
