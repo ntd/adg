@@ -33,8 +33,8 @@ libadg_gtk_1_la_SOURCES=	$(h_sources) \
 nodist_libadg_gtk_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_gtk_1_la_CFLAGS=		$(ADG_GTK_CFLAGS) \
+libadg_gtk_1_la_CFLAGS=		$(GTK2_CFLAGS) \
 				-I$(top_srcdir)/src
 libadg_gtk_1_la_LDFLAGS=	-no-undefined
-libadg_gtk_1_la_LIBADD=		$(ADG_GTK_LIBS) \
+libadg_gtk_1_la_LIBADD=		$(GTK2_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
