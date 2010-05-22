@@ -27,9 +27,11 @@
 #define __ADG_INTERNAL_H__
 
 #define G_LOG_DOMAIN  "adg"
+
+/* The following define enables the inclusion of internal headers */
 #define __ADG_H__
 
-#include "config.h"
+#include <config.h>
 #include "adg-utils.h"
 
 
