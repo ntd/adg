@@ -98,9 +98,9 @@ LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue
 
 Section "Uninstall"
 
-  Delete "$INSTDIR\adg-64.png"
-  Delete "$INSTDIR\adg-demo.ui"
   Delete "$INSTDIR\adg-demo.exe"
+  Delete "$INSTDIR\share\adg-64.png"
+  Delete "$INSTDIR\share\adg-demo.ui"
   Delete "$INSTDIR\bin\libadg-gtk-1-*.dll"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
   Delete "$INSTDIR\bin\libcpml-1-*.dll"

@@ -3,7 +3,20 @@ include $(top_srcdir)/build/Makefile.am.common
 AM_CFLAGS=			@GTK2_CFLAGS@ \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-AM_CPPFLAGS=			-DPKGDATADIR='"$(pkgdatadir)"'
+
+if OS_WINDOWS
+
+## On windows, ADG_DATADIR is handled as a path relative
+## to the binary executable
+adgdatadir=			$(bindir)/share
+AM_CPPFLAGS=			-DADG_DATADIR='"share"'
+
+else # ! OS_WINDOWS
+
+adgdatadir=			$(pkgdatadir)
+AM_CPPFLAGS=			-DADG_DATADIR='"$(adgdatadir)"'
+
+endif
 
 
 if HAVE_GTK2
@@ -18,9 +31,9 @@ cpml_demo_SOURCES=		cpml-demo.c \
 				demo.h
 cpml_demo_LDADD=		$(GTK2_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la
-nodist_pkgdata_DATA=		adg-demo.ui \
+nodist_adgdata_DATA=		adg-demo.ui \
 				cpml-demo.ui
-dist_pkgdata_DATA=		adg-64.png
+dist_adgdata_DATA=		adg-64.png
 endif
 
 EXTRA_DIST=			cpml-demo.ui.in \

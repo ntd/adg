@@ -2,23 +2,31 @@
 
 /**
  * demo_find_data_file:
- * @file: the name of the file to look for
+ * @file: the name of a data file
  * @caller: caller program (argv[0])
  *
- * Looks for @file in the data path. This wrapper is needed
- * to allow running the program both when uninstalled and
- * installed: in the former case, @file must be present in
- * the parent directory of the caller file while in the
- * latter case it must reside in $(pkgdatadir).
+ * Builds the proper path of a data file, without checking
+ * for @file existence. This wrapper is needed to allow
+ * running the program either when uninstalled and installed
+ * and to deal with different platform issues.
  *
- * The function looks for paths in the following order:
+ * A call is considered coming from an uninstalled program
+ * if @caller (containing the supposed absolute path of
+ * the program) contains the LT_OBJDIR constant (usually
+ * ".libs"), typically used to store an uninstalled binary.
  *
- * - $(top_scrdir)/demo
- * - $(top_builddir)/demo
- * - $(pkgdatadir)
+ * If the call comes from an uninstalled program, @file will
+ * be searched in the parent directory of @caller dirname.
  *
- * Returns: the full path to @file to be freed with g_free()
- *          or %NULL if not found or on errors
+ * If the call comes from an installed program, the
+ * %ADG_DATADIR will be used instead. This constant is set
+ * by the makefile throught preprocessor flags and will be
+ * considered an absolute path on non-windows platforms,
+ * hence resolving to $(pkgdatadir), or a path relative to
+ * the @caller dirname on windows platforms.
+ *
+ * Returns: the full path to @file that must bel freed with
+ *          g_free() or %NULL on errors
  **/
 gchar *
 demo_find_data_file(const gchar *file, const gchar *caller)
@@ -27,17 +35,37 @@ demo_find_data_file(const gchar *file, const gchar *caller)
 
     if (data_root == NULL) {
         if (caller == NULL || strstr(caller, LT_OBJDIR) == NULL) {
-            /* Supposedly, this program is installed */
-            data_root = PKGDATADIR;
+            /* Supposedly, this is a call to an installed program */
+#ifdef G_OS_WIN32
+
+            /* On windows, ADG_DATADIR is a path relative to the
+             * caller dirname. This is needed because the data
+             * files must be relocatable, so the installer is free
+             * to put the project tree under custom directories.
+             * Other files, such as headers and libraries, are
+             * yet properly managed by autotools.
+             */
+            gchar *caller_dirname = g_path_get_dirname(caller);
+            data_root = g_build_filename(caller_dirname, ADG_DATADIR, NULL);
+            g_free(caller_dirname);
+
+#else /* ! G_OS_WIN32 */
+
+            /* On other operating systems, ADG_DATADIR is an
+             * absolute path, so no further processing is required.
+             */
+            data_root = ADG_DATADIR;
+
+#endif
         } else {
-            /* Program not installed: set data_root to
-             * the parent directory of the caller dirname */
+            /* This is likely an uninstalled program call: set
+             * data_root to the parent directory of the caller dirname.
+             */
             gchar *caller_dirname = g_path_get_dirname(caller);
             data_root = g_build_filename(caller_dirname, "..", NULL);
             g_free(caller_dirname);
         }
     }
 
-    g_print("File: %s\n", g_build_filename(data_root, file, NULL));
     return g_build_filename(data_root, file, NULL);
 }
