@@ -8,8 +8,8 @@ if OS_WINDOWS
 
 ## On windows, ADG_DATADIR is handled as a path relative
 ## to the binary executable
-adgdatadir=			$(bindir)/share
-AM_CPPFLAGS=			-DADG_DATADIR='"share"'
+adgdatadir=			$(bindir)
+AM_CPPFLAGS=			-DADG_DATADIR='""'
 
 else # ! OS_WINDOWS
 
