@@ -1,15 +1,8 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-GTKDOC_CFLAGS=		@ADG_GTK_CFLAGS@ \
-			-I$(top_srcdir)
-GTKDOC_LIBS=		@ADG_GTK_LIBS@ \
-			$(top_builddir)/src/adg/libadg-1.la \
-			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
-
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg \
-			$(abs_top_srcdir)/src/adg-gtk
+DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
@@ -36,7 +29,6 @@ IGNORE_HFILES=		adg.h \
 			adg-edges-private.h \
 			adg-entity-private.h \
 			adg-fill-style-private.h \
-			adg-gtk-internal.h \
 			adg-font-style-private.h \
 			adg-hatch-private.h \
 			adg-ldim-private.h \
@@ -54,7 +46,6 @@ IGNORE_HFILES=		adg.h \
 			adg-title-block-private.h \
 			adg-toy-text-private.h \
 			adg-trail-private.h \
-			adg-gtk-area-private.h \
 			test-internal.h
 HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
@@ -62,6 +53,29 @@ content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/TODO.xml \
 			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
 expand_content_files=
+
+
+if HAVE_GTK2
+
+GTKDOC_CFLAGS=		$(GTK2_CFLAGS) \
+			-I$(top_srcdir)/src
+GTKDOC_LIBS=		$(GTK2_LIBS) \
+			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
+
+DOC_SOURCE_DIR+=	$(abs_top_srcdir)/src/adg-gtk
+IGNORE_HFILES+=		adg-gtk-internal.h \
+			adg-gtk-area-private.h
+
+else # ! HAVE_GTK2
+
+GTKDOC_CFLAGS=		$(CAIRO_CFLAGS) \
+			$(GOBJECT2_CFLAGS) \
+			-I$(top_srcdir)/src
+GTKDOC_LIBS=		$(CAIRO_LIBS) \
+			$(top_builddir)/src/adg/libadg-1.la
+
+endif
+
 
 include $(top_srcdir)/build/Makefile.am.gtk-doc
 
