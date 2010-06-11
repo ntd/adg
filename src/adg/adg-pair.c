@@ -54,6 +54,24 @@ adg_pair_get_type(void)
 }
 
 /**
+ * adg_pair_copy:
+ * @pair: the destination #AdgPair
+ * @src: the source #AdgPair
+ *
+ * Copies @src in @pair. It works in the same way as
+ * cpml_pair_copy() but performing argument validation
+ * before proceeding.
+ **/
+void
+adg_pair_copy(AdgPair *pair, const AdgPair *src)
+{
+    g_return_if_fail(pair != NULL);
+    g_return_if_fail(src != NULL);
+
+    memcpy(pair, src, sizeof(AdgPair));
+}
+
+/**
  * adg_pair_dup:
  * @pair: an #AdgPair structure
  *
