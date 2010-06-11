@@ -49,6 +49,7 @@ G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
 
 enum {
     PROP_0,
+    PROP_SIZE,
     PROP_BACKGROUND_DRESS,
     PROP_FRAME_DRESS,
     PROP_TITLE_BLOCK,
@@ -102,6 +103,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
     entity_class->invalidate = _adg_invalidate;
     entity_class->arrange = _adg_arrange;
     entity_class->render = _adg_render;
+
+    param = g_param_spec_boxed("size",
+                               P_("Canvas Size"),
+                               P_("The size set on this canvas: use 0 to have an automatic dimension based on the canvas extents"),
+                               ADG_TYPE_PAIR,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SIZE, param);
 
     param = adg_param_spec_dress("background-dress",
                                  P_("Background Dress"),
@@ -195,6 +203,8 @@ adg_canvas_init(AdgCanvas *canvas)
                                                          ADG_TYPE_CANVAS,
                                                          AdgCanvasPrivate);
 
+    data->size.x = 0;
+    data->size.y = 0;
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->title_block = NULL;
@@ -233,6 +243,9 @@ _adg_get_property(GObject *object, guint prop_id,
     AdgCanvasPrivate *data = ((AdgCanvas *) object)->data;
 
     switch (prop_id) {
+    case PROP_SIZE:
+        g_value_set_boxed(value, &data->size);
+        break;
     case PROP_BACKGROUND_DRESS:
         g_value_set_int(value, data->background_dress);
         break;
@@ -287,6 +300,9 @@ _adg_set_property(GObject *object, guint prop_id,
     data = canvas->data;
 
     switch (prop_id) {
+    case PROP_SIZE:
+        adg_pair_copy(&data->size, g_value_get_boxed(value));
+        break;
     case PROP_BACKGROUND_DRESS:
         data->background_dress = g_value_get_int(value);
         break;
@@ -349,6 +365,68 @@ AdgCanvas *
 adg_canvas_new(void)
 {
     return g_object_new(ADG_TYPE_CANVAS, NULL);
+}
+
+/**
+ * adg_canvas_set_size:
+ * @canvas: an #AdgCanvas
+ * @size: the new size for the canvas
+ *
+ * Sets a specific size on @canvas. The x and/or y
+ * components of the returned #AdgPair could be %0, in which
+ * case the size returned by adg_entity_get_extents() on
+ * @canvas will be used instead.
+ **/
+void
+adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(size != NULL);
+
+    g_object_set((GObject *) canvas, "size", size, NULL);
+}
+
+/**
+ * adg_canvas_set_size_explicit:
+ * @canvas: an #AdgCanvas
+ * @x: the new width of the canvas or %0 to reset
+ * @y: the new height of the canvas or %0 to reset
+ *
+ * A convenient function to set the size of @canvas using
+ * explicit coordinates. Check adg_canvas_set_size() for
+ * further details.
+ **/
+void
+adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
+{
+    AdgPair size;
+
+    size.x = x;
+    size.y = y;
+
+    adg_canvas_set_size(canvas, &size);
+}
+
+/**
+ * adg_canvas_get_size:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the specific size set on @canvas. The x and/or y
+ * components of the returned #AdgPair could be %0, in which
+ * case the size returned by adg_entity_get_extents() on
+ * @canvas will be used instead.
+ *
+ * Returns: the explicit size set on this canvas or %NULL on errors
+ **/
+const AdgPair *
+adg_canvas_get_size(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
+
+    data = canvas->data;
+    return &data->size;
 }
 
 /**

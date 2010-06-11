@@ -62,6 +62,12 @@ struct _AdgCanvasClass {
 GType           adg_canvas_get_type             (void) G_GNUC_CONST;
 
 AdgCanvas *     adg_canvas_new                  (void);
+void            adg_canvas_set_size             (AdgCanvas      *canvas,
+                                                 const AdgPair  *pair);
+void            adg_canvas_set_size_explicit    (AdgCanvas      *canvas,
+                                                 gdouble         x,
+                                                 gdouble         y);
+const AdgPair * adg_canvas_get_size             (AdgCanvas      *canvas);
 void            adg_canvas_set_background_dress (AdgCanvas      *canvas,
                                                  AdgDress        dress);
 AdgDress        adg_canvas_get_background_dress (AdgCanvas      *canvas);
