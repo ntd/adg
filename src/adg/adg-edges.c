@@ -52,9 +52,11 @@
 #include "adg-edges-private.h"
 #include "adg-pair.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
-#define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
+#define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)
 
+
+G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL);
 
 enum {
     PROP_0,
@@ -63,31 +65,24 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
-static void             finalize                (GObject        *object);
-static void             get_property            (GObject        *object,
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             clear                   (AdgModel       *model);
-static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
-static gboolean         set_source              (AdgEdges       *edges,
-                                                 AdgTrail       *source);
-static gboolean         set_critical_angle      (AdgEdges       *edges,
-                                                 gdouble         angle);
-static void             unset_source            (AdgEdges       *edges);
-static void             clear_cpml_path         (AdgEdges       *edges);
-static GSList *         get_vertices            (CpmlSegment    *segment,
+static void             _adg_clear              (AdgModel       *model);
+static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
+static void             _adg_unset_source       (AdgEdges       *edges);
+static void             _adg_clear_cpml_path    (AdgEdges       *edges);
+static GSList *         _adg_get_vertices       (CpmlSegment    *segment,
                                                  gdouble         threshold);
-static GSList *         optimize_vertices       (GSList         *vertices);
-static GArray *         build_array             (const GSList   *vertices);
-
-
-G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL);
+static GSList *         _adg_optimize_vertices  (GSList         *vertices);
+static GArray *         _adg_build_array        (const GSList   *vertices);
 
 
 static void
@@ -104,14 +99,14 @@ adg_edges_class_init(AdgEdgesClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgEdgesPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    model_class->clear = clear;
+    model_class->clear = _adg_clear;
 
-    trail_class->get_cpml_path = get_cpml_path;
+    trail_class->get_cpml_path = _adg_get_cpml_path;
 
     param = g_param_spec_object("source",
                                 P_("Source"),
@@ -145,27 +140,28 @@ adg_edges_init(AdgEdges *edges)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgEdges *edges = (AdgEdges *) object;
 
     adg_edges_set_source(edges, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
-    clear_cpml_path((AdgEdges *) object);
+    _adg_clear_cpml_path((AdgEdges *) object);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgEdges *edges;
     AdgEdgesPrivate *data;
@@ -187,17 +183,27 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgEdges *edges = (AdgEdges *) object;
+    AdgEdgesPrivate *data = ((AdgEdges *) object)->data;
 
     switch (prop_id) {
     case PROP_SOURCE:
-        set_source(edges, g_value_get_object(value));
+        if (data->source != NULL)
+            g_object_weak_unref((GObject *) data->source,
+                                (GWeakNotify) _adg_unset_source, object);
+
+        data->source = g_value_get_object(value);
+        _adg_clear((AdgModel *) object);
+
+        if (data->source != NULL)
+            g_object_weak_ref((GObject *) data->source,
+                              (GWeakNotify) _adg_unset_source, object);
         break;
     case PROP_CRITICAL_ANGLE:
-        set_critical_angle(edges, g_value_get_double(value));
+        data->threshold = sin(g_value_get_double(value));
+        data->threshold *= data->threshold * 2;
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -265,9 +271,7 @@ void
 adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
 {
     g_return_if_fail(ADG_IS_EDGES(edges));
-
-    if (set_source(edges, source))
-        g_object_notify((GObject *) edges, "source");
+    g_object_set(edges, "source", source, NULL);
 }
 
 /**
@@ -306,23 +310,21 @@ void
 adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
 {
     g_return_if_fail(ADG_IS_EDGES(edges));
-
-    if (set_critical_angle(edges, angle))
-        g_object_notify((GObject *) edges, "critical-angle");
+    g_object_set(edges, "critical-angle", angle, NULL);
 }
 
 
 static void
-clear(AdgModel *model)
+_adg_clear(AdgModel *model)
 {
-    clear_cpml_path((AdgEdges *) model);
+    _adg_clear_cpml_path((AdgEdges *) model);
 
-    if (PARENT_MODEL_CLASS->clear)
-        PARENT_MODEL_CLASS->clear(model);
+    if (_ADG_OLD_MODEL_CLASS->clear)
+        _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
 static CpmlPath *
-get_cpml_path(AdgTrail *trail)
+_adg_get_cpml_path(AdgTrail *trail)
 {
     AdgEdges *edges;
     AdgEdgesPrivate *data;
@@ -334,16 +336,16 @@ get_cpml_path(AdgTrail *trail)
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS)
         return &data->cpml.path;
 
-    clear_cpml_path((AdgEdges *) trail);
+    _adg_clear_cpml_path((AdgEdges *) trail);
 
     if (data->source != NULL) {
         CpmlSegment segment;
         GSList *vertices;
 
         adg_trail_put_segment(data->source, 1, &segment);
-        vertices = get_vertices(&segment, 0.01);
-        vertices = optimize_vertices(vertices);
-        data->cpml.array = build_array(vertices);
+        vertices = _adg_get_vertices(&segment, 0.01);
+        vertices = _adg_optimize_vertices(vertices);
+        data->cpml.array = _adg_build_array(vertices);
 
         g_slist_foreach(vertices, (GFunc) g_free, NULL);
         g_slist_free(vertices);
@@ -356,63 +358,14 @@ get_cpml_path(AdgTrail *trail)
     return &data->cpml.path;
 }
 
-static gboolean
-set_source(AdgEdges *edges, AdgTrail *source)
+static void
+_adg_unset_source(AdgEdges *edges)
 {
-    AdgEntity *entity;
-    AdgEdgesPrivate *data;
-
-    g_return_val_if_fail(source == NULL || ADG_IS_TRAIL(source), FALSE);
-
-    entity = (AdgEntity *) edges;
-    data = edges->data;
-
-    if (source == data->source)
-        return FALSE;
-
-    if (data->source != NULL)
-        g_object_weak_unref((GObject *) data->source,
-                            (GWeakNotify) unset_source, edges);
-
-    data->source = source;
-    clear((AdgModel *) edges);
-
-    if (data->source != NULL)
-        g_object_weak_ref((GObject *) data->source,
-                          (GWeakNotify) unset_source, edges);
-
-    return TRUE;
-}
-
-static gboolean
-set_critical_angle(AdgEdges *edges, gdouble angle)
-{
-    AdgEdgesPrivate *data;
-    gdouble threshold;
-
-    data = edges->data;
-    threshold = sin(angle);
-    threshold *= threshold * 2;
-
-    if (threshold == data->threshold)
-        return FALSE;
-
-    data->threshold = threshold;
-
-    return TRUE;
+    g_object_set(edges, "source", NULL, NULL);
 }
 
 static void
-unset_source(AdgEdges *edges)
-{
-    AdgEdgesPrivate *data = edges->data;
-
-    if (data->source != NULL)
-        set_source(edges, NULL);
-}
-
-static void
-clear_cpml_path(AdgEdges *edges)
+_adg_clear_cpml_path(AdgEdges *edges)
 {
     AdgEdgesPrivate *data = edges->data;
 
@@ -427,7 +380,7 @@ clear_cpml_path(AdgEdges *edges)
 }
 
 static GSList *
-get_vertices(CpmlSegment *segment, gdouble threshold)
+_adg_get_vertices(CpmlSegment *segment, gdouble threshold)
 {
     GSList *vertices;
     CpmlPrimitive primitive;
@@ -465,7 +418,7 @@ get_vertices(CpmlSegment *segment, gdouble threshold)
 
 /* Removes adjacent vertices lying on the same edge */
 static GSList *
-optimize_vertices(GSList *vertices)
+_adg_optimize_vertices(GSList *vertices)
 {
     GSList *vertex, *old_vertex;
     AdgPair *pair, *old_pair;
@@ -501,7 +454,7 @@ optimize_vertices(GSList *vertices)
 }
 
 static GArray *
-build_array(const GSList *vertices)
+_adg_build_array(const GSList *vertices)
 {
     cairo_path_data_t line[4];
     GArray *array;
