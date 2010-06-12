@@ -66,8 +66,10 @@
 #include "adg-dim-style.h"
 #include "adg-marshal.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 
+
+G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED);
 
 enum {
     PROP_0,
@@ -88,35 +90,25 @@ enum {
 };
 
 
-static void             dispose                 (GObject         *object);
-static void             get_property            (GObject         *object,
+static void             _adg_dispose            (GObject         *object);
+static void             _adg_get_property       (GObject         *object,
                                                  guint            prop_id,
                                                  GValue          *value,
                                                  GParamSpec      *pspec);
-static void             set_property            (GObject         *object,
+static void             _adg_set_property       (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
-static gboolean         set_parent              (AdgEntity       *entity,
+static void             _adg_set_parent         (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-static gboolean         set_global_map          (AdgEntity       *entity,
-                                                 const AdgMatrix *map);
-static gboolean         set_local_map           (AdgEntity       *entity,
-                                                 const AdgMatrix *map);
-static gboolean         set_local_method        (AdgEntity       *entity,
-                                                 AdgMixMethod     local_method);
-static void             global_changed          (AdgEntity       *entity);
-static void             local_changed           (AdgEntity       *entity);
-static void             real_invalidate         (AdgEntity       *entity);
-static void             real_arrange            (AdgEntity       *entity);
-static void             real_render             (AdgEntity       *entity,
+static void             _adg_global_changed     (AdgEntity       *entity);
+static void             _adg_local_changed      (AdgEntity       *entity);
+static void             _adg_real_invalidate    (AdgEntity       *entity);
+static void             _adg_real_arrange       (AdgEntity       *entity);
+static void             _adg_real_render        (AdgEntity       *entity,
                                                  cairo_t         *cr);
-
-static guint    signals[LAST_SIGNAL] = { 0 };
-static gboolean show_extents = FALSE;
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED);
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
+static gboolean         _adg_show_extents = FALSE;
 
 
 static void
@@ -131,13 +123,13 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgEntityPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
     klass->parent_set = NULL;
-    klass->global_changed = global_changed;
-    klass->local_changed = local_changed;
+    klass->global_changed = _adg_global_changed;
+    klass->local_changed = _adg_local_changed;
     klass->invalidate = NULL;
     klass->arrange= NULL;
     klass->render = NULL;
@@ -180,13 +172,14 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * It is allowed for both old and new parent to be %NULL.
      **/
-    signals[PARENT_SET] = g_signal_new("parent-set",
-                                       G_OBJECT_CLASS_TYPE(gobject_class),
-                                       G_SIGNAL_RUN_FIRST,
-                                       G_STRUCT_OFFSET(AdgEntityClass, parent_set),
-                                       NULL, NULL,
-                                       adg_marshal_VOID__OBJECT,
-                                       G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[PARENT_SET] =
+        g_signal_new("parent-set",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, parent_set),
+                     NULL, NULL,
+                     adg_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgEntity::global-changed
@@ -196,13 +189,14 @@ adg_entity_class_init(AdgEntityClass *klass)
      * has changed. The default handler will compute the new global
      * matrix, updating the internal cache.
      **/
-    signals[GLOBAL_CHANGED] = g_signal_new("global-changed",
-                                           G_OBJECT_CLASS_TYPE(gobject_class),
-                                           G_SIGNAL_RUN_FIRST,
-                                           G_STRUCT_OFFSET(AdgEntityClass, global_changed),
-                                           NULL, NULL,
-                                           adg_marshal_VOID__VOID,
-                                           G_TYPE_NONE, 0);
+    _adg_signals[GLOBAL_CHANGED] =
+        g_signal_new("global-changed",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, global_changed),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 
     /**
      * AdgEntity::local-changed
@@ -212,13 +206,14 @@ adg_entity_class_init(AdgEntityClass *klass)
      * has changed. The default handler will compute the new local
      * matrix, updating the internal cache.
      **/
-    signals[LOCAL_CHANGED] = g_signal_new("local-changed",
-                                          G_OBJECT_CLASS_TYPE(gobject_class),
-                                          G_SIGNAL_RUN_FIRST,
-                                          G_STRUCT_OFFSET(AdgEntityClass, local_changed),
-                                          NULL, NULL,
-                                          adg_marshal_VOID__VOID,
-                                          G_TYPE_NONE, 0);
+    _adg_signals[LOCAL_CHANGED] =
+        g_signal_new("local-changed",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, local_changed),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 
     /**
      * AdgEntity::invalidate:
@@ -229,11 +224,12 @@ adg_entity_class_init(AdgEntityClass *klass)
      * The resulting state is a clean entity, similar to what you
      * have just before the first rendering.
      **/
-    closure = g_cclosure_new(G_CALLBACK(real_invalidate), NULL, NULL);
-    signals[INVALIDATE] = g_signal_newv("invalidate", ADG_TYPE_ENTITY,
-                                        G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                                        adg_marshal_VOID__VOID,
-                                        G_TYPE_NONE, 0, param_types);
+    closure = g_cclosure_new(G_CALLBACK(_adg_real_invalidate), NULL, NULL);
+    _adg_signals[INVALIDATE] =
+        g_signal_newv("invalidate", ADG_TYPE_ENTITY,
+                      G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                      adg_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0, param_types);
 
     /**
      * AdgEntity::arrange:
@@ -242,11 +238,13 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Arranges the layout of @entity, updating the cache if necessary,
      * and computes the extents of @entity.
      **/
-    closure = g_cclosure_new(G_CALLBACK(real_arrange), NULL, NULL);
-    signals[ARRANGE] = g_signal_newv("arrange", ADG_TYPE_ENTITY,
-                                     G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                                     adg_marshal_VOID__VOID,
-                                     G_TYPE_NONE, 0, param_types);
+    closure = g_cclosure_new(G_CALLBACK(_adg_real_arrange), NULL, NULL);
+    _adg_signals[ARRANGE] =
+        g_signal_newv("arrange", ADG_TYPE_ENTITY,
+                      G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                      adg_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0, param_types);
+
     /**
      * AdgEntity::render:
      * @entity: an #AdgEntity
@@ -256,12 +254,13 @@ adg_entity_class_init(AdgEntityClass *klass)
      * automatically emit #AdgEntity::arrange just before the real
      * rendering on the cairo context.
      **/
-    closure = g_cclosure_new(G_CALLBACK(real_render), NULL, NULL);
+    closure = g_cclosure_new(G_CALLBACK(_adg_real_render), NULL, NULL);
     param_types[0] = G_TYPE_POINTER;
-    signals[RENDER] = g_signal_newv("render", ADG_TYPE_ENTITY,
-                                    G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                                    adg_marshal_VOID__POINTER,
-                                    G_TYPE_NONE, 1, param_types);
+    _adg_signals[RENDER] =
+        g_signal_newv("render", ADG_TYPE_ENTITY,
+                      G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                      adg_marshal_VOID__POINTER,
+                      G_TYPE_NONE, 1, param_types);
 }
 
 static void
@@ -285,7 +284,7 @@ adg_entity_init(AdgEntity *entity)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgEntity *entity;
     AdgEntityPrivate *data;
@@ -302,12 +301,13 @@ dispose(GObject *object)
         data->hash_styles = NULL;
     }
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgEntity *entity;
     AdgEntityPrivate *data;
@@ -335,27 +335,26 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity;
-    AdgEntityPrivate *data;
-
-    entity = (AdgEntity *) object;
-    data = entity->data;
+    AdgEntityPrivate *data = ((AdgEntity *) object)->data;
 
     switch (prop_id) {
     case PROP_PARENT:
-        set_parent(entity, g_value_get_object(value));
+        _adg_set_parent(object, g_value_get_object(value));
         break;
     case PROP_GLOBAL_MAP:
-        set_global_map(entity, g_value_get_boxed(value));
+        adg_matrix_copy(&data->global_map, g_value_get_boxed(value));
+        data->global.is_defined = FALSE;
         break;
     case PROP_LOCAL_MAP:
-        set_local_map(entity, g_value_get_boxed(value));
+        adg_matrix_copy(&data->local_map, g_value_get_boxed(value));
+        data->local.is_defined = FALSE;
         break;
     case PROP_LOCAL_METHOD:
-        set_local_method(entity, g_value_get_enum(value));
+        data->local_method = g_value_get_enum(value);
+        g_signal_emit(object, _adg_signals[LOCAL_CHANGED], 0);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -374,7 +373,7 @@ set_property(GObject *object,
 void
 adg_switch_extents(gboolean state)
 {
-    show_extents = state;
+    _adg_show_extents = state;
 }
 
 /**
@@ -417,9 +416,7 @@ void
 adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_parent(entity, parent))
-        g_object_notify((GObject *) entity, "parent");
+    g_object_set(entity, "parent", parent, NULL);
 }
 
 /**
@@ -455,9 +452,7 @@ void
 adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_global_map(entity, map))
-        g_object_notify((GObject *) entity, "global-map");
+    g_object_set(entity, "global-map", map, NULL);
 }
 
 /**
@@ -493,8 +488,7 @@ adg_entity_transform_global_map(AdgEntity *entity,
     adg_matrix_copy(&map, &data->global_map);
     adg_matrix_transform(&map, transformation, mode);
 
-    if (set_global_map(entity, &map))
-        g_object_notify((GObject *) entity, "global-map");
+    g_object_set(entity, "global-map", &map, NULL);
 }
 
 /**
@@ -556,9 +550,7 @@ void
 adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_local_map(entity, map))
-        g_object_notify((GObject *) entity, "local-map");
+    g_object_set(entity, "local-map", map, NULL);
 }
 
 /**
@@ -593,9 +585,7 @@ adg_entity_transform_local_map(AdgEntity *entity,
 
     adg_matrix_copy(&map, &data->local_map);
     adg_matrix_transform(&map, transformation, mode);
-
-    if (set_local_map(entity, &map))
-        g_object_notify((GObject *) entity, "local-map");
+    g_object_set(entity, "local-map", &map, NULL);
 }
 
 /**
@@ -662,9 +652,7 @@ void
 adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    if (set_local_method(entity, local_method))
-        g_object_notify((GObject *) entity, "local-method");
+    g_object_set(entity, "local-method", local_method, NULL);
 }
 
 /**
@@ -906,7 +894,7 @@ adg_entity_global_changed(AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+    g_signal_emit(entity, _adg_signals[GLOBAL_CHANGED], 0);
 }
 
 /**
@@ -921,7 +909,7 @@ adg_entity_local_changed(AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+    g_signal_emit(entity, _adg_signals[LOCAL_CHANGED], 0);
 }
 
 /**
@@ -938,7 +926,7 @@ adg_entity_invalidate(AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[INVALIDATE], 0);
+    g_signal_emit(entity, _adg_signals[INVALIDATE], 0);
 }
 
 /**
@@ -955,7 +943,7 @@ adg_entity_arrange(AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[ARRANGE], 0);
+    g_signal_emit(entity, _adg_signals[ARRANGE], 0);
 }
 
 /**
@@ -971,7 +959,7 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    g_signal_emit(entity, signals[RENDER], 0, cr);
+    g_signal_emit(entity, _adg_signals[RENDER], 0, cr);
 }
 
 /**
@@ -1022,96 +1010,30 @@ adg_entity_point(AdgEntity *entity, AdgPoint *point, AdgPoint *new_point)
 }
 
 
-static gboolean
-set_parent(AdgEntity *entity, AdgEntity *parent)
+static void
+_adg_set_parent(AdgEntity *entity, AdgEntity *parent)
 {
     AdgEntityPrivate *data;
     AdgEntity *old_parent;
 
-    g_return_val_if_fail(parent == NULL || ADG_IS_ENTITY(parent), FALSE);
-
     data = entity->data;
     old_parent = data->parent;
 
-    /* Check if parent has changed */
-    if (parent == old_parent)
-        return FALSE;
-
-    if (parent != NULL)
+    if (parent)
         g_object_ref(parent);
 
     data->parent = parent;
     data->global.is_defined = FALSE;
     data->local.is_defined = FALSE;
 
-    g_signal_emit(entity, signals[PARENT_SET], 0, old_parent);
+    g_signal_emit(entity, _adg_signals[PARENT_SET], 0, old_parent);
 
-    if (old_parent != NULL)
+    if (old_parent)
         g_object_unref(old_parent);
-
-    return TRUE;
-}
-
-static gboolean
-set_global_map(AdgEntity *entity, const AdgMatrix *map)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(map != NULL, FALSE);
-
-    data = entity->data;
-
-    if (adg_matrix_equal(&data->global_map, map))
-        return FALSE;
-
-    adg_matrix_copy(&data->global_map, map);
-
-    data->global.is_defined = FALSE;
-    return TRUE;
-}
-
-static gboolean
-set_local_map(AdgEntity *entity, const AdgMatrix *map)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(map != NULL, FALSE);
-
-    data = entity->data;
-
-    if (map == NULL)
-        map = adg_matrix_identity();
-
-    if (adg_matrix_equal(&data->local_map, map))
-        return FALSE;
-
-    adg_matrix_copy(&data->local_map, map);
-
-    data->local.is_defined = FALSE;
-    return TRUE;
-}
-
-static gboolean
-set_local_method(AdgEntity *entity, AdgMixMethod local_method)
-{
-    AdgEntityPrivate *data;
-
-    g_return_val_if_fail(adg_is_enum_value(local_method, ADG_TYPE_MIX_METHOD),
-                         FALSE);
-
-    data = entity->data;
-
-    if (data->local_method == local_method)
-        return FALSE;
-
-    data->local_method = local_method;
-    g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
-
-    return TRUE;
 }
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
     const AdgMatrix *map;
@@ -1130,7 +1052,7 @@ global_changed(AdgEntity *entity)
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
     const AdgMatrix *map;
@@ -1192,7 +1114,7 @@ local_changed(AdgEntity *entity)
 }
 
 static void
-real_invalidate(AdgEntity *entity)
+_adg_real_invalidate(AdgEntity *entity)
 {
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
     AdgEntityPrivate *data = entity->data;
@@ -1206,7 +1128,7 @@ real_invalidate(AdgEntity *entity)
 }
 
 static void
-real_arrange(AdgEntity *entity)
+_adg_real_arrange(AdgEntity *entity)
 {
     AdgEntityClass *klass;
     AdgEntityPrivate *data;
@@ -1217,13 +1139,13 @@ real_arrange(AdgEntity *entity)
     /* Update the global matrix, if required */
     if (!data->global.is_defined) {
         data->global.is_defined = TRUE;
-        g_signal_emit(entity, signals[GLOBAL_CHANGED], 0);
+        g_signal_emit(entity, _adg_signals[GLOBAL_CHANGED], 0);
     }
 
     /* Update the local matrix, if required */
     if (!data->local.is_defined) {
         data->local.is_defined = TRUE;
-        g_signal_emit(entity, signals[LOCAL_CHANGED], 0);
+        g_signal_emit(entity, _adg_signals[LOCAL_CHANGED], 0);
     }
 
     /* The arrange() method must be defined */
@@ -1238,7 +1160,7 @@ real_arrange(AdgEntity *entity)
 }
 
 static void
-real_render(AdgEntity *entity, cairo_t *cr)
+_adg_real_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
 
@@ -1250,14 +1172,14 @@ real_render(AdgEntity *entity, cairo_t *cr)
     }
 
     /* Before the rendering, the entity should be arranged */
-    g_signal_emit(entity, signals[ARRANGE], 0);
+    g_signal_emit(entity, _adg_signals[ARRANGE], 0);
 
     cairo_save(cr);
     cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
     klass->render(entity, cr);
     cairo_restore(cr);
 
-    if (show_extents) {
+    if (_adg_show_extents) {
         AdgEntityPrivate *data = entity->data;
         CpmlExtents *extents = &data->extents;
 
