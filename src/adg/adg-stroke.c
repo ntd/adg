@@ -39,9 +39,11 @@
 #include "adg-dress-builtins.h"
 #include "adg-line-style.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
 
+
+G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -49,26 +51,22 @@ enum {
     PROP_TRAIL
 };
 
-static void             dispose                 (GObject        *object);
-static void             get_property            (GObject        *object,
+
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             global_changed          (AdgEntity      *entity);
-static void             local_changed           (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gboolean         set_trail               (AdgStroke      *stroke,
-                                                 AdgTrail       *trail);
-static void             unset_trail             (AdgStroke      *stroke);
-
-
-G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY);
+static void             _adg_unset_trail        (AdgStroke      *stroke);
 
 
 static void
@@ -83,14 +81,14 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgStrokePrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("line-dress",
                                  P_("Line Dress"),
@@ -121,18 +119,19 @@ adg_stroke_init(AdgStroke *stroke)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgStroke *stroke = (AdgStroke *) object;
 
     adg_stroke_set_trail(stroke, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgStrokePrivate *data = ((AdgStroke *) object)->data;
 
@@ -150,21 +149,34 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgStroke *stroke;
-    AdgStrokePrivate *data;
-
-    stroke = (AdgStroke *) object;
-    data = stroke->data;
+    AdgStrokePrivate *data = ((AdgStroke *) object)->data;
+    AdgTrail *old_trail;
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
         data->line_dress = g_value_get_int(value);
         break;
     case PROP_TRAIL:
-        set_trail(stroke, (AdgTrail *) g_value_get_object(value));
+        old_trail = data->trail;
+        data->trail = g_value_get_object(value);
+
+        if (data->trail != old_trail) {
+            if (data->trail) {
+                g_object_weak_ref((GObject *) data->trail,
+                                  (GWeakNotify) _adg_unset_trail, object);
+                adg_model_add_dependency((AdgModel *) data->trail,
+                                         (AdgEntity *) object);
+            }
+            if (old_trail) {
+                g_object_weak_unref((GObject *) old_trail,
+                                    (GWeakNotify) _adg_unset_trail, object);
+                adg_model_remove_dependency((AdgModel *) old_trail,
+                                            (AdgEntity *) object);
+            }
+        }
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -240,9 +252,7 @@ void
 adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
 {
     g_return_if_fail(ADG_IS_STROKE(stroke));
-
-    if (set_trail(stroke, trail))
-        g_object_notify((GObject *) stroke, "trail");
+    g_object_set(stroke, "trail", trail, NULL);
 }
 
 /**
@@ -267,25 +277,25 @@ adg_stroke_get_trail(AdgStroke *stroke)
 
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     adg_entity_invalidate(entity);
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 
     adg_entity_invalidate(entity);
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgStroke *stroke;
     AdgStrokePrivate *data;
@@ -306,7 +316,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgStroke *stroke;
     AdgStrokePrivate *data;
@@ -327,42 +337,8 @@ render(AdgEntity *entity, cairo_t *cr)
     }
 }
 
-static gboolean
-set_trail(AdgStroke *stroke, AdgTrail *trail)
-{
-    AdgEntity *entity;
-    AdgStrokePrivate *data;
-
-    g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
-
-    entity = (AdgEntity *) stroke;
-    data = stroke->data;
-
-    if (trail == data->trail)
-        return FALSE;
-
-    if (data->trail != NULL) {
-        g_object_weak_unref((GObject *) data->trail,
-                            (GWeakNotify) unset_trail, stroke);
-        adg_model_remove_dependency((AdgModel *) data->trail, entity);
-    }
-
-    data->trail = trail;
-
-    if (data->trail != NULL) {
-        g_object_weak_ref((GObject *) data->trail,
-                          (GWeakNotify) unset_trail, stroke);
-        adg_model_add_dependency((AdgModel *) data->trail, entity);
-    }
-
-    return TRUE;
-}
-
 static void
-unset_trail(AdgStroke *stroke)
+_adg_unset_trail(AdgStroke *stroke)
 {
-    AdgStrokePrivate *data = stroke->data;
-
-    if (data->trail != NULL)
-        set_trail(stroke, NULL);
+    g_object_set(stroke, "trail", NULL, NULL);
 }
