@@ -40,8 +40,8 @@
 #include "adg-color-style.h"
 #include "adg-color-style-private.h"
 
-#define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_color_style_parent_class)
 
+G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE);
 
 enum {
     PROP_0,
@@ -52,22 +52,17 @@ enum {
 };
 
 
-static void             get_property    (GObject        *object,
-                                         guint           prop_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void             set_property    (GObject        *object,
-                                         guint           prop_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void             apply           (AdgStyle       *style,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
-static gboolean         set_channel     (gdouble        *channel,
-                                         gdouble         value);
-
-
-G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_apply              (AdgStyle       *style,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
 
 
 static void
@@ -82,10 +77,10 @@ adg_color_style_class_init(AdgColorStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgColorStylePrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
     param = g_param_spec_double("red",
                                 P_("Red Channel"),
@@ -132,8 +127,8 @@ adg_color_style_init(AdgColorStyle *color_style)
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgColorStylePrivate *data = ((AdgColorStyle *) object)->data;
 
@@ -157,23 +152,23 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgColorStylePrivate *data = ((AdgColorStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_RED:
-        set_channel(&data->red, g_value_get_double(value));
+        data->red = g_value_get_double(value);
         break;
     case PROP_GREEN:
-        set_channel(&data->green, g_value_get_double(value));
+        data->green = g_value_get_double(value);
         break;
     case PROP_BLUE:
-        set_channel(&data->blue, g_value_get_double(value));
+        data->blue = g_value_get_double(value);
         break;
     case PROP_ALPHA:
-        set_channel(&data->alpha, g_value_get_double(value));
+        data->alpha = g_value_get_double(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -206,14 +201,8 @@ adg_color_style_new(void)
 void
 adg_color_style_set_red(AdgColorStyle *color_style, gdouble red)
 {
-    AdgColorStylePrivate *data;
-
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    data = color_style->data;
-
-    if (set_channel(&data->red, red))
-        g_object_notify((GObject *) color_style, "red");
+    g_object_set(color_style, "red", red, NULL);
 }
 
 /**
@@ -248,14 +237,8 @@ adg_color_style_get_red(AdgColorStyle *color_style)
 void
 adg_color_style_set_green(AdgColorStyle *color_style, gdouble green)
 {
-    AdgColorStylePrivate *data;
-
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    data = color_style->data;
-
-    if (set_channel(&data->green, green))
-        g_object_notify((GObject *) color_style, "green");
+    g_object_set(color_style, "green", green, NULL);
 }
 
 /**
@@ -290,14 +273,8 @@ adg_color_style_get_green(AdgColorStyle *color_style)
 void
 adg_color_style_set_blue(AdgColorStyle *color_style, gdouble blue)
 {
-    AdgColorStylePrivate *data;
-
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    data = color_style->data;
-
-    if (set_channel(&data->blue, blue))
-        g_object_notify((GObject *) color_style, "blue");
+    g_object_set(color_style, "blue", blue, NULL);
 }
 
 /**
@@ -388,14 +365,8 @@ adg_color_style_put_rgb(AdgColorStyle *color_style,
 void
 adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
 {
-    AdgColorStylePrivate *data;
-
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    data = color_style->data;
-
-    if (set_channel(&data->alpha, alpha))
-        g_object_notify((GObject *) color_style, "alpha");
+    g_object_set(color_style, "alpha", alpha, NULL);
 }
 
 /**
@@ -421,7 +392,7 @@ adg_color_style_get_alpha(AdgColorStyle *color_style)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgColorStylePrivate *data = ((AdgColorStyle *) style)->data;
 
@@ -430,16 +401,4 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     else
         cairo_set_source_rgba(cr, data->red, data->green, data->blue,
                               data->alpha);
-}
-
-static gboolean
-set_channel(gdouble *channel, gdouble value)
-{
-    g_return_val_if_fail(value >= 0 && value <=1, FALSE);
-
-    if (*channel == value)
-        return FALSE;
-
-    *channel = value;
-    return TRUE;
 }
