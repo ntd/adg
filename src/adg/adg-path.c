@@ -64,46 +64,47 @@
 #include <string.h>
 #include <math.h>
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
-#define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
-
-
-static void             finalize                (GObject        *object);
-static void             clear                   (AdgModel       *model);
-static void             clear_parent            (AdgModel       *model);
-static void             changed                 (AdgModel       *model);
-static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
-static CpmlPath *       read_cpml_path          (AdgPath        *path);
-static void             append_primitive        (AdgPath        *path,
-                                                 AdgPrimitive   *primitive);
-static void             clear_operation         (AdgPath        *path);
-static gboolean         append_operation        (AdgPath        *path,
-                                                 AdgAction       action,
-                                                 ...);
-static void             do_operation            (AdgPath        *path,
-                                                 cairo_path_data_t
-                                                                *path_data);
-static void             do_action               (AdgPath        *path,
-                                                 AdgAction       action,
-                                                 AdgPrimitive   *primitive);
-static void             do_chamfer              (AdgPath        *path,
-                                                 AdgPrimitive   *current);
-static void             do_fillet               (AdgPath        *path,
-                                                 AdgPrimitive   *current);
-static gboolean         is_convex               (const AdgPrimitive
-                                                                *primitive1,
-                                                 const AdgPrimitive
-                                                                *primitive2);
-static const gchar *    action_name             (AdgAction       action);
-static void             get_named_pair          (AdgModel       *model,
-                                                 const gchar    *name,
-                                                 AdgPair        *pair,
-                                                 gpointer        user_data);
-static void             dup_reverse_named_pairs (AdgModel       *model,
-                                                 const AdgMatrix*matrix);
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
+#define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
+
+
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_clear              (AdgModel       *model);
+static void             _adg_clear_parent       (AdgModel       *model);
+static void             _adg_changed            (AdgModel       *model);
+static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
+static CpmlPath *       _adg_read_cpml_path     (AdgPath        *path);
+static void             _adg_append_primitive   (AdgPath        *path,
+                                                 AdgPrimitive   *primitive);
+static void             _adg_clear_operation    (AdgPath        *path);
+static gboolean         _adg_append_operation   (AdgPath        *path,
+                                                 AdgAction       action,
+                                                 ...);
+static void             _adg_do_operation       (AdgPath        *path,
+                                                 cairo_path_data_t
+                                                                *path_data);
+static void             _adg_do_action          (AdgPath        *path,
+                                                 AdgAction       action,
+                                                 AdgPrimitive   *primitive);
+static void             _adg_do_chamfer         (AdgPath        *path,
+                                                 AdgPrimitive   *current);
+static void             _adg_do_fillet          (AdgPath        *path,
+                                                 AdgPrimitive   *current);
+static gboolean         _adg_is_convex          (const AdgPrimitive
+                                                                *primitive1,
+                                                 const AdgPrimitive
+                                                                *primitive2);
+static const gchar *    _adg_action_name        (AdgAction       action);
+static void             _adg_get_named_pair     (AdgModel       *model,
+                                                 const gchar    *name,
+                                                 AdgPair        *pair,
+                                                 gpointer        user_data);
+static void             _adg_dup_reverse_named_pairs
+                                                (AdgModel       *model,
+                                                 const AdgMatrix*matrix);
 
 
 static void
@@ -119,12 +120,12 @@ adg_path_class_init(AdgPathClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgPathPrivate));
 
-    gobject_class->finalize = finalize;
+    gobject_class->finalize = _adg_finalize;
 
-    model_class->clear = clear;
-    model_class->changed = changed;
+    model_class->clear = _adg_clear;
+    model_class->changed = _adg_changed;
 
-    trail_class->get_cpml_path = get_cpml_path;
+    trail_class->get_cpml_path = _adg_get_cpml_path;
 }
 
 static void
@@ -141,7 +142,7 @@ adg_path_init(AdgPath *path)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgPath *path;
     AdgPathPrivate *data;
@@ -150,10 +151,10 @@ finalize(GObject *object)
     data = path->data;
 
     g_array_free(data->cpml.array, TRUE);
-    clear_operation(path);
+    _adg_clear_operation(path);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 
@@ -355,7 +356,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     primitive.segment = NULL;
 
     /* Append this primitive to @path */
-    append_primitive(path, &primitive);
+    _adg_append_primitive(path, &primitive);
 
     g_free(primitive.data);
 }
@@ -390,7 +391,7 @@ adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
      * work on a copy */
     primitive_dup = adg_primitive_deep_dup(primitive);
 
-    append_primitive(path, primitive_dup);
+    _adg_append_primitive(path, primitive_dup);
 
     g_free(primitive_dup);
 }
@@ -412,7 +413,7 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
 
     data = path->data;
 
-    clear_parent((AdgModel *) path);
+    _adg_clear_parent((AdgModel *) path);
     data->cpml.array = g_array_append_vals(data->cpml.array,
                                            segment->data, segment->num_data);
 }
@@ -435,7 +436,7 @@ adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
 
     data = path->data;
 
-    clear_parent((AdgModel *) path);
+    _adg_clear_parent((AdgModel *) path);
     data->cpml.array = g_array_append_vals(data->cpml.array,
                                            cpml_path->data,
                                            cpml_path->num_data);
@@ -738,7 +739,7 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!append_operation(path, ADG_ACTION_CHAMFER, delta1, delta2))
+    if (!_adg_append_operation(path, ADG_ACTION_CHAMFER, delta1, delta2))
         return;
 }
 
@@ -764,7 +765,7 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 {
     g_return_if_fail(ADG_IS_PATH(path));
 
-    if (!append_operation(path, ADG_ACTION_FILLET, radius))
+    if (!_adg_append_operation(path, ADG_ACTION_FILLET, radius))
         return;
 }
 
@@ -836,12 +837,12 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 
     g_free(dup_segment);
 
-    dup_reverse_named_pairs(model, &matrix);
+    _adg_dup_reverse_named_pairs(model, &matrix);
 }
 
 
 static void
-clear(AdgModel *model)
+_adg_clear(AdgModel *model)
 {
     AdgPath *path;
     AdgPathPrivate *data;
@@ -850,35 +851,35 @@ clear(AdgModel *model)
     data = path->data;
 
     g_array_set_size(data->cpml.array, 0);
-    clear_operation(path);
-    clear_parent(model);
+    _adg_clear_operation(path);
+    _adg_clear_parent(model);
 }
 
 static void
-clear_parent(AdgModel *model)
+_adg_clear_parent(AdgModel *model)
 {
-    if (PARENT_MODEL_CLASS->clear)
-        PARENT_MODEL_CLASS->clear(model);
+    if (_ADG_OLD_MODEL_CLASS->clear)
+        _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
 static void
-changed(AdgModel *model)
+_adg_changed(AdgModel *model)
 {
-    clear_parent(model);
+    _adg_clear_parent(model);
 
-    if (PARENT_MODEL_CLASS->changed)
-        PARENT_MODEL_CLASS->changed(model);
+    if (_ADG_OLD_MODEL_CLASS->changed)
+        _ADG_OLD_MODEL_CLASS->changed(model);
 }
 
 static CpmlPath *
-get_cpml_path(AdgTrail *trail)
+_adg_get_cpml_path(AdgTrail *trail)
 {
-    clear_parent((AdgModel *) trail);
-    return read_cpml_path((AdgPath *) trail);
+    _adg_clear_parent((AdgModel *) trail);
+    return _adg_read_cpml_path((AdgPath *) trail);
 }
 
 static CpmlPath *
-read_cpml_path(AdgPath *path)
+_adg_read_cpml_path(AdgPath *path)
 {
     AdgPathPrivate *data = path->data;
 
@@ -891,7 +892,7 @@ read_cpml_path(AdgPath *path)
 }
 
 static void
-append_primitive(AdgPath *path, AdgPrimitive *current)
+_adg_append_primitive(AdgPath *path, AdgPrimitive *current)
 {
     AdgPathPrivate *data;
     cairo_path_data_t *path_data;
@@ -902,7 +903,7 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
     length = path_data[0].header.length;
 
     /* Execute any pending operation */
-    do_operation(path, path_data);
+    _adg_do_operation(path, path_data);
 
     /* Append the path data to the internal path array */
     data->cpml.array = g_array_append_vals(data->cpml.array,
@@ -927,11 +928,11 @@ append_primitive(AdgPath *path, AdgPrimitive *current)
         cpml_pair_from_cairo(&data->cp, &path_data[length-1]);
 
     /* Invalidate cairo_path: should be recomputed */
-    clear_parent((AdgModel *) path);
+    _adg_clear_parent((AdgModel *) path);
 }
 
 static void
-clear_operation(AdgPath *path)
+_adg_clear_operation(AdgPath *path)
 {
     AdgPathPrivate *data;
     AdgOperation *operation;
@@ -941,7 +942,7 @@ clear_operation(AdgPath *path)
 
     if (operation->action != ADG_ACTION_NONE) {
         g_warning(_("%s: a `%s' operation is still active while clearing the path"),
-                  G_STRLOC, action_name(operation->action));
+                  G_STRLOC, _adg_action_name(operation->action));
         operation->action = ADG_ACTION_NONE;
     }
 
@@ -951,7 +952,7 @@ clear_operation(AdgPath *path)
 }
 
 static gboolean
-append_operation(AdgPath *path, AdgAction action, ...)
+_adg_append_operation(AdgPath *path, AdgAction action, ...)
 {
     AdgPathPrivate *data;
     AdgOperation *operation;
@@ -961,14 +962,15 @@ append_operation(AdgPath *path, AdgAction action, ...)
 
     if (data->last.data == NULL) {
         g_warning(_("%s: requested a `%s' operation on a path without current primitive"),
-                  G_STRLOC, action_name(action));
+                  G_STRLOC, _adg_action_name(action));
         return FALSE;
     }
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
         g_warning(_("%s: requested a `%s' operation while a `%s' operation is active"),
-                  G_STRLOC, action_name(action), action_name(operation->action));
+                  G_STRLOC, _adg_action_name(action),
+                  _adg_action_name(operation->action));
         /* TODO: this is a rude simplification, as a lot of actions
          * could be chained up. As an example, a fillet followed by
          * a polar chamfer is quite common.
@@ -1024,7 +1026,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
         --data->cpml.array->len;
 
         /* Set segment and current (the first primitive of segment) */
-        cpml_segment_from_cairo(&segment, read_cpml_path(path));
+        cpml_segment_from_cairo(&segment, _adg_read_cpml_path(path));
         while (cpml_segment_next(&segment))
             ;
         cpml_primitive_from_segment(&current, &segment);
@@ -1039,7 +1041,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
         data->last.org = &path_data[length - 2];
         data->last.data = &path_data[length - 1];
 
-        do_action(path, action, &current);
+        _adg_do_action(path, action, &current);
     }
 
 
@@ -1047,7 +1049,7 @@ append_operation(AdgPath *path, AdgAction action, ...)
 }
 
 static void
-do_operation(AdgPath *path, cairo_path_data_t *path_data)
+_adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
 {
     AdgPathPrivate *data;
     AdgAction action;
@@ -1057,7 +1059,7 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
 
     data = path->data;
     action = data->operation.action;
-    cpml_segment_from_cairo(&segment, read_cpml_path(path));
+    cpml_segment_from_cairo(&segment, _adg_read_cpml_path(path));
 
     /* Construct the current primitive, that is the primitive to be
      * mixed with the last primitive with the specified operation.
@@ -1070,20 +1072,20 @@ do_operation(AdgPath *path, cairo_path_data_t *path_data)
     current.data = path_data;
     cpml_pair_to_cairo(&data->cp, &current_org);
 
-    do_action(path, action, &current);
+    _adg_do_action(path, action, &current);
 }
 
 static void
-do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
+_adg_do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
 {
     switch (action) {
     case ADG_ACTION_NONE:
         return;
     case ADG_ACTION_CHAMFER:
-        do_chamfer(path, primitive);
+        _adg_do_chamfer(path, primitive);
         break;
     case ADG_ACTION_FILLET:
-        do_fillet(path, primitive);
+        _adg_do_fillet(path, primitive);
         break;
     default:
         g_return_if_reached();
@@ -1091,7 +1093,7 @@ do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
 }
 
 static void
-do_chamfer(AdgPath *path, AdgPrimitive *current)
+_adg_do_chamfer(AdgPath *path, AdgPrimitive *current)
 {
     AdgPathPrivate *data;
     AdgPrimitive *last;
@@ -1133,7 +1135,7 @@ do_chamfer(AdgPath *path, AdgPrimitive *current)
 }
 
 static void
-do_fillet(AdgPath *path, AdgPrimitive *current)
+_adg_do_fillet(AdgPath *path, AdgPrimitive *current)
 {
     AdgPathPrivate *data;
     AdgPrimitive *last, *current_dup, *last_dup;
@@ -1145,7 +1147,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
     current_dup = adg_primitive_deep_dup(current);
     last_dup = adg_primitive_deep_dup(last);
     radius = data->operation.data.fillet.radius;
-    offset = is_convex(last_dup, current_dup) ? -radius : radius;
+    offset = _adg_is_convex(last_dup, current_dup) ? -radius : radius;
 
     /* Find the center of the fillet from the intersection between
      * the last and current primitives offseted by radius */
@@ -1198,7 +1200,7 @@ do_fillet(AdgPath *path, AdgPrimitive *current)
 }
 
 static gboolean
-is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
+_adg_is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
 {
     CpmlVector v1, v2;
     gdouble angle1, angle2;
@@ -1217,7 +1219,7 @@ is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
 }
 
 static const gchar *
-action_name(AdgAction action)
+_adg_action_name(AdgAction action)
 {
     switch (action) {
     case ADG_ACTION_NONE:
@@ -1232,8 +1234,8 @@ action_name(AdgAction action)
 }
 
 static void
-get_named_pair(AdgModel *model, const gchar *name,
-               AdgPair *pair, gpointer user_data)
+_adg_get_named_pair(AdgModel *model, const gchar *name,
+                    AdgPair *pair, gpointer user_data)
 {
     GSList **named_pairs;
     AdgNamedPair *named_pair;
@@ -1248,7 +1250,7 @@ get_named_pair(AdgModel *model, const gchar *name,
 }
 
 static void
-dup_reverse_named_pairs(AdgModel *model, const AdgMatrix *matrix)
+_adg_dup_reverse_named_pairs(AdgModel *model, const AdgMatrix *matrix)
 {
     AdgNamedPair *old_named_pair;
     AdgNamedPair named_pair;
@@ -1256,7 +1258,7 @@ dup_reverse_named_pairs(AdgModel *model, const AdgMatrix *matrix)
 
     /* Populate named_pairs with all the named pairs of model */
     named_pairs = NULL;
-    adg_model_foreach_named_pair(model, get_named_pair, &named_pairs);
+    adg_model_foreach_named_pair(model, _adg_get_named_pair, &named_pairs);
 
     /* Readd the pairs applying the reversing transformation matrix to
      * their coordinates and prepending a "-" to their name */
