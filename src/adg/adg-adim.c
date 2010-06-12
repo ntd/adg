@@ -38,8 +38,8 @@
 #include "adg-adim-private.h"
 #include "adg-dim-private.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)
 
 
 G_DEFINE_TYPE(AdgADim, adg_adim, ADG_TYPE_DIM);
@@ -54,7 +54,7 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
+static void             _adg_dispose            (GObject        *object);
 static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
@@ -65,20 +65,20 @@ static void             _adg_set_property       (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             _adg_global_changed     (AdgEntity      *entity);
 static void             _adg_local_changed      (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gchar *          default_value           (AdgDim         *dim);
-static void             update_geometry         (AdgADim        *adim);
-static void             update_entities         (AdgADim        *adim);
-static void             unset_trail             (AdgADim        *adim);
-static void             dispose_markers         (AdgADim        *adim);
-static gboolean         get_info                (AdgADim        *adim,
+static gchar *          _adg_default_value      (AdgDim         *dim);
+static void             _adg_update_geometry    (AdgADim        *adim);
+static void             _adg_update_entities    (AdgADim        *adim);
+static void             _adg_unset_trail        (AdgADim        *adim);
+static void             _adg_dispose_markers    (AdgADim        *adim);
+static gboolean         _adg_get_info           (AdgADim        *adim,
                                                  CpmlVector      vector[],
                                                  AdgPair        *center,
                                                  gdouble        *distance);
-static CpmlPath *       trail_callback          (AdgTrail       *trail,
+static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
@@ -96,17 +96,17 @@ adg_adim_class_init(AdgADimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgADimPrivate));
 
-    gobject_class->dispose = dispose;
+    gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
     entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = _adg_local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
-    dim_class->default_value = default_value;
+    dim_class->default_value = _adg_default_value;
 
     /* Override #AdgDim:value to append a degree symbol
      * to the default set value template string */
@@ -172,7 +172,7 @@ adg_adim_init(AdgADim *adim)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgEntity *entity;
     AdgADimPrivate *data;
@@ -180,7 +180,7 @@ dispose(GObject *object)
     entity = (AdgEntity *) object;
     data = ((AdgADim *) object)->data;
 
-    dispose_markers((AdgADim *) object);
+    _adg_dispose_markers((AdgADim *) object);
 
     if (data->org1 != NULL)
         data->org1 = adg_entity_point(entity, data->org1, NULL);
@@ -188,8 +188,8 @@ dispose(GObject *object)
     if (data->org2 != NULL)
         data->org2 = adg_entity_point(entity, data->org2, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -598,10 +598,10 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgADimPrivate *data = ((AdgADim *) entity)->data;
 
-    unset_trail((AdgADim *) entity);
+    _adg_unset_trail((AdgADim *) entity);
 
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     if (data->marker1 != NULL)
         adg_entity_global_changed((AdgEntity *) data->marker1);
@@ -613,14 +613,14 @@ _adg_global_changed(AdgEntity *entity)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    unset_trail((AdgADim *) entity);
+    _adg_unset_trail((AdgADim *) entity);
 
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     AdgADim *adim;
     AdgADimPrivate *data;
@@ -628,21 +628,21 @@ invalidate(AdgEntity *entity)
     adim = (AdgADim *) entity;
     data = adim->data;
 
-    dispose_markers(adim);
+    _adg_dispose_markers(adim);
     data->geometry_arranged = FALSE;
-    unset_trail(adim);
+    _adg_unset_trail(adim);
 
     if (data->org1)
         adg_point_invalidate(data->org1);
     if (data->org2)
         adg_point_invalidate(data->org2);
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgADim *adim;
     AdgDim *dim;
@@ -652,16 +652,16 @@ arrange(AdgEntity *entity)
     AdgPair ref1, ref2, base1, base12, base2;
     AdgPair pair;
 
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange)
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     adim = (AdgADim *) entity;
     dim = (AdgDim *) adim;
     data = adim->data;
     quote = adg_dim_get_quote(dim);
 
-    update_geometry(adim);
-    update_entities(adim);
+    _adg_update_geometry(adim);
+    _adg_update_entities(adim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
         AdgEntity *quote_entity = (AdgEntity *) quote;
@@ -749,7 +749,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgADim *adim;
     AdgDim *dim;
@@ -782,7 +782,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gchar *
-default_value(AdgDim *dim)
+_adg_default_value(AdgDim *dim)
 {
     AdgADim *adim;
     AdgADimPrivate *data;
@@ -795,7 +795,7 @@ default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    update_geometry(adim);
+    _adg_update_geometry(adim);
     angle = (data->angle2 - data->angle1) * 180 / M_PI;
 
     return g_strdup_printf(format, angle);
@@ -805,7 +805,7 @@ default_value(AdgDim *dim)
  * that can be cached: this is strictly related on how the arrange()
  * method works */
 static void
-update_geometry(AdgADim *adim)
+_adg_update_geometry(AdgADim *adim)
 {
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
@@ -820,7 +820,7 @@ update_geometry(AdgADim *adim)
     if (data->geometry_arranged)
         return;
 
-    if (!get_info(adim, vector, &center, &distance)) {
+    if (!_adg_get_info(adim, vector, &center, &distance)) {
         /* Parallel lines: hang with an error message */
         g_warning("%s: trying to set an angular dimension on parallel lines",
                   G_STRLOC);
@@ -883,7 +883,7 @@ update_geometry(AdgADim *adim)
 }
 
 static void
-update_entities(AdgADim *adim)
+_adg_update_entities(AdgADim *adim)
 {
     AdgEntity *entity;
     AdgADimPrivate *data;
@@ -894,7 +894,7 @@ update_entities(AdgADim *adim)
     dim_style = _ADG_GET_DIM_STYLE(adim);
 
     if (data->trail == NULL)
-        data->trail = adg_trail_new(trail_callback, adim);
+        data->trail = adg_trail_new(_adg_trail_callback, adim);
 
     if (data->marker1 == NULL) {
         data->marker1 = adg_dim_style_marker1_new(dim_style);
@@ -908,7 +908,7 @@ update_entities(AdgADim *adim)
 }
 
 static void
-unset_trail(AdgADim *adim)
+_adg_unset_trail(AdgADim *adim)
 {
     AdgADimPrivate *data = adim->data;
 
@@ -919,7 +919,7 @@ unset_trail(AdgADim *adim)
 }
 
 static void
-dispose_markers(AdgADim *adim)
+_adg_dispose_markers(AdgADim *adim)
 {
     AdgADimPrivate *data = adim->data;
 
@@ -940,8 +940,8 @@ dispose_markers(AdgADim *adim)
 }
 
 static gboolean
-get_info(AdgADim *adim, CpmlVector vector[],
-         AdgPair *center, gdouble *distance)
+_adg_get_info(AdgADim *adim, CpmlVector vector[],
+              AdgPair *center, gdouble *distance)
 {
     AdgDim *dim;
     AdgADimPrivate *data;
@@ -982,7 +982,7 @@ get_info(AdgADim *adim, CpmlVector vector[],
 }
 
 static CpmlPath *
-trail_callback(AdgTrail *trail, gpointer user_data)
+_adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
     AdgADim *adim;
     AdgADimPrivate *data;
