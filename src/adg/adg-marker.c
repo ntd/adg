@@ -56,9 +56,11 @@
 #include "adg-marker-private.h"
 #include <string.h>
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
 
+
+G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -70,35 +72,22 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
-static void             get_property            (GObject        *object,
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             local_changed           (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static gboolean         set_trail               (AdgMarker      *marker,
-                                                 AdgTrail       *trail);
-static void             _adg_unset_trail        (AdgMarker      *marker);
-static gboolean         set_n_segment           (AdgMarker      *marker,
-                                                 guint           n_segment);
-static gboolean         set_segment             (AdgMarker      *marker,
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_clear_trail        (AdgMarker      *marker);
+static gboolean         _adg_set_segment        (AdgMarker      *marker,
                                                  AdgTrail       *trail,
                                                  guint           n_segment);
-static gboolean         set_pos                 (AdgMarker      *marker,
-                                                 gdouble         pos);
-static gboolean         set_size                (AdgMarker      *marker,
-                                                 gdouble         size);
-static gboolean         set_model               (AdgMarker      *marker,
-                                                 AdgModel       *model);
-static AdgModel *       create_model            (AdgMarker      *marker);
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY);
+static AdgModel *       _adg_create_model       (AdgMarker      *marker);
 
 
 static void
@@ -113,14 +102,14 @@ adg_marker_class_init(AdgMarkerClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgMarkerPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->set_property = set_property;
-    gobject_class->get_property = get_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->set_property = _adg_set_property;
+    gobject_class->get_property = _adg_get_property;
 
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
 
-    klass->create_model = create_model;
+    klass->create_model = _adg_create_model;
 
     param = g_param_spec_object("trail",
                                 P_("Trail"),
@@ -176,21 +165,21 @@ adg_marker_init(AdgMarker *marker)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgMarker *marker = (AdgMarker *) object;
 
     adg_marker_set_model(marker, NULL);
     adg_marker_set_segment(marker, NULL, 0);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgMarkerPrivate *data = ((AdgMarker *) object)->data;
 
@@ -217,26 +206,36 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgMarker *marker = (AdgMarker *) object;
+    AdgMarkerPrivate *data = ((AdgMarker *) object)->data;
+    AdgModel *old_model;
 
     switch (prop_id) {
     case PROP_TRAIL:
-        set_trail(marker, g_value_get_object(value));
+        _adg_set_segment(marker, g_value_get_object(value), data->n_segment);
         break;
     case PROP_N_SEGMENT:
-        set_n_segment(marker, g_value_get_uint(value));
+        _adg_set_segment(marker, data->trail, g_value_get_uint(value));
         break;
     case PROP_POS:
-        set_pos(marker, g_value_get_double(value));
+        data->pos = g_value_get_double(value);
         break;
     case PROP_SIZE:
-        set_size(marker, g_value_get_double(value));
+        data->size = g_value_get_double(value);
         break;
     case PROP_MODEL:
-        set_model(marker, g_value_get_object(value));
+        old_model = data->model;
+        data->model = g_value_get_object(value);
+
+        if (data->model) {
+            g_object_ref((GObject *) data->model);
+            adg_entity_local_changed((AdgEntity *) object);
+        }
+        if (old_model)
+            g_object_unref(old_model);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -251,7 +250,7 @@ set_property(GObject *object,
  * @trail: the new trail to use
  *
  * Sets the #AdgMarker:trail property to @trail. It is allowed to pass
- * %NULL to unset the current trail.
+ * %NULL to clear the current trail.
  *
  * This method could fail unexpectedly if the segment index specified
  * by the #AdgMarker:n-segment property is not present inside the new
@@ -263,9 +262,7 @@ void
 adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    if (set_trail(marker, trail))
-        g_object_notify((GObject *) marker, "trail");
+    g_object_set(marker, "trail", trail, NULL);
 }
 
 /**
@@ -301,14 +298,8 @@ adg_marker_get_trail(AdgMarker *marker)
 void
 adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
 {
-    AdgMarkerPrivate *data;
-
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    data = marker->data;
-
-    if (set_n_segment(marker, n_segment))
-        g_object_notify((GObject *) marker, "n-segment");
+    g_object_set(marker, "n-segment", n_segment, NULL);
 }
 
 /**
@@ -350,12 +341,10 @@ void
 adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    if (set_segment(marker, trail, n_segment)) {
-        GObject *object = (GObject *) marker;
-        g_object_notify(object, "trail");
-        g_object_notify(object, "n-segment");
-    }
+    /* To avoid referring to an inexistent trail/n-segment couple, the
+     * "n-segment" property is reset before to avoid segment validation */
+    g_object_set(marker, "n-segment", 0,
+                 "trail", trail, "n-segment", n_segment, NULL);
 }
 
 /**
@@ -470,9 +459,7 @@ void
 adg_marker_set_pos(AdgMarker *marker, gdouble pos)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    if (set_pos(marker, pos))
-        g_object_notify((GObject *) marker, "pos");
+    g_object_set(marker, "pos", pos, NULL);
 }
 
 /**
@@ -509,9 +496,7 @@ void
 adg_marker_set_size(AdgMarker *marker, gdouble size)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    if (set_size(marker, size))
-        g_object_notify((GObject *) marker, "size");
+    g_object_set(marker, "size", size, NULL);
 }
 
 /**
@@ -551,9 +536,7 @@ void
 adg_marker_set_model(AdgMarker *marker, AdgModel *model)
 {
     g_return_if_fail(ADG_IS_MARKER(marker));
-
-    if (set_model(marker, model))
-        g_object_notify((GObject *) marker, "model");
+    g_object_set(marker, "model", model, NULL);
 }
 
 /**
@@ -617,7 +600,7 @@ adg_marker_model(AdgMarker *marker)
 
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
     AdgMarkerPrivate *data;
     CpmlPair pair;
@@ -642,26 +625,19 @@ local_changed(AdgEntity *entity)
 
     adg_entity_set_local_map(entity, &map);
 
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     adg_marker_set_model((AdgMarker *) entity, NULL);
 }
 
 
-static gboolean
-set_trail(AdgMarker *marker, AdgTrail *trail)
-{
-    AdgMarkerPrivate *data = marker->data;
-    return set_segment(marker, trail, data->n_segment);
-}
-
 static void
-_adg_unset_trail(AdgMarker *marker)
+_adg_clear_trail(AdgMarker *marker)
 {
     AdgMarkerPrivate *data = marker->data;
 
@@ -677,14 +653,7 @@ _adg_unset_trail(AdgMarker *marker)
 }
 
 static gboolean
-set_n_segment(AdgMarker *marker, guint n_segment)
-{
-    AdgMarkerPrivate *data = marker->data;
-    return set_segment(marker, data->trail, n_segment);
-}
-
-static gboolean
-set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
+_adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 {
     AdgMarkerPrivate *data;
     AdgSegment segment = { 0 };
@@ -723,7 +692,7 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
         if (trail) {
             adg_model_add_dependency((AdgModel *) trail, entity);
             g_signal_connect_swapped(trail, "remove-dependency",
-                                     G_CALLBACK(_adg_unset_trail), marker);
+                                     G_CALLBACK(_adg_clear_trail), marker);
         }
     }
 
@@ -733,66 +702,8 @@ set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
     return TRUE;
 }
 
-static gboolean
-set_pos(AdgMarker *marker, gdouble pos)
-{
-    AdgMarkerPrivate *data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(pos >= 0 && pos <= 1, FALSE);
-
-    data = marker->data;
-
-    if (pos == data->pos)
-        return FALSE;
-
-    data->pos = pos;
-
-    return TRUE;
-}
-
-static gboolean
-set_size(AdgMarker *marker, gdouble size)
-{
-    AdgMarkerPrivate *data = marker->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(size >= 0, FALSE);
-
-    if (size == data->size)
-        return FALSE;
-
-    data->size = size;
-
-    return TRUE;
-}
-
-static gboolean
-set_model(AdgMarker *marker, AdgModel *model)
-{
-    AdgMarkerPrivate *data = marker->data;
-
-    g_return_val_if_fail(model == NULL || ADG_IS_MODEL(model), FALSE);
-
-    if (model == data->model)
-        return FALSE;
-
-    if (model)
-        g_object_ref((GObject *) model);
-
-    if (data->model != NULL)
-        g_object_unref((GObject *) data->model);
-
-    data->model = model;
-
-    if (model)
-        adg_entity_local_changed((AdgEntity *) marker);
-
-    return TRUE;
-}
-
 static AdgModel *
-create_model(AdgMarker *marker)
+_adg_create_model(AdgMarker *marker)
 {
     g_warning("%s: `create_model' method not implemented for type `%s'",
               G_STRLOC, g_type_name(G_OBJECT_TYPE(marker)));
