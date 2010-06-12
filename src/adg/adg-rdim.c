@@ -39,8 +39,8 @@
 #include "adg-dim-private.h"
 #include "adg-dim-style.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_rdim_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_rdim_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)
 
 
 G_DEFINE_TYPE(AdgRDim, adg_rdim, ADG_TYPE_DIM);
@@ -51,7 +51,7 @@ enum {
 };
 
 
-static void             dispose                 (GObject        *object);
+static void             _adg_dispose            (GObject        *object);
 static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
@@ -62,16 +62,16 @@ static void             _adg_set_property       (GObject        *object,
                                                  GParamSpec     *pspec);
 static void             _adg_global_changed     (AdgEntity      *entity);
 static void             _adg_local_changed      (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gchar *          default_value           (AdgDim         *dim);
-static void             update_geometry         (AdgRDim        *rdim);
-static void             update_entities         (AdgRDim        *rdim);
-static void             unset_trail             (AdgRDim        *rdim);
-static void             dispose_marker          (AdgRDim        *rdim);
-static CpmlPath *       trail_callback          (AdgTrail       *trail,
+static gchar *          _adg_default_value      (AdgDim         *dim);
+static void             _adg_update_geometry    (AdgRDim        *rdim);
+static void             _adg_update_entities    (AdgRDim        *rdim);
+static void             _adg_clear_trail        (AdgRDim        *rdim);
+static void             _adg_dispose_marker     (AdgRDim        *rdim);
+static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
@@ -89,17 +89,17 @@ adg_rdim_class_init(AdgRDimClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgRDimPrivate));
 
-    gobject_class->dispose = dispose;
+    gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
     entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = _adg_local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
-    dim_class->default_value = default_value;
+    dim_class->default_value = _adg_default_value;
 
     /* Override #AdgDim:value to prepend "R "
      * to the default set value template string */
@@ -143,12 +143,12 @@ adg_rdim_init(AdgRDim *rdim)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
-    dispose_marker((AdgRDim *) object);
+    _adg_dispose_marker((AdgRDim *) object);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -287,10 +287,10 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgRDimPrivate *data = ((AdgRDim *) entity)->data;
 
-    unset_trail((AdgRDim *) entity);
+    _adg_clear_trail((AdgRDim *) entity);
 
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     if (data->marker != NULL)
         adg_entity_global_changed((AdgEntity *) data->marker);
@@ -299,14 +299,14 @@ _adg_global_changed(AdgEntity *entity)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    unset_trail((AdgRDim *) entity);
+    _adg_clear_trail((AdgRDim *) entity);
 
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
     AdgRDim *rdim;
     AdgRDimPrivate *data;
@@ -314,16 +314,16 @@ invalidate(AdgEntity *entity)
     rdim = (AdgRDim *) entity;
     data = rdim->data;
 
-    dispose_marker(rdim);
+    _adg_dispose_marker(rdim);
     data->geometry_arranged = FALSE;
-    unset_trail(rdim);
+    _adg_clear_trail(rdim);
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgRDim *rdim;
     AdgDim *dim;
@@ -335,16 +335,16 @@ arrange(AdgEntity *entity)
     AdgPair ref1, ref2, base;
     AdgPair pair;
 
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange)
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     rdim = (AdgRDim *) entity;
     dim = (AdgDim *) rdim;
     data = rdim->data;
     quote = adg_dim_get_quote(dim);
 
-    update_geometry(rdim);
-    update_entities(rdim);
+    _adg_update_geometry(rdim);
+    _adg_update_entities(rdim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
         AdgEntity *quote_entity = (AdgEntity *) quote;
@@ -409,7 +409,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgRDim *rdim;
     AdgDim *dim;
@@ -439,7 +439,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static gchar *
-default_value(AdgDim *dim)
+_adg_default_value(AdgDim *dim)
 {
     AdgRDim *rdim;
     AdgRDimPrivate *data;
@@ -451,13 +451,13 @@ default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    update_geometry(rdim);
+    _adg_update_geometry(rdim);
 
     return g_strdup_printf(format, data->radius);
 }
 
 static void
-update_geometry(AdgRDim *rdim)
+_adg_update_geometry(AdgRDim *rdim)
 {
     AdgRDimPrivate *data;
     AdgDim *dim;
@@ -508,7 +508,7 @@ update_geometry(AdgRDim *rdim)
 }
 
 static void
-update_entities(AdgRDim *rdim)
+_adg_update_entities(AdgRDim *rdim)
 {
     AdgEntity *entity;
     AdgRDimPrivate *data;
@@ -519,7 +519,7 @@ update_entities(AdgRDim *rdim)
     dim_style = _ADG_GET_DIM_STYLE(rdim);
 
     if (data->trail == NULL)
-        data->trail = adg_trail_new(trail_callback, rdim);
+        data->trail = adg_trail_new(_adg_trail_callback, rdim);
 
     if (data->marker == NULL) {
         data->marker = adg_dim_style_marker2_new(dim_style);
@@ -528,7 +528,7 @@ update_entities(AdgRDim *rdim)
 }
 
 static void
-unset_trail(AdgRDim *rdim)
+_adg_clear_trail(AdgRDim *rdim)
 {
     AdgRDimPrivate *data = rdim->data;
 
@@ -539,7 +539,7 @@ unset_trail(AdgRDim *rdim)
 }
 
 static void
-dispose_marker(AdgRDim *rdim)
+_adg_dispose_marker(AdgRDim *rdim)
 {
     AdgRDimPrivate *data = rdim->data;
 
@@ -555,7 +555,7 @@ dispose_marker(AdgRDim *rdim)
 }
 
 static CpmlPath *
-trail_callback(AdgTrail *trail, gpointer user_data)
+_adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
     AdgRDim *rdim;
     AdgRDimPrivate *data;
