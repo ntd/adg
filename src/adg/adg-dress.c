@@ -60,21 +60,30 @@
 #include "adg-dress-builtins.h"
 
 
-static AdgDress         quark_to_dress          (GQuark          quark);
-static void             dress_to_string         (const GValue   *src,
-                                                 GValue         *dst);
-static void             string_to_dress         (const GValue   *src,
-                                                 GValue         *dst);
-static void             param_class_init        (GParamSpecClass*klass);
-static const gchar *    _adg_dress_name         (AdgDress        dress);
-static gboolean         dress_is_valid          (AdgDress        dress);
-static gboolean         dress_is_valid_with_log (AdgDress        dress);
-static gboolean         value_validate          (GParamSpec     *spec,
-                                                 GValue         *value);
+typedef struct _AdgParamSpecDress AdgParamSpecDress;
 
-static guint            array_append            (AdgDressPrivate*data);
-static AdgDressPrivate *array_lookup            (guint           n);
-static guint            array_len               (void);
+struct _AdgParamSpecDress {
+    GParamSpecInt parent;
+    AdgDress      source_dress;
+};
+
+
+static AdgDress         _adg_quark_to_dress     (GQuark          quark);
+static void             _adg_dress_to_string    (const GValue   *src,
+                                                 GValue         *dst);
+static void             _adg_string_to_dress    (const GValue   *src,
+                                                 GValue         *dst);
+static void             _adg_param_class_init   (GParamSpecClass*klass);
+static const gchar *    _adg_dress_name         (AdgDress        dress);
+static gboolean         _adg_dress_is_valid     (AdgDress        dress);
+static gboolean         _adg_dress_is_valid_with_log
+                                                (AdgDress        dress);
+static gboolean         _adg_value_validate     (GParamSpec     *spec,
+                                                 GValue         *value);
+static GArray *         _adg_array_singleton    (void) G_GNUC_CONST;
+static guint            _adg_array_append       (AdgDressPrivate*data);
+static AdgDressPrivate *_adg_array_lookup       (guint           n);
+static guint            _adg_array_len          (void);
 
 
 GType
@@ -87,8 +96,10 @@ adg_dress_get_type(void)
 
         type = g_type_register_static(G_TYPE_INT, "AdgDress", &info, 0);
 
-        g_value_register_transform_func(type, G_TYPE_STRING, dress_to_string);
-        g_value_register_transform_func(G_TYPE_STRING, type, string_to_dress);
+        g_value_register_transform_func(type, G_TYPE_STRING,
+                                        _adg_dress_to_string);
+        g_value_register_transform_func(G_TYPE_STRING, type,
+                                        _adg_string_to_dress);
     }
 
     return type;
@@ -150,7 +161,7 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
                          ADG_DRESS_UNDEFINED);
 
     quark = g_quark_from_string(name);
-    dress = quark_to_dress(quark);
+    dress = _adg_quark_to_dress(quark);
 
     if (dress > 0) {
         g_warning(_("%s: the `%s' name is yet used by the `%d' dress"),
@@ -165,7 +176,7 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
     if (fallback != NULL)
         g_object_ref(fallback);
 
-    return array_append(&data) - 1;
+    return _adg_array_append(&data) - 1;
 }
 
 /**
@@ -180,7 +191,7 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
 AdgDress
 adg_dress_from_name(const gchar *name)
 {
-    return quark_to_dress(g_quark_try_string(name));
+    return _adg_quark_to_dress(g_quark_try_string(name));
 }
 
 /**
@@ -246,10 +257,10 @@ adg_dress_set(AdgDress *dress, AdgDress src)
 const gchar *
 adg_dress_get_name(AdgDress dress)
 {
-    if (!dress_is_valid(dress))
+    if (!_adg_dress_is_valid(dress))
         return NULL;
 
-    return g_quark_to_string(array_lookup(dress)->quark);
+    return g_quark_to_string(_adg_array_lookup(dress)->quark);
 }
 
 /**
@@ -267,10 +278,10 @@ adg_dress_get_ancestor_type(AdgDress dress)
 {
     AdgDressPrivate *data;
 
-    if (!dress_is_valid(dress))
+    if (!_adg_dress_is_valid(dress))
         return 0;
 
-    data = array_lookup(dress);
+    data = _adg_array_lookup(dress);
 
     return data->ancestor_type;
 }
@@ -296,10 +307,10 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 {
     AdgDressPrivate *data;
 
-    if (!dress_is_valid_with_log(dress))
+    if (!_adg_dress_is_valid_with_log(dress))
         return;
 
-    data = array_lookup(dress);
+    data = _adg_array_lookup(dress);
 
     if (data->fallback == fallback)
         return;
@@ -336,10 +347,10 @@ adg_dress_get_fallback(AdgDress dress)
 {
     AdgDressPrivate *data;
 
-    if (!dress_is_valid(dress))
+    if (!_adg_dress_is_valid(dress))
         return NULL;
 
-    data = array_lookup(dress);
+    data = _adg_array_lookup(dress);
 
     return data->fallback;
 }
@@ -368,13 +379,13 @@ adg_dress_style_is_compatible(AdgDress dress, AdgStyle *style)
 
 
 static AdgDress
-quark_to_dress(GQuark quark)
+_adg_quark_to_dress(GQuark quark)
 {
     AdgDress dress;
     AdgDressPrivate *data;
 
-    for (dress = 0; dress < array_len(); ++dress) {
-        data = array_lookup(dress);
+    for (dress = 0; dress < _adg_array_len(); ++dress) {
+        data = _adg_array_lookup(dress);
 
         if (data->quark == quark)
             return dress;
@@ -384,25 +395,16 @@ quark_to_dress(GQuark quark)
 }
 
 static void
-dress_to_string(const GValue *src, GValue *dst)
+_adg_dress_to_string(const GValue *src, GValue *dst)
 {
     g_value_set_string(dst, adg_dress_get_name(g_value_get_int(src)));
 }
 
 static void
-string_to_dress(const GValue *src, GValue *dst)
+_adg_string_to_dress(const GValue *src, GValue *dst)
 {
     g_value_set_int(dst, adg_dress_from_name(g_value_get_string(src)));
 }
-
-
-typedef struct _AdgParamSpecDress AdgParamSpecDress;
-
-struct _AdgParamSpecDress {
-    GParamSpecInt parent;
-    AdgDress      source_dress;
-};
-
 
 GType
 _adg_param_spec_dress_get_type(void)
@@ -414,7 +416,7 @@ _adg_param_spec_dress_get_type(void)
             sizeof(GParamSpecClass),
             NULL,
             NULL,
-            (GClassInitFunc) param_class_init,
+            (GClassInitFunc) _adg_param_class_init,
             NULL,
             NULL,
             sizeof(AdgParamSpecDress),
@@ -429,10 +431,10 @@ _adg_param_spec_dress_get_type(void)
 }
 
 static void
-param_class_init(GParamSpecClass *klass)
+_adg_param_class_init(GParamSpecClass *klass)
 {
     klass->value_type = ADG_TYPE_DRESS;
-    klass->value_validate = value_validate;
+    klass->value_validate = _adg_value_validate;
 }
 
 static const gchar *
@@ -448,15 +450,15 @@ _adg_dress_name(AdgDress dress)
 }
 
 static gboolean
-dress_is_valid(AdgDress dress)
+_adg_dress_is_valid(AdgDress dress)
 {
-    return dress > 0 && dress < array_len();
+    return dress > 0 && dress < _adg_array_len();
 }
 
 static gboolean
-dress_is_valid_with_log(AdgDress dress)
+_adg_dress_is_valid_with_log(AdgDress dress)
 {
-    if (!dress_is_valid(dress)) {
+    if (!_adg_dress_is_valid(dress)) {
         g_warning(_("%s: the dress `%d' is undefined"), G_STRLOC, dress);
         return FALSE;
     }
@@ -465,7 +467,7 @@ dress_is_valid_with_log(AdgDress dress)
 }
 
 static gboolean
-value_validate(GParamSpec *spec, GValue *value)
+_adg_value_validate(GParamSpec *spec, GValue *value)
 {
     AdgParamSpecDress *fspec;
     AdgDress *dress;
@@ -505,7 +507,7 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 {
     AdgParamSpecDress *fspec;
 
-    if (!dress_is_valid_with_log(dress))
+    if (!_adg_dress_is_valid_with_log(dress))
         return NULL;
 
     fspec = g_param_spec_internal(ADG_TYPE_PARAM_SPEC_DRESS,
@@ -516,10 +518,8 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 }
 
 
-static GArray * array_singleton         (void) G_GNUC_CONST;
-
 static GArray *
-array_singleton(void)
+_adg_array_singleton(void)
 {
     static GArray *array = NULL;
 
@@ -536,19 +536,19 @@ array_singleton(void)
 }
 
 static guint
-array_append(AdgDressPrivate *data)
+_adg_array_append(AdgDressPrivate *data)
 {
-    return g_array_append_val(array_singleton(), *data)->len;
+    return g_array_append_val(_adg_array_singleton(), *data)->len;
 }
 
 static AdgDressPrivate *
-array_lookup(guint n)
+_adg_array_lookup(guint n)
 {
-    return &g_array_index(array_singleton(), AdgDressPrivate, n);
+    return &g_array_index(_adg_array_singleton(), AdgDressPrivate, n);
 }
 
 static guint
-array_len(void)
+_adg_array_len(void)
 {
-    return array_singleton()->len;
+    return _adg_array_singleton()->len;
 }
