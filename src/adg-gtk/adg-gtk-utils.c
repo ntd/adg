@@ -53,3 +53,64 @@ gtk_widget_get_window(GtkWidget *widget)
 }
 
 #endif
+
+/**
+ * adg_canvas_set_paper:
+ * @canvas: an #AdgCanvas
+ * @paper_name: a paper name or %NULL
+ *
+ * A convenient function to set the size of @canvas using a
+ * @paper_name value. This should be a PWG 5101.1-2002 paper name
+ * and it will be passed as is to gtk_paper_size_new(), so use
+ * any valid name accepted by that function.
+ *
+ * Using %NULL will reset the size, that is it will be resolved to
+ * a call to adg_canvas_set_size() with a %NULL size.
+ *
+ * When a valid value is passed, the margins will be modified
+ * accordingly to the default margins, as returned by the temporary
+ * #GtkPaperSize instance. If you want to use your own margins,
+ * set them to your values <emphasis>after</emphasis> this call.
+ **/
+void
+adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
+                     GtkPageOrientation orientation)
+{
+    GtkPaperSize *paper;
+    AdgPair size;
+    gdouble margin;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    if (paper_name == NULL) {
+        /* Unset the canvas size */
+        adg_canvas_set_size(canvas, NULL);
+        return;
+    }
+
+    paper = gtk_paper_size_new(paper_name);
+
+    switch (orientation) {
+    case GTK_PAGE_ORIENTATION_PORTRAIT:
+    case GTK_PAGE_ORIENTATION_REVERSE_PORTRAIT:
+        size.x = gtk_paper_size_get_width(paper, GTK_UNIT_POINTS);
+        size.y = gtk_paper_size_get_height(paper, GTK_UNIT_POINTS);
+        break;
+    default:
+        size.y = gtk_paper_size_get_width(paper, GTK_UNIT_POINTS);
+        size.x = gtk_paper_size_get_height(paper, GTK_UNIT_POINTS);
+        break;
+    }
+    adg_canvas_set_size(canvas, &size);
+
+    margin = gtk_paper_size_get_default_top_margin(paper, GTK_UNIT_POINTS);
+    adg_canvas_set_top_margin(canvas, margin);
+    margin = gtk_paper_size_get_default_right_margin(paper, GTK_UNIT_POINTS);
+    adg_canvas_set_right_margin(canvas, margin);
+    margin = gtk_paper_size_get_default_bottom_margin(paper, GTK_UNIT_POINTS);
+    adg_canvas_set_bottom_margin(canvas, margin);
+    margin = gtk_paper_size_get_default_left_margin(paper, GTK_UNIT_POINTS);
+    adg_canvas_set_left_margin(canvas, margin);
+
+    gtk_paper_size_free(paper);
+}

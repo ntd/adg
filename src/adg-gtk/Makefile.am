@@ -4,14 +4,14 @@ SUBDIRS=			tests
 
 
 # file groups
-h_sources=			adg-gtk-utils.h \
-				adg-gtk-area.h
+h_sources=			adg-gtk-area.h \
+				adg-gtk-utils.h
 built_h_sources=
-private_h_sources=		adg-gtk-internal.h \
-				adg-gtk-area-private.h
+private_h_sources=		adg-gtk-area-private.h \
+				adg-gtk-internal.h
 built_private_h_sources=
-c_sources=			adg-gtk-utils.c \
-				adg-gtk-area.c
+c_sources=			adg-gtk-area.c \
+				adg-gtk-utils.c
 built_c_sources=
 
 
