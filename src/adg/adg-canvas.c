@@ -940,7 +940,7 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgCanvasPrivate *data;
     CpmlExtents extents;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange)
@@ -951,12 +951,46 @@ _adg_arrange(AdgEntity *entity)
     /* The extents should be defined, otherwise there is no drawing */
     g_return_if_fail(extents.is_defined);
 
-    extents.org.x -= data->left_margin + data->left_padding;
-    extents.org.y -= data->top_margin + data->top_padding;
-    extents.size.x += data->left_margin + data->left_padding;
-    extents.size.x += data->right_margin + data->right_padding;
-    extents.size.y += data->top_margin + data->top_padding;
-    extents.size.y += data->bottom_margin + data->bottom_padding;
+    data = ((AdgCanvas *) entity)->data;
+
+    if (data->size.x > 0 || data->size.y > 0) {
+        const AdgMatrix *global = adg_entity_get_global_matrix(entity);
+        CpmlExtents paper;
+
+        paper.org.x = data->left_margin;
+        paper.org.y = data->top_margin;
+        paper.size.x = data->size.x;
+        paper.size.y = data->size.y;
+
+        cairo_matrix_transform_point(global, &paper.org.x, &paper.org.y);
+        cairo_matrix_transform_distance(global, &paper.size.x, &paper.size.y);
+
+        if (data->size.x > 0) {
+            extents.org.x = paper.org.x;
+            extents.size.x = paper.size.x;
+        }
+        if (data->size.y > 0) {
+            extents.org.y = paper.org.y;
+            extents.size.y = paper.size.y;
+        }
+    }
+
+    if (data->size.x == 0) {
+        extents.org.x -= data->left_padding;
+        extents.size.x += data->left_padding + data->right_padding;
+    }
+    if (data->size.y == 0) {
+        extents.org.y -= data->top_padding;
+        extents.size.y += data->top_padding + data->bottom_padding;
+    }
+
+    /* Add margins */
+    extents.org.x -= data->left_margin;
+    extents.org.y -= data->top_margin;
+    extents.size.x += data->left_margin + data->right_margin;
+    extents.size.y += data->top_margin + data->bottom_margin;
+
+    /* Impose the new extents */
     adg_entity_set_extents(entity, &extents);
 
     if (data->title_block) {
@@ -974,7 +1008,7 @@ _adg_arrange(AdgEntity *entity)
             - title_block_extents->size.y - data->bottom_margin;
 
         /* The following block could be optimized by skipping tiny shift,
-         * usually left by mathematical roundings */
+         * usually left by rounding errors */
         if (shift.x != 0 || shift.y != 0) {
             AdgMatrix unglobal, map;
             adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));

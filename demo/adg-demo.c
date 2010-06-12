@@ -547,13 +547,13 @@ _adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, -100, 200);
+    cairo_matrix_init_translate(&map, 30, 545);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 
     toy_text = adg_toy_text_new("Drag with the wheel pressed to pan");
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, -100, 215);
+    cairo_matrix_init_translate(&map, 30, 560);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 }
@@ -566,6 +566,9 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     AdgMatrix map;
 
     container = (AdgContainer *) canvas;
+
+    adg_canvas_set_paper(canvas, GTK_PAPER_NAME_A4,
+                         GTK_PAGE_ORIENTATION_LANDSCAPE);
 
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
     adg_container_add(container, entity);
@@ -580,7 +583,8 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
     _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
-    cairo_matrix_init_scale(&map, 7, 7);
+    cairo_matrix_init_translate(&map, 200, 280);
+    cairo_matrix_scale(&map, 8, 8);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
     return canvas;
