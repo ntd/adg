@@ -394,22 +394,14 @@ _adg_part_destroy(AdgPart *part)
 static void
 _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
 {
-    AdgTitleBlock *title_block;
-    AdgLogo *logo;
-    AdgMatrix map;
-
-    title_block = adg_title_block_new();
-
-    logo = adg_logo_new();
-    cairo_matrix_init_scale(&map, 2, 2);
-    adg_entity_set_global_map(ADG_ENTITY(logo), &map);
+    AdgTitleBlock *title_block = adg_title_block_new();
 
     g_object_set(title_block,
                  "title", "SAMPLE DRAWING",
                  "author", "NtD",
                  "date", "",
                  "drawing", "TEST123",
-                 "logo", logo,
+                 "logo", adg_logo_new(),
                  "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
                  "scale", "NONE",
                  "size", "A4",
@@ -655,8 +647,8 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response,
 #include <cairo-ps.h>
         surface = cairo_ps_surface_create(file, 841, 595);
         cairo_ps_surface_dsc_comment(surface, "%%Title: " PACKAGE_STRING);
-        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyright (C) 2006-2010 Fontana Nicola");
-        cairo_ps_surface_dsc_comment(surface, "%%Orientation: Portrait");
+        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyleft (C) 2006-2010 Fontana Nicola");
+        cairo_ps_surface_dsc_comment(surface, "%%Orientation: Landscape");
         cairo_ps_surface_dsc_begin_setup(surface);
         cairo_ps_surface_dsc_begin_page_setup(surface);
         cairo_ps_surface_dsc_comment(surface, "%%IncludeFeature: *PageSize A4");

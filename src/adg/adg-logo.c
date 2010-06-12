@@ -352,18 +352,18 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->symbol == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 4, 13);
-        adg_path_line_to_explicit(path, 12, 5);
-        adg_path_arc_to_explicit(path, 16, 9, 12, 13);
-        adg_path_line_to_explicit(path, 12, 5.5);
+        adg_path_move_to_explicit(path, 8, 26);
+        adg_path_line_to_explicit(path, 24, 10);
+        adg_path_arc_to_explicit(path, 32, 18, 24, 26);
+        adg_path_line_to_explicit(path, 24, 11);
 
-        adg_path_move_to_explicit(path, 20, 5);
-        adg_path_arc_to_explicit(path, 16, 9, 20, 13);
-        adg_path_line_to_explicit(path, 20, 11);
-        adg_path_line_to_explicit(path, 19, 11);
+        adg_path_move_to_explicit(path, 40, 10);
+        adg_path_arc_to_explicit(path, 32, 18, 40, 26);
+        adg_path_line_to_explicit(path, 40, 22);
+        adg_path_line_to_explicit(path, 38, 22);
 
-        adg_path_move_to_explicit(path, 11.5, 11);
-        adg_path_line_to_explicit(path, 8, 11);
+        adg_path_move_to_explicit(path, 23, 22);
+        adg_path_line_to_explicit(path, 16, 22);
 
         data_class->symbol = path;
         extents->is_defined = FALSE;
@@ -372,15 +372,15 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->screen == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 1.5, 1.5);
-        adg_path_line_to_explicit(path, 23.5, 1.5);
-        adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 23.5, 16.5);
-        adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 1.5, 16.5);
-        adg_path_fillet(path, 5);
+        adg_path_move_to_explicit(path, 3, 3);
+        adg_path_line_to_explicit(path, 47, 3);
+        adg_path_fillet(path, 10);
+        adg_path_line_to_explicit(path, 47, 33);
+        adg_path_fillet(path, 10);
+        adg_path_line_to_explicit(path, 3, 33);
+        adg_path_fillet(path, 10);
         adg_path_close(path);
-        adg_path_fillet(path, 5);
+        adg_path_fillet(path, 10);
 
         data_class->screen = path;
         extents->is_defined = FALSE;
@@ -390,9 +390,9 @@ arrange_class(AdgLogoClass *logo_class)
         AdgPath *path = adg_path_new();
 
         adg_path_move_to_explicit(path, 0, 0);
-        adg_path_line_to_explicit(path, 25, 0);
-        adg_path_line_to_explicit(path, 25, 18);
-        adg_path_line_to_explicit(path, 0, 18);
+        adg_path_line_to_explicit(path, 50, 0);
+        adg_path_line_to_explicit(path, 50, 36);
+        adg_path_line_to_explicit(path, 0, 36);
         adg_path_close(path);
 
         data_class->frame = path;
@@ -428,7 +428,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 2);
+        cairo_set_line_width(cr, 3);
         adg_entity_apply_dress(entity, data->symbol_dress, cr);
 
         cairo_stroke(cr);
@@ -441,7 +441,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 1.25);
+        cairo_set_line_width(cr, 2);
         adg_entity_apply_dress(entity, data->screen_dress, cr);
 
         cairo_stroke(cr);
@@ -454,7 +454,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 1.25);
+        cairo_set_line_width(cr, 2);
         cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
         adg_entity_apply_dress(entity, data->frame_dress, cr);
 
