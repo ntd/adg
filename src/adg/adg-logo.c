@@ -39,8 +39,8 @@
 #include "adg-line-style.h"
 #include "adg-dress-builtins.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_logo_parent_class)
 
+G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -50,21 +50,18 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static void             arrange_class           (AdgLogoClass   *logo_class);
-
-
-G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
+static void             _adg_arrange_class      (AdgLogoClass   *logo_class);
 
 
 static void
@@ -80,11 +77,11 @@ adg_logo_class_init(AdgLogoClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgLogoPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("symbol-dress",
                                  P_("Symbol Dress"),
@@ -136,7 +133,8 @@ adg_logo_init(AdgLogo *logo)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgLogoPrivate *data = ((AdgLogo *) object)->data;
 
@@ -157,8 +155,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgLogo *logo;
     AdgLogoPrivate *data;
@@ -323,7 +321,7 @@ adg_logo_get_frame_dress(AdgLogo *logo)
 
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgLogoClass *logo_class;
     AdgLogoClassPrivate *data_class;
@@ -332,7 +330,7 @@ arrange(AdgEntity *entity)
     logo_class = ADG_LOGO_GET_CLASS(entity);
     data_class = logo_class->data_class;
 
-    arrange_class(logo_class);
+    _adg_arrange_class(logo_class);
     cpml_extents_copy(&extents, &data_class->extents);
 
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
@@ -341,7 +339,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-arrange_class(AdgLogoClass *logo_class)
+_adg_arrange_class(AdgLogoClass *logo_class)
 {
     AdgLogoClassPrivate *data_class;
     CpmlExtents *extents;
@@ -410,7 +408,7 @@ arrange_class(AdgLogoClass *logo_class)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLogoClassPrivate *data_class;
     AdgLogoPrivate *data;
