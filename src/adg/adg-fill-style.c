@@ -37,8 +37,8 @@
 #include "adg-fill-style.h"
 #include "adg-fill-style-private.h"
 
-#define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_fill_style_parent_class)
 
+G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE);
 
 enum {
     PROP_0,
@@ -46,25 +46,20 @@ enum {
 };
 
 
-static void             finalize        (GObject        *object);
-static void             get_property    (GObject        *object,
-                                         guint           prop_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void             set_property    (GObject        *object,
-                                         guint           prop_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void             apply           (AdgStyle       *style,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
-static gboolean         set_pattern     (AdgFillStyle   *fill_style,
-                                         AdgPattern     *pattern);
-static void             set_extents     (AdgFillStyle   *fill_style,
-                                         const CpmlExtents *extents);
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE);
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_apply              (AdgStyle       *style,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static void             _adg_set_extents        (AdgFillStyle   *fill_style,
+                                                 const CpmlExtents *extents);
 
 
 static void
@@ -79,13 +74,13 @@ adg_fill_style_class_init(AdgFillStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgFillStylePrivate));
 
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
-    klass->set_extents = set_extents;
+    klass->set_extents = _adg_set_extents;
 
     param = g_param_spec_boxed("pattern",
                                P_("Pattern"),
@@ -108,7 +103,7 @@ adg_fill_style_init(AdgFillStyle *fill_style)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
 
@@ -119,8 +114,8 @@ finalize(GObject *object)
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
 
@@ -135,14 +130,21 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgFillStyle *fill_style = (AdgFillStyle *) object;
+    AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
+    cairo_pattern_t *old_pattern;
 
     switch (prop_id) {
     case PROP_PATTERN:
-        set_pattern(fill_style, g_value_get_boxed(value));
+        old_pattern = data->pattern;
+        data->pattern = g_value_get_boxed(value);
+
+        if (data->pattern)
+            cairo_pattern_reference(data->pattern);
+        if (old_pattern)
+            cairo_pattern_destroy(old_pattern);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -168,9 +170,7 @@ void
 adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
 {
     g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
-
-    if (set_pattern(fill_style, pattern))
-        g_object_notify((GObject *) fill_style, "pattern");
+    g_object_set(fill_style, "pattern", pattern, NULL);
 }
 
 /**
@@ -255,7 +255,7 @@ adg_fill_style_get_extents(AdgFillStyle *fill_style)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStylePrivate *data = ((AdgFillStyle *) style)->data;
 
@@ -266,27 +266,8 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
         cairo_set_source(cr, data->pattern);
 }
 
-static gboolean
-set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
-{
-    AdgFillStylePrivate *data = fill_style->data;
-
-    if (pattern == data->pattern)
-        return FALSE;
-
-    if (data->pattern != NULL)
-        cairo_pattern_destroy(data->pattern);
-
-    data->pattern = pattern;
-
-    if (data->pattern != NULL)
-        cairo_pattern_reference(data->pattern);
-
-    return TRUE;
-}
-
 static void
-set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
+_adg_set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
 {
     AdgFillStylePrivate *data = fill_style->data;
 
