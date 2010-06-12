@@ -49,28 +49,28 @@
 #include "adg-alignment.h"
 #include "adg-alignment-private.h"
 
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 
+
+G_DEFINE_TYPE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER);
 
 enum {
     PROP_0,
     PROP_FACTOR
 };
 
-static void             get_property            (GObject        *object,
+
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             arrange                 (AdgEntity      *entity);
-static gboolean         set_factor              (AdgAlignment   *alignment,
+static void             _adg_arrange            (AdgEntity      *entity);
+static gboolean         _adg_set_factor         (AdgAlignment   *alignment,
                                                  const AdgPair  *factor);
-
-
-G_DEFINE_TYPE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER);
 
 
 static void
@@ -85,10 +85,10 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgAlignmentPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->arrange = arrange;
+    entity_class->arrange = _adg_arrange;
 
     param = g_param_spec_boxed("factor",
                                P_("Factor"),
@@ -112,7 +112,8 @@ adg_alignment_init(AdgAlignment *alignment)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgAlignmentPrivate *data = ((AdgAlignment *) object)->data;
 
@@ -127,14 +128,14 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgAlignment *alignment = (AdgAlignment *) object;
 
     switch (prop_id) {
     case PROP_FACTOR:
-        set_factor(alignment, g_value_get_boxed(value));
+        _adg_set_factor(alignment, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -195,7 +196,7 @@ adg_alignment_set_factor(AdgAlignment*alignment, const AdgPair *factor)
     g_return_if_fail(ADG_IS_ALIGNMENT(alignment));
     /* The factor == NULL condition is handled by set_factor() */
 
-    if (set_factor(alignment, factor))
+    if (_adg_set_factor(alignment, factor))
         g_object_notify((GObject *) alignment, "factor");
 }
 
@@ -243,7 +244,7 @@ adg_alignment_get_factor(AdgAlignment *alignment)
 
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     const CpmlExtents *extents;
     AdgMatrix old_map;
@@ -252,8 +253,8 @@ arrange(AdgEntity *entity)
     adg_entity_set_global_map(entity, adg_matrix_identity());
     adg_entity_global_changed(entity);
 
-    if (PARENT_ENTITY_CLASS->arrange)
-        PARENT_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange)
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     extents = adg_entity_get_extents(entity);
 
@@ -276,15 +277,15 @@ arrange(AdgEntity *entity)
 
         /* Here there is room for improvements: this second arrange()
          * phase could probably be avoided... */
-        if (PARENT_ENTITY_CLASS->arrange)
-            PARENT_ENTITY_CLASS->arrange(entity);
+        if (_ADG_OLD_ENTITY_CLASS->arrange)
+            _ADG_OLD_ENTITY_CLASS->arrange(entity);
     }
 
     adg_entity_set_global_map(entity, &old_map);
 }
 
 static gboolean
-set_factor(AdgAlignment *alignment, const AdgPair *factor)
+_adg_set_factor(AdgAlignment *alignment, const AdgPair *factor)
 {
     AdgAlignmentPrivate *data;
 
