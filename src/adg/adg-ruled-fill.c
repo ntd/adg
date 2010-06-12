@@ -41,9 +41,11 @@
 #include "adg-dress-builtins.h"
 #include <math.h>
 
-#define PARENT_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)
-#define PARENT_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)
+#define _ADG_OLD_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)
+#define _ADG_OLD_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)
 
+
+G_DEFINE_TYPE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE);
 
 enum {
     PROP_0,
@@ -53,32 +55,25 @@ enum {
 };
 
 
-static void             get_property    (GObject        *object,
-                                         guint           prop_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void             set_property    (GObject        *object,
-                                         guint           prop_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void             apply           (AdgStyle       *style,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
-static void             set_extents     (AdgFillStyle   *fill_style,
-                                         const CpmlExtents *extents);
-static gboolean         set_spacing     (AdgRuledFill   *ruled_fill,
-                                         gdouble         spacing);
-static gboolean         set_angle       (AdgRuledFill   *ruled_fill,
-                                         gdouble         angle);
-static cairo_pattern_t *create_pattern  (AdgRuledFill   *ruled_fill,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
-static void             draw_lines      (const CpmlPair *spacing,
-                                         const CpmlPair *size,
-                                         cairo_t        *cr);
-
-
-G_DEFINE_TYPE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_apply              (AdgStyle       *style,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static void             _adg_set_extents        (AdgFillStyle   *fill_style,
+                                                 const CpmlExtents *extents);
+static cairo_pattern_t *_adg_create_pattern     (AdgRuledFill   *ruled_fill,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static void             _adg_draw_lines         (const CpmlPair *spacing,
+                                                 const CpmlPair *size,
+                                                 cairo_t        *cr);
 
 
 static void
@@ -95,12 +90,12 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgRuledFillPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
-    fill_style_class->set_extents = set_extents;
+    fill_style_class->set_extents = _adg_set_extents;
 
     param = adg_param_spec_dress("line-dress",
                                   P_("Line Dress"),
@@ -139,8 +134,8 @@ adg_ruled_fill_init(AdgRuledFill *ruled_fill)
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgRuledFillPrivate *data = ((AdgRuledFill *) object)->data;
 
@@ -161,8 +156,8 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgRuledFill *ruled_fill;
     AdgRuledFillPrivate *data;
@@ -175,10 +170,12 @@ set_property(GObject *object,
         data->line_dress = g_value_get_int(value);
         break;
     case PROP_SPACING:
-        set_spacing(ruled_fill, g_value_get_double(value));
+        data->spacing = g_value_get_double(value);
+        adg_fill_style_set_pattern((AdgFillStyle *) object, NULL);
         break;
     case PROP_ANGLE:
-        set_angle(ruled_fill, g_value_get_double(value));
+        data->angle = g_value_get_double(value);
+        adg_fill_style_set_pattern((AdgFillStyle *) object, NULL);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -245,9 +242,7 @@ void
 adg_ruled_fill_set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
 {
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-
-    if (set_spacing(ruled_fill, spacing))
-        g_object_notify((GObject *) ruled_fill, "spacing");
+    g_object_set(ruled_fill, "spacing", spacing, NULL);
 }
 
 /**
@@ -281,9 +276,7 @@ void
 adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
 {
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-
-    if (set_angle(ruled_fill, angle))
-        g_object_notify((GObject *) ruled_fill, "angle");
+    g_object_set(ruled_fill, "angle", angle, NULL);
 }
 
 /**
@@ -308,7 +301,7 @@ adg_ruled_fill_get_angle(AdgRuledFill *ruled_fill)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
     AdgPattern *pattern;
@@ -320,7 +313,7 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     extents = adg_fill_style_get_extents(fill_style);
 
     if (pattern == NULL) {
-        pattern = create_pattern((AdgRuledFill *) style, entity, cr);
+        pattern = _adg_create_pattern((AdgRuledFill *) style, entity, cr);
         if (pattern == NULL)
             return;
 
@@ -334,12 +327,12 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     cairo_matrix_init_translate(&matrix, extents->org.x, extents->org.y);
     cairo_set_matrix(cr, &matrix);
 
-    if (PARENT_STYLE_CLASS->apply)
-        PARENT_STYLE_CLASS->apply(style, entity, cr);
+    if (_ADG_OLD_STYLE_CLASS->apply)
+        _ADG_OLD_STYLE_CLASS->apply(style, entity, cr);
 }
 
 static void
-set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
+_adg_set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
 {
     CpmlExtents old, new;
 
@@ -355,40 +348,12 @@ set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
         adg_fill_style_set_pattern(fill_style, NULL);
     }
 
-    if (PARENT_FILL_STYLE_CLASS->set_extents)
-        PARENT_FILL_STYLE_CLASS->set_extents(fill_style, &new);
-}
-
-static gboolean
-set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
-{
-    AdgRuledFillPrivate *data = ruled_fill->data;
-
-    if (spacing == data->spacing)
-        return FALSE;
-
-    data->spacing = spacing;
-    adg_fill_style_set_pattern((AdgFillStyle *) ruled_fill, NULL);
-
-    return TRUE;
-}
-
-static gboolean
-set_angle(AdgRuledFill *ruled_fill, gdouble angle)
-{
-    AdgRuledFillPrivate *data = ruled_fill->data;
-
-    if (angle == data->angle)
-        return FALSE;
-
-    data->angle = angle;
-    adg_fill_style_set_pattern((AdgFillStyle *) ruled_fill, NULL);
-
-    return TRUE;
+    if (_ADG_OLD_FILL_STYLE_CLASS->set_extents)
+        _ADG_OLD_FILL_STYLE_CLASS->set_extents(fill_style, &new);
 }
 
 static cairo_pattern_t *
-create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
+_adg_create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
     const CpmlExtents *extents;
@@ -422,14 +387,14 @@ create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
 
     context = cairo_create(surface);
     adg_style_apply(line_style, entity, context);
-    draw_lines(&spacing, &extents->size, context);
+    _adg_draw_lines(&spacing, &extents->size, context);
     cairo_destroy(context);
 
     return pattern;
 }
 
 static void
-draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
+_adg_draw_lines(const CpmlPair *spacing, const CpmlPair *size, cairo_t *cr)
 {
     CpmlPair step, step1, step2;
     CpmlPair p1, p2;
