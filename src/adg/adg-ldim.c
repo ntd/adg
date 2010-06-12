@@ -69,8 +69,6 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static gboolean         _adg_set_direction      (AdgLDim        *ldim,
-                                                 gdouble         direction);
 static void             _adg_update_geometry    (AdgLDim        *ldim);
 static void             _adg_update_shift       (AdgLDim        *ldim);
 static void             _adg_update_entities    (AdgLDim        *ldim);
@@ -212,7 +210,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DIRECTION:
-        _adg_set_direction(ldim, g_value_get_double(value));
+        data->direction = cpml_angle(g_value_get_double(value));
         break;
     case PROP_HAS_EXTENSION1:
         data->has_extension1 = g_value_get_boolean(value);
@@ -350,9 +348,7 @@ void
 adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
 {
     g_return_if_fail(ADG_IS_LDIM(ldim));
-
-    if (_adg_set_direction(ldim, direction))
-        g_object_notify((GObject *) ldim, "direction");
+    g_object_set(ldim, "direction", direction, NULL);
 }
 
 /**
@@ -815,21 +811,6 @@ _adg_default_value(AdgDim *dim)
     _adg_update_geometry(ldim);
 
     return g_strdup_printf(format, data->geometry.distance);
-}
-
-static gboolean
-_adg_set_direction(AdgLDim *ldim, gdouble direction)
-{
-    AdgLDimPrivate *data = ldim->data;
-
-    direction = cpml_angle(direction);
-
-    if (data->direction == direction)
-        return FALSE;
-
-    data->direction = direction;
-
-    return TRUE;
 }
 
 static void
