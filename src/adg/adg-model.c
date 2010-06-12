@@ -65,8 +65,10 @@
 #include "adg-entity.h"
 #include "adg-marshal.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
 
+
+G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
 
 enum {
     PROP_0,
@@ -83,34 +85,29 @@ enum {
 };
 
 
-static void     dispose                 (GObject        *object);
-static void     set_property            (GObject        *object,
-                                         guint           prop_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void     add_dependency          (AdgModel       *model,
-                                         AdgEntity      *entity);
-static void     remove_dependency       (AdgModel       *model,
-                                         AdgEntity      *entity);
-static const AdgPair *
-                named_pair              (AdgModel       *model,
-                                         const gchar    *name);
-static void     _adg_clear              (AdgModel       *model);
-static void     set_named_pair          (AdgModel       *model,
-                                         const gchar    *name,
-                                         const AdgPair  *pair);
-static void     changed                 (AdgModel       *model);
-static void     _adg_named_pair_wrapper (gpointer        key,
-                                         gpointer        value,
-                                         gpointer        user_data);
-static void     _adg_invalidate_wrapper (AdgModel       *model,
-                                         AdgEntity      *entity,
-                                         gpointer        user_data);
-
-static guint    _adg_signals[LAST_SIGNAL] = { 0 };
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_add_dependency     (AdgModel       *model,
+                                                 AdgEntity      *entity);
+static void             _adg_remove_dependency  (AdgModel       *model,
+                                                 AdgEntity      *entity);
+static const AdgPair *  _adg_named_pair         (AdgModel       *model,
+                                                 const gchar    *name);
+static void             _adg_clear              (AdgModel       *model);
+static void             _adg_set_named_pair     (AdgModel       *model,
+                                                 const gchar    *name,
+                                                 const AdgPair  *pair);
+static void             _adg_changed            (AdgModel       *model);
+static void             _adg_named_pair_wrapper (gpointer        key,
+                                                 gpointer        value,
+                                                 gpointer        user_data);
+static void             _adg_invalidate_wrapper (AdgModel       *model,
+                                                 AdgEntity      *entity,
+                                                 gpointer        user_data);
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
@@ -123,15 +120,15 @@ adg_model_class_init(AdgModelClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->set_property = _adg_set_property;
 
-    klass->add_dependency = add_dependency;
-    klass->remove_dependency = remove_dependency;
-    klass->named_pair = named_pair;
-    klass->set_named_pair = set_named_pair;
+    klass->add_dependency = _adg_add_dependency;
+    klass->remove_dependency = _adg_remove_dependency;
+    klass->named_pair = _adg_named_pair;
+    klass->set_named_pair = _adg_set_named_pair;
     klass->clear = NULL;
-    klass->changed = changed;
+    klass->changed = _adg_changed;
 
     param = g_param_spec_object("dependency",
                                 P_("Dependency"),
@@ -148,13 +145,14 @@ adg_model_class_init(AdgModelClass *klass)
      * Adds @entity to @model. After that @entity will depend on @model,
      * that is #AdgModel::changed on @model will invalidate @entity.
      **/
-    _adg_signals[ADD_DEPENDENCY] = g_signal_new("add-dependency",
-                                                G_OBJECT_CLASS_TYPE(gobject_class),
-                                                G_SIGNAL_RUN_FIRST,
-                                                G_STRUCT_OFFSET(AdgModelClass, add_dependency),
-                                                NULL, NULL,
-                                                adg_marshal_VOID__OBJECT,
-                                                G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[ADD_DEPENDENCY] =
+        g_signal_new("add-dependency",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgModelClass, add_dependency),
+                     NULL, NULL,
+                     adg_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgModel::remove-dependency:
@@ -164,13 +162,14 @@ adg_model_class_init(AdgModelClass *klass)
      * Removes the @entity from @model, that is @entity will not depend
      * on @model anymore.
      **/
-    _adg_signals[REMOVE_DEPENDENCY] = g_signal_new("remove-dependency",
-                                                   G_OBJECT_CLASS_TYPE(gobject_class),
-                                                   G_SIGNAL_RUN_FIRST,
-                                                   G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
-                                                   NULL, NULL,
-                                                   adg_marshal_VOID__OBJECT,
-                                                   G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
+    _adg_signals[REMOVE_DEPENDENCY] =
+        g_signal_new("remove-dependency",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
+                     NULL, NULL,
+                     adg_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
      * AdgModel::set-named-pair:
@@ -188,14 +187,15 @@ adg_model_class_init(AdgModelClass *klass)
      * its data are updated with @pair. If it is not found, a new
      * named pair is created using @name and @pair.
      **/
-    _adg_signals[SET_NAMED_PAIR] = g_signal_new("set-named-pair",
-                                                G_OBJECT_CLASS_TYPE(gobject_class),
-                                                G_SIGNAL_RUN_FIRST,
-                                                G_STRUCT_OFFSET(AdgModelClass, set_named_pair),
-                                                NULL, NULL,
-                                                adg_marshal_VOID__STRING_POINTER,
-                                                G_TYPE_NONE, 2,
-                                                G_TYPE_STRING, G_TYPE_POINTER);
+    _adg_signals[SET_NAMED_PAIR] =
+        g_signal_new("set-named-pair",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgModelClass, set_named_pair),
+                     NULL, NULL,
+                     adg_marshal_VOID__STRING_POINTER,
+                     G_TYPE_NONE, 2,
+                     G_TYPE_STRING, G_TYPE_POINTER);
 
     /**
      * AdgModel::clear:
@@ -203,12 +203,13 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Removes any cached information from @model.
      **/
-    _adg_signals[CLEAR] = g_signal_new("clear", ADG_TYPE_MODEL,
-                                       G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                       G_STRUCT_OFFSET(AdgModelClass, clear),
-                                       NULL, NULL,
-                                       adg_marshal_VOID__VOID,
-                                       G_TYPE_NONE, 0);
+    _adg_signals[CLEAR] =
+        g_signal_new("clear", ADG_TYPE_MODEL,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgModelClass, clear),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 
     /**
      * AdgModel::changed:
@@ -217,12 +218,13 @@ adg_model_class_init(AdgModelClass *klass)
      * Notificates that the model has changed. By default, all the
      * dependent entities are invalidated.
      **/
-    _adg_signals[CHANGED] = g_signal_new("changed", ADG_TYPE_MODEL,
-                                         G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
-                                         G_STRUCT_OFFSET(AdgModelClass, changed),
-                                         NULL, NULL,
-                                         adg_marshal_VOID__VOID,
-                                         G_TYPE_NONE, 0);
+    _adg_signals[CHANGED] =
+        g_signal_new("changed", ADG_TYPE_MODEL,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgModelClass, changed),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 }
 
 static void
@@ -237,7 +239,7 @@ adg_model_init(AdgModel *model)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgModel *model;
     AdgModelPrivate *data;
@@ -257,19 +259,18 @@ dispose(GObject *object)
     if (data->named_pairs)
         _adg_clear(model);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgModel *model = (AdgModel *) object;
-
     switch (prop_id) {
     case PROP_DEPENDENCY:
-        adg_model_add_dependency(model, g_value_get_object(value));
+        g_signal_emit(object, _adg_signals[ADD_DEPENDENCY], 0,
+                      g_value_get_object(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -294,8 +295,7 @@ adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
 {
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(ADG_IS_ENTITY(entity));
-
-    g_signal_emit(model, _adg_signals[ADD_DEPENDENCY], 0, entity);
+    g_object_set(model, "dependency", entity, NULL);
 }
 
 /**
@@ -525,9 +525,15 @@ adg_model_changed(AdgModel *model)
 
 
 static void
-add_dependency(AdgModel *model, AdgEntity *entity)
+_adg_add_dependency(AdgModel *model, AdgEntity *entity)
 {
-    AdgModelPrivate *data = model->data;
+    AdgModelPrivate *data;
+
+    /* Do not add NULL values */
+    if (entity == NULL)
+        return;
+
+    data = model->data;
 
     /* The prepend operation is more efficient */
     data->dependencies = g_slist_prepend(data->dependencies, entity);
@@ -536,7 +542,7 @@ add_dependency(AdgModel *model, AdgEntity *entity)
 }
 
 static void
-remove_dependency(AdgModel *model, AdgEntity *entity)
+_adg_remove_dependency(AdgModel *model, AdgEntity *entity)
 {
     AdgModelPrivate *data;
     GSList *node;
@@ -568,7 +574,7 @@ _adg_clear(AdgModel *model)
 }
 
 static void
-set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
+_adg_set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
 {
     AdgModelPrivate *data;
     GHashTable **hash;
@@ -598,7 +604,7 @@ set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
 }
 
 static const AdgPair *
-named_pair(AdgModel *model, const gchar *name)
+_adg_named_pair(AdgModel *model, const gchar *name)
 {
     AdgModelPrivate *data = model->data;
 
@@ -609,7 +615,7 @@ named_pair(AdgModel *model, const gchar *name)
 }
 
 static void
-changed(AdgModel *model)
+_adg_changed(AdgModel *model)
 {
     /* Invalidate all the entities dependent on this model */
     adg_model_foreach_dependency(model, _adg_invalidate_wrapper, NULL);
