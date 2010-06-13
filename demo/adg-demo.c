@@ -399,7 +399,7 @@ _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
     g_object_set(title_block,
                  "title", "SAMPLE DRAWING",
                  "author", "NtD",
-                 "date", "",
+                 "date", NULL,
                  "drawing", "TEST123",
                  "logo", adg_logo_new(),
                  "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),

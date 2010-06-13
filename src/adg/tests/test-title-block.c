@@ -87,7 +87,7 @@ _adg_test_date(void)
 
     adg_title_block_set_date(title_block, NULL);
     date = adg_title_block_get_date(title_block);
-    g_assert(date == NULL);
+    g_assert(date != NULL);
 
     /* Using GObject property methods */
     g_object_set(title_block, "date", valid_text, NULL);
@@ -102,7 +102,8 @@ _adg_test_date(void)
 
     g_object_set(title_block, "date", NULL, NULL);
     g_object_get(title_block, "date", &date_dup, NULL);
-    g_assert(date_dup == NULL);
+    g_assert(date_dup != NULL);
+    g_free(date_dup);
 
     g_object_unref(title_block);
 }
