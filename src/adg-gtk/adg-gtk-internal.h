@@ -27,9 +27,11 @@
 #define __ADG_GTK_INTERNAL_H__
 
 #define G_LOG_DOMAIN  "adg-gtk"
+
+/* The following define enables the inclusion of internal headers */
 #define __ADG_GTK_H__
 
-#include "config.h"
+#include <config.h>
 #include <gtk/gtk.h>
 #include <adg.h>
 #include "adg-gtk-utils.h"

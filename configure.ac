@@ -19,6 +19,46 @@ AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
 AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
+AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
+
+
+# Check for host information
+
+AC_CANONICAL_HOST
+case "${host}" in
+  *-*-linux*)
+    guessed_host=linux
+    ;;
+  *-*-freebsd*)
+    guessed_host=freebsd
+    ;;
+  *-*-mingw*)
+    guessed_host=mingw
+    ;;
+  *-*-solaris*)
+    guessed_host=solaris
+    ;;
+  *-*-darwin*)
+    guessed_host=darwin
+    ;;
+  *-*-beos*)
+    guessed_host=beos
+    ;;
+  *-*-cygwin*)
+    guessed_host=cygwin
+    ;;
+  *-*-minix)
+    guessed_host=minix
+    ;;
+  *-*-aix*)
+    guessed_host=aix
+    ;;
+  *)
+    guessed_host=unknown
+    ;;
+esac
+AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
+AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" == "mingw" -o "${guessed_host}" == "cygwin"])
 
 
 # Check for programs
@@ -33,20 +73,23 @@ AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 
+
+# Libtool initialization
+
 AC_MSG_CHECKING([which libtool initialization strategy to adopt])
 AC_MSG_RESULT([m4_ifset([LT_INIT],[LT-INIT],[AC-PROG-LIBTOOL])])
 m4_ifset([LT_INIT],
          [LT_INIT([disable-static win32-dll])],
          [AC_DISABLE_STATIC
-	  AC_LIBTOOL_WIN32_DLL
+          AC_LIBTOOL_WIN32_DLL
           AC_PROG_LIBTOOL])
 
 
 # I18n
 
-AC_SUBST([GETTEXT_PACKAGE],adg-adg_api_version)
-AC_DEFINE([GETTEXT_PACKAGE],"AC_PACKAGE_TARNAME-adg_api_version",
-          [Define to the domain used by gettext.])
+AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
+AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
+                   [Define to the domain used by gettext.])
 ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
@@ -54,7 +97,7 @@ AC_CONFIG_COMMANDS([default],
                    [case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
         ${SED} -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
     esac],
-		   [SED="${SED}"])
+                   [SED="${SED}"])
 
 
 # Check for required packages
@@ -72,7 +115,9 @@ AC_ARG_ENABLE([gtk2],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes],
+                         [enable_gtk2=yes
+                          DLLDIR=`${PKG_CONFIG} --variable=prefix gtk+-2.0`/bin
+                          AC_SUBST([DLLDIR])],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
@@ -126,29 +171,14 @@ AC_C_CONST
 
 # Final step
 
-CPML_REQUIRES='cairo >= cairo_prereq'
-CPML_CFLAGS="${CAIRO_CFLAGS}"
-CPML_LIBS="${CAIRO_LIBS}"
-ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
-ADG_CFLAGS="${GOBJECT2_CFLAGS} ${CPML_CFLAGS}"
-ADG_LIBS="${GOBJECT2_LIBS} ${CPML_LIBS}"
-AS_IF([test "x${enable_gtk2}" = "xyes"],
-      [ADG_GTK_REQUIRES='gtk+-2.0 >= gtk_prereq'
-       ADG_GTK_CFLAGS="${GTK2_CFLAGS} ${CPML_CFLAGS}"
-       ADG_GTK_LIBS="${GTK2_LIBS} ${CPML_LIBS}"
-       AC_SUBST([ADG_GTK_REQUIRES])
-       AC_SUBST([ADG_GTK_CFLAGS])
-       AC_SUBST([ADG_GTK_LIBS])])
-AC_SUBST([CPML_REQUIRES])
-AC_SUBST([CPML_CFLAGS])
-AC_SUBST([CPML_LIBS])
-AC_SUBST([ADG_REQUIRES])
-AC_SUBST([ADG_CFLAGS])
-AC_SUBST([ADG_LIBS])
+AC_SUBST([CPML_REQUIRES],'cairo >= cairo_prereq')
+AC_SUBST([ADG_REQUIRES],'gobject-2.0 >= gobject_prereq')
+AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
 
 SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
                  build/shave-libtool
+                 build/adg.nsi
                  Makefile
                  src/Makefile
                  src/cpml-1.pc
@@ -160,6 +190,7 @@ AC_CONFIG_FILES([build/shave
                  src/adg-gtk/Makefile
                  src/adg-gtk/tests/Makefile
                  demo/Makefile
+                 demo/cpml-demo.ui
                  demo/adg-demo.ui
                  po/Makefile.in
                  po-properties/Makefile.in
@@ -176,7 +207,7 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([generating report
 
-ADG canvas adg_version will be built with the following options:
+AC_PACKAGE_NAME adg_version will be built with the following options:
 ----------------------------------------------------------
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)

@@ -39,8 +39,8 @@
 #include "adg-line-style-private.h"
 #include "adg-dress-builtins.h"
 
-#define PARENT_STYLE_CLASS  ((AdgStyleClass *) adg_line_style_parent_class)
 
+G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
 
 enum {
     PROP_0,
@@ -54,24 +54,17 @@ enum {
 };
 
 
-static void             get_property    (GObject        *object,
-                                         guint           prop_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void             set_property    (GObject        *object,
-                                         guint           prop_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void             apply           (AdgStyle       *style,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
-static gboolean         set_width       (AdgLineStyle   *line_style,
-                                         gdouble         width);
-static gboolean         set_miter_limit (AdgLineStyle   *line_style,
-                                         gdouble         miter_limit);
-
-
-G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_apply              (AdgStyle       *style,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
 
 
 static void
@@ -86,10 +79,10 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgLineStylePrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
@@ -156,8 +149,8 @@ adg_line_style_init(AdgLineStyle *line_style)
 }
 
 static void
-get_property(GObject *object, guint prop_id,
-             GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
@@ -190,21 +183,17 @@ get_property(GObject *object, guint prop_id,
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgLineStyle *line_style;
-    AdgLineStylePrivate *data;
-
-    line_style = (AdgLineStyle *) object;
-    data = line_style->data;
+    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
         data->color_dress = g_value_get_int(value);
         break;
     case PROP_WIDTH:
-        set_width(line_style, g_value_get_double(value));
+        data->width = g_value_get_double(value);
         break;
     case PROP_CAP:
         data->cap = g_value_get_int(value);
@@ -213,7 +202,7 @@ set_property(GObject *object, guint prop_id,
         data->join = g_value_get_int(value);
         break;
     case PROP_MITER_LIMIT:
-        set_miter_limit(line_style, g_value_get_double(value));
+        data->miter_limit = g_value_get_double(value);
         break;
     case PROP_ANTIALIAS:
         data->antialias = g_value_get_int(value);
@@ -294,9 +283,7 @@ void
 adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-
-    if (set_width(line_style, width))
-        g_object_notify((GObject *) line_style, "width");
+    g_object_set(line_style, "width", width, NULL);
 }
 
 /**
@@ -412,9 +399,7 @@ void
 adg_line_style_set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-
-    if (set_miter_limit(line_style, miter_limit))
-        g_object_notify((GObject *) line_style, "miter-limit");
+    g_object_set(line_style, "miter-limit", miter_limit, NULL);
 }
 
 /**
@@ -482,7 +467,7 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgLineStylePrivate *data = ((AdgLineStyle *) style)->data;
 
@@ -498,36 +483,4 @@ apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 
         cairo_set_dash(cr, data->dashes, data->num_dashes, data->dash_offset);
     }
-}
-
-static gboolean
-set_width(AdgLineStyle *line_style, gdouble width)
-{
-    AdgLineStylePrivate *data = line_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(width >= 0, FALSE);
-
-    if (width == data->width)
-        return FALSE;
-
-    data->width = width;
-
-    return TRUE;
-}
-
-static gboolean
-set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
-{
-    AdgLineStylePrivate *data = line_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(miter_limit >= 0, FALSE);
-
-    if (miter_limit == data->miter_limit)
-        return FALSE;
-
-    data->miter_limit = miter_limit;
-
-    return TRUE;
 }

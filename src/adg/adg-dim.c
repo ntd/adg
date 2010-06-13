@@ -41,8 +41,8 @@
 #include "adg-toy-text.h"
 #include "adg-type-builtins.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
@@ -233,8 +233,8 @@ _adg_dispose(GObject *object)
     if (data->pos)
         data->pos = adg_entity_point(entity, data->pos, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
@@ -246,8 +246,8 @@ _adg_finalize(GObject *object)
     g_free(data->min);
     g_free(data->max);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 static void
@@ -1031,8 +1031,8 @@ _adg_global_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     if (data->quote.entity)
         adg_entity_global_changed((AdgEntity *) data->quote.entity);
@@ -1043,8 +1043,8 @@ _adg_local_changed(AdgEntity *entity)
 {
     AdgDimPrivate *data = ((AdgDim *) entity)->data;
 
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 
     if (data->quote.entity)
         adg_entity_local_changed((AdgEntity *) data->quote.entity);
@@ -1068,8 +1068,8 @@ _adg_invalidate(AdgEntity *entity)
     if (data->pos)
         adg_point_invalidate(data->pos);
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
 static void

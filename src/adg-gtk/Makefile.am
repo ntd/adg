@@ -4,14 +4,14 @@ SUBDIRS=			tests
 
 
 # file groups
-h_sources=			adg-gtk-utils.h \
-				adg-gtk-area.h
+h_sources=			adg-gtk-area.h \
+				adg-gtk-utils.h
 built_h_sources=
-private_h_sources=		adg-gtk-internal.h \
-				adg-gtk-area-private.h
+private_h_sources=		adg-gtk-area-private.h \
+				adg-gtk-internal.h
 built_private_h_sources=
-c_sources=			adg-gtk-utils.c \
-				adg-gtk-area.c
+c_sources=			adg-gtk-area.c \
+				adg-gtk-utils.c
 built_c_sources=
 
 
@@ -33,8 +33,8 @@ libadg_gtk_1_la_SOURCES=	$(h_sources) \
 nodist_libadg_gtk_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_gtk_1_la_CFLAGS=		$(ADG_GTK_CFLAGS) \
+libadg_gtk_1_la_CFLAGS=		$(GTK2_CFLAGS) \
 				-I$(top_srcdir)/src
 libadg_gtk_1_la_LDFLAGS=	-no-undefined
-libadg_gtk_1_la_LIBADD=		$(ADG_GTK_LIBS) \
+libadg_gtk_1_la_LIBADD=		$(GTK2_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la

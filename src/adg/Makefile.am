@@ -142,11 +142,12 @@ libadg_1_la_SOURCES=		$(h_sources) \
 nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_1_la_CFLAGS=		$(ADG_CFLAGS) \
+libadg_1_la_CFLAGS=		$(CAIRO_CFLAGS) \
+				$(GOBJECT2_CFLAGS) \
 				-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 libadg_1_la_LDFLAGS=		-no-undefined
-libadg_1_la_LIBADD=		$(ADG_LIBS) \
+libadg_1_la_LIBADD=		$(GOBJECT2_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la
 
 

@@ -1,11 +1,47 @@
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
+ */
+
+/*
+ * This header is included by every demo program in order to
+ * initialize some common stuff, such as internationalization
+ * and configuration macros.
+ */
+
 #ifndef __DEMO_H__
 #define __DEMO_H__
 
+#define G_LOG_DOMAIN    "adg-demo"
+
+#include <config.h>
 #include <gtk/gtk.h>
 
 /* Required for i18n */
-#undef G_LOG_DOMAIN
-#include <adg/adg-internal.h>
+#ifdef ENABLE_NLS
+#include <glib/gi18n-lib.h>
+#else
+#define _(String)       (String)
+#endif
+
+/* Fallback to ".libs" if not defined by configure */
+#ifndef LT_OBJDIR
+#define LT_OBJDIR ".libs"
+#endif
 
 
 G_BEGIN_DECLS

@@ -40,8 +40,8 @@
 #include "adg-line-style.h"
 #include "adg-dress-builtins.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_projection_parent_class)
 
+G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -51,24 +51,19 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static void             arrange_class           (AdgProjectionClass *projection_class,
+static void             _adg_arrange_class      (AdgProjectionClass *projection_class,
                                                  AdgProjectionScheme scheme);
-static gboolean         set_scheme              (AdgProjection  *projection,
-                                                 AdgProjectionScheme scheme);
-
-
-G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY);
 
 
 static void
@@ -84,11 +79,11 @@ adg_projection_class_init(AdgProjectionClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgProjectionPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("symbol-dress",
                                  P_("Symbol Dress"),
@@ -141,7 +136,8 @@ adg_projection_init(AdgProjection *projection)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgProjectionPrivate *data = ((AdgProjection *) object)->data;
 
@@ -162,8 +158,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgProjection *projection;
     AdgProjectionPrivate *data;
@@ -179,7 +175,8 @@ set_property(GObject *object, guint prop_id,
         data->axis_dress = g_value_get_int(value);
         break;
     case PROP_SCHEME:
-        set_scheme(projection, g_value_get_enum(value));
+        data->scheme = g_value_get_enum(value);
+        adg_entity_invalidate((AdgEntity *) object);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -300,9 +297,7 @@ adg_projection_set_scheme(AdgProjection *projection,
                           AdgProjectionScheme scheme)
 {
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-
-    if (set_scheme(projection, scheme))
-        g_object_notify((GObject *) projection, "scheme");
+    g_object_set(projection, "scheme", scheme, NULL);
 }
 
 /**
@@ -328,7 +323,7 @@ adg_projection_get_scheme(AdgProjection  *projection)
 
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgProjectionPrivate *data;
     AdgProjectionClass *projection_class;
@@ -339,7 +334,7 @@ arrange(AdgEntity *entity)
     projection_class = ADG_PROJECTION_GET_CLASS(entity);
     data_class = projection_class->data_class;
 
-    arrange_class(projection_class, data->scheme);
+    _adg_arrange_class(projection_class, data->scheme);
     cpml_extents_copy(&extents, &data_class->extents);
 
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
@@ -348,7 +343,8 @@ arrange(AdgEntity *entity)
 }
 
 static void
-arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
+_adg_arrange_class(AdgProjectionClass *projection_class,
+                   AdgProjectionScheme scheme)
 {
     AdgProjectionClassPrivate *data_class;
     AdgPath *symbol, *axis;
@@ -426,7 +422,7 @@ arrange_class(AdgProjectionClass *projection_class, AdgProjectionScheme scheme)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgProjectionClassPrivate *data_class;
     AdgProjectionPrivate *data;
@@ -465,23 +461,4 @@ render(AdgEntity *entity, cairo_t *cr)
 
         cairo_stroke(cr);
     }
-}
-
-static gboolean
-set_scheme(AdgProjection *projection, AdgProjectionScheme scheme)
-{
-    AdgProjectionPrivate *data;
-
-    g_return_val_if_fail(adg_is_enum_value(scheme, ADG_TYPE_PROJECTION_SCHEME),
-                         FALSE);
-
-    data = projection->data;
-
-    if (data->scheme == scheme)
-        return FALSE;
-
-    data->scheme = scheme;
-
-    adg_entity_invalidate((AdgEntity *) projection);
-    return TRUE;
 }

@@ -1,0 +1,16 @@
+#! /bin/sh
+
+TARGET_ARCH=i486
+TARGET_PLATFORM=mingw32
+BUILD_ARCH=`uname -m`
+BUILD_PLATFORM=unknown-linux-gnu
+INSTALL_DIR="`pwd`/_mingw"
+
+TARGET="$TARGET_ARCH-$TARGET_PLATFORM"
+BUILD="$BUILD_ARCH-$BUILD_PLATFORM"
+
+`dirname $0`/../configure \
+    CFLAGS="-O2 -Wall -march=$TARGET_ARCH -mms-bitfields -fexceptions" \
+    --target=$TARGET --host=$TARGET --build=$BUILD \
+    --prefix=$INSTALL_DIR --bindir=$INSTALL_DIR --datadir=$INSTALL_DIR \
+    $*

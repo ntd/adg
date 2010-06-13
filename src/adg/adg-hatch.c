@@ -40,27 +40,25 @@
 #include "adg-dress-builtins.h"
 #include "adg-fill-style.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_hatch_parent_class)
 
+G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE);
 
 enum {
     PROP_0,
     PROP_FILL_DRESS
 };
 
-static void             get_property            (GObject        *object,
+
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-
-
-G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE);
 
 
 static void
@@ -75,10 +73,10 @@ adg_hatch_class_init(AdgHatchClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgHatchPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->render = render;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("fill-dress",
                                  P_("Fill Dress"),
@@ -100,7 +98,8 @@ adg_hatch_init(AdgHatch *hatch)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgHatchPrivate *data = ((AdgHatch *) object)->data;
 
@@ -115,8 +114,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgHatch *hatch;
     AdgHatchPrivate *data;
@@ -193,7 +192,7 @@ adg_hatch_get_fill_dress(AdgHatch *hatch)
 
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgHatch *hatch;
     AdgStroke *stroke;

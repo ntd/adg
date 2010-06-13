@@ -19,10 +19,10 @@ GType
             { @VALUENAME@, "@VALUENAME@", "@valuenick@" },
 /*** END value-production ***/
 /*** BEGIN value-tail ***/
-	    { 0, NULL, NULL }
-	};
+            { 0, NULL, NULL }
+        };
 
-	etype = g_@type@_register_static("@EnumName@", values);
+        etype = g_@type@_register_static("@EnumName@", values);
     }
 
     return etype;

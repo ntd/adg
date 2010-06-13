@@ -1,8 +1,7 @@
-#include <adg-gtk.h>
-#include <math.h>
-
 #include "demo.h"
 
+#include <adg-gtk.h>
+#include <math.h>
 
 #define SQRT3   1.732050808
 #define CHAMFER 0.3
@@ -395,22 +394,14 @@ _adg_part_destroy(AdgPart *part)
 static void
 _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
 {
-    AdgTitleBlock *title_block;
-    AdgLogo *logo;
-    AdgMatrix map;
-
-    title_block = adg_title_block_new();
-
-    logo = adg_logo_new();
-    cairo_matrix_init_scale(&map, 2, 2);
-    adg_entity_set_global_map(ADG_ENTITY(logo), &map);
+    AdgTitleBlock *title_block = adg_title_block_new();
 
     g_object_set(title_block,
                  "title", "SAMPLE DRAWING",
                  "author", "NtD",
                  "date", "",
                  "drawing", "TEST123",
-                 "logo", logo,
+                 "logo", adg_logo_new(),
                  "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
                  "scale", "NONE",
                  "size", "A4",
@@ -556,13 +547,13 @@ _adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
 
     toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, -100, 200);
+    cairo_matrix_init_translate(&map, 30, 545);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 
     toy_text = adg_toy_text_new("Drag with the wheel pressed to pan");
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, -100, 215);
+    cairo_matrix_init_translate(&map, 30, 560);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 }
@@ -575,6 +566,9 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     AdgMatrix map;
 
     container = (AdgContainer *) canvas;
+
+    adg_canvas_set_paper(canvas, GTK_PAPER_NAME_A4,
+                         GTK_PAGE_ORIENTATION_LANDSCAPE);
 
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
     adg_container_add(container, entity);
@@ -589,7 +583,8 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
     _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
-    cairo_matrix_init_scale(&map, 7, 7);
+    cairo_matrix_init_translate(&map, 200, 280);
+    cairo_matrix_scale(&map, 8, 8);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
     return canvas;
@@ -656,8 +651,8 @@ _adg_save_as_response(GtkWidget *window, GtkResponseType response,
 #include <cairo-ps.h>
         surface = cairo_ps_surface_create(file, 841, 595);
         cairo_ps_surface_dsc_comment(surface, "%%Title: " PACKAGE_STRING);
-        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyright (C) 2006-2010 Fontana Nicola");
-        cairo_ps_surface_dsc_comment(surface, "%%Orientation: Portrait");
+        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyleft (C) 2006-2010 Fontana Nicola");
+        cairo_ps_surface_dsc_comment(surface, "%%Orientation: Landscape");
         cairo_ps_surface_dsc_begin_setup(surface);
         cairo_ps_surface_dsc_begin_page_setup(surface);
         cairo_ps_surface_dsc_comment(surface, "%%IncludeFeature: *PageSize A4");

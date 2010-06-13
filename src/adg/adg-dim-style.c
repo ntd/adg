@@ -43,6 +43,8 @@
 #include "adg-line-style.h"
 
 
+G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
+
 enum {
     PROP_0,
     PROP_MARKER1,
@@ -64,44 +66,23 @@ enum {
 };
 
 
-static void             finalize                (GObject        *object);
-static void             get_property            (GObject        *object,
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             apply                   (AdgStyle       *style,
+static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gboolean         set_from_offset         (AdgDimStyle    *dim_style,
-                                                 gdouble         offset);
-static gboolean         set_to_offset           (AdgDimStyle    *dim_style,
-                                                 gdouble         offset);
-static gboolean         set_baseline_spacing    (AdgDimStyle    *dim_style,
-                                                 gdouble         spacing);
-static gboolean         set_limits_spacing      (AdgDimStyle    *dim_style,
-                                                 gdouble         spacing);
-static gboolean         set_beyond              (AdgDimStyle    *dim_style,
-                                                 gdouble         beyond);
-static gboolean         set_quote_shift         (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-static gboolean         set_limits_shift        (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-static void             set_number_format       (AdgDimStyle    *dim_style,
-                                                 const gchar    *format);
-static void             set_number_tag          (AdgDimStyle    *dim_style,
-                                                 const gchar    *tag);
-static AdgMarker *      marker_new              (const AdgMarkerData
+static AdgMarker *      _adg_marker_new         (const AdgMarkerData
                                                                 *marker_data);
-static gboolean         set_marker              (AdgMarkerData  *marker_data,
+static void             _adg_set_marker         (AdgMarkerData  *marker_data,
                                                  AdgMarker      *marker);
-static void             free_marker             (AdgMarkerData  *marker_data);
-
-
-G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
+static void             _adg_free_marker        (AdgMarkerData  *marker_data);
 
 
 static void
@@ -116,11 +97,11 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgDimStylePrivate));
 
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
     param = g_param_spec_object("marker1",
                                 P_("First Marker"),
@@ -270,12 +251,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
-    free_marker(&data->marker1);
-    free_marker(&data->marker2);
+    _adg_free_marker(&data->marker1);
+    _adg_free_marker(&data->marker2);
 
     g_free(data->number_format);
     data->number_format = NULL;
@@ -285,7 +266,8 @@ finalize(GObject *object)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
 
@@ -339,8 +321,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgDimStyle *dim_style;
     AdgDimStylePrivate *data;
@@ -350,10 +332,10 @@ set_property(GObject *object,
 
     switch (prop_id) {
     case PROP_MARKER1:
-        set_marker(&data->marker1, g_value_get_object(value));
+        _adg_set_marker(&data->marker1, g_value_get_object(value));
         break;
     case PROP_MARKER2:
-        set_marker(&data->marker2, g_value_get_object(value));
+        _adg_set_marker(&data->marker2, g_value_get_object(value));
         break;
     case PROP_COLOR_DRESS:
         data->color_dress = g_value_get_int(value);
@@ -371,31 +353,33 @@ set_property(GObject *object,
         data->line_dress = g_value_get_int(value);
         break;
     case PROP_FROM_OFFSET:
-        set_from_offset(dim_style, g_value_get_double(value));
+        data->from_offset = g_value_get_double(value);
         break;
     case PROP_TO_OFFSET:
-        set_to_offset(dim_style, g_value_get_double(value));
+        data->to_offset = g_value_get_double(value);
         break;
     case PROP_BEYOND:
-        set_beyond(dim_style, g_value_get_double(value));
+        data->beyond = g_value_get_double(value);
         break;
     case PROP_BASELINE_SPACING:
-        set_baseline_spacing(dim_style, g_value_get_double(value));
+        data->baseline_spacing = g_value_get_double(value);
         break;
     case PROP_LIMITS_SPACING:
-        set_limits_spacing(dim_style, g_value_get_double(value));
+        data->limits_spacing = g_value_get_double(value);
         break;
     case PROP_QUOTE_SHIFT:
-        set_quote_shift(dim_style, g_value_get_boxed(value));
+        adg_pair_copy(&data->quote_shift, g_value_get_boxed(value));
         break;
     case PROP_LIMITS_SHIFT:
-        set_limits_shift(dim_style, g_value_get_boxed(value));
+        adg_pair_copy(&data->limits_shift, g_value_get_boxed(value));
         break;
     case PROP_NUMBER_FORMAT:
-        set_number_format(dim_style, g_value_get_string(value));
+        g_free(data->number_format);
+        data->number_format = g_value_dup_string(value);
         break;
     case PROP_NUMBER_TAG:
-        set_number_tag(dim_style, g_value_get_string(value));
+        g_free(data->number_tag);
+        data->number_tag = g_value_dup_string(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -436,14 +420,8 @@ adg_dim_style_new(void)
 void
 adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    data = dim_style->data;
-
-    if (set_marker(&data->marker1, marker))
-        g_object_notify((GObject *) dim_style, "marker1");
+    g_object_set(dim_style, "marker1", marker, NULL);
 }
 
 /**
@@ -466,7 +444,7 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return marker_new(&data->marker1);
+    return _adg_marker_new(&data->marker1);
 }
 
 /**
@@ -488,15 +466,8 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
 void
 adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
 {
-    AdgDimStylePrivate *data;
-
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
-
-    data = dim_style->data;
-
-    if (set_marker(&data->marker2, marker))
-        g_object_notify((GObject *) dim_style, "marker2");
+    g_object_set(dim_style, "marker2", marker, NULL);
 }
 
 /**
@@ -519,7 +490,7 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
 
     data = dim_style->data;
 
-    return marker_new(&data->marker2);
+    return _adg_marker_new(&data->marker2);
 }
 
 /**
@@ -708,9 +679,7 @@ void
 adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_from_offset(dim_style, offset))
-        g_object_notify((GObject *) dim_style, "from-offset");
+    g_object_set(dim_style, "from-offset", offset, NULL);
 }
 
 /**
@@ -745,9 +714,7 @@ void
 adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_to_offset(dim_style, offset))
-        g_object_notify((GObject *) dim_style, "to-offset");
+    g_object_set(dim_style, "to-offset", offset, NULL);
 }
 
 /**
@@ -782,9 +749,7 @@ void
 adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble beyond)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_beyond(dim_style, beyond))
-        g_object_notify((GObject *) dim_style, "beyond");
+    g_object_set(dim_style, "beyond", beyond, NULL);
 }
 
 /**
@@ -819,9 +784,7 @@ void
 adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_baseline_spacing(dim_style, spacing))
-        g_object_notify((GObject *) dim_style, "baseline-spacing");
+    g_object_set(dim_style, "baseline-spacing", spacing, NULL);
 }
 
 /**
@@ -856,9 +819,7 @@ void
 adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_limits_spacing(dim_style, spacing))
-        g_object_notify((GObject *) dim_style, "limits-spacing");
+    g_object_set(dim_style, "limits-spacing", spacing, NULL);
 }
 
 /**
@@ -892,9 +853,7 @@ void
 adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_quote_shift(dim_style, shift))
-        g_object_notify((GObject *) dim_style, "quote-shift");
+    g_object_set(dim_style, "quote-shift", shift, NULL);
 }
 
 /**
@@ -929,9 +888,7 @@ void
 adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    if (set_limits_shift(dim_style, shift))
-        g_object_notify((GObject *) dim_style, "limits-shift");
+    g_object_set(dim_style, "limits-shift", shift, NULL);
 }
 
 /**
@@ -966,9 +923,7 @@ void
 adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    set_number_format(dim_style, format);
-    g_object_notify((GObject *) dim_style, "number-format");
+    g_object_set(dim_style, "number-format", format, NULL);
 }
 
 /**
@@ -1004,9 +959,7 @@ void
 adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-
-    set_number_tag(dim_style, tag);
-    g_object_notify((GObject *) dim_style, "number-tag");
+    g_object_set(dim_style, "number-tag", tag, NULL);
 }
 
 /**
@@ -1036,141 +989,14 @@ adg_dim_style_get_number_tag(AdgDimStyle *dim_style)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgDimStylePrivate *data = ((AdgDimStyle *) style)->data;
     adg_entity_apply_dress(entity, data->color_dress, cr);
 }
 
-static gboolean
-set_from_offset(AdgDimStyle *dim_style, gdouble offset)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(offset >= 0, FALSE);
-
-    if (data->from_offset == offset)
-        return FALSE;
-
-    data->from_offset = offset;
-    return TRUE;
-}
-
-static gboolean
-set_to_offset(AdgDimStyle *dim_style, gdouble offset)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(offset >= 0, FALSE);
-
-    if (data->to_offset == offset)
-        return FALSE;
-
-    data->to_offset = offset;
-    return TRUE;
-}
-
-static gboolean
-set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(spacing >= 0, FALSE);
-
-    if (data->baseline_spacing == spacing)
-        return FALSE;
-
-    data->baseline_spacing = spacing;
-    return TRUE;
-}
-
-static gboolean
-set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(spacing >= 0, FALSE);
-
-    if (data->limits_spacing == spacing)
-        return FALSE;
-
-    data->limits_spacing = spacing;
-    return TRUE;
-}
-
-static gboolean
-set_beyond(AdgDimStyle *dim_style, gdouble beyond)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(beyond >= 0, FALSE);
-
-    if (data->beyond == beyond)
-        return FALSE;
-
-    data->beyond = beyond;
-    return TRUE;
-}
-
-static gboolean
-set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(shift != NULL, FALSE);
-
-    data = dim_style->data;
-
-    if (adg_pair_equal(&data->quote_shift, shift))
-        return FALSE;
-
-    data->quote_shift = *shift;
-
-    return TRUE;
-}
-
-static gboolean
-set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
-{
-    AdgDimStylePrivate *data;
-
-    g_return_val_if_fail(shift != NULL, FALSE);
-
-    data = dim_style->data;
-
-    if (adg_pair_equal(&data->limits_shift, shift))
-        return FALSE;
-
-    data->limits_shift = *shift;
-
-    return TRUE;
-}
-
-static void
-set_number_format(AdgDimStyle *dim_style, const gchar *format)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    g_free(data->number_format);
-    data->number_format = g_strdup(format);
-}
-
-static void
-set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
-{
-    AdgDimStylePrivate *data = dim_style->data;
-
-    g_free(data->number_tag);
-    data->number_tag = g_strdup(tag);
-}
-
 static AdgMarker *
-marker_new(const AdgMarkerData *marker_data)
+_adg_marker_new(const AdgMarkerData *marker_data)
 {
     if (marker_data->type == 0)
         return NULL;
@@ -1180,13 +1006,13 @@ marker_new(const AdgMarkerData *marker_data)
                          marker_data->parameters);
 }
 
-static gboolean
-set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
+static void
+_adg_set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
 {
-    g_return_val_if_fail(marker == NULL || ADG_IS_MARKER(marker), FALSE);
+    g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
 
     /* Free the previous marker data, if any */
-    free_marker(marker_data);
+    _adg_free_marker(marker_data);
 
     if (marker) {
         GObject *object;
@@ -1217,12 +1043,10 @@ set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
 
         g_free(specs);
     }
-
-    return TRUE;
 }
 
 static void
-free_marker(AdgMarkerData *marker_data)
+_adg_free_marker(AdgMarkerData *marker_data)
 {
     guint n;
 

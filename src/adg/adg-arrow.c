@@ -40,29 +40,26 @@
 #include "adg-path.h"
 
 
+G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER);
+
 enum {
     PROP_0,
     PROP_ANGLE
 };
 
 
-static void             get_property            (GObject        *object,
+static void             _adg_get_property            (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property            (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static AdgModel *       create_model            (AdgMarker      *marker);
-static gboolean         set_angle               (AdgArrow       *arrow,
-                                                 gdouble         angle);
-
-
-G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER);
+static AdgModel *       _adg_create_model       (AdgMarker      *marker);
 
 
 static void
@@ -79,13 +76,13 @@ adg_arrow_class_init(AdgArrowClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgArrowPrivate));
 
-    gobject_class->set_property = set_property;
-    gobject_class->get_property = get_property;
+    gobject_class->set_property = _adg_set_property;
+    gobject_class->get_property = _adg_get_property;
 
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
-    marker_class->create_model = create_model;
+    marker_class->create_model = _adg_create_model;
 
     param = g_param_spec_double("angle",
                                 P_("Arrow Angle"),
@@ -108,8 +105,8 @@ adg_arrow_init(AdgArrow *arrow)
 }
 
 static void
-get_property(GObject *object,
-             guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgArrowPrivate *data = ((AdgArrow *) object)->data;
 
@@ -124,14 +121,14 @@ get_property(GObject *object,
 }
 
 static void
-set_property(GObject *object,
-             guint prop_id, const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgArrow *arrow = (AdgArrow *) object;
+    AdgArrowPrivate *data = ((AdgArrow *) object)->data;
 
     switch (prop_id) {
     case PROP_ANGLE:
-        set_angle(arrow, g_value_get_double(value));
+        data->angle = cpml_angle(g_value_get_double(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -193,9 +190,7 @@ void
 adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
 {
     g_return_if_fail(ADG_IS_ARROW(arrow));
-
-    if (set_angle(arrow, angle))
-        g_object_notify((GObject *) arrow, "angle");
+    g_object_set(arrow, "angle", angle, NULL);
 }
 
 /**
@@ -220,13 +215,13 @@ adg_arrow_get_angle(AdgArrow *arrow)
 
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     /* TODO */
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgModel *model;
     const cairo_path_t *cairo_path;
@@ -245,7 +240,7 @@ render(AdgEntity *entity, cairo_t *cr)
 }
 
 static AdgModel *
-create_model(AdgMarker *marker)
+_adg_create_model(AdgMarker *marker)
 {
     AdgArrowPrivate *data;
     AdgPath *path;
@@ -263,20 +258,4 @@ create_model(AdgMarker *marker)
     adg_path_close(path);
 
     return (AdgModel *) path;
-}
-
-static gboolean
-set_angle(AdgArrow *arrow, gdouble angle)
-{
-    AdgArrowPrivate *data = arrow->data;
-
-    angle = cpml_angle(angle);
-
-    if (angle == data->angle)
-        return FALSE;
-
-    data->angle = angle;
-    adg_entity_invalidate((AdgEntity *) arrow);
-
-    return TRUE;
 }

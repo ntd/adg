@@ -37,7 +37,7 @@
 #include "adg-style.h"
 
 
-static void             apply           (AdgStyle       *style,
+static void             _adg_apply      (AdgStyle       *style,
                                          AdgEntity      *entity,
                                          cairo_t        *cr);
 
@@ -48,7 +48,7 @@ G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
 static void
 adg_style_class_init(AdgStyleClass *klass)
 {
-    klass->apply = apply;
+    klass->apply = _adg_apply;
 }
 
 static void
@@ -84,7 +84,7 @@ adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     /* The apply method must be defined */
     g_warning("%s: `apply' method not implemented for type `%s'",

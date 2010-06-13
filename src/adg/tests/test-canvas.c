@@ -156,6 +156,52 @@ _adg_test_title_block(void)
 }
 
 static void
+_adg_test_size(void)
+{
+    AdgCanvas *canvas;
+    AdgPair null_size, sample_size;
+    const AdgPair *size;
+    AdgPair *size_dup;
+
+    canvas = adg_canvas_new();
+    null_size.x = 0;
+    null_size.y = 0;
+    sample_size.x = 123;
+    sample_size.y = 321;
+
+    /* Using the public APIs */
+    adg_canvas_set_size(canvas, &sample_size);
+    size = adg_canvas_get_size(canvas);
+    g_assert(adg_pair_equal(size, &sample_size));
+
+    adg_canvas_set_size(canvas, NULL);
+    size = adg_canvas_get_size(canvas);
+    g_assert(adg_pair_equal(size, &sample_size));
+
+    adg_canvas_set_size_explicit(canvas, 0, 0);
+    size = adg_canvas_get_size(canvas);
+    g_assert(adg_pair_equal(size, &null_size));
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "size", &sample_size, NULL);
+    g_object_get(canvas, "size", &size_dup, NULL);
+    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_free(size_dup);
+
+    g_object_set(canvas, "size", NULL, NULL);
+    g_object_get(canvas, "size", &size_dup, NULL);
+    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_free(size_dup);
+
+    g_object_set(canvas, "size", &null_size, NULL);
+    g_object_get(canvas, "size", &size_dup, NULL);
+    g_assert(adg_pair_equal(size_dup, &null_size));
+    g_free(size_dup);
+
+    g_object_unref(canvas);
+}
+
+static void
 _adg_test_top_margin(void)
 {
     AdgCanvas *canvas;
@@ -462,6 +508,8 @@ main(int argc, char *argv[])
                       _adg_test_frame_dress);
     adg_test_add_func("/adg/canvas/property/title-block",
                       _adg_test_title_block);
+    adg_test_add_func("/adg/canvas/property/size",
+                      _adg_test_size);
     adg_test_add_func("/adg/canvas/property/top-margin",
                       _adg_test_top_margin);
     adg_test_add_func("/adg/canvas/property/right-margin",

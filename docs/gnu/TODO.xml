@@ -69,18 +69,25 @@ API: the 0.7.0 release will probably be a beta release.</para>
 <itemizedlist mark="circle">
    <listitem override="disc">Provide a document with API guidelines take it as the holy bible!
    All the APIs must comply with the rules of this document.</listitem>
-   <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
-   should come from the CPML library (and there the TODO items are
-   bound to the less common use cases).</listitem>
-   <listitem>Create a separate project called adg-lua to host the lua bindings for
-   the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
-   <listitem>Add italian localization.</listitem>
    <listitem override="disc">Try to cross compile and build a windows binary package. Check out
    <ulink url="http://ricardo.ecn.wfu.edu/~cottrell/cross-gtk/">Allin suggestions</ulink>
    for hints.</listitem>
-   <listitem override="disc">Implement a decent "make check" target, basing the check programs on
+   <listitem>Add printing support with page setup based on GtkPrintOperation provided
+   by GTK+ 2.10 (hence, always available if GTK+ support is enable).</listitem>
+   <listitem>Expose conventions used by ADG APIs: this is mainly needed to make clear
+   getters must be considered read-only, also when returning non-const
+   values (because object referencing is always allowed).</listitem>
+   <listitem>Add italian localization.</listitem>
+   <listitem>Implement a decent "make check" target, basing the check programs on
    the test framework of glib. Make this an optional feature, as this
    framework is based on the too young glib-2.16.0.</listitem>
+   <listitem>Create a separate project called adg-lua to host the lua bindings for
+   the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
+   <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
+   should come from the CPML library (and there the TODO items are
+   bound to the less common use cases).</listitem>
+   <listitem>Provide some binary packages for major distributions, such as an
+   installable demo for Windows, a deb package and an rpm one.</listitem>
 </itemizedlist>
 
 </simplesect>

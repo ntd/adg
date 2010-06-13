@@ -34,6 +34,10 @@ G_BEGIN_DECLS
 GdkWindow *     gtk_widget_get_window   (GtkWidget      *widget);
 #endif
 
+void            adg_canvas_set_paper    (AdgCanvas      *canvas,
+                                         const gchar    *paper_name,
+                                         GtkPageOrientation orientation);
+
 G_END_DECLS
 
 

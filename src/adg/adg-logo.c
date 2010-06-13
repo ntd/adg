@@ -39,8 +39,8 @@
 #include "adg-line-style.h"
 #include "adg-dress-builtins.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_logo_parent_class)
 
+G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -50,21 +50,18 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             arrange                 (AdgEntity      *entity);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static void             arrange_class           (AdgLogoClass   *logo_class);
-
-
-G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
+static void             _adg_arrange_class      (AdgLogoClass   *logo_class);
 
 
 static void
@@ -80,11 +77,11 @@ adg_logo_class_init(AdgLogoClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgLogoPrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("symbol-dress",
                                  P_("Symbol Dress"),
@@ -136,7 +133,8 @@ adg_logo_init(AdgLogo *logo)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgLogoPrivate *data = ((AdgLogo *) object)->data;
 
@@ -157,8 +155,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgLogo *logo;
     AdgLogoPrivate *data;
@@ -323,7 +321,7 @@ adg_logo_get_frame_dress(AdgLogo *logo)
 
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgLogoClass *logo_class;
     AdgLogoClassPrivate *data_class;
@@ -332,7 +330,7 @@ arrange(AdgEntity *entity)
     logo_class = ADG_LOGO_GET_CLASS(entity);
     data_class = logo_class->data_class;
 
-    arrange_class(logo_class);
+    _adg_arrange_class(logo_class);
     cpml_extents_copy(&extents, &data_class->extents);
 
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
@@ -341,7 +339,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-arrange_class(AdgLogoClass *logo_class)
+_adg_arrange_class(AdgLogoClass *logo_class)
 {
     AdgLogoClassPrivate *data_class;
     CpmlExtents *extents;
@@ -352,18 +350,18 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->symbol == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 4, 13);
-        adg_path_line_to_explicit(path, 12, 5);
-        adg_path_arc_to_explicit(path, 16, 9, 12, 13);
-        adg_path_line_to_explicit(path, 12, 5.5);
+        adg_path_move_to_explicit(path, 8, 26);
+        adg_path_line_to_explicit(path, 24, 10);
+        adg_path_arc_to_explicit(path, 32, 18, 24, 26);
+        adg_path_line_to_explicit(path, 24, 11);
 
-        adg_path_move_to_explicit(path, 20, 5);
-        adg_path_arc_to_explicit(path, 16, 9, 20, 13);
-        adg_path_line_to_explicit(path, 20, 11);
-        adg_path_line_to_explicit(path, 19, 11);
+        adg_path_move_to_explicit(path, 40, 10);
+        adg_path_arc_to_explicit(path, 32, 18, 40, 26);
+        adg_path_line_to_explicit(path, 40, 22);
+        adg_path_line_to_explicit(path, 38, 22);
 
-        adg_path_move_to_explicit(path, 11.5, 11);
-        adg_path_line_to_explicit(path, 8, 11);
+        adg_path_move_to_explicit(path, 23, 22);
+        adg_path_line_to_explicit(path, 16, 22);
 
         data_class->symbol = path;
         extents->is_defined = FALSE;
@@ -372,15 +370,15 @@ arrange_class(AdgLogoClass *logo_class)
     if (data_class->screen == NULL) {
         AdgPath *path = adg_path_new();
 
-        adg_path_move_to_explicit(path, 1.5, 1.5);
-        adg_path_line_to_explicit(path, 23.5, 1.5);
-        adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 23.5, 16.5);
-        adg_path_fillet(path, 5);
-        adg_path_line_to_explicit(path, 1.5, 16.5);
-        adg_path_fillet(path, 5);
+        adg_path_move_to_explicit(path, 3, 3);
+        adg_path_line_to_explicit(path, 47, 3);
+        adg_path_fillet(path, 10);
+        adg_path_line_to_explicit(path, 47, 33);
+        adg_path_fillet(path, 10);
+        adg_path_line_to_explicit(path, 3, 33);
+        adg_path_fillet(path, 10);
         adg_path_close(path);
-        adg_path_fillet(path, 5);
+        adg_path_fillet(path, 10);
 
         data_class->screen = path;
         extents->is_defined = FALSE;
@@ -390,9 +388,9 @@ arrange_class(AdgLogoClass *logo_class)
         AdgPath *path = adg_path_new();
 
         adg_path_move_to_explicit(path, 0, 0);
-        adg_path_line_to_explicit(path, 25, 0);
-        adg_path_line_to_explicit(path, 25, 18);
-        adg_path_line_to_explicit(path, 0, 18);
+        adg_path_line_to_explicit(path, 50, 0);
+        adg_path_line_to_explicit(path, 50, 36);
+        adg_path_line_to_explicit(path, 0, 36);
         adg_path_close(path);
 
         data_class->frame = path;
@@ -410,7 +408,7 @@ arrange_class(AdgLogoClass *logo_class)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgLogoClassPrivate *data_class;
     AdgLogoPrivate *data;
@@ -428,7 +426,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 2);
+        cairo_set_line_width(cr, 3);
         adg_entity_apply_dress(entity, data->symbol_dress, cr);
 
         cairo_stroke(cr);
@@ -441,7 +439,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 1.25);
+        cairo_set_line_width(cr, 2);
         adg_entity_apply_dress(entity, data->screen_dress, cr);
 
         cairo_stroke(cr);
@@ -454,7 +452,7 @@ render(AdgEntity *entity, cairo_t *cr)
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);
 
-        cairo_set_line_width(cr, 1.25);
+        cairo_set_line_width(cr, 2);
         cairo_set_antialias(cr, CAIRO_ANTIALIAS_NONE);
         adg_entity_apply_dress(entity, data->frame_dress, cr);
 
