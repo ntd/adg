@@ -42,9 +42,11 @@
 #include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_toy_text_parent_class)
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_toy_text_parent_class)
 
+
+G_DEFINE_TYPE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -53,28 +55,23 @@ enum {
 };
 
 
-static void     finalize                (GObject        *object);
-static void     get_property            (GObject        *object,
-                                         guint           param_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void     set_property            (GObject        *object,
-                                         guint           param_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void     global_changed          (AdgEntity      *entity);
-static void     local_changed           (AdgEntity      *entity);
-static void     invalidate              (AdgEntity      *entity);
-static void     arrange                 (AdgEntity      *entity);
-static void     render                  (AdgEntity      *entity,
-                                         cairo_t        *cr);
-static gboolean set_label               (AdgToyText     *toy_text,
-                                         const gchar    *label);
-static void     unset_font              (AdgToyText     *toy_text);
-static void     unset_glyphs            (AdgToyText     *toy_text);
-
-
-G_DEFINE_TYPE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY);
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static void             _adg_clear_font         (AdgToyText     *toy_text);
+static void             _adg_clear_glyphs       (AdgToyText     *toy_text);
 
 
 static void
@@ -89,15 +86,15 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgToyTextPrivate));
 
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("font-dress",
                                  P_("Font Dress"),
@@ -129,7 +126,7 @@ adg_toy_text_init(AdgToyText *toy_text)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
@@ -138,15 +135,16 @@ finalize(GObject *object)
     data = toy_text->data;
 
     g_free(data->label);
-    unset_font(toy_text);
-    unset_glyphs(toy_text);
+    _adg_clear_font(toy_text);
+    _adg_clear_glyphs(toy_text);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
 
@@ -164,8 +162,8 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
@@ -176,10 +174,12 @@ set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_FONT_DRESS:
         data->font_dress = g_value_get_int(value);
-        unset_font(toy_text);
+        _adg_clear_font(toy_text);
         break;
     case PROP_LABEL:
-        set_label(toy_text, g_value_get_string(value));
+        g_free(data->label);
+        data->label = g_value_dup_string(value);
+        _adg_clear_glyphs(toy_text);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -259,9 +259,7 @@ void
 adg_toy_text_set_label(AdgToyText *toy_text, const gchar *label)
 {
     g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
-
-    if (set_label(toy_text, label))
-        g_object_notify((GObject *) toy_text, "label");
+    g_object_set(toy_text, "label", label, NULL);
 }
 
 /**
@@ -287,35 +285,35 @@ adg_toy_text_get_label(AdgToyText *toy_text)
 
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
     adg_entity_invalidate(entity);
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 
     adg_entity_invalidate(entity);
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
-    unset_font((AdgToyText *) entity);
-    unset_glyphs((AdgToyText *) entity);
+    _adg_clear_font((AdgToyText *) entity);
+    _adg_clear_glyphs((AdgToyText *) entity);
 
-    if (PARENT_ENTITY_CLASS->invalidate)
-        PARENT_ENTITY_CLASS->invalidate(entity);
+    if (_ADG_OLD_ENTITY_CLASS->invalidate)
+        _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
@@ -356,7 +354,7 @@ arrange(AdgEntity *entity)
                                                   NULL, NULL, NULL);
 
         if (status != CAIRO_STATUS_SUCCESS) {
-            unset_glyphs(toy_text);
+            _adg_clear_glyphs(toy_text);
             g_error("Unable to build glyphs (cairo message: %s)",
                     cairo_status_to_string(status));
             return;
@@ -374,7 +372,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgToyText *toy_text;
     AdgToyTextPrivate *data;
@@ -389,24 +387,8 @@ render(AdgEntity *entity, cairo_t *cr)
     }
 }
 
-static gboolean
-set_label(AdgToyText *toy_text, const gchar *label)
-{
-    AdgToyTextPrivate *data = toy_text->data;
-
-    /* Check if the new label differs from the current label */
-    if (g_strcmp0(label, data->label) == 0)
-        return FALSE;
-
-    g_free(data->label);
-    data->label = g_strdup(label);
-
-    unset_glyphs(toy_text);
-    return TRUE;
-}
-
 static void
-unset_font(AdgToyText *toy_text)
+_adg_clear_font(AdgToyText *toy_text)
 {
     AdgToyTextPrivate *data = toy_text->data;
 
@@ -414,7 +396,7 @@ unset_font(AdgToyText *toy_text)
 }
 
 static void
-unset_glyphs(AdgToyText *toy_text)
+_adg_clear_glyphs(AdgToyText *toy_text)
 {
     AdgToyTextPrivate *data = toy_text->data;
 
