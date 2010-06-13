@@ -187,19 +187,23 @@ _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
     AdgEdgesPrivate *data = ((AdgEdges *) object)->data;
+    gpointer tmp_pointer;
 
     switch (prop_id) {
     case PROP_SOURCE:
-        if (data->source != NULL)
-            g_object_weak_unref((GObject *) data->source,
-                                (GWeakNotify) _adg_unset_source, object);
-
+        tmp_pointer = data->source;
         data->source = g_value_get_object(value);
-        _adg_clear((AdgModel *) object);
 
-        if (data->source != NULL)
-            g_object_weak_ref((GObject *) data->source,
-                              (GWeakNotify) _adg_unset_source, object);
+        if (tmp_pointer != data->source) {
+            if (data->source)
+                g_object_weak_ref((GObject *) data->source,
+                                  (GWeakNotify) _adg_unset_source, object);
+            if (tmp_pointer)
+                g_object_weak_unref((GObject *) tmp_pointer,
+                                    (GWeakNotify) _adg_unset_source, object);
+        }
+
+        _adg_clear((AdgModel *) object);
         break;
     case PROP_CRITICAL_ANGLE:
         data->threshold = sin(g_value_get_double(value));
