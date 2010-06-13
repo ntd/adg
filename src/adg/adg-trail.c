@@ -61,19 +61,18 @@
 #include "adg-trail-private.h"
 #include <string.h>
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
-#define PARENT_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
-
-
-static void             finalize                (GObject        *object);
-static void             clear                   (AdgModel       *model);
-static CpmlPath *       get_cpml_path           (AdgTrail       *trail);
-static GArray *         arc_to_curves           (GArray         *array,
-                                                 const cairo_path_data_t
-                                                                *src);
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
+#define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
 
 
 G_DEFINE_TYPE(AdgTrail, adg_trail, ADG_TYPE_MODEL);
+
+
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_clear              (AdgModel       *model);
+static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
+static GArray *         _adg_arc_to_curves      (GArray         *array,
+                                                 const cairo_path_data_t *src);
 
 
 static void
@@ -87,11 +86,11 @@ adg_trail_class_init(AdgTrailClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgTrailPrivate));
 
-    gobject_class->finalize = finalize;
+    gobject_class->finalize = _adg_finalize;
 
-    model_class->clear = clear;
+    model_class->clear = _adg_clear;
 
-    klass->get_cpml_path = get_cpml_path;
+    klass->get_cpml_path = _adg_get_cpml_path;
 }
 
 static void
@@ -113,12 +112,12 @@ adg_trail_init(AdgTrail *trail)
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
-    clear((AdgModel *) object);
+    _adg_clear((AdgModel *) object);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 
@@ -206,7 +205,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
         p_src = (const cairo_path_data_t *) cpml_path->data + i;
 
         if ((CpmlPrimitiveType) p_src->header.type == CPML_ARC)
-            dst = arc_to_curves(dst, p_src);
+            dst = _adg_arc_to_curves(dst, p_src);
         else
             dst = g_array_append_vals(dst, p_src, p_src->header.length);
     }
@@ -383,7 +382,7 @@ adg_trail_dump(AdgTrail *trail)
 
 
 static void
-clear(AdgModel *model)
+_adg_clear(AdgModel *model)
 {
     AdgTrailPrivate *data = ((AdgTrail *) model)->data;
 
@@ -394,12 +393,12 @@ clear(AdgModel *model)
     data->cairo_path.num_data = 0;
     data->extents.is_defined = FALSE;
 
-    if (PARENT_MODEL_CLASS->clear)
-        PARENT_MODEL_CLASS->clear(model);
+    if (_ADG_OLD_MODEL_CLASS->clear)
+        _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
 static CpmlPath *
-get_cpml_path(AdgTrail *trail)
+_adg_get_cpml_path(AdgTrail *trail)
 {
     AdgTrailPrivate *data = trail->data;
 
@@ -413,7 +412,7 @@ get_cpml_path(AdgTrail *trail)
 }
 
 static GArray *
-arc_to_curves(GArray *array, const cairo_path_data_t *src)
+_adg_arc_to_curves(GArray *array, const cairo_path_data_t *src)
 {
     CpmlPrimitive arc;
     double start, end;
