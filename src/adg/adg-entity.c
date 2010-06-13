@@ -342,7 +342,8 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_PARENT:
-        _adg_set_parent(object, g_value_get_object(value));
+        _adg_set_parent((AdgEntity *) object,
+                        (AdgEntity *) g_value_get_object(value));
         break;
     case PROP_GLOBAL_MAP:
         adg_matrix_copy(&data->global_map, g_value_get_boxed(value));
