@@ -106,6 +106,12 @@ AdgEntity *     adg_table_cell_value            (AdgTableCell   *cell);
 void            adg_table_cell_set_value_pos    (AdgTableCell   *cell,
                                                  const AdgPair  *from_factor,
                                                  const AdgPair  *to_factor);
+void            adg_table_cell_set_value_pos_explicit
+                                                (AdgTableCell   *cell,
+                                                 gdouble         from_x,
+                                                 gdouble         from_y,
+                                                 gdouble         to_x,
+                                                 gdouble         to_y);
 void            adg_table_cell_set_width        (AdgTableCell   *cell,
                                                  gdouble         width);
 gdouble         adg_table_cell_get_width        (AdgTableCell   *cell);

@@ -128,7 +128,7 @@ static AdgTableCell *   _adg_cell_new           (AdgTableRow    *row,
                                                  const gchar    *name,
                                                  AdgEntity      *title,
                                                  AdgEntity      *value);
-static void             _adg_cell_set_name      (AdgTableCell   *cell,
+static void             _adg_cell_set_name           (AdgTableCell   *cell,
                                                  const gchar    *name);
 static gboolean         _adg_cell_set_title     (AdgTableCell   *cell,
                                                  AdgEntity      *title);
@@ -935,6 +935,32 @@ adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
     g_return_if_fail(cell->value != NULL);
 
     _adg_cell_set_value_pos(cell, from_factor, to_factor);
+}
+
+/**
+ * adg_table_cell_set_value_pos_explicit:
+ * @cell: a valid #AdgTableCell
+ * @from_x: the x alignment factor on the entity
+ * @from_y: the y alignment factor on the entity
+ * @to_x: the x alignment factor on the cell
+ * @to_y: the y alignment factor on the cell
+ *
+ * A convenient wrapper around adg_table_cell_set_value_pos()
+ * that uses explicit factors instead of #AdgPair.
+ **/
+void
+adg_table_cell_set_value_pos_explicit(AdgTableCell *cell,
+                                      gdouble from_x, gdouble from_y,
+                                      gdouble to_x, gdouble to_y)
+{
+    AdgPair from, to;
+
+    from.x = from_x;
+    from.y = from_y;
+    to.x = to_x;
+    to.y = to_y;
+
+    adg_table_cell_set_value_pos(cell, &from, &to);
 }
 
 /**
