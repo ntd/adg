@@ -69,8 +69,6 @@ static void             _adg_set_property       (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             _adg_arrange            (AdgEntity      *entity);
-static gboolean         _adg_set_factor         (AdgAlignment   *alignment,
-                                                 const AdgPair  *factor);
 
 
 static void
@@ -131,11 +129,11 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgAlignment *alignment = (AdgAlignment *) object;
+    AdgAlignmentPrivate *data = ((AdgAlignment *) object)->data;
 
     switch (prop_id) {
     case PROP_FACTOR:
-        _adg_set_factor(alignment, g_value_get_boxed(value));
+        adg_pair_copy(&data->factor, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -191,13 +189,10 @@ adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
  * reference to the normal flow without @alignment.
  **/
 void
-adg_alignment_set_factor(AdgAlignment*alignment, const AdgPair *factor)
+adg_alignment_set_factor(AdgAlignment *alignment, const AdgPair *factor)
 {
     g_return_if_fail(ADG_IS_ALIGNMENT(alignment));
-    /* The factor == NULL condition is handled by set_factor() */
-
-    if (_adg_set_factor(alignment, factor))
-        g_object_notify((GObject *) alignment, "factor");
+    g_object_set(alignment, "factor", factor, NULL);
 }
 
 /**
@@ -282,21 +277,4 @@ _adg_arrange(AdgEntity *entity)
     }
 
     adg_entity_set_global_map(entity, &old_map);
-}
-
-static gboolean
-_adg_set_factor(AdgAlignment *alignment, const AdgPair *factor)
-{
-    AdgAlignmentPrivate *data;
-
-    g_return_val_if_fail(factor != NULL, FALSE);
-
-    data = alignment->data;
-
-    if (adg_pair_equal(&data->factor, factor))
-        return FALSE;
-
-    data->factor = *factor;
-
-    return TRUE;
 }
