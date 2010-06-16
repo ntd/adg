@@ -25,6 +25,35 @@
  * The canvas is the toplevel entity of an ADG drawing. It can be
  * bound to a GTK+ widget, such as #AdgGtkArea, or manually rendered
  * to a custom surface.
+ *
+ * Tipically, the canvas contains the description and properties of
+ * the media used, such as such as size (if relevant), margins,
+ * border and paddings. This approach clearly follows the block model
+ * of the CSS specifications level 2.
+ *
+ * The paddings specify the distance between the entities contained
+ * by the canvas and the border. The margins specify the distance
+ * between the canvas border and the media extents.
+ *
+ * The canvas (hence the media) size can be explicitely specified
+ * by directly writing to the #AdgCanvas:size property or using any
+ * valid setter, such as adg_canvas_set_size(),
+ * adg_canvas_set_size_explicit() or the convenient
+ * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
+ * only one dimension and let the other one be computed automatically.
+ * This is done by using the special value %0 that specifies a side
+ * must be autocalculated.
+ *
+ * By default either width and height must be autocalculated (are
+ * set to %0), so the arrange() phase on the canvas is performed.
+ * Margins and paddings are then added to the extents to get the
+ * border coordinates and the final bounding box.
+ *
+ * When the size is explicitely set, instead, the final bounding
+ * box is forcibly set to this value without taking the canvas
+ * extents into account. The margins are then subtracted to get
+ * the coordinates of the border. In this case, the paddings are
+ * simply ignored.
  **/
 
 /**
