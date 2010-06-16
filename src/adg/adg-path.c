@@ -275,7 +275,7 @@ adg_path_over_primitive(AdgPath *path)
  * adg_path_append:
  * @path: an #AdgPath
  * @type: a #cairo_data_type_t value
- * @...:  point data, specified as #AdgPair pointers
+ * @Varargs:  point data, specified as #AdgPair pointers
  *
  * Generic method to append a primitive to @path. The number of #AdgPair
  * structs depends on @type: there is no way with this function to
