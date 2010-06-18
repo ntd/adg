@@ -51,7 +51,8 @@ HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/NEWS.xml \
 			$(top_srcdir)/docs/gnu/TODO.xml \
-			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
+			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml \
+			$(top_srcdir)/docs/gnu/HACKING.xml
 expand_content_files=
 
 

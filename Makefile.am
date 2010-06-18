@@ -18,7 +18,8 @@ BUILT_SOURCES=			ChangeLog \
 				README \
 				NEWS \
 				TODO \
-				CONTRIBUTING
+				CONTRIBUTING \
+				HACKING
 
 EXTRA_DIST=			COPYING \
 				ChangeLog-0.2.1 \
@@ -60,3 +61,6 @@ TODO: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/TODO.xml
 
 CONTRIBUTING: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/CONTRIBUTING.xml
 	$(xml2txt_command) $(srcdir)/docs/gnu/CONTRIBUTING.xml
+
+HACKING: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/HACKING.xml
+	$(xml2txt_command) $(srcdir)/docs/gnu/HACKING.xml

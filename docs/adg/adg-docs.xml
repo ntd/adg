@@ -10,6 +10,7 @@
     <xi:include href="../gnu/NEWS.xml"/>
     <xi:include href="../gnu/TODO.xml"/>
     <xi:include href="../gnu/CONTRIBUTING.xml"/>
+    <xi:include href="../gnu/HACKING.xml"/>
   </part>
 
   <part id="Core">
