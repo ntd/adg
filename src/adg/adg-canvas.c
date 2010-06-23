@@ -986,8 +986,8 @@ _adg_arrange(AdgEntity *entity)
         const AdgMatrix *global = adg_entity_get_global_matrix(entity);
         CpmlExtents paper;
 
-        paper.org.x = data->left_margin;
-        paper.org.y = data->top_margin;
+        paper.org.x = 0;
+        paper.org.y = 0;
         paper.size.x = data->size.x;
         paper.size.y = data->size.y;
 
@@ -1013,12 +1013,6 @@ _adg_arrange(AdgEntity *entity)
         extents.size.y += data->top_padding + data->bottom_padding;
     }
 
-    /* Add margins */
-    extents.org.x -= data->left_margin;
-    extents.org.y -= data->top_margin;
-    extents.size.x += data->left_margin + data->right_margin;
-    extents.size.y += data->top_margin + data->bottom_margin;
-
     /* Impose the new extents */
     adg_entity_set_extents(entity, &extents);
 
@@ -1032,9 +1026,9 @@ _adg_arrange(AdgEntity *entity)
         title_block_extents = adg_entity_get_extents(title_block_entity);
 
         shift.x = extents.org.x + extents.size.x - title_block_extents->org.x
-            - title_block_extents->size.x - data->right_margin;
+            - title_block_extents->size.x;
         shift.y = extents.org.y + extents.size.y - title_block_extents->org.y
-            - title_block_extents->size.y - data->bottom_margin;
+            - title_block_extents->size.y;
 
         /* The following block could be optimized by skipping tiny shift,
          * usually left by rounding errors */
@@ -1073,16 +1067,8 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     /* Frame line */
     if (data->has_frame) {
-        CpmlExtents frame;
-        cpml_extents_copy(&frame, extents);
-
-        frame.org.x += data->left_margin;
-        frame.org.y += data->top_margin;
-        frame.size.x -= data->left_margin + data->right_margin;
-        frame.size.y -= data->top_margin + data->bottom_margin;
-
-        cairo_rectangle(cr, frame.org.x, frame.org.y,
-                        frame.size.x, frame.size.y);
+        cairo_rectangle(cr, extents->org.x, extents->org.y,
+                        extents->size.x, extents->size.y);
         cairo_transform(cr, adg_entity_get_global_matrix(entity));
         adg_entity_apply_dress(entity, data->frame_dress, cr);
         cairo_stroke(cr);

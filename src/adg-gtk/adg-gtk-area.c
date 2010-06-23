@@ -354,6 +354,7 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     AdgCanvas *canvas;
     AdgEntity *entity;
     const CpmlExtents *extents;
+    gdouble top, right, bottom, left;
 
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
@@ -368,8 +369,13 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
     if (extents == NULL || !extents->is_defined)
         return;
 
-    requisition->width = extents->size.x;
-    requisition->height = extents->size.y;
+    top = adg_canvas_get_top_margin(canvas);
+    right = adg_canvas_get_right_margin(canvas);
+    bottom = adg_canvas_get_bottom_margin(canvas);
+    left = adg_canvas_get_left_margin(canvas);
+
+    requisition->width = extents->size.x + left + right;
+    requisition->height = extents->size.y + top + bottom;
 }
 
 /**
@@ -420,21 +426,33 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     if (data->src_factor <= 0) {
         /* First allocation */
         const CpmlExtents *extents = adg_entity_get_extents(entity);
+        gdouble top, right, bottom, left;
+        gdouble width, height;
 
-        if (extents == NULL || !extents->is_defined ||
-            extents->size.x <= 0 || extents->size.y <= 0)
+        if (extents == NULL || !extents->is_defined)
             return;
 
-        ratio.x = (gdouble) allocation->width / extents->size.x;
-        ratio.y = (gdouble) allocation->height / extents->size.y;
+        top = adg_canvas_get_top_margin(canvas);
+        right = adg_canvas_get_right_margin(canvas);
+        bottom = adg_canvas_get_bottom_margin(canvas);
+        left = adg_canvas_get_left_margin(canvas);
+
+        width = extents->size.x + left + right;
+        height = extents->size.y + top + bottom;
+
+        if (width <= 0 || height <= 0)
+            return;
+
+        ratio.x = (gdouble) allocation->width / width;
+        ratio.y = (gdouble) allocation->height / height;
         factor = MIN(ratio.x, ratio.y);
 
-        map.x0 = allocation->width - extents->size.x * factor;
-        map.y0 = allocation->height - extents->size.y * factor;
+        map.x0 = allocation->width - width * factor;
+        map.y0 = allocation->height - height * factor;
         map.x0 /= 2;
         map.y0 /= 2;
-        map.x0 -= extents->org.x;
-        map.y0 -= extents->org.y;
+        map.x0 += left;
+        map.y0 += top;
 
         *src_allocation = *allocation;
         src_allocation->x = map.x0;
