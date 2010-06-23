@@ -382,6 +382,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     if (data->glyphs != NULL) {
         adg_entity_apply_dress(entity, data->font_dress, cr);
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_show_glyphs(cr, data->glyphs, data->num_glyphs);
     }

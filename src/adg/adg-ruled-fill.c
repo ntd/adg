@@ -306,7 +306,6 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     AdgFillStyle *fill_style;
     AdgPattern *pattern;
     const CpmlExtents *extents;
-    cairo_matrix_t matrix;
 
     fill_style = (AdgFillStyle *) style;
     pattern = adg_fill_style_get_pattern(fill_style);
@@ -321,11 +320,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
         cairo_pattern_destroy(pattern);
     }
 
-    /* The extents are yet in identity space, so the ctm should be
-     * reset to avoid using local and global maps twice: only the
-     * translation (also in identity space) is applied */
-    cairo_matrix_init_translate(&matrix, extents->org.x, extents->org.y);
-    cairo_set_matrix(cr, &matrix);
+    cairo_translate(cr, extents->org.x, extents->org.y);
 
     if (_ADG_OLD_STYLE_CLASS->apply)
         _ADG_OLD_STYLE_CLASS->apply(style, entity, cr);

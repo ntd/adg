@@ -431,6 +431,8 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     data_class = ADG_PROJECTION_GET_CLASS(entity)->data_class;
     data = ((AdgProjection *) entity)->data;
 
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
+
     if (data_class->symbol != NULL) {
         cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);
 

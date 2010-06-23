@@ -417,6 +417,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     data_class = ADG_LOGO_GET_CLASS(entity)->data_class;
     data = ((AdgLogo *) entity)->data;
 
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
     cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
 
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);

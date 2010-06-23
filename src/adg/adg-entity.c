@@ -1176,7 +1176,6 @@ _adg_real_render(AdgEntity *entity, cairo_t *cr)
     g_signal_emit(entity, _adg_signals[ARRANGE], 0);
 
     cairo_save(cr);
-    cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
     klass->render(entity, cr);
     cairo_restore(cr);
 
@@ -1186,7 +1185,6 @@ _adg_real_render(AdgEntity *entity, cairo_t *cr)
 
         if (extents->is_defined) {
             cairo_save(cr);
-            cairo_identity_matrix(cr);
             cairo_set_source_rgba(cr, 0.15, 0.15, 0.15, 0.15);
             cairo_rectangle(cr, extents->org.x, extents->org.y,
                             extents->size.x, extents->size.y);

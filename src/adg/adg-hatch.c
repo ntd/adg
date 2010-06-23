@@ -211,6 +211,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         adg_fill_style_set_extents(fill_style, adg_entity_get_extents(entity));
 
         cairo_save(cr);
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);

@@ -327,6 +327,8 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
+
         cairo_save(cr);
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);

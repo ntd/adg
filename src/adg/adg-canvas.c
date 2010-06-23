@@ -1066,7 +1066,6 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     cairo_save(cr);
 
     /* Background fill */
-    cairo_identity_matrix(cr);
     cairo_rectangle(cr, extents->org.x, extents->org.y,
                     extents->size.x, extents->size.y);
     adg_entity_apply_dress(entity, data->background_dress, cr);
@@ -1084,7 +1083,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
         cairo_rectangle(cr, frame.org.x, frame.org.y,
                         frame.size.x, frame.size.y);
-        cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         adg_entity_apply_dress(entity, data->frame_dress, cr);
         cairo_stroke(cr);
     }

@@ -424,12 +424,12 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
+    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
 
     if (data->marker != NULL)
         adg_entity_render((AdgEntity *) data->marker, cr);
 
-    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
-
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
     dress = adg_dim_style_get_line_dress(dim_style);
     adg_entity_apply_dress(entity, dress, cr);
 
