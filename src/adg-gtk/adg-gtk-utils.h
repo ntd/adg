@@ -31,12 +31,15 @@ G_BEGIN_DECLS
 
 #if GTK_CHECK_VERSION(2, 14, 0)
 #else
-GdkWindow *     gtk_widget_get_window   (GtkWidget      *widget);
+GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
 #endif
 
-void            adg_canvas_set_paper    (AdgCanvas      *canvas,
-                                         const gchar    *paper_name,
-                                         GtkPageOrientation orientation);
+void            adg_canvas_set_paper            (AdgCanvas      *canvas,
+                                                 const gchar    *paper_name,
+                                                 GtkPageOrientation
+                                                                 orientation);
+void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
+                                                 GtkPageSetup   *page_setup);
 
 G_END_DECLS
 

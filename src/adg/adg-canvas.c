@@ -721,7 +721,7 @@ adg_canvas_get_left_margin(AdgCanvas *canvas)
  **/
 void
 adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
-                          gdouble bottom, gdouble left)
+                       gdouble bottom, gdouble left)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_object_set((GObject *) canvas,
@@ -1060,8 +1060,10 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     cairo_save(cr);
 
     /* Background fill */
-    cairo_rectangle(cr, extents->org.x, extents->org.y,
-                    extents->size.x, extents->size.y);
+    cairo_rectangle(cr, extents->org.x - data->left_margin,
+                    extents->org.y - data->top_margin,
+                    extents->size.x + data->left_margin + data->right_margin,
+                    extents->size.y + data->top_margin + data->bottom_margin);
     adg_entity_apply_dress(entity, data->background_dress, cr);
     cairo_fill(cr);
 
