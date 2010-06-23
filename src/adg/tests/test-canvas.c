@@ -210,7 +210,7 @@ _adg_test_top_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1;
 
     /* Using the public APIs */
     adg_canvas_set_top_margin(canvas, valid_value_1);
@@ -242,7 +242,7 @@ _adg_test_right_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = 0;
 
     /* Using the public APIs */
     adg_canvas_set_right_margin(canvas, valid_value_1);
@@ -274,7 +274,7 @@ _adg_test_bottom_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1234;
 
     /* Using the public APIs */
     adg_canvas_set_bottom_margin(canvas, valid_value_1);
@@ -306,7 +306,7 @@ _adg_test_left_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -4321;
 
     /* Using the public APIs */
     adg_canvas_set_left_margin(canvas, valid_value_1);
@@ -377,7 +377,7 @@ _adg_test_top_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = 0;
 
     /* Using the public APIs */
     adg_canvas_set_top_padding(canvas, valid_value_1);
@@ -409,7 +409,7 @@ _adg_test_right_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1;
 
     /* Using the public APIs */
     adg_canvas_set_right_padding(canvas, valid_value_1);
@@ -441,7 +441,7 @@ _adg_test_bottom_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -4321;
 
     /* Using the public APIs */
     adg_canvas_set_bottom_padding(canvas, valid_value_1);
@@ -473,7 +473,7 @@ _adg_test_left_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1111;
 
     /* Using the public APIs */
     adg_canvas_set_left_padding(canvas, valid_value_1);

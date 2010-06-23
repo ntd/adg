@@ -164,28 +164,28 @@ adg_canvas_class_init(AdgCanvasClass *klass)
     param = g_param_spec_double("top-margin",
                                 P_("Top Margin"),
                                 P_("The margin (in identity space) to leave above the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOP_MARGIN, param);
 
     param = g_param_spec_double("right-margin",
                                 P_("Right Margin"),
                                 P_("The margin (in identity space) to leave empty at the right of the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RIGHT_MARGIN, param);
 
     param = g_param_spec_double("bottom-margin",
                                 P_("Bottom Margin"),
                                 P_("The margin (in identity space) to leave empty below the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BOTTOM_MARGIN, param);
 
     param = g_param_spec_double("left-margin",
                                 P_("Left Margin"),
                                 P_("The margin (in identity space) to leave empty at the left of the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_MARGIN, param);
 
@@ -199,28 +199,28 @@ adg_canvas_class_init(AdgCanvasClass *klass)
     param = g_param_spec_double("top-padding",
                                 P_("Top Padding"),
                                 P_("The padding (in identity space) to leave empty above between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOP_PADDING, param);
 
     param = g_param_spec_double("right-padding",
                                 P_("Right Padding"),
                                 P_("The padding (in identity space) to leave empty at the right between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RIGHT_PADDING, param);
 
     param = g_param_spec_double("bottom-padding",
                                 P_("Bottom Padding"),
                                 P_("The padding (in identity space) to leave empty below between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BOTTOM_PADDING, param);
 
     param = g_param_spec_double("left-padding",
                                 P_("Left Padding"),
                                 P_("The padding (in identity space) to leave empty at the left between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_PADDING, param);
 }
