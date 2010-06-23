@@ -250,7 +250,7 @@ _adg_dress_line_stroke(void)
  *
  * The builtin #AdgDress line type used by default
  * for rendering base and extension lines of dimensions.
- * The fallback style is a line with a thickness of %0.75
+ * The fallback style is a line with a thickness of %0.5
  * and a pass-through color dress.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
@@ -262,7 +262,7 @@ _adg_dress_line_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 0.75, NULL);
+                                          "width", 0.5, NULL);
 
         dress = adg_dress_new("line-dimension", fallback);
         g_object_unref(fallback);
@@ -276,7 +276,7 @@ _adg_dress_line_dimension(void)
  *
  * The builtin #AdgDress line type used by #AdgFillStyle
  * based styles. The fallback style is a line with
- * #ADG_DRESS_COLOR_FILL color and a thickness of %1.
+ * #ADG_DRESS_COLOR_FILL color and a thickness of %0.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -288,7 +288,7 @@ _adg_dress_line_fill(void)
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_FILL,
-                                          "width", 1., NULL);
+                                          "width", 0.5, NULL);
 
         dress = adg_dress_new("line-fill", fallback);
         g_object_unref(fallback);
