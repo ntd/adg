@@ -55,6 +55,27 @@ gtk_widget_get_window(GtkWidget *widget)
 #endif
 
 /**
+ * adg_gtk_notify_error:
+ * @message: a custom error message
+ * @parent_window: the parent window or %NULL
+ *
+ * Convenient function that presents an error dialog and waits the user
+ * to close this modal dialog.
+ **/
+void
+adg_gtk_notify_error(const gchar *message, GtkWindow *parent_window)
+{
+    GtkWidget *dialog = gtk_message_dialog_new(parent_window,
+                                               GTK_DIALOG_DESTROY_WITH_PARENT,
+                                               GTK_MESSAGE_ERROR,
+                                               GTK_BUTTONS_CLOSE,
+                                               "%s", message);
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Error from ADG"));
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+/**
  * adg_canvas_set_paper:
  * @canvas: an #AdgCanvas
  * @paper_name: a paper name
