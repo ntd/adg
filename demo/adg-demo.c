@@ -666,7 +666,9 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 
     gtk_print_operation_set_use_full_page(operation, FALSE);
     gtk_print_operation_set_unit(operation, GTK_UNIT_POINTS);
+#if GTK_CHECK_VERSION(2, 18, 0)
     gtk_print_operation_set_embed_page_setup(operation, TRUE);
+#endif
 
     switch (gtk_print_operation_run(operation,
                                     GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
@@ -675,9 +677,9 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
     case GTK_PRINT_OPERATION_RESULT_APPLY:
         if (settings)
             g_object_unref(settings);
-
         settings = gtk_print_operation_get_print_settings(operation);
-        g_object_ref(settings);
+        if (settings)
+            g_object_ref(settings);
         break;
 
     default:
