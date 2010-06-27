@@ -48,6 +48,8 @@ G_BEGIN_DECLS
 
 gchar *         demo_find_data_file     (const gchar    *file,
                                          const gchar    *caller);
+void            demo_notify_error       (const gchar    *message,
+                                         GtkWindow      *parent_window);
 
 G_END_DECLS
 
