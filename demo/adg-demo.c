@@ -552,15 +552,14 @@ _adg_do_reset(AdgPart *part)
 }
 
 static void
-_adg_do_save_as(GtkWidget *window, GtkResponseType response, AdgCanvas *canvas)
+_adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
 {
-    gchar *file, *suffix;
     GtkRadioButton *type_radio;
-    cairo_surface_t *surface = NULL;
-    void (*callback)(cairo_surface_t *, gchar *) = NULL;
+    gchar *file, *suffix;
+    cairo_surface_t *surface;
 
     if (response != GTK_RESPONSE_OK) {
-        gtk_widget_hide(window);
+        gtk_widget_hide(GTK_WIDGET(window));
         return;
     }
 
@@ -571,7 +570,6 @@ _adg_do_save_as(GtkWidget *window, GtkResponseType response, AdgCanvas *canvas)
     type_radio = _adg_group_get_active(g_object_get_data(G_OBJECT(window),
                                                          "type-group"));
     g_assert(GTK_IS_RADIO_BUTTON(type_radio));
-
     suffix = gtk_widget_get_tooltip_markup(GTK_WIDGET(type_radio));
     g_assert(suffix != NULL);
 
@@ -581,18 +579,19 @@ _adg_do_save_as(GtkWidget *window, GtkResponseType response, AdgCanvas *canvas)
         g_free(tmp);
     }
 
-    if (strcmp(suffix, ".png") == 0) {
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
+    if (strcmp(suffix, ".png") == 0) {
         surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, 800, 600);
-        callback = (gpointer) cairo_surface_write_to_png;
+    } else
 #endif
-    } else if (strcmp(suffix, ".pdf") == 0) {
 #ifdef CAIRO_HAS_PDF_SURFACE
+    if (strcmp(suffix, ".pdf") == 0) {
 #include <cairo-pdf.h>
         surface = cairo_pdf_surface_create(file, 841, 595);
+    } else
 #endif
-    } else if (strcmp(suffix, ".ps") == 0) {
 #ifdef CAIRO_HAS_PS_SURFACE
+    if (strcmp(suffix, ".ps") == 0) {
 #include <cairo-ps.h>
         surface = cairo_ps_surface_create(file, 841, 595);
         cairo_ps_surface_dsc_comment(surface, "%%Title: " PACKAGE_STRING);
@@ -601,22 +600,37 @@ _adg_do_save_as(GtkWidget *window, GtkResponseType response, AdgCanvas *canvas)
         cairo_ps_surface_dsc_begin_setup(surface);
         cairo_ps_surface_dsc_begin_page_setup(surface);
         cairo_ps_surface_dsc_comment(surface, "%%IncludeFeature: *PageSize A4");
+    } else
 #endif
+    {
+        adg_gtk_notify_error(_("Requested format not supported"), window);
+        surface = NULL;
     }
 
     if (surface) {
-        cairo_t *cr = cairo_create(surface);
+        cairo_t *cr;
+        cairo_status_t status;
+
+        cr = cairo_create(surface);
         cairo_surface_destroy(surface);
         adg_entity_render(ADG_ENTITY(canvas), cr);
-        cairo_show_page(cr);
-        if (callback)
-            callback(surface, file);
+
+        if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE) {
+            status = cairo_surface_write_to_png(surface, file);
+        } else {
+            cairo_show_page(cr);
+            status = cairo_status(cr);
+        }
+
         cairo_destroy(cr);
+
+        if (status != CAIRO_STATUS_SUCCESS)
+            adg_gtk_notify_error(cairo_status_to_string(status), window);
     }
 
     g_free(file);
     g_free(suffix);
-    gtk_widget_hide(window);
+    gtk_widget_hide(GTK_WIDGET(window));
 }
 
 static void
@@ -644,12 +658,12 @@ static void
 _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 {
     static GtkPrintSettings *settings = NULL;
-    GtkWidget *window;
+    GtkWindow *window;
     GtkPrintOperation *operation;
     GtkPageSetup *page_setup;
     GError *error;
 
-    window = gtk_widget_get_toplevel(button);
+    window = (GtkWindow *) gtk_widget_get_toplevel(button);
     operation = gtk_print_operation_new();
     page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
     error = NULL;
@@ -672,7 +686,7 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 
     switch (gtk_print_operation_run(operation,
                                     GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
-                                    GTK_WINDOW(window), &error)) {
+                                    window, &error)) {
 
     case GTK_PRINT_OPERATION_RESULT_APPLY:
         if (settings)
@@ -688,16 +702,8 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 
     g_object_unref(operation);
 
-    if (error) {
-        GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(window),
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_CLOSE,
-                                                   "%s", error->message);
-        g_error_free(error);
-        gtk_dialog_run(GTK_DIALOG(dialog));
-        gtk_widget_destroy(dialog);
-    }
+    if (error)
+        adg_gtk_notify_error(error->message, window);
 }
 
 static AdgPart *
