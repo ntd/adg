@@ -634,7 +634,6 @@ _adg_print_page(GtkPrintOperation *operation, GtkPrintContext *context,
 
     adg_matrix_copy(&old_map, adg_entity_get_global_map(canvas));;
 
-    cairo_matrix_init_identity(&old_map);
     adg_entity_set_global_map(canvas, adg_matrix_identity());
     adg_entity_render(canvas, cr);
 
