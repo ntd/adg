@@ -584,6 +584,12 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
         surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, 800, 600);
     } else
 #endif
+#ifdef CAIRO_HAS_SVG_SURFACE
+    if (strcmp(suffix, ".svg") == 0) {
+#include <cairo-svg.h>
+        surface = cairo_svg_surface_create(file, 841, 595);
+    } else
+#endif
 #ifdef CAIRO_HAS_PDF_SURFACE
     if (strcmp(suffix, ".pdf") == 0) {
 #include <cairo-pdf.h>
@@ -603,7 +609,7 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
     } else
 #endif
     {
-        adg_gtk_notify_error(_("Requested format not supported"), window);
+        demo_notify_error(_("Requested format not supported"), window);
         surface = NULL;
     }
 
@@ -625,7 +631,7 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
         cairo_destroy(cr);
 
         if (status != CAIRO_STATUS_SUCCESS)
-            adg_gtk_notify_error(cairo_status_to_string(status), window);
+            demo_notify_error(cairo_status_to_string(status), window);
     }
 
     g_free(file);
@@ -703,7 +709,7 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
     g_object_unref(operation);
 
     if (error)
-        adg_gtk_notify_error(error->message, window);
+        demo_notify_error(error->message, window);
 }
 
 static AdgPart *

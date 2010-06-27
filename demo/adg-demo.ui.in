@@ -954,11 +954,11 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="saveAsPdf">
-                    <property name="label" translatable="yes">PDF _document</property>
+                  <object class="GtkRadioButton" id="saveAsSvg">
+                    <property name="label" translatable="yes">S_VG image</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="tooltip_text">.pdf</property>
+                    <property name="tooltip_text">.svg</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">saveAsPng</property>
@@ -970,8 +970,24 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkRadioButton" id="saveAsPdf">
+                    <property name="label" translatable="yes">P_DF document</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text">.pdf</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">saveAsPng</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="padding">6</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkRadioButton" id="saveAsPs">
-                    <property name="label" translatable="yes">PostScript _file</property>
+                    <property name="label" translatable="yes">_PostScript file</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip_text">.ps</property>
@@ -982,7 +998,7 @@ Boston, MA  02110-1301, USA.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="padding">6</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
