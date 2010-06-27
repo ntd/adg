@@ -825,16 +825,34 @@ static GtkWidget *
 _adg_save_as_window(GtkBuilder *builder, AdgCanvas *canvas)
 {
     GtkWidget *window;
-    GtkWidget *type_group, *button_save;
+    GtkWidget *type_group;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndSaveAs");
     g_assert(GTK_IS_WINDOW(window));
     type_group = (GtkWidget *) gtk_builder_get_object(builder, "saveAsPng");
     g_assert(GTK_IS_RADIO_BUTTON(type_group));
-    button_save = (GtkWidget *) gtk_builder_get_object(builder, "saveAsSave");
-    g_assert(GTK_IS_BUTTON(button_save));
 
     g_object_set_data(G_OBJECT(window), "type-group", type_group);
+
+    /* Set the default destination file */
+    if (GTK_IS_FILE_CHOOSER(window)) {
+        GtkFileChooser *file_chooser;
+        const gchar *dir;
+
+        file_chooser = (GtkFileChooser *) window;
+
+#if GLIB_CHECK_VERSION(2, 14, 0)
+        dir = g_get_user_special_dir(G_USER_DIRECTORY_DOCUMENTS);
+#else
+        dir = NULL;
+#endif
+
+        if (dir == NULL)
+            dir = g_get_home_dir();
+
+        gtk_file_chooser_set_current_folder(file_chooser, dir);
+        gtk_file_chooser_set_current_name(file_chooser, "adg-demo");
+    }
 
     g_signal_connect(window, "response", G_CALLBACK(_adg_do_save_as), canvas);
 
