@@ -471,7 +471,7 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
     _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
-    cairo_matrix_init_translate(&map, 150, 250);
+    cairo_matrix_init_translate(&map, 160, 160);
     cairo_matrix_scale(&map, 8, 8);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
@@ -779,29 +779,6 @@ _adg_about_window(GtkBuilder *builder)
     return window;
 }
 
-/**
- * _adg_window_hide:
- * @window: a #GtkWindow
- *
- * A convenient function that hides @window storing the current position
- * so any subsequent call to gtk_widget_show() will hopefully reopen
- * the window at the same position.
- *
- * It is useful to connect this callback to a #GtkDialog::response signal.
- **/
-static void
-_adg_window_hide(GtkWindow *window)
-{
-    gint x, y;
-
-    g_return_if_fail(GTK_IS_WINDOW(window));
-
-    gtk_window_get_position(window, &x, &y);
-    gtk_widget_hide((GtkWidget *) window);
-    gtk_window_set_position(window, GTK_WIN_POS_NONE);
-    gtk_window_move(window, x, y);
-}
-
 static GtkWidget *
 _adg_edit_window(GtkBuilder *builder, AdgPart *part)
 {
@@ -816,7 +793,8 @@ _adg_edit_window(GtkBuilder *builder, AdgPart *part)
                              G_CALLBACK(_adg_do_edit), part);
     g_signal_connect_swapped(part->reset, "clicked",
                              G_CALLBACK(_adg_do_reset), part);
-    g_signal_connect(window, "response", G_CALLBACK(_adg_window_hide), NULL);
+    g_signal_connect(window, "response",
+                     G_CALLBACK(adg_gtk_window_hide_here), NULL);
 
     return window;
 }

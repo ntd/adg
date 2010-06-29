@@ -55,6 +55,35 @@ gtk_widget_get_window(GtkWidget *widget)
 #endif
 
 /**
+ * adg_gtk_window_hide_here:
+ * @window: a #GtkWindow
+ *
+ * A convenient function that hides @window and tries to store the
+ * current position. Any subsequent call to gtk_widget_show() will
+ * hopefully reopen the window at the same position.
+ *
+ * It can be used instead of gtk_widget_hide() or by connecting it
+ * to a #GtkDialog::response signal, for instance:
+ *
+ * |[
+ * g_signal_connect(dialog, "response",
+ *                  G_CALLBACK(adg_gtk_window_hide_here), NULL);
+ * ]|
+ **/
+void
+adg_gtk_window_hide_here(GtkWindow *window)
+{
+    gint x, y;
+
+    g_return_if_fail(GTK_IS_WINDOW(window));
+
+    gtk_window_get_position(window, &x, &y);
+    gtk_widget_hide((GtkWidget *) window);
+    gtk_window_set_position(window, GTK_WIN_POS_NONE);
+    gtk_window_move(window, x, y);
+}
+
+/**
  * adg_canvas_set_paper:
  * @canvas: an #AdgCanvas
  * @paper_name: a paper name

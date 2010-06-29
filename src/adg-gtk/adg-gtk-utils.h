@@ -34,6 +34,8 @@ G_BEGIN_DECLS
 GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
 #endif
 
+void            adg_gtk_window_hide_here        (GtkWindow      *window);
+
 void            adg_canvas_set_paper            (AdgCanvas      *canvas,
                                                  const gchar    *paper_name,
                                                  GtkPageOrientation
