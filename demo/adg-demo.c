@@ -17,6 +17,9 @@ struct _AdgPart {
     gdouble     RD34, RD56;
     gdouble     LD2, LD3, LD5, LD6, LD7;
 
+    gboolean    GROOVE;
+    gdouble     ZGROOVE, DGROOVE, LGROOVE;
+
     /* User interface widgets */
     AdgGtkArea *area;
     GHashTable *widgets;
@@ -246,6 +249,8 @@ _adg_part_unlock(AdgPart *part)
 static void
 _adg_part_link(AdgPart *part, gpointer data, GObject *widget)
 {
+    const gchar *edit_signal;
+
     g_assert(GTK_IS_WIDGET(widget));
     g_object_ref(widget);
     g_hash_table_insert(part->widgets, data, widget);
@@ -255,8 +260,19 @@ _adg_part_link(AdgPart *part, gpointer data, GObject *widget)
         gtk_adjustment_value_changed(gtk_spin_button_get_adjustment(spin_button));
     }
 
-    g_signal_connect_swapped(widget, "changed",
+    edit_signal = GTK_IS_TOGGLE_BUTTON(widget) ? "toggled" : "changed";
+    g_signal_connect_swapped(widget, edit_signal,
                              G_CALLBACK(_adg_part_unlock), part);
+}
+
+static void
+_adg_part_ui_to_boolean(AdgPart *part, gboolean *data)
+{
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+
+    g_assert(GTK_IS_TOGGLE_BUTTON(widget));
+
+    *data = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
 }
 
 static void
@@ -264,9 +280,19 @@ _adg_part_ui_to_double(AdgPart *part, gdouble *data)
 {
     GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
-    g_assert(GTK_IS_WIDGET(widget));
+    g_assert(GTK_IS_SPIN_BUTTON(widget));
 
     *data = gtk_spin_button_get_value(GTK_SPIN_BUTTON(widget));
+}
+
+static void
+_adg_part_boolean_to_ui(AdgPart *part, gboolean *data)
+{
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+
+    g_assert(GTK_IS_TOGGLE_BUTTON(widget));
+
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget), *data);
 }
 
 static void
@@ -513,6 +539,11 @@ _adg_do_edit(AdgPart *part)
     _adg_part_ui_to_double(part, &part->D7);
     //_adg_part_ui_to_double(part, &part->LD7);
 
+    _adg_part_ui_to_boolean(part, &part->GROOVE);
+    _adg_part_ui_to_double(part, &part->ZGROOVE);
+    _adg_part_ui_to_double(part, &part->DGROOVE);
+    _adg_part_ui_to_double(part, &part->LGROOVE);
+
     _adg_part_lock(part);
 
     adg_model_clear(ADG_MODEL(part->shape));
@@ -548,6 +579,12 @@ _adg_do_reset(AdgPart *part)
     //_adg_part_double_to_ui(part, &part->LD6);
     _adg_part_double_to_ui(part, &part->D7);
     //_adg_part_double_to_ui(part, &part->LD7);
+
+    _adg_part_boolean_to_ui(part, &part->GROOVE);
+    _adg_part_double_to_ui(part, &part->ZGROOVE);
+    _adg_part_double_to_ui(part, &part->DGROOVE);
+    _adg_part_double_to_ui(part, &part->LGROOVE);
+
     _adg_part_lock(part);
 }
 
@@ -716,6 +753,7 @@ static AdgPart *
 _adg_part_new(GtkBuilder *builder)
 {
     AdgPart *part;
+    GObject *object, *toggle_object;
 
     part = g_new0(AdgPart, 1);
     part->widgets = g_hash_table_new_full(g_direct_hash, g_direct_equal,
@@ -734,8 +772,6 @@ _adg_part_new(GtkBuilder *builder)
     _adg_part_link(part, &part->A, gtk_builder_get_object(builder, "editA"));
     _adg_part_link(part, &part->B, gtk_builder_get_object(builder, "editB"));
     _adg_part_link(part, &part->C, gtk_builder_get_object(builder, "editC"));
-    _adg_part_link(part, &part->DHOLE, gtk_builder_get_object(builder, "editDHOLE"));
-    _adg_part_link(part, &part->LHOLE, gtk_builder_get_object(builder, "editLHOLE"));
     _adg_part_link(part, &part->D1, gtk_builder_get_object(builder, "editD1"));
     _adg_part_link(part, &part->D2, gtk_builder_get_object(builder, "editD2"));
     _adg_part_link(part, &part->LD2, gtk_builder_get_object(builder, "editLD2"));
@@ -747,6 +783,35 @@ _adg_part_new(GtkBuilder *builder)
     //_adg_part_link(part, &part->LD6, gtk_builder_get_object(builder, "editLD6"));
     _adg_part_link(part, &part->D7, gtk_builder_get_object(builder, "editD7"));
     //_adg_part_link(part, &part->LD7, gtk_builder_get_object(builder, "editLD7"));
+    _adg_part_link(part, &part->DHOLE, gtk_builder_get_object(builder, "editDHOLE"));
+    _adg_part_link(part, &part->LHOLE, gtk_builder_get_object(builder, "editLHOLE"));
+
+    toggle_object = gtk_builder_get_object(builder, "GROOVE");
+    _adg_part_link(part, &part->GROOVE, toggle_object);
+
+    object = gtk_builder_get_object(builder, "editZGROOVE");
+    _adg_part_link(part, &part->ZGROOVE, object);
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
+    object = gtk_builder_get_object(builder, "editZGROOVELabel");
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
+
+    object = gtk_builder_get_object(builder, "editDGROOVE");
+    _adg_part_link(part, &part->DGROOVE, object);
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
+    object = gtk_builder_get_object(builder, "editDGROOVELabel");
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
+
+    object = gtk_builder_get_object(builder, "editLGROOVE");
+    _adg_part_link(part, &part->LGROOVE, object);
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
+    object = gtk_builder_get_object(builder, "editLGROOVELabel");
+    g_signal_connect(toggle_object, "toggled",
+                     G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
 
     part->D5 = 4.5;
     part->RD34 = 1;
