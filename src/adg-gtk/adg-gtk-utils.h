@@ -35,11 +35,13 @@ GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
 #endif
 
 void            adg_gtk_window_hide_here        (GtkWindow      *window);
+void            adg_gtk_toggle_button_sensitivize
+                                                (GtkToggleButton*toggle_button,
+                                                 GtkWidget      *widget);
 
 void            adg_canvas_set_paper            (AdgCanvas      *canvas,
                                                  const gchar    *paper_name,
-                                                 GtkPageOrientation
-                                                                 orientation);
+                                                 GtkPageOrientation orientation);
 void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
                                                  GtkPageSetup   *page_setup);
 

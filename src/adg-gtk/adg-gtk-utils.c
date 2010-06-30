@@ -84,6 +84,38 @@ adg_gtk_window_hide_here(GtkWindow *window)
 }
 
 /**
+ * adg_gtk_toggle_button_sensitivize:
+ * @toggle_button: a #GtkToggleButton
+ * @widget: the #GtkWidget
+ *
+ * Assigns the value of the #GtkToggleButton:active property of
+ * @toggle_button to the #GtkWidget:sensitive property of @widget.
+ * Useful to set or reset the sensitiveness of @widget depending
+ * of the state of a check button, for example:
+ *
+ * |[
+ * g_signal_connect(toggle_button, "toggled",
+ *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget1);
+ * g_signal_connect(toggle_button, "toggled",
+ *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget2);
+ * g_signal_connect(toggle_button, "toggled",
+ *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget3);
+ * ]|
+ **/
+void
+adg_gtk_toggle_button_sensitivize(GtkToggleButton *toggle_button,
+                                  GtkWidget *widget)
+{
+    gboolean is_active;
+
+    g_return_if_fail(GTK_IS_TOGGLE_BUTTON(toggle_button));
+    g_return_if_fail(GTK_IS_WIDGET(widget));
+
+    is_active = gtk_toggle_button_get_active(toggle_button);
+    gtk_widget_set_sensitive(widget, is_active);
+}
+
+/**
  * adg_canvas_set_paper:
  * @canvas: an #AdgCanvas
  * @paper_name: a paper name
