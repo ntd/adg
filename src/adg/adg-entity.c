@@ -969,13 +969,24 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * @point: the #AdgPoint to define
  * @new_point: the new #AdgPoint value
  *
- * A convenient method to set an #AdgPoint with old value of @point
- * to the new value @new_point. It assumes the points are owned by
- * @entity, so it takes also care of the dependencies between
- * @entity and the model bound to the #AdgPoint.
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
  *
- * @point can be %NULL, in which case a new #AdgPoint is created.
- * Also, @new_point can be %NULL in which case @point is destroyed.
+ * A convenient method to set an #AdgPoint owned by @entity.
+ * @point is the old value while @new_point is the new value. It
+ * can be used for setting #AdgPoint in the private data, such as:
+ *
+ * |[
+ * data->point = adg_entity_point(entity, data->point, new_point);
+ * ]|
+ *
+ * This function takes care of the dependencies between @entity and
+ * the eventual models bound to the old and new points.
+ *
+ * @point can be %NULL, in which case a clone of @new_point will be
+ * returned. Also @new_point can be %NULL, in which case @point is
+ * destroyed and %NULL will be returned.
  *
  * Returns: the new properly defined point
  **/
