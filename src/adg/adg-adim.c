@@ -70,7 +70,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static void             _adg_update_geometry    (AdgADim        *adim);
+static gboolean         _adg_update_geometry    (AdgADim        *adim);
 static void             _adg_update_entities    (AdgADim        *adim);
 static void             _adg_unset_trail        (AdgADim        *adim);
 static void             _adg_dispose_markers    (AdgADim        *adim);
@@ -656,11 +656,14 @@ _adg_arrange(AdgEntity *entity)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     adim = (AdgADim *) entity;
+
+    if (!_adg_update_geometry(adim))
+        return;
+
     dim = (AdgDim *) adim;
     data = adim->data;
     quote = adg_dim_get_quote(dim);
 
-    _adg_update_geometry(adim);
     _adg_update_entities(adim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
@@ -759,8 +762,14 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     adim = (AdgADim *) entity;
-    dim = (AdgDim *) entity;
     data = adim->data;
+
+    if (!data->geometry_arranged) {
+        /* Entity not arranged, probably due to undefined pair found */
+        return;
+    }
+
+    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -794,16 +803,17 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    _adg_update_geometry(adim);
-    angle = (data->angle2 - data->angle1) * 180 / M_PI;
+    if (!_adg_update_geometry(adim))
+        return g_strdup("undef");
 
+    angle = (data->angle2 - data->angle1) * 180 / M_PI;
     return g_strdup_printf(format, angle);
 }
 
 /* With "geometry" is considered any data (point, vector or angle)
  * that can be cached: this is strictly related on how the arrange()
  * method works */
-static void
+static gboolean
 _adg_update_geometry(AdgADim *adim)
 {
     AdgADimPrivate *data;
@@ -817,14 +827,9 @@ _adg_update_geometry(AdgADim *adim)
     data = adim->data;
 
     if (data->geometry_arranged)
-        return;
-
-    if (!_adg_get_info(adim, vector, &center, &distance)) {
-        /* Parallel lines: hang with an error message */
-        g_warning("%s: trying to set an angular dimension on parallel lines",
-                  G_STRLOC);
-        return;
-    }
+        return TRUE;
+    else if (!_adg_get_info(adim, vector, &center, &distance))
+        return FALSE;
 
     dim_style = _ADG_GET_DIM_STYLE(adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
@@ -879,6 +884,8 @@ _adg_update_geometry(AdgADim *adim)
     data->point.base12.y = vector[1].y + center.y;
 
     data->geometry_arranged = TRUE;
+
+    return TRUE;
 }
 
 static void
@@ -944,7 +951,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 {
     AdgDim *dim;
     AdgADimPrivate *data;
-    const AdgPair *ref1, *ref2;
+    const AdgPair *ref1, *ref2, *pos;
     const AdgPair *org1, *org2;
     gdouble factor;
 
@@ -952,8 +959,13 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     data = adim->data;
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
+    pos = adg_point_get_pair(adg_dim_get_pos(dim));
     org1 = adg_point_get_pair(data->org1);
     org2 = adg_point_get_pair(data->org2);
+
+    if (ref1 == NULL || ref2 == NULL || pos == NULL ||
+        org1 == NULL || org2 == NULL)
+        return FALSE;
 
     vector[0].x = ref1->x - org1->x;
     vector[0].y = ref1->y - org1->y;
@@ -961,15 +973,19 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     vector[2].y = ref2->y - org2->y;
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
-    if (factor == 0)
+    if (factor == 0) {
+        /* Parallel lines: hang with an error message */
+        g_warning("%s: trying to set an angular dimension on parallel lines",
+                  G_STRLOC);
         return FALSE;
+    }
 
     factor = ((ref1->y - ref2->y) * vector[2].x -
               (ref1->x - ref2->x) * vector[2].y) / factor;
 
     center->x = ref1->x + vector[0].x * factor;
     center->y = ref1->y + vector[0].y * factor;
-    *distance = cpml_pair_distance(center, adg_point_get_pair(adg_dim_get_pos(dim)));
+    *distance = cpml_pair_distance(center, pos);
     data->angle1 = cpml_vector_angle(&vector[0]);
     data->angle2 = cpml_vector_angle(&vector[2]);
     while (data->angle2 < data->angle1)
