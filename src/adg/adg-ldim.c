@@ -69,7 +69,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static void             _adg_update_geometry    (AdgLDim        *ldim);
+static gboolean         _adg_update_geometry    (AdgLDim        *ldim);
 static void             _adg_update_shift       (AdgLDim        *ldim);
 static void             _adg_update_entities    (AdgLDim        *ldim);
 static void             _adg_choose_flags       (AdgLDim        *ldim,
@@ -524,11 +524,13 @@ _adg_arrange(AdgEntity *entity)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     ldim = (AdgLDim *) entity;
+
+    if (!_adg_update_geometry(ldim))
+        return;
+
     dim = (AdgDim *) ldim;
     data = ldim->data;
     quote = adg_dim_get_quote(dim);
-
-    _adg_update_geometry(ldim);
     _adg_update_shift(ldim);
     _adg_update_entities(ldim);
 
@@ -775,6 +777,12 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     ldim = (AdgLDim *) entity;
     dim = (AdgDim *) entity;
     data = ldim->data;
+
+    if (!data->geometry.is_arranged) {
+        /* Entity not arranged, probably due to undefined pair found */
+        return;
+    }
+
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -807,12 +815,13 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    _adg_update_geometry(ldim);
+    if (!_adg_update_geometry(ldim))
+        return g_strdup("undef");
 
     return g_strdup_printf(format, data->geometry.distance);
 }
 
-static void
+static gboolean
 _adg_update_geometry(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
@@ -823,21 +832,26 @@ _adg_update_geometry(AdgLDim *ldim)
     gdouble d, k;
 
     data = ldim->data;
-
-    if (data->geometry.is_arranged)
-        return;
-
     dim = (AdgDim *) ldim;
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
     pos = adg_point_get_pair(adg_dim_get_pos(dim));
+
+    /* Check if the needed pairs are properly defined */
+    if (ref1 == NULL || ref2 == NULL || pos == NULL) {
+        data->geometry.is_arranged = FALSE;
+        return FALSE;
+    } else if (data->geometry.is_arranged) {
+        return TRUE;
+    }
+
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);
     cpml_vector_normal(&baseline);
 
     d = extension.y * baseline.x -
         extension.x * baseline.y;
-    g_return_if_fail(d != 0);
+    g_return_val_if_fail(d != 0, FALSE);
 
     k = ((pos->y - ref1->y) * baseline.x -
          (pos->x - ref1->x) * baseline.y) / d;
@@ -853,6 +867,8 @@ _adg_update_geometry(AdgLDim *ldim)
                                                  &data->geometry.base2);
 
     data->geometry.is_arranged = TRUE;
+
+    return TRUE;
 }
 
 static void
