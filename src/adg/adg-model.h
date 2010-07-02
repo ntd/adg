@@ -72,6 +72,7 @@ struct _AdgModelClass {
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
     void                (*clear)                (AdgModel         *model);
+    void                (*reset)                (AdgModel         *model);
     void                (*changed)              (AdgModel         *model);
 };
 
@@ -100,6 +101,7 @@ void            adg_model_foreach_named_pair    (AdgModel         *model,
                                                  AdgNamedPairFunc  callback,
                                                  gpointer          user_data);
 void            adg_model_clear                 (AdgModel         *model);
+void            adg_model_reset                 (AdgModel         *model);
 void            adg_model_changed               (AdgModel         *model);
 
 G_END_DECLS

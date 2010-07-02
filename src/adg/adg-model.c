@@ -80,6 +80,7 @@ enum {
     REMOVE_DEPENDENCY,
     SET_NAMED_PAIR,
     CLEAR,
+    RESET,
     CHANGED,
     LAST_SIGNAL
 };
@@ -96,7 +97,7 @@ static void             _adg_remove_dependency  (AdgModel       *model,
                                                  AdgEntity      *entity);
 static const AdgPair *  _adg_named_pair         (AdgModel       *model,
                                                  const gchar    *name);
-static void             _adg_clear              (AdgModel       *model);
+static void             _adg_reset              (AdgModel       *model);
 static void             _adg_set_named_pair     (AdgModel       *model,
                                                  const gchar    *name,
                                                  const AdgPair  *pair);
@@ -128,6 +129,7 @@ adg_model_class_init(AdgModelClass *klass)
     klass->named_pair = _adg_named_pair;
     klass->set_named_pair = _adg_set_named_pair;
     klass->clear = NULL;
+    klass->reset = _adg_reset;
     klass->changed = _adg_changed;
 
     param = g_param_spec_object("dependency",
@@ -201,12 +203,45 @@ adg_model_class_init(AdgModelClass *klass)
      * AdgModel::clear:
      * @model: an #AdgModel
      *
-     * Removes any cached information from @model.
+     * <note><para>
+     * This signal is only useful in model implementations.
+     * </para></note>
+     *
+     * Removes any information from @model cached by the implementation
+     * code. Useful to force a recomputation of the cache when something
+     * in the model has changed.
      **/
     _adg_signals[CLEAR] =
         g_signal_new("clear", ADG_TYPE_MODEL,
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgModelClass, clear),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
+
+    /**
+     * AdgModel::reset:
+     * @model: an #AdgModel
+     *
+     * Resets the state of @model by destroying any named pair
+     * associated to it. This step also involves the emission of the
+     * AdgModel:clear signal.
+     *
+     * This signal is intended to be used while redefining the model.
+     * A typical usage would be on these terms:
+     *
+     * |[
+     * adg_model_reset(model);
+     * // Definition of model. This also requires the redefinition of
+     * // the named pairs because the old ones have been destroyed.
+     * ...
+     * adg_model_changed(model);
+     * ]|
+     **/
+    _adg_signals[RESET] =
+        g_signal_new("reset", ADG_TYPE_MODEL,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgModelClass, reset),
                      NULL, NULL,
                      adg_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
@@ -241,23 +276,26 @@ adg_model_init(AdgModel *model)
 static void
 _adg_dispose(GObject *object)
 {
-    AdgModel *model;
-    AdgModelPrivate *data;
-    AdgEntity *entity;
+    static gboolean is_disposed = FALSE;
 
-    model = (AdgModel *) object;
-    data = model->data;
+    if (G_UNLIKELY(!is_disposed)) {
+        AdgModel *model;
+        AdgModelPrivate *data;
+        AdgEntity *entity;
 
-    /* Remove all the dependencies from the model: this will emit
-     * a "remove-dependency" signal for every dependency, dropping
-     * all references from those entities to this model */
-    while (data->dependencies != NULL) {
-        entity = (AdgEntity *) data->dependencies->data;
-        adg_model_remove_dependency(model, entity);
+        model = (AdgModel *) object;
+        data = model->data;
+
+        /* Remove all the dependencies: this will emit a
+         * "remove-dependency" signal for every dependency, dropping
+         * all references from entities to this model */
+        while (data->dependencies != NULL) {
+            entity = (AdgEntity *) data->dependencies->data;
+            adg_model_remove_dependency(model, entity);
+        }
+
+        g_signal_emit(model, _adg_signals[RESET], 0);
     }
-
-    if (data->named_pairs)
-        _adg_clear(model);
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
@@ -492,7 +530,7 @@ adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairFunc callback,
  * @model: an #AdgModel
  *
  * <note><para>
- * This function is only useful in entity implementations.
+ * This function is only useful new model implementations.
  * </para></note>
  *
  * Emits the #AdgModel::clear signal on @model.
@@ -503,6 +541,20 @@ adg_model_clear(AdgModel *model)
     g_return_if_fail(ADG_IS_MODEL(model));
 
     g_signal_emit(model, _adg_signals[CLEAR], 0);
+}
+
+/**
+ * adg_model_reset:
+ * @model: an #AdgModel
+ *
+ * Emits the #AdgModel::reset signal on @model.
+ **/
+void
+adg_model_reset(AdgModel *model)
+{
+    g_return_if_fail(ADG_IS_MODEL(model));
+
+    g_signal_emit(model, _adg_signals[RESET], 0);
 }
 
 /**
@@ -551,9 +603,8 @@ _adg_remove_dependency(AdgModel *model, AdgEntity *entity)
     node = g_slist_find(data->dependencies, entity);
 
     if (node == NULL) {
-        g_warning("%s: attempting to remove the dependency on an entity "
-                  "with type %s from a model of type %s, but the entity "
-                  "is yet not present",
+        g_warning(_("%s: attempting to remove the nonexistent dependency "
+                    "on the entity with type %s from a model of type %s"),
                   G_STRLOC,
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(model)));
@@ -565,12 +616,16 @@ _adg_remove_dependency(AdgModel *model, AdgEntity *entity)
 }
 
 static void
-_adg_clear(AdgModel *model)
+_adg_reset(AdgModel *model)
 {
     AdgModelPrivate *data = model->data;
 
-    g_hash_table_destroy(data->named_pairs);
-    data->named_pairs = NULL;
+    adg_model_clear(model);
+
+    if (data->named_pairs) {
+        g_hash_table_destroy(data->named_pairs);
+        data->named_pairs = NULL;
+    }
 }
 
 static void
@@ -587,13 +642,13 @@ _adg_set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
     if (pair == NULL) {
         /* Delete mode: raise a warning if @name is not found */
         if (*hash == NULL || !g_hash_table_remove(*hash, name))
-            g_warning("%s: attempting to remove inexistent `%s' named pair",
+            g_warning(_("%s: attempting to remove nonexistent `%s' named pair"),
                       G_STRLOC, name);
 
         return;
     }
 
-    /* Insert/update mode */
+    /* Insert or update mode */
     key = g_strdup(name);
     value = adg_pair_dup(pair);
 
