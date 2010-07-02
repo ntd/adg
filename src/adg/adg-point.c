@@ -235,11 +235,11 @@ adg_point_set_pair_from_model(AdgPoint *point,
  * adg_point_unset:
  * @point: a pointer to an #AdgPoint
  *
- * Unsets @point by resetting the internal "is_updated" flag.
+ * Unsets @point by resetting the internal "is_uptodate" flag.
  * This also means @point is unlinked from the model if it is
  * a named pair. In any cases, after this call the content of
  * @point is undefined, that is calling adg_point_get_pair()
- * raises an error.
+ * will return %NULL.
  **/
 void
 adg_point_unset(AdgPoint *point)
@@ -252,7 +252,6 @@ adg_point_unset(AdgPoint *point)
         g_free(point->name);
     }
 
-    /* Set the new named pair */
     point->is_uptodate = FALSE;
     point->model = NULL;
     point->name = NULL;
@@ -262,12 +261,13 @@ adg_point_unset(AdgPoint *point)
  * adg_point_get_pair:
  * @point: an #AdgPoint
  *
- * #AdgPoint is an evolution of the pair concept, but internally the
+ * #AdgPoint is an evolution of the pair concept but internally the
  * relevant data is still stored in an #AdgPair struct. This function
- * gets this struct, updating the internal value from the linked
- * named pair if needed.
+ * gets the pointer to this struct, updating the value prior to
+ * return it if needed (that is, if @point is linked to a not up
+ * to date named pair).
  *
- * Returns: the pair of @point
+ * Returns: the pair of @point or %NULL if the named pair does not exist
  **/
 const AdgPair *
 adg_point_get_pair(AdgPoint *point)
@@ -287,12 +287,9 @@ adg_point_get_pair(AdgPoint *point)
 
         pair = adg_model_get_named_pair(point->model, point->name);
 
-        if (pair == NULL) {
-            g_warning(_("%s: `%s' named pair not found in `%s' model instance"),
-                      G_STRLOC, point->name,
-                      g_type_name(G_TYPE_FROM_INSTANCE(point->model)));
+        /* "Named pair not found" condition: return NULL without warnings */
+        if (pair == NULL)
             return NULL;
-        }
 
         cpml_pair_copy(&point->pair, pair);
         point->is_uptodate = TRUE;
