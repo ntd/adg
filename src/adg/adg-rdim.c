@@ -67,7 +67,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static void             _adg_update_geometry    (AdgRDim        *rdim);
+static gboolean         _adg_update_geometry    (AdgRDim        *rdim);
 static void             _adg_update_entities    (AdgRDim        *rdim);
 static void             _adg_clear_trail        (AdgRDim        *rdim);
 static void             _adg_dispose_marker     (AdgRDim        *rdim);
@@ -343,7 +343,9 @@ _adg_arrange(AdgEntity *entity)
     data = rdim->data;
     quote = adg_dim_get_quote(dim);
 
-    _adg_update_geometry(rdim);
+    if (!_adg_update_geometry(rdim))
+        return;
+
     _adg_update_entities(rdim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
@@ -419,8 +421,14 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     rdim = (AdgRDim *) entity;
-    dim = (AdgDim *) entity;
     data = rdim->data;
+
+    if (!data->geometry_arranged) {
+        /* Entity not arranged, probably due to undefined pair found */
+        return;
+    }
+
+    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -451,12 +459,13 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    _adg_update_geometry(rdim);
+    if (!_adg_update_geometry(rdim))
+        return g_strdup("undef");
 
     return g_strdup_printf(format, data->radius);
 }
 
-static void
+static gboolean
 _adg_update_geometry(AdgRDim *rdim)
 {
     AdgRDimPrivate *data;
@@ -470,18 +479,23 @@ _adg_update_geometry(AdgRDim *rdim)
     data = rdim->data;
 
     if (data->geometry_arranged)
-        return;
+        return TRUE;
 
     dim = (AdgDim *) rdim;
-    dim_style = _ADG_GET_DIM_STYLE(rdim);
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
     pos = adg_point_get_pair(adg_dim_get_pos(dim));
+
+    if (ref1 == NULL || ref2 == NULL || pos == NULL)
+        return FALSE;
+
+    dim_style = _ADG_GET_DIM_STYLE(rdim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);
     vector.x = ref2->x - ref1->x;
     vector.y = ref2->y - ref1->y;
+
     if (cpml_pair_squared_distance(pos, ref1) <
         cpml_pair_squared_distance(pos, ref2)) {
         vector.x = -vector.x;
@@ -505,6 +519,8 @@ _adg_update_geometry(AdgRDim *rdim)
     cpml_vector_set_length(&data->shift.base, spacing * level);
 
     data->geometry_arranged = TRUE;
+
+    return TRUE;
 }
 
 static void
