@@ -1,4 +1,4 @@
-m4_define([adg_version],[0.6.0])
+m4_define([adg_version],[0.6.1])
 m4_define([adg_api_version],[1.0])
 
 m4_define([gtkdoc_prereq],[1.9])
