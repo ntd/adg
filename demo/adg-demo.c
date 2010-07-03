@@ -26,7 +26,7 @@ struct _AdgPart {
     GtkButton  *apply, *reset;
 
     /* Models */
-    AdgPath    *shape, *hatch;
+    AdgPath    *shape, *hatch, *hatch_edge;
     AdgEdges   *edges;
 };
 
@@ -66,15 +66,15 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
 }
 
 static void
-_adg_define_hole(AdgPath *path, const AdgPart *part, gdouble height)
+_adg_path_add_hole(AdgPath *path, const AdgPart *part)
 {
     AdgModel *model;
     AdgPair pair;
 
     model = ADG_MODEL(path);
-
     pair.x = part->LHOLE;
     pair.y = 0;
+
     adg_path_move_to(path, &pair);
     adg_model_set_named_pair(model, "LHOLE", &pair);
 
@@ -85,34 +85,93 @@ _adg_define_hole(AdgPath *path, const AdgPart *part, gdouble height)
     pair.x = 0;
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "DHOLE", &pair);
+}
 
+static void
+_adg_path_add_rail(AdgPath *path, const AdgPart *part, gdouble to_x)
+{
+    AdgModel *model;
+    AdgPair pair;
+
+    model = ADG_MODEL(path);
+    pair.x = 0;
     pair.y = part->D1 / 2;
+
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D1I", &pair);
 
-    pair.x = height;
+    if (part->GROOVE && to_x > part->ZGROOVE) {
+        pair.x = part->ZGROOVE;
+        adg_path_line_to(path, &pair);
+        adg_model_set_named_pair(model, "DGROOVEI_X", &pair);
+
+        pair.y = part->D3 / 2;
+        adg_model_set_named_pair(model, "DGROOVEY_POS", &pair);
+
+        pair.y = part->DGROOVE / 2;
+        adg_path_line_to(path, &pair);
+        adg_model_set_named_pair(model, "DGROOVEI_Y", &pair);
+
+        pair.x += part->LGROOVE;
+        adg_path_line_to(path, &pair);
+
+        pair.y = part->D3 / 2;
+        adg_model_set_named_pair(model, "DGROOVEX_POS", &pair);
+
+        pair.y = part->D1 / 2;
+        adg_path_line_to(path, &pair);
+        adg_model_set_named_pair(model, "DGROOVEF_X", &pair);
+    }
+
+    pair.x = to_x;
     adg_path_line_to(path, &pair);
     adg_model_set_named_pair(model, "D1F", &pair);
 }
 
 static void
-_adg_define_hatch(AdgPath *path, const AdgPart *part)
+_adg_part_define_hatch(AdgPart *part)
 {
-    _adg_define_hole(path, part, part->LHOLE + 2);
+    AdgPath *path;
+    AdgPair pair;
+
+    path = part->hatch;
+    pair.x = 0;
+    pair.y = (part->D1 + part->DHOLE) / 4;
+
+    _adg_path_add_hole(path, part);
+    adg_path_line_to(path, &pair);
+    adg_path_curve_to_explicit(path,
+                               part->LHOLE / 2, part->DHOLE / 2,
+                               part->LHOLE + 2, part->D1 / 2,
+                               part->LHOLE + 2, 0);
     adg_path_reflect(path, NULL);
     adg_path_close(path);
+
+    path = part->hatch_edge;
+    adg_path_move_to(path, &pair);
+    adg_path_curve_to_explicit(path,
+                               part->LHOLE / 2, part->DHOLE / 2,
+                               part->LHOLE + 2, part->D1 / 2,
+                               part->LHOLE + 2, 0);
+    adg_path_reflect(path, NULL);
 }
 
 static void
-_adg_define_shape(AdgPath *path, const AdgPart *part)
+_adg_part_define_shape(AdgPart *part)
 {
     AdgModel *model;
+    AdgPath *path;
     AdgPair pair, tmp;
     const AdgPrimitive *primitive;
 
-    pair.x = part->A - part->B - part->LD2;
-    _adg_define_hole(path, part, pair.x);
+    path = part->shape;
     model = ADG_MODEL(path);
+    pair.x = part->A - part->B - part->LD2;
+    pair.y = part->D3 / 2;
+    adg_model_set_named_pair(model, "D2_POS", &pair);
+
+    _adg_path_add_hole(path, part);
+    _adg_path_add_rail(path, part, pair.x);
 
     pair.x += (part->D1 - part->D2) / 2;
     pair.y = part->D2 / 2;
@@ -228,8 +287,6 @@ _adg_define_shape(AdgPath *path, const AdgPart *part)
 
     adg_path_reflect(path, NULL);
     adg_path_close(path);
-    adg_path_move_to_explicit(path, part->LHOLE + 2, part->D1 / 2);
-    adg_path_line_to_explicit(path, part->LHOLE + 2, -part->D1 / 2);
 }
 
 static void
@@ -332,19 +389,8 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     AdgRDim *rdim;
 
     /* NORTH */
-    adim = adg_adim_new_full_from_model(model, "-D1I", "-D1F",
-                                        "-D1F", "-D2I", "-D1F");
-    adg_dim_set_level(ADG_DIM(adim), 2);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
-
-    ldim = adg_ldim_new_full_from_model(model, "-D1F", "-D3I_X", "-D3F_Y",
-                                        ADG_DIR_UP);
-    adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
-
     ldim = adg_ldim_new_full_from_model(model, "-D3I_X", "-D3F_X", "-D3F_Y",
                                         ADG_DIR_UP);
-    adg_ldim_switch_extension1(ldim, FALSE);
     adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -367,11 +413,39 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     rdim = adg_rdim_new_full_from_model(model, "-RD34", "-RD34_R", "-RD34_XY");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(rdim));
 
+    ldim = adg_ldim_new_full_from_model(model, "-DGROOVEI_X", "-DGROOVEF_X",
+                                        "-DGROOVEX_POS", ADG_DIR_UP);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full_from_model(model, "D2I", "-D2I", "-D2_POS",
+                                        ADG_DIR_LEFT);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full_from_model(model, "DGROOVEI_Y", "-DGROOVEI_Y",
+                                        "-DGROOVEY_POS", ADG_DIR_LEFT);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
+    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* SOUTH */
-    ldim = adg_ldim_new_full_from_model(model, "D1I", "LHOLE", "D3F_Y",
+    adim = adg_adim_new_full_from_model(model, "D1F", "D1I", "D2I", "D1F", "D1F");
+    adg_dim_set_level(ADG_DIM(adim), 2);
+    adg_adim_switch_extension2(adim, FALSE);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
+
+    ldim = adg_ldim_new_full_from_model(model, "D1I", "LHOLE", "West",
                                         ADG_DIR_DOWN);
     adg_ldim_switch_extension1(ldim, FALSE);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full_from_model(model, "D1I", "DGROOVEI_X", "West",
+                                        ADG_DIR_DOWN);
+    adg_ldim_switch_extension1(ldim, FALSE);
+    adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D4F", "D6I_X", "D4_POS",
@@ -380,10 +454,18 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "D3I_X", "D7F", "D3F_Y",
+    ldim = adg_ldim_new_full_from_model(model, "D1F", "D3I_X", "D2_POS",
+                                        ADG_DIR_DOWN);
+    adg_dim_set_level(ADG_DIM(ldim), 2);
+    adg_ldim_switch_extension2(ldim, FALSE);
+    adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full_from_model(model, "D3I_X", "D7F", "East",
                                         ADG_DIR_DOWN);
     adg_dim_set_limits(ADG_DIM(ldim), NULL, "+0.1");
     adg_dim_set_level(ADG_DIM(ldim), 2);
+    adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
     adg_ldim_switch_extension2(ldim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
@@ -396,6 +478,7 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adim = adg_adim_new_full_from_model(model, "D4F", "D4I",
                                         "D5I", "D4F", "D4F");
     adg_dim_set_level(ADG_DIM(adim), 1.5);
+    adg_adim_switch_extension2(adim, FALSE);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(adim));
 
     /* EAST */
@@ -424,31 +507,23 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-
     /* WEST */
-    ldim = adg_ldim_new_full_from_model(model, "D3I_Y", "-D3I_Y", "-West",
+    ldim = adg_ldim_new_full_from_model(model, "DHOLE", "-DHOLE", "-West",
                                         ADG_DIR_LEFT);
-    adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
-    adg_dim_set_level(ADG_DIM(ldim), 4);
     adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D1I", "-D1I", "-West",
                                         ADG_DIR_LEFT);
-    adg_dim_set_limits(ADG_DIM(ldim), "+0.05", "-0.05");
-    adg_dim_set_level(ADG_DIM(ldim), 3);
-    adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
-
-    ldim = adg_ldim_new_full_from_model(model, "D2I", "-D2I", "-West",
-                                        ADG_DIR_LEFT);
-    adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
     adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
-    ldim = adg_ldim_new_full_from_model(model, "DHOLE", "-DHOLE", "-West",
+    ldim = adg_ldim_new_full_from_model(model, "D3I_Y", "-D3I_Y", "-West",
                                         ADG_DIR_LEFT);
+    adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
+    adg_dim_set_level(ADG_DIM(ldim), 3);
     adg_dim_set_value(ADG_DIM(ldim), ADG_UTF8_DIAMETER "<>");
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
@@ -490,6 +565,9 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hatch)));
     adg_container_add(container, entity);
 
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->hatch_edge)));
+    adg_container_add(container, entity);
+
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
     adg_container_add(container, entity);
 
@@ -497,7 +575,7 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
     _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
-    cairo_matrix_init_translate(&map, 160, 160);
+    cairo_matrix_init_translate(&map, 140, 180);
     cairo_matrix_scale(&map, 8, 8);
     adg_entity_set_local_map(ADG_ENTITY(container), &map);
 
@@ -546,15 +624,17 @@ _adg_do_edit(AdgPart *part)
 
     _adg_part_lock(part);
 
-    adg_model_clear(ADG_MODEL(part->shape));
-    _adg_define_shape(part->shape, part);
+    adg_model_reset(ADG_MODEL(part->shape));
+    adg_model_reset(ADG_MODEL(part->hatch));
+    adg_model_reset(ADG_MODEL(part->hatch_edge));
+    adg_model_reset(ADG_MODEL(part->edges));
+
+    _adg_part_define_shape(part);
+    _adg_part_define_hatch(part);
+
     adg_model_changed(ADG_MODEL(part->shape));
-
-    adg_model_clear(ADG_MODEL(part->hatch));
-    _adg_define_hatch(part->hatch, part);
     adg_model_changed(ADG_MODEL(part->hatch));
-
-    adg_model_clear(ADG_MODEL(part->edges));
+    adg_model_changed(ADG_MODEL(part->hatch_edge));
     adg_model_changed(ADG_MODEL(part->edges));
 
     gtk_widget_queue_draw(GTK_WIDGET(part->area));
@@ -763,6 +843,7 @@ _adg_part_new(GtkBuilder *builder)
     part->reset = (GtkButton *) gtk_builder_get_object(builder, "editReset");
     part->shape = adg_path_new();
     part->hatch = adg_path_new();
+    part->hatch_edge = adg_path_new();
     part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
 
     g_assert(ADG_GTK_IS_AREA(part->area));
