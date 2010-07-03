@@ -382,17 +382,9 @@ adg_ldim_get_direction(AdgLDim *ldim)
 void
 adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
 {
-    AdgLDimPrivate *data;
-
     g_return_if_fail(ADG_IS_LDIM(ldim));
     g_return_if_fail(adg_is_boolean_value(new_state));
-
-    data = ldim->data;
-
-    if (data->has_extension1 != new_state) {
-        data->has_extension1 = new_state;
-        g_object_notify((GObject *) ldim, "has-extension1");
-    }
+    g_object_set(ldim, "has-extension1", new_state, NULL);
 }
 
 /**
@@ -426,17 +418,9 @@ adg_ldim_has_extension1(AdgLDim *ldim)
 void
 adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
 {
-    AdgLDimPrivate *data;
-
     g_return_if_fail(ADG_IS_LDIM(ldim));
     g_return_if_fail(adg_is_boolean_value(new_state));
-
-    data = ldim->data;
-
-    if (data->has_extension2 != new_state) {
-        data->has_extension2 = new_state;
-        g_object_notify((GObject *) ldim, "has-extension2");
-    }
+    g_object_set(ldim, "has-extension2", new_state, NULL);
 }
 
 /**
