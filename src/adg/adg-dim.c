@@ -1165,36 +1165,40 @@ _adg_arrange(AdgEntity *entity)
 
     /* Limit values (min and max) */
     if (min_entity || max_entity) {
-        const CpmlExtents *extents;
         const AdgPair *limits_shift;
+        gdouble spacing;
+        AdgPair size;
         AdgMatrix unglobal;
+        AdgPair org_min, org_max;
 
-        extents = adg_entity_get_extents(value_entity);
         limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
-
-        cairo_matrix_init_translate(&map, extents->size.x + limits_shift->x,
-                                    -extents->size.y / 2 + limits_shift->y);
-
+        spacing = adg_dim_style_get_limits_spacing(data->dim_style);
+        size = adg_entity_get_extents(value_entity)->size;
         adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
         cairo_matrix_invert(&unglobal);
-        cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
+        cpml_vector_transform(&size, &unglobal);
+        org_min.x = size.x + limits_shift->x;
+        org_min.y = -size.y / 2 + limits_shift->y;
+        org_max = org_min;
+
+        if (min_entity && max_entity) {
+            /* Prearrange the min entity to get its extents */
+            adg_entity_arrange(min_entity);
+            size = adg_entity_get_extents(min_entity)->size;
+            cpml_vector_transform(&size, &unglobal);
+
+            org_min.y += spacing / 2;
+            org_max.y = org_min.y - size.y - spacing / 2;
+        }
 
         if (min_entity) {
-            AdgPair offset;
-
+            cairo_matrix_init_translate(&map, org_min.x, org_min.y);
             adg_entity_set_global_map(min_entity, &map);
             adg_entity_arrange(min_entity);
-            extents = adg_entity_get_extents(min_entity);
-
-            offset.x = 0;
-            offset.y = -extents->size.y - adg_dim_style_get_limits_spacing(data->dim_style);
-            cairo_matrix_transform_distance(&unglobal, &offset.x, &offset.y);
-
-            map.x0 += offset.x;
-            map.y0 += offset.y;
         }
 
         if (max_entity) {
+            cairo_matrix_init_translate(&map, org_max.x, org_max.y);
             adg_entity_set_global_map(max_entity, &map);
             adg_entity_arrange(max_entity);
         }

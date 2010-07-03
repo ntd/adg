@@ -176,7 +176,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_double("baseline-spacing",
                                 P_("Baseline Spacing"),
                                 P_("Distance between two consecutive baselines while stacking dimensions"),
-                                0, G_MAXDOUBLE, 30,
+                                0, G_MAXDOUBLE, 32,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING, param);
 
@@ -238,12 +238,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->from_offset = 6;
     data->to_offset = 6;
     data->beyond = 20;
-    data->baseline_spacing = 30;
-    data->limits_spacing = 1;
+    data->baseline_spacing = 32;
+    data->limits_spacing = 2;
     data->quote_shift.x = 4;
     data->quote_shift.y = -4;
     data->limits_shift.x = +2;
-    data->limits_shift.y = -2;
+    data->limits_shift.y = -4;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
 
