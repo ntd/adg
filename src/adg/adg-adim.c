@@ -131,6 +131,18 @@ adg_adim_class_init(AdgADimClass *klass)
                                ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ORG2, param);
+
+    param = g_param_spec_boolean("has-extension1",
+                                 P_("Has First Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the first extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION1, param);
+
+    param = g_param_spec_boolean("has-extension2",
+                                 P_("Has Second Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the second extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION2, param);
 }
 
 static void
@@ -592,6 +604,78 @@ adg_adim_get_org2(AdgADim *adim)
     return data->org2;
 }
 
+/**
+ * adg_adim_switch_extension1:
+ * @adim: an #AdgADim entity
+ * @new_state: the new state
+ *
+ * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
+ * the first extension line of @adim.
+ **/
+void
+adg_adim_switch_extension1(AdgADim *adim, gboolean new_state)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
+    g_object_set(adim, "has-extension1", new_state, NULL);
+}
+
+/**
+ * adg_adim_has_extension1:
+ * @adim: an #AdgADim entity
+ *
+ * Checks if @adim should render the first extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_adim_has_extension1(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
+
+    data = adim->data;
+
+    return data->has_extension1;
+}
+
+/**
+ * adg_adim_switch_extension2:
+ * @adim: an #AdgADim entity
+ * @new_state: the new new_state
+ *
+ * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
+ * the second extension line of @adim.
+ **/
+void
+adg_adim_switch_extension2(AdgADim *adim, gboolean new_state)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
+    g_object_set(adim, "has-extension2", new_state, NULL);
+}
+
+/**
+ * adg_adim_has_extension2:
+ * @adim: an #AdgADim entity
+ *
+ * Checks if @adim should render the second extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_adim_has_extension2(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
+
+    data = adim->data;
+
+    return data->has_extension2;
+}
+
 
 static void
 _adg_global_changed(AdgEntity *entity)
@@ -714,6 +798,13 @@ _adg_arrange(AdgEntity *entity)
     pair.x += data->shift.to2.x;
     pair.y += data->shift.to2.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[12]);
+
+    /* Play with header lengths to show or hide the extension lines */
+    if (data->has_extension1) {
+        data->cpml.data[7].header.length = data->has_extension2 ? 2 : 6;
+    } else {
+        data->cpml.data[2].header.length = data->has_extension2 ? 7 : 11;
+    }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 

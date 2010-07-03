@@ -99,6 +99,12 @@ void            adg_adim_set_org2_from_model    (AdgADim        *adim,
                                                  AdgModel       *model,
                                                  const gchar    *org2);
 AdgPoint *      adg_adim_get_org2               (AdgADim        *adim);
+void            adg_adim_switch_extension1      (AdgADim        *adim,
+                                                 gboolean        new_state);
+gboolean        adg_adim_has_extension1         (AdgADim        *adim);
+void            adg_adim_switch_extension2      (AdgADim        *adim,
+                                                 gboolean        new_state);
+gboolean        adg_adim_has_extension2         (AdgADim        *adim);
 
 G_END_DECLS
 

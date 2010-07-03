@@ -189,14 +189,94 @@ _adg_test_org2(void)
     g_object_unref(model);
 }
 
+static void
+_adg_test_has_extension1(void)
+{
+    AdgADim *adim;
+    gboolean invalid_boolean;
+    gboolean has_extension1;
+
+    adim = adg_adim_new();
+    invalid_boolean = (gboolean) 1234;
+
+    /* Using the public APIs */
+    adg_adim_switch_extension1(adim, FALSE);
+    has_extension1 = adg_adim_has_extension1(adim);
+    g_assert(!has_extension1);
+
+    adg_adim_switch_extension1(adim, invalid_boolean);
+    has_extension1 = adg_adim_has_extension1(adim);
+    g_assert(!has_extension1);
+
+    adg_adim_switch_extension1(adim, TRUE);
+    has_extension1 = adg_adim_has_extension1(adim);
+    g_assert(has_extension1);
+
+    /* Using GObject property methods */
+    g_object_set(adim, "has-extension1", FALSE, NULL);
+    g_object_get(adim, "has-extension1", &has_extension1, NULL);
+    g_assert(!has_extension1);
+
+    g_object_set(adim, "has-extension1", invalid_boolean, NULL);
+    g_object_get(adim, "has-extension1", &has_extension1, NULL);
+    g_assert(!has_extension1);
+
+    g_object_set(adim, "has-extension1", TRUE, NULL);
+    g_object_get(adim, "has-extension1", &has_extension1, NULL);
+    g_assert(has_extension1);
+
+    g_object_unref(adim);
+}
+
+static void
+_adg_test_has_extension2(void)
+{
+    AdgADim *adim;
+    gboolean invalid_boolean;
+    gboolean has_extension2;
+
+    adim = adg_adim_new();
+    invalid_boolean = (gboolean) 1234;
+
+    /* Using the public APIs */
+    adg_adim_switch_extension2(adim, FALSE);
+    has_extension2 = adg_adim_has_extension2(adim);
+    g_assert(!has_extension2);
+
+    adg_adim_switch_extension2(adim, invalid_boolean);
+    has_extension2 = adg_adim_has_extension2(adim);
+    g_assert(!has_extension2);
+
+    adg_adim_switch_extension2(adim, TRUE);
+    has_extension2 = adg_adim_has_extension2(adim);
+    g_assert(has_extension2);
+
+    /* Using GObject property methods */
+    g_object_set(adim, "has-extension2", FALSE, NULL);
+    g_object_get(adim, "has-extension2", &has_extension2, NULL);
+    g_assert(!has_extension2);
+
+    g_object_set(adim, "has-extension2", invalid_boolean, NULL);
+    g_object_get(adim, "has-extension2", &has_extension2, NULL);
+    g_assert(!has_extension2);
+
+    g_object_set(adim, "has-extension2", TRUE, NULL);
+    g_object_get(adim, "has-extension2", &has_extension2, NULL);
+    g_assert(has_extension2);
+
+    g_object_unref(adim);
+}
+
 
 int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/adim/org1", _adg_test_org1);
-    adg_test_add_func("/adg/adim/org2", _adg_test_org2);
+    adg_test_add_func("/adg/adim/property/org1", _adg_test_org1);
+    adg_test_add_func("/adg/adim/property/org2", _adg_test_org2);
+    adg_test_add_func("/adg/adim/property/has-extension1", _adg_test_has_extension1);
+    adg_test_add_func("/adg/adim/property/has-extension2", _adg_test_has_extension2);
 
     return g_test_run();
 }
