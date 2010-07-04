@@ -15,8 +15,7 @@ Name "@PACKAGE_NAME@ @PACKAGE_VERSION@"
 OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-win32.exe"
 SetCompressor /SOLID lzma
 InstallDir "$PROGRAMFILES\@ADG_API_PACKAGE@"
-InstallDirRegKey HKLM "Software\@ADG_API_PACKAGE@" ""
-RequestExecutionLevel highest
+RequestExecutionLevel user
 
 ; Interface settings --------------------------------------------
 
@@ -76,16 +75,16 @@ Section "ADG canvas" SecBase
   File "${LIBDIR}/adg/.libs/libadg-1-*.dll"
   File "${LIBDIR}/adg-gtk/.libs/libadg-gtk-1-*.dll"
 
-  WriteRegStr SHCTX "Software\@ADG_API_PACKAGE@" "" "$INSTDIR"
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
-  ${EnvVarUpdate} $0 "PATH" "A" "HKLM" "$INSTDIR\bin"
+  CreateDirectory "$SMPROGRAMS\ADG Canvas"
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" $INSTDIR\adg-demo.exe
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" $INSTDIR\uninstall.exe
 
+  WriteUninstaller "$INSTDIR\uninstall.exe"
+  ${EnvVarUpdate} $0 "PATH" "A" "HKCU" "$INSTDIR\bin"
 SectionEnd
 
 Section "Support for languages" SecLanguages
-
   SetOutPath "$INSTDIR\data"
-
 SectionEnd
 
 ; Descriptions --------------------------------------------------
@@ -103,14 +102,17 @@ LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue
 ; Uninstaller ---------------------------------------------------
 
 Section "Uninstall"
+  Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
+  RMDir  "$SMPROGRAMS\ADG Canvas"
 
   Delete "$INSTDIR\adg-demo.exe"
   Delete "$INSTDIR\adg-64.png"
   Delete "$INSTDIR\adg-demo.ui"
+
   Delete "$INSTDIR\bin\libadg-gtk-1-*.dll"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
   Delete "$INSTDIR\bin\libcpml-1-*.dll"
-
   Delete "$INSTDIR\bin\libgtk-win32-2.0-*.dll"
   Delete "$INSTDIR\bin\libgdk-win32-2.0-*.dll"
   Delete "$INSTDIR\bin\libatk-1.0-*.dll"
@@ -131,13 +133,9 @@ Section "Uninstall"
   Delete "$INSTDIR\bin\libexpat-*.dll"
   Delete "$INSTDIR\bin\zlib1.dll"
 
-  Delete "$INSTDIR\Uninstall.exe"
-
-  RMDir "$INSTDIR\bin"
-  RMDir "$INSTDIR\data"
-  RMDir "$INSTDIR"
-
-  DeleteRegKey /ifempty SHCTX "Software\@ADG_API_PACKAGE@"
-  ${un.EnvVarUpdate} $0 "PATH" "R" "HKLM" "$INSTDIR\bin"
-
+  Delete "$INSTDIR\uninstall.exe"
+  RMDir  "$INSTDIR\bin"
+  RMDir  "$INSTDIR\data"
+  RMDir  "$INSTDIR"
+  ${un.EnvVarUpdate} $0 "PATH" "R" "HKCU" "$INSTDIR\bin"
 SectionEnd
