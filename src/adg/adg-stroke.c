@@ -218,7 +218,7 @@ void
 adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_STROKE(stroke));
-    g_object_set((GObject *) stroke, "line-dress", dress, NULL);
+    g_object_set(stroke, "line-dress", dress, NULL);
 }
 
 /**

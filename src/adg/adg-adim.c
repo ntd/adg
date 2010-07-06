@@ -404,7 +404,7 @@ void
 adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
 {
     g_return_if_fail(ADG_IS_ADIM(adim));
-    g_object_set((GObject *) adim, "org1", org1, NULL);
+    g_object_set(adim, "org1", org1, NULL);
 }
 
 /**
@@ -512,7 +512,7 @@ void
 adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
 {
     g_return_if_fail(ADG_IS_ADIM(adim));
-    g_object_set((GObject *) adim, "org2", org2, NULL);
+    g_object_set(adim, "org2", org2, NULL);
 }
 
 /**

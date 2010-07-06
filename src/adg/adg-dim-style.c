@@ -504,7 +504,7 @@ void
 adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "color-dress", dress, NULL);
+    g_object_set(dim_style, "color-dress", dress, NULL);
 }
 
 /**
@@ -541,7 +541,7 @@ void
 adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "value-dress", dress, NULL);
+    g_object_set(dim_style, "value-dress", dress, NULL);
 }
 
 /**
@@ -576,7 +576,7 @@ void
 adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "min-dress", dress, NULL);
+    g_object_set(dim_style, "min-dress", dress, NULL);
 }
 
 /**
@@ -610,7 +610,7 @@ void
 adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "max-dress", dress, NULL);
+    g_object_set(dim_style, "max-dress", dress, NULL);
 }
 
 /**
@@ -644,7 +644,7 @@ void
 adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "line-dress", dress, NULL);
+    g_object_set(dim_style, "line-dress", dress, NULL);
 }
 
 /**

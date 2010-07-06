@@ -363,7 +363,7 @@ void
 adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "dim-dress", dress, NULL);
+    g_object_set(dim, "dim-dress", dress, NULL);
 }
 
 /**
@@ -402,7 +402,7 @@ void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "ref1", ref1, NULL);
+    g_object_set(dim, "ref1", ref1, NULL);
 }
 
 /**
@@ -510,7 +510,7 @@ void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "ref2", ref2, NULL);
+    g_object_set(dim, "ref2", ref2, NULL);
 }
 
 /**
@@ -618,7 +618,7 @@ void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "pos", pos, NULL);
+    g_object_set(dim, "pos", pos, NULL);
 }
 
 /**

@@ -224,7 +224,7 @@ void
 adg_toy_text_set_font_dress(AdgToyText *toy_text, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TOY_TEXT(toy_text));
-    g_object_set((GObject *) toy_text, "font-dress", dress, NULL);
+    g_object_set(toy_text, "font-dress", dress, NULL);
 }
 
 /**

@@ -286,7 +286,7 @@ void
 adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-    g_object_set((GObject *) area, "canvas", canvas, NULL);
+    g_object_set(area, "canvas", canvas, NULL);
 }
 
 /**
@@ -321,7 +321,7 @@ void
 adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-    g_object_set((GObject *) area, "factor", factor, NULL);
+    g_object_set(area, "factor", factor, NULL);
 }
 
 /**

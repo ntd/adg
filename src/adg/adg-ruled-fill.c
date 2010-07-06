@@ -208,7 +208,7 @@ void
 adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-    g_object_set((GObject *) ruled_fill, "line-dress", dress, NULL);
+    g_object_set(ruled_fill, "line-dress", dress, NULL);
 }
 
 /**

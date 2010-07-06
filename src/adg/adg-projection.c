@@ -220,7 +220,7 @@ void
 adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-    g_object_set((GObject *) projection, "symbol-dress", dress, NULL);
+    g_object_set(projection, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -261,7 +261,7 @@ void
 adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-    g_object_set((GObject *) projection, "axis-dress", dress, NULL);
+    g_object_set(projection, "axis-dress", dress, NULL);
 }
 
 /**

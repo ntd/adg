@@ -167,7 +167,7 @@ void
 adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_HATCH(hatch));
-    g_object_set((GObject *) hatch, "fill-dress", dress, NULL);
+    g_object_set(hatch, "fill-dress", dress, NULL);
 }
 
 /**

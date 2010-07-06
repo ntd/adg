@@ -321,7 +321,7 @@ void
 adg_table_set_table_dress(AdgTable *table, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE(table));
-    g_object_set((GObject *) table, "table-dress", dress, NULL);
+    g_object_set(table, "table-dress", dress, NULL);
 }
 
 /**

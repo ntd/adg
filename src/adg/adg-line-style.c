@@ -249,7 +249,7 @@ void
 adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-    g_object_set((GObject *) line_style, "color-dress", dress, NULL);
+    g_object_set(line_style, "color-dress", dress, NULL);
 }
 
 /**

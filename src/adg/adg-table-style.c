@@ -265,7 +265,7 @@ void
 adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "color-dress", dress, NULL);
+    g_object_set(table_style, "color-dress", dress, NULL);
 }
 
 /**
@@ -302,7 +302,7 @@ void
 adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "frame-dress", dress, NULL);
+    g_object_set(table_style, "frame-dress", dress, NULL);
 }
 
 /**
@@ -337,7 +337,7 @@ void
 adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "grid-dress", dress, NULL);
+    g_object_set(table_style, "grid-dress", dress, NULL);
 }
 
 /**
@@ -372,7 +372,7 @@ void
 adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "title-dress", dress, NULL);
+    g_object_set(table_style, "title-dress", dress, NULL);
 }
 
 /**
@@ -407,7 +407,7 @@ void
 adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "value-dress", dress, NULL);
+    g_object_set(table_style, "value-dress", dress, NULL);
 }
 
 /**

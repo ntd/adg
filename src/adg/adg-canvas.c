@@ -412,7 +412,7 @@ adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(size != NULL);
 
-    g_object_set((GObject *) canvas, "size", size, NULL);
+    g_object_set(canvas, "size", size, NULL);
 }
 
 /**
@@ -470,7 +470,7 @@ void
 adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "background-dress", dress, NULL);
+    g_object_set(canvas, "background-dress", dress, NULL);
 }
 
 /**
@@ -505,7 +505,7 @@ void
 adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "frame-dress", dress, NULL);
+    g_object_set(canvas, "frame-dress", dress, NULL);
 }
 
 /**
@@ -549,7 +549,7 @@ adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(title_block == NULL || ADG_IS_TITLE_BLOCK(title_block));
-    g_object_set((GObject *) canvas, "title-block", title_block, NULL);
+    g_object_set(canvas, "title-block", title_block, NULL);
 }
 
 /**
@@ -584,7 +584,7 @@ void
 adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "top-margin", value, NULL);
+    g_object_set(canvas, "top-margin", value, NULL);
 }
 
 /**
@@ -618,7 +618,7 @@ void
 adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "right-margin", value, NULL);
+    g_object_set(canvas, "right-margin", value, NULL);
 }
 
 /**
@@ -653,7 +653,7 @@ void
 adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "bottom-margin", value, NULL);
+    g_object_set(canvas, "bottom-margin", value, NULL);
 }
 
 /**
@@ -687,7 +687,7 @@ void
 adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "left-margin", value, NULL);
+    g_object_set(canvas, "left-margin", value, NULL);
 }
 
 /**
@@ -724,12 +724,8 @@ adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
                        gdouble bottom, gdouble left)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas,
-                 "top-margin", top,
-                 "right-margin", right,
-                 "bottom-margin", bottom,
-                 "left-margin", left,
-                 NULL);
+    g_object_set(canvas, "top-margin", top, "right-margin", right,
+                 "bottom-margin", bottom, "left-margin", left, NULL);
 }
 
 /**
@@ -745,7 +741,7 @@ void
 adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "has-frame", new_state, NULL);
+    g_object_set(canvas, "has-frame", new_state, NULL);
 }
 
 /**
@@ -781,7 +777,7 @@ void
 adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "top-padding", value, NULL);
+    g_object_set(canvas, "top-padding", value, NULL);
 }
 
 /**
@@ -815,7 +811,7 @@ void
 adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "right-padding", value, NULL);
+    g_object_set(canvas, "right-padding", value, NULL);
 }
 
 /**
@@ -850,7 +846,7 @@ void
 adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "bottom-padding", value, NULL);
+    g_object_set(canvas, "bottom-padding", value, NULL);
 }
 
 /**
@@ -884,7 +880,7 @@ void
 adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "left-padding", value, NULL);
+    g_object_set(canvas, "left-padding", value, NULL);
 }
 
 /**
@@ -921,12 +917,8 @@ adg_canvas_set_paddings(AdgCanvas *canvas, gdouble top, gdouble right,
                           gdouble bottom, gdouble left)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas,
-                 "top-padding", top,
-                 "right-padding", right,
-                 "bottom-padding", bottom,
-                 "left-padding", left,
-                 NULL);
+    g_object_set(canvas, "top-padding", top, "right-padding", right,
+                 "bottom-padding", bottom, "left-padding", left, NULL);
 }
 
 

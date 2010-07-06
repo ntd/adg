@@ -376,7 +376,7 @@ void
 adg_font_style_set_color_dress(AdgFontStyle *font_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_FONT_STYLE(font_style));
-    g_object_set((GObject *) font_style, "color-dress", dress, NULL);
+    g_object_set(font_style, "color-dress", dress, NULL);
 }
 
 /**

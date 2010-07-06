@@ -212,7 +212,7 @@ void
 adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "symbol-dress", dress, NULL);
+    g_object_set(logo, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -254,7 +254,7 @@ void
 adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "screen-dress", dress, NULL);
+    g_object_set(logo, "screen-dress", dress, NULL);
 }
 
 /**
@@ -296,7 +296,7 @@ void
 adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "frame-dress", dress, NULL);
+    g_object_set(logo, "frame-dress", dress, NULL);
 }
 
 /**
