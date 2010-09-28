@@ -355,7 +355,7 @@ _adg_arrange(AdgEntity *entity)
 
         if (status != CAIRO_STATUS_SUCCESS) {
             _adg_clear_glyphs(toy_text);
-            g_error("Unable to build glyphs (cairo message: %s)",
+            g_error(_("Unable to build glyphs (cairo message: %s)"),
                     cairo_status_to_string(status));
             return;
         }

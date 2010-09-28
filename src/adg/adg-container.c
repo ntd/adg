@@ -486,7 +486,7 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
     if (old_parent != NULL) {
         g_warning(_("Attempting to add an entity with type %s to a container "
                     "of type %s, but the entity is already inside a container "
-                    "of type %s."),
+                    "of type %s"),
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(container)),
                   g_type_name(G_OBJECT_TYPE(old_parent)));

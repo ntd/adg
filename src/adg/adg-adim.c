@@ -1066,7 +1066,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0) {
         /* Parallel lines: hang with an error message */
-        g_warning("%s: trying to set an angular dimension on parallel lines",
+        g_warning(_("%s: trying to set an angular dimension on parallel lines"),
                   G_STRLOC);
         return FALSE;
     }

@@ -1210,7 +1210,7 @@ _adg_arrange(AdgEntity *entity)
 static gchar *
 _adg_default_value(AdgDim *dim)
 {
-    g_warning("AdgDim::default_value not implemented for `%s'",
+    g_warning(_("AdgDim::default_value not implemented for `%s'"),
               g_type_name(G_TYPE_FROM_INSTANCE(dim)));
     return g_strdup("undef");
 }

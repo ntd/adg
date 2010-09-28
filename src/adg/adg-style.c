@@ -87,6 +87,6 @@ static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     /* The apply method must be defined */
-    g_warning("%s: `apply' method not implemented for type `%s'",
+    g_warning(_("%s: `apply' method not implemented for type `%s'"),
               G_STRLOC, g_type_name(G_OBJECT_TYPE(style)));
 }

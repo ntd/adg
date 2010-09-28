@@ -372,7 +372,7 @@ adg_trail_dump(AdgTrail *trail)
     g_return_if_fail(cairo_path != NULL);
 
     if (!cpml_segment_from_cairo(&segment, cairo_path)) {
-        g_warning(_("%s: Invalid path data to dump!"), G_STRLOC);
+        g_warning(_("%s: invalid path data"), G_STRLOC);
     } else {
         do {
             cpml_segment_dump(&segment);
