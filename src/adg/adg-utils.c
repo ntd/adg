@@ -256,3 +256,77 @@ adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
 
     return result;
 }
+
+/**
+ * _adg_dgettext:
+ * @domain: the translation domain to use, or %NULL to use
+ *          the domain set with textdomain()
+ * @msgid:  message to translate
+ *
+ * A variant of dgettext() (or of g_dgettext(), if available) that
+ * initialize the ADG localization infrastructure.
+ *
+ * Returns: The translated string
+ **/
+G_CONST_RETURN gchar *
+_adg_dgettext(const gchar *domain, const gchar *msgid)
+{
+    static gboolean initialized = FALSE;
+
+    if (G_UNLIKELY(!initialized)) {
+        bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+        bindtextdomain(GETTEXT_PACKAGE "-properties", LOCALEDIR);
+        initialized = TRUE;
+    }
+
+#if GLIB_CHECK_VERSION(2, 18, 0)
+    return g_dgettext(domain, msgid);
+#else
+    return dgettext(domain, msgid);
+#endif
+}
+
+/**
+ * _adg_dpgettext:
+ * @domain:      the translation domain to use, or %NULL to use
+ *               the domain set with textdomain()
+ * @msgctxtid:   a combined message context and message id, separated
+ *               by a \004 character
+ * @msgidoffset: the offset of the message id in @msgctxid
+ *
+ * This function is basically a duplicate of g_dpgettext() but using
+ * _adg_dgettext() internally instead of g_dgettext().
+ *
+ * Returns: The translated string
+ **/
+G_CONST_RETURN gchar *
+_adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)
+{
+    const gchar *translation;
+    gchar *sep;
+
+    translation = _adg_dgettext(domain, msgctxtid);
+
+    if (translation == msgctxtid) {
+        if (msgidoffset > 0)
+            return msgctxtid + msgidoffset;
+
+        sep = strchr(msgctxtid, '|');
+
+        if (sep) {
+            /* try with '\004' instead of '|', in case
+             * xgettext -kQ_:1g was used
+             */
+            gchar *tmp = g_alloca(strlen(msgctxtid) + 1);
+            strcpy(tmp, msgctxtid);
+            tmp[sep - msgctxtid] = '\004';
+
+            translation = _adg_dgettext(domain, tmp);
+
+            if (translation == tmp)
+                return sep + 1;
+        }
+    }
+
+    return translation;
+}

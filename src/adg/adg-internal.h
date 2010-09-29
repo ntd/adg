@@ -26,19 +26,34 @@
 #ifndef __ADG_INTERNAL_H__
 #define __ADG_INTERNAL_H__
 
-#define G_LOG_DOMAIN  "adg"
 
 /* The following define enables the inclusion of internal headers */
 #define __ADG_H__
 
 #include <config.h>
+#define G_LOG_DOMAIN  PACKAGE
 #include "adg-utils.h"
 
 
 #ifdef ENABLE_NLS
 
-#include <glib/gi18n-lib.h>
-#define P_(String) dgettext(GETTEXT_PACKAGE "-properties",String)
+#include <libintl.h>
+
+#ifndef GETTEXT_PACKAGE
+#error You must define GETTEXT_PACKAGE before including adg-internal.h.  Did you forget to include config.h?
+#endif
+
+#ifdef gettext_noop
+#define N_(String)              gettext_noop(String)
+#else
+#define N_(String)              (String)
+#endif
+
+#define _(String)               _adg_dgettext(GETTEXT_PACKAGE, String)
+#define P_(String)              _adg_dgettext(GETTEXT_PACKAGE "-properties", String)
+#define Q_(String)              _adg_dpgettext(GETTEXT_PACKAGE, String, 0)
+#define C_(Context,String)      _adg_dpgettext(GETTEXT_PACKAGE, Context "\004" String, strlen(Context) + 1)
+#define NC_(Context,String)     N_(String)
 
 #else /* !ENABLE_NLS */
 
@@ -50,5 +65,13 @@
 #define NC_(Context, String)    (String)
 
 #endif
+
+
+G_CONST_RETURN gchar *  _adg_dgettext   (const gchar *domain,
+                                         const gchar *msgid) G_GNUC_FORMAT(2);
+G_CONST_RETURN gchar *  _adg_dpgettext  (const gchar *domain,
+                                         const gchar *msgctxtid,
+                                         gsize        msgidoffset) G_GNUC_FORMAT(2);
+
 
 #endif /* __ADG_INTERNAL_H__ */
