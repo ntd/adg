@@ -90,7 +90,7 @@ m4_ifset([LT_INIT],
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
-ALL_LINGUAS=""
+ALL_LINGUAS="`grep -v '^#' "$srcdir/po/LINGUAS" | tr '\n' ' '`"
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 AC_CONFIG_COMMANDS([default],

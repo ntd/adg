@@ -1,4 +1,5 @@
-# List of source files which contain translatable strings.
+demo/adg-demo.c
+demo/adg-demo.ui
 src/adg/adg-adim.c
 src/adg/adg-alignment.c
 src/adg/adg-arrow.c
@@ -7,11 +8,9 @@ src/adg/adg-color-style.c
 src/adg/adg-container.c
 src/adg/adg-dim.c
 src/adg/adg-dim-style.c
-src/adg/adg-dress-builtins.c
 src/adg/adg-dress.c
 src/adg/adg-edges.c
 src/adg/adg-entity.c
-src/adg/adg-enums.c
 src/adg/adg-fill-style.c
 src/adg/adg-font-style.c
 src/adg/adg-hatch.c
@@ -21,15 +20,10 @@ src/adg/adg-logo.c
 src/adg/adg-marker.c
 src/adg/adg-matrix.c
 src/adg/adg-model.c
-src/adg/adg-pair.c
 src/adg/adg-path.c
-src/adg/adg-pattern.c
 src/adg/adg-point.c
-src/adg/adg-primitive.c
 src/adg/adg-projection.c
-src/adg/adg-rdim.c
 src/adg/adg-ruled-fill.c
-src/adg/adg-segment.c
 src/adg/adg-stroke.c
 src/adg/adg-style.c
 src/adg/adg-table.c
@@ -37,5 +31,4 @@ src/adg/adg-table-style.c
 src/adg/adg-title-block.c
 src/adg/adg-toy-text.c
 src/adg/adg-trail.c
-src/adg/adg-utils.c
 src/adg-gtk/adg-gtk-area.c
