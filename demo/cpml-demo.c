@@ -1,5 +1,5 @@
+#include <config.h>
 #include "demo.h"
-
 #include <cpml.h>
 #include <math.h>
 

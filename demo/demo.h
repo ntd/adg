@@ -26,17 +26,7 @@
 #ifndef __DEMO_H__
 #define __DEMO_H__
 
-#define G_LOG_DOMAIN    "adg-demo"
-
-#include <config.h>
 #include <gtk/gtk.h>
-
-/* Required for i18n */
-#ifdef ENABLE_NLS
-#include <glib/gi18n-lib.h>
-#else
-#define _(String)       (String)
-#endif
 
 /* Fallback to ".libs" if not defined by configure */
 #ifndef LT_OBJDIR
@@ -48,8 +38,6 @@ G_BEGIN_DECLS
 
 gchar *         demo_find_data_file     (const gchar    *file,
                                          const gchar    *caller);
-void            demo_notify_error       (const gchar    *message,
-                                         GtkWindow      *parent_window);
 
 G_END_DECLS
 

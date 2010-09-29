@@ -1,6 +1,13 @@
+/* Needed for localization support */
+#include <adg/adg-internal.h>
+
+/* Force the reinclusion of adg.h */
+#undef __ADG_H__
+
 #include "demo.h"
 
 #include <adg-gtk.h>
+#include <string.h>
 #include <math.h>
 
 #define SQRT3   1.732050808
@@ -44,15 +51,15 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
     GError *error = NULL;
     GOptionEntry entries[] = {
         {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-         _adg_version, "Display version information", NULL},
+         _adg_version, _("Display version information"), NULL},
         {"show-extents", 'E', 0, G_OPTION_ARG_NONE,
-         NULL, "Show the boundary boxes of every entity", NULL},
+         NULL, _("Show the boundary boxes of every entity"), NULL},
         {NULL}
     };
 
     entries[1].arg_data = show_extents;
     *show_extents = FALSE;
-    gtk_init_with_args(p_argc, p_argv, "- ADG demonstration program",
+    gtk_init_with_args(p_argc, p_argv, _("- ADG demonstration program"),
                        entries, GETTEXT_PACKAGE, &error);
 
     if (error != NULL) {
@@ -63,6 +70,28 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
         g_error_free(error);
         exit(error_code);
     }
+}
+
+
+/**
+ * _adg_error:
+ * @message: a custom error message
+ * @parent_window: the parent window or %NULL
+ *
+ * Convenient function that presents an error dialog and waits the user
+ * to close this modal dialog.
+ **/
+void
+_adg_error(const gchar *message, GtkWindow *parent_window)
+{
+    GtkWidget *dialog = gtk_message_dialog_new(parent_window,
+                                               GTK_DIALOG_DESTROY_WITH_PARENT,
+                                               GTK_MESSAGE_ERROR,
+                                               GTK_BUTTONS_CLOSE,
+                                               "%s", message);
+    gtk_window_set_title(GTK_WINDOW(dialog), _("Error from adg-demo"));
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
 }
 
 static void
@@ -368,13 +397,13 @@ _adg_demo_canvas_add_sheet(AdgCanvas *canvas)
     AdgTitleBlock *title_block = adg_title_block_new();
 
     g_object_set(title_block,
-                 "title", "SAMPLE DRAWING",
+                 "title", _("SAMPLE DRAWING"),
                  "author", "NtD",
                  "date", NULL,
                  "drawing", "TEST123",
                  "logo", adg_logo_new(),
                  "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
-                 "scale", "NONE",
+                 "scale", "---",
                  "size", "A4",
                  NULL);
 
@@ -534,13 +563,13 @@ _adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
     AdgToyText *toy_text;
     AdgMatrix map;
 
-    toy_text = adg_toy_text_new("Rotate the mouse wheel to zoom in and out");
+    toy_text = adg_toy_text_new(_("Rotate the mouse wheel to zoom in and out"));
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
     cairo_matrix_init_translate(&map, 15, 500);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
 
-    toy_text = adg_toy_text_new("Drag with the wheel pressed to pan");
+    toy_text = adg_toy_text_new(_("Drag with the wheel pressed to pan"));
     adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
     cairo_matrix_init_translate(&map, 15, 515);
     adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
@@ -726,7 +755,7 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
     } else
 #endif
     {
-        demo_notify_error(_("Requested format not supported"), window);
+        _adg_error(_("Requested format not supported"), window);
         surface = NULL;
     }
 
@@ -748,7 +777,7 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
         cairo_destroy(cr);
 
         if (status != CAIRO_STATUS_SUCCESS)
-            demo_notify_error(cairo_status_to_string(status), window);
+            _adg_error(cairo_status_to_string(status), window);
     }
 
     g_free(file);
@@ -826,7 +855,7 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
     g_object_unref(operation);
 
     if (error)
-        demo_notify_error(error->message, window);
+        _adg_error(error->message, window);
 }
 
 static AdgPart *
@@ -1045,7 +1074,7 @@ main(gint argc, gchar **argv)
 
     path = demo_find_data_file("adg-demo.ui", argv[0]);
     if (path == NULL) {
-        g_print("adg-demo.ui not found!\n");
+        g_print(_("adg-demo.ui not found!\n"));
         return 1;
     }
 
