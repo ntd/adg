@@ -1,0 +1,300 @@
+# Italian translation for adg-1.0.
+# This file is distributed under the same license as adg package
+# Copyright (C) 2010 Free Software Foundation, Inc.
+# Nicola Fontana <ntd@entidi.it> 2010.
+#
+# NOTE PER IL TRADUTTORE
+#
+# Per convenzione sono state adottate le seguenti traduzioni:
+#
+# dress -> vestito
+# mix -> combinazione
+# fallback -> implicito
+# map -> trasformazione
+# marker -> contrassegno
+#
+# Le seguenti parole sono state lasciate in inglese:
+#
+# canvas, named pair, path, top-level
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: adg 1.0.x\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-09-29 18:53+0200\n"
+"PO-Revision-Date: 2010-09-28 16:40+0200\n"
+"Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
+"Language-Team: \n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: demo/adg-demo.c:54
+msgid "Display version information"
+msgstr "Stampa le informazioni sulla versione"
+
+#: demo/adg-demo.c:56
+msgid "Show the boundary boxes of every entity"
+msgstr "Mostrare il riquadro contenitore di ogni entità"
+
+#: demo/adg-demo.c:62
+msgid "- ADG demonstration program"
+msgstr "- Programma dimostrativo della ADG"
+
+#: demo/adg-demo.c:92
+msgid "Error from adg-demo"
+msgstr "Errore da adg-demo"
+
+#: demo/adg-demo.c:400
+msgid "SAMPLE DRAWING"
+msgstr "DISEGNO CAMPIONE"
+
+#: demo/adg-demo.c:566
+msgid "Rotate the mouse wheel to zoom in and out"
+msgstr "Ruotare la rotella del mouse per ingrandire"
+
+#: demo/adg-demo.c:572
+msgid "Drag with the wheel pressed to pan"
+msgstr "Trascinare con la rotella premuta per traslare"
+
+#: demo/adg-demo.c:758
+msgid "Requested format not supported"
+msgstr "Formato richiesto non supportato"
+
+#: demo/adg-demo.c:1077
+#, c-format
+msgid "adg-demo.ui not found!\n"
+msgstr "adg-demo.ui non trovato!\n"
+
+#. Parallel lines: hang with an error message
+#: src/adg/adg-adim.c:1069
+#, c-format
+msgid "%s: trying to set an angular dimension on parallel lines"
+msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
+
+#: src/adg/adg-container.c:377
+#, c-format
+msgid "%s: signal `%s' is invalid for instance `%p'"
+msgstr "%s: segnale `%s' non valido per l'oggetto `%p'"
+
+#: src/adg/adg-container.c:487
+#, c-format
+msgid ""
+"Attempting to add an entity with type %s to a container of type %s, but the "
+"entity is already inside a container of type %s"
+msgstr ""
+"Si è provato ad aggiungere una entità di tipo %s ad un contenitore di tipo "
+"%s ma l'entità è già all'interno di un contenitore di tipo %s"
+
+#: src/adg/adg-container.c:521
+#, c-format
+msgid ""
+"Attempting to remove an entity with type %s from a container of type %s, but "
+"the entity is not present"
+msgstr ""
+"Si è provato ad eliminare una entità di tipo %s da un contenitore di tipo %s "
+"ma l'entità non è presente"
+
+#: src/adg/adg-dim.c:1213
+#, fuzzy, c-format
+msgid "AdgDim::default_value not implemented for `%s'"
+msgstr "AdgDim::default_value non implementato da `%s'"
+
+#: src/adg/adg-dress.c:167
+#, c-format
+msgid "%s: the `%s' name is yet used by the `%d' dress"
+msgstr "%s: il nome `%s' è già usato dal vestito `%d'"
+
+#: src/adg/adg-dress.c:320
+#, c-format
+msgid ""
+"%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' "
+"has been provided"
+msgstr ""
+"%s: lo stile implicito di `%d' (%s) deve essere un tipo derivato da `%s' "
+"mentre è stato fornito `%s'"
+
+#: src/adg/adg-dress.c:446
+msgid "(UNDEFINED)"
+msgstr "(NON DEFINITO)"
+
+#: src/adg/adg-dress.c:462
+#, c-format
+msgid "%s: the dress `%d' is undefined"
+msgstr "%s: il vestito `%d' non è definito"
+
+#: src/adg/adg-entity.c:783
+#, c-format
+msgid "%s: `%s' is not compatible with `%s' for `%s' dress"
+msgstr "%s: `%s' non è compatibile con `%s' per il vestito `%s'"
+
+#: src/adg/adg-entity.c:1119
+#, c-format
+msgid "%s: requested to mix the maps using an undefined method"
+msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
+
+#: src/adg/adg-entity.c:1165
+#, c-format
+msgid "%s: `arrange' method not implemented for type `%s'"
+msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
+
+#: src/adg/adg-entity.c:1181
+#, c-format
+msgid "%s: `render' method not implemented for type `%s'"
+msgstr "%s: metodo `render' non implementato dal tipo `%s'"
+
+#: src/adg/adg-fill-style.c:263
+#, fuzzy, c-format
+msgid "%s: pattern undefined for type `%s'"
+msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
+
+#: src/adg/adg-marker.c:708
+#, fuzzy, c-format
+msgid "%s: `create_model' method not implemented for type `%s'"
+msgstr "%s: `create_model' non implementato dal tipo `%s'"
+
+#. TODO: does normalization make sense on these matrices?
+#: src/adg/adg-matrix.c:170
+#, c-format
+msgid "%s: anamorphic matrices not supported"
+msgstr "%s: matrici anamorfiche non supportate"
+
+#: src/adg/adg-model.c:606
+#, c-format
+msgid ""
+"%s: attempting to remove the nonexistent dependency on the entity with type "
+"%s from a model of type %s"
+msgstr ""
+"%s: si è provato ad eliminare un'inesistente dipendenza da un'entità di tipo "
+"%s in un modello di tipo %s"
+
+#: src/adg/adg-model.c:645
+#, c-format
+msgid "%s: attempting to remove nonexistent `%s' named pair"
+msgstr "%s: si è provato ad eliminare l'inesistente named pair `%s'"
+
+#: src/adg/adg-path.c:346
+#, c-format
+msgid "%s: null pair caught while parsing arguments"
+msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
+
+#: src/adg/adg-path.c:809
+#, c-format
+msgid "%s: the axis of the reflection is not known"
+msgstr "%s: l'asse di riflessione non è conosciuta"
+
+#: src/adg/adg-path.c:944
+#, c-format
+msgid "%s: a `%s' operation is still active while clearing the path"
+msgstr "%s: operazione `%s' ancora attiva durante l'azzeramento del path"
+
+#: src/adg/adg-path.c:964
+#, c-format
+msgid "%s: requested a `%s' operation on a path without current primitive"
+msgstr "%s: richiesta l'operazione `%s' su un path senza primitiva attiva"
+
+#: src/adg/adg-path.c:971
+#, c-format
+msgid "%s: requested a `%s' operation while a `%s' operation is active"
+msgstr "%s: richiesta l'operazione `%s' con operazione `%s' in corso"
+
+#: src/adg/adg-path.c:999
+#, c-format
+msgid "%s: `%d' operation not recognized"
+msgstr "%s: l'operazione `%d' non è conosciuta"
+
+#: src/adg/adg-path.c:1110
+#, c-format
+msgid ""
+"%s: first chamfer delta of `%lf' is greather than the available `%lf' length"
+msgstr ""
+"%s: il primo delta di smusso `%lf' è maggiore dello spazio disponibile `%lf'"
+
+#: src/adg/adg-path.c:1119
+#, c-format
+msgid ""
+"%s: second chamfer delta of `%lf' is greather than the available `%lf' length"
+msgstr ""
+"%s: il secondo delta di smusso `%lf' è maggiore dello spazio disponibile `"
+"%lf'"
+
+#: src/adg/adg-path.c:1157
+#, c-format
+msgid "%s: fillet with radius of `%lf' is not applicable here"
+msgstr "%s: un raccordo di raggio `%lf' non è fattibile in questa posizione"
+
+#. A point with explicit coordinates not up to date
+#. * is an unexpected condition
+#: src/adg/adg-point.c:283
+#, c-format
+msgid "%s: trying to get a pair from an undefined point"
+msgstr "%s: si è provato ad ottenere le coordinate da un punto indefinito"
+
+#. The apply method must be defined
+#: src/adg/adg-style.c:90
+#, fuzzy, c-format
+msgid "%s: `apply' method not implemented for type `%s'"
+msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
+
+#: src/adg/adg-table.c:1414
+#, c-format
+msgid "%s: `%s' cell name is yet used"
+msgstr "%s: il nome di cella `%s' è già usato"
+
+#: src/adg/adg-title-block.c:638
+msgid "TITLE"
+msgstr "TITOLO"
+
+#: src/adg/adg-title-block.c:649
+msgid "SIZE"
+msgstr "FOGLIO"
+
+#: src/adg/adg-title-block.c:654
+msgid "SCALE"
+msgstr "SCALA"
+
+#: src/adg/adg-title-block.c:659
+msgid "DRAWING"
+msgstr "DISEGNO"
+
+#: src/adg/adg-title-block.c:671
+msgid "AUTHOR"
+msgstr "AUTORE"
+
+#: src/adg/adg-title-block.c:676
+msgid "DATE"
+msgstr "DATA"
+
+#: src/adg/adg-toy-text.c:358
+#, c-format
+msgid "Unable to build glyphs (cairo message: %s)"
+msgstr ""
+
+#: src/adg/adg-trail.c:257
+#, c-format
+msgid ""
+"%s: you cannot access the path from the callback you provided to build it"
+msgstr ""
+"%s: non puoi accedere al path dalla funzione che hai fornito per definirlo"
+
+#: src/adg/adg-trail.c:298
+#, c-format
+msgid "%s: requested undefined segment for type `%s'"
+msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
+
+#: src/adg/adg-trail.c:314
+#, c-format
+msgid "%s: segment %u is out of range for type `%s'"
+msgstr "%s: il numero di segmento `%u' è sballato per il tipo `%s'"
+
+#: src/adg/adg-trail.c:375
+#, c-format
+msgid "%s: invalid path data"
+msgstr "%s: dati del path non validi"
+
+#: src/adg/adg-trail.c:406
+#, c-format
+msgid "%s: callback not defined for instance of type `%s'"
+msgstr "%s: callback non definita per un'istanza di tipo `%s'"

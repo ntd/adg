@@ -1,6 +1,1 @@
-# TRANSLATORS:  Please note that ADG has both po/ and po-properties/
-# directories.  If you add a new language in this file, please make
-# sure that both po/ and po-properties/ have .po files that correspond
-# to your language.  If you only add one to po/, the build will break
-# in po-properties/.
-# Please keep this list sorted alphabetically.
+../po/LINGUAS
