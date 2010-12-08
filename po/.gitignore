@@ -1,4 +1,5 @@
+/*.gmo
 /Makefile.in.in
 /POTFILES
 /adg-*.pot
-/*.gmo
+/stamp-it

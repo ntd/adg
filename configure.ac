@@ -12,8 +12,7 @@ m4_define([gtk_prereq],[2.12.0])
 dnl autoconf 2.60 implements datarootdir, required by ADG
 dnl to help overcoming the hardcoded glade catalogdir
 AC_PREREQ([2.60])
-AC_INIT([Automatic Drawing Generation],adg_version,
-        [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
+AC_INIT([adg-1.0],adg_version,[http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
@@ -91,6 +90,7 @@ AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
 ALL_LINGUAS="`grep -v '^#' "$srcdir/po/LINGUAS" | tr '\n' ' '`"
+IT_PROG_INTLTOOL(0.40.1)
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 AC_CONFIG_COMMANDS([default],

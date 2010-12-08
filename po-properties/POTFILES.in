@@ -1,4 +1,4 @@
-# List of source files which contain translatable strings.
+# List of source files which contain translatable properties.
 src/adg/adg-arrow.c
 src/adg/adg-entity.c
 src/adg/adg-adim.c

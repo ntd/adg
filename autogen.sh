@@ -11,6 +11,7 @@ fi
 
 cd $srcdir
 glib-gettextize -f || exit $?
+libtoolize -f || exit $?
 
 # autoreconf interaction with libtool has been broken for ages:
 # explicitely calling libtoolize avoid some problems
