@@ -116,6 +116,7 @@ main(gint argc, gchar **argv)
     builder = gtk_builder_new();
     error = NULL;
 
+    gtk_builder_set_translation_domain(builder, GETTEXT_PACKAGE);
     gtk_builder_add_from_file(builder, path, &error);
     if (error != NULL) {
         g_print("%s\n", error->message);

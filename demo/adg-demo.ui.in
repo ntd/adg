@@ -5,7 +5,7 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="wndMain">
     <property name="border_width">6</property>
-    <property name="title" translatable="yes">@PACKAGE_NAME@ - Demostration program</property>
+    <property name="title" translatable="yes">adg-demo - Demostration program</property>
     <property name="window_position">center</property>
     <property name="icon">adg-64.png</property>
     <child>
