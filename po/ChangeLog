@@ -1,3 +1,7 @@
+2010-12-08  Nicola Fontana  <ntd@entidi.it>
+
+	* it.po: updated italian translations.
+
 2006-07-05  gettextize  <bug-gnu-gettext@gnu.org>
 
 	* Makefile.in.in: New file, from gettext-0.14.3.
@@ -9,4 +13,3 @@
 	* quot.sed: New file, from gettext-0.14.3.
 	* remove-potcdate.sin: New file, from gettext-0.14.3.
 	* POTFILES.in: New file.
-
