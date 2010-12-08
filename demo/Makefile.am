@@ -30,7 +30,7 @@ cpml_demo_SOURCES=		cpml-demo.c \
 				demo.c \
 				demo.h
 cpml_demo_LDADD=		$(GTK2_LIBS) \
-				$(top_builddir)/src/cpml/libcpml-1.la
+				$(top_builddir)/src/adg/libadg-1.la
 nodist_adgdata_DATA=		adg-demo.ui \
 				cpml-demo.ui
 dist_adgdata_DATA=		adg-64.png

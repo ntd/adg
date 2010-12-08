@@ -2,6 +2,7 @@
 
 demo/adg-demo.c
 [type: gettext/glade] demo/adg-demo.ui.in
+demo/cpml-demo.c
 [type: gettext/glade] demo/cpml-demo.ui.in
 src/adg/adg-adim.c
 src/adg/adg-alignment.c
