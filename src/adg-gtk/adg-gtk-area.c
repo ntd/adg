@@ -31,10 +31,8 @@
  * The default minimum size of this widget will depend on the canvas
  * content. The global matrix of the #AdgCanvas will be adjusted to
  * expose the drawing in the proper position. The empty space around
- * the drawing can be changed by setting the #AdgGtkArea:top-margin,
- * #AdgGtkArea:right-margin, #AdgGtkArea:bottom-margin and
- * #AdgGtkArea:left-margin properties or by using the equivalent
- * setter methods.
+ * the drawing can be changed by setting the margins of the underlying
+ * #AdgCanvas object.
  *
  * The default implementation reacts to some mouse events: if you drag
  * the mouse keeping the wheel pressed the canvas will be translated;
