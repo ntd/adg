@@ -935,9 +935,8 @@ adg_entity_invalidate(AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Emits the #AdgEntity::arrange signal on @entity and all its children,
- * if any. This function is rarely needed as the arrange call is usually
- * implicitely called by the #AdgEntity::render signal or iby a call to
- * adg_entity_get_extents().
+ * if any. The arrange call is implicitely called by the
+ * #AdgEntity::render signal but not by adg_entity_get_extents().
  **/
 void
 adg_entity_arrange(AdgEntity *entity)
