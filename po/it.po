@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-12-08 22:27+0100\n"
+"POT-Creation-Date: 2011-01-01 11:58+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,11 +59,15 @@ msgstr "Ruotare la rotella del mouse per ingrandire"
 msgid "Drag with the wheel pressed to pan"
 msgstr "Trascinare con la rotella premuta per traslare"
 
-#: ../demo/adg-demo.c:758
+#: ../demo/adg-demo.c:578
+msgid "Keep the shift pressed to zoom or pan in global space"
+msgstr "Tenere premuto lo shift per ingrandire o traslare in global space"
+
+#: ../demo/adg-demo.c:764
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: ../demo/adg-demo.c:1077
+#: ../demo/adg-demo.c:1083
 #, c-format
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"

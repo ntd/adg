@@ -28,6 +28,19 @@
  **/
 
 
+/**
+ * ADG_GTK_MODIFIERS:
+ *
+ * A GDK mask of the key/mouse modifiers accepted by the GTK+ widgets
+ * of the ADG library. This means the state of the specified modifiers
+ * is always checked: for example %GDK_CONTROL_MASK and %GDK_SHIFT_MASK
+ * are included, hence keeping %CTRL and %SHIFT pressed is different
+ * from keeping only %SHIFT pressed. %GDK_LOCK_MASK instead is not
+ * considered, so having it enabled or disabled does not make any
+ * difference while monitoring the status %SHIFT or %CTRL.
+ **/
+
+
 #include "adg-gtk-internal.h"
 #include "adg-gtk-utils.h"
 

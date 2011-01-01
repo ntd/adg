@@ -41,6 +41,7 @@
  * #AdgGtkArea:factor property.
  **/
 
+
 /**
  * AdgGtkArea:
  *
@@ -53,8 +54,8 @@
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
 
-#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_gtk_area_parent_class)
-#define _ADG_OLD_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_OBJECT_CLASS   ((GObjectClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_WIDGET_CLASS   ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
 G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
@@ -92,10 +93,12 @@ static gboolean         _adg_button_press_event (GtkWidget       *widget,
                                                  GdkEventButton  *event);
 static gboolean         _adg_motion_notify_event(GtkWidget       *widget,
                                                  GdkEventMotion  *event);
-static gboolean         _adg_get_local_map      (GtkWidget       *widget,
+static gboolean         _adg_get_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
                                                  AdgMatrix       *map,
                                                  AdgMatrix       *inverted);
-static void             _adg_set_local_map      (GtkWidget       *widget,
+static void             _adg_set_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
                                                  const AdgMatrix *map);
 
 static guint            _adg_signals[LAST_SIGNAL] = { 0 };
@@ -497,31 +500,28 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 static gboolean
 _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
-    AdgGtkAreaPrivate *data;
+    gboolean zoom_in, zoom_out, local_space, global_space;
     AdgMatrix map, inverted;
+    AdgGtkAreaPrivate *data;
+    double factor, x, y;
 
-    data = ((AdgGtkArea *) widget)->data;
+    zoom_in = event->direction == GDK_SCROLL_UP;
+    zoom_out = event->direction == GDK_SCROLL_DOWN;
+    local_space = (event->state & ADG_GTK_MODIFIERS) == 0;
+    global_space = (event->state & ADG_GTK_MODIFIERS) == GDK_SHIFT_MASK;
 
-    if ((event->direction == GDK_SCROLL_UP ||
-         event->direction == GDK_SCROLL_DOWN) &&
-        _adg_get_local_map(widget, &map, &inverted)) {
-        double factor, x, y;
-
-        if (event->direction == GDK_SCROLL_UP) {
-            factor = data->factor;
-        } else {
-            factor = 1. / data->factor;
-        }
-
+    if ((zoom_in || zoom_out) && (local_space || global_space) &&
+        _adg_get_map(widget, local_space, &map, &inverted)) {
+        data = ((AdgGtkArea *) widget)->data;
+        factor = zoom_in ? data->factor : 1. / data->factor;
         x = event->x;
         y = event->y;
 
         cairo_matrix_transform_point(&inverted, &x, &y);
-
         cairo_matrix_scale(&map, factor, factor);
         cairo_matrix_translate(&map, x/factor - x, y/factor - y);
 
-        _adg_set_local_map(widget, &map);
+        _adg_set_map(widget, local_space, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -538,6 +538,7 @@ _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) widget)->data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
+        /* Remember the starting coordinates of a (probable) translation */
         data->x_event = event->x;
         data->y_event = event->y;
     }
@@ -551,15 +552,18 @@ _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
 static gboolean
 _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
-    AdgGtkAreaPrivate *data;
+    gboolean translating, local_space, global_space;
     AdgMatrix map, inverted;
+    AdgGtkAreaPrivate *data;
+    double x, y;
 
-    data = ((AdgGtkArea *) widget)->data;
+    translating = (event->state & GDK_BUTTON2_MASK) == GDK_BUTTON2_MASK;
+    local_space = (event->state & ADG_GTK_MODIFIERS) == 0;
+    global_space = (event->state & ADG_GTK_MODIFIERS) == GDK_SHIFT_MASK;
 
-    if ((event->state & GDK_BUTTON2_MASK) > 0 &&
-        _adg_get_local_map(widget, &map, &inverted)) {
-        double x, y;
-
+    if (translating && (local_space || global_space) &&
+        _adg_get_map(widget, local_space, &map, &inverted)) {
+        data = ((AdgGtkArea *) widget)->data;
         x = event->x - data->x_event;
         y = event->y - data->y_event;
 
@@ -568,7 +572,7 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
         data->x_event = event->x;
         data->y_event = event->y;
 
-        _adg_set_local_map(widget, &map);
+        _adg_set_map(widget, local_space, &map);
 
         gtk_widget_queue_draw(widget);
     }
@@ -580,7 +584,8 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 }
 
 static gboolean
-_adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
+_adg_get_map(GtkWidget *widget, gboolean local_space,
+             AdgMatrix *map, AdgMatrix *inverted)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;
@@ -590,17 +595,22 @@ _adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
     if (entity == NULL)
         return FALSE;
 
-    adg_matrix_copy(map, adg_entity_get_local_map(entity));
+    if (local_space) {
+        adg_matrix_copy(map, adg_entity_get_local_map(entity));
 
-    /* The inverted map is subject to the global matrix */
-    adg_matrix_copy(inverted, adg_entity_get_global_matrix(entity));
-    adg_matrix_transform(inverted, map, ADG_TRANSFORM_BEFORE);
+        /* The inverted map is subject to the global matrix */
+        adg_matrix_copy(inverted, adg_entity_get_global_matrix(entity));
+        adg_matrix_transform(inverted, map, ADG_TRANSFORM_BEFORE);
+    } else {
+        adg_matrix_copy(map, adg_entity_get_global_map(entity));
+        adg_matrix_copy(inverted, map);
+    }
 
     return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;
 }
 
 static void
-_adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
+_adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;
@@ -608,6 +618,11 @@ _adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
     data = ((AdgGtkArea *) widget)->data;
     entity = (AdgEntity *) data->canvas;
 
-    if (entity)
+    if (entity == NULL)
+        return;
+
+    if (local_space)
         adg_entity_set_local_map(entity, map);
+    else
+        adg_entity_set_global_map(entity, map);
 }
