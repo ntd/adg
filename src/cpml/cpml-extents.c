@@ -85,6 +85,33 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
 }
 
 /**
+ * cpml_extents_equal:
+ * @extents: the first extents to compare
+ * @src: the second extents to compare
+ *
+ * Compares @extents to @src and returns 1 if the extents are equals.
+ * Two %NULL or undefined extents are considered equal.
+ *
+ * Returns: 1 if @extents is equal to @src, 0 otherwise
+ **/
+cairo_bool_t
+cpml_extents_equal(const CpmlExtents *extents, const CpmlExtents *src)
+{
+    if (extents == NULL && src == NULL)
+        return 1;
+
+    if (extents == NULL || src == NULL)
+        return 0;
+
+    if (!extents->is_defined && !src->is_defined)
+        return 1;
+
+    return extents->is_defined == src->is_defined &&
+           cpml_pair_equal(&extents->org,  &src->org) &&
+           cpml_pair_equal(&extents->size, &src->size) ? 1 : 0;
+}
+
+/**
  * cpml_extents_add:
  * @extents: the destination #CpmlExtents
  * @src: the extents to add

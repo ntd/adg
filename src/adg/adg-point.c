@@ -357,10 +357,10 @@ adg_point_invalidate(AdgPoint *point)
  * Compares @point1 and @point2 and returns %TRUE if the points are
  * equals. The comparison is made by matching also where the points
  * are bound. If you want to compare only the coordinates, use
- * adg_pair_equal() directly on their pairs:
+ * cpml_pair_equal() directly on their pairs:
  *
  * |[
- * adg_pair_equal(adg_point_get_pair(point1), adg_point_get_pair(point2));
+ * cpml_pair_equal(adg_point_get_pair(point1), adg_point_get_pair(point2));
  * ]|
  *
  * %NULL values are handled gracefully.
@@ -386,5 +386,5 @@ adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)
         return g_strcmp0(point1->name, point2->name) == 0;
 
     /* Handle points with explicit coordinates */
-    return adg_pair_equal(&point1->pair, &point2->pair);
+    return cpml_pair_equal(&point1->pair, &point2->pair);
 }

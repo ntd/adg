@@ -172,30 +172,30 @@ _adg_test_size(void)
     /* Using the public APIs */
     adg_canvas_set_size(canvas, &sample_size);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &sample_size));
+    g_assert(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size(canvas, NULL);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &sample_size));
+    g_assert(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size_explicit(canvas, 0, 0);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &null_size));
+    g_assert(cpml_pair_equal(size, &null_size));
 
     /* Using GObject property methods */
     g_object_set(canvas, "size", &sample_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_assert(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", NULL, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_assert(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", &null_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &null_size));
+    g_assert(cpml_pair_equal(size_dup, &null_size));
     g_free(size_dup);
 
     g_object_unref(canvas);

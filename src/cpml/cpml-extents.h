@@ -43,6 +43,8 @@ CpmlExtents *   cpml_extents_copy               (CpmlExtents       *extents,
 CpmlExtents *   cpml_extents_from_cairo_text    (CpmlExtents       *extents,
                                                  const cairo_text_extents_t
                                                                    *cairo_extents);
+cairo_bool_t    cpml_extents_equal              (const CpmlExtents *extents,
+                                                 const CpmlExtents *src);
 void            cpml_extents_add                (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
 void            cpml_extents_pair_add           (CpmlExtents       *extents,
