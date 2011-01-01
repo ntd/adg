@@ -61,6 +61,8 @@ GtkWidget *     adg_gtk_area_new_with_canvas    (AdgCanvas      *canvas);
 void            adg_gtk_area_set_canvas         (AdgGtkArea     *area,
                                                  AdgCanvas      *canvas);
 AdgCanvas *     adg_gtk_area_get_canvas         (AdgGtkArea     *area);
+const CpmlExtents *
+                adg_gtk_area_get_extents        (AdgGtkArea     *area);
 void            adg_gtk_area_set_factor         (AdgGtkArea     *area,
                                                  gdouble         factor);
 gdouble         adg_gtk_area_get_factor         (AdgGtkArea     *area);

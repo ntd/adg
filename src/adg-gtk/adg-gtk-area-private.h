@@ -32,6 +32,7 @@ struct _AdgGtkAreaPrivate {
     AdgCanvas    *canvas;
     gdouble       factor;
 
+    CpmlExtents   extents;
     gdouble       x_event, y_event;
     GtkAllocation src_allocation;
     gdouble       src_factor;

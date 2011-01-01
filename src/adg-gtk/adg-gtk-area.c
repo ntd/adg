@@ -100,6 +100,8 @@ static gboolean         _adg_get_map            (GtkWidget       *widget,
 static void             _adg_set_map            (GtkWidget       *widget,
                                                  gboolean         local_space,
                                                  const AdgMatrix *map);
+static const CpmlExtents *
+                        _adg_get_extents        (AdgGtkArea      *area);
 
 static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
@@ -311,6 +313,32 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
 }
 
 /**
+ * adg_gtk_area_get_extents:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the extents of the canvas bound to @area. The returned
+ * struct is owned by @area and should not modified or freed.
+ * This is a convenient function that gets the extents with
+ * adg_entity_get_extents() and add to it the margins of the
+ * canvas .
+ *
+ * If @area still does not have any canvas associated to it or
+ * the canvas is invalid or empty, %NULL is returned.
+ *
+ * The canvas will be updated, meaning the adg_entity_arrange()
+ * will be called before the extents computation.
+ *
+ * Returns: the extents of the @area canvas or %NULL on errors
+ **/
+const CpmlExtents *
+adg_gtk_area_get_extents(AdgGtkArea *area)
+{
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), NULL);
+
+    return _adg_get_extents(area);
+}
+
+/**
  * adg_gtk_area_set_factor:
  * @area: an #AdgGtkArea
  * @factor: the new zoom factor
@@ -351,32 +379,12 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
-    AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-    AdgEntity *entity;
-    const CpmlExtents *extents;
-    gdouble top, right, bottom, left;
+    const CpmlExtents *extents = _adg_get_extents((AdgGtkArea *) widget);
 
-    data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
-
-    if (canvas == NULL)
-        return;
-
-    entity = (AdgEntity *) canvas;
-    adg_entity_arrange(entity);
-    extents = adg_entity_get_extents(entity);
-
-    if (extents == NULL || !extents->is_defined)
-        return;
-
-    top = adg_canvas_get_top_margin(canvas);
-    right = adg_canvas_get_right_margin(canvas);
-    bottom = adg_canvas_get_bottom_margin(canvas);
-    left = adg_canvas_get_left_margin(canvas);
-
-    requisition->width = extents->size.x + left + right;
-    requisition->height = extents->size.y + top + bottom;
+    if (extents != NULL && extents->is_defined) {
+        requisition->width = extents->size.x;
+        requisition->height = extents->size.y;
+    }
 }
 
 /**
@@ -398,6 +406,7 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
+    AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
     AdgEntity *entity;
@@ -409,7 +418,8 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     if (_ADG_OLD_WIDGET_CLASS->size_allocate)
         _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
 
-    data = ((AdgGtkArea *) widget)->data;
+    area = (AdgGtkArea *) widget;
+    data = area->data;
     canvas = data->canvas;
 
     if (canvas == NULL)
@@ -426,34 +436,26 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 
     if (data->src_factor <= 0) {
         /* First allocation */
-        const CpmlExtents *extents = adg_entity_get_extents(entity);
-        gdouble top, right, bottom, left;
-        gdouble width, height;
+        const CpmlExtents *extents = _adg_get_extents(area);
 
         if (extents == NULL || !extents->is_defined)
             return;
 
-        top = adg_canvas_get_top_margin(canvas);
-        right = adg_canvas_get_right_margin(canvas);
-        bottom = adg_canvas_get_bottom_margin(canvas);
-        left = adg_canvas_get_left_margin(canvas);
-
-        width = extents->size.x + left + right;
-        height = extents->size.y + top + bottom;
-
-        if (width <= 0 || height <= 0)
+        if (extents->size.x <= 0 || extents->size.y <= 0)
             return;
 
-        ratio.x = (gdouble) allocation->width / width;
-        ratio.y = (gdouble) allocation->height / height;
+        ratio.x = (gdouble) allocation->width / extents->size.x;
+        ratio.y = (gdouble) allocation->height / extents->size.y;
         factor = MIN(ratio.x, ratio.y);
 
-        map.x0 = allocation->width - width * factor;
-        map.y0 = allocation->height - height * factor;
+        /* TODO: check the following formula, especially
+         * the final translation */
+        map.x0 = allocation->width - extents->size.x * factor;
+        map.y0 = allocation->height - extents->size.y * factor;
         map.x0 /= 2;
         map.y0 /= 2;
-        map.x0 += left;
-        map.y0 += top;
+        map.x0 -= extents->org.x;
+        map.y0 -= extents->org.y;
 
         *src_allocation = *allocation;
         src_allocation->x = map.x0;
@@ -625,4 +627,43 @@ _adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
         adg_entity_set_local_map(entity, map);
     else
         adg_entity_set_global_map(entity, map);
+}
+
+static const CpmlExtents *
+_adg_get_extents(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+    AdgCanvas *canvas;
+    AdgEntity *entity;
+    const CpmlExtents *extents;
+    gdouble top, right, bottom, left;
+
+    data = area->data;
+    data->extents.is_defined = FALSE;
+
+    canvas = data->canvas;
+    if (!ADG_IS_CANVAS(canvas))
+        return NULL;
+
+    entity = (AdgEntity *) canvas;
+
+    adg_entity_arrange(entity);
+
+    extents = adg_entity_get_extents(entity);
+    if (extents == NULL || !extents->is_defined)
+        return NULL;
+
+    top = adg_canvas_get_top_margin(canvas);
+    right = adg_canvas_get_right_margin(canvas);
+    bottom = adg_canvas_get_bottom_margin(canvas);
+    left = adg_canvas_get_left_margin(canvas);
+
+    data->extents = *extents;
+    data->extents.org.x -= left;
+    data->extents.org.y -= top;
+    data->extents.size.x += left + right;
+    data->extents.size.y += top + bottom;
+    data->extents.is_defined = TRUE;
+
+    return &data->extents;
 }
