@@ -53,6 +53,7 @@
 #include "adg-gtk-internal.h"
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
+#include "adg-gtk-marshal.h"
 
 #define _ADG_OLD_OBJECT_CLASS   ((GObjectClass *) adg_gtk_area_parent_class)
 #define _ADG_OLD_WIDGET_CLASS   ((GtkWidgetClass *) adg_gtk_area_parent_class)
@@ -68,6 +69,7 @@ enum {
 
 enum {
     CANVAS_CHANGED,
+    EXTENTS_CHANGED,
     LAST_SIGNAL
 };
 
@@ -146,16 +148,36 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     /**
      * AdgGtkArea::canvas-changed:
      * @area: an #AdgGtkArea
+     * @old_canvas: the old #AdgCanvas object
      *
-     * Emitted when the #AdgGtkArea has a new canvas.
+     * Emitted when the #AdgGtkArea has a new canvas. If the new canvas
+     * is the same as the old one, the signal is not emitted.
      **/
     _adg_signals[CANVAS_CHANGED] =
         g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
                      NULL, NULL,
-                     g_cclosure_marshal_VOID__VOID,
-                     G_TYPE_NONE, 0);
+                     adg_gtk_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1, ADG_TYPE_CANVAS);
+
+    /**
+     * AdgGtkArea::extents-changed:
+     * @area: an #AdgGtkArea
+     * @old_extents: the old #CpmlExtents struct
+     *
+     * Emitted when the extents of @area have been changed.
+     * The old extents are always compared to the new ones,
+     * so when the extents are recalculated but the result
+     * is the same the signal is not emitted.
+     **/
+    _adg_signals[EXTENTS_CHANGED] =
+        g_signal_new("extents-changed", ADG_GTK_TYPE_AREA,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgGtkAreaClass, extents_changed),
+                     NULL, NULL,
+                     adg_gtk_marshal_VOID__POINTER,
+                     G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 static void
@@ -232,8 +254,10 @@ _adg_set_property(GObject *object, guint prop_id,
             g_object_ref(canvas);
         if (data->canvas)
             g_object_unref(data->canvas);
-        data->canvas = canvas;
-        g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
+        if (data->canvas != canvas) {
+            data->canvas = canvas;
+            g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
+        }
         break;
     case PROP_FACTOR:
         data->factor = g_value_get_double(value);
@@ -373,6 +397,36 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
 
     data = area->data;
     return data->factor;
+}
+
+/**
+ * adg_gtk_area_canvas_changed:
+ * @area: an #AdgGtkArea
+ * @canvas: the old canvas bound to @area
+ *
+ * Emits the #AdgGtkArea::canvas-changed signal on @area.
+ **/
+void
+adg_gtk_area_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+
+    g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
+}
+
+/**
+ * adg_gtk_area_extents_changed:
+ * @area: an #AdgGtkArea
+ * @old_extents: the old extents of @area
+ *
+ * Emits the #AdgGtkArea::extents-changed signal on @area.
+ **/
+void
+adg_gtk_area_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+
+    g_signal_emit(area, _adg_signals[EXTENTS_CHANGED], 0, old_extents);
 }
 
 
@@ -627,6 +681,8 @@ _adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
         adg_entity_set_local_map(entity, map);
     else
         adg_entity_set_global_map(entity, map);
+
+    _adg_get_extents((AdgGtkArea *) widget);
 }
 
 static const CpmlExtents *
@@ -634,36 +690,41 @@ _adg_get_extents(AdgGtkArea *area)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
-    AdgEntity *entity;
-    const CpmlExtents *extents;
+    CpmlExtents old_extents;
     gdouble top, right, bottom, left;
 
     data = area->data;
+    old_extents = data->extents;
     data->extents.is_defined = FALSE;
 
     canvas = data->canvas;
-    if (!ADG_IS_CANVAS(canvas))
-        return NULL;
 
-    entity = (AdgEntity *) canvas;
+    if (ADG_IS_CANVAS(canvas)) {
+        const CpmlExtents *extents;
+        AdgEntity *entity;
 
-    adg_entity_arrange(entity);
+        entity = (AdgEntity *) canvas;
 
-    extents = adg_entity_get_extents(entity);
-    if (extents == NULL || !extents->is_defined)
-        return NULL;
+        adg_entity_arrange(entity);
 
-    top = adg_canvas_get_top_margin(canvas);
-    right = adg_canvas_get_right_margin(canvas);
-    bottom = adg_canvas_get_bottom_margin(canvas);
-    left = adg_canvas_get_left_margin(canvas);
+        extents = adg_entity_get_extents(entity);
+        if (extents != NULL && extents->is_defined) {
+            top = adg_canvas_get_top_margin(canvas);
+            right = adg_canvas_get_right_margin(canvas);
+            bottom = adg_canvas_get_bottom_margin(canvas);
+            left = adg_canvas_get_left_margin(canvas);
 
-    data->extents = *extents;
-    data->extents.org.x -= left;
-    data->extents.org.y -= top;
-    data->extents.size.x += left + right;
-    data->extents.size.y += top + bottom;
-    data->extents.is_defined = TRUE;
+            data->extents = *extents;
+            data->extents.org.x -= left;
+            data->extents.org.y -= top;
+            data->extents.size.x += left + right;
+            data->extents.size.y += top + bottom;
+            data->extents.is_defined = TRUE;
+        }
+    }
+
+    if (!cpml_extents_equal(&data->extents, &old_extents))
+        g_signal_emit(area, _adg_signals[EXTENTS_CHANGED], 0, &old_extents);
 
     return &data->extents;
 }

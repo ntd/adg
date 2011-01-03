@@ -51,6 +51,9 @@ struct _AdgGtkAreaClass {
     /*< public >*/
     /* Virtual Table */
     void                (*canvas_changed)       (AdgGtkArea     *area);
+    void                (*extents_changed)      (AdgGtkArea     *area,
+                                                 const CpmlExtents
+                                                                *old_extents);
 };
 
 
@@ -66,6 +69,11 @@ const CpmlExtents *
 void            adg_gtk_area_set_factor         (AdgGtkArea     *area,
                                                  gdouble         factor);
 gdouble         adg_gtk_area_get_factor         (AdgGtkArea     *area);
+void            adg_gtk_area_canvas_changed     (AdgGtkArea     *area,
+                                                 AdgCanvas      *old_canvas);
+void            adg_gtk_area_extents_changed    (AdgGtkArea     *area,
+                                                 const CpmlExtents
+                                                                *old_extents);
 
 G_END_DECLS
 
