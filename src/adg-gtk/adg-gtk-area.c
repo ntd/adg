@@ -201,7 +201,7 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->x_event = 0;
     data->y_event = 0;
-    data->src_factor = 0;
+    data->initial_zoom = 0;
 
     area->data = data;
 
@@ -378,6 +378,27 @@ adg_gtk_area_get_extents(AdgGtkArea *area)
 }
 
 /**
+ * adg_gtk_area_get_zoom:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the current zoom factor applied on the canvas of @area.
+ * If the #AdgGtkArea:autozoom property is %FALSE, the value
+ * returned is always %1.
+ *
+ * Returns: the current zoom factor
+ **/
+gdouble
+adg_gtk_area_get_zoom(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->zoom;
+}
+
+/**
  * adg_gtk_area_set_factor:
  * @area: an #AdgGtkArea
  * @factor: the new zoom factor
@@ -516,9 +537,11 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
     AdgEntity *entity;
-    GtkAllocation *src_allocation;
+    CpmlVector *initial_size;
+    CpmlVector size;
+    gdouble top, right, bottom, left;
+    gdouble vmargins, hmargins;
     AdgPair ratio;
-    gdouble factor;
     AdgMatrix map;
 
     if (_ADG_OLD_WIDGET_CLASS->size_allocate)
@@ -526,26 +549,32 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 
     area = (AdgGtkArea *) widget;
     data = area->data;
-
-    if (!data->autozoom)
-        return;
-
     canvas = data->canvas;
 
     if (canvas == NULL)
         return;
 
+    top = adg_canvas_get_top_margin(canvas);
+    right = adg_canvas_get_right_margin(canvas);
+    bottom = adg_canvas_get_bottom_margin(canvas);
+    left = adg_canvas_get_left_margin(canvas);
+    vmargins = top + bottom;
+    hmargins = left + right;
+
     /* Check if the allocated space is enough:
      * if not, there is not much we can do... */
-    g_return_if_fail(allocation->width > 0 && allocation->height > 0);
+    g_return_if_fail(allocation->width > hmargins);
+    g_return_if_fail(allocation->height > vmargins);
 
     entity = (AdgEntity *) canvas;
-    src_allocation = &data->src_allocation;
+    initial_size = &data->initial_size;
+    size.x = allocation->width - hmargins;
+    size.y = allocation->height - vmargins;
 
     adg_matrix_copy(&map, adg_entity_get_global_map(entity));
 
-    if (data->src_factor <= 0) {
-        /* First allocation */
+    if (data->initial_zoom <= 0) {
+        /* First call: register the initial size and zoom */
         const CpmlExtents *extents = _adg_get_extents(area);
 
         if (extents == NULL || !extents->is_defined)
@@ -554,37 +583,20 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
         if (extents->size.x <= 0 || extents->size.y <= 0)
             return;
 
-        ratio.x = (gdouble) allocation->width / extents->size.x;
-        ratio.y = (gdouble) allocation->height / extents->size.y;
-        factor = MIN(ratio.x, ratio.y);
-
-        /* TODO: check the following formula, especially
-         * the final translation */
-        map.x0 = allocation->width - extents->size.x * factor;
-        map.y0 = allocation->height - extents->size.y * factor;
-        map.x0 /= 2;
-        map.y0 /= 2;
-        map.x0 -= extents->org.x;
-        map.y0 -= extents->org.y;
-
-        *src_allocation = *allocation;
-        src_allocation->x = map.x0;
-        src_allocation->y = map.y0;
-        data->src_factor = factor;
-    } else {
-        /* Scaling with reference to the first allocation */
-        ratio.x = data->src_factor * allocation->width / src_allocation->width;
-        ratio.y = data->src_factor * allocation->height / src_allocation->height;
-
-        factor = MIN(ratio.x, ratio.y);
-
-        map.x0 = src_allocation->x * factor +
-            (allocation->width - src_allocation->width * factor) / 2;
-        map.y0 = src_allocation->y * factor +
-            (allocation->height - src_allocation->height * factor) / 2;
+        *initial_size = size;
+        data->initial_zoom = 1;
     }
 
-    map.xx = map.yy = factor;
+    if (data->autozoom) {
+        /* Adjust the zoom according to the initial size */
+        ratio.x = data->initial_zoom * size.x / initial_size->x;
+        ratio.y = data->initial_zoom * size.y / initial_size->y;
+        data->zoom = MIN(ratio.x, ratio.y);
+    }
+
+    map.x0 = (size.x - initial_size->x * data->zoom) / 2;
+    map.y0 = (size.y - initial_size->y * data->zoom) / 2;
+    map.xx = map.yy = data->zoom;
     adg_entity_set_global_map(entity, &map);
 }
 
@@ -599,6 +611,9 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 
     if (canvas && event->window) {
         cairo_t *cr = gdk_cairo_create(event->window);
+        cairo_translate(cr,
+                        adg_canvas_get_left_margin(canvas),
+                        adg_canvas_get_top_margin(canvas));
         adg_entity_render((AdgEntity *) canvas, cr);
         cairo_destroy(cr);
     }
