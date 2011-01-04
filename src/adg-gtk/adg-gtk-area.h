@@ -69,6 +69,9 @@ const CpmlExtents *
 void            adg_gtk_area_set_factor         (AdgGtkArea     *area,
                                                  gdouble         factor);
 gdouble         adg_gtk_area_get_factor         (AdgGtkArea     *area);
+void            adg_gtk_area_switch_autozoom    (AdgGtkArea     *area,
+                                                 gboolean        state);
+gboolean        adg_gtk_area_has_autozoom       (AdgGtkArea     *area);
 void            adg_gtk_area_canvas_changed     (AdgGtkArea     *area,
                                                  AdgCanvas      *old_canvas);
 void            adg_gtk_area_extents_changed    (AdgGtkArea     *area,

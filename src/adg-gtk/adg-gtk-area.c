@@ -64,7 +64,8 @@ G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
 enum {
     PROP_0,
     PROP_CANVAS,
-    PROP_FACTOR
+    PROP_FACTOR,
+    PROP_AUTOZOOM
 };
 
 enum {
@@ -145,6 +146,13 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
+    param = g_param_spec_boolean("autozoom",
+                                 P_("Autozoom"),
+                                 P_("When enabled, automatically adjust the zoom factor in global space at every size allocation"),
+                                 FALSE,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_AUTOZOOM, param);
+
     /**
      * AdgGtkArea::canvas-changed:
      * @area: an #AdgGtkArea
@@ -189,6 +197,7 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->canvas = NULL;
     data->factor = 1.05;
+    data->autozoom = FALSE;
 
     data->x_event = 0;
     data->y_event = 0;
@@ -230,6 +239,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_FACTOR:
         g_value_set_double(value, data->factor);
         break;
+    case PROP_AUTOZOOM:
+        g_value_set_boolean(value, data->autozoom);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -261,6 +273,9 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_FACTOR:
         data->factor = g_value_get_double(value);
+        break;
+    case PROP_AUTOZOOM:
+        data->autozoom = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -400,6 +415,44 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
 }
 
 /**
+ * adg_gtk_area_switch_autozoom:
+ * @area: an #AdgGtkArea
+ * @state: the new autozoom state
+ *
+ * Sets the #AdgGtkArea:autozoom property of @area to @state. When the
+ * autozoom feature is enabled, @area reacts to any size allocation
+ * by adjusting its zoom factor in global space. This means the
+ * drawing will fill the available space (keeping its aspect ratio)
+ * when resizing the window.
+ **/
+void
+adg_gtk_area_switch_autozoom(AdgGtkArea *area, gboolean state)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set(area, "autozoom", state, NULL);
+}
+
+/**
+ * adg_gtk_area_has_autozoom:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the current state of the #AdgGtkArea:autozoom property on
+ * the @area object.
+ *
+ * Returns: the current autozoom state
+ **/
+gboolean
+adg_gtk_area_has_autozoom(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), FALSE);
+
+    data = area->data;
+    return data->autozoom;
+}
+
+/**
  * adg_gtk_area_canvas_changed:
  * @area: an #AdgGtkArea
  * @canvas: the old canvas bound to @area
@@ -473,13 +526,17 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 
     area = (AdgGtkArea *) widget;
     data = area->data;
+
+    if (!data->autozoom)
+        return;
+
     canvas = data->canvas;
 
     if (canvas == NULL)
         return;
 
     /* Check if the allocated space is enough:
-     * if not, there is no much we can do... */
+     * if not, there is not much we can do... */
     g_return_if_fail(allocation->width > 0 && allocation->height > 0);
 
     entity = (AdgEntity *) canvas;

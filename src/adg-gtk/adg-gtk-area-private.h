@@ -31,6 +31,7 @@ typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
 struct _AdgGtkAreaPrivate {
     AdgCanvas    *canvas;
     gdouble       factor;
+    gboolean      autozoom;
 
     CpmlExtents   extents;
     gdouble       x_event, y_event;

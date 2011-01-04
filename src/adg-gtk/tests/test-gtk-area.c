@@ -114,6 +114,44 @@ _adg_test_factor(void)
     g_object_unref(area);
 }
 
+static void
+_adg_test_autozoom(void)
+{
+    AdgGtkArea *area;
+    gboolean invalid_boolean;
+    gboolean has_autozoom;
+
+    area = (AdgGtkArea *) adg_gtk_area_new();
+    invalid_boolean = (gboolean) 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_switch_autozoom(area, FALSE);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(!has_autozoom);
+
+    adg_gtk_area_switch_autozoom(area, invalid_boolean);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(!has_autozoom);
+
+    adg_gtk_area_switch_autozoom(area, TRUE);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(has_autozoom);
+
+    /* Using GObject property methods */
+    g_object_set(area, "autozoom", invalid_boolean, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(has_autozoom);
+
+    g_object_set(area, "autozoom", FALSE, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(!has_autozoom);
+
+    g_object_set(area, "autozoom", TRUE, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(has_autozoom);
+
+    g_object_unref(area);
+}
 
 int
 main(int argc, char *argv[])
@@ -122,6 +160,7 @@ main(int argc, char *argv[])
 
     adg_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
     adg_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
+    adg_test_add_func("/adg/gtk/area/autozoom", _adg_test_autozoom);
 
     return g_test_run();
 }
