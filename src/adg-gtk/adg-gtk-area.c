@@ -448,14 +448,13 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
  *
  * Scales the drawing according to the new allocation.
  *
- * The current implementation translates the drawing as a user would
- * expect: keep the point in the center of the #AdgCanvas at the
- * center of the new #AdgGtkArea.
- *
- * The scaling is not that easy, though. The drawing is scaled up to
- * the edges of the widget. Anyway, if the model matrix changes (that is,
- * if the model is translated or scaled), the algorithm behaves as if
- * the model matrix was not changed.
+ * TODO: the current implementation keeps the point in the center
+ * of the #AdgCanvas at the center of the new #AdgGtkArea. This is
+ * not what a user would likely expect because all the eventual
+ * translations in global space will be lost. In other words the
+ * resulting drawing is always centered also when the original
+ * drawing (that is, the drawing before the new size allocation)
+ * was not.
  **/
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
