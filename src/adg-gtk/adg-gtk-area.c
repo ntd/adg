@@ -141,14 +141,14 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
 
     param = g_param_spec_double("factor",
                                 P_("Factor"),
-                                P_("The factor used in zooming in and out"),
+                                P_("The factor to use while zooming in and out (usually with the mouse wheel)"),
                                 1., G_MAXDOUBLE, 1.05,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
     param = g_param_spec_boolean("autozoom",
                                  P_("Autozoom"),
-                                 P_("When enabled, automatically adjust the zoom factor in global space at every size allocation"),
+                                 P_("When enabled, automatically adjust the zoom in global space at every size allocation"),
                                  FALSE,
                                  G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_AUTOZOOM, param);
@@ -201,7 +201,6 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->x_event = 0;
     data->y_event = 0;
-    data->initial_zoom = 0;
 
     area->data = data;
 
@@ -357,15 +356,15 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
  *
  * Gets the extents of the canvas bound to @area. The returned
  * struct is owned by @area and should not modified or freed.
- * This is a convenient function that gets the extents with
- * adg_entity_get_extents() and add to it the margins of the
- * canvas .
+ * This is a convenient function that gets the extents of the
+ * canvas bound to @area with adg_entity_get_extents().
  *
  * If @area still does not have any canvas associated to it or
- * the canvas is invalid or empty, %NULL is returned.
+ * the canvas is invalid or empty, an undefined #CpmlExtents
+ * struct will be returned.
  *
- * The canvas will be updated, meaning the adg_entity_arrange()
- * will be called before the extents computation.
+ * The canvas will be updated before, meaning adg_entity_arrange()
+ * is called before the extents computation.
  *
  * Returns: the extents of the @area canvas or %NULL on errors
  **/
@@ -381,11 +380,11 @@ adg_gtk_area_get_extents(AdgGtkArea *area)
  * adg_gtk_area_get_zoom:
  * @area: an #AdgGtkArea
  *
- * Gets the current zoom factor applied on the canvas of @area.
+ * Gets the last zoom coefficient applied on the canvas of @area.
  * If the #AdgGtkArea:autozoom property is %FALSE, the value
- * returned is always %1.
+ * returned should be always %1.
  *
- * Returns: the current zoom factor
+ * Returns: the current zoom coefficient
  **/
 gdouble
 adg_gtk_area_get_zoom(AdgGtkArea *area)
@@ -420,7 +419,7 @@ adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
  * Gets the zoom factor associated to @area. The zoom factor is
  * directly used to zoom in (that is, the default zoom factor of
  * 1.05 will zoom of 5% every iteration) and it is reversed while
- * zooming out (that is, the default factor will use 1/1.05).
+ * zooming out (that is, the default factor will be 1/1.05).
  *
  * Returns: the requested zoom factor or 0 on error
  **/
@@ -442,7 +441,7 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
  *
  * Sets the #AdgGtkArea:autozoom property of @area to @state. When the
  * autozoom feature is enabled, @area reacts to any size allocation
- * by adjusting its zoom factor in global space. This means the
+ * by adjusting its zoom coefficient in global space. This means the
  * drawing will fill the available space (keeping its aspect ratio)
  * when resizing the window.
  **/
@@ -507,11 +506,26 @@ adg_gtk_area_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
-    const CpmlExtents *extents = _adg_get_extents((AdgGtkArea *) widget);
+    AdgGtkArea *area;
+    const CpmlExtents *extents;
 
-    if (extents != NULL && extents->is_defined) {
-        requisition->width = extents->size.x;
-        requisition->height = extents->size.y;
+    area = (AdgGtkArea *) widget;
+    extents = _adg_get_extents(area);
+
+    if (extents->is_defined) {
+        AdgGtkAreaPrivate *data;
+        AdgCanvas *canvas;
+        gdouble top, right, bottom, left;
+
+        data = area->data;
+        canvas = data->canvas;
+        top = adg_canvas_get_top_margin(canvas);
+        right = adg_canvas_get_right_margin(canvas);
+        bottom = adg_canvas_get_bottom_margin(canvas);
+        left = adg_canvas_get_left_margin(canvas);
+
+        requisition->width = extents->size.x + left + right;
+        requisition->height = extents->size.y + top + bottom;
     }
 }
 
@@ -536,11 +550,11 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
-    AdgEntity *entity;
-    CpmlVector *initial_size;
-    CpmlVector size;
+    const CpmlExtents *extents;
     gdouble top, right, bottom, left;
     gdouble vmargins, hmargins;
+    AdgEntity *entity;
+    CpmlVector size;
     AdgPair ratio;
     AdgMatrix map;
 
@@ -549,9 +563,13 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 
     area = (AdgGtkArea *) widget;
     data = area->data;
-    canvas = data->canvas;
 
+    canvas = data->canvas;
     if (canvas == NULL)
+        return;
+
+    extents = _adg_get_extents(area);
+    if (!extents->is_defined || extents->size.x <= 0 || extents->size.y <= 0)
         return;
 
     top = adg_canvas_get_top_margin(canvas);
@@ -567,36 +585,27 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     g_return_if_fail(allocation->height > vmargins);
 
     entity = (AdgEntity *) canvas;
-    initial_size = &data->initial_size;
     size.x = allocation->width - hmargins;
     size.y = allocation->height - vmargins;
 
+    if (data->autozoom) {
+        /* Adjust the zoom according to the allocation and drawing size */
+        ratio.x = size.x / extents->size.x;
+        ratio.y = size.y / extents->size.y;
+        data->zoom = MIN(ratio.x, ratio.y);
+    } else {
+        /* Zoom default value */
+        data->zoom = 1;
+    }
+
     adg_matrix_copy(&map, adg_entity_get_global_map(entity));
 
-    if (data->initial_zoom <= 0) {
-        /* First call: register the initial size and zoom */
-        const CpmlExtents *extents = _adg_get_extents(area);
+    /* TODO: plan different attachment policies other than centering */
+    map.x0 = (size.x - extents->size.x * data->zoom) / 2;
+    map.y0 = (size.y - extents->size.y * data->zoom) / 2;
 
-        if (extents == NULL || !extents->is_defined)
-            return;
-
-        if (extents->size.x <= 0 || extents->size.y <= 0)
-            return;
-
-        *initial_size = size;
-        data->initial_zoom = 1;
-    }
-
-    if (data->autozoom) {
-        /* Adjust the zoom according to the initial size */
-        ratio.x = data->initial_zoom * size.x / initial_size->x;
-        ratio.y = data->initial_zoom * size.y / initial_size->y;
-        data->zoom = MIN(ratio.x, ratio.y);
-    }
-
-    map.x0 = (size.x - initial_size->x * data->zoom) / 2;
-    map.y0 = (size.y - initial_size->y * data->zoom) / 2;
-    map.xx = map.yy = data->zoom;
+    map.xx *= data->zoom;
+    map.yy *= data->zoom;
     adg_entity_set_global_map(entity, &map);
 }
 
@@ -762,12 +771,10 @@ _adg_get_extents(AdgGtkArea *area)
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
     CpmlExtents old_extents;
-    gdouble top, right, bottom, left;
 
     data = area->data;
     old_extents = data->extents;
     data->extents.is_defined = FALSE;
-
     canvas = data->canvas;
 
     if (ADG_IS_CANVAS(canvas)) {
@@ -777,21 +784,10 @@ _adg_get_extents(AdgGtkArea *area)
         entity = (AdgEntity *) canvas;
 
         adg_entity_arrange(entity);
-
         extents = adg_entity_get_extents(entity);
-        if (extents != NULL && extents->is_defined) {
-            top = adg_canvas_get_top_margin(canvas);
-            right = adg_canvas_get_right_margin(canvas);
-            bottom = adg_canvas_get_bottom_margin(canvas);
-            left = adg_canvas_get_left_margin(canvas);
 
+        if (extents != NULL)
             data->extents = *extents;
-            data->extents.org.x -= left;
-            data->extents.org.y -= top;
-            data->extents.size.x += left + right;
-            data->extents.size.y += top + bottom;
-            data->extents.is_defined = TRUE;
-        }
     }
 
     if (!cpml_extents_equal(&data->extents, &old_extents))
