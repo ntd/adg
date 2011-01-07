@@ -94,6 +94,8 @@ void            adg_canvas_set_margins          (AdgCanvas      *canvas,
                                                  gdouble         right,
                                                  gdouble         bottom,
                                                  gdouble         left);
+void            adg_canvas_apply_margins        (AdgCanvas      *canvas,
+                                                 CpmlExtents    *extents);
 void            adg_canvas_switch_frame         (AdgCanvas      *canvas,
                                                  gboolean        new_state);
 gboolean        adg_canvas_has_frame            (AdgCanvas      *canvas);
