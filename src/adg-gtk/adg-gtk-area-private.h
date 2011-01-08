@@ -32,12 +32,11 @@ struct _AdgGtkAreaPrivate {
     AdgCanvas   *canvas;
     gdouble      factor;
     gboolean     autozoom;
+    AdgMatrix    render_map;
 
+    gboolean     initialized;
     CpmlExtents  extents;
     gdouble      x_event, y_event;
-    CpmlVector   initial_size;
-    gdouble      initial_zoom;
-    gdouble      zoom;
 };
 
 G_END_DECLS

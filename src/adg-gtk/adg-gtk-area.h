@@ -60,24 +60,31 @@ struct _AdgGtkAreaClass {
 GType           adg_gtk_area_get_type           (void) G_GNUC_CONST;
 
 GtkWidget *     adg_gtk_area_new                (void);
-GtkWidget *     adg_gtk_area_new_with_canvas    (AdgCanvas      *canvas);
-void            adg_gtk_area_set_canvas         (AdgGtkArea     *area,
-                                                 AdgCanvas      *canvas);
-AdgCanvas *     adg_gtk_area_get_canvas         (AdgGtkArea     *area);
+GtkWidget *     adg_gtk_area_new_with_canvas    (AdgCanvas       *canvas);
+void            adg_gtk_area_set_canvas         (AdgGtkArea      *area,
+                                                 AdgCanvas       *canvas);
+AdgCanvas *     adg_gtk_area_get_canvas         (AdgGtkArea      *area);
 const CpmlExtents *
-                adg_gtk_area_get_extents        (AdgGtkArea     *area);
-gdouble         adg_gtk_area_get_zoom           (AdgGtkArea     *area);
-void            adg_gtk_area_set_factor         (AdgGtkArea     *area,
-                                                 gdouble         factor);
-gdouble         adg_gtk_area_get_factor         (AdgGtkArea     *area);
-void            adg_gtk_area_switch_autozoom    (AdgGtkArea     *area,
-                                                 gboolean        state);
-gboolean        adg_gtk_area_has_autozoom       (AdgGtkArea     *area);
-void            adg_gtk_area_canvas_changed     (AdgGtkArea     *area,
-                                                 AdgCanvas      *old_canvas);
-void            adg_gtk_area_extents_changed    (AdgGtkArea     *area,
+                adg_gtk_area_get_extents        (AdgGtkArea      *area);
+gdouble         adg_gtk_area_get_zoom           (AdgGtkArea      *area);
+void            adg_gtk_area_set_factor         (AdgGtkArea      *area,
+                                                 gdouble          factor);
+gdouble         adg_gtk_area_get_factor         (AdgGtkArea      *area);
+void            adg_gtk_area_switch_autozoom    (AdgGtkArea      *area,
+                                                 gboolean         state);
+gboolean        adg_gtk_area_has_autozoom       (AdgGtkArea      *area);
+void            adg_gtk_area_canvas_changed     (AdgGtkArea      *area,
+                                                 AdgCanvas       *old_canvas);
+void            adg_gtk_area_set_render_map     (AdgGtkArea      *area,
+                                                 const AdgMatrix *map);
+void            adg_gtk_area_transform_render_map
+                                                (AdgGtkArea      *area,
+                                                 const AdgMatrix *transformation,
+                                                 AdgTransformMode mode);
+const AdgMatrix*adg_gtk_area_get_render_map     (AdgGtkArea      *area);
+void            adg_gtk_area_extents_changed    (AdgGtkArea      *area,
                                                  const CpmlExtents
-                                                                *old_extents);
+                                                                 *old_extents);
 
 G_END_DECLS
 
