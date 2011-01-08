@@ -50,7 +50,8 @@ struct _AdgGtkAreaClass {
     GtkDrawingAreaClass  parent_class;
     /*< public >*/
     /* Virtual Table */
-    void                (*canvas_changed)       (AdgGtkArea     *area);
+    void                (*canvas_changed)       (AdgGtkArea     *area,
+                                                 AdgCanvas      *old_canvas);
     void                (*extents_changed)      (AdgGtkArea     *area,
                                                  const CpmlExtents
                                                                 *old_extents);

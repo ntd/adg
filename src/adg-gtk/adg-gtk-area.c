@@ -110,6 +110,8 @@ static gboolean         _adg_get_map            (GtkWidget       *widget,
 static void             _adg_set_map            (GtkWidget       *widget,
                                                  gboolean         local_space,
                                                  const AdgMatrix *map);
+static void             _adg_canvas_changed     (AdgGtkArea      *area,
+                                                 AdgCanvas       *old_canvas);
 static const CpmlExtents *
                         _adg_get_extents        (AdgGtkArea      *area);
 
@@ -138,6 +140,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     widget_class->scroll_event = _adg_scroll_event;
     widget_class->button_press_event = _adg_button_press_event;
     widget_class->motion_notify_event = _adg_motion_notify_event;
+
+    klass->canvas_changed = _adg_canvas_changed;
 
     param = g_param_spec_object("canvas",
                                 P_("Canvas"),
@@ -276,22 +280,22 @@ _adg_set_property(GObject *object, guint prop_id,
 {
     AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
+    AdgCanvas *new_canvas, *old_canvas;
 
     area = (AdgGtkArea *) object;
     data = area->data;
 
     switch (prop_id) {
     case PROP_CANVAS:
-        canvas = g_value_get_object(value);
-        if (canvas)
-            g_object_ref(canvas);
-        if (data->canvas)
-            g_object_unref(data->canvas);
-        if (data->canvas != canvas) {
-            data->canvas = canvas;
-            data->initialized = FALSE;
-            g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
+        new_canvas = g_value_get_object(value);
+        old_canvas = data->canvas;
+        if (new_canvas != old_canvas) {
+            if (new_canvas != NULL)
+                g_object_ref(new_canvas);
+            if (old_canvas != NULL)
+                g_object_unref(old_canvas);
+            data->canvas = new_canvas;
+            g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
         }
         break;
     case PROP_FACTOR:
@@ -683,7 +687,6 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
                                     (size.x - sheet->size.x) / 2 - sheet->org.x,
                                     (size.y - sheet->size.y) / 2 - sheet->org.y);
         data->initialized = TRUE;
-    } else {
     }
 
     /* TODO: plan other reference points other than left/top (x0, y0) */
@@ -856,6 +859,13 @@ _adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
 
     /* This will emit the extents-changed signal when applicable */
     _adg_get_extents((AdgGtkArea *) widget);
+}
+
+static void
+_adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
+{
+    AdgGtkAreaPrivate *data = area->data;
+    data->initialized = FALSE;
 }
 
 static const CpmlExtents *
