@@ -18,14 +18,22 @@
  */
 
 
-#ifndef __ADG_GTK_H__
-#define __ADG_GTK_H__
+#ifndef __ADG_GTK_LAYOUT_PRIVATE_H__
+#define __ADG_GTK_LAYOUT_PRIVATE_H__
 
-#include <adg.h>
-#include <gtk/gtk.h>
 
-#include "adg-gtk/adg-gtk-utils.h"
-#include "adg-gtk/adg-gtk-area.h"
-#include "adg-gtk/adg-gtk-layout.h"
+G_BEGIN_DECLS
 
-#endif /* __ADG_GTK_H__ */
+typedef struct _AdgGtkLayoutPrivate AdgGtkLayoutPrivate;
+
+struct _AdgGtkLayoutPrivate {
+    GtkAdjustment       *hadjustment;
+    GtkAdjustment       *vadjustment;
+
+    CpmlExtents          viewport;
+};
+
+G_END_DECLS
+
+
+#endif /* __ADG_GTK_LAYOUT_PRIVATE_H__ */

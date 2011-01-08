@@ -12,9 +12,17 @@
       <object class="GtkVBox" id="mainBox">
         <property name="visible">True</property>
         <child>
-          <object class="AdgGtkArea" id="mainCanvas">
+          <object class="GtkScrolledWindow" id="scrollCanvas">
             <property name="visible">True</property>
-            <property name="autozoom">True</property>
+            <property name="hscrollbar-policy">automatic</property>
+            <property name="vscrollbar-policy">automatic</property>
+            <property name="width-request">800</property>
+            <property name="height-request">400</property>
+            <child>
+              <object class="AdgGtkLayout" id="mainCanvas">
+                <property name="visible">True</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="position">0</property>

@@ -5,12 +5,15 @@ SUBDIRS=			tests
 
 # file groups
 h_sources=			adg-gtk-area.h \
+				adg-gtk-layout.h \
 				adg-gtk-utils.h
 built_h_sources=
 private_h_sources=		adg-gtk-area-private.h \
-				adg-gtk-internal.h
+				adg-gtk-internal.h \
+				adg-gtk-layout-private.h
 built_private_h_sources=	adg-gtk-marshal.h
 c_sources=			adg-gtk-area.c \
+				adg-gtk-layout.c \
 				adg-gtk-utils.c
 built_c_sources=		adg-gtk-marshal.c
 template_sources=		adg-gtk-marshal.genmarshal
