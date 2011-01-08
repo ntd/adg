@@ -36,3 +36,4 @@ src/adg/adg-title-block.c
 src/adg/adg-toy-text.c
 src/adg/adg-trail.c
 src/adg-gtk/adg-gtk-area.c
+src/adg-gtk/adg-gtk-layout.c

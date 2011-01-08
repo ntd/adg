@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-01 11:58+0100\n"
+"POT-Creation-Date: 2011-01-08 17:28+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -356,17 +356,17 @@ msgstr "%s: il vestito `%d' non è definito"
 msgid "%s: `%s' is not compatible with `%s' for `%s' dress"
 msgstr "%s: `%s' non è compatibile con `%s' per il vestito `%s'"
 
-#: ../src/adg/adg-entity.c:1119
+#: ../src/adg/adg-entity.c:1118
 #, c-format
 msgid "%s: requested to mix the maps using an undefined method"
 msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
 
-#: ../src/adg/adg-entity.c:1165
+#: ../src/adg/adg-entity.c:1164
 #, c-format
 msgid "%s: `arrange' method not implemented for type `%s'"
 msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
 
-#: ../src/adg/adg-entity.c:1181
+#: ../src/adg/adg-entity.c:1180
 #, c-format
 msgid "%s: `render' method not implemented for type `%s'"
 msgstr "%s: metodo `render' non implementato dal tipo `%s'"

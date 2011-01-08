@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-09-28 17:46+0200\n"
+"POT-Creation-Date: 2011-01-08 23:31+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -490,114 +490,126 @@ msgid ""
 "taking as reference the perfect compact position (the middle of the baseline "
 "on common linear dimension, for instance)"
 msgstr ""
+"Usato per specificare un piccolo scostamento (in global space) della quota "
+"con riferimento alla posizione compatta ideale (nelle comuni dimensioni "
+"lineari, la metà della linea di base, per esempio)"
 
 #: src/adg/adg-dim-style.c:198
 msgid "Limits Shift"
-msgstr ""
+msgstr "Scostamento dei Limiti"
 
 #: src/adg/adg-dim-style.c:199
 msgid ""
 "Used to specify a smooth displacement (in global space) for the limits/"
 "tolerances by taking as reference the perfect compact position"
 msgstr ""
+"Useto per specificare un piccolo scostamento (in global space) per le "
+"tolleranze/limiti prendendo come riferimento la posizione compatta ideale"
 
 #: src/adg/adg-dim-style.c:205
 msgid "Number Format"
-msgstr ""
+msgstr "Formato Numero"
 
 #: src/adg/adg-dim-style.c:206
 msgid ""
 "The format (in printf style) of the numeric component of the basic value"
 msgstr ""
+"Il formato (in modalità printf) del componente numerico della quota nominale"
 
 #: src/adg/adg-dim-style.c:212
 msgid "Number Tag"
-msgstr ""
+msgstr "Tag di Quota"
 
 #: src/adg/adg-dim-style.c:213
 msgid "The tag to substitute inside the value template string"
-msgstr ""
+msgstr "Il tag da sostituire all'interno della stringa template del valore"
 
 #: src/adg/adg-color-style.c:86
 msgid "Red Channel"
-msgstr ""
+msgstr "Canale Rosso"
 
 #: src/adg/adg-color-style.c:87
 msgid "The red value, where 0 means no red and 1 is full red"
-msgstr ""
+msgstr "Quantità di rosso, dove 0 significa assenza di rosso e 1 rosso pieno"
 
 #: src/adg/adg-color-style.c:93
 msgid "Green Channel"
-msgstr ""
+msgstr "Canale Verde"
 
 #: src/adg/adg-color-style.c:94
 msgid "The green value, where 0 means no green and 1 is full green"
-msgstr ""
+msgstr "Quantità di verde, dove 0 significa assenza di verde e 1 verde pieno"
 
 #: src/adg/adg-color-style.c:100
 msgid "Blue Channel"
-msgstr ""
+msgstr "Canale Blu"
 
 #: src/adg/adg-color-style.c:101
 msgid "The blue value, where 0 means no blue and 1 is full blue"
-msgstr ""
+msgstr "Quantità di blu, dove 0 significa assenza di blu e 1 blu pieno"
 
 #: src/adg/adg-color-style.c:107
 msgid "Alpha Channel"
-msgstr ""
+msgstr "Canale Alfa"
 
 #: src/adg/adg-color-style.c:108
 msgid ""
 "The alpha value, where 0 means completely transparent and 1 is fully opaque"
 msgstr ""
+"Il valore alfa, dove 0 significa totalmente trasparente e 1 completamente "
+"opaco"
 
 #: src/adg/adg-model.c:136
 msgid "Dependency"
-msgstr ""
+msgstr "Dipendenza"
 
 #: src/adg/adg-model.c:137
 msgid ""
 "Can be used to add a new dependency from this model (this entity will be "
 "invalidated on model changed)"
 msgstr ""
+"Può essere usato per aggiungere una nuova dipendenza da questo modello "
+"(questa entità sarà invalidata quando cambia il modello)"
 
 #: src/adg/adg-dim.c:119
 msgid "Dimension Dress"
-msgstr ""
+msgstr "Vestito Dimensione"
 
 #: src/adg/adg-dim.c:120
 msgid "The dress to use for rendering this dimension"
-msgstr ""
+msgstr "Il vestito da usare per il rendering di questa dimensione"
 
 #: src/adg/adg-dim.c:126
 msgid "First Reference"
-msgstr ""
+msgstr "Primo Riferimento"
 
 #: src/adg/adg-dim.c:127
 msgid "First reference point of the dimension"
-msgstr ""
+msgstr "Primo punto di riferimento della dimensione"
 
 #: src/adg/adg-dim.c:133
 msgid "Second Reference"
-msgstr ""
+msgstr "Secondo Riferimento"
 
 #: src/adg/adg-dim.c:134
 msgid "Second reference point of the dimension"
-msgstr ""
+msgstr "Secondo punto di riferimento della dimensione"
 
 #: src/adg/adg-dim.c:140 src/adg/adg-marker.c:129
 msgid "Position"
-msgstr ""
+msgstr "Posizione"
 
 #: src/adg/adg-dim.c:141
 msgid ""
 "The reference position of the quote: it will be combined with \"level\" to "
 "get the real quote position"
 msgstr ""
+"Il punto di riferimento per il posizionamento della quota: sarà combinato "
+"con il \"level\" per ottenere la posizione reale della quota"
 
 #: src/adg/adg-dim.c:147
 msgid "Level"
-msgstr ""
+msgstr "Livello"
 
 #: src/adg/adg-dim.c:148
 msgid ""
@@ -605,10 +617,13 @@ msgid ""
 "(defined in the dimension style) to get the offset from pos where the quote "
 "should be rendered"
 msgstr ""
+"Il livello della dimensione, ossia il fattore per moltiplicare la spaziatura "
+"tra le linee base (definito nello stile della dimensione) per ottenere "
+"l'offset dal punto di posizionamento dove la quota dovrebbe essere riportata"
 
 #: src/adg/adg-dim.c:154
 msgid "Outside"
-msgstr ""
+msgstr "Esterna"
 
 #: src/adg/adg-dim.c:155
 msgid ""
@@ -616,10 +631,14 @@ msgid ""
 "must be extended outside the extension lines (ADG_THREE_STATE_ON) or should "
 "be automatically handled depending on the available space"
 msgstr ""
+"Specifica se le freccie devono stare all'interno delle linee di estensione "
+"(ADG_THREE_STATE_OFF), devono estendersi all'esterno delle linee di "
+"estensione (ADG_THREE_STATE_ON) oppure questa decisione viene gestita "
+"automaticamente in base allo spazio disponibile"
 
 #: src/adg/adg-dim.c:161
 msgid "Detached Quote"
-msgstr ""
+msgstr "Quota Distaccata"
 
 #: src/adg/adg-dim.c:162
 msgid ""
@@ -627,339 +646,378 @@ msgid ""
 "(ADG_THREE_STATE_OFF), near the pos point (ADG_THREE_STATE_ON) or should be "
 "automatically deducted depending on the available space"
 msgstr ""
+"Dove deve essere posizionata la quota: nel mezzo della linea di base "
+"(ADG_THREE_STATE_OFF), vicino al punto di posizionamento "
+"(ADG_THREE_STATE_ON) oppure se questa decisione è subordinata allo spazio "
+"disponibile"
 
 #: src/adg/adg-dim.c:168
 msgid "Value Template"
-msgstr ""
+msgstr "Template Valore"
 
 #: src/adg/adg-dim.c:169
 msgid ""
 "The template string to be used for generating the set value of the quote"
 msgstr ""
+"La stringa di template da usare per generare il valore nominale della quota"
 
 #: src/adg/adg-dim.c:175
 msgid "Minimum Value or Low Tolerance"
-msgstr ""
+msgstr "Valore Minimo o Tolleranza Inferiore"
 
 #: src/adg/adg-dim.c:176
 msgid ""
 "The minimum value allowed or the lowest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
 msgstr ""
+"Il valore minimo ammesso o la tolleranza inferiore dal valore nominale (a "
+"seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
 #: src/adg/adg-dim.c:182
 msgid "Maximum Value or High Tolerance"
-msgstr ""
+msgstr "Valore Massimo o Tolleranza Superiore"
 
 #: src/adg/adg-dim.c:183
 msgid ""
 "The maximum value allowed or the highest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
 msgstr ""
+"Il valore massimo ammesso o la tolleranza superiore dal valore nominale (a "
+"seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
 #: src/adg/adg-fill-style.c:86
 msgid "Pattern"
-msgstr ""
+msgstr "Pattern"
 
 #: src/adg/adg-fill-style.c:87
 msgid "The cairo pattern set for this entity"
-msgstr ""
+msgstr "Il pattern cairo impostato per questa entità"
 
 #: src/adg/adg-hatch.c:82
 msgid "Fill Dress"
-msgstr ""
+msgstr "Vestito Riempimento"
 
 #: src/adg/adg-hatch.c:83
 msgid "The dress to use for filling this entity"
-msgstr ""
+msgstr "Il vestito da usare per riempire questa entità"
 
 #: src/adg/adg-canvas.c:137
 msgid "Canvas Size"
-msgstr ""
+msgstr "Dimensione Canvas"
 
 #: src/adg/adg-canvas.c:138
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
 msgstr ""
+"La dimensione impostata per questo canvas: usare 0 per abilitare il "
+"dimensionamento automatico basato sui limiti del canvas"
 
 #: src/adg/adg-canvas.c:144
 msgid "Background Dress"
-msgstr ""
+msgstr "Vestito Sfondo"
 
 #: src/adg/adg-canvas.c:145
 msgid "The color dress to use for the canvas background"
-msgstr ""
+msgstr "Il vestito colore da usare come sfondo per il canvas"
 
 #: src/adg/adg-canvas.c:152
 msgid "Line dress to use while drawing the frame around the canvas"
-msgstr ""
+msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
 #: src/adg/adg-canvas.c:158
 msgid "Title Block"
-msgstr ""
+msgstr "Blocco delle Iscrizioni"
 
 #: src/adg/adg-canvas.c:159
 msgid "The title block to assign to this canvas"
-msgstr ""
+msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
 #: src/adg/adg-canvas.c:165
 msgid "Top Margin"
-msgstr ""
+msgstr "Margine Superiore"
 
 #: src/adg/adg-canvas.c:166
-msgid "The margin (in identity space) to leave above the frame"
-msgstr ""
+msgid "The margin (in global space) to leave above the frame"
+msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
 #: src/adg/adg-canvas.c:172
 msgid "Right Margin"
-msgstr ""
+msgstr "Margine Destro"
 
 #: src/adg/adg-canvas.c:173
-msgid "The margin (in identity space) to leave empty at the right of the frame"
-msgstr ""
+msgid "The margin (in global space) to leave empty at the right of the frame"
+msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
 #: src/adg/adg-canvas.c:179
 msgid "Bottom Margin"
-msgstr ""
+msgstr "Margine Inferiore"
 
 #: src/adg/adg-canvas.c:180
-msgid "The margin (in identity space) to leave empty below the frame"
-msgstr ""
+msgid "The margin (in global space) to leave empty below the frame"
+msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
 #: src/adg/adg-canvas.c:186
 msgid "Left Margin"
-msgstr ""
+msgstr "Margine Sinistro"
 
 #: src/adg/adg-canvas.c:187
-msgid "The margin (in identity space) to leave empty at the left of the frame"
+msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
+"Lo spazio (in global space) da lasciare vuoto alla sinistra della cornice"
 
 #: src/adg/adg-canvas.c:194
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
 msgstr ""
+"Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
+"limiti dal canvas tenendo in considerazione i margini"
 
 #: src/adg/adg-canvas.c:200
 msgid "Top Padding"
-msgstr ""
+msgstr "Spaziatura Superiore"
 
 #: src/adg/adg-canvas.c:201
 msgid ""
-"The padding (in identity space) to leave empty above between the drawing and "
+"The padding (in global space) to leave empty above between the drawing and "
 "the frame"
 msgstr ""
+"La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
+"cornice"
 
 #: src/adg/adg-canvas.c:207
 msgid "Right Padding"
-msgstr ""
+msgstr "Spaziatura Destra"
 
 #: src/adg/adg-canvas.c:208
 msgid ""
-"The padding (in identity space) to leave empty at the right between the "
+"The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
 msgstr ""
+"La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
+"la cornice"
 
 #: src/adg/adg-canvas.c:214
 msgid "Bottom Padding"
-msgstr ""
+msgstr "Spaziatura Inferiore"
 
 #: src/adg/adg-canvas.c:215
 msgid ""
-"The padding (in identity space) to leave empty below between the drawing and "
+"The padding (in global space) to leave empty below between the drawing and "
 "the frame"
 msgstr ""
+"La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
+"la cornice"
 
 #: src/adg/adg-canvas.c:221
 msgid "Left Padding"
-msgstr ""
+msgstr "Spaziatura Sinistra"
 
 #: src/adg/adg-canvas.c:222
 msgid ""
-"The padding (in identity space) to leave empty at the left between the "
-"drawing and the frame"
+"The padding (in global space) to leave empty at the left between the drawing "
+"and the frame"
 msgstr ""
+"La spaziatura (in global space) da lasciare vuota a sinistra tra il disegno "
+"e la cornice"
 
 #: src/adg/adg-marker.c:116
 msgid "The subject AdgTrail for this marker"
-msgstr ""
+msgstr "L'AdgTrail soggetto per questo indicatore"
 
 #: src/adg/adg-marker.c:122
 msgid "Segment Index"
-msgstr ""
+msgstr "Indice del Segmento"
 
 #: src/adg/adg-marker.c:123
 msgid ""
 "The segment on trail where this marker should be applied (where 0 means "
 "undefined segment, 1 the first segment and so on)"
 msgstr ""
+"Il segmento dell'AdgTrail dove questo indicatore dovrebbe essere applicato "
+"(dove 0 significa nessun segmento, 1 il primo segmento e così via)"
 
 #: src/adg/adg-marker.c:130
 msgid ""
 "The position ratio inside the segment where to put the marker (0 means the "
 "start point while 1 means the end point)"
 msgstr ""
+"Il ratio di posizione all'interno del segmento dove inserire l'indicatore (0 "
+"significa punto iniziale mentre 1 significa punto finale)"
 
 #: src/adg/adg-marker.c:136
 msgid "Marker Size"
-msgstr ""
+msgstr "Dimensione Indicatore"
 
 #: src/adg/adg-marker.c:137
 msgid "The size (in global space) of the marker"
-msgstr ""
+msgstr "La dimensione (in global space) dell'indicatore"
 
 #: src/adg/adg-marker.c:143
 msgid "Model"
-msgstr ""
+msgstr "Modello"
 
 #: src/adg/adg-marker.c:144
 msgid "A general purpose model usable by the marker implementations"
-msgstr ""
+msgstr "Un modello ad uso generale usato dall'implementazione dell'indicatore"
 
 #: src/adg/adg-projection.c:90
 msgid "The line dress to use for rendering the views of the projection"
 msgstr ""
+"Il vestito linea da usare per il rendering delle viste della proiezione"
 
 #: src/adg/adg-projection.c:96
 msgid "Axis Dress"
-msgstr ""
+msgstr "Vestito Assi"
 
 #: src/adg/adg-projection.c:97
 msgid "The line dress to use for rendering the axis of the projection scheme"
-msgstr ""
+msgstr "Il vestito linea da usare per il rendering degli assi della proiezione"
 
 #: src/adg/adg-projection.c:103 src/adg/adg-title-block.c:140
 msgid "Projection Scheme"
-msgstr ""
+msgstr "Proiezione Ortografica"
 
 #: src/adg/adg-projection.c:104
 msgid "The projection scheme to be represented"
-msgstr ""
+msgstr "Il tipo di proiezione ortografica da adottare"
 
 #: src/adg/adg-container.c:116
 msgid "Child"
-msgstr ""
+msgstr "Figlio"
 
 #: src/adg/adg-container.c:117
 msgid "Can be used to add a new child to the container"
-msgstr ""
+msgstr "Può essere usato per aggiungere una nuova entità al contenitore"
 
 #: src/adg/adg-title-block.c:91
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: src/adg/adg-title-block.c:92
 msgid "A descriptive title of the drawing"
-msgstr ""
+msgstr "Un titolo descrittivo del disegno"
 
 #: src/adg/adg-title-block.c:98
 msgid "Drawing Name"
-msgstr ""
+msgstr "Nome Disegno"
 
 #: src/adg/adg-title-block.c:99
 msgid ""
 "The name of the drawing: the ADG canvas does not make any assumtpion on this "
 "text string"
 msgstr ""
+"Il nome del disegno: il canvas ADG non avanza alcuna ipotesi sul significato "
+"di questa stringa"
 
 #: src/adg/adg-title-block.c:105
 msgid "Media Size"
-msgstr ""
+msgstr "Dimensione del Supporto"
 
 #: src/adg/adg-title-block.c:106
 msgid ""
 "The media size to be used to print the drawing, usually something like "
 "\"A3\" or \"Letter\""
 msgstr ""
+"La dimensione del supporto usato per stampare il disegno, solitamente una "
+"stringa tipo \"A3\" o \"Letter\""
 
 #: src/adg/adg-title-block.c:112
 msgid "Scale"
-msgstr ""
+msgstr "Scala"
 
 #: src/adg/adg-title-block.c:113
 msgid "The scale of the drawing, if it makes sense"
-msgstr ""
+msgstr "La scala del disegno, se significativa"
 
 #: src/adg/adg-title-block.c:119
 msgid "Author"
-msgstr ""
+msgstr "Autore"
 
 #: src/adg/adg-title-block.c:120
 msgid "Name and last name of the author of the drawing"
-msgstr ""
+msgstr "Nome e cognome dell'autore del disegno"
 
 #: src/adg/adg-title-block.c:126
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: src/adg/adg-title-block.c:127
 msgid ""
 "The date this drawing has been generated: setting it to an empty string will "
 "fallback to today in the preferred representation for the current locale"
 msgstr ""
+"La data di generazione disegno: impostandola ad una stringa vuota, la data "
+"verrà inizializzata automaticamente ad oggi nel formato privilegiato dalle "
+"impostazioni di localizzazione correnti"
 
 #: src/adg/adg-title-block.c:133
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #: src/adg/adg-title-block.c:134
 msgid ""
 "An entity to be displayed in the title block as the logo of the owner: the "
 "containing cell has a 1:1 ratio"
 msgstr ""
+"L'entità da mostrare nel riquadro delle iscrizioni come logo del "
+"proprietario: la cella contenitrice ha un ratio 1:1"
 
 #: src/adg/adg-title-block.c:141
 msgid ""
 "The entity usually reserved to identify the projection scheme adopted by "
 "this drawing"
 msgstr ""
+"Entità solitamente riservata per identificare il tipo di proiezione "
+"ortografica usata in questo disegno"
 
 #: src/adg/adg-line-style.c:89
 msgid "The color dress to bind to this line style"
-msgstr ""
+msgstr "Il vestito colore da allegare a questo stile di linea"
 
 #: src/adg/adg-line-style.c:95
 msgid "Line Width"
-msgstr ""
+msgstr "Spessore Linea"
 
 #: src/adg/adg-line-style.c:96
 msgid "The line thickness in device unit"
-msgstr ""
+msgstr "Lo spessore della linea in unità device"
 
 #: src/adg/adg-line-style.c:101
 msgid "Line Cap"
-msgstr ""
+msgstr "Terminazione Linea"
 
 #: src/adg/adg-line-style.c:102
 msgid "The line cap mode"
-msgstr ""
+msgstr "La modalità di terminazione della linea"
 
 #: src/adg/adg-line-style.c:108
 msgid "Line Join"
-msgstr ""
+msgstr "Unione Linee"
 
 #: src/adg/adg-line-style.c:109
 msgid "The line join mode"
-msgstr ""
+msgstr "La modalità di unione delle linee"
 
 #: src/adg/adg-line-style.c:115
 msgid "Miter Limit"
-msgstr ""
+msgstr "Limite Punta"
 
 #: src/adg/adg-line-style.c:116
 msgid "Whether the lines should be joined with a bevel instead of a miter"
 msgstr ""
+"Quando le linee devono essere unite da un trapezio invece che da un triangolo"
 
 #: src/adg/adg-line-style.c:122
 msgid "Antialiasing Mode"
-msgstr ""
+msgstr "Modalità di Antialiasing"
 
 #: src/adg/adg-line-style.c:123
 msgid "Type of antialiasing to do when rendering lines"
-msgstr ""
+msgstr "Tipo di antialiasing da applicare durante il rendering delle linee"
 
-#: src/adg/adg-alignment.c:92 src/adg-gtk/adg-gtk-area.c:137
+#: src/adg/adg-alignment.c:92 src/adg-gtk/adg-gtk-area.c:154
 msgid "Factor"
 msgstr "Fattore"
 
@@ -968,15 +1026,41 @@ msgid ""
 "Portion of extents, either in x and y, the content will be displaced: a "
 "(0.5, 0.5) factor means the origin is the middle point of the extents"
 msgstr ""
+"Frazione dell'estensione, sia in x che in y, ove il contenuto sarà "
+"posizionato: per esempio, usando (0.5, 0.5) l'origine si troverà al centro "
+"dell'esetensione"
 
-#: src/adg-gtk/adg-gtk-area.c:130
+#: src/adg-gtk/adg-gtk-area.c:147
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg-gtk/adg-gtk-area.c:131
+#: src/adg-gtk/adg-gtk-area.c:148
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg-gtk/adg-gtk-area.c:138
-msgid "The factor used in zooming in and out"
-msgstr "Il fattore da usare durante l'ingrandimento avanti e indietro"
+#: src/adg-gtk/adg-gtk-area.c:155
+msgid ""
+"The factor to use while zooming in and out (usually with the mouse wheel)"
+msgstr ""
+"Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
+"avanti e indietro"
+
+#: src/adg-gtk/adg-gtk-area.c:161
+msgid "Autozoom"
+msgstr "Autozoom"
+
+#: src/adg-gtk/adg-gtk-area.c:162
+msgid ""
+"When enabled, automatically adjust the zoom in global space at every size "
+"allocation"
+msgstr ""
+"Quando abilitato, corregge automaticamente l'ingrandimento in global space "
+"ad ogni nuovo cambiamento di dimensione"
+
+#: src/adg-gtk/adg-gtk-area.c:168
+msgid "Render Map"
+msgstr "Mappa di Render"
+
+#: src/adg-gtk/adg-gtk-area.c:169
+msgid "The transformation to be applied on the canvas before rendering it"
+msgstr "La trasformazione da applicare al canvas prima del rendering"
