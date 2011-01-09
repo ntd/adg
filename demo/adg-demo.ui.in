@@ -16,8 +16,6 @@
             <property name="visible">True</property>
             <property name="hscrollbar-policy">automatic</property>
             <property name="vscrollbar-policy">automatic</property>
-            <property name="width-request">800</property>
-            <property name="height-request">400</property>
             <child>
               <object class="AdgGtkLayout" id="mainCanvas">
                 <property name="visible">True</property>

@@ -20,10 +20,12 @@
 
 /**
  * SECTION:adg-gtk-layout
- * @short_description: A #GtkWidget specifically designed to contain
- *                     an #AdgCanvas entity
+ * @short_description: A scrollable #AdgGtkArea based widget
  *
  * This is an #AdgGtkArea derived object with scrolling capabilities.
+ * It means an #AdgGtkLayout object can be added directly to a
+ * #GtkScrolledWindow container without the need for an intermediate
+ * #GtkViewport container.
  **/
 
 /**
@@ -66,12 +68,17 @@ static void     _adg_set_property               (GObject        *object,
 static void     _adg_set_scroll_adjustments     (GtkWidget      *widget,
                                                  GtkAdjustment  *hadjustment,
                                                  GtkAdjustment  *vadjustment);
+static void     _adg_parent_set                 (GtkWidget      *widget,
+                                                 GtkWidget      *old_parent);
+static void     _adg_size_request               (GtkWidget      *widget,
+                                                 GtkRequisition *requisition);
 static void     _adg_size_allocate              (GtkWidget      *widget,
                                                  GtkAllocation  *allocation);
 static void     _adg_canvas_changed             (AdgGtkArea     *area,
                                                  AdgCanvas      *old_canvas);
 static void     _adg_extents_changed            (AdgGtkArea     *area,
                                                  const CpmlExtents *old_extents);
+static void     _adg_set_parent_size            (AdgGtkLayout   *layout);
 static void     _adg_set_adjustment             (AdgGtkLayout   *layout,
                                                  GtkAdjustment **dst,
                                                  GtkAdjustment  *src);
@@ -99,6 +106,8 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
+    widget_class->parent_set = _adg_parent_set;
+    widget_class->size_request = _adg_size_request;
     widget_class->size_allocate = _adg_size_allocate;
 
     area_class->canvas_changed = _adg_canvas_changed;
@@ -144,6 +153,7 @@ adg_gtk_layout_init(AdgGtkLayout *layout)
 
     data->hadjustment = NULL;
     data->vadjustment = NULL;
+    data->policy_stored = FALSE;
     data->viewport.is_defined = FALSE;
 
     layout->data = data;
@@ -339,6 +349,30 @@ _adg_set_scroll_adjustments(GtkWidget *widget,
 }
 
 static void
+_adg_parent_set(GtkWidget *widget, GtkWidget *old_parent)
+{
+    AdgGtkLayout *layout = (AdgGtkLayout *) widget;
+
+    if (_ADG_OLD_WIDGET_CLASS->parent_set != NULL)
+        _ADG_OLD_WIDGET_CLASS->parent_set(widget, old_parent);
+
+    _adg_set_parent_size(layout);
+}
+
+static void
+_adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
+{
+    AdgGtkLayout *layout;
+    AdgGtkLayoutPrivate *data;
+
+    layout = (AdgGtkLayout *) widget;
+    data = layout->data;
+
+    if (_ADG_OLD_WIDGET_CLASS->size_request != NULL)
+        _ADG_OLD_WIDGET_CLASS->size_request(widget, requisition);
+}
+
+static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
     AdgGtkLayout *layout;
@@ -347,9 +381,8 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
     layout = (AdgGtkLayout *) widget;
     data = layout->data;
 
-    if (_ADG_OLD_WIDGET_CLASS->size_allocate)
+    if (_ADG_OLD_WIDGET_CLASS->size_allocate != NULL)
         _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
-
 
     /* Resize the viewport on a new allocation.
      * TODO: plan other policies instead of forcibly set only the
@@ -365,7 +398,11 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 static void
 _adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
 {
-    AdgGtkLayoutPrivate *data = ((AdgGtkLayout *) area)->data;
+    AdgGtkLayout *layout;
+    AdgGtkLayoutPrivate *data;
+
+    layout = (AdgGtkLayout *) area;
+    data = layout->data;
 
     if (_ADG_OLD_AREA_CLASS->canvas_changed != NULL)
         _ADG_OLD_AREA_CLASS->canvas_changed(area, old_canvas);
@@ -374,6 +411,8 @@ _adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
      * on the top/left corner of the allocation area */
     data->viewport.org.x = 0;
     data->viewport.org.y = 0;
+
+    _adg_set_parent_size(layout);
 }
 
 static void
@@ -383,6 +422,41 @@ _adg_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
         _ADG_OLD_AREA_CLASS->extents_changed(area, old_extents);
 
     _adg_update_adjustments((AdgGtkLayout *) area);
+}
+
+static void
+_adg_set_parent_size(AdgGtkLayout *layout)
+{
+    AdgGtkLayoutPrivate *data;
+    GtkWidget *parent;
+    const CpmlExtents *sheet;
+    GtkScrolledWindow *scrolled_window;
+
+    /* When the widget is realized it is too late to suggest a size */
+    if (GTK_WIDGET_REALIZED(layout))
+        return;
+
+    data = layout->data;
+    parent = gtk_widget_get_parent((GtkWidget *) layout);
+    if (!GTK_IS_WIDGET(parent))
+        return;
+
+    sheet = adg_gtk_area_get_extents((AdgGtkArea *) layout);
+    if (sheet == NULL || !sheet->is_defined)
+        return;
+
+    gtk_widget_set_size_request(parent, sheet->size.x + 2, sheet->size.y + 2);
+
+    if (GTK_IS_SCROLLED_WINDOW(parent) && !data->policy_stored) {
+        scrolled_window = (GtkScrolledWindow *) parent;
+
+        gtk_scrolled_window_get_policy(scrolled_window,
+                                       &data->hpolicy, &data->vpolicy);
+        gtk_scrolled_window_set_policy(scrolled_window,
+                                       GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+
+        data->policy_stored = TRUE;
+    }
 }
 
 static void
@@ -446,6 +520,20 @@ _adg_update_adjustments(AdgGtkLayout *layout)
     viewport = &data->viewport;
     surface = *sheet;
     cpml_extents_add(&surface, viewport);
+
+    if (data->policy_stored) {
+        /* Restore the original policy for the scrollbars */
+        GtkWidget *parent;
+        GtkScrolledWindow *scrolled_window;
+
+        parent = gtk_widget_get_parent((GtkWidget *) layout);
+        scrolled_window = (GtkScrolledWindow *) parent;
+
+        gtk_scrolled_window_set_policy(scrolled_window,
+                                       data->hpolicy, data->vpolicy);
+
+        data->policy_stored = TRUE;
+    }
 
     g_object_set(hadj,
                  "lower", surface.org.x,

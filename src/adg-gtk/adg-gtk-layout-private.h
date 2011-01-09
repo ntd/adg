@@ -30,6 +30,8 @@ struct _AdgGtkLayoutPrivate {
     GtkAdjustment       *hadjustment;
     GtkAdjustment       *vadjustment;
 
+    gboolean             policy_stored;
+    GtkPolicyType        hpolicy, vpolicy;
     CpmlExtents          viewport;
 };
 
