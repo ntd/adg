@@ -6,6 +6,21 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.2">
+<title>ADG 0.6.2</title>
+
+<para>The localization infrastructure has been added and tested by adding
+the italian translation.</para>
+
+<para>The AdgGtkArea widget is now capable of interactively change zoom
+and pan in global space by dragging and/or rotating the wheel while
+keeping the shift pressed.</para>
+
+<para>A new class has been implemented: AdgGtkLayout is an AdgGtkArea
+based widget that implements the scrolling natively, hence it can
+be added directly to a GtkScrolledWindow container.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.6.1">
 <title>ADG 0.6.1</title>
 
