@@ -65,7 +65,9 @@ GTKDOC_LIBS=		$(GTK2_LIBS) \
 
 DOC_SOURCE_DIR+=	$(abs_top_srcdir)/src/adg-gtk
 IGNORE_HFILES+=		adg-gtk-internal.h \
-			adg-gtk-area-private.h
+			adg-gtk-area-private.h \
+			adg-gtk-layout-private.h \
+			adg-gtk-marshal.h
 
 else # ! HAVE_GTK2
 

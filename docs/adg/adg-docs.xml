@@ -90,6 +90,7 @@
     <title>GTK+ support</title>
     <xi:include href="xml/adg-gtk-utils.xml"/>
     <xi:include href="xml/adg-gtk-area.xml"/>
+    <xi:include href="xml/adg-gtk-layout.xml"/>
   </part>
 
   <chapter id="Hierarchy">
