@@ -205,6 +205,12 @@ AC_OUTPUT
 
 # Report
 
+AS_IF([test "x${enable_glade}" != "xno"],
+      [report_glade_catalogdir="
+                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
+      [report_glade_catalogdir=''])
+
+
 AC_MSG_NOTICE([generating report
 
 AC_PACKAGE_NAME adg_version will be built with the following options:
@@ -212,7 +218,7 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
            GTK+2 additional widgets: ${enable_gtk2}
-             Install glade catalogs: ${enable_glade}
+             Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
              Test framework support: ${enable_test_framework}
 ])
