@@ -21,8 +21,6 @@
 #ifndef __ADG_CONTAINER_PRIVATE_H__
 #define __ADG_CONTAINER_PRIVATE_H__
 
-#include <glib.h>
-
 
 G_BEGIN_DECLS
 

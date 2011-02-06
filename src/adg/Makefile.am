@@ -40,8 +40,8 @@ h_sources=			adg-adim.h \
 				adg-table.h \
 				adg-table-style.h \
 				adg-title-block.h \
-				adg-trail.h \
 				adg-toy-text.h \
+				adg-trail.h \
 				adg-utils.h
 built_h_sources=		adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
@@ -72,8 +72,8 @@ private_h_sources=		adg-adim-private.h \
 				adg-table-private.h \
 				adg-table-style-private.h \
 				adg-title-block-private.h \
-				adg-trail-private.h \
-				adg-toy-text-private.h
+				adg-toy-text-private.h \
+				adg-trail-private.h
 built_private_h_sources=	adg-marshal.h
 c_sources=			adg-adim.c \
 				adg-alignment.c \
@@ -154,7 +154,7 @@ libadg_1_la_LIBADD=		$(GOBJECT2_LIBS) \
 mkenums_command=		$(MSG_GEN) ; \
 				$(GLIB_MKENUMS) --template
 genmarshal_command=		$(MSG_GEN) ; \
-				$(GLIB_GENMARSHAL) --prefix=adg_marshal
+				$(GLIB_GENMARSHAL) --nostdinc --internal --prefix=adg_marshal
 
 adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h
 	$(mkenums_command) $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h > $@
@@ -163,7 +163,8 @@ adg-type-builtins.h: $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h
 	$(mkenums_command) $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h > $@
 
 adg-marshal.c: $(srcdir)/adg-marshal.genmarshal
-	$(genmarshal_command) --body $(srcdir)/adg-marshal.genmarshal > $@
+	echo '#include <glib-object.h>' > $@ ;
+	$(genmarshal_command) --body $(srcdir)/adg-marshal.genmarshal >> $@
 
 adg-marshal.h: $(srcdir)/adg-marshal.genmarshal
 	$(genmarshal_command) --header $(srcdir)/adg-marshal.genmarshal > $@

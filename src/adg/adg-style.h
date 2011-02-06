@@ -26,8 +26,6 @@
 #ifndef __ADG_STYLE_H__
 #define __ADG_STYLE_H__
 
-#include "adg-entity.h"
-
 
 G_BEGIN_DECLS
 

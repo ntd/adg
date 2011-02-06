@@ -60,10 +60,10 @@
 
 
 #include "adg-internal.h"
+
 #include "adg-model.h"
 #include "adg-model-private.h"
-#include "adg-entity.h"
-#include "adg-marshal.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
 

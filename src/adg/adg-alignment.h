@@ -26,9 +26,6 @@
 #ifndef __ADG_ALIGNMENT_H__
 #define __ADG_ALIGNMENT_H__
 
-#include "adg-container.h"
-#include "adg-pair.h"
-
 
 G_BEGIN_DECLS
 

@@ -26,9 +26,6 @@
 #ifndef __ADG_LINE_STYLE_H__
 #define __ADG_LINE_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-dress.h"
-
 
 G_BEGIN_DECLS
 

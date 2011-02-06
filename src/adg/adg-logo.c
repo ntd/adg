@@ -34,10 +34,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+
 #include "adg-logo.h"
 #include "adg-logo-private.h"
-#include "adg-line-style.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);

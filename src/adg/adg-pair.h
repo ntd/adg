@@ -26,9 +26,6 @@
 #ifndef __ADG_PAIR_H__
 #define __ADG_PAIR_H__
 
-#include <cpml.h>
-#include <glib-object.h>
-
 
 G_BEGIN_DECLS
 

@@ -37,10 +37,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-font-style.h"
+
 #include "adg-toy-text.h"
 #include "adg-toy-text-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-font-style.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_toy_text_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_toy_text_parent_class)

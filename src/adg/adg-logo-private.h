@@ -19,8 +19,6 @@
 #ifndef __ADG_LOGO_PRIVATE_H__
 #define __ADG_LOGO_PRIVATE_H__
 
-#include "adg-path.h"
-
 
 G_BEGIN_DECLS
 

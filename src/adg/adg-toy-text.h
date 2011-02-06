@@ -26,9 +26,6 @@
 #ifndef __ADG_TOY_TEXT_H__
 #define __ADG_TOY_TEXT_H__
 
-#include "adg-entity.h"
-#include "adg-pair.h"
-
 
 G_BEGIN_DECLS
 

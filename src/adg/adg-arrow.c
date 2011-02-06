@@ -35,9 +35,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+#include "adg-marker.h"
+
 #include "adg-arrow.h"
 #include "adg-arrow-private.h"
-#include "adg-path.h"
 
 
 G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER);

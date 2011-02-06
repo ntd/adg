@@ -26,8 +26,6 @@
 #ifndef __ADG_ARROW_H__
 #define __ADG_ARROW_H__
 
-#include "adg-marker.h"
-
 
 G_BEGIN_DECLS
 

@@ -35,9 +35,12 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);

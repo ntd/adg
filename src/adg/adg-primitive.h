@@ -26,9 +26,6 @@
 #ifndef __ADG_PRIMITIVE_H__
 #define __ADG_PRIMITIVE_H__
 
-#include <cpml.h>
-#include <glib-object.h>
-
 
 G_BEGIN_DECLS
 

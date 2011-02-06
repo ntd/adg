@@ -26,10 +26,6 @@
 #ifndef __ADG_FILL_STYLE_H__
 #define __ADG_FILL_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-pattern.h"
-#include <cpml.h>
-
 
 G_BEGIN_DECLS
 

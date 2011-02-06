@@ -26,8 +26,6 @@
 #ifndef __ADG_DRESS_BUILTINS_H__
 #define __ADG_DRESS_BUILTINS_H__
 
-#include "adg-dress.h"
-
 
 G_BEGIN_DECLS
 

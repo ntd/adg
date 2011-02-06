@@ -26,8 +26,6 @@
 #ifndef __ADG_HATCH_H__
 #define __ADG_HATCH_H__
 
-#include "adg-stroke.h"
-
 
 G_BEGIN_DECLS
 

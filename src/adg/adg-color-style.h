@@ -26,9 +26,6 @@
 #ifndef __ADG_COLOR_STYLE_H__
 #define __ADG_COLOR_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-enums.h"
-
 
 G_BEGIN_DECLS
 

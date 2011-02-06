@@ -52,9 +52,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include <string.h>
+
 #include "adg-marker.h"
 #include "adg-marker-private.h"
-#include <string.h>
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)

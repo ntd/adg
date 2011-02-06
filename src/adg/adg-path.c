@@ -57,12 +57,14 @@
 
 
 #include "adg-internal.h"
-#include "adg-path.h"
-#include "adg-path-private.h"
-#include "adg-matrix.h"
-#include "adg-primitive.h"
+#include "adg-model.h"
+#include "adg-trail.h"
 #include <string.h>
 #include <math.h>
+
+#include "adg-path.h"
+#include "adg-path-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)

@@ -35,10 +35,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+
 #include "adg-projection.h"
 #include "adg-projection-private.h"
-#include "adg-line-style.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY);

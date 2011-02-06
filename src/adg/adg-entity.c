@@ -59,12 +59,17 @@
 
 
 #include "adg-internal.h"
-#include "adg-entity.h"
-#include "adg-entity-private.h"
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
 #include "adg-canvas.h"
-#include "adg-font-style.h"
-#include "adg-dim-style.h"
-#include "adg-marshal.h"
+#include "adg-dress.h"
+#include "adg-style.h"
+#include "adg-model.h"
+#include "adg-point.h"
+
+#include "adg-entity-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 

@@ -26,8 +26,6 @@
 #ifndef __ADG_ENUMS_H__
 #define __ADG_ENUMS_H__
 
-#include <glib-object.h>
-
 
 G_BEGIN_DECLS
 
@@ -72,4 +70,4 @@ typedef enum {
 G_END_DECLS
 
 
-#endif                          /* __ADG_ENUMS_H__ */
+#endif /* __ADG_ENUMS_H__ */

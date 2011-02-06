@@ -26,8 +26,6 @@
 #ifndef __ADG_UTILS_H__
 #define __ADG_UTILS_H__
 
-#include <glib-object.h>
-#include <math.h>
 
 #define ADG_FORWARD_DECL(id)    typedef struct _##id id
 

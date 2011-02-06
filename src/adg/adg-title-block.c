@@ -40,8 +40,11 @@
 
 
 #include "adg-internal.h"
+#include "adg-table.h"
+
 #include "adg-title-block.h"
 #include "adg-title-block-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
 

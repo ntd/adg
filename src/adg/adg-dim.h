@@ -26,11 +26,6 @@
 #ifndef __ADG_DIM_H__
 #define __ADG_DIM_H__
 
-#include "adg-point.h"
-#include "adg-alignment.h"
-#include "adg-model.h"
-#include "adg-enums.h"
-
 
 G_BEGIN_DECLS
 

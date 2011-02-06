@@ -26,8 +26,6 @@
 #ifndef __ADG_TITLE_BLOCK_H__
 #define __ADG_TITLE_BLOCK_H__
 
-#include "adg-table.h"
-
 
 G_BEGIN_DECLS
 

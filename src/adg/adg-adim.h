@@ -26,8 +26,6 @@
 #ifndef __ADG_ADIM_H__
 #define __ADG_ADIM_H__
 
-#include "adg-dim.h"
-
 
 G_BEGIN_DECLS
 

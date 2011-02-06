@@ -26,10 +26,6 @@
 #ifndef __ADG_PATH_H__
 #define __ADG_PATH_H__
 
-#include "adg-trail.h"
-#include "adg-primitive.h"
-#include "adg-segment.h"
-
 
 G_BEGIN_DECLS
 

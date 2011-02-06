@@ -57,9 +57,9 @@
 
 
 #include "adg-gtk-internal.h"
+
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
-#include "adg-gtk-marshal.h"
 
 #define _ADG_OLD_OBJECT_CLASS   ((GObjectClass *) adg_gtk_area_parent_class)
 #define _ADG_OLD_WIDGET_CLASS   ((GtkWidgetClass *) adg_gtk_area_parent_class)

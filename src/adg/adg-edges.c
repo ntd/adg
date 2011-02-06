@@ -48,9 +48,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include <math.h>
+
 #include "adg-edges.h"
 #include "adg-edges-private.h"
-#include "adg-pair.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)

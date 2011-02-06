@@ -1,6 +1,5 @@
 /*** BEGIN file-header ***/
 #include "adg-internal.h"
-#include "adg-enums.h"
 
 
 /*** END file-header ***/

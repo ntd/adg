@@ -26,9 +26,6 @@
 #ifndef __ADG_PATTERN_H__
 #define __ADG_PATTERN_H__
 
-#include <glib-object.h>
-#include <cairo.h>
-
 
 G_BEGIN_DECLS
 

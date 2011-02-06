@@ -35,11 +35,14 @@
 
 
 #include "adg-internal.h"
-#include "adg-table-style.h"
-#include "adg-table-style-private.h"
+#include "adg-dress.h"
 #include "adg-dress-builtins.h"
+#include "adg-style.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
+
+#include "adg-table-style.h"
+#include "adg-table-style-private.h"
 
 
 G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE);

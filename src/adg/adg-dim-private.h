@@ -21,10 +21,6 @@
 #ifndef __ADG_DIM_PRIVATE_H__
 #define __ADG_DIM_PRIVATE_H__
 
-#include "adg-point.h"
-#include "adg-dim-style.h"
-#include "adg-toy-text.h"
-
 
 G_BEGIN_DECLS
 

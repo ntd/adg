@@ -26,8 +26,6 @@
 #ifndef __ADG_DRESS_H__
 #define __ADG_DRESS_H__
 
-#include "adg-style.h"
-
 
 G_BEGIN_DECLS
 

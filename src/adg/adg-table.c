@@ -72,13 +72,21 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-table-style.h"
+#include "adg-path.h"
+#include "adg-stroke.h"
+#include "adg-toy-text.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+
 #include "adg-table.h"
 #include "adg-table-private.h"
-#include "adg-alignment.h"
-#include "adg-dress-builtins.h"
-#include "adg-path.h"
-#include "adg-line-style.h"
-#include "adg-toy-text.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_table_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)

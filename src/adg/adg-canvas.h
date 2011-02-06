@@ -26,10 +26,6 @@
 #ifndef __ADG_CANVAS_H__
 #define __ADG_CANVAS_H__
 
-#include "adg-container.h"
-#include "adg-title-block.h"
-#include "adg-style.h"
-
 
 G_BEGIN_DECLS
 

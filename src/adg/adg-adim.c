@@ -34,9 +34,22 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+#include "adg-model.h"
+#include "adg-point.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-style.h"
+#include "adg-dim-style.h"
+#include "adg-toy-text.h"
+#include "adg-dim.h"
+#include "adg-dim-private.h"
+#include <math.h>
+
 #include "adg-adim.h"
 #include "adg-adim-private.h"
-#include "adg-dim-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)

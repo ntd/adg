@@ -26,8 +26,6 @@
 #ifndef __ADG_EDGES_H__
 #define __ADG_EDGES_H__
 
-#include "adg-trail.h"
-
 
 G_BEGIN_DECLS
 

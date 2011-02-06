@@ -26,11 +26,6 @@
 #ifndef __ADG_TABLE_STYLE_H__
 #define __ADG_TABLE_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-dress.h"
-#include "adg-marker.h"
-#include "adg-pair.h"
-
 
 G_BEGIN_DECLS
 

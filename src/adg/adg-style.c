@@ -34,15 +34,16 @@
 
 
 #include "adg-internal.h"
+
 #include "adg-style.h"
+
+
+G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
 
 
 static void             _adg_apply      (AdgStyle       *style,
                                          AdgEntity      *entity,
                                          cairo_t        *cr);
-
-
-G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
 
 
 static void

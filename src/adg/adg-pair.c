@@ -36,7 +36,6 @@
 
 
 #include "adg-internal.h"
-#include "adg-pair.h"
 #include <string.h>
 
 

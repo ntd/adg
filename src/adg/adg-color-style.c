@@ -37,6 +37,9 @@
 
 
 #include "adg-internal.h"
+#include "adg-style.h"
+#include "adg-color-style.h"
+
 #include "adg-color-style.h"
 #include "adg-color-style-private.h"
 

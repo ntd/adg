@@ -31,14 +31,22 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-pattern.h"
+#include "adg-dress.h"
+#include "adg-style.h"
 #include "adg-color-style.h"
 #include "adg-line-style.h"
 #include "adg-font-style.h"
+#include "adg-fill-style.h"
 #include "adg-dim-style.h"
+#include "adg-table-style.h"
 #include "adg-arrow.h"
 #include "adg-ruled-fill.h"
-#include "adg-table-style.h"
+
+#include "adg-dress-builtins.h"
 
 
 /**

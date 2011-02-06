@@ -35,9 +35,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
-#include "adg-dress-builtins.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_font_style_parent_class)
 

@@ -26,9 +26,6 @@
 #ifndef __ADG_FONT_STYLE_H__
 #define __ADG_FONT_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-matrix.h"
-
 
 G_BEGIN_DECLS
 

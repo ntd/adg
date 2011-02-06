@@ -26,9 +26,6 @@
 #ifndef __ADG_TABLE_H__
 #define __ADG_TABLE_H__
 
-#include "adg-entity.h"
-#include "adg-pair.h"
-
 
 G_BEGIN_DECLS
 

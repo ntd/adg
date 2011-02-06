@@ -35,10 +35,17 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-stroke.h"
+#include "adg-pattern.h"
+#include "adg-style.h"
+#include "adg-fill-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-fill-style.h"
 
 
 G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE);

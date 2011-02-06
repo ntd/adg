@@ -26,11 +26,6 @@
 #ifndef __ADG_TRAIL_H__
 #define __ADG_TRAIL_H__
 
-#include "adg-model.h"
-#include "adg-primitive.h"
-#include "adg-segment.h"
-#include <cpml.h>
-
 
 G_BEGIN_DECLS
 

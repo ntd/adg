@@ -36,7 +36,6 @@
 
 
 #include "adg-internal.h"
-#include "adg-primitive.h"
 #include <string.h>
 
 

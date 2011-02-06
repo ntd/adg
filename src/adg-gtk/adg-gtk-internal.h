@@ -34,6 +34,7 @@
 #include <config.h>
 #include <gtk/gtk.h>
 #include <adg.h>
+#include "adg-gtk-marshal.h"
 #include "adg-gtk-utils.h"
 
 

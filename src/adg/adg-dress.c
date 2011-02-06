@@ -55,9 +55,11 @@
 
 
 #include "adg-internal.h"
+#include "adg-style.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-dress.h"
 #include "adg-dress-private.h"
-#include "adg-dress-builtins.h"
 
 
 typedef struct _AdgParamSpecDress AdgParamSpecDress;

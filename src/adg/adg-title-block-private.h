@@ -21,8 +21,6 @@
 #ifndef __ADG_TITLE_BLOCK_PRIVATE_H__
 #define __ADG_TITLE_BLOCK_PRIVATE_H__
 
-#include <glib.h>
-
 
 G_BEGIN_DECLS
 

@@ -34,6 +34,9 @@
 
 
 #include "adg-internal.h"
+#include "adg-style.h"
+#include "adg-pattern.h"
+
 #include "adg-fill-style.h"
 #include "adg-fill-style-private.h"
 

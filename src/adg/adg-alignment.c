@@ -46,8 +46,12 @@
 
 
 #include "adg-internal.h"
+#include "adg-entity.h"
+#include "adg-container.h"
+
 #include "adg-alignment.h"
 #include "adg-alignment-private.h"
+
 
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 

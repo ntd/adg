@@ -21,8 +21,6 @@
 #ifndef __ADG_DIM_STYLE_PRIVATE_H__
 #define __ADG_DIM_STYLE_PRIVATE_H__
 
-#include "adg-style.h"
-
 
 G_BEGIN_DECLS
 

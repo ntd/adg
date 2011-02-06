@@ -36,10 +36,16 @@
 
 
 #include "adg-internal.h"
+#include "adg-pattern.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-fill-style.h"
+#include <math.h>
+
 #include "adg-ruled-fill.h"
 #include "adg-ruled-fill-private.h"
-#include "adg-dress-builtins.h"
-#include <math.h>
+
 
 #define _ADG_OLD_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)
 #define _ADG_OLD_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)

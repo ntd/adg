@@ -21,8 +21,6 @@
 #ifndef __ADG_COLOR_STYLE_PRIVATE_H__
 #define __ADG_COLOR_STYLE_PRIVATE_H__
 
-#include <cairo.h>
-
 
 G_BEGIN_DECLS
 

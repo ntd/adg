@@ -36,11 +36,17 @@
 
 
 #include "adg-internal.h"
-#include "adg-dim-style.h"
-#include "adg-dim-style-private.h"
-#include "adg-dress-builtins.h"
+#include "adg-style.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+
+#include "adg-dim-style.h"
+#include "adg-dim-style-private.h"
 
 
 G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);

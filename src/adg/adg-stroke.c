@@ -34,10 +34,15 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-line-style.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-line-style.h"
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)

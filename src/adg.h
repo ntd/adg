@@ -22,32 +22,32 @@
 #define __ADG_H__
 
 #include <glib-object.h>
+#include <cpml.h>
 
+#include "adg/adg-enums.h"
 #include "adg/adg-utils.h"
 #include "adg/adg-pair.h"
 #include "adg/adg-matrix.h"
 #include "adg/adg-pattern.h"
 #include "adg/adg-primitive.h"
 #include "adg/adg-segment.h"
-#include "adg/adg-point.h"
-
+#include "adg/adg-entity.h"
 #include "adg/adg-model.h"
 #include "adg/adg-trail.h"
 #include "adg/adg-path.h"
 #include "adg/adg-edges.h"
-
+#include "adg/adg-point.h"
+#include "adg/adg-marker.h"
 #include "adg/adg-style.h"
 #include "adg/adg-color-style.h"
 #include "adg/adg-line-style.h"
 #include "adg/adg-font-style.h"
-#include "adg/adg-ruled-fill.h"
 #include "adg/adg-table-style.h"
 #include "adg/adg-dim-style.h"
 #include "adg/adg-fill-style.h"
+#include "adg/adg-ruled-fill.h"
 #include "adg/adg-dress.h"
 #include "adg/adg-dress-builtins.h"
-
-#include "adg/adg-entity.h"
 #include "adg/adg-stroke.h"
 #include "adg/adg-hatch.h"
 #include "adg/adg-toy-text.h"
@@ -55,14 +55,13 @@
 #include "adg/adg-projection.h"
 #include "adg/adg-container.h"
 #include "adg/adg-alignment.h"
+#include "adg/adg-table.h"
+#include "adg/adg-title-block.h"
 #include "adg/adg-canvas.h"
-#include "adg/adg-marker.h"
 #include "adg/adg-arrow.h"
 #include "adg/adg-dim.h"
 #include "adg/adg-adim.h"
 #include "adg/adg-ldim.h"
 #include "adg/adg-rdim.h"
-#include "adg/adg-table.h"
-#include "adg/adg-title-block.h"
 
 #endif /* __ADG_H__ */

@@ -26,9 +26,6 @@
 #ifndef __ADG_RULED_FILL_H__
 #define __ADG_RULED_FILL_H__
 
-#include "adg-fill-style.h"
-#include "adg-dress.h"
-
 
 G_BEGIN_DECLS
 

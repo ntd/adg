@@ -26,9 +26,6 @@
 #ifndef __ADG_MATRIX_H__
 #define __ADG_MATRIX_H__
 
-#include "adg-enums.h"
-#include <cairo.h>
-
 
 G_BEGIN_DECLS
 

@@ -26,9 +26,6 @@
 #ifndef __ADG_MARKER_H__
 #define __ADG_MARKER_H__
 
-#include "adg-entity.h"
-#include "adg-trail.h"
-
 
 G_BEGIN_DECLS
 

@@ -26,8 +26,6 @@
 #ifndef __ADG_LOGO_H__
 #define __ADG_LOGO_H__
 
-#include "adg-entity.h"
-
 
 G_BEGIN_DECLS
 

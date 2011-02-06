@@ -41,8 +41,10 @@
 
 
 #include "adg-internal.h"
-#include "adg-point.h"
+#include "adg-model.h"
 #include <string.h>
+
+#include "adg-point.h"
 
 
 struct _AdgPoint {

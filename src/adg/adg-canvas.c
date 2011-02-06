@@ -65,10 +65,17 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
+#include "adg-style.h"
+#include "adg-color-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-color-style.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
