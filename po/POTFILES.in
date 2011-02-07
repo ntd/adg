@@ -32,6 +32,7 @@ src/adg/adg-stroke.c
 src/adg/adg-style.c
 src/adg/adg-table.c
 src/adg/adg-table-style.c
+src/adg/adg-textual.c
 src/adg/adg-title-block.c
 src/adg/adg-toy-text.c
 src/adg/adg-trail.c

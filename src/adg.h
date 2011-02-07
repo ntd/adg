@@ -50,6 +50,7 @@
 #include "adg/adg-dress-builtins.h"
 #include "adg/adg-stroke.h"
 #include "adg/adg-hatch.h"
+#include "adg/adg-textual.h"
 #include "adg/adg-toy-text.h"
 #include "adg/adg-logo.h"
 #include "adg/adg-projection.h"
@@ -60,8 +61,8 @@
 #include "adg/adg-canvas.h"
 #include "adg/adg-arrow.h"
 #include "adg/adg-dim.h"
-#include "adg/adg-adim.h"
 #include "adg/adg-ldim.h"
 #include "adg/adg-rdim.h"
+#include "adg/adg-adim.h"
 
 #endif /* __ADG_H__ */

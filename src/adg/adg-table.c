@@ -80,6 +80,7 @@
 #include "adg-table-style.h"
 #include "adg-path.h"
 #include "adg-stroke.h"
+#include "adg-textual.h"
 #include "adg-toy-text.h"
 #include "adg-container.h"
 #include "adg-alignment.h"
@@ -787,14 +788,18 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
         adg_table_cell_set_title(cell, NULL);
 
     if (cell->title) {
-        const gchar *old_title;
+        gchar *old_title;
+        gboolean unchanged;
 
-        if (ADG_IS_TOY_TEXT(cell->title))
-            old_title = adg_toy_text_get_label((AdgToyText *) cell->title);
+        if (ADG_IS_TEXTUAL(cell->title))
+            old_title = adg_textual_dup_text((AdgTextual *) cell->title);
         else
             old_title = NULL;
 
-        if (g_strcmp0(title, old_title) == 0)
+        unchanged = g_strcmp0(title, old_title) == 0;
+        g_free(old_title);
+
+        if (unchanged)
             return;
     }
 
@@ -804,7 +809,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_title_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", title,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", title,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, padding->x, padding->y);
@@ -880,15 +885,16 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
         adg_table_cell_set_value(cell, NULL);
 
     if (cell->value) {
-        const gchar *old_value;
+        gchar *old_value;
+        gboolean unchanged;
 
-        if (ADG_IS_TOY_TEXT(cell->value))
-            old_value = adg_toy_text_get_label((AdgToyText *) cell->value);
+        if (ADG_IS_TEXTUAL(cell->value))
+            old_value = adg_textual_dup_text((AdgTextual *) cell->value);
         else
             old_value = NULL;
 
-        if (g_strcmp0(value, old_value) == 0)
-            return;
+        unchanged = g_strcmp0(value, old_value) == 0;
+        g_free(old_value);
     }
 
     table = cell->row->table;
@@ -897,7 +903,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_value_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", value,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", value,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, 0, -padding->y);

@@ -39,6 +39,7 @@ h_sources=			adg-adim.h \
 				adg-style.h \
 				adg-table.h \
 				adg-table-style.h \
+				adg-textual.h \
 				adg-title-block.h \
 				adg-toy-text.h \
 				adg-trail.h \
@@ -110,6 +111,7 @@ c_sources=			adg-adim.c \
 				adg-style.c \
 				adg-table.c \
 				adg-table-style.c \
+				adg-textual.c \
 				adg-title-block.c \
 				adg-trail.c \
 				adg-toy-text.c \

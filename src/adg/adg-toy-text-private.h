@@ -28,7 +28,8 @@ typedef struct _AdgToyTextPrivate AdgToyTextPrivate;
 
 struct _AdgToyTextPrivate {
     AdgDress             font_dress;
-    gchar               *label;
+    gchar               *text;
+
     int                  num_glyphs;
     cairo_glyph_t       *glyphs;
 

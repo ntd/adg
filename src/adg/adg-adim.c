@@ -42,6 +42,7 @@
 #include "adg-marker.h"
 #include "adg-style.h"
 #include "adg-dim-style.h"
+#include "adg-textual.h"
 #include "adg-toy-text.h"
 #include "adg-dim.h"
 #include "adg-dim-private.h"

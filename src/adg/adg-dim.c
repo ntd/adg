@@ -36,6 +36,7 @@
 #include "adg-internal.h"
 #include "adg-container.h"
 #include "adg-alignment.h"
+#include "adg-textual.h"
 #include "adg-toy-text.h"
 #include "adg-model.h"
 #include "adg-trail.h"
@@ -1134,7 +1135,7 @@ _adg_arrange(AdgEntity *entity)
 
         g_free(value);
 
-        adg_toy_text_set_label(data->quote.value, text);
+        adg_textual_set_text(data->quote.value, text);
         g_free(text);
     }
 
@@ -1146,7 +1147,7 @@ _adg_arrange(AdgEntity *entity)
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.min);
-        adg_toy_text_set_label(data->quote.min, data->min);
+        adg_textual_set_text(data->quote.min, data->min);
     }
 
     if (data->quote.max == NULL && data->max) {
@@ -1157,7 +1158,7 @@ _adg_arrange(AdgEntity *entity)
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.max);
-        adg_toy_text_set_label(data->quote.max, data->max);
+        adg_textual_set_text(data->quote.max, data->max);
     }
 
     value_entity = (AdgEntity *) data->quote.value;

@@ -21,6 +21,7 @@ src/adg/adg-canvas.c
 src/adg/adg-marker.c
 src/adg/adg-projection.c
 src/adg/adg-container.c
+src/adg/adg-textual.c
 src/adg/adg-title-block.c
 src/adg/adg-line-style.c
 src/adg/adg-alignment.c

@@ -45,9 +45,9 @@ struct _AdgDimPrivate {
 
     struct {
         AdgAlignment    *entity;
-        AdgToyText      *value;
-        AdgToyText      *min;
-        AdgToyText      *max;
+        AdgTextual      *value;
+        AdgTextual      *min;
+        AdgTextual      *max;
     }                    quote;
 };
 
