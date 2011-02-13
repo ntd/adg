@@ -5,6 +5,7 @@ m4_define([gtkdoc_prereq],[1.9])
 m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
 m4_define([gtk_prereq],[2.12.0])
+m4_define([pangocairo_prereq],[1.18.0])
 
 
 # Initialization
@@ -105,6 +106,23 @@ AC_CONFIG_COMMANDS([default],
 GTK_DOC_CHECK(gtkdoc_prereq)
 PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
+
+
+# Check for optional pango support
+
+AC_ARG_ENABLE([pango],
+              [AS_HELP_STRING([--enable-pango],
+                              [use pango for rendering text @<:@default=check@:>@])],
+              [],[enable_pango=check])
+AS_IF([test "x${enable_pango}" != "xno"],
+      [PKG_CHECK_MODULES([PANGO],[pangocairo >= ]pangocairo_prereq,
+                         [enable_pango=yes
+                          AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
+                                             [Defined if the pango support is enabled.])],
+                         [AS_IF([test "x${enable_pango}" = "xyes"],
+                                [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
+                                [enable_pango=no])])])
+AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
 
 
 # Check for optional GTK+2 support
@@ -216,6 +234,7 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
 ----------------------------------------------------------
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
+         Build pango based entities: ${enable_pango}
            GTK+2 additional widgets: ${enable_gtk2}
              Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
