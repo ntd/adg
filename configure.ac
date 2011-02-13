@@ -115,9 +115,7 @@ AC_ARG_ENABLE([gtk2],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes
-                          DLLDIR=`${PKG_CONFIG} --variable=prefix gtk+-2.0`/bin
-                          AC_SUBST([DLLDIR])],
+                         [enable_gtk2=yes],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
@@ -174,6 +172,7 @@ AC_C_CONST
 AC_SUBST([CPML_REQUIRES],'cairo >= cairo_prereq')
 AC_SUBST([ADG_REQUIRES],'gobject-2.0 >= gobject_prereq')
 AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
+AC_SUBST([DLLDIR],"$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin")
 
 SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
