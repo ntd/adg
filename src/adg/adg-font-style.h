@@ -36,6 +36,7 @@ G_BEGIN_DECLS
 #define ADG_IS_FONT_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_FONT_STYLE))
 #define ADG_FONT_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
 
+
 typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
 
@@ -53,12 +54,14 @@ struct _AdgFontStyleClass {
 
 GType           adg_font_style_get_type         (void) G_GNUC_CONST;
 AdgFontStyle *  adg_font_style_new              (void);
+cairo_font_options_t *
+                adg_font_style_new_options      (AdgFontStyle    *font_style);
 cairo_scaled_font_t *
                 adg_font_style_get_scaled_font  (AdgFontStyle    *font_style,
                                                  const AdgMatrix *ctm);
-void            adg_font_style_set_color_dress  (AdgFontStyle   *font_style,
-                                                 AdgDress        dress);
-AdgDress        adg_font_style_get_color_dress  (AdgFontStyle   *font_style);
+void            adg_font_style_set_color_dress  (AdgFontStyle    *font_style,
+                                                 AdgDress         dress);
+AdgDress        adg_font_style_get_color_dress  (AdgFontStyle    *font_style);
 void            adg_font_style_set_family       (AdgFontStyle    *font_style,
                                                  const gchar     *family);
 const gchar *   adg_font_style_get_family       (AdgFontStyle    *font_style);
