@@ -52,6 +52,8 @@ struct _AdgStyleClass {
     /*< private >*/
     GObjectClass         parent_class;
     /*< public >*/
+    /* Signals */
+    void                (*invalidate)           (AdgStyle       *style);
     void                (*apply)                (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -60,6 +62,7 @@ struct _AdgStyleClass {
 
 GType                   adg_style_get_type      (void) G_GNUC_CONST;
 
+void                    adg_style_invalidate    (AdgStyle       *style);
 void                    adg_style_apply         (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);

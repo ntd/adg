@@ -40,16 +40,63 @@
 
 G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
 
+enum {
+    INVALIDATE,
+    APPLY,
+    LAST_SIGNAL
+};
 
-static void             _adg_apply      (AdgStyle       *style,
-                                         AdgEntity      *entity,
-                                         cairo_t        *cr);
+
+static void             _adg_apply              (AdgStyle       *style,
+                                                 AdgEntity      *entity,
+                                                 cairo_t        *cr);
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
 adg_style_class_init(AdgStyleClass *klass)
 {
+    klass->invalidate = NULL;
     klass->apply = _adg_apply;
+
+    /**
+     * AdgStyle::invalidate:
+     * @style: an #AdgStyle
+     *
+     * Invalidates the @style, that is resets all the cache, if any,
+     * retained by the internal implementation.
+     *
+     * This is usually emitted from the property setter code of new
+     * style implementations when it changes something fundamental
+     * for the style itsself.
+     **/
+    _adg_signals[INVALIDATE] =
+        g_signal_new("invalidate",
+                     G_OBJECT_CLASS_TYPE(klass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(AdgStyleClass, invalidate),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
+
+    /**
+     * AdgStyle::apply:
+     * @style: an #AdgStyle
+     * @entity: the caller #AdgEntity
+     * @cr: the #cairo_t context
+     *
+     * Applies @style to @cr so the next rendering operations will be
+     * done accordling to this style directives. The @entity parameter
+     * is used to resolve the internal dresses of @style, if any.
+     **/
+    _adg_signals[APPLY] =
+        g_signal_new("apply",
+                     G_OBJECT_CLASS_TYPE(klass),
+                     G_SIGNAL_RUN_LAST,
+                     G_STRUCT_OFFSET(AdgStyleClass, apply),
+                     NULL, NULL,
+                     adg_marshal_VOID__OBJECT_POINTER,
+                     G_TYPE_NONE, 2, ADG_TYPE_ENTITY, G_TYPE_POINTER);
 }
 
 static void
@@ -59,14 +106,27 @@ adg_style_init(AdgStyle *style)
 
 
 /**
+ * adg_style_invalidate:
+ * @style: an #AdgStyle derived style
+ *
+ * Emits the #AdgStyle::invalidate signal on @style.
+ **/
+void
+adg_style_invalidate(AdgStyle *style)
+{
+    g_return_if_fail(ADG_IS_STYLE(style));
+
+    g_signal_emit(style, _adg_signals[INVALIDATE], 0);
+}
+
+/**
  * adg_style_apply:
  * @style: an #AdgStyle derived style
  * @entity: the caller #AdgEntity
  * @cr: the subject cairo context
  *
- * Applies @style to @cr so the next rendering operations will be
- * done accordling to this style directives. The @entity parameter
- * is used to resolve the internal dresses of @style, if any.
+ * Emits the #AdgStyle::apply signal on @style, passing @entity and
+ * @cr as parameters to the signal.
  **/
 void
 adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
@@ -77,10 +137,7 @@ adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(cr != NULL);
 
-    klass = ADG_STYLE_GET_CLASS(style);
-
-    if (klass->apply)
-        klass->apply(style, entity, cr);
+    g_signal_emit(style, _adg_signals[APPLY], 0, entity, cr);
 }
 
 
