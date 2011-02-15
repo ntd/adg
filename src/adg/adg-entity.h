@@ -63,8 +63,6 @@ struct _AdgEntityClass {
                                                  AdgEntity       *old_parent);
     void                (*global_changed)       (AdgEntity       *entity);
     void                (*local_changed)        (AdgEntity       *entity);
-
-    /* Virtual Table */
     void                (*invalidate)           (AdgEntity       *entity);
     void                (*arrange)              (AdgEntity       *entity);
     void                (*render)               (AdgEntity       *entity,
