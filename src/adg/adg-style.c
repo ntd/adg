@@ -38,6 +38,9 @@
 #include "adg-style.h"
 
 
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_style_parent_class)
+
+
 G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
 
 enum {
@@ -47,6 +50,7 @@ enum {
 };
 
 
+static void             _adg_dispose            (GObject        *object);
 static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -56,6 +60,12 @@ static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 static void
 adg_style_class_init(AdgStyleClass *klass)
 {
+    GObjectClass *gobject_class;
+
+    gobject_class = (GObjectClass *) klass;
+
+    gobject_class->dispose = _adg_dispose;
+
     klass->invalidate = NULL;
     klass->apply = _adg_apply;
 
@@ -66,9 +76,10 @@ adg_style_class_init(AdgStyleClass *klass)
      * Invalidates the @style, that is resets all the cache, if any,
      * retained by the internal implementation.
      *
-     * This is usually emitted from the property setter code of new
-     * style implementations when it changes something fundamental
-     * for the style itsself.
+     * This signal is emitted while disposing @style, so be sure it
+     * can be called more than once without harms. Furthermore it
+     * will be emitted from property setter code of new implementations
+     * to force the recomputation of the cache.
      **/
     _adg_signals[INVALIDATE] =
         g_signal_new("invalidate",
@@ -104,12 +115,27 @@ adg_style_init(AdgStyle *style)
 {
 }
 
+static void
+_adg_dispose(GObject *object)
+{
+    g_signal_emit(object, _adg_signals[INVALIDATE], 0);
+
+    if (_ADG_OLD_OBJECT_CLASS->dispose != NULL)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
+}
+
 
 /**
  * adg_style_invalidate:
  * @style: an #AdgStyle derived style
  *
- * Emits the #AdgStyle::invalidate signal on @style.
+ * Emits the #AdgStyle::invalidate signal on @style. This signal
+ * is always emitted while disposing @style, so be sure it
+ * can be called more than once without harms.
+ *
+ * <note><para>
+ * This function is only useful in new style implementations.
+ * </para></note>
  **/
 void
 adg_style_invalidate(AdgStyle *style)
