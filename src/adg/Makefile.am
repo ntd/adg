@@ -154,13 +154,14 @@ libadg_1_la_LIBADD=		$(GOBJECT2_LIBS) \
 
 
 if HAVE_PANGO
-
-h_sources+=			adg-pango-style.h
-private_h_sources+=		adg-pango-style-private.h
-c_sources+=			adg-pango-style.c
+h_sources+=			adg-pango-style.h \
+				adg-text.h
+private_h_sources+=		adg-pango-style-private.h \
+				adg-text-private.h
+c_sources+=			adg-pango-style.c \
+				adg-text.c
 libadg_1_la_CFLAGS+=		$(PANGO_CFLAGS)
 libadg_1_la_LIBADD+=		$(PANGO_LIBS)
-
 endif
 
 

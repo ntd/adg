@@ -27,6 +27,9 @@
  * - an internal proxy type (AdgBestFontStyle) that resolves to
  *   AdgFontStyle or AdgPangoStyle, depending on wheter or not
  *   the pango support has been compiled;
+ * - an internal proxy type (AdgBestText) that resolves to
+ *   AdgToyText or AdgText, depending on wheter or not  the pango
+ *   support has been compiled;
  */
 
 #ifndef __ADG_INTERNAL_H__
@@ -93,13 +96,17 @@
 
 #include <pango/pango.h>
 
+#define ADG_TYPE_BEST_TEXT              ADG_TYPE_TEXT
 #define ADG_TYPE_BEST_FONT_STYLE        ADG_TYPE_PANGO_STYLE
 
 #else /* ! PANGO_ENABLED */
 
+#define ADG_TYPE_BEST_TEXT              ADG_TYPE_TOY_TEXT
 #define ADG_TYPE_BEST_FONT_STYLE        ADG_TYPE_FONT_STYLE
 
 /* Prevent the inclusion of the pango specific headers */
+#define __ADG_TEXT_H__                  1
+#define __ADG_TEXT_PRIVATE_H__          1
 #define __ADG_PANGO_STYLE_H__           1
 #define __ADG_PANGO_STYLE_PRIVATE_H__   1
 
