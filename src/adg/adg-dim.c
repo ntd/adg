@@ -38,6 +38,7 @@
 #include "adg-alignment.h"
 #include "adg-textual.h"
 #include "adg-toy-text.h"
+#include "adg-text.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-point.h"
@@ -49,6 +50,7 @@
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
+
 
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
@@ -1123,7 +1125,7 @@ _adg_arrange(AdgEntity *entity)
         tag = adg_dim_style_get_number_tag(data->dim_style);
         value = klass->default_value ? klass->default_value(dim) : NULL;
 
-        data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.value = g_object_new(ADG_TYPE_BEST_TEXT,
                                          "local-method", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
         adg_container_add(quote_container, (AdgEntity *) data->quote.value);
@@ -1142,7 +1144,7 @@ _adg_arrange(AdgEntity *entity)
     if (data->quote.min == NULL && data->min) {
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
-        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.min = g_object_new(ADG_TYPE_BEST_TEXT,
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
@@ -1153,7 +1155,7 @@ _adg_arrange(AdgEntity *entity)
     if (data->quote.max == NULL && data->max) {
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
-        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.max = g_object_new(ADG_TYPE_BEST_TEXT,
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
