@@ -153,6 +153,17 @@ libadg_1_la_LIBADD=		$(GOBJECT2_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la
 
 
+if HAVE_PANGO
+
+h_sources+=			adg-pango-style.h
+private_h_sources+=		adg-pango-style-private.h
+c_sources+=			adg-pango-style.c
+libadg_1_la_CFLAGS+=		$(PANGO_CFLAGS)
+libadg_1_la_LIBADD+=		$(PANGO_LIBS)
+
+endif
+
+
 mkenums_command=		$(MSG_GEN) ; \
 				$(GLIB_MKENUMS) --template
 genmarshal_command=		$(MSG_GEN) ; \

@@ -40,6 +40,7 @@
 #include "adg-color-style.h"
 #include "adg-line-style.h"
 #include "adg-font-style.h"
+#include "adg-pango-style.h"
 #include "adg-fill-style.h"
 #include "adg-dim-style.h"
 #include "adg-table-style.h"
@@ -375,7 +376,7 @@ _adg_dress_font(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Serif",
                                           "size", 14., NULL);
 
@@ -402,7 +403,7 @@ _adg_dress_font_text(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_ANNOTATION,
                                           "family", "Sans",
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
@@ -430,7 +431,7 @@ _adg_dress_font_annotation(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_ANNOTATION,
                                           "family", "Sans",
                                           "size", 8., NULL);
@@ -458,7 +459,7 @@ _adg_dress_font_quote_text(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Sans",
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
                                           "size", 12., NULL);
@@ -486,7 +487,7 @@ _adg_dress_font_quote_annotation(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Sans",
                                           "size", 8., NULL);
 
