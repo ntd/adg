@@ -37,12 +37,14 @@ IGNORE_HFILES=		adg.h \
 			adg-marker-private.h \
 			adg-model-private.h \
 			adg-path-private.h \
+			adg-pango-style-private.h \
 			adg-projection-private.h \
 			adg-rdim-private.h \
 			adg-ruled-fill-private.h \
 			adg-stroke-private.h \
 			adg-table-private.h \
 			adg-table-style-private.h \
+			adg-text-private.h \
 			adg-title-block-private.h \
 			adg-toy-text-private.h \
 			adg-trail-private.h \

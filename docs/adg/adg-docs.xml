@@ -48,6 +48,7 @@
       <xi:include href="xml/adg-stroke.xml"/>
       <xi:include href="xml/adg-hatch.xml"/>
       <xi:include href="xml/adg-toy-text.xml"/>
+      <xi:include href="xml/adg-text.xml"/>
       <xi:include href="xml/adg-table.xml"/>
     </chapter>
     <chapter id="Populating-special">
@@ -82,6 +83,7 @@
       <xi:include href="xml/adg-fill-style.xml"/>
       <xi:include href="xml/adg-ruled-fill.xml"/>
       <xi:include href="xml/adg-font-style.xml"/>
+      <xi:include href="xml/adg-pango-style.xml"/>
       <xi:include href="xml/adg-dim-style.xml"/>
       <xi:include href="xml/adg-table-style.xml"/>
     </chapter>
