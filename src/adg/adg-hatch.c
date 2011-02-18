@@ -48,7 +48,7 @@
 #include "adg-hatch-private.h"
 
 
-G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE);
+G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE)
 
 enum {
     PROP_0,

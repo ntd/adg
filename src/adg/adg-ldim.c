@@ -55,7 +55,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
-G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM);
+G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,

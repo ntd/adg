@@ -51,7 +51,7 @@ _adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
     GError *error = NULL;
     GOptionEntry entries[] = {
         {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
-         _adg_version, _("Display version information"), NULL},
+         (gpointer) _adg_version, _("Display version information"), NULL},
         {"show-extents", 'E', 0, G_OPTION_ARG_NONE,
          NULL, _("Show the boundary boxes of every entity"), NULL},
         {NULL}

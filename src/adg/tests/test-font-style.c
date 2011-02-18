@@ -249,8 +249,8 @@ _adg_test_slant(void)
     cairo_font_slant_t slant;
 
     font_style = adg_font_style_new();
-    valid_slant_1 = CAIRO_FONT_WEIGHT_NORMAL;
-    valid_slant_2 = CAIRO_FONT_WEIGHT_BOLD;
+    valid_slant_1 = CAIRO_FONT_SLANT_NORMAL;
+    valid_slant_2 = CAIRO_FONT_SLANT_OBLIQUE;
 
     /* Using the public APIs */
     adg_font_style_set_slant(font_style, valid_slant_1);

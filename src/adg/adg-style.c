@@ -41,7 +41,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_style_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT)
 
 enum {
     INVALIDATE,

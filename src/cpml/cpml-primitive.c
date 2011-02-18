@@ -498,7 +498,7 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
     if (class_data == NULL || class_data->offset == NULL)
         return;
 
-    return class_data->offset(primitive, offset);
+    class_data->offset(primitive, offset);
 }
 
 /**

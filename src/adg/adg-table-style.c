@@ -43,7 +43,7 @@
 #include "adg-table-style-private.h"
 
 
-G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

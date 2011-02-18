@@ -49,7 +49,7 @@
 #include "adg-dim-style-private.h"
 
 
-G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

@@ -93,7 +93,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)
 
 
-G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -946,8 +946,6 @@ adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
                              const AdgPair *to_factor)
 {
     g_return_if_fail(cell != NULL);
-    g_return_if_fail(cell->value != NULL);
-
     _adg_cell_set_value_pos(cell, from_factor, to_factor);
 }
 

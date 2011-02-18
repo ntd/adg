@@ -44,7 +44,7 @@
 #include "adg-logo-private.h"
 
 
-G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,

@@ -57,7 +57,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY);
+G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,

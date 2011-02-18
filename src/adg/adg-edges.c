@@ -60,7 +60,7 @@
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)
 
 
-G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL);
+G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL)
 
 enum {
     PROP_0,

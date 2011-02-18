@@ -70,7 +70,7 @@
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
 
 
-G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL);
+G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL)
 
 
 static void             _adg_finalize           (GObject        *object);

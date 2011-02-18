@@ -59,7 +59,7 @@ static void             _adg_iface_init         (AdgTextualIface *iface);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgText, adg_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init));
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init))
 
 enum {
     PROP_0,

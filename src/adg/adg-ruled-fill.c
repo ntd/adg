@@ -51,7 +51,7 @@
 #define _ADG_OLD_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)
 
 
-G_DEFINE_TYPE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE);
+G_DEFINE_TYPE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE)
 
 enum {
     PROP_0,

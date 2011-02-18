@@ -46,7 +46,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_font_style_parent_class)
 
 
-G_DEFINE_TYPE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

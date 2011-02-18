@@ -256,13 +256,12 @@ cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
     /* Handle the common cases: start and end points */
-    if (pos == 0)
-        return cpml_primitive_put_pair_at(&primitive, 0, pair);
-
-    if (pos == 1) {
+    if (pos == 0) {
+        cpml_primitive_put_pair_at(&primitive, 0, pair);
+    } if (pos == 1) {
         while (cpml_primitive_next(&primitive))
             ;
-        return cpml_primitive_put_pair_at(&primitive, 1, pair);
+        cpml_primitive_put_pair_at(&primitive, 1, pair);
     }
 }
 
