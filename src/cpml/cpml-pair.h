@@ -1,5 +1,5 @@
 /* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,8 @@ void            cpml_pair_from_cairo            (CpmlPair       *pair,
                                                  const cairo_path_data_t
                                                                 *path_data);
 void            cpml_pair_copy                  (CpmlPair       *pair,
+                                                 const CpmlPair *src);
+cairo_bool_t    cpml_pair_equal                 (const CpmlPair *pair,
                                                  const CpmlPair *src);
 void            cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t

@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -145,9 +145,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/ldim/direction", _adg_test_direction);
-    adg_test_add_func("/adg/ldim/has-extension1", _adg_test_has_extension1);
-    adg_test_add_func("/adg/ldim/has-extension2", _adg_test_has_extension2);
+    adg_test_add_func("/adg/ldim/property/direction", _adg_test_direction);
+    adg_test_add_func("/adg/ldim/property/has-extension1", _adg_test_has_extension1);
+    adg_test_add_func("/adg/ldim/property/has-extension2", _adg_test_has_extension2);
 
     return g_test_run();
 }

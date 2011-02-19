@@ -1,5 +1,5 @@
 /* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,8 @@ CpmlExtents *   cpml_extents_copy               (CpmlExtents       *extents,
 CpmlExtents *   cpml_extents_from_cairo_text    (CpmlExtents       *extents,
                                                  const cairo_text_extents_t
                                                                    *cairo_extents);
+cairo_bool_t    cpml_extents_equal              (const CpmlExtents *extents,
+                                                 const CpmlExtents *src);
 void            cpml_extents_add                (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
 void            cpml_extents_pair_add           (CpmlExtents       *extents,

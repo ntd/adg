@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,9 @@
 
 
 #include "adg-internal.h"
+#include "adg-style.h"
+#include "adg-pattern.h"
+
 #include "adg-fill-style.h"
 #include "adg-fill-style-private.h"
 
@@ -260,7 +263,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     AdgFillStylePrivate *data = ((AdgFillStyle *) style)->data;
 
     if (data->pattern == NULL)
-        g_warning("%s: pattern undefined for type `%s'",
+        g_warning(_("%s: pattern undefined for type `%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(style)));
     else
         cairo_set_source(cr, data->pattern);

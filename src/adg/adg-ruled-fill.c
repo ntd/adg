@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,10 +36,16 @@
 
 
 #include "adg-internal.h"
+#include "adg-pattern.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-fill-style.h"
+#include <math.h>
+
 #include "adg-ruled-fill.h"
 #include "adg-ruled-fill-private.h"
-#include "adg-dress-builtins.h"
-#include <math.h>
+
 
 #define _ADG_OLD_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)
 #define _ADG_OLD_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)
@@ -208,7 +214,7 @@ void
 adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_RULED_FILL(ruled_fill));
-    g_object_set((GObject *) ruled_fill, "line-dress", dress, NULL);
+    g_object_set(ruled_fill, "line-dress", dress, NULL);
 }
 
 /**
@@ -306,7 +312,6 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     AdgFillStyle *fill_style;
     AdgPattern *pattern;
     const CpmlExtents *extents;
-    cairo_matrix_t matrix;
 
     fill_style = (AdgFillStyle *) style;
     pattern = adg_fill_style_get_pattern(fill_style);
@@ -321,11 +326,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
         cairo_pattern_destroy(pattern);
     }
 
-    /* The extents are yet in identity space, so the ctm should be
-     * reset to avoid using local and global maps twice: only the
-     * translation (also in identity space) is applied */
-    cairo_matrix_init_translate(&matrix, extents->org.x, extents->org.y);
-    cairo_set_matrix(cr, &matrix);
+    cairo_translate(cr, extents->org.x, extents->org.y);
 
     if (_ADG_OLD_STYLE_CLASS->apply)
         _ADG_OLD_STYLE_CLASS->apply(style, entity, cr);

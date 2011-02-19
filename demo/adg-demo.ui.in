@@ -5,15 +5,22 @@
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="wndMain">
     <property name="border_width">6</property>
-    <property name="title" translatable="yes">@PACKAGE_NAME@ - Demostration program</property>
+    <property name="title" translatable="yes">adg-demo - Demostration program</property>
     <property name="window_position">center</property>
     <property name="icon">adg-64.png</property>
     <child>
       <object class="GtkVBox" id="mainBox">
         <property name="visible">True</property>
         <child>
-          <object class="AdgGtkArea" id="mainCanvas">
+          <object class="GtkScrolledWindow" id="scrollCanvas">
             <property name="visible">True</property>
+            <property name="hscrollbar-policy">automatic</property>
+            <property name="vscrollbar-policy">automatic</property>
+            <child>
+              <object class="AdgGtkLayout" id="mainCanvas">
+                <property name="visible">True</property>
+              </object>
+            </child>
           </object>
           <packing>
             <property name="position">0</property>
@@ -69,6 +76,20 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="mainPrint">
+                <property name="label">gtk-print</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="mainQuit">
                 <property name="label">gtk-quit</property>
                 <property name="visible">True</property>
@@ -80,7 +101,7 @@
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -630,31 +651,18 @@ Boston, MA  02110-1301, USA.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkExpander" id="editAdditional">
+          <object class="GtkFrame" id="editHole">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="border_width">6</property>
-            <property name="use_markup">True</property>
+            <property name="border_width">3</property>
+            <property name="label_xalign">0</property>
+            <property name="shadow_type">none</property>
             <child>
-              <object class="GtkTable" id="editAdditionalTable">
+              <object class="GtkTable" id="editHoleTable">
                 <property name="visible">True</property>
                 <property name="border_width">3</property>
-                <property name="n_rows">3</property>
+                <property name="n_rows">1</property>
                 <property name="n_columns">5</property>
                 <property name="row_spacing">6</property>
-                <child>
-                  <object class="GtkSpinButton" id="editDHOLE">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjDHOLE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                  </packing>
-                </child>
                 <child>
                   <object class="GtkLabel" id="editDHOLELabel">
                     <property name="visible">True</property>
@@ -669,16 +677,16 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="editLHOLE">
+                  <object class="GtkSpinButton" id="editDHOLE">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="adjustment">adjLHOLE</property>
+                    <property name="adjustment">adjDHOLE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                   </object>
                   <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
+                    <property name="left_attach">1</property>
+                    <property name="right_attach">2</property>
                   </packing>
                 </child>
                 <child>
@@ -697,14 +705,108 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="editDGrooveLabel">
+                  <object class="GtkSpinButton" id="editLHOLE">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="adjustment">adjLHOLE</property>
+                    <property name="digits">1</property>
+                    <property name="numeric">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">4</property>
+                    <property name="right_attach">5</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel" id="editHoleLabel">
+                <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="yalign">0</property>
+                <property name="xpad">3</property>
+                <property name="ypad">3</property>
+                <property name="label" translatable="yes">&lt;b&gt;Rear hole data&lt;/b&gt;</property>
+                <property name="use_markup">True</property>
+                <property name="single_line_mode">True</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkExpander" id="editAdditional">
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="border_width">6</property>
+            <property name="use_markup">True</property>
+            <child>
+              <object class="GtkTable" id="editAdditionalTable">
+                <property name="visible">True</property>
+                <property name="border_width">3</property>
+                <property name="n_rows">3</property>
+                <property name="n_columns">5</property>
+                <property name="row_spacing">6</property>
+                <child>
+                  <object class="GtkCheckButton" id="GROOVE">
+                    <property name="label" translatable="yes">Groove machining</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="draw_indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="right_attach">3</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="x_padding">12</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="editZGROOVELabel">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="xalign">0</property>
+                    <property name="xpad">12</property>
+                    <property name="label" translatable="yes">Groove position:</property>
+                    <property name="use_underline">True</property>
+                    <property name="mnemonic_widget">editZGROOVE</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">3</property>
+                    <property name="right_attach">4</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                    <property name="x_options">GTK_FILL</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="editZGROOVE">
+                    <property name="visible">True</property>
+                    <property name="sensitive">False</property>
+                    <property name="can_focus">True</property>
+                    <property name="adjustment">adjZGROOVE</property>
+                    <property name="digits">1</property>
+                    <property name="numeric">True</property>
+                  </object>
+                  <packing>
+                    <property name="left_attach">4</property>
+                    <property name="right_attach">5</property>
+                    <property name="top_attach">1</property>
+                    <property name="bottom_attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="editDGROOVELabel">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="xalign">0</property>
                     <property name="xpad">12</property>
                     <property name="label" translatable="yes">Groove diameter:</property>
                     <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editDGroove</property>
+                    <property name="mnemonic_widget">editDGROOVE</property>
                   </object>
                   <packing>
                     <property name="top_attach">2</property>
@@ -713,11 +815,11 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="editDGroove">
+                  <object class="GtkSpinButton" id="editDGROOVE">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="adjustment">adjDGroove</property>
+                    <property name="adjustment">adjDGROOVE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                   </object>
@@ -729,14 +831,14 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="editLGrooveLabel">
+                  <object class="GtkLabel" id="editLGROOVELabel">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="xalign">0</property>
                     <property name="xpad">12</property>
                     <property name="label" translatable="yes">Groove thickness:</property>
                     <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLGroove</property>
+                    <property name="mnemonic_widget">editLGROOVE</property>
                   </object>
                   <packing>
                     <property name="left_attach">3</property>
@@ -747,45 +849,11 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSpinButton" id="editZGroove">
+                  <object class="GtkSpinButton" id="editLGROOVE">
                     <property name="visible">True</property>
                     <property name="sensitive">False</property>
                     <property name="can_focus">True</property>
-                    <property name="adjustment">adjZGroove</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editZGrooveLabel">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Groove position:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editZGroove</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editLGroove">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjLGroove</property>
+                    <property name="adjustment">adjLGROOVE</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                   </object>
@@ -794,20 +862,6 @@ Boston, MA  02110-1301, USA.</property>
                     <property name="right_attach">5</property>
                     <property name="top_attach">2</property>
                     <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkCheckButton" id="chkGroove">
-                    <property name="label" translatable="yes">Groove machining</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="right_attach">3</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_padding">12</property>
                   </packing>
                 </child>
                 <child>
@@ -831,7 +885,7 @@ Boston, MA  02110-1301, USA.</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="position">2</property>
+            <property name="position">3</property>
           </packing>
         </child>
         <child internal-child="action_area">
@@ -940,11 +994,11 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkRadioButton" id="saveAsPdf">
-                    <property name="label" translatable="yes">PDF _document</property>
+                  <object class="GtkRadioButton" id="saveAsSvg">
+                    <property name="label" translatable="yes">S_VG image</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="tooltip_text">.pdf</property>
+                    <property name="tooltip_text">.svg</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
                     <property name="group">saveAsPng</property>
@@ -956,8 +1010,24 @@ Boston, MA  02110-1301, USA.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkRadioButton" id="saveAsPdf">
+                    <property name="label" translatable="yes">P_DF document</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text">.pdf</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">saveAsPng</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="padding">6</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkRadioButton" id="saveAsPs">
-                    <property name="label" translatable="yes">PostScript _file</property>
+                    <property name="label" translatable="yes">_PostScript file</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="tooltip_text">.ps</property>
@@ -968,7 +1038,7 @@ Boston, MA  02110-1301, USA.</property>
                   <packing>
                     <property name="expand">False</property>
                     <property name="padding">6</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>
@@ -1131,25 +1201,25 @@ Boston, MA  02110-1301, USA.</property>
     <property name="page_increment">1</property>
     <property name="value">3</property>
   </object>
-  <object class="GtkAdjustment" id="adjDGroove">
+  <object class="GtkAdjustment" id="adjDGROOVE">
     <property name="lower">2</property>
     <property name="upper">24</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
-    <property name="value">8.5</property>
+    <property name="value">8.3</property>
   </object>
-  <object class="GtkAdjustment" id="adjLGroove">
+  <object class="GtkAdjustment" id="adjLGROOVE">
     <property name="lower">0.1</property>
     <property name="upper">20</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
     <property name="value">1</property>
   </object>
-  <object class="GtkAdjustment" id="adjZGroove">
+  <object class="GtkAdjustment" id="adjZGROOVE">
     <property name="lower">0.5</property>
     <property name="upper">50</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
-    <property name="value">23</property>
+    <property name="value">16</property>
   </object>
 </interface>

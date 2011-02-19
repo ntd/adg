@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,10 +40,12 @@
  * Use its public methods instead.
  **/
 
+
 #include "adg-internal.h"
+
 #include "adg-container.h"
 #include "adg-container-private.h"
-#include "adg-marshal.h"
+
 
 #define _ADG_PARENT_OBJECT_CLASS  ((GObjectClass *) adg_container_parent_class)
 #define _ADG_PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
@@ -486,7 +488,7 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
     if (old_parent != NULL) {
         g_warning(_("Attempting to add an entity with type %s to a container "
                     "of type %s, but the entity is already inside a container "
-                    "of type %s."),
+                    "of type %s"),
                   g_type_name(G_OBJECT_TYPE(entity)),
                   g_type_name(G_OBJECT_TYPE(container)),
                   g_type_name(G_OBJECT_TYPE(old_parent)));

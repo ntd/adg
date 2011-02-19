@@ -37,12 +37,14 @@ IGNORE_HFILES=		adg.h \
 			adg-marker-private.h \
 			adg-model-private.h \
 			adg-path-private.h \
+			adg-pango-style-private.h \
 			adg-projection-private.h \
 			adg-rdim-private.h \
 			adg-ruled-fill-private.h \
 			adg-stroke-private.h \
 			adg-table-private.h \
 			adg-table-style-private.h \
+			adg-text-private.h \
 			adg-title-block-private.h \
 			adg-toy-text-private.h \
 			adg-trail-private.h \
@@ -51,7 +53,8 @@ HTML_IMAGES=
 content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/NEWS.xml \
 			$(top_srcdir)/docs/gnu/TODO.xml \
-			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml
+			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml \
+			$(top_srcdir)/docs/gnu/HACKING.xml
 expand_content_files=
 
 
@@ -64,7 +67,9 @@ GTKDOC_LIBS=		$(GTK2_LIBS) \
 
 DOC_SOURCE_DIR+=	$(abs_top_srcdir)/src/adg-gtk
 IGNORE_HFILES+=		adg-gtk-internal.h \
-			adg-gtk-area-private.h
+			adg-gtk-area-private.h \
+			adg-gtk-layout-private.h \
+			adg-gtk-marshal.h
 
 else # ! HAVE_GTK2
 

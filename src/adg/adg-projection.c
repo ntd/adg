@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,10 +35,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+
 #include "adg-projection.h"
 #include "adg-projection-private.h"
-#include "adg-line-style.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY);
@@ -220,7 +224,7 @@ void
 adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-    g_object_set((GObject *) projection, "symbol-dress", dress, NULL);
+    g_object_set(projection, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -261,7 +265,7 @@ void
 adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_PROJECTION(projection));
-    g_object_set((GObject *) projection, "axis-dress", dress, NULL);
+    g_object_set(projection, "axis-dress", dress, NULL);
 }
 
 /**
@@ -430,6 +434,8 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     data_class = ADG_PROJECTION_GET_CLASS(entity)->data_class;
     data = ((AdgProjection *) entity)->data;
+
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
 
     if (data_class->symbol != NULL) {
         cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);

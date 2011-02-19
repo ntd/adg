@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,9 +25,6 @@
 
 #ifndef __ADG_TOY_TEXT_H__
 #define __ADG_TOY_TEXT_H__
-
-#include "adg-entity.h"
-#include "adg-pair.h"
 
 
 G_BEGIN_DECLS
@@ -55,13 +52,7 @@ struct _AdgToyTextClass {
 
 
 GType           adg_toy_text_get_type           (void) G_GNUC_CONST;
-AdgToyText *    adg_toy_text_new                (const gchar    *label);
-void            adg_toy_text_set_font_dress     (AdgToyText     *toy_text,
-                                                 AdgDress        dress);
-AdgDress        adg_toy_text_get_font_dress     (AdgToyText     *toy_text);
-void            adg_toy_text_set_label          (AdgToyText     *toy_text,
-                                                 const gchar    *label);
-const gchar *   adg_toy_text_get_label          (AdgToyText     *toy_text);
+AdgToyText *    adg_toy_text_new                (const gchar    *text);
 
 G_END_DECLS
 

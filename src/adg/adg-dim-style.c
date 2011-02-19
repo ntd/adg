@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,11 +36,17 @@
 
 
 #include "adg-internal.h"
-#include "adg-dim-style.h"
-#include "adg-dim-style-private.h"
-#include "adg-dress-builtins.h"
+#include "adg-style.h"
 #include "adg-font-style.h"
 #include "adg-line-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+
+#include "adg-dim-style.h"
+#include "adg-dim-style-private.h"
 
 
 G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
@@ -176,7 +182,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_double("baseline-spacing",
                                 P_("Baseline Spacing"),
                                 P_("Distance between two consecutive baselines while stacking dimensions"),
-                                0, G_MAXDOUBLE, 30,
+                                0, G_MAXDOUBLE, 32,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BASELINE_SPACING, param);
 
@@ -238,12 +244,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->from_offset = 6;
     data->to_offset = 6;
     data->beyond = 20;
-    data->baseline_spacing = 30;
-    data->limits_spacing = 1;
+    data->baseline_spacing = 32;
+    data->limits_spacing = 2;
     data->quote_shift.x = 4;
     data->quote_shift.y = -4;
     data->limits_shift.x = +2;
-    data->limits_shift.y = -2;
+    data->limits_shift.y = -4;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
 
@@ -504,7 +510,7 @@ void
 adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "color-dress", dress, NULL);
+    g_object_set(dim_style, "color-dress", dress, NULL);
 }
 
 /**
@@ -541,7 +547,7 @@ void
 adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "value-dress", dress, NULL);
+    g_object_set(dim_style, "value-dress", dress, NULL);
 }
 
 /**
@@ -576,7 +582,7 @@ void
 adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "min-dress", dress, NULL);
+    g_object_set(dim_style, "min-dress", dress, NULL);
 }
 
 /**
@@ -610,7 +616,7 @@ void
 adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "max-dress", dress, NULL);
+    g_object_set(dim_style, "max-dress", dress, NULL);
 }
 
 /**
@@ -644,7 +650,7 @@ void
 adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
-    g_object_set((GObject *) dim_style, "line-dress", dress, NULL);
+    g_object_set(dim_style, "line-dress", dress, NULL);
 }
 
 /**

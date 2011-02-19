@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,9 +52,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include <string.h>
+
 #include "adg-marker.h"
 #include "adg-marker-private.h"
-#include <string.h>
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_marker_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
@@ -705,7 +709,7 @@ _adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 static AdgModel *
 _adg_create_model(AdgMarker *marker)
 {
-    g_warning("%s: `create_model' method not implemented for type `%s'",
+    g_warning(_("%s: `create_model' method not implemented for type `%s'"),
               G_STRLOC, g_type_name(G_OBJECT_TYPE(marker)));
     return NULL;
 }

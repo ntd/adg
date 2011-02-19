@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,9 +26,6 @@
 #ifndef __ADG_FONT_STYLE_H__
 #define __ADG_FONT_STYLE_H__
 
-#include "adg-style.h"
-#include "adg-matrix.h"
-
 
 G_BEGIN_DECLS
 
@@ -38,6 +35,7 @@ G_BEGIN_DECLS
 #define ADG_IS_FONT_STYLE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE((obj), ADG_TYPE_FONT_STYLE))
 #define ADG_IS_FONT_STYLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_FONT_STYLE))
 #define ADG_FONT_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_FONT_STYLE, AdgFontStyleClass))
+
 
 typedef struct _AdgFontStyle        AdgFontStyle;
 typedef struct _AdgFontStyleClass   AdgFontStyleClass;
@@ -56,12 +54,14 @@ struct _AdgFontStyleClass {
 
 GType           adg_font_style_get_type         (void) G_GNUC_CONST;
 AdgFontStyle *  adg_font_style_new              (void);
+cairo_font_options_t *
+                adg_font_style_new_options      (AdgFontStyle    *font_style);
 cairo_scaled_font_t *
                 adg_font_style_get_scaled_font  (AdgFontStyle    *font_style,
                                                  const AdgMatrix *ctm);
-void            adg_font_style_set_color_dress  (AdgFontStyle   *font_style,
-                                                 AdgDress        dress);
-AdgDress        adg_font_style_get_color_dress  (AdgFontStyle   *font_style);
+void            adg_font_style_set_color_dress  (AdgFontStyle    *font_style,
+                                                 AdgDress         dress);
+AdgDress        adg_font_style_get_color_dress  (AdgFontStyle    *font_style);
 void            adg_font_style_set_family       (AdgFontStyle    *font_style,
                                                  const gchar     *family);
 const gchar *   adg_font_style_get_family       (AdgFontStyle    *font_style);

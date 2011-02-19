@@ -6,7 +6,7 @@ SUBDIRS+=			adg-gtk
 endif
 
 if HAVE_GLADE
-adg_catalogdir=			$(DESTDIR)$(GLADE_CATALOGDIR)
+adg_catalogdir=			$(GLADE_CATALOGDIR)
 adg_catalog_DATA=		adg.xml
 endif
 

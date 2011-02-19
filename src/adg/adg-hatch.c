@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,10 +35,17 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-stroke.h"
+#include "adg-pattern.h"
+#include "adg-style.h"
+#include "adg-fill-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-fill-style.h"
 
 
 G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE);
@@ -167,7 +174,7 @@ void
 adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_HATCH(hatch));
-    g_object_set((GObject *) hatch, "fill-dress", dress, NULL);
+    g_object_set(hatch, "fill-dress", dress, NULL);
 }
 
 /**
@@ -211,6 +218,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         adg_fill_style_set_extents(fill_style, adg_entity_get_extents(entity));
 
         cairo_save(cr);
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);

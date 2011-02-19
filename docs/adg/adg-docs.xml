@@ -10,6 +10,7 @@
     <xi:include href="../gnu/NEWS.xml"/>
     <xi:include href="../gnu/TODO.xml"/>
     <xi:include href="../gnu/CONTRIBUTING.xml"/>
+    <xi:include href="../gnu/HACKING.xml"/>
   </part>
 
   <part id="Core">
@@ -41,11 +42,13 @@
     <xi:include href="xml/adg-entity.xml"/>
     <xi:include href="xml/adg-container.xml"/>
     <xi:include href="xml/adg-alignment.xml"/>
+    <xi:include href="xml/adg-textual.xml"/>
     <chapter id="Populating-stock">
       <title>Stock entities</title>
       <xi:include href="xml/adg-stroke.xml"/>
       <xi:include href="xml/adg-hatch.xml"/>
       <xi:include href="xml/adg-toy-text.xml"/>
+      <xi:include href="xml/adg-text.xml"/>
       <xi:include href="xml/adg-table.xml"/>
     </chapter>
     <chapter id="Populating-special">
@@ -80,6 +83,7 @@
       <xi:include href="xml/adg-fill-style.xml"/>
       <xi:include href="xml/adg-ruled-fill.xml"/>
       <xi:include href="xml/adg-font-style.xml"/>
+      <xi:include href="xml/adg-pango-style.xml"/>
       <xi:include href="xml/adg-dim-style.xml"/>
       <xi:include href="xml/adg-table-style.xml"/>
     </chapter>
@@ -89,6 +93,7 @@
     <title>GTK+ support</title>
     <xi:include href="xml/adg-gtk-utils.xml"/>
     <xi:include href="xml/adg-gtk-area.xml"/>
+    <xi:include href="xml/adg-gtk-layout.xml"/>
   </part>
 
   <chapter id="Hierarchy">

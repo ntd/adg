@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,23 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+#include "adg-model.h"
+#include "adg-point.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-style.h"
+#include "adg-dim-style.h"
+#include "adg-textual.h"
+#include "adg-toy-text.h"
+#include "adg-dim.h"
+#include "adg-dim-private.h"
+#include <math.h>
+
 #include "adg-rdim.h"
 #include "adg-rdim-private.h"
-#include "adg-dim-private.h"
-#include "adg-dim-style.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_rdim_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)
@@ -67,7 +80,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static void             _adg_update_geometry    (AdgRDim        *rdim);
+static gboolean         _adg_update_geometry    (AdgRDim        *rdim);
 static void             _adg_update_entities    (AdgRDim        *rdim);
 static void             _adg_clear_trail        (AdgRDim        *rdim);
 static void             _adg_dispose_marker     (AdgRDim        *rdim);
@@ -343,7 +356,9 @@ _adg_arrange(AdgEntity *entity)
     data = rdim->data;
     quote = adg_dim_get_quote(dim);
 
-    _adg_update_geometry(rdim);
+    if (!_adg_update_geometry(rdim))
+        return;
+
     _adg_update_entities(rdim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
@@ -419,17 +434,23 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     rdim = (AdgRDim *) entity;
-    dim = (AdgDim *) entity;
     data = rdim->data;
+
+    if (!data->geometry_arranged) {
+        /* Entity not arranged, probably due to undefined pair found */
+        return;
+    }
+
+    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
+    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
 
     if (data->marker != NULL)
         adg_entity_render((AdgEntity *) data->marker, cr);
 
-    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
-
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
     dress = adg_dim_style_get_line_dress(dim_style);
     adg_entity_apply_dress(entity, dress, cr);
 
@@ -451,12 +472,13 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    _adg_update_geometry(rdim);
+    if (!_adg_update_geometry(rdim))
+        return g_strdup("undef");
 
     return g_strdup_printf(format, data->radius);
 }
 
-static void
+static gboolean
 _adg_update_geometry(AdgRDim *rdim)
 {
     AdgRDimPrivate *data;
@@ -470,18 +492,23 @@ _adg_update_geometry(AdgRDim *rdim)
     data = rdim->data;
 
     if (data->geometry_arranged)
-        return;
+        return TRUE;
 
     dim = (AdgDim *) rdim;
-    dim_style = _ADG_GET_DIM_STYLE(rdim);
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
     pos = adg_point_get_pair(adg_dim_get_pos(dim));
+
+    if (ref1 == NULL || ref2 == NULL || pos == NULL)
+        return FALSE;
+
+    dim_style = _ADG_GET_DIM_STYLE(rdim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);
     vector.x = ref2->x - ref1->x;
     vector.y = ref2->y - ref1->y;
+
     if (cpml_pair_squared_distance(pos, ref1) <
         cpml_pair_squared_distance(pos, ref2)) {
         vector.x = -vector.x;
@@ -505,6 +532,8 @@ _adg_update_geometry(AdgRDim *rdim)
     cpml_vector_set_length(&data->shift.base, spacing * level);
 
     data->geometry_arranged = TRUE;
+
+    return TRUE;
 }
 
 static void

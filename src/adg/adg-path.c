@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,12 +57,14 @@
 
 
 #include "adg-internal.h"
-#include "adg-path.h"
-#include "adg-path-private.h"
-#include "adg-matrix.h"
-#include "adg-primitive.h"
+#include "adg-model.h"
+#include "adg-trail.h"
 #include <string.h>
 #include <math.h>
+
+#include "adg-path.h"
+#include "adg-path-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
@@ -275,7 +277,7 @@ adg_path_over_primitive(AdgPath *path)
  * adg_path_append:
  * @path: an #AdgPath
  * @type: a #cairo_data_type_t value
- * @...:  point data, specified as #AdgPair pointers
+ * @Varargs:  point data, specified as #AdgPair pointers
  *
  * Generic method to append a primitive to @path. The number of #AdgPair
  * structs depends on @type: there is no way with this function to

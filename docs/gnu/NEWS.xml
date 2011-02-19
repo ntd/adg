@@ -6,6 +6,37 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.2">
+<title>ADG 0.6.2</title>
+
+<para>The localization infrastructure has been added and tested by adding
+the italian translation.</para>
+
+<para>The AdgGtkArea widget is now capable of interactively change zoom
+and pan in global space by dragging and/or rotating the wheel while
+keeping the shift pressed.</para>
+
+<para>A new class has been implemented: AdgGtkLayout is an AdgGtkArea
+based widget that implements the scrolling natively, hence it can
+be added directly to a GtkScrolledWindow container.</para>
+</simplesect>
+
+<simplesect id="NEWS.0.6.1">
+<title>ADG 0.6.1</title>
+
+<para>The canvas now has printing support when compiled with GTK+ enabled.
+The media setup can be associated to the canvas so this data can be
+accessed to provide a consistent behavior between different backends.</para>
+
+<para>The demo program can now render the drawing to an SVG file.
+Generated files are stored in the user document directory.</para>
+
+<para>Uncomplete entities now fail gracefully instead of complaining for
+insufficient data. This provides an easy way to implement optional
+machinings: the optional groove in the adg-demo program is working
+by leveraging this feature.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.6.0">
 <title>ADG 0.6.0</title>
 
@@ -47,7 +78,6 @@ under development but yet fully working.</para>
 function pointers to delegate the job to the different primitives.
 The public symbols of the CPML library have been reduced from 105
 to 70.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.5">
@@ -65,7 +95,6 @@ also provided.</para>
 <para>A lot of bug fixing and code clean up. A bug in the installation
 has been solved and support for pkg-config has been added. This
 will probably be the last release of the 0.5 branch.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.4">
@@ -85,7 +114,6 @@ custom entities.</para>
 <para>AdgAlignment is a new container entity that allows to traslate its
 children of a custom factor of the children boundary box: any
 entity can now be right aligned or centered.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.3">
@@ -104,7 +132,6 @@ can be set explicitely (as before) or as a reference to a pair
 set by the model. The AdgPoint helper class is the object used
 to manage this relationship. The API of dimension entities has
 been updated to accept AdgPoint instead of plain AdgPair.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.2">
@@ -124,7 +151,6 @@ can be used on symmetrical shapes, often met in turned parts.</para>
 <para>The entities now actively respond to extents requests: it is possible
 to know the necessary space before rendering them. Any matrix change
 now emits specific signals to fulfill this requirement.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.1">
@@ -143,7 +169,6 @@ of the entity hierarchy. The deprecated AdgContext class has been removed.</para
 provides low level access to CpmlPath, allowing the implementation of
 paths that do not fit in the global/local model. AdgLDim internally
 uses a private AdgTrail to implement base and extension lines rendering.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.5.0">
@@ -163,7 +188,6 @@ rendering code a lot.</para>
 <para>A bunch of classes, most notably AdgRotable, AdgTranslatable and AdgPoint,
 have been superseded by the new global/local map approach and have been
 removed from the project.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.4.3">
@@ -184,7 +208,6 @@ needed by the above new features. Now it has a ..._length() and
 library is far from complete: the overall design is quite stable
 but there are a lot of placeholders, especially when curves were
 involved.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.4.2">
@@ -204,7 +227,6 @@ trasformations transparently.</para>
 <para>The old AdgPath entity has been rewrote to AdgStroke. This is a
 stroked view of an AdgPath model. Its implementation is trivial
 as all the path complexity has moved to AdgPath.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.4.1">
@@ -221,7 +243,6 @@ a stub, the overall infrastructure is likely to be definitive.</para>
 <para>The ldim demo has been merged into the more complex adg-demo.
 Now the demo programs use the GtkBuilder feature, so the Gtk+
 dependency has been raised to 2.12.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.4.0">
@@ -251,7 +272,6 @@ are kept in docbook format, allowing to use them also in html version.</para>
 
 <para>The adg-demo program now allows to save the sample drawing in png, pdf
 and postscript. Two useless toy text entities has been added.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.3.2">
@@ -264,7 +284,6 @@ without installing anything.</para>
 
 <para>The container logic has been included in AdgEntity (the GChildable
 portion) and AdgContainer (the GContainerable part).</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.3.1">
@@ -281,7 +300,6 @@ raised to version 0.7.4 or more.</para>
 <para>The AdgLDim entity has been rewritten to full implement the new cache
 design. Other entities have been improved to allow a paper matrix
 other than the default identity matrix.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.3.0">
@@ -294,7 +312,6 @@ approach to manage rendering customization.</para>
 (CPML), an internal library depending only on cairo.</para>
   
 <para>Greatly improved documentation.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.2.2">
@@ -306,7 +323,6 @@ management using nested transformations.</para>
 <para>Reworked the rendering process in a cleaner way by propagating the
 "render" signal and using internal entity states to let the application
 know what changed from the previous rendering.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.2.1">
@@ -314,7 +330,6 @@ know what changed from the previous rendering.</para>
 
 <para>Reworked the sources tree in a cleaner way (to help future development)
 and used private structs instead of populating the instance structure.</para>
- 
 </simplesect>
 
 <simplesect id="NEWS.0.2.0">
@@ -322,7 +337,6 @@ and used private structs instead of populating the instance structure.</para>
  
 <para>This is the first public release of the ADG library. It is in a early
 stage of developement, but the goal is quite ambitious!</para>
-
 </simplesect>
 
 </chapter>

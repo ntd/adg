@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+
 #include "adg-logo.h"
 #include "adg-logo-private.h"
-#include "adg-line-style.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY);
@@ -212,7 +216,7 @@ void
 adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "symbol-dress", dress, NULL);
+    g_object_set(logo, "symbol-dress", dress, NULL);
 }
 
 /**
@@ -254,7 +258,7 @@ void
 adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "screen-dress", dress, NULL);
+    g_object_set(logo, "screen-dress", dress, NULL);
 }
 
 /**
@@ -296,7 +300,7 @@ void
 adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LOGO(logo));
-    g_object_set((GObject *) logo, "frame-dress", dress, NULL);
+    g_object_set(logo, "frame-dress", dress, NULL);
 }
 
 /**
@@ -417,6 +421,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     data_class = ADG_LOGO_GET_CLASS(entity)->data_class;
     data = ((AdgLogo *) entity)->data;
 
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
     cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
 
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) data_class->symbol);

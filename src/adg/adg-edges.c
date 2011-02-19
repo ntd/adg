@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,9 +48,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include <math.h>
+
 #include "adg-edges.h"
 #include "adg-edges-private.h"
-#include "adg-pair.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)
@@ -187,19 +191,23 @@ _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
     AdgEdgesPrivate *data = ((AdgEdges *) object)->data;
+    gpointer tmp_pointer;
 
     switch (prop_id) {
     case PROP_SOURCE:
-        if (data->source != NULL)
-            g_object_weak_unref((GObject *) data->source,
-                                (GWeakNotify) _adg_unset_source, object);
-
+        tmp_pointer = data->source;
         data->source = g_value_get_object(value);
-        _adg_clear((AdgModel *) object);
 
-        if (data->source != NULL)
-            g_object_weak_ref((GObject *) data->source,
-                              (GWeakNotify) _adg_unset_source, object);
+        if (tmp_pointer != data->source) {
+            if (data->source)
+                g_object_weak_ref((GObject *) data->source,
+                                  (GWeakNotify) _adg_unset_source, object);
+            if (tmp_pointer)
+                g_object_weak_unref((GObject *) tmp_pointer,
+                                    (GWeakNotify) _adg_unset_source, object);
+        }
+
+        _adg_clear((AdgModel *) object);
         break;
     case PROP_CRITICAL_ANGLE:
         data->threshold = sin(g_value_get_double(value));

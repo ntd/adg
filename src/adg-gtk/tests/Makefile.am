@@ -14,6 +14,9 @@ if HAVE_TEST_FRAMEWORK
 TEST_PROGS+=			test-gtk-area$(EXEEXT)
 test_gtk_area_SOURCES=		test-gtk-area.c
 
+TEST_PROGS+=			test-gtk-layout$(EXEEXT)
+test_gtk_layout_SOURCES=	test-gtk-layout.c
+
 endif
 
 

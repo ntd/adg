@@ -1,10 +1,11 @@
-m4_define([adg_version],[0.6.0])
+m4_define([adg_version],[0.6.2])
 m4_define([adg_api_version],[1.0])
 
 m4_define([gtkdoc_prereq],[1.9])
 m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
 m4_define([gtk_prereq],[2.12.0])
+m4_define([pangocairo_prereq],[1.18.0])
 
 
 # Initialization
@@ -12,8 +13,7 @@ m4_define([gtk_prereq],[2.12.0])
 dnl autoconf 2.60 implements datarootdir, required by ADG
 dnl to help overcoming the hardcoded glade catalogdir
 AC_PREREQ([2.60])
-AC_INIT([Automatic Drawing Generation],adg_version,
-        [http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
+AC_INIT([adg-1.0],adg_version,[http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
@@ -90,7 +90,8 @@ m4_ifset([LT_INIT],
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
-ALL_LINGUAS=""
+ALL_LINGUAS="`grep -v '^#' "$srcdir/po/LINGUAS" | tr '\n' ' '`"
+IT_PROG_INTLTOOL(0.40.1)
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 AC_CONFIG_COMMANDS([default],
@@ -107,6 +108,23 @@ PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 
 
+# Check for optional pango support
+
+AC_ARG_ENABLE([pango],
+              [AS_HELP_STRING([--enable-pango],
+                              [use pango for rendering text @<:@default=check@:>@])],
+              [],[enable_pango=check])
+AS_IF([test "x${enable_pango}" != "xno"],
+      [PKG_CHECK_MODULES([PANGO],[pangocairo >= ]pangocairo_prereq,
+                         [enable_pango=yes
+                          AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
+                                             [Defined if the pango support is enabled.])],
+                         [AS_IF([test "x${enable_pango}" = "xyes"],
+                                [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
+                                [enable_pango=no])])])
+AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
+
+
 # Check for optional GTK+2 support
 
 AC_ARG_ENABLE([gtk2],
@@ -115,9 +133,7 @@ AC_ARG_ENABLE([gtk2],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes
-                          DLLDIR=`${PKG_CONFIG} --variable=prefix gtk+-2.0`/bin
-                          AC_SUBST([DLLDIR])],
+                         [enable_gtk2=yes],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
@@ -174,6 +190,7 @@ AC_C_CONST
 AC_SUBST([CPML_REQUIRES],'cairo >= cairo_prereq')
 AC_SUBST([ADG_REQUIRES],'gobject-2.0 >= gobject_prereq')
 AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
+AC_SUBST([DLLDIR],"$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin")
 
 SHAVE_INIT([build],[enable])
 AC_CONFIG_FILES([build/shave
@@ -205,14 +222,21 @@ AC_OUTPUT
 
 # Report
 
+AS_IF([test "x${enable_glade}" != "xno"],
+      [report_glade_catalogdir="
+                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
+      [report_glade_catalogdir=''])
+
+
 AC_MSG_NOTICE([generating report
 
 AC_PACKAGE_NAME adg_version will be built with the following options:
 ----------------------------------------------------------
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
+         Build pango based entities: ${enable_pango}
            GTK+2 additional widgets: ${enable_gtk2}
-             Install glade catalogs: ${enable_glade}
+             Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
              Test framework support: ${enable_test_framework}
 ])

@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,6 @@
 #ifndef __ADG_MODEL_H__
 #define __ADG_MODEL_H__
 
-#include "adg-pair.h"
-
 
 G_BEGIN_DECLS
 
@@ -38,9 +36,6 @@ G_BEGIN_DECLS
 #define ADG_IS_MODEL_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_MODEL))
 #define ADG_MODEL_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_MODEL, AdgModelClass))
 
-
-/* Forward declarations */
-ADG_FORWARD_DECL(AdgEntity);
 
 typedef struct _AdgModel        AdgModel;
 typedef struct _AdgModelClass   AdgModelClass;
@@ -72,6 +67,7 @@ struct _AdgModelClass {
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
     void                (*clear)                (AdgModel         *model);
+    void                (*reset)                (AdgModel         *model);
     void                (*changed)              (AdgModel         *model);
 };
 
@@ -100,6 +96,7 @@ void            adg_model_foreach_named_pair    (AdgModel         *model,
                                                  AdgNamedPairFunc  callback,
                                                  gpointer          user_data);
 void            adg_model_clear                 (AdgModel         *model);
+void            adg_model_reset                 (AdgModel         *model);
 void            adg_model_changed               (AdgModel         *model);
 
 G_END_DECLS

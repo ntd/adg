@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,9 +26,6 @@
 #ifndef __ADG_PAIR_H__
 #define __ADG_PAIR_H__
 
-#include <cpml.h>
-#include <glib-object.h>
-
 
 G_BEGIN_DECLS
 
@@ -42,8 +39,6 @@ GType           adg_pair_get_type       (void) G_GNUC_CONST;
 void            adg_pair_copy           (AdgPair        *pair,
                                          const AdgPair  *src);
 AdgPair *       adg_pair_dup            (const AdgPair  *pair);
-gboolean        adg_pair_equal          (const AdgPair  *pair1,
-                                         const AdgPair  *pair2);
 
 G_END_DECLS
 

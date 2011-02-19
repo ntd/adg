@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,9 +34,23 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+#include "adg-model.h"
+#include "adg-point.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-style.h"
+#include "adg-dim-style.h"
+#include "adg-textual.h"
+#include "adg-toy-text.h"
+#include "adg-dim.h"
+#include "adg-dim-private.h"
+#include <math.h>
+
 #include "adg-adim.h"
 #include "adg-adim-private.h"
-#include "adg-dim-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_adim_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)
@@ -70,7 +84,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static void             _adg_update_geometry    (AdgADim        *adim);
+static gboolean         _adg_update_geometry    (AdgADim        *adim);
 static void             _adg_update_entities    (AdgADim        *adim);
 static void             _adg_unset_trail        (AdgADim        *adim);
 static void             _adg_dispose_markers    (AdgADim        *adim);
@@ -131,6 +145,18 @@ adg_adim_class_init(AdgADimClass *klass)
                                ADG_TYPE_POINT,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ORG2, param);
+
+    param = g_param_spec_boolean("has-extension1",
+                                 P_("Has First Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the first extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION1, param);
+
+    param = g_param_spec_boolean("has-extension2",
+                                 P_("Has Second Extension Line flag"),
+                                 P_("Show (TRUE) or hide (FALSE) the second extension line"),
+                                 TRUE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_HAS_EXTENSION2, param);
 }
 
 static void
@@ -392,7 +418,7 @@ void
 adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
 {
     g_return_if_fail(ADG_IS_ADIM(adim));
-    g_object_set((GObject *) adim, "org1", org1, NULL);
+    g_object_set(adim, "org1", org1, NULL);
 }
 
 /**
@@ -500,7 +526,7 @@ void
 adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
 {
     g_return_if_fail(ADG_IS_ADIM(adim));
-    g_object_set((GObject *) adim, "org2", org2, NULL);
+    g_object_set(adim, "org2", org2, NULL);
 }
 
 /**
@@ -592,6 +618,78 @@ adg_adim_get_org2(AdgADim *adim)
     return data->org2;
 }
 
+/**
+ * adg_adim_switch_extension1:
+ * @adim: an #AdgADim entity
+ * @new_state: the new state
+ *
+ * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
+ * the first extension line of @adim.
+ **/
+void
+adg_adim_switch_extension1(AdgADim *adim, gboolean new_state)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
+    g_object_set(adim, "has-extension1", new_state, NULL);
+}
+
+/**
+ * adg_adim_has_extension1:
+ * @adim: an #AdgADim entity
+ *
+ * Checks if @adim should render the first extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_adim_has_extension1(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
+
+    data = adim->data;
+
+    return data->has_extension1;
+}
+
+/**
+ * adg_adim_switch_extension2:
+ * @adim: an #AdgADim entity
+ * @new_state: the new new_state
+ *
+ * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
+ * the second extension line of @adim.
+ **/
+void
+adg_adim_switch_extension2(AdgADim *adim, gboolean new_state)
+{
+    g_return_if_fail(ADG_IS_ADIM(adim));
+    g_return_if_fail(adg_is_boolean_value(new_state));
+    g_object_set(adim, "has-extension2", new_state, NULL);
+}
+
+/**
+ * adg_adim_has_extension2:
+ * @adim: an #AdgADim entity
+ *
+ * Checks if @adim should render the second extension line.
+ *
+ * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ **/
+gboolean
+adg_adim_has_extension2(AdgADim *adim)
+{
+    AdgADimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
+
+    data = adim->data;
+
+    return data->has_extension2;
+}
+
 
 static void
 _adg_global_changed(AdgEntity *entity)
@@ -656,11 +754,14 @@ _adg_arrange(AdgEntity *entity)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     adim = (AdgADim *) entity;
+
+    if (!_adg_update_geometry(adim))
+        return;
+
     dim = (AdgDim *) adim;
     data = adim->data;
     quote = adg_dim_get_quote(dim);
 
-    _adg_update_geometry(adim);
     _adg_update_entities(adim);
 
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
@@ -712,6 +813,13 @@ _adg_arrange(AdgEntity *entity)
     pair.y += data->shift.to2.y;
     cpml_pair_to_cairo(&pair, &data->cpml.data[12]);
 
+    /* Play with header lengths to show or hide the extension lines */
+    if (data->has_extension1) {
+        data->cpml.data[7].header.length = data->has_extension2 ? 2 : 6;
+    } else {
+        data->cpml.data[2].header.length = data->has_extension2 ? 7 : 11;
+    }
+
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
     if (quote != NULL) {
@@ -759,20 +867,25 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     adim = (AdgADim *) entity;
-    dim = (AdgDim *) entity;
     data = adim->data;
+
+    if (!data->geometry_arranged) {
+        /* Entity not arranged, probably due to undefined pair found */
+        return;
+    }
+
+    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
+    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
 
     if (data->marker1 != NULL)
         adg_entity_render((AdgEntity *) data->marker1, cr);
-
     if (data->marker2 != NULL)
         adg_entity_render((AdgEntity *) data->marker2, cr);
 
-    adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
-
+    cairo_transform(cr, adg_entity_get_global_matrix(entity));
     dress = adg_dim_style_get_line_dress(dim_style);
     adg_entity_apply_dress(entity, dress, cr);
 
@@ -795,16 +908,17 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    _adg_update_geometry(adim);
-    angle = (data->angle2 - data->angle1) * 180 / M_PI;
+    if (!_adg_update_geometry(adim))
+        return g_strdup("undef");
 
+    angle = (data->angle2 - data->angle1) * 180 / M_PI;
     return g_strdup_printf(format, angle);
 }
 
 /* With "geometry" is considered any data (point, vector or angle)
  * that can be cached: this is strictly related on how the arrange()
  * method works */
-static void
+static gboolean
 _adg_update_geometry(AdgADim *adim)
 {
     AdgADimPrivate *data;
@@ -818,14 +932,9 @@ _adg_update_geometry(AdgADim *adim)
     data = adim->data;
 
     if (data->geometry_arranged)
-        return;
-
-    if (!_adg_get_info(adim, vector, &center, &distance)) {
-        /* Parallel lines: hang with an error message */
-        g_warning("%s: trying to set an angular dimension on parallel lines",
-                  G_STRLOC);
-        return;
-    }
+        return TRUE;
+    else if (!_adg_get_info(adim, vector, &center, &distance))
+        return FALSE;
 
     dim_style = _ADG_GET_DIM_STYLE(adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
@@ -880,6 +989,8 @@ _adg_update_geometry(AdgADim *adim)
     data->point.base12.y = vector[1].y + center.y;
 
     data->geometry_arranged = TRUE;
+
+    return TRUE;
 }
 
 static void
@@ -945,7 +1056,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 {
     AdgDim *dim;
     AdgADimPrivate *data;
-    const AdgPair *ref1, *ref2;
+    const AdgPair *ref1, *ref2, *pos;
     const AdgPair *org1, *org2;
     gdouble factor;
 
@@ -953,8 +1064,13 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     data = adim->data;
     ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
     ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
+    pos = adg_point_get_pair(adg_dim_get_pos(dim));
     org1 = adg_point_get_pair(data->org1);
     org2 = adg_point_get_pair(data->org2);
+
+    if (ref1 == NULL || ref2 == NULL || pos == NULL ||
+        org1 == NULL || org2 == NULL)
+        return FALSE;
 
     vector[0].x = ref1->x - org1->x;
     vector[0].y = ref1->y - org1->y;
@@ -962,15 +1078,19 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     vector[2].y = ref2->y - org2->y;
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
-    if (factor == 0)
+    if (factor == 0) {
+        /* Parallel lines: hang with an error message */
+        g_warning(_("%s: trying to set an angular dimension on parallel lines"),
+                  G_STRLOC);
         return FALSE;
+    }
 
     factor = ((ref1->y - ref2->y) * vector[2].x -
               (ref1->x - ref2->x) * vector[2].y) / factor;
 
     center->x = ref1->x + vector[0].x * factor;
     center->y = ref1->y + vector[0].y * factor;
-    *distance = cpml_pair_distance(center, adg_point_get_pair(adg_dim_get_pos(dim)));
+    *distance = cpml_pair_distance(center, pos);
     data->angle1 = cpml_vector_angle(&vector[0]);
     data->angle2 = cpml_vector_angle(&vector[2]);
     while (data->angle2 < data->angle1)

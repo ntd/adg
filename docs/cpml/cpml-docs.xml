@@ -8,18 +8,18 @@
     <title>Core reference</title>
     <xi:include href="xml/cpml-utils.xml"/>
     <xi:include href="xml/cpml-pair.xml"/>
+    <xi:include href="xml/cpml-extents.xml"/>
   </part>
 
   <part id="Constructs">
-    <title>CPML constructs</title>
+    <title>Path constructs</title>
     <xi:include href="xml/cpml-segment.xml"/>
     <xi:include href="xml/cpml-primitive.xml"/>
     <chapter id="Constructs-primitives">
-      <title>Special primitive types</title>
+      <title>Special primitives</title>
       <xi:include href="xml/cpml-arc.xml"/>
       <xi:include href="xml/cpml-curve.xml"/>
     </chapter>
-    <xi:include href="xml/cpml-extents.xml"/>
   </part>
 
   <index id="Index">

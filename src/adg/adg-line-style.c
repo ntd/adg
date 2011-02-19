@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,9 +35,12 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
-#include "adg-dress-builtins.h"
 
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
@@ -249,7 +252,7 @@ void
 adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
-    g_object_set((GObject *) line_style, "color-dress", dress, NULL);
+    g_object_set(line_style, "color-dress", dress, NULL);
 }
 
 /**

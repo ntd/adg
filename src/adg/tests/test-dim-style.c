@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -202,30 +202,30 @@ _adg_limits_shift(void)
     /* Using the public APIs */
     adg_dim_style_set_limits_shift(dim_style, &identity_shift);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &identity_shift));
+    g_assert(cpml_pair_equal(shift, &identity_shift));
 
     adg_dim_style_set_limits_shift(dim_style, &null_shift);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &null_shift));
+    g_assert(cpml_pair_equal(shift, &null_shift));
 
     adg_dim_style_set_limits_shift(dim_style, NULL);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &null_shift));
+    g_assert(cpml_pair_equal(shift, &null_shift));
 
     /* Using GObject property methods */
     g_object_set(dim_style, "limits-shift", &identity_shift, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &identity_shift));
+    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "limits-shift", NULL, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &identity_shift));
+    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "limits-shift", &null_shift, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &null_shift));
+    g_assert(cpml_pair_equal(shift_dup, &null_shift));
     g_free(shift_dup);
 
     g_object_unref(dim_style);
@@ -586,30 +586,30 @@ _adg_quote_shift(void)
     /* Using the public APIs */
     adg_dim_style_set_quote_shift(dim_style, &identity_shift);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &identity_shift));
+    g_assert(cpml_pair_equal(shift, &identity_shift));
 
     adg_dim_style_set_quote_shift(dim_style, &null_shift);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &null_shift));
+    g_assert(cpml_pair_equal(shift, &null_shift));
 
     adg_dim_style_set_quote_shift(dim_style, NULL);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(adg_pair_equal(shift, &null_shift));
+    g_assert(cpml_pair_equal(shift, &null_shift));
 
     /* Using GObject property methods */
     g_object_set(dim_style, "quote-shift", &identity_shift, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &identity_shift));
+    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "quote-shift", NULL, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &identity_shift));
+    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "quote-shift", &null_shift, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(adg_pair_equal(shift_dup, &null_shift));
+    g_assert(cpml_pair_equal(shift_dup, &null_shift));
     g_free(shift_dup);
 
     g_object_unref(dim_style);

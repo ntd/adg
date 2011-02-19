@@ -9,7 +9,8 @@ xml2txt_command=		$(MSG_GEN) ; \
 				fi ; \
 				$(XSLTPROC) --novalid -o $@ $(xml2txt_stylesheet)
 ACLOCAL_AMFLAGS=		-I build
-DISTCHECK_CONFIGURE_FLAGS=	--enable-gtk2 \
+DISTCHECK_CONFIGURE_FLAGS=	--enable-pango \
+				--enable-gtk2 \
 				--enable-gtk-doc \
 				--enable-glade \
 				--enable-test-framework
@@ -18,14 +19,15 @@ BUILT_SOURCES=			ChangeLog \
 				README \
 				NEWS \
 				TODO \
-				CONTRIBUTING
+				CONTRIBUTING \
+				HACKING
 
 EXTRA_DIST=			COPYING \
 				ChangeLog-0.2.1 \
 				INSTALL \
 				THANKS \
 				adg.doap \
-				build/configure-mingw32 \
+				build/configure-mingw \
 				$(BUILT_SOURCES)
 
 SUBDIRS=			src
@@ -60,3 +62,6 @@ TODO: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/TODO.xml
 
 CONTRIBUTING: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/CONTRIBUTING.xml
 	$(xml2txt_command) $(srcdir)/docs/gnu/CONTRIBUTING.xml
+
+HACKING: $(xml2txt_stylesheet) $(srcdir)/docs/gnu/HACKING.xml
+	$(xml2txt_command) $(srcdir)/docs/gnu/HACKING.xml

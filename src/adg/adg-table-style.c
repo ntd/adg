@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,12 +35,15 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+
 #include "adg-table-style.h"
 #include "adg-table-style-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-font-style.h"
-#include "adg-line-style.h"
 
+
+G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE);
 
 enum {
     PROP_0,
@@ -55,26 +58,17 @@ enum {
 };
 
 
-static void             get_property            (GObject        *object,
+static void             _adg_get_property       (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             apply                   (AdgStyle       *style,
+static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gboolean         set_row_height          (AdgTableStyle  *table_style,
-                                                 gdouble         height);
-static gboolean         set_cell_padding        (AdgTableStyle  *table_style,
-                                                 const AdgPair  *padding);
-static gboolean         set_cell_spacing        (AdgTableStyle  *table_style,
-                                                 const AdgPair  *spacing);
-
-
-G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE);
 
 
 static void
@@ -89,10 +83,10 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgTableStylePrivate));
 
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    style_class->apply = apply;
+    style_class->apply = _adg_apply;
 
     param = adg_param_spec_dress("color-dress",
                                  P_("Color Dress"),
@@ -174,7 +168,8 @@ adg_table_style_init(AdgTableStyle *table_style)
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgTableStylePrivate *data = ((AdgTableStyle *) object)->data;
 
@@ -210,14 +205,10 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgTableStyle *table_style;
-    AdgTableStylePrivate *data;
-
-    table_style = (AdgTableStyle *) object;
-    data = table_style->data;
+    AdgTableStylePrivate *data = ((AdgTableStyle *) object)->data;
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -236,13 +227,13 @@ set_property(GObject *object, guint prop_id,
         data->value_dress = g_value_get_int(value);
         break;
     case PROP_ROW_HEIGHT:
-        set_row_height(table_style, g_value_get_double(value));
+        data->row_height = g_value_get_double(value);
         break;
     case PROP_CELL_PADDING:
-        set_cell_padding(table_style, g_value_get_boxed(value));
+        adg_pair_copy(&data->cell_padding, g_value_get_boxed(value));
         break;
     case PROP_CELL_SPACING:
-        set_cell_spacing(table_style, g_value_get_boxed(value));
+        adg_pair_copy(&data->cell_spacing, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -275,7 +266,7 @@ void
 adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "color-dress", dress, NULL);
+    g_object_set(table_style, "color-dress", dress, NULL);
 }
 
 /**
@@ -312,7 +303,7 @@ void
 adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "frame-dress", dress, NULL);
+    g_object_set(table_style, "frame-dress", dress, NULL);
 }
 
 /**
@@ -347,7 +338,7 @@ void
 adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "grid-dress", dress, NULL);
+    g_object_set(table_style, "grid-dress", dress, NULL);
 }
 
 /**
@@ -382,7 +373,7 @@ void
 adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "title-dress", dress, NULL);
+    g_object_set(table_style, "title-dress", dress, NULL);
 }
 
 /**
@@ -417,7 +408,7 @@ void
 adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-    g_object_set((GObject *) table_style, "value-dress", dress, NULL);
+    g_object_set(table_style, "value-dress", dress, NULL);
 }
 
 /**
@@ -454,9 +445,7 @@ void
 adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble height)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-
-    if (set_row_height(table_style, height))
-        g_object_notify((GObject *) table_style, "row-height");
+    g_object_set(table_style, "row-height", height, NULL);
 }
 
 /**
@@ -491,9 +480,7 @@ adg_table_style_set_cell_padding(AdgTableStyle *table_style,
                                  const AdgPair *padding)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-
-    if (set_cell_padding(table_style, padding))
-        g_object_notify((GObject *) table_style, "cell-padding");
+    g_object_set(table_style, "cell-padding", padding, NULL);
 }
 
 /**
@@ -534,9 +521,7 @@ adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
                                  const AdgPair *spacing)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
-
-    if (set_cell_spacing(table_style, spacing))
-        g_object_notify((GObject *) table_style, "cell-spacing");
+    g_object_set(table_style, "cell-spacing", spacing, NULL);
 }
 
 /**
@@ -567,58 +552,9 @@ adg_table_style_get_cell_spacing(AdgTableStyle *table_style)
 
 
 static void
-apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
+_adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgTableStylePrivate *data = ((AdgTableStyle *) style)->data;
 
     adg_entity_apply_dress(entity, data->color_dress, cr);
-}
-
-static gboolean
-set_row_height(AdgTableStyle *table_style, gdouble height)
-{
-    AdgTableStylePrivate *data = table_style->data;
-
-    /* A better approach would be to use the GParamSpec of this property */
-    g_return_val_if_fail(height >= 0, FALSE);
-
-    if (data->row_height == height)
-        return FALSE;
-
-    data->row_height = height;
-    return TRUE;
-}
-
-static gboolean
-set_cell_padding(AdgTableStyle *table_style, const AdgPair *padding)
-{
-    AdgTableStylePrivate *data;
-
-    g_return_val_if_fail(padding != NULL, FALSE);
-
-    data = table_style->data;
-
-    if (adg_pair_equal(&data->cell_padding, padding))
-        return FALSE;
-
-    data->cell_padding = *padding;
-
-    return TRUE;
-}
-
-static gboolean
-set_cell_spacing(AdgTableStyle *table_style, const AdgPair *spacing)
-{
-    AdgTableStylePrivate *data;
-
-    g_return_val_if_fail(spacing != NULL, FALSE);
-
-    data = table_style->data;
-
-    if (adg_pair_equal(&data->cell_spacing, spacing))
-        return FALSE;
-
-    data->cell_spacing = *spacing;
-
-    return TRUE;
 }

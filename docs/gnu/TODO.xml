@@ -31,6 +31,8 @@ to implement.</para>
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
    external data. Use libgda as sample data provider.</listitem>
    <listitem>Implement AdgText, a generic text management, using pango.</listitem>
+   <listitem>Add a new tab to the edit dialog of adg-demo to customize the
+   style of the rendering.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Add datum support: for implementation ideas checkout this
    <ulink url="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
@@ -58,6 +60,11 @@ a 1.0.0 release.</para>
 project such as the ADG canvas. This means to build releases also
 for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 
+<itemizedlist mark="circle">
+   <listitem>Provide some binary packages for major distributions, such as an
+   installable demo for Windows, a deb package and an rpm one.</listitem>
+</itemizedlist>
+
 </simplesect>
 
 <simplesect id="TODO.0.7.0">
@@ -72,22 +79,27 @@ API: the 0.7.0 release will probably be a beta release.</para>
    <listitem override="disc">Try to cross compile and build a windows binary package. Check out
    <ulink url="http://ricardo.ecn.wfu.edu/~cottrell/cross-gtk/">Allin suggestions</ulink>
    for hints.</listitem>
-   <listitem>Add printing support with page setup based on GtkPrintOperation provided
+   <listitem override="disc">Add printing support with page setup based on GtkPrintOperation provided
    by GTK+ 2.10 (hence, always available if GTK+ support is enable).</listitem>
-   <listitem>Expose conventions used by ADG APIs: this is mainly needed to make clear
+   <listitem override="disc">Uncomplete entities should fail gracefully instead of complaining for
+   insufficient data. For example, a linear dimension without the
+   needed pairs should simply not be rendered without warnings.
+   This provides an easy way to implement optional machinings.</listitem>
+   <listitem override="disc">Expose conventions used by ADG APIs: this is mainly needed to make clear
    getters must be considered read-only, also when returning non-const
    values (because object referencing is always allowed).</listitem>
-   <listitem>Add italian localization.</listitem>
+   <listitem override="disc">Add italian localization.</listitem>
+   <listitem override="disc">Implement a new widget that adds scrolling capabilities to AdgGtkArea.</listitem>
+   <listitem>Add a new tab to the edit dialog of adg-demo to change the content of
+   the title block with custom labels.</listitem>
    <listitem>Implement a decent "make check" target, basing the check programs on
    the test framework of glib. Make this an optional feature, as this
    framework is based on the too young glib-2.16.0.</listitem>
-   <listitem>Create a separate project called adg-lua to host the lua bindings for
-   the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
    <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
    should come from the CPML library (and there the TODO items are
    bound to the less common use cases).</listitem>
-   <listitem>Provide some binary packages for major distributions, such as an
-   installable demo for Windows, a deb package and an rpm one.</listitem>
+   <listitem>Create a separate project called adg-lua to host the lua bindings for
+   the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
 </itemizedlist>
 
 </simplesect>
@@ -206,7 +218,7 @@ main infrastructures should be in place.</para>
    <listitem override="disc">Move AdgTranslatable and AdgRotable directly inside AdgEntity.</listitem>
    <listitem override="disc">Ensure there are no bitfield flags, as they are not binding friendly.</listitem>
    <listitem override="disc">Change building scripts to get the GTK+ dependency optional.</listitem>
-   <listitem override="disc">Add AdgWidget, a GtkDrawingArea that can accept an AdgCanvas.</listitem>
+   <listitem override="disc">Add AdgGtkArea, a GtkDrawingArea that can accept an AdgCanvas.</listitem>
    <listitem override="disc">Optimize the implemented entities applying the 0.4 ADG infractrusture
    and enable caching where applicable.</listitem>
    <listitem override="disc">Use AdgToyText to draw dimenstion quote where applicable.</listitem>

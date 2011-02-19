@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,14 +31,23 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress-builtins.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-pattern.h"
+#include "adg-dress.h"
+#include "adg-style.h"
 #include "adg-color-style.h"
 #include "adg-line-style.h"
 #include "adg-font-style.h"
+#include "adg-pango-style.h"
+#include "adg-fill-style.h"
 #include "adg-dim-style.h"
+#include "adg-table-style.h"
 #include "adg-arrow.h"
 #include "adg-ruled-fill.h"
-#include "adg-table-style.h"
+
+#include "adg-dress-builtins.h"
 
 
 /**
@@ -250,7 +259,7 @@ _adg_dress_line_stroke(void)
  *
  * The builtin #AdgDress line type used by default
  * for rendering base and extension lines of dimensions.
- * The fallback style is a line with a thickness of %0.75
+ * The fallback style is a line with a thickness of %0.5
  * and a pass-through color dress.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
@@ -262,7 +271,7 @@ _adg_dress_line_dimension(void)
 
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
-                                          "width", 0.75, NULL);
+                                          "width", 0.5, NULL);
 
         dress = adg_dress_new("line-dimension", fallback);
         g_object_unref(fallback);
@@ -276,7 +285,7 @@ _adg_dress_line_dimension(void)
  *
  * The builtin #AdgDress line type used by #AdgFillStyle
  * based styles. The fallback style is a line with
- * #ADG_DRESS_COLOR_FILL color and a thickness of %1.
+ * #ADG_DRESS_COLOR_FILL color and a thickness of %0.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
  **/
@@ -288,7 +297,7 @@ _adg_dress_line_fill(void)
     if (G_UNLIKELY(dress == 0)) {
         AdgStyle *fallback = g_object_new(ADG_TYPE_LINE_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_FILL,
-                                          "width", 1., NULL);
+                                          "width", 0.5, NULL);
 
         dress = adg_dress_new("line-fill", fallback);
         g_object_unref(fallback);
@@ -367,7 +376,7 @@ _adg_dress_font(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Serif",
                                           "size", 14., NULL);
 
@@ -394,7 +403,7 @@ _adg_dress_font_text(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_ANNOTATION,
                                           "family", "Sans",
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
@@ -422,7 +431,7 @@ _adg_dress_font_annotation(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "color-dress", ADG_DRESS_COLOR_ANNOTATION,
                                           "family", "Sans",
                                           "size", 8., NULL);
@@ -450,7 +459,7 @@ _adg_dress_font_quote_text(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Sans",
                                           "weight", CAIRO_FONT_WEIGHT_BOLD,
                                           "size", 12., NULL);
@@ -478,7 +487,7 @@ _adg_dress_font_quote_annotation(void)
     static AdgDress dress = 0;
 
     if (G_UNLIKELY(dress == 0)) {
-        AdgStyle *fallback = g_object_new(ADG_TYPE_FONT_STYLE,
+        AdgStyle *fallback = g_object_new(ADG_TYPE_BEST_FONT_STYLE,
                                           "family", "Sans",
                                           "size", 8., NULL);
 

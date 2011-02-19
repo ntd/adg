@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,10 +25,6 @@
 
 #ifndef __ADG_CANVAS_H__
 #define __ADG_CANVAS_H__
-
-#include "adg-container.h"
-#include "adg-title-block.h"
-#include "adg-style.h"
 
 
 G_BEGIN_DECLS
@@ -94,6 +90,8 @@ void            adg_canvas_set_margins          (AdgCanvas      *canvas,
                                                  gdouble         right,
                                                  gdouble         bottom,
                                                  gdouble         left);
+void            adg_canvas_apply_margins        (AdgCanvas      *canvas,
+                                                 CpmlExtents    *extents);
 void            adg_canvas_switch_frame         (AdgCanvas      *canvas,
                                                  gboolean        new_state);
 gboolean        adg_canvas_has_frame            (AdgCanvas      *canvas);

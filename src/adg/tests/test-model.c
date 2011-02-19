@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,14 +34,14 @@ _adg_test_named_pair(void)
 
     adg_model_set_named_pair(model, "Existent", &valid_pair);
     named_pair = adg_model_get_named_pair(model, "Existent");
-    g_assert(adg_pair_equal(named_pair, &valid_pair));
+    g_assert(cpml_pair_equal(named_pair, &valid_pair));
 
     named_pair = adg_model_get_named_pair(model, "Not existent");
     g_assert(named_pair == NULL);
 
     adg_model_set_named_pair(model, "Latin1: àèìòù", &valid_pair);
     named_pair = adg_model_get_named_pair(model, "Latin1: àèìòù");
-    g_assert(adg_pair_equal(named_pair, &valid_pair));
+    g_assert(cpml_pair_equal(named_pair, &valid_pair));
 
     g_object_unref(model);
 }

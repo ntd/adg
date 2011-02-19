@@ -1,5 +1,5 @@
 /* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -63,120 +63,122 @@
  * the curve pass thought a given point (pm, known and got from the
  * original curve) at a given time (m, now hardcoded to 0.5).
  *
- * Firstly, I define some useful variables:
+ * Firstly, some useful variables are defined:
  *
  * |[
- * v0 = unitvector(p[1]-p[0]) * offset;
- * v3 = unitvector(p[3]-p[2]) * offset;
+ * v0 = unitvector(p[1] &minus; p[0]) &times; offset;
+ * v3 = unitvector(p[3] &minus; p[2]) &times; offset;
  * p0 = p[0] + normal v0;
  * p3 = p[3] + normal v3.
  * ]|
  *
- * Now I want the curve to have the specified slopes at the start
- * and end point. Forcing the same slope at the start point means:
+ * The resulting curve must have the same slopes than the original
+ * one at the start and end points. Forcing the same slopes means:
  *
  * |[
  * p1 = p0 + k0 v0.
  * ]|
  *
- * where k0 is an arbitrary factor. Decomposing for x and y components:
+ * where %k0 is an arbitrary factor. Decomposing for %x and %y:
  *
  * |[
  * p1.x = p0.x + k0 v0.x;
  * p1.y = p0.y + k0 v0.y.
  * ]|
  *
- * Doing the same for the end point gives:
+ * and doing the same for the end point:
  *
  * |[
  * p2.x = p3.x + k3 v3.x;
  * p2.y = p3.y + k3 v3.y.
  * ]|
  *
- * Now I interpolate the curve by forcing it to pass throught pm
- * when "time" is m, where 0 < m < 1. The cubic Bézier function is:
+ * This does not give a resolvable system, though. The curve will be
+ * interpolated by forcing its path to pass throught %pm when
+ * <varname>time</varname> is %m, where <code>0 &le; m &le; 1</code>.
+ * Knowing the function of the cubic Bézier:
  *
  * |[
- * C(t) = (1-t)³p0 + 3t(1-t)²p1 + 3t²(1-t)p2 + t³p3.
+ * C(t) = (1 &minus; t)³p0 + 3t(1 &minus; t)²p1 + 3t²(1 &minus; t)p2 + t³p3.
  * ]|
  *
- * and forcing t=m and C(t) = pm:
+ * and forcing <code>t = m</code> and <code>C(t) = pm</code>:
  *
  * |[
- * pm = (1-m)³p0 + 3m(1-m)²p1 + 3m²(1-m)p2 + m³p3.
+ * pm = (1 &minus; m)³p0 + 3m(1 &minus; m)²p1 + 3m²(1 &minus; m)p2 + m³p3.
  *
- * (1-m) p1 + m p2 = (pm - (1-m)³p0 - m³p3) / (3m (1-m)).
+ * (1 &minus; m) p1 + m p2 = (pm &minus; (1 &minus; m)³p0 &minus; m³p3) / (3m (1 &minus; m)).
  * ]|
  *
- * So the final system is:
+ * gives this final system:
  *
  * |[
  * p1.x = p0.x + k0 v0.x;
  * p1.y = p0.y + k0 v0.y;
  * p2.x = p3.x + k3 v3.x;
  * p2.y = p3.y + k3 v3.y;
- * (1-m) p1.x + m p2.x = (pm.x - (1-m)³p0.x - m³p3.x) / (3m (1-m));
- * (1-m) p1.y + m p2.y = (pm.y - (1-m)³p0.y - m³p3.y) / (3m (1-m)).
+ * (1 &minus; m) p1.x + m p2.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m));
+ * (1 &minus; m) p1.y + m p2.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)).
  * ]|
  *
- * Substituting and resolving for k0 and k3:
+ * Substituting and resolving for %k0 and %k3:
  *
  * |[
- * (1-m) k0 v0.x + m k3 v3.x =
- *     (pm.x - (1-m)³p0.x - m³p3.x) / (3m (1-m)) - (1-m) p0.x - m p3.x;
- * (1-m) k0 v0.y + m k3 v3.y =
- *     (pm.y - (1-m)³p0.y - m³p3.y) / (3m (1-m)) - (1-m) p0.y - m p3.y.
+ * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.x &minus; m p3.x;
+ * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.y &minus; m p3.y.
  *
- * (1-m) k0 v0.x + m k3 v3.x =
- *     (pm.x - (1-m)²(1+2m) p0.x - m²(3-2m) p3.x) / (3m (1-m));
- * (1-m) k0 v0.y + m k3 v3.y =
- *     (pm.y - (1-m)²(1+2m) p0.y - m²(3-2m) p3.y) / (3m (1-m)).
+ * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)²(1+2m) p0.x &minus; m²(3 &minus; 2m) p3.x) / (3m (1 &minus; m));
+ * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)²(1+2m) p0.y &minus; m²(3 &minus; 2m) p3.y) / (3m (1 &minus; m)).
  * ]|
  *
- * Let:
+ * Letting:
  *
  * |[
- * pk = (pm - (1-m)²(1+2m) p0 - m²(3-2m) p3) / (3m (1-m)).
+ * pk = (pm &minus; (1 &minus; m)²(1+2m) p0 &minus; m²(3 &minus; 2m) p3) / (3m (1 &minus; m)).
  * ]|
  *
- * gives the following system:
+ * reduces the above to this final equations:
  *
  * |[
- * (1-m) k0 v0.x + m k3 v3.x = pk.x;
- * (1-m) k0 v0.y + m k3 v3.y = pk.y.
+ * (1 &minus; m) k0 v0.x + m k3 v3.x = pk.x;
+ * (1 &minus; m) k0 v0.y + m k3 v3.y = pk.y.
  * ]|
  *
- * Now I should avoid division by 0 troubles. If either v0.x and v3.x
- * are 0, the first equation will be inconsistent. More in general the
- * v0.x*v3.y = v3.x*v3.y condition should be avoided. This is the first
- * case to check, in which case an alternative approach is used. In the
- * other cases the above system can be used.
- *
- * If v0.x != 0 I can resolve for k0 and then find k3:
+ * If <code>v0.x &ne; 0</code>, the system can be resolved for %k0 and
+ * %k3 calculated accordingly:
  *
  * |[
- * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x);
- * (pk.x - m k3 v3.x) v0.y / v0.x + m k3 v3.y = pk.y.
+ * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x);
+ * (pk.x &minus; m k3 v3.x) v0.y / v0.x + m k3 v3.y = pk.y.
  *
- * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x);
- * k3 m (v3.y - v3.x v0.y / v0.x) = pk.y - pk.x v0.y / v0.x.
+ * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x);
+ * k3 m (v3.y &minus; v3.x v0.y / v0.x) = pk.y &minus; pk.x v0.y / v0.x.
  *
- * k3 = (pk.y - pk.x v0.y / v0.x) / (m (v3.y - v3.x v0.y / v0.x));
- * k0 = (pk.x - m k3 v3.x) / ((1-m) v0.x).
+ * k3 = (pk.y &minus; pk.x v0.y / v0.x) / (m (v3.y &minus; v3.x v0.y / v0.x));
+ * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x).
  * ]|
  *
- * If v3.x != 0 I can resolve for k3 and then find k0:
+ * Otherwise, if <code>v3.x &ne; 0</code>, the system can be solved
+ * for %k3 and %k0 calculated accordingly:
  *
  * |[
- * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x);
- * (1-m) k0 v0.y + (pk.x - (1-m) k0 v0.x) v3.y / v3.x = pk.y.
+ * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x);
+ * (1 &minus; m) k0 v0.y + (pk.x &minus; (1 &minus; m) k0 v0.x) v3.y / v3.x = pk.y.
  *
- * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x);
- * k0 (1-m) (v0.y - k0 v0.x v3.y / v3.x) = pk.y - pk.x v3.y / v3.x.
+ * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x);
+ * k0 (1 &minus; m) (v0.y &minus; k0 v0.x v3.y / v3.x) = pk.y &minus; pk.x v3.y / v3.x.
  *
- * k0 = (pk.y - pk.x v3.y / v3.x) / ((1-m) (v0.y - v0.x v3.y / v3.x));
- * k3 = (pk.x - (1-m) k0 v0.x) / (m v3.x).
+ * k0 = (pk.y &minus; pk.x v3.y / v3.x) / ((1 &minus; m) (v0.y &minus; v0.x v3.y / v3.x));
+ * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x).
  * ]|
+ *
+ * The whole process must be guarded against division by 0 exceptions.
+ * If either <code>v0.x</code> and <code>v3.x</code> are %0, the first
+ * equation will be inconsistent. More in general, the
+ * <code>v0.x &times; v3.y = v3.x &times; v3.y</code> condition must
+ * be avoided. This is the first situation to avoid, in which case
+ * an alternative approach should be used.
+ *
  * </para>
  * </refsect2>
  * <para>

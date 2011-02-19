@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -59,12 +59,17 @@
 
 
 #include "adg-internal.h"
-#include "adg-entity.h"
-#include "adg-entity-private.h"
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
 #include "adg-canvas.h"
-#include "adg-font-style.h"
-#include "adg-dim-style.h"
-#include "adg-marshal.h"
+#include "adg-dress.h"
+#include "adg-style.h"
+#include "adg-model.h"
+#include "adg-point.h"
+
+#include "adg-entity-private.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 
@@ -342,7 +347,8 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_PARENT:
-        _adg_set_parent(object, g_value_get_object(value));
+        _adg_set_parent((AdgEntity *) object,
+                        (AdgEntity *) g_value_get_object(value));
         break;
     case PROP_GLOBAL_MAP:
         adg_matrix_copy(&data->global_map, g_value_get_boxed(value));
@@ -934,9 +940,8 @@ adg_entity_invalidate(AdgEntity *entity)
  * @entity: an #AdgEntity
  *
  * Emits the #AdgEntity::arrange signal on @entity and all its children,
- * if any. This function is rarely needed as the arrange call is usually
- * implicitely called by the #AdgEntity::render signal or iby a call to
- * adg_entity_get_extents().
+ * if any. The arrange call is implicitely called by the
+ * #AdgEntity::render signal but not by adg_entity_get_extents().
  **/
 void
 adg_entity_arrange(AdgEntity *entity)
@@ -968,13 +973,24 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * @point: the #AdgPoint to define
  * @new_point: the new #AdgPoint value
  *
- * A convenient method to set an #AdgPoint with old value of @point
- * to the new value @new_point. It assumes the points are owned by
- * @entity, so it takes also care of the dependencies between
- * @entity and the model bound to the #AdgPoint.
+ * <note><para>
+ * This function is only useful in entity implementations.
+ * </para></note>
  *
- * @point can be %NULL, in which case a new #AdgPoint is created.
- * Also, @new_point can be %NULL in which case @point is destroyed.
+ * A convenient method to set an #AdgPoint owned by @entity.
+ * @point is the old value while @new_point is the new value. It
+ * can be used for setting #AdgPoint in the private data, such as:
+ *
+ * |[
+ * data->point = adg_entity_point(entity, data->point, new_point);
+ * ]|
+ *
+ * This function takes care of the dependencies between @entity and
+ * the eventual models bound to the old and new points.
+ *
+ * @point can be %NULL, in which case a clone of @new_point will be
+ * returned. Also @new_point can be %NULL, in which case @point is
+ * destroyed and %NULL will be returned.
  *
  * Returns: the new properly defined point
  **/
@@ -1175,7 +1191,6 @@ _adg_real_render(AdgEntity *entity, cairo_t *cr)
     g_signal_emit(entity, _adg_signals[ARRANGE], 0);
 
     cairo_save(cr);
-    cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
     klass->render(entity, cr);
     cairo_restore(cr);
 
@@ -1185,7 +1200,6 @@ _adg_real_render(AdgEntity *entity, cairo_t *cr)
 
         if (extents->is_defined) {
             cairo_save(cr);
-            cairo_identity_matrix(cr);
             cairo_set_source_rgba(cr, 0.15, 0.15, 0.15, 0.15);
             cairo_rectangle(cr, extents->org.x, extents->org.y,
                             extents->size.x, extents->size.y);

@@ -1,5 +1,5 @@
 /* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,6 +89,28 @@ void
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
     memcpy(pair, src, sizeof(CpmlPair));
+}
+
+/**
+ * cpml_pair_equal:
+ * @pair: the first pair to compare
+ * @src: the second pair to compare
+ *
+ * Compares @pair to @src and returns 1 if the pairs are equals.
+ * Two %NULL pairs are considered equal.
+ *
+ * Returns: 1 if @pair is equal to @src, 0 otherwise
+ **/
+cairo_bool_t
+cpml_pair_equal(const CpmlPair *pair, const CpmlPair *src)
+{
+    if (pair == NULL && src == NULL)
+        return 1;
+
+    if (pair == NULL || src == NULL)
+        return 0;
+
+    return pair->x == src->x && pair->y == src->y ? 1 : 0;
 }
 
 /**

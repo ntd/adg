@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,35 @@
  * The canvas is the toplevel entity of an ADG drawing. It can be
  * bound to a GTK+ widget, such as #AdgGtkArea, or manually rendered
  * to a custom surface.
+ *
+ * Tipically, the canvas contains the description and properties of
+ * the media used, such as such as size (if relevant), margins,
+ * border and paddings. This approach clearly follows the block model
+ * of the CSS specifications level 2.
+ *
+ * The paddings specify the distance between the entities contained
+ * by the canvas and the border. The margins specify the distance
+ * between the canvas border and the media extents.
+ *
+ * The canvas (hence the media) size can be explicitely specified
+ * by directly writing to the #AdgCanvas:size property or using any
+ * valid setter, such as adg_canvas_set_size(),
+ * adg_canvas_set_size_explicit() or the convenient
+ * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
+ * only one dimension and let the other one be computed automatically.
+ * This is done by using the special value %0 that specifies a side
+ * must be autocalculated.
+ *
+ * By default either width and height must be autocalculated (are
+ * set to %0), so the arrange() phase on the canvas is performed.
+ * Margins and paddings are then added to the extents to get the
+ * border coordinates and the final bounding box.
+ *
+ * When the size is explicitely set, instead, the final bounding
+ * box is forcibly set to this value without taking the canvas
+ * extents into account. The margins are then subtracted to get
+ * the coordinates of the border. In this case, the paddings are
+ * simply ignored.
  **/
 
 /**
@@ -36,10 +65,17 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
+#include "adg-style.h"
+#include "adg-color-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-color-style.h"
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
@@ -134,29 +170,29 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 
     param = g_param_spec_double("top-margin",
                                 P_("Top Margin"),
-                                P_("The margin (in identity space) to leave above the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The margin (in global space) to leave above the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOP_MARGIN, param);
 
     param = g_param_spec_double("right-margin",
                                 P_("Right Margin"),
-                                P_("The margin (in identity space) to leave empty at the right of the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The margin (in global space) to leave empty at the right of the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RIGHT_MARGIN, param);
 
     param = g_param_spec_double("bottom-margin",
                                 P_("Bottom Margin"),
-                                P_("The margin (in identity space) to leave empty below the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The margin (in global space) to leave empty below the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BOTTOM_MARGIN, param);
 
     param = g_param_spec_double("left-margin",
                                 P_("Left Margin"),
-                                P_("The margin (in identity space) to leave empty at the left of the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The margin (in global space) to leave empty at the left of the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_MARGIN, param);
 
@@ -169,29 +205,29 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 
     param = g_param_spec_double("top-padding",
                                 P_("Top Padding"),
-                                P_("The padding (in identity space) to leave empty above between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The padding (in global space) to leave empty above between the drawing and the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_TOP_PADDING, param);
 
     param = g_param_spec_double("right-padding",
                                 P_("Right Padding"),
-                                P_("The padding (in identity space) to leave empty at the right between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The padding (in global space) to leave empty at the right between the drawing and the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RIGHT_PADDING, param);
 
     param = g_param_spec_double("bottom-padding",
                                 P_("Bottom Padding"),
-                                P_("The padding (in identity space) to leave empty below between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The padding (in global space) to leave empty below between the drawing and the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_BOTTOM_PADDING, param);
 
     param = g_param_spec_double("left-padding",
                                 P_("Left Padding"),
-                                P_("The padding (in identity space) to leave empty at the left between the drawing and the frame"),
-                                G_MINDOUBLE, G_MAXDOUBLE, 15,
+                                P_("The padding (in global space) to leave empty at the left between the drawing and the frame"),
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 15,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LEFT_PADDING, param);
 }
@@ -383,7 +419,7 @@ adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(size != NULL);
 
-    g_object_set((GObject *) canvas, "size", size, NULL);
+    g_object_set(canvas, "size", size, NULL);
 }
 
 /**
@@ -441,7 +477,7 @@ void
 adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "background-dress", dress, NULL);
+    g_object_set(canvas, "background-dress", dress, NULL);
 }
 
 /**
@@ -476,7 +512,7 @@ void
 adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "frame-dress", dress, NULL);
+    g_object_set(canvas, "frame-dress", dress, NULL);
 }
 
 /**
@@ -520,7 +556,7 @@ adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(title_block == NULL || ADG_IS_TITLE_BLOCK(title_block));
-    g_object_set((GObject *) canvas, "title-block", title_block, NULL);
+    g_object_set(canvas, "title-block", title_block, NULL);
 }
 
 /**
@@ -546,7 +582,7 @@ adg_canvas_get_title_block(AdgCanvas *canvas)
 /**
  * adg_canvas_set_top_margin:
  * @canvas: an #AdgCanvas
- * @value: the new margin, in identity space
+ * @value: the new margin, in global space
  *
  * Changes the top margin of @canvas by setting #AdgCanvas:top-margin
  * to @value. Negative values are allowed.
@@ -555,14 +591,14 @@ void
 adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "top-margin", value, NULL);
+    g_object_set(canvas, "top-margin", value, NULL);
 }
 
 /**
  * adg_canvas_get_top_margin:
  * @canvas: an #AdgCanvas
  *
- * Gets the top margin (in identity space) of @canvas.
+ * Gets the top margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
  **/
@@ -580,7 +616,7 @@ adg_canvas_get_top_margin(AdgCanvas *canvas)
 /**
  * adg_canvas_set_right_margin:
  * @canvas: an #AdgCanvas
- * @value: the new margin, in identity space
+ * @value: the new margin, in global space
  *
  * Changes the right margin of @canvas by setting #AdgCanvas:right-margin
  * to @value. Negative values are allowed.
@@ -589,14 +625,14 @@ void
 adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "right-margin", value, NULL);
+    g_object_set(canvas, "right-margin", value, NULL);
 }
 
 /**
  * adg_canvas_get_right_margin:
  * @canvas: an #AdgCanvas
  *
- * Gets the right margin (in identity space) of @canvas.
+ * Gets the right margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
  **/
@@ -615,7 +651,7 @@ adg_canvas_get_right_margin(AdgCanvas *canvas)
 /**
  * adg_canvas_set_bottom_margin:
  * @canvas: an #AdgCanvas
- * @value: the new margin, in identity space
+ * @value: the new margin, in global space
  *
  * Changes the bottom margin of @canvas by setting #AdgCanvas:bottom-margin
  * to @value. Negative values are allowed.
@@ -624,14 +660,14 @@ void
 adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "bottom-margin", value, NULL);
+    g_object_set(canvas, "bottom-margin", value, NULL);
 }
 
 /**
  * adg_canvas_get_bottom_margin:
  * @canvas: an #AdgCanvas
  *
- * Gets the bottom margin (in identity space) of @canvas.
+ * Gets the bottom margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
  **/
@@ -649,7 +685,7 @@ adg_canvas_get_bottom_margin(AdgCanvas *canvas)
 /**
  * adg_canvas_set_left_margin:
  * @canvas: an #AdgCanvas
- * @value: the new margin, in identity space
+ * @value: the new margin, in global space
  *
  * Changes the left margin of @canvas by setting #AdgCanvas:left-margin
  * to @value. Negative values are allowed.
@@ -658,14 +694,14 @@ void
 adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "left-margin", value, NULL);
+    g_object_set(canvas, "left-margin", value, NULL);
 }
 
 /**
  * adg_canvas_get_left_margin:
  * @canvas: an #AdgCanvas
  *
- * Gets the left margin (in identity space) of @canvas.
+ * Gets the left margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
  **/
@@ -683,24 +719,43 @@ adg_canvas_get_left_margin(AdgCanvas *canvas)
 /**
  * adg_canvas_set_margins:
  * @canvas: an #AdgCanvas
- * @top: top margin, in identity space
- * @right: right margin, in identity space
- * @bottom: bottom margin, in identity space
- * @left: left margin, in identity space
+ * @top: top margin, in global space
+ * @right: right margin, in global space
+ * @bottom: bottom margin, in global space
+ * @left: left margin, in global space
  *
  * Convenient function to set all the margins at once.
  **/
 void
 adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
-                          gdouble bottom, gdouble left)
+                       gdouble bottom, gdouble left)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas,
-                 "top-margin", top,
-                 "right-margin", right,
-                 "bottom-margin", bottom,
-                 "left-margin", left,
-                 NULL);
+    g_object_set(canvas, "top-margin", top, "right-margin", right,
+                 "bottom-margin", bottom, "left-margin", left, NULL);
+}
+
+/**
+ * adg_canvas_apply_margins:
+ * @canvas: an #AdgCanvas
+ * @extents: where apply the margins
+ *
+ * A convenient function to apply the margins of @canvas to the
+ * arbitrary #CpmlExtents struct @extents.
+ **/
+void
+adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    data = canvas->data;
+
+    extents->org.x -= data->left_margin;
+    extents->org.y -= data->top_margin;
+    extents->size.x += data->left_margin + data->right_margin;
+    extents->size.y += data->top_margin + data->bottom_margin;
 }
 
 /**
@@ -716,7 +771,7 @@ void
 adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "has-frame", new_state, NULL);
+    g_object_set(canvas, "has-frame", new_state, NULL);
 }
 
 /**
@@ -743,7 +798,7 @@ adg_canvas_has_frame(AdgCanvas *canvas)
 /**
  * adg_canvas_set_top_padding:
  * @canvas: an #AdgCanvas
- * @value: the new padding, in identity space
+ * @value: the new padding, in global space
  *
  * Changes the top padding of @canvas by setting #AdgCanvas:top-padding
  * to @value. Negative values are allowed.
@@ -752,14 +807,14 @@ void
 adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "top-padding", value, NULL);
+    g_object_set(canvas, "top-padding", value, NULL);
 }
 
 /**
  * adg_canvas_get_top_padding:
  * @canvas: an #AdgCanvas
  *
- * Gets the top padding (in identity space) of @canvas.
+ * Gets the top padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
  **/
@@ -777,7 +832,7 @@ adg_canvas_get_top_padding(AdgCanvas *canvas)
 /**
  * adg_canvas_set_right_padding:
  * @canvas: an #AdgCanvas
- * @value: the new padding, in identity space
+ * @value: the new padding, in global space
  *
  * Changes the right padding of @canvas by setting #AdgCanvas:right-padding
  * to @value. Negative values are allowed.
@@ -786,14 +841,14 @@ void
 adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "right-padding", value, NULL);
+    g_object_set(canvas, "right-padding", value, NULL);
 }
 
 /**
  * adg_canvas_get_right_padding:
  * @canvas: an #AdgCanvas
  *
- * Gets the right padding (in identity space) of @canvas.
+ * Gets the right padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
  **/
@@ -812,7 +867,7 @@ adg_canvas_get_right_padding(AdgCanvas *canvas)
 /**
  * adg_canvas_set_bottom_padding:
  * @canvas: an #AdgCanvas
- * @value: the new padding, in identity space
+ * @value: the new padding, in global space
  *
  * Changes the bottom padding of @canvas by setting #AdgCanvas:bottom-padding
  * to @value. Negative values are allowed.
@@ -821,14 +876,14 @@ void
 adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "bottom-padding", value, NULL);
+    g_object_set(canvas, "bottom-padding", value, NULL);
 }
 
 /**
  * adg_canvas_get_bottom_padding:
  * @canvas: an #AdgCanvas
  *
- * Gets the bottom padding (in identity space) of @canvas.
+ * Gets the bottom padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
  **/
@@ -846,7 +901,7 @@ adg_canvas_get_bottom_padding(AdgCanvas *canvas)
 /**
  * adg_canvas_set_left_padding:
  * @canvas: an #AdgCanvas
- * @value: the new padding, in identity space
+ * @value: the new padding, in global space
  *
  * Changes the left padding of @canvas by setting #AdgCanvas:left-padding
  * to @value. Negative values are allowed.
@@ -855,14 +910,14 @@ void
 adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas, "left-padding", value, NULL);
+    g_object_set(canvas, "left-padding", value, NULL);
 }
 
 /**
  * adg_canvas_get_left_padding:
  * @canvas: an #AdgCanvas
  *
- * Gets the left padding (in identity space) of @canvas.
+ * Gets the left padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
  **/
@@ -880,10 +935,10 @@ adg_canvas_get_left_padding(AdgCanvas *canvas)
 /**
  * adg_canvas_set_paddings:
  * @canvas: an #AdgCanvas
- * @top: top padding, in identity space
- * @right: right padding, in identity space
- * @bottom: bottom padding, in identity space
- * @left: left padding, in identity space
+ * @top: top padding, in global space
+ * @right: right padding, in global space
+ * @bottom: bottom padding, in global space
+ * @left: left padding, in global space
  *
  * Convenient function to set all the paddings at once.
  **/
@@ -892,12 +947,8 @@ adg_canvas_set_paddings(AdgCanvas *canvas, gdouble top, gdouble right,
                           gdouble bottom, gdouble left)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
-    g_object_set((GObject *) canvas,
-                 "top-padding", top,
-                 "right-padding", right,
-                 "bottom-padding", bottom,
-                 "left-padding", left,
-                 NULL);
+    g_object_set(canvas, "top-padding", top, "right-padding", right,
+                 "bottom-padding", bottom, "left-padding", left, NULL);
 }
 
 
@@ -957,8 +1008,8 @@ _adg_arrange(AdgEntity *entity)
         const AdgMatrix *global = adg_entity_get_global_matrix(entity);
         CpmlExtents paper;
 
-        paper.org.x = data->left_margin;
-        paper.org.y = data->top_margin;
+        paper.org.x = 0;
+        paper.org.y = 0;
         paper.size.x = data->size.x;
         paper.size.y = data->size.y;
 
@@ -984,12 +1035,6 @@ _adg_arrange(AdgEntity *entity)
         extents.size.y += data->top_padding + data->bottom_padding;
     }
 
-    /* Add margins */
-    extents.org.x -= data->left_margin;
-    extents.org.y -= data->top_margin;
-    extents.size.x += data->left_margin + data->right_margin;
-    extents.size.y += data->top_margin + data->bottom_margin;
-
     /* Impose the new extents */
     adg_entity_set_extents(entity, &extents);
 
@@ -1003,9 +1048,9 @@ _adg_arrange(AdgEntity *entity)
         title_block_extents = adg_entity_get_extents(title_block_entity);
 
         shift.x = extents.org.x + extents.size.x - title_block_extents->org.x
-            - title_block_extents->size.x - data->right_margin;
+            - title_block_extents->size.x;
         shift.y = extents.org.y + extents.size.y - title_block_extents->org.y
-            - title_block_extents->size.y - data->bottom_margin;
+            - title_block_extents->size.y;
 
         /* The following block could be optimized by skipping tiny shift,
          * usually left by rounding errors */
@@ -1037,25 +1082,18 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     cairo_save(cr);
 
     /* Background fill */
-    cairo_identity_matrix(cr);
-    cairo_rectangle(cr, extents->org.x, extents->org.y,
-                    extents->size.x, extents->size.y);
+    cairo_rectangle(cr, extents->org.x - data->left_margin,
+                    extents->org.y - data->top_margin,
+                    extents->size.x + data->left_margin + data->right_margin,
+                    extents->size.y + data->top_margin + data->bottom_margin);
     adg_entity_apply_dress(entity, data->background_dress, cr);
     cairo_fill(cr);
 
     /* Frame line */
     if (data->has_frame) {
-        CpmlExtents frame;
-        cpml_extents_copy(&frame, extents);
-
-        frame.org.x += data->left_margin;
-        frame.org.y += data->top_margin;
-        frame.size.x -= data->left_margin + data->right_margin;
-        frame.size.y -= data->top_margin + data->bottom_margin;
-
-        cairo_rectangle(cr, frame.org.x, frame.org.y,
-                        frame.size.x, frame.size.y);
-        cairo_set_matrix(cr, adg_entity_get_global_matrix(entity));
+        cairo_rectangle(cr, extents->org.x, extents->org.y,
+                        extents->size.x, extents->size.y);
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         adg_entity_apply_dress(entity, data->frame_dress, cr);
         cairo_stroke(cr);
     }

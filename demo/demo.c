@@ -1,4 +1,5 @@
 #include "demo.h"
+#include <string.h>
 
 /**
  * demo_find_data_file:

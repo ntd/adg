@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -172,30 +172,30 @@ _adg_test_size(void)
     /* Using the public APIs */
     adg_canvas_set_size(canvas, &sample_size);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &sample_size));
+    g_assert(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size(canvas, NULL);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &sample_size));
+    g_assert(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size_explicit(canvas, 0, 0);
     size = adg_canvas_get_size(canvas);
-    g_assert(adg_pair_equal(size, &null_size));
+    g_assert(cpml_pair_equal(size, &null_size));
 
     /* Using GObject property methods */
     g_object_set(canvas, "size", &sample_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_assert(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", NULL, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &sample_size));
+    g_assert(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", &null_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(adg_pair_equal(size_dup, &null_size));
+    g_assert(cpml_pair_equal(size_dup, &null_size));
     g_free(size_dup);
 
     g_object_unref(canvas);
@@ -210,7 +210,7 @@ _adg_test_top_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1;
 
     /* Using the public APIs */
     adg_canvas_set_top_margin(canvas, valid_value_1);
@@ -242,7 +242,7 @@ _adg_test_right_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = 0;
 
     /* Using the public APIs */
     adg_canvas_set_right_margin(canvas, valid_value_1);
@@ -274,7 +274,7 @@ _adg_test_bottom_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1234;
 
     /* Using the public APIs */
     adg_canvas_set_bottom_margin(canvas, valid_value_1);
@@ -306,7 +306,7 @@ _adg_test_left_margin(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -4321;
 
     /* Using the public APIs */
     adg_canvas_set_left_margin(canvas, valid_value_1);
@@ -377,7 +377,7 @@ _adg_test_top_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = 0;
 
     /* Using the public APIs */
     adg_canvas_set_top_padding(canvas, valid_value_1);
@@ -409,7 +409,7 @@ _adg_test_right_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1;
 
     /* Using the public APIs */
     adg_canvas_set_right_padding(canvas, valid_value_1);
@@ -441,7 +441,7 @@ _adg_test_bottom_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -4321;
 
     /* Using the public APIs */
     adg_canvas_set_bottom_padding(canvas, valid_value_1);
@@ -473,7 +473,7 @@ _adg_test_left_padding(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     valid_value_1 = 4321;
-    valid_value_2 = 1234;
+    valid_value_2 = -1111;
 
     /* Using the public APIs */
     adg_canvas_set_left_padding(canvas, valid_value_1);

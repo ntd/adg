@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,15 @@
 
 
 #include "adg-internal.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-line-style.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"
-#include "adg-dress-builtins.h"
-#include "adg-line-style.h"
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_stroke_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
@@ -218,7 +223,7 @@ void
 adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_STROKE(stroke));
-    g_object_set((GObject *) stroke, "line-dress", dress, NULL);
+    g_object_set(stroke, "line-dress", dress, NULL);
 }
 
 /**
@@ -327,6 +332,8 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
+
         cairo_save(cr);
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);

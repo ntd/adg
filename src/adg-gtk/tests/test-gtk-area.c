@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -114,6 +114,103 @@ _adg_test_factor(void)
     g_object_unref(area);
 }
 
+static void
+_adg_test_autozoom(void)
+{
+    AdgGtkArea *area;
+    gboolean invalid_boolean;
+    gboolean has_autozoom;
+
+    area = (AdgGtkArea *) adg_gtk_area_new();
+    invalid_boolean = (gboolean) 1234;
+
+    /* Using the public APIs */
+    adg_gtk_area_switch_autozoom(area, FALSE);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(!has_autozoom);
+
+    adg_gtk_area_switch_autozoom(area, invalid_boolean);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(!has_autozoom);
+
+    adg_gtk_area_switch_autozoom(area, TRUE);
+    has_autozoom = adg_gtk_area_has_autozoom(area);
+    g_assert(has_autozoom);
+
+    /* Using GObject property methods */
+    g_object_set(area, "autozoom", invalid_boolean, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(has_autozoom);
+
+    g_object_set(area, "autozoom", FALSE, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(!has_autozoom);
+
+    g_object_set(area, "autozoom", TRUE, NULL);
+    g_object_get(area, "autozoom", &has_autozoom, NULL);
+    g_assert(has_autozoom);
+
+    g_object_unref(area);
+}
+
+static void
+_adg_test_render_map(void)
+{
+    AdgGtkArea *area;
+    const AdgMatrix *identity_map;
+    AdgMatrix null_map, dummy_map;
+    const AdgMatrix *render_map;
+    AdgMatrix *render_map_dup;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    identity_map = adg_matrix_identity();
+
+    /* A null map is a kind of degenerated matrix: it must be
+     * treated as valid value by the API */
+    cairo_matrix_init(&null_map, 0, 0, 0, 0, 0, 0);
+    /* A general purpose map value without translations */
+    cairo_matrix_init(&dummy_map, 1, 2, 3, 4, 0, 0);
+
+    /* Using the public APIs */
+    adg_gtk_area_set_render_map(area, &null_map);
+    render_map = adg_gtk_area_get_render_map(area);
+    g_assert(adg_matrix_equal(render_map, &null_map));
+
+    adg_gtk_area_transform_render_map(area, &dummy_map, ADG_TRANSFORM_AFTER);
+    render_map = adg_gtk_area_get_render_map(area);
+    g_assert(adg_matrix_equal(render_map, &null_map));
+
+    adg_gtk_area_set_render_map(area, identity_map);
+    render_map = adg_gtk_area_get_render_map(area);
+    g_assert(adg_matrix_equal(render_map, identity_map));
+
+    adg_gtk_area_set_render_map(area, NULL);
+    render_map = adg_gtk_area_get_render_map(area);
+    g_assert(adg_matrix_equal(render_map, identity_map));
+
+    adg_gtk_area_transform_render_map(area, &dummy_map, ADG_TRANSFORM_BEFORE);
+    render_map = adg_gtk_area_get_render_map(area);
+    g_assert(adg_matrix_equal(render_map, &dummy_map));
+
+    /* Using GObject property methods */
+    g_object_set(area, "render-map", &null_map, NULL);
+    g_object_get(area, "render-map", &render_map_dup, NULL);
+    g_assert(adg_matrix_equal(render_map_dup, &null_map));
+    g_free(render_map_dup);
+
+    g_object_set(area, "render-map", NULL, NULL);
+    g_object_get(area, "render-map", &render_map_dup, NULL);
+    g_assert(adg_matrix_equal(render_map_dup, &null_map));
+    g_free(render_map_dup);
+
+    g_object_set(area, "render-map", identity_map, NULL);
+    g_object_get(area, "render-map", &render_map_dup, NULL);
+    g_assert(adg_matrix_equal(render_map_dup, identity_map));
+    g_free(render_map_dup);
+
+    g_object_unref(area);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -122,6 +219,8 @@ main(int argc, char *argv[])
 
     adg_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
     adg_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
+    adg_test_add_func("/adg/gtk/area/autozoom", _adg_test_autozoom);
+    adg_test_add_func("/adg/gtk/area/render-map", _adg_test_render_map);
 
     return g_test_run();
 }

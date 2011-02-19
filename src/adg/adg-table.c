@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,17 +72,28 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+#include "adg-style.h"
+#include "adg-table-style.h"
+#include "adg-path.h"
+#include "adg-stroke.h"
+#include "adg-textual.h"
+#include "adg-toy-text.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+
 #include "adg-table.h"
 #include "adg-table-private.h"
-#include "adg-alignment.h"
-#include "adg-dress-builtins.h"
-#include "adg-path.h"
-#include "adg-line-style.h"
-#include "adg-toy-text.h"
 
-#define PARENT_OBJECT_CLASS  ((GObjectClass *) adg_table_parent_class)
-#define PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)
 
+#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_table_parent_class)
+#define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)
+
+
+G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY);
 
 enum {
     PROP_0,
@@ -90,62 +101,58 @@ enum {
     PROP_HAS_FRAME
 };
 
-static void             dispose                 (GObject        *object);
-static void             finalize                (GObject        *object);
-static void             get_property            (GObject        *object,
+
+static void             _adg_dispose            (GObject        *object);
+static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
                                                  guint           param_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           param_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static void             global_changed          (AdgEntity      *entity);
-static void             local_changed           (AdgEntity      *entity);
-static void             invalidate              (AdgEntity      *entity);
-static void             arrange                 (AdgEntity      *entity);
-static void             arrange_grid            (AdgEntity      *entity);
-static void             arrange_frame           (AdgEntity      *entity,
+static void             _adg_global_changed     (AdgEntity      *entity);
+static void             _adg_local_changed      (AdgEntity      *entity);
+static void             _adg_invalidate         (AdgEntity      *entity);
+static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_arrange_grid       (AdgEntity      *entity);
+static void             _adg_arrange_frame      (AdgEntity      *entity,
                                                  const CpmlExtents *extents);
-static void             render                  (AdgEntity      *entity,
+static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
-static gboolean         switch_frame            (AdgTable       *table,
-                                                 gboolean        new_state);
-static void             propagate               (AdgTable       *table,
+static void             _adg_propagate          (AdgTable       *table,
                                                  const gchar    *detailed_signal,
                                                  ...);
-static AdgTableRow *    row_new                 (AdgTable       *table,
+static AdgTableRow *    _adg_row_new            (AdgTable       *table,
                                                  AdgTableRow    *before_row);
-static void             row_arrange_size        (AdgTableRow    *row);
-static void             row_arrange             (AdgTableRow    *row);
-static void             row_dispose             (AdgTableRow    *row);
-static void             row_free                (AdgTableRow    *row);
-static AdgTableCell *   cell_new                (AdgTableRow    *row,
+static void             _adg_row_arrange        (AdgTableRow    *row);
+static void             _adg_row_arrange_size   (AdgTableRow    *row);
+static void             _adg_row_dispose        (AdgTableRow    *row);
+static void             _adg_row_free           (AdgTableRow    *row);
+static AdgTableCell *   _adg_cell_new           (AdgTableRow    *row,
                                                  AdgTableCell   *before_cell,
                                                  gdouble         width,
                                                  gboolean        has_frame,
                                                  const gchar    *name,
                                                  AdgEntity      *title,
                                                  AdgEntity      *value);
-static void             cell_set_name           (AdgTableCell   *cell,
+static void             _adg_cell_set_name           (AdgTableCell   *cell,
                                                  const gchar    *name);
-static gboolean         cell_set_title          (AdgTableCell   *cell,
+static gboolean         _adg_cell_set_title     (AdgTableCell   *cell,
                                                  AdgEntity      *title);
-static gboolean         cell_set_value          (AdgTableCell   *cell,
+static gboolean         _adg_cell_set_value     (AdgTableCell   *cell,
                                                  AdgEntity      *value);
-static void             cell_set_value_pos      (AdgTableCell   *cell,
+static void             _adg_cell_set_value_pos (AdgTableCell   *cell,
                                                  const AdgPair  *from_factor,
                                                  const AdgPair  *to_factor);
-static void             cell_arrange_size       (AdgTableCell   *cell);
-static void             cell_arrange            (AdgTableCell   *cell);
-static void             cell_dispose            (AdgTableCell   *cell);
-static void             cell_free               (AdgTableCell   *cell);
-static gboolean         value_match             (gpointer        key,
+static void             _adg_cell_arrange       (AdgTableCell   *cell);
+static void             _adg_cell_arrange_size  (AdgTableCell   *cell);
+static void             _adg_cell_dispose       (AdgTableCell   *cell);
+static void             _adg_cell_free          (AdgTableCell   *cell);
+static gboolean         _adg_value_match        (gpointer        key,
                                                  gpointer        value,
                                                  gpointer        user_data);
-
-
-G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY);
 
 
 static void
@@ -160,16 +167,16 @@ adg_table_class_init(AdgTableClass *klass)
 
     g_type_class_add_private(klass, sizeof(AdgTablePrivate));
 
-    gobject_class->dispose = dispose;
-    gobject_class->finalize = finalize;
-    gobject_class->get_property = get_property;
-    gobject_class->set_property = set_property;
+    gobject_class->dispose = _adg_dispose;
+    gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
-    entity_class->global_changed = global_changed;
-    entity_class->local_changed = local_changed;
-    entity_class->invalidate = invalidate;
-    entity_class->arrange = arrange;
-    entity_class->render = render;
+    entity_class->global_changed = _adg_global_changed;
+    entity_class->local_changed = _adg_local_changed;
+    entity_class->invalidate = _adg_invalidate;
+    entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = adg_param_spec_dress("table-dress",
                                  P_("Table Dress"),
@@ -206,7 +213,7 @@ adg_table_init(AdgTable *table)
 }
 
 static void
-dispose(GObject *object)
+_adg_dispose(GObject *object)
 {
     AdgTablePrivate *data = ((AdgTable *) object)->data;
 
@@ -222,14 +229,14 @@ dispose(GObject *object)
 
     /* The rows finalization will happen in the finalize() method */
     if (data->rows)
-        g_slist_foreach(data->rows, (GFunc) row_dispose, NULL);
+        g_slist_foreach(data->rows, (GFunc) _adg_row_dispose, NULL);
 
-    if (PARENT_OBJECT_CLASS->dispose)
-        PARENT_OBJECT_CLASS->dispose(object);
+    if (_ADG_OLD_OBJECT_CLASS->dispose)
+        _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
 static void
-finalize(GObject *object)
+_adg_finalize(GObject *object)
 {
     AdgTable *table;
     AdgTablePrivate *data;
@@ -238,19 +245,20 @@ finalize(GObject *object)
     data = table->data;
 
     if (data->rows) {
-        g_slist_foreach(data->rows, (GFunc) row_free, NULL);
+        g_slist_foreach(data->rows, (GFunc) _adg_row_free, NULL);
         g_slist_free(data->rows);
     }
 
     if (data->cell_names)
         g_hash_table_destroy(data->cell_names);
 
-    if (PARENT_OBJECT_CLASS->finalize)
-        PARENT_OBJECT_CLASS->finalize(object);
+    if (_ADG_OLD_OBJECT_CLASS->finalize)
+        _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
 static void
-get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
 {
     AdgTablePrivate *data = ((AdgTable *) object)->data;
 
@@ -268,21 +276,17 @@ get_property(GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 }
 
 static void
-set_property(GObject *object, guint prop_id,
-             const GValue *value, GParamSpec *pspec)
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
 {
-    AdgTable *table;
-    AdgTablePrivate *data;
-
-    table = (AdgTable *) object;
-    data = table->data;
+    AdgTablePrivate *data = ((AdgTable *) object)->data;
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
         data->table_dress = g_value_get_int(value);
         break;
     case PROP_HAS_FRAME:
-        switch_frame(table, g_value_get_boolean(value));
+        data->has_frame = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -326,7 +330,7 @@ void
 adg_table_set_table_dress(AdgTable *table, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_TABLE(table));
-    g_object_set((GObject *) table, "table-dress", dress, NULL);
+    g_object_set(table, "table-dress", dress, NULL);
 }
 
 /**
@@ -362,9 +366,7 @@ void
 adg_table_switch_frame(AdgTable *table, gboolean new_state)
 {
     g_return_if_fail(ADG_IS_TABLE(table));
-
-    if (switch_frame(table, new_state))
-        g_object_notify((GObject *) table, "has-frame");
+    g_object_set(table, "has-frame", new_state, NULL);
 }
 
 /**
@@ -426,7 +428,7 @@ adg_table_row_new(AdgTable *table)
 {
     g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
 
-    return row_new(table, NULL);
+    return _adg_row_new(table, NULL);
 }
 
 /**
@@ -444,7 +446,7 @@ adg_table_row_new_before(AdgTableRow *row)
     g_return_val_if_fail(row != NULL, NULL);
     g_return_val_if_fail(ADG_IS_TABLE(row->table), NULL);
 
-    return row_new(row->table, row);
+    return _adg_row_new(row->table, row);
 }
 
 /**
@@ -468,7 +470,7 @@ adg_table_row_delete(AdgTableRow *row)
 
     data = table->data;
 
-    g_slist_foreach(row->cells, (GFunc) cell_free, NULL);
+    g_slist_foreach(row->cells, (GFunc) _adg_cell_free, NULL);
     g_slist_free(row->cells);
     data->rows = g_slist_remove(data->rows, row);
 
@@ -578,7 +580,7 @@ adg_table_cell_new(AdgTableRow *row, gdouble width)
     g_return_val_if_fail(row != NULL, NULL);
     g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(row, NULL, width, FALSE, NULL, NULL, NULL);
+    return _adg_cell_new(row, NULL, width, FALSE, NULL, NULL, NULL);
 }
 
 /**
@@ -599,7 +601,7 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
     g_return_val_if_fail(cell->row != NULL, NULL);
     g_return_val_if_fail(width >= 0, NULL);
 
-    return cell_new(cell->row, cell, width, FALSE, NULL, NULL, NULL);
+    return _adg_cell_new(cell->row, cell, width, FALSE, NULL, NULL, NULL);
 }
 
 /**
@@ -634,7 +636,7 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
 
     g_return_val_if_fail(row != NULL, NULL);
 
-    cell = cell_new(row, NULL, width, TRUE, name, NULL, NULL);
+    cell = _adg_cell_new(row, NULL, width, TRUE, name, NULL, NULL);
 
     if (title)
         adg_table_cell_set_text_title(cell, title);
@@ -688,7 +690,7 @@ adg_table_cell_delete(AdgTableCell *cell)
 
     g_return_if_fail(row != NULL);
 
-    cell_free(cell);
+    _adg_cell_free(cell);
     row->cells = g_slist_remove(row->cells, cell);
 }
 
@@ -709,8 +711,8 @@ adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
 
     data = cell->row->table->data;
 
-    cell_set_name(cell, NULL);
-    cell_set_name(cell, name);
+    _adg_cell_set_name(cell, NULL);
+    _adg_cell_set_name(cell, name);
 }
 
 /**
@@ -733,7 +735,7 @@ adg_table_cell_get_name(AdgTableCell *cell)
 
     data = cell->row->table->data;
 
-    return g_hash_table_find(data->cell_names, value_match, cell);
+    return g_hash_table_find(data->cell_names, _adg_value_match, cell);
 }
 
 /**
@@ -757,7 +759,7 @@ adg_table_cell_set_title(AdgTableCell *cell, AdgEntity *title)
     g_return_if_fail(cell != NULL);
     g_return_if_fail(title == NULL || ADG_IS_ENTITY(title));
 
-    if (cell_set_title(cell, title))
+    if (_adg_cell_set_title(cell, title))
         adg_entity_invalidate((AdgEntity *) cell->row->table);
 }
 
@@ -786,14 +788,18 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
         adg_table_cell_set_title(cell, NULL);
 
     if (cell->title) {
-        const gchar *old_title;
+        gchar *old_title;
+        gboolean unchanged;
 
-        if (ADG_IS_TOY_TEXT(cell->title))
-            old_title = adg_toy_text_get_label((AdgToyText *) cell->title);
+        if (ADG_IS_TEXTUAL(cell->title))
+            old_title = adg_textual_dup_text((AdgTextual *) cell->title);
         else
             old_title = NULL;
 
-        if (g_strcmp0(title, old_title) == 0)
+        unchanged = g_strcmp0(title, old_title) == 0;
+        g_free(old_title);
+
+        if (unchanged)
             return;
     }
 
@@ -803,7 +809,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_title_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", title,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", title,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, padding->x, padding->y);
@@ -850,7 +856,7 @@ adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
     g_return_if_fail(cell != NULL);
     g_return_if_fail(value == NULL || ADG_IS_ENTITY(value));
 
-    if (cell_set_value(cell, value))
+    if (_adg_cell_set_value(cell, value))
         adg_entity_invalidate((AdgEntity *) cell->row->table);
 }
 
@@ -879,15 +885,16 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
         adg_table_cell_set_value(cell, NULL);
 
     if (cell->value) {
-        const gchar *old_value;
+        gchar *old_value;
+        gboolean unchanged;
 
-        if (ADG_IS_TOY_TEXT(cell->value))
-            old_value = adg_toy_text_get_label((AdgToyText *) cell->value);
+        if (ADG_IS_TEXTUAL(cell->value))
+            old_value = adg_textual_dup_text((AdgTextual *) cell->value);
         else
             old_value = NULL;
 
-        if (g_strcmp0(value, old_value) == 0)
-            return;
+        unchanged = g_strcmp0(value, old_value) == 0;
+        g_free(old_value);
     }
 
     table = cell->row->table;
@@ -896,7 +903,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_value_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "label", value,
+    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", value,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, 0, -padding->y);
@@ -941,7 +948,33 @@ adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
     g_return_if_fail(cell != NULL);
     g_return_if_fail(cell->value != NULL);
 
-    cell_set_value_pos(cell, from_factor, to_factor);
+    _adg_cell_set_value_pos(cell, from_factor, to_factor);
+}
+
+/**
+ * adg_table_cell_set_value_pos_explicit:
+ * @cell: a valid #AdgTableCell
+ * @from_x: the x alignment factor on the entity
+ * @from_y: the y alignment factor on the entity
+ * @to_x: the x alignment factor on the cell
+ * @to_y: the y alignment factor on the cell
+ *
+ * A convenient wrapper around adg_table_cell_set_value_pos()
+ * that uses explicit factors instead of #AdgPair.
+ **/
+void
+adg_table_cell_set_value_pos_explicit(AdgTableCell *cell,
+                                      gdouble from_x, gdouble from_y,
+                                      gdouble to_x, gdouble to_y)
+{
+    AdgPair from, to;
+
+    from.x = from_x;
+    from.y = from_y;
+    to.x = to_x;
+    to.y = to_y;
+
+    adg_table_cell_set_value_pos(cell, &from, &to);
 }
 
 /**
@@ -1043,31 +1076,31 @@ adg_table_cell_get_extents(AdgTableCell *cell)
 
 
 static void
-global_changed(AdgEntity *entity)
+_adg_global_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->global_changed)
-        PARENT_ENTITY_CLASS->global_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->global_changed)
+        _ADG_OLD_ENTITY_CLASS->global_changed(entity);
 
-    propagate((AdgTable *) entity, "global-changed");
+    _adg_propagate((AdgTable *) entity, "global-changed");
 }
 
 static void
-local_changed(AdgEntity *entity)
+_adg_local_changed(AdgEntity *entity)
 {
-    if (PARENT_ENTITY_CLASS->local_changed)
-        PARENT_ENTITY_CLASS->local_changed(entity);
+    if (_ADG_OLD_ENTITY_CLASS->local_changed)
+        _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 
-    propagate((AdgTable *) entity, "local-changed");
+    _adg_propagate((AdgTable *) entity, "local-changed");
 }
 
 static void
-invalidate(AdgEntity *entity)
+_adg_invalidate(AdgEntity *entity)
 {
-    propagate((AdgTable *) entity, "invalidate");
+    _adg_propagate((AdgTable *) entity, "invalidate");
 }
 
 static void
-arrange(AdgEntity *entity)
+_adg_arrange(AdgEntity *entity)
 {
     AdgTable *table;
     AdgTablePrivate *data;
@@ -1091,7 +1124,7 @@ arrange(AdgEntity *entity)
     for (row_node = data->rows; row_node; row_node = row_node->next) {
         row = row_node->data;
 
-        row_arrange_size(row);
+        _adg_row_arrange_size(row);
 
         if (row->extents.size.x > extents.size.x)
             extents.size.x = row->extents.size.x;
@@ -1107,13 +1140,13 @@ arrange(AdgEntity *entity)
         row->extents.org.y = y;
         row->extents.size.x = extents.size.x;
 
-        row_arrange(row);
+        _adg_row_arrange(row);
 
         y += row->extents.size.y + spacing->y;
     }
 
-    arrange_grid(entity);
-    arrange_frame(entity, &extents);
+    _adg_arrange_grid(entity);
+    _adg_arrange_frame(entity, &extents);
 
     extents.is_defined = TRUE;
     cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
@@ -1122,7 +1155,7 @@ arrange(AdgEntity *entity)
 }
 
 static void
-arrange_grid(AdgEntity *entity)
+_adg_arrange_grid(AdgEntity *entity)
 {
     AdgTablePrivate *data;
     AdgPath *path;
@@ -1175,7 +1208,7 @@ arrange_grid(AdgEntity *entity)
 }
 
 static void
-arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
+_adg_arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
 {
     AdgTablePrivate *data;
     AdgPath *path;
@@ -1211,38 +1244,17 @@ arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
 }
 
 static void
-render(AdgEntity *entity, cairo_t *cr)
+_adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgTablePrivate *data = ((AdgTable *) entity)->data;
 
-    cairo_transform(cr, adg_entity_get_local_matrix(entity));
     adg_style_apply((AdgStyle *) data->table_style, entity, cr);
 
-    propagate((AdgTable *) entity, "render", cr);
-}
-
-static gboolean
-switch_frame(AdgTable *table, gboolean new_state)
-{
-    AdgTablePrivate *data = table->data;
-
-    g_return_val_if_fail(adg_is_boolean_value(new_state), FALSE);
-
-    if (data->has_frame == new_state)
-        return FALSE;
-
-    data->has_frame = new_state;
-
-    if (data->frame) {
-        g_object_unref(data->frame);
-        data->frame = NULL;
-    }
-
-    return TRUE;
+    _adg_propagate((AdgTable *) entity, "render", cr);
 }
 
 static void
-propagate(AdgTable *table, const gchar *detailed_signal, ...)
+_adg_propagate(AdgTable *table, const gchar *detailed_signal, ...)
 {
     guint signal_id;
     GQuark detail = 0;
@@ -1296,7 +1308,7 @@ propagate(AdgTable *table, const gchar *detailed_signal, ...)
 }
 
 static AdgTableRow *
-row_new(AdgTable *table, AdgTableRow *before_row)
+_adg_row_new(AdgTable *table, AdgTableRow *before_row)
 {
     AdgTablePrivate *data;
     AdgTableRow *new_row;
@@ -1319,13 +1331,43 @@ row_new(AdgTable *table, AdgTableRow *before_row)
         data->rows = g_slist_insert_before(data->rows, before_node, new_row);
     }
 
-    invalidate((AdgEntity *) table);
+    _adg_invalidate((AdgEntity *) table);
 
     return new_row;
 }
 
+/* Before calling this function, row->extents should be updated */
 static void
-row_arrange_size(AdgTableRow *row)
+_adg_row_arrange(AdgTableRow *row)
+{
+    AdgTableStyle *table_style;
+    const AdgPair *spacing;
+    const AdgPair *org;
+    AdgTableCell *cell;
+    GSList *cell_node;
+    gdouble x;
+
+    table_style = GET_TABLE_STYLE(row->table);
+    spacing = adg_table_style_get_cell_spacing(table_style);
+    org = &row->extents.org;
+    x = org->x + spacing->x;
+
+    for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
+        cell = cell_node->data;
+
+        cell->extents.org.x = x;
+        cell->extents.org.y = org->y;
+
+        _adg_cell_arrange(cell);
+
+        x += cell->extents.size.x + spacing->x;
+    }
+
+    row->extents.is_defined = TRUE;
+}
+
+static void
+_adg_row_arrange_size(AdgTableRow *row)
 {
     AdgTableStyle *table_style;
     const AdgPair *spacing;
@@ -1347,7 +1389,7 @@ row_arrange_size(AdgTableRow *row)
     for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
         cell = cell_node->data;
 
-        cell_arrange_size(cell);
+        _adg_cell_arrange_size(cell);
 
         size->x += cell->extents.size.x + spacing->x;
     }
@@ -1356,55 +1398,25 @@ row_arrange_size(AdgTableRow *row)
         size->x += spacing->x;
 }
 
-/* Before calling this function, row->extents should be updated */
 static void
-row_arrange(AdgTableRow *row)
+_adg_row_dispose(AdgTableRow *row)
 {
-    AdgTableStyle *table_style;
-    const AdgPair *spacing;
-    const AdgPair *org;
-    AdgTableCell *cell;
-    GSList *cell_node;
-    gdouble x;
-
-    table_style = GET_TABLE_STYLE(row->table);
-    spacing = adg_table_style_get_cell_spacing(table_style);
-    org = &row->extents.org;
-    x = org->x + spacing->x;
-
-    for (cell_node = row->cells; cell_node; cell_node = cell_node->next) {
-        cell = cell_node->data;
-
-        cell->extents.org.x = x;
-        cell->extents.org.y = org->y;
-
-        cell_arrange(cell);
-
-        x += cell->extents.size.x + spacing->x;
-    }
-
-    row->extents.is_defined = TRUE;
+    g_slist_foreach(row->cells, (GFunc) _adg_cell_dispose, NULL);
 }
 
 static void
-row_dispose(AdgTableRow *row)
+_adg_row_free(AdgTableRow *row)
 {
-    g_slist_foreach(row->cells, (GFunc) cell_dispose, NULL);
-}
-
-static void
-row_free(AdgTableRow *row)
-{
-    g_slist_foreach(row->cells, (GFunc) cell_free, NULL);
+    g_slist_foreach(row->cells, (GFunc) _adg_cell_free, NULL);
     g_slist_free(row->cells);
 
     g_free(row);
 }
 
 static AdgTableCell *
-cell_new(AdgTableRow *row, AdgTableCell *before_cell,
-         gdouble width, gboolean has_frame,
-         const gchar *name, AdgEntity *title, AdgEntity *value)
+_adg_cell_new(AdgTableRow *row, AdgTableCell *before_cell,
+              gdouble width, gboolean has_frame,
+              const gchar *name, AdgEntity *title, AdgEntity *value)
 {
     AdgTablePrivate *data;
     AdgTableCell *new_cell;
@@ -1427,8 +1439,8 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
     new_cell->value_factor.x = 0.5;
     new_cell->value_factor.y = 1;
 
-    cell_set_title(new_cell, title);
-    cell_set_value(new_cell, value);
+    _adg_cell_set_title(new_cell, title);
+    _adg_cell_set_value(new_cell, value);
 
     if (before_cell == NULL) {
         row->cells = g_slist_append(row->cells, new_cell);
@@ -1442,13 +1454,13 @@ cell_new(AdgTableRow *row, AdgTableCell *before_cell,
     }
 
     if (name)
-        cell_set_name(new_cell, name);
+        _adg_cell_set_name(new_cell, name);
 
     return new_cell;
 }
 
 static void
-cell_set_name(AdgTableCell *cell, const gchar *name)
+_adg_cell_set_name(AdgTableCell *cell, const gchar *name)
 {
     AdgTablePrivate *data = cell->row->table->data;
 
@@ -1460,13 +1472,13 @@ cell_set_name(AdgTableCell *cell, const gchar *name)
                                                  g_free, NULL);
 
     if (name == NULL)
-        g_hash_table_foreach_remove(data->cell_names, value_match, cell);
+        g_hash_table_foreach_remove(data->cell_names, _adg_value_match, cell);
     else
         g_hash_table_insert(data->cell_names, g_strdup(name), cell);
 }
 
 static gboolean
-cell_set_title(AdgTableCell *cell, AdgEntity *title)
+_adg_cell_set_title(AdgTableCell *cell, AdgEntity *title)
 {
     AdgAlignment *alignment;
 
@@ -1493,7 +1505,7 @@ cell_set_title(AdgTableCell *cell, AdgEntity *title)
 }
 
 static gboolean
-cell_set_value(AdgTableCell *cell, AdgEntity *value)
+_adg_cell_set_value(AdgTableCell *cell, AdgEntity *value)
 {
     AdgAlignment *alignment;
 
@@ -1520,8 +1532,8 @@ cell_set_value(AdgTableCell *cell, AdgEntity *value)
 }
 
 static void
-cell_set_value_pos(AdgTableCell *cell,
-                   const AdgPair *from_factor, const AdgPair *to_factor)
+_adg_cell_set_value_pos(AdgTableCell *cell,
+                        const AdgPair *from_factor, const AdgPair *to_factor)
 {
     AdgAlignment *alignment;
 
@@ -1534,8 +1546,39 @@ cell_set_value_pos(AdgTableCell *cell,
         cell->value_factor = *to_factor;
 }
 
+/* Before calling this function, cell->extents should be updated */
 static void
-cell_arrange_size(AdgTableCell *cell)
+_adg_cell_arrange(AdgTableCell *cell)
+{
+    CpmlExtents *extents;
+    AdgAlignment *alignment;
+    AdgMatrix map;
+
+    extents = &cell->extents;
+
+    if (cell->title) {
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
+
+        cairo_matrix_init_translate(&map, extents->org.x, extents->org.y);
+        adg_entity_set_global_map((AdgEntity *) alignment, &map);
+    }
+
+    if (cell->value) {
+        AdgPair to;
+
+        alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
+        to.x = extents->size.x * cell->value_factor.x + extents->org.x;
+        to.y = extents->size.y * cell->value_factor.y + extents->org.y;
+
+        cairo_matrix_init_translate(&map, to.x, to.y);
+        adg_entity_set_global_map((AdgEntity *) alignment, &map);
+    }
+
+    extents->is_defined = TRUE;
+}
+
+static void
+_adg_cell_arrange_size(AdgTableCell *cell)
 {
     CpmlVector *size;
     AdgAlignment *title_alignment;
@@ -1583,54 +1626,23 @@ cell_arrange_size(AdgTableCell *cell)
     }
 }
 
-/* Before calling this function, cell->extents should be updated */
 static void
-cell_arrange(AdgTableCell *cell)
+_adg_cell_dispose(AdgTableCell *cell)
 {
-    CpmlExtents *extents;
-    AdgAlignment *alignment;
-    AdgMatrix map;
-
-    extents = &cell->extents;
-
-    if (cell->title) {
-        alignment = (AdgAlignment *) adg_entity_get_parent(cell->title);
-
-        cairo_matrix_init_translate(&map, extents->org.x, extents->org.y);
-        adg_entity_set_global_map((AdgEntity *) alignment, &map);
-    }
-
-    if (cell->value) {
-        AdgPair to;
-
-        alignment = (AdgAlignment *) adg_entity_get_parent(cell->value);
-        to.x = extents->size.x * cell->value_factor.x + extents->org.x;
-        to.y = extents->size.y * cell->value_factor.y + extents->org.y;
-
-        cairo_matrix_init_translate(&map, to.x, to.y);
-        adg_entity_set_global_map((AdgEntity *) alignment, &map);
-    }
-
-    extents->is_defined = TRUE;
+    _adg_cell_set_title(cell, NULL);
+    _adg_cell_set_value(cell, NULL);
 }
 
 static void
-cell_dispose(AdgTableCell *cell)
+_adg_cell_free(AdgTableCell *cell)
 {
-    cell_set_title(cell, NULL);
-    cell_set_value(cell, NULL);
-}
-
-static void
-cell_free(AdgTableCell *cell)
-{
-    cell_set_name(cell, NULL);
-    cell_dispose(cell);
+    _adg_cell_set_name(cell, NULL);
+    _adg_cell_dispose(cell);
     g_free(cell);
 }
 
 static gboolean
-value_match(gpointer key, gpointer value, gpointer user_data)
+_adg_value_match(gpointer key, gpointer value, gpointer user_data)
 {
     return value == user_data;
 }

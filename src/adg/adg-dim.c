@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,12 +34,24 @@
 
 
 #include "adg-internal.h"
+#include "adg-container.h"
+#include "adg-alignment.h"
+#include "adg-textual.h"
+#include "adg-toy-text.h"
+#include "adg-text.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-point.h"
+#include "adg-marker.h"
+#include "adg-style.h"
+#include "adg-dim-style.h"
+#include "adg-dress.h"
+#include "adg-dress-builtins.h"
+
 #include "adg-dim.h"
 #include "adg-dim-private.h"
-#include "adg-dim-style.h"
-#include "adg-dress-builtins.h"
-#include "adg-toy-text.h"
-#include "adg-type-builtins.h"
+
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
@@ -363,7 +375,7 @@ void
 adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "dim-dress", dress, NULL);
+    g_object_set(dim, "dim-dress", dress, NULL);
 }
 
 /**
@@ -402,7 +414,7 @@ void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "ref1", ref1, NULL);
+    g_object_set(dim, "ref1", ref1, NULL);
 }
 
 /**
@@ -510,7 +522,7 @@ void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "ref2", ref2, NULL);
+    g_object_set(dim, "ref2", ref2, NULL);
 }
 
 /**
@@ -618,7 +630,7 @@ void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
 {
     g_return_if_fail(ADG_IS_DIM(dim));
-    g_object_set((GObject *) dim, "pos", pos, NULL);
+    g_object_set(dim, "pos", pos, NULL);
 }
 
 /**
@@ -1113,7 +1125,7 @@ _adg_arrange(AdgEntity *entity)
         tag = adg_dim_style_get_number_tag(data->dim_style);
         value = klass->default_value ? klass->default_value(dim) : NULL;
 
-        data->quote.value = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.value = g_object_new(ADG_TYPE_BEST_TEXT,
                                          "local-method", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
         adg_container_add(quote_container, (AdgEntity *) data->quote.value);
@@ -1125,30 +1137,30 @@ _adg_arrange(AdgEntity *entity)
 
         g_free(value);
 
-        adg_toy_text_set_label(data->quote.value, text);
+        adg_textual_set_text(data->quote.value, text);
         g_free(text);
     }
 
     if (data->quote.min == NULL && data->min) {
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
-        data->quote.min = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.min = g_object_new(ADG_TYPE_BEST_TEXT,
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.min);
-        adg_toy_text_set_label(data->quote.min, data->min);
+        adg_textual_set_text(data->quote.min, data->min);
     }
 
     if (data->quote.max == NULL && data->max) {
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
-        data->quote.max = g_object_new(ADG_TYPE_TOY_TEXT,
+        data->quote.max = g_object_new(ADG_TYPE_BEST_TEXT,
                                        "local-method", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.max);
-        adg_toy_text_set_label(data->quote.max, data->max);
+        adg_textual_set_text(data->quote.max, data->max);
     }
 
     value_entity = (AdgEntity *) data->quote.value;
@@ -1165,36 +1177,40 @@ _adg_arrange(AdgEntity *entity)
 
     /* Limit values (min and max) */
     if (min_entity || max_entity) {
-        const CpmlExtents *extents;
         const AdgPair *limits_shift;
+        gdouble spacing;
+        AdgPair size;
         AdgMatrix unglobal;
+        AdgPair org_min, org_max;
 
-        extents = adg_entity_get_extents(value_entity);
         limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
-
-        cairo_matrix_init_translate(&map, extents->size.x + limits_shift->x,
-                                    -extents->size.y / 2 + limits_shift->y);
-
+        spacing = adg_dim_style_get_limits_spacing(data->dim_style);
+        size = adg_entity_get_extents(value_entity)->size;
         adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
         cairo_matrix_invert(&unglobal);
-        cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
+        cpml_vector_transform(&size, &unglobal);
+        org_min.x = size.x + limits_shift->x;
+        org_min.y = -size.y / 2 + limits_shift->y;
+        org_max = org_min;
+
+        if (min_entity && max_entity) {
+            /* Prearrange the min entity to get its extents */
+            adg_entity_arrange(min_entity);
+            size = adg_entity_get_extents(min_entity)->size;
+            cpml_vector_transform(&size, &unglobal);
+
+            org_min.y += spacing / 2;
+            org_max.y = org_min.y - size.y - spacing / 2;
+        }
 
         if (min_entity) {
-            AdgPair offset;
-
+            cairo_matrix_init_translate(&map, org_min.x, org_min.y);
             adg_entity_set_global_map(min_entity, &map);
             adg_entity_arrange(min_entity);
-            extents = adg_entity_get_extents(min_entity);
-
-            offset.x = 0;
-            offset.y = -extents->size.y - adg_dim_style_get_limits_spacing(data->dim_style);
-            cairo_matrix_transform_distance(&unglobal, &offset.x, &offset.y);
-
-            map.x0 += offset.x;
-            map.y0 += offset.y;
         }
 
         if (max_entity) {
+            cairo_matrix_init_translate(&map, org_max.x, org_max.y);
             adg_entity_set_global_map(max_entity, &map);
             adg_entity_arrange(max_entity);
         }
@@ -1206,7 +1222,7 @@ _adg_arrange(AdgEntity *entity)
 static gchar *
 _adg_default_value(AdgDim *dim)
 {
-    g_warning("AdgDim::default_value not implemented for `%s'",
+    g_warning(_("AdgDim::default_value not implemented for `%s'"),
               g_type_name(G_TYPE_FROM_INSTANCE(dim)));
     return g_strdup("undef");
 }

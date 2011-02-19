@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,8 +25,6 @@
 
 #ifndef __ADG_ADIM_H__
 #define __ADG_ADIM_H__
-
-#include "adg-dim.h"
 
 
 G_BEGIN_DECLS
@@ -99,6 +97,12 @@ void            adg_adim_set_org2_from_model    (AdgADim        *adim,
                                                  AdgModel       *model,
                                                  const gchar    *org2);
 AdgPoint *      adg_adim_get_org2               (AdgADim        *adim);
+void            adg_adim_switch_extension1      (AdgADim        *adim,
+                                                 gboolean        new_state);
+gboolean        adg_adim_has_extension1         (AdgADim        *adim);
+void            adg_adim_switch_extension2      (AdgADim        *adim,
+                                                 gboolean        new_state);
+gboolean        adg_adim_has_extension2         (AdgADim        *adim);
 
 G_END_DECLS
 

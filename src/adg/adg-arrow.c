@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,9 +35,13 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+#include "adg-marker.h"
+
 #include "adg-arrow.h"
 #include "adg-arrow-private.h"
-#include "adg-path.h"
 
 
 G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER);
@@ -231,6 +235,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     if (cairo_path != NULL) {
         cairo_save(cr);
+        cairo_transform(cr, adg_entity_get_global_matrix(entity));
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
         cairo_append_path(cr, cairo_path);
         cairo_restore(cr);

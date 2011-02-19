@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,20 +28,25 @@
  * directly with the adg_gtk_area_new_with_canvas() constructor
  * function or by using adg_gtk_area_set_canvas().
  *
- * The default minimum size of this widget will depend on the canvas
- * content. The global matrix of the #AdgCanvas will be adjusted to
- * expose the drawing in the proper position. The empty space around
- * the drawing can be changed by setting the #AdgGtkArea:top-margin,
- * #AdgGtkArea:right-margin, #AdgGtkArea:bottom-margin and
- * #AdgGtkArea:left-margin properties or by using the equivalent
- * setter methods.
+ * The minimum size of the widget will depend on the canvas content.
  *
  * The default implementation reacts to some mouse events: if you drag
- * the mouse keeping the wheel pressed the canvas will be translated;
+ * the mouse keeping the wheel pressed, the canvas will be translated
+ * (in local space by default and in global space if %SHIFT is pressed);
  * if the mouse wheel is rotated the canvas will be scaled up or down
- * (accordingly to the wheel direction) by the factor specified in the
- * #AdgGtkArea:factor property.
+ * according to the wheel direction by the factor specified in the
+ * #AdgGtkArea:factor property (again, in local space by default and
+ * in global space if %SHIFT is pressed). The adg_gtk_area_get_zoom()
+ * method could be used to retrieve the current zoom coefficient.
+ *
+ * A new transformation layer is present between the global space
+ * and the rendering: the #AdgGtkArea:render-map matrix. This
+ * transformation is applied just before the rendering and it is
+ * used to align and/or apply the zoom coefficient to the canvas
+ * without affecting the other layers. Local transformations,
+ * instead, are directly applied to the local matrix of the canvas.
  **/
+
 
 /**
  * AdgGtkArea:
@@ -52,11 +57,12 @@
 
 
 #include "adg-gtk-internal.h"
+
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
 
-#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_gtk_area_parent_class)
-#define _ADG_OLD_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_OBJECT_CLASS   ((GObjectClass *) adg_gtk_area_parent_class)
+#define _ADG_OLD_WIDGET_CLASS   ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
 G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
@@ -64,11 +70,14 @@ G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA);
 enum {
     PROP_0,
     PROP_CANVAS,
-    PROP_FACTOR
+    PROP_FACTOR,
+    PROP_AUTOZOOM,
+    PROP_RENDER_MAP
 };
 
 enum {
     CANVAS_CHANGED,
+    EXTENTS_CHANGED,
     LAST_SIGNAL
 };
 
@@ -94,11 +103,17 @@ static gboolean         _adg_button_press_event (GtkWidget       *widget,
                                                  GdkEventButton  *event);
 static gboolean         _adg_motion_notify_event(GtkWidget       *widget,
                                                  GdkEventMotion  *event);
-static gboolean         _adg_get_local_map      (GtkWidget       *widget,
+static gboolean         _adg_get_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
                                                  AdgMatrix       *map,
                                                  AdgMatrix       *inverted);
-static void             _adg_set_local_map      (GtkWidget       *widget,
+static void             _adg_set_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
                                                  const AdgMatrix *map);
+static void             _adg_canvas_changed     (AdgGtkArea      *area,
+                                                 AdgCanvas       *old_canvas);
+static const CpmlExtents *
+                        _adg_get_extents        (AdgGtkArea      *area);
 
 static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
@@ -126,6 +141,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     widget_class->button_press_event = _adg_button_press_event;
     widget_class->motion_notify_event = _adg_motion_notify_event;
 
+    klass->canvas_changed = _adg_canvas_changed;
+
     param = g_param_spec_object("canvas",
                                 P_("Canvas"),
                                 P_("The canvas to be shown"),
@@ -135,24 +152,62 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
 
     param = g_param_spec_double("factor",
                                 P_("Factor"),
-                                P_("The factor used in zooming in and out"),
+                                P_("The factor to use while zooming in and out (usually with the mouse wheel)"),
                                 1., G_MAXDOUBLE, 1.05,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
+    param = g_param_spec_boolean("autozoom",
+                                 P_("Autozoom"),
+                                 P_("When enabled, automatically adjust the zoom in global space at every size allocation"),
+                                 FALSE,
+                                 G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_AUTOZOOM, param);
+
+    param = g_param_spec_boxed("render-map",
+                               P_("Render Map"),
+                               P_("The transformation to be applied on the canvas before rendering it"),
+                               ADG_TYPE_MATRIX,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_RENDER_MAP, param);
+
     /**
      * AdgGtkArea::canvas-changed:
      * @area: an #AdgGtkArea
+     * @old_canvas: the old #AdgCanvas object
      *
-     * Emitted when the #AdgGtkArea has a new canvas.
+     * Emitted when the #AdgGtkArea has a new canvas. If the new canvas
+     * is the same as the old one, the signal is not emitted.
      **/
     _adg_signals[CANVAS_CHANGED] =
         g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
                      NULL, NULL,
-                     g_cclosure_marshal_VOID__VOID,
-                     G_TYPE_NONE, 0);
+                     adg_gtk_marshal_VOID__OBJECT,
+                     G_TYPE_NONE, 1, ADG_TYPE_CANVAS);
+
+    /**
+     * AdgGtkArea::extents-changed:
+     * @area: an #AdgGtkArea
+     * @old_extents: the old #CpmlExtents struct
+     *
+     * Emitted when the extents of @area have been changed.
+     * The old extents are always compared to the new ones,
+     * so when the extents are recalculated but the result
+     * is the same the signal is not emitted.
+     *
+     * The extents of #AdgGtkArea are subject to the render
+     * map, so changing the #AdgGtkArea:render-map property
+     * will emit this signal too.
+     **/
+    _adg_signals[EXTENTS_CHANGED] =
+        g_signal_new("extents-changed", ADG_GTK_TYPE_AREA,
+                     G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
+                     G_STRUCT_OFFSET(AdgGtkAreaClass, extents_changed),
+                     NULL, NULL,
+                     adg_gtk_marshal_VOID__POINTER,
+                     G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 static void
@@ -164,10 +219,12 @@ adg_gtk_area_init(AdgGtkArea *area)
 
     data->canvas = NULL;
     data->factor = 1.05;
+    data->autozoom = FALSE;
+    cairo_matrix_init_identity(&data->render_map);
 
+    data->initialized = FALSE;
     data->x_event = 0;
     data->y_event = 0;
-    data->src_factor = 0;
 
     area->data = data;
 
@@ -205,6 +262,12 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_FACTOR:
         g_value_set_double(value, data->factor);
         break;
+    case PROP_AUTOZOOM:
+        g_value_set_boolean(value, data->autozoom);
+        break;
+    case PROP_RENDER_MAP:
+        g_value_set_boxed(value, &data->render_map);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -217,23 +280,32 @@ _adg_set_property(GObject *object, guint prop_id,
 {
     AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
+    AdgCanvas *new_canvas, *old_canvas;
 
     area = (AdgGtkArea *) object;
     data = area->data;
 
     switch (prop_id) {
     case PROP_CANVAS:
-        canvas = g_value_get_object(value);
-        if (canvas)
-            g_object_ref(canvas);
-        if (data->canvas)
-            g_object_unref(data->canvas);
-        data->canvas = canvas;
-        g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0);
+        new_canvas = g_value_get_object(value);
+        old_canvas = data->canvas;
+        if (new_canvas != old_canvas) {
+            if (new_canvas != NULL)
+                g_object_ref(new_canvas);
+            if (old_canvas != NULL)
+                g_object_unref(old_canvas);
+            data->canvas = new_canvas;
+            g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
+        }
         break;
     case PROP_FACTOR:
         data->factor = g_value_get_double(value);
+        break;
+    case PROP_AUTOZOOM:
+        data->autozoom = g_value_get_boolean(value);
+        break;
+    case PROP_RENDER_MAP:
+        adg_matrix_copy(&data->render_map, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -286,7 +358,7 @@ void
 adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-    g_object_set((GObject *) area, "canvas", canvas, NULL);
+    g_object_set(area, "canvas", canvas, NULL);
 }
 
 /**
@@ -310,6 +382,138 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
 }
 
 /**
+ * adg_gtk_area_set_render_map:
+ * @area: an #AdgGtkArea object
+ * @map: the new map
+ *
+ * Sets the new render transformation of @area to @map:
+ * the old map is discarded. If @map is %NULL, the render
+ * map is left unchanged.
+ *
+ * <note><para>
+ * The render map is an implementation detail and this function
+ * is expected to be used only by #AdgGtkArea derived objects.
+ * </para></note>
+ **/
+void
+adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set(area, "render-map", map, NULL);
+}
+
+/**
+ * adg_gtk_area_transform_render_map:
+ * @area: an #AdgGtkArea object
+ * @transformation: the transformation to apply
+ * @mode: how @transformation should be applied
+ *
+ * Convenient function to change the render map of @area by
+ * applying @tranformation using the @mode operator. This is
+ * logically equivalent to the following:
+ *
+ * |[
+ * AdgMatrix map;
+ * adg_matrix_copy(&map, adg_gtk_area_get_render_map(area));
+ * adg_matrix_transform(&map, transformation, mode);
+ * adg_gtk_area_set_render_map(area, &map);
+ * ]|
+ *
+ * <note><para>
+ * The render map is an implementation detail and this function
+ * is expected to be used only by #AdgGtkArea derived objects.
+ * </para></note>
+ **/
+void
+adg_gtk_area_transform_render_map(AdgGtkArea *area,
+                                  const AdgMatrix *transformation,
+                                  AdgTransformMode mode)
+{
+    AdgGtkAreaPrivate *data;
+    AdgMatrix map;
+
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_return_if_fail(transformation != NULL);
+
+    data = area->data;
+
+    adg_matrix_copy(&map, &data->render_map);
+    adg_matrix_transform(&map, transformation, mode);
+
+    g_object_set(area, "render-map", &map, NULL);
+}
+
+/**
+ * adg_gtk_area_get_render_map:
+ * @area: an #AdgGtkArea object
+ *
+ * Gets the render map.
+ *
+ * Returns: the requested map or %NULL on errors
+ **/
+const AdgMatrix *
+adg_gtk_area_get_render_map(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), NULL);
+
+    data = area->data;
+
+    return &data->render_map;
+}
+
+/**
+ * adg_gtk_area_get_extents:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the extents of the canvas bound to @area. The returned
+ * struct is owned by @area and should not modified or freed.
+ *
+ * The extents of an #AdgGtkArea instance are the extents of
+ * its canvas (as returned by adg_entity_get_extents()) with
+ * the margins added to it and the #AdgGtkArea:render-map
+ * transformation applied.
+ *
+ * If @area does not have any canvas associated to it or the
+ * canvas is invalid or empty, an undefined #CpmlExtents
+ * struct will be returned.
+ *
+ * The canvas will be updated, meaning adg_entity_arrange()
+ * is called before the extents computation.
+ *
+ * Returns: the extents of the @area canvas or %NULL on errors
+ **/
+const CpmlExtents *
+adg_gtk_area_get_extents(AdgGtkArea *area)
+{
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), NULL);
+
+    return _adg_get_extents(area);
+}
+
+/**
+ * adg_gtk_area_get_zoom:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the last zoom coefficient applied on the canvas of @area.
+ * If the #AdgGtkArea:autozoom property is %FALSE, the value
+ * returned should be always %1.
+ *
+ * Returns: the current zoom coefficient
+ **/
+gdouble
+adg_gtk_area_get_zoom(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
+
+    data = area->data;
+    return data->render_map.xx;
+}
+
+/**
  * adg_gtk_area_set_factor:
  * @area: an #AdgGtkArea
  * @factor: the new zoom factor
@@ -321,7 +525,7 @@ void
 adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
-    g_object_set((GObject *) area, "factor", factor, NULL);
+    g_object_set(area, "factor", factor, NULL);
 }
 
 /**
@@ -331,7 +535,7 @@ adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
  * Gets the zoom factor associated to @area. The zoom factor is
  * directly used to zoom in (that is, the default zoom factor of
  * 1.05 will zoom of 5% every iteration) and it is reversed while
- * zooming out (that is, the default factor will use 1/1.05).
+ * zooming out (that is, the default factor will be 1/1.05).
  *
  * Returns: the requested zoom factor or 0 on error
  **/
@@ -346,30 +550,88 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
     return data->factor;
 }
 
+/**
+ * adg_gtk_area_switch_autozoom:
+ * @area: an #AdgGtkArea
+ * @state: the new autozoom state
+ *
+ * Sets the #AdgGtkArea:autozoom property of @area to @state. When the
+ * autozoom feature is enabled, @area reacts to any size allocation
+ * by adjusting its zoom coefficient in global space. This means the
+ * drawing will fill the available space (keeping its aspect ratio)
+ * when resizing the window.
+ **/
+void
+adg_gtk_area_switch_autozoom(AdgGtkArea *area, gboolean state)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+    g_object_set(area, "autozoom", state, NULL);
+}
+
+/**
+ * adg_gtk_area_has_autozoom:
+ * @area: an #AdgGtkArea
+ *
+ * Gets the current state of the #AdgGtkArea:autozoom property on
+ * the @area object.
+ *
+ * Returns: the current autozoom state
+ **/
+gboolean
+adg_gtk_area_has_autozoom(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+
+    g_return_val_if_fail(ADG_GTK_IS_AREA(area), FALSE);
+
+    data = area->data;
+    return data->autozoom;
+}
+
+/**
+ * adg_gtk_area_canvas_changed:
+ * @area: an #AdgGtkArea
+ * @canvas: the old canvas bound to @area
+ *
+ * Emits the #AdgGtkArea::canvas-changed signal on @area.
+ **/
+void
+adg_gtk_area_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+
+    g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
+}
+
+/**
+ * adg_gtk_area_extents_changed:
+ * @area: an #AdgGtkArea
+ * @old_extents: the old extents of @area
+ *
+ * Emits the #AdgGtkArea::extents-changed signal on @area.
+ **/
+void
+adg_gtk_area_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
+{
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+
+    g_signal_emit(area, _adg_signals[EXTENTS_CHANGED], 0, old_extents);
+}
+
 
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
-    AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-    AdgEntity *entity;
+    AdgGtkArea *area;
     const CpmlExtents *extents;
 
-    data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
+    area = (AdgGtkArea *) widget;
+    extents = _adg_get_extents(area);
 
-    if (canvas == NULL)
-        return;
-
-    entity = (AdgEntity *) canvas;
-    adg_entity_arrange(entity);
-    extents = adg_entity_get_extents(entity);
-
-    if (extents == NULL || !extents->is_defined)
-        return;
-
-    requisition->width = extents->size.x;
-    requisition->height = extents->size.y;
+    if (extents->is_defined) {
+        requisition->width = extents->size.x;
+        requisition->height = extents->size.y;
+    }
 }
 
 /**
@@ -377,84 +639,61 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
  * @widget: an #AdgGtkArea widget
  * @allocation: the new allocation struct
  *
- * Scales the drawing according to the new allocation.
+ * Scales the drawing according to the new allocation if
+ * #AdgGtkArea:autozoom is %TRUE.
  *
- * The current implementation translates the drawing as a user would
- * expect: keep the point in the center of the #AdgCanvas at the
- * center of the new #AdgGtkArea.
- *
- * The scaling is not that easy, though. The drawing is scaled up to
- * the edges of the widget. Anyway, if the model matrix changes (that is,
- * if the model is translated or scaled), the algorithm behaves as if
- * the model matrix was not changed.
+ * TODO: the current implementation initially centers the canvas
+ * on the allocation space. Further allocations (due to a
+ * window resizing, for example) use the top/left corner of the
+ * canvas as reference point. Plan different policies for either
+ * those situations.
  **/
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
+    AdgGtkArea *area;
     AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-    AdgEntity *entity;
-    GtkAllocation *src_allocation;
-    AdgPair ratio;
+    const CpmlExtents *sheet;
+    CpmlVector size;
     gdouble factor;
-    AdgMatrix map;
 
     if (_ADG_OLD_WIDGET_CLASS->size_allocate)
         _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
 
-    data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
+    area = (AdgGtkArea *) widget;
+    data = area->data;
 
-    if (canvas == NULL)
+    sheet = _adg_get_extents(area);
+    if (!sheet->is_defined || sheet->size.x <= 0 || sheet->size.y <= 0)
         return;
 
-    /* Check if the allocated space is enough:
-     * if not, there is no much we can do... */
-    g_return_if_fail(allocation->width > 0 && allocation->height > 0);
+    size.x = allocation->width;
+    size.y = allocation->height;
 
-    entity = (AdgEntity *) canvas;
-    src_allocation = &data->src_allocation;
-
-    adg_matrix_copy(&map, adg_entity_get_global_map(entity));
-
-    if (data->src_factor <= 0) {
-        /* First allocation */
-        const CpmlExtents *extents = adg_entity_get_extents(entity);
-
-        if (extents == NULL || !extents->is_defined ||
-            extents->size.x <= 0 || extents->size.y <= 0)
-            return;
-
-        ratio.x = (gdouble) allocation->width / extents->size.x;
-        ratio.y = (gdouble) allocation->height / extents->size.y;
-        factor = MIN(ratio.x, ratio.y);
-
-        map.x0 = allocation->width - extents->size.x * factor;
-        map.y0 = allocation->height - extents->size.y * factor;
-        map.x0 /= 2;
-        map.y0 /= 2;
-        map.x0 -= extents->org.x;
-        map.y0 -= extents->org.y;
-
-        *src_allocation = *allocation;
-        src_allocation->x = map.x0;
-        src_allocation->y = map.y0;
-        data->src_factor = factor;
+    if (data->autozoom)  {
+        /* Adjust the zoom according to the allocation and sheet size */
+        factor = MIN(size.x / sheet->size.x, size.y / sheet->size.y);
+    } else if (!data->initialized) {
+        /* First allocation with autozoom off: keep the current zoom */
+        factor = 1;
     } else {
-        /* Scaling with reference to the first allocation */
-        ratio.x = data->src_factor * allocation->width / src_allocation->width;
-        ratio.y = data->src_factor * allocation->height / src_allocation->height;
-
-        factor = MIN(ratio.x, ratio.y);
-
-        map.x0 = src_allocation->x * factor +
-            (allocation->width - src_allocation->width * factor) / 2;
-        map.y0 = src_allocation->y * factor +
-            (allocation->height - src_allocation->height * factor) / 2;
+        /* Not the first allocation and autozoom off: keep the old map */
+        return;
     }
 
-    map.xx = map.yy = factor;
-    adg_entity_set_global_map(entity, &map);
+    if (!data->initialized) {
+        /* TODO: plan different attachment policies other than centering */
+        cairo_matrix_init_translate(&data->render_map,
+                                    (size.x - sheet->size.x) / 2 - sheet->org.x,
+                                    (size.y - sheet->size.y) / 2 - sheet->org.y);
+        data->initialized = TRUE;
+    }
+
+    /* TODO: plan other reference points other than left/top (x0, y0) */
+    data->render_map.x0 *= factor;
+    data->render_map.y0 *= factor;
+    data->render_map.xx *= factor;
+    data->render_map.yy *= factor;
 }
 
 static gboolean
@@ -466,8 +705,9 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
 
-    if (canvas && event->window) {
+    if (canvas != NULL && event->window != NULL) {
         cairo_t *cr = gdk_cairo_create(event->window);
+        cairo_transform(cr, &data->render_map);
         adg_entity_render((AdgEntity *) canvas, cr);
         cairo_destroy(cr);
     }
@@ -481,33 +721,34 @@ _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 static gboolean
 _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
-    AdgGtkAreaPrivate *data;
+    gboolean zoom_in, zoom_out, local_space, global_space;
     AdgMatrix map, inverted;
+    AdgGtkAreaPrivate *data;
+    double factor, x, y;
 
-    data = ((AdgGtkArea *) widget)->data;
+    zoom_in = event->direction == GDK_SCROLL_UP;
+    zoom_out = event->direction == GDK_SCROLL_DOWN;
+    local_space = (event->state & ADG_GTK_MODIFIERS) == 0;
+    global_space = (event->state & ADG_GTK_MODIFIERS) == GDK_SHIFT_MASK;
 
-    if ((event->direction == GDK_SCROLL_UP ||
-         event->direction == GDK_SCROLL_DOWN) &&
-        _adg_get_local_map(widget, &map, &inverted)) {
-        double factor, x, y;
-
-        if (event->direction == GDK_SCROLL_UP) {
-            factor = data->factor;
-        } else {
-            factor = 1. / data->factor;
-        }
-
+    if ((zoom_in || zoom_out) && (local_space || global_space) &&
+        _adg_get_map(widget, local_space, &map, &inverted)) {
+        data = ((AdgGtkArea *) widget)->data;
+        factor = zoom_in ? data->factor : 1. / data->factor;
         x = event->x;
         y = event->y;
 
         cairo_matrix_transform_point(&inverted, &x, &y);
-
         cairo_matrix_scale(&map, factor, factor);
         cairo_matrix_translate(&map, x/factor - x, y/factor - y);
 
-        _adg_set_local_map(widget, &map);
+        _adg_set_map(widget, local_space, &map);
 
         gtk_widget_queue_draw(widget);
+
+        /* Avoid to chain up the default handler:
+         * this event has been grabbed by this function */
+        return TRUE;
     }
 
     if (_ADG_OLD_WIDGET_CLASS->scroll_event == NULL)
@@ -522,6 +763,7 @@ _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
     AdgGtkAreaPrivate *data = ((AdgGtkArea *) widget)->data;
 
     if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
+        /* Remember the starting coordinates of a (probable) translation */
         data->x_event = event->x;
         data->y_event = event->y;
     }
@@ -535,15 +777,18 @@ _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
 static gboolean
 _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
-    AdgGtkAreaPrivate *data;
+    gboolean translating, local_space, global_space;
     AdgMatrix map, inverted;
+    AdgGtkAreaPrivate *data;
+    double x, y;
 
-    data = ((AdgGtkArea *) widget)->data;
+    translating = (event->state & GDK_BUTTON2_MASK) == GDK_BUTTON2_MASK;
+    local_space = (event->state & ADG_GTK_MODIFIERS) == 0;
+    global_space = (event->state & ADG_GTK_MODIFIERS) == GDK_SHIFT_MASK;
 
-    if ((event->state & GDK_BUTTON2_MASK) > 0 &&
-        _adg_get_local_map(widget, &map, &inverted)) {
-        double x, y;
-
+    if (translating && (local_space || global_space) &&
+        _adg_get_map(widget, local_space, &map, &inverted)) {
+        data = ((AdgGtkArea *) widget)->data;
         x = event->x - data->x_event;
         y = event->y - data->y_event;
 
@@ -552,9 +797,13 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
         data->x_event = event->x;
         data->y_event = event->y;
 
-        _adg_set_local_map(widget, &map);
+        _adg_set_map(widget, local_space, &map);
 
         gtk_widget_queue_draw(widget);
+
+        /* Avoid to chain up the default handler:
+         * this event has been grabbed by this function */
+        return TRUE;
     }
 
     if (_ADG_OLD_WIDGET_CLASS->motion_notify_event == NULL)
@@ -564,7 +813,8 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 }
 
 static gboolean
-_adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
+_adg_get_map(GtkWidget *widget, gboolean local_space,
+             AdgMatrix *map, AdgMatrix *inverted)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;
@@ -574,17 +824,22 @@ _adg_get_local_map(GtkWidget *widget, AdgMatrix *map, AdgMatrix *inverted)
     if (entity == NULL)
         return FALSE;
 
-    adg_matrix_copy(map, adg_entity_get_local_map(entity));
+    if (local_space) {
+        adg_matrix_copy(map, adg_entity_get_local_map(entity));
 
-    /* The inverted map is subject to the global matrix */
-    adg_matrix_copy(inverted, adg_entity_get_global_matrix(entity));
-    adg_matrix_transform(inverted, map, ADG_TRANSFORM_BEFORE);
+        /* The inverted map is subject to the global matrix */
+        adg_matrix_copy(inverted, adg_entity_get_global_matrix(entity));
+        adg_matrix_transform(inverted, map, ADG_TRANSFORM_BEFORE);
+    } else {
+        adg_matrix_copy(map, adg_entity_get_global_map(entity));
+        adg_matrix_copy(inverted, map);
+    }
 
     return cairo_matrix_invert(inverted) == CAIRO_STATUS_SUCCESS;
 }
 
 static void
-_adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
+_adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;
@@ -592,6 +847,57 @@ _adg_set_local_map(GtkWidget *widget, const AdgMatrix *map)
     data = ((AdgGtkArea *) widget)->data;
     entity = (AdgEntity *) data->canvas;
 
-    if (entity)
+    if (entity == NULL)
+        return;
+
+    if (local_space) {
+        /* TODO: this forcibly overwrites any local transformation */
         adg_entity_set_local_map(entity, map);
+    } else {
+        adg_matrix_transform(&data->render_map, map, ADG_TRANSFORM_BEFORE);
+    }
+
+    /* This will emit the extents-changed signal when applicable */
+    _adg_get_extents((AdgGtkArea *) widget);
+}
+
+static void
+_adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
+{
+    AdgGtkAreaPrivate *data = area->data;
+    data->initialized = FALSE;
+}
+
+static const CpmlExtents *
+_adg_get_extents(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+    AdgCanvas *canvas;
+    CpmlExtents old_extents;
+
+    data = area->data;
+    old_extents = data->extents;
+    data->extents.is_defined = FALSE;
+    canvas = data->canvas;
+
+    if (ADG_IS_CANVAS(canvas)) {
+        const CpmlExtents *extents;
+        AdgEntity *entity;
+
+        entity = (AdgEntity *) canvas;
+
+        adg_entity_arrange(entity);
+        extents = adg_entity_get_extents(entity);
+
+        if (extents != NULL) {
+            data->extents = *extents;
+            adg_canvas_apply_margins(canvas, &data->extents);
+            cpml_extents_transform(&data->extents, &data->render_map);
+        }
+    }
+
+    if (!cpml_extents_equal(&data->extents, &old_extents))
+        g_signal_emit(area, _adg_signals[EXTENTS_CHANGED], 0, &old_extents);
+
+    return &data->extents;
 }
