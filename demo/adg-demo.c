@@ -557,31 +557,6 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
 
-static void
-_adg_demo_canvas_add_stuff(AdgCanvas *canvas, AdgModel *model)
-{
-    AdgToyText *toy_text;
-    AdgMatrix map;
-
-    toy_text = adg_toy_text_new(_("Rotate the mouse wheel to zoom in and out"));
-    adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, 15, 490);
-    adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
-
-    toy_text = adg_toy_text_new(_("Drag with the wheel pressed to pan"));
-    adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, 15, 505);
-    adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
-
-    toy_text = adg_toy_text_new(_("Keep the shift pressed to zoom or pan in global space"));
-    adg_entity_set_local_method(ADG_ENTITY(toy_text), ADG_MIX_DISABLED);
-    cairo_matrix_init_translate(&map, 15, 520);
-    adg_entity_set_global_map(ADG_ENTITY(toy_text), &map);
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(toy_text));
-}
-
 static AdgCanvas *
 _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
 {
@@ -608,7 +583,6 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
 
     _adg_demo_canvas_add_sheet(canvas);
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
-    _adg_demo_canvas_add_stuff(canvas, ADG_MODEL(part->shape));
 
     cairo_matrix_init_translate(&map, 140, 180);
     cairo_matrix_scale(&map, 8, 8);
