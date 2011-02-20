@@ -574,28 +574,24 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
 void
 cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
 {
+    CpmlPrimitiveType type;
     cairo_path_t path;
     cairo_path_data_t *path_data;
 
     cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
 
-    switch ((CpmlPrimitiveType) primitive->data->header.type) {
+    type = primitive->data->header.type;
 
-    case CPML_CLOSE:
+    if (type == CPML_CLOSE) {
         path_data = cpml_primitive_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
-        break;
-
-    case CPML_ARC:
+    } else if (type == CPML_ARC) {
         cpml_arc_to_cairo(primitive, cr);
-        break;
-
-    default:
+    } else {
         path.status = CAIRO_STATUS_SUCCESS;
         path.data = primitive->data;
         path.num_data = primitive->data->header.length;
         cairo_append_path(cr, &path);
-        break;
     }
 }
 
@@ -646,18 +642,14 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, cairo_bool_t org_also)
 static const _CpmlPrimitiveClass *
 get_class_from_type(CpmlPrimitiveType type)
 {
-    switch (type) {
-    case CPML_LINE:
+    if (type == CPML_LINE)
         return _cpml_line_get_class();
-    case CPML_ARC:
+    else if (type == CPML_ARC)
         return _cpml_arc_get_class();
-    case CPML_CURVE:
+    else if (type == CPML_CURVE)
         return _cpml_curve_get_class();
-    case CPML_CLOSE:
+    else if (type == CPML_CLOSE)
         return _cpml_close_get_class();
-    default:
-        break;
-    }
 
     return NULL;
 }
