@@ -34,16 +34,14 @@
 
 
 #include "adg-internal.h"
+#include "adg-text-internal.h"
+
 #include "adg-container.h"
 #include "adg-alignment.h"
-#include "adg-textual.h"
-#include "adg-toy-text.h"
-#include "adg-text.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-point.h"
 #include "adg-marker.h"
-#include "adg-style.h"
 #include "adg-dim-style.h"
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"

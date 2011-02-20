@@ -34,6 +34,8 @@
 
 
 #include "adg-internal.h"
+#include <pango/pango.h>
+
 #include "adg-style.h"
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
