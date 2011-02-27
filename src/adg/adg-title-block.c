@@ -49,7 +49,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
 
 
-G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE);
+G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE)
 
 enum {
     PROP_0,

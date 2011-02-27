@@ -81,7 +81,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
 
 
-G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER);
+G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER)
 
 enum {
     PROP_0,

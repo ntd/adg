@@ -56,7 +56,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 
 
-G_DEFINE_TYPE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER);
+G_DEFINE_TYPE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER)
 
 enum {
     PROP_0,

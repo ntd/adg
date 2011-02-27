@@ -47,10 +47,10 @@ _adg_log_handler(const gchar *log_domain, GLogLevelFlags log_level,
 static void
 _adg_test_func(gconstpointer user_data)
 {
-    void (*test_func)(void);
+    GCallback test_func;
     GLogFunc previous_handler;
 
-    test_func = user_data;
+    test_func = (GCallback) user_data;
 
     /* Run a test in a forked environment, without showing log messages */
     previous_handler = g_log_set_default_handler(_adg_log_handler, NULL);
@@ -68,5 +68,5 @@ _adg_test_func(gconstpointer user_data)
 void
 adg_test_add_func(const char *testpath, void (*test_func)(void))
 {
-    g_test_add_data_func(testpath, test_func, _adg_test_func);
+    g_test_add_data_func(testpath, (gconstpointer) test_func, _adg_test_func);
 }

@@ -72,16 +72,15 @@
 
 
 #include "adg-internal.h"
+#include "adg-text-internal.h"
+
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
-#include "adg-style.h"
 #include "adg-table-style.h"
 #include "adg-path.h"
 #include "adg-stroke.h"
-#include "adg-textual.h"
-#include "adg-toy-text.h"
 #include "adg-container.h"
 #include "adg-alignment.h"
 
@@ -93,7 +92,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)
 
 
-G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -809,7 +808,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_title_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", title,
+    entity = g_object_new(ADG_TYPE_BEST_TEXT, "text", title,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, padding->x, padding->y);
@@ -903,7 +902,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
                                                      table_dress);
     padding = adg_table_style_get_cell_padding(table_style);
     font_dress = adg_table_style_get_value_dress(table_style);
-    entity = g_object_new(ADG_TYPE_TOY_TEXT, "text", value,
+    entity = g_object_new(ADG_TYPE_BEST_TEXT, "text", value,
                           "font-dress", font_dress, NULL);
 
     cairo_matrix_init_translate(&map, 0, -padding->y);
@@ -946,8 +945,6 @@ adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
                              const AdgPair *to_factor)
 {
     g_return_if_fail(cell != NULL);
-    g_return_if_fail(cell->value != NULL);
-
     _adg_cell_set_value_pos(cell, from_factor, to_factor);
 }
 

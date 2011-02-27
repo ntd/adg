@@ -45,7 +45,7 @@
 #include "adg-projection-private.h"
 
 
-G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,

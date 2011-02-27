@@ -178,8 +178,8 @@ parse_args(gint *p_argc, gchar **p_argv[])
 {
     GError *error = NULL;
     GOptionEntry entries[] = {
-        {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK, version,
-         _("Display version information"), NULL},
+        {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
+         (gpointer) version, _("Display version information"), NULL},
         {NULL}
     };
 

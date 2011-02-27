@@ -41,7 +41,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_style_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE(AdgStyle, adg_style, G_TYPE_OBJECT)
 
 enum {
     INVALIDATE,
@@ -157,8 +157,6 @@ adg_style_invalidate(AdgStyle *style)
 void
 adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
-    AdgStyleClass *klass;
-
     g_return_if_fail(ADG_IS_STYLE(style));
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(cr != NULL);

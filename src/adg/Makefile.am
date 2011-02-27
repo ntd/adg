@@ -72,6 +72,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-stroke-private.h \
 				adg-table-private.h \
 				adg-table-style-private.h \
+				adg-text-internal.h \
 				adg-title-block-private.h \
 				adg-toy-text-private.h \
 				adg-trail-private.h

@@ -24,6 +24,7 @@ src/adg/adg-logo.c
 src/adg/adg-marker.c
 src/adg/adg-matrix.c
 src/adg/adg-model.c
+src/adg/adg-pango-style.c
 src/adg/adg-path.c
 src/adg/adg-point.c
 src/adg/adg-projection.c

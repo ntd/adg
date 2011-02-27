@@ -110,6 +110,12 @@ TEST_PROGS+=			test-canvas$(EXEEXT)
 test_canvas_SOURCES=		test-canvas.c \
 				$(test_internals)
 
+if HAVE_PANGO
+TEST_PROGS+=			test-text$(EXEEXT)
+test_text_SOURCES=		test-text.c \
+				$(test_internals)
+endif
+
 endif
 
 

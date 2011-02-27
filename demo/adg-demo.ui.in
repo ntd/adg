@@ -27,6 +27,31 @@
           </packing>
         </child>
         <child>
+          <object class="GtkHBox" id="noteBox">
+            <property name="border-width">6</property>
+            <property name="homogeneous">True</property>
+            <property name="spacing">6</property>
+            <child>
+              <object class="GtkLabel" id="note1Label">
+                <property name="wrap">True</property>
+                <property name="label" translatable="yes">Rotate the mouse wheel to zoom in and out.
+Drag with the wheel pressed to pan.</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkLabel" id="note2Label">
+                <property name="wrap">True</property>
+                <property name="label" translatable="yes">Keep the shift pressed while rotating or dragging with the wheel to zoom or pan in global space.</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="fill">True</property>
+            <property name="expand">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
           <object class="GtkHButtonBox" id="mainButtons">
             <property name="visible">True</property>
             <property name="border_width">6</property>
@@ -107,7 +132,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>

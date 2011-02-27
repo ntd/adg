@@ -48,7 +48,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
 
 
-G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,

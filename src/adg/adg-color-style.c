@@ -44,7 +44,7 @@
 #include "adg-color-style-private.h"
 
 
-G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

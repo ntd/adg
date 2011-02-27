@@ -44,7 +44,7 @@
 #include "adg-arrow-private.h"
 
 
-G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER);
+G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER)
 
 enum {
     PROP_0,

@@ -64,7 +64,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY);
+G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,

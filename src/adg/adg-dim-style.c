@@ -49,7 +49,7 @@
 #include "adg-dim-style-private.h"
 
 
-G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -245,11 +245,11 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->to_offset = 6;
     data->beyond = 20;
     data->baseline_spacing = 32;
-    data->limits_spacing = 2;
+    data->limits_spacing = 0;
     data->quote_shift.x = 4;
-    data->quote_shift.y = -4;
+    data->quote_shift.y = -1;
     data->limits_shift.x = +2;
-    data->limits_shift.y = -4;
+    data->limits_shift.y = +2;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
 

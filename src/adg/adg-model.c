@@ -68,7 +68,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT)
 
 enum {
     PROP_0,

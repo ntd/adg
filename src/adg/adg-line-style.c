@@ -43,7 +43,7 @@
 #include "adg-line-style-private.h"
 
 
-G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE);
+G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

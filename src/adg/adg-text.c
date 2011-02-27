@@ -59,7 +59,7 @@ static void             _adg_iface_init         (AdgTextualIface *iface);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgText, adg_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init));
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init))
 
 enum {
     PROP_0,
@@ -312,7 +312,7 @@ _adg_arrange(AdgEntity *entity)
         pango_layout_set_font_description(data->layout, font_description);
     }
 
-    pango_layout_get_extents(data->layout, &size, NULL);
+    pango_layout_get_extents(data->layout, NULL, &size);
 
     data->raw_extents.org.x = pango_units_to_double(size.x);
     data->raw_extents.org.y = pango_units_to_double(size.y);

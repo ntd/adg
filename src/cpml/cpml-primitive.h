@@ -33,15 +33,15 @@
 
 CAIRO_BEGIN_DECLS
 
-typedef struct _CpmlPrimitive CpmlPrimitive;
+#define CPML_MOVE       CAIRO_PATH_MOVE_TO
+#define CPML_LINE       CAIRO_PATH_LINE_TO
+#define CPML_CURVE      CAIRO_PATH_CURVE_TO
+#define CPML_CLOSE      CAIRO_PATH_CLOSE_PATH
+#define CPML_ARC        ((CpmlPrimitiveType) 88)
 
-typedef enum {
-    CPML_MOVE   = CAIRO_PATH_MOVE_TO,
-    CPML_LINE   = CAIRO_PATH_LINE_TO,
-    CPML_CURVE  = CAIRO_PATH_CURVE_TO,
-    CPML_CLOSE  = CAIRO_PATH_CLOSE_PATH,
-    CPML_ARC    = CAIRO_PATH_ARC_TO
-} CpmlPrimitiveType;
+
+typedef cairo_path_data_type_t CpmlPrimitiveType;
+typedef struct _CpmlPrimitive CpmlPrimitive;
 
 struct _CpmlPrimitive {
     CpmlSegment       *segment;

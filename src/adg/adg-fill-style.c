@@ -41,7 +41,7 @@
 #include "adg-fill-style-private.h"
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE);
+G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,

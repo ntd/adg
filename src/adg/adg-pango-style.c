@@ -34,6 +34,8 @@
 
 
 #include "adg-internal.h"
+#include <pango/pango.h>
+
 #include "adg-style.h"
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
@@ -46,7 +48,7 @@
 #define _ADG_OLD_STYLE_CLASS  ((AdgStyleClass *) adg_pango_style_parent_class)
 
 
-G_DEFINE_TYPE(AdgPangoStyle, adg_pango_style, ADG_TYPE_FONT_STYLE);
+G_DEFINE_TYPE(AdgPangoStyle, adg_pango_style, ADG_TYPE_FONT_STYLE)
 
 
 static void             _adg_invalidate         (AdgStyle       *style);

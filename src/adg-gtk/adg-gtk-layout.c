@@ -47,7 +47,7 @@
 #define _ADG_OLD_AREA_CLASS    ((AdgGtkAreaClass *) adg_gtk_layout_parent_class)
 
 
-G_DEFINE_TYPE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA);
+G_DEFINE_TYPE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA)
 
 enum {
     PROP_0,
@@ -472,7 +472,7 @@ _adg_set_adjustment(AdgGtkLayout *layout,
 
     if (*dst != NULL) {
         /* Release the old adjustment */
-        g_signal_handlers_disconnect_by_func(*dst, value_changed, layout);
+        g_signal_handlers_disconnect_by_func(*dst, (gpointer) value_changed, layout);
         g_object_unref(*dst);
     }
 

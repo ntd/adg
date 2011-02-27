@@ -51,7 +51,7 @@
 #define _ADG_PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
 
 
-G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY);
+G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
