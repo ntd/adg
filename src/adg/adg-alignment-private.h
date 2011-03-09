@@ -28,6 +28,8 @@ typedef struct _AdgAlignmentPrivate AdgAlignmentPrivate;
 
 struct _AdgAlignmentPrivate {
     AdgPair      factor;
+
+    CpmlVector   displacement;
 };
 
 G_END_DECLS
