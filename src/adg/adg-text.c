@@ -267,7 +267,6 @@ _adg_arrange(AdgEntity *entity)
     AdgText *text;
     AdgTextPrivate *data;
     PangoRectangle size;
-    AdgMatrix map;
 
     text = (AdgText *) entity;
     data = text->data;
@@ -320,12 +319,7 @@ _adg_arrange(AdgEntity *entity)
     data->raw_extents.size.y = pango_units_to_double(size.height);
     data->raw_extents.is_defined = TRUE;
 
-    /* Realign the text modifying the local matrix to use the cairo
-     * toy text convention: bottom/left corner is the reference point.
-     * Furthermore, by emitting a "local-changed" signal, the
-     * extents will be automatically updated. */
-    cairo_matrix_init_translate(&map, 0, - data->raw_extents.size.y);
-    adg_entity_transform_local_map(entity, &map, ADG_TRANSFORM_AFTER);
+    _adg_refresh_extents((AdgText *) entity);
 }
 
 static void
@@ -338,10 +332,14 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     data = text->data;
 
     if (data->layout != NULL) {
-        AdgMatrix ctm;
         adg_entity_apply_dress(entity, data->font_dress, cr);
         cairo_transform(cr, adg_entity_get_global_matrix(entity));
         cairo_transform(cr, adg_entity_get_local_matrix(entity));
+
+        /* Realign the text to follow the cairo toy text convention:
+         * use bottom/left corner as reference (pango uses top/left). */
+        cairo_translate(cr, 0, -data->raw_extents.size.y);
+
         pango_cairo_update_layout(cr, data->layout);
         pango_cairo_show_layout(cr, data->layout);
     }
@@ -392,7 +390,12 @@ _adg_refresh_extents(AdgText *text)
     adg_matrix_transform(&ctm, adg_entity_get_local_matrix(entity),
                          ADG_TRANSFORM_AFTER);
     cpml_extents_copy(&new_extents, &data->raw_extents);
-    cpml_pair_transform(&new_extents.org, &ctm);
+
+    /* Realign the text to follow the cairo toy text convention:
+     * use bottom/left corner as reference (pango uses top/left). */
+    new_extents.org.y -= new_extents.size.y;
+
+    cpml_extents_transform(&new_extents, &ctm);
     adg_entity_set_extents(entity, &new_extents);
 }
 
