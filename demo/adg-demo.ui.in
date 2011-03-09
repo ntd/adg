@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <interface>
-  <!-- interface-requires adg 0.0 -->
+  <!-- interface-requires adg 1.0 -->
   <!-- interface-requires gtk+ 2.12 -->
   <!-- interface-naming-policy toplevel-contextual -->
   <object class="GtkWindow" id="wndMain">
@@ -27,7 +27,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="noteBox">
+          <object class="GtkHBox" id="boxNotes">
             <property name="border-width">6</property>
             <property name="homogeneous">True</property>
             <property name="spacing">6</property>
@@ -202,732 +202,915 @@ Boston, MA  02110-1301, USA.</property>
     <property name="transient_for">wndMain</property>
     <property name="has_separator">False</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="editBox">
+      <object class="GtkVBox" id="boxEdit">
         <property name="visible">True</property>
         <property name="spacing">6</property>
         <child>
-          <object class="GtkFrame" id="editBody">
+          <object class="GtkNotebook" id="nbMain">
             <property name="visible">True</property>
-            <property name="border_width">3</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
+            <property name="can-focus">True</property>
             <child>
-              <object class="GtkTable" id="editBodyTable">
+              <object class="GtkVBox" id="boxDimensions">
                 <property name="visible">True</property>
-                <property name="border_width">3</property>
-                <property name="n_rows">4</property>
-                <property name="n_columns">5</property>
-                <property name="row_spacing">6</property>
                 <child>
-                  <object class="GtkSpinButton" id="editD1">
+                  <object class="GtkFrame" id="editBody">
+                    <property name="visible">True</property>
+                    <property name="border_width">3</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkTable" id="editBodyTable">
+                        <property name="visible">True</property>
+                        <property name="border_width">3</property>
+                        <property name="n_rows">4</property>
+                        <property name="n_columns">5</property>
+                        <property name="row_spacing">6</property>
+                        <child>
+                          <object class="GtkSpinButton" id="editD1">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="is-focus">True</property>
+                            <property name="has-focus">True</property>
+                            <property name="adjustment">adjD1</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editD1Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">_Diameter rail:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD1</property>
+                          </object>
+                          <packing>
+                            <property name="x_options">GTK_FILL</property>
+                            <property name="x_padding">12</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editA">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjA</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editALabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">_Total length:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editA</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editBLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">_B quote:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editB</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editB">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjB</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editD2Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Diameter _2:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD2</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editD2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjD2</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editLD2Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Length 2:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editLD2</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editLD2">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjLD2</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editD3Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Diameter _3:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD3</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editD4Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Diameter _4:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD4</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editD3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjD3</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editD4">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjD4</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">3</property>
+                            <property name="bottom_attach">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editLD3Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Length 3:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editLD3</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editLD3">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjLD3</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="editBodyLabel">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xpad">3</property>
+                        <property name="ypad">3</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Body data&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="single_line_mode">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="editHead">
+                    <property name="visible">True</property>
+                    <property name="border_width">3</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkTable" id="editHeadTable">
+                        <property name="visible">True</property>
+                        <property name="border_width">3</property>
+                        <property name="n_rows">3</property>
+                        <property name="n_columns">5</property>
+                        <property name="row_spacing">6</property>
+                        <child>
+                          <object class="GtkLabel" id="editD6Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">_Head diameter:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD6</property>
+                          </object>
+                          <packing>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editD6">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjD6</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editCLabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Head tickness:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editC</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editC">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjC</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editD7Label">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Tablet diameter:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD7</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editD7">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjD7</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="optChamferedHead">
+                            <property name="label" translatable="yes">Cham_fered head</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="use_underline">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="right_attach">3</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_padding">12</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="optRoundedHead">
+                            <property name="label" translatable="yes">_Rounded head</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="use_underline">True</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">optChamferedHead</property>
+                          </object>
+                          <packing>
+                            <property name="right_attach">3</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_padding">12</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editRD6Label">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Head radius:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editRD6</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editRD6">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjRD6</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="editHeadLabel">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xpad">3</property>
+                        <property name="ypad">3</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Head data&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="single_line_mode">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame" id="editHole">
+                    <property name="visible">True</property>
+                    <property name="border_width">3</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <object class="GtkTable" id="editHoleTable">
+                        <property name="visible">True</property>
+                        <property name="border_width">3</property>
+                        <property name="n_rows">1</property>
+                        <property name="n_columns">5</property>
+                        <property name="row_spacing">6</property>
+                        <child>
+                          <object class="GtkLabel" id="editDHOLELabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Hole diameter:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editD1</property>
+                          </object>
+                          <packing>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editDHOLE">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjDHOLE</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editLHOLELabel">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Hole depth:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editLHOLE</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editLHOLE">
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjLHOLE</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="editHoleLabel">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xpad">3</property>
+                        <property name="ypad">3</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Rear hole data&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="single_line_mode">True</property>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkExpander" id="editAdditional">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="adjustment">adjD1</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
+                    <property name="border_width">6</property>
+                    <property name="use_markup">True</property>
+                    <child>
+                      <object class="GtkTable" id="editAdditionalTable">
+                        <property name="visible">True</property>
+                        <property name="border_width">3</property>
+                        <property name="n_rows">3</property>
+                        <property name="n_columns">5</property>
+                        <property name="row_spacing">6</property>
+                        <child>
+                          <object class="GtkCheckButton" id="GROOVE">
+                            <property name="label" translatable="yes">Groove machining</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="right_attach">3</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_padding">12</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editZGROOVELabel">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Groove position:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editZGROOVE</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editZGROOVE">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjZGROOVE</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editDGROOVELabel">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Groove diameter:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editDGROOVE</property>
+                          </object>
+                          <packing>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editDGROOVE">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjDGROOVE</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="editLGROOVELabel">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="xalign">0</property>
+                            <property name="xpad">12</property>
+                            <property name="label" translatable="yes">Groove thickness:</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">editLGROOVE</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">3</property>
+                            <property name="right_attach">4</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                            <property name="x_options">GTK_FILL</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="editLGROOVE">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="adjustment">adjLGROOVE</property>
+                            <property name="digits">1</property>
+                            <property name="numeric">True</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">4</property>
+                            <property name="right_attach">5</property>
+                            <property name="top_attach">2</property>
+                            <property name="bottom_attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="editAdditionalLabel">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Additional machinings&lt;/b&gt;</property>
+                        <property name="use_markup">True</property>
+                        <property name="single_line_mode">True</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
+                    <property name="expand">False</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
+              </object>
+            </child>
+            <child type="tab">
+              <object class="GtkLabel" id="lblDimensions">
+                <property name="visible">True</property>
+                <property name="label" translatable="yes">Dimensions</property>
+              </object>
+              <packing>
+                <property name="tab-fill">False</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkVBox" id="boxTitleBlock">
+                <property name="visible">True</property>
                 <child>
-                  <object class="GtkLabel" id="editD1Label">
+                  <object class="GtkFrame" id="frmMetadata">
                     <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="label" translatable="yes">_Diameter rail:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD1</property>
+                    <property name="border-width">3</property>
+                    <property name="label-xalign">0</property>
+                    <property name="shadow-type">none</property>
+                    <child>
+                      <object class="GtkTable" id="tableMetadata">
+                        <property name="visible">True</property>
+                        <property name="border-width">6</property>
+                        <property name="n-rows">4</property>
+                        <property name="n-columns">2</property>
+                        <property name="row-spacing">6</property>
+                        <property name="column-spacing">6</property>
+                        <child>
+                          <object class="GtkLabel" id="lblTitle">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">_Title:</property>
+                            <property name="use-underline">True</property>
+                            <property name="mnemonic-widget">txtTitle</property>
+                          </object>
+                          <packing>
+                            <property name="x-options">GTK_FILL</property>
+                            <property name="x-padding">12</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="txtTitle">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="text" translatable="yes">SAMPLE DRAWING</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="right-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lblDrawing">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">_Drawing:</property>
+                            <property name="use-underline">True</property>
+                            <property name="mnemonic-widget">txtDrawing</property>
+                          </object>
+                          <packing>
+                            <property name="x-options">GTK_FILL</property>
+                            <property name="x-padding">12</property>
+                            <property name="top-attach">1</property>
+                            <property name="bottom-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="txtDrawing">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="text" translatable="yes">SAMPLE</property>
+                          </object>
+                          <packing>
+                            <property name="top-attach">1</property>
+                            <property name="bottom-attach">2</property>
+                            <property name="left-attach">1</property>
+                            <property name="right-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lblAuthor">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">A_uthor:</property>
+                            <property name="use-underline">True</property>
+                            <property name="mnemonic-widget">txtAuthor</property>
+                          </object>
+                          <packing>
+                            <property name="x-options">GTK_FILL</property>
+                            <property name="x-padding">12</property>
+                            <property name="top-attach">2</property>
+                            <property name="bottom-attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="txtAuthor">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="text" translatable="no">adg-demo</property>
+                          </object>
+                          <packing>
+                            <property name="top-attach">2</property>
+                            <property name="bottom-attach">3</property>
+                            <property name="left-attach">1</property>
+                            <property name="right-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lblDate">
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">D_ate:</property>
+                            <property name="use-underline">True</property>
+                            <property name="mnemonic-widget">txtDate</property>
+                          </object>
+                          <packing>
+                            <property name="x-options">GTK_FILL</property>
+                            <property name="x-padding">12</property>
+                            <property name="top-attach">3</property>
+                            <property name="bottom-attach">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="txtDate">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="text" translatable="no">09/03/2011</property>
+                          </object>
+                          <packing>
+                            <property name="top-attach">3</property>
+                            <property name="bottom-attach">4</property>
+                            <property name="left-attach">1</property>
+                            <property name="right-attach">2</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel" id="lblMetadata">
+                        <property name="visible">True</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xpad">3</property>
+                        <property name="ypad">3</property>
+                        <property name="label" translatable="yes">&lt;b&gt;Metadata&lt;/b&gt;</property>
+                        <property name="use-markup">True</property>
+                        <property name="single-line-mode">True</property>
+                      </object>
+                    </child>
                   </object>
                   <packing>
-                    <property name="x_options">GTK_FILL</property>
-                    <property name="x_padding">12</property>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
                   </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editA">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjA</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editALabel">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">_Total length:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editA</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editBLabel">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">_B quote:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editB</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">3</property>
-                    <property name="bottom_attach">4</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editB">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjB</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">3</property>
-                    <property name="bottom_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editD2Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Diameter _2:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD2</property>
-                  </object>
-                  <packing>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editD2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjD2</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editLD2Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Length 2:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLD2</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editLD2">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjLD2</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editD3Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Diameter _3:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD3</property>
-                  </object>
-                  <packing>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editD4Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Diameter _4:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD4</property>
-                  </object>
-                  <packing>
-                    <property name="top_attach">3</property>
-                    <property name="bottom_attach">4</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editD3">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjD3</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editD4">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjD4</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">3</property>
-                    <property name="bottom_attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editLD3Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Length 3:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLD3</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editLD3">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjLD3</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
                 </child>
               </object>
             </child>
-            <child type="label">
-              <object class="GtkLabel" id="editBodyLabel">
+            <child type="tab">
+              <object class="GtkLabel" id="lblTitleblock">
                 <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="xpad">3</property>
-                <property name="ypad">3</property>
-                <property name="label" translatable="yes">&lt;b&gt;Body data&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-                <property name="single_line_mode">True</property>
+                <property name="label" translatable="yes">Title block</property>
               </object>
+              <packing>
+                <property name="position">1</property>
+                <property name="tab-fill">False</property>
+              </packing>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame" id="editHead">
-            <property name="visible">True</property>
-            <property name="border_width">3</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
-            <child>
-              <object class="GtkTable" id="editHeadTable">
-                <property name="visible">True</property>
-                <property name="border_width">3</property>
-                <property name="n_rows">3</property>
-                <property name="n_columns">5</property>
-                <property name="row_spacing">6</property>
-                <child>
-                  <object class="GtkLabel" id="editD6Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">_Head diameter:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD6</property>
-                  </object>
-                  <packing>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editD6">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjD6</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editCLabel">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Head tickness:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editC</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editC">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjC</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editD7Label">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Tablet diameter:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD7</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editD7">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjD7</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkRadioButton" id="optChamferedHead">
-                    <property name="label" translatable="yes">Cham_fered head</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="use_underline">True</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="right_attach">3</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_padding">12</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkRadioButton" id="optRoundedHead">
-                    <property name="label" translatable="yes">_Rounded head</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="use_underline">True</property>
-                    <property name="active">True</property>
-                    <property name="draw_indicator">True</property>
-                    <property name="group">optChamferedHead</property>
-                  </object>
-                  <packing>
-                    <property name="right_attach">3</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_padding">12</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editRD6Label">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Head radius:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editRD6</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editRD6">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjRD6</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel" id="editHeadLabel">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="xpad">3</property>
-                <property name="ypad">3</property>
-                <property name="label" translatable="yes">&lt;b&gt;Head data&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-                <property name="single_line_mode">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame" id="editHole">
-            <property name="visible">True</property>
-            <property name="border_width">3</property>
-            <property name="label_xalign">0</property>
-            <property name="shadow_type">none</property>
-            <child>
-              <object class="GtkTable" id="editHoleTable">
-                <property name="visible">True</property>
-                <property name="border_width">3</property>
-                <property name="n_rows">1</property>
-                <property name="n_columns">5</property>
-                <property name="row_spacing">6</property>
-                <child>
-                  <object class="GtkLabel" id="editDHOLELabel">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Hole diameter:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editD1</property>
-                  </object>
-                  <packing>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editDHOLE">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjDHOLE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editLHOLELabel">
-                    <property name="visible">True</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Hole depth:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLHOLE</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editLHOLE">
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjLHOLE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                  </packing>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel" id="editHoleLabel">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="xpad">3</property>
-                <property name="ypad">3</property>
-                <property name="label" translatable="yes">&lt;b&gt;Rear hole data&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-                <property name="single_line_mode">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">2</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkExpander" id="editAdditional">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="border_width">6</property>
-            <property name="use_markup">True</property>
-            <child>
-              <object class="GtkTable" id="editAdditionalTable">
-                <property name="visible">True</property>
-                <property name="border_width">3</property>
-                <property name="n_rows">3</property>
-                <property name="n_columns">5</property>
-                <property name="row_spacing">6</property>
-                <child>
-                  <object class="GtkCheckButton" id="GROOVE">
-                    <property name="label" translatable="yes">Groove machining</property>
-                    <property name="visible">True</property>
-                    <property name="can_focus">True</property>
-                    <property name="draw_indicator">True</property>
-                  </object>
-                  <packing>
-                    <property name="right_attach">3</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_padding">12</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editZGROOVELabel">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Groove position:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editZGROOVE</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editZGROOVE">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjZGROOVE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">1</property>
-                    <property name="bottom_attach">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editDGROOVELabel">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Groove diameter:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editDGROOVE</property>
-                  </object>
-                  <packing>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editDGROOVE">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjDGROOVE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">1</property>
-                    <property name="right_attach">2</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="editLGROOVELabel">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="xalign">0</property>
-                    <property name="xpad">12</property>
-                    <property name="label" translatable="yes">Groove thickness:</property>
-                    <property name="use_underline">True</property>
-                    <property name="mnemonic_widget">editLGROOVE</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">3</property>
-                    <property name="right_attach">4</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                    <property name="x_options">GTK_FILL</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkSpinButton" id="editLGROOVE">
-                    <property name="visible">True</property>
-                    <property name="sensitive">False</property>
-                    <property name="can_focus">True</property>
-                    <property name="adjustment">adjLGROOVE</property>
-                    <property name="digits">1</property>
-                    <property name="numeric">True</property>
-                  </object>
-                  <packing>
-                    <property name="left_attach">4</property>
-                    <property name="right_attach">5</property>
-                    <property name="top_attach">2</property>
-                    <property name="bottom_attach">3</property>
-                  </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel" id="editAdditionalLabel">
-                <property name="visible">True</property>
-                <property name="xalign">0</property>
-                <property name="yalign">0</property>
-                <property name="label" translatable="yes">&lt;b&gt;Additional machinings&lt;/b&gt;</property>
-                <property name="use_markup">True</property>
-                <property name="single_line_mode">True</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">3</property>
-          </packing>
         </child>
         <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="editButtons">
+          <object class="GtkHButtonBox" id="bbMain">
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="editApply">
+              <object class="GtkButton" id="btnApply">
                 <property name="label">gtk-apply</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">True</property>
-                <property name="has_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="use-stock">True</property>
+                <property name="focus-on-click">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -936,13 +1119,13 @@ Boston, MA  02110-1301, USA.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="editReset">
+              <object class="GtkButton" id="btnReset">
                 <property name="label">gtk-revert-to-saved</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="use-stock">True</property>
+                <property name="focus-on-click">False</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -951,12 +1134,11 @@ Boston, MA  02110-1301, USA.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="editClose">
+              <object class="GtkButton" id="btnClose">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
+                <property name="can-focus">True</property>
+                <property name="use-stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -974,7 +1156,7 @@ Boston, MA  02110-1301, USA.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-4">editClose</action-widget>
+      <action-widget response="-4">btnClose</action-widget>
     </action-widgets>
   </object>
   <object class="GtkFileChooserDialog" id="wndSaveAs">
