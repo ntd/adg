@@ -34,6 +34,7 @@
             <child>
               <object class="GtkLabel" id="note1Label">
                 <property name="wrap">True</property>
+                <property name="width-chars">50</property>
                 <property name="label" translatable="yes">Rotate the mouse wheel to zoom in and out.
 Drag with the wheel pressed to pan.</property>
               </object>
@@ -41,6 +42,7 @@ Drag with the wheel pressed to pan.</property>
             <child>
               <object class="GtkLabel" id="note2Label">
                 <property name="wrap">True</property>
+                <property name="width-chars">50</property>
                 <property name="label" translatable="yes">Keep the shift pressed while rotating or dragging with the wheel to zoom or pan in global space.</property>
               </object>
             </child>
