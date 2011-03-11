@@ -1,5 +1,7 @@
 include $(top_srcdir)/build/Makefile.am.common
 
+SUBDIRS=			tests
+
 
 # file groups
 h_sources=			cpml-arc.h \
