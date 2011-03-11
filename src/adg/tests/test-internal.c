@@ -66,7 +66,7 @@ _adg_test_func(gconstpointer user_data)
 }
 
 void
-adg_test_add_func(const char *testpath, void (*test_func)(void))
+adg_test_add_func(const char *testpath, GCallback test_func)
 {
     g_test_add_data_func(testpath, (gconstpointer) test_func, _adg_test_func);
 }
