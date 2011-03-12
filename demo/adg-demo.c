@@ -14,27 +14,54 @@
 #define CHAMFER 0.3
 
 
-typedef struct _AdgPart AdgPart;
+typedef struct _DemoPart DemoPart;
 
-struct _AdgPart {
-    /* Raw data */
-    gdouble     A, B, C;
-    gdouble     DHOLE, LHOLE;
-    gdouble     D1, D2, D3, D4, D5, D6, D7;
-    gdouble     RD34, RD56;
-    gdouble     LD2, LD3, LD5, LD6, LD7;
+struct _DemoPart {
+    /* Dimensions */
+    gdouble              A;
+    gdouble              B;
+    gdouble              C;
+    gdouble              DHOLE;
+    gdouble              LHOLE;
+    gdouble              D1;
+    gdouble              D2;
+    gdouble              D3;
+    gdouble              D4;
+    gdouble              D5;
+    gdouble              D6;
+    gdouble              D7;
+    gdouble              RD34;
+    gdouble              RD56;
+    gdouble              LD2;
+    gdouble              LD3;
+    gdouble              LD5;
+    gdouble              LD6;
+    gdouble              LD7;
+    gboolean             GROOVE;
+    gdouble              ZGROOVE;
+    gdouble              DGROOVE;
+    gdouble              LGROOVE;
 
-    gboolean    GROOVE;
-    gdouble     ZGROOVE, DGROOVE, LGROOVE;
+    /* Metadata */
+    gchar               *TITLE;
+    gchar               *DRAWING;
+    gchar               *AUTHOR;
+    gchar               *DATE;
 
     /* User interface widgets */
-    AdgGtkArea *area;
-    GHashTable *widgets;
-    GtkButton  *apply, *reset;
+    AdgGtkArea          *area;
+    GHashTable          *widgets;
+    GtkButton           *apply;
+    GtkButton           *reset;
 
-    /* Models */
-    AdgPath    *shape, *hatch, *hatch_edge;
-    AdgEdges   *edges;
+    /* Data models */
+    AdgPath             *shape;
+    AdgPath             *hatch;
+    AdgPath             *hatch_edge;
+
+    /* Special entities */
+    AdgTitleBlock       *title_block;
+    AdgEdges            *edges;
 };
 
 
@@ -95,7 +122,7 @@ _adg_error(const gchar *message, GtkWindow *parent_window)
 }
 
 static void
-_adg_path_add_hole(AdgPath *path, const AdgPart *part)
+_adg_path_add_hole(AdgPath *path, const DemoPart *part)
 {
     AdgModel *model;
     AdgPair pair;
@@ -117,7 +144,7 @@ _adg_path_add_hole(AdgPath *path, const AdgPart *part)
 }
 
 static void
-_adg_path_add_rail(AdgPath *path, const AdgPart *part, gdouble to_x)
+_adg_path_add_rail(AdgPath *path, const DemoPart *part, gdouble to_x)
 {
     AdgModel *model;
     AdgPair pair;
@@ -157,8 +184,24 @@ _adg_path_add_rail(AdgPath *path, const AdgPart *part, gdouble to_x)
     adg_model_set_named_pair(model, "D1F", &pair);
 }
 
+
 static void
-_adg_part_define_hatch(AdgPart *part)
+_adg_part_define_title_block(DemoPart *part)
+{
+    g_object_set(part->title_block,
+                 "title", part->TITLE,
+                 "author", part->AUTHOR,
+                 "date", part->DATE,
+                 "drawing", part->DRAWING,
+                 "logo", adg_logo_new(),
+                 "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
+                 "scale", "---",
+                 "size", "A4",
+                 NULL);
+}
+
+static void
+_adg_part_define_hatch(DemoPart *part)
 {
     AdgPath *path;
     AdgPair pair;
@@ -186,7 +229,7 @@ _adg_part_define_hatch(AdgPart *part)
 }
 
 static void
-_adg_part_define_shape(AdgPart *part)
+_adg_part_define_shape(DemoPart *part)
 {
     AdgModel *model;
     AdgPath *path;
@@ -319,21 +362,21 @@ _adg_part_define_shape(AdgPart *part)
 }
 
 static void
-_adg_part_lock(AdgPart *part)
+_adg_part_lock(DemoPart *part)
 {
     gtk_widget_set_sensitive(GTK_WIDGET(part->apply), FALSE);
     gtk_widget_set_sensitive(GTK_WIDGET(part->reset), FALSE);
 }
 
 static void
-_adg_part_unlock(AdgPart *part)
+_adg_part_unlock(DemoPart *part)
 {
     gtk_widget_set_sensitive(GTK_WIDGET(part->apply), TRUE);
     gtk_widget_set_sensitive(GTK_WIDGET(part->reset), TRUE);
 }
 
 static void
-_adg_part_link(AdgPart *part, gpointer data, GObject *widget)
+_adg_part_link(DemoPart *part, gpointer data, GObject *widget)
 {
     const gchar *edit_signal;
 
@@ -352,7 +395,7 @@ _adg_part_link(AdgPart *part, gpointer data, GObject *widget)
 }
 
 static void
-_adg_part_ui_to_boolean(AdgPart *part, gboolean *data)
+_adg_part_ui_to_boolean(DemoPart *part, gboolean *data)
 {
     GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
@@ -362,7 +405,7 @@ _adg_part_ui_to_boolean(AdgPart *part, gboolean *data)
 }
 
 static void
-_adg_part_ui_to_double(AdgPart *part, gdouble *data)
+_adg_part_ui_to_double(DemoPart *part, gdouble *data)
 {
     GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
@@ -372,7 +415,18 @@ _adg_part_ui_to_double(AdgPart *part, gdouble *data)
 }
 
 static void
-_adg_part_boolean_to_ui(AdgPart *part, gboolean *data)
+_adg_part_ui_to_string(DemoPart *part, gchar **data)
+{
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+
+    g_assert(GTK_IS_ENTRY(widget));
+
+    g_free(*data);
+    *data = g_strdup(gtk_entry_get_text(GTK_ENTRY(widget)));
+}
+
+static void
+_adg_part_boolean_to_ui(DemoPart *part, gboolean *data)
 {
     GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
@@ -382,32 +436,23 @@ _adg_part_boolean_to_ui(AdgPart *part, gboolean *data)
 }
 
 static void
-_adg_part_double_to_ui(AdgPart *part, gdouble *data)
+_adg_part_double_to_ui(DemoPart *part, gdouble *data)
 {
     GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
-    g_assert(GTK_IS_WIDGET(widget));
+    g_assert(GTK_IS_SPIN_BUTTON(widget));
 
     gtk_spin_button_set_value(GTK_SPIN_BUTTON(widget), *data);
 }
 
 static void
-_adg_demo_canvas_add_sheet(AdgCanvas *canvas)
+_adg_part_string_to_ui(DemoPart *part, gchar **data)
 {
-    AdgTitleBlock *title_block = adg_title_block_new();
+    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
 
-    g_object_set(title_block,
-                 "title", _("SAMPLE DRAWING"),
-                 "author", "NtD",
-                 "date", NULL,
-                 "drawing", "TEST123",
-                 "logo", adg_logo_new(),
-                 "projection", adg_projection_new(ADG_PROJECTION_FIRST_ANGLE),
-                 "scale", "---",
-                 "size", "A4",
-                 NULL);
+    g_assert(GTK_IS_ENTRY(widget));
 
-    adg_canvas_set_title_block(canvas, title_block);
+    gtk_entry_set_text(GTK_ENTRY(widget), *data);
 }
 
 static void
@@ -558,7 +603,7 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
 }
 
 static AdgCanvas *
-_adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
+_adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
 {
     AdgContainer *container;
     AdgEntity *entity;
@@ -568,6 +613,7 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
 
     adg_canvas_set_paper(canvas, GTK_PAPER_NAME_A4,
                          GTK_PAGE_ORIENTATION_LANDSCAPE);
+    adg_canvas_set_title_block(canvas, part->title_block);
 
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
     adg_container_add(container, entity);
@@ -581,7 +627,6 @@ _adg_canvas_init(AdgCanvas *canvas, AdgPart *part)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
     adg_container_add(container, entity);
 
-    _adg_demo_canvas_add_sheet(canvas);
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
 
     cairo_matrix_init_translate(&map, 140, 180);
@@ -607,7 +652,7 @@ _adg_group_get_active(GtkRadioButton *radio_group)
 }
 
 static void
-_adg_do_edit(AdgPart *part)
+_adg_do_edit(DemoPart *part)
 {
     _adg_part_ui_to_double(part, &part->A);
     _adg_part_ui_to_double(part, &part->B);
@@ -631,6 +676,11 @@ _adg_do_edit(AdgPart *part)
     _adg_part_ui_to_double(part, &part->DGROOVE);
     _adg_part_ui_to_double(part, &part->LGROOVE);
 
+    _adg_part_ui_to_string(part, &part->TITLE);
+    _adg_part_ui_to_string(part, &part->DRAWING);
+    _adg_part_ui_to_string(part, &part->AUTHOR);
+    _adg_part_ui_to_string(part, &part->DATE);
+
     _adg_part_lock(part);
 
     adg_model_reset(ADG_MODEL(part->shape));
@@ -638,6 +688,7 @@ _adg_do_edit(AdgPart *part)
     adg_model_reset(ADG_MODEL(part->hatch_edge));
     adg_model_reset(ADG_MODEL(part->edges));
 
+    _adg_part_define_title_block(part);
     _adg_part_define_shape(part);
     _adg_part_define_hatch(part);
 
@@ -650,7 +701,7 @@ _adg_do_edit(AdgPart *part)
 }
 
 static void
-_adg_do_reset(AdgPart *part)
+_adg_do_reset(DemoPart *part)
 {
     _adg_part_double_to_ui(part, &part->A);
     _adg_part_double_to_ui(part, &part->B);
@@ -673,6 +724,11 @@ _adg_do_reset(AdgPart *part)
     _adg_part_double_to_ui(part, &part->ZGROOVE);
     _adg_part_double_to_ui(part, &part->DGROOVE);
     _adg_part_double_to_ui(part, &part->LGROOVE);
+
+    _adg_part_string_to_ui(part, &part->TITLE);
+    _adg_part_string_to_ui(part, &part->DRAWING);
+    _adg_part_string_to_ui(part, &part->AUTHOR);
+    _adg_part_string_to_ui(part, &part->DATE);
 
     _adg_part_lock(part);
 }
@@ -838,21 +894,22 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
         _adg_error(error->message, window);
 }
 
-static AdgPart *
+static DemoPart *
 _adg_part_new(GtkBuilder *builder)
 {
-    AdgPart *part;
+    DemoPart *part;
     GObject *object, *toggle_object;
 
-    part = g_new0(AdgPart, 1);
+    part = g_new0(DemoPart, 1);
     part->widgets = g_hash_table_new_full(g_direct_hash, g_direct_equal,
                                           NULL, g_object_unref);
     part->area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
-    part->apply = (GtkButton *) gtk_builder_get_object(builder, "editApply");
-    part->reset = (GtkButton *) gtk_builder_get_object(builder, "editReset");
+    part->apply = (GtkButton *) gtk_builder_get_object(builder, "btnApply");
+    part->reset = (GtkButton *) gtk_builder_get_object(builder, "btnReset");
     part->shape = adg_path_new();
     part->hatch = adg_path_new();
     part->hatch_edge = adg_path_new();
+    part->title_block = adg_title_block_new();
     part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
 
     g_assert(ADG_GTK_IS_AREA(part->area));
@@ -903,6 +960,11 @@ _adg_part_new(GtkBuilder *builder)
     g_signal_connect(toggle_object, "toggled",
                      G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
 
+    _adg_part_link(part, &part->TITLE, gtk_builder_get_object(builder, "txtTitle"));
+    _adg_part_link(part, &part->DRAWING, gtk_builder_get_object(builder, "txtDrawing"));
+    _adg_part_link(part, &part->AUTHOR, gtk_builder_get_object(builder, "txtAuthor"));
+    _adg_part_link(part, &part->DATE, gtk_builder_get_object(builder, "txtDate"));
+
     part->D5 = 4.5;
     part->RD34 = 1;
     part->LD5 = 5;
@@ -915,7 +977,7 @@ _adg_part_new(GtkBuilder *builder)
 }
 
 static void
-_adg_part_destroy(AdgPart *part)
+_adg_part_destroy(DemoPart *part)
 {
     g_hash_table_destroy(part->widgets);
     g_free(part);
@@ -935,7 +997,7 @@ _adg_about_window(GtkBuilder *builder)
 }
 
 static GtkWidget *
-_adg_edit_window(GtkBuilder *builder, AdgPart *part)
+_adg_edit_window(GtkBuilder *builder, DemoPart *part)
 {
     GtkWidget *window;
 
@@ -996,7 +1058,7 @@ static GtkWidget *
 _adg_main_window(GtkBuilder *builder)
 {
     GtkWidget *window;
-    AdgPart *part;
+    DemoPart *part;
     AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_print;
     GtkWidget *button_about, *button_quit;

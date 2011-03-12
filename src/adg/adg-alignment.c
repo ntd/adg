@@ -32,9 +32,6 @@
  * For example, to center the children either in x and y, you can call
  * adg_alignment_set_factor_explicit(alignment, 0.5, 0.5). To align them
  * on the right, specify a (0, 1) factor.
- *
- * The displacement is done by modifing the global matrix at the end of
- * the arrange method.
  **/
 
 /**
@@ -73,6 +70,8 @@ static void             _adg_set_property       (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             _adg_arrange            (AdgEntity      *entity);
+static void             _adg_render             (AdgEntity      *entity,
+                                                 cairo_t        *cr);
 
 
 static void
@@ -91,6 +90,7 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
     gobject_class->set_property = _adg_set_property;
 
     entity_class->arrange = _adg_arrange;
+    entity_class->render = _adg_render;
 
     param = g_param_spec_boxed("factor",
                                P_("Factor"),
@@ -109,6 +109,8 @@ adg_alignment_init(AdgAlignment *alignment)
 
     data->factor.x = 0;
     data->factor.y = 0;
+    data->displacement.x = 0;
+    data->displacement.y = 0;
 
     alignment->data = data;
 }
@@ -133,11 +135,18 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgAlignmentPrivate *data = ((AdgAlignment *) object)->data;
+    AdgAlignmentPrivate *data;
+    const AdgPair *pair;
+
+    data = ((AdgAlignment *) object)->data;
 
     switch (prop_id) {
     case PROP_FACTOR:
-        adg_pair_copy(&data->factor, g_value_get_boxed(value));
+        pair = g_value_get_boxed(value);
+        if (! cpml_pair_equal(&data->factor, pair)) {
+            adg_pair_copy(&data->factor, pair);
+            adg_entity_invalidate((AdgEntity *) object);
+        }
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -245,40 +254,61 @@ adg_alignment_get_factor(AdgAlignment *alignment)
 static void
 _adg_arrange(AdgEntity *entity)
 {
+    AdgAlignmentPrivate *data;
     const CpmlExtents *extents;
-    AdgMatrix old_map;
 
-    adg_matrix_copy(&old_map, adg_entity_get_global_map(entity));
-    adg_entity_set_global_map(entity, adg_matrix_identity());
-    adg_entity_global_changed(entity);
-
-    if (_ADG_OLD_ENTITY_CLASS->arrange)
+    if (_ADG_OLD_ENTITY_CLASS->arrange != NULL)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
+    data = ((AdgAlignment *) entity)->data;
     extents = adg_entity_get_extents(entity);
 
     /* The children are displaced only if the extents are valid */
     if (extents->is_defined) {
-        AdgAlignmentPrivate *data;
-        AdgMatrix unglobal, map;
+        const AdgMatrix *global;
+        AdgMatrix unglobal;
+        CpmlExtents new_extents;
 
-        data = ((AdgAlignment *) entity)->data;
-        adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
+        global = adg_entity_get_global_matrix(entity);
+        adg_matrix_copy(&unglobal, global);
         cairo_matrix_invert(&unglobal);
-        cairo_matrix_init_translate(&map,
-                                    -extents->size.x * data->factor.x,
-                                    -extents->size.y * data->factor.y);
-        cairo_matrix_transform_distance(&unglobal, &map.x0, &map.y0);
-        adg_matrix_transform(&map, &old_map, ADG_TRANSFORM_AFTER);
+        data->displacement = extents->size;
 
-        adg_entity_set_global_map(entity, &map);
-        adg_entity_global_changed(entity);
+        cpml_vector_transform(&data->displacement, &unglobal);
 
-        /* Here there is room for improvements: this second arrange()
-         * phase could probably be avoided... */
-        if (_ADG_OLD_ENTITY_CLASS->arrange)
-            _ADG_OLD_ENTITY_CLASS->arrange(entity);
+        /* The alignment is computed on the absolute size
+         * of the bare entity (with bare meaning the entity
+         * as it was rendered on an identity matrix) */
+        if (data->displacement.x < 0)
+            data->displacement.x = -data->displacement.x;
+        if (data->displacement.y < 0)
+            data->displacement.y = -data->displacement.y;
+
+        data->displacement.x *= -data->factor.x;
+        data->displacement.y *= -data->factor.y;
+
+        cpml_vector_transform(&data->displacement, global);
+
+        cpml_extents_copy(&new_extents, extents);
+        new_extents.org.x += data->displacement.x;
+        new_extents.org.y += data->displacement.y;
+        adg_entity_set_extents(entity, &new_extents);
+    } else {
+        data->displacement.x = 0;
+        data->displacement.y = 0;
     }
+}
 
-    adg_entity_set_global_map(entity, &old_map);
+static void
+_adg_render(AdgEntity *entity, cairo_t *cr)
+{
+    AdgAlignmentPrivate *data;
+
+    if (_ADG_OLD_ENTITY_CLASS->render == NULL)
+        return;
+
+    data = ((AdgAlignment *) entity)->data;
+
+    cairo_translate(cr, data->displacement.x, data->displacement.y);
+    _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }

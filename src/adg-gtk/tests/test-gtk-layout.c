@@ -30,7 +30,7 @@ _adg_test_hadjustment(void)
 
     layout = ADG_GTK_LAYOUT(adg_gtk_layout_new());
     valid_adjustment = (GtkAdjustment *) gtk_adjustment_new(0, 0, 0, 0, 0, 0);
-    invalid_adjustment = adg_test_invalid_pointer();
+    invalid_adjustment = adg_gtk_test_invalid_pointer();
 
     g_object_ref(valid_adjustment);
 
@@ -88,7 +88,7 @@ _adg_test_vadjustment(void)
 
     layout = ADG_GTK_LAYOUT(adg_gtk_layout_new());
     valid_adjustment = (GtkAdjustment *) gtk_adjustment_new(0, 0, 0, 0, 0, 0);
-    invalid_adjustment = adg_test_invalid_pointer();
+    invalid_adjustment = adg_gtk_test_invalid_pointer();
 
     g_object_ref(valid_adjustment);
 
@@ -142,10 +142,10 @@ _adg_test_vadjustment(void)
 int
 main(int argc, char *argv[])
 {
-    adg_test_init(&argc, &argv);
+    adg_gtk_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/gtk/layout/hadjustment", _adg_test_hadjustment);
-    adg_test_add_func("/adg/gtk/layout/vadjustment", _adg_test_vadjustment);
+    adg_gtk_test_add_func("/adg/gtk/layout/hadjustment", _adg_test_hadjustment);
+    adg_gtk_test_add_func("/adg/gtk/layout/vadjustment", _adg_test_vadjustment);
 
     return g_test_run();
 }

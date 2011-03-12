@@ -104,6 +104,7 @@ AC_CONFIG_COMMANDS([default],
 # Check for required packages
 
 GTK_DOC_CHECK(gtkdoc_prereq)
+PKG_CHECK_MODULES([GLIB],[glib-2.0])
 PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 
@@ -200,6 +201,7 @@ AC_CONFIG_FILES([build/shave
                  src/Makefile
                  src/cpml-1.pc
                  src/cpml/Makefile
+                 src/cpml/tests/Makefile
                  src/adg-1.pc
                  src/adg/Makefile
                  src/adg/tests/Makefile

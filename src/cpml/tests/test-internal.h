@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,21 +18,21 @@
  */
 
 
-#ifndef __ADG_ALIGNMENT_PRIVATE_H__
-#define __ADG_ALIGNMENT_PRIVATE_H__
+#ifndef __TEST_INIT_H__
+#define __TEST_INIT_H__
+
+#include <cpml.h>
+#include <glib.h>
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgAlignmentPrivate AdgAlignmentPrivate;
-
-struct _AdgAlignmentPrivate {
-    AdgPair      factor;
-
-    CpmlVector   displacement;
-};
+void            cpml_test_init                  (int            *p_argc,
+                                                 char          **p_argv[]);
+void            cpml_test_add_func              (const char     *testpath,
+                                                 void (*test_func)(void));
 
 G_END_DECLS
 
 
-#endif /* __ADG_ALIGNMENT_PRIVATE_H__ */
+#endif /* __TEST_INIT_H__ */
