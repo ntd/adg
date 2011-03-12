@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-20 21:58+0100\n"
+"POT-Creation-Date: 2011-03-11 01:28+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -148,7 +148,8 @@ msgstr "Margine Sinistro"
 #: src/adg/adg-canvas.c:194
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
-"Lo spazio (in global space) da lasciare vuoto alla sinistra della cornice"
+"Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
+"cornice"
 
 #: src/adg/adg-canvas.c:200 src/adg/adg-table.c:188
 msgid "Has Frame Flag"
@@ -935,12 +936,11 @@ msgstr "Quanto spazio lasciare vuoto tra le celle"
 
 #: src/adg/adg-textual.c:102
 msgid "Text"
-msgstr ""
+msgstr "Testo"
 
 #: src/adg/adg-textual.c:103
-#, fuzzy
 msgid "The text associated to this entity"
-msgstr "Il pattern cairo impostato per questa entità"
+msgstr "Il testo associato a questa entità"
 
 #: src/adg/adg-textual.c:109
 msgid "Font Dress"
@@ -1068,26 +1068,24 @@ msgstr "La trasformazione da applicare al canvas prima del rendering"
 
 #: src/adg-gtk/adg-gtk-layout.c:117
 msgid "Horizontal adjustment"
-msgstr ""
+msgstr "Regolazione orizzontale"
 
 #: src/adg-gtk/adg-gtk-layout.c:118
 msgid ""
 "The GtkAdjustment that determines the values of the horizontal position for "
 "this viewport"
 msgstr ""
+"Il GtkAdjustment che determina il valore per il posizionamento orizzontale "
+"di questa vista"
 
 #: src/adg-gtk/adg-gtk-layout.c:124
 msgid "Vertical adjustment"
-msgstr ""
+msgstr "Regolazione verticale"
 
 #: src/adg-gtk/adg-gtk-layout.c:125
 msgid ""
 "The GtkAdjustment that determines the values of the vertical position for "
 "this viewport"
 msgstr ""
-
-#~ msgid "Label"
-#~ msgstr "Testo"
-
-#~ msgid "The label to display"
-#~ msgstr "Il testo da visualizzare"
+"Il GtkAdjustment che determina il valore per il posizionamento verticale di "
+"questa vista"
