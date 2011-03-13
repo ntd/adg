@@ -26,10 +26,6 @@
 #ifndef __CPML_PRIMITIVE_H__
 #define __CPML_PRIMITIVE_H__
 
-#ifndef CAIRO_PATH_ARC_TO
-#define CAIRO_PATH_ARC_TO 100
-#endif
-
 
 CAIRO_BEGIN_DECLS
 
