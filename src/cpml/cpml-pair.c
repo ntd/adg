@@ -160,11 +160,10 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * cpml_pair_distance:
  * @from: the first #CpmlPair struct
  * @to: the second #CpmlPair struct
- * @distance: where to store the result
  *
- * Gets the distance between @from and @to, storing the result in @distance.
- * If you need this value only for comparation purpose, you could use
- * cpm_pair_squared_distance() instead.
+ * Gets the distance between @from and @to. If you need this value only
+ * for comparation purpose, you could use cpm_pair_squared_distance()
+ * instead.
  *
  * @from or @to could be %NULL, in which case the fallback (0, 0) pair
  * will be used.
