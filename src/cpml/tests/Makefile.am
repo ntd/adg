@@ -19,6 +19,10 @@ TEST_PROGS+=			test-pair$(EXEEXT)
 test_pair_SOURCES=		test-pair.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-extents$(EXEEXT)
+test_extents_SOURCES=		test-extents.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-segment$(EXEEXT)
 test_segment_SOURCES=		test-segment.c \
 				$(test_internals)
