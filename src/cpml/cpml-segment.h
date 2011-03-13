@@ -45,8 +45,8 @@ cairo_bool_t
 void    cpml_segment_copy               (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
 #define cpml_path_is_empty(cpml_path) \
-    ((cpml_path) == NULL || (cpml_path)->data == NULL || \
-     (cpml_path)->num_data <= 0)
+    ((cpml_path) == NULL || ((cairo_path_t *) cpml_path)->data == NULL || \
+     ((cairo_path_t *) cpml_path)->num_data <= 0)
 void    cpml_segment_reset              (CpmlSegment            *segment);
 cairo_bool_t
         cpml_segment_next               (CpmlSegment            *segment);
