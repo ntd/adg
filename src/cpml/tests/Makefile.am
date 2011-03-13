@@ -15,6 +15,10 @@ test_internals=			test-internal.c \
 
 if HAVE_TEST_FRAMEWORK
 
+TEST_PROGS+=			test-segment$(EXEEXT)
+test_segment_SOURCES=		test-segment.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-primitive$(EXEEXT)
 test_primitive_SOURCES=		test-primitive.c \
 				$(test_internals)
