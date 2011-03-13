@@ -121,7 +121,7 @@ _cpml_test_transform(void)
     CpmlExtents extents;
     cairo_matrix_t matrix;
     CpmlPair nord = { 1, 0 };
-    cairo_bool_t equals, is_inside;
+    cairo_bool_t is_inside;
 
     extents.is_defined = 1;
     extents.org.x = 2;

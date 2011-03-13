@@ -57,7 +57,6 @@ _cpml_test_basic(void)
     cairo_bool_t found;
     CpmlSegment segment;
     CpmlPrimitive primitive, primitive_copy;
-    size_t n_points;
 
     found = cpml_segment_from_cairo(&segment, &path);
     g_assert(found);
