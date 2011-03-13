@@ -18,7 +18,7 @@
  */
 
 
-#include <test-internal.h>
+#include "test-internal.h"
 
 
 static cairo_path_data_t data[] = {

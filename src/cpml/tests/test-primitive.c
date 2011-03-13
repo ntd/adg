@@ -18,7 +18,7 @@
  */
 
 
-#include <test-internal.h>
+#include "test-internal.h"
 
 
 static cairo_path_data_t data[] = {
@@ -50,27 +50,6 @@ CpmlPath path = {
     G_N_ELEMENTS(data)
 };
 
-
-static void
-_cpml_test_type_get_n_points(void)
-{
-    size_t n_points;
-
-    n_points = cpml_primitive_type_get_n_points(CPML_MOVE);
-    g_assert_cmpuint(n_points, ==, 0);
-
-    n_points = cpml_primitive_type_get_n_points(CPML_LINE);
-    g_assert_cmpuint(n_points, ==, 2);
-
-    n_points = cpml_primitive_type_get_n_points(CPML_ARC);
-    g_assert_cmpuint(n_points, ==, 3);
-
-    n_points = cpml_primitive_type_get_n_points(CPML_CURVE);
-    g_assert_cmpuint(n_points, ==, 4);
-
-    n_points = cpml_primitive_type_get_n_points(CPML_CLOSE);
-    g_assert_cmpuint(n_points, ==, 2);
-}
 
 static void
 _cpml_test_basic(void)
@@ -105,6 +84,27 @@ _cpml_test_basic(void)
     cpml_primitive_reset(&primitive_copy);
     g_assert(primitive_copy.data != NULL);
     g_assert_cmpint((primitive_copy.data)->header.type, ==, CPML_LINE);
+}
+
+static void
+_cpml_test_type_get_n_points(void)
+{
+    size_t n_points;
+
+    n_points = cpml_primitive_type_get_n_points(CPML_MOVE);
+    g_assert_cmpuint(n_points, ==, 0);
+
+    n_points = cpml_primitive_type_get_n_points(CPML_LINE);
+    g_assert_cmpuint(n_points, ==, 2);
+
+    n_points = cpml_primitive_type_get_n_points(CPML_ARC);
+    g_assert_cmpuint(n_points, ==, 3);
+
+    n_points = cpml_primitive_type_get_n_points(CPML_CURVE);
+    g_assert_cmpuint(n_points, ==, 4);
+
+    n_points = cpml_primitive_type_get_n_points(CPML_CLOSE);
+    g_assert_cmpuint(n_points, ==, 2);
 }
 
 static void
@@ -230,8 +230,8 @@ main(int argc, char *argv[])
 {
     cpml_test_init(&argc, &argv);
 
-    cpml_test_add_func("/cpml/primitive/type_get_n_points", _cpml_test_type_get_n_points);
     cpml_test_add_func("/cpml/primitive/basic", _cpml_test_basic);
+    cpml_test_add_func("/cpml/primitive/type_get_n_points", _cpml_test_type_get_n_points);
     cpml_test_add_func("/cpml/primitive/get_n_points", _cpml_test_get_n_points);
     cpml_test_add_func("/cpml/primitive/get_point", _cpml_test_get_point);
 
