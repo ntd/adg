@@ -90,7 +90,8 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
  * @src: the second extents to compare
  *
  * Compares @extents to @src and returns 1 if the extents are equals.
- * Two %NULL or undefined extents are considered equal.
+ * Two %NULL or two undefined extents are considered equal, athough
+ * %NULL extents are not equal to undefined extents.
  *
  * Returns: 1 if @extents is equal to @src, 0 otherwise
  **/
