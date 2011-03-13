@@ -160,7 +160,7 @@ AS_IF([test "x${enable_glade}" == "xyes"],
        AS_IF([test "x${gladeroot}" == "x"],
              [GLADE_CATALOGDIR="\${datarootdir}/glade3/catalogs}"],
              [gladecatalog=`${PKG_CONFIG} --variable=catalogdir gladeui-1.0`
-              GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|\$\{datarootdir\}|" -`])
+              GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])
        AC_SUBST([GLADE_CATALOGDIR])
        AC_MSG_RESULT(${GLADE_CATALOGDIR})])
 
