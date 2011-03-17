@@ -1,4 +1,5 @@
 include $(top_srcdir)/build/Makefile.am.common
+
 SUBDIRS=			cpml \
 				adg
 if HAVE_GTK2

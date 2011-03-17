@@ -29,6 +29,12 @@ EXTRA_DIST=			COPYING \
 				adg.doap \
 				build/configure-mingw \
 				$(BUILT_SOURCES)
+CLEANFILES=			test-report.xml \
+				test-report.html \
+				perf-report.xml \
+				perf-report.html \
+				full-report.xml \
+				full-report.html
 
 SUBDIRS=			src
 if HAVE_GTK2

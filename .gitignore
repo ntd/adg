@@ -12,6 +12,8 @@
 /config.status
 /configure
 /CONTRIBUTING
+/full-report.xml
+/full-report.html
 /HACKING
 /INSTALL
 /intltool-extract.in
@@ -19,7 +21,11 @@
 /intltool-update.in
 /libtool
 /NEWS
+/perf-report.xml
+/perf-report.html
 /README
+/test-report.xml
+/test-report.html
 /TODO
 Makefile
 Makefile.in
