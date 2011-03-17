@@ -144,16 +144,20 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
     g_return_val_if_fail(matrix1 != NULL, FALSE);
     g_return_val_if_fail(matrix2 != NULL, FALSE);
 
-    /* XXX: I don't know if the following is always correct */
-    return memcmp(matrix1, matrix2, sizeof(AdgMatrix)) == 0;
+    return
+        matrix1->xx == matrix2->xx &&
+        matrix1->yx == matrix2->yx &&
+        matrix1->xy == matrix2->xy &&
+        matrix1->yy == matrix2->yy &&
+        matrix1->x0 == matrix2->x0 &&
+        matrix1->y0 == matrix2->y0;
 }
 
 /**
  * adg_matrix_normalize:
  * @matrix: the source/destination #AdgMatrix
  *
- * Gets rid of the scaling component of a matrix. The algorithm used
- * has been found sperimentally so it could luckely be plain wrong.
+ * Gets rid of the scaling component of a matrix.
  *
  * Returns: %TRUE on success, %FALSE on errors
  **/
@@ -165,8 +169,8 @@ adg_matrix_normalize(AdgMatrix *matrix)
     g_return_val_if_fail(matrix != NULL, FALSE);
 
     if (matrix->xx != matrix->yy || matrix->xy != -matrix->yx) {
-        /* TODO: does normalization make sense on these matrices? */
-        g_warning(_("%s: anamorphic matrices not supported"), G_STRLOC);
+        g_warning(_("%s: normalization of anamorphic matrices not supported"),
+                  G_STRLOC);
         return FALSE;
     }
 
