@@ -237,17 +237,34 @@ cpml_extents_pair_is_inside(const CpmlExtents *extents, const CpmlPair *src)
  * @extents: the container #CpmlExtents
  * @matrix: the transformation matrix
  *
- * Shortcut to apply a specific transformation matrix to @extents.
- * It basically convert the <structfield>org</structfield> field
- * with cairo_matrix_transform_point() and <structfield>size</structfield>
- * with cairo_matrix_transform_distance().
+ * Transforms the four corners of @extents with @matrix and
+ * recomputes @extents. This will logically equivalent to transform
+ * an extents box and gets the extents of the resulting shape.
  **/
 void
 cpml_extents_transform(CpmlExtents *extents, const cairo_matrix_t *matrix)
 {
+    CpmlPair p[4];
+
     if (extents->is_defined == 0)
         return;
 
-    cairo_matrix_transform_point(matrix, &extents->org.x, &extents->org.y);
-    cairo_matrix_transform_distance(matrix, &extents->size.x, &extents->size.y);
+    p[0] = extents->org;
+    p[1].x = extents->org.x + extents->size.x;
+    p[1].y = extents->org.y;
+    p[2].x = extents->org.x + extents->size.x;
+    p[2].y = extents->org.y + extents->size.y;
+    p[3].x = extents->org.x;
+    p[3].y = extents->org.y + extents->size.y;
+
+    cairo_matrix_transform_point(matrix, &p[0].x, &p[0].y);
+    cairo_matrix_transform_point(matrix, &p[1].x, &p[1].y);
+    cairo_matrix_transform_point(matrix, &p[2].x, &p[2].y);
+    cairo_matrix_transform_point(matrix, &p[3].x, &p[3].y);
+
+    extents->is_defined = 0;
+    cpml_extents_pair_add(extents, &p[0]);
+    cpml_extents_pair_add(extents, &p[1]);
+    cpml_extents_pair_add(extents, &p[2]);
+    cpml_extents_pair_add(extents, &p[3]);
 }
