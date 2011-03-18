@@ -343,36 +343,42 @@ _adg_arrange(AdgEntity *entity)
     AdgRDimPrivate *data;
     AdgAlignment *quote;
     AdgDimStyle *dim_style;
+    AdgEntity *quote_entity;
     gboolean outside;
-    const AdgMatrix *local;
+    const AdgMatrix *global, *local;
     AdgPair ref1, ref2, base;
     AdgPair pair;
+    CpmlExtents extents;
 
-    if (_ADG_OLD_ENTITY_CLASS->arrange)
+    if (_ADG_OLD_ENTITY_CLASS->arrange != NULL)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     rdim = (AdgRDim *) entity;
     dim = (AdgDim *) rdim;
     data = rdim->data;
     quote = adg_dim_get_quote(dim);
+    quote_entity = (AdgEntity *) quote;
 
     if (!_adg_update_geometry(rdim))
         return;
 
     _adg_update_entities(rdim);
 
+    /* Check for cached result */
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
-        AdgEntity *quote_entity = (AdgEntity *) quote;
         adg_entity_set_global_map(quote_entity, &data->quote.global_map);
         return;
     }
 
-    dim_style = _ADG_GET_DIM_STYLE(dim);
     outside = adg_dim_get_outside(dim);
     if (outside == ADG_THREE_STATE_UNKNOWN)
         outside = ADG_THREE_STATE_OFF;
 
+    dim_style = _ADG_GET_DIM_STYLE(dim);
+    global = adg_entity_get_global_matrix(entity);
     local = adg_entity_get_local_matrix(entity);
+    extents.is_defined = FALSE;
+
     cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
     cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base, &data->point.base);
@@ -391,36 +397,49 @@ _adg_arrange(AdgEntity *entity)
 
     if (outside) {
         data->cpml.data[2].header.length = 2;
-        /* TODO: outside radius dimensions */
+        /* XXX: http://dev.entidi.com/p/adg/issues/9/ */
     } else {
         data->cpml.data[2].header.length = 6;
     }
 
-    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-
+    /* Add the quote */
     if (quote != NULL) {
-        AdgEntity *quote_entity;
         AdgMatrix map;
-
-        quote_entity = (AdgEntity *) quote;
-        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
 
         adg_alignment_set_factor_explicit(quote, 1, 0);
 
+        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, data->angle);
         adg_entity_set_global_map(quote_entity, &map);
+        adg_entity_arrange(quote_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
         adg_matrix_copy(&data->quote.global_map,
                         adg_entity_get_global_map(quote_entity));
     }
 
-    if (data->marker != NULL) {
-        adg_marker_set_segment(data->marker, data->trail, outside ? 2 : 1);
-        adg_entity_local_changed((AdgEntity *) data->marker);
+    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
+
+    if (data->trail != NULL) {
+        CpmlExtents trail_extents;
+        AdgEntity *marker_entity;
+
+        cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
+        cpml_extents_transform(&trail_extents, global);
+        cpml_extents_add(&extents, &trail_extents);
+
+        if (data->marker != NULL) {
+            marker_entity = (AdgEntity *) data->marker;
+            adg_marker_set_segment(data->marker, data->trail,
+                                   outside ? 2 : 1);
+            adg_entity_local_changed(marker_entity);
+            adg_entity_arrange(marker_entity);
+            cpml_extents_add(&extents, adg_entity_get_extents(marker_entity));
+        }
     }
 
-    /* TODO: compute the extents */
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
