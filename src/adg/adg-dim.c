@@ -1139,7 +1139,7 @@ _adg_arrange(AdgEntity *entity)
         g_free(text);
     }
 
-    if (data->quote.min == NULL && data->min) {
+    if (data->quote.min == NULL && data->min != NULL) {
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
         data->quote.min = g_object_new(ADG_TYPE_BEST_TEXT,
@@ -1150,7 +1150,7 @@ _adg_arrange(AdgEntity *entity)
         adg_textual_set_text(data->quote.min, data->min);
     }
 
-    if (data->quote.max == NULL && data->max) {
+    if (data->quote.max == NULL && data->max != NULL) {
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
         data->quote.max = g_object_new(ADG_TYPE_BEST_TEXT,
@@ -1174,19 +1174,15 @@ _adg_arrange(AdgEntity *entity)
     adg_entity_arrange(value_entity);
 
     /* Limit values (min and max) */
-    if (min_entity || max_entity) {
+    if (min_entity != NULL || max_entity != NULL) {
         const AdgPair *limits_shift;
         gdouble spacing;
         AdgPair size;
-        AdgMatrix unglobal;
         AdgPair org_min, org_max;
 
         limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
         spacing = adg_dim_style_get_limits_spacing(data->dim_style);
         size = adg_entity_get_extents(value_entity)->size;
-        adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
-        cairo_matrix_invert(&unglobal);
-        cpml_vector_transform(&size, &unglobal);
         org_min.x = size.x + limits_shift->x;
         org_min.y = -size.y / 2 + limits_shift->y;
         org_max = org_min;
@@ -1195,26 +1191,23 @@ _adg_arrange(AdgEntity *entity)
             /* Prearrange the min entity to get its extents */
             adg_entity_arrange(min_entity);
             size = adg_entity_get_extents(min_entity)->size;
-            cpml_vector_transform(&size, &unglobal);
 
             org_min.y += spacing / 2;
             org_max.y = org_min.y - size.y - spacing / 2;
         }
 
-        if (min_entity) {
+        if (min_entity != NULL) {
             cairo_matrix_init_translate(&map, org_min.x, org_min.y);
             adg_entity_set_global_map(min_entity, &map);
             adg_entity_arrange(min_entity);
         }
 
-        if (max_entity) {
+        if (max_entity != NULL) {
             cairo_matrix_init_translate(&map, org_max.x, org_max.y);
             adg_entity_set_global_map(max_entity, &map);
             adg_entity_arrange(max_entity);
         }
     }
-
-    adg_entity_arrange(quote_entity);
 }
 
 static gchar *
