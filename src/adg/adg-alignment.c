@@ -24,8 +24,13 @@
  *
  * The #AdgAlignment is an entity that can contains more sub-entities,
  * much in the same way as the #AdgContainer does, but allowing the
- * alignment of the content with an arbitrary fraction of the boundaring
- * box of the content itsself.
+ * displacement of its content with an arbitrary fraction dependent
+ * on the content itself.
+ *
+ * This shift is computed by multiplying the #AdgAligment:factor
+ * property with the extents of the bare content, with "bare" meaning
+ * the children entities as they are rendered on the global matrix
+ * *without* rotation components.
  *
  * To specify the alignment fraction, use adg_alignment_set_factor() and
  * related methods or directly set the #AdgAlignment:factor property.
@@ -109,8 +114,8 @@ adg_alignment_init(AdgAlignment *alignment)
 
     data->factor.x = 0;
     data->factor.y = 0;
-    data->displacement.x = 0;
-    data->displacement.y = 0;
+    data->shift.x = 0;
+    data->shift.y = 0;
 
     alignment->data = data;
 }
@@ -256,47 +261,50 @@ _adg_arrange(AdgEntity *entity)
 {
     AdgAlignmentPrivate *data;
     const CpmlExtents *extents;
+    CpmlExtents new_extents;
+    AdgMatrix ctm, ctm_inverted, old_map;
 
-    if (_ADG_OLD_ENTITY_CLASS->arrange != NULL)
-        _ADG_OLD_ENTITY_CLASS->arrange(entity);
+    if (_ADG_OLD_ENTITY_CLASS->arrange == NULL)
+        return;
 
     data = ((AdgAlignment *) entity)->data;
     extents = adg_entity_get_extents(entity);
+    data->shift.x = 0;
+    data->shift.y = 0;
 
-    /* The children are displaced only if the extents are valid */
-    if (extents->is_defined) {
-        const AdgMatrix *global;
-        AdgMatrix unglobal;
-        CpmlExtents new_extents;
+    /* The shift is performed only when relevant */
+    if (data->factor.x != 0 || data->factor.y != 0) {
+        /* Force the ctm to be the identity matrix */
+        adg_matrix_copy(&old_map, adg_entity_get_global_map(entity));
+        adg_matrix_copy(&ctm, adg_entity_get_global_map(entity));
+        adg_matrix_transform(&ctm, adg_entity_get_local_matrix(entity),
+                             ADG_TRANSFORM_AFTER);
+        adg_matrix_copy(&ctm_inverted, &ctm);
+        cairo_matrix_invert(&ctm_inverted);
+        adg_entity_transform_global_map(entity, &ctm_inverted,
+                                        ADG_TRANSFORM_AFTER);
+        adg_entity_global_changed(entity);
 
-        global = adg_entity_get_global_matrix(entity);
-        adg_matrix_copy(&unglobal, global);
-        cairo_matrix_invert(&unglobal);
-        data->displacement = extents->size;
+        /* Calculating the shift */
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
+        extents = adg_entity_get_extents(entity);
+        if (extents->is_defined) {
+            data->shift.x = -extents->size.x * data->factor.x;
+            data->shift.y = -extents->size.y * data->factor.y;
+            cpml_vector_transform(&data->shift, &ctm);
+        }
 
-        cpml_vector_transform(&data->displacement, &unglobal);
-
-        /* The alignment is computed on the absolute size
-         * of the bare entity (with bare meaning the entity
-         * as it was rendered on an identity matrix) */
-        if (data->displacement.x < 0)
-            data->displacement.x = -data->displacement.x;
-        if (data->displacement.y < 0)
-            data->displacement.y = -data->displacement.y;
-
-        data->displacement.x *= -data->factor.x;
-        data->displacement.y *= -data->factor.y;
-
-        cpml_vector_transform(&data->displacement, global);
-
-        cpml_extents_copy(&new_extents, extents);
-        new_extents.org.x += data->displacement.x;
-        new_extents.org.y += data->displacement.y;
-        adg_entity_set_extents(entity, &new_extents);
-    } else {
-        data->displacement.x = 0;
-        data->displacement.y = 0;
+        /* Restore the old global map */
+        adg_entity_set_global_map(entity, &old_map);
+        adg_entity_global_changed(entity);
     }
+
+    /* Add the shift to the extents */
+    _ADG_OLD_ENTITY_CLASS->arrange(entity);
+    cpml_extents_copy(&new_extents, adg_entity_get_extents(entity));
+    new_extents.org.x += data->shift.x;
+    new_extents.org.y += data->shift.y;
+    adg_entity_set_extents(entity, &new_extents);
 }
 
 static void
@@ -309,6 +317,6 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     data = ((AdgAlignment *) entity)->data;
 
-    cairo_translate(cr, data->displacement.x, data->displacement.y);
+    cairo_translate(cr, data->shift.x, data->shift.y);
     _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }
