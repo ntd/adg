@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-11 01:28+0100\n"
+"POT-Creation-Date: 2011-03-19 23:56+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -43,27 +43,27 @@ msgstr ""
 "Da dove arriva la seconda linea: questo punto è usato insieme a \"ref2\" per "
 "allineare la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:130
+#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:139
 msgid "Has First Extension Line flag"
 msgstr "Flag di Prima Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:151 src/adg/adg-ldim.c:131
+#: src/adg/adg-adim.c:151 src/adg/adg-ldim.c:140
 msgid "Show (TRUE) or hide (FALSE) the first extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la prima linea di estensione"
 
-#: src/adg/adg-adim.c:156 src/adg/adg-ldim.c:136
+#: src/adg/adg-adim.c:156 src/adg/adg-ldim.c:145
 msgid "Has Second Extension Line flag"
 msgstr "Flag di Seconda Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:157 src/adg/adg-ldim.c:137
+#: src/adg/adg-adim.c:157 src/adg/adg-ldim.c:146
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:96 src/adg-gtk/adg-gtk-area.c:154
+#: src/adg/adg-alignment.c:101 src/adg-gtk/adg-gtk-area.c:154
 msgid "Factor"
 msgstr "Fattore"
 
-#: src/adg/adg-alignment.c:97
+#: src/adg/adg-alignment.c:102
 msgid ""
 "Portion of extents, either in x and y, the content will be displaced: a "
 "(0.5, 0.5) factor means the origin is the middle point of the extents"
@@ -523,17 +523,29 @@ msgstr "Il tag da sostituire all'interno della stringa template del valore"
 
 #: src/adg/adg-edges.c:116
 msgid "Source"
-msgstr "Sorgente"
+msgstr "Originale"
 
 #: src/adg/adg-edges.c:117
-msgid "The source where the edges should be computed from"
-msgstr "La sorgente da dove computare le linee spigolo"
+msgid "The source from which the edges should be computed from"
+msgstr "L'originale da dove ottenere le linee spigolo"
 
 #: src/adg/adg-edges.c:123
+msgid "Axis Angle"
+msgstr "Angolo Asse"
+
+#: src/adg/adg-edges.c:124
+msgid ""
+"The angle of the axis of the source trail: it is implied this axis passes "
+"through (0,0)"
+msgstr ""
+"L'angolo dellasse dell'originale: è sottinteso che questo asse passerà per "
+"(0;0)"
+
+#: src/adg/adg-edges.c:130
 msgid "Critical Angle"
 msgstr "Angolo Critico"
 
-#: src/adg/adg-edges.c:124
+#: src/adg/adg-edges.c:131
 msgid ""
 "The angle that defines which corner generates an edge (if the corner angle "
 "is greater than this critical angle) and which edge is ignored"
@@ -684,11 +696,11 @@ msgstr "Vestito Riempimento"
 msgid "The dress to use for filling this entity"
 msgstr "Il vestito da usare per riempire questa entità"
 
-#: src/adg/adg-ldim.c:123
+#: src/adg/adg-ldim.c:132
 msgid "Direction"
 msgstr "Direzione"
 
-#: src/adg/adg-ldim.c:124
+#: src/adg/adg-ldim.c:133
 msgid "The inclination angle of the extension lines"
 msgstr "L'angolo di inclinazione delle linee di estensione"
 
@@ -1030,6 +1042,18 @@ msgid ""
 msgstr ""
 "Entità solitamente riservata per identificare il tipo di proiezione "
 "ortografica usata in questo disegno"
+
+#: src/adg/adg-trail.c:118
+msgid "Max Angle"
+msgstr "Angolo Massimo"
+
+#: src/adg/adg-trail.c:119
+msgid ""
+"Max arc angle to approximate with a single Bezier curve: check "
+"adg_trail_set_max_angle() for details"
+msgstr ""
+"Massimo angolo di arco da approssimare con una singola linea di Bézier: "
+"consultare adg_trail_set_max_angle() per dettagli"
 
 #: src/adg-gtk/adg-gtk-area.c:147
 msgid "Canvas"

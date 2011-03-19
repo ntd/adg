@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-12 12:24+0100\n"
+"POT-Creation-Date: 2011-03-20 00:00+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -331,7 +331,7 @@ msgid "RESET"
 msgstr "AZZERA"
 
 #. Parallel lines: hang with an error message
-#: ../src/adg/adg-adim.c:1083
+#: ../src/adg/adg-adim.c:1114
 #, c-format
 msgid "%s: trying to set an angular dimension on parallel lines"
 msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
@@ -359,7 +359,7 @@ msgstr ""
 "Si è provato ad eliminare una entità di tipo %s da un contenitore di tipo %s "
 "ma l'entità non è presente"
 
-#: ../src/adg/adg-dim.c:1223
+#: ../src/adg/adg-dim.c:1216
 #, c-format
 msgid "AdgDim::default_value not implemented for `%s'"
 msgstr "AdgDim::default_value non implementato da `%s'"
@@ -417,11 +417,10 @@ msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 msgid "%s: `create_model' method not implemented for type `%s'"
 msgstr "%s: `create_model' non implementato dal tipo `%s'"
 
-#. TODO: does normalization make sense on these matrices?
-#: ../src/adg/adg-matrix.c:169
+#: ../src/adg/adg-matrix.c:172
 #, c-format
-msgid "%s: anamorphic matrices not supported"
-msgstr "%s: matrici anamorfiche non supportate"
+msgid "%s: normalization of anamorphic matrices not supported"
+msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
 
 #: ../src/adg/adg-model.c:606
 #, c-format
@@ -469,22 +468,22 @@ msgstr "%s: richiesta l'operazione `%s' su un path senza primitiva attiva"
 
 #: ../src/adg/adg-path.c:973
 #, c-format
-msgid "%s: requested a `%s' operation while a `%s' operation is active"
-msgstr "%s: richiesta l'operazione `%s' con operazione `%s' in corso"
+msgid "%s: requested a `%s' operation while a `%s' operation was active"
+msgstr "%s: richiesta l'operazione `%s' mentre l'operazione `%s' era in corso"
 
-#: ../src/adg/adg-path.c:1001
+#: ../src/adg/adg-path.c:998
 #, c-format
 msgid "%s: `%d' operation not recognized"
 msgstr "%s: l'operazione `%d' non è conosciuta"
 
-#: ../src/adg/adg-path.c:1112
+#: ../src/adg/adg-path.c:1109
 #, c-format
 msgid ""
 "%s: first chamfer delta of `%lf' is greather than the available `%lf' length"
 msgstr ""
 "%s: il primo delta di smusso `%lf' è maggiore dello spazio disponibile `%lf'"
 
-#: ../src/adg/adg-path.c:1121
+#: ../src/adg/adg-path.c:1118
 #, c-format
 msgid ""
 "%s: second chamfer delta of `%lf' is greather than the available `%lf' length"
@@ -492,7 +491,7 @@ msgstr ""
 "%s: il secondo delta di smusso `%lf' è maggiore dello spazio disponibile `"
 "%lf'"
 
-#: ../src/adg/adg-path.c:1159
+#: ../src/adg/adg-path.c:1156
 #, c-format
 msgid "%s: fillet with radius of `%lf' is not applicable here"
 msgstr "%s: un raccordo di raggio `%lf' non è fattibile in questa posizione"
@@ -564,28 +563,28 @@ msgstr "DATA"
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
 
-#: ../src/adg/adg-trail.c:261
+#: ../src/adg/adg-trail.c:317
 #, c-format
 msgid ""
 "%s: you cannot access the path from the callback you provided to build it"
 msgstr "%s: accesso al path non consentito dalla funzione che deve definirlo"
 
-#: ../src/adg/adg-trail.c:302
+#: ../src/adg/adg-trail.c:358
 #, c-format
 msgid "%s: requested undefined segment for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 
-#: ../src/adg/adg-trail.c:318
+#: ../src/adg/adg-trail.c:374
 #, c-format
 msgid "%s: segment %u is out of range for type `%s'"
 msgstr "%s: il numero di segmento `%u' è sballato per il tipo `%s'"
 
-#: ../src/adg/adg-trail.c:379
+#: ../src/adg/adg-trail.c:435
 #, c-format
 msgid "%s: invalid path data"
 msgstr "%s: dati del path non validi"
 
-#: ../src/adg/adg-trail.c:410
+#: ../src/adg/adg-trail.c:517
 #, c-format
 msgid "%s: callback not defined for instance of type `%s'"
 msgstr "%s: callback non definita per un'istanza di tipo `%s'"
