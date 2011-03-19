@@ -74,6 +74,11 @@ AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 
 
+# Check for libraries
+
+AC_CHECK_LIB([m],[cos])
+
+
 # Libtool initialization
 
 AC_MSG_CHECKING([which libtool initialization strategy to adopt])
