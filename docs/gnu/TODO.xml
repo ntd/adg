@@ -17,17 +17,23 @@ improvements must be reflected in the demo programs, where applicable.</para>
 to implement.</para>
 
 <itemizedlist mark="circle">
+   <listitem>Actually the AdgPath code is simplified to execute binary actions
+   only when the two operands are properly defined primitives. Anyway
+   those actions could be chained up in a lot of situations. For example,
+   it is quite common to have a chamfer followed by a fillet.</listitem>
+   <listitem>By using wine, it should be possible (at least theoretically) to do
+   a "make check" while cross-building for windows.</listitem>
    <listitem override="disc">Hide the CPML APIs accessible from the CpmlPrimitive interface: use
    a private struct of function pointers to delegate the job to the
    different primitives.</listitem>
-   <listitem>Check if the decentralization of the quote is applicable to the angular
-   dimensions too and if it is worth the effort.</listitem>
+   <listitem>Check if the decentralization of the quote is applicable to the
+   angular dimensions too and if it is worth the effort.</listitem>
    <listitem>The ARROW and TRIANGLE markers should follow the director path that
    could be a curve. Use the METAPOST solution suggested by John Hobby
-   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
-   path by half <parameter>angle</parameter> in both directions, look for intersection with a
-   circle centered at the end of the director path with radius <parameter>size</parameter> and
-   close the resulting path.</listitem>
+   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotates the
+   path by half <parameter>angle</parameter> in both directions, looks for intersection with a
+   circle centered at the end of the director path with radius <parameter>size</parameter>
+   and closes the resulting path.</listitem>
    <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
    external data. Use libgda as sample data provider.</listitem>
    <listitem override="disc">Implement AdgText, a generic text management, using pango.</listitem>
@@ -43,9 +49,9 @@ to implement.</para>
    information useful in some operation, such as getting the radius
    of a radial quote or precisely extending an arc.</listitem>
    <listitem>Hunt the TODOs in CPML and fill the missing logic.</listitem>
-   <listitem>Improve Bézier offset approximation algorithm, possibly enabling the
-   feature of splitting the offset curve in more than one Bézier arc
-   when the error is not acceptable.</listitem>
+   <listitem>Improve Bézier offset approximation algorithm, possibly enabling
+   the feature of splitting the offset curve in more than one Bézier
+   arc when the error is not acceptable.</listitem>
 </itemizedlist>
 
 </simplesect>
@@ -65,6 +71,9 @@ project such as the ADG canvas. This means to build releases also
 for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 
 <itemizedlist mark="circle">
+   <listitem>Actually AdgLineStyle can change color, width, cap, join, miter
+   limit and antialiasing of a line. The only thing remaining is
+   the possibility to customize the dashing of a dashed line.</listitem>
    <listitem>Provide some binary packages for major distributions, such as an
    installable demo for Windows, a deb package and an rpm one.</listitem>
 </itemizedlist>
@@ -100,7 +109,7 @@ API: the 0.7.0 release will probably be a beta release.</para>
    <listitem override="disc">Implement a decent "make check" target, basing the check programs on
    the test framework of glib. Make this an optional feature, as this
    framework is based on the too young glib-2.16.0.</listitem>
-   <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
+   <listitem override="disc">Resolve the TODOs in the adg/ directory: the only missing logic
    should come from the CPML library (and there the TODO items are
    bound to the less common use cases).</listitem>
    <listitem>Create a separate project called adg-lua to host the lua bindings for
