@@ -45,6 +45,7 @@
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
+/* XXX: http://dev.entidi.com/p/adg/issues/51/ */
 enum {
     PROP_0,
     PROP_COLOR_DRESS,
@@ -52,8 +53,7 @@ enum {
     PROP_CAP,
     PROP_JOIN,
     PROP_MITER_LIMIT,
-    PROP_ANTIALIAS,
-    PROP_DASH
+    PROP_ANTIALIAS
 };
 
 
@@ -127,8 +127,6 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
                              G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANTIALIAS, param);
-
-    /* TODO: PROP_DASH (PROP_DASHES, PROP_NUM_DASHES, PROP_DASH_OFFSET) */
 }
 
 static void
@@ -176,9 +174,6 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_ANTIALIAS:
         g_value_set_int(value, data->antialias);
         break;
-    case PROP_DASH:
-        /* TODO */
-        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -209,9 +204,6 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_ANTIALIAS:
         data->antialias = g_value_get_int(value);
-        break;
-    case PROP_DASH:
-        /* TODO */
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -483,7 +475,6 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 
     if (data->num_dashes > 0) {
         g_return_if_fail(data->dashes != NULL);
-
         cairo_set_dash(cr, data->dashes, data->num_dashes, data->dash_offset);
     }
 }
