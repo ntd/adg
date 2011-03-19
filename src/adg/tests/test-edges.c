@@ -65,6 +65,38 @@ _adg_test_source(void)
 }
 
 static void
+_adg_test_axis_angle(void)
+{
+    AdgEdges *edges;
+    gdouble valid_value, invalid_value;
+    gdouble axis_angle;
+
+    edges = adg_edges_new();
+    valid_value = G_PI / 10;
+    invalid_value = G_PI + 1;
+
+    /* Using the public APIs */
+    adg_edges_set_axis_angle(edges, valid_value);
+    axis_angle = adg_edges_get_axis_angle(edges);
+    g_assert_cmpfloat(axis_angle, ==, valid_value);
+
+    adg_edges_set_axis_angle(edges, invalid_value);
+    axis_angle = adg_edges_get_axis_angle(edges);
+    g_assert_cmpfloat(axis_angle, !=, invalid_value);
+
+    /* Using GObject property methods */
+    g_object_set(edges, "axis-angle", valid_value, NULL);
+    g_object_get(edges, "axis-angle", &axis_angle, NULL);
+    g_assert_cmpfloat(axis_angle, ==, valid_value);
+
+    g_object_set(edges, "axis-angle", invalid_value, NULL);
+    g_object_get(edges, "axis-angle", &axis_angle, NULL);
+    g_assert_cmpfloat(axis_angle, !=, invalid_value);
+
+    g_object_unref(edges);
+}
+
+static void
 _adg_test_critical_angle(void)
 {
     AdgEdges *edges;
@@ -103,6 +135,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_func("/adg/edges/source", _adg_test_source);
+    adg_test_add_func("/adg/edges/axis-angle", _adg_test_axis_angle);
     adg_test_add_func("/adg/edges/critical-angle", _adg_test_critical_angle);
 
     return g_test_run();

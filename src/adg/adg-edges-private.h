@@ -28,6 +28,7 @@ typedef struct _AdgEdgesPrivate AdgEdgesPrivate;
 
 struct _AdgEdgesPrivate {
     AdgTrail    *source;
+    gdouble      axis_angle;
     gdouble      critical_angle;
 
     struct {

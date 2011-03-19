@@ -25,18 +25,15 @@
  * The #AdgEdges can be used to render the edges of a yet existing
  * #AdgTrail source. It is useful for any part made by revolution,
  * where the shape is symmetric along a specific axis and thus the
- * corners can be easily computed.
+ * edge lines can be easily computed.
  *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>Actually the edges of the source trail are always computed
- *           taking the y=0 axis as the origin: anyway, it would be not
- *           too hard to apply an arbitrary transformation to aling the
- *           trail on the y=0 axis, compute the edges as usual and apply
- *           the inverse transformation to the result.</listitem>
- * </itemizedlist>
- * </important>
+ * The trail can be set by changing the #AdgEdges:source property
+ * or the relevant APIs. If the trail changes, a recomputation
+ * can be forced by calling the adg_model_clear() method.
+ *
+ * The angle of the axis is implied to pass through the (0,0) point
+ * and has an angle of #AdgEdges:axis-angle radiants. The default
+ * is a 0 radiant angle, meaning the y=0 axis is assumed.
  **/
 
 /**
@@ -65,7 +62,8 @@ G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL)
 enum {
     PROP_0,
     PROP_SOURCE,
-    PROP_CRITICAL_ANGLE
+    PROP_CRITICAL_ANGLE,
+    PROP_AXIS_ANGLE
 };
 
 
@@ -86,7 +84,9 @@ static void             _adg_clear_cpml_path    (AdgEdges       *edges);
 static GSList *         _adg_get_vertices       (CpmlSegment    *segment,
                                                  gdouble         threshold);
 static GSList *         _adg_optimize_vertices  (GSList         *vertices);
-static GArray *         _adg_build_array        (const GSList   *vertices);
+static GArray *         _adg_path_build         (const GSList   *vertices);
+static void             _adg_path_transform     (GArray         *path_data,
+                                                 const AdgMatrix*map);
 
 
 static void
@@ -119,6 +119,13 @@ adg_edges_class_init(AdgEdgesClass *klass)
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_SOURCE, param);
 
+    param = g_param_spec_double("axis-angle",
+                                P_("Axis Angle"),
+                                P_("The angle of the axis of the source trail: it is implied this axis passes through (0,0)"),
+                                -G_PI, G_PI, 0,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_AXIS_ANGLE, param);
+
     param = g_param_spec_double("critical-angle",
                                 P_("Critical Angle"),
                                 P_("The angle that defines which corner generates an edge (if the corner angle is greater than this critical angle) and which edge is ignored"),
@@ -135,6 +142,7 @@ adg_edges_init(AdgEdges *edges)
 
     data->source = NULL;
     data->critical_angle = G_PI / 45;
+    data->axis_angle = 0;
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cpml.array = NULL;
@@ -176,6 +184,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_SOURCE:
         g_value_set_object(value, data->source);
         break;
+    case PROP_AXIS_ANGLE:
+        g_value_set_double(value, data->axis_angle);
+        break;
     case PROP_CRITICAL_ANGLE:
         g_value_set_double(value, data->critical_angle);
         break;
@@ -212,6 +223,13 @@ _adg_set_property(GObject *object, guint prop_id,
         }
 
         _adg_clear((AdgModel *) object);
+        break;
+    case PROP_AXIS_ANGLE:
+        tmp_double = g_value_get_double(value);
+        if (data->axis_angle != tmp_double) {
+            data->axis_angle = tmp_double;
+            _adg_clear_cpml_path(edges);
+        }
         break;
     case PROP_CRITICAL_ANGLE:
         tmp_double = g_value_get_double(value);
@@ -290,6 +308,46 @@ adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
 }
 
 /**
+ * adg_edges_set_axis_angle:
+ * @edges: an #AdgEdges
+ * @angle: the new angle (in radians)
+ *
+ * Sets the axis angle of @edges to @angle, basically setting
+ * the #AdgEdges:axis-angle property. All the resulting edge
+ * lines will be normal to this axis.
+ *
+ * It is implied the axis will pass through the (0,0) point,
+ * so the underlying trail should be constructed accordingly.
+ **/
+void
+adg_edges_set_axis_angle(AdgEdges *edges, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_EDGES(edges));
+    g_object_set(edges, "axis-angle", angle, NULL);
+}
+
+/**
+ * adg_edges_get_axis_angle:
+ * @edges: an #AdgEdges
+ *
+ * Gets the angle of the supposed axis of @edges. Refer to
+ * adg_edges_set_axis_angle() for details of what this parameter
+ * is used for.
+ *
+ * Returns: the value (in radians) of the axis angle
+ **/
+gdouble
+adg_edges_get_axis_angle(AdgEdges *edges)
+{
+    AdgEdgesPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_EDGES(edges), 0);
+
+    data = edges->data;
+    return data->axis_angle;
+}
+
+/**
  * adg_edges_set_critical_angle:
  * @edges: an #AdgEdges
  * @angle: the new angle (in radians)
@@ -347,6 +405,7 @@ _adg_get_cpml_path(AdgTrail *trail)
     gdouble threshold;
     CpmlSegment segment;
     GSList *vertices;
+    AdgMatrix map;
 
     edges = (AdgEdges *) trail;
     data = edges->data;
@@ -367,11 +426,23 @@ _adg_get_cpml_path(AdgTrail *trail)
         threshold *= threshold * 2;
 
         vertices = _adg_get_vertices(&segment, threshold);
+
+        /* Rotate all the vertices so the axis will always be on y=0:
+         * this is mainly needed to not complicate the _adg_path_build()
+         * code which assumes the y=0 axis is in effect */
+        cairo_matrix_init_rotate(&map, -data->axis_angle);
+        g_slist_foreach(vertices, (GFunc) cpml_pair_transform, &map);
+
         vertices = _adg_optimize_vertices(vertices);
-        data->cpml.array = _adg_build_array(vertices);
+        data->cpml.array = _adg_path_build(vertices);
 
         g_slist_foreach(vertices, (GFunc) g_free, NULL);
         g_slist_free(vertices);
+
+        /* Reapply the inverse of the previous transformation to
+         * move the vertices to their original positions */
+        cairo_matrix_invert(&map);
+        _adg_path_transform(data->cpml.array, &map);
 
         data->cpml.path.status = CAIRO_STATUS_SUCCESS;
         data->cpml.path.data = (cairo_path_data_t *) (data->cpml.array)->data;
@@ -402,6 +473,20 @@ _adg_clear_cpml_path(AdgEdges *edges)
     data->cpml.path.num_data = 0;
 }
 
+/**
+ * _adg_get_vertices:
+ * @segment: a #CpmlSegment
+ * @threshold: a theshold value
+ *
+ * Collects a list of #AdgPair corners where the angle has a minimum
+ * threshold incidence of @threshold. The threshold is considered as
+ * the squared distance between the two unit vectors, the one before
+ * and the one after every corner.
+ *
+ * Returns: a #GSList of #AdgPair: the list should be freed with
+ *          g_slist_free() and all the pairs freed with g_free()
+ *          when no longer needed
+ **/
 static GSList *
 _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
 {
@@ -476,7 +561,7 @@ _adg_optimize_vertices(GSList *vertices)
 }
 
 static GArray *
-_adg_build_array(const GSList *vertices)
+_adg_path_build(const GSList *vertices)
 {
     cairo_path_data_t line[4];
     GArray *array;
@@ -513,4 +598,18 @@ _adg_build_array(const GSList *vertices)
     }
 
     return array;
+}
+
+static void
+_adg_path_transform(GArray *path_data, const AdgMatrix *map)
+{
+    guint n;
+    cairo_path_data_t *data;
+
+    /* Only the odd items are transformed: the even ones are either
+     * header items, CPML_MOVE and CPML_LINE alternatively */
+    for (n = 1; n < path_data->len; n += 2) {
+        data = &g_array_index(path_data, cairo_path_data_t, n);
+        cairo_matrix_transform_point(map, &data->point.x, &data->point.y);
+    }
 }
