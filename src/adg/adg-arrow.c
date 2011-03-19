@@ -221,7 +221,21 @@ adg_arrow_get_angle(AdgArrow *arrow)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    /* TODO */
+    AdgModel *model;
+    const CpmlExtents *extents;
+    CpmlExtents new_extents;
+
+    model = adg_marker_model((AdgMarker *) entity);
+    if (model == NULL)
+        return;
+
+    extents = adg_trail_get_extents((AdgTrail *) model);
+    if (extents == NULL)
+        return;
+
+    cpml_extents_copy(&new_extents, extents);
+    cpml_extents_transform(&new_extents, adg_entity_get_local_matrix(entity));
+    adg_entity_set_extents(entity, &new_extents);
 }
 
 static void
@@ -231,6 +245,9 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     model = adg_marker_model((AdgMarker *) entity);
+    if (model == NULL)
+        return;
+
     cairo_path = adg_trail_get_cairo_path((AdgTrail *) model);
 
     if (cairo_path != NULL) {
