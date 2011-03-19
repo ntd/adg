@@ -114,7 +114,7 @@ adg_edges_class_init(AdgEdgesClass *klass)
 
     param = g_param_spec_object("source",
                                 P_("Source"),
-                                P_("The source where the edges should be computed from"),
+                                P_("The source from which the edges should be computed from"),
                                 ADG_TYPE_TRAIL,
                                 G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
     g_object_class_install_property(gobject_class, PROP_SOURCE, param);
@@ -134,8 +134,7 @@ adg_edges_init(AdgEdges *edges)
                                                         AdgEdgesPrivate);
 
     data->source = NULL;
-    data->threshold = sin(G_PI / 45);
-    data->threshold *= data->threshold * 2;
+    data->critical_angle = G_PI / 45;
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cpml.array = NULL;
@@ -150,7 +149,7 @@ _adg_dispose(GObject *object)
 
     adg_edges_set_source(edges, NULL);
 
-    if (_ADG_OLD_OBJECT_CLASS->dispose)
+    if (_ADG_OLD_OBJECT_CLASS->dispose != NULL)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
 }
 
@@ -159,7 +158,7 @@ _adg_finalize(GObject *object)
 {
     _adg_clear_cpml_path((AdgEdges *) object);
 
-    if (_ADG_OLD_OBJECT_CLASS->finalize)
+    if (_ADG_OLD_OBJECT_CLASS->finalize != NULL)
         _ADG_OLD_OBJECT_CLASS->finalize(object);
 }
 
@@ -178,7 +177,7 @@ _adg_get_property(GObject *object, guint prop_id,
         g_value_set_object(value, data->source);
         break;
     case PROP_CRITICAL_ANGLE:
-        g_value_set_double(value, adg_edges_get_critical_angle(edges));
+        g_value_set_double(value, data->critical_angle);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -190,8 +189,13 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgEdgesPrivate *data = ((AdgEdges *) object)->data;
+    AdgEdges *edges;
+    AdgEdgesPrivate *data;
     gpointer tmp_pointer;
+    gdouble tmp_double;
+
+    edges = (AdgEdges *) object;
+    data = edges->data;
 
     switch (prop_id) {
     case PROP_SOURCE:
@@ -210,8 +214,11 @@ _adg_set_property(GObject *object, guint prop_id,
         _adg_clear((AdgModel *) object);
         break;
     case PROP_CRITICAL_ANGLE:
-        data->threshold = sin(g_value_get_double(value));
-        data->threshold *= data->threshold * 2;
+        tmp_double = g_value_get_double(value);
+        if (data->critical_angle != tmp_double) {
+            data->critical_angle = tmp_double;
+            _adg_clear_cpml_path(edges);
+        }
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -283,12 +290,31 @@ adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
 }
 
 /**
+ * adg_edges_set_critical_angle:
+ * @edges: an #AdgEdges
+ * @angle: the new angle (in radians)
+ *
+ * Sets the critical angle of @edges to @angle, basically setting
+ * the #AdgEdges:critical-angle property.
+ *
+ * The critical angle defines what corner should generate an edge and
+ * what not. Typical values are close to %0, being %0 the lowest angle
+ * where every corner generates an edge.
+ **/
+void
+adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_EDGES(edges));
+    g_object_set(edges, "critical-angle", angle, NULL);
+}
+
+/**
  * adg_edges_get_critical_angle:
  * @edges: an #AdgEdges
  *
- * Gets the current critical angle of @edges. The angle is internally
- * converted to a threshold value, so the returned angle could be not
- * exactly what set throught adg_edges_set_critical_angle().
+ * Gets the current critical angle of @edges. Refer to
+ * adg_edges_set_critical_angle() for details of what this parameter
+ * is used for.
  *
  * Returns: the value (in radians) of the critical angle
  **/
@@ -300,25 +326,7 @@ adg_edges_get_critical_angle(AdgEdges *edges)
     g_return_val_if_fail(ADG_IS_EDGES(edges), 0);
 
     data = edges->data;
-
-    return asin(sqrt(data->threshold / 2));
-}
-
-/**
- * adg_edges_set_critical_angle:
- * @edges: an #AdgEdges
- * @angle: the new angle (in radians)
- *
- * Sets a new critical angle on @edges. The critical angle defines
- * what corner should generate an edge and what not. Typical values
- * are close to %0, being %0 the lowest angle where all the corners
- * generate an edge.
- **/
-void
-adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
-{
-    g_return_if_fail(ADG_IS_EDGES(edges));
-    g_object_set(edges, "critical-angle", angle, NULL);
+    return data->critical_angle;
 }
 
 
@@ -327,7 +335,7 @@ _adg_clear(AdgModel *model)
 {
     _adg_clear_cpml_path((AdgEdges *) model);
 
-    if (_ADG_OLD_MODEL_CLASS->clear)
+    if (_ADG_OLD_MODEL_CLASS->clear != NULL)
         _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
@@ -336,6 +344,9 @@ _adg_get_cpml_path(AdgTrail *trail)
 {
     AdgEdges *edges;
     AdgEdgesPrivate *data;
+    gdouble threshold;
+    CpmlSegment segment;
+    GSList *vertices;
 
     edges = (AdgEdges *) trail;
     data = edges->data;
@@ -347,11 +358,15 @@ _adg_get_cpml_path(AdgTrail *trail)
     _adg_clear_cpml_path((AdgEdges *) trail);
 
     if (data->source != NULL) {
-        CpmlSegment segment;
-        GSList *vertices;
-
         adg_trail_put_segment(data->source, 1, &segment);
-        vertices = _adg_get_vertices(&segment, 0.01);
+
+        /* The threshold is squared because the _adg_get_vertices()
+         * function uses cpml_pair_squared_distance() against the
+         * two vectors of every corner to avoid sqrt()ing everything */
+        threshold = sin(data->critical_angle);
+        threshold *= threshold * 2;
+
+        vertices = _adg_get_vertices(&segment, threshold);
         vertices = _adg_optimize_vertices(vertices);
         data->cpml.array = _adg_build_array(vertices);
 
@@ -393,6 +408,7 @@ _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
     GSList *vertices;
     CpmlPrimitive primitive;
     CpmlVector old, new;
+    AdgPair pair;
 
     vertices = NULL;
     cpml_primitive_from_segment(&primitive, segment);
@@ -411,8 +427,6 @@ _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
              * the edge detection */
             if (new.x == 0 ||
                 cpml_pair_squared_distance(&old, &new) > threshold) {
-                AdgPair pair;
-
                 cpml_primitive_put_pair_at(&primitive, 0, &pair);
                 vertices = g_slist_prepend(vertices, adg_pair_dup(&pair));
             }

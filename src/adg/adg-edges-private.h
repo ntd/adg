@@ -28,7 +28,7 @@ typedef struct _AdgEdgesPrivate AdgEdgesPrivate;
 
 struct _AdgEdgesPrivate {
     AdgTrail    *source;
-    gdouble      threshold;
+    gdouble      critical_angle;
 
     struct {
         CpmlPath path;
