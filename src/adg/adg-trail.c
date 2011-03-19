@@ -59,6 +59,7 @@
 #include "adg-internal.h"
 #include <math.h>
 #include <string.h>
+
 #include "adg-model.h"
 
 #include "adg-trail.h"
@@ -156,7 +157,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * adg_trail_get_cairo_path:
  * @trail: an #AdgTrail
  *
- * Gets a pointer to the cairo path of @trail. The return path is
+ * Gets a pointer to the cairo path of @trail. The returned path is
  * owned by @trail and must be considered read-only.
  *
  * This function gets the #CpmlPath of @trail by calling
@@ -432,7 +433,7 @@ _adg_arc_to_curves(GArray *array, const cairo_path_data_t *src)
         int n_curves;
         cairo_path_data_t *curves;
 
-        n_curves = ceil(fabs(end-start) / M_PI_2);
+        n_curves = ceil(fabs(end-start) / G_PI_2);
         curves = g_new(cairo_path_data_t, n_curves * 4);
         segment.data = curves;
         cpml_arc_to_curves(&arc, &segment, n_curves);

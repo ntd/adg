@@ -46,7 +46,6 @@
 #include "adg-toy-text.h"
 #include "adg-dim.h"
 #include "adg-dim-private.h"
-#include <math.h>
 
 #include "adg-adim.h"
 #include "adg-adim-private.h"
@@ -937,7 +936,7 @@ _adg_default_value(AdgDim *dim)
     if (!_adg_update_geometry(adim))
         return g_strdup("undef");
 
-    angle = (data->angle2 - data->angle1) * 180 / M_PI;
+    angle = (data->angle2 - data->angle1) * 180 / G_PI;
     return g_strdup_printf(format, angle);
 }
 
@@ -1126,7 +1125,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     data->angle1 = cpml_vector_angle(&vector[0]);
     data->angle2 = cpml_vector_angle(&vector[2]);
     while (data->angle2 < data->angle1)
-        data->angle2 += M_PI * 2;
+        data->angle2 += G_PI * 2;
 
     cpml_vector_from_angle(&vector[1], (data->angle1 + data->angle2) / 2);
 

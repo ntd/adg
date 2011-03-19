@@ -57,10 +57,10 @@
 
 
 #include "adg-internal.h"
+#include <string.h>
+
 #include "adg-model.h"
 #include "adg-trail.h"
-#include <string.h>
-#include <math.h>
 
 #include "adg-path.h"
 #include "adg-path-private.h"
@@ -1212,9 +1212,9 @@ _adg_is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
     angle2 = cpml_vector_angle(&v2);
 
     if (angle1 > angle2)
-        angle1 -= M_PI*2;
+        angle1 -= G_PI*2;
 
-    return angle2-angle1 > M_PI;
+    return angle2-angle1 > G_PI;
 }
 
 static const gchar *
