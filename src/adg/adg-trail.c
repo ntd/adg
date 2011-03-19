@@ -116,7 +116,7 @@ adg_trail_class_init(AdgTrailClass *klass)
 
     param = g_param_spec_double("max-angle",
                                 P_("Max Angle"),
-                                P_("Max arc angle to approximate with a single Bézier curve: check adg_trail_set_max_angle() for details"),
+                                P_("Max arc angle to approximate with a single Bezier curve: check adg_trail_set_max_angle() for details"),
                                 0, G_PI, G_PI_2,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_MAX_ANGLE, param);
