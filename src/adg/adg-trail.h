@@ -66,6 +66,9 @@ gboolean            adg_trail_put_segment       (AdgTrail        *trail,
                                                  AdgSegment      *segment);
 const CpmlExtents * adg_trail_get_extents       (AdgTrail        *trail);
 void                adg_trail_dump              (AdgTrail        *trail);
+void                adg_trail_set_max_angle     (AdgTrail        *trail,
+                                                 gdouble          angle);
+gdouble             adg_trail_get_max_angle     (AdgTrail        *trail);
 
 G_END_DECLS
 

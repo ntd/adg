@@ -30,6 +30,7 @@ struct _AdgTrailPrivate {
     cairo_path_t        cairo_path;
     AdgTrailCallback    callback;
     gpointer            user_data;
+    gdouble             max_angle;
 
     gboolean            in_construction;
     CpmlExtents         extents;

@@ -72,12 +72,26 @@
 
 G_DEFINE_TYPE(AdgTrail, adg_trail, ADG_TYPE_MODEL)
 
+enum {
+    PROP_0,
+    PROP_MAX_ANGLE
+};
+
 
 static void             _adg_finalize           (GObject        *object);
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           param_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
 static void             _adg_clear              (AdgModel       *model);
 static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
 static GArray *         _adg_arc_to_curves      (GArray         *array,
-                                                 const cairo_path_data_t *src);
+                                                 const cairo_path_data_t *src,
+                                                 gdouble         max_angle);
 
 
 static void
@@ -85,6 +99,7 @@ adg_trail_class_init(AdgTrailClass *klass)
 {
     GObjectClass *gobject_class;
     AdgModelClass *model_class;
+    GParamSpec *param;
 
     gobject_class = (GObjectClass *) klass;
     model_class = (AdgModelClass *) klass;
@@ -92,10 +107,19 @@ adg_trail_class_init(AdgTrailClass *klass)
     g_type_class_add_private(klass, sizeof(AdgTrailPrivate));
 
     gobject_class->finalize = _adg_finalize;
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
 
     model_class->clear = _adg_clear;
 
     klass->get_cpml_path = _adg_get_cpml_path;
+
+    param = g_param_spec_double("max-angle",
+                                P_("Max Angle"),
+                                P_("Max arc angle to approximate with a single Bézier curve: check adg_trail_set_max_angle() for details"),
+                                0, G_PI, G_PI_2,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_MAX_ANGLE, param);
 }
 
 static void
@@ -109,7 +133,7 @@ adg_trail_init(AdgTrail *trail)
     data->cairo_path.num_data = 0;
     data->callback = NULL;
     data->user_data = NULL;
-
+    data->max_angle = G_PI_2;
     data->in_construction = FALSE;
     data->extents.is_defined = FALSE;
 
@@ -123,6 +147,48 @@ _adg_finalize(GObject *object)
 
     if (_ADG_OLD_OBJECT_CLASS->finalize)
         _ADG_OLD_OBJECT_CLASS->finalize(object);
+}
+
+static void
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
+{
+    AdgTrail *trail;
+    AdgTrailPrivate *data;
+
+    trail = (AdgTrail *) object;
+    data = trail->data;
+
+    switch (prop_id) {
+    case PROP_MAX_ANGLE:
+        g_value_set_double(value, data->max_angle);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
+{
+    AdgTrail *trail;
+    AdgTrailPrivate *data;
+    gpointer tmp_pointer;
+    gdouble tmp_double;
+
+    trail = (AdgTrail *) object;
+    data = trail->data;
+
+    switch (prop_id) {
+    case PROP_MAX_ANGLE:
+        data->max_angle = g_value_get_double(value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
 }
 
 
@@ -152,7 +218,6 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
     return trail;
 }
 
-
 /**
  * adg_trail_get_cairo_path:
  * @trail: an #AdgTrail
@@ -166,16 +231,6 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * primitives (#CPML_CURVE). The conversion is cached, so any further
  * request is O(1). This cache is cleared only by the
  * adg_model_clear() method.
- *
- * <important>
- * <title>TODO</title>
- * <itemizedlist>
- * <listitem>Actually, the arcs are approximated with Bézier using the
- *           hardcoded max angle of PI/2. This should be customizable
- *           by adding, for instance, a property to the #AdgTrail class
- *           with a default value of PI/2.</listitem>
- * </itemizedlist>
- * </important>
  *
  * Returns: a pointer to the internal cairo path or %NULL on errors
  **/
@@ -210,7 +265,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
         p_src = (const cairo_path_data_t *) cpml_path->data + i;
 
         if ((CpmlPrimitiveType) p_src->header.type == CPML_ARC)
-            dst = _adg_arc_to_curves(dst, p_src);
+            dst = _adg_arc_to_curves(dst, p_src, data->max_angle);
         else
             dst = g_array_append_vals(dst, p_src, p_src->header.length);
     }
@@ -385,6 +440,57 @@ adg_trail_dump(AdgTrail *trail)
     }
 }
 
+/**
+ * adg_trail_set_max_angle:
+ * @trail: an #AdgTrail
+ * @angle: the new angle (in radians)
+ *
+ * Sets the max angle of @trail to @angle, basically setting
+ * the #AdgTrail:max-angle property.
+ *
+ * This property is used to specify the maximum ciruclar arc
+ * that will be approximated by a single Bézier curve in the
+ * adg_trail_get_cairo_path() method. Basically this can be
+ * used to fine tune the fitting algorithm: lower values mean
+ * an arc will be approximated with more curves, lowering the
+ * error but incrementing time and memory needed. The default
+ * value of #G_PI_2 is usually good in most cases.
+ *
+ * Check the cairo-arc.c source file (part of the cairo project)
+ * for mathematical details. A copy can probably be consulted
+ * online at the cairo repository on freedesktop. Here is a link
+ * to the 1.10.2 version:
+ *
+ * http://cgit.freedesktop.org/cairo/tree/src/cairo-arc.c?id=1.10.2
+ **/
+void
+adg_trail_set_max_angle(AdgTrail *trail, gdouble angle)
+{
+    g_return_if_fail(ADG_IS_TRAIL(trail));
+    g_object_set(trail, "max-angle", angle, NULL);
+}
+
+/**
+ * adg_trail_get_max_angle:
+ * @trail: an #AdgTrail
+ *
+ * Gets the #AdgTrail:max-angle property value of @trail.
+ * Refer to adg_trail_set_max_angle() for details of what
+ * this parameter is used for.
+ *
+ * Returns: the value (in radians) of the max angle
+ **/
+gdouble
+adg_trail_get_max_angle(AdgTrail *trail)
+{
+    AdgTrailPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_TRAIL(trail), 0);
+
+    data = trail->data;
+    return data->max_angle;
+}
+
 
 static void
 _adg_clear(AdgModel *model)
@@ -417,7 +523,8 @@ _adg_get_cpml_path(AdgTrail *trail)
 }
 
 static GArray *
-_adg_arc_to_curves(GArray *array, const cairo_path_data_t *src)
+_adg_arc_to_curves(GArray *array, const cairo_path_data_t *src,
+                   gdouble max_angle)
 {
     CpmlPrimitive arc;
     double start, end;
@@ -433,7 +540,7 @@ _adg_arc_to_curves(GArray *array, const cairo_path_data_t *src)
         int n_curves;
         cairo_path_data_t *curves;
 
-        n_curves = ceil(fabs(end-start) / G_PI_2);
+        n_curves = ceil(fabs(end-start) / max_angle);
         curves = g_new(cairo_path_data_t, n_curves * 4);
         segment.data = curves;
         cpml_arc_to_curves(&arc, &segment, n_curves);
