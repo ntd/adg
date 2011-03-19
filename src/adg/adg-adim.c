@@ -87,6 +87,7 @@ static gchar *          _adg_default_value      (AdgDim         *dim);
 static gboolean         _adg_update_geometry    (AdgADim        *adim);
 static void             _adg_update_entities    (AdgADim        *adim);
 static void             _adg_unset_trail        (AdgADim        *adim);
+static void             _adg_dispose_trail      (AdgADim        *adim);
 static void             _adg_dispose_markers    (AdgADim        *adim);
 static gboolean         _adg_get_info           (AdgADim        *adim,
                                                  CpmlVector      vector[],
@@ -201,12 +202,15 @@ static void
 _adg_dispose(GObject *object)
 {
     AdgEntity *entity;
+    AdgADim *adim;
     AdgADimPrivate *data;
 
     entity = (AdgEntity *) object;
-    data = ((AdgADim *) object)->data;
+    adim = (AdgADim *) entity;
+    data = adim->data;
 
-    _adg_dispose_markers((AdgADim *) object);
+    _adg_dispose_trail(adim);
+    _adg_dispose_markers(adim);
 
     if (data->org1 != NULL)
         data->org1 = adg_entity_point(entity, data->org1, NULL);
@@ -726,6 +730,7 @@ _adg_invalidate(AdgEntity *entity)
     adim = (AdgADim *) entity;
     data = adim->data;
 
+    _adg_dispose_trail(adim);
     _adg_dispose_markers(adim);
     data->geometry_arranged = FALSE;
     _adg_unset_trail(adim);
@@ -746,9 +751,11 @@ _adg_arrange(AdgEntity *entity)
     AdgDim *dim;
     AdgADimPrivate *data;
     AdgAlignment *quote;
-    const AdgMatrix *local;
+    const AdgMatrix *global, *local;
     AdgPair ref1, ref2, base1, base12, base2;
     AdgPair pair;
+    CpmlExtents extents;
+    AdgEntity *marker_entity;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
@@ -770,7 +777,10 @@ _adg_arrange(AdgEntity *entity)
         return;
     }
 
+    global = adg_entity_get_global_matrix(entity);
     local = adg_entity_get_local_matrix(entity);
+    extents.is_defined = FALSE;
+
     cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
     cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base1, &data->point.base1);
@@ -822,8 +832,8 @@ _adg_arrange(AdgEntity *entity)
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
+    /* Arrange the quote */
     if (quote != NULL) {
-        /* Update global and local map of the quote */
         AdgEntity *quote_entity;
         gdouble angle;
         AdgMatrix map;
@@ -837,23 +847,39 @@ _adg_arrange(AdgEntity *entity)
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, angle);
         adg_entity_set_global_map(quote_entity, &map);
+        adg_entity_arrange(quote_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
-        adg_matrix_copy(&data->quote.global_map,
-                        adg_entity_get_global_map(quote_entity));
+        adg_matrix_copy(&data->quote.global_map, &map);
     }
 
-    /* Signal to the markers (if any) that the path has changed */
+    /* Arrange the trail */
+    if (data->trail != NULL) {
+        CpmlExtents trail_extents;
+        cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
+        cpml_extents_transform(&trail_extents, global);
+        cpml_extents_add(&extents, &trail_extents);
+    } else {
+        _adg_dispose_markers(adim);
+    }
+
+    /* Arrange the markers */
     if (data->marker1 != NULL) {
+        marker_entity = (AdgEntity *) data->marker1;
         adg_marker_set_segment(data->marker1, data->trail, 1);
-        adg_entity_local_changed((AdgEntity *) data->marker1);
+        adg_entity_local_changed(marker_entity);
+        adg_entity_arrange(marker_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(marker_entity));
     }
-
     if (data->marker2 != NULL) {
+        marker_entity = (AdgEntity *) data->marker2;
         adg_marker_set_segment(data->marker2, data->trail, 1);
-        adg_entity_local_changed((AdgEntity *) data->marker2);
+        adg_entity_local_changed(marker_entity);
+        adg_entity_arrange(marker_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(marker_entity));
     }
 
-    /* TODO: compute the extents */
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
@@ -1030,7 +1056,7 @@ _adg_unset_trail(AdgADim *adim)
 }
 
 static void
-_adg_dispose_markers(AdgADim *adim)
+_adg_dispose_trail(AdgADim *adim)
 {
     AdgADimPrivate *data = adim->data;
 
@@ -1038,6 +1064,12 @@ _adg_dispose_markers(AdgADim *adim)
         g_object_unref(data->trail);
         data->trail = NULL;
     }
+}
+
+static void
+_adg_dispose_markers(AdgADim *adim)
+{
+    AdgADimPrivate *data = adim->data;
 
     if (data->marker1 != NULL) {
         g_object_unref(data->marker1);
