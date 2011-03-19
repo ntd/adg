@@ -83,6 +83,7 @@ static gchar *          _adg_default_value      (AdgDim         *dim);
 static gboolean         _adg_update_geometry    (AdgRDim        *rdim);
 static void             _adg_update_entities    (AdgRDim        *rdim);
 static void             _adg_clear_trail        (AdgRDim        *rdim);
+static void             _adg_dispose_trail      (AdgRDim        *rdim);
 static void             _adg_dispose_marker     (AdgRDim        *rdim);
 static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
@@ -158,7 +159,10 @@ adg_rdim_init(AdgRDim *rdim)
 static void
 _adg_dispose(GObject *object)
 {
-    _adg_dispose_marker((AdgRDim *) object);
+    AdgRDim *rdim = (AdgRDim *) object;
+
+    _adg_dispose_trail(rdim);
+    _adg_dispose_marker(rdim);
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
@@ -327,6 +331,7 @@ _adg_invalidate(AdgEntity *entity)
     rdim = (AdgRDim *) entity;
     data = rdim->data;
 
+    _adg_dispose_trail(rdim);
     _adg_dispose_marker(rdim);
     data->geometry_arranged = FALSE;
     _adg_clear_trail(rdim);
@@ -402,7 +407,7 @@ _adg_arrange(AdgEntity *entity)
         data->cpml.data[2].header.length = 6;
     }
 
-    /* Add the quote */
+    /* Arrange the quote */
     if (quote != NULL) {
         AdgMatrix map;
 
@@ -415,28 +420,28 @@ _adg_arrange(AdgEntity *entity)
         adg_entity_arrange(quote_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
 
-        adg_matrix_copy(&data->quote.global_map,
-                        adg_entity_get_global_map(quote_entity));
+        adg_matrix_copy(&data->quote.global_map, &map);
     }
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
+    /* Arrange the trail */
     if (data->trail != NULL) {
         CpmlExtents trail_extents;
-        AdgEntity *marker_entity;
-
         cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
         cpml_extents_transform(&trail_extents, global);
         cpml_extents_add(&extents, &trail_extents);
+    } else {
+        _adg_dispose_marker(rdim);
+    }
 
-        if (data->marker != NULL) {
-            marker_entity = (AdgEntity *) data->marker;
-            adg_marker_set_segment(data->marker, data->trail,
-                                   outside ? 2 : 1);
-            adg_entity_local_changed(marker_entity);
-            adg_entity_arrange(marker_entity);
-            cpml_extents_add(&extents, adg_entity_get_extents(marker_entity));
-        }
+    /* Arrange the marker */
+    if (data->marker != NULL) {
+        AdgEntity *marker_entity = (AdgEntity *) data->marker;
+        adg_marker_set_segment(data->marker, data->trail, outside ? 2 : 1);
+        adg_entity_local_changed(marker_entity);
+        adg_entity_arrange(marker_entity);
+        cpml_extents_add(&extents, adg_entity_get_extents(marker_entity));
     }
 
     adg_entity_set_extents(entity, &extents);
@@ -587,7 +592,7 @@ _adg_clear_trail(AdgRDim *rdim)
 }
 
 static void
-_adg_dispose_marker(AdgRDim *rdim)
+_adg_dispose_trail(AdgRDim *rdim)
 {
     AdgRDimPrivate *data = rdim->data;
 
@@ -595,6 +600,12 @@ _adg_dispose_marker(AdgRDim *rdim)
         g_object_unref(data->trail);
         data->trail = NULL;
     }
+}
+
+static void
+_adg_dispose_marker(AdgRDim *rdim)
+{
+    AdgRDimPrivate *data = rdim->data;
 
     if (data->marker != NULL) {
         g_object_unref(data->marker);
