@@ -6,6 +6,30 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.3">
+<title>ADG 0.6.3</title>
+
+<para>The text manipulation logic has been moved inside the AdgTextual
+interface and a new entity based on pango (AdgText) has been added.
+Also AdgToyText implements AdgTextual so all the text entities are
+now interchangeable.</para>
+
+<para>The demo program has a new dialog page that allows to customize
+the title block of the drawing. The zoom hints have been moved
+outside the paper so the drawing can be considered finalized.</para>
+
+<para>The CPML library has its own test framework. Anyway tests have
+been improved generally so it is now possible to generate a
+report by using "make test-report".</para>
+
+<para>The missing extents computation on AdgRDim, AdgADim and AdgArrow
+are now in place. By calling adg-demo with the -E option it
+is possible to visually verify the extents status.</para>
+
+<para>A bunch of bugs, most notably the wrong glade catalogdir detection
+and some extents computation, have been resolved.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.6.2">
 <title>ADG 0.6.2</title>
 
