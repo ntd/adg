@@ -87,7 +87,16 @@ static void             _adg_update_entities    (AdgLDim        *ldim);
 static void             _adg_choose_flags       (AdgLDim        *ldim,
                                                  gboolean       *to_outside,
                                                  gboolean       *to_detach);
+static void             _adg_update_quote       (AdgLDim        *ldim,
+                                                 AdgPair        *base1,
+                                                 AdgPair        *base2,
+                                                 AdgPair        *pos,
+                                                 gboolean        detach,
+                                                 gboolean        outside,
+                                                 gdouble         gap);
+static void             _adg_update_extents     (AdgLDim        *ldim);
 static void             _adg_unset_trail        (AdgLDim        *ldim);
+static void             _adg_dispose_trail      (AdgLDim        *ldim);
 static void             _adg_dispose_markers    (AdgLDim        *ldim);
 static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
@@ -182,7 +191,10 @@ adg_ldim_init(AdgLDim *ldim)
 static void
 _adg_dispose(GObject *object)
 {
-    _adg_dispose_markers((AdgLDim *) object);
+    AdgLDim *ldim = (AdgLDim *) object;
+
+    _adg_dispose_trail(ldim);
+    _adg_dispose_markers(ldim);
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
@@ -491,6 +503,7 @@ _adg_invalidate(AdgEntity *entity)
     ldim = (AdgLDim *) entity;
     data = ldim->data;
 
+    _adg_dispose_trail(ldim);
     _adg_dispose_markers(ldim);
     data->geometry.is_arranged = FALSE;
     data->shift.is_arranged = FALSE;
@@ -500,7 +513,6 @@ _adg_invalidate(AdgEntity *entity)
         _ADG_OLD_ENTITY_CLASS->invalidate(entity);
 }
 
-/* TODO: split the following crap in more manageable functions */
 static void
 _adg_arrange(AdgEntity *entity)
 {
@@ -509,46 +521,45 @@ _adg_arrange(AdgEntity *entity)
     AdgLDimPrivate *data;
     AdgAlignment *quote;
     AdgDimStyle *dim_style;
-    gboolean to_outside, to_detach;
-    const AdgMatrix *global, *local;
-    AdgPair ref1, ref2, base1, base2;
+    gboolean outside, detach;
+    const AdgMatrix *local;
+    AdgPair ref1, ref2, pos, base1, base2;
     AdgPair pair;
-    gint n;
-    CpmlExtents extents;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
     ldim = (AdgLDim *) entity;
-
-    if (!_adg_update_geometry(ldim))
+    if (! _adg_update_geometry(ldim))
         return;
 
     dim = (AdgDim *) ldim;
     data = ldim->data;
     quote = adg_dim_get_quote(dim);
+
     _adg_update_shift(ldim);
     _adg_update_entities(ldim);
 
     /* Check for cached result */
     if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
-        AdgEntity *quote_entity = (AdgEntity *) quote;
-        adg_entity_set_global_map(quote_entity, &data->quote.global_map);
+        adg_entity_set_global_map((AdgEntity *) quote, &data->quote.global_map);
         return;
     }
 
-    _adg_choose_flags(ldim, &to_outside, &to_detach);
+    _adg_choose_flags(ldim, &outside, &detach);
 
     dim_style = _ADG_GET_DIM_STYLE(dim);
-    global = adg_entity_get_global_matrix(entity);
     local = adg_entity_get_local_matrix(entity);
+
     cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
     cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
+    cpml_pair_copy(&pos, adg_point_get_pair(adg_dim_get_pos(dim)));
     cpml_pair_copy(&base1, &data->geometry.base1);
     cpml_pair_copy(&base2, &data->geometry.base2);
 
     cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
+    cpml_pair_transform(&pos, local);
     cpml_pair_transform(&base1, local);
     base1.x += data->shift.base.x;
     base1.y += data->shift.base.y;
@@ -577,7 +588,7 @@ _adg_arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
 
     /* Calculate the outside segments */
-    if (to_outside) {
+    if (outside) {
         gdouble beyond;
         CpmlVector vector;
 
@@ -604,126 +615,19 @@ _adg_arrange(AdgEntity *entity)
         cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
 
         data->cpml.data[2].header.length = 2;
-        n = 10;
     } else {
         data->cpml.data[2].header.length = 10;
-        n = 2;
     }
-
     data->cpml.data[10].header.length = 2;
-    extents.is_defined = FALSE;
 
-    /* Add the quote */
-    if (quote) {
-        AdgEntity *quote_entity;
-        gdouble angle;
-        AdgPair middle, factor;
-        AdgMatrix map;
-
-        quote_entity = (AdgEntity *) quote;
-        angle = adg_dim_quote_angle(dim, data->direction + G_PI_2);
-        middle.x = (base1.x + base2.x) / 2;
-        middle.y = (base1.y + base2.y) / 2;
-        factor.x = factor.y = 0;
-
-        if (to_detach) {
-            /* Detached quote: position the quote at "pos" */
-            const AdgPair *quote_shift;
-            CpmlVector vector;
-            AdgPair tmp_pair, quote_end;
-            gdouble same_sd, opposite_sd, quote_size;
-            gint n_side;
-            cairo_path_data_t *to_extend;
-
-            quote_shift = adg_dim_style_get_quote_shift(dim_style);
-
-            /* Set "pair" to the properly converted "pos" coordinates */
-            cpml_pair_copy(&pair, adg_point_get_pair(adg_dim_get_pos(dim)));
-            cpml_pair_transform(&pair, local);
-            pair.x += data->shift.base.x;
-            pair.y += data->shift.base.y;
-
-            /* Taking "middle" as the reference, check if the quote
-             * is on the _left_ or on the _right_ side. This is got
-             * by checking if (pos-middle) is closer to the quote
-             * vector or to the negated quote vector by using an
-             * algorithm based on the squared distances. */
-            tmp_pair.x = pair.x - middle.x;
-            tmp_pair.y = pair.y - middle.y;
-            cpml_vector_from_angle(&vector, angle);
-
-            same_sd = cpml_pair_squared_distance(&vector, &tmp_pair);
-            vector.x = -vector.x;
-            vector.y = -vector.y;
-            opposite_sd = cpml_pair_squared_distance(&vector, &tmp_pair);
-            quote_size = adg_entity_get_extents(quote_entity)->size.x;
-            quote_size /= (global->xx + global->yy) / 2;
-
-            /* Properly align the quote, depending on its side */
-            if (same_sd > opposite_sd) {
-                factor.x = 1;
-            } else {
-                factor.x = 0;
-                vector.x = -vector.x;
-                vector.y = -vector.y;
-            }
-
-            /* Add the quote displacement */
-            cpml_vector_set_length(&vector, quote_shift->x);
-            pair.x += vector.x;
-            pair.y += vector.y;
-
-            /* Calculate the end point (on the base line) of the quote */
-            cpml_vector_set_length(&vector, quote_size);
-            quote_end.x = pair.x + vector.x;
-            quote_end.y = pair.y + vector.y;
-
-            /* Extends the base line to include the "quote_end" pair,
-             * so a detached quote is properly underlined */
-            if (cpml_pair_squared_distance(&quote_end, &base1) >
-                cpml_pair_squared_distance(&quote_end, &base2))
-                n_side = 2;
-            else
-                n_side = 1;
-
-            if (to_outside) {
-                to_extend = &data->cpml.data[n_side == 1 ? 7 : 9];
-            } else {
-                to_extend = &data->cpml.data[9];
-                cpml_pair_to_cairo(&middle, &data->cpml.data[9]);
-                cpml_pair_to_cairo(n_side == 1 ? &base1 : &base2,
-                                   &data->cpml.data[11]);
-                data->cpml.data[2].header.length = 6;
-                n = 10;
-            }
-
-            cpml_pair_from_cairo(&tmp_pair, to_extend);
-
-            /* Extend the base line only if needed */
-            if (cpml_pair_squared_distance(&quote_end, &middle) >
-                cpml_pair_squared_distance(&tmp_pair, &middle))
-                cpml_pair_to_cairo(&quote_end, to_extend);
-        } else {
-            /* Center the quote in the middle of the base line */
-            factor.x = 0.5;
-            cpml_pair_copy(&pair, &middle);
-        }
-
-        adg_alignment_set_factor(quote, &factor);
-        cairo_matrix_init_translate(&map, pair.x, pair.y);
-        cairo_matrix_rotate(&map, angle);
-        adg_entity_set_global_map(quote_entity, &map);
-        adg_entity_arrange(quote_entity);
-        cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
-
-        adg_matrix_copy(&data->quote.global_map,
-                        adg_entity_get_global_map(quote_entity));
-    }
+    _adg_update_quote(ldim, &base1, &base2, &pos, detach, outside,
+                      adg_dim_style_get_quote_shift(dim_style)->x);
 
     /* Play with header lengths to show or hide the extension lines */
     if (data->has_extension1) {
         data->cpml.data[14].header.length = data->has_extension2 ? 2 : 6;
     } else {
+        gint n = ! outside && ! detach ? 2 : 10;
         data->cpml.data[14].header.length = 2;
         data->cpml.data[n].header.length += 4;
         if (!data->has_extension2)
@@ -732,32 +636,17 @@ _adg_arrange(AdgEntity *entity)
 
     data->cpml.path.status = CAIRO_STATUS_SUCCESS;
 
-    if (data->trail) {
-        CpmlExtents trail_extents;
-
-        cpml_extents_copy(&trail_extents, adg_trail_get_extents(data->trail));
-
-        cpml_extents_transform(&trail_extents, global);
-        cpml_extents_add(&extents, &trail_extents);
+    /* Update the markers, if present */
+    if (data->trail != NULL) {
+        if (data->marker1 != NULL)
+            adg_marker_set_segment(data->marker1, data->trail, outside ? 2 : 1);
+        if (data->marker2 != NULL)
+            adg_marker_set_segment(data->marker2, data->trail, outside ? 3 : 1);
+    } else {
+        _adg_dispose_markers(ldim);
     }
 
-    if (data->marker1) {
-        AdgEntity *marker1_entity = (AdgEntity *) data->marker1;
-        adg_marker_set_segment(data->marker1, data->trail, to_outside ? 2 : 1);
-        adg_entity_local_changed(marker1_entity);
-        adg_entity_arrange(marker1_entity);
-        cpml_extents_add(&extents, adg_entity_get_extents(marker1_entity));
-    }
-
-    if (data->marker2) {
-        AdgEntity *marker2_entity = (AdgEntity *) data->marker2;
-        adg_marker_set_segment(data->marker2, data->trail, to_outside ? 3 : 1);
-        adg_entity_local_changed(marker2_entity);
-        adg_entity_arrange(marker2_entity);
-        cpml_extents_add(&extents, adg_entity_get_extents(marker2_entity));
-    }
-
-    adg_entity_set_extents(entity, &extents);
+    _adg_update_extents(ldim);
 }
 
 static void
@@ -811,7 +700,7 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    if (!_adg_update_geometry(ldim))
+    if (! _adg_update_geometry(ldim))
         return g_strdup("undef");
 
     return g_strdup_printf(format, data->geometry.distance);
@@ -932,7 +821,6 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
     AdgDim *dim;
     AdgThreeState outside, detached;
     AdgLDimPrivate *data;
-    AdgEntity *quote;
     const AdgMatrix *local, *global;
     gdouble local_factor, global_factor;
     gdouble available_space, markers_space, quote_space;
@@ -950,7 +838,6 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
         return;
 
     data = ldim->data;
-    quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
     global = adg_entity_get_global_matrix((AdgEntity *) ldim);
     local_factor = (local->xx + local->yy) / 2;
@@ -959,9 +846,9 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 
     markers_space = 0;
     if (outside != ADG_THREE_STATE_ON) {
-        if (data->marker1)
+        if (data->marker1 != NULL)
             markers_space += adg_marker_get_size(data->marker1);
-        if (data->marker2)
+        if (data->marker2 != NULL)
             markers_space += adg_marker_get_size(data->marker2);
 
         markers_space *= global_factor;
@@ -971,6 +858,8 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
         /* Leave at least 0.25 markers_space between the markers */
         quote_space = markers_space * 0.25;
     } else {
+        AdgEntity *quote = (AdgEntity *) adg_dim_get_quote(dim);
+        adg_entity_arrange(quote);
         quote_space = adg_entity_get_extents(quote)->size.x;
     }
 
@@ -997,14 +886,163 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 }
 
 static void
+_adg_update_quote(AdgLDim *ldim, AdgPair *base1, AdgPair *base2, AdgPair *pos,
+                  gboolean detach, gboolean outside, gdouble gap)
+{
+    AdgLDimPrivate *data;
+    AdgEntity *quote_entity;
+    AdgPair middle, factor, org;
+    CpmlVector dir;
+    AdgMatrix map;
+
+    quote_entity = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
+    if (quote_entity == NULL)
+        return;
+
+    data = (AdgLDimPrivate *) ldim->data;
+    middle.x = (base1->x + base2->x) / 2;
+    middle.y = (base1->y + base2->y) / 2;
+    dir.x = base2->x - base1->x;
+    dir.y = base2->y - base1->y;
+    cpml_vector_set_length(&dir, 1);
+
+    if (detach) {
+        /* Detached quote: position the quote at "pos" */
+        AdgPair tmp_pair, quote_end;
+        CpmlVector vector;
+        gdouble distance1, distance2, quote_size;
+        gboolean on_side1;
+        cairo_path_data_t *to_extend;
+
+        /* Set "org" to the properly converted "pos" coordinates */
+        org.x = pos->x + data->shift.base.x;
+        org.y = pos->y + data->shift.base.y;
+
+        /* Check in which side of the base line the quote must be rendered.
+         * This is done by checking if the (pos..middle) vector is closer
+         * to the base line vector or to its inverse, that is if they are
+         * concordants or discordants. For this purpose, an algorithm
+         * based on squared distances is used. */
+        tmp_pair.x = org.x - middle.x;
+        tmp_pair.y = org.y - middle.y;
+        vector.x = -dir.x;
+        vector.y = -dir.y;
+        distance2 = cpml_pair_squared_distance(&dir, &tmp_pair);
+        distance1 = cpml_pair_squared_distance(&vector, &tmp_pair);
+        on_side1 = distance2 > distance1;
+
+        /* Properly align the quote, depending on its side */
+        factor.x = on_side1 ? 1 : 0;
+        if (! on_side1)
+            vector = dir;
+
+        /* Add a gap between the quote and the extension line */
+        org.x += vector.x * gap;
+        org.y += vector.y * gap;
+
+        /* Calculate the end point (on the base line) of the quote */
+        quote_size = adg_entity_get_extents(quote_entity)->size.x;
+        quote_end.x = org.x + vector.x * quote_size;
+        quote_end.y = org.y + vector.y * quote_size;
+
+        /* Extends the base line to include the "quote_end" pair,
+         * so a detached quote is properly underlined */
+        if (outside) {
+            to_extend = &data->cpml.data[on_side1 ? 7 : 9];
+        } else {
+            to_extend = &data->cpml.data[9];
+            cpml_pair_to_cairo(&middle, &data->cpml.data[9]);
+            cpml_pair_to_cairo(on_side1 ? base1 : base2, &data->cpml.data[11]);
+            data->cpml.data[2].header.length = 6;
+        }
+
+        /* Extend the base line only if needed */
+        cpml_pair_from_cairo(&tmp_pair, to_extend);
+        distance1 = cpml_pair_squared_distance(&quote_end, &middle);
+        distance2 = cpml_pair_squared_distance(&tmp_pair, &middle);
+        if (distance1 > distance2)
+            cpml_pair_to_cairo(&quote_end, to_extend);
+    } else {
+        /* Center the quote in the middle of the base line */
+        factor.x = 0.5;
+        cpml_pair_copy(&org, &middle);
+    }
+
+    factor.y = 0;
+    adg_alignment_set_factor((AdgAlignment *) quote_entity, &factor);
+    cairo_matrix_init(&map, dir.x, dir.y, -dir.y, dir.x, org.x, org.y);
+    adg_entity_set_global_map(quote_entity, &map);
+    adg_entity_arrange(quote_entity);
+
+    adg_matrix_copy(&data->quote.global_map, &map);
+}
+
+static void
+_adg_update_extents(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data;
+    CpmlExtents new_extents;
+    const CpmlExtents *extents;
+    AdgEntity *quote;
+    AdgMarker *marker;
+    AdgEntity *marker_entity;
+
+    data = ldim->data;
+    quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
+    new_extents.is_defined = FALSE;
+
+    /* The quote is always present (otherwise something bad happened) */
+    extents = adg_entity_get_extents(quote);
+    if (extents != NULL)
+        cpml_extents_add(&new_extents, extents);
+
+    if (data->trail != NULL) {
+        extents = adg_trail_get_extents(data->trail);
+        if (extents != NULL)
+            cpml_extents_add(&new_extents, extents);
+    }
+
+    if (data->marker1 != NULL) {
+        marker_entity = (AdgEntity *) data->marker1;
+        adg_entity_local_changed(marker_entity);
+        adg_entity_arrange(marker_entity);
+        extents = adg_entity_get_extents(marker_entity);
+        if (extents != NULL)
+            cpml_extents_add(&new_extents, extents);
+    }
+
+    if (data->marker2 != NULL) {
+        marker_entity = (AdgEntity *) data->marker2;
+        adg_entity_local_changed(marker_entity);
+        adg_entity_arrange(marker_entity);
+        extents = adg_entity_get_extents(marker_entity);
+        if (extents != NULL)
+            cpml_extents_add(&new_extents, extents);
+    }
+
+    adg_entity_set_extents((AdgEntity *) ldim, &new_extents);
+}
+
+static void
 _adg_unset_trail(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->trail)
+    if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
 
     data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+}
+
+static void
+_adg_dispose_trail(AdgLDim *ldim)
+{
+    AdgLDimPrivate *data = ldim->data;
+
+    if (data->trail != NULL) {
+        g_object_unref(data->trail);
+        data->trail = NULL;
+    }
 }
 
 static void
@@ -1012,17 +1050,12 @@ _adg_dispose_markers(AdgLDim *ldim)
 {
     AdgLDimPrivate *data = ldim->data;
 
-    if (data->trail) {
-        g_object_unref(data->trail);
-        data->trail = NULL;
-    }
-
-    if (data->marker1) {
+    if (data->marker1 != NULL) {
         g_object_unref(data->marker1);
         data->marker1 = NULL;
     }
 
-    if (data->marker2) {
+    if (data->marker2 != NULL) {
         g_object_unref(data->marker2);
         data->marker2 = NULL;
     }
