@@ -970,13 +970,10 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning(_("%s: requested a `%s' operation while a `%s' operation is active"),
+        g_warning(_("%s: requested a `%s' operation while a `%s' operation was active"),
                   G_STRLOC, _adg_action_name(action),
                   _adg_action_name(operation->action));
-        /* TODO: this is a rude simplification, as a lot of actions
-         * could be chained up. As an example, a fillet followed by
-         * a polar chamfer is quite common.
-         */
+        /* XXX: http://dev.entidi.com/p/adg/issues/50/ */
         return FALSE;
     }
 
