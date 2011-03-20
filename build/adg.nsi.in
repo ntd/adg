@@ -56,6 +56,7 @@ Section "ADG canvas" SecBase
   File "${DLLDIR}/libpng14-*.dll"
   File "${DLLDIR}/intl.dll"
   File "${DLLDIR}/libglib-2.0-*.dll"
+  File "${DLLDIR}/libgthread-2.0-*.dll"
   File "${DLLDIR}/libgmodule-2.0-*.dll"
   File "${DLLDIR}/libgobject-2.0-*.dll"
   File "${DLLDIR}/libfontconfig-*.dll"
