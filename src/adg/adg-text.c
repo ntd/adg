@@ -276,6 +276,7 @@ _adg_arrange(AdgEntity *entity)
         CpmlExtents new_extents;
         new_extents.is_defined = FALSE;
         adg_entity_set_extents(entity, &new_extents);
+        _adg_clear_layout(text);
         return;
     } else if (data->layout != NULL) {
         /* Cached result */
@@ -283,21 +284,32 @@ _adg_arrange(AdgEntity *entity)
     }
 
     if (data->layout == NULL) {
+        static PangoFontMap *font_map = NULL;
         AdgDress dress;
         AdgPangoStyle *pango_style;
-        PangoFontMap *font_map;
         PangoFontDescription *font_description;
         cairo_font_options_t *options;
         PangoContext *context;
 
+        /* Keep around a font_map object. The rationale is here:
+         * https://bugzilla.gnome.org/show_bug.cgi?id=143542
+         *
+         * Basically, PangoFontMap is an heavy object and
+         * creating/destroying it is not the right way.
+         *
+         * In reality, the blocking issue for me was the following
+         * line make the adg-demo program crash on MinGW32:
+         * g_object_unref(font_map);
+         */
+        if (font_map == NULL)
+            font_map = pango_cairo_font_map_new();
+
         dress = data->font_dress;
         pango_style = (AdgPangoStyle *) adg_entity_style(entity, dress);
-        font_map = pango_cairo_font_map_new();
         font_description = adg_pango_style_get_description(pango_style);
 
         context = pango_context_new();
         pango_context_set_font_map(context, font_map);
-        g_object_unref(font_map);
         pango_cairo_context_set_resolution(context, 72);
 
         options = adg_font_style_new_options((AdgFontStyle *) pango_style);
