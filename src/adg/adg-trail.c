@@ -175,8 +175,6 @@ _adg_set_property(GObject *object, guint prop_id,
 {
     AdgTrail *trail;
     AdgTrailPrivate *data;
-    gpointer tmp_pointer;
-    gdouble tmp_double;
 
     trail = (AdgTrail *) object;
     data = trail->data;

@@ -984,7 +984,6 @@ _adg_update_extents(AdgLDim *ldim)
     CpmlExtents new_extents;
     const CpmlExtents *extents;
     AdgEntity *quote;
-    AdgMarker *marker;
     AdgEntity *marker_entity;
 
     data = ldim->data;
