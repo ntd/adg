@@ -28,6 +28,7 @@
 
 
 /* The following define enables the inclusion of internal headers */
+#undef  __ADG_H__
 #define __ADG_H__
 
 #include <config.h>

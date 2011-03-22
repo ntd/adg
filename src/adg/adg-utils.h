@@ -40,8 +40,7 @@
 
 G_BEGIN_DECLS
 
-#if GLIB_CHECK_VERSION(2, 16, 0)
-#else
+#if GLIB_MINOR_VERSION < 16
 gint            g_strcmp0               (const gchar    *s1,
                                          const gchar    *s2);
 #endif

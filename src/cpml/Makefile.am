@@ -1,5 +1,8 @@
 include $(top_srcdir)/build/Makefile.am.common
 
+AM_CFLAGS=			$(CAIRO_CFLAGS)
+AM_LDFLAGS=			$(CAIRO_LIBS)
+
 SUBDIRS=			tests
 
 
@@ -41,6 +44,3 @@ libcpml_1_la_SOURCES=		$(h_sources) \
 				$(built_private_h_sources) \
 				$(c_sources) \
 				$(built_c_sources)
-libcpml_1_la_CFLAGS=		$(CAIRO_CFLAGS)
-libcpml_1_la_LDFLAGS=		-no-undefined
-libcpml_1_la_LIBADD=		$(CAIRO_LIBS)
