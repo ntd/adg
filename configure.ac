@@ -19,6 +19,9 @@ AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
 AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall])
+m4_ifdef([AM_SILENT_RULES],
+	 [AM_SILENT_RULES([yes])],
+	 [AC_SUBST([AM_V_GEN],[])])
 AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
 
 
@@ -198,10 +201,7 @@ AC_SUBST([ADG_REQUIRES],'gobject-2.0 >= gobject_prereq')
 AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
 AC_SUBST([DLLDIR],"$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin")
 
-SHAVE_INIT([build],[enable])
-AC_CONFIG_FILES([build/shave
-                 build/shave-libtool
-                 build/adg.nsi
+AC_CONFIG_FILES([build/adg.nsi
                  Makefile
                  src/Makefile
                  src/cpml-1.pc

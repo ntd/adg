@@ -7,6 +7,4 @@ abs_builddir=@abs_builddir@
 abs_top_builddir=@abs_top_builddir@
 pkgconfigdir=$(libdir)/pkgconfig
 
-MSG_GEN=@echo '  GEN   $@'
-
 include $(top_srcdir)/build/Makefile.am.gtester

@@ -1,8 +1,7 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 xml2txt_stylesheet=		$(srcdir)/docs/gnu/docbook2txt.xsl
-xml2txt_command=		$(MSG_GEN) ; \
-				if test -x $(XSLTPROC) ; then : ; else \
+xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 				  echo ' *WARN  libxslt-1.0.19 or later is required to generate $@' ; \
 				  touch $@ ; \
 				  exit 0 ; \
@@ -48,8 +47,7 @@ SUBDIRS+=			po \
 # Creating ChangeLog files from git log:
 # idea stolen from cairo/build/Makefile.am.changelog
 ChangeLog:
-	$(MSG_GEN) ; \
-	if test -d "$(srcdir)/.git"; then \
+	$(AM_V_GEN)if test -d "$(srcdir)/.git"; then \
 	  ( cd "$(srcdir)" && git log --stat > $@ ) ; \
 	else \
 	  echo ' *WARN  A git checkout is required to generate $@' ; \

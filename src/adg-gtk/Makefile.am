@@ -44,10 +44,11 @@ libadg_gtk_1_la_LIBADD=		$(GTK2_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
 
 
-mkenums_command=		$(MSG_GEN) ; \
-				$(GLIB_MKENUMS) --template
-genmarshal_command=		$(MSG_GEN) ; \
-				$(GLIB_GENMARSHAL) --prefix=adg_gtk_marshal
+mkenums_command=		$(AM_V_GEN)$(GLIB_MKENUMS) \
+				--template
+genmarshal_command=		$(AM_V_GEN)$(GLIB_GENMARSHAL) \
+				--prefix=adg_gtk_marshal
+
 
 adg-gtk-marshal.c: $(srcdir)/adg-gtk-marshal.genmarshal
 	$(genmarshal_command) --body $(srcdir)/adg-gtk-marshal.genmarshal > $@
