@@ -1,6 +1,14 @@
 include $(top_srcdir)/build/Makefile.am.common
 
+
 SUBDIRS=			tests
+AM_CPPFLAGS=			-I$(top_srcdir)/src \
+				-I$(top_builddir)/src
+AM_CFLAGS=			$(CAIRO_CFLAGS) \
+				$(GOBJECT2_CFLAGS)
+AM_LDFLAGS=			$(CAIRO_LIBS) \
+				$(GOBJECT2_LIBS)
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
 
 
 # file groups
@@ -145,24 +153,58 @@ libadg_1_la_SOURCES=		$(h_sources) \
 nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_1_la_CFLAGS=		$(CAIRO_CFLAGS) \
-				$(GOBJECT2_CFLAGS) \
-				-I$(top_srcdir)/src \
-				-I$(top_builddir)/src
 libadg_1_la_LDFLAGS=		-no-undefined
-libadg_1_la_LIBADD=		$(GOBJECT2_LIBS) \
-				$(top_builddir)/src/cpml/libcpml-1.la
 
 
+## Optional pangocairo related stuff
 if HAVE_PANGO
+
 h_sources+=			adg-pango-style.h \
 				adg-text.h
 private_h_sources+=		adg-pango-style-private.h \
 				adg-text-private.h
 c_sources+=			adg-pango-style.c \
 				adg-text.c
-libadg_1_la_CFLAGS+=		$(PANGO_CFLAGS)
-libadg_1_la_LIBADD+=		$(PANGO_LIBS)
+AM_CFLAGS+=			$(PANGO_CFLAGS)
+AM_LDFLAGS+=			$(PANGO_LIBS)
+
+endif
+
+
+## GObject introspection
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS=
+INTROSPECTION_SCANNER_ARGS=	--add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS=	--includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+
+introspection_sources=		$(h_sources) \
+				$(c_sources) \
+				$(built_h_sources) \
+				$(built_c_sources)
+
+Adg-1.gir: libadg-1.la
+Adg_1_gir_INCLUDES=		GLib-2.0 \
+				GObject-2.0
+if HAVE_PANGO
+Adg_1_gir_INCLUDES+=		PangoCairo-1.0
+endif
+Adg_1_gir_CFLAGS=		$(AM_CPPFLAGS) \
+				$(AM_CFLAGS) \
+				-D__ADG_H__
+Adg_1_gir_LDFLAGS=		$(AM_LDFLAGS) \
+				-L$(top_builddir)/src/cpml/.libs \
+				-lcpml-1
+Adg_1_gir_LIBS=			libadg-1.la
+Adg_1_gir_FILES=		$(introspection_sources)
+INTROSPECTION_GIRS+=		Adg-1.gir
+girdir=				$(datadir)/gir-1.0
+gir_DATA=			$(INTROSPECTION_GIRS)
+typelibdir=			$(libdir)/girepository-1.0
+typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
+CLEANFILES+=			$(gir_DATA) $(typelib_DATA)
+
 endif
 
 
@@ -179,7 +221,7 @@ adg-type-builtins.h: $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h
 	$(mkenums_command) $(srcdir)/adg-type-builtins.h.mkenums $(srcdir)/adg-enums.h > $@
 
 adg-marshal.c: $(srcdir)/adg-marshal.genmarshal
-	echo '#include <glib-object.h>' > $@ ;
+	@echo '#include <glib-object.h>' > $@ ;
 	$(genmarshal_command) --body $(srcdir)/adg-marshal.genmarshal >> $@
 
 adg-marshal.h: $(srcdir)/adg-marshal.genmarshal

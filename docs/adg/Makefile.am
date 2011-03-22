@@ -64,6 +64,8 @@ if HAVE_GTK2
 GTKDOC_CFLAGS=		$(GTK2_CFLAGS) \
 			-I$(top_srcdir)/src
 GTKDOC_LIBS=		$(GTK2_LIBS) \
+			$(top_builddir)/src/cpml/libcpml-1.la \
+			$(top_builddir)/src/adg/libadg-1.la \
 			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
 
 DOC_SOURCE_DIR+=	$(abs_top_srcdir)/src/adg-gtk

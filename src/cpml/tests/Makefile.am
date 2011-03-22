@@ -1,12 +1,13 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-AM_CFLAGS=			-g \
-				$(GLIB_CFLAGS) \
-				$(CAIRO_CFLAGS) \
-				-I$(top_srcdir)/src \
+
+AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(GLIB_LIBS)
+AM_CFLAGS=			$(GLIB_CFLAGS) \
+				$(CAIRO_CFLAGS)
+AM_LDFLAGS=			$(GLIB_LIBS) \
+				$(CAIRO_LIBS)
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
 
 
 # file groups

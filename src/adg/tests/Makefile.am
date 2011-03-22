@@ -1,11 +1,14 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-AM_CFLAGS=			-g \
-				$(GOBJECT2_CFLAGS) \
-				$(CAIRO_CFLAGS) \
-				-I$(top_srcdir)/src \
+
+AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-LDADD=				$(top_builddir)/src/adg/libadg-1.la
+AM_CFLAGS=			$(CAIRO_CFLAGS) \
+				$(GOBJECT2_CFLAGS)
+AM_LDFLAGS=			$(CAIRO_LIBS) \
+				$(GOBJECT2_LIBS)
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/adg/libadg-1.la
 
 
 # file groups
@@ -118,6 +121,8 @@ if HAVE_PANGO
 TEST_PROGS+=			test-text$(EXEEXT)
 test_text_SOURCES=		test-text.c \
 				$(test_internals)
+AM_CFLAGS+=			$(PANGO_CFLAGS)
+AM_LDFLAGS+=			$(PANGO_LIBS)
 endif
 
 endif

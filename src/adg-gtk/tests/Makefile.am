@@ -1,10 +1,13 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-AM_CFLAGS=			-g \
-				$(GTK2_CFLAGS) \
-				-I$(top_srcdir)/src \
+
+AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-LDADD=				$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
+AM_CFLAGS=			$(GTK2_CFLAGS)
+AM_LDFLAGS=			$(GTK2_LIBS)
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/adg/libadg-1.la \
+				$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
 
 
 # file groups
