@@ -132,11 +132,17 @@ AS_IF([test "x${enable_pango}" != "xno"],
       [PKG_CHECK_MODULES([PANGO],[pangocairo >= ]pangocairo_prereq,
                          [enable_pango=yes
                           AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
-                                             [Defined if the pango support is enabled.])],
+                                             [Defined if the pango support is enabled.])
+                          ADG_H_INCLUDES='
+#include <pango/pango.h>
+#include "adg/adg-text.h"
+#include "adg/adg-pango-style.h"
+'],
                          [AS_IF([test "x${enable_pango}" = "xyes"],
                                 [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
                                 [enable_pango=no])])])
 AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
+AC_SUBST([ADG_H_INCLUDES])
 
 
 # Check for optional GTK+2 support
@@ -202,7 +208,10 @@ AC_C_CONST
 # Final step
 
 AC_SUBST([CPML_REQUIRES],'cairo >= cairo_prereq')
-AC_SUBST([ADG_REQUIRES],'gobject-2.0 >= gobject_prereq')
+AS_IF([test "x${enable_pango}" == "xyes"],
+      [ADG_REQUIRES='pangocairo >= pangocairo_prereq'],
+      [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'])
+AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
 AC_SUBST([DLLDIR],"$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin")
 
@@ -213,6 +222,7 @@ AC_CONFIG_FILES([build/adg.nsi
                  src/cpml/Makefile
                  src/cpml/tests/Makefile
                  src/adg-1.pc
+		 src/adg.h
                  src/adg/Makefile
                  src/adg/tests/Makefile
                  src/adg-gtk-1.pc

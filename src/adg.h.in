@@ -64,5 +64,5 @@
 #include "adg/adg-ldim.h"
 #include "adg/adg-rdim.h"
 #include "adg/adg-adim.h"
-
+@ADG_H_INCLUDES@
 #endif /* __ADG_H__ */
