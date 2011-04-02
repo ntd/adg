@@ -23,6 +23,8 @@
  * @short_description: The ADG default logo
  *
  * The #AdgLogo is an entity representing the default ADG logo.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -191,6 +195,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Creates a new logo entity.
  *
  * Returns: the newly created logo entity
+ *
+ * Since: 1.0
  **/
 AdgLogo *
 adg_logo_new(void)
@@ -211,6 +217,8 @@ adg_logo_new(void)
  * The default dress is a transparent line dress: the rendering
  * callback will stroke the symbol using the default color with
  * a predefined thickness.
+ *
+ * Since: 1.0
  **/
 void
 adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
@@ -226,6 +234,8 @@ adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
  * Gets the line dress to be used in stroking the symbol of @logo.
  *
  * Returns: the requested line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_logo_get_symbol_dress(AdgLogo *logo)
@@ -253,6 +263,8 @@ adg_logo_get_symbol_dress(AdgLogo *logo)
  * The default dress is a transparent line dress: the rendering
  * callback will stroke the screen using the default color with
  * a predefined thickness.
+ *
+ * Since: 1.0
  **/
 void
 adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
@@ -268,6 +280,8 @@ adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
  * Gets the line dress to be used in stroking the screen shape of @logo.
  *
  * Returns: the requested line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_logo_get_screen_dress(AdgLogo *logo)
@@ -295,6 +309,8 @@ adg_logo_get_screen_dress(AdgLogo *logo)
  * The default dress is a transparent line dress: the rendering
  * callback will stroke the frame using the default color with
  * a predefined thickness.
+ *
+ * Since: 1.0
  **/
 void
 adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
@@ -310,6 +326,8 @@ adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
  * Gets the line dress to be used in stroking the frame of @logo.
  *
  * Returns: the requested line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_logo_get_frame_dress(AdgLogo *logo)

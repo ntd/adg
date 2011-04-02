@@ -24,6 +24,8 @@
  *
  * Contains parameters on how to draw arrows, providing a way to register a
  * custom rendering callback.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -31,6 +33,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -150,6 +154,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * By default, an arrow as #AdgEntity:local-method set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity
+ *
+ * Since: 1.0
  **/
 AdgArrow *
 adg_arrow_new(void)
@@ -170,6 +176,8 @@ adg_arrow_new(void)
  * By default, an arrow as #AdgEntity:local-method set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity
+ *
+ * Since: 1.0
  **/
 AdgArrow *
 adg_arrow_new_with_trail(AdgTrail *trail, gdouble pos)
@@ -189,6 +197,8 @@ adg_arrow_new_with_trail(AdgTrail *trail, gdouble pos)
  *
  * Sets a new angle: @angle will be the new opening angle of @arrow.
  * Changing the arrow angle will invalidate @arrow.
+ *
+ * Since: 1.0
  **/
 void
 adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
@@ -204,6 +214,8 @@ adg_arrow_set_angle(AdgArrow *arrow, gdouble angle)
  * Gets the current angle of @arrow.
  *
  * Returns: the arrow angle, in radians
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_arrow_get_angle(AdgArrow *arrow)

@@ -67,6 +67,8 @@
  * <listitem>the put_intersections() method must be implemented;</listitem>
  * </itemizedlist>
  * </important>
+ *
+ * Since: 1.0
  **/
 
 
@@ -100,7 +102,7 @@ static void             put_vector_at   (const CpmlPrimitive    *arc,
                                          CpmlVector             *vector);
 static void             offset          (CpmlPrimitive          *arc,
                                          double                  offset);
-static cairo_bool_t     get_center      (const CpmlPair         *p,
+static int              get_center      (const CpmlPair         *p,
                                          CpmlPair               *dest);
 static void             get_angles      (const CpmlPair         *p,
                                          const CpmlPair         *center,
@@ -139,11 +141,11 @@ _cpml_arc_get_class(void)
 
 /**
  * cpml_arc_info:
- * @arc:    the #CpmlPrimitive arc data
- * @center: where to store the center coordinates (can be %NULL)
- * @r:      where to store the radius (can be %NULL)
- * @start:  where to store the starting angle (can be %NULL)
- * @end:    where to store the ending angle (can be %NULL)
+ * @arc:    (in):               the #CpmlPrimitive arc data
+ * @center: (out) (allow-none): where to store the center coordinates
+ * @r:      (out) (allow-none): where to store the radius
+ * @start:  (out) (allow-none): where to store the starting angle
+ * @end:    (out) (allow-none): where to store the ending angle
  *
  * Given an @arc, this function calculates and returns its basic data.
  * Any pointer can be %NULL, in which case the requested info is not
@@ -166,9 +168,12 @@ _cpml_arc_get_class(void)
  * { -M_PI < value < 3*M_PI } inclusive instead of the usual
  * { -M_PI < value < M_PI } range.
  *
- * Returns: 1 if the function worked succesfully, 0 on errors
+ * Returns: (type boolean): %TRUE if the function worked succesfully,
+ *                          %FALSE on errors
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
               double *r, double *start, double *end)
 {
@@ -178,8 +183,8 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     cpml_pair_from_cairo(&p[1], &arc->data[1]);
     cpml_pair_from_cairo(&p[2], &arc->data[2]);
 
-    if (!get_center(p, &l_center))
-        return 0;
+    if (! get_center(p, &l_center))
+        return FALSE;
 
     if (center)
         *center = l_center;
@@ -198,13 +203,13 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
             *end = l_end;
     }
 
-    return 1;
+    return TRUE;
 }
 
 /**
  * cpml_arc_to_cairo:
- * @arc: the #CpmlPrimitive arc data
- * @cr:  the destination cairo context
+ * @arc: (in):    the #CpmlPrimitive arc data
+ * @cr:  (inout): the destination cairo context
  *
  * Renders @arc to the @cr cairo context. As cairo does not support
  * arcs natively, it is approximated using one or more Bézier curves.
@@ -214,6 +219,8 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
  * as threshold value. This means the maximum arc approximated by a
  * single curve will be a quarter of a circle and, consequently, a
  * whole circle will be approximated by 4 Bézier curves.
+ *
+ * Since: 1.0
  **/
 void
 cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
@@ -243,9 +250,9 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
 
 /**
  * cpml_arc_to_curves:
- * @arc:      the #CpmlPrimitive arc data
- * @segment:  the destination #CpmlSegment
- * @n_curves: number of Bézier to use
+ * @arc:      (in):  the #CpmlPrimitive arc data
+ * @segment:  (out): the destination #CpmlSegment
+ * @n_curves: (in):  number of Bézier to use
  *
  * Converts @arc to a serie of @n_curves Bézier curves and puts them
  * inside @segment. Obviously, @segment must have enough space to
@@ -258,6 +265,8 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
  * the application: in the file src/cairo-arc.c, found in the cairo
  * tarball (at least in cairo-1.9.1), there is a table showing the
  * magnitude of error of this curve approximation algorithm.
+ *
+ * Since: 1.0
  **/
 void
 cpml_arc_to_curves(const CpmlPrimitive *arc, CpmlSegment *segment,
@@ -427,7 +436,7 @@ offset(CpmlPrimitive *arc, double offset)
     cpml_pair_to_cairo(&p[2], &arc->data[2]);
 }
 
-static cairo_bool_t
+static int
 get_center(const CpmlPair *p, CpmlPair *dest)
 {
     CpmlPair b, c;
@@ -437,7 +446,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
         dest->x = (p[0].x + p[1].x) / 2;
         dest->y = (p[0].y + p[1].y) / 2;
-        return 1;
+        return TRUE;
     }
 
     /* Translate the 3 points of -p0, to simplify the formula */
@@ -450,7 +459,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
      * are laying on a straight line and there is no fitting circle */
     d = (b.x*c.y - b.y*c.x) * 2;
     if (d == 0.)
-        return 0;
+        return FALSE;
 
     b2 = b.x*b.x + b.y*b.y;
     c2 = c.x*c.x + c.y*c.y;
@@ -458,7 +467,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     dest->x = (c.y*b2 - b.y*c2) / d + p[0].x;
     dest->y = (b.x*c2 - c.x*b2) / d + p[0].y;
 
-    return 1;
+    return TRUE;
 }
 
 static void

@@ -37,6 +37,8 @@
  * For example, to center the children either in x and y, you can call
  * adg_alignment_set_factor_explicit(alignment, 0.5, 0.5). To align them
  * on the right, specify a (0, 1) factor.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -44,6 +46,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -166,6 +170,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Creates a new alignment container with the specified factor.
  *
  * Returns: the newly created alignment or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgAlignment *
 adg_alignment_new(const AdgPair *factor)
@@ -182,6 +188,8 @@ adg_alignment_new(const AdgPair *factor)
  * factor values.
  *
  * Returns: the newly created alignment
+ *
+ * Since: 1.0
  **/
 AdgAlignment *
 adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
@@ -205,6 +213,8 @@ adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
  * the content either vertically or horizontally. A pair factor of
  * (%0.5, %0) means the content will be centered horizontally in
  * reference to the normal flow without @alignment.
+ *
+ * Since: 1.0
  **/
 void
 adg_alignment_set_factor(AdgAlignment *alignment, const AdgPair *factor)
@@ -221,6 +231,8 @@ adg_alignment_set_factor(AdgAlignment *alignment, const AdgPair *factor)
  *
  * Convenient wrapper around adg_alignment_set_factor() that accepts
  * explicit factors instead of an #AdgPair value.
+ *
+ * Since: 1.0
  **/
 void
 adg_alignment_set_factor_explicit(AdgAlignment *alignment,
@@ -242,6 +254,8 @@ adg_alignment_set_factor_explicit(AdgAlignment *alignment,
  * pair is owned by @alignment and must not be modified or freed.
  *
  * Returns: the factor pair
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_alignment_get_factor(AdgAlignment *alignment)

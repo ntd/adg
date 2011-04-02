@@ -33,6 +33,8 @@
  * this alteration. A typical example is the path used to draw extension
  * lines and base line of #AdgLDim: every point is subject to different
  * constrains not expressible with a single affine transformation.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -40,6 +42,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -53,6 +57,8 @@
  * #CpmlPath should be made by the caller when appropriate.
  *
  * Returns: the #CpmlPath of this trail model
+ *
+ * Since: 1.0
  **/
 
 
@@ -200,6 +206,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * implement any caching mechanism in the callback, if needed.
  *
  * Returns: a new trail model
+ *
+ * Since: 1.0
  **/
 AdgTrail *
 adg_trail_new(AdgTrailCallback callback, gpointer user_data)
@@ -231,6 +239,8 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * adg_model_clear() method.
  *
  * Returns: a pointer to the internal cairo path or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const cairo_path_t *
 adg_trail_get_cairo_path(AdgTrail *trail)
@@ -296,6 +306,8 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * relocated and the old #CpmlPath will likely contain rubbish.
  *
  * Returns: a pointer to the #CpmlPath or %NULL on errors
+ *
+ * Since: 1.0
  **/
 CpmlPath *
 adg_trail_cpml_path(AdgTrail *trail)
@@ -341,6 +353,8 @@ adg_trail_cpml_path(AdgTrail *trail)
  * is copied in @segment.
  *
  * Returns: %TRUE on success or %FALSE on errors
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
@@ -383,6 +397,8 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
  * @trail and should not be freed nor modified.
  *
  * Returns: the requested extents or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_trail_get_extents(AdgTrail *trail)
@@ -416,6 +432,8 @@ adg_trail_get_extents(AdgTrail *trail)
  * @trail: an #AdgTrail
  *
  * Dumps the data content of @trail to stdout in a human readable format.
+ *
+ * Since: 1.0
  **/
 void
 adg_trail_dump(AdgTrail *trail)
@@ -460,6 +478,8 @@ adg_trail_dump(AdgTrail *trail)
  * to the 1.10.2 version:
  *
  * http://cgit.freedesktop.org/cairo/tree/src/cairo-arc.c?id=1.10.2
+ *
+ * Since: 1.0
  **/
 void
 adg_trail_set_max_angle(AdgTrail *trail, gdouble angle)
@@ -477,6 +497,8 @@ adg_trail_set_max_angle(AdgTrail *trail, gdouble angle)
  * this parameter is used for.
  *
  * Returns: the value (in radians) of the max angle
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_trail_get_max_angle(AdgTrail *trail)

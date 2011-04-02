@@ -25,6 +25,8 @@
  * @short_description: A wrapper for #CpmlPrimitive
  *
  * AdgPrimitive is a wrapper in #GType syntax of the #CpmlPrimitive struct.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -32,6 +34,8 @@
  *
  * Another name for #CpmlPrimitive: check its documentation for the
  * fields description and visibility details.
+ *
+ * Since: 1.0
  **/
 
 
@@ -64,6 +68,8 @@ adg_primitive_get_type(void)
  *
  * Returns: a shallow duplicate of @primitive: must be freed
  *          with g_free() when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgPrimitive *
 adg_primitive_dup(const AdgPrimitive *primitive)
@@ -89,6 +95,8 @@ adg_primitive_dup(const AdgPrimitive *primitive)
  *
  * Returns: a deep duplicate of @primitive: must be freed
  *          with g_free() when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgPrimitive *
 adg_primitive_deep_dup(const AdgPrimitive *primitive)

@@ -23,6 +23,8 @@
  * @short_description: Angular dimensions
  *
  * The #AdgADim entity defines an angular dimension.
+ *
+ * Since: 1.0
  */
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are privates and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -294,6 +298,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * the quote in #AdgDim:pos.
  *
  * Returns: the newly created angular dimension entity
+ *
+ * Since: 1.0
  **/
 AdgADim *
 adg_adim_new(void)
@@ -312,6 +318,8 @@ adg_adim_new(void)
  * properties in one shot using #AdgPair.
  *
  * Returns: the newly created angular dimension entity
+ *
+ * Since: 1.0
  **/
 AdgADim *
 adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
@@ -346,6 +354,8 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  * Wrappes adg_adim_new_full() with explicit values.
  *
  * Returns: the newly created linear dimension entity
+ *
+ * Since: 1.0
  **/
 AdgADim *
 adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
@@ -383,6 +393,8 @@ adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
  * in one shot and using named pairs from @model.
  *
  * Returns: the newly created angular dimension entity
+ *
+ * Since: 1.0
  **/
 AdgADim *
 adg_adim_new_full_from_model(AdgModel *model,
@@ -416,6 +428,8 @@ adg_adim_new_full_from_model(AdgModel *model,
  * the model if this was the last reference).
  *
  * @org1 can be %NULL, in which case the point is destroyed.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
@@ -435,6 +449,8 @@ adg_adim_set_org1(AdgADim *adim, const AdgPoint *org1)
  * unreferencing its model if that point was bound to a named
  * pair (hence, possibly destroying the model if this was the
  * last reference).
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org1_explicit(AdgADim *adim, gdouble x, gdouble y)
@@ -454,6 +470,8 @@ adg_adim_set_org1_explicit(AdgADim *adim, gdouble x, gdouble y)
  *
  * Convenient function to set the #AdgADim:org1 property using a
  * pair instead of explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org1_from_pair(AdgADim *adim, const AdgPair *org1)
@@ -478,6 +496,8 @@ adg_adim_set_org1_from_pair(AdgADim *adim, const AdgPair *org1)
  * The assignment is lazy so @org1 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
  * if the named pair is still missing.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org1_from_model(AdgADim *adim, AdgModel *model, const gchar *org1)
@@ -500,6 +520,8 @@ adg_adim_set_org1_from_model(AdgADim *adim, AdgModel *model, const gchar *org1)
  * the returned point.
  *
  * Returns: the first reference point
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_adim_get_org1(AdgADim *adim)
@@ -524,6 +546,8 @@ adg_adim_get_org1(AdgADim *adim)
  * the model if this was the last reference).
  *
  * @org2 can be %NULL, in which case the point is destroyed.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
@@ -543,6 +567,8 @@ adg_adim_set_org2(AdgADim *adim, const AdgPoint *org2)
  * unreferencing its model if that point was bound to a named
  * pair (hence, possibly destroying the model if this was the
  * last reference).
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org2_explicit(AdgADim *adim, gdouble x, gdouble y)
@@ -562,6 +588,8 @@ adg_adim_set_org2_explicit(AdgADim *adim, gdouble x, gdouble y)
  *
  * Convenient function to set the #AdgADim:org2 property using a
  * pair instead of explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org2_from_pair(AdgADim *adim, const AdgPair *org2)
@@ -586,6 +614,8 @@ adg_adim_set_org2_from_pair(AdgADim *adim, const AdgPair *org2)
  * The assignment is lazy so @org2 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
  * if the named pair is still missing.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_set_org2_from_model(AdgADim *adim, AdgModel *model, const gchar *org2)
@@ -608,6 +638,8 @@ adg_adim_set_org2_from_model(AdgADim *adim, AdgModel *model, const gchar *org2)
  * the returned point.
  *
  * Returns: the first reference point
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_adim_get_org2(AdgADim *adim)
@@ -628,6 +660,8 @@ adg_adim_get_org2(AdgADim *adim)
  *
  * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
  * the first extension line of @adim.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_switch_extension1(AdgADim *adim, gboolean new_state)
@@ -644,6 +678,8 @@ adg_adim_switch_extension1(AdgADim *adim, gboolean new_state)
  * Checks if @adim should render the first extension line.
  *
  * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_adim_has_extension1(AdgADim *adim)
@@ -664,6 +700,8 @@ adg_adim_has_extension1(AdgADim *adim)
  *
  * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
  * the second extension line of @adim.
+ *
+ * Since: 1.0
  **/
 void
 adg_adim_switch_extension2(AdgADim *adim, gboolean new_state)
@@ -680,6 +718,8 @@ adg_adim_switch_extension2(AdgADim *adim, gboolean new_state)
  * Checks if @adim should render the second extension line.
  *
  * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_adim_has_extension2(AdgADim *adim)

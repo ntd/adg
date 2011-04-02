@@ -23,6 +23,8 @@
  * @short_description: A stroked entity
  *
  * The #AdgStroke object is a stroked representation of an #AdgTrail model.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -198,6 +202,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * @trail can be %NULL, in which case an empty stroke is created.
  *
  * Returns: the newly created stroke entity
+ *
+ * Since: 1.0
  **/
 AdgStroke *
 adg_stroke_new(AdgTrail *trail)
@@ -218,6 +224,8 @@ adg_stroke_new(AdgTrail *trail)
  * The check is done by calling adg_dress_are_related() with
  * @dress and the previous dress as arguments. Check out its
  * documentation for details on what is a related dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
@@ -233,6 +241,8 @@ adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
  * Gets the line dress to be used in rendering @stroke.
  *
  * Returns: the current line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_stroke_get_line_dress(AdgStroke *stroke)
@@ -252,6 +262,8 @@ adg_stroke_get_line_dress(AdgStroke *stroke)
  * @trail: the new #AdgTrail to bind
  *
  * Sets @trail as the new trail to be stroked by @stroke.
+ *
+ * Since: 1.0
  **/
 void
 adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
@@ -267,6 +279,8 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
  * Gets the #AdgTrail bound to this @stroke entity.
  *
  * Returns: the requested #AdgTrail or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTrail *
 adg_stroke_get_trail(AdgStroke *stroke)

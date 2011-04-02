@@ -26,6 +26,8 @@
  *
  * The #CpmlExtents struct groups two pairs representing the rectangular
  * area of a bounding box.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -37,6 +39,8 @@
  * A structure defining a bounding box area. These APIs expect the
  * size of the extents to be always positives, so be careful while
  * directly accessing the @size field.
+ *
+ * Since: 1.0
  **/
 
 
@@ -48,30 +52,30 @@
 
 /**
  * cpml_extents_copy:
- * @extents: the destination #CpmlExtents
- * @src: the source #CpmlExtents
+ * @extents: (out): the destination #CpmlExtents
+ * @src:     (in):  the source #CpmlExtents
  *
  * Copies @src in @extents.
  *
- * Returns: @extents
+ * Since: 1.0
  **/
-CpmlExtents *
+void
 cpml_extents_copy(CpmlExtents *extents, const CpmlExtents *src)
 {
-    return memcpy(extents, src, sizeof(CpmlExtents));
+    memcpy(extents, src, sizeof(CpmlExtents));
 }
 
 /**
  * cpml_extents_from_cairo_text:
- * @extents: the destination #CpmlExtents
- * @cairo_extents: the source cairo_text_extents_t struct
+ * @extents:       (out): the destination #CpmlExtents
+ * @cairo_extents: (in):  the source #cairo_text_extents_t struct
  *
  * Converts @cairo_extents in a #CpmlExtents format and stores the
  * result in @extents.
  *
- * Returns: @extents
+ * Since: 1.0
  **/
-CpmlExtents *
+void
 cpml_extents_from_cairo_text(CpmlExtents *extents,
                              const cairo_text_extents_t *cairo_extents)
 {
@@ -80,44 +84,47 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
     extents->org.y = cairo_extents->y_bearing;
     extents->size.x = cairo_extents->width;
     extents->size.y = cairo_extents->height;
-
-    return extents;
 }
 
 /**
  * cpml_extents_equal:
  * @extents: the first extents to compare
- * @src: the second extents to compare
+ * @src:     the second extents to compare
  *
  * Compares @extents to @src and returns 1 if the extents are equals.
  * Two %NULL or two undefined extents are considered equal, athough
  * %NULL extents are not equal to undefined extents.
  *
- * Returns: 1 if @extents is equal to @src, 0 otherwise
+ * Returns: (type gboolean): %TRUE if @extents is equal to @src,
+ *                           %FALSE otherwise
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_extents_equal(const CpmlExtents *extents, const CpmlExtents *src)
 {
     if (extents == NULL && src == NULL)
-        return 1;
+        return TRUE;
 
     if (extents == NULL || src == NULL)
-        return 0;
+        return FALSE;
 
     if (!extents->is_defined && !src->is_defined)
-        return 1;
+        return TRUE;
 
     return extents->is_defined == src->is_defined &&
            cpml_pair_equal(&extents->org,  &src->org) &&
-           cpml_pair_equal(&extents->size, &src->size) ? 1 : 0;
+           cpml_pair_equal(&extents->size, &src->size) ? TRUE : FALSE;
 }
 
 /**
  * cpml_extents_add:
- * @extents: the destination #CpmlExtents
- * @src: the extents to add
+ * @extents: (inout): the destination #CpmlExtents
+ * @src:     (in):    the extents to add
  *
  * Merges @extents and @src and store the result in @extents.
+ *
+ * Since: 1.0
  **/
 void
 cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
@@ -136,12 +143,14 @@ cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
 
 /**
  * cpml_extents_pair_add:
- * @extents: the destination #CpmlExtents
- * @src: the #AdgPair to add
+ * @extents: (inout): the source and destination #CpmlExtents
+ * @src:     (in):    the #AdgPair to add
  *
  * Extends @extents, if required, to include @src. If @extents is
  * undefined, the origin of @extents is set to @src and its size
  * will be (0,0).
+ *
+ * Since: 1.0
  **/
 void
 cpml_extents_pair_add(CpmlExtents *extents, const CpmlPair *src)
@@ -172,74 +181,77 @@ cpml_extents_pair_add(CpmlExtents *extents, const CpmlPair *src)
 /**
  * cpml_extents_is_inside:
  * @extents: the container #CpmlExtents
- * @src: the subject #CpmlExtents
+ * @src:     the subject #CpmlExtents
  *
  * Checks wheter @src is enterely contained by @extents. If @extents
  * is undefined, %0 will be returned. If @src is undefined, %1 will
  * be returned. The border of @extents is considered inside.
  *
- * Returns: %1 if @src is totally inside @extents, %0 otherwise
+ * Returns: (type gboolean): %TRUE if @src is totally inside @extents,
+ *                           %FALSE otherwise
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
 {
     CpmlPair pe, ps;
 
     if (extents->is_defined == 0)
-        return 0;
+        return FALSE;
 
     if (src->is_defined == 0)
-        return 1;
+        return TRUE;
 
     cpml_pair_copy(&pe, &extents->org);
     cpml_pair_copy(&ps, &src->org);
 
     if (ps.x < pe.x || ps.y < pe.y)
-        return 0;
+        return FALSE;
 
     pe.x += extents->size.x;
     pe.y += extents->size.y;
     ps.x += extents->size.x;
     ps.y += extents->size.y;
 
-    if (ps.x > pe.x || ps.y > pe.y)
-        return 0;
-
-    return 1;
+    return ps.x > pe.x || ps.y > pe.y ? FALSE : TRUE;
 }
 
 /**
  * cpml_extents_pair_is_inside:
  * @extents: the container #CpmlExtents
- * @src: the subject #CpmlPair
+ * @src:     the subject #CpmlPair
  *
  * Checks wheter @src is inside @extents. If @extents is undefined,
  * %0 will be returned. The border of @extents is considered inside.
  *
- * Returns: %1 if @src is inside @extents, %0 otherwise
+ * Returns: (type gboolean): %TRUE if @src is inside @extents,
+ *                           %FALSE otherwise
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_extents_pair_is_inside(const CpmlExtents *extents, const CpmlPair *src)
 {
-    if (extents->is_defined == 0)
-        return 0;
-
-    if (src->x < extents->org.x || src->y < extents->org.y ||
+    if (extents->is_defined == 0 ||
+        src->x < extents->org.x || src->y < extents->org.y ||
         src->x > extents->org.x + extents->size.x ||
         src->y > extents->org.y + extents->size.y)
-        return 0;
+        return FALSE;
 
-    return 1;
+    return TRUE;
 }
 
 /**
  * cpml_extents_transform:
- * @extents: the container #CpmlExtents
- * @matrix: the transformation matrix
+ * @extents: (inout): the container #CpmlExtents
+ * @matrix:  (in):    the transformation matrix
  *
  * Transforms the four corners of @extents with @matrix and
  * recomputes @extents. This will logically equivalent to transform
  * an extents box and gets the extents of the resulting shape.
+ *
+ * Since: 1.0
  **/
 void
 cpml_extents_transform(CpmlExtents *extents, const cairo_matrix_t *matrix)

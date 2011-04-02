@@ -24,6 +24,8 @@
  *
  * Contains parameters on how to build tables such as the lines to
  * use for frames and grids and the font dresses for titles or values.
+ *
+ * Since: 1.0
  */
 
 /**
@@ -31,6 +33,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -248,6 +252,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Constructs a new empty table style initialized with default params.
  *
  * Returns: a new table style
+ *
+ * Since: 1.0
  **/
 AdgTableStyle *
 adg_table_style_new(void)
@@ -261,6 +267,8 @@ adg_table_style_new(void)
  * @dress: the new color dress
  *
  * Sets a new color dress on @table_style.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
@@ -279,6 +287,8 @@ adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
  * #AdgTableStyle:value-dress.
  *
  * Returns: the color dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_style_get_color_dress(AdgTableStyle *table_style)
@@ -298,6 +308,8 @@ adg_table_style_get_color_dress(AdgTableStyle *table_style)
  * @dress: the new line dress
  *
  * Sets a new line dress on @table_style for rendering the frames.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
@@ -314,6 +326,8 @@ adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
  * @table_style.
  *
  * Returns: the line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_style_get_frame_dress(AdgTableStyle *table_style)
@@ -333,6 +347,8 @@ adg_table_style_get_frame_dress(AdgTableStyle *table_style)
  * @dress: the new line dress
  *
  * Sets a new line dress on @table_style for rendering the grids.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
@@ -349,6 +365,8 @@ adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
  * @table_style.
  *
  * Returns: the line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_style_get_grid_dress(AdgTableStyle *table_style)
@@ -368,6 +386,8 @@ adg_table_style_get_grid_dress(AdgTableStyle *table_style)
  * @dress: the new font dress
  *
  * Sets a new font dress on @table_style for rendering cell titles.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
@@ -384,6 +404,8 @@ adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
  * with @table_style.
  *
  * Returns: the font dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_style_get_title_dress(AdgTableStyle *table_style)
@@ -403,6 +425,8 @@ adg_table_style_get_title_dress(AdgTableStyle *table_style)
  * @dress: the new font dress
  *
  * Sets a new font dress on @table_style for rendering cell values.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
@@ -419,6 +443,8 @@ adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
  * with @table_style.
  *
  * Returns: the font dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_style_get_value_dress(AdgTableStyle *table_style)
@@ -440,6 +466,8 @@ adg_table_style_get_value_dress(AdgTableStyle *table_style)
  * Sets a new #AdgTableStyle:row-height fallback. @height must
  * be a valid row height greather than %0 or a warning will be
  * raised and this function will fail.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble height)
@@ -455,6 +483,8 @@ adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble height)
  * Gets the row height fallback value.
  *
  * Returns: the fallback row height or %0 on errors
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_table_style_get_row_height(AdgTableStyle *table_style)
@@ -474,6 +504,8 @@ adg_table_style_get_row_height(AdgTableStyle *table_style)
  * @padding: the new padding values
  *
  * Sets new #AdgTableStyle:cell-padding values.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_cell_padding(AdgTableStyle *table_style,
@@ -496,6 +528,8 @@ adg_table_style_set_cell_padding(AdgTableStyle *table_style,
  * will always be equal to the bottom.
  *
  * Returns: the cell padding values or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_table_style_get_cell_padding(AdgTableStyle *table_style)
@@ -515,6 +549,8 @@ adg_table_style_get_cell_padding(AdgTableStyle *table_style)
  * @spacing: the new spacing values
  *
  * Sets new #AdgTableStyle:cell-spacing values.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
@@ -537,6 +573,8 @@ adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
  * will always be equal to the bottom.
  *
  * Returns: the cell spacing values or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_table_style_get_cell_spacing(AdgTableStyle *table_style)

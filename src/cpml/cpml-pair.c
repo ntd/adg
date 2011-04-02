@@ -28,6 +28,8 @@
  * coordinates, sizes, offsets or whatever have two components.
  *
  * The name comes from MetaFont.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -36,6 +38,8 @@
  * @y: the y component of the pair
  *
  * A generic 2D structure.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -52,6 +56,8 @@
  * is not problably what you expect: the x axis increases at right
  * (as usual) but the y axis increases at down (the reverse of a usual
  * cartesian plan). An angle of 0 is at V=(1; 0) (middle right).
+ *
+ * Since: 1.0
  **/
 
 
@@ -65,11 +71,13 @@ static CpmlPair fallback_pair = { 0, 0 };
 
 /**
  * cpml_pair_from_cairo:
- * @pair: the destination #CpmlPair
- * @path_data: the original path data point
+ * @pair:      (out): the destination #CpmlPair
+ * @path_data: (in):  the original path data point
  *
  * Sets @pair from a #cairo_path_data_t struct. @path_data should contains
  * a point data: it is up to the caller to be sure @path_data is valid.
+ *
+ * Since: 1.0
  **/
 void
 cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
@@ -80,10 +88,12 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
 
 /**
  * cpml_pair_copy:
- * @pair: the destination #CpmlPair
- * @src: the source #CpmlPair
+ * @pair: (out): the destination #CpmlPair
+ * @src:  (in):  the source #CpmlPair
  *
  * Copies @src in @pair.
+ *
+ * Since: 1.0
  **/
 void
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
@@ -94,14 +104,17 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 /**
  * cpml_pair_equal:
  * @pair: the first pair to compare
- * @src: the second pair to compare
+ * @src:  the second pair to compare
  *
  * Compares @pair to @src and returns 1 if the pairs are equals.
  * Two %NULL pairs are considered equal.
  *
- * Returns: 1 if @pair is equal to @src, 0 otherwise
+ * Returns: (type gboolean): %TRUE if @pair is equal to @src,
+ *                           %FALSE otherwise
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_pair_equal(const CpmlPair *pair, const CpmlPair *src)
 {
     if (pair == NULL && src == NULL)
@@ -115,10 +128,12 @@ cpml_pair_equal(const CpmlPair *pair, const CpmlPair *src)
 
 /**
  * cpml_pair_transform:
- * @pair: the destination #CpmlPair struct
- * @matrix: the transformation matrix
+ * @pair:   (inout): the destination #CpmlPair struct
+ * @matrix: (in):    the transformation matrix
  *
  * Shortcut to apply a specific transformation matrix to @pair.
+ *
+ * Since: 1.0
  **/
 void
 cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
@@ -129,7 +144,7 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
 /**
  * cpml_pair_squared_distance:
  * @from: the first #CpmlPair struct
- * @to: the second #CpmlPair struct
+ * @to:   the second #CpmlPair struct
  *
  * Gets the squared distance between @from and @to. This value is useful
  * for comparation purpose: if you need to get the real distance, use
@@ -139,6 +154,8 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
  * will be used.
  *
  * Returns: the squared distance
+ *
+ * Since: 1.0
  **/
 double
 cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
@@ -159,7 +176,7 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
 /**
  * cpml_pair_distance:
  * @from: the first #CpmlPair struct
- * @to: the second #CpmlPair struct
+ * @to:   the second #CpmlPair struct
  *
  * Gets the distance between @from and @to. If you need this value only
  * for comparation purpose, you could use cpm_pair_squared_distance()
@@ -175,6 +192,8 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * http://www.research.ibm.com/journal/rd/276/ibmrd2706P.pdf
  *
  * Returns: the distance
+ *
+ * Since: 1.0
  **/
 double
 cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
@@ -221,11 +240,13 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_pair_to_cairo:
- * @pair: the destination #CpmlPair
- * @path_data: the original path data point
+ * @pair:      (in):    the source #CpmlPair
+ * @path_data: (inout): the path data point to modify
  *
  * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
  * operation of cpml_pair_from_cairo().
+ *
+ * Since: 1.0
  **/
 void
 cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
@@ -237,11 +258,13 @@ cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
 
 /**
  * cpml_vector_from_angle:
- * @vector: the destination #CpmlVector
- * @angle: angle of direction, in radians
+ * @vector: (out): the destination #CpmlVector
+ * @angle:  (in):  angle of direction, in radians
  *
  * Calculates the coordinates of the point far %1 from the origin
  * in the @angle direction. The result is stored in @vector.
+ *
+ * Since: 1.0
  **/
 void
 cpml_vector_from_angle(CpmlVector *vector, double angle)
@@ -267,8 +290,8 @@ cpml_vector_from_angle(CpmlVector *vector, double angle)
 
 /**
  * cpml_vector_set_length:
- * @vector: a #CpmlVector
- * @length: the new length
+ * @vector: (inout): a #CpmlVector
+ * @length: (in):    the new length
  *
  * Imposes the specified @length to @vector. If the old length is %0
  * (and so the direction is not known), nothing happens. If @length
@@ -276,6 +299,8 @@ cpml_vector_from_angle(CpmlVector *vector, double angle)
  *
  * The @length parameter can be negative, in which case the vector
  * is inverted.
+ *
+ * Since: 1.0
  **/
 void
 cpml_vector_set_length(CpmlVector *vector, double length)
@@ -306,6 +331,8 @@ cpml_vector_set_length(CpmlVector *vector, double length)
  * 0 is returned.
  *
  * Returns: the angle in radians, a value between -M_PI and M_PI
+ *
+ * Since: 1.0
  **/
 double
 cpml_vector_angle(const CpmlVector *vector)
@@ -325,12 +352,14 @@ cpml_vector_angle(const CpmlVector *vector)
 
 /**
  * cpml_vector_normal:
- * @vector: the subject #CpmlVector
+ * @vector: (inout): the subject #CpmlVector
  *
  * Stores in @vector a vector normal to the original @vector.
  * The length is retained.
  *
  * The algorithm is really quick because no trigonometry is involved.
+ *
+ * Since: 1.0
  **/
 void
 cpml_vector_normal(CpmlVector *vector)
@@ -343,13 +372,15 @@ cpml_vector_normal(CpmlVector *vector)
 
 /**
  * cpml_vector_transform:
- * @vector: the destination #CpmlPair struct
- * @matrix: the transformation matrix
+ * @vector: (inout): the destination #CpmlPair struct
+ * @matrix: (in):    the transformation matrix
  *
  * Shortcut to apply a specific transformation matrix to @vector.
  * It works in a similar way of cpml_pair_transform() but uses
  * cairo_matrix_transform_distance() instead of
  * cairo_matrix_transform_point().
+ *
+ * Since: 1.0
  **/
 void
 cpml_vector_transform(CpmlPair *vector, const cairo_matrix_t *matrix)

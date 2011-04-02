@@ -27,6 +27,8 @@
  * AdgSegment is a wrapper in #GType syntax of the #CpmlSegment struct.
  * Furthermore, some dynamic memory functions are provided, such as
  * shallow and deep duplication functions.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -34,6 +36,8 @@
  *
  * Another name for #CpmlSegment: check its documentation for the
  * fields description and visibility details.
+ *
+ * Since: 1.0
  **/
 
 
@@ -67,6 +71,8 @@ adg_segment_get_type(void)
  *
  * Returns: a shallow duplicate of @segment: must be freed
  *          with g_free() when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgSegment *
 adg_segment_dup(const AdgSegment *segment)
@@ -89,6 +95,8 @@ adg_segment_dup(const AdgSegment *segment)
  *
  * Returns: a deep duplicate of @segment: must be freed
  *          with g_free() when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgSegment *
 adg_segment_deep_dup(const AdgSegment *segment)
@@ -147,6 +155,8 @@ adg_segment_deep_dup(const AdgSegment *segment)
  * check if it is compatible with @src.
  *
  * Returns: @segment
+ *
+ * Since: 1.0
  **/
 AdgSegment *
 adg_segment_deep_copy(AdgSegment *segment, const AdgSegment *src)

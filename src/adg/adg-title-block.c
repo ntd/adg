@@ -29,6 +29,8 @@
  *
  * Actually this entity is only a place-holder: it will be implemented
  * properly in a 0.6.x release, after having AdgToyTable in place.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -36,6 +38,8 @@
  *
  * All fields are privates and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -308,6 +312,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * title block is not subject to any local transformations.
  *
  * Returns: the newly created title block entity
+ *
+ * Since: 1.0
  **/
 AdgTitleBlock *
 adg_title_block_new(void)
@@ -322,6 +328,8 @@ adg_title_block_new(void)
  * @title: the new title
  *
  * Sets a new title on the title block.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
@@ -339,6 +347,8 @@ adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
  * be modifed or freed.
  *
  * Returns: the title or %NULL on no title or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_title(AdgTitleBlock *title_block)
@@ -358,6 +368,8 @@ adg_title_block_get_title(AdgTitleBlock *title_block)
  * @drawing: the new drawing name
  *
  * Sets a new drawing name on the title block.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
@@ -375,6 +387,8 @@ adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
  * be modifed or freed.
  *
  * Returns: the drawing name or %NULL on no name or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_drawing(AdgTitleBlock *title_block)
@@ -394,6 +408,8 @@ adg_title_block_get_drawing(AdgTitleBlock *title_block)
  * @size: the new size
  *
  * Sets a new size on the title block.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
@@ -412,6 +428,8 @@ adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
  * be modifed or freed.
  *
  * Returns: the size or %NULL on no size or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_size(AdgTitleBlock *title_block)
@@ -431,6 +449,8 @@ adg_title_block_get_size(AdgTitleBlock *title_block)
  * @scale: the new scale
  *
  * Sets a new scale on the title block.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
@@ -446,6 +466,8 @@ adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
  * Gets the scale descriptive name of the drawing.
  *
  * Returns: the scale text or %NULL on no scale or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_scale(AdgTitleBlock *title_block)
@@ -465,6 +487,8 @@ adg_title_block_get_scale(AdgTitleBlock *title_block)
  * @author: the new author
  *
  * Sets a new author on the title block.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
@@ -480,6 +504,8 @@ adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
  * Gets the author's name of the drawing.
  *
  * Returns: the author or %NULL on no author or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_author(AdgTitleBlock *title_block)
@@ -509,6 +535,8 @@ adg_title_block_get_author(AdgTitleBlock *title_block)
  * ]|
  *
  * To not render any value, use an empty string as @date.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
@@ -524,6 +552,8 @@ adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
  * Gets the date of the rendering set on @title_block.
  *
  * Returns: the date or %NULL on no date or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_title_block_get_date(AdgTitleBlock *title_block)
@@ -548,6 +578,8 @@ adg_title_block_get_date(AdgTitleBlock *title_block)
  *
  * The space reserved for the logo is 56x56, so try to keep the
  * new logo near this size or scale it accordingly.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
@@ -565,6 +597,8 @@ adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
  * be unreferenced although can be freely modified.
  *
  * Returns: the logo or %NULL on no logo or errors
+ *
+ * Since: 1.0
  **/
 AdgEntity *
 adg_title_block_logo(AdgTitleBlock *title_block)
@@ -590,6 +624,8 @@ adg_title_block_logo(AdgTitleBlock *title_block)
  *
  * The space reserved for the projection is 56x56, so try to keep the
  * new projection near this size or scale it accordingly.
+ *
+ * Since: 1.0
  **/
 void
 adg_title_block_set_projection(AdgTitleBlock *title_block,
@@ -608,6 +644,8 @@ adg_title_block_set_projection(AdgTitleBlock *title_block,
  * be unreferenced although can be freely modified.
  *
  * Returns: the projection or %NULL on no projection or errors
+ *
+ * Since: 1.0
  **/
 AdgEntity *
 adg_title_block_projection(AdgTitleBlock *title_block)

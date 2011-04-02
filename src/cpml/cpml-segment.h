@@ -39,8 +39,7 @@ struct _CpmlSegment {
 };
 
 
-cairo_bool_t
-        cpml_segment_from_cairo         (CpmlSegment            *segment,
+int     cpml_segment_from_cairo         (CpmlSegment            *segment,
                                          CpmlPath               *path);
 void    cpml_segment_copy               (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
@@ -48,8 +47,7 @@ void    cpml_segment_copy               (CpmlSegment            *segment,
     ((cpml_path) == NULL || ((cairo_path_t *) cpml_path)->data == NULL || \
      ((cairo_path_t *) cpml_path)->num_data <= 0)
 void    cpml_segment_reset              (CpmlSegment            *segment);
-cairo_bool_t
-        cpml_segment_next               (CpmlSegment            *segment);
+int     cpml_segment_next               (CpmlSegment            *segment);
 double  cpml_segment_get_length         (const CpmlSegment      *segment);
 void    cpml_segment_put_extents        (const CpmlSegment      *segment,
                                          CpmlExtents            *extents);

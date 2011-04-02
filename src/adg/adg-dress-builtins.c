@@ -27,6 +27,8 @@
  *
  * This is a collection of built-it dresses used internally by
  * the ADG library to provide some useful defaults.
+ *
+ * Since: 1.0
  **/
 
 
@@ -53,6 +55,8 @@
  * ADG_DRESS_UNDEFINED:
  *
  * A value reperesenting an undefined #AdgDress.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -63,6 +67,8 @@
  * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color(void)
@@ -83,6 +89,8 @@ _adg_dress_color(void)
  * background. The fallback style is a full opaque white.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color_background(void)
@@ -108,6 +116,8 @@ _adg_dress_color_background(void)
  * The fallback style is a full opaque black.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color_stroke(void)
@@ -131,6 +141,8 @@ _adg_dress_color_stroke(void)
  * The fallback style is a somewhat full opaque blue.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color_dimension(void)
@@ -159,6 +171,8 @@ _adg_dress_color_dimension(void)
  * style is a full opaque greenish variant.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color_annotation(void)
@@ -186,6 +200,8 @@ _adg_dress_color_annotation(void)
  * based styles. The fallback style is a full opaque %0.25 gray.
  *
  * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_color_fill(void)
@@ -213,6 +229,8 @@ _adg_dress_color_fill(void)
  * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line(void)
@@ -235,6 +253,8 @@ _adg_dress_line(void)
  * of %1.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line_stroke(void)
@@ -262,6 +282,8 @@ _adg_dress_line_stroke(void)
  * and a pass-through color dress.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line_dimension(void)
@@ -287,6 +309,8 @@ _adg_dress_line_dimension(void)
  * #ADG_DRESS_COLOR_FILL color and a thickness of %0.5.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line_fill(void)
@@ -314,6 +338,8 @@ _adg_dress_line_fill(void)
  * pass-through color dress, rendered without antialiasing.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line_grid(void)
@@ -342,6 +368,8 @@ _adg_dress_line_grid(void)
  * antialiasing.
  *
  * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_line_frame(void)
@@ -368,6 +396,8 @@ _adg_dress_line_frame(void)
  * a %Sans %14 font with a pass-through color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_font(void)
@@ -395,6 +425,8 @@ _adg_dress_font(void)
  * #ADG_DRESS_COLOR_ANNOTATION color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_font_text(void)
@@ -423,6 +455,8 @@ _adg_dress_font_text(void)
  * is a %Sans %8 with an #ADG_DRESS_COLOR_ANNOTATION color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_font_annotation(void)
@@ -451,6 +485,8 @@ _adg_dress_font_annotation(void)
  * a pass-through color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_font_quote_text(void)
@@ -479,6 +515,8 @@ _adg_dress_font_quote_text(void)
  * color dress.
  *
  * This dress will be resolved to an #AdgFontStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_font_quote_annotation(void)
@@ -505,6 +543,8 @@ _adg_dress_font_quote_annotation(void)
  * #AdgArrow markers (as returned by adg_arrow_new() on both sides.
  *
  * This dress will be resolved to an #AdgDimStyle instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_dimension(void)
@@ -535,6 +575,8 @@ _adg_dress_dimension(void)
  * the cairo context when it is applied.
  *
  * This dress will be resolved to an #AdgFillStyle derived instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_fill(void)
@@ -556,6 +598,8 @@ _adg_dress_fill(void)
  * #AdgRuledFill instance.
  *
  * This dress will be resolved to an #AdgFillStyle derived instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_fill_hatch(void)
@@ -581,6 +625,8 @@ _adg_dress_fill_hatch(void)
  * is the default implementation of the #AdgTableStyle instance.
  *
  * This dress will be resolved to an #AdgTableStyle derived instance.
+ *
+ * Since: 1.0
  **/
 AdgDress
 _adg_dress_table(void)

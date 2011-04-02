@@ -250,5 +250,6 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
            GTK+2 additional widgets: ${enable_gtk2}
              Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
+             GObject instrospection: ${enable_introspection}
              Test framework support: ${enable_test_framework}
 ])

@@ -23,6 +23,8 @@
  * @short_description: Root abstract class for all dimension entities
  *
  * The #AdgDim class is the base stub of all the dimension entities.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -368,6 +372,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * The check is done by calling adg_dress_are_related() with
  * @dress and the previous dress as arguments. Check out its
  * documentation for details on what is a related dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
@@ -383,6 +389,8 @@ adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
  * Gets the dimension dress to be used in rendering @dim.
  *
  * Returns: the current dimension dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_get_dim_dress(AdgDim *dim)
@@ -407,6 +415,8 @@ adg_dim_get_dim_dress(AdgDim *dim)
  * the model if this was the last reference).
  *
  * @ref1 can be %NULL, in which case the point is destroyed.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
@@ -426,6 +436,8 @@ adg_dim_set_ref1(AdgDim *dim, const AdgPoint *ref1)
  * unreferencing its model if that point was bound to a named
  * pair (hence, possibly destroying the model if this was the
  * last reference).
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref1_explicit(AdgDim *dim, gdouble x, gdouble y)
@@ -445,6 +457,8 @@ adg_dim_set_ref1_explicit(AdgDim *dim, gdouble x, gdouble y)
  *
  * Convenient function to set the #AdgDim:ref1 property using a
  * pair instead of explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref1_from_pair(AdgDim *dim, const AdgPair *ref1)
@@ -469,6 +483,8 @@ adg_dim_set_ref1_from_pair(AdgDim *dim, const AdgPair *ref1)
  * The assignment is lazy so @ref1 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
  * if the named pair is still missing.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref1_from_model(AdgDim *dim, AdgModel *model, const gchar *ref1)
@@ -485,12 +501,15 @@ adg_dim_set_ref1_from_model(AdgDim *dim, AdgModel *model, const gchar *ref1)
  * adg_dim_get_ref1:
  * @dim: an #AdgDim
  *
- * Gets the #AdgDim:ref1 point. The returned point is internally owned
- * and must not be freed or modified. Anyway, it is not const because
- * adg_point_get_pair() must be able to modify the internal cache of
- * the returned point.
+ * Gets the #AdgDim:ref1 point of @dim.
  *
- * Returns: the first reference point
+ * Returns: (transfer none): the first reference point.
+ * The returned point is internally owned and must not be freed
+ * or modified. Anyway it is not const because a call to
+ * adg_point_get_pair() with the returned value must be able to
+ * modify the internal cache.
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_dim_get_ref1(AdgDim *dim)
@@ -515,6 +534,8 @@ adg_dim_get_ref1(AdgDim *dim)
  * the model if it was the last reference).
  *
  * @ref2 can be %NULL, in which case the point is destroyed.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
@@ -534,6 +555,8 @@ adg_dim_set_ref2(AdgDim *dim, const AdgPoint *ref2)
  * unreferencing its model if that point was bound to a named
  * pair (hence, possibly destroying the model if this was the
  * last reference).
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref2_explicit(AdgDim *dim, gdouble x, gdouble y)
@@ -553,6 +576,8 @@ adg_dim_set_ref2_explicit(AdgDim *dim, gdouble x, gdouble y)
  *
  * Convenient function to set the #AdgDim:ref2 property using a
  * pair instead of explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref2_from_pair(AdgDim *dim, const AdgPair *ref2)
@@ -577,6 +602,8 @@ adg_dim_set_ref2_from_pair(AdgDim *dim, const AdgPair *ref2)
  * The assignment is lazy so @ref2 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
  * if the named pair is still missing.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_ref2_from_model(AdgDim *dim, AdgModel *model, const gchar *ref2)
@@ -593,12 +620,15 @@ adg_dim_set_ref2_from_model(AdgDim *dim, AdgModel *model, const gchar *ref2)
  * adg_dim_get_ref2:
  * @dim: an #AdgDim
  *
- * Gets the #AdgDim:ref2 point. The returned point is internally owned
- * and must not be freed or modified. Anyway, it is not const because
- * adg_point_get_pair() must be able to modify the internal cache of
- * the returned point.
+ * Gets the #AdgDim:ref2 point of @dim.
  *
- * Returns: the second reference point
+ * Returns: (transfer none): the second reference point.
+ * The returned point is internally owned and must not be freed
+ * or modified. Anyway it is not const because a call to
+ * adg_point_get_pair() with the returned value must be able to
+ * modify the internal cache.
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_dim_get_ref2(AdgDim *dim)
@@ -617,12 +647,14 @@ adg_dim_get_ref2(AdgDim *dim)
  * @dim: an #AdgDim
  * @pos: the new point to use as position
  *
- * Sets the #AdgDim:pos property to @pos. The old point
+ * Sets the #AdgDim:pos property of @dim to @pos. The old point
  * is silently discarded, unreferencing its model if that
  * point was bound to a named pair (hence, possibly destroying
  * the model if it was the last reference).
  *
  * @pos can be %NULL, in which case the point is destroyed.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
@@ -642,6 +674,8 @@ adg_dim_set_pos(AdgDim *dim, const AdgPoint *pos)
  * unreferencing its model if that point was bound to a named
  * pair (hence, possibly destroying the model if this was the
  * last reference).
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
@@ -661,6 +695,8 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
  *
  * Convenient function to set the #AdgDim:pos property using a
  * pair instead of explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_pos_from_pair(AdgDim *dim, const AdgPair *pos)
@@ -685,6 +721,8 @@ adg_dim_set_pos_from_pair(AdgDim *dim, const AdgPair *pos)
  * The assignment is lazy so @pos could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
  * if the named pair is still missing.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
@@ -701,12 +739,15 @@ adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
  * adg_dim_get_pos:
  * @dim: an #AdgDim
  *
- * Gets the #AdgDim:pos point. The returned point is internally owned
- * and must not be freed or modified. Anyway, it is not const because
- * adg_point_get_pair() must be able to modify the internal cache of
- * the returned point.
+ * Gets the #AdgDim:pos point of @dim.
  *
- * Returns: the position point
+ * Returns: (transfer none): the position point.
+ * The returned point is internally owned and must not be freed
+ * or modified. Anyway it is not const because a call to
+ * adg_point_get_pair() with the returned value must be able to
+ * modify the internal cache.
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_dim_get_pos(AdgDim *dim)
@@ -728,6 +769,8 @@ adg_dim_get_pos(AdgDim *dim)
  * Sets a new level for this dimension. The level is used to
  * stack the quotes using a spacing value from dim_style
  * (specified in global space).
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_level(AdgDim *dim, gdouble level)
@@ -749,6 +792,8 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
  * Gets the level of this dimension.
  *
  * Returns: the level value
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_get_level(AdgDim *dim)
@@ -769,6 +814,8 @@ adg_dim_get_level(AdgDim *dim)
  *
  * Sets a new state for the #AdgDim:outside flag: check the property
  * documentation for further details.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
@@ -787,6 +834,8 @@ adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
  * documentation for further details.
  *
  * Returns: the current flag state
+ *
+ * Since: 1.0
  **/
 AdgThreeState
 adg_dim_get_outside(AdgDim *dim)
@@ -811,6 +860,8 @@ adg_dim_get_outside(AdgDim *dim)
  * This is used only by dimensions where detaching has meaning.
  * In some cases, such as with #AdgRDim dimensions, this property is
  * not used.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
@@ -829,6 +880,8 @@ adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
  * documentation for further details.
  *
  * Returns: the current flag state
+ *
+ * Since: 1.0
  **/
 AdgThreeState
 adg_dim_get_detached(AdgDim *dim)
@@ -855,6 +908,8 @@ adg_dim_get_detached(AdgDim *dim)
  * Inside the template string, the "<>" tag (or whatever specified
  * by the #AdgDimStyle:number-tag property) is substituted with the
  * string returned by the default_value() virtual method.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_value(AdgDim *dim, const gchar *value)
@@ -872,7 +927,9 @@ adg_dim_set_value(AdgDim *dim, const gchar *value)
  * Gets the value text. The string is internally owned and
  * must not be freed or modified.
  *
- * Returns: the value text
+ * Returns: (transfer none): the value text
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_dim_get_value(AdgDim *dim)
@@ -893,6 +950,8 @@ adg_dim_get_value(AdgDim *dim)
  * @max: the new maximum value
  *
  * Shortcut to set both the limits at once.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
@@ -911,6 +970,8 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
  * @min: the new minimum limit
  *
  * Sets the minimum value. Use %NULL as @min to disable it.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_min(AdgDim *dim, const gchar *min)
@@ -926,9 +987,11 @@ adg_dim_set_min(AdgDim *dim, const gchar *min)
  * @dim: an #AdgDim
  *
  * Gets the minimum value text or %NULL on minimum value disabled.
+ *
+ * Returns: (transfer none): the mimimum value text.
  * The string is internally owned and must not be freed or modified.
  *
- * Returns: the mimimum value text
+ * Since: 1.0
  **/
 const gchar *
 adg_dim_get_min(AdgDim *dim)
@@ -948,6 +1011,8 @@ adg_dim_get_min(AdgDim *dim)
  * @max: the new maximum value
  *
  * Sets the maximum value. Use %NULL as @max to disable it.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_set_max(AdgDim *dim, const gchar *max)
@@ -963,9 +1028,11 @@ adg_dim_set_max(AdgDim *dim, const gchar *max)
  * @dim: an #AdgDim
  *
  * Gets the maximum value text or %NULL on maximum value disabled.
+ *
+ * Returns: (transfer none): the maximum value text.
  * The string is internally owned and must not be freed or modified.
  *
- * Returns: the maximum value text
+ * Since: 1.0
  **/
 const gchar *
 adg_dim_get_max(AdgDim *dim)
@@ -983,15 +1050,17 @@ adg_dim_get_max(AdgDim *dim)
  * adg_dim_get_quote:
  * @dim: an #AdgDim
  *
- * <note><para>
- * This function is only useful in new dimension implementations.
- * </para></note>
- *
  * Gets the quote entity, if any. This function is valid only after
  * the #AdgDim implementation of the arrange() virtual method has
  * been called.
  *
- * Returns: the quote entity
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Returns: (transfer none): the quote entity
+ *
+ * Since: 1.0
  **/
 AdgAlignment *
 adg_dim_get_quote(AdgDim *dim)
@@ -1019,6 +1088,8 @@ adg_dim_get_quote(AdgDim *dim)
  * style has its own convention regardling the text rotation.
  *
  * Returns: the angle to use (always in radians)
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_quote_angle(AdgDim *dim, gdouble angle)

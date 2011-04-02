@@ -23,6 +23,8 @@
  * @short_description: Generic pattern fill
  *
  * A style defining a generic fill based on cairo_pattern_t.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -168,6 +172,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Sets a new pattern on @fill_style. A new reference is added to
  * @pattern with cairo_pattern_reference() and the old pattern
  * (if any) is unreferenced with cairo_pattern_destroy().
+ *
+ * Since: 1.0
  **/
 void
 adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
@@ -183,6 +189,8 @@ adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
  * Gets the current pattern binded to @fill_style.
  *
  * Returns: the current pattern
+ *
+ * Since: 1.0
  **/
 AdgPattern *
 adg_fill_style_get_pattern(AdgFillStyle *fill_style)
@@ -216,6 +224,8 @@ adg_fill_style_get_pattern(AdgFillStyle *fill_style)
  * override the set_extents() implementation to customize this
  * behavior, for example to keep the greatest boundary box instead
  * of the last one.
+ *
+ * Since: 1.0
  **/
 void
 adg_fill_style_set_extents(AdgFillStyle *fill_style,
@@ -243,6 +253,8 @@ adg_fill_style_set_extents(AdgFillStyle *fill_style,
  * entities as needed.
  *
  * Returns: the extents of @fill_style or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_fill_style_get_extents(AdgFillStyle *fill_style)

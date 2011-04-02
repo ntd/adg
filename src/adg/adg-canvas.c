@@ -54,6 +54,8 @@
  * extents into account. The margins are then subtracted to get
  * the coordinates of the border. In this case, the paddings are
  * simply ignored.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -61,6 +63,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -396,6 +400,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Creates a new empty canvas object.
  *
  * Returns: the canvas
+ *
+ * Since: 1.0
  **/
 AdgCanvas *
 adg_canvas_new(void)
@@ -412,6 +418,8 @@ adg_canvas_new(void)
  * components of the returned #AdgPair could be %0, in which
  * case the size returned by adg_entity_get_extents() on
  * @canvas will be used instead.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
@@ -431,6 +439,8 @@ adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
  * A convenient function to set the size of @canvas using
  * explicit coordinates. Check adg_canvas_set_size() for
  * further details.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
@@ -453,6 +463,8 @@ adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
  * @canvas will be used instead.
  *
  * Returns: the explicit size set on this canvas or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_canvas_get_size(AdgCanvas *canvas)
@@ -472,6 +484,8 @@ adg_canvas_get_size(AdgCanvas *canvas)
  *
  * Sets a new background dress for rendering @canvas: the new
  * dress must be a color dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
@@ -487,6 +501,8 @@ adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
  * Gets the background dress to be used in rendering @canvas.
  *
  * Returns: the current background dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_canvas_get_background_dress(AdgCanvas *canvas)
@@ -507,6 +523,8 @@ adg_canvas_get_background_dress(AdgCanvas *canvas)
  *
  * Sets the #AdgCanvas:frame-dress property of @canvas to @dress:
  * the new dress must be a line dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
@@ -522,6 +540,8 @@ adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
  * Gets the frame dress to be used in rendering the border of @canvas.
  *
  * Returns: the current frame dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_canvas_get_frame_dress(AdgCanvas *canvas)
@@ -550,6 +570,8 @@ adg_canvas_get_frame_dress(AdgCanvas *canvas)
  *   usual way too, by resetting the right and bottom paddings);
  * - the @title_block boundary box is not taken into account while
  *   computing the extents of @canvas.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
@@ -567,6 +589,8 @@ adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
  * adg_canvas_set_title_block() for details.
  *
  * Returns: the title block object or %NULL
+ *
+ * Since: 1.0
  **/
 AdgTitleBlock *
 adg_canvas_get_title_block(AdgCanvas *canvas)
@@ -586,6 +610,8 @@ adg_canvas_get_title_block(AdgCanvas *canvas)
  *
  * Changes the top margin of @canvas by setting #AdgCanvas:top-margin
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
@@ -601,6 +627,8 @@ adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
  * Gets the top margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_top_margin(AdgCanvas *canvas)
@@ -620,6 +648,8 @@ adg_canvas_get_top_margin(AdgCanvas *canvas)
  *
  * Changes the right margin of @canvas by setting #AdgCanvas:right-margin
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
@@ -635,6 +665,8 @@ adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
  * Gets the right margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_right_margin(AdgCanvas *canvas)
@@ -655,6 +687,8 @@ adg_canvas_get_right_margin(AdgCanvas *canvas)
  *
  * Changes the bottom margin of @canvas by setting #AdgCanvas:bottom-margin
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
@@ -670,6 +704,8 @@ adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
  * Gets the bottom margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_bottom_margin(AdgCanvas *canvas)
@@ -689,6 +725,8 @@ adg_canvas_get_bottom_margin(AdgCanvas *canvas)
  *
  * Changes the left margin of @canvas by setting #AdgCanvas:left-margin
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
@@ -704,6 +742,8 @@ adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
  * Gets the left margin (in global space) of @canvas.
  *
  * Returns: the requested margin or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_left_margin(AdgCanvas *canvas)
@@ -725,6 +765,8 @@ adg_canvas_get_left_margin(AdgCanvas *canvas)
  * @left: left margin, in global space
  *
  * Convenient function to set all the margins at once.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
@@ -742,6 +784,8 @@ adg_canvas_set_margins(AdgCanvas *canvas, gdouble top, gdouble right,
  *
  * A convenient function to apply the margins of @canvas to the
  * arbitrary #CpmlExtents struct @extents.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
@@ -766,6 +810,8 @@ adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
  * Sets a new status on the #AdgCanvas:has-frame property: %TRUE
  * means a border around the canvas extents (less the margins)
  * should be rendered.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
@@ -783,6 +829,8 @@ adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
  * margins) should be rendered (%TRUE) or not (%FALSE).
  *
  * Returns: the current status of the frame flag
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_canvas_has_frame(AdgCanvas *canvas)
@@ -802,6 +850,8 @@ adg_canvas_has_frame(AdgCanvas *canvas)
  *
  * Changes the top padding of @canvas by setting #AdgCanvas:top-padding
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
@@ -817,6 +867,8 @@ adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
  * Gets the top padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_top_padding(AdgCanvas *canvas)
@@ -836,6 +888,8 @@ adg_canvas_get_top_padding(AdgCanvas *canvas)
  *
  * Changes the right padding of @canvas by setting #AdgCanvas:right-padding
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
@@ -851,6 +905,8 @@ adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
  * Gets the right padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_right_padding(AdgCanvas *canvas)
@@ -871,6 +927,8 @@ adg_canvas_get_right_padding(AdgCanvas *canvas)
  *
  * Changes the bottom padding of @canvas by setting #AdgCanvas:bottom-padding
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
@@ -886,6 +944,8 @@ adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
  * Gets the bottom padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_bottom_padding(AdgCanvas *canvas)
@@ -905,6 +965,8 @@ adg_canvas_get_bottom_padding(AdgCanvas *canvas)
  *
  * Changes the left padding of @canvas by setting #AdgCanvas:left-padding
  * to @value. Negative values are allowed.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
@@ -920,6 +982,8 @@ adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
  * Gets the left padding (in global space) of @canvas.
  *
  * Returns: the requested padding or %0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_canvas_get_left_padding(AdgCanvas *canvas)
@@ -941,6 +1005,8 @@ adg_canvas_get_left_padding(AdgCanvas *canvas)
  * @left: left padding, in global space
  *
  * Convenient function to set all the paddings at once.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_paddings(AdgCanvas *canvas, gdouble top, gdouble right,

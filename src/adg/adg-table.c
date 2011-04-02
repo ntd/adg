@@ -47,6 +47,8 @@
  * entities will be displaced accordingly to the
  * #AdgTableStyle:cell-padding value (not used when setting the
  * entities throught other APIs).
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -54,6 +56,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -61,6 +65,8 @@
  *
  * An opaque structure referring to a row of an #AdgTable. Any
  * table can have an unlimited number of rows.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -68,6 +74,8 @@
  *
  * An opaque structure referring to the cell of an #AdgTableRow.
  * Any row can have an unlimited number of cells.
+ *
+ * Since: 1.0
  **/
 
 
@@ -302,6 +310,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * table is not subject to any local transformations.
  *
  * Returns: the newly created table entity
+ *
+ * Since: 1.0
  **/
 AdgTable *
 adg_table_new(void)
@@ -324,6 +334,8 @@ adg_table_new(void)
  * The check is done by calling adg_dress_are_related() with
  * @dress and the previous dress as arguments. Check out its
  * documentation for details on what is a related dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_set_table_dress(AdgTable *table, AdgDress dress)
@@ -339,6 +351,8 @@ adg_table_set_table_dress(AdgTable *table, AdgDress dress)
  * Gets the table dress to be used in rendering @table.
  *
  * Returns: the current table dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_table_get_table_dress(AdgTable *table)
@@ -360,6 +374,8 @@ adg_table_get_table_dress(AdgTable *table)
  * Sets the #AdgTable:has-frame property: %TRUE will draw a
  * frame around the whole table using the #AdgTableStyle:frame-dress
  * dress of the table style.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_switch_frame(AdgTable *table, gboolean new_state)
@@ -375,6 +391,8 @@ adg_table_switch_frame(AdgTable *table, gboolean new_state)
  * Returns the state of the #AdgTable:has-frame property.
  *
  * Returns: the current state
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_table_has_frame(AdgTable *table)
@@ -395,6 +413,8 @@ adg_table_has_frame(AdgTable *table)
  * Gets the number of rows stored in @table.
  *
  * Returns: the number of rows or %0 on empty @table or errors
+ *
+ * Since: 1.0
  **/
 guint
 adg_table_get_n_rows(AdgTable *table)
@@ -421,6 +441,8 @@ adg_table_get_n_rows(AdgTable *table)
  * you can override it by using adg_table_row_set_height().
  *
  * Returns: the newly created row or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTableRow *
 adg_table_row_new(AdgTable *table)
@@ -438,6 +460,8 @@ adg_table_row_new(AdgTable *table)
  * just before @row.
  *
  * Returns: the newly created row or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTableRow *
 adg_table_row_new_before(AdgTableRow *row)
@@ -454,6 +478,8 @@ adg_table_row_new_before(AdgTableRow *row)
  *
  * Removes @row from its owner table and frees every resources allocated
  * by it. This means also the eventual cells owned by @row will be freed.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_row_delete(AdgTableRow *row)
@@ -483,6 +509,8 @@ adg_table_row_delete(AdgTableRow *row)
  * Gets the number of cells stored in @row.
  *
  * Returns: the number of cells or %0 on empty row or errors
+ *
+ * Since: 1.0
  **/
 guint
 adg_table_row_get_n_cells(const AdgTableRow *row)
@@ -503,6 +531,8 @@ adg_table_row_get_n_cells(const AdgTableRow *row)
  * Sets a new height on @row. The extents will be invalidated to
  * recompute the whole layout of the table. Specifying %0 in
  * @height will use the default height set in the table style.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_row_set_height(AdgTableRow *row, gdouble height)
@@ -521,6 +551,8 @@ adg_table_row_set_height(AdgTableRow *row, gdouble height)
  * Gets the height of @row.
  *
  * Returns: the requested height or %0 on errors
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_table_row_get_height(AdgTableRow *row)
@@ -539,6 +571,8 @@ adg_table_row_get_height(AdgTableRow *row)
  * be not up to date.
  *
  * Returns: the extents of @row or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_table_row_get_extents(AdgTableRow *row)
@@ -572,6 +606,8 @@ adg_table_row_get_extents(AdgTableRow *row)
  * a warning without any further processing.
  *
  * Returns: the newly created cell or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTableCell *
 adg_table_cell_new(AdgTableRow *row, gdouble width)
@@ -592,6 +628,8 @@ adg_table_cell_new(AdgTableRow *row, gdouble width)
  * adg_table_cell_new() function.
  *
  * Returns: the newly created cell or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTableCell *
 adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
@@ -626,6 +664,8 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
  * be raised and the function will fail.
  *
  * Returns: the newly created cell or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTableCell *
 adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
@@ -655,6 +695,8 @@ adg_table_cell_new_full(AdgTableRow *row, gdouble width, const gchar *name,
  * retrieved by this method.
  *
  * Returns: the requested cell or %NULL if not found
+ *
+ * Since: 1.0
  **/
 AdgTableCell *
 adg_table_cell(AdgTable *table, const gchar *name)
@@ -677,6 +719,8 @@ adg_table_cell(AdgTable *table, const gchar *name)
  *
  * Deletes @cell removing it from the container row and freeing
  * any resource associated to it.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_delete(AdgTableCell *cell)
@@ -700,6 +744,8 @@ adg_table_cell_delete(AdgTableCell *cell)
  *
  * Sets a new name on @cell: this will allow to access @cell by
  * name at a later time using the adg_table_cell() API.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
@@ -724,6 +770,8 @@ adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
  * inspection.
  *
  * Returns: the name bound of @cell or %NULL on no name or errors
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_table_cell_get_name(AdgTableCell *cell)
@@ -751,6 +799,8 @@ adg_table_cell_get_name(AdgTableCell *cell)
  * not %NULL) is refenenced with g_object_ref_sink().
  *
  * @title can be %NULL, in which case the old entity is removed.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_title(AdgTableCell *cell, AdgEntity *title)
@@ -770,6 +820,8 @@ adg_table_cell_set_title(AdgTableCell *cell, AdgEntity *title)
  * Convenient function to set a the title of a cell using an #AdgToyText
  * entity with the font dress picked from #AdgTable:table-dress with
  * a call to adg_table_style_get_title_dress().
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
@@ -825,6 +877,8 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
  * by @cell and must not be modified or freed.
  *
  * Returns: the title entity or %NULL for undefined title
+ *
+ * Since: 1.0
  **/
 AdgEntity *
 adg_table_cell_title(AdgTableCell *cell)
@@ -848,6 +902,8 @@ adg_table_cell_title(AdgTableCell *cell)
  * not %NULL) is refenenced with g_object_ref_sink().
  *
  * @value can be %NULL, in which case the old entity is removed.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
@@ -867,6 +923,8 @@ adg_table_cell_set_value(AdgTableCell *cell, AdgEntity *value)
  * Convenient function to set a the value of a cell using an #AdgToyText
  * entity with a value font dress picked from #AdgTable:table-dress with
  * a call to adg_table_style_get_value_dress().
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
@@ -919,6 +977,8 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
  * by @cell and must not be modified or freed.
  *
  * Returns: the value entity or %NULL for undefined value
+ *
+ * Since: 1.0
  **/
 AdgEntity *
 adg_table_cell_value(AdgTableCell *cell)
@@ -939,6 +999,8 @@ adg_table_cell_value(AdgTableCell *cell)
  * value extents) while the @to_factor is the destination point
  * (specified as a fraction of the cell extents) the source point
  * must be moved to.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
@@ -958,6 +1020,8 @@ adg_table_cell_set_value_pos(AdgTableCell *cell, const AdgPair *from_factor,
  *
  * A convenient wrapper around adg_table_cell_set_value_pos()
  * that uses explicit factors instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_value_pos_explicit(AdgTableCell *cell,
@@ -982,6 +1046,8 @@ adg_table_cell_set_value_pos_explicit(AdgTableCell *cell,
  * Sets a new width on @cell. The extents on the whole table
  * will be invalidated, so will be recomputed in the next
  * arrange() phase.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_set_width(AdgTableCell *cell, gdouble width)
@@ -1000,6 +1066,8 @@ adg_table_cell_set_width(AdgTableCell *cell, gdouble width)
  * Gets the width of @cell.
  *
  * Returns: the requested width or %0 on errors
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_table_cell_get_width(AdgTableCell *cell)
@@ -1017,6 +1085,8 @@ adg_table_cell_get_width(AdgTableCell *cell)
  * Sets the frame flag of @cell: if @new_state is %TRUE, a frame around
  * @cell will be rendered using the #AdgTableStyle:cell-dress dress
  * of the table style.
+ *
+ * Since: 1.0
  **/
 void
 adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
@@ -1044,6 +1114,8 @@ adg_table_cell_switch_frame(AdgTableCell *cell, gboolean new_state)
  * Gets the frame flag of @cell.
  *
  * Returns: the frame flag
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_table_cell_has_frame(AdgTableCell *cell)
@@ -1062,6 +1134,8 @@ adg_table_cell_has_frame(AdgTableCell *cell)
  * be not up to date.
  *
  * Returns: the extents of @cell or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_table_cell_get_extents(AdgTableCell *cell)

@@ -23,6 +23,8 @@
  * @short_description: The base class of all styling objects
  *
  * This is the fundamental abstract class for styles.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -80,6 +84,8 @@ adg_style_class_init(AdgStyleClass *klass)
      * can be called more than once without harms. Furthermore it
      * will be emitted from property setter code of new implementations
      * to force the recomputation of the cache.
+ *
+ * Since: 1.0
      **/
     _adg_signals[INVALIDATE] =
         g_signal_new("invalidate",
@@ -99,6 +105,8 @@ adg_style_class_init(AdgStyleClass *klass)
      * Applies @style to @cr so the next rendering operations will be
      * done accordling to this style directives. The @entity parameter
      * is used to resolve the internal dresses of @style, if any.
+ *
+ * Since: 1.0
      **/
     _adg_signals[APPLY] =
         g_signal_new("apply",
@@ -136,6 +144,8 @@ _adg_dispose(GObject *object)
  * <note><para>
  * This function is only useful in new style implementations.
  * </para></note>
+ *
+ * Since: 1.0
  **/
 void
 adg_style_invalidate(AdgStyle *style)
@@ -153,6 +163,8 @@ adg_style_invalidate(AdgStyle *style)
  *
  * Emits the #AdgStyle::apply signal on @style, passing @entity and
  * @cr as parameters to the signal.
+ *
+ * Since: 1.0
  **/
 void
 adg_style_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)

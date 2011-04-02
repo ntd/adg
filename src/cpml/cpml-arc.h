@@ -29,15 +29,14 @@
 
 CAIRO_BEGIN_DECLS
 
-cairo_bool_t
-        cpml_arc_info                   (const CpmlPrimitive    *arc,
+int             cpml_arc_info           (const CpmlPrimitive    *arc,
                                          CpmlPair               *center,
                                          double                 *r,
                                          double                 *start,
                                          double                 *end);
-void    cpml_arc_to_cairo               (const CpmlPrimitive    *arc,
+void            cpml_arc_to_cairo       (const CpmlPrimitive    *arc,
                                          cairo_t                *cr);
-void    cpml_arc_to_curves              (const CpmlPrimitive    *arc,
+void            cpml_arc_to_curves      (const CpmlPrimitive    *arc,
                                          CpmlSegment            *segment,
                                          size_t                  n_curves);
 

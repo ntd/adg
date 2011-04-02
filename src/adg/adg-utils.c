@@ -25,6 +25,8 @@
  * @short_description: Assorted macros and functions
  *
  * Collection of macros and functions that do not fit inside any other topic.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -65,30 +67,40 @@
  * ...
  * };
  * ]|
+ *
+ * Since: 1.0
  **/
 
 /**
  * ADG_DIR_RIGHT:
  *
  * Symbolic constant for the right direction (in radians).
+ *
+ * Since: 1.0
  **/
 
 /**
  * ADG_DIR_DOWN:
  *
  * Symbolic constant for the down direction (in radians).
+ *
+ * Since: 1.0
  **/
 
 /**
  * ADG_DIR_LEFT:
  *
  * Symbolic constant for the left direction (in radians).
+ *
+ * Since: 1.0
  **/
 
 /**
  * ADG_DIR_UP:
  *
  * Symbolic constant for the up direction (in radians).
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -100,6 +112,8 @@
  * |[
  * adg_dim_set_value(dim, ADG_UTF8_DIAMETER "<>");
  * ]|
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -112,6 +126,8 @@
  * |[
  * adg_dim_set_value(dim, "<>" ADG_UTF8_DEGREE);
  * ]|
+ *
+ * Since: 1.0
  **/
 
 
@@ -133,6 +149,8 @@
  * prior to 2.16.0
  *
  * Returns: -1, 0 or 1, if @str1 is <, == or > than @str2.
+ *
+ * Since: 1.0
  */
 int
 g_strcmp0(const char *str1, const char *str2)
@@ -155,6 +173,8 @@ g_strcmp0(const char *str1, const char *str2)
  * its first character is %'\0'.
  *
  * Returns: %TRUE if @str is an empty string, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_is_string_empty(const gchar *str)
@@ -170,6 +190,8 @@ adg_is_string_empty(const gchar *str)
  * Checks if @value is a valid @enum_type value.
  *
  * Returns: %TRUE if @value is a valid @enum_type, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_is_enum_value(int value, GType enum_type)
@@ -205,6 +227,8 @@ adg_is_enum_value(int value, GType enum_type)
  * or %FALSE. No other values are accepted.
  *
  * Returns: %TRUE if @value is a valid #gboolean, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_is_boolean_value(gboolean value)
@@ -226,6 +250,8 @@ adg_is_boolean_value(gboolean value)
  *
  * Returns: a newly allocated string to be freed with g_free() or
  *          %NULL on errors
+ *
+ * Since: 1.0
  **/
 gchar *
 adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
@@ -266,6 +292,8 @@ adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
  * initialize the ADG localization infrastructure.
  *
  * Returns: The translated string
+ *
+ * Since: 1.0
  **/
 G_CONST_RETURN gchar *
 _adg_dgettext(const gchar *domain, const gchar *msgid)
@@ -297,6 +325,8 @@ _adg_dgettext(const gchar *domain, const gchar *msgid)
  * _adg_dgettext() internally instead of g_dgettext().
  *
  * Returns: The translated string
+ *
+ * Since: 1.0
  **/
 G_CONST_RETURN gchar *
 _adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)

@@ -25,12 +25,16 @@
  * The #AdgTextual interface should be implemented by entities that
  * can be expressed by text. #AdgToyText is a typical case but also
  * more complex entities could implement it.
+ *
+ * Since: 1.0
  **/
 
 /**
  * AdgTextual:
  *
  * Dummy type of the #AdgTextualIface interface.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -44,6 +48,8 @@
  *
  * The virtual methods @set_text and @dup_text must be implemented
  * by all the types which implement this interface.
+ *
+ * Since: 1.0
  **/
 
 
@@ -118,6 +124,8 @@ _adg_iface_base(AdgTextualIface *iface)
      * @old_text: the old text
      *
      * Emitted whenever the text of @textual has been changed.
+ *
+ * Since: 1.0
      **/
     _adg_signals[TEXT_CHANGED] =
         g_signal_new("text-changed",
@@ -136,6 +144,8 @@ _adg_iface_base(AdgTextualIface *iface)
  * @dress: the new dress
  *
  * Sets the font dress of @textual to @dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_textual_set_font_dress(AdgTextual *textual, AdgDress dress)
@@ -163,6 +173,8 @@ adg_textual_set_font_dress(AdgTextual *textual, AdgDress dress)
  * an #AdgFontStyle before the rendering.
  *
  * Returns: the current font dress of @textual
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_textual_get_font_dress(AdgTextual *textual)
@@ -190,6 +202,8 @@ adg_textual_get_font_dress(AdgTextual *textual)
  * Sets a new text on @textual. If @text is the same as the old text
  * no actions are performed, otherwise the set_text() virtual method
  * is called and the #AdgTextual::text-changed signal is emitted.
+ *
+ * Since: 1.0
  **/
 void
 adg_textual_set_text(AdgTextual *textual, const gchar *text)
@@ -223,6 +237,8 @@ adg_textual_set_text(AdgTextual *textual, const gchar *text)
  * Gets a duplicate of the current text bound to @textual.
  *
  * Returns: the current text of @textual: free with g_free() when finished
+ *
+ * Since: 1.0
  **/
 gchar *
 adg_textual_dup_text(AdgTextual *textual)
@@ -243,6 +259,8 @@ adg_textual_dup_text(AdgTextual *textual)
  * This function is only useful when creating a new class that implements
  * the #AdgTextual interface.
  * </para></note>
+ *
+ * Since: 1.0
  **/
 void
 adg_textual_text_changed(AdgTextual *textual, const gchar *old_text)

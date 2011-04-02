@@ -42,7 +42,7 @@ void            cpml_pair_from_cairo            (CpmlPair       *pair,
                                                                 *path_data);
 void            cpml_pair_copy                  (CpmlPair       *pair,
                                                  const CpmlPair *src);
-cairo_bool_t    cpml_pair_equal                 (const CpmlPair *pair,
+int             cpml_pair_equal                 (const CpmlPair *pair,
                                                  const CpmlPair *src);
 void            cpml_pair_transform             (CpmlPair       *pair,
                                                  const cairo_matrix_t

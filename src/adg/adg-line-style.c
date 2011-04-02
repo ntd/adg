@@ -24,6 +24,8 @@
  *
  * Contains parameters on how to draw lines such as width, cap mode, join mode
  * and dash composition, if used.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -31,6 +33,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -218,6 +222,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Constructs a new line style initialized with default params.
  *
  * Returns: a new line style
+ *
+ * Since: 1.0
  **/
 AdgLineStyle *
 adg_line_style_new(void)
@@ -239,6 +245,8 @@ adg_line_style_new(void)
  * adg_dress_are_related() with @dress and the previous
  * dress as arguments: check out its documentation for
  * details on what is a related dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
@@ -254,6 +262,8 @@ adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
  * Gets the color dress used by @line_style.
  *
  * Returns: the current color dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_line_style_get_color_dress(AdgLineStyle *line_style)
@@ -273,6 +283,8 @@ adg_line_style_get_color_dress(AdgLineStyle *line_style)
  * @width: the new width
  *
  * Sets a new line thickness value.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
@@ -288,6 +300,8 @@ adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
  * Gets the line thickness value (in global space).
  *
  * Returns: the requested width
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_line_style_get_width(AdgLineStyle *line_style)
@@ -307,6 +321,8 @@ adg_line_style_get_width(AdgLineStyle *line_style)
  * @cap: the new cap mode
  *
  * Sets a new line cap mode.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
@@ -328,6 +344,8 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
  * Gets the line cap mode.
  *
  * Returns: the requested line cap mode
+ *
+ * Since: 1.0
  **/
 cairo_line_cap_t
 adg_line_style_get_cap(AdgLineStyle *line_style)
@@ -348,6 +366,8 @@ adg_line_style_get_cap(AdgLineStyle *line_style)
  * @join: the new join mode
  *
  * Sets a new line join mode.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
@@ -369,6 +389,8 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
  * Gets the line join mode.
  *
  * Returns: the requested line join mode
+ *
+ * Since: 1.0
  **/
 cairo_line_join_t
 adg_line_style_get_join(AdgLineStyle *line_style)
@@ -389,6 +411,8 @@ adg_line_style_get_join(AdgLineStyle *line_style)
  * @miter_limit: the new miter limit
  *
  * Sets a new miter limit value.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
@@ -405,6 +429,8 @@ adg_line_style_set_miter_limit(AdgLineStyle *line_style, gdouble miter_limit)
  * whether the lines should be joined with a bevel instead of a miter.
  *
  * Returns: the requested miter limit
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_line_style_get_miter_limit(AdgLineStyle *line_style)
@@ -424,6 +450,8 @@ adg_line_style_get_miter_limit(AdgLineStyle *line_style)
  * @antialias: the new antialias mode
  *
  * Sets a new antialias mode.
+ *
+ * Since: 1.0
  **/
 void
 adg_line_style_set_antialias(AdgLineStyle *line_style,
@@ -446,6 +474,8 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
  * Gets the antialias mode used.
  *
  * Returns: the requested antialias mode
+ *
+ * Since: 1.0
  **/
 cairo_antialias_t
 adg_line_style_get_antialias(AdgLineStyle *line_style)

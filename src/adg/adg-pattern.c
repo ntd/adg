@@ -25,6 +25,8 @@
  * @short_description: A wrapper for #cairo_pattern_t
  *
  * AdgPattern is a wrapper in #GType syntax of the #cairo_pattern_t struct.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -32,6 +34,8 @@
  *
  * Another name for #cairo_pattern_t: check its documentation for the
  * fields description and visibility details.
+ *
+ * Since: 1.0
  **/
 
 

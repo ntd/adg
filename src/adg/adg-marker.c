@@ -41,6 +41,8 @@
  *
  * The #AdgMarker:model property and APIs are intended only for marker
  * implementation purposes.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -48,6 +50,8 @@
  *
  * All fields are privates and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -261,6 +265,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * segment: if you want to set a new segment it is more convenient to
  * change both properties (#AdgMarker:trail and #AdgMarker:n-segment)
  * at once with adg_marker_set_segment().
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
@@ -276,6 +282,8 @@ adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
  * Gets the trail where this marker should be applied.
  *
  * Returns: the trail owned by @marker or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTrail *
 adg_marker_get_trail(AdgMarker *marker)
@@ -298,6 +306,8 @@ adg_marker_get_trail(AdgMarker *marker)
  * is unchanged. If you want to set both properties at once (as
  * usually requested to refer to a specific segment),
  * adg_marker_set_segment() should be more convenient.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
@@ -314,6 +324,8 @@ adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
  * will be applied, where %1 is the first segment.
  *
  * Returns: an index greather than %0 on success or %0 on errors
+ *
+ * Since: 1.0
  **/
 guint
 adg_marker_get_n_segment(AdgMarker *marker)
@@ -340,6 +352,8 @@ adg_marker_get_n_segment(AdgMarker *marker)
  * A callback is added to #AdgTrail::remove-dependency so manually
  * removing the dependency (such as when @trail is destroyed) will
  * unlink @marker from it.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
@@ -364,6 +378,8 @@ adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
  * having applied the marker.
  *
  * Returns: the segment or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgSegment *
 adg_marker_get_segment(AdgMarker *marker)
@@ -395,6 +411,8 @@ adg_marker_get_segment(AdgMarker *marker)
  * When the subject segment is changed (either by changing
  * #AdgMarker:trail or #AdgMarker:n-segment) the original segment
  * is automatically restored.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_backup_segment(AdgMarker *marker)
@@ -438,6 +456,8 @@ adg_marker_backup_segment(AdgMarker *marker)
  * is automatically restored.
  *
  * Returns: the original segment or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgSegment *
 adg_marker_get_backup_segment(AdgMarker *marker)
@@ -458,6 +478,8 @@ adg_marker_get_backup_segment(AdgMarker *marker)
  *
  * Sets a new position on @marker. Check out adg_marker_get_pos() for
  * details on what @pos represents.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_pos(AdgMarker *marker, gdouble pos)
@@ -475,6 +497,8 @@ adg_marker_set_pos(AdgMarker *marker, gdouble pos)
  * start point and %1 means the end point of the segment.
  *
  * Returns: the marker position
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_marker_get_pos(AdgMarker *marker)
@@ -495,6 +519,8 @@ adg_marker_get_pos(AdgMarker *marker)
  *
  * Sets a new size on @marker. The @size is an implementation-dependent
  * property: it has meaning only when used by an #AdgMarker derived type.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_size(AdgMarker *marker, gdouble size)
@@ -510,6 +536,8 @@ adg_marker_set_size(AdgMarker *marker, gdouble size)
  * Gets the current size of @marker.
  *
  * Returns: the marker size, in global space
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_marker_get_size(AdgMarker *marker)
@@ -535,6 +563,8 @@ adg_marker_get_size(AdgMarker *marker)
  * Sets a new model for @marker. The reference to the old model (if an
  * old model was present) is dropped while a new reference is added to
  * @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_marker_set_model(AdgMarker *marker, AdgModel *model)
@@ -556,6 +586,8 @@ adg_marker_set_model(AdgMarker *marker, AdgModel *model)
  * instead.
  *
  * Returns: the cached model owned by @marker or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgModel *
 adg_marker_get_model(AdgMarker *marker)
@@ -581,6 +613,8 @@ adg_marker_get_model(AdgMarker *marker)
  * automatically created by calling the create_model() virtual method.
  *
  * Returns: the current model owned by @marker or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgModel *
 adg_marker_model(AdgMarker *marker)

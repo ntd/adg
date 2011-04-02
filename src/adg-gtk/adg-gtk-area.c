@@ -45,6 +45,8 @@
  * used to align and/or apply the zoom coefficient to the canvas
  * without affecting the other layers. Local transformations,
  * instead, are directly applied to the local matrix of the canvas.
+ *
+ * Since: 1.0
  **/
 
 
@@ -53,6 +55,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -178,6 +182,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
      *
      * Emitted when the #AdgGtkArea has a new canvas. If the new canvas
      * is the same as the old one, the signal is not emitted.
+ *
+ * Since: 1.0
      **/
     _adg_signals[CANVAS_CHANGED] =
         g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
@@ -200,6 +206,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
      * The extents of #AdgGtkArea are subject to the render
      * map, so changing the #AdgGtkArea:render-map property
      * will emit this signal too.
+ *
+ * Since: 1.0
      **/
     _adg_signals[EXTENTS_CHANGED] =
         g_signal_new("extents-changed", ADG_GTK_TYPE_AREA,
@@ -322,6 +330,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * property or with adg_gtk_area_set_canvas().
  *
  * Returns: the newly created widget
+ *
+ * Since: 1.0
  **/
 GtkWidget *
 adg_gtk_area_new(void)
@@ -337,6 +347,8 @@ adg_gtk_area_new(void)
  * to @canvas.
  *
  * Returns: the newly created widget
+ *
+ * Since: 1.0
  **/
 GtkWidget *
 adg_gtk_area_new_with_canvas(AdgCanvas *canvas)
@@ -353,6 +365,8 @@ adg_gtk_area_new_with_canvas(AdgCanvas *canvas)
  *
  * Sets a new canvas on @area. The old canvas, if presents, is
  * unreferenced.
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
@@ -368,6 +382,8 @@ adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
  * Gets the canvas associated to @area.
  *
  * Returns: the requested #AdgCanvas object or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgCanvas *
 adg_gtk_area_get_canvas(AdgGtkArea *area)
@@ -394,6 +410,8 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
  * The render map is an implementation detail and this function
  * is expected to be used only by #AdgGtkArea derived objects.
  * </para></note>
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
@@ -423,6 +441,8 @@ adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
  * The render map is an implementation detail and this function
  * is expected to be used only by #AdgGtkArea derived objects.
  * </para></note>
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_transform_render_map(AdgGtkArea *area,
@@ -450,6 +470,8 @@ adg_gtk_area_transform_render_map(AdgGtkArea *area,
  * Gets the render map.
  *
  * Returns: the requested map or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_gtk_area_get_render_map(AdgGtkArea *area)
@@ -483,6 +505,8 @@ adg_gtk_area_get_render_map(AdgGtkArea *area)
  * is called before the extents computation.
  *
  * Returns: the extents of the @area canvas or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_gtk_area_get_extents(AdgGtkArea *area)
@@ -501,6 +525,8 @@ adg_gtk_area_get_extents(AdgGtkArea *area)
  * returned should be always %1.
  *
  * Returns: the current zoom coefficient
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_gtk_area_get_zoom(AdgGtkArea *area)
@@ -520,6 +546,8 @@ adg_gtk_area_get_zoom(AdgGtkArea *area)
  *
  * Sets a new zoom factor to @area. If the factor is less than
  * 1, it will be clamped to 1.
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
@@ -538,6 +566,8 @@ adg_gtk_area_set_factor(AdgGtkArea *area, gdouble factor)
  * zooming out (that is, the default factor will be 1/1.05).
  *
  * Returns: the requested zoom factor or 0 on error
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_gtk_area_get_factor(AdgGtkArea *area)
@@ -560,6 +590,8 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
  * by adjusting its zoom coefficient in global space. This means the
  * drawing will fill the available space (keeping its aspect ratio)
  * when resizing the window.
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_switch_autozoom(AdgGtkArea *area, gboolean state)
@@ -576,6 +608,8 @@ adg_gtk_area_switch_autozoom(AdgGtkArea *area, gboolean state)
  * the @area object.
  *
  * Returns: the current autozoom state
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_gtk_area_has_autozoom(AdgGtkArea *area)
@@ -594,6 +628,8 @@ adg_gtk_area_has_autozoom(AdgGtkArea *area)
  * @canvas: the old canvas bound to @area
  *
  * Emits the #AdgGtkArea::canvas-changed signal on @area.
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
@@ -609,6 +645,8 @@ adg_gtk_area_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
  * @old_extents: the old extents of @area
  *
  * Emits the #AdgGtkArea::extents-changed signal on @area.
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_area_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
@@ -647,6 +685,8 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
  * window resizing, for example) use the top/left corner of the
  * canvas as reference point. Plan different policies for either
  * those situations.
+ *
+ * Since: 1.0
  **/
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)

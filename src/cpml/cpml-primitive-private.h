@@ -75,7 +75,7 @@ struct __CpmlPrimitiveClass {
                                          CpmlPair               *dest);
     void         (*offset)              (CpmlPrimitive          *primitive,
                                          double                  offset);
-    cairo_bool_t (*join)                (CpmlPrimitive          *primitive,
+    int          (*join)                (CpmlPrimitive          *primitive,
                                          CpmlPrimitive          *primitive2);
 };
 

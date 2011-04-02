@@ -29,15 +29,15 @@
 
 CAIRO_BEGIN_DECLS
 
-#define CPML_MOVE       CAIRO_PATH_MOVE_TO
-#define CPML_LINE       CAIRO_PATH_LINE_TO
-#define CPML_CURVE      CAIRO_PATH_CURVE_TO
-#define CPML_CLOSE      CAIRO_PATH_CLOSE_PATH
-#define CPML_ARC        ((CpmlPrimitiveType) 88)
-
-
-typedef cairo_path_data_type_t CpmlPrimitiveType;
 typedef struct _CpmlPrimitive CpmlPrimitive;
+
+typedef enum {
+    CPML_MOVE = CAIRO_PATH_MOVE_TO,
+    CPML_LINE = CAIRO_PATH_LINE_TO,
+    CPML_CURVE = CAIRO_PATH_CURVE_TO,
+    CPML_CLOSE = CAIRO_PATH_CLOSE_PATH,
+    CPML_ARC = 88
+} CpmlPrimitiveType;
 
 struct _CpmlPrimitive {
     CpmlSegment       *segment;
@@ -52,7 +52,7 @@ void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
 void            cpml_primitive_copy        (CpmlPrimitive       *primitive,
                                             const CpmlPrimitive *src);
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
-cairo_bool_t    cpml_primitive_next        (CpmlPrimitive       *primitive);
+int             cpml_primitive_next        (CpmlPrimitive       *primitive);
 size_t          cpml_primitive_get_n_points(const CpmlPrimitive *primitive);
 cairo_path_data_t *
                 cpml_primitive_get_point   (const CpmlPrimitive *primitive,
@@ -82,12 +82,12 @@ size_t          cpml_primitive_put_intersections_with_segment
                                             CpmlPair            *dest);
 void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
                                             double               offset);
-cairo_bool_t    cpml_primitive_join        (CpmlPrimitive       *primitive,
+int             cpml_primitive_join        (CpmlPrimitive       *primitive,
                                             CpmlPrimitive       *primitive2);
 void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
                                             cairo_t             *cr);
 void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
-                                            cairo_bool_t         org_also);
+                                            int                  org_also);
 
 CAIRO_END_DECLS
 

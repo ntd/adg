@@ -23,6 +23,8 @@
  * @short_description: Linear dimensions
  *
  * The #AdgLDim entity represents a linear dimension.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -260,6 +264,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * should be specified with adg_ldim_set_direction().
  *
  * Returns: the newly created linear dimension entity
+ *
+ * Since: 1.0
  **/
 AdgLDim *
 adg_ldim_new(void)
@@ -278,6 +284,8 @@ adg_ldim_new(void)
  * one shot.
  *
  * Returns: the newly created linear dimension entity
+ *
+ * Since: 1.0
  **/
 AdgLDim *
 adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
@@ -309,6 +317,8 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
  * Wrappes adg_ldim_new_full() with explicit values.
  *
  * Returns: the newly created linear dimension entity
+ *
+ * Since: 1.0
  **/
 AdgLDim *
 adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
@@ -341,6 +351,8 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
  * one shot and using named pairs from @model.
  *
  * Returns: the newly created linear dimension entity
+ *
+ * Since: 1.0
  **/
 AdgLDim *
 adg_ldim_new_full_from_model(AdgModel *model,
@@ -367,6 +379,8 @@ adg_ldim_new_full_from_model(AdgModel *model,
  *
  * Sets the direction angle where to extend @ldim.
  * @direction is normalized by cpml_angle() before being used.
+ *
+ * Since: 1.0
  **/
 void
 adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
@@ -382,6 +396,8 @@ adg_ldim_set_direction(AdgLDim *ldim, gdouble direction)
  * Gets the direction where @ldim will extend.
  *
  * Returns: the direction angle in radians
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_ldim_get_direction(AdgLDim *ldim)
@@ -402,6 +418,8 @@ adg_ldim_get_direction(AdgLDim *ldim)
  *
  * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
  * the first extension line of @ldim.
+ *
+ * Since: 1.0
  **/
 void
 adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
@@ -418,6 +436,8 @@ adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
  * Checks if @ldim should render also the first extension line.
  *
  * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_ldim_has_extension1(AdgLDim *ldim)
@@ -438,6 +458,8 @@ adg_ldim_has_extension1(AdgLDim *ldim)
  *
  * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
  * the second extension line of @ldim.
+ *
+ * Since: 1.0
  **/
 void
 adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
@@ -454,6 +476,8 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
  * Checks if @ldim should render also the second extension line.
  *
  * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_ldim_has_extension2(AdgLDim *ldim)

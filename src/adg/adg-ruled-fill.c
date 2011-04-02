@@ -25,6 +25,8 @@
  * The spacing between the lines could be changed using the
  * adg_ruled_fill_set_spacing() method. The angle of the lines should
  * be changed with adg_ruled_fill_set_angle().
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -32,6 +34,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -196,6 +200,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Constructs a new empty ruled fill style initialized with default params.
  *
  * Returns: a newly created ruled fill style
+ *
+ * Since: 1.0
  **/
 AdgRuledFill *
 adg_ruled_fill_new(void)
@@ -209,6 +215,8 @@ adg_ruled_fill_new(void)
  * @dress: the new line dress
  *
  * Sets a new line dress on @ruled_fill.
+ *
+ * Since: 1.0
  **/
 void
 adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
@@ -224,6 +232,8 @@ adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
  * Gets the @ruled_fill dress to be used for rendering the lines.
  *
  * Returns: the line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_ruled_fill_get_line_dress(AdgRuledFill *ruled_fill)
@@ -243,6 +253,8 @@ adg_ruled_fill_get_line_dress(AdgRuledFill *ruled_fill)
  * @spacing: the new spacing
  *
  * Sets a new spacing on @ruled_fill.
+ *
+ * Since: 1.0
  **/
 void
 adg_ruled_fill_set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
@@ -258,6 +270,8 @@ adg_ruled_fill_set_spacing(AdgRuledFill *ruled_fill, gdouble spacing)
  * Gets the current spacing of @ruled_fill.
  *
  * Returns: the spacing (in global space)
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_ruled_fill_get_spacing(AdgRuledFill *ruled_fill)
@@ -277,6 +291,8 @@ adg_ruled_fill_get_spacing(AdgRuledFill *ruled_fill)
  * @angle: the new angle
  *
  * Sets a new angle on @ruled_fill.
+ *
+ * Since: 1.0
  **/
 void
 adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
@@ -292,6 +308,8 @@ adg_ruled_fill_set_angle(AdgRuledFill *ruled_fill, gdouble angle)
  * Gets the current angle of @ruled_fill.
  *
  * Returns: the angle (in radians)
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_ruled_fill_get_angle(AdgRuledFill *ruled_fill)

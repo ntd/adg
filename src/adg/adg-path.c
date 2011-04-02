@@ -46,6 +46,8 @@
  * Furthermore, after cairo_path_close_path() a #CPML_MOVE primitive
  * to the starting point of the segment is automatically added by
  * cairo; in ADG, after an adg_path_close() the current point is unset.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -53,6 +55,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -167,6 +171,8 @@ _adg_finalize(GObject *object)
  * programmatically by using the methods provided by #AdgPath.
  *
  * Returns: the newly created path model
+ *
+ * Since: 1.0
  **/
 AdgPath *
 adg_path_new(void)
@@ -190,6 +196,8 @@ adg_path_new(void)
  * a warning. Check the description of every method for specific details.
  *
  * Returns: the current point or %NULL on no current point set or errors
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_path_get_current_point(AdgPath *path)
@@ -214,6 +222,8 @@ adg_path_get_current_point(AdgPath *path)
  * See adg_path_get_current_point() for details on the current point.
  *
  * Returns: whether a current point is defined
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_path_has_current_point(AdgPath *path)
@@ -235,6 +245,8 @@ adg_path_has_current_point(AdgPath *path)
  * is owned by @path and should not be freed or modified.
  *
  * Returns: a pointer to the last appended primitive or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgPrimitive *
 adg_path_last_primitive(AdgPath *path)
@@ -260,6 +272,8 @@ adg_path_last_primitive(AdgPath *path)
  *
  * Returns: a pointer to the primitive before the last appended one
  *          or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgPrimitive *
 adg_path_over_primitive(AdgPath *path)
@@ -288,6 +302,8 @@ adg_path_over_primitive(AdgPath *path)
  *
  * If @path has no current point while the requested primitive needs it,
  * a warning message will be triggered without other effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
@@ -306,6 +322,8 @@ adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
  * @var_args: point data, specified as #AdgPair pointers
  *
  * va_list version of adg_path_append().
+ *
+ * Since: 1.0
  **/
 void
 adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
@@ -373,6 +391,8 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * component of @primitive is not used. Anyway the current point is
  * checked against it: they must be equal or the function will fail
  * without further processing.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
@@ -404,6 +424,8 @@ adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
  * @segment: the #AdgSegment to append
  *
  * Appends @segment to @path.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
@@ -427,6 +449,8 @@ adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
  *
  * Appends a whole #CpmlPath to @path. #CpmlPath is a superset of
  * #cairo_path_t, so this function can be feeded with both.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
@@ -450,6 +474,8 @@ adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
  * @pair: the destination coordinates
  *
  * Begins a new segment. After this call the current point will be @pair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_move_to(AdgPath *path, const AdgPair *pair)
@@ -465,6 +491,8 @@ adg_path_move_to(AdgPath *path, const AdgPair *pair)
  *
  * Convenient function to call adg_path_move_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
@@ -487,6 +515,8 @@ adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_line_to(AdgPath *path, const AdgPair *pair)
@@ -502,6 +532,8 @@ adg_path_line_to(AdgPath *path, const AdgPair *pair)
  *
  * Convenient function to call adg_path_line_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
@@ -525,6 +557,8 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
@@ -542,6 +576,8 @@ adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
  *
  * Convenient function to call adg_path_arc_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
@@ -570,6 +606,8 @@ adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_curve_to(AdgPath *path, const AdgPair *control1,
@@ -590,6 +628,8 @@ adg_path_curve_to(AdgPath *path, const AdgPair *control1,
  *
  * Convenient function to call adg_path_curve_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
@@ -624,6 +664,8 @@ adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_close(AdgPath *path)
@@ -653,6 +695,8 @@ adg_path_close(AdgPath *path)
  * the arc will be automatically prepended to the arc. If @path has a
  * current point, a #CPML_LINE to the start point of the arc will be
  * used instead of the "move to" primitive.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
@@ -699,6 +743,8 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
  *
  * Convenient function to call adg_path_arc() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
@@ -735,6 +781,8 @@ adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * applied on the second primitive. The term "quantity" means the length
  * of the portion to cut out from the original primitive (that is the
  * primitive as would be without the chamfer).
+ *
+ * Since: 1.0
  **/
 void
 adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
@@ -761,6 +809,8 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * the second primitive is not required: the current close path is used
  * as first operand while the first primitive of the current segment is
  * used as second operand.
+ *
+ * Since: 1.0
  **/
 void
 adg_path_fillet(AdgPath *path, gdouble radius)
@@ -785,6 +835,8 @@ adg_path_fillet(AdgPath *path, gdouble radius)
  *
  * For convenience, if @vector is %NULL the path is reversed
  * around the x axis (y=0).
+ *
+ * Since: 1.0
  **/
 void
 adg_path_reflect(AdgPath *path, const CpmlVector *vector)

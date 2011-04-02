@@ -15,6 +15,7 @@ HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
 IGNORE_HFILES=		adg.h \
 			adg-internal.h \
+			adg-introspection.h \
 			adg-text-internal.h \
 			adg-type-builtins.h \
 			adg-marshal.h \

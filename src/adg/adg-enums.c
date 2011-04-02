@@ -26,6 +26,8 @@
  *
  * All the enumerations are available in GType notation, and so are
  * the standard type macros.
+ *
+ * Since: 1.0
  **/
 
 
@@ -38,6 +40,8 @@
  * A generic three state flags to be used whenever needed. Could be
  * user when a boolean is requested but also an indefinite / default
  * state should be caught.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -60,6 +64,8 @@
  * Specifies the mode a generic transformation should be applied on
  * a matrix. Although used in different places, the function performing
  * the dirty work is always adg_matrix_transform().
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -91,19 +97,22 @@
  * by the #AdgEntity::local-changed default handler to compute the
  * local matrix, while the global matrix is always computed using the
  * #ADG_MIX_ANCESTORS method.
+ *
+ * Since: 1.0
  **/
 
 /**
  * AdgProjectionScheme:
- *
- * ADG_PROJECTION_UNDEFINED:   there is a single view or the views are not
- *                             related with a consistent scheme
- * ADG_PROJECTION_FIRST_ANGLE: the views are generated as if the object were
- *                             sitting on the paper and, from the front view,
- *                             it is rolled to the right to show the left
- *                             side or rolled up to show its bottom
- * ADG_PROJECTION_THIRD_ANGLE: the views are generated as if the object were
- *                             a box to be unfolded
+ * @ADG_PROJECTION_UNDEFINED:   there is a single view or the views are not
+ *                              related with a consistent scheme
+ * @ADG_PROJECTION_FIRST_ANGLE: the views are generated as if the object were
+ *                              sitting on the paper and, from the front view,
+ *                              it is rolled to the right to show the left
+ *                              side or rolled up to show its bottom
+ * @ADG_PROJECTION_THIRD_ANGLE: the views are generated as if the object were
+ *                              a box to be unfolded
  *
  * Specifies how the views are positioned relative to each other.
+ *
+ * Since: 1.0
  **/

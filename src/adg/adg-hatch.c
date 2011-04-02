@@ -24,6 +24,8 @@
  *
  * The #AdgHatch object is used to fill a closed #AdgTrail model
  * with some sort of pattern.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -31,6 +33,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -149,6 +153,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * @trail can be %NULL, in which case an empty hatch is created.
  *
  * Returns: the newly created hatch entity
+ *
+ * Since: 1.0
  **/
 AdgHatch *
 adg_hatch_new(AdgTrail *trail)
@@ -169,6 +175,8 @@ adg_hatch_new(AdgTrail *trail)
  * The check is done by calling adg_dress_are_related() with
  * @dress and the previous dress as arguments. Check out its
  * documentation for details on what is a related dress.
+ *
+ * Since: 1.0
  **/
 void
 adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
@@ -184,6 +192,8 @@ adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
  * Gets the line dress to be used in rendering @hatch.
  *
  * Returns: the current line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_hatch_get_fill_dress(AdgHatch *hatch)

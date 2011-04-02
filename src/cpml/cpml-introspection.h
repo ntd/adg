@@ -1,5 +1,5 @@
 /* CPML - Cairo Path Manipulation Library
- * Copyright (C) 2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,39 +18,8 @@
  */
 
 
-#if !defined(__CPML_H__)
-#error "Only <cpml/cpml.h> can be included directly."
+#if !defined(__GI_SCANNER__)
+#error "cpml-introspection.h must be included by g-ir-scanner only."
 #endif
 
-
-#ifndef __CPML_UTILS_H__
-#define __CPML_UTILS_H__
-
-/* Required include files */
-#include <stdlib.h>
-#include <cairo.h>
-
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#define CPML_GNUC_CONST    __attribute__((__const__))
-#else
-#define CPML_GNUC_CONST
-#endif
-
-
-#ifndef FALSE
-#define FALSE   (0)
-#endif
-
-#ifndef TRUE
-#define TRUE    (! FALSE)
-#endif
-
-
-CAIRO_BEGIN_DECLS
-
-double          cpml_angle              (double         angle);
-
-CAIRO_END_DECLS
-
-
-#endif /* __CPML_UTILS_H__ */
+#include <cpml.h>

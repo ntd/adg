@@ -32,26 +32,26 @@ CAIRO_BEGIN_DECLS
 typedef struct _CpmlExtents CpmlExtents;
 
 struct _CpmlExtents {
-    cairo_bool_t is_defined;
+    int          is_defined;
     CpmlPair     org;
     CpmlVector   size;
 };
 
 
-CpmlExtents *   cpml_extents_copy               (CpmlExtents       *extents,
+void            cpml_extents_copy               (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
-CpmlExtents *   cpml_extents_from_cairo_text    (CpmlExtents       *extents,
+void            cpml_extents_from_cairo_text    (CpmlExtents       *extents,
                                                  const cairo_text_extents_t
                                                                    *cairo_extents);
-cairo_bool_t    cpml_extents_equal              (const CpmlExtents *extents,
+int             cpml_extents_equal              (const CpmlExtents *extents,
                                                  const CpmlExtents *src);
 void            cpml_extents_add                (CpmlExtents       *extents,
                                                  const CpmlExtents *src);
 void            cpml_extents_pair_add           (CpmlExtents       *extents,
                                                  const CpmlPair    *src);
-cairo_bool_t    cpml_extents_is_inside          (const CpmlExtents *extents,
+int             cpml_extents_is_inside          (const CpmlExtents *extents,
                                                  const CpmlExtents *src);
-cairo_bool_t    cpml_extents_pair_is_inside     (const CpmlExtents *extents,
+int             cpml_extents_pair_is_inside     (const CpmlExtents *extents,
                                                  const CpmlPair    *src);
 void            cpml_extents_transform          (CpmlExtents       *extents,
                                                  const cairo_matrix_t *matrix);

@@ -29,12 +29,16 @@
  * instead. This allows some advanced operations, such as overriding
  * a dress only in a specific entity branch of the hierarchy or
  * customize multiple entities at once.
+ *
+ * Since: 1.0
  **/
 
 /**
  * AdgDress:
  *
  * An index representing a virtual #AdgStyle.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -42,6 +46,8 @@
  *
  * The type used to express a dress index. It is defined only for GObject
  * internal and should not be used directly (at least, as far as I know).
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -51,6 +57,8 @@
  * Checks whether a #GValue is actually holding an #AdgDress value or not.
  *
  * Returns: %TRUE is @value is holding an #AdgDress, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 
 
@@ -118,6 +126,8 @@ adg_dress_get_type(void)
  * After a succesfull call, a new reference is added to @fallback.
  *
  * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dress_new(const gchar *name, AdgStyle *fallback)
@@ -147,6 +157,8 @@ adg_dress_new(const gchar *name, AdgStyle *fallback)
  * if needed.
  *
  * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
@@ -189,6 +201,8 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
  * if the dress is not found.
  *
  * Returns: the #AdgDress code or #ADG_DRESS_UNDEFINED if not found
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dress_from_name(const gchar *name)
@@ -206,6 +220,8 @@ adg_dress_from_name(const gchar *name)
  * adg_dress_get_ancestor_type().
  *
  * Returns: %TRUE if the dresses are related, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_dress_are_related(AdgDress dress1, AdgDress dress2)
@@ -233,6 +249,8 @@ adg_dress_are_related(AdgDress dress1, AdgDress dress2)
  * to @src, that is adg_dress_are_related() returns %TRUE.
  *
  * Returns: %TRUE on copy done, %FALSE on copy failed or not needed
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_dress_set(AdgDress *dress, AdgDress src)
@@ -255,6 +273,8 @@ adg_dress_set(AdgDress *dress, AdgDress src)
  * @dress is not found.
  *
  * Returns: the requested name or %NULL if not found
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_dress_get_name(AdgDress dress)
@@ -274,6 +294,8 @@ adg_dress_get_name(AdgDress dress)
  * is not found.
  *
  * Returns: the ancestor type or %0 on errors
+ *
+ * Since: 1.0
  **/
 GType
 adg_dress_get_ancestor_type(AdgDress dress)
@@ -303,6 +325,8 @@ adg_dress_get_ancestor_type(AdgDress dress)
  *
  * After a succesfull call, the reference to the previous fallback
  * (if any) is dropped while a new reference to @fallback is added.
+ *
+ * Since: 1.0
  **/
 void
 adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
@@ -343,6 +367,8 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
  * are raised if the dress is not found.
  *
  * Returns: the requested #AdgStyle derived instance or %NULL if not set
+ *
+ * Since: 1.0
  **/
 AdgStyle *
 adg_dress_get_fallback(AdgDress dress)
@@ -367,6 +393,8 @@ adg_dress_get_fallback(AdgDress dress)
  * adg_dress_get_ancestor_type()) in its hierarchy.
  *
  * Returns: %TRUE if @dress can accept @style, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_dress_style_is_compatible(AdgDress dress, AdgStyle *style)
@@ -502,6 +530,8 @@ _adg_value_validate(GParamSpec *spec, GValue *value)
  * Creates a param spec to hold a dress value.
  *
  * Returns: the newly allocated #GParamSpec
+ *
+ * Since: 1.0
  **/
 GParamSpec *
 adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,

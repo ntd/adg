@@ -26,6 +26,8 @@
  * uses the so called cairo "toy" API and it shares the same limitations.
  *
  * The toy text entity is not subject to the local matrix, only its origin is.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -33,6 +35,8 @@
  *
  * All fields are privates and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -210,6 +214,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * #ADG_LOCAL_NORMALIZED.
  *
  * Returns: the newly created toy text entity
+ *
+ * Since: 1.0
  **/
 AdgToyText *
 adg_toy_text_new(const gchar *text)

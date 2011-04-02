@@ -25,11 +25,30 @@
  * @short_description: Assorted macros and functions
  *
  * Collection of macros and functions that do not fit inside any other topic.
+ *
+ * Since: 1.0
  **/
 
 
 #include "cpml-internal.h"
 #include <math.h>
+
+
+/**
+ * TRUE:
+ *
+ * Defines the TRUE value for the gboolean type.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * FALSE:
+ *
+ * Defines the FALSE value for the gboolean type.
+ *
+ * Since: 1.0
+ **/
 
 
 /**
@@ -40,6 +59,8 @@
  *
  * The coded is an adaptation of the #G_GNUC_CONST macro defined by
  * glib-2.18.3 in <filename>glib/gmacros.h</filename>.
+ *
+ * Since: 1.0
  **/
 
 
@@ -51,6 +72,8 @@
  * between the range %M_PI (inclusive) and %-M_PI (exclusive).
  *
  * Returns: an equivalent value in radians
+ *
+ * Since: 1.0
  **/
 double
 cpml_angle(double angle)

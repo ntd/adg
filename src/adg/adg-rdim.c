@@ -23,6 +23,8 @@
  * @short_description: Linear dimensions
  *
  * The #AdgRDim entity represents a linear dimension.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -206,6 +210,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * in #AdgDim:pos using any valid #AdgDim method.
  *
  * Returns: a newly created quote
+ *
+ * Since: 1.0
  **/
 AdgRDim *
 adg_rdim_new(void)
@@ -223,6 +229,8 @@ adg_rdim_new(void)
  * data to get a valid quote.
  *
  * Returns: a newly created quote
+ *
+ * Since: 1.0
  **/
 AdgRDim *
 adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
@@ -255,6 +263,8 @@ adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
  * data to get a valid quote.
  *
  * Returns: a newly created quote
+ *
+ * Since: 1.0
  **/
 AdgRDim *
 adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
@@ -284,6 +294,8 @@ adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
  * one shot and using named pairs from @model.
  *
  * Returns: the newly created radial dimension entity
+ *
+ * Since: 1.0
  **/
 AdgRDim *
 adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,

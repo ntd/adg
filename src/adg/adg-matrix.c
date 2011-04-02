@@ -25,6 +25,8 @@
  * @short_description: A wrapper for #cairo_matrix_t
  *
  * AdgMatrix is a wrapper in #GType syntax of the #cairo_matrix_t struct.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -32,6 +34,8 @@
  *
  * Another name for #cairo_matrix_t: check its documentation for the
  * fields description and visibility details.
+ *
+ * Since: 1.0
  **/
 
 
@@ -59,6 +63,8 @@ adg_matrix_get_type(void)
  * A convenient constant providing an identity matrix.
  *
  * Returns: a pointer to the identity matrix
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_matrix_identity(void)
@@ -80,6 +86,8 @@ adg_matrix_identity(void)
  * where all components are 0.
  *
  * Returns: a pointer to the null matrix
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_matrix_null(void)
@@ -100,6 +108,8 @@ adg_matrix_null(void)
  * Copies @matrix to @dst.
  *
  * Returns: @matrix
+ *
+ * Since: 1.0
  **/
 AdgMatrix *
 adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
@@ -120,6 +130,8 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  *
  * Returns: the duplicate of @matrix: must be freed with g_free()
  *          when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgMatrix *
 adg_matrix_dup(const AdgMatrix *matrix)
@@ -137,6 +149,8 @@ adg_matrix_dup(const AdgMatrix *matrix)
  * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
  *
  * Returns: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
@@ -160,6 +174,8 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
  * Gets rid of the scaling component of a matrix.
  *
  * Returns: %TRUE on success, %FALSE on errors
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_matrix_normalize(AdgMatrix *matrix)
@@ -200,6 +216,8 @@ adg_matrix_normalize(AdgMatrix *matrix)
  *
  * Modifies @matrix applying @transformation in the way specified by
  * @mode.
+ *
+ * Since: 1.0
  **/
 void
 adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
@@ -239,6 +257,8 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
  * @matrix: an #AdgMatrix
  *
  * Dumps the specified @matrix to stdout. Useful for debugging purposes.
+ *
+ * Since: 1.0
  **/
 void
 adg_matrix_dump(const AdgMatrix *matrix)

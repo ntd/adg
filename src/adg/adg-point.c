@@ -31,12 +31,16 @@
  * adg_point_set_pair_from_model(). It can be thought as an
  * #AdgPair on steroid, because it adds named pair support to
  * a simple pair, enabling coordinates depending on #AdgModel.
+ *
+ * Since: 1.0
  **/
 
 /**
  * AdgPoint:
  *
  * This is an opaque struct: all its fields are privates.
+ *
+ * Since: 1.0
  **/
 
 
@@ -78,6 +82,8 @@ adg_point_get_type(void)
  * when no longer needed.
  *
  * Returns: a newly created #AdgPoint
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_point_new(void)
@@ -96,6 +102,8 @@ adg_point_new(void)
  * when no longer needed.
  *
  * Returns: the duplicated #AdgPoint struct or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_point_dup(const AdgPoint *src)
@@ -119,6 +127,8 @@ adg_point_dup(const AdgPoint *src)
  *
  * Destroys the @point instance, unreferencing the internal model if
  * @point is linked to a named pair.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_destroy(AdgPoint *point)
@@ -138,6 +148,8 @@ adg_point_destroy(AdgPoint *point)
  * to the named pair of a model, the reference to that model is
  * dropped. Similary, if @src is a named pair, a new reference to
  * the new model is added.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_copy(AdgPoint *point, const AdgPoint *src)
@@ -166,6 +178,8 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
  * Sets an explicit pair in @point by using the given @pair. If
  * @point was linked to a named pair in a model, this link is
  * dropped before setting the pair.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_set_pair(AdgPoint *point, const AdgPair *pair)
@@ -184,6 +198,8 @@ adg_point_set_pair(AdgPoint *point, const AdgPair *pair)
  *
  * Works in the same way of adg_point_set_pair() but accept direct numbers
  * instead of an #AdgPair structure.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
@@ -206,6 +222,8 @@ adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
  * call to adg_point_get_pair() will return the named pair value.
  * A new reference is added to @model while the previous model (if any)
  * is unreferenced.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_set_pair_from_model(AdgPoint *point,
@@ -242,6 +260,8 @@ adg_point_set_pair_from_model(AdgPoint *point,
  * a named pair. In any cases, after this call the content of
  * @point is undefined, that is calling adg_point_get_pair()
  * will return %NULL.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_unset(AdgPoint *point)
@@ -270,6 +290,8 @@ adg_point_unset(AdgPoint *point)
  * to date named pair).
  *
  * Returns: the pair of @point or %NULL if the named pair does not exist
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_point_get_pair(AdgPoint *point)
@@ -309,6 +331,8 @@ adg_point_get_pair(AdgPoint *point)
  * value is owned by @point.
  *
  * Returns: an #AdgModel or %NULL
+ *
+ * Since: 1.0
  **/
 AdgModel *
 adg_point_get_model(AdgPoint *point)
@@ -326,6 +350,8 @@ adg_point_get_model(AdgPoint *point)
  * owned by @point and should not be modified or freed.
  *
  * Returns: the name of the named pair or %NULL
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_point_get_name(AdgPoint *point)
@@ -341,6 +367,8 @@ adg_point_get_name(AdgPoint *point)
  * Invalidates @point, forcing a refresh of its internal #AdgPair if
  * the point is linked to a named pair. If @point is explicitely set,
  * this function has no effect.
+ *
+ * Since: 1.0
  **/
 void
 adg_point_invalidate(AdgPoint *point)
@@ -368,6 +396,8 @@ adg_point_invalidate(AdgPoint *point)
  * %NULL values are handled gracefully.
  *
  * Returns: %TRUE if @point1 is equal to @point2, %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 gboolean
 adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)

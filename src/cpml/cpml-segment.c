@@ -45,6 +45,8 @@
  *
  * When initialized, #CpmlSegment yet refers to the first segment so
  * the initial reset is not required.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -56,6 +58,8 @@
  * This is not a native cairo primitive and having two different data
  * types is a good way to make clear when a function expect or not
  * embedded arc-to primitives.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -69,6 +73,8 @@
  * cairo path. Unobtrusive means that the real coordinates are
  * still stored in @path: CpmlSegment only provides a way to
  * access them.
+ *
+ * Since: 1.0
  **/
 
 
@@ -79,15 +85,15 @@
 #include "cpml-curve.h"
 #include <string.h>
 
-static cairo_bool_t     normalize               (CpmlSegment       *segment);
-static cairo_bool_t     ensure_one_leading_move (CpmlSegment       *segment);
-static cairo_bool_t     reshape                 (CpmlSegment       *segment);
+static int              normalize               (CpmlSegment       *segment);
+static int              ensure_one_leading_move (CpmlSegment       *segment);
+static int              reshape                 (CpmlSegment       *segment);
 
 
 /**
  * cpml_segment_from_cairo:
- * @segment: a #CpmlSegment
- * @path: the source #CpmlPath
+ * @segment: (out): a #CpmlSegment
+ * @path:    (in):  the source #CpmlPath
  *
  * Builds a CpmlSegment from a #CpmlPath structure. This operation
  * involves stripping the duplicate %CPML_MOVE primitives at the
@@ -101,15 +107,18 @@ static cairo_bool_t     reshape                 (CpmlSegment       *segment);
  * Also, the first primitive must be a %CPML_MOVE, so no
  * dependency on the cairo context is needed.
  *
- * Returns: 1 on success, 0 on errors
+ * Returns: (type gboolean): %TRUE if @segment has been succesfully computed,
+ *                           %FALSE on errors
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
 {
     /* The cairo path should be defined and in a perfect state */
     if (path == NULL || path->num_data == 0 ||
         path->status != CAIRO_STATUS_SUCCESS)
-        return 0;
+        return FALSE;
 
     segment->path = path;
     segment->data = path->data;
@@ -124,6 +133,8 @@ cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
  * @src: the source segment to copy
  *
  * Makes a shallow copy of @src into @segment.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
@@ -137,7 +148,10 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
  *
  * Checks if @cpml_path is empty. An invalid path is considered empty.
  *
- * Returns: %1 if the path is empty or invalid, %0 otherwise
+ * Returns: (type gboolean): %TRUE if the path is empty or invalid,
+ *                           %FALSE otherwise
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -145,6 +159,8 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
  * @segment: a #CpmlSegment
  *
  * Modifies @segment to point to the first segment of the source cairo path.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_reset(CpmlSegment *segment)
@@ -160,9 +176,12 @@ cpml_segment_reset(CpmlSegment *segment)
  *
  * Modifies @segment to point to the next segment of the source cairo path.
  *
- * Returns: 1 on success, 0 if no next segment found or errors
+ * Returns: (type gboolean): %TRUE on success,
+ *                           %FALSE if no next segment found or errors
+ *
+ * Since: 1.0
  **/
-cairo_bool_t
+int
 cpml_segment_next(CpmlSegment *segment)
 {
     cairo_path_data_t *new_data;
@@ -172,7 +191,7 @@ cpml_segment_next(CpmlSegment *segment)
     end_data = segment->path->data + segment->path->num_data;
 
     if (new_data >= end_data)
-        return 0;
+        return FALSE;
 
     segment->data = new_data;
     segment->num_data = end_data - new_data;
@@ -187,6 +206,8 @@ cpml_segment_next(CpmlSegment *segment)
  * Gets the whole length of @segment.
  *
  * Returns: the requested length
+ *
+ * Since: 1.0
  **/
 double
 cpml_segment_get_length(const CpmlSegment *segment)
@@ -210,6 +231,8 @@ cpml_segment_get_length(const CpmlSegment *segment)
  * @extents: where to store the extents
  *
  * Gets the whole extents of @segment.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
@@ -217,7 +240,7 @@ cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
     CpmlPrimitive primitive;
     CpmlExtents primitive_extents;
 
-    extents->is_defined = 0;
+    extents->is_defined = FALSE;
 
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
@@ -246,6 +269,8 @@ cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
  *           that is only when @pos is %0 or %1.</listitem>
  * </itemizedlist>
  * </important>
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
@@ -284,6 +309,8 @@ cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
  *           steepness, that is only when @pos is %0 or %1.</listitem>
  * </itemizedlist>
  * </important>
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_put_vector_at(const CpmlSegment *segment, double pos,
@@ -323,6 +350,8 @@ cpml_segment_put_vector_at(const CpmlSegment *segment, double pos,
  * means @segment has a higher precedence over @segment2.
  *
  * Returns: the number of intersections found
+ *
+ * Since: 1.0
  **/
 size_t
 cpml_segment_put_intersections(const CpmlSegment *segment,
@@ -364,6 +393,8 @@ cpml_segment_put_intersections(const CpmlSegment *segment,
  *           managed properly.</listitem>
  * </itemizedlist>
  * </important>
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_offset(CpmlSegment *segment, double offset)
@@ -371,10 +402,10 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
     CpmlPrimitive primitive;
     CpmlPrimitive last_primitive;
     cairo_path_data_t org, old_end;
-    cairo_bool_t first_cycle;
+    int first_cycle;
 
     cpml_primitive_from_segment(&primitive, segment);
-    first_cycle = 1;
+    first_cycle = TRUE;
 
     do {
         if (!first_cycle) {
@@ -391,7 +422,7 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
         }
 
         cpml_primitive_copy(&last_primitive, &primitive);
-        first_cycle = 0;
+        first_cycle = FALSE;
     } while (cpml_primitive_next(&primitive));
 }
 
@@ -401,6 +432,8 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
  * @matrix: the matrix to be applied
  *
  * Applies @matrix on all the points of @segment.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
@@ -437,6 +470,8 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * It is assumed that @segment has yet been sanitized, that is returned
  * by some CPML API function or it is a path yet conforming to the
  * segment rules described by the cpml_segment_from_cairo() function.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_reverse(CpmlSegment *segment)
@@ -496,6 +531,8 @@ cpml_segment_reverse(CpmlSegment *segment)
  * that is %CPML_ARC primitives are approximated by one or more
  * %CPML_CURVE using cpml_arc_to_cairo(). Check its documentation
  * for further details.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
@@ -514,40 +551,42 @@ cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
  * @segment: a #CpmlSegment
  *
  * Dumps the specified @segment to stdout. Useful for debugging purposes.
+ *
+ * Since: 1.0
  **/
 void
 cpml_segment_dump(const CpmlSegment *segment)
 {
     CpmlPrimitive primitive;
-    cairo_bool_t first_call = 1;
+    int first_call = TRUE;
 
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
     do {
         cpml_primitive_dump(&primitive, first_call);
-        first_call = 0;
+        first_call = FALSE;
     } while (cpml_primitive_next(&primitive));
 }
 
 
-/**
+/*
  * normalize:
  * @segment: a #CpmlSegment
  *
  * Sanitizes @segment by calling ensure_one_leading_move() and reshape().
  *
- * Returns: 1 on success, 0 on no leading MOVE_TOs or on errors
+ * Returns: %TRUE on success, %FALSE on no leading MOVE_TOs or on errors
  **/
-static cairo_bool_t
+static int
 normalize(CpmlSegment *segment)
 {
     if (!ensure_one_leading_move(segment))
-        return 0;
+        return FALSE;
 
     return reshape(segment);
 }
 
-/**
+/*
  * ensure_one_leading_move:
  * @segment: a #CpmlSegment
  *
@@ -555,9 +594,9 @@ normalize(CpmlSegment *segment)
  * <structname>CpmlSegment</structname> structure accordingly.
  * One, and only one, %CPML_MOVE primitive is left.
  *
- * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
+ * Returns: %TRUE on success, %FALSE on no leading MOVE_TOs or on empty path
  **/
-static cairo_bool_t
+static int
 ensure_one_leading_move(CpmlSegment *segment)
 {
     cairo_path_data_t *new_data;
@@ -565,18 +604,18 @@ ensure_one_leading_move(CpmlSegment *segment)
 
     /* Check for at least one move to */
     if (segment->data->header.type != CAIRO_PATH_MOVE_TO)
-        return 0;
+        return FALSE;
 
     new_data = segment->data;
     new_num_data = segment->num_data;
 
-    while (1) {
+    while (TRUE) {
         move_length = new_data->header.length;
 
         /* Check for the end of cairo path data, that is when
          * @segment is composed by only CAIRO_PATH_MOVE_TO */
         if (new_num_data <= move_length)
-            return 0;
+            return FALSE;
 
         /* Check if this is the last CAIRO_PATH_MOVE_TO */
         if (new_data[move_length].header.type != CAIRO_PATH_MOVE_TO)
@@ -589,10 +628,10 @@ ensure_one_leading_move(CpmlSegment *segment)
     segment->data = new_data;
     segment->num_data = new_num_data;
 
-    return 1;
+    return TRUE;
 }
 
-/**
+/*
  * reshape:
  * @segment: a #CpmlSegment
  *
@@ -605,9 +644,9 @@ ensure_one_leading_move(CpmlSegment *segment)
  * This function also checks that all the components of @segment
  * are valid primitives.
  *
- * Returns: 1 on success, 0 on invalid primitive found
+ * Returns: %TRUE on success, %FALSE on invalid primitive found
  **/
-static cairo_bool_t
+static int
 reshape(CpmlSegment *segment)
 {
     const cairo_path_data_t *data;
@@ -617,7 +656,7 @@ reshape(CpmlSegment *segment)
     new_num_data = 0;
     trailing_data = segment->num_data;
 
-    while (1) {
+    while (TRUE) {
         length = data->header.length;
         new_num_data += length;
         trailing_data -= length;
@@ -625,16 +664,16 @@ reshape(CpmlSegment *segment)
 
         /* Check for invalid data size */
         if (trailing_data < 0)
-            return 0;
+            return FALSE;
 
         if (trailing_data == 0 || data->header.type == CAIRO_PATH_MOVE_TO)
             break;
 
         /* Ensure that all the components are valid primitives */
         if (cpml_primitive_type_get_n_points(data->header.type) == 0)
-            return 0;
+            return FALSE;
     }
 
     segment->num_data = new_num_data;
-    return 1;
+    return TRUE;
 }

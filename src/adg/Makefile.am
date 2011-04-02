@@ -133,7 +133,8 @@ template_sources=		adg-type-builtins.c.mkenums \
 
 
 # targets
-EXTRA_DIST=			$(template_sources)
+EXTRA_DIST=			$(template_sources) \
+				adg-introspection.h
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)
 #				built_c_sources are properly tracked
@@ -174,36 +175,40 @@ endif
 ## GObject introspection
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS=
-INTROSPECTION_SCANNER_ARGS=	--add-include-path=$(srcdir)
-INTROSPECTION_COMPILER_ARGS=	--includedir=$(srcdir)
+INTROSPECTION_SCANNER_ARGS=	--add-include-path=$(top_builddir)/src/cpml
+INTROSPECTION_COMPILER_ARGS=	--includedir=$(top_builddir)/src/cpml
 
 if HAVE_INTROSPECTION
 
-introspection_sources=		$(h_sources) \
-				$(c_sources) \
-				$(built_h_sources) \
-				$(built_c_sources)
+INTROSPECTION_GIRS+=		Adg-1.0.gir
+Adg-1.0.gir: libadg-1.la
 
-Adg-1.gir: libadg-1.la
-Adg_1_gir_INCLUDES=		GLib-2.0 \
-				GObject-2.0
+Adg_1_0_gir_LIBS=		libadg-1.la
+Adg_1_0_gir_INCLUDES=		Cpml-1.0
+Adg_1_0_gir_PACKAGES=		cpml-1
 if HAVE_PANGO
-Adg_1_gir_INCLUDES+=		PangoCairo-1.0
+## pangocairo includes all the needed dependencies
+Adg_1_0_gir_INCLUDES+=		PangoCairo-1.0
+Adg_1_0_gir_PACKAGES+=		pangocairo
+else
+Adg_1_0_gir_INCLUDES+=		GObject-2.0
+Adg_1_0_gir_PACKAGES+=		gobject-2.0
 endif
-Adg_1_gir_CFLAGS=		$(AM_CPPFLAGS) \
-				$(AM_CFLAGS) \
-				-D__ADG_H__
-Adg_1_gir_LDFLAGS=		$(AM_LDFLAGS) \
+Adg_1_0_gir_FILES=		adg-introspection.h \
+				$(h_sources) \
+				$(c_sources)
+Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS) \
+				$(AM_CFLAGS)
+Adg_1_0_gir_LDFLAGS=		$(AM_LDFLAGS) \
 				-L$(top_builddir)/src/cpml/.libs \
 				-lcpml-1
-Adg_1_gir_LIBS=			libadg-1.la
-Adg_1_gir_FILES=		$(introspection_sources)
-INTROSPECTION_GIRS+=		Adg-1.gir
+Adg_1_0_gir_SCANNERFLAGS=	--c-include="adg.h"
 girdir=				$(datadir)/gir-1.0
 gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0
 typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
-CLEANFILES+=			$(gir_DATA) $(typelib_DATA)
+CLEANFILES+=			$(gir_DATA) \
+				$(typelib_DATA)
 
 endif
 

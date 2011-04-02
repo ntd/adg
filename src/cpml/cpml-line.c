@@ -41,7 +41,7 @@ static size_t   put_intersections       (const CpmlPrimitive    *line,
                                          CpmlPair               *dest);
 static void     offset                  (CpmlPrimitive          *line,
                                          double                  offset);
-static cairo_bool_t
+static int
                 intersection            (const CpmlPair         *p1_4,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
@@ -211,7 +211,7 @@ offset(CpmlPrimitive *line, double offset)
     p2->point.y += normal.y;
 }
 
-static cairo_bool_t
+static int
 intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
 {
     CpmlVector v[2];
@@ -225,7 +225,7 @@ intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
 
     /* Check for equal slopes (the lines are parallel) */
     if (factor == 0)
-        return 0;
+        return FALSE;
 
     factor = ((p1_4[0].y - p1_4[2].y) * v[1].x -
               (p1_4[0].x - p1_4[2].x) * v[1].y) / factor;
@@ -238,5 +238,5 @@ intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
     if (get_factor != NULL)
         *get_factor = factor;
 
-    return 1;
+    return TRUE;
 }

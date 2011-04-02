@@ -31,6 +31,8 @@
  * to the child entity to intercept when the entity is manually
  * destroyed (usually by calling g_object_unref()) and remove the child
  * reference from the internal children list.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -38,6 +40,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -128,6 +132,8 @@ adg_container_class_init(AdgContainerClass *klass)
      *
      * Adds @entity to @container. @entity must not be inside another
      * container or the operation will fail.
+ *
+ * Since: 1.0
      **/
     _adg_signals[ADD] = g_signal_new("add",
                                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -143,6 +149,8 @@ adg_container_class_init(AdgContainerClass *klass)
      * @entity: the #AdgEntity to remove
      *
      * Removes @entity from @container.
+ *
+ * Since: 1.0
      **/
     _adg_signals[REMOVE] = g_signal_new("remove",
                                         G_OBJECT_CLASS_TYPE(gobject_class),
@@ -207,6 +215,8 @@ _adg_set_property(GObject *object,
  * Creates a new container entity.
  *
  * Returns: the newly created container entity
+ *
+ * Since: 1.0
  **/
 AdgContainer *
 adg_container_new(void)
@@ -227,6 +237,8 @@ adg_container_new(void)
  * Once @entity has been added, the floating reference will be removed
  * and @container will own a reference to @entity. This means the only
  * proper way to destroy @entity is to call adg_container_remove().
+ *
+ * Since: 1.0
  **/
 void
 adg_container_add(AdgContainer *container, AdgEntity *entity)
@@ -261,6 +273,8 @@ adg_container_add(AdgContainer *container, AdgEntity *entity)
  * adg_container_add(container2, entity)
  * g_object_unref(entity);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_container_remove(AdgContainer *container, AdgEntity *entity)
@@ -282,6 +296,8 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
  * to the oldest one.
  *
  * Returns: a newly allocated #GSList or %NULL empty list or on errors
+ *
+ * Since: 1.0
  **/
 GSList *
 adg_container_children(AdgContainer *container)
@@ -310,6 +326,8 @@ adg_container_children(AdgContainer *container)
  * |[
  * void callback(AdgEntity *entity, gpointer user_data);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_container_foreach(AdgContainer *container,
@@ -342,6 +360,8 @@ adg_container_foreach(AdgContainer *container,
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.
+ *
+ * Since: 1.0
  **/
 void
 adg_container_propagate(AdgContainer *container,
@@ -365,6 +385,8 @@ adg_container_propagate(AdgContainer *container,
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.
+ *
+ * Since: 1.0
  **/
 void
 adg_container_propagate_by_name(AdgContainer *container,
@@ -398,6 +420,8 @@ adg_container_propagate_by_name(AdgContainer *container,
  *
  * Emits the specified signal to all the children of @container
  * using g_signal_emit_valist() calls.
+ *
+ * Since: 1.0
  **/
 void
 adg_container_propagate_valist(AdgContainer *container,

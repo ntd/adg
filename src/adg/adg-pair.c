@@ -25,6 +25,8 @@
  * @short_description: A wrapper for #CpmlPair
  *
  * AdgPair is a wrapper in #GType syntax of the #CpmlPair struct.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -32,6 +34,8 @@
  *
  * Another name for #CpmlPair: check its documentation for the
  * fields description and visibility details.
+ *
+ * Since: 1.0
  **/
 
 
@@ -60,6 +64,8 @@ adg_pair_get_type(void)
  * Copies @src in @pair. It works in the same way as
  * cpml_pair_copy() but performing argument validation
  * before proceeding.
+ *
+ * Since: 1.0
  **/
 void
 adg_pair_copy(AdgPair *pair, const AdgPair *src)
@@ -78,6 +84,8 @@ adg_pair_copy(AdgPair *pair, const AdgPair *src)
  *
  * Returns: the duplicate of @pair: must be freed with g_free()
  *           when no longer needed.
+ *
+ * Since: 1.0
  **/
 AdgPair *
 adg_pair_dup(const AdgPair *pair)

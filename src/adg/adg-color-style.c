@@ -26,6 +26,8 @@
  * #AdgColorStyle also supports the alpha compositing that should be
  * expressed with a double value between %0 and %1, where %0 is the
  * "completely transparent" value while %1 is "fully opaque".
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -33,6 +35,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -186,6 +190,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Constructs a new color initialized to opaque black.
  *
  * Returns: a new color style
+ *
+ * Since: 1.0
  **/
 AdgColorStyle *
 adg_color_style_new(void)
@@ -200,6 +206,8 @@ adg_color_style_new(void)
  *
  * Sets a new value for the red channel, where %0 means no red and
  * %1 is full red.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_set_red(AdgColorStyle *color_style, gdouble red)
@@ -216,6 +224,8 @@ adg_color_style_set_red(AdgColorStyle *color_style, gdouble red)
  * %1 is full red.
  *
  * Returns: the requested red value
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_color_style_get_red(AdgColorStyle *color_style)
@@ -236,6 +246,8 @@ adg_color_style_get_red(AdgColorStyle *color_style)
  *
  * Sets a new value for the green channel, where %0 means no green and
  * %1 is full green.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_set_green(AdgColorStyle *color_style, gdouble green)
@@ -252,6 +264,8 @@ adg_color_style_set_green(AdgColorStyle *color_style, gdouble green)
  * %1 is full green.
  *
  * Returns: the requested green value
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_color_style_get_green(AdgColorStyle *color_style)
@@ -272,6 +286,8 @@ adg_color_style_get_green(AdgColorStyle *color_style)
  *
  * Sets a new value for the blue channel, where %0 means no blue and
  * %1 is full blue.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_set_blue(AdgColorStyle *color_style, gdouble blue)
@@ -288,6 +304,8 @@ adg_color_style_set_blue(AdgColorStyle *color_style, gdouble blue)
  * %1 is full blue.
  *
  * Returns: the requested blue value
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_color_style_get_blue(AdgColorStyle *color_style)
@@ -309,6 +327,8 @@ adg_color_style_get_blue(AdgColorStyle *color_style)
  * @b: the blue channel value
  *
  * Sets the RGB channels at once.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_set_rgb(AdgColorStyle *color_style,
@@ -336,6 +356,8 @@ adg_color_style_set_rgb(AdgColorStyle *color_style,
  *
  * Gets the values of the red, green and blue channels of @color_style.
  * Any of the pointer can be %NULL, in which case the value is not returned.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_put_rgb(AdgColorStyle *color_style,
@@ -364,6 +386,8 @@ adg_color_style_put_rgb(AdgColorStyle *color_style,
  *
  * Sets a new color alpha value, where %0 means completely transparent
  * and %1 is fully opaque.
+ *
+ * Since: 1.0
  **/
 void
 adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
@@ -380,6 +404,8 @@ adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
  * and %1 is fully opaque.
  *
  * Returns: the requested alpha value
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_color_style_get_alpha(AdgColorStyle *color_style)

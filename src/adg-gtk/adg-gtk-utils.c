@@ -25,6 +25,8 @@
  * @short_description: Assorted macros and backward compatible fallbacks
  *
  * Collection of macros and functions that do not fit inside any other topic.
+ *
+ * Since: 1.0
  **/
 
 
@@ -38,6 +40,8 @@
  * from keeping only %SHIFT pressed. %GDK_LOCK_MASK instead is not
  * considered, so having it enabled or disabled does not make any
  * difference while monitoring the status %SHIFT or %CTRL.
+ *
+ * Since: 1.0
  **/
 
 
@@ -56,6 +60,8 @@
  * This is an API fallback for GTK+ prior to 2.14.
  *
  * Return value: @widget's window.
+ *
+ * Since: 1.0
  **/
 GdkWindow *
 gtk_widget_get_window(GtkWidget *widget)
@@ -82,6 +88,8 @@ gtk_widget_get_window(GtkWidget *widget)
  * g_signal_connect(dialog, "response",
  *                  G_CALLBACK(adg_gtk_window_hide_here), NULL);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_window_hide_here(GtkWindow *window)
@@ -114,6 +122,8 @@ adg_gtk_window_hide_here(GtkWindow *window)
  * g_signal_connect(toggle_button, "toggled",
  *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget3);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_toggle_button_sensitivize(GtkToggleButton *toggle_button,
@@ -148,6 +158,8 @@ adg_gtk_toggle_button_sensitivize(GtkToggleButton *toggle_button,
  * that is the margins returned by the #GtkPaperSize API.
  * If you want to use your own margins on a named paper size,
  * set them <emphasis>after</emphasis> the call to this function.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
@@ -206,6 +218,8 @@ adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
  * // To restore the original status and have an autocomputed size:
  * adg_canvas_set_size(canvas, NULL);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_page_setup(AdgCanvas *canvas, GtkPageSetup *page_setup)

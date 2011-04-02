@@ -25,6 +25,8 @@
  * Contains parameters on how to build dimensions such as the different font
  * styles (for value and limits), line style, offsets of the various
  * dimension components etc...
+ *
+ * Since: 1.0
  */
 
 /**
@@ -32,6 +34,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -400,6 +404,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Constructs a new empty dimension style initialized with default params.
  *
  * Returns: a newly created dimension style
+ *
+ * Since: 1.0
  **/
 AdgDimStyle *
 adg_dim_style_new(void)
@@ -422,6 +428,8 @@ adg_dim_style_new(void)
  * This also means @marker could be destroyed without problems after
  * this call because @dim_style uses only its property values and does
  * not add any references to @marker.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
@@ -440,6 +448,8 @@ adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
  *
  * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker1
  *          property is not set or on errors
+ *
+ * Since: 1.0
  **/
 AdgMarker *
 adg_dim_style_marker1_new(AdgDimStyle *dim_style)
@@ -468,6 +478,8 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
  * This also means @marker could be destroyed without problems after
  * this call because @dim_style uses only its property values and does
  * not add any references to @marker.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
@@ -486,6 +498,8 @@ adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
  *
  * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker2
  *          property is not set or on errors
+ *
+ * Since: 1.0
  **/
 AdgMarker *
 adg_dim_style_marker2_new(AdgDimStyle *dim_style)
@@ -505,6 +519,8 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
  * @dress: the new color dress
  *
  * Sets a new color dress on @dim_style.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -523,6 +539,8 @@ adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
  * #AdgDimStyle:value-dress.
  *
  * Returns: the color dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
@@ -542,6 +560,8 @@ adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
  * @dress: the new basic value font style
  *
  * Sets a new dress on @dim_style for the basic value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -558,6 +578,8 @@ adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
  * with @dim_style.
  *
  * Returns: the font dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
@@ -577,6 +599,8 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
  * @dress: the new lower limit dress
  *
  * Sets a new dress on @dim_style for the lower limit value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -592,6 +616,8 @@ adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
  * Gets the @dim_style dress to be used for the lower limit.
  *
  * Returns: the lower limit dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
@@ -611,6 +637,8 @@ adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
  * @dress: the new upper limit dress
  *
  * Sets a new dress on @dim_style for the upper limit value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -626,6 +654,8 @@ adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
  * Gets the @dim_style dress to be used for the upper limit.
  *
  * Returns: the upper limit dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
@@ -645,6 +675,8 @@ adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
  * @dress: the new line dress
  *
  * Sets a new line dress on @dim_style.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
@@ -661,6 +693,8 @@ adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
  * the extension lines with @dim_style.
  *
  * Returns: the line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
@@ -680,6 +714,8 @@ adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
  * @offset: the new offset
  *
  * Sets a new value in the #AdgDimStyle:from-offset property.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
@@ -696,6 +732,8 @@ adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
  * sensed points.
  *
  * Returns: the requested distance
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
@@ -715,6 +753,8 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
  * @offset: the new offset
  *
  * Sets a new value in the #AdgDimStyle:to-offset property.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
@@ -731,6 +771,8 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
  * crossing the baseline.
  *
  * Returns: the requested distance
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
@@ -750,6 +792,8 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
  * @beyond: the new length
  *
  * Sets a new value in the #AdgDimStyle:beyond property.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble beyond)
@@ -766,6 +810,8 @@ adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble beyond)
  * the extension lines on dimension with outside markers.
  *
  * Returns: the requested beyond length
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_style_get_beyond(AdgDimStyle *dim_style)
@@ -785,6 +831,8 @@ adg_dim_style_get_beyond(AdgDimStyle *dim_style)
  * @spacing: the new spacing
  *
  * Sets a new value in the #AdgDimStyle:baseline-spacing value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
@@ -801,6 +849,8 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * while stacking dimensions.
  *
  * Returns: the requested spacing
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
@@ -820,6 +870,8 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
  * @spacing: the new spacing
  *
  * Sets a new #AdgDimStyle:limits-spacing value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
@@ -835,6 +887,8 @@ adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * Gets the distance (in global space) between the limits/tolerances.
  *
  * Returns: the requested spacing
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
@@ -854,6 +908,8 @@ adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
  * @shift: the new displacement
  *
  * Sets a new #AdgDimStyle:quote-shift value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
@@ -870,6 +926,8 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * to an internal allocated struct and must not be modified or freed.
  *
  * Returns: the requested shift
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
@@ -889,6 +947,8 @@ adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
  * @shift: the new displacement
  *
  * Sets a new #AdgDimStyle:limits-shift value.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
@@ -905,6 +965,8 @@ adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * refers to an internal allocated struct and must not be modified or freed.
  *
  * Returns: the requested shift
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
@@ -924,6 +986,8 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  * @format: the new format to adopt
  *
  * Sets a new value in the #AdgDimStyle:number-format property.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
@@ -941,6 +1005,8 @@ adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
  * modified or freed.
  *
  * Returns: the requested format
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_dim_style_get_number_format(AdgDimStyle *dim_style)
@@ -960,6 +1026,8 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
  * @tag: the new tag
  *
  * Sets a new tag in the #AdgDimStyle:number-tag property.
+ *
+ * Since: 1.0
  **/
 void
 adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
@@ -980,6 +1048,8 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
  * must not be modified or freed.
  *
  * Returns: the requested tag
+ *
+ * Since: 1.0
  **/
 const gchar *
 adg_dim_style_get_number_tag(AdgDimStyle *dim_style)

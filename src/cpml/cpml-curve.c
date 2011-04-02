@@ -182,6 +182,8 @@
  * </para>
  * </refsect2>
  * <para>
+ *
+ * Since: 1.0
  **/
 
 
@@ -233,6 +235,8 @@ _cpml_curve_get_class(void)
  * (where 0 is the start and 1 is the end) and stores the result
  * in @pair. Keep in mind @t is not homogeneous, so 0.5 does not
  * necessarily means the mid point.
+ *
+ * Since: 1.0
  **/
 void
 cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
@@ -268,6 +272,8 @@ cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
  * (where 0 is the start and 1 is the end) and stores the result
  * in @vector. Keep in mind @t is not homogeneous, so 0.5
  * does not necessarily means the mid point.
+ *
+ * Since: 1.0
  **/
 void
 cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,

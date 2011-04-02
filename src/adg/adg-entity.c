@@ -28,6 +28,8 @@
  * implement its arrange() and render() virtual methods. Also, if
  * you are using some sort of caching, ensure to clear it in the
  * invalidate() method.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -35,6 +37,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -45,6 +49,8 @@
  * @render: rendering callback, it must be implemented
  *
  * Any entity (if not abstract) must implement at least the @render method.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -55,6 +61,8 @@
  * Callback used when inspecting or browsing entities. For example,
  * it is passed to adg_model_foreach_dependency() to perform an
  * operation on all the entities depending on an #AdgModel.
+ *
+ * Since: 1.0
  **/
 
 
@@ -176,6 +184,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * can be inspected using adg_entity_get_parent().
      *
      * It is allowed for both old and new parent to be %NULL.
+ *
+ * Since: 1.0
      **/
     _adg_signals[PARENT_SET] =
         g_signal_new("parent-set",
@@ -193,6 +203,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted when the global map of @entity or any of its parent
      * has changed. The default handler will compute the new global
      * matrix, updating the internal cache.
+ *
+ * Since: 1.0
      **/
     _adg_signals[GLOBAL_CHANGED] =
         g_signal_new("global-changed",
@@ -210,6 +222,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted when the local map of @entity or any of its parent
      * has changed. The default handler will compute the new local
      * matrix, updating the internal cache.
+ *
+ * Since: 1.0
      **/
     _adg_signals[LOCAL_CHANGED] =
         g_signal_new("local-changed",
@@ -228,6 +242,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * (if present) built during the #AdgEntity::arrange signal.
      * The resulting state is a clean entity, similar to what you
      * have just before the first rendering.
+ *
+ * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_invalidate), NULL, NULL);
     _adg_signals[INVALIDATE] =
@@ -242,6 +258,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * Arranges the layout of @entity, updating the cache if necessary,
      * and computes the extents of @entity.
+ *
+ * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_arrange), NULL, NULL);
     _adg_signals[ARRANGE] =
@@ -258,6 +276,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Causes the rendering of @entity on @cr. A render signal will
      * automatically emit #AdgEntity::arrange just before the real
      * rendering on the cairo context.
+ *
+ * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_render), NULL, NULL);
     param_types[0] = G_TYPE_POINTER;
@@ -375,6 +395,8 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Strokes (if @state is %TRUE) a rectangle around every entity to
  * show their extents. Useful for debugging purposes.
+ *
+ * Since: 1.0
  **/
 void
 adg_switch_extents(gboolean state)
@@ -391,6 +413,8 @@ adg_switch_extents(gboolean state)
  *
  * Returns: the requested canvas or %NULL on errors or if there is
  *          no #AdgCanvas in the @entity hierarchy
+ *
+ * Since: 1.0
  **/
 AdgCanvas *
 adg_entity_get_canvas(AdgEntity *entity)
@@ -417,6 +441,8 @@ adg_entity_get_canvas(AdgEntity *entity)
  * </para></note>
  *
  * Sets a new parent on @entity.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
@@ -432,6 +458,8 @@ adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
  * Gets the parent of @entity.
  *
  * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
+ *
+ * Since: 1.0
  **/
 AdgEntity *
 adg_entity_get_parent(AdgEntity *entity)
@@ -453,6 +481,8 @@ adg_entity_get_parent(AdgEntity *entity)
  * Sets the new global transformation of @entity to @map:
  * the old map is discarded. If @map is %NULL, the global
  * map is left unchanged.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
@@ -477,6 +507,8 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_global_map(entity, &map);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_transform_global_map(AdgEntity *entity,
@@ -505,6 +537,8 @@ adg_entity_transform_global_map(AdgEntity *entity,
  * of @entity.
  *
  * Returns: the requested map or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_entity_get_global_map(AdgEntity *entity)
@@ -530,6 +564,8 @@ adg_entity_get_global_map(AdgEntity *entity)
  * the %ADG_MIX_ANCESTORS method.
  *
  * Returns: the global matrix or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_entity_get_global_matrix(AdgEntity *entity)
@@ -551,6 +587,8 @@ adg_entity_get_global_matrix(AdgEntity *entity)
  * Sets the new local transformation of @entity to @map:
  * the old map is discarded. If @map is %NULL, the local
  * map is left unchanged.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
@@ -575,6 +613,8 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_local_map(entity, &map);
  * ]|
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_transform_local_map(AdgEntity *entity,
@@ -602,6 +642,8 @@ adg_entity_transform_local_map(AdgEntity *entity,
  * of @entity and store it in @map.
  *
  * Returns: the requested map or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_entity_get_local_map(AdgEntity *entity)
@@ -627,6 +669,8 @@ adg_entity_get_local_map(AdgEntity *entity)
  * the method specified by the #AdgEntity:local-method property.
  *
  * Returns: the local matrix or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const AdgMatrix *
 adg_entity_get_local_matrix(AdgEntity *entity)
@@ -653,6 +697,8 @@ adg_entity_get_local_matrix(AdgEntity *entity)
  *
  * Setting a different local method emits an #Adgentity::local-changed
  * signal on @entity.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
@@ -670,6 +716,8 @@ adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
  * local method is used for.
  *
  * Returns: the local method of @entity or %ADG_MIX_UNDEFINED on errors
+ *
+ * Since: 1.0
  **/
 AdgMixMethod
 adg_entity_get_local_method(AdgEntity *entity)
@@ -694,6 +742,8 @@ adg_entity_get_local_method(AdgEntity *entity)
  *
  * Sets a new bounding box for @entity. @extents can be %NULL,
  * in which case the extents are unset.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
@@ -727,6 +777,8 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * an up to date boundary box.
  *
  * Returns: the bounding box of @entity or %NULL on errors
+ *
+ * Since: 1.0
  **/
 const CpmlExtents *
 adg_entity_get_extents(AdgEntity *entity)
@@ -752,6 +804,8 @@ adg_entity_get_extents(AdgEntity *entity)
  * The new style must still be compatible with @dress: check out
  * the adg_dress_style_is_compatible() documentation to know
  * what a compatible style means.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
@@ -807,6 +861,8 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
  *
  * Returns: the requested style or %NULL if the @dress style
  *          is not overriden
+ *
+ * Since: 1.0
  **/
 AdgStyle *
 adg_entity_get_style(AdgEntity *entity, AdgDress dress)
@@ -843,6 +899,8 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
  * </orderedlist>
  *
  * Returns: the requested style or %NULL for transparent dresses or errors
+ *
+ * Since: 1.0
  **/
 AdgStyle *
 adg_entity_style(AdgEntity *entity, AdgDress dress)
@@ -873,6 +931,8 @@ adg_entity_style(AdgEntity *entity, AdgDress dress)
  *
  * Convenient function to apply a @dress style (as returned by
  * adg_entity_style()) to the @cr cairo context.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
@@ -894,6 +954,8 @@ adg_entity_apply_dress(AdgEntity *entity, AdgDress dress, cairo_t *cr)
  *
  * Emits the #AdgEntity::global-changed signal on @entity and on all of
  * its children, if any.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_global_changed(AdgEntity *entity)
@@ -909,6 +971,8 @@ adg_entity_global_changed(AdgEntity *entity)
  *
  * Emits the #AdgEntity::local-changed signal on @entity and on all of
  * its children, if any.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_local_changed(AdgEntity *entity)
@@ -926,6 +990,8 @@ adg_entity_local_changed(AdgEntity *entity)
  * its children, if any, clearing the eventual cache stored by the
  * #AdgEntity::arrange signal and setting the entity state similary
  * to the just initialized entity.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_invalidate(AdgEntity *entity)
@@ -942,6 +1008,8 @@ adg_entity_invalidate(AdgEntity *entity)
  * Emits the #AdgEntity::arrange signal on @entity and all its children,
  * if any. The arrange call is implicitely called by the
  * #AdgEntity::render signal but not by adg_entity_get_extents().
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_arrange(AdgEntity *entity)
@@ -958,6 +1026,8 @@ adg_entity_arrange(AdgEntity *entity)
  *
  * Emits the #AdgEntity::render signal on @entity and on all of its
  * children, if any, causing the rendering to the @cr cairo context.
+ *
+ * Since: 1.0
  **/
 void
 adg_entity_render(AdgEntity *entity, cairo_t *cr)
@@ -993,6 +1063,8 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * destroyed and %NULL will be returned.
  *
  * Returns: the new properly defined point
+ *
+ * Since: 1.0
  **/
 AdgPoint *
 adg_entity_point(AdgEntity *entity, AdgPoint *point, AdgPoint *new_point)

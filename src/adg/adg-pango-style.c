@@ -23,6 +23,8 @@
  * @short_description: A font style with pango support
  *
  * Adds pango support to the #AdgFontStyle class.
+ *
+ * Since: 1.0
  */
 
 /**
@@ -30,6 +32,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -89,6 +93,8 @@ adg_pango_style_init(AdgPangoStyle *pango_style)
  * Constructs a new pango style initialized with default params.
  *
  * Returns: a newly created pango style
+ *
+ * Since: 1.0
  **/
 AdgPangoStyle *
 adg_pango_style_new(void)
@@ -104,6 +110,8 @@ adg_pango_style_new(void)
  * owned by @pango_style and must not be destroyed by the caller.
  *
  * Returns: the font description
+ *
+ * Since: 1.0
  **/
 PangoFontDescription *
 adg_pango_style_get_description(AdgPangoStyle *pango_style)

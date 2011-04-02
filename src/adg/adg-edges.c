@@ -34,6 +34,8 @@
  * The angle of the axis is implied to pass through the (0,0) point
  * and has an angle of #AdgEdges:axis-angle radiants. The default
  * is a 0 radiant angle, meaning the y=0 axis is assumed.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -41,6 +43,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -253,6 +257,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * with adg_edges_set_source().
  *
  * Returns: the newly created edges model
+ *
+ * Since: 1.0
  **/
 AdgEdges *
 adg_edges_new(void)
@@ -266,6 +272,8 @@ adg_edges_new(void)
  * Creates a new edges model explicitely specifying the source trail.
  *
  * Returns: the newly created edges model
+ *
+ * Since: 1.0
  **/
 AdgEdges *
 adg_edges_new_with_source(AdgTrail *source)
@@ -280,6 +288,8 @@ adg_edges_new_with_source(AdgTrail *source)
  * Gets the source #AdgTrail of this @edges model.
  *
  * Returns: the requested #AdgTrail or %NULL on errors
+ *
+ * Since: 1.0
  **/
 AdgTrail *
 adg_edges_get_source(AdgEdges *edges)
@@ -299,6 +309,8 @@ adg_edges_get_source(AdgEdges *edges)
  * @source: the new source #AdgTrail
  *
  * Sets @source as the source trail for @edges.
+ *
+ * Since: 1.0
  **/
 void
 adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
@@ -318,6 +330,8 @@ adg_edges_set_source(AdgEdges *edges, AdgTrail *source)
  *
  * It is implied the axis will pass through the (0,0) point,
  * so the underlying trail should be constructed accordingly.
+ *
+ * Since: 1.0
  **/
 void
 adg_edges_set_axis_angle(AdgEdges *edges, gdouble angle)
@@ -335,6 +349,8 @@ adg_edges_set_axis_angle(AdgEdges *edges, gdouble angle)
  * is used for.
  *
  * Returns: the value (in radians) of the axis angle
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_edges_get_axis_angle(AdgEdges *edges)
@@ -358,6 +374,8 @@ adg_edges_get_axis_angle(AdgEdges *edges)
  * The critical angle defines what corner should generate an edge and
  * what not. Typical values are close to %0, being %0 the lowest angle
  * where every corner generates an edge.
+ *
+ * Since: 1.0
  **/
 void
 adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
@@ -375,6 +393,8 @@ adg_edges_set_critical_angle(AdgEdges *edges, gdouble angle)
  * is used for.
  *
  * Returns: the value (in radians) of the critical angle
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_edges_get_critical_angle(AdgEdges *edges)
@@ -486,6 +506,8 @@ _adg_clear_cpml_path(AdgEdges *edges)
  * Returns: a #GSList of #AdgPair: the list should be freed with
  *          g_slist_free() and all the pairs freed with g_free()
  *          when no longer needed
+ *
+ * Since: 1.0
  **/
 static GSList *
 _adg_get_vertices(CpmlSegment *segment, gdouble threshold)

@@ -24,6 +24,8 @@
  *
  * The #AdgProjection is an entity representing the standard symbol
  * of the projection scheme.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -31,6 +33,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -199,6 +203,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * #ADG_PROJECTION_UNDEFINED, and a warning is raised.
  *
  * Returns: the newly created projection entity
+ *
+ * Since: 1.0
  **/
 AdgProjection *
 adg_projection_new(AdgProjectionScheme scheme)
@@ -219,6 +225,8 @@ adg_projection_new(AdgProjectionScheme scheme)
  * The default dress is a transparent line dress: the rendering
  * callback will stroke the symbol using the default color with
  * a predefined thickness.
+ *
+ * Since: 1.0
  **/
 void
 adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
@@ -234,6 +242,8 @@ adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
  * Gets the line dress to be used in stroking the symbol of @projection.
  *
  * Returns: the requested line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_projection_get_symbol_dress(AdgProjection *projection)
@@ -260,6 +270,8 @@ adg_projection_get_symbol_dress(AdgProjection *projection)
  *
  * The default dress is a transparent line dress: the rendering
  * callback will stroke the axis using the default line style.
+ *
+ * Since: 1.0
  **/
 void
 adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
@@ -275,6 +287,8 @@ adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
  * Gets the line dress to be used in stroking the axis of @projection.
  *
  * Returns: the requested line dress
+ *
+ * Since: 1.0
  **/
 AdgDress
 adg_projection_get_axis_dress(AdgProjection *projection)
@@ -295,6 +309,8 @@ adg_projection_get_axis_dress(AdgProjection *projection)
  *
  * Sets a new scheme on @projection. If @scheme is different
  * from the old one, @projection is invalidated.
+ *
+ * Since: 1.0
  **/
 void
 adg_projection_set_scheme(AdgProjection *projection,
@@ -311,6 +327,8 @@ adg_projection_set_scheme(AdgProjection *projection,
  * Gets the scheme represented by @projection.
  *
  * Returns: the scheme of @projection
+ *
+ * Since: 1.0
  **/
 AdgProjectionScheme
 adg_projection_get_scheme(AdgProjection  *projection)

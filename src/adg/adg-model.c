@@ -30,6 +30,8 @@
  * not renderable (that is, #AdgModel is not derived from #AdgEntity).
  * Instead, it must be passed as subject to entities such as #AdgStroke
  * or #AdgHatch.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -37,6 +39,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -46,6 +50,8 @@
  * @user_data: a general purpose pointer
  *
  * Callback used by adg_model_foreach_dependency().
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -56,6 +62,8 @@
  * @user_data: a general purpose pointer
  *
  * Callback used by adg_model_foreach_named_pair().
+ *
+ * Since: 1.0
  **/
 
 
@@ -146,6 +154,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Adds @entity to @model. After that @entity will depend on @model,
      * that is #AdgModel::changed on @model will invalidate @entity.
+ *
+ * Since: 1.0
      **/
     _adg_signals[ADD_DEPENDENCY] =
         g_signal_new("add-dependency",
@@ -163,6 +173,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Removes the @entity from @model, that is @entity will not depend
      * on @model anymore.
+ *
+ * Since: 1.0
      **/
     _adg_signals[REMOVE_DEPENDENCY] =
         g_signal_new("remove-dependency",
@@ -188,6 +200,8 @@ adg_model_class_init(AdgModelClass *klass)
      * Otherwise, the @name named pair is searched: if it is found,
      * its data are updated with @pair. If it is not found, a new
      * named pair is created using @name and @pair.
+ *
+ * Since: 1.0
      **/
     _adg_signals[SET_NAMED_PAIR] =
         g_signal_new("set-named-pair",
@@ -210,6 +224,8 @@ adg_model_class_init(AdgModelClass *klass)
      * Removes any information from @model cached by the implementation
      * code. Useful to force a recomputation of the cache when something
      * in the model has changed.
+ *
+ * Since: 1.0
      **/
     _adg_signals[CLEAR] =
         g_signal_new("clear", ADG_TYPE_MODEL,
@@ -237,6 +253,8 @@ adg_model_class_init(AdgModelClass *klass)
      * ...
      * adg_model_changed(model);
      * ]|
+ *
+ * Since: 1.0
      **/
     _adg_signals[RESET] =
         g_signal_new("reset", ADG_TYPE_MODEL,
@@ -252,6 +270,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Notificates that the model has changed. By default, all the
      * dependent entities are invalidated.
+ *
+ * Since: 1.0
      **/
     _adg_signals[CHANGED] =
         g_signal_new("changed", ADG_TYPE_MODEL,
@@ -327,6 +347,8 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Emits a #AdgModel::add-dependency signal on @model passing @entity
  * as argument. This will add a reference to @entity owned by @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
@@ -351,6 +373,8 @@ adg_model_add_dependency(AdgModel *model, AdgEntity *entity)
  * Note that @model will own a reference to @entity and it
  * may be the last reference held: this means removing an entity
  * from the model can destroy it.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
@@ -369,6 +393,8 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
  * is owned by @model and must not be modified or freed.
  *
  * Returns: a #GSList of dependencies or %NULL on error
+ *
+ * Since: 1.0
  **/
 const GSList *
 adg_model_get_dependencies(AdgModel *model)
@@ -389,6 +415,8 @@ adg_model_get_dependencies(AdgModel *model)
  * @user_data: general purpose user data passed "as is" to @callback
  *
  * Invokes @callback on each entity linked to @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
@@ -428,6 +456,8 @@ adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
  *
  * Emits a #AdgModel::set-named-pair signal on @model passing
  * @name and @pair as arguments.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_set_named_pair(AdgModel *model, const gchar *name,
@@ -454,6 +484,8 @@ adg_model_set_named_pair(AdgModel *model, const gchar *name,
  *
  * Convenient wrapper on adg_model_set_named_pair() that accepts
  * explicit coordinates.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
@@ -476,6 +508,8 @@ adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
  * pair is owned by @model and must not be modified or freed.
  *
  * Returns: the requested #AdgPair or %NULL if not found
+ *
+ * Since: 1.0
  **/
 const AdgPair *
 adg_model_get_named_pair(AdgModel *model, const gchar *name)
@@ -502,6 +536,8 @@ adg_model_get_named_pair(AdgModel *model, const gchar *name)
  * Invokes @callback for each named pair set on @model. This can
  * be used, for example, to retrieve all the named pairs of a @model
  * or to duplicate a transformed version of every named pair.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairFunc callback,
@@ -534,6 +570,8 @@ adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairFunc callback,
  * </para></note>
  *
  * Emits the #AdgModel::clear signal on @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_clear(AdgModel *model)
@@ -548,6 +586,8 @@ adg_model_clear(AdgModel *model)
  * @model: an #AdgModel
  *
  * Emits the #AdgModel::reset signal on @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_reset(AdgModel *model)
@@ -566,6 +606,8 @@ adg_model_reset(AdgModel *model)
  * </para></note>
  *
  * Emits the #AdgModel::changed signal on @model.
+ *
+ * Since: 1.0
  **/
 void
 adg_model_changed(AdgModel *model)

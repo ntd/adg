@@ -26,6 +26,8 @@
  * It means an #AdgGtkLayout object can be added directly to a
  * #GtkScrolledWindow container without the need for an intermediate
  * #GtkViewport container.
+ *
+ * Since: 1.0
  **/
 
 /**
@@ -33,6 +35,8 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
  **/
 
 
@@ -133,6 +137,8 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
      * @old_canvas: the old #AdgCanvas object
      *
      * Emitted when the #AdgGtkLayout scroll adjustments have been set.
+ *
+ * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_set_scroll_adjustments), NULL, NULL);
     param_types[0] = GTK_TYPE_ADJUSTMENT;
@@ -238,6 +244,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * property or with adg_gtk_layout_set_canvas().
  *
  * Returns: the newly created widget
+ *
+ * Since: 1.0
  **/
 GtkWidget *
 adg_gtk_layout_new(void)
@@ -253,6 +261,8 @@ adg_gtk_layout_new(void)
  * to @canvas.
  *
  * Returns: the newly created widget
+ *
+ * Since: 1.0
  **/
 GtkWidget *
 adg_gtk_layout_new_with_canvas(AdgCanvas *canvas)
@@ -272,6 +282,8 @@ adg_gtk_layout_new_with_canvas(AdgCanvas *canvas)
  *
  * This is basically the same as manually setting the
  * #AdgGtkLayout:hadjustment property with g_object_set().
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_layout_set_hadjustment(AdgGtkLayout *layout,
@@ -286,6 +298,8 @@ adg_gtk_layout_set_hadjustment(AdgGtkLayout *layout,
  * @layout: an #AdgGtkLayout
  *
  * Retrieves the current horizontal adjustment of @layout.
+ *
+ * Since: 1.0
  **/
 GtkAdjustment *
 adg_gtk_layout_get_hadjustment(AdgGtkLayout *layout)
@@ -309,6 +323,8 @@ adg_gtk_layout_get_hadjustment(AdgGtkLayout *layout)
  *
  * This is basically the same as manually setting the
  * #AdgGtkLayout:vadjustment property with g_object_set().
+ *
+ * Since: 1.0
  **/
 void
 adg_gtk_layout_set_vadjustment(AdgGtkLayout *layout,
@@ -323,6 +339,8 @@ adg_gtk_layout_set_vadjustment(AdgGtkLayout *layout,
  * @layout: an #AdgGtkLayout
  *
  * Retrieves the current vertical adjustment of @layout.
+ *
+ * Since: 1.0
  **/
 GtkAdjustment *
 adg_gtk_layout_get_vadjustment(AdgGtkLayout *layout)
@@ -494,6 +512,8 @@ _adg_set_adjustment(AdgGtkLayout *layout,
  * the <var>sheet</var> (the extents of the drawing, margins
  * included) and <var>surface</var> (a helper variable that is the
  * union of the previous two extents).
+ *
+ * Since: 1.0
  **/
 static void
 _adg_update_adjustments(AdgGtkLayout *layout)

@@ -15,6 +15,7 @@ HFILE_GLOB=		$(top_srcdir)/src/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/src/cpml/*.c
 IGNORE_HFILES=		cpml.h \
 			cpml-internal.h \
+			cpml-introspection.h \
 			cpml-primitive-private.h \
 			test-internal.h
 HTML_IMAGES=
