@@ -242,13 +242,13 @@ void
 cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
                             CpmlPair *pair)
 {
-    cairo_path_data_t *p1, *p2, *p3, *p4;
+    CpmlPair p1, p2, p3, p4;
     double t_2, t_3, t1, t1_2, t1_3;
 
-    p1 = cpml_primitive_get_point(curve, 0);
-    p2 = cpml_primitive_get_point(curve, 1);
-    p3 = cpml_primitive_get_point(curve, 2);
-    p4 = cpml_primitive_get_point(curve, 3);
+    cpml_primitive_put_point(curve, 0, &p1);
+    cpml_primitive_put_point(curve, 1, &p2);
+    cpml_primitive_put_point(curve, 2, &p3);
+    cpml_primitive_put_point(curve, 3, &p4);
 
     t_2 = t * t;
     t_3 = t_2 * t;
@@ -256,10 +256,10 @@ cpml_curve_put_pair_at_time(const CpmlPrimitive *curve, double t,
     t1_2 = t1 * t1;
     t1_3 = t1_2 * t1;
 
-    pair->x = t1_3 * p1->point.x + 3 * t1_2 * t * p2->point.x
-              + 3 * t1 * t_2 * p3->point.x + t_3 * p4->point.x;
-    pair->y = t1_3 * p1->point.y + 3 * t1_2 * t * p2->point.y
-              + 3 * t1 * t_2 * p3->point.y + t_3 * p4->point.y;
+    pair->x = t1_3 * p1.x + 3 * t1_2 * t * p2.x
+              + 3 * t1 * t_2 * p3.x + t_3 * p4.x;
+    pair->y = t1_3 * p1.y + 3 * t1_2 * t * p2.y
+              + 3 * t1 * t_2 * p3.y + t_3 * p4.y;
 }
 
 /**
@@ -279,21 +279,21 @@ void
 cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
                               double t, CpmlVector *vector)
 {
-    cairo_path_data_t *p1, *p2, *p3, *p4;
+    CpmlPair p1, p2, p3, p4;
     CpmlPair p21, p32, p43;
     double t1, t1_2, t_2;
 
-    p1 = cpml_primitive_get_point(curve, 0);
-    p2 = cpml_primitive_get_point(curve, 1);
-    p3 = cpml_primitive_get_point(curve, 2);
-    p4 = cpml_primitive_get_point(curve, 3);
+    cpml_primitive_put_point(curve, 0, &p1);
+    cpml_primitive_put_point(curve, 1, &p2);
+    cpml_primitive_put_point(curve, 2, &p3);
+    cpml_primitive_put_point(curve, 3, &p4);
 
-    p21.x = p2->point.x - p1->point.x;
-    p21.y = p2->point.y - p1->point.y;
-    p32.x = p3->point.x - p2->point.x;
-    p32.y = p3->point.y - p2->point.y;
-    p43.x = p4->point.x - p3->point.x;
-    p43.y = p4->point.y - p3->point.y;
+    p21.x = p2.x - p1.x;
+    p21.y = p2.y - p1.y;
+    p32.x = p3.x - p2.x;
+    p32.y = p3.y - p2.y;
+    p43.x = p4.x - p3.x;
+    p43.y = p4.y - p3.y;
 
     t1 = 1 - t;
     t1_2 = t1 * t1;
@@ -311,10 +311,10 @@ put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 
     extents->is_defined = 0;
 
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(curve, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(curve, 1));
-    cpml_pair_from_cairo(&p3, cpml_primitive_get_point(curve, 2));
-    cpml_pair_from_cairo(&p4, cpml_primitive_get_point(curve, 3));
+    cpml_primitive_put_point(curve, 0, &p1);
+    cpml_primitive_put_point(curve, 1, &p2);
+    cpml_primitive_put_point(curve, 2, &p3);
+    cpml_primitive_put_point(curve, 3, &p4);
 
     cpml_extents_pair_add(extents, &p1);
     cpml_extents_pair_add(extents, &p2);

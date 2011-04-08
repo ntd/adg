@@ -87,10 +87,13 @@
 
 
 static const _CpmlPrimitiveClass *
-                get_class_from_type     (CpmlPrimitiveType        type);
+                _cpml_class_from_type   (CpmlPrimitiveType        type);
 static const _CpmlPrimitiveClass *
-                get_class               (const CpmlPrimitive     *primitive);
-static void     dump_cairo_point        (const cairo_path_data_t *path_data);
+                _cpml_class_from_obj    (const CpmlPrimitive     *primitive);
+static cairo_path_data_t *
+                _cpml_get_point         (const CpmlPrimitive     *primitive,
+                                         int     n_point);
+static void     _cpml_dump_point        (const cairo_path_data_t *path_data);
 
 
 /**
@@ -106,7 +109,7 @@ static void     dump_cairo_point        (const cairo_path_data_t *path_data);
 size_t
 cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 {
-    const _CpmlPrimitiveClass *class_data = get_class_from_type(type);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_type(type);
 
     if (class_data == NULL)
         return 0;
@@ -194,7 +197,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
     if (new_data >= end_data)
         return FALSE;
 
-    primitive->org = cpml_primitive_get_point(primitive, -1);
+    primitive->org = _cpml_get_point(primitive, -1);
     primitive->data = new_data;
 
     return TRUE;
@@ -221,60 +224,6 @@ cpml_primitive_get_n_points(const CpmlPrimitive *primitive)
 }
 
 /**
- * cpml_primitive_get_point:
- * @primitive: a #CpmlPrimitive
- * @n_point:   the index of the point to retrieve
- *
- * Gets the specified @n_point from @primitive. The index starts
- * at 0: if @n_point is 0, the start point (the origin) is
- * returned, 1 for the second point and so on. If @n_point is
- * negative, it is considered as a negative index from the end,
- * so that -1 is the end point, -2 the point before the end point
- * and so on.
- *
- * #CPML_CLOSE is managed in a special way: if @n_point
- * is -1 or 1 and @primitive is a close-path, this function cycles
- * the source #CpmlSegment and returns the first point. This is
- * needed because requesting the end point (or the second point)
- * of a close path is a valid operation and must returns the start
- * of the segment.
- *
- * Returns: a pointer to the requested point (in cairo format)
- *          or %NULL if the point is outside the valid range
- *
- * Since: 1.0
- **/
-cairo_path_data_t *
-cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
-{
-    size_t n_points;
-
-    /* For a start point request, simply return the origin
-     * without further checking */
-    if (n_point == 0)
-        return primitive->org;
-
-    /* The CPML_CLOSE special case */
-    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH &&
-        (n_point == 1 || n_point == -1))
-        return &primitive->segment->data[1];
-
-    n_points = cpml_primitive_get_n_points(primitive);
-    if (n_points == 0)
-        return NULL;
-
-    /* If n_point is negative, consider it as a negative index from the end */
-    if (n_point < 0)
-        n_point = n_points + n_point;
-
-    /* Out of range condition */
-    if (n_point < 0 || n_point >= n_points)
-        return NULL;
-
-    return n_point == 0 ? primitive->org : &primitive->data[n_point];
-}
-
-/**
  * cpml_primitive_get_length:
  * @primitive: a #CpmlPrimitive
  *
@@ -291,7 +240,7 @@ cpml_primitive_get_point(const CpmlPrimitive *primitive, int n_point)
 double
 cpml_primitive_get_length(const CpmlPrimitive *primitive)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->get_length == NULL)
         return 0;
@@ -320,12 +269,66 @@ void
 cpml_primitive_put_extents(const CpmlPrimitive *primitive,
                            CpmlExtents *extents)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->put_extents == NULL)
         return;
 
     class_data->put_extents(primitive, extents);
+}
+
+/**
+ * cpml_primitive_set_point:
+ * @primitive: a #CpmlPrimitive
+ * @n_point:   the index of the point to retrieve
+ * @pair:      the source #CpmlPair
+ *
+ * Sets the specified @n_point of @primitive to @pair. The @n_point
+ * index starts from 0: if @n_point is 0, the start point (the origin)
+ * is changed, 1 for the second point and so on. If @n_point is
+ * negative, it is considered as a negative index from the end, so
+ * that -1 is the end point, -2 the point before the end point and
+ * so on.
+ *
+ * #CPML_CLOSE is managed in a special way: if @n_point
+ * is -1 or 1 and @primitive is a close-path, this function cycles
+ * the source #CpmlSegment and returns the first point. This is
+ * needed because requesting the end point (or the second point)
+ * of a close path is a valid operation and must returns the origin
+ * of the segment.
+ *
+ * Since: 1.0
+ **/
+void
+cpml_primitive_set_point(CpmlPrimitive *primitive,
+                         int n_point, const CpmlPair *pair)
+{
+    cairo_path_data_t *point = _cpml_get_point(primitive, n_point);
+
+    if (point != NULL)
+        cpml_pair_to_cairo(pair, point);
+}
+
+/**
+ * cpml_primitive_put_point:
+ * @primitive: (in):  a #CpmlPrimitive
+ * @n_point:   (in):  the index of the point to retrieve
+ * @pair:      (out): the destination #CpmlPair
+ *
+ * Gets the specified @n_point from @primitive and stores it into
+ * @pair. The @n_point index is subject to the same rules explained
+ * in the cpml_primitive_set_point() function.
+ *
+ * Since: 1.0
+ **/
+void
+cpml_primitive_put_point(const CpmlPrimitive *primitive,
+                         int n_point, CpmlPair *pair)
+{
+    const cairo_path_data_t *point = _cpml_get_point(primitive, n_point);
+
+    if (point != NULL)
+        cpml_pair_from_cairo(pair, point);
 }
 
 /**
@@ -354,7 +357,7 @@ void
 cpml_primitive_put_pair_at(const CpmlPrimitive *primitive,
                            double pos, CpmlPair *pair)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->put_pair_at == NULL)
         return;
@@ -388,7 +391,7 @@ void
 cpml_primitive_put_vector_at(const CpmlPrimitive *primitive,
                              double pos, CpmlVector *vector)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->put_vector_at == NULL)
         return;
@@ -414,7 +417,7 @@ double
 cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
                                const CpmlPair *pair)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->get_closest_pos == NULL)
         return -1;
@@ -465,7 +468,7 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
     const _CpmlPrimitiveClass *class_data;
     size_t n_points, n_points2;
 
-    class_data = get_class(primitive);
+    class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->put_intersections == NULL)
         return 0;
@@ -544,7 +547,7 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
 void
 cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
 {
-    const _CpmlPrimitiveClass *class_data = get_class(primitive);
+    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
 
     if (class_data == NULL || class_data->offset == NULL)
         return;
@@ -587,14 +590,14 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     cairo_path_data_t data1[2], data2[2];
     CpmlPair joint;
 
-    end1 = cpml_primitive_get_point(primitive, -1);
-    start2 = cpml_primitive_get_point(primitive2, 0);
+    end1 = _cpml_get_point(primitive, -1);
+    start2 = _cpml_get_point(primitive2, 0);
 
     /* Check if the primitives are yet connected */
     if (end1->point.x == start2->point.x && end1->point.y == start2->point.y)
         return TRUE;
 
-    line1.org = cpml_primitive_get_point(primitive, -2);
+    line1.org = _cpml_get_point(primitive, -2);
     line1.data = data1;
     data1[0].header.type = CPML_LINE;
     data1[1] = *end1;
@@ -602,7 +605,7 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     line2.org = start2;
     line2.data = data2;
     data2[0].header.type = CPML_LINE;
-    data2[1] = *cpml_primitive_get_point(primitive2, 1);
+    data2[1] = *_cpml_get_point(primitive2, 1);
 
     if (!cpml_primitive_put_intersections(&line1, &line2, 1, &joint))
         return FALSE;
@@ -640,7 +643,7 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
     type = primitive->data->header.type;
 
     if (type == CPML_CLOSE) {
-        path_data = cpml_primitive_get_point(primitive, -1);
+        path_data = _cpml_get_point(primitive, -1);
         cairo_line_to(cr, path_data->point.x, path_data->point.y);
     } else if (type == CPML_ARC) {
         cpml_arc_to_cairo(primitive, cr);
@@ -674,7 +677,7 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, int org_also)
 
     data = primitive->data;
     type = data->header.type;
-    class_data = get_class_from_type(type);
+    class_data = _cpml_class_from_type(type);
 
     if (class_data == NULL) {
         printf("Unknown primitive type (%d)\n", type);
@@ -684,7 +687,7 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, int org_also)
     /* Dump the origin, if requested */
     if (org_also) {
         printf("move to ");
-        dump_cairo_point(primitive->org);
+        _cpml_dump_point(primitive->org);
         printf("\n");
     }
 
@@ -692,14 +695,14 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, int org_also)
 
     n_points = cpml_primitive_get_n_points(primitive);
     for (n = 1; n < n_points; ++n)
-        dump_cairo_point(cpml_primitive_get_point(primitive, n));
+        _cpml_dump_point(_cpml_get_point(primitive, n));
 
     printf("\n");
 }
 
 
 static const _CpmlPrimitiveClass *
-get_class_from_type(CpmlPrimitiveType type)
+_cpml_class_from_type(CpmlPrimitiveType type)
 {
     if (type == CPML_LINE)
         return _cpml_line_get_class();
@@ -714,13 +717,67 @@ get_class_from_type(CpmlPrimitiveType type)
 }
 
 static const _CpmlPrimitiveClass *
-get_class(const CpmlPrimitive *primitive)
+_cpml_class_from_obj(const CpmlPrimitive *primitive)
 {
-    return get_class_from_type(primitive->data->header.type);
+    return _cpml_class_from_type(primitive->data->header.type);
+}
+
+/*
+ * _cpml_get_point:
+ * @primitive: a #CpmlPrimitive
+ * @n_point:   the index of the point to retrieve
+ *
+ * Gets the specified @n_point from @primitive. The index starts
+ * at 0: if @n_point is 0, the start point (the origin) is
+ * returned, 1 for the second point and so on. If @n_point is
+ * negative, it is considered as a negative index from the end,
+ * so that -1 is the end point, -2 the point before the end point
+ * and so on.
+ *
+ * #CPML_CLOSE is managed in a special way: if @n_point
+ * is -1 or 1 and @primitive is a close-path, this function cycles
+ * the source #CpmlSegment and returns the first point. This is
+ * needed because requesting the end point (or the second point)
+ * of a close path is a valid operation and must returns the start
+ * of the segment.
+ *
+ * Returns: a pointer to the requested point (in cairo format)
+ *          or %NULL if the point is outside the valid range
+ *
+ * Since: 1.0
+ **/
+static cairo_path_data_t *
+_cpml_get_point(const CpmlPrimitive *primitive, int n_point)
+{
+    size_t n_points;
+
+    /* For a start point request, simply return the origin
+     * without further checking */
+    if (n_point == 0)
+        return primitive->org;
+
+    /* The CPML_CLOSE special case */
+    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH &&
+        (n_point == 1 || n_point == -1))
+        return &primitive->segment->data[1];
+
+    n_points = cpml_primitive_get_n_points(primitive);
+    if (n_points == 0)
+        return NULL;
+
+    /* If n_point is negative, consider it as a negative index from the end */
+    if (n_point < 0)
+        n_point = n_points + n_point;
+
+    /* Out of range condition */
+    if (n_point < 0 || n_point >= n_points)
+        return NULL;
+
+    return n_point == 0 ? primitive->org : &primitive->data[n_point];
 }
 
 static void
-dump_cairo_point(const cairo_path_data_t *path_data)
+_cpml_dump_point(const cairo_path_data_t *path_data)
 {
     printf("(%g %g) ", path_data->point.x, path_data->point.y);
 }

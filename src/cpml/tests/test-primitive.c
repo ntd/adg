@@ -19,6 +19,7 @@
 
 
 #include "test-internal.h"
+#include <string.h>
 
 
 static cairo_path_data_t data[] = {
@@ -138,89 +139,204 @@ _cpml_test_get_n_points(void)
 }
 
 static void
-_cpml_test_get_point(void)
+_cpml_test_set_point(void)
+{
+    gsize size;
+    cairo_path_data_t data_copy[G_N_ELEMENTS(data)];
+    CpmlPath path_copy = {
+        CAIRO_STATUS_SUCCESS,
+        data_copy,
+        G_N_ELEMENTS(data)
+    };
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair, pair2;
+    int equality;
+
+    size = sizeof(data_copy);
+    memcpy(data_copy, data, size);
+
+    cpml_segment_from_cairo(&segment, &path_copy);
+
+    /* Line */
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+    cpml_primitive_put_point(&primitive, 0, &pair);
+    pair.x += 1;
+    cpml_primitive_set_point(&primitive, 0, &pair);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    pair.x -= 1;
+    cpml_primitive_set_point(&primitive, 0, &pair);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+    cpml_primitive_put_point(&primitive, 1, &pair);
+    pair.y += 1;
+    cpml_primitive_set_point(&primitive, 1, &pair);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    /* On a CPML_LINE primitives, -1 and 1 indices are equals */
+    cpml_primitive_put_point(&primitive, -1, &pair2);
+    g_assert_cmpfloat(pair.x, ==, pair2.x);
+    g_assert_cmpfloat(pair.y, ==, pair2.y);
+    memcpy(data_copy, data, size);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+    cpml_primitive_put_point(&primitive, 2, &pair);
+    pair.x += 1;
+    pair.y += 1;
+    /* This should be a NOP without segfaults */
+    cpml_primitive_set_point(&primitive, 2, &pair);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+
+    /* From now on, memcpy() is assumed to force equality (as yet
+     * proved by the previous assertions) and pair2 is used as a
+     * different-from-everything pair, that is setting pair2 on any
+     * point will break the equality between data and data_copy
+     */
+    pair2.x = 12345;
+    pair2.y = 54321;
+
+    /* Arc */
+    cpml_primitive_next(&primitive);
+
+    cpml_primitive_set_point(&primitive, 0, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 1, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 2, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 3, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+
+    /* Curve */
+    cpml_primitive_next(&primitive);
+
+    cpml_primitive_set_point(&primitive, 0, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 1, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 2, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 3, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 4, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+
+    cpml_primitive_set_point(&primitive, 0, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 1, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, !=, 0);
+    memcpy(data_copy, data, size);
+    cpml_primitive_set_point(&primitive, 2, &pair2);
+    equality = memcmp(data_copy, data, size);
+    g_assert_cmpint(equality, ==, 0);
+}
+
+static void
+_cpml_test_put_point(void)
 {
     CpmlSegment segment;
     CpmlPrimitive primitive;
-    const cairo_path_data_t *point;
+    CpmlPair pair;
 
     cpml_segment_from_cairo(&segment, &path);
 
     /* Line */
     cpml_primitive_from_segment(&primitive, &segment);
-    point = cpml_primitive_get_point(&primitive, 0);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 0);
-    g_assert_cmpfloat(point->point.y, ==, 1);
-    point = cpml_primitive_get_point(&primitive, 1);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 2);
-    g_assert_cmpfloat(point->point.y, ==, 3);
-    point = cpml_primitive_get_point(&primitive, 2);
-    g_assert(point == NULL);
 
+    cpml_primitive_put_point(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_point(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 2);
+    g_assert_cmpfloat(pair.y, ==, 3);
+    cpml_primitive_put_point(&primitive, 2, &pair);
+    g_assert_cmpfloat(pair.x, ==, 2);
+    g_assert_cmpfloat(pair.y, ==, 3);
     /* The negative indices are checked only against CPML_LINE */
-    point = cpml_primitive_get_point(&primitive, -1);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 2);
-    g_assert_cmpfloat(point->point.y, ==, 3);
-    point = cpml_primitive_get_point(&primitive, -2);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 0);
-    g_assert_cmpfloat(point->point.y, ==, 1);
-    point = cpml_primitive_get_point(&primitive, -3);
-    g_assert(point == NULL);
+    cpml_primitive_put_point(&primitive, -1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 2);
+    g_assert_cmpfloat(pair.y, ==, 3);
+    cpml_primitive_put_point(&primitive, -2, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_point(&primitive, -3, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
 
     /* Arc */
     cpml_primitive_next(&primitive);
-    point = cpml_primitive_get_point(&primitive, 0);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 2);
-    g_assert_cmpfloat(point->point.y, ==, 3);
-    point = cpml_primitive_get_point(&primitive, 1);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 4);
-    g_assert_cmpfloat(point->point.y, ==, 5);
-    point = cpml_primitive_get_point(&primitive, 2);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 6);
-    g_assert_cmpfloat(point->point.y, ==, 7);
-    point = cpml_primitive_get_point(&primitive, 3);
-    g_assert(point == NULL);
+
+    cpml_primitive_put_point(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 2);
+    g_assert_cmpfloat(pair.y, ==, 3);
+    cpml_primitive_put_point(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 4);
+    g_assert_cmpfloat(pair.y, ==, 5);
+    cpml_primitive_put_point(&primitive, 2, &pair);
+    g_assert_cmpfloat(pair.x, ==, 6);
+    g_assert_cmpfloat(pair.y, ==, 7);
+    cpml_primitive_put_point(&primitive, 3, &pair);
+    g_assert_cmpfloat(pair.x, ==, 6);
+    g_assert_cmpfloat(pair.y, ==, 7);
 
     /* Curve */
     cpml_primitive_next(&primitive);
-    point = cpml_primitive_get_point(&primitive, 0);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 6);
-    g_assert_cmpfloat(point->point.y, ==, 7);
-    point = cpml_primitive_get_point(&primitive, 1);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 8);
-    g_assert_cmpfloat(point->point.y, ==, 9);
-    point = cpml_primitive_get_point(&primitive, 2);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 10);
-    g_assert_cmpfloat(point->point.y, ==, 11);
-    point = cpml_primitive_get_point(&primitive, 3);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 12);
-    g_assert_cmpfloat(point->point.y, ==, 13);
-    point = cpml_primitive_get_point(&primitive, 4);
-    g_assert(point == NULL);
+
+    cpml_primitive_put_point(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 6);
+    g_assert_cmpfloat(pair.y, ==, 7);
+    cpml_primitive_put_point(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 8);
+    g_assert_cmpfloat(pair.y, ==, 9);
+    cpml_primitive_put_point(&primitive, 2, &pair);
+    g_assert_cmpfloat(pair.x, ==, 10);
+    g_assert_cmpfloat(pair.y, ==, 11);
+    cpml_primitive_put_point(&primitive, 3, &pair);
+    g_assert_cmpfloat(pair.x, ==, 12);
+    g_assert_cmpfloat(pair.y, ==, 13);
+    cpml_primitive_put_point(&primitive, 4, &pair);
+    g_assert_cmpfloat(pair.x, ==, 12);
+    g_assert_cmpfloat(pair.y, ==, 13);
 
     /* Close */
     cpml_primitive_next(&primitive);
-    point = cpml_primitive_get_point(&primitive, 0);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 12);
-    g_assert_cmpfloat(point->point.y, ==, 13);
-    point = cpml_primitive_get_point(&primitive, 1);
-    g_assert(point != NULL);
-    g_assert_cmpfloat(point->point.x, ==, 0);
-    g_assert_cmpfloat(point->point.y, ==, 1);
-    point = cpml_primitive_get_point(&primitive, 2);
-    g_assert(point == NULL);
+
+    cpml_primitive_put_point(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 12);
+    g_assert_cmpfloat(pair.y, ==, 13);
+    cpml_primitive_put_point(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_point(&primitive, 2, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
 }
 
 
@@ -232,7 +348,8 @@ main(int argc, char *argv[])
     cpml_test_add_func("/cpml/primitive/basic", _cpml_test_basic);
     cpml_test_add_func("/cpml/primitive/type_get_n_points", _cpml_test_type_get_n_points);
     cpml_test_add_func("/cpml/primitive/get_n_points", _cpml_test_get_n_points);
-    cpml_test_add_func("/cpml/primitive/get_point", _cpml_test_get_point);
+    cpml_test_add_func("/cpml/primitive/set_point", _cpml_test_set_point);
+    cpml_test_add_func("/cpml/primitive/put_point", _cpml_test_put_point);
 
     return g_test_run();
 }

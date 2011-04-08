@@ -401,24 +401,26 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
 {
     CpmlPrimitive primitive;
     CpmlPrimitive last_primitive;
-    cairo_path_data_t org, old_end;
+    CpmlPair old_end;
+    cairo_path_data_t org, *old_org;
     int first_cycle;
 
     cpml_primitive_from_segment(&primitive, segment);
     first_cycle = TRUE;
 
     do {
-        if (!first_cycle) {
-            org = old_end;
+        if (! first_cycle) {
+            cpml_pair_to_cairo(&old_end, &org);
+            old_org = primitive.org;
             primitive.org = &org;
         }
 
-        old_end = *cpml_primitive_get_point(&primitive, -1);
+        cpml_primitive_put_point(&primitive, -1, &old_end);
         cpml_primitive_offset(&primitive, offset);
 
-        if (!first_cycle) {
+        if (! first_cycle) {
             cpml_primitive_join(&last_primitive, &primitive);
-            primitive.org = cpml_primitive_get_point(&last_primitive, -1);
+            primitive.org = old_org;
         }
 
         cpml_primitive_copy(&last_primitive, &primitive);

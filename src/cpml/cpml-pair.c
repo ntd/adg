@@ -240,8 +240,8 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_pair_to_cairo:
- * @pair:      (in):    the source #CpmlPair
- * @path_data: (inout): the path data point to modify
+ * @pair:      (in):  the source #CpmlPair
+ * @path_data: (out): the path data point to modify
  *
  * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
  * operation of cpml_pair_from_cairo().

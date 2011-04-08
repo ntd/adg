@@ -272,10 +272,10 @@ _adg_part_define_shape(DemoPart *part)
     adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    cpml_primitive_put_point(primitive, 0, &tmp);
     adg_model_set_named_pair(model, "D3I_X", &tmp);
 
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, -1));
+    cpml_primitive_put_point(primitive, -1, &tmp);
     adg_model_set_named_pair(model, "D3I_Y", &tmp);
 
     adg_path_chamfer(path, CHAMFER, CHAMFER);
@@ -284,9 +284,9 @@ _adg_part_define_shape(DemoPart *part)
     adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    cpml_primitive_put_point(primitive, 0, &tmp);
     adg_model_set_named_pair(model, "D3F_Y", &tmp);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, -1));
+    cpml_primitive_put_point(primitive, -1, &tmp);
     adg_model_set_named_pair(model, "D3F_X", &tmp);
 
     adg_path_fillet(path, part->RD34);
@@ -302,7 +302,7 @@ _adg_part_define_shape(DemoPart *part)
     adg_model_set_named_pair(model, "D4_POS", &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    cpml_primitive_put_point(primitive, 0, &tmp);
     tmp.x += part->RD34;
     adg_model_set_named_pair(model, "RD34", &tmp);
 
@@ -328,7 +328,7 @@ _adg_part_define_shape(DemoPart *part)
     adg_path_line_to(path, &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    cpml_primitive_put_point(primitive, 0, &tmp);
     adg_model_set_named_pair(model, "D5F", &tmp);
 
     adg_path_fillet(path, 0.1);
@@ -338,11 +338,11 @@ _adg_part_define_shape(DemoPart *part)
     adg_model_set_named_pair(model, "D6F", &pair);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, 0));
+    cpml_primitive_put_point(primitive, 0, &tmp);
     adg_model_set_named_pair(model, "D6I_X", &tmp);
 
     primitive = adg_path_over_primitive(path);
-    cpml_pair_from_cairo(&tmp, cpml_primitive_get_point(primitive, -1));
+    cpml_primitive_put_point(primitive, -1, &tmp);
     adg_model_set_named_pair(model, "D6I_Y", &tmp);
 
     pair.x = part->A - part->LD7;

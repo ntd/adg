@@ -99,8 +99,8 @@ get_length(const CpmlPrimitive *line)
 {
     CpmlPair p1, p2;
 
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
+    cpml_primitive_put_point(line, 0, &p1);
+    cpml_primitive_put_point(line, -1, &p2);
 
     return cpml_pair_distance(&p1, &p2);
 }
@@ -112,8 +112,8 @@ put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
 
     extents->is_defined = 0;
 
-    cpml_pair_from_cairo(&p1, cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p2, cpml_primitive_get_point(line, -1));
+    cpml_primitive_put_point(line, 0, &p1);
+    cpml_primitive_put_point(line, -1, &p2);
 
     cpml_extents_pair_add(extents, &p1);
     cpml_extents_pair_add(extents, &p2);
@@ -122,25 +122,25 @@ put_extents(const CpmlPrimitive *line, CpmlExtents *extents)
 static void
 put_pair_at(const CpmlPrimitive *line, double pos, CpmlPair *pair)
 {
-    cairo_path_data_t *p1, *p2;
+    CpmlPair p1, p2;
 
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
+    cpml_primitive_put_point(line, 0, &p1);
+    cpml_primitive_put_point(line, -1, &p2);
 
-    pair->x = p1->point.x + (p2->point.x - p1->point.x) * pos;
-    pair->y = p1->point.y + (p2->point.y - p1->point.y) * pos;
+    pair->x = p1.x + (p2.x - p1.x) * pos;
+    pair->y = p1.y + (p2.y - p1.y) * pos;
 }
 
 static void
 put_vector_at(const CpmlPrimitive *line, double pos, CpmlVector *vector)
 {
-    cairo_path_data_t *p1, *p2;
+    CpmlPair p1, p2;
 
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
+    cpml_primitive_put_point(line, 0, &p1);
+    cpml_primitive_put_point(line, -1, &p2);
 
-    vector->x = p2->point.x - p1->point.x;
-    vector->y = p2->point.y - p1->point.y;
+    vector->x = p2.x - p1.x;
+    vector->y = p2.y - p1.y;
 }
 
 static double
@@ -150,8 +150,8 @@ get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
     CpmlVector normal;
     double pos;
 
-    cpml_pair_from_cairo(&p1_4[0], cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p1_4[1], cpml_primitive_get_point(line, -1));
+    cpml_primitive_put_point(line, 0, &p1_4[0]);
+    cpml_primitive_put_point(line, -1, &p1_4[1]);
 
     normal.x = p1_4[1].x - p1_4[2].x;
     normal.y = p1_4[1].y - p1_4[2].y;
@@ -184,10 +184,10 @@ put_intersections(const CpmlPrimitive *line, const CpmlPrimitive *primitive,
     if (n_dest == 0)
         return 0;
 
-    cpml_pair_from_cairo(&p1_4[0], cpml_primitive_get_point(line, 0));
-    cpml_pair_from_cairo(&p1_4[1], cpml_primitive_get_point(line, -1));
-    cpml_pair_from_cairo(&p1_4[2], cpml_primitive_get_point(primitive, 0));
-    cpml_pair_from_cairo(&p1_4[3], cpml_primitive_get_point(primitive, -1));
+    cpml_primitive_put_point(line, 0, &p1_4[0]);
+    cpml_primitive_put_point(line, -1, &p1_4[1]);
+    cpml_primitive_put_point(primitive, 0, &p1_4[2]);
+    cpml_primitive_put_point(primitive, -1, &p1_4[3]);
 
     return intersection(p1_4, dest, NULL) ? 1 : 0;
 }
@@ -195,20 +195,23 @@ put_intersections(const CpmlPrimitive *line, const CpmlPrimitive *primitive,
 static void
 offset(CpmlPrimitive *line, double offset)
 {
-    cairo_path_data_t *p1, *p2;
+    CpmlPair p1, p2;
     CpmlVector normal;
 
-    p1 = cpml_primitive_get_point(line, 0);
-    p2 = cpml_primitive_get_point(line, -1);
+    cpml_primitive_put_point(line, 0, &p1);
+    cpml_primitive_put_point(line, -1, &p2);
 
     put_vector_at(line, 0, &normal);
     cpml_vector_normal(&normal);
     cpml_vector_set_length(&normal, offset);
 
-    p1->point.x += normal.x;
-    p1->point.y += normal.y;
-    p2->point.x += normal.x;
-    p2->point.y += normal.y;
+    p1.x += normal.x;
+    p1.y += normal.y;
+    p2.x += normal.x;
+    p2.y += normal.y;
+
+    cpml_primitive_set_point(line, 0, &p1);
+    cpml_primitive_set_point(line, -1, &p2);
 }
 
 static int

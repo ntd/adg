@@ -54,12 +54,15 @@ void            cpml_primitive_copy        (CpmlPrimitive       *primitive,
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
 int             cpml_primitive_next        (CpmlPrimitive       *primitive);
 size_t          cpml_primitive_get_n_points(const CpmlPrimitive *primitive);
-cairo_path_data_t *
-                cpml_primitive_get_point   (const CpmlPrimitive *primitive,
-                                            int                  n_point);
 double          cpml_primitive_get_length  (const CpmlPrimitive *primitive);
 void            cpml_primitive_put_extents (const CpmlPrimitive *primitive,
                                             CpmlExtents         *extents);
+void            cpml_primitive_set_point   (CpmlPrimitive       *primitive,
+                                            int                  n_point,
+                                            const CpmlPair      *pair);
+void            cpml_primitive_put_point   (const CpmlPrimitive *primitive,
+                                            int                  n_point,
+                                            CpmlPair            *pair);
 void            cpml_primitive_put_pair_at (const CpmlPrimitive *primitive,
                                             double               pos,
                                             CpmlPair            *pair);

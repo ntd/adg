@@ -347,11 +347,11 @@ put_extents(const CpmlPrimitive *arc, CpmlExtents *extents)
     }
 
     /* Add the start point */
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, 0));
+    cpml_primitive_put_point(arc, 0, &pair);
     cpml_extents_pair_add(extents, &pair);
 
     /* Add the end point */
-    cpml_pair_from_cairo(&pair, cpml_primitive_get_point(arc, -1));
+    cpml_primitive_put_point(arc, -1, &pair);
     cpml_extents_pair_add(extents, &pair);
 }
 
