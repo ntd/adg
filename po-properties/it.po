@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-27 16:04+0200\n"
+"POT-Creation-Date: 2011-04-08 23:46+0200\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg-gtk/adg-gtk-area.c:154
+#: src/adg/adg-alignment.c:105 src/adg-gtk/adg-gtk-area.c:158
 msgid "Factor"
 msgstr "Fattore"
 
@@ -553,21 +553,21 @@ msgstr ""
 "L'angolo che definisce quando considerare uno spigolo (se l'angolo dello "
 "spigolo è maggiore di questo valore) e quando ignorarlo"
 
-#: src/adg/adg-entity.c:151
+#: src/adg/adg-entity.c:155
 msgid "Parent Entity"
 msgstr "Entità Genitore"
 
-#: src/adg/adg-entity.c:152
+#: src/adg/adg-entity.c:156
 msgid "The parent entity of this entity or NULL if this is a top-level entity"
 msgstr ""
 "L'entità che contiene questa entità o NULL se l'entità corrente è una top-"
 "level"
 
-#: src/adg/adg-entity.c:158
+#: src/adg/adg-entity.c:162
 msgid "Global Map"
 msgstr "Trasformazione Globale"
 
-#: src/adg/adg-entity.c:159
+#: src/adg/adg-entity.c:163
 msgid ""
 "The transformation to be combined with the parent ones to get the global "
 "matrix"
@@ -575,11 +575,11 @@ msgstr ""
 "La trasformazione da combinare insieme a quelle dei progenitori per ottenere "
 "la matrice globale"
 
-#: src/adg/adg-entity.c:165
+#: src/adg/adg-entity.c:169
 msgid "Local Map"
 msgstr "Trasformazione Locale"
 
-#: src/adg/adg-entity.c:166
+#: src/adg/adg-entity.c:170
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
 "the way specified by the #AdgEntity:local-method property"
@@ -587,11 +587,11 @@ msgstr ""
 "La trasformazione locale che può venir usata per calcolare la matrice locale "
 "nella modalità specificata dalla proprietà #AdgEntity:local-method"
 
-#: src/adg/adg-entity.c:172
+#: src/adg/adg-entity.c:176
 msgid "Local Mix Method"
 msgstr "Metodo di Combinazione Locale"
 
-#: src/adg/adg-entity.c:173
+#: src/adg/adg-entity.c:177
 msgid ""
 "Define how the local maps of the entity and its ancestors should be combined "
 "to get the local matrix"
@@ -1055,26 +1055,26 @@ msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
 
-#: src/adg-gtk/adg-gtk-area.c:147
+#: src/adg-gtk/adg-gtk-area.c:151
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg-gtk/adg-gtk-area.c:148
+#: src/adg-gtk/adg-gtk-area.c:152
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg-gtk/adg-gtk-area.c:155
+#: src/adg-gtk/adg-gtk-area.c:159
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg-gtk/adg-gtk-area.c:161
+#: src/adg-gtk/adg-gtk-area.c:165
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg-gtk/adg-gtk-area.c:162
+#: src/adg-gtk/adg-gtk-area.c:166
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -1082,19 +1082,19 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg-gtk/adg-gtk-area.c:168
+#: src/adg-gtk/adg-gtk-area.c:172
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg-gtk/adg-gtk-area.c:169
+#: src/adg-gtk/adg-gtk-area.c:173
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
-#: src/adg-gtk/adg-gtk-layout.c:117
+#: src/adg-gtk/adg-gtk-layout.c:121
 msgid "Horizontal adjustment"
 msgstr "Regolazione orizzontale"
 
-#: src/adg-gtk/adg-gtk-layout.c:118
+#: src/adg-gtk/adg-gtk-layout.c:122
 msgid ""
 "The GtkAdjustment that determines the values of the horizontal position for "
 "this viewport"
@@ -1102,11 +1102,11 @@ msgstr ""
 "Il GtkAdjustment che determina il valore per il posizionamento orizzontale "
 "di questa vista"
 
-#: src/adg-gtk/adg-gtk-layout.c:124
+#: src/adg-gtk/adg-gtk-layout.c:128
 msgid "Vertical adjustment"
 msgstr "Regolazione verticale"
 
-#: src/adg-gtk/adg-gtk-layout.c:125
+#: src/adg-gtk/adg-gtk-layout.c:129
 msgid ""
 "The GtkAdjustment that determines the values of the vertical position for "
 "this viewport"
