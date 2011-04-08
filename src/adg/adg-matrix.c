@@ -57,12 +57,29 @@ adg_matrix_get_type(void)
     return matrix_type;
 }
 
+
+/**
+ * adg_matrix_new:
+ *
+ * Creates a new empty #AdgMatrix. The returned pointer
+ * should be freed with g_free() when no longer needed.
+ *
+ * Returns: a newly created #AdgMatrix
+ *
+ * Since: 1.0
+ **/
+AdgMatrix *
+adg_matrix_new(void)
+{
+    return g_new0(AdgMatrix, 1);
+}
+
 /**
  * adg_matrix_identity:
  *
  * A convenient constant providing an identity matrix.
  *
- * Returns: a pointer to the identity matrix
+ * Returns: (transfer none): a pointer to the identity matrix
  *
  * Since: 1.0
  **/
@@ -85,7 +102,7 @@ adg_matrix_identity(void)
  * A convenient constant providing an null matrix, that is a matrix
  * where all components are 0.
  *
- * Returns: a pointer to the null matrix
+ * Returns: (transfer none): a pointer to the null matrix
  *
  * Since: 1.0
  **/
@@ -102,24 +119,20 @@ adg_matrix_null(void)
 
 /**
  * adg_matrix_copy:
- * @matrix: the destination #AdgMatrix
- * @src: the source #AdgMatrix
+ * @matrix: (out caller-allocates): the destination #AdgMatrix
+ * @src:                            the source #AdgMatrix
  *
- * Copies @matrix to @dst.
- *
- * Returns: @matrix
+ * Copies @src to @matrix.
  *
  * Since: 1.0
  **/
-AdgMatrix *
+void
 adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
 {
-    g_return_val_if_fail(matrix != NULL, matrix);
-    g_return_val_if_fail(src != NULL, matrix);
+    g_return_if_fail(matrix != NULL);
+    g_return_if_fail(src != NULL);
 
     memcpy(matrix, src, sizeof(AdgMatrix));
-
-    return matrix;
 }
 
 /**
@@ -128,8 +141,7 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  *
  * Duplicates @matrix.
  *
- * Returns: the duplicate of @matrix: must be freed with g_free()
- *          when no longer needed.
+ * Returns: (transfer full): a duplicate of @matrix that must be freed with g_free() when no longer needed.
  *
  * Since: 1.0
  **/
@@ -143,8 +155,8 @@ adg_matrix_dup(const AdgMatrix *matrix)
 
 /**
  * adg_matrix_equal:
- * @matrix1: an #AdgMatrix
- * @matrix2: an #AdgMatrix
+ * @matrix1: the first operand
+ * @matrix2: the second operand
  *
  * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
  *
@@ -169,7 +181,7 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 
 /**
  * adg_matrix_normalize:
- * @matrix: the source/destination #AdgMatrix
+ * @matrix: (inout): the source/destination #AdgMatrix
  *
  * Gets rid of the scaling component of a matrix.
  *
@@ -210,9 +222,9 @@ adg_matrix_normalize(AdgMatrix *matrix)
 
 /**
  * adg_matrix_transform:
- * @matrix: the source/destination #AdgMatrix
- * @transformation: the transformation to apply
- * @mode: how @transformation should be applied
+ * @matrix:         (inout): the source/destination #AdgMatrix
+ * @transformation:          the transformation to apply
+ * @mode:           (in):    how @transformation should be applied
  *
  * Modifies @matrix applying @transformation in the way specified by
  * @mode.

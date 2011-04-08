@@ -32,7 +32,11 @@ G_BEGIN_DECLS
 #define ADG_TYPE_PATTERN  (adg_pattern_get_type ())
 
 
+#ifdef __GI_SCANNER__
+ADG_FORWARD_DECL(AdgPattern);
+#else
 typedef cairo_pattern_t AdgPattern;
+#endif
 
 
 GType                   adg_pattern_get_type    (void) G_GNUC_CONST;

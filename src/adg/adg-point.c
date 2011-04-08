@@ -78,9 +78,6 @@ adg_point_get_type(void)
  * Creates a new empty #AdgPoint. The returned pointer
  * should be freed with adg_point_destroy() when no longer needed.
  *
- * The returned value should be freed with adg_point_destroy()
- * when no longer needed.
- *
  * Returns: a newly created #AdgPoint
  *
  * Since: 1.0

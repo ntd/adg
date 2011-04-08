@@ -32,14 +32,20 @@ G_BEGIN_DECLS
 #define ADG_TYPE_MATRIX  (adg_matrix_get_type())
 
 
+#ifdef __GI_SCANNER__
+ADG_FORWARD_DECL(AdgMatrix);
+#else
 typedef cairo_matrix_t AdgMatrix;
+#endif
 
 
 GType            adg_matrix_get_type            (void) G_GNUC_CONST;
+
+AdgMatrix *      adg_matrix_new                 (void);
 const AdgMatrix *adg_matrix_identity            (void) G_GNUC_CONST;
 const AdgMatrix *adg_matrix_null                (void) G_GNUC_CONST;
 
-AdgMatrix *      adg_matrix_copy                (AdgMatrix       *matrix,
+void             adg_matrix_copy                (AdgMatrix       *matrix,
                                                  const AdgMatrix *src);
 AdgMatrix *      adg_matrix_dup                 (const AdgMatrix *matrix);
 gboolean         adg_matrix_equal               (const AdgMatrix *matrix1,

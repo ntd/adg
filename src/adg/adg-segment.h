@@ -32,7 +32,11 @@ G_BEGIN_DECLS
 #define ADG_TYPE_SEGMENT                (adg_segment_get_type())
 
 
+#ifdef __GI_SCANNER__
+ADG_FORWARD_DECL(AdgSegment);
+#else
 typedef CpmlSegment AdgSegment;
+#endif
 
 
 GType           adg_segment_get_type    (void) G_GNUC_CONST;

@@ -43,12 +43,16 @@
 
 /**
  * AdgEntityClass:
- * @parent_set: called after the parent has changed
- * @invalidate: invalidating callback, used to clear the cache
- * @arrange: prepare the layout and fill the extents struct
- * @render: rendering callback, it must be implemented
+ * @parent_set:     called whenever the parent of an entity has changed
+ * @global_changed: the global matrix has been invalidated
+ * @local_changed:  the local matrix has been invalidated
+ * @invalidate:     invalidating callback, used to clear the internal cache
+ * @arrange:        prepare the layout and fill the extents struct
+ * @render:         rendering callback, it must be implemented by every entity
  *
  * Any entity (if not abstract) must implement at least the @render method.
+ * The other signal handlers can be overriden to provide custom behaviors
+ * and usually must chain up the original handler.
  *
  * Since: 1.0
  **/

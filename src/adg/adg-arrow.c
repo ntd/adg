@@ -147,7 +147,6 @@ _adg_set_property(GObject *object, guint prop_id,
 
 /**
  * adg_arrow_new:
- * @trail: the #AdgTrail to arrow
  *
  * Creates a new undefined arrow entity. The position must be defined
  * by setting the #AdgMarker:trail and #AdgMarker:pos properties.

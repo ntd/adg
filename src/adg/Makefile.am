@@ -184,8 +184,8 @@ INTROSPECTION_GIRS+=		Adg-1.0.gir
 Adg-1.0.gir: libadg-1.la
 
 Adg_1_0_gir_LIBS=		libadg-1.la
-Adg_1_0_gir_INCLUDES=		Cpml-1.0
-Adg_1_0_gir_PACKAGES=		cpml-1
+Adg_1_0_gir_INCLUDES=
+Adg_1_0_gir_PACKAGES=
 if HAVE_PANGO
 ## pangocairo includes all the needed dependencies
 Adg_1_0_gir_INCLUDES+=		PangoCairo-1.0
@@ -202,7 +202,8 @@ Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS) \
 Adg_1_0_gir_LDFLAGS=		$(AM_LDFLAGS) \
 				-L$(top_builddir)/src/cpml/.libs \
 				-lcpml-1
-Adg_1_0_gir_SCANNERFLAGS=	--c-include="adg.h"
+Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
+				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
 girdir=				$(datadir)/gir-1.0
 gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0

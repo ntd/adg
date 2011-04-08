@@ -41,7 +41,12 @@ G_BEGIN_DECLS
 ADG_FORWARD_DECL(AdgCanvas);
 ADG_FORWARD_DECL(AdgStyle);
 ADG_FORWARD_DECL(AdgPoint);
+
+#ifdef __GI_SCANNER__
+ADG_FORWARD_DECL(AdgDress);
+#else
 typedef gint AdgDress;
+#endif
 
 
 typedef struct _AdgEntity        AdgEntity;

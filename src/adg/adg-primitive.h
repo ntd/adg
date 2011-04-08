@@ -32,7 +32,11 @@ G_BEGIN_DECLS
 #define ADG_TYPE_PRIMITIVE              (adg_primitive_get_type())
 
 
+#ifdef __GI_SCANNER__
+ADG_FORWARD_DECL(AdgPrimitive);
+#else
 typedef CpmlPrimitive AdgPrimitive;
+#endif
 
 
 GType           adg_primitive_get_type  (void) G_GNUC_CONST;
