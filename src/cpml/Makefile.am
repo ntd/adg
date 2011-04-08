@@ -74,10 +74,10 @@ Cpml_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
 Cpml_1_0_gir_LDFLAGS=
 Cpml_1_0_gir_SCANNERFLAGS=	--c-include="cpml.h"
 girdir=				$(datadir)/gir-1.0
-gir_DATA=			$(INTROSPECTION_GIRS)
+dist_gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0
 typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
-CLEANFILES+=			$(gir_DATA) \
+CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)
 
 endif

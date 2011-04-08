@@ -76,10 +76,10 @@ AdgGtk_1_0_gir_LDFLAGS=		$(AM_LDFLAGS) \
 				-ladg-1
 AdgGtk_1_gir_SCANNERFLAGS=	--c-include="adg-gtk.h"
 girdir=				$(datadir)/gir-1.0
-gir_DATA=			$(INTROSPECTION_GIRS)
+dist_gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0
 typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
-CLEANFILES+=			$(gir_DATA) \
+CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)
 
 endif

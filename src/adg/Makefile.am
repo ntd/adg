@@ -205,10 +205,10 @@ Adg_1_0_gir_LDFLAGS=		$(AM_LDFLAGS) \
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
 				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
 girdir=				$(datadir)/gir-1.0
-gir_DATA=			$(INTROSPECTION_GIRS)
+dist_gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0
 typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
-CLEANFILES+=			$(gir_DATA) \
+CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)
 
 endif
