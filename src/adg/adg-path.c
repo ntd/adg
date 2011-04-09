@@ -492,6 +492,8 @@ adg_path_move_to(AdgPath *path, const AdgPair *pair)
  * Convenient function to call adg_path_move_to() using explicit
  * coordinates instead of #AdgPair.
  *
+ * Rename to: adg_path_move_to
+ *
  * Since: 1.0
  **/
 void
@@ -532,6 +534,8 @@ adg_path_line_to(AdgPath *path, const AdgPair *pair)
  *
  * Convenient function to call adg_path_line_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Rename to: adg_path_line_to
  *
  * Since: 1.0
  **/
@@ -576,6 +580,8 @@ adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
  *
  * Convenient function to call adg_path_arc_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Rename to: adg_path_arc_to
  *
  * Since: 1.0
  **/
@@ -628,6 +634,8 @@ adg_path_curve_to(AdgPath *path, const AdgPair *control1,
  *
  * Convenient function to call adg_path_curve_to() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Rename to: adg_path_curve_to
  *
  * Since: 1.0
  **/
@@ -743,6 +751,8 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
  *
  * Convenient function to call adg_path_arc() using explicit
  * coordinates instead of #AdgPair.
+ *
+ * Rename to: adg_path_arc
  *
  * Since: 1.0
  **/
