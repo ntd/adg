@@ -18,8 +18,7 @@
  */
 
 
-#include <test-internal.h>
-#include <adg-gtk.h>
+#include "test-internal.h"
 
 
 static void
@@ -30,7 +29,7 @@ _adg_test_canvas(void)
 
     area = ADG_GTK_AREA(adg_gtk_area_new());
     valid_canvas = adg_canvas_new();
-    invalid_canvas = adg_gtk_test_invalid_pointer();
+    invalid_canvas = adg_test_invalid_pointer();
 
     g_object_ref(valid_canvas);
 
@@ -215,12 +214,12 @@ _adg_test_render_map(void)
 int
 main(int argc, char *argv[])
 {
-    adg_gtk_test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
-    adg_gtk_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
-    adg_gtk_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
-    adg_gtk_test_add_func("/adg/gtk/area/autozoom", _adg_test_autozoom);
-    adg_gtk_test_add_func("/adg/gtk/area/render-map", _adg_test_render_map);
+    adg_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
+    adg_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
+    adg_test_add_func("/adg/gtk/area/autozoom", _adg_test_autozoom);
+    adg_test_add_func("/adg/gtk/area/render-map", _adg_test_render_map);
 
     return g_test_run();
 }

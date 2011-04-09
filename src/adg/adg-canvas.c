@@ -69,6 +69,7 @@
 
 
 #include "adg-internal.h"
+
 #include "adg-container.h"
 #include "adg-table.h"
 #include "adg-title-block.h"
@@ -79,6 +80,11 @@
 
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
+
+#if GTK2_ENABLED
+#include <gtk/gtk.h>
+#include "adg-canvas-gtk.h"
+#endif
 
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)
@@ -1172,3 +1178,122 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     if (_ADG_OLD_ENTITY_CLASS->render)
         _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }
+
+#if GTK2_ENABLED
+
+/**
+ * adg_canvas_set_paper:
+ * @canvas: an #AdgCanvas
+ * @paper_name: a paper name
+ * @orientation: the page orientation
+ *
+ * A convenient function to set the size of @canvas using a
+ * @paper_name and an @orientation value. This should be a
+ * PWG 5101.1-2002 paper name and it will be passed as is to
+ * gtk_paper_size_new(), so use any valid name accepted by
+ * that function.
+ *
+ * To reset this size, you could use adg_canvas_set_size() with a
+ * %NULL size: in this way the size will match the boundary boxes
+ * of the entities contained by the canvas.
+ *
+ * Furthermore, the margins will be set to their default values,
+ * that is the margins returned by the #GtkPaperSize API.
+ * If you want to use your own margins on a named paper size,
+ * set them <emphasis>after</emphasis> the call to this function.
+ *
+ * Since: 1.0
+ **/
+void
+adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
+                     GtkPageOrientation orientation)
+{
+    GtkPageSetup *page_setup;
+    GtkPaperSize *paper_size;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(paper_name != NULL);
+
+    page_setup = gtk_page_setup_new();
+    paper_size = gtk_paper_size_new(paper_name);
+
+    gtk_page_setup_set_paper_size(page_setup, paper_size);
+    gtk_page_setup_set_orientation(page_setup, orientation);
+    gtk_paper_size_free(paper_size);
+
+    adg_canvas_set_page_setup(canvas, page_setup);
+    g_object_unref(page_setup);
+}
+
+/**
+ * adg_canvas_set_page_setup:
+ * @canvas: an #AdgCanvas
+ * @page_setup: the page setup
+ *
+ * A convenient function to setup the page of @canvas so it can
+ * also be subsequentially used for printing. It is allowed to
+ * pass %NULL for @page_setup to unset the setup data from @canvas.
+ *
+ * A reference to @page_setup is added, so there is no need to keep
+ * alive this object outside this function. The @page_setup pointer
+ * is stored in the associative key %_adg_page_setup and can be
+ * retrieved at any time with:
+ *
+ * |[
+ * page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
+ * ]|
+ *
+ * The size and margins provided by @page_setup are used to set the
+ * size and margins of @canvas much in the same way as what
+ * adg_canvas_set_paper() does. This means if you set a page and
+ * then unset it, the canvas will retain size and margins of the
+ * original page although @page_setup will not be used for printing.
+ * You must unset the size with adg_canvas_set_size() with a %NULL size.
+ *
+ * |[
+ * // By default, canvas does not have an explicit size
+ * adg_canvas_set_page_setup(canvas, a4);
+ * // Here canvas has the size and margins specified by a4
+ * adg_canvas_set_page_setup(canvas, NULL);
+ * // Now the only difference is that canvas is no more bound
+ * // to the a4 page setup, so the following will return NULL:
+ * page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
+ * // To restore the original status and have an autocomputed size:
+ * adg_canvas_set_size(canvas, NULL);
+ * ]|
+ *
+ * Since: 1.0
+ **/
+void
+adg_canvas_set_page_setup(AdgCanvas *canvas, GtkPageSetup *page_setup)
+{
+    gdouble top, right, bottom, left;
+    AdgPair size;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    if (page_setup == NULL) {
+        /* By convention, NULL resets the default page but
+         * does not change any other property */
+        g_object_set_data((GObject *) canvas, "_adg_page_setup", NULL);
+        return;
+    }
+
+    g_return_if_fail(GTK_IS_PAGE_SETUP(page_setup));
+
+    top = gtk_page_setup_get_top_margin(page_setup, GTK_UNIT_POINTS);
+    right = gtk_page_setup_get_right_margin(page_setup, GTK_UNIT_POINTS);
+    bottom = gtk_page_setup_get_bottom_margin(page_setup, GTK_UNIT_POINTS);
+    left = gtk_page_setup_get_left_margin(page_setup, GTK_UNIT_POINTS);
+    size.x = gtk_page_setup_get_page_width(page_setup, GTK_UNIT_POINTS);
+    size.y = gtk_page_setup_get_page_height(page_setup, GTK_UNIT_POINTS);
+
+    adg_canvas_set_size(canvas, &size);
+    adg_canvas_set_margins(canvas, top, right, bottom, left);
+
+    g_object_ref(page_setup);
+    g_object_set_data_full((GObject *) canvas, "_adg_page_setup",
+                           page_setup, g_object_unref);
+}
+
+#endif

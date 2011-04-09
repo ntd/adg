@@ -18,10 +18,24 @@
  */
 
 
-#if !defined(__GI_SCANNER__)
-#error "adg-gtk-introspection.h must be included by g-ir-scanner only."
+#if !defined(__ADG_H__)
+#error "Only <adg.h> can be included directly."
 #endif
 
-#include <config.h>
 
-#include <adg-gtk.h>
+#ifndef __ADG_CANVAS_GTK_H__
+#define __ADG_CANVAS_GTK_H__
+
+
+G_BEGIN_DECLS
+
+void            adg_canvas_set_paper            (AdgCanvas      *canvas,
+                                                 const gchar    *paper_name,
+                                                 GtkPageOrientation orientation);
+void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
+                                                 GtkPageSetup   *page_setup);
+
+G_END_DECLS
+
+
+#endif /* __ADG_CANVAS_GTK_H__ */

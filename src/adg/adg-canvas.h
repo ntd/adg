@@ -112,6 +112,14 @@ void            adg_canvas_set_paddings         (AdgCanvas      *canvas,
                                                  gdouble         right,
                                                  gdouble         bottom,
                                                  gdouble         left);
+/* Declared by adg-canvas-gtk.h */
+#if 0
+void            adg_canvas_set_paper            (AdgCanvas      *canvas,
+                                                 const gchar    *paper_name,
+                                                 GtkPageOrientation orientation);
+void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
+                                                 GtkPageSetup   *page_setup);
+#endif
 
 G_END_DECLS
 

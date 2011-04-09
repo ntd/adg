@@ -18,8 +18,8 @@
  */
 
 
-#if !defined(__ADG_GTK_H__)
-#error "Only <adg-gtk.h> can be included directly."
+#if !defined(__ADG_H__)
+#error "Only <adg.h> can be included directly."
 #endif
 
 

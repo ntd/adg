@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2011  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,21 +18,26 @@
  */
 
 
-#ifndef __TEST_INIT_H__
-#define __TEST_INIT_H__
-
-#include <adg-gtk.h>
+#ifndef __ADG_GTK_AREA_PRIVATE_H__
+#define __ADG_GTK_AREA_PRIVATE_H__
 
 
 G_BEGIN_DECLS
 
-void            adg_gtk_test_init               (int            *p_argc,
-                                                 char          **p_argv[]);
-const gpointer  adg_gtk_test_invalid_pointer    (void) G_GNUC_CONST;
-void            adg_gtk_test_add_func           (const char     *testpath,
-                                                 GCallback       test_func);
+typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
+
+struct _AdgGtkAreaPrivate {
+    AdgCanvas   *canvas;
+    gdouble      factor;
+    gboolean     autozoom;
+    AdgMatrix    render_map;
+
+    gboolean     initialized;
+    CpmlExtents  extents;
+    gdouble      x_event, y_event;
+};
 
 G_END_DECLS
 
 
-#endif /* __TEST_INIT_H__ */
+#endif /* __ADG_GTK_AREA_PRIVATE_H__ */

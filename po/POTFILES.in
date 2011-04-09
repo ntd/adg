@@ -17,6 +17,8 @@ src/adg/adg-edges.c
 src/adg/adg-entity.c
 src/adg/adg-fill-style.c
 src/adg/adg-font-style.c
+src/adg/adg-gtk-area.c
+src/adg/adg-gtk-layout.c
 src/adg/adg-hatch.c
 src/adg/adg-ldim.c
 src/adg/adg-line-style.c
@@ -37,5 +39,3 @@ src/adg/adg-textual.c
 src/adg/adg-title-block.c
 src/adg/adg-toy-text.c
 src/adg/adg-trail.c
-src/adg-gtk/adg-gtk-area.c
-src/adg-gtk/adg-gtk-layout.c

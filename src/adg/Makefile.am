@@ -157,6 +157,24 @@ nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 libadg_1_la_LDFLAGS=		-no-undefined
 
 
+## Optional GTK+2 related stuff
+if HAVE_GTK2
+
+h_sources+=			adg-canvas-gtk.h \
+				adg-gtk-area.h \
+				adg-gtk-layout.h \
+				adg-gtk-utils.h
+private_h_sources+=		adg-gtk-area-private.h \
+				adg-gtk-layout-private.h
+c_sources+=			adg-gtk-area.c \
+				adg-gtk-layout.c \
+				adg-gtk-utils.c
+AM_CFLAGS+=			$(GTK2_CFLAGS)
+AM_LDFLAGS+=			$(GTK2_LIBS)
+
+endif
+
+
 ## Optional pangocairo related stuff
 if HAVE_PANGO
 
@@ -186,14 +204,22 @@ Adg-1.0.gir: libadg-1.la
 Adg_1_0_gir_LIBS=		libadg-1.la
 Adg_1_0_gir_INCLUDES=
 Adg_1_0_gir_PACKAGES=
+
+if HAVE_GTK2
+## GTK+2 includes all the needed dependencies
+Adg_1_0_gir_INCLUDES+=		Gtk-2.0
+Adg_1_0_gir_PACKAGES+=		gtk+-2.0
+else
 if HAVE_PANGO
-## pangocairo includes all the needed dependencies
+## pangocairo is a superset of the default dependencies
 Adg_1_0_gir_INCLUDES+=		PangoCairo-1.0
 Adg_1_0_gir_PACKAGES+=		pangocairo
 else
 Adg_1_0_gir_INCLUDES+=		GObject-2.0
 Adg_1_0_gir_PACKAGES+=		gobject-2.0
 endif
+endif
+
 Adg_1_0_gir_FILES=		adg-introspection.h \
 				$(h_sources) \
 				$(c_sources)

@@ -10,6 +10,8 @@
 /test-entity
 /test-fill-style
 /test-font-style
+/test-gtk-area
+/test-gtk-layout
 /test-hatch
 /test-ldim
 /test-line-style

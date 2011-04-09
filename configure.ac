@@ -18,10 +18,10 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
-AM_INIT_AUTOMAKE([1.6 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
-m4_ifdef([AM_SILENT_RULES],
-         [AM_SILENT_RULES([yes])],
-         [AC_SUBST([AM_V_GEN],[])])
+dnl automake 1.11 is required for multiline substitution (AM_SUBST_NOTMAKE)
+AM_INIT_AUTOMAKE([1.11 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
+AM_SILENT_RULES([yes])
+
 AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
 
 
@@ -61,7 +61,7 @@ case "${host}" in
     ;;
 esac
 AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
-AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" == "mingw" -o "${guessed_host}" == "cygwin"])
+AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" = "mingw" -o "${guessed_host}" = "cygwin"])
 
 
 # Check for programs
@@ -109,21 +109,16 @@ AC_CONFIG_COMMANDS([default],
                    [SED="${SED}"])
 
 
-# Gobject introspection
-
-GOBJECT_INTROSPECTION_CHECK([0.6.7])
-
-
 # Check for required packages
 
-GTK_DOC_CHECK(gtkdoc_prereq)
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
 PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 
 
-# Check for optional pango support
+# Check for optional packages
 
+dnl PangoCairo
 AC_ARG_ENABLE([pango],
               [AS_HELP_STRING([--enable-pango],
                               [use pango for rendering text @<:@default=check@:>@])],
@@ -132,36 +127,28 @@ AS_IF([test "x${enable_pango}" != "xno"],
       [PKG_CHECK_MODULES([PANGO],[pangocairo >= ]pangocairo_prereq,
                          [enable_pango=yes
                           AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
-                                             [Defined if the pango support is enabled.])
-                          ADG_H_INCLUDES='
-#include <pango/pango.h>
-#include "adg/adg-text.h"
-#include "adg/adg-pango-style.h"
-'],
+                                             [Defined if the pango support is enabled.])],
                          [AS_IF([test "x${enable_pango}" = "xyes"],
                                 [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
                                 [enable_pango=no])])])
 AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
-AC_SUBST([ADG_H_INCLUDES])
 
-
-# Check for optional GTK+2 support
-
+dnl GTK+2
 AC_ARG_ENABLE([gtk2],
               [AS_HELP_STRING([--enable-gtk2],
                               [include GKT+2 specific widgets @<:@default=check@:>@])],
               [],[enable_gtk2=check])
 AS_IF([test "x${enable_gtk2}" != "xno"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes],
+                         [enable_gtk2=yes
+                          AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
+                                             [Defined if the GTK+2 support is enabled.])],
                          [AS_IF([test "x${enable_gtk2}" = "xyes"],
                                 [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
                                 [enable_gtk2=no])])])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
 
-
-# Check for optional glade support
-
+dnl Glade
 AC_ARG_ENABLE([glade],
               [AS_HELP_STRING([--enable-glade],
                               [install glade catalog file @<:@default=check@:>@])],
@@ -173,20 +160,17 @@ AS_IF([test "x${enable_glade}" != "xno"],
                                 [AC_MSG_ERROR([${GLADE_PKG_ERRORS} and glade support requested])],
                                 [enable_glade=no])])])
 AM_CONDITIONAL([HAVE_GLADE],[test "x${enable_glade}" = "xyes"])
-AS_IF([test "x${enable_glade}" == "xyes"],
-      [AC_MSG_CHECKING([for the glade catalog path])
-       gladeroot=`${PKG_CONFIG} --variable=datarootdir gladeui-1.0`
-       AS_IF([test "x${gladeroot}" == "x"],
-             [GLADE_CATALOGDIR="\${datarootdir}/glade3/catalogs}"],
-             [gladecatalog=`${PKG_CONFIG} --variable=catalogdir gladeui-1.0`
-              GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])
-       AC_SUBST([GLADE_CATALOGDIR])
-       AC_MSG_RESULT(${GLADE_CATALOGDIR})])
 
+dnl gtk-doc
+GTK_DOC_CHECK(gtkdoc_prereq)
 
+dnl GObject introspection
+GOBJECT_INTROSPECTION_CHECK([0.6.7])
+AM_COND_IF([HAVE_INTROSPECTION],
+           [enable_introspection=yes],
+           [enable_introspection=no])
 
-# Check for optional GLib test framework
-
+dnl GLib test framework
 AC_ARG_ENABLE([test_framework],
               [AS_HELP_STRING([--enable-test-framework],
                               [enable GLib test framework @<:@default=check@:>@])],
@@ -205,15 +189,62 @@ AM_CONDITIONAL([HAVE_TEST_FRAMEWORK],[test "x${enable_test_framework}" = "xyes"]
 AC_C_CONST
 
 
-# Final step
+# Substitutions
 
-AC_SUBST([CPML_REQUIRES],'cairo >= cairo_prereq')
-AS_IF([test "x${enable_pango}" == "xyes"],
-      [ADG_REQUIRES='pangocairo >= pangocairo_prereq'],
-      [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'])
+DLLDIR="$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin"
+CPML_REQUIRES='cairo >= cairo_prereq'
+AM_COND_IF([HAVE_PANGO],
+      [ADG_REQUIRES='pangocairo >= pangocairo_prereq'
+       ADG_H_ADDITIONAL='
+#include <pango/pango.h>
+#include "adg/adg-text.h"
+#include "adg/adg-pango-style.h"
+'],
+      [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
+       ADG_H_ADDITIONAL=''])
+AM_COND_IF([HAVE_GTK2],
+           [ADG_REQUIRES='gtk+-2.0 >= gtk_prereq'
+            ADG_H_ADDITIONAL="${ADG_H_ADDITIONAL}
+#include <gtk/gtk.h>
+#include \"adg/adg-gtk-utils.h\"
+#include \"adg/adg-gtk-area.h\"
+#include \"adg/adg-gtk-layout.h\"
+#include \"adg/adg-canvas-gtk.h\"
+"
+            ADG_CANVAS_H_ADDITIONAL='
+void            adg_canvas_set_paper            (AdgCanvas      *canvas,
+                                                 const gchar    *paper_name,
+                                                 GtkPageOrientation orientation);
+void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
+                                                 GtkPageSetup   *page_setup);
+'],
+           [ADG_CANVAS_H_ADDITIONAL=''])
+AM_COND_IF([HAVE_GLADE],
+           [gladeroot=`${PKG_CONFIG} --variable=datarootdir gladeui-1.0`
+            AS_IF([test "x${gladeroot}" = "x"],
+                  [GLADE_CATALOGDIR="\${datarootdir}/glade3/catalogs}"],
+                  [gladecatalog=`${PKG_CONFIG} --variable=catalogdir gladeui-1.0`
+                   GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])
+            report_glade_catalogdir="
+                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
+           [GLADE_CATALOGDIR=''
+            report_glade_catalogdir=''])
+
+AC_SUBST([CPML_REQUIRES])
 AC_SUBST([ADG_REQUIRES])
-AC_SUBST([ADG_GTK_REQUIRES],'gtk+-2.0 >= gtk_prereq')
-AC_SUBST([DLLDIR],"$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin")
+AC_SUBST([ADG_H_ADDITIONAL])
+AC_SUBST([ADG_CANVAS_H_ADDITIONAL])
+AC_SUBST([DLLDIR])
+AC_SUBST([GLADE_CATALOGDIR])
+
+AM_SUBST_NOTMAKE([CPML_REQUIRES])
+AM_SUBST_NOTMAKE([ADG_REQUIRES])
+AM_SUBST_NOTMAKE([ADG_H_ADDITIONAL])
+AM_SUBST_NOTMAKE([ADG_CANVAS_H_ADDITIONAL])
+AM_SUBST_NOTMAKE([DLLDIR])
+
+
+# Generation
 
 AC_CONFIG_FILES([build/adg.nsi
                  Makefile
@@ -222,12 +253,9 @@ AC_CONFIG_FILES([build/adg.nsi
                  src/cpml/Makefile
                  src/cpml/tests/Makefile
                  src/adg-1.pc
-		 src/adg.h
+                 src/adg.h
                  src/adg/Makefile
                  src/adg/tests/Makefile
-                 src/adg-gtk-1.pc
-                 src/adg-gtk/Makefile
-                 src/adg-gtk/tests/Makefile
                  demo/Makefile
                  demo/cpml-demo.ui
                  demo/adg-demo.ui
@@ -244,12 +272,6 @@ AC_OUTPUT
 
 # Report
 
-AS_IF([test "x${enable_glade}" != "xno"],
-      [report_glade_catalogdir="
-                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
-      [report_glade_catalogdir=''])
-
-
 AC_MSG_NOTICE([generating report
 
 AC_PACKAGE_NAME adg_version will be built with the following options:
@@ -257,7 +279,7 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
          Build pango based entities: ${enable_pango}
-           GTK+2 additional widgets: ${enable_gtk2}
+                      GTK+2 support: ${enable_gtk2}
              Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
              GObject instrospection: ${enable_introspection}

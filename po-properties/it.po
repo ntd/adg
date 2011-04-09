@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-08 23:46+0200\n"
+"POT-Creation-Date: 2011-04-09 19:31+0200\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg-gtk/adg-gtk-area.c:158
+#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:165
 msgid "Factor"
 msgstr "Fattore"
 
@@ -80,11 +80,11 @@ msgstr "Angolo Freccia"
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
-#: src/adg/adg-canvas.c:148
+#: src/adg/adg-canvas.c:154
 msgid "Canvas Size"
 msgstr "Dimensione Canvas"
 
-#: src/adg/adg-canvas.c:149
+#: src/adg/adg-canvas.c:155
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
@@ -92,70 +92,70 @@ msgstr ""
 "La dimensione impostata per questo canvas: usare 0 per abilitare il "
 "dimensionamento automatico basato sui limiti del canvas"
 
-#: src/adg/adg-canvas.c:155
+#: src/adg/adg-canvas.c:161
 msgid "Background Dress"
 msgstr "Vestito Sfondo"
 
-#: src/adg/adg-canvas.c:156
+#: src/adg/adg-canvas.c:162
 msgid "The color dress to use for the canvas background"
 msgstr "Il vestito colore da usare come sfondo per il canvas"
 
-#: src/adg/adg-canvas.c:162 src/adg/adg-logo.c:109
+#: src/adg/adg-canvas.c:168 src/adg/adg-logo.c:109
 #: src/adg/adg-table-style.c:110
 msgid "Frame Dress"
 msgstr "Vestito Riquadro"
 
-#: src/adg/adg-canvas.c:163
+#: src/adg/adg-canvas.c:169
 msgid "Line dress to use while drawing the frame around the canvas"
 msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
-#: src/adg/adg-canvas.c:169
+#: src/adg/adg-canvas.c:175
 msgid "Title Block"
 msgstr "Blocco delle Iscrizioni"
 
-#: src/adg/adg-canvas.c:170
+#: src/adg/adg-canvas.c:176
 msgid "The title block to assign to this canvas"
 msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
-#: src/adg/adg-canvas.c:176
+#: src/adg/adg-canvas.c:182
 msgid "Top Margin"
 msgstr "Margine Superiore"
 
-#: src/adg/adg-canvas.c:177
+#: src/adg/adg-canvas.c:183
 msgid "The margin (in global space) to leave above the frame"
 msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
-#: src/adg/adg-canvas.c:183
+#: src/adg/adg-canvas.c:189
 msgid "Right Margin"
 msgstr "Margine Destro"
 
-#: src/adg/adg-canvas.c:184
+#: src/adg/adg-canvas.c:190
 msgid "The margin (in global space) to leave empty at the right of the frame"
 msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
-#: src/adg/adg-canvas.c:190
+#: src/adg/adg-canvas.c:196
 msgid "Bottom Margin"
 msgstr "Margine Inferiore"
 
-#: src/adg/adg-canvas.c:191
+#: src/adg/adg-canvas.c:197
 msgid "The margin (in global space) to leave empty below the frame"
 msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
-#: src/adg/adg-canvas.c:197
+#: src/adg/adg-canvas.c:203
 msgid "Left Margin"
 msgstr "Margine Sinistro"
 
-#: src/adg/adg-canvas.c:198
+#: src/adg/adg-canvas.c:204
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:204 src/adg/adg-table.c:196
+#: src/adg/adg-canvas.c:210 src/adg/adg-table.c:196
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
-#: src/adg/adg-canvas.c:205
+#: src/adg/adg-canvas.c:211
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
@@ -163,11 +163,11 @@ msgstr ""
 "Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
 "limiti dal canvas tenendo in considerazione i margini"
 
-#: src/adg/adg-canvas.c:211
+#: src/adg/adg-canvas.c:217
 msgid "Top Padding"
 msgstr "Spaziatura Superiore"
 
-#: src/adg/adg-canvas.c:212
+#: src/adg/adg-canvas.c:218
 msgid ""
 "The padding (in global space) to leave empty above between the drawing and "
 "the frame"
@@ -175,11 +175,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
 "cornice"
 
-#: src/adg/adg-canvas.c:218
+#: src/adg/adg-canvas.c:224
 msgid "Right Padding"
 msgstr "Spaziatura Destra"
 
-#: src/adg/adg-canvas.c:219
+#: src/adg/adg-canvas.c:225
 msgid ""
 "The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
@@ -187,11 +187,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:225
+#: src/adg/adg-canvas.c:231
 msgid "Bottom Padding"
 msgstr "Spaziatura Inferiore"
 
-#: src/adg/adg-canvas.c:226
+#: src/adg/adg-canvas.c:232
 msgid ""
 "The padding (in global space) to leave empty below between the drawing and "
 "the frame"
@@ -199,11 +199,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:232
+#: src/adg/adg-canvas.c:238
 msgid "Left Padding"
 msgstr "Spaziatura Sinistra"
 
-#: src/adg/adg-canvas.c:233
+#: src/adg/adg-canvas.c:239
 msgid ""
 "The padding (in global space) to leave empty at the left between the drawing "
 "and the frame"
@@ -688,6 +688,65 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
+#: src/adg/adg-gtk-area.c:158
+msgid "Canvas"
+msgstr "Canvas"
+
+#: src/adg/adg-gtk-area.c:159
+msgid "The canvas to be shown"
+msgstr "Il canvas da mostrare"
+
+#: src/adg/adg-gtk-area.c:166
+msgid ""
+"The factor to use while zooming in and out (usually with the mouse wheel)"
+msgstr ""
+"Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
+"avanti e indietro"
+
+#: src/adg/adg-gtk-area.c:172
+msgid "Autozoom"
+msgstr "Autozoom"
+
+#: src/adg/adg-gtk-area.c:173
+msgid ""
+"When enabled, automatically adjust the zoom in global space at every size "
+"allocation"
+msgstr ""
+"Quando abilitato, corregge automaticamente l'ingrandimento in global space "
+"ad ogni nuovo cambiamento di dimensione"
+
+#: src/adg/adg-gtk-area.c:179
+msgid "Render Map"
+msgstr "Mappa di Render"
+
+#: src/adg/adg-gtk-area.c:180
+msgid "The transformation to be applied on the canvas before rendering it"
+msgstr "La trasformazione da applicare al canvas prima del rendering"
+
+#: src/adg/adg-gtk-layout.c:127
+msgid "Horizontal adjustment"
+msgstr "Regolazione orizzontale"
+
+#: src/adg/adg-gtk-layout.c:128
+msgid ""
+"The GtkAdjustment that determines the values of the horizontal position for "
+"this viewport"
+msgstr ""
+"Il GtkAdjustment che determina il valore per il posizionamento orizzontale "
+"di questa vista"
+
+#: src/adg/adg-gtk-layout.c:134
+msgid "Vertical adjustment"
+msgstr "Regolazione verticale"
+
+#: src/adg/adg-gtk-layout.c:135
+msgid ""
+"The GtkAdjustment that determines the values of the vertical position for "
+"this viewport"
+msgstr ""
+"Il GtkAdjustment che determina il valore per il posizionamento verticale di "
+"questa vista"
+
 #: src/adg/adg-hatch.c:93
 msgid "Fill Dress"
 msgstr "Vestito Riempimento"
@@ -1054,62 +1113,3 @@ msgid ""
 msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
-
-#: src/adg-gtk/adg-gtk-area.c:151
-msgid "Canvas"
-msgstr "Canvas"
-
-#: src/adg-gtk/adg-gtk-area.c:152
-msgid "The canvas to be shown"
-msgstr "Il canvas da mostrare"
-
-#: src/adg-gtk/adg-gtk-area.c:159
-msgid ""
-"The factor to use while zooming in and out (usually with the mouse wheel)"
-msgstr ""
-"Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
-"avanti e indietro"
-
-#: src/adg-gtk/adg-gtk-area.c:165
-msgid "Autozoom"
-msgstr "Autozoom"
-
-#: src/adg-gtk/adg-gtk-area.c:166
-msgid ""
-"When enabled, automatically adjust the zoom in global space at every size "
-"allocation"
-msgstr ""
-"Quando abilitato, corregge automaticamente l'ingrandimento in global space "
-"ad ogni nuovo cambiamento di dimensione"
-
-#: src/adg-gtk/adg-gtk-area.c:172
-msgid "Render Map"
-msgstr "Mappa di Render"
-
-#: src/adg-gtk/adg-gtk-area.c:173
-msgid "The transformation to be applied on the canvas before rendering it"
-msgstr "La trasformazione da applicare al canvas prima del rendering"
-
-#: src/adg-gtk/adg-gtk-layout.c:121
-msgid "Horizontal adjustment"
-msgstr "Regolazione orizzontale"
-
-#: src/adg-gtk/adg-gtk-layout.c:122
-msgid ""
-"The GtkAdjustment that determines the values of the horizontal position for "
-"this viewport"
-msgstr ""
-"Il GtkAdjustment che determina il valore per il posizionamento orizzontale "
-"di questa vista"
-
-#: src/adg-gtk/adg-gtk-layout.c:128
-msgid "Vertical adjustment"
-msgstr "Regolazione verticale"
-
-#: src/adg-gtk/adg-gtk-layout.c:129
-msgid ""
-"The GtkAdjustment that determines the values of the vertical position for "
-"this viewport"
-msgstr ""
-"Il GtkAdjustment che determina il valore per il posizionamento verticale di "
-"questa vista"

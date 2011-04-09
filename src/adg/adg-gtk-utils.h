@@ -18,28 +18,30 @@
  */
 
 
-#ifndef __ADG_GTK_AREA_PRIVATE_H__
-#define __ADG_GTK_AREA_PRIVATE_H__
+#if !defined(__ADG_H__)
+#error "Only <adg.h> can be included directly."
+#endif
 
-#include <glib.h>
+
+#ifndef __ADG_GTK_UTILS_H__
+#define __ADG_GTK_UTILS_H__
+
+#define ADG_GTK_MODIFIERS  (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
+#if GTK_CHECK_VERSION(2, 14, 0)
+#else
+GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
+#endif
 
-struct _AdgGtkAreaPrivate {
-    AdgCanvas   *canvas;
-    gdouble      factor;
-    gboolean     autozoom;
-    AdgMatrix    render_map;
-
-    gboolean     initialized;
-    CpmlExtents  extents;
-    gdouble      x_event, y_event;
-};
+void            adg_gtk_window_hide_here        (GtkWindow      *window);
+void            adg_gtk_toggle_button_sensitivize
+                                                (GtkToggleButton*toggle_button,
+                                                 GtkWidget      *widget);
 
 G_END_DECLS
 
 
-#endif /* __ADG_GTK_AREA_PRIVATE_H__ */
+#endif /* __ADG_GTK_UTILS_H__ */

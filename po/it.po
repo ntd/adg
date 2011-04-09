@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-09 00:16+0200\n"
+"POT-Creation-Date: 2011-04-09 19:29+0200\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -451,39 +451,39 @@ msgstr "Valore di weight inatteso (%d)"
 msgid "%s: null pair caught while parsing arguments"
 msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
 
-#: ../src/adg/adg-path.c:863
+#: ../src/adg/adg-path.c:873
 #, c-format
 msgid "%s: the axis of the reflection is not known"
 msgstr "%s: l'asse di riflessione non è conosciuta"
 
-#: ../src/adg/adg-path.c:998
+#: ../src/adg/adg-path.c:1008
 #, c-format
 msgid "%s: a `%s' operation is still active while clearing the path"
 msgstr "%s: operazione `%s' ancora attiva durante l'azzeramento del path"
 
-#: ../src/adg/adg-path.c:1018
+#: ../src/adg/adg-path.c:1028
 #, c-format
 msgid "%s: requested a `%s' operation on a path without current primitive"
 msgstr "%s: richiesta l'operazione `%s' su un path senza primitiva attiva"
 
-#: ../src/adg/adg-path.c:1025
+#: ../src/adg/adg-path.c:1035
 #, c-format
 msgid "%s: requested a `%s' operation while a `%s' operation was active"
 msgstr "%s: richiesta l'operazione `%s' mentre l'operazione `%s' era in corso"
 
-#: ../src/adg/adg-path.c:1050
+#: ../src/adg/adg-path.c:1060
 #, c-format
 msgid "%s: `%d' operation not recognized"
 msgstr "%s: l'operazione `%d' non è conosciuta"
 
-#: ../src/adg/adg-path.c:1161
+#: ../src/adg/adg-path.c:1171
 #, c-format
 msgid ""
 "%s: first chamfer delta of `%lf' is greather than the available `%lf' length"
 msgstr ""
 "%s: il primo delta di smusso `%lf' è maggiore dello spazio disponibile `%lf'"
 
-#: ../src/adg/adg-path.c:1170
+#: ../src/adg/adg-path.c:1180
 #, c-format
 msgid ""
 "%s: second chamfer delta of `%lf' is greather than the available `%lf' length"
@@ -491,7 +491,7 @@ msgstr ""
 "%s: il secondo delta di smusso `%lf' è maggiore dello spazio disponibile `"
 "%lf'"
 
-#: ../src/adg/adg-path.c:1208
+#: ../src/adg/adg-path.c:1218
 #, c-format
 msgid "%s: fillet with radius of `%lf' is not applicable here"
 msgstr "%s: un raccordo di raggio `%lf' non è fattibile in questa posizione"

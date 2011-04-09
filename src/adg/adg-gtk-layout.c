@@ -40,11 +40,17 @@
  **/
 
 
-#include "adg-gtk-internal.h"
+#include "adg-internal.h"
+#include <gtk/gtk.h>
+
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
+#include "adg-canvas.h"
 #include "adg-gtk-area.h"
+
 #include "adg-gtk-layout.h"
 #include "adg-gtk-layout-private.h"
-#include "adg-gtk-marshal.h"
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_gtk_layout_parent_class)
 #define _ADG_OLD_WIDGET_CLASS  ((GtkWidgetClass *) adg_gtk_layout_parent_class)
@@ -146,7 +152,7 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     widget_class->set_scroll_adjustments_signal =
         g_signal_newv("set-scroll-adjustments", ADG_GTK_TYPE_LAYOUT,
                       G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                      adg_gtk_marshal_VOID__OBJECT_OBJECT,
+                      adg_marshal_VOID__OBJECT_OBJECT,
                       G_TYPE_NONE, 2, param_types);
 }
 

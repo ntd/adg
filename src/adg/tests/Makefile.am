@@ -125,6 +125,17 @@ AM_CFLAGS+=			$(PANGO_CFLAGS)
 AM_LDFLAGS+=			$(PANGO_LIBS)
 endif
 
+if HAVE_GTK2
+TEST_PROGS+=			test-gtk-area$(EXEEXT)
+test_gtk_area_SOURCES=		test-gtk-area.c \
+				$(test_internals)
+TEST_PROGS+=			test-gtk-layout$(EXEEXT)
+test_gtk_layout_SOURCES=	test-gtk-layout.c \
+				$(test_internals)
+AM_CFLAGS+=			$(GTK2_CFLAGS)
+AM_LDFLAGS+=			$(GTK2_LIBS)
+endif
+
 endif
 
 

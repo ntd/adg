@@ -23,6 +23,7 @@ IGNORE_HFILES=		adg.h \
 			adg-alignment-private.h \
 			adg-arrow-private.h \
 			adg-canvas-private.h \
+			adg-canvas-gtk.h \
 			adg-color-style-private.h \
 			adg-container-private.h \
 			adg-dim-private.h \
@@ -32,6 +33,8 @@ IGNORE_HFILES=		adg.h \
 			adg-entity-private.h \
 			adg-fill-style-private.h \
 			adg-font-style-private.h \
+			adg-gtk-area-private.h \
+			adg-gtk-layout-private.h \
 			adg-hatch-private.h \
 			adg-ldim-private.h \
 			adg-line-style-private.h \
@@ -59,30 +62,22 @@ content_files=		$(top_srcdir)/docs/gnu/README.xml \
 			$(top_srcdir)/docs/gnu/HACKING.xml
 expand_content_files=
 
+GTKDOC_CFLAGS=		-I$(top_srcdir)/src \
+			$(CAIRO_CFLAGS) \
+			$(GOBJECT2_CFLAGS)
+GTKDOC_LIBS=		$(top_builddir)/src/cpml/libcpml-1.la \
+			$(top_builddir)/src/adg/libadg-1.la \
+			$(CAIRO_LIBS) \
+			$(GOBJECT2_LIBS)
+
+if HAVE_PANGO
+GTKDOC_CFLAGS+=		$(PANGO_CFLAGS)
+GTKDOC_LIBS+=		$(PANGO_LIBS)
+endif
 
 if HAVE_GTK2
-
-GTKDOC_CFLAGS=		$(GTK2_CFLAGS) \
-			-I$(top_srcdir)/src
-GTKDOC_LIBS=		$(GTK2_LIBS) \
-			$(top_builddir)/src/cpml/libcpml-1.la \
-			$(top_builddir)/src/adg/libadg-1.la \
-			$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
-
-DOC_SOURCE_DIR+=	$(abs_top_srcdir)/src/adg-gtk
-IGNORE_HFILES+=		adg-gtk-internal.h \
-			adg-gtk-area-private.h \
-			adg-gtk-layout-private.h \
-			adg-gtk-marshal.h
-
-else # ! HAVE_GTK2
-
-GTKDOC_CFLAGS=		$(CAIRO_CFLAGS) \
-			$(GOBJECT2_CFLAGS) \
-			-I$(top_srcdir)/src
-GTKDOC_LIBS=		$(CAIRO_LIBS) \
-			$(top_builddir)/src/adg/libadg-1.la
-
+GTKDOC_CFLAGS+=		$(GTK2_CFLAGS)
+GTKDOC_LIBS+=		$(GTK2_LIBS)
 endif
 
 

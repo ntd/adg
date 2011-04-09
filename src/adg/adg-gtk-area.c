@@ -60,7 +60,14 @@
  **/
 
 
-#include "adg-gtk-internal.h"
+#include "adg-internal.h"
+#include <gtk/gtk.h>
+
+#include "adg-container.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
+#include "adg-canvas.h"
+#include "adg-gtk-utils.h"
 
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
@@ -190,7 +197,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
                      NULL, NULL,
-                     adg_gtk_marshal_VOID__OBJECT,
+                     adg_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_CANVAS);
 
     /**
@@ -214,7 +221,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, extents_changed),
                      NULL, NULL,
-                     adg_gtk_marshal_VOID__POINTER,
+                     adg_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 

@@ -35,7 +35,7 @@ adg_demo_SOURCES=		adg-demo.c \
 				demo.c \
 				demo.h
 adg_demo_LDADD=			$(LDADD) \
-				$(top_builddir)/src/adg-gtk/libadg-gtk-1.la
+				$(top_builddir)/src/adg/libadg-1.la
 cpml_demo_SOURCES=		cpml-demo.c \
 				demo.c \
 				demo.h

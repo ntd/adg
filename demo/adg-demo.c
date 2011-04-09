@@ -6,7 +6,7 @@
 
 #include "demo.h"
 
-#include <adg-gtk.h>
+#include <adg.h>
 #include <string.h>
 #include <math.h>
 
