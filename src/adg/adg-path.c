@@ -1208,11 +1208,11 @@ _adg_do_chamfer(AdgPath *path, AdgPrimitive *current)
 
     /* Change the end point of the last primitive */
     cpml_primitive_put_pair_at(last, 1. - delta1 / len1, &pair);
-    cpml_primitive_put_point(last, -1, &pair);
+    cpml_primitive_set_point(last, -1, &pair);
 
     /* Change the start point of the current primitive */
     cpml_primitive_put_pair_at(current, delta2 / len2, &pair);
-    cpml_primitive_put_point(current, 0, &pair);
+    cpml_primitive_set_point(current, 0, &pair);
 
     /* Add the chamfer line */
     data->operation.action = ADG_ACTION_NONE;
@@ -1274,10 +1274,10 @@ _adg_do_fillet(AdgPath *path, AdgPrimitive *current)
     g_free(last_dup);
 
     /* Change the end point of the last primitive */
-    cpml_primitive_put_point(last, -1, &p[0]);
+    cpml_primitive_set_point(last, -1, &p[0]);
 
     /* Change the start point of the current primitive */
-    cpml_primitive_put_point(current, 0, &p[2]);
+    cpml_primitive_set_point(current, 0, &p[2]);
 
     /* Add the fillet arc */
     data->operation.action = ADG_ACTION_NONE;
