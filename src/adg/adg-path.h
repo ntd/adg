@@ -123,6 +123,9 @@ void            adg_path_fillet                 (AdgPath        *path,
                                                  gdouble         radius);
 void            adg_path_reflect                (AdgPath        *path,
                                                  const CpmlVector *vector);
+void            adg_path_reflect_explicit       (AdgPath        *path,
+                                                 gdouble         x,
+                                                 gdouble         y);
 
 G_END_DECLS
 

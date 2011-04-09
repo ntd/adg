@@ -904,6 +904,30 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     _adg_dup_reverse_named_pairs(model, &matrix);
 }
 
+/**
+ * adg_path_reflect_explicit:
+ * @path: an #AdgPath
+ * @x:    the vector x component
+ * @y:    the vector y component
+ *
+ * Convenient function to call adg_path_reflect() using explicit
+ * vector components instead of #CpmlVector.
+ *
+ * Rename to: adg_path_reflect
+ *
+ * Since: 1.0
+ **/
+void
+adg_path_reflect_explicit(AdgPath *path, gdouble x, gdouble y)
+{
+    CpmlVector vector;
+
+    vector.x = x;
+    vector.y = y;
+
+    adg_path_reflect(path, &vector);
+}
+
 
 static void
 _adg_clear(AdgModel *model)
