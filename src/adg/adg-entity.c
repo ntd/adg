@@ -71,6 +71,10 @@
 
 
 #include "adg-internal.h"
+#if GTK2_ENABLED
+#include <gtk/gtk.h>
+#endif
+
 #include "adg-container.h"
 #include "adg-table.h"
 #include "adg-title-block.h"

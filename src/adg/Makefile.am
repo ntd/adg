@@ -160,8 +160,7 @@ libadg_1_la_LDFLAGS=		-no-undefined
 ## Optional GTK+2 related stuff
 if HAVE_GTK2
 
-h_sources+=			adg-canvas-gtk.h \
-				adg-gtk-area.h \
+h_sources+=			adg-gtk-area.h \
 				adg-gtk-layout.h \
 				adg-gtk-utils.h
 private_h_sources+=		adg-gtk-area-private.h \

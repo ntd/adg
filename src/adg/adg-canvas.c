@@ -69,6 +69,9 @@
 
 
 #include "adg-internal.h"
+#if GTK2_ENABLED
+#include <gtk/gtk.h>
+#endif
 
 #include "adg-container.h"
 #include "adg-table.h"
@@ -80,11 +83,6 @@
 
 #include "adg-canvas.h"
 #include "adg-canvas-private.h"
-
-#if GTK2_ENABLED
-#include <gtk/gtk.h>
-#include "adg-canvas-gtk.h"
-#endif
 
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)

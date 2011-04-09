@@ -23,7 +23,6 @@ IGNORE_HFILES=		adg.h \
 			adg-alignment-private.h \
 			adg-arrow-private.h \
 			adg-canvas-private.h \
-			adg-canvas-gtk.h \
 			adg-color-style-private.h \
 			adg-container-private.h \
 			adg-dim-private.h \

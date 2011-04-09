@@ -209,7 +209,6 @@ AM_COND_IF([HAVE_GTK2],
 #include \"adg/adg-gtk-utils.h\"
 #include \"adg/adg-gtk-area.h\"
 #include \"adg/adg-gtk-layout.h\"
-#include \"adg/adg-canvas-gtk.h\"
 "
             ADG_CANVAS_H_ADDITIONAL='
 void            adg_canvas_set_paper            (AdgCanvas      *canvas,
@@ -255,6 +254,7 @@ AC_CONFIG_FILES([build/adg.nsi
                  src/adg-1.pc
                  src/adg.h
                  src/adg/Makefile
+                 src/adg/adg-canvas.h
                  src/adg/tests/Makefile
                  demo/Makefile
                  demo/cpml-demo.ui
