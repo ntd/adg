@@ -74,7 +74,6 @@ Section "ADG canvas" SecBase
   File "${DLLDIR}/libgtk-win32-2.0-*.dll"
   File "${LIBDIR}/cpml/.libs/libcpml-1-*.dll"
   File "${LIBDIR}/adg/.libs/libadg-1-*.dll"
-  File "${LIBDIR}/adg-gtk/.libs/libadg-gtk-1-*.dll"
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" $INSTDIR\adg-demo.exe
@@ -111,7 +110,6 @@ Section "Uninstall"
   Delete "$INSTDIR\adg-64.png"
   Delete "$INSTDIR\adg-demo.ui"
 
-  Delete "$INSTDIR\bin\libadg-gtk-1-*.dll"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
   Delete "$INSTDIR\bin\libcpml-1-*.dll"
   Delete "$INSTDIR\bin\libgtk-win32-2.0-*.dll"
