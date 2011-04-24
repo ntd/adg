@@ -1,5 +1,10 @@
 m4_define([adg_version],[0.6.3])
 m4_define([adg_api_version],[1.0])
+m4_define([adg_lt_version],[1:0:0])
+
+m4_define([cpml_version],adg_version)
+m4_define([cpml_api_version],adg_api_version)
+m4_define([cpml_lt_version],[1:0:0])
 
 m4_define([gtkdoc_prereq],[1.9])
 m4_define([gobject_prereq],[2.10.1])
@@ -13,7 +18,7 @@ m4_define([pangocairo_prereq],[1.18.0])
 dnl autoconf 2.62 is required by GObject introspection:
 dnl http://live.gnome.org/GObjectIntrospection/AutotoolsIntegration
 AC_PREREQ([2.62])
-AC_INIT([adg-1.0],adg_version,[http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
+AC_INIT([adg-1],adg_version,[http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
@@ -112,7 +117,7 @@ AC_CONFIG_COMMANDS([default],
 # Check for required packages
 
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
-PKG_CHECK_MODULES([GOBJECT2],[gobject-2.0 >= ]gobject_prereq)
+PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 
 
@@ -229,7 +234,11 @@ AM_COND_IF([HAVE_GLADE],
            [GLADE_CATALOGDIR=''
             report_glade_catalogdir=''])
 
+AC_SUBST([CPML_API_VERSION],cpml_api_version)
+AC_SUBST([CPML_LT_VERSION],cpml_lt_version)
 AC_SUBST([CPML_REQUIRES])
+AC_SUBST([ADG_API_VERSION],adg_api_version)
+AC_SUBST([ADG_LT_VERSION],adg_lt_version)
 AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_H_ADDITIONAL])
 AC_SUBST([ADG_CANVAS_H_ADDITIONAL])

@@ -1,12 +1,12 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 
+SUBDIRS=			tests
+
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-AM_CFLAGS=			$(CAIRO_CFLAGS)
-AM_LDFLAGS=			$(CAIRO_LIBS)
-
-SUBDIRS=			tests
+CPML_CFLAGS=			$(CAIRO_CFLAGS)
+CPML_LDFLAGS=			$(CAIRO_LIBS)
 
 
 # file groups
@@ -46,11 +46,15 @@ cpml_include_DATA=		$(h_sources) \
 
 lib_LTLIBRARIES= 		libcpml-1.la
 libcpml_1_la_SOURCES=		$(h_sources) \
-				$(built_h_sources) \
 				$(private_h_sources) \
+				$(c_sources)
+nodist_libcpml_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
-				$(c_sources) \
 				$(built_c_sources)
+libcpml_1_la_CFLAGS=		$(CPML_CFLAGS)
+libcpml_1_la_LDFLAGS=		-no-undefined \
+				-version-info @CPML_LT_VERSION@ \
+				$(CPML_LDFLAGS)
 
 
 ## GObject introspection

@@ -2,13 +2,13 @@ include $(top_srcdir)/build/Makefile.am.common
 
 
 SUBDIRS=			tests
+
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-AM_CFLAGS=			$(CAIRO_CFLAGS) \
-				$(GOBJECT2_CFLAGS)
-AM_LDFLAGS=			$(CAIRO_LIBS) \
-				$(GOBJECT2_LIBS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
+ADG_CFLAGS=			$(CAIRO_CFLAGS) \
+				$(GOBJECT_CFLAGS)
+ADG_LDFLAGS=			$(CAIRO_LIBS) \
+				$(GOBJECT_LIBS)
 
 
 # file groups
@@ -154,7 +154,11 @@ libadg_1_la_SOURCES=		$(h_sources) \
 nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_1_la_LDFLAGS=		-no-undefined
+libadg_1_la_CFLAGS=		$(ADG_CFLAGS)
+libadg_1_la_LDFLAGS=		-no-undefined \
+				-version-info @ADG_LT_VERSION@ \
+				$(ADG_LDFLAGS)
+libadg_1_LDADD=			$(top_builddir)/src/cpml/libcpml-1.la
 
 
 ## Optional GTK+2 related stuff
@@ -168,8 +172,8 @@ private_h_sources+=		adg-gtk-area-private.h \
 c_sources+=			adg-gtk-area.c \
 				adg-gtk-layout.c \
 				adg-gtk-utils.c
-AM_CFLAGS+=			$(GTK2_CFLAGS)
-AM_LDFLAGS+=			$(GTK2_LIBS)
+ADG_CFLAGS+=			$(GTK2_CFLAGS)
+ADG_LDFLAGS+=			$(GTK2_LIBS)
 
 endif
 
@@ -183,8 +187,8 @@ private_h_sources+=		adg-pango-style-private.h \
 				adg-text-private.h
 c_sources+=			adg-pango-style.c \
 				adg-text.c
-AM_CFLAGS+=			$(PANGO_CFLAGS)
-AM_LDFLAGS+=			$(PANGO_LIBS)
+ADG_CFLAGS+=			$(PANGO_CFLAGS)
+ADG_LDFLAGS+=			$(PANGO_LIBS)
 
 endif
 
@@ -222,9 +226,10 @@ endif
 Adg_1_0_gir_FILES=		adg-introspection.h \
 				$(h_sources) \
 				$(c_sources)
-Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS) \
-				$(AM_CFLAGS)
-Adg_1_0_gir_LDFLAGS=		$(AM_LDFLAGS) \
+## Dependency from CPML will be added manually because it is still an
+## internal component, hence not yet installed at this point
+Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
+Adg_1_0_gir_LDFLAGS=		$(ADG_LDFLAGS) \
 				-L$(top_builddir)/src/cpml/.libs \
 				-lcpml-1
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
