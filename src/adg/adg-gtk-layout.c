@@ -386,12 +386,6 @@ _adg_parent_set(GtkWidget *widget, GtkWidget *old_parent)
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
-    AdgGtkLayout *layout;
-    AdgGtkLayoutPrivate *data;
-
-    layout = (AdgGtkLayout *) widget;
-    data = layout->data;
-
     if (_ADG_OLD_WIDGET_CLASS->size_request != NULL)
         _ADG_OLD_WIDGET_CLASS->size_request(widget, requisition);
 }
