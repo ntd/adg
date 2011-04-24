@@ -322,9 +322,9 @@ adg_color_style_get_blue(AdgColorStyle *color_style)
 /**
  * adg_color_style_set_rgb:
  * @color_style: an #AdgColorStyle
- * @r: the red channel value
- * @g: the green channel value
- * @b: the blue channel value
+ * @red: the red channel value
+ * @green: the green channel value
+ * @blue: the blue channel value
  *
  * Sets the RGB channels at once.
  *
@@ -334,25 +334,16 @@ void
 adg_color_style_set_rgb(AdgColorStyle *color_style,
                         gdouble red, gdouble green, gdouble blue)
 {
-    GObject *object;
-    AdgColorStylePrivate *data;
-
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
-
-    object = (GObject *) color_style;
-    data = color_style->data;
-
-    data->red = red;
-    data->green = green;
-    data->blue = blue;
+    g_object_set(color_style, "red", red, "green", green, "blue", blue, NULL);
 }
 
 /**
  * adg_color_style_put_rgb:
  * @color_style: an #AdgColorStyle
- * @r: where to store the red channel value
- * @g: where to store the green channel value
- * @b: where to store the blue channel value
+ * @red: where to store the red channel value
+ * @green: where to store the green channel value
+ * @blue: where to store the blue channel value
  *
  * Gets the values of the red, green and blue channels of @color_style.
  * Any of the pointer can be %NULL, in which case the value is not returned.
@@ -361,7 +352,7 @@ adg_color_style_set_rgb(AdgColorStyle *color_style,
  **/
 void
 adg_color_style_put_rgb(AdgColorStyle *color_style,
-                        gdouble *r, gdouble *g, gdouble *b)
+                        gdouble *red, gdouble *green, gdouble *blue)
 {
     AdgColorStylePrivate *data;
 
@@ -369,14 +360,14 @@ adg_color_style_put_rgb(AdgColorStyle *color_style,
 
     data = color_style->data;
 
-    if (r != NULL)
-        *r = data->red;
+    if (red != NULL)
+        *red = data->red;
 
-    if (g != NULL)
-        *g = data->green;
+    if (green != NULL)
+        *green = data->green;
 
-    if (b != NULL)
-        *b = data->blue;
+    if (blue != NULL)
+        *blue = data->blue;
 }
 
 /**
