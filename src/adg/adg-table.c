@@ -750,11 +750,7 @@ adg_table_cell_delete(AdgTableCell *cell)
 void
 adg_table_cell_set_name(AdgTableCell *cell, const gchar *name)
 {
-    AdgTablePrivate *data;
-
     g_return_if_fail(cell != NULL);
-
-    data = cell->row->table->data;
 
     _adg_cell_set_name(cell, NULL);
     _adg_cell_set_name(cell, name);
@@ -952,6 +948,8 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
 
         unchanged = g_strcmp0(value, old_value) == 0;
         g_free(old_value);
+        if (unchanged)
+            return;
     }
 
     table = cell->row->table;
