@@ -83,6 +83,7 @@ static void             _adg_clear_parent       (AdgModel       *model);
 static void             _adg_changed            (AdgModel       *model);
 static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
 static CpmlPath *       _adg_read_cpml_path     (AdgPath        *path);
+static gint             _adg_primitive_length   (CpmlPrimitiveType type);
 static void             _adg_append_primitive   (AdgPath        *path,
                                                  AdgPrimitive   *primitive);
 static void             _adg_clear_operation    (AdgPath        *path);
@@ -294,14 +295,12 @@ adg_path_over_primitive(AdgPath *path)
  * @Varargs:  point data, specified as #AdgPair pointers
  *
  * Generic method to append a primitive to @path. The number of #AdgPair
- * structs depends on @type: there is no way with this function to
- * reserve more cairo_path_data_t structs than what is needed by the
- * primitive.
+ * pointers to pass as @Varargs depends on @type: #CPML_CLOSE does not
+ * require any pair, #CPML_MOVE and #CPML_LINE require one pair,
+ * #CPML_ARC two pairs, #CPML_CURVE three pairs and so on.
  *
- * This function accepts also the special #CPML_ARC primitive.
- *
- * If @path has no current point while the requested primitive needs it,
- * a warning message will be triggered without other effect.
+ * All the needed pairs must be not %NULL pointers, otherwise the function
+ * will fail. The pairs in excess, if any, will be ignored.
  *
  * Since: 1.0
  **/
@@ -323,63 +322,98 @@ adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
  *
  * va_list version of adg_path_append().
  *
+ * Rename to: adg_path_append()
+ *
  * Since: 1.0
  **/
 void
 adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 {
-    AdgPathPrivate *data;
-    AdgPrimitive primitive;
-    gint length, cnt;
-    cairo_path_data_t org;
-    cairo_path_data_t *path_data;
-    const AdgPair *pair;
+    GArray *array;
+    AdgPair *pair;
+    gint length;
 
-    g_return_if_fail(ADG_IS_PATH(path));
-
-    data = path->data;
-
-    if (type == CPML_CLOSE)
-        length = 1;
-    else if (type == CPML_MOVE)
-        length = 2;
-    else
-        length = cpml_primitive_type_get_n_points(type);
-
+    length = _adg_primitive_length(type);
     if (length == 0)
         return;
 
-    /* Set a copy of the current point as the primitive origin */
-    cpml_pair_to_cairo(&data->cp, &org);
-    primitive.org = &org;
-
-    /* Build the cairo_path_data_t array */
-    primitive.data = path_data = g_new(cairo_path_data_t, length);
-
-    path_data->header.type = type;
-    path_data->header.length = length;
-
-    for (cnt = 1; cnt < length; ++ cnt) {
+    array = g_array_new(TRUE, FALSE, sizeof(pair));
+    while (-- length) {
         pair = va_arg(var_args, AdgPair *);
-        if (pair == NULL) {
-            g_free(primitive.data);
-            g_warning(_("%s: null pair caught while parsing arguments"),
-                      G_STRLOC);
-            return;
-        }
-
-        ++ path_data;
-        cpml_pair_to_cairo(pair, path_data);
+        g_array_append_val(array, pair);
     }
 
-    /* Terminate the creation of the temporary primitive */
-    primitive.segment = NULL;
-
-    /* Append this primitive to @path */
-    _adg_append_primitive(path, &primitive);
-
-    g_free(primitive.data);
+    adg_path_append_array(path, type, (const AdgPair **) array->data);
+    g_array_free(array, TRUE);
 }
+
+/**
+ * adg_path_append_array:
+ * @path:  an #AdgPath
+ * @type:  a #cairo_data_type_t value
+ * @pairs: (array zero-terminated=1) (element-type Adg.Pair): point data, specified as a %NULL terminated array of #AdgPair pointers
+ *
+ * A bindingable version of adg_path_append() that uses a %NULL terminated
+ * array of pairs instead of variable argument list and friends.
+ *
+ * Furthermore, because of the list is %NULL terminated, an arbitrary
+ * number of pairs can be passed in @pairs. This allows to embed in a
+ * primitive element more data pairs than requested, something impossible
+ * to do with adg_path_append() and adg_path_append_valist().
+ *
+ * Rename to: adg_path_append()
+ *
+ * Since: 1.0
+ **/
+void
+adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
+                      const AdgPair **pairs)
+{
+    gint length;
+    GArray *array;
+    const AdgPair **pair;
+    cairo_path_data_t path_data;
+
+    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(pairs != NULL);
+
+    length = _adg_primitive_length(type);
+    if (length == 0)
+        return;
+
+    array = g_array_new(FALSE, FALSE, sizeof(path_data));
+    for (pair = pairs; *pair != NULL; ++ pair) {
+        cpml_pair_to_cairo(*pair, &path_data);
+        g_array_append_val(array, path_data);
+    }
+
+    if (array->len < length - 1) {
+        /* Not enough pairs have been provided */
+        g_warning(_("%s: null pair caught while parsing arguments"), G_STRLOC);
+    } else {
+        AdgPathPrivate *data;
+        AdgPrimitive primitive;
+        cairo_path_data_t org;
+
+        /* Save a copy of the current point as primitive origin */
+        data = path->data;
+        cpml_pair_to_cairo(&data->cp, &org);
+
+        /* Prepend the cairo header */
+        path_data.header.type = type;
+        path_data.header.length = array->len + 1;
+        g_array_prepend_val(array, path_data);
+
+        /* Append a new primitive to @path */
+        primitive.segment = NULL;
+        primitive.org = &org;
+        primitive.data = (cairo_path_data_t *) array->data;
+        _adg_append_primitive(path, &primitive);
+    }
+
+    g_array_free(array, TRUE);
+}
+
 
 /**
  * adg_path_append_primitive:
@@ -977,6 +1011,17 @@ _adg_read_cpml_path(AdgPath *path)
     data->cpml.path.num_data = (data->cpml.array)->len;
 
     return &data->cpml.path;
+}
+
+static gint
+_adg_primitive_length(CpmlPrimitiveType type)
+{
+    if (type == CPML_CLOSE)
+        return 1;
+    else if (type == CPML_MOVE)
+        return 2;
+
+    return cpml_primitive_type_get_n_points(type);
 }
 
 static void

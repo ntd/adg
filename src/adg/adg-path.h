@@ -67,6 +67,9 @@ void            adg_path_append                 (AdgPath        *path,
 void            adg_path_append_valist          (AdgPath        *path,
                                                  CpmlPrimitiveType type,
                                                  va_list         var_args);
+void            adg_path_append_array           (AdgPath        *path,
+                                                 CpmlPrimitiveType type,
+                                                 const AdgPair **pairs);
 void            adg_path_append_primitive       (AdgPath        *path,
                                                  const AdgPrimitive
                                                                 *primitive);
