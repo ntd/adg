@@ -84,9 +84,9 @@
 #endif
 
 
-G_CONST_RETURN gchar *  _adg_dgettext   (const gchar *domain,
+const gchar *           _adg_dgettext   (const gchar *domain,
                                          const gchar *msgid) G_GNUC_FORMAT(2);
-G_CONST_RETURN gchar *  _adg_dpgettext  (const gchar *domain,
+const gchar *           _adg_dpgettext  (const gchar *domain,
                                          const gchar *msgctxtid,
                                          gsize        msgidoffset) G_GNUC_FORMAT(2);
 

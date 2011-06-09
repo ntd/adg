@@ -295,7 +295,7 @@ adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
  *
  * Since: 1.0
  **/
-G_CONST_RETURN gchar *
+const gchar *
 _adg_dgettext(const gchar *domain, const gchar *msgid)
 {
     static gboolean initialized = FALSE;
@@ -328,7 +328,7 @@ _adg_dgettext(const gchar *domain, const gchar *msgid)
  *
  * Since: 1.0
  **/
-G_CONST_RETURN gchar *
+const gchar *
 _adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)
 {
     const gchar *translation;
