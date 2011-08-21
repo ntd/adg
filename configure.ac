@@ -11,6 +11,7 @@ m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
 m4_define([gtk_prereq],[2.12.0])
 m4_define([pangocairo_prereq],[1.18.0])
+m4_define([gi_prereq],[0.9.5])dnl Picked up from clutter
 
 
 # Initialization
@@ -170,7 +171,7 @@ dnl gtk-doc
 GTK_DOC_CHECK(gtkdoc_prereq)
 
 dnl GObject introspection
-GOBJECT_INTROSPECTION_CHECK([0.6.7])
+GOBJECT_INTROSPECTION_CHECK(gi_prereq)
 AM_COND_IF([HAVE_INTROSPECTION],
            [enable_introspection=yes],
            [enable_introspection=no])
