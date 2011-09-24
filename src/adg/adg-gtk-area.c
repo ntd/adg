@@ -189,8 +189,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
      *
      * Emitted when the #AdgGtkArea has a new canvas. If the new canvas
      * is the same as the old one, the signal is not emitted.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[CANVAS_CHANGED] =
         g_signal_new("canvas-changed", ADG_GTK_TYPE_AREA,
@@ -213,8 +213,8 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
      * The extents of #AdgGtkArea are subject to the render
      * map, so changing the #AdgGtkArea:render-map property
      * will emit this signal too.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[EXTENTS_CHANGED] =
         g_signal_new("extents-changed", ADG_GTK_TYPE_AREA,

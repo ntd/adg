@@ -124,8 +124,8 @@ _adg_iface_base(AdgTextualIface *iface)
      * @old_text: the old text
      *
      * Emitted whenever the text of @textual has been changed.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[TEXT_CHANGED] =
         g_signal_new("text-changed",

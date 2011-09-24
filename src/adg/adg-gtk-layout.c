@@ -143,8 +143,8 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
      * @old_canvas: the old #AdgCanvas object
      *
      * Emitted when the #AdgGtkLayout scroll adjustments have been set.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_set_scroll_adjustments), NULL, NULL);
     param_types[0] = GTK_TYPE_ADJUSTMENT;

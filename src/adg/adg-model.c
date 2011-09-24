@@ -154,8 +154,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Adds @entity to @model. After that @entity will depend on @model,
      * that is #AdgModel::changed on @model will invalidate @entity.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[ADD_DEPENDENCY] =
         g_signal_new("add-dependency",
@@ -173,8 +173,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Removes the @entity from @model, that is @entity will not depend
      * on @model anymore.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[REMOVE_DEPENDENCY] =
         g_signal_new("remove-dependency",
@@ -200,8 +200,8 @@ adg_model_class_init(AdgModelClass *klass)
      * Otherwise, the @name named pair is searched: if it is found,
      * its data are updated with @pair. If it is not found, a new
      * named pair is created using @name and @pair.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[SET_NAMED_PAIR] =
         g_signal_new("set-named-pair",
@@ -224,8 +224,8 @@ adg_model_class_init(AdgModelClass *klass)
      * Removes any information from @model cached by the implementation
      * code. Useful to force a recomputation of the cache when something
      * in the model has changed.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[CLEAR] =
         g_signal_new("clear", ADG_TYPE_MODEL,
@@ -253,8 +253,8 @@ adg_model_class_init(AdgModelClass *klass)
      * ...
      * adg_model_changed(model);
      * ]|
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[RESET] =
         g_signal_new("reset", ADG_TYPE_MODEL,
@@ -270,8 +270,8 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Notificates that the model has changed. By default, all the
      * dependent entities are invalidated.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[CHANGED] =
         g_signal_new("changed", ADG_TYPE_MODEL,

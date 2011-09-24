@@ -192,8 +192,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * can be inspected using adg_entity_get_parent().
      *
      * It is allowed for both old and new parent to be %NULL.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[PARENT_SET] =
         g_signal_new("parent-set",
@@ -211,8 +211,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted when the global map of @entity or any of its parent
      * has changed. The default handler will compute the new global
      * matrix, updating the internal cache.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[GLOBAL_CHANGED] =
         g_signal_new("global-changed",
@@ -230,8 +230,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted when the local map of @entity or any of its parent
      * has changed. The default handler will compute the new local
      * matrix, updating the internal cache.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[LOCAL_CHANGED] =
         g_signal_new("local-changed",
@@ -250,8 +250,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * (if present) built during the #AdgEntity::arrange signal.
      * The resulting state is a clean entity, similar to what you
      * have just before the first rendering.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_invalidate), NULL, NULL);
     _adg_signals[INVALIDATE] =
@@ -266,8 +266,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      *
      * Arranges the layout of @entity, updating the cache if necessary,
      * and computes the extents of @entity.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_arrange), NULL, NULL);
     _adg_signals[ARRANGE] =
@@ -284,8 +284,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Causes the rendering of @entity on @cr. A render signal will
      * automatically emit #AdgEntity::arrange just before the real
      * rendering on the cairo context.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     closure = g_cclosure_new(G_CALLBACK(_adg_real_render), NULL, NULL);
     param_types[0] = G_TYPE_POINTER;

@@ -84,8 +84,8 @@ adg_style_class_init(AdgStyleClass *klass)
      * can be called more than once without harms. Furthermore it
      * will be emitted from property setter code of new implementations
      * to force the recomputation of the cache.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[INVALIDATE] =
         g_signal_new("invalidate",
@@ -105,8 +105,8 @@ adg_style_class_init(AdgStyleClass *klass)
      * Applies @style to @cr so the next rendering operations will be
      * done accordling to this style directives. The @entity parameter
      * is used to resolve the internal dresses of @style, if any.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[APPLY] =
         g_signal_new("apply",

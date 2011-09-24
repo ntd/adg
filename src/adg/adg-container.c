@@ -132,8 +132,8 @@ adg_container_class_init(AdgContainerClass *klass)
      *
      * Adds @entity to @container. @entity must not be inside another
      * container or the operation will fail.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[ADD] = g_signal_new("add",
                                      G_OBJECT_CLASS_TYPE(gobject_class),
@@ -149,8 +149,8 @@ adg_container_class_init(AdgContainerClass *klass)
      * @entity: the #AdgEntity to remove
      *
      * Removes @entity from @container.
- *
- * Since: 1.0
+     *
+     * Since: 1.0
      **/
     _adg_signals[REMOVE] = g_signal_new("remove",
                                         G_OBJECT_CLASS_TYPE(gobject_class),
