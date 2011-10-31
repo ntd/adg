@@ -57,7 +57,7 @@ struct _DemoPart {
     /* Data models */
     AdgPath             *shape;
     AdgPath             *hatch;
-    AdgPath             *hatch_edge;
+    AdgPath             *hatch_contour;
 
     /* Special entities */
     AdgTitleBlock       *title_block;
@@ -219,7 +219,7 @@ _adg_part_define_hatch(DemoPart *part)
     adg_path_reflect(path, NULL);
     adg_path_close(path);
 
-    path = part->hatch_edge;
+    path = part->hatch_contour;
     adg_path_move_to(path, &pair);
     adg_path_curve_to_explicit(path,
                                part->LHOLE / 2, part->DHOLE / 2,
@@ -621,7 +621,7 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
     entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hatch)));
     adg_container_add(container, entity);
 
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->hatch_edge)));
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->hatch_contour)));
     adg_container_add(container, entity);
 
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
@@ -685,7 +685,7 @@ _adg_do_edit(DemoPart *part)
 
     adg_model_reset(ADG_MODEL(part->shape));
     adg_model_reset(ADG_MODEL(part->hatch));
-    adg_model_reset(ADG_MODEL(part->hatch_edge));
+    adg_model_reset(ADG_MODEL(part->hatch_contour));
     adg_model_reset(ADG_MODEL(part->edges));
 
     _adg_part_define_title_block(part);
@@ -694,7 +694,7 @@ _adg_do_edit(DemoPart *part)
 
     adg_model_changed(ADG_MODEL(part->shape));
     adg_model_changed(ADG_MODEL(part->hatch));
-    adg_model_changed(ADG_MODEL(part->hatch_edge));
+    adg_model_changed(ADG_MODEL(part->hatch_contour));
     adg_model_changed(ADG_MODEL(part->edges));
 
     gtk_widget_queue_draw(GTK_WIDGET(part->area));
@@ -908,7 +908,7 @@ _adg_part_new(GtkBuilder *builder)
     part->reset = (GtkButton *) gtk_builder_get_object(builder, "btnReset");
     part->shape = adg_path_new();
     part->hatch = adg_path_new();
-    part->hatch_edge = adg_path_new();
+    part->hatch_contour = adg_path_new();
     part->title_block = adg_title_block_new();
     part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
 
