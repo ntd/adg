@@ -12,11 +12,6 @@ libadg_includedir=		$(includedir)/adg-1
 libadg_include_DATA=		adg.h \
 				cpml.h
 
-pkgconfig_DATA=			cpml-1.pc \
-				adg-1.pc
-
 EXTRA_DIST=			adg.h \
 				cpml.h \
-				adg.xml \
-				cpml-1.pc.in \
-				adg-1.pc.in
+				adg.xml

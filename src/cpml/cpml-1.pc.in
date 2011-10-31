@@ -2,6 +2,10 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+girdir=${datadir}/gir-1.0
+typelibdir=${libdir}/girepository-1.0
 
 Name: CPML
 Description: Cairo Path Manipulation Library

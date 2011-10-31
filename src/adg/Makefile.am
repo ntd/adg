@@ -3,6 +3,7 @@ include $(top_srcdir)/build/Makefile.am.common
 
 SUBDIRS=			tests
 
+
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 ADG_CFLAGS=			$(CAIRO_CFLAGS) \
@@ -134,7 +135,8 @@ template_sources=		adg-type-builtins.c.mkenums \
 
 # targets
 EXTRA_DIST=			$(template_sources) \
-				adg-introspection.h
+				adg-introspection.h \
+				adg-1.pc.in
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)
 #				built_c_sources are properly tracked
@@ -142,6 +144,8 @@ BUILT_SOURCES=			$(built_h_sources) \
 CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
+
+pkgconfig_DATA=			adg-1.pc
 
 adg_includedir=			$(includedir)/adg-1/adg
 adg_include_DATA=		$(h_sources) \
@@ -158,7 +162,7 @@ libadg_1_la_CFLAGS=		$(ADG_CFLAGS)
 libadg_1_la_LDFLAGS=		-no-undefined \
 				-version-info @ADG_LT_VERSION@ \
 				$(ADG_LDFLAGS)
-libadg_1_LDADD=			$(top_builddir)/src/cpml/libcpml-1.la
+libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la
 
 
 ## Optional GTK+2 related stuff
@@ -229,9 +233,7 @@ Adg_1_0_gir_FILES=		adg-introspection.h \
 ## Dependency from CPML will be added manually because it is still an
 ## internal component, hence not yet installed at this point
 Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
-Adg_1_0_gir_LDFLAGS=		$(ADG_LDFLAGS) \
-				-L$(top_builddir)/src/cpml/.libs \
-				-lcpml-1
+Adg_1_0_gir_LDFLAGS=		$(ADG_LDFLAGS)
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
 				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
 girdir=				$(datadir)/gir-1.0

@@ -3,6 +3,7 @@ include $(top_srcdir)/build/Makefile.am.common
 
 SUBDIRS=			tests
 
+
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 CPML_CFLAGS=			$(CAIRO_CFLAGS)
@@ -30,7 +31,8 @@ c_sources=			cpml-arc.c \
 				cpml-segment.c \
 				cpml-utils.c
 built_c_sources=
-EXTRA_DIST=			cpml-introspection.h
+EXTRA_DIST=			cpml-introspection.h \
+				cpml-1.pc.in
 
 # targets
 BUILT_SOURCES=			$(built_h_sources) \
@@ -39,6 +41,8 @@ BUILT_SOURCES=			$(built_h_sources) \
 CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
+
+pkgconfig_DATA=			cpml-1.pc
 
 cpml_includedir=		$(includedir)/adg-1/cpml
 cpml_include_DATA=		$(h_sources) \

@@ -258,10 +258,10 @@ AM_SUBST_NOTMAKE([DLLDIR])
 AC_CONFIG_FILES([build/adg.nsi
                  Makefile
                  src/Makefile
-                 src/cpml-1.pc
+                 src/cpml/cpml-1.pc
                  src/cpml/Makefile
                  src/cpml/tests/Makefile
-                 src/adg-1.pc
+                 src/adg/adg-1.pc
                  src/adg.h
                  src/adg/Makefile
                  src/adg/adg-canvas.h
