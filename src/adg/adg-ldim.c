@@ -275,9 +275,9 @@ adg_ldim_new(void)
 
 /**
  * adg_ldim_new_full:
- * @ref1: the first reference point
- * @ref2: the second reference point
- * @pos: the position reference
+ * @ref1: allow-none: the first reference point
+ * @ref2: allow-none: the second reference point
+ * @pos: allow-none: the position reference
  * @direction: angle where to extend the dimension
  *
  * Creates a new linear dimension, specifing all the needed properties in
@@ -294,12 +294,17 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     AdgLDim *ldim;
     AdgDim *dim;
 
-    ldim = g_object_new(ADG_TYPE_LDIM, "direction", direction, NULL);
+    ldim = adg_ldim_new();
     dim = (AdgDim *) ldim;
 
-    adg_dim_set_ref1_from_pair(dim, ref1);
-    adg_dim_set_ref2_from_pair(dim, ref2);
-    adg_dim_set_pos_from_pair(dim, pos);
+    if (ref1 != NULL)
+        adg_dim_set_ref1_from_pair(dim, ref1);
+
+    if (ref2 != NULL)
+        adg_dim_set_ref2_from_pair(dim, ref2);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_pair(dim, pos);
 
     return ldim;
 }
@@ -323,7 +328,7 @@ adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
 AdgLDim *
 adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
                            gdouble ref2_x, gdouble ref2_y,
-                           gdouble pos_x,  gdouble pos_y, gdouble direction)
+                           gdouble pos_x, gdouble pos_y, gdouble direction)
 {
     AdgPair ref1;
     AdgPair ref2;
@@ -341,10 +346,10 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 
 /**
  * adg_ldim_new_full_from_model:
- * @model: the model from which the named pairs are taken
- * @ref1: the first reference point
- * @ref2: the second reference point
- * @pos: the position reference
+ * @model: transfer-none: the model from which the named pairs are taken
+ * @ref1: allow-none: the first reference point
+ * @ref2: allow-none: the second reference point
+ * @pos: allow-none: the position reference
  * @direction: angle where to extend the dimension
  *
  * Creates a new linear dimension, specifing all the needed properties in
@@ -362,14 +367,23 @@ adg_ldim_new_full_from_model(AdgModel *model,
     AdgLDim *ldim;
     AdgDim *dim;
 
-    ldim = g_object_new(ADG_TYPE_LDIM, "direction", direction, NULL);
+    g_return_val_if_fail(model != NULL, NULL);
+
+    ldim = adg_ldim_new();
     dim = (AdgDim *) ldim;
 
-    adg_dim_set_ref1_from_model(dim, model, ref1);
-    adg_dim_set_ref2_from_model(dim, model, ref2);
-    adg_dim_set_pos_from_model(dim, model, pos);
+    adg_ldim_set_direction(ldim, direction);
 
-    return ldim;
+    if (ref1 != NULL)
+        adg_dim_set_ref1_from_model(dim, model, ref1);
+
+    if (ref2 != NULL)
+        adg_dim_set_ref2_from_model(dim, model, ref2);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_model(dim, model, pos);
+
+    return (AdgLDim *) dim;
 }
 
 /**

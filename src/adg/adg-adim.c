@@ -309,10 +309,10 @@ adg_adim_new(void)
 
 /**
  * adg_adim_new_full:
- * @ref1: first reference point
- * @ref2: second reference point
- * @org1: first origin point
- * @org2: second origin point
+ * @ref1: allow-none: first reference point
+ * @ref2: allow-none: second reference point
+ * @org1: allow-none: first origin point
+ * @org2: allow-none: second origin point
  *
  * Creates a new angular dimension, specifing all the needed
  * properties in one shot using #AdgPair.
@@ -329,14 +329,23 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
     AdgADim *adim;
     AdgDim *dim;
 
-    adim = g_object_new(ADG_TYPE_ADIM, NULL);
+    adim = adg_adim_new();
     dim = (AdgDim *) adim;
 
-    adg_dim_set_ref1_from_pair(dim, ref1);
-    adg_dim_set_ref2_from_pair(dim, ref2);
-    adg_dim_set_pos_from_pair(dim, pos);
-    adg_adim_set_org1_from_pair(adim, org1);
-    adg_adim_set_org2_from_pair(adim, org2);
+    if (ref1 != NULL)
+        adg_dim_set_ref1_from_pair(dim, ref1);
+
+    if (ref2 != NULL)
+        adg_dim_set_ref2_from_pair(dim, ref2);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_pair(dim, pos);
+
+    if (org1 != NULL)
+        adg_adim_set_org1_from_pair(adim, org1);
+
+    if (org2 != NULL)
+        adg_adim_set_org2_from_pair(adim, org2);
 
     return adim;
 }
@@ -382,12 +391,12 @@ adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 
 /**
  * adg_adim_new_full_from_model:
- * @model: the model from which the named pairs are taken
- * @ref1: the end point of the first line
- * @ref2: the end point of the second line
- * @org1: the origin of the first line
- * @org2: the origin of the second line
- * @pos: the position reference
+ * @model: transfer-none: the model from which the named pairs are taken
+ * @ref1: allow-none: the end point of the first line
+ * @ref2: allow-none: the end point of the second line
+ * @org1: allow-none: the origin of the first line
+ * @org2: allow-none: the origin of the second line
+ * @pos: allow-none: the position reference
  *
  * Creates a new angular dimension, specifing all the needed properties
  * in one shot and using named pairs from @model.
@@ -405,14 +414,23 @@ adg_adim_new_full_from_model(AdgModel *model,
     AdgADim *adim;
     AdgDim *dim;
 
-    adim = g_object_new(ADG_TYPE_ADIM, NULL);
+    adim = adg_adim_new();
     dim = (AdgDim *) adim;
 
-    adg_dim_set_ref1_from_model(dim, model, ref1);
-    adg_dim_set_ref2_from_model(dim, model, ref2);
-    adg_dim_set_pos_from_model(dim, model, pos);
-    adg_adim_set_org1_from_model(adim, model, org1);
-    adg_adim_set_org2_from_model(adim, model, org2);
+    if (ref1 != NULL)
+        adg_dim_set_ref1_from_model(dim, model, ref1);
+
+    if (ref2 != NULL)
+        adg_dim_set_ref2_from_model(dim, model, ref2);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_model(dim, model, pos);
+
+    if (org1 != NULL)
+        adg_adim_set_org1_from_model(adim, model, org1);
+
+    if (org2 != NULL)
+        adg_adim_set_org2_from_model(adim, model, org2);
 
     return adim;
 }

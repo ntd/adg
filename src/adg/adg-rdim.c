@@ -221,9 +221,9 @@ adg_rdim_new(void)
 
 /**
  * adg_rdim_new_full:
- * @center: center of the arc to quote
- * @radius: where the quote must be applied on the arc
- * @pos: position of the quote text
+ * @center: allow-none: center of the arc to quote
+ * @radius: allow-none: where the quote must be applied on the arc
+ * @pos: allow-none: position of the quote text
  *
  * Creates a new quote by specifying explicitely all the needed
  * data to get a valid quote.
@@ -233,8 +233,7 @@ adg_rdim_new(void)
  * Since: 1.0
  **/
 AdgRDim *
-adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
-                  const AdgPair *pos)
+adg_rdim_new_full(const AdgPair *center, const AdgPair *radius, const AdgPair *pos)
 {
     AdgRDim *rdim;
     AdgDim *dim;
@@ -242,9 +241,14 @@ adg_rdim_new_full(const AdgPair *center, const AdgPair *radius,
     rdim = adg_rdim_new();
     dim = (AdgDim *) rdim;
 
-    adg_dim_set_ref1_from_pair(dim, center);
-    adg_dim_set_ref2_from_pair(dim, radius);
-    adg_dim_set_pos_from_pair(dim, pos);
+    if (center != NULL)
+        adg_dim_set_ref1_from_pair(dim, center);
+
+    if (radius != NULL)
+        adg_dim_set_ref2_from_pair(dim, radius);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_pair(dim, pos);
 
     return rdim;
 }
@@ -285,10 +289,10 @@ adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
 
 /**
  * adg_rdim_new_full_from_model:
- * @model: the model from which the named pairs are taken
- * @center: the center point of the arc to quote
- * @radius: an arbitrary point on the arc
- * @pos: the position reference
+ * @model: transfer-none: the model from which the named pairs are taken
+ * @center: allow-none: the center point of the arc to quote
+ * @radius: allow-none: an arbitrary point on the arc
+ * @pos: allow-none: the position reference
  *
  * Creates a new radial dimension, specifing all the needed properties in
  * one shot and using named pairs from @model.
@@ -301,13 +305,24 @@ AdgRDim *
 adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,
                              const gchar *radius, const gchar *pos)
 {
-    AdgDim *dim = g_object_new(ADG_TYPE_RDIM, NULL);
+    AdgRDim *rdim;
+    AdgDim *dim;
 
-    adg_dim_set_ref1_from_model(dim, model, center);
-    adg_dim_set_ref2_from_model(dim, model, radius);
-    adg_dim_set_pos_from_model(dim, model, pos);
+    g_return_val_if_fail(model != NULL, NULL);
 
-    return (AdgRDim *) dim;
+    rdim = adg_rdim_new();
+    dim = (AdgDim *) rdim;
+
+    if (center != NULL)
+        adg_dim_set_ref1_from_model(dim, model, center);
+
+    if (radius != NULL)
+        adg_dim_set_ref2_from_model(dim, model, radius);
+
+    if (pos != NULL)
+        adg_dim_set_pos_from_model(dim, model, pos);
+
+    return rdim;
 }
 
 
@@ -359,7 +374,6 @@ _adg_arrange(AdgEntity *entity)
     AdgDim *dim;
     AdgRDimPrivate *data;
     AdgAlignment *quote;
-    AdgDimStyle *dim_style;
     AdgEntity *quote_entity;
     gboolean outside;
     const AdgMatrix *global, *local;
@@ -391,7 +405,6 @@ _adg_arrange(AdgEntity *entity)
     if (outside == ADG_THREE_STATE_UNKNOWN)
         outside = ADG_THREE_STATE_OFF;
 
-    dim_style = _ADG_GET_DIM_STYLE(dim);
     global = adg_entity_get_global_matrix(entity);
     local = adg_entity_get_local_matrix(entity);
     extents.is_defined = FALSE;
