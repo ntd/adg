@@ -24,11 +24,16 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
-dnl automake 1.11 is required for multiline substitution (AM_SUBST_NOTMAKE)
-AM_INIT_AUTOMAKE([1.11 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
-AM_SILENT_RULES([yes])
+AM_INIT_AUTOMAKE([1.10 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
 
-AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
+dnl m4 backward compatibility stuff
+m4_ifdef([AM_SILENT_RULES],[],
+         [m4_define([AM_SILENT_RULES])])
+m4_ifdef([AM_SUBST_NOTMAKE],[],
+         [AC_DEFUN([AM_SUBST_NOTMAKE],[_AM_SUBST_NOTMAKE($@)])])
+m4_ifdef([AM_COND_IF],[],
+         [AC_DEFUN([AM_COND_IF],
+                   [AS_IF([test -z "$$1_TRUE"],[$2],[$3])])])
 
 
 # Check for host information
@@ -101,6 +106,7 @@ m4_ifset([LT_INIT],
 
 # I18n
 
+AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
@@ -173,8 +179,9 @@ GTK_DOC_CHECK(gtkdoc_prereq)
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
 AM_COND_IF([HAVE_INTROSPECTION],
-           [enable_introspection=yes],
-           [enable_introspection=no])
+           [enable_introspection='yes'],
+           [enable_introspection='no'])
+
 
 dnl GLib test framework
 AC_ARG_ENABLE([test_framework],
@@ -254,6 +261,8 @@ AM_SUBST_NOTMAKE([DLLDIR])
 
 
 # Generation
+
+AM_SILENT_RULES([yes])
 
 AC_CONFIG_FILES([build/adg.nsi
                  Makefile
