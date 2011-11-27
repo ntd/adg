@@ -27,8 +27,9 @@ AC_CONFIG_MACRO_DIR([build])
 AM_INIT_AUTOMAKE([1.10 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
 
 dnl m4 backward compatibility stuff
-m4_ifdef([AM_SILENT_RULES],[],
-         [m4_define([AM_SILENT_RULES])])
+m4_ifdef([AM_SILENT_RULES],
+         [AM_SILENT_RULES([yes])],
+         [AC_SUBST([AM_V_GEN],[])])
 m4_ifdef([AM_SUBST_NOTMAKE],[],
          [AC_DEFUN([AM_SUBST_NOTMAKE],[_AM_SUBST_NOTMAKE($@)])])
 m4_ifdef([AM_COND_IF],[],
@@ -261,8 +262,6 @@ AM_SUBST_NOTMAKE([DLLDIR])
 
 
 # Generation
-
-AM_SILENT_RULES([yes])
 
 AC_CONFIG_FILES([build/adg.nsi
                  Makefile
