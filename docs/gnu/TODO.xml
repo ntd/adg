@@ -30,25 +30,32 @@ to implement.</para>
    angular dimensions too and if it is worth the effort.</listitem>
    <listitem>The ARROW and TRIANGLE markers should follow the director path that
    could be a curve. Use the METAPOST solution suggested by John Hobby
-   I don't remember where, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotates the
-   path by half <parameter>angle</parameter> in both directions, looks for intersection with a
-   circle centered at the end of the director path with radius <parameter>size</parameter>
-   and closes the resulting path.</listitem>
-   <listitem>Add connectivity feature to AdgModel: enable dependencies of models to
-   external data. Use libgda as sample data provider.</listitem>
+   in its METAPOST manual, that is given <parameter>angle</parameter> and <parameter>size</parameter>, rotate the
+   path by half <parameter>angle</parameter> in both directions, cut it with a circle centered
+   at the end of the director path with radius <parameter>size</parameter> and close the
+   resulting path (eventually filling it).</listitem>
+   <listitem>Investigate the use of <ulink url="http://www.gnome-db.org">libgda</ulink> as a sample
+   data provider and check if it is worth to add custom methods to
+   AdgModel to improve the interoperatibility between adg and libgda.</listitem>
    <listitem override="disc">Implement AdgText, a generic text management, using pango.</listitem>
-   <listitem>Add a new tab to the edit dialog of adg-demo to customize the various
-   styles of the rendering (colors, thicknesses, sizes, fonts).</listitem>
+   <listitem>Add a specialized GTK+ widget that allows the customization of the
+   rendering process. This should be a tree widget that provides
+   hierarchical access to AdgStyle and derived <emphasis>instances</emphasis> by
+   inspecting an AdgCanvas object, in a way similar to what
+   <ulink url="http://glade.gnome.org">glade</ulink> does with a GtkWindow. Add this
+   widget to a new tab in the edit dialog of adg-demo to expose and
+   test this new feature.</listitem>
    <listitem>Add self-intersection API for CPML segments.</listitem>
    <listitem>Add datum support: for implementation ideas checkout this
-   <ulink url="http://nvl.nist.gov/pub/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
-   <listitem>Actually the CPML library is able to transparently handle arcs and
-   convert them to Bézier curves. Add more logic to do the same in
-   the reverse side, that is to automatically convert curves to arcs
-   if a curve is an arc approximation. This will bring an additional
-   information useful in some operation, such as getting the radius
-   of a radial quote or precisely extending an arc.</listitem>
-   <listitem>Hunt the TODOs in CPML and fill the missing logic.</listitem>
+   <ulink url="http://nvlpubs.nist.gov/nistpubs/jres/104/4/html/j44mac.htm">draft</ulink>.</listitem>
+   <listitem>The cairo library does not handle arcs natively. Actually the CPML
+   library is able to transparently convert them to Bézier curves
+   when needed. Add more logic to do the same in the reverse side,
+   that is to automatically convert curves to arcs when a curve is
+   close enough to an arc approximation. This will bring in a new
+   information that can be used in some operation, such as getting
+   the value to put in the quote of a radial dimension or offsetting
+   a curved segment in a precise way.</listitem>
    <listitem>Improve Bézier offset approximation algorithm, possibly enabling
    the feature of splitting the offset curve in more than one Bézier
    arc when the error is not acceptable.</listitem>
@@ -112,6 +119,10 @@ API: the 0.7.0 release will probably be a beta release.</para>
    <listitem override="disc">Resolve the TODOs in the adg/ directory: the only missing logic
    should come from the CPML library (and there the TODO items are
    bound to the less common use cases).</listitem>
+   <listitem>Add support for GTK+3, possibly adding an optional check at configure
+   time and trying to keep the same codebase.</listitem>
+   <listitem>Enhance the AdgRDim class by adding an alternative rendering when the
+   "outside" property is enabled.</listitem>
    <listitem>Create a separate project called adg-lua to host the lua bindings for
    the ADG project. Provide a demo similar to adg-demo in lua.</listitem>
 </itemizedlist>
