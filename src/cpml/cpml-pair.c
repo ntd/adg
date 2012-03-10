@@ -109,8 +109,8 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * Compares @pair to @src and returns 1 if the pairs are equals.
  * Two %NULL pairs are considered equal.
  *
- * Returns: (type gboolean): %TRUE if @pair is equal to @src,
- *                           %FALSE otherwise
+ * Returns: (type gboolean): %1 if @pair is equal to @src,
+ *                           %0 otherwise
  *
  * Since: 1.0
  **/

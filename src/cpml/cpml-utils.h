@@ -37,15 +37,6 @@
 #endif
 
 
-#ifndef FALSE
-#define FALSE   (0)
-#endif
-
-#ifndef TRUE
-#define TRUE    (! FALSE)
-#endif
-
-
 CAIRO_BEGIN_DECLS
 
 double          cpml_angle              (double         angle);

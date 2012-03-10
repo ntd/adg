@@ -95,8 +95,8 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
  * Two %NULL or two undefined extents are considered equal, athough
  * %NULL extents are not equal to undefined extents.
  *
- * Returns: (type gboolean): %TRUE if @extents is equal to @src,
- *                           %FALSE otherwise
+ * Returns: (type gboolean): %1 if @extents is equal to @src,
+ *                           %0 otherwise
  *
  * Since: 1.0
  **/
@@ -104,17 +104,15 @@ int
 cpml_extents_equal(const CpmlExtents *extents, const CpmlExtents *src)
 {
     if (extents == NULL && src == NULL)
-        return TRUE;
+        return 1;
 
     if (extents == NULL || src == NULL)
-        return FALSE;
+        return 0;
 
-    if (!extents->is_defined && !src->is_defined)
-        return TRUE;
-
-    return extents->is_defined == src->is_defined &&
-           cpml_pair_equal(&extents->org,  &src->org) &&
-           cpml_pair_equal(&extents->size, &src->size) ? TRUE : FALSE;
+    return (!extents->is_defined && !src->is_defined) ||
+           (extents->is_defined && src->is_defined &&
+               cpml_pair_equal(&extents->org,  &src->org) &&
+               cpml_pair_equal(&extents->size, &src->size));
 }
 
 /**
@@ -187,8 +185,8 @@ cpml_extents_pair_add(CpmlExtents *extents, const CpmlPair *src)
  * is undefined, %0 will be returned. If @src is undefined, %1 will
  * be returned. The border of @extents is considered inside.
  *
- * Returns: (type gboolean): %TRUE if @src is totally inside @extents,
- *                           %FALSE otherwise
+ * Returns: (type gboolean): %1 if @src is totally inside @extents,
+ *                           %0 otherwise
  *
  * Since: 1.0
  **/
@@ -198,23 +196,23 @@ cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
     CpmlPair pe, ps;
 
     if (extents->is_defined == 0)
-        return FALSE;
+        return 0;
 
     if (src->is_defined == 0)
-        return TRUE;
+        return 1;
 
     cpml_pair_copy(&pe, &extents->org);
     cpml_pair_copy(&ps, &src->org);
 
     if (ps.x < pe.x || ps.y < pe.y)
-        return FALSE;
+        return 0;
 
     pe.x += extents->size.x;
     pe.y += extents->size.y;
     ps.x += extents->size.x;
     ps.y += extents->size.y;
 
-    return ps.x > pe.x || ps.y > pe.y ? FALSE : TRUE;
+    return ps.x < pe.x && ps.y < pe.y;
 }
 
 /**
@@ -225,8 +223,8 @@ cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
  * Checks wheter @src is inside @extents. If @extents is undefined,
  * %0 will be returned. The border of @extents is considered inside.
  *
- * Returns: (type gboolean): %TRUE if @src is inside @extents,
- *                           %FALSE otherwise
+ * Returns: (type gboolean): %1 if @src is inside @extents,
+ *                           %0 otherwise
  *
  * Since: 1.0
  **/
@@ -237,9 +235,9 @@ cpml_extents_pair_is_inside(const CpmlExtents *extents, const CpmlPair *src)
         src->x < extents->org.x || src->y < extents->org.y ||
         src->x > extents->org.x + extents->size.x ||
         src->y > extents->org.y + extents->size.y)
-        return FALSE;
+        return 0;
 
-    return TRUE;
+    return 1;
 }
 
 /**

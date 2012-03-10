@@ -35,23 +35,6 @@
 
 
 /**
- * TRUE:
- *
- * Defines the TRUE value for the gboolean type.
- *
- * Since: 1.0
- **/
-
-/**
- * FALSE:
- *
- * Defines the FALSE value for the gboolean type.
- *
- * Since: 1.0
- **/
-
-
-/**
  * CPML_GNUC_CONST:
  *
  * To be appended at the end of a function to notice the compiler (gcc)

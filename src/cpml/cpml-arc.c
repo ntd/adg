@@ -168,8 +168,8 @@ _cpml_arc_get_class(void)
  * { -M_PI < value < 3*M_PI } inclusive instead of the usual
  * { -M_PI < value < M_PI } range.
  *
- * Returns: (type boolean): %TRUE if the function worked succesfully,
- *                          %FALSE on errors
+ * Returns: (type boolean): %1 if the function worked succesfully,
+ *                          %0 on errors
  *
  * Since: 1.0
  **/
@@ -184,7 +184,7 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
     cpml_pair_from_cairo(&p[2], &arc->data[2]);
 
     if (! get_center(p, &l_center))
-        return FALSE;
+        return 0;
 
     if (center)
         *center = l_center;
@@ -203,7 +203,7 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
             *end = l_end;
     }
 
-    return TRUE;
+    return 1;
 }
 
 /**
@@ -446,7 +446,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     if (p[0].x == p[2].x && p[0].y == p[2].y) {
         dest->x = (p[0].x + p[1].x) / 2;
         dest->y = (p[0].y + p[1].y) / 2;
-        return TRUE;
+        return 1;
     }
 
     /* Translate the 3 points of -p0, to simplify the formula */
@@ -459,7 +459,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
      * are laying on a straight line and there is no fitting circle */
     d = (b.x*c.y - b.y*c.x) * 2;
     if (d == 0.)
-        return FALSE;
+        return 0;
 
     b2 = b.x*b.x + b.y*b.y;
     c2 = c.x*c.x + c.y*c.y;
@@ -467,7 +467,7 @@ get_center(const CpmlPair *p, CpmlPair *dest)
     dest->x = (c.y*b2 - b.y*c2) / d + p[0].x;
     dest->y = (b.x*c2 - c.x*b2) / d + p[0].y;
 
-    return TRUE;
+    return 1;
 }
 
 static void

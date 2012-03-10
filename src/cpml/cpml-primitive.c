@@ -180,8 +180,8 @@ cpml_primitive_reset(CpmlPrimitive *primitive)
  * source segment. If there are no more primitives, @primitive is
  * not changed and 0 is returned.
  *
- * Returns: (type boolean): %TRUE on success,
- *                          %FALSE if no next primitive found or errors
+ * Returns: (type boolean): %1 on success,
+ *                          %0 if no next primitive found or errors
  *
  * Since: 1.0
  **/
@@ -195,12 +195,12 @@ cpml_primitive_next(CpmlPrimitive *primitive)
     end_data = primitive->segment->data + primitive->segment->num_data;
 
     if (new_data >= end_data)
-        return FALSE;
+        return 0;
 
     primitive->org = _cpml_get_point(primitive, -1);
     primitive->data = new_data;
 
-    return TRUE;
+    return 1;
 }
 
 /**
@@ -575,8 +575,8 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
  * </itemizedlist>
  * </important>
  *
- * Returns: (type boolean): %TRUE on success,
- *                          %FALSE if the primitives cannot be joint
+ * Returns: (type boolean): %1 on success,
+ *                          %0 if the primitives cannot be joint
  *
  * <!-- Virtual: join -->
  *
@@ -595,7 +595,7 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
 
     /* Check if the primitives are yet connected */
     if (end1->point.x == start2->point.x && end1->point.y == start2->point.y)
-        return TRUE;
+        return 1;
 
     line1.org = _cpml_get_point(primitive, -2);
     line1.data = data1;
@@ -608,12 +608,12 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     data2[1] = *_cpml_get_point(primitive2, 1);
 
     if (!cpml_primitive_put_intersections(&line1, &line2, 1, &joint))
-        return FALSE;
+        return 0;
 
     cpml_pair_to_cairo(&joint, end1);
     cpml_pair_to_cairo(&joint, start2);
 
-    return TRUE;
+    return 1;
 }
 
 /**

@@ -228,7 +228,7 @@ intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
 
     /* Check for equal slopes (the lines are parallel) */
     if (factor == 0)
-        return FALSE;
+        return 0;
 
     factor = ((p1_4[0].y - p1_4[2].y) * v[1].x -
               (p1_4[0].x - p1_4[2].x) * v[1].y) / factor;
@@ -241,5 +241,5 @@ intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
     if (get_factor != NULL)
         *get_factor = factor;
 
-    return TRUE;
+    return 1;
 }
