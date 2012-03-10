@@ -67,8 +67,8 @@ cpml_extents_copy(CpmlExtents *extents, const CpmlExtents *src)
 
 /**
  * cpml_extents_from_cairo_text:
- * @extents:       (out): the destination #CpmlExtents
- * @cairo_extents: (in):  the source #cairo_text_extents_t struct
+ * @extents:                      (out): the destination #CpmlExtents
+ * @cairo_extents: (in) (type gpointer): the source #cairo_text_extents_t
  *
  * Converts @cairo_extents in a #CpmlExtents format and stores the
  * result in @extents.

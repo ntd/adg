@@ -71,8 +71,8 @@ static CpmlPair fallback_pair = { 0, 0 };
 
 /**
  * cpml_pair_from_cairo:
- * @pair:      (out): the destination #CpmlPair
- * @path_data: (in):  the original path data point
+ * @pair:                     (out): the destination #CpmlPair
+ * @path_data: (in) (type gpointer): the original path data point
  *
  * Sets @pair from a #cairo_path_data_t struct. @path_data should contains
  * a point data: it is up to the caller to be sure @path_data is valid.
@@ -240,8 +240,8 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_pair_to_cairo:
- * @pair:      (in):  the source #CpmlPair
- * @path_data: (out): the path data point to modify
+ * @pair:                       (in):  the source #CpmlPair
+ * @path_data: (out) (type gpointer): the path data point to modify
  *
  * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
  * operation of cpml_pair_from_cairo().

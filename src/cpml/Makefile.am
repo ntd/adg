@@ -80,7 +80,8 @@ Cpml_1_0_gir_FILES=		cpml-introspection.h \
 				$(c_sources)
 Cpml_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
 Cpml_1_0_gir_LDFLAGS=
-Cpml_1_0_gir_SCANNERFLAGS=	--c-include="cpml.h"
+Cpml_1_0_gir_SCANNERFLAGS=	--c-include="cpml.h" \
+				--warn-all
 girdir=				$(datadir)/gir-1.0
 dist_gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(libdir)/girepository-1.0
