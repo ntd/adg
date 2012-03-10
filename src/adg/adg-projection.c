@@ -202,7 +202,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * returned, that is #AdgProjection:scheme is set to
  * #ADG_PROJECTION_UNDEFINED, and a warning is raised.
  *
- * Returns: the newly created projection entity
+ * Returns: (transfer full): the newly created projection entity.
  *
  * Since: 1.0
  **/
@@ -241,7 +241,7 @@ adg_projection_set_symbol_dress(AdgProjection *projection, AdgDress dress)
  *
  * Gets the line dress to be used in stroking the symbol of @projection.
  *
- * Returns: the requested line dress
+ * Returns: (transfer none): the requested line dress.
  *
  * Since: 1.0
  **/
@@ -286,7 +286,7 @@ adg_projection_set_axis_dress(AdgProjection *projection, AdgDress dress)
  *
  * Gets the line dress to be used in stroking the axis of @projection.
  *
- * Returns: the requested line dress
+ * Returns: (transfer none): the requested line dress.
  *
  * Since: 1.0
  **/
@@ -326,7 +326,7 @@ adg_projection_set_scheme(AdgProjection *projection,
  *
  * Gets the scheme represented by @projection.
  *
- * Returns: the scheme of @projection
+ * Returns: (transfer none): the scheme of @projection
  *
  * Since: 1.0
  **/

@@ -245,14 +245,13 @@ adg_fill_style_set_extents(AdgFillStyle *fill_style,
 /**
  * adg_fill_style_get_extents:
  * @fill_style: an #AdgFillStyle
- * @extents: where to store the extents
  *
  * Stores a copy of the extents of @fill_style in @extents.
  * This struct specifies the maximum portion (in global space)
  * this fill style should be applied: it will clamped by the
  * entities as needed.
  *
- * Returns: the extents of @fill_style or %NULL on errors
+ * Returns: (transfer none): the extents of @fill_style or %NULL on errors.
  *
  * Since: 1.0
  **/

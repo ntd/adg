@@ -194,7 +194,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Creates a new logo entity.
  *
- * Returns: the newly created logo entity
+ * Returns: (transfer full): the newly created logo entity.
  *
  * Since: 1.0
  **/
@@ -233,7 +233,7 @@ adg_logo_set_symbol_dress(AdgLogo *logo, AdgDress dress)
  *
  * Gets the line dress to be used in stroking the symbol of @logo.
  *
- * Returns: the requested line dress
+ * Returns: (transfer none): the requested line dress.
  *
  * Since: 1.0
  **/
@@ -279,7 +279,7 @@ adg_logo_set_screen_dress(AdgLogo *logo, AdgDress dress)
  *
  * Gets the line dress to be used in stroking the screen shape of @logo.
  *
- * Returns: the requested line dress
+ * Returns: (transfer none): the requested line dress.
  *
  * Since: 1.0
  **/
@@ -325,7 +325,7 @@ adg_logo_set_frame_dress(AdgLogo *logo, AdgDress dress)
  *
  * Gets the line dress to be used in stroking the frame of @logo.
  *
- * Returns: the requested line dress
+ * Returns: (transfer none): the requested line dress.
  *
  * Since: 1.0
  **/

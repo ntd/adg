@@ -198,14 +198,14 @@ _adg_set_property(GObject *object, guint prop_id,
 
 /**
  * adg_trail_new:
- * @callback: the #CpmlPath constructor function
+ * @callback: (scope notified): the #CpmlPath constructor function
  * @user_data: generic pointer to pass to the callback
  *
- * Creates a new trail model. The #CpmlPath must be constructed by the
- * @callback function: #AdgTrail will not cache anything, so you should
- * implement any caching mechanism in the callback, if needed.
+ * Creates a new trail model. The #CpmlPath must be constructed by
+ * the @callback function: #AdgTrail will not cache anything, so you
+ * should implement any caching mechanism in the callback, if needed.
  *
- * Returns: a new trail model
+ * Returns: (transfer full): a new trail model.
  *
  * Since: 1.0
  **/
@@ -305,7 +305,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * previously returned useless because the #CpmlPath could be
  * relocated and the old #CpmlPath will likely contain rubbish.
  *
- * Returns: a pointer to the #CpmlPath or %NULL on errors
+ * Returns: (transfer none): a pointer to the #CpmlPath or %NULL on errors.
  *
  * Since: 1.0
  **/

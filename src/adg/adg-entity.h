@@ -120,7 +120,7 @@ void             adg_entity_arrange             (AdgEntity       *entity);
 void             adg_entity_render              (AdgEntity       *entity,
                                                  cairo_t         *cr);
 AdgPoint *       adg_entity_point               (AdgEntity       *entity,
-                                                 AdgPoint        *old_point,
+                                                 AdgPoint        *point,
                                                  AdgPoint        *new_point);
 
 G_END_DECLS

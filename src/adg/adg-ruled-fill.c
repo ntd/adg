@@ -231,7 +231,7 @@ adg_ruled_fill_set_line_dress(AdgRuledFill *ruled_fill, AdgDress dress)
  *
  * Gets the @ruled_fill dress to be used for rendering the lines.
  *
- * Returns: the line dress
+ * Returns: (transfer none): the line dress.
  *
  * Since: 1.0
  **/

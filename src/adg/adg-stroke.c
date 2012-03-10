@@ -240,7 +240,7 @@ adg_stroke_set_line_dress(AdgStroke *stroke, AdgDress dress)
  *
  * Gets the line dress to be used in rendering @stroke.
  *
- * Returns: the current line dress
+ * Returns: (transfer none): the current line dress.
  *
  * Since: 1.0
  **/
@@ -277,8 +277,10 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
  * @stroke: an #AdgStroke
  *
  * Gets the #AdgTrail bound to this @stroke entity.
+ * The returned trail is owned by @stroke and should not
+ * be freed or modified.
  *
- * Returns: the requested #AdgTrail or %NULL on errors
+ * Returns: (transfer none): the requested #AdgTrail or %NULL on errors.
  *
  * Since: 1.0
  **/

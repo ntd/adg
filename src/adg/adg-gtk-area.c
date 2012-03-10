@@ -386,9 +386,11 @@ adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
  * adg_gtk_area_get_canvas:
  * @area: an #AdgGtkArea
  *
- * Gets the canvas associated to @area.
+ * Gets the canvas associated to @area. The returned canvas
+ * is owned by @area and should not be modified or freed.
  *
- * Returns: the requested #AdgCanvas object or %NULL on errors
+ * Returns: (transfer none): the requested #AdgCanvas object or
+ *          %NULL on errors
  *
  * Since: 1.0
  **/
@@ -632,7 +634,7 @@ adg_gtk_area_has_autozoom(AdgGtkArea *area)
 /**
  * adg_gtk_area_canvas_changed:
  * @area: an #AdgGtkArea
- * @canvas: the old canvas bound to @area
+ * @old_canvas: the old canvas bound to @area
  *
  * Emits the #AdgGtkArea::canvas-changed signal on @area.
  *

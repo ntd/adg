@@ -191,7 +191,7 @@ adg_hatch_set_fill_dress(AdgHatch *hatch, AdgDress dress)
  *
  * Gets the line dress to be used in rendering @hatch.
  *
- * Returns: the current line dress
+ * Returns: (transfer none): the current line dress.
  *
  * Since: 1.0
  **/

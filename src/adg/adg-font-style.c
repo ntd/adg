@@ -286,7 +286,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Constructs a new font style initialized with default params.
  *
- * Returns: a newly created font style
+ * Returns: (transfer full): a newly created font style
  *
  * Since: 1.0
  **/
@@ -304,7 +304,7 @@ adg_font_style_new(void)
  * picked from @font_style. The returned value must be freed with
  * cairo_font_options_destroy().
  *
- * Returns: a newly allocated list of cairo font options
+ * Returns: (transfer full): a newly allocated list of cairo font options.
  *
  * Since: 1.0
  **/
@@ -340,7 +340,7 @@ adg_font_style_new_options(AdgFontStyle *font_style)
  * Gets the scaled font of @font_style. The returned font is
  * owned by @font_style and must not be destroyed by the caller.
  *
- * Returns: the scaled font
+ * Returns: (transfer none): the scaled font.
  *
  * Since: 1.0
  **/
@@ -389,7 +389,7 @@ adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
 /**
  * adg_font_style_set_color_dress:
  * @font_style: an #AdgFontStyle
- * @dress: the new color dress to use
+ * @dress: (transfer none): the new color dress to use
  *
  * Sets a new color dress on @font_style. The new dress
  * should be related to the original dress: you cannot
@@ -416,7 +416,7 @@ adg_font_style_set_color_dress(AdgFontStyle *font_style, AdgDress dress)
  *
  * Gets the color dress used by @font_style.
  *
- * Returns: the current color dress
+ * Returns: (transfer none): the current color dress.
  *
  * Since: 1.0
  **/
@@ -435,7 +435,7 @@ adg_font_style_get_color_dress(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_family:
  * @font_style: an #AdgFontStyle object
- * @family: the new family
+ * @family: (transfer none): the new family
  *
  * Sets a new family.
  *
@@ -455,7 +455,7 @@ adg_font_style_set_family(AdgFontStyle *font_style, const gchar *family)
  * Gets the family of @font_style. The returned pointer refers to
  * internally managed text that must not be modified or freed.
  *
- * Returns: the requested family
+ * Returns: (transfer none): the requested family.
  *
  * Since: 1.0
  **/
@@ -474,7 +474,7 @@ adg_font_style_get_family(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_slant:
  * @font_style: an #AdgFontStyle object
- * @slant: the new slant
+ * @slant: (type gint): the new slant
  *
  * Sets a new slant variant on @font_style.
  *
@@ -494,7 +494,7 @@ adg_font_style_set_slant(AdgFontStyle *font_style,
  *
  * Gets the slant variant of @font_style.
  *
- * Returns: the slant variant
+ * Returns: (type gint) (transfer none): the slant variant.
  *
  * Since: 1.0
  **/
@@ -514,7 +514,7 @@ adg_font_style_get_slant(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_weight:
  * @font_style: an #AdgFontStyle object
- * @weight: the new weight
+ * @weight: (type gint): the new weight
  *
  * Sets a new weight variant on @font_style.
  *
@@ -534,7 +534,7 @@ adg_font_style_set_weight(AdgFontStyle *font_style,
  *
  * Gets the weight variant of @font_style.
  *
- * Returns: the weight variant
+ * Returns: (type gint) (transfer none): the weight variant.
  *
  * Since: 1.0
  **/
@@ -573,7 +573,7 @@ adg_font_style_set_size(AdgFontStyle *font_style, gdouble size)
  *
  * Gets the size (in global space) of @font_style.
  *
- * Returns: the size variant
+ * Returns: the size variant.
  *
  * Since: 1.0
  **/
@@ -592,7 +592,7 @@ adg_font_style_get_size(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_antialias:
  * @font_style: an #AdgFontStyle object
- * @antialias: the new antialias mode
+ * @antialias: (type gint): the new antialias mode
  *
  * Sets a new antialias mode.
  *
@@ -612,7 +612,7 @@ adg_font_style_set_antialias(AdgFontStyle *font_style,
  *
  * Gets the antialias mode used.
  *
- * Returns: the requested antialias mode
+ * Returns: (type gint) (transfer none): the requested antialias mode.
  *
  * Since: 1.0
  **/
@@ -632,7 +632,7 @@ adg_font_style_get_antialias(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_subpixel_order:
  * @font_style: an #AdgFontStyle object
- * @subpixel_order: the new subpixel order mode
+ * @subpixel_order: (type gint): the new subpixel order mode
  *
  * Sets a new subpixel order mode.
  *
@@ -654,7 +654,7 @@ adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
  * within each pixel on the display device when rendering with an
  * antialiasing mode of %CAIRO_ANTIALIAS_SUBPIXEL.
  *
- * Returns: the requested subpixel order mode
+ * Returns: (type gint) (transfer none): the requested subpixel order mode.
  *
  * Since: 1.0
  **/
@@ -674,7 +674,7 @@ adg_font_style_get_subpixel_order(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_hint_style:
  * @font_style: an #AdgFontStyle object
- * @hint_style: the new hint style mode
+ * @hint_style: (type gint): the new hint style mode
  *
  * Sets a new hint style mode.
  *
@@ -695,7 +695,7 @@ adg_font_style_set_hint_style(AdgFontStyle *font_style,
  * Gets the hint style mode used, that is how to fit outlines
  * to the pixel grid in order to improve the appearance of the result.
  *
- * Returns: the requested hint style mode
+ * Returns: (type gint) (transfer none): the requested hint style mode.
  *
  * Since: 1.0
  **/
@@ -715,7 +715,7 @@ adg_font_style_get_hint_style(AdgFontStyle *font_style)
 /**
  * adg_font_style_set_hint_metrics:
  * @font_style: an #AdgFontStyle object
- * @hint_metrics: the new hint metrics state
+ * @hint_metrics: (type gint): the new hint metrics state
  *
  * Sets a new hint metrics state.
  *
@@ -735,7 +735,7 @@ adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
  *
  * Gets the state on whether to hint font metrics.
  *
- * Returns: the requested hint metrics state
+ * Returns: (type gint) (transfer none): the requested hint metrics state.
  *
  * Since: 1.0
  **/

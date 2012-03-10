@@ -251,7 +251,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Constructs a new empty table style initialized with default params.
  *
- * Returns: a new table style
+ * Returns: (transfer full): a new table style.
  *
  * Since: 1.0
  **/
@@ -286,7 +286,7 @@ adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
  * specific dresses, such as a color explicitely specified on the
  * #AdgTableStyle:value-dress.
  *
- * Returns: the color dress
+ * Returns: (transfer none): the color dress.
  *
  * Since: 1.0
  **/
@@ -325,7 +325,7 @@ adg_table_style_set_frame_dress(AdgTableStyle *table_style, AdgDress dress)
  * Gets the line dress to be used for rendering the frames with
  * @table_style.
  *
- * Returns: the line dress
+ * Returns: (transfer none): the line dress.
  *
  * Since: 1.0
  **/
@@ -364,7 +364,7 @@ adg_table_style_set_grid_dress(AdgTableStyle *table_style, AdgDress dress)
  * Gets the line dress to be used for rendering the grids with
  * @table_style.
  *
- * Returns: the line dress
+ * Returns: (transfer none): the line dress.
  *
  * Since: 1.0
  **/
@@ -403,7 +403,7 @@ adg_table_style_set_title_dress(AdgTableStyle *table_style, AdgDress dress)
  * Gets the font dress to be used for rendering cell titles
  * with @table_style.
  *
- * Returns: the font dress
+ * Returns: (transfer none): the font dress.
  *
  * Since: 1.0
  **/
@@ -442,7 +442,7 @@ adg_table_style_set_value_dress(AdgTableStyle *table_style, AdgDress dress)
  * Gets the font dress to be used for rendering cell values
  * with @table_style.
  *
- * Returns: the font dress
+ * Returns: (transfer none): the font dress.
  *
  * Since: 1.0
  **/
@@ -461,7 +461,7 @@ adg_table_style_get_value_dress(AdgTableStyle *table_style)
 /**
  * adg_table_style_set_row_height:
  * @table_style: an #AdgTableStyle object
- * @heigth: the new row heigth fallback
+ * @height: the new row heigth fallback
  *
  * Sets a new #AdgTableStyle:row-height fallback. @height must
  * be a valid row height greather than %0 or a warning will be
@@ -482,7 +482,7 @@ adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble height)
  *
  * Gets the row height fallback value.
  *
- * Returns: the fallback row height or %0 on errors
+ * Returns: the fallback row height or %0 on errors.
  *
  * Since: 1.0
  **/
@@ -527,7 +527,7 @@ adg_table_style_set_cell_padding(AdgTableStyle *table_style,
  * left will always be equal to the padding on the right and the top
  * will always be equal to the bottom.
  *
- * Returns: the cell padding values or %NULL on errors
+ * Returns: (transfer none): the cell padding values or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -572,7 +572,7 @@ adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
  * left will always be equal to the spacing on the right and the top
  * will always be equal to the bottom.
  *
- * Returns: the cell spacing values or %NULL on errors
+ * Returns: (transfer none): the cell spacing values or %NULL on errors.
  *
  * Since: 1.0
  **/

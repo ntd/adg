@@ -235,6 +235,7 @@ Adg_1_0_gir_FILES=		adg-introspection.h \
 Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
 Adg_1_0_gir_LDFLAGS=		$(ADG_LDFLAGS)
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
+				--warn-all \
 				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
 girdir=				$(datadir)/gir-1.0
 dist_gir_DATA=			$(INTROSPECTION_GIRS)

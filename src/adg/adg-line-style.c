@@ -221,7 +221,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Constructs a new line style initialized with default params.
  *
- * Returns: a new line style
+ * Returns: (transfer full): a new line style.
  *
  * Since: 1.0
  **/
@@ -261,7 +261,7 @@ adg_line_style_set_color_dress(AdgLineStyle *line_style, AdgDress dress)
  *
  * Gets the color dress used by @line_style.
  *
- * Returns: the current color dress
+ * Returns: (transfer none): the current color dress.
  *
  * Since: 1.0
  **/
@@ -299,7 +299,7 @@ adg_line_style_set_width(AdgLineStyle *line_style, gdouble width)
  *
  * Gets the line thickness value (in global space).
  *
- * Returns: the requested width
+ * Returns: the requested width.
  *
  * Since: 1.0
  **/
@@ -318,7 +318,7 @@ adg_line_style_get_width(AdgLineStyle *line_style)
 /**
  * adg_line_style_set_cap:
  * @line_style: an #AdgLineStyle object
- * @cap: the new cap mode
+ * @cap: (type gint): the new cap mode
  *
  * Sets a new line cap mode.
  *
@@ -343,7 +343,7 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
  *
  * Gets the line cap mode.
  *
- * Returns: the requested line cap mode
+ * Returns: (type gint) (transfer none): the requested line cap mode.
  *
  * Since: 1.0
  **/
@@ -363,7 +363,7 @@ adg_line_style_get_cap(AdgLineStyle *line_style)
 /**
  * adg_line_style_set_join:
  * @line_style: an #AdgLineStyle object
- * @join: the new join mode
+ * @join: (type gint): the new join mode
  *
  * Sets a new line join mode.
  *
@@ -388,7 +388,7 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
  *
  * Gets the line join mode.
  *
- * Returns: the requested line join mode
+ * Returns: (type gint) (transfer none): the requested line join mode.
  *
  * Since: 1.0
  **/
@@ -447,7 +447,7 @@ adg_line_style_get_miter_limit(AdgLineStyle *line_style)
 /**
  * adg_line_style_set_antialias:
  * @line_style: an #AdgLineStyle object
- * @antialias: the new antialias mode
+ * @antialias: (type gint): the new antialias mode
  *
  * Sets a new antialias mode.
  *
@@ -473,7 +473,7 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
  *
  * Gets the antialias mode used.
  *
- * Returns: the requested antialias mode
+ * Returns: (type gint) (transfer none): the requested antialias mode.
  *
  * Since: 1.0
  **/

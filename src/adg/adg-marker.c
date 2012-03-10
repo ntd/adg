@@ -280,8 +280,10 @@ adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
  * @marker: an #AdgMarker
  *
  * Gets the trail where this marker should be applied.
+ * The returned object is owned by @marker and should not be
+ * freed or modified.
  *
- * Returns: the trail owned by @marker or %NULL on errors
+ * Returns: (transfer none): the requested trail or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -583,9 +585,10 @@ adg_marker_set_model(AdgMarker *marker, AdgModel *model)
  *
  * Gets the current model of @marker. This is an accessor method:
  * if you need to get the model for rendering, use adg_marker_model()
- * instead.
+ * instead. The returned object is owned by @marker and should not be
+ * freed or modified.
  *
- * Returns: the cached model owned by @marker or %NULL on errors
+ * Returns: (transfer none): the cached model or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -611,8 +614,10 @@ adg_marker_get_model(AdgMarker *marker)
  *
  * Gets the model of @marker. If the model is not found, it is
  * automatically created by calling the create_model() virtual method.
+ * The returned object is owned by @marker and should not be
+ * freed or modified.
  *
- * Returns: the current model owned by @marker or %NULL on errors
+ * Returns: (transfer none): the current model or %NULL on errors.
  *
  * Since: 1.0
  **/

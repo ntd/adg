@@ -403,7 +403,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Constructs a new empty dimension style initialized with default params.
  *
- * Returns: a newly created dimension style
+ * Returns: (transfer full): a newly created dimension style.
  *
  * Since: 1.0
  **/
@@ -446,8 +446,9 @@ adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
  * object. The returned entity should be unreferenced with
  * g_object_unref() when no longer needed.
  *
- * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker1
- *          property is not set or on errors
+ * Returns: (transfer full): a newly created marker or %NULL
+ *                           if the #AdgDimStyle:marker1 property
+ *                           is not set or on errors.
  *
  * Since: 1.0
  **/
@@ -496,8 +497,9 @@ adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
  * object. The returned entity should be unreferenced with
  * g_object_unref() when no longer needed.
  *
- * Returns: a newly created marker or %NULL if the #AdgDimStyle:marker2
- *          property is not set or on errors
+ * Returns: (transfer full): a newly created marker or %NULL
+ *                           if the #AdgDimStyle:marker2 property
+ *                           is not set or on errors.
  *
  * Since: 1.0
  **/
@@ -538,7 +540,7 @@ adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
  * specific dresses, such as a color explicitely specified on the
  * #AdgDimStyle:value-dress.
  *
- * Returns: the color dress
+ * Returns: (transfer none): the color dress.
  *
  * Since: 1.0
  **/
@@ -577,7 +579,7 @@ adg_dim_style_set_value_dress(AdgDimStyle *dim_style, AdgDress dress)
  * Gets the font dress to be used for the basic value of dimensions
  * with @dim_style.
  *
- * Returns: the font dress
+ * Returns: (transfer none): the font dress.
  *
  * Since: 1.0
  **/
@@ -615,7 +617,7 @@ adg_dim_style_set_min_dress(AdgDimStyle *dim_style, AdgDress dress)
  *
  * Gets the @dim_style dress to be used for the lower limit.
  *
- * Returns: the lower limit dress
+ * Returns: (transfer none): the lower limit dress.
  *
  * Since: 1.0
  **/
@@ -653,7 +655,7 @@ adg_dim_style_set_max_dress(AdgDimStyle *dim_style, AdgDress dress)
  *
  * Gets the @dim_style dress to be used for the upper limit.
  *
- * Returns: the upper limit dress
+ * Returns: (transfer none): the upper limit dress.
  *
  * Since: 1.0
  **/
@@ -692,7 +694,7 @@ adg_dim_style_set_line_dress(AdgDimStyle *dim_style, AdgDress dress)
  * Gets the line dress to be used for rendering the base and
  * the extension lines with @dim_style.
  *
- * Returns: the line dress
+ * Returns: (transfer none): the line dress.
  *
  * Since: 1.0
  **/
@@ -731,7 +733,7 @@ adg_dim_style_set_from_offset(AdgDimStyle *dim_style, gdouble offset)
  * Gets the distance (in global space) the extension lines must keep from the
  * sensed points.
  *
- * Returns: the requested distance
+ * Returns: the requested distance.
  *
  * Since: 1.0
  **/
@@ -770,7 +772,7 @@ adg_dim_style_set_to_offset(AdgDimStyle *dim_style, gdouble offset)
  * Gets how much (in global space) the extension lines must extend after
  * crossing the baseline.
  *
- * Returns: the requested distance
+ * Returns: the requested distance.
  *
  * Since: 1.0
  **/
@@ -809,7 +811,7 @@ adg_dim_style_set_beyond(AdgDimStyle *dim_style, gdouble beyond)
  * Gets how much (in global space) the baseline should extend beyond
  * the extension lines on dimension with outside markers.
  *
- * Returns: the requested beyond length
+ * Returns: the requested beyond length.
  *
  * Since: 1.0
  **/
@@ -848,7 +850,7 @@ adg_dim_style_set_baseline_spacing(AdgDimStyle *dim_style, gdouble spacing)
  * Gets the distance between two consecutive baselines
  * while stacking dimensions.
  *
- * Returns: the requested spacing
+ * Returns: the requested spacing.
  *
  * Since: 1.0
  **/
@@ -886,7 +888,7 @@ adg_dim_style_set_limits_spacing(AdgDimStyle *dim_style, gdouble spacing)
  *
  * Gets the distance (in global space) between the limits/tolerances.
  *
- * Returns: the requested spacing
+ * Returns: the requested spacing.
  *
  * Since: 1.0
  **/
@@ -925,7 +927,7 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * Gets the smooth displacement of the quote. The returned pointer refers
  * to an internal allocated struct and must not be modified or freed.
  *
- * Returns: the requested shift
+ * Returns: (transfer none): the requested shift.
  *
  * Since: 1.0
  **/
@@ -964,7 +966,7 @@ adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  * Gets the smooth displacement for the limits. The returned pointer
  * refers to an internal allocated struct and must not be modified or freed.
  *
- * Returns: the requested shift
+ * Returns: (transfer none): the requested shift.
  *
  * Since: 1.0
  **/
@@ -1004,7 +1006,7 @@ adg_dim_style_set_number_format(AdgDimStyle *dim_style, const gchar *format)
  * returned pointer refers to internally managed text that must not be
  * modified or freed.
  *
- * Returns: the requested format
+ * Returns: (transfer none): the requested format.
  *
  * Since: 1.0
  **/
@@ -1047,7 +1049,7 @@ adg_dim_style_set_number_tag(AdgDimStyle *dim_style, const gchar *tag)
  * The returned pointer refers to internally managed text that
  * must not be modified or freed.
  *
- * Returns: the requested tag
+ * Returns: (transfer none): the requested tag.
  *
  * Since: 1.0
  **/

@@ -327,7 +327,7 @@ adg_point_get_pair(AdgPoint *point)
  * returns %NULL if @point is an explicit pair. The returned
  * value is owned by @point.
  *
- * Returns: an #AdgModel or %NULL
+ * Returns: (transfer none): an #AdgModel or %NULL.
  *
  * Since: 1.0
  **/

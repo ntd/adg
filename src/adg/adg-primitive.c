@@ -66,8 +66,8 @@ adg_primitive_get_type(void)
  * out adg_primitive_deep_dup() if it is required also the content
  * duplication.
  *
- * Returns: (transfer full) (type CpmlPrimitive): a shallow duplicate of
- * @primitive: must be freed with g_free() when no longer needed
+ * Returns: (transfer full): a shallow duplicate of @primitive: must be
+ *                           freed with g_free() when no longer needed.
  *
  * Since: 1.0
  **/

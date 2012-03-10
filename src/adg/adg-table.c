@@ -350,7 +350,7 @@ adg_table_set_table_dress(AdgTable *table, AdgDress dress)
  *
  * Gets the table dress to be used in rendering @table.
  *
- * Returns: the current table dress
+ * Returns: (transfer none): the current table dress.
  *
  * Since: 1.0
  **/
@@ -390,7 +390,7 @@ adg_table_switch_frame(AdgTable *table, gboolean new_state)
  *
  * Returns the state of the #AdgTable:has-frame property.
  *
- * Returns: the current state
+ * Returns: the current state.
  *
  * Since: 1.0
  **/
@@ -605,7 +605,7 @@ adg_table_row_get_extents(AdgTableRow *row)
  * Negative width values are not allowed: this condition will raise
  * a warning without any further processing.
  *
- * Returns: the newly created cell or %NULL on errors
+ * Returns: (transfer full): the newly created cell or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -627,7 +627,7 @@ adg_table_cell_new(AdgTableRow *row, gdouble width)
  * This works similarily and accepts the same parameters as the
  * adg_table_cell_new() function.
  *
- * Returns: the newly created cell or %NULL on errors
+ * Returns: (transfer full): the newly created cell or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -663,7 +663,7 @@ adg_table_cell_new_before(AdgTableCell *cell, gdouble width)
  * if there is yet a cell with the same name a warning message will
  * be raised and the function will fail.
  *
- * Returns: the newly created cell or %NULL on errors
+ * Returns: (transfer full): the newly created cell or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -872,7 +872,7 @@ adg_table_cell_set_text_title(AdgTableCell *cell, const gchar *title)
  * Gets the current title of @cell. The returned string is owned
  * by @cell and must not be modified or freed.
  *
- * Returns: the title entity or %NULL for undefined title
+ * Returns: (transfer none): the title entity or %NULL for undefined title.
  *
  * Since: 1.0
  **/
@@ -974,7 +974,7 @@ adg_table_cell_set_text_value(AdgTableCell *cell, const gchar *value)
  * Gets the current value of @cell. The returned string is owned
  * by @cell and must not be modified or freed.
  *
- * Returns: the value entity or %NULL for undefined value
+ * Returns: (transfer none): the value entity or %NULL for undefined value.
  *
  * Since: 1.0
  **/

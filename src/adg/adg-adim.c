@@ -352,11 +352,14 @@ adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
 
 /**
  * adg_adim_new_full_explicit:
- * @ref1_x: the x coordinate of the first reference point
- * @ref1_y: the y coordinate of the first reference point
- * @ref2_x: the x coordinate of the second reference point
- * @ref2_y: the y coordinate of the second reference point
- * @direction: angle where to extend the dimension
+ * @ref1_x: the x coordinate of end point of the first line
+ * @ref1_y: the y coordinate of end point of the first line
+ * @ref2_x: the x coordinate of end point of the second line
+ * @ref2_y: the y coordinate of end point of the second line
+ * @org1_x: the x coordinate of start point of the first line
+ * @org1_y: the y coordinate of start point of the first line
+ * @org2_x: the x coordinate of start point of the second line
+ * @org2_y: the y coordinate of start point of the second line
  * @pos_x: the x coordinate of the position reference
  * @pos_y: the y coordinate of the position reference
  *

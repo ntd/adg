@@ -416,11 +416,13 @@ adg_switch_extents(gboolean state)
  * adg_entity_get_canvas:
  * @entity: an #AdgEntity
  *
- * Walks on the @entity hierarchy and gets the first parent of @entity that is
- * of #AdgCanvas derived type.
+ * Walks on the @entity hierarchy and gets the first parent of @entity,
+ * that is the first #AdgCanvas instance. The returned object is
+ * owned by @entity and should not be freed or modified.
  *
- * Returns: the requested canvas or %NULL on errors or if there is
- *          no #AdgCanvas in the @entity hierarchy
+ * Returns: (transfer none): the requested canvas or %NULL on errors
+ *                           or if there is no #AdgCanvas in the
+ *                           @entity hierarchy.
  *
  * Since: 1.0
  **/
@@ -463,9 +465,11 @@ adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
  * adg_entity_get_parent:
  * @entity: an #AdgEntity
  *
- * Gets the parent of @entity.
+ * Gets the parent of @entity. The returned object is owned
+ * by @entity and should not be freed or modified.
  *
- * Returns: the parent entity or %NULL on errors or if @entity is a toplevel
+ * Returns: (transfer none): the parent entity or %NULL on errors
+ *                           or if @entity is a toplevel.
  *
  * Since: 1.0
  **/
@@ -864,11 +868,12 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
  * @dress: the dress of the style to get
  *
  * Gets the overriden @dress style from @entity. This is a kind
- * of accessor function: to get the style to be used for rendering
- * purpose, use adg_entity_style() instead.
+ * of accessor function: for rendering purpose use adg_entity_style()
+ * instead. The returned object is owned by @entity and should not be
+ * freed or modified.
  *
- * Returns: the requested style or %NULL if the @dress style
- *          is not overriden
+ * Returns: (transfer none): the requested style or %NULL
+ *                           if the @dress style is not overriden
  *
  * Since: 1.0
  **/
@@ -906,7 +911,11 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
  * <listitem>returns the main style with adg_dress_get_fallback().</listitem>
  * </orderedlist>
  *
- * Returns: the requested style or %NULL for transparent dresses or errors
+ * The returned object is owned by @entity and should not be
+ * freed or modified.
+ *
+ * Returns: (transfer none): the requested style or %NULL for
+ *                           transparent dresses or errors.
  *
  * Since: 1.0
  **/

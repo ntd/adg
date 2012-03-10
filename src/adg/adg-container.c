@@ -317,7 +317,7 @@ adg_container_children(AdgContainer *container)
 /**
  * adg_container_foreach:
  * @container: an #AdgContainer
- * @callback: a callback
+ * @callback: (scope call): a callback
  * @user_data: callback user data
  *
  * Invokes @callback on each child of @container.

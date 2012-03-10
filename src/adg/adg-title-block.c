@@ -311,7 +311,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * property is set by default to #ADG_MIX_DISABLED, that is the
  * title block is not subject to any local transformations.
  *
- * Returns: the newly created title block entity
+ * Returns: (transfer full): the newly created title block entity.
  *
  * Since: 1.0
  **/
@@ -346,7 +346,7 @@ adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: the title or %NULL on no title or errors
+ * Returns: (transfer none): the title or %NULL on no title or errors.
  *
  * Since: 1.0
  **/
@@ -386,7 +386,7 @@ adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: the drawing name or %NULL on no name or errors
+ * Returns: (transfer none): the drawing name or %NULL on no name or errors.
  *
  * Since: 1.0
  **/
@@ -427,7 +427,7 @@ adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: the size or %NULL on no size or errors
+ * Returns: (transfer none): the size or %NULL on no size or errors.
  *
  * Since: 1.0
  **/
@@ -465,7 +465,7 @@ adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
  *
  * Gets the scale descriptive name of the drawing.
  *
- * Returns: the scale text or %NULL on no scale or errors
+ * Returns: (transfer none): the scale text or %NULL on no scale or errors.
  *
  * Since: 1.0
  **/
@@ -503,7 +503,7 @@ adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
  *
  * Gets the author's name of the drawing.
  *
- * Returns: the author or %NULL on no author or errors
+ * Returns: (transfer none): the author or %NULL on no author or errors.
  *
  * Since: 1.0
  **/
@@ -551,7 +551,7 @@ adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
  *
  * Gets the date of the rendering set on @title_block.
  *
- * Returns: the date or %NULL on no date or errors
+ * Returns: (transfer none): the date or %NULL on no date or errors.
  *
  * Since: 1.0
  **/
@@ -596,7 +596,7 @@ adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
  * The returned object is owned by @title_block and should not
  * be unreferenced although can be freely modified.
  *
- * Returns: the logo or %NULL on no logo or errors
+ * Returns: (transfer none): the logo or %NULL on no logo or errors.
  *
  * Since: 1.0
  **/
@@ -643,7 +643,8 @@ adg_title_block_set_projection(AdgTitleBlock *title_block,
  * The returned object is owned by @title_block and should not
  * be unreferenced although can be freely modified.
  *
- * Returns: the projection or %NULL on no projection or errors
+ * Returns: (transfer none): the projection or
+ *                           %NULL on no projection or errors.
  *
  * Since: 1.0
  **/

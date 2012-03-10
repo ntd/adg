@@ -172,7 +172,7 @@ adg_textual_set_font_dress(AdgTextual *textual, AdgDress dress)
  * Gets the current font dress of @textual, eventually resolved to
  * an #AdgFontStyle before the rendering.
  *
- * Returns: the current font dress of @textual
+ * Returns: (transfer none): the current font dress of @textual.
  *
  * Since: 1.0
  **/

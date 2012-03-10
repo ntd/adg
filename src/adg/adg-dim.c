@@ -388,7 +388,7 @@ adg_dim_set_dim_dress(AdgDim *dim, AdgDress dress)
  *
  * Gets the dimension dress to be used in rendering @dim.
  *
- * Returns: the current dimension dress
+ * Returns: (transfer none): the current dimension dress.
  *
  * Since: 1.0
  **/
@@ -503,11 +503,12 @@ adg_dim_set_ref1_from_model(AdgDim *dim, AdgModel *model, const gchar *ref1)
  *
  * Gets the #AdgDim:ref1 point of @dim.
  *
- * Returns: (transfer none): the first reference point.
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
  * adg_point_get_pair() with the returned value must be able to
  * modify the internal cache.
+ *
+ * Returns: (transfer none): the first reference point.
  *
  * Since: 1.0
  **/
@@ -622,11 +623,12 @@ adg_dim_set_ref2_from_model(AdgDim *dim, AdgModel *model, const gchar *ref2)
  *
  * Gets the #AdgDim:ref2 point of @dim.
  *
- * Returns: (transfer none): the second reference point.
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
  * adg_point_get_pair() with the returned value must be able to
  * modify the internal cache.
+ *
+ * Returns: (transfer none): the second reference point.
  *
  * Since: 1.0
  **/
@@ -741,11 +743,12 @@ adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
  *
  * Gets the #AdgDim:pos point of @dim.
  *
- * Returns: (transfer none): the position point.
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
  * adg_point_get_pair() with the returned value must be able to
  * modify the internal cache.
+ *
+ * Returns: (transfer none): the position point.
  *
  * Since: 1.0
  **/
@@ -791,7 +794,7 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
  *
  * Gets the level of this dimension.
  *
- * Returns: the level value
+ * Returns: the level value.
  *
  * Since: 1.0
  **/
@@ -833,7 +836,7 @@ adg_dim_set_outside(AdgDim *dim, AdgThreeState outside)
  * Gets the state of the #AdgDim:outside property: check the property
  * documentation for further details.
  *
- * Returns: the current flag state
+ * Returns: the current flag state.
  *
  * Since: 1.0
  **/
@@ -879,7 +882,7 @@ adg_dim_set_detached(AdgDim *dim, AdgThreeState detached)
  * Gets the state of the #AdgDim:detached property: check the property
  * documentation for further details.
  *
- * Returns: the current flag state
+ * Returns: the current flag state.
  *
  * Since: 1.0
  **/
@@ -927,7 +930,7 @@ adg_dim_set_value(AdgDim *dim, const gchar *value)
  * Gets the value text. The string is internally owned and
  * must not be freed or modified.
  *
- * Returns: (transfer none): the value text
+ * Returns: (transfer none): the value text.
  *
  * Since: 1.0
  **/
@@ -988,8 +991,9 @@ adg_dim_set_min(AdgDim *dim, const gchar *min)
  *
  * Gets the minimum value text or %NULL on minimum value disabled.
  *
- * Returns: (transfer none): the mimimum value text.
  * The string is internally owned and must not be freed or modified.
+ *
+ * Returns: (transfer none): the mimimum value text.
  *
  * Since: 1.0
  **/
@@ -1029,8 +1033,9 @@ adg_dim_set_max(AdgDim *dim, const gchar *max)
  *
  * Gets the maximum value text or %NULL on maximum value disabled.
  *
- * Returns: (transfer none): the maximum value text.
  * The string is internally owned and must not be freed or modified.
+ *
+ * Returns: (transfer none): the maximum value text.
  *
  * Since: 1.0
  **/
@@ -1054,11 +1059,14 @@ adg_dim_get_max(AdgDim *dim)
  * the #AdgDim implementation of the arrange() virtual method has
  * been called.
  *
+ * The returned entity is owned by @dim and should not be
+ * modified or freed.
+ *
  * <note><para>
  * This function is only useful in new dimension implementations.
  * </para></note>
  *
- * Returns: (transfer none): the quote entity
+ * Returns: (transfer none): the quote entity.
  *
  * Since: 1.0
  **/
@@ -1087,7 +1095,7 @@ adg_dim_get_quote(AdgDim *dim)
  * should be validated by this method because every dimensioning
  * style has its own convention regardling the text rotation.
  *
- * Returns: the angle to use (always in radians)
+ * Returns: the angle to use (always in radians).
  *
  * Since: 1.0
  **/

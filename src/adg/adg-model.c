@@ -388,11 +388,12 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
 /**
  * adg_model_get_dependencies:
  * @model: an #AdgModel
- *
+ *.
  * Gets the list of entities dependending on @model. This list
  * is owned by @model and must not be modified or freed.
  *
- * Returns: a #GSList of dependencies or %NULL on error
+ * Returns: (transfer none) (element-type Adg.Entity): a #GSList of
+ *          dependencies or %NULL on error.
  *
  * Since: 1.0
  **/
@@ -411,7 +412,7 @@ adg_model_get_dependencies(AdgModel *model)
 /**
  * adg_model_foreach_dependency:
  * @model: an #AdgModel
- * @callback: the entity callback
+ * @callback: (scope call): the entity callback
  * @user_data: general purpose user data passed "as is" to @callback
  *
  * Invokes @callback on each entity linked to @model.
@@ -530,7 +531,7 @@ adg_model_get_named_pair(AdgModel *model, const gchar *name)
 /**
  * adg_model_foreach_named_pair:
  * @model: an #AdgModel
- * @callback: the named pair callback
+ * @callback: (scope call): the named pair callback
  * @user_data: general purpose user data passed "as is" to @callback
  *
  * Invokes @callback for each named pair set on @model. This can

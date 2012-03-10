@@ -249,7 +249,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * an #AdgCanvas has been added either using the #AdgGtkLayout:canvas
  * property or with adg_gtk_layout_set_canvas().
  *
- * Returns: the newly created widget
+ * Returns: (transfer full): the newly created widget.
  *
  * Since: 1.0
  **/
@@ -266,7 +266,7 @@ adg_gtk_layout_new(void)
  * Creates a new #AdgGtkLayout and sets the #AdgGtkLayout:canvas property
  * to @canvas.
  *
- * Returns: the newly created widget
+ * Returns: (transfer full): the newly created widget.
  *
  * Since: 1.0
  **/
@@ -304,6 +304,11 @@ adg_gtk_layout_set_hadjustment(AdgGtkLayout *layout,
  * @layout: an #AdgGtkLayout
  *
  * Retrieves the current horizontal adjustment of @layout.
+ *
+ * The returned alignment is owned by @layout and should
+ * not be modified or freed.
+ *
+ * Returns: (transfer none): the alignment of @layout.
  *
  * Since: 1.0
  **/
@@ -345,6 +350,11 @@ adg_gtk_layout_set_vadjustment(AdgGtkLayout *layout,
  * @layout: an #AdgGtkLayout
  *
  * Retrieves the current vertical adjustment of @layout.
+ *
+ * The returned alignment is owned by @layout and should
+ * not be modified or freed.
+ *
+ * Returns: (transfer none): the alignment of @layout.
  *
  * Since: 1.0
  **/

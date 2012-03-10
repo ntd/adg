@@ -286,8 +286,10 @@ adg_edges_new_with_source(AdgTrail *source)
  * @edges: an #AdgEdges
  *
  * Gets the source #AdgTrail of this @edges model.
+ * The returned object is owned by @edges and should not be
+ * freed or modified.
  *
- * Returns: the requested #AdgTrail or %NULL on errors
+ * Returns: (transfer none): the requested #AdgTrail or %NULL on errors.
  *
  * Since: 1.0
  **/

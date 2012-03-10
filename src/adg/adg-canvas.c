@@ -403,7 +403,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Creates a new empty canvas object.
  *
- * Returns: the canvas
+ * Returns: (transfer full): the newly created canvas.
  *
  * Since: 1.0
  **/
@@ -466,7 +466,7 @@ adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
  * case the size returned by adg_entity_get_extents() on
  * @canvas will be used instead.
  *
- * Returns: the explicit size set on this canvas or %NULL on errors
+ * Returns: the explicit size set on this canvas or %NULL on errors.
  *
  * Since: 1.0
  **/
@@ -504,7 +504,7 @@ adg_canvas_set_background_dress(AdgCanvas *canvas, AdgDress dress)
  *
  * Gets the background dress to be used in rendering @canvas.
  *
- * Returns: the current background dress
+ * Returns: (transfer none): the current background dress.
  *
  * Since: 1.0
  **/
@@ -543,7 +543,7 @@ adg_canvas_set_frame_dress(AdgCanvas *canvas, AdgDress dress)
  *
  * Gets the frame dress to be used in rendering the border of @canvas.
  *
- * Returns: the current frame dress
+ * Returns: (transfer none): the current frame dress.
  *
  * Since: 1.0
  **/
@@ -592,7 +592,10 @@ adg_canvas_set_title_block(AdgCanvas *canvas, AdgTitleBlock *title_block)
  * Gets the #AdgTitleBlock object of @canvas: check
  * adg_canvas_set_title_block() for details.
  *
- * Returns: the title block object or %NULL
+ * The returned entity is owned by @canvas and should not be
+ * modified or freed.
+ *
+ * Returns: (transfer none): the title block object or %NULL.
  *
  * Since: 1.0
  **/
@@ -630,7 +633,7 @@ adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the top margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error
+ * Returns: the requested margin or %0 on error.
  *
  * Since: 1.0
  **/
@@ -668,7 +671,7 @@ adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the right margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error
+ * Returns: the requested margin or %0 on error.
  *
  * Since: 1.0
  **/
@@ -707,7 +710,7 @@ adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the bottom margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error
+ * Returns: the requested margin or %0 on error.
  *
  * Since: 1.0
  **/
@@ -745,7 +748,7 @@ adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the left margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error
+ * Returns: the requested margin or %0 on error.
  *
  * Since: 1.0
  **/
@@ -832,7 +835,7 @@ adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
  * that is whether a border around the canvas extents (less the
  * margins) should be rendered (%TRUE) or not (%FALSE).
  *
- * Returns: the current status of the frame flag
+ * Returns: the current status of the frame flag.
  *
  * Since: 1.0
  **/
@@ -870,7 +873,7 @@ adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the top padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error
+ * Returns: the requested padding or %0 on error.
  *
  * Since: 1.0
  **/
@@ -908,7 +911,7 @@ adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the right padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error
+ * Returns: the requested padding or %0 on error.
  *
  * Since: 1.0
  **/
@@ -947,7 +950,7 @@ adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the bottom padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error
+ * Returns: the requested padding or %0 on error.
  *
  * Since: 1.0
  **/
@@ -985,7 +988,7 @@ adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the left padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error
+ * Returns: the requested padding or %0 on error.
  *
  * Since: 1.0
  **/
