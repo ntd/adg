@@ -36,8 +36,11 @@ G_BEGIN_DECLS
 #define ADG_IS_TABLE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_TABLE))
 #define ADG_TABLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_TABLE, AdgTableClass))
 
-typedef struct _AdgTableCell    AdgTableCell;
-typedef struct _AdgTableRow     AdgTableRow;
+
+/* Forward declarations */
+ADG_FORWARD_DECL(AdgTableRow);
+ADG_FORWARD_DECL(AdgTableCell);
+
 typedef struct _AdgTable        AdgTable;
 typedef struct _AdgTableClass   AdgTableClass;
 
@@ -57,66 +60,30 @@ GType           adg_table_get_type              (void) G_GNUC_CONST;
 
 AdgTable *      adg_table_new                   (void);
 
+void            adg_table_insert                (AdgTable       *table,
+                                                 AdgTableRow    *table_row,
+                                                 AdgTableRow    *before_row);
+void            adg_table_remove                (AdgTable       *table,
+                                                 AdgTableRow    *table_row);
+void            adg_table_foreach               (AdgTable       *table,
+                                                 GCallback       callback,
+                                                 gpointer        user_data);
+void            adg_table_foreach_cell          (AdgTable       *table,
+                                                 GCallback       callback,
+                                                 gpointer        user_data);
+void            adg_table_set_cell              (AdgTable       *table,
+                                                 const gchar    *name,
+                                                 AdgTableCell   *table_cell);
+AdgTableCell *  adg_table_get_cell              (AdgTable       *table,
+                                                 const gchar    *name);
+AdgStyle *      adg_table_get_table_style       (AdgTable       *table);
 void            adg_table_set_table_dress       (AdgTable       *table,
                                                  AdgDress        dress);
 AdgDress        adg_table_get_table_dress       (AdgTable       *table);
 void            adg_table_switch_frame          (AdgTable       *table,
                                                  gboolean        new_state);
 gboolean        adg_table_has_frame             (AdgTable       *table);
-guint           adg_table_get_n_rows            (AdgTable       *table);
-
-AdgTableRow *   adg_table_row_new               (AdgTable       *table);
-AdgTableRow *   adg_table_row_new_before        (AdgTableRow    *row);
-void            adg_table_row_delete            (AdgTableRow    *row);
-guint           adg_table_row_get_n_cells       (const AdgTableRow *row);
-void            adg_table_row_set_height        (AdgTableRow    *row,
-                                                 gdouble         height);
-gdouble         adg_table_row_get_height        (AdgTableRow    *row);
-const CpmlExtents *
-                adg_table_row_get_extents       (AdgTableRow    *row);
-
-AdgTableCell *  adg_table_cell_new              (AdgTableRow    *row,
-                                                 gdouble         width);
-AdgTableCell *  adg_table_cell_new_before       (AdgTableCell   *cell,
-                                                 gdouble         width);
-AdgTableCell *  adg_table_cell_new_full         (AdgTableRow    *row,
-                                                 gdouble         width,
-                                                 const gchar    *name,
-                                                 const gchar    *title,
-                                                 const gchar    *value);
-AdgTableCell *  adg_table_cell                  (AdgTable       *table,
-                                                 const gchar    *name);
-void            adg_table_cell_delete           (AdgTableCell   *cell);
-void            adg_table_cell_set_name         (AdgTableCell   *cell,
-                                                 const gchar    *name);
-const gchar *   adg_table_cell_get_name         (AdgTableCell   *cell);
-void            adg_table_cell_set_title        (AdgTableCell   *cell,
-                                                 AdgEntity      *title);
-void            adg_table_cell_set_text_title   (AdgTableCell   *cell,
-                                                 const gchar    *title);
-AdgEntity *     adg_table_cell_title            (AdgTableCell   *cell);
-void            adg_table_cell_set_value        (AdgTableCell   *cell,
-                                                 AdgEntity      *value);
-void            adg_table_cell_set_text_value   (AdgTableCell   *cell,
-                                                 const gchar    *value);
-AdgEntity *     adg_table_cell_value            (AdgTableCell   *cell);
-void            adg_table_cell_set_value_pos    (AdgTableCell   *cell,
-                                                 const AdgPair  *from_factor,
-                                                 const AdgPair  *to_factor);
-void            adg_table_cell_set_value_pos_explicit
-                                                (AdgTableCell   *cell,
-                                                 gdouble         from_x,
-                                                 gdouble         from_y,
-                                                 gdouble         to_x,
-                                                 gdouble         to_y);
-void            adg_table_cell_set_width        (AdgTableCell   *cell,
-                                                 gdouble         width);
-gdouble         adg_table_cell_get_width        (AdgTableCell   *cell);
-void            adg_table_cell_switch_frame     (AdgTableCell   *cell,
-                                                 gboolean        new_state);
-gboolean        adg_table_cell_has_frame        (AdgTableCell   *cell);
-const CpmlExtents *
-                adg_table_cell_get_extents      (AdgTableCell   *cell);
+void            adg_table_invalidate_grid       (AdgTable       *table);
 
 G_END_DECLS
 

@@ -44,7 +44,10 @@
 
 
 #include "adg-internal.h"
+
 #include "adg-table.h"
+#include "adg-table-row.h"
+#include "adg-table-cell.h"
 
 #include "adg-title-block.h"
 #include "adg-title-block-private.h"
@@ -53,7 +56,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
 
 
-G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE)
+G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE);
 
 enum {
     PROP_0,
@@ -77,7 +80,6 @@ static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
-static AdgTable *       _adg_get_table          (AdgTitleBlock  *title_block);
 
 
 static void
@@ -154,9 +156,12 @@ adg_title_block_class_init(AdgTitleBlockClass *klass)
 static void
 adg_title_block_init(AdgTitleBlock *title_block)
 {
+    AdgTable *table = (AdgTable *) title_block;
+    AdgTableRow *row;
     AdgTitleBlockPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(title_block,
                                                              ADG_TYPE_TITLE_BLOCK,
                                                              AdgTitleBlockPrivate);
+
     data->author = NULL;
     data->title = NULL;
     data->drawing = NULL;
@@ -167,6 +172,26 @@ adg_title_block_init(AdgTitleBlock *title_block)
     data->projection = NULL;
 
     title_block->data = data;
+
+    /* Create the title block template*/
+
+    /* First row */
+    row = adg_table_row_new(table);
+    adg_table_cell_new_with_width(row, 62);
+    adg_table_cell_new_full(row, 200, "title", _("TITLE"), TRUE);
+
+    /* Second row */
+    row = adg_table_row_new(table);
+    adg_table_cell_new_full(row, 62, "logo", NULL, FALSE);
+    adg_table_cell_new_full(row, 40, "size", _("SIZE"), TRUE);
+    adg_table_cell_new_full(row, 60, "scale", _("SCALE"), TRUE);
+    adg_table_cell_new_full(row, 100, "drawing", _("DRAWING"), TRUE);
+
+    /* Third row */
+    row = adg_table_row_new(table);
+    adg_table_cell_new_full(row, 62, "projection", NULL, TRUE);
+    adg_table_cell_new_full(row, 100, "author", _("AUTHOR"), TRUE);
+    adg_table_cell_new_full(row, 100, "date", _("DATE"), TRUE);
 }
 
 static void
@@ -233,37 +258,37 @@ _adg_set_property(GObject *object, guint prop_id,
 
     title_block = (AdgTitleBlock *) object;
     data = title_block->data;
-    table = _adg_get_table(title_block);
+    table = (AdgTable *) object;
 
     switch (prop_id) {
     case PROP_TITLE:
         g_free(data->title);
         data->title = g_value_dup_string(value);
-        cell = adg_table_cell(table, "title");
+        cell = adg_table_get_cell(table, "title");
         adg_table_cell_set_text_value(cell, data->title);
         break;
     case PROP_DRAWING:
         g_free(data->drawing);
         data->drawing = g_value_dup_string(value);
-        cell = adg_table_cell(table, "drawing");
+        cell = adg_table_get_cell(table, "drawing");
         adg_table_cell_set_text_value(cell, data->drawing);
         break;
     case PROP_SIZE:
         g_free(data->size);
         data->size = g_value_dup_string(value);
-        cell = adg_table_cell(table, "size");
+        cell = adg_table_get_cell(table, "size");
         adg_table_cell_set_text_value(cell, data->size);
         break;
     case PROP_SCALE:
         g_free(data->scale);
         data->scale = g_value_dup_string(value);
-        cell = adg_table_cell(table, "scale");
+        cell = adg_table_get_cell(table, "scale");
         adg_table_cell_set_text_value(cell, data->scale);
         break;
     case PROP_AUTHOR:
         g_free(data->author);
         data->author = g_value_dup_string(value);
-        cell = adg_table_cell(table, "author");
+        cell = adg_table_get_cell(table, "author");
         adg_table_cell_set_text_value(cell, data->author);
         break;
     case PROP_DATE:
@@ -282,18 +307,18 @@ _adg_set_property(GObject *object, guint prop_id,
         } else {
             data->date = g_value_dup_string(value);
         }
-        cell = adg_table_cell(table, "date");
+        cell = adg_table_get_cell(table, "date");
         adg_table_cell_set_text_value(cell, data->date);
         break;
     case PROP_LOGO:
         data->logo = g_value_get_object(value);
-        cell = adg_table_cell(table, "logo");
+        cell = adg_table_get_cell(table, "logo");
         adg_table_cell_set_value(cell, data->logo);
         adg_table_cell_set_value_pos_explicit(cell, 0.5, 1, 0.5, 0.5);
         break;
     case PROP_PROJECTION:
         data->projection = g_value_get_object(value);
-        cell = adg_table_cell(table, "projection");
+        cell = adg_table_get_cell(table, "projection");
         adg_table_cell_set_value(cell, data->projection);
         adg_table_cell_set_value_pos_explicit(cell, 0.5, 0.5, 0.5, 0.5);
         break;
@@ -658,66 +683,4 @@ adg_title_block_projection(AdgTitleBlock *title_block)
     data = title_block->data;
 
     return data->projection;
-}
-
-
-static AdgTable *
-_adg_get_table(AdgTitleBlock *title_block)
-{
-    AdgTable *table = (AdgTable *) title_block;
-
-    if (adg_table_get_n_rows(table) == 0) {
-        AdgTableRow *row;
-        AdgTableCell *cell;
-
-        /* First row */
-        row = adg_table_row_new(table);
-
-        cell = adg_table_cell_new(row, 62);
-
-        cell = adg_table_cell_new(row, 200);
-        adg_table_cell_set_name(cell, "title");
-        adg_table_cell_set_text_title(cell, _("TITLE"));
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        /* Second row */
-        row = adg_table_row_new(table);
-
-        cell = adg_table_cell_new(row, 62);
-        adg_table_cell_set_name(cell, "logo");
-
-        cell = adg_table_cell_new(row, 40);
-        adg_table_cell_set_name(cell, "size");
-        adg_table_cell_set_text_title(cell, _("SIZE"));
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        cell = adg_table_cell_new(row, 60);
-        adg_table_cell_set_name(cell, "scale");
-        adg_table_cell_set_text_title(cell, _("SCALE"));
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        cell = adg_table_cell_new(row, 100);
-        adg_table_cell_set_name(cell, "drawing");
-        adg_table_cell_set_text_title(cell, _("DRAWING"));
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        /* Third row */
-        row = adg_table_row_new(table);
-
-        cell = adg_table_cell_new(row, 62);
-        adg_table_cell_set_name(cell, "projection");
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        cell = adg_table_cell_new(row, 100);
-        adg_table_cell_set_name(cell, "author");
-        adg_table_cell_set_text_title(cell, _("AUTHOR"));
-        adg_table_cell_switch_frame(cell, TRUE);
-
-        cell = adg_table_cell_new(row, 100);
-        adg_table_cell_set_name(cell, "date");
-        adg_table_cell_set_text_title(cell, _("DATE"));
-        adg_table_cell_switch_frame(cell, TRUE);
-    }
-
-    return table;
 }

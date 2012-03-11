@@ -50,6 +50,8 @@
       <xi:include href="xml/adg-toy-text.xml"/>
       <xi:include href="xml/adg-text.xml"/>
       <xi:include href="xml/adg-table.xml"/>
+      <xi:include href="xml/adg-table-row.xml"/>
+      <xi:include href="xml/adg-table-cell.xml"/>
     </chapter>
     <chapter id="Populating-special">
       <title>Special entities</title>

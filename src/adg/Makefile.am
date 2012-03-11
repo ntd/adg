@@ -47,6 +47,8 @@ h_sources=			adg-adim.h \
 				adg-stroke.h \
 				adg-style.h \
 				adg-table.h \
+				adg-table-cell.h \
+				adg-table-row.h \
 				adg-table-style.h \
 				adg-textual.h \
 				adg-title-block.h \
@@ -120,6 +122,8 @@ c_sources=			adg-adim.c \
 				adg-stroke.c \
 				adg-style.c \
 				adg-table.c \
+				adg-table-cell.c \
+				adg-table-row.c \
 				adg-table-style.c \
 				adg-textual.c \
 				adg-title-block.c \

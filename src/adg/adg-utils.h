@@ -40,6 +40,15 @@
 
 G_BEGIN_DECLS
 
+typedef struct _AdgClosure        AdgClosure;
+
+
+struct _AdgClosure {
+    GCallback       callback;
+    gpointer        user_data;
+};
+
+
 #if GLIB_MINOR_VERSION < 16
 gint            g_strcmp0               (const gchar    *s1,
                                          const gchar    *s2);

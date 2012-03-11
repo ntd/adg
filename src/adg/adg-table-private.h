@@ -24,25 +24,13 @@
 
 G_BEGIN_DECLS
 
-#define GET_TABLE_STYLE(table)  (((AdgTablePrivate *) ((AdgTable *) (table))->data)->table_style)
-
+typedef struct _AdgProxyData AdgProxyData;
 typedef struct _AdgTablePrivate AdgTablePrivate;
 
-struct _AdgTableCell {
-    AdgTableRow   *row;
-    gdouble        width;
-    gboolean       has_frame;
-    AdgEntity     *title;
-    AdgEntity     *value;
-    AdgPair        value_factor;
-    CpmlExtents    extents;
-};
-
-struct _AdgTableRow {
-    AdgTable      *table;
-    GSList        *cells;
-    gdouble        height;
-    CpmlExtents    extents;
+struct _AdgProxyData {
+    guint signal_id;
+    GQuark detail;
+    va_list var_args;
 };
 
 struct _AdgTablePrivate {
