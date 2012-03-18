@@ -80,8 +80,6 @@ static void     _adg_set_scroll_adjustments     (GtkWidget      *widget,
                                                  GtkAdjustment  *vadjustment);
 static void     _adg_parent_set                 (GtkWidget      *widget,
                                                  GtkWidget      *old_parent);
-static void     _adg_size_request               (GtkWidget      *widget,
-                                                 GtkRequisition *requisition);
 static void     _adg_size_allocate              (GtkWidget      *widget,
                                                  GtkAllocation  *allocation);
 static void     _adg_canvas_changed             (AdgGtkArea     *area,
@@ -117,7 +115,6 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     gobject_class->set_property = _adg_set_property;
 
     widget_class->parent_set = _adg_parent_set;
-    widget_class->size_request = _adg_size_request;
     widget_class->size_allocate = _adg_size_allocate;
 
     area_class->canvas_changed = _adg_canvas_changed;
@@ -391,13 +388,6 @@ _adg_parent_set(GtkWidget *widget, GtkWidget *old_parent)
         _ADG_OLD_WIDGET_CLASS->parent_set(widget, old_parent);
 
     _adg_set_parent_size(layout);
-}
-
-static void
-_adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
-{
-    if (_ADG_OLD_WIDGET_CLASS->size_request != NULL)
-        _ADG_OLD_WIDGET_CLASS->size_request(widget, requisition);
 }
 
 static void
