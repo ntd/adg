@@ -377,7 +377,7 @@ _adg_arrange(AdgEntity *entity)
     AdgEntity *quote_entity;
     gboolean outside;
     const AdgMatrix *global, *local;
-    AdgPair ref1, ref2, base;
+    AdgPair ref2, base;
     AdgPair pair;
     CpmlExtents extents;
 
@@ -409,11 +409,9 @@ _adg_arrange(AdgEntity *entity)
     local = adg_entity_get_local_matrix(entity);
     extents.is_defined = FALSE;
 
-    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
     cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
     cpml_pair_copy(&base, &data->point.base);
 
-    cpml_pair_transform(&ref1, local);
     cpml_pair_transform(&ref2, local);
     cpml_pair_transform(&base, local);
     base.x += data->shift.base.x;
@@ -426,8 +424,25 @@ _adg_arrange(AdgEntity *entity)
     cpml_pair_to_cairo(&ref2, &data->cpml.data[3]);
 
     if (outside) {
+        AdgDimStyle *dim_style;
+        gdouble beyond;
+        CpmlVector vector;
+
+        dim_style = _ADG_GET_DIM_STYLE(dim);
+        beyond = adg_dim_style_get_beyond(dim_style);
+        vector.x = ref2.x - base.x;
+        vector.y = ref2.y - base.y;
+        cpml_vector_set_length(&vector, beyond);
+        pair.x = ref2.x + vector.x;
+        pair.y = ref2.y + vector.y;
+
         data->cpml.data[2].header.length = 2;
-        /* XXX: http://dev.entidi.com/p/adg/issues/9/ */
+
+        /* Outside segment start */
+        cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
+
+        /* Outside segment end */
+        cpml_pair_to_cairo(&ref2, &data->cpml.data[7]);
     } else {
         data->cpml.data[2].header.length = 6;
     }
