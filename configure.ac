@@ -170,18 +170,34 @@ AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" = "xgtk2" -o "x${with_gtk}" = "x
 AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
 AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
-dnl Glade
-AC_ARG_ENABLE([glade],
-              [AS_HELP_STRING([--enable-glade],
-                              [install glade catalog file @<:@default=check@:>@])],
-              [],[enable_glade=check])
-AS_IF([test "x${enable_glade}" != "xno"],
-      [PKG_CHECK_MODULES([GLADE],[gladeui-1.0],
-                         [enable_glade=yes],
-                         [AS_IF([test "x${enable_glade}" = "xyes"],
-                                [AC_MSG_ERROR([${GLADE_PKG_ERRORS} and glade support requested])],
-                                [enable_glade=no])])])
-AM_CONDITIONAL([HAVE_GLADE],[test "x${enable_glade}" = "xyes"])
+dnl Glade catalog dir
+AC_ARG_WITH(glade_catalogdir,
+            [AC_HELP_STRING([--with-glade-catalogdir=PATH],
+                            [whether to install the glade catalogs @<:@default=check@:>@])],
+            [],[with_glade_catalogdir=check])
+# Check before for gladeui-2.0, dependent on GTK+3, and failback to gladeui-1.0.
+AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gtk}" != "xgtk2"],
+      [PKG_CHECK_MODULES([GLADEUI2],[gladeui-2.0],[with_gladeui=gladeui-2.0],[:])])
+AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gladeui}" = "x"],
+      [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[with_gladeui=gladeui-1.0],
+                         [with_glade_catalogdir=no])])
+# The following is a dirty hack to have a catalogdir relative to datarootdir
+AS_IF([test "x${with_gladeui}" != "x"],
+      [gladeroot=`${PKG_CONFIG} --variable=datarootdir ${with_gladeui}`
+            AS_IF([test "x${gladeroot}" = "x"],
+                  [with_glade_catalogdir="\${datarootdir}/glade3/catalogs}"],
+                  [gladecatalog=`${PKG_CONFIG} --variable=catalogdir ${with_gladeui}`
+                   with_glade_catalogdir=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])])
+# Substitutions and reporting
+AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
+AM_COND_IF([HAVE_GLADE],
+           [enable_glade=yes
+            GLADE_CATALOGDIR="${with_glade_catalogdir}"
+            report_glade_catalogdir="
+                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
+           [enable_glade=no
+            GLADE_CATALOGDIR=""])
+AC_SUBST([GLADE_CATALOGDIR])
 
 dnl gtk-doc
 GTK_DOC_CHECK(gtkdoc_prereq)
@@ -242,16 +258,6 @@ void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
                                                  GtkPageSetup   *page_setup);
 '],
            [ADG_CANVAS_H_ADDITIONAL=''])
-AM_COND_IF([HAVE_GLADE],
-           [gladeroot=`${PKG_CONFIG} --variable=datarootdir gladeui-1.0`
-            AS_IF([test "x${gladeroot}" = "x"],
-                  [GLADE_CATALOGDIR="\${datarootdir}/glade3/catalogs}"],
-                  [gladecatalog=`${PKG_CONFIG} --variable=catalogdir gladeui-1.0`
-                   GLADE_CATALOGDIR=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])
-            report_glade_catalogdir="
-                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
-           [GLADE_CATALOGDIR=''
-            report_glade_catalogdir=''])
 
 AC_SUBST([CPML_API_VERSION],cpml_api_version)
 AC_SUBST([CPML_LT_VERSION],cpml_lt_version)
@@ -262,7 +268,6 @@ AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_H_ADDITIONAL])
 AC_SUBST([ADG_CANVAS_H_ADDITIONAL])
 AC_SUBST([DLLDIR])
-AC_SUBST([GLADE_CATALOGDIR])
 
 AM_SUBST_NOTMAKE([CPML_REQUIRES])
 AM_SUBST_NOTMAKE([ADG_REQUIRES])
