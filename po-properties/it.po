@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-09 20:41+0200\n"
+"POT-Creation-Date: 2012-03-19 01:05+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:165
+#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:182
 msgid "Factor"
 msgstr "Fattore"
 
@@ -151,7 +151,7 @@ msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:196
+#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:140
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
@@ -688,26 +688,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:158
+#: src/adg/adg-gtk-area.c:175
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:159
+#: src/adg/adg-gtk-area.c:176
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:166
+#: src/adg/adg-gtk-area.c:183
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:172
+#: src/adg/adg-gtk-area.c:189
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:173
+#: src/adg/adg-gtk-area.c:190
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -715,37 +715,13 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:179
+#: src/adg/adg-gtk-area.c:196
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:180
+#: src/adg/adg-gtk-area.c:197
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
-
-#: src/adg/adg-gtk-layout.c:127
-msgid "Horizontal adjustment"
-msgstr "Regolazione orizzontale"
-
-#: src/adg/adg-gtk-layout.c:128
-msgid ""
-"The GtkAdjustment that determines the values of the horizontal position for "
-"this viewport"
-msgstr ""
-"Il GtkAdjustment che determina il valore per il posizionamento orizzontale "
-"di questa vista"
-
-#: src/adg/adg-gtk-layout.c:134
-msgid "Vertical adjustment"
-msgstr "Regolazione verticale"
-
-#: src/adg/adg-gtk-layout.c:135
-msgid ""
-"The GtkAdjustment that determines the values of the vertical position for "
-"this viewport"
-msgstr ""
-"Il GtkAdjustment che determina il valore per il posizionamento verticale di "
-"questa vista"
 
 #: src/adg/adg-hatch.c:93
 msgid "Fill Dress"
@@ -898,7 +874,7 @@ msgstr "Vestito Assi"
 msgid "The line dress to use for rendering the axis of the projection scheme"
 msgstr "Il vestito linea da usare per il rendering degli assi della proiezione"
 
-#: src/adg/adg-projection.c:111 src/adg/adg-title-block.c:147
+#: src/adg/adg-projection.c:111 src/adg/adg-title-block.c:149
 msgid "Projection Scheme"
 msgstr "Proiezione Ortografica"
 
@@ -926,7 +902,7 @@ msgstr "Angolo"
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:190
+#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:134
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
@@ -934,11 +910,11 @@ msgstr "Il vestito da usare per tracciare questa entità"
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
-#: src/adg/adg-table.c:189
+#: src/adg/adg-table.c:133
 msgid "Table Dress"
 msgstr "Vestito Tabella"
 
-#: src/adg/adg-table.c:197
+#: src/adg/adg-table.c:141
 msgid ""
 "If enabled, a frame using the proper dress found in this table style will be "
 "drawn around the table extents"
@@ -1021,19 +997,19 @@ msgstr "Vestito del Font"
 msgid "The font dress to use for rendering this text"
 msgstr "Il vestito del font da usare per disegnare questo testo"
 
-#: src/adg/adg-title-block.c:98
+#: src/adg/adg-title-block.c:100
 msgid "Title"
 msgstr "Titolo"
 
-#: src/adg/adg-title-block.c:99
+#: src/adg/adg-title-block.c:101
 msgid "A descriptive title of the drawing"
 msgstr "Un titolo descrittivo del disegno"
 
-#: src/adg/adg-title-block.c:105
+#: src/adg/adg-title-block.c:107
 msgid "Drawing Name"
 msgstr "Nome Disegno"
 
-#: src/adg/adg-title-block.c:106
+#: src/adg/adg-title-block.c:108
 msgid ""
 "The name of the drawing: the ADG canvas does not make any assumtpion on this "
 "text string"
@@ -1041,11 +1017,11 @@ msgstr ""
 "Il nome del disegno: il canvas ADG non avanza alcuna ipotesi sul significato "
 "di questa stringa"
 
-#: src/adg/adg-title-block.c:112
+#: src/adg/adg-title-block.c:114
 msgid "Media Size"
 msgstr "Dimensione del Supporto"
 
-#: src/adg/adg-title-block.c:113
+#: src/adg/adg-title-block.c:115
 msgid ""
 "The media size to be used to print the drawing, usually something like "
 "\"A3\" or \"Letter\""
@@ -1053,27 +1029,27 @@ msgstr ""
 "La dimensione del supporto usato per stampare il disegno, solitamente una "
 "stringa tipo \"A3\" o \"Letter\""
 
-#: src/adg/adg-title-block.c:119
+#: src/adg/adg-title-block.c:121
 msgid "Scale"
 msgstr "Scala"
 
-#: src/adg/adg-title-block.c:120
+#: src/adg/adg-title-block.c:122
 msgid "The scale of the drawing, if it makes sense"
 msgstr "La scala del disegno, se significativa"
 
-#: src/adg/adg-title-block.c:126
+#: src/adg/adg-title-block.c:128
 msgid "Author"
 msgstr "Autore"
 
-#: src/adg/adg-title-block.c:127
+#: src/adg/adg-title-block.c:129
 msgid "Name and last name of the author of the drawing"
 msgstr "Nome e cognome dell'autore del disegno"
 
-#: src/adg/adg-title-block.c:133
+#: src/adg/adg-title-block.c:135
 msgid "Date"
 msgstr "Data"
 
-#: src/adg/adg-title-block.c:134
+#: src/adg/adg-title-block.c:136
 msgid ""
 "The date this drawing has been generated: setting it to an empty string will "
 "fallback to today in the preferred representation for the current locale"
@@ -1082,11 +1058,11 @@ msgstr ""
 "verrà inizializzata automaticamente ad oggi nel formato privilegiato dalle "
 "impostazioni di localizzazione correnti"
 
-#: src/adg/adg-title-block.c:140
+#: src/adg/adg-title-block.c:142
 msgid "Logo"
 msgstr "Logo"
 
-#: src/adg/adg-title-block.c:141
+#: src/adg/adg-title-block.c:143
 msgid ""
 "An entity to be displayed in the title block as the logo of the owner: the "
 "containing cell has a 1:1 ratio"
@@ -1094,7 +1070,7 @@ msgstr ""
 "L'entità da mostrare nel riquadro delle iscrizioni come logo del "
 "proprietario: la cella contenitrice ha un ratio 1:1"
 
-#: src/adg/adg-title-block.c:148
+#: src/adg/adg-title-block.c:150
 msgid ""
 "The entity usually reserved to identify the projection scheme adopted by "
 "this drawing"
@@ -1113,3 +1089,23 @@ msgid ""
 msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
+
+#~ msgid "Horizontal adjustment"
+#~ msgstr "Regolazione orizzontale"
+
+#~ msgid ""
+#~ "The GtkAdjustment that determines the values of the horizontal position "
+#~ "for this viewport"
+#~ msgstr ""
+#~ "Il GtkAdjustment che determina il valore per il posizionamento "
+#~ "orizzontale di questa vista"
+
+#~ msgid "Vertical adjustment"
+#~ msgstr "Regolazione verticale"
+
+#~ msgid ""
+#~ "The GtkAdjustment that determines the values of the vertical position for "
+#~ "this viewport"
+#~ msgstr ""
+#~ "Il GtkAdjustment che determina il valore per il posizionamento verticale "
+#~ "di questa vista"

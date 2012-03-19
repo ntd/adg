@@ -93,54 +93,40 @@ enum {
 };
 
 
-static void     _adg_dispose                (GObject         *object);
-static void     _adg_get_property           (GObject         *object,
-                                             guint            prop_id,
-                                             GValue          *value,
-                                             GParamSpec      *pspec);
-static void     _adg_set_property           (GObject         *object,
-                                             guint            prop_id,
-                                             const GValue    *value,
-                                             GParamSpec      *pspec);
-static void     _adg_get_preferred_height   (GtkWidget       *widget,
-                                             gint            *minimum_height,
-                                             gint            *natural_height);
-static void     _adg_get_preferred_height_for_width
-                                            (GtkWidget       *widget,
-                                             gint             width,
-                                             gint            *minimum_height,
-                                             gint            *natural_height);
-static void     _adg_get_preferred_width    (GtkWidget       *widget,
-                                             gint            *minimum_width,
-                                             gint            *natural_width);
-static void     _adg_get_preferred_width_for_height
-                                            (GtkWidget       *widget,
-                                             gint             height,
-                                             gint            *minimum_width,
-                                             gint            *natural_width);
-static void     _adg_size_allocate          (GtkWidget       *widget,
-                                             GtkAllocation   *allocation);
-static gboolean _adg_draw                   (GtkWidget       *widget,
-                                             cairo_t         *cr);
-static gboolean _adg_scroll_event           (GtkWidget       *widget,
-                                             GdkEventScroll  *event);
-static gboolean _adg_button_press_event     (GtkWidget       *widget,
+static void             _adg_dispose            (GObject         *object);
+static void             _adg_get_property       (GObject         *object,
+                                                 guint            prop_id,
+                                                 GValue          *value,
+                                                 GParamSpec      *pspec);
+static void             _adg_set_property       (GObject         *object,
+                                                 guint            prop_id,
+                                                 const GValue    *value,
+                                                 GParamSpec      *pspec);
+static void             _adg_size_request       (GtkWidget       *widget,
+                                                 GtkRequisition  *requisition);
+static void             _adg_size_allocate      (GtkWidget       *widget,
+                                                 GtkAllocation   *allocation);
+static gboolean         _adg_expose_event       (GtkWidget       *widget,
+                                                 GdkEventExpose  *event);
+static gboolean         _adg_scroll_event       (GtkWidget       *widget,
+                                                 GdkEventScroll  *event);
+static gboolean         _adg_button_press_event (GtkWidget       *widget,
                                                  GdkEventButton  *event);
-static gboolean _adg_motion_notify_event    (GtkWidget       *widget,
-                                             GdkEventMotion  *event);
-static gboolean _adg_get_map                (GtkWidget       *widget,
-                                             gboolean         local_space,
-                                             AdgMatrix       *map,
-                                             AdgMatrix       *inverted);
-static void     _adg_set_map                (GtkWidget       *widget,
-                                             gboolean         local_space,
-                                             const AdgMatrix *map);
-static void     _adg_canvas_changed         (AdgGtkArea      *area,
-                                             AdgCanvas       *old_canvas);
+static gboolean         _adg_motion_notify_event(GtkWidget       *widget,
+                                                 GdkEventMotion  *event);
+static gboolean         _adg_get_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
+                                                 AdgMatrix       *map,
+                                                 AdgMatrix       *inverted);
+static void             _adg_set_map            (GtkWidget       *widget,
+                                                 gboolean         local_space,
+                                                 const AdgMatrix *map);
+static void             _adg_canvas_changed     (AdgGtkArea      *area,
+                                                 AdgCanvas       *old_canvas);
 static const CpmlExtents *
-                _adg_get_extents            (AdgGtkArea      *area);
+                        _adg_get_extents        (AdgGtkArea      *area);
 
-static guint    _adg_signals[LAST_SIGNAL] = { 0 };
+static guint            _adg_signals[LAST_SIGNAL] = { 0 };
 
 
 static void
@@ -159,12 +145,9 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
-    widget_class->get_preferred_height = _adg_get_preferred_height;
-    widget_class->get_preferred_height_for_width = _adg_get_preferred_height_for_width;
-    widget_class->get_preferred_width = _adg_get_preferred_width;
-    widget_class->get_preferred_width_for_height = _adg_get_preferred_width_for_height;
+    widget_class->size_request = _adg_size_request;
     widget_class->size_allocate = _adg_size_allocate;
-    widget_class->draw = _adg_draw;
+    widget_class->expose_event = _adg_expose_event;
     widget_class->scroll_event = _adg_scroll_event;
     widget_class->button_press_event = _adg_button_press_event;
     widget_class->motion_notify_event = _adg_motion_notify_event;
@@ -684,8 +667,7 @@ adg_gtk_area_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
 
 
 static void
-_adg_get_preferred_height(GtkWidget *widget,
-                          gint *minimum_height, gint *natural_height)
+_adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
     AdgGtkArea *area;
     const CpmlExtents *extents;
@@ -694,56 +676,8 @@ _adg_get_preferred_height(GtkWidget *widget,
     extents = _adg_get_extents(area);
 
     if (extents->is_defined) {
-        *minimum_height = extents->size.y;
-        *natural_height = *minimum_height;
-    }
-}
-
-static void
-_adg_get_preferred_height_for_width(GtkWidget *widget, gint width,
-                                    gint *minimum_height, gint *natural_height)
-{
-    AdgGtkArea *area;
-    const CpmlExtents *extents;
-
-    area = (AdgGtkArea *) widget;
-    extents = _adg_get_extents(area);
-
-    if (extents->is_defined && extents->size.x > 0) {
-        *minimum_height = extents->size.y;
-        *natural_height = *minimum_height * width / extents->size.x;
-    }
-}
-
-static void
-_adg_get_preferred_width(GtkWidget *widget,
-                         gint *minimum_width, gint *natural_width)
-{
-    AdgGtkArea *area;
-    const CpmlExtents *extents;
-
-    area = (AdgGtkArea *) widget;
-    extents = _adg_get_extents(area);
-
-    if (extents->is_defined) {
-        *minimum_width = extents->size.x;
-        *natural_width = *minimum_width;
-    }
-}
-
-static void
-_adg_get_preferred_width_for_height(GtkWidget *widget, gint height,
-                                    gint *minimum_width, gint *natural_width)
-{
-    AdgGtkArea *area;
-    const CpmlExtents *extents;
-
-    area = (AdgGtkArea *) widget;
-    extents = _adg_get_extents(area);
-
-    if (extents->is_defined && extents->size.y > 0) {
-        *minimum_width = extents->size.x;
-        *natural_width = *minimum_width * height / extents->size.y;
+        requisition->width = extents->size.x;
+        requisition->height = extents->size.y;
     }
 }
 
@@ -812,7 +746,7 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 }
 
 static gboolean
-_adg_draw(GtkWidget *widget, cairo_t *cr)
+_adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
     AdgGtkAreaPrivate *data;
     AdgCanvas *canvas;
@@ -820,12 +754,17 @@ _adg_draw(GtkWidget *widget, cairo_t *cr)
     data = ((AdgGtkArea *) widget)->data;
     canvas = data->canvas;
 
-    if (canvas != NULL) {
+    if (canvas != NULL && event->window != NULL) {
+        cairo_t *cr = gdk_cairo_create(event->window);
         cairo_transform(cr, &data->render_map);
         adg_entity_render((AdgEntity *) canvas, cr);
+        cairo_destroy(cr);
     }
 
-    return FALSE;
+    if (_ADG_OLD_WIDGET_CLASS->expose_event == NULL)
+        return FALSE;
+
+    return _ADG_OLD_WIDGET_CLASS->expose_event(widget, event);
 }
 
 static gboolean

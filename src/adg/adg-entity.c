@@ -71,7 +71,7 @@
 
 
 #include "adg-internal.h"
-#if GTK2_ENABLED
+#if GTK3_ENABLED || GTK2_ENABLED
 #include <gtk/gtk.h>
 #endif
 

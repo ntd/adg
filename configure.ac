@@ -9,7 +9,8 @@ m4_define([cpml_lt_version],[1:0:0])
 m4_define([gtkdoc_prereq],[1.9])
 m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
-m4_define([gtk_prereq],[2.12.0])
+m4_define([gtk2_prereq],[2.12.0])
+m4_define([gtk3_prereq],[3.0.0])
 m4_define([pangocairo_prereq],[1.18.0])
 m4_define([gi_prereq],[0.9.5])dnl Picked up from clutter
 
@@ -146,20 +147,28 @@ AS_IF([test "x${enable_pango}" != "xno"],
                                 [enable_pango=no])])])
 AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
 
-dnl GTK+2
-AC_ARG_ENABLE([gtk2],
-              [AS_HELP_STRING([--enable-gtk2],
-                              [include GKT+2 specific widgets @<:@default=check@:>@])],
-              [],[enable_gtk2=check])
-AS_IF([test "x${enable_gtk2}" != "xno"],
-      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk_prereq,
-                         [enable_gtk2=yes
+dnl GTK+ support
+AC_ARG_WITH(gtk,
+            [AC_HELP_STRING([--with-gtk=@<:@gtk2/gtk3@:>@],
+                            [include GTK+ specific widgets @<:@default=check@:>@])],
+            [],[with_gtk=check])
+AS_IF([test "x${with_gtk}" = "xgtk3" -o "x${with_gtk}" = "xcheck"],
+      [PKG_CHECK_MODULES([GTK3],[gtk+-3.0 >= ]gtk3_prereq,
+                         [with_gtk=gtk3
+                          AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
+                                             [Defined if the GTK+3 support is enabled.])],
+                         [AS_IF([test "x${with_gtk}" = "xgtk3"],
+                                [AC_MSG_ERROR([${GTK3_PKG_ERRORS} and GTK+3 support requested])])])])
+AS_IF([test "x${with_gtk}" = "xgtk2" -o "x{with_gtk}" = "xcheck"],
+      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,
+                         [with_gtk=gtk2
                           AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
                                              [Defined if the GTK+2 support is enabled.])],
-                         [AS_IF([test "x${enable_gtk2}" = "xyes"],
-                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
-                                [enable_gtk2=no])])])
-AM_CONDITIONAL([HAVE_GTK2],[test "x${enable_gtk2}" = "xyes"])
+                         [AS_IF([test "x${with_gtk}" = "xgtk2"],
+                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])])])])
+AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" = "xgtk2" -o "x${with_gtk}" = "xgtk3"])
+AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
+AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
 dnl Glade
 AC_ARG_ENABLE([glade],
@@ -216,9 +225,10 @@ AM_COND_IF([HAVE_PANGO],
 '],
       [ADG_REQUIRES='gobject-2.0 >= gobject_prereq'
        ADG_H_ADDITIONAL=''])
-AM_COND_IF([HAVE_GTK2],
-           [ADG_REQUIRES='gtk+-2.0 >= gtk_prereq'
-            ADG_H_ADDITIONAL="${ADG_H_ADDITIONAL}
+AM_COND_IF([HAVE_GTK3],[ADG_REQUIRES='gtk+-3.0 >= gtk3_prereq'])
+AM_COND_IF([HAVE_GTK2],[ADG_REQUIRES='gtk+-2.0 >= gtk2_prereq'])
+AM_COND_IF([HAVE_GTK],
+           [ADG_H_ADDITIONAL="${ADG_H_ADDITIONAL}
 #include <gtk/gtk.h>
 #include \"adg/adg-gtk-utils.h\"
 #include \"adg/adg-gtk-area.h\"
@@ -297,7 +307,7 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
                   API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
          Build pango based entities: ${enable_pango}
-                      GTK+2 support: ${enable_gtk2}
+                       GTK+ support: ${with_gtk}
              Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
                 Build API reference: ${enable_gtk_doc}
              GObject instrospection: ${enable_introspection}

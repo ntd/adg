@@ -35,11 +35,9 @@ CLEANFILES=			test-report.xml \
 				full-report.xml \
 				full-report.html
 
-SUBDIRS=			src
-if HAVE_GTK2
-SUBDIRS+=			demo
-endif
-SUBDIRS+=			po \
+SUBDIRS=			src \
+				demo \
+				po \
 				po-properties \
 				docs
 

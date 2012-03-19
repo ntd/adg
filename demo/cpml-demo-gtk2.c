@@ -17,7 +17,8 @@ static void     stroke_and_destroy      (cairo_t        *cr,
                                          cairo_path_t   *path);
 
 static void     browsing                (GtkWidget      *widget,
-                                         cairo_t        *cr);
+                                         GdkEventExpose *event,
+                                         gpointer        user_data);
 static void     browsing_segment        (GtkToggleButton*togglebutton,
                                          gpointer        user_data);
 static void     browsing_primitive      (GtkToggleButton*togglebutton,
@@ -27,8 +28,9 @@ static void     browsing_reset          (GtkButton      *button,
 static void     browsing_next           (GtkButton      *button,
                                          gpointer        user_data);
 
-static gboolean arcs                    (GtkWidget      *widget,
-                                         cairo_t        *cr);
+static void     arcs                    (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        user_data);
 static void     arc3p                   (cairo_t        *cr,
                                          double          x1,
                                          double          y1,
@@ -37,12 +39,17 @@ static void     arc3p                   (cairo_t        *cr,
                                          double          x3,
                                          double          y3);
 
-static gboolean intersections           (GtkWidget      *widget,
-                                         cairo_t        *cr);
-static gboolean offset_curves           (GtkWidget      *widget,
-                                         cairo_t        *cr);
-static gboolean offset_segments         (GtkWidget      *widget,
-                                         cairo_t        *cr);
+static void     intersections           (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        user_data);
+
+static void     offset_curves           (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        user_data);
+
+static void     offset_segments         (GtkWidget      *widget,
+                                         GdkEventExpose *event,
+                                         gpointer        user_data);
 
 static void     circle_callback         (cairo_t        *cr);
 static void     piston_callback         (cairo_t        *cr);
@@ -56,7 +63,7 @@ static struct {
     CpmlSegment          segment;
     CpmlPrimitive        primitive;
 } browsing_data = {
-    NULL, 
+    NULL,
 };
 
 static CpmlPair bezier_samples[][4] = {
@@ -126,7 +133,7 @@ main(gint argc, gchar **argv)
     /* Connect signals */
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
-                     "draw", G_CALLBACK(browsing), NULL);
+                     "expose-event", G_CALLBACK(browsing), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "optBrowsingSegment"),
                      "toggled", G_CALLBACK(browsing_segment), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "optBrowsingPrimitive"),
@@ -136,13 +143,13 @@ main(gint argc, gchar **argv)
     g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingNext"),
                      "clicked", G_CALLBACK(browsing_next), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaArcs"),
-                     "draw", G_CALLBACK(arcs), NULL);
+                     "expose-event", G_CALLBACK(arcs), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaIntersections"),
-                     "draw", G_CALLBACK(intersections), NULL);
+                     "expose-event", G_CALLBACK(intersections), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetCurves"),
-                     "draw", G_CALLBACK(offset_curves), NULL);
+                     "expose-event", G_CALLBACK(offset_curves), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaOffsetSegments"),
-                     "draw", G_CALLBACK(offset_segments), NULL);
+                     "expose-event", G_CALLBACK(offset_segments), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
                      "clicked", G_CALLBACK(gtk_main_quit), NULL);
 
@@ -213,11 +220,14 @@ stroke_and_destroy(cairo_t *cr, cairo_path_t *path)
 
 
 static void
-browsing(GtkWidget *widget, cairo_t *cr)
+browsing(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
-    if (browsing_data.area == NULL) {
-        int n;
+    cairo_t *cr;
+    int n;
 
+    cr = gdk_cairo_create(widget->window);
+
+    if (browsing_data.area == NULL) {
         /* Initialize browsing_data */
         browsing_data.area = widget;
         browsing_data.use_segment = TRUE;
@@ -257,6 +267,7 @@ browsing(GtkWidget *widget, cairo_t *cr)
         cpml_primitive_to_cairo(&browsing_data.primitive, cr);
 
     cairo_stroke(cr);
+    cairo_destroy(cr);
 }
 
 static void
@@ -308,9 +319,11 @@ browsing_next(GtkButton *button, gpointer user_data)
 }
 
 
-static gboolean
-arcs(GtkWidget *widget, cairo_t *cr)
+static void
+arcs(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    cairo_t *cr = gdk_cairo_create(widget->window);
+
     cairo_translate(cr, 100.5, 100.5);
     arc3p(cr, 0, 0, 0, 120, 120, 120);
 
@@ -326,7 +339,7 @@ arcs(GtkWidget *widget, cairo_t *cr)
     cairo_translate(cr, 200, 0);
     arc3p(cr, -2, 85, 0, 50, 120, 0);
 
-    return FALSE;
+    cairo_destroy(cr);
 }
 
 static void
@@ -379,13 +392,15 @@ arc3p(cairo_t *cr, double x1, double y1,
 }
 
 
-static gboolean
-intersections(GtkWidget *widget, cairo_t *cr)
+static void
+intersections(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    cairo_t *cr;
     cairo_path_t *path;
     CpmlSegment segment1, segment2;
     CpmlPair intersection;
 
+    cr = gdk_cairo_create(widget->window);
     cairo_translate(cr, 10.5, 120.5);
 
     line1_callback(cr);
@@ -408,13 +423,14 @@ intersections(GtkWidget *widget, cairo_t *cr)
     }
 
     cairo_path_destroy(path);
-    return FALSE;
+    cairo_destroy(cr);
 }
 
 
-static gboolean
-offset_curves(GtkWidget *widget, cairo_t *cr)
+static void
+offset_curves(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    cairo_t *cr;
     gint n;
     CpmlPair *bezier;
     cairo_path_t *path, *path_copy;
@@ -423,6 +439,8 @@ offset_curves(GtkWidget *widget, cairo_t *cr)
     CpmlPair pair;
     CpmlVector vector;
     double t;
+
+    cr = gdk_cairo_create(widget->window);
 
     /* Add the Bézier curve samples */
     for (n = 0; n < G_N_ELEMENTS(bezier_samples); ++n) {
@@ -472,17 +490,19 @@ offset_curves(GtkWidget *widget, cairo_t *cr)
         cairo_path_destroy(path_copy);
     }
 
-    return FALSE;
+    cairo_destroy(cr);
 }
 
 
-static gboolean
-offset_segments(GtkWidget *widget, cairo_t *cr)
+static void
+offset_segments(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 {
+    cairo_t *cr;
     cairo_path_t *path;
     CpmlSegment segment;
     int n;
 
+    cr = gdk_cairo_create(widget->window);
     cairo_translate(cr, 270.5, -120.5);
 
     /* Offset the path samples */
@@ -502,7 +522,7 @@ offset_segments(GtkWidget *widget, cairo_t *cr)
         stroke_and_destroy(cr, path);
     }
 
-    return FALSE;
+    cairo_destroy(cr);
 }
 
 

@@ -69,7 +69,7 @@
 
 
 #include "adg-internal.h"
-#if GTK2_ENABLED
+#if GTK3_ENABLED || GTK2_ENABLED
 #include <gtk/gtk.h>
 #endif
 
@@ -1180,7 +1180,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }
 
-#if GTK2_ENABLED
+#if GTK3_ENABLED || GTK2_ENABLED
 
 /**
  * adg_canvas_set_paper:

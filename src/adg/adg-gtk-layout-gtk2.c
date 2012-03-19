@@ -57,15 +57,12 @@
 #define _ADG_OLD_AREA_CLASS    ((AdgGtkAreaClass *) adg_gtk_layout_parent_class)
 
 
-G_DEFINE_TYPE_WITH_CODE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA,
-                        G_IMPLEMENT_INTERFACE(GTK_TYPE_SCROLLABLE, NULL))
+G_DEFINE_TYPE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA)
 
 enum {
     PROP_0,
     PROP_HADJUSTMENT,
-    PROP_HSCROLL_POLICY,
-    PROP_VADJUSTMENT,
-    PROP_VSCROLL_POLICY
+    PROP_VADJUSTMENT
 };
 
 
@@ -78,6 +75,9 @@ static void     _adg_set_property               (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void     _adg_set_scroll_adjustments     (GtkWidget      *widget,
+                                                 GtkAdjustment  *hadjustment,
+                                                 GtkAdjustment  *vadjustment);
 static void     _adg_parent_set                 (GtkWidget      *widget,
                                                  GtkWidget      *old_parent);
 static void     _adg_size_allocate              (GtkWidget      *widget,
@@ -100,6 +100,9 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     GObjectClass *gobject_class;
     GtkWidgetClass *widget_class;
     AdgGtkAreaClass *area_class;
+    GParamSpec *param;
+    GClosure *closure;
+    GType param_types[2];
 
     gobject_class = (GObjectClass *) klass;
     widget_class = (GtkWidgetClass *) klass;
@@ -117,14 +120,37 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     area_class->canvas_changed = _adg_canvas_changed;
     area_class->extents_changed = _adg_extents_changed;
 
-    g_object_class_override_property (gobject_class, PROP_HADJUSTMENT,
-                                      "hadjustment");
-    g_object_class_override_property (gobject_class, PROP_HSCROLL_POLICY,
-                                      "hscroll-policy");
-    g_object_class_override_property (gobject_class, PROP_VADJUSTMENT,
-                                      "vadjustment");
-    g_object_class_override_property (gobject_class, PROP_VSCROLL_POLICY,
-                                      "vscroll-policy");
+    param = g_param_spec_object("hadjustment",
+                                P_("Horizontal adjustment"),
+                                P_("The GtkAdjustment that determines the values of the horizontal position for this viewport"),
+                                GTK_TYPE_ADJUSTMENT,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+    g_object_class_install_property(gobject_class, PROP_HADJUSTMENT, param);
+
+    param = g_param_spec_object("vadjustment",
+                                P_("Vertical adjustment"),
+                                P_("The GtkAdjustment that determines the values of the vertical position for this viewport"),
+                                GTK_TYPE_ADJUSTMENT,
+                                G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+    g_object_class_install_property(gobject_class, PROP_VADJUSTMENT, param);
+
+    /**
+     * AdgGtkLayout::set-scroll-adjustments:
+     * @layout: an #AdgGtkLayout
+     * @old_canvas: the old #AdgCanvas object
+     *
+     * Emitted when the #AdgGtkLayout scroll adjustments have been set.
+     *
+     * Since: 1.0
+     **/
+    closure = g_cclosure_new(G_CALLBACK(_adg_set_scroll_adjustments), NULL, NULL);
+    param_types[0] = GTK_TYPE_ADJUSTMENT;
+    param_types[1] = GTK_TYPE_ADJUSTMENT;
+    widget_class->set_scroll_adjustments_signal =
+        g_signal_newv("set-scroll-adjustments", ADG_GTK_TYPE_LAYOUT,
+                      G_SIGNAL_RUN_LAST, closure, NULL, NULL,
+                      adg_marshal_VOID__OBJECT_OBJECT,
+                      G_TYPE_NONE, 2, param_types);
 }
 
 static void
@@ -171,14 +197,8 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_HADJUSTMENT:
         g_value_set_object(value, data->hadjustment);
         break;
-    case PROP_HSCROLL_POLICY:
-        g_value_set_enum(value, data->hpolicy);
-        break;
     case PROP_VADJUSTMENT:
         g_value_set_object(value, data->vadjustment);
-        break;
-    case PROP_VSCROLL_POLICY:
-        g_value_set_enum(value, data->vpolicy);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -205,18 +225,12 @@ _adg_set_property(GObject *object, guint prop_id,
 
         _adg_set_adjustment(layout, &data->hadjustment, adjustment);
         break;
-    case PROP_HSCROLL_POLICY:
-        data->hpolicy = g_value_get_enum(value);
-        break;
     case PROP_VADJUSTMENT:
         adjustment = g_value_get_object(value);
         if (adjustment == NULL)
             adjustment = (GtkAdjustment *) gtk_adjustment_new(0, 0, 0, 0, 0, 0);
 
         _adg_set_adjustment(layout, &data->vadjustment, adjustment);
-        break;
-    case PROP_VSCROLL_POLICY:
-        data->vpolicy = g_value_get_enum(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -355,6 +369,17 @@ adg_gtk_layout_get_vadjustment(AdgGtkLayout *layout)
 
 
 static void
+_adg_set_scroll_adjustments(GtkWidget *widget,
+                            GtkAdjustment *hadjustment,
+                            GtkAdjustment *vadjustment)
+{
+    g_object_set(widget,
+                 "hadjustment", hadjustment,
+                 "vadjustment", vadjustment,
+                 NULL);
+}
+
+static void
 _adg_parent_set(GtkWidget *widget, GtkWidget *old_parent)
 {
     AdgGtkLayout *layout = (AdgGtkLayout *) widget;
@@ -420,20 +445,17 @@ _adg_extents_changed(AdgGtkArea *area, const CpmlExtents *old_extents)
 static void
 _adg_set_parent_size(AdgGtkLayout *layout)
 {
-    GtkWidget *widget;
     AdgGtkLayoutPrivate *data;
     GtkWidget *parent;
     const CpmlExtents *sheet;
     GtkScrolledWindow *scrolled_window;
 
-    widget = (GtkWidget *) layout;
-
     /* When the widget is realized it is too late to suggest a size */
-    if (gtk_widget_get_realized(widget))
+    if (GTK_WIDGET_REALIZED(layout))
         return;
 
     data = layout->data;
-    parent = gtk_widget_get_parent(widget);
+    parent = gtk_widget_get_parent((GtkWidget *) layout);
     if (!GTK_IS_WIDGET(parent))
         return;
 
@@ -550,15 +572,12 @@ _adg_update_adjustments(AdgGtkLayout *layout)
 static void
 _adg_value_changed(AdgGtkLayout *layout)
 {
-    GtkWidget *widget;
     AdgGtkArea *area;
     AdgGtkLayoutPrivate *data;
     AdgPair org;
     AdgMatrix map;
 
-    widget = (GtkWidget *) layout;
-
-    if (!gtk_widget_get_realized(widget))
+    if (!GTK_WIDGET_REALIZED(layout))
         return;
 
     area = (AdgGtkArea *) layout;
@@ -570,6 +589,6 @@ _adg_value_changed(AdgGtkLayout *layout)
                                 data->viewport.org.y - org.y);
     adg_gtk_area_transform_render_map(area, &map, ADG_TRANSFORM_BEFORE);
 
-    gtk_widget_queue_draw(widget);
+    gtk_widget_queue_draw((GtkWidget *) layout);
     _adg_update_adjustments(layout);
 }

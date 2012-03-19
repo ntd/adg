@@ -169,19 +169,33 @@ libadg_1_la_LDFLAGS=		-no-undefined \
 libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la
 
 
-## Optional GTK+2 related stuff
-if HAVE_GTK2
+## Optional GTK+ related stuff
+if HAVE_GTK
 
 h_sources+=			adg-gtk-area.h \
 				adg-gtk-layout.h \
 				adg-gtk-utils.h
 private_h_sources+=		adg-gtk-area-private.h \
 				adg-gtk-layout-private.h
+c_sources+=			adg-gtk-utils.c
+ADG_CFLAGS+=			$(GTK3_CFLAGS) \
+				$(GTK2_CFLAGS)
+ADG_LDFLAGS+=			$(GTK3_LIBS) \
+				$(GTK2_LIBS)
+
+endif
+
+if HAVE_GTK3
+
 c_sources+=			adg-gtk-area.c \
-				adg-gtk-layout.c \
-				adg-gtk-utils.c
-ADG_CFLAGS+=			$(GTK2_CFLAGS)
-ADG_LDFLAGS+=			$(GTK2_LIBS)
+				adg-gtk-layout.c
+
+endif
+
+if HAVE_GTK2
+
+c_sources+=			adg-gtk-area-gtk2.c \
+				adg-gtk-layout-gtk2.c
 
 endif
 
@@ -216,10 +230,16 @@ Adg_1_0_gir_LIBS=		libadg-1.la
 Adg_1_0_gir_INCLUDES=
 Adg_1_0_gir_PACKAGES=
 
-if HAVE_GTK2
+if HAVE_GTK
+if HAVE_GTK3
+## GTK+3 includes all the needed dependencies
+Adg_1_0_gir_INCLUDES+=		Gtk-3.0
+Adg_1_0_gir_PACKAGES+=		gtk+-3.0
+else
 ## GTK+2 includes all the needed dependencies
 Adg_1_0_gir_INCLUDES+=		Gtk-2.0
 Adg_1_0_gir_PACKAGES+=		gtk+-2.0
+endif
 else
 if HAVE_PANGO
 ## pangocairo is a superset of the default dependencies

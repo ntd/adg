@@ -11,7 +11,6 @@
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="tab_pos">left</property>
-            <property name="tab_vborder">6</property>
             <child>
               <object class="GtkVBox" id="vbox3">
                 <property name="visible">True</property>

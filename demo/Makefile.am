@@ -24,10 +24,12 @@ AM_CPPFLAGS+=			-DADG_DATADIR='"$(adgdatadir)"'
 endif
 
 
-if HAVE_GTK2
+if HAVE_GTK
 
-AM_CFLAGS+=			$(GTK2_CFLAGS)
-AM_LDFLAGS+=			$(GTK2_LIBS)
+AM_CFLAGS+=			$(GTK3_CFLAGS) \
+				$(GTK2_CFLAGS)
+AM_LDFLAGS+=			$(GTK3_LIBS) \
+				$(GTK2_LIBS)
 
 bin_PROGRAMS=			adg-demo \
 				cpml-demo
@@ -36,13 +38,26 @@ adg_demo_SOURCES=		adg-demo.c \
 				demo.h
 adg_demo_LDADD=			$(LDADD) \
 				$(top_builddir)/src/adg/libadg-1.la
-cpml_demo_SOURCES=		cpml-demo.c \
-				demo.c \
+cpml_demo_SOURCES=		demo.c \
 				demo.h
 nodist_adgdata_DATA=		adg-demo.ui \
 				cpml-demo.ui
 dist_adgdata_DATA=		adg-64.png
+
+if HAVE_GTK3
+
+cpml_demo_SOURCES+=		cpml-demo.c
+
 endif
+
+if HAVE_GTK2
+
+cpml_demo_SOURCES+=		cpml-demo-gtk2.c
+
+endif
+
+endif
+
 
 EXTRA_DIST=			cpml-demo.ui.in \
 				adg-demo.ui.in
