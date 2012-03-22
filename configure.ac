@@ -173,7 +173,7 @@ AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 dnl Glade catalog dir
 AC_ARG_WITH(glade_catalogdir,
             [AC_HELP_STRING([--with-glade-catalogdir=PATH],
-                            [whether to install the glade catalogs @<:@default=check@:>@])],
+                            [where to install the glade catalogs @<:@default=check@:>@])],
             [],[with_glade_catalogdir=check])
 # Check before for gladeui-2.0, dependent on GTK+3, and failback to gladeui-1.0.
 AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gtk}" != "xgtk2"],
@@ -181,6 +181,8 @@ AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gtk}" != "xgtk2"]
 AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gladeui}" = "x"],
       [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[with_gladeui=gladeui-1.0],
                          [with_glade_catalogdir=no])])
+AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
+
 # The following is a dirty hack to have a catalogdir relative to datarootdir
 AS_IF([test "x${with_gladeui}" != "x"],
       [gladeroot=`${PKG_CONFIG} --variable=datarootdir ${with_gladeui}`
@@ -188,26 +190,37 @@ AS_IF([test "x${with_gladeui}" != "x"],
                   [with_glade_catalogdir="\${datarootdir}/glade3/catalogs}"],
                   [gladecatalog=`${PKG_CONFIG} --variable=catalogdir ${with_gladeui}`
                    with_glade_catalogdir=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])])
-# Substitutions and reporting
-AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
+
 AM_COND_IF([HAVE_GLADE],
            [enable_glade=yes
-            GLADE_CATALOGDIR="${with_glade_catalogdir}"
-            report_glade_catalogdir="
-                  Glade catalog dir: ${GLADE_CATALOGDIR}"],
+            report_glade="
+                  Glade catalog dir: ${with_glade_catalogdir}"],
            [enable_glade=no
-            GLADE_CATALOGDIR=""])
-AC_SUBST([GLADE_CATALOGDIR])
+            report_glade=""])
+AC_SUBST([GLADE_CATALOGDIR],${with_glade_catalogdir})
 
 dnl gtk-doc
 GTK_DOC_CHECK(gtkdoc_prereq)
 
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
+AC_ARG_WITH(girdir,
+            [AC_HELP_STRING([--with-girdir=@<:@PATH@:>@],
+                            [where the gir files are installed @<:@default=check@:>@])],
+            [],[with_girdir="${INTROSPECTION_GIRDIR}"])
+AC_SUBST([GIRDIR],${with_girdir})
+AC_ARG_WITH(typelibdir,
+            [AC_HELP_STRING([--with-typelibdir=@<:@PATH@:>@],
+                            [where the typelib files are installed @<:@default=check@:>@])],
+            [],[with_typelibdir="${INTROSPECTION_TYPELIBDIR}"])
+AC_SUBST([TYPELIBDIR],${with_typelibdir})
 AM_COND_IF([HAVE_INTROSPECTION],
-           [enable_introspection='yes'],
-           [enable_introspection='no'])
-
+           [enable_introspection='yes'
+            report_introspection="
+         Where to install gir files: ${with_girdir}
+ Where to install the typelib files: ${with_typelibdir}"],
+           [enable_introspection='no'
+            report_introspection=""])
 
 dnl GLib test framework
 AC_ARG_ENABLE([test_framework],
@@ -228,7 +241,7 @@ AM_CONDITIONAL([HAVE_TEST_FRAMEWORK],[test "x${enable_test_framework}" = "xyes"]
 AC_C_CONST
 
 
-# Substitutions
+# Additional substitutions
 
 DLLDIR="$(${PKG_CONFIG} --variable=prefix gobject-2.0)/bin"
 CPML_REQUIRES='cairo >= cairo_prereq'
@@ -313,8 +326,8 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
                 CPML library to use: internal (cpml-adg_version)
          Build pango based entities: ${enable_pango}
                        GTK+ support: ${with_gtk}
-             Install glade catalogs: ${enable_glade}${report_glade_catalogdir}
+             Install glade catalogs: ${enable_glade}${report_glade}
                 Build API reference: ${enable_gtk_doc}
-             GObject instrospection: ${enable_introspection}
+             GObject instrospection: ${enable_introspection}${report_introspection}
              Test framework support: ${enable_test_framework}
 ])
