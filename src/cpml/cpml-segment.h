@@ -39,13 +39,11 @@ struct _CpmlSegment {
 };
 
 
+int     cpml_path_is_empty              (const CpmlPath         *path);
 int     cpml_segment_from_cairo         (CpmlSegment            *segment,
                                          CpmlPath               *path);
 void    cpml_segment_copy               (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
-#define cpml_path_is_empty(cpml_path) \
-    ((cpml_path) == NULL || ((cairo_path_t *) cpml_path)->data == NULL || \
-     ((cairo_path_t *) cpml_path)->num_data <= 0)
 void    cpml_segment_reset              (CpmlSegment            *segment);
 int     cpml_segment_next               (CpmlSegment            *segment);
 double  cpml_segment_get_length         (const CpmlSegment      *segment);

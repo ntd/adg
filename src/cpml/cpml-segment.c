@@ -144,15 +144,21 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 
 /**
  * cpml_path_is_empty:
- * @cpml_path: a #CpmlPath (or a #cairo_path_t) pointer
+ * @path: a #CpmlPath (or a #cairo_path_t) pointer
  *
- * Checks if @cpml_path is empty. An invalid path is considered empty.
+ * Checks if @path is empty. An invalid path is considered empty.
  *
  * Returns: (type gboolean): %1 if the path is empty or invalid,
  *                           %0 otherwise
  *
  * Since: 1.0
  **/
+int
+cpml_path_is_empty(const CpmlPath *path)
+{
+    cairo_path_t *cairo_path = (cairo_path_t *) path;
+    return path == NULL || cairo_path->data == NULL || cairo_path->num_data <= 0;
+}
 
 /**
  * cpml_segment_reset:
