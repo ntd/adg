@@ -20,9 +20,9 @@
 
 /**
  * SECTION:adg-rdim
- * @short_description: Linear dimensions
+ * @short_description: Radial dimensions
  *
- * The #AdgRDim entity represents a linear dimension.
+ * The #AdgRDim entity represents a radial dimension.
  *
  * Since: 1.0
  **/
