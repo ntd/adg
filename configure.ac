@@ -1,4 +1,4 @@
-m4_define([adg_version],[0.6.3])
+m4_define([adg_version],[0.6.4])
 m4_define([adg_api_version],[1.0])
 m4_define([adg_lt_version],[1:0:0])
 
