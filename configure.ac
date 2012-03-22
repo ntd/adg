@@ -172,7 +172,7 @@ AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
 dnl Glade catalog dir
 AC_ARG_WITH(glade_catalogdir,
-            [AC_HELP_STRING([--with-glade-catalogdir=PATH],
+            [AC_HELP_STRING([--with-glade-catalogdir=DIR],
                             [where to install the glade catalogs @<:@default=check@:>@])],
             [],[with_glade_catalogdir=check])
 # Check before for gladeui-2.0, dependent on GTK+3, and failback to gladeui-1.0.
@@ -205,12 +205,12 @@ GTK_DOC_CHECK(gtkdoc_prereq)
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
 AC_ARG_WITH(girdir,
-            [AC_HELP_STRING([--with-girdir=@<:@PATH@:>@],
+            [AC_HELP_STRING([--with-girdir=DIR],
                             [where the gir files are installed @<:@default=check@:>@])],
             [],[with_girdir="${INTROSPECTION_GIRDIR}"])
 AC_SUBST([GIRDIR],${with_girdir})
 AC_ARG_WITH(typelibdir,
-            [AC_HELP_STRING([--with-typelibdir=@<:@PATH@:>@],
+            [AC_HELP_STRING([--with-typelibdir=DIR],
                             [where the typelib files are installed @<:@default=check@:>@])],
             [],[with_typelibdir="${INTROSPECTION_TYPELIBDIR}"])
 AC_SUBST([TYPELIBDIR],${with_typelibdir})
