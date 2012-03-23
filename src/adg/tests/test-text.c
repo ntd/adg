@@ -61,7 +61,7 @@ _adg_test_font_dress(void)
     g_object_get(toy_text, "font-dress", &font_dress, NULL);
     g_assert_cmpint(font_dress, ==, valid_dress_2);
 
-    g_object_unref(toy_text);
+    adg_entity_destroy(ADG_ENTITY(toy_text));
 }
 
 static void
@@ -108,7 +108,7 @@ _adg_test_text(void)
     g_object_get(toy_text, "text", &text, NULL);
     g_assert(text == NULL);
 
-    g_object_unref(toy_text);
+    adg_entity_destroy(ADG_ENTITY(toy_text));
 }
 
 

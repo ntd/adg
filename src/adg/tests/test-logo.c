@@ -59,7 +59,7 @@ _adg_test_frame_dress(void)
     g_object_get(logo, "frame-dress", &frame_dress, NULL);
     g_assert_cmpint(frame_dress, ==, valid_dress_2);
 
-    g_object_unref(logo);
+    adg_entity_destroy(ADG_ENTITY(logo));
 }
 
 static void
@@ -100,7 +100,7 @@ _adg_test_screen_dress(void)
     g_object_get(logo, "screen-dress", &screen_dress, NULL);
     g_assert_cmpint(screen_dress, ==, valid_dress_2);
 
-    g_object_unref(logo);
+    adg_entity_destroy(ADG_ENTITY(logo));
 }
 
 static void
@@ -141,7 +141,7 @@ _adg_test_symbol_dress(void)
     g_object_get(logo, "symbol-dress", &symbol_dress, NULL);
     g_assert_cmpint(symbol_dress, ==, valid_dress_2);
 
-    g_object_unref(logo);
+    adg_entity_destroy(ADG_ENTITY(logo));
 }
 
 

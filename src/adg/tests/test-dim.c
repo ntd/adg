@@ -59,7 +59,7 @@ _adg_test_detached(void)
     g_object_get(dim, "detached", &detached, NULL);
     g_assert_cmpint(detached, ==, valid_three_state_2);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -91,7 +91,7 @@ _adg_test_dim_dress(void)
     g_object_get(dim, "dim-dress", &dim_dress, NULL);
     g_assert_cmpint(dim_dress, ==, valid_dress);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -123,7 +123,7 @@ _adg_test_level(void)
     g_object_get(dim, "level", &level, NULL);
     g_assert_cmpfloat(level, ==, valid_value_2);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -166,7 +166,7 @@ _adg_test_max(void)
     g_object_get(dim, "max", &max_dup, NULL);
     g_assert(max_dup == NULL);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -209,7 +209,7 @@ _adg_test_min(void)
     g_object_get(dim, "min", &min_dup, NULL);
     g_assert(min_dup == NULL);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -250,7 +250,7 @@ _adg_test_outside(void)
     g_object_get(dim, "outside", &outside, NULL);
     g_assert_cmpint(outside, ==, valid_three_state_2);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 static void
@@ -333,7 +333,7 @@ _adg_test_pos(void)
     adg_point_destroy(origin);
     adg_point_destroy(explicit_point);
     adg_point_destroy(model_point);
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
     g_object_unref(model);
 }
 
@@ -417,7 +417,7 @@ _adg_test_ref1(void)
     adg_point_destroy(origin);
     adg_point_destroy(explicit_point);
     adg_point_destroy(model_point);
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
     g_object_unref(model);
 }
 
@@ -501,7 +501,7 @@ _adg_test_ref2(void)
     adg_point_destroy(origin);
     adg_point_destroy(explicit_point);
     adg_point_destroy(model_point);
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
     g_object_unref(model);
 }
 
@@ -545,7 +545,7 @@ _adg_test_value(void)
     g_object_get(dim, "value", &value_dup, NULL);
     g_assert(value_dup == NULL);
 
-    g_object_unref(dim);
+    adg_entity_destroy(ADG_ENTITY(dim));
 }
 
 

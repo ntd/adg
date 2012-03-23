@@ -58,7 +58,7 @@ _adg_test_angle(void)
     g_object_get(arrow, "angle", &angle, NULL);
     g_assert_cmpfloat(angle, !=, invalid_value);
 
-    g_object_unref(arrow);
+    adg_entity_destroy(ADG_ENTITY(arrow));
 }
 
 

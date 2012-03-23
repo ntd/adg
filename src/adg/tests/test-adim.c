@@ -101,7 +101,7 @@ _adg_test_org1(void)
     adg_point_destroy(origin);
     adg_point_destroy(explicit_point);
     adg_point_destroy(model_point);
-    g_object_unref(adim);
+    adg_entity_destroy(ADG_ENTITY(adim));
     g_object_unref(model);
 }
 
@@ -185,7 +185,7 @@ _adg_test_org2(void)
     adg_point_destroy(origin);
     adg_point_destroy(explicit_point);
     adg_point_destroy(model_point);
-    g_object_unref(adim);
+    adg_entity_destroy(ADG_ENTITY(adim));
     g_object_unref(model);
 }
 
@@ -225,7 +225,7 @@ _adg_test_has_extension1(void)
     g_object_get(adim, "has-extension1", &has_extension1, NULL);
     g_assert(has_extension1);
 
-    g_object_unref(adim);
+    adg_entity_destroy(ADG_ENTITY(adim));
 }
 
 static void
@@ -264,7 +264,7 @@ _adg_test_has_extension2(void)
     g_object_get(adim, "has-extension2", &has_extension2, NULL);
     g_assert(has_extension2);
 
-    g_object_unref(adim);
+    adg_entity_destroy(ADG_ENTITY(adim));
 }
 
 

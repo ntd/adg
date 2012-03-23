@@ -58,19 +58,19 @@ _adg_test_canvas(void)
     g_object_set(area, "canvas", valid_canvas, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert(canvas == valid_canvas);
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", invalid_canvas, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert(canvas == valid_canvas);
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", NULL, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert(canvas == NULL);
 
-    g_object_unref(area);
-    g_object_unref(valid_canvas);
+    gtk_widget_destroy(GTK_WIDGET(area));
+    adg_entity_destroy(ADG_ENTITY(valid_canvas));
 }
 
 static void
@@ -110,7 +110,7 @@ _adg_test_factor(void)
     g_object_get(area, "factor", &factor, NULL);
     g_assert_cmpfloat(factor, ==, valid_factor2);
 
-    g_object_unref(area);
+    gtk_widget_destroy(GTK_WIDGET(area));
 }
 
 static void
@@ -149,7 +149,7 @@ _adg_test_autozoom(void)
     g_object_get(area, "autozoom", &has_autozoom, NULL);
     g_assert(has_autozoom);
 
-    g_object_unref(area);
+    gtk_widget_destroy(GTK_WIDGET(area));
 }
 
 static void
@@ -207,7 +207,7 @@ _adg_test_render_map(void)
     g_assert(adg_matrix_equal(render_map_dup, identity_map));
     g_free(render_map_dup);
 
-    g_object_unref(area);
+    gtk_widget_destroy(GTK_WIDGET(area));
 }
 
 

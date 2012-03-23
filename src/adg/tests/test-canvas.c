@@ -59,7 +59,7 @@ _adg_test_background_dress(void)
     g_object_get(canvas, "background-dress", &background_dress, NULL);
     g_assert_cmpint(background_dress, ==, valid_dress_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -100,7 +100,7 @@ _adg_test_frame_dress(void)
     g_object_get(canvas, "frame-dress", &frame_dress, NULL);
     g_assert_cmpint(frame_dress, ==, valid_dress_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -140,19 +140,19 @@ _adg_test_title_block(void)
     g_object_set(canvas, "title-block", valid_title_block, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
     g_assert(title_block == valid_title_block);
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 
     g_object_set(canvas, "title-block", invalid_title_block, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
     g_assert(title_block == valid_title_block);
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 
     g_object_set(canvas, "title-block", NULL, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
     g_assert(title_block == NULL);
 
-    g_object_unref(canvas);
-    g_object_unref(valid_title_block);
+    adg_entity_destroy(ADG_ENTITY(canvas));
+    adg_entity_destroy(ADG_ENTITY(valid_title_block));
 }
 
 static void
@@ -198,7 +198,7 @@ _adg_test_size(void)
     g_assert(cpml_pair_equal(size_dup, &null_size));
     g_free(size_dup);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -230,7 +230,7 @@ _adg_test_top_margin(void)
     g_object_get(canvas, "top-margin", &top_margin, NULL);
     g_assert_cmpfloat(top_margin, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -262,7 +262,7 @@ _adg_test_right_margin(void)
     g_object_get(canvas, "right-margin", &right_margin, NULL);
     g_assert_cmpfloat(right_margin, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -294,7 +294,7 @@ _adg_test_bottom_margin(void)
     g_object_get(canvas, "bottom-margin", &bottom_margin, NULL);
     g_assert_cmpfloat(bottom_margin, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -326,7 +326,7 @@ _adg_test_left_margin(void)
     g_object_get(canvas, "left-margin", &left_margin, NULL);
     g_assert_cmpfloat(left_margin, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -365,7 +365,7 @@ _adg_test_has_frame(void)
     g_object_get(canvas, "has-frame", &has_frame, NULL);
     g_assert(has_frame);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -397,7 +397,7 @@ _adg_test_top_padding(void)
     g_object_get(canvas, "top-padding", &top_padding, NULL);
     g_assert_cmpfloat(top_padding, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -429,7 +429,7 @@ _adg_test_right_padding(void)
     g_object_get(canvas, "right-padding", &right_padding, NULL);
     g_assert_cmpfloat(right_padding, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -461,7 +461,7 @@ _adg_test_bottom_padding(void)
     g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
     g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -493,7 +493,7 @@ _adg_test_left_padding(void)
     g_object_get(canvas, "left-padding", &left_padding, NULL);
     g_assert_cmpfloat(left_padding, ==, valid_value_2);
 
-    g_object_unref(canvas);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 

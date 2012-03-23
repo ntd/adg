@@ -327,12 +327,12 @@ _adg_marker1(void)
     adg_dim_style_set_marker1(dim_style, valid_marker);
     marker = adg_dim_style_marker1_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker1(dim_style, invalid_marker);
     marker = adg_dim_style_marker1_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker1(dim_style, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
@@ -342,19 +342,19 @@ _adg_marker1(void)
     g_object_set(dim_style, "marker1", valid_marker, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker1", invalid_marker, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker1", NULL, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
     g_assert(marker == NULL);
 
     g_object_unref(dim_style);
-    g_object_unref(valid_marker);
+    adg_entity_destroy(ADG_ENTITY(valid_marker));
 }
 
 static void
@@ -371,12 +371,12 @@ _adg_marker2(void)
     adg_dim_style_set_marker2(dim_style, valid_marker);
     marker = adg_dim_style_marker2_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker2(dim_style, invalid_marker);
     marker = adg_dim_style_marker2_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker2(dim_style, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
@@ -386,19 +386,19 @@ _adg_marker2(void)
     g_object_set(dim_style, "marker2", valid_marker, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker2", invalid_marker, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
     g_assert(marker != NULL);
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker2", NULL, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
     g_assert(marker == NULL);
 
     g_object_unref(dim_style);
-    g_object_unref(valid_marker);
+    adg_entity_destroy(ADG_ENTITY(valid_marker));
 }
 
 static void

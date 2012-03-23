@@ -74,6 +74,7 @@ static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static void             _adg_destroy            (AdgEntity      *entity);
 static void             _adg_global_changed     (AdgEntity      *entity);
 static void             _adg_local_changed      (AdgEntity      *entity);
 static void             _adg_invalidate         (AdgEntity      *entity);
@@ -108,6 +109,7 @@ adg_container_class_init(AdgContainerClass *klass)
     gobject_class->dispose = _adg_dispose;
     gobject_class->set_property = _adg_set_property;
 
+    entity_class->destroy = _adg_destroy;
     entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = _adg_local_changed;
     entity_class->invalidate = _adg_invalidate;
@@ -444,6 +446,15 @@ adg_container_propagate_valist(AdgContainer *container,
     }
 }
 
+
+static void
+_adg_destroy(AdgEntity *entity)
+{
+    adg_container_propagate_by_name((AdgContainer *) entity, "destroy");
+
+    if (_ADG_PARENT_ENTITY_CLASS->destroy)
+        _ADG_PARENT_ENTITY_CLASS->destroy(entity);
+}
 
 static void
 _adg_global_changed(AdgEntity *entity)

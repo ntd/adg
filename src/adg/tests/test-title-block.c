@@ -61,7 +61,7 @@ _adg_test_author(void)
     g_object_get(title_block, "author", &author_dup, NULL);
     g_assert(author_dup == NULL);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 static void
@@ -105,7 +105,7 @@ _adg_test_date(void)
     g_assert(date_dup != NULL);
     g_free(date_dup);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 static void
@@ -148,7 +148,7 @@ _adg_test_drawing(void)
     g_object_get(title_block, "drawing", &drawing_dup, NULL);
     g_assert(drawing_dup == NULL);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 static void
@@ -178,19 +178,19 @@ _adg_test_logo(void)
     g_object_set(title_block, "logo", valid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == valid_entity);
-    g_object_unref(logo);
+    adg_entity_destroy(logo);
 
     g_object_set(title_block, "logo", invalid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == valid_entity);
-    g_object_unref(logo);
+    adg_entity_destroy(logo);
 
     g_object_set(title_block, "logo", NULL, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == NULL);
 
-    g_object_unref(title_block);
-    g_object_unref(valid_entity);
+    adg_entity_destroy(ADG_ENTITY(title_block));
+    adg_entity_destroy(valid_entity);
 }
 
 static void
@@ -220,19 +220,19 @@ _adg_test_projection(void)
     g_object_set(title_block, "projection", valid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
     g_assert(projection == valid_entity);
-    g_object_unref(projection);
+    adg_entity_destroy(projection);
 
     g_object_set(title_block, "projection", invalid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
     g_assert(projection == valid_entity);
-    g_object_unref(projection);
+    adg_entity_destroy(projection);
 
     g_object_set(title_block, "projection", NULL, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
     g_assert(projection == NULL);
 
-    g_object_unref(title_block);
-    g_object_unref(valid_entity);
+    adg_entity_destroy(ADG_ENTITY(title_block));
+    adg_entity_destroy(valid_entity);
 }
 
 static void
@@ -275,7 +275,7 @@ _adg_test_scale(void)
     g_object_get(title_block, "scale", &scale_dup, NULL);
     g_assert(scale_dup == NULL);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 static void
@@ -318,7 +318,7 @@ _adg_test_size(void)
     g_object_get(title_block, "size", &size_dup, NULL);
     g_assert(size_dup == NULL);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 static void
@@ -361,7 +361,7 @@ _adg_test_title(void)
     g_object_get(title_block, "title", &title_dup, NULL);
     g_assert(title_dup == NULL);
 
-    g_object_unref(title_block);
+    adg_entity_destroy(ADG_ENTITY(title_block));
 }
 
 

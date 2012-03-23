@@ -69,7 +69,7 @@ _adg_test_model(void)
     g_object_get(marker, "model", &model, NULL);
     g_assert(model == NULL);
 
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
     g_object_unref(valid_model);
 }
 
@@ -114,7 +114,7 @@ _adg_test_n_segment(void)
     g_object_get(marker, "n-segment", &n_segment, NULL);
     g_assert_cmpint(n_segment, ==, valid_n_segment);
 
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
     g_object_unref(trail);
 }
 
@@ -155,7 +155,7 @@ _adg_test_pos(void)
     g_object_get(marker, "pos", &pos, NULL);
     g_assert_cmpfloat(pos, ==, valid_pos2);
 
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 }
 
 static void
@@ -214,7 +214,7 @@ _adg_test_trail(void)
     g_object_get(marker, "trail", &trail, NULL);
     g_assert(trail == NULL);
 
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
     g_object_unref(valid_trail);
 }
 
@@ -255,7 +255,7 @@ _adg_test_size(void)
     g_object_get(marker, "size", &size, NULL);
     g_assert_cmpfloat(size, ==, valid_size2);
 
-    g_object_unref(marker);
+    adg_entity_destroy(ADG_ENTITY(marker));
 }
 
 

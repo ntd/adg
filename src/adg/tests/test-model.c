@@ -98,7 +98,7 @@ _adg_test_dependency(void)
     g_assert(dependencies == NULL);
 
     g_object_unref(model);
-    g_object_unref(valid_entity);
+    adg_entity_destroy(valid_entity);
 }
 
 

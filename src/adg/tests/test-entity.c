@@ -49,19 +49,19 @@ _adg_test_parent(void)
     g_object_set(entity, "parent", valid_container, NULL);
     g_object_get(entity, "parent", &parent, NULL);
     g_assert(parent == valid_container);
-    g_object_unref(parent);
+    adg_entity_destroy(parent);
 
     g_object_set(entity, "parent", invalid_container, NULL);
     g_object_get(entity, "parent", &parent, NULL);
     g_assert(parent == valid_container);
-    g_object_unref(parent);
+    adg_entity_destroy(parent);
 
     g_object_set(entity, "parent", NULL, NULL);
     g_object_get(entity, "parent", &parent, NULL);
     g_assert(parent == NULL);
 
-    g_object_unref(entity);
-    g_object_unref(valid_container);
+    adg_entity_destroy(entity);
+    adg_entity_destroy(valid_container);
 }
 
 static void
@@ -119,7 +119,7 @@ _adg_test_global_map(void)
     g_assert(adg_matrix_equal(global_map_dup, identity_map));
     g_free(global_map_dup);
 
-    g_object_unref(entity);
+    adg_entity_destroy(entity);
 }
 
 static void
@@ -177,7 +177,7 @@ _adg_test_local_map(void)
     g_assert(adg_matrix_equal(local_map_dup, identity_map));
     g_free(local_map_dup);
 
-    g_object_unref(entity);
+    adg_entity_destroy(entity);
 }
 
 static void
@@ -218,7 +218,7 @@ _adg_test_local_method(void)
     g_object_get(entity, "local-method", &local_method, NULL);
     g_assert_cmpint(local_method, ==, valid_method2);
 
-    g_object_unref(entity);
+    adg_entity_destroy(entity);
 }
 
 

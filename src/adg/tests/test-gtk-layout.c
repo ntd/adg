@@ -75,7 +75,7 @@ _adg_test_hadjustment(void)
     g_assert(hadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(hadjustment));
     g_object_unref(hadjustment);
 
-    g_object_unref(layout);
+    gtk_widget_destroy(GTK_WIDGET(layout));
     g_object_unref(valid_adjustment);
 }
 
@@ -133,7 +133,7 @@ _adg_test_vadjustment(void)
     g_assert(vadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(vadjustment));
     g_object_unref(vadjustment);
 
-    g_object_unref(layout);
+    gtk_widget_destroy(GTK_WIDGET(layout));
     g_object_unref(valid_adjustment);
 }
 

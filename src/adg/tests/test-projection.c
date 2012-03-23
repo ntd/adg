@@ -59,7 +59,7 @@ _adg_test_axis_dress(void)
     g_object_get(projection, "axis-dress", &axis_dress, NULL);
     g_assert_cmpint(axis_dress, ==, valid_dress_2);
 
-    g_object_unref(projection);
+    adg_entity_destroy(ADG_ENTITY(projection));
 }
 
 static void
@@ -100,7 +100,7 @@ _adg_test_scheme(void)
     g_object_get(projection, "scheme", &scheme, NULL);
     g_assert_cmpint(scheme, ==, valid_scheme_2);
 
-    g_object_unref(projection);
+    adg_entity_destroy(ADG_ENTITY(projection));
 }
 
 static void
@@ -141,7 +141,7 @@ _adg_test_symbol_dress(void)
     g_object_get(projection, "symbol-dress", &symbol_dress, NULL);
     g_assert_cmpint(symbol_dress, ==, valid_dress_2);
 
-    g_object_unref(projection);
+    adg_entity_destroy(ADG_ENTITY(projection));
 }
 
 

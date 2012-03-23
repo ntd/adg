@@ -59,7 +59,7 @@ _adg_test_line_dress(void)
     g_object_get(stroke, "line-dress", &line_dress, NULL);
     g_assert_cmpint(line_dress, ==, valid_dress_2);
 
-    g_object_unref(stroke);
+    adg_entity_destroy(ADG_ENTITY(stroke));
 }
 
 static void
@@ -110,7 +110,7 @@ _adg_test_trail(void)
     g_object_get(stroke, "trail", &trail, NULL);
     g_assert(trail == NULL);
 
-    g_object_unref(stroke);
+    adg_entity_destroy(ADG_ENTITY(stroke));
     g_object_unref(valid_trail);
 }
 

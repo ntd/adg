@@ -58,7 +58,7 @@ _adg_test_direction(void)
     g_object_get(ldim, "direction", &direction, NULL);
     g_assert_cmpfloat(direction, !=, invalid_value);
 
-    g_object_unref(ldim);
+    adg_entity_destroy(ADG_ENTITY(ldim));
 }
 
 static void
@@ -97,7 +97,7 @@ _adg_test_has_extension1(void)
     g_object_get(ldim, "has-extension1", &has_extension1, NULL);
     g_assert(has_extension1);
 
-    g_object_unref(ldim);
+    adg_entity_destroy(ADG_ENTITY(ldim));
 }
 
 static void
@@ -136,7 +136,7 @@ _adg_test_has_extension2(void)
     g_object_get(ldim, "has-extension2", &has_extension2, NULL);
     g_assert(has_extension2);
 
-    g_object_unref(ldim);
+    adg_entity_destroy(ADG_ENTITY(ldim));
 }
 
 

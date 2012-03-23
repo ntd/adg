@@ -79,8 +79,8 @@ _adg_property_child(void)
     children = adg_container_children(container);
     g_assert(children == NULL);
 
-    g_object_unref(container);
-    g_object_unref(valid_entity);
+    adg_entity_destroy(ADG_ENTITY(container));
+    adg_entity_destroy(valid_entity);
 }
 
 static void
@@ -109,17 +109,17 @@ _adg_misc(void)
     g_assert_cmpint(g_slist_length(children), ==, 2);
     g_slist_free(children);
 
-    g_object_unref(entity1);
+    adg_entity_destroy(entity1);
     children = adg_container_children(container);
     g_assert(children != NULL);
     g_assert_cmpint(g_slist_length(children), ==, 1);
     g_slist_free(children);
 
-    g_object_unref(entity2);
+    adg_entity_destroy(entity2);
     children = adg_container_children(container);
     g_assert(children == NULL);
 
-    g_object_unref(container);
+    adg_entity_destroy(ADG_ENTITY(container));
 }
 
 

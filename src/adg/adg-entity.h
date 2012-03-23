@@ -64,6 +64,7 @@ struct _AdgEntityClass {
     GInitiallyUnownedClass      parent_class;
     /*< public >*/
     /* Signals */
+    void                (*destroy)              (AdgEntity       *entity);
     void                (*parent_set)           (AdgEntity       *entity,
                                                  AdgEntity       *old_parent);
     void                (*global_changed)       (AdgEntity       *entity);
@@ -78,6 +79,7 @@ struct _AdgEntityClass {
 void             adg_switch_extents             (gboolean         state);
 
 GType            adg_entity_get_type            (void) G_GNUC_CONST;
+void             adg_entity_destroy             (AdgEntity       *entity);
 AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
 void             adg_entity_set_parent          (AdgEntity       *entity,
                                                  AdgEntity       *parent);

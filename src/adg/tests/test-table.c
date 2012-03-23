@@ -50,7 +50,7 @@ _adg_test_table_dress(void)
     g_object_get(table, "table-dress", &table_dress, NULL);
     g_assert_cmpint(table_dress, ==, valid_dress);
 
-    g_object_unref(table);
+    adg_entity_destroy(ADG_ENTITY(table));
 }
 
 static void
@@ -89,7 +89,7 @@ _adg_test_has_frame(void)
     g_object_get(table, "has-frame", &has_frame, NULL);
     g_assert(has_frame);
 
-    g_object_unref(table);
+    adg_entity_destroy(ADG_ENTITY(table));
 }
 
 

@@ -43,6 +43,7 @@
 
 /**
  * AdgEntityClass:
+ * @destroy:        when a destroy request has been explicitely requested
  * @parent_set:     called whenever the parent of an entity has changed
  * @global_changed: the global matrix has been invalidated
  * @local_changed:  the local matrix has been invalidated
@@ -101,6 +102,7 @@ enum {
 };
 
 enum {
+    DESTROY,
     PARENT_SET,
     GLOBAL_CHANGED,
     LOCAL_CHANGED,
@@ -148,6 +150,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
+    klass->destroy = (void (*)(AdgEntity *)) g_object_unref;
     klass->parent_set = NULL;
     klass->global_changed = _adg_global_changed;
     klass->local_changed = _adg_local_changed;
@@ -182,6 +185,29 @@ adg_entity_class_init(AdgEntityClass *klass)
                               ADG_TYPE_MIX_METHOD, ADG_MIX_ANCESTORS,
                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_METHOD, param);
+
+    /**
+     * AdgEntity::destroy:
+     * @entity: an #AdgEntity
+     *
+     * Emitted to explicitely destroy @entity. It unreferences
+     * @entity so that will be destroyed, unless the caller owns
+     * an additional references added with g_object_ref().
+     *
+     * In the usual case, this is equivalent of calling
+     * g_object_unref() on @entity but, for composite entities or
+     * containers, the destroy signal is propagated to the children.
+     *
+     * Since: 1.0
+     **/
+    _adg_signals[DESTROY] =
+        g_signal_new("destroy",
+                     G_OBJECT_CLASS_TYPE(gobject_class),
+                     G_SIGNAL_RUN_FIRST,
+                     G_STRUCT_OFFSET(AdgEntityClass, destroy),
+                     NULL, NULL,
+                     adg_marshal_VOID__VOID,
+                     G_TYPE_NONE, 0);
 
     /**
      * AdgEntity::parent-set:
@@ -410,6 +436,23 @@ void
 adg_switch_extents(gboolean state)
 {
     _adg_show_extents = state;
+}
+
+/**
+ * adg_entity_destroy:
+ * @entity: an #AdgEntity
+ *
+ * Emits the #AdgEntity::destroy signal on @entity and on all of
+ * its children, if any.
+ *
+ * Since: 1.0
+ **/
+void
+adg_entity_destroy(AdgEntity *entity)
+{
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+
+    g_signal_emit(entity, _adg_signals[DESTROY], 0);
 }
 
 /**

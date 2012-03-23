@@ -59,7 +59,7 @@ _adg_test_fill_dress(void)
     g_object_get(hatch, "fill-dress", &fill_dress, NULL);
     g_assert_cmpint(fill_dress, ==, valid_dress_2);
 
-    g_object_unref(hatch);
+    adg_entity_destroy(ADG_ENTITY(hatch));
 }
 
 
