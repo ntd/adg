@@ -159,14 +159,15 @@ AS_IF([test "x${with_gtk}" = "xgtk3" -o "x${with_gtk}" = "xcheck"],
                                              [Defined if the GTK+3 support is enabled.])],
                          [AS_IF([test "x${with_gtk}" = "xgtk3"],
                                 [AC_MSG_ERROR([${GTK3_PKG_ERRORS} and GTK+3 support requested])])])])
-AS_IF([test "x${with_gtk}" = "xgtk2" -o "x{with_gtk}" = "xcheck"],
+AS_IF([test "x${with_gtk}" = "xgtk2" -o "x${with_gtk}" = "xcheck"],
       [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,
                          [with_gtk=gtk2
                           AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
                                              [Defined if the GTK+2 support is enabled.])],
                          [AS_IF([test "x${with_gtk}" = "xgtk2"],
-                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])])])])
-AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" = "xgtk2" -o "x${with_gtk}" = "xgtk3"])
+                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
+				[with_gtk=no])])])
+AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" != "xno"])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
 AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
