@@ -125,7 +125,7 @@ adg_dress_get_type(void)
  *
  * After a succesfull call, a new reference is added to @fallback.
  *
- * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
+ * Returns: (type gint) (transfer full): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
  *
  * Since: 1.0
  **/
@@ -156,7 +156,7 @@ adg_dress_new(const gchar *name, AdgStyle *fallback)
  * After a succesfull call, a new reference is added to @fallback
  * if needed.
  *
- * Returns: the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
+ * Returns: (type gint) (transfer full): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
  *
  * Since: 1.0
  **/
