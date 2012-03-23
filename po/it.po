@@ -93,8 +93,8 @@ msgid "Cham_fered head"
 msgstr "Testa sm_ussata"
 
 #: ../demo/adg-demo.ui.in.h:10
-msgid "Copyright (C) 2007,2008,2009,2010  Nicola Fontana"
-msgstr "Copyright (C) 2007,2008,2009,2010  Nicola Fontana"
+msgid "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
+msgstr "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
 
 #: ../demo/adg-demo.ui.in.h:11
 msgid "Customize drawing"
