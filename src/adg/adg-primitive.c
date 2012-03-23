@@ -46,7 +46,7 @@
 GType
 adg_primitive_get_type(void)
 {
-    static int primitive_type = 0;
+    static GType primitive_type = 0;
 
     if (G_UNLIKELY(primitive_type == 0))
         primitive_type = g_boxed_type_register_static("AdgPrimitive",

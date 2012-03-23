@@ -49,7 +49,7 @@
 GType
 adg_segment_get_type(void)
 {
-    static int segment_type = 0;
+    static GType segment_type = 0;
 
     if (G_UNLIKELY(segment_type == 0))
         segment_type = g_boxed_type_register_static("AdgSegment",

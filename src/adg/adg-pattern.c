@@ -47,7 +47,7 @@
 GType
 adg_pattern_get_type(void)
 {
-    static int pattern_type = 0;
+    static GType pattern_type = 0;
 
     if (G_UNLIKELY(pattern_type == 0))
         pattern_type = g_boxed_type_register_static("AdgPattern",

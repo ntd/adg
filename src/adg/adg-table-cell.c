@@ -95,7 +95,7 @@ static void             _adg_cell_set_value_pos (AdgTableCell   *table_cell,
 GType
 adg_table_cell_get_type(void)
 {
-    static int cell_type = 0;
+    static GType cell_type = 0;
 
     if (G_UNLIKELY(cell_type == 0))
         cell_type = g_boxed_type_register_static("AdgTableCell",

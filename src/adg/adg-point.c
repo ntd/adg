@@ -62,7 +62,7 @@ struct _AdgPoint {
 GType
 adg_point_get_type(void)
 {
-    static int type = 0;
+    static GType type = 0;
 
     if (G_UNLIKELY(type == 0))
         type = g_boxed_type_register_static("AdgPoint",

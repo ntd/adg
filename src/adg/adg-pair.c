@@ -46,7 +46,7 @@
 GType
 adg_pair_get_type(void)
 {
-    static int pair_type = 0;
+    static GType pair_type = 0;
 
     if (G_UNLIKELY(pair_type == 0))
         pair_type = g_boxed_type_register_static("AdgPair",

@@ -68,7 +68,7 @@ static AdgTableRow *    _adg_row_new        (AdgTable       *table);
 GType
 adg_table_row_get_type(void)
 {
-    static int row_type = 0;
+    static GType row_type = 0;
 
     if (G_UNLIKELY(row_type == 0))
         row_type = g_boxed_type_register_static("AdgTableRow",
