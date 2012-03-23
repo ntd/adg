@@ -177,20 +177,16 @@ AC_ARG_WITH(glade_catalogdir,
             [],[with_glade_catalogdir=check])
 # Check before for gladeui-2.0, dependent on GTK+3, and failback to gladeui-1.0.
 AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gtk}" != "xgtk2"],
-      [PKG_CHECK_MODULES([GLADEUI2],[gladeui-2.0],[with_gladeui=gladeui-2.0],[:])])
-AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gladeui}" = "x"],
-      [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[with_gladeui=gladeui-1.0],
+      [PKG_CHECK_MODULES([GLADEUI2],[gladeui-2.0],[gladeui=gladeui-2.0],[:])])
+AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${gladeui}" = "x"],
+      [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[gladeui=gladeui-1.0],
                          [with_glade_catalogdir=no])])
 AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
-
-# The following is a dirty hack to have a catalogdir relative to datarootdir
-AS_IF([test "x${with_gladeui}" != "x"],
-      [gladeroot=`${PKG_CONFIG} --variable=datarootdir ${with_gladeui}`
-            AS_IF([test "x${gladeroot}" = "x"],
-                  [with_glade_catalogdir="\${datarootdir}/glade3/catalogs}"],
-                  [gladecatalog=`${PKG_CONFIG} --variable=catalogdir ${with_gladeui}`
-                   with_glade_catalogdir=`echo "${gladecatalog}" | ${SED} -e "s|^${gladeroot}|"'${datarootdir}|'`])])
-
+AS_IF([test "x${gladeui}" != "x"],
+      [NTD_UNEXPAND([${gladeui}],
+                    [catalogdir],
+                    [with_glade_catalogdir="${NTD_UNEXPANDED}"],
+                    [AC_MSG_ERROR([${gladeui} found but pkg-config file invalid])])])
 AM_COND_IF([HAVE_GLADE],
            [enable_glade=yes
             report_glade="
@@ -207,12 +203,22 @@ GOBJECT_INTROSPECTION_CHECK(gi_prereq)
 AC_ARG_WITH(girdir,
             [AC_HELP_STRING([--with-girdir=DIR],
                             [where the gir files are installed @<:@default=check@:>@])],
-            [],[with_girdir="${INTROSPECTION_GIRDIR}"])
+            [],[with_girdir=check])
+AS_IF([test "x${with_girdir}" = "xcheck"],
+      [NTD_UNEXPAND([gobject-introspection-1.0],
+                    [girdir],
+                    [with_girdir="${NTD_UNEXPANDED}"],
+                    [AC_MSG_ERROR([invalid GObject introspection pkg-config file])])])
 AC_SUBST([GIRDIR],${with_girdir})
 AC_ARG_WITH(typelibdir,
             [AC_HELP_STRING([--with-typelibdir=DIR],
                             [where the typelib files are installed @<:@default=check@:>@])],
-            [],[with_typelibdir="${INTROSPECTION_TYPELIBDIR}"])
+            [],[with_typelibdir=check])
+AS_IF([test "x${with_typelibdir}" = "xcheck"],
+      [NTD_UNEXPAND([gobject-introspection-1.0],
+                    [typelibdir],
+                    [with_typelibdir="${NTD_UNEXPANDED}"],
+                    [AC_MSG_ERROR([invalid GObject introspection pkg-config file])])])
 AC_SUBST([TYPELIBDIR],${with_typelibdir})
 AM_COND_IF([HAVE_INTROSPECTION],
            [enable_introspection='yes'
