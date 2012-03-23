@@ -1,7 +1,8 @@
 /Adg-1.0.gir
 /Adg-1.0.typelib
 /adg-1.pc
-/adg-type-builtins.c
-/adg-type-builtins.h
+/adg-canvas.h
 /adg-marshal.c
 /adg-marshal.h
+/adg-type-builtins.c
+/adg-type-builtins.h
