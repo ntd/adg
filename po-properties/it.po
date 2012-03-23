@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 01:05+0100\n"
+"POT-Creation-Date: 2012-03-23 15:13+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -151,7 +151,7 @@ msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:140
+#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:142
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
@@ -246,11 +246,11 @@ msgstr ""
 "Il valore alfa, dove 0 significa totalmente trasparente e 1 completamente "
 "opaco"
 
-#: src/adg/adg-container.c:122
+#: src/adg/adg-container.c:124
 msgid "Child"
 msgstr "Figlio"
 
-#: src/adg/adg-container.c:123
+#: src/adg/adg-container.c:125
 msgid "Can be used to add a new child to the container"
 msgstr "Può essere usato per aggiungere una nuova entità al contenitore"
 
@@ -553,21 +553,21 @@ msgstr ""
 "L'angolo che definisce quando considerare uno spigolo (se l'angolo dello "
 "spigolo è maggiore di questo valore) e quando ignorarlo"
 
-#: src/adg/adg-entity.c:159
+#: src/adg/adg-entity.c:162
 msgid "Parent Entity"
 msgstr "Entità Genitore"
 
-#: src/adg/adg-entity.c:160
+#: src/adg/adg-entity.c:163
 msgid "The parent entity of this entity or NULL if this is a top-level entity"
 msgstr ""
 "L'entità che contiene questa entità o NULL se l'entità corrente è una top-"
 "level"
 
-#: src/adg/adg-entity.c:166
+#: src/adg/adg-entity.c:169
 msgid "Global Map"
 msgstr "Trasformazione Globale"
 
-#: src/adg/adg-entity.c:167
+#: src/adg/adg-entity.c:170
 msgid ""
 "The transformation to be combined with the parent ones to get the global "
 "matrix"
@@ -575,11 +575,11 @@ msgstr ""
 "La trasformazione da combinare insieme a quelle dei progenitori per ottenere "
 "la matrice globale"
 
-#: src/adg/adg-entity.c:173
+#: src/adg/adg-entity.c:176
 msgid "Local Map"
 msgstr "Trasformazione Locale"
 
-#: src/adg/adg-entity.c:174
+#: src/adg/adg-entity.c:177
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
 "the way specified by the #AdgEntity:local-method property"
@@ -587,11 +587,11 @@ msgstr ""
 "La trasformazione locale che può venir usata per calcolare la matrice locale "
 "nella modalità specificata dalla proprietà #AdgEntity:local-method"
 
-#: src/adg/adg-entity.c:180
+#: src/adg/adg-entity.c:183
 msgid "Local Mix Method"
 msgstr "Metodo di Combinazione Locale"
 
-#: src/adg/adg-entity.c:181
+#: src/adg/adg-entity.c:184
 msgid ""
 "Define how the local maps of the entity and its ancestors should be combined "
 "to get the local matrix"
@@ -902,7 +902,7 @@ msgstr "Angolo"
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:134
+#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:136
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
@@ -910,11 +910,11 @@ msgstr "Il vestito da usare per tracciare questa entità"
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
-#: src/adg/adg-table.c:133
+#: src/adg/adg-table.c:135
 msgid "Table Dress"
 msgstr "Vestito Tabella"
 
-#: src/adg/adg-table.c:141
+#: src/adg/adg-table.c:143
 msgid ""
 "If enabled, a frame using the proper dress found in this table style will be "
 "drawn around the table extents"
