@@ -207,8 +207,7 @@ AC_ARG_WITH(girdir,
 AS_IF([test "x${with_girdir}" = "xcheck"],
       [NTD_UNEXPAND([gobject-introspection-1.0],
                     [girdir],
-                    [with_girdir="${NTD_UNEXPANDED}"],
-                    [AC_MSG_ERROR([invalid GObject introspection pkg-config file])])])
+                    [with_girdir="${NTD_UNEXPANDED}"])])
 AC_SUBST([GIRDIR],${with_girdir})
 AC_ARG_WITH(typelibdir,
             [AC_HELP_STRING([--with-typelibdir=DIR],
@@ -217,8 +216,7 @@ AC_ARG_WITH(typelibdir,
 AS_IF([test "x${with_typelibdir}" = "xcheck"],
       [NTD_UNEXPAND([gobject-introspection-1.0],
                     [typelibdir],
-                    [with_typelibdir="${NTD_UNEXPANDED}"],
-                    [AC_MSG_ERROR([invalid GObject introspection pkg-config file])])])
+                    [with_typelibdir="${NTD_UNEXPANDED}"])])
 AC_SUBST([TYPELIBDIR],${with_typelibdir})
 AM_COND_IF([HAVE_INTROSPECTION],
            [enable_introspection='yes'
