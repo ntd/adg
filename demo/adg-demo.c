@@ -407,11 +407,15 @@ _adg_part_ui_to_boolean(DemoPart *part, gboolean *data)
 static void
 _adg_part_ui_to_double(DemoPart *part, gdouble *data)
 {
-    GtkWidget *widget = g_hash_table_lookup(part->widgets, data);
+    GtkWidget *widget;
+    GtkSpinButton *spin_button;
 
+    widget = g_hash_table_lookup(part->widgets, data);
     g_assert(GTK_IS_SPIN_BUTTON(widget));
 
-    *data = gtk_spin_button_get_value(GTK_SPIN_BUTTON(widget));
+    spin_button = GTK_SPIN_BUTTON(widget);
+    gtk_spin_button_update(spin_button);
+    *data = gtk_spin_button_get_value(spin_button);
 }
 
 static void
