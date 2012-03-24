@@ -20,7 +20,9 @@
 
 /**
  * SECTION:adg-table-row
- * @short_description: A tabular row
+ * @Section_Id:AdgTableRow
+ * @title: AdgTableRow
+ * @short_description: A boxed type representing a table row
  *
  * The #AdgTableRow is a boxed type containing a single row of cells
  * of an #AdgTable object.
@@ -31,8 +33,6 @@
  *
  * Since: 1.0
  **/
-
-
 
 /**
  * AdgTableRow:

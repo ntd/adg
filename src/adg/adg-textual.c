@@ -20,6 +20,8 @@
 
 /**
  * SECTION:adg-textual
+ * @Section_Id:AdgTextual
+ * @title: AdgTextual
  * @short_description: An interface for entities that embeds text
  *
  * The #AdgTextual interface should be implemented by entities that

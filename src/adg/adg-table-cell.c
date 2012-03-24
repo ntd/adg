@@ -20,7 +20,9 @@
 
 /**
  * SECTION:adg-table-cell
- * @short_description: A single cell of a table
+ * @Section_Id:AdgTableCell
+ * @title: AdgTableCell
+ * @short_description: A single cell of an #AdgTable
  *
  * The #AdgTableCell is a boxed type, the basic component of an
  * #AdgTable entity. It must be added to an #AdgTableRow that,
