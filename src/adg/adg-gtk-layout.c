@@ -117,14 +117,14 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     area_class->canvas_changed = _adg_canvas_changed;
     area_class->extents_changed = _adg_extents_changed;
 
-    g_object_class_override_property (gobject_class, PROP_HADJUSTMENT,
-                                      "hadjustment");
-    g_object_class_override_property (gobject_class, PROP_HSCROLL_POLICY,
-                                      "hscroll-policy");
-    g_object_class_override_property (gobject_class, PROP_VADJUSTMENT,
-                                      "vadjustment");
-    g_object_class_override_property (gobject_class, PROP_VSCROLL_POLICY,
-                                      "vscroll-policy");
+    g_object_class_override_property(gobject_class, PROP_HADJUSTMENT,
+                                     "hadjustment");
+    g_object_class_override_property(gobject_class, PROP_HSCROLL_POLICY,
+                                     "hscroll-policy");
+    g_object_class_override_property(gobject_class, PROP_VADJUSTMENT,
+                                     "vadjustment");
+    g_object_class_override_property(gobject_class, PROP_VSCROLL_POLICY,
+                                     "vscroll-policy");
 }
 
 static void
