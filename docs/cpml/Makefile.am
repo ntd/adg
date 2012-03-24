@@ -7,7 +7,6 @@ SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST" \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
-			--type-name-mangling \
 			--output-format=xml
 MKHTML_OPTIONS=
 HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
