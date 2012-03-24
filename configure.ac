@@ -149,45 +149,73 @@ AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
 
 dnl GTK+ support
 AC_ARG_WITH(gtk,
-            [AC_HELP_STRING([--with-gtk=@<:@gtk2/gtk3@:>@],
+            [AC_HELP_STRING([--with-gtk@<:@=gtk2/gtk3@:>@],
                             [include GTK+ specific widgets @<:@default=check@:>@])],
             [],[with_gtk=check])
-AS_IF([test "x${with_gtk}" = "xgtk3" -o "x${with_gtk}" = "xcheck"],
-      [PKG_CHECK_MODULES([GTK3],[gtk+-3.0 >= ]gtk3_prereq,
-                         [with_gtk=gtk3
-                          AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
-                                             [Defined if the GTK+3 support is enabled.])],
-                         [AS_IF([test "x${with_gtk}" = "xgtk3"],
-                                [AC_MSG_ERROR([${GTK3_PKG_ERRORS} and GTK+3 support requested])])])])
-AS_IF([test "x${with_gtk}" = "xgtk2" -o "x${with_gtk}" = "xcheck"],
-      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,
-                         [with_gtk=gtk2
-                          AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
-                                             [Defined if the GTK+2 support is enabled.])],
-                         [AS_IF([test "x${with_gtk}" = "xgtk2"],
-                                [AC_MSG_ERROR([${GTK2_PKG_ERRORS} and GTK+2 support requested])],
-				[with_gtk=no])])])
+AS_CASE(["${with_gtk}"],
+        [gtk2],      [gtk2_pkg=yes; gtk3_pkg=no],
+        [gtk3],      [gtk2_pkg=no;  gtk3_pkg=yes],
+        [check|yes], [gtk2_pkg=yes; gtk3_pkg=yes],
+        [no],        [gtk2_pkg=no;  gtk3_pkg=no],
+        [AC_MSG_ERROR([Invalid option passed to --with-gtk])])
+
+# GTK+ autodetection, giving precedence to GTK+3
+AS_IF([test "x${gtk3_pkg}" = "xyes"],
+      [PKG_CHECK_MODULES([GTK3],[gtk+-3.0 >= ]gtk3_prereq,[gtk_pkg=gtk3],[:])])
+AS_IF([test "x${gtk2_pkg}" = "xyes" -a "x${gtk_pkg}" = "x"],
+      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,[gtk_pkg=gtk2],[:])])
+AS_IF([test "x${gtk_pkg}" != "x"],[with_gtk=${gtk_pkg}])
+
+
+# Handle "check" graceful degradation
+AS_IF([test "x${with_gtk}" = "xcheck"],[with_gtk=no])
+
+# Handle failures
+AS_IF([test "x${with_gtk}" != "xno" -a "x${gtk_pkg}" = "x"],
+      [AC_MSG_ERROR([GTK+ support explicitely required but no valid GTK+ found])])
+
+AS_IF([test "x${with_gtk}" = "xgtk3"],
+      [AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
+                          [Defined if the GTK+3 support is enabled.])])
+AS_IF([test "x${with_gtk}" = "xgtk2"],
+      [AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
+                          [Defined if the GTK+2 support is enabled.])])
+
 AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" != "xno"])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
 AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
 dnl Glade catalog dir
 AC_ARG_WITH(glade_catalogdir,
-            [AC_HELP_STRING([--with-glade-catalogdir=DIR],
+            [AC_HELP_STRING([--with-glade-catalogdir@<:@=DIR@:>@],
                             [where to install the glade catalogs @<:@default=check@:>@])],
             [],[with_glade_catalogdir=check])
-# Check before for gladeui-2.0, dependent on GTK+3, and failback to gladeui-1.0.
-AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${with_gtk}" != "xgtk2"],
-      [PKG_CHECK_MODULES([GLADEUI2],[gladeui-2.0],[gladeui=gladeui-2.0],[:])])
-AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -a "x${gladeui}" = "x"],
-      [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[gladeui=gladeui-1.0],
-                         [with_glade_catalogdir=no])])
-AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
-AS_IF([test "x${gladeui}" != "x"],
-      [NTD_UNEXPAND([${gladeui}],
+
+# Both "check" and "yes" mean gladeui autodetection,
+# but "yes" will fail on gladeui not found
+AS_IF([test "x${with_glade_catalogdir}" = "xcheck" -o "x${with_glade_catalogdir}" = "xyes"],
+      [glade_pkg=check])
+
+# gladeui autodetection, giving precedence to gladeui-2.0 if possible
+AS_IF([test "x${glade_pkg}" = "xcheck" -a "x${with_gtk}" != "xgtk2"],
+      [PKG_CHECK_MODULES([GLADEUI2],[gladeui-2.0],[glade_pkg=gladeui-2.0],[:])])
+AS_IF([test "x${glade_pkg}" = "xcheck"],
+      [PKG_CHECK_MODULES([GLADEUI1],[gladeui-1.0],[glade_pkg=gladeui-1.0],[:])])
+AS_IF([test "x${glade_pkg}" != "x" -a "x${glade_pkg}" != "xcheck"],
+      [NTD_UNEXPAND([${glade_pkg}],
                     [catalogdir],
                     [with_glade_catalogdir="${NTD_UNEXPANDED}"],
-                    [AC_MSG_ERROR([${gladeui} found but pkg-config file invalid])])])
+                    [AC_MSG_ERROR([${glade_pkg} found but pkg-config file invalid])])])
+
+# Handle "yes" failure
+AS_IF([test "x${glade_pkg}" = "xcheck" -a "x${with_glade_catalogdir}" = "xyes"],
+      [AC_MSG_ERROR([Glade support explicitely required but no valid gladeui found])])
+
+# Handle "check" graceful degradation
+AS_IF([test "x${glade_pkg}" = "xcheck" -a "x${with_glade_catalogdir}" = "xcheck"],
+      [with_glade_catalogdir=no])
+
+AM_CONDITIONAL([HAVE_GLADE],[test "x${with_glade_catalogdir}" != "xno"])
 AM_COND_IF([HAVE_GLADE],
            [enable_glade=yes
             report_glade="
