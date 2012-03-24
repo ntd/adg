@@ -7,9 +7,8 @@ SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
-			--type-name-mangling \
 			--output-format=xml
-MKHTML_OPTIONS=		--path=$(abs_builddir)
+MKHTML_OPTIONS=
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
@@ -54,11 +53,7 @@ IGNORE_HFILES=		adg.h \
 			adg-trail-private.h \
 			test-internal.h
 HTML_IMAGES=
-content_files=		$(top_srcdir)/docs/gnu/README.xml \
-			$(top_srcdir)/docs/gnu/NEWS.xml \
-			$(top_srcdir)/docs/gnu/TODO.xml \
-			$(top_srcdir)/docs/gnu/CONTRIBUTING.xml \
-			$(top_srcdir)/docs/gnu/HACKING.xml
+content_files=
 expand_content_files=
 
 GTKDOC_CFLAGS=		-I$(top_srcdir)/src \

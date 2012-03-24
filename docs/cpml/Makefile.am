@@ -9,7 +9,9 @@ SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST" \
 MKDB_OPTIONS=		--sgml-mode \
 			--type-name-mangling \
 			--output-format=xml
-MKHTML_OPTIONS=		--path=$(abs_builddir)
+MKHTML_OPTIONS=
+HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
+			--stringparam chunker.output.doctype-system 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
 FIXXREF_OPTIONS=
 HFILE_GLOB=		$(top_srcdir)/src/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/src/cpml/*.c

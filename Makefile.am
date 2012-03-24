@@ -1,6 +1,6 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-xml2txt_stylesheet=		$(srcdir)/docs/gnu/docbook2txt.xsl
+xml2txt_stylesheet=		$(srcdir)/docs/common/docbook2txt.xsl
 xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 				  echo ' *WARN  libxslt-1.0.19 or later is required to generate $@' ; \
 				  touch $@ ; \
