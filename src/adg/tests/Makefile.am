@@ -77,6 +77,10 @@ TEST_PROGS+=			test-ldim$(EXEEXT)
 test_ldim_SOURCES=		test-ldim.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-rdim$(EXEEXT)
+test_rdim_SOURCES=		test-rdim.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-adim$(EXEEXT)
 test_adim_SOURCES=		test-adim.c \
 				$(test_internals)
