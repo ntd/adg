@@ -78,6 +78,9 @@ project such as the ADG canvas. This means to build releases also
 for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 
 <itemizedlist mark="circle">
+   <listitem>Add autoscaling to AdgCanvas. In other words, there must be a way
+   to select a specific scale from a finite set of predefined factors
+   depending on the current extents of the canvas.</listitem>
    <listitem>Actually AdgLineStyle can change color, width, cap, join, miter
    limit and antialiasing of a line. The only thing remaining is
    the possibility to customize the dashing of a dashed line.</listitem>
@@ -93,30 +96,30 @@ for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 <para>The target of the 0.6 branch is to clean up the code and stabilize the
 API: the 0.7.0 release will probably be a beta release.</para>
 
-<itemizedlist mark="circle">
-   <listitem override="disc">Provide a document with API guidelines take it as the holy bible!
+<itemizedlist mark="disc">
+   <listitem>Provide a document with API guidelines take it as the holy bible!
    All the APIs must comply with the rules of this document.</listitem>
-   <listitem override="disc">Try to cross compile and build a windows binary package. Check out
+   <listitem>Try to cross compile and build a windows binary package. Check out
    <ulink url="http://ricardo.ecn.wfu.edu/~cottrell/cross-gtk/">Allin suggestions</ulink>
    for hints.</listitem>
-   <listitem override="disc">Add printing support with page setup based on GtkPrintOperation provided
+   <listitem>Add printing support with page setup based on GtkPrintOperation provided
    by GTK+ 2.10 (hence, always available if GTK+ support is enable).</listitem>
-   <listitem override="disc">Uncomplete entities should fail gracefully instead of complaining for
+   <listitem>Uncomplete entities should fail gracefully instead of complaining for
    insufficient data. For example, a linear dimension without the
    needed pairs should simply not be rendered without warnings.
    This provides an easy way to implement optional machinings.</listitem>
-   <listitem override="disc">Expose conventions used by ADG APIs: this is mainly needed to make clear
+   <listitem>Expose conventions used by ADG APIs: this is mainly needed to make clear
    getters must be considered read-only, also when returning non-const
    values (because object referencing is always allowed).</listitem>
-   <listitem override="disc">Add italian localization.</listitem>
-   <listitem override="disc">Implement AdgGtkLayout, a new GTK+ widget that adds scrolling
+   <listitem>Add italian localization.</listitem>
+   <listitem>Implement AdgGtkLayout, a new GTK+ widget that adds scrolling
    capabilities to AdgGtkArea.</listitem>
-   <listitem override="disc">Add a new tab to the edit dialog of adg-demo to change the content
+   <listitem>Add a new tab to the edit dialog of adg-demo to change the content
    of the title block with custom labels.</listitem>
-   <listitem override="disc">Implement a decent "make check" target, basing the check programs on
+   <listitem>Implement a decent "make check" target, basing the check programs on
    the test framework of glib. Make this an optional feature, as this
    framework is based on the too young glib-2.16.0.</listitem>
-   <listitem override="disc">Resolve the TODOs in the adg/ directory: the only missing logic
+   <listitem>Resolve the TODOs in the adg/ directory: the only missing logic
    should come from the CPML library (and there the TODO items are
    bound to the less common use cases).</listitem>
    <listitem>Add support for GTK+3, possibly adding an optional check at configure
