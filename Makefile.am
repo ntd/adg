@@ -9,10 +9,11 @@ xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 				$(XSLTPROC) --novalid -o $@ $(xml2txt_stylesheet)
 ACLOCAL_AMFLAGS=		-I build
 DISTCHECK_CONFIGURE_FLAGS=	--enable-pango \
-				--enable-gtk2 \
 				--enable-gtk-doc \
-				--enable-glade \
-				--enable-test-framework
+				--enable-test-framework \
+				--enable-introspection \
+				--with-gtk \
+				--with-glade-catalogdir
 
 BUILT_SOURCES=			ChangeLog \
 				README \
