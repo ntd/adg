@@ -6,6 +6,13 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.5">
+<title>ADG 0.6.5</title>
+
+<para>Some missing documentation files that prevented the proper build
+adg-0.6.4 have been included in the distribution package.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.6.4">
 <title>ADG 0.6.4</title>
 
