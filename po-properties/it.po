@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-23 18:50+0100\n"
+"POT-Creation-Date: 2012-03-25 22:41+0200\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -981,19 +981,19 @@ msgstr "Distanza Celle"
 msgid "How much space to left between the cells"
 msgstr "Quanto spazio lasciare vuoto tra le celle"
 
-#: src/adg/adg-textual.c:108
+#: src/adg/adg-textual.c:110
 msgid "Text"
 msgstr "Testo"
 
-#: src/adg/adg-textual.c:109
+#: src/adg/adg-textual.c:111
 msgid "The text associated to this entity"
 msgstr "Il testo associato a questa entità"
 
-#: src/adg/adg-textual.c:115
+#: src/adg/adg-textual.c:117
 msgid "Font Dress"
 msgstr "Vestito del Font"
 
-#: src/adg/adg-textual.c:116
+#: src/adg/adg-textual.c:118
 msgid "The font dress to use for rendering this text"
 msgstr "Il vestito del font da usare per disegnare questo testo"
 
