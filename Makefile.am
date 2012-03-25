@@ -28,6 +28,11 @@ EXTRA_DIST=			COPYING \
 				THANKS \
 				adg.doap \
 				build/configure-mingw \
+				docs/gnu/CONTRIBUTING.xml \
+				docs/gnu/HACKING.xml \
+				docs/gnu/NEWS.xml \
+				docs/gnu/README.xml \
+				docs/gnu/TODO.xml \
 				$(BUILT_SOURCES)
 CLEANFILES=			test-report.xml \
 				test-report.html \
