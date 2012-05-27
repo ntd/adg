@@ -149,7 +149,7 @@ AM_CONDITIONAL([HAVE_PANGO],[test "x${enable_pango}" = "xyes"])
 
 dnl GTK+ support
 AC_ARG_WITH(gtk,
-            [AC_HELP_STRING([--with-gtk@<:@=gtk2/gtk3@:>@],
+            [AS_HELP_STRING([--with-gtk@<:@=gtk2/gtk3@:>@],
                             [include GTK+ specific widgets @<:@default=check@:>@])],
             [],[with_gtk=check])
 AS_CASE(["${with_gtk}"],
@@ -187,7 +187,7 @@ AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
 dnl Glade catalog dir
 AC_ARG_WITH(glade_catalogdir,
-            [AC_HELP_STRING([--with-glade-catalogdir@<:@=DIR@:>@],
+            [AS_HELP_STRING([--with-glade-catalogdir@<:@=DIR@:>@],
                             [where to install the glade catalogs @<:@default=check@:>@])],
             [],[with_glade_catalogdir=check])
 
@@ -230,7 +230,7 @@ GTK_DOC_CHECK(gtkdoc_prereq)
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
 AC_ARG_WITH(girdir,
-            [AC_HELP_STRING([--with-girdir=DIR],
+            [AS_HELP_STRING([--with-girdir=DIR],
                             [where the gir files are installed @<:@default=check@:>@])],
             [],[with_girdir=check])
 AS_IF([test "x${with_girdir}" = "xcheck"],
@@ -239,7 +239,7 @@ AS_IF([test "x${with_girdir}" = "xcheck"],
                     [with_girdir="${NTD_UNEXPANDED}"])])
 AC_SUBST([GIRDIR],${with_girdir})
 AC_ARG_WITH(typelibdir,
-            [AC_HELP_STRING([--with-typelibdir=DIR],
+            [AS_HELP_STRING([--with-typelibdir=DIR],
                             [where the typelib files are installed @<:@default=check@:>@])],
             [],[with_typelibdir=check])
 AS_IF([test "x${with_typelibdir}" = "xcheck"],
