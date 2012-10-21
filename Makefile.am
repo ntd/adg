@@ -29,6 +29,9 @@ EXTRA_DIST=			COPYING \
 				adg.doap \
 				build/configure-win32 \
 				build/configure-win64 \
+				build/adg-header.bmp \
+				build/adg-welcome.bmp \
+				build/adg.ico \
 				docs/gnu/CONTRIBUTING.xml \
 				docs/gnu/HACKING.xml \
 				docs/gnu/NEWS.xml \

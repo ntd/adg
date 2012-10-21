@@ -1,28 +1,43 @@
-; NSIS installer
+; ADG installer based on NSIS
 ; Check http://nsis.sourceforge.net/ for details
 
-!define DEMODIR "@abs_top_builddir@/demo/"
-!define LIBDIR "@abs_top_builddir@/src/"
-!define DLLDIR "@DLLDIR@"
+!define SRCDIR      "@abs_top_srcdir@"
+!define BUILDDIR    "@abs_top_builddir@"
+!define USRDIR      "@USRDIR@"
+!define DLLDIR      "${USRDIR}/bin"
 
-!addincludedir "@abs_top_srcdir@/build"
-!include "MUI2.nsh"
-!include "EnvVarUpdate.nsh"
+; ---------------------------------------------------------------
+; 1. Header file
 
-; General -------------------------------------------------------
+!addincludedir "${SRCDIR}/build"
+!include MUI2.nsh
+!include EnvVarUpdate.nsh
 
 Name "@PACKAGE_NAME@ @PACKAGE_VERSION@"
-OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-win32.exe"
+OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-@WINSUFFIX@.exe"
 SetCompressor /SOLID lzma
 InstallDir "$PROGRAMFILES\@ADG_API_PACKAGE@"
 RequestExecutionLevel user
 
-; Interface settings --------------------------------------------
+; ---------------------------------------------------------------
+; 2. Interface configuration
 
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_SMALLDESC
 
-; Pages ---------------------------------------------------------
+!define MUI_ICON "${SRCDIR}/build/adg.ico"
+!define MUI_UNICON "${SRCDIR}/build/adg.ico"
+
+!define MUI_HEADERIMAGE
+!define MUI_HEADERIMAGE_RIGHT
+!define MUI_HEADERIMAGE_BITMAP "${SRCDIR}/build/adg-header.bmp"
+!define MUI_HEADERIMAGE_UNBITMAP "${SRCDIR}/build/adg-header.bmp"
+
+!define MUI_WELCOMEFINISHPAGE_BITMAP "${SRCDIR}/build/adg-welcome.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "${SRCDIR}/build/adg-welcome.bmp"
+
+; ---------------------------------------------------------------
+; 3. Pages
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE "@abs_top_srcdir@/COPYING"
@@ -35,59 +50,71 @@ RequestExecutionLevel user
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
-; Languages -----------------------------------------------------
+; ---------------------------------------------------------------
+; 4. Language files
 
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Italian"
 
-; Sections ------------------------------------------------------
+; ---------------------------------------------------------------
+; 5. Reserve files
+
+
+; ---------------------------------------------------------------
+; I. Installer sections
 
 Section "ADG canvas" SecBase
   SectionIn RO
-  SetOutPath "$INSTDIR"
 
-  File "${DEMODIR}/.libs/adg-demo.exe"
-  File "${DEMODIR}/adg-demo.ui"
-  File "@abs_top_srcdir@/demo/adg-64.png"
+  SetOutPath "$INSTDIR"
+  File "${BUILDDIR}/demo/.libs/adg-demo.exe"
+  File "${BUILDDIR}/demo/adg-demo.ui"
+  File "${SRCDIR}/demo/adg-16.png"
+  File "${SRCDIR}/demo/adg-32.png"
+  File "${SRCDIR}/demo/adg-48.png"
+  File "${SRCDIR}/demo/adg-64.png"
+  File "${SRCDIR}/demo/adg-128.png"
 
   SetOutPath "$INSTDIR\bin"
   File "${DLLDIR}/zlib1.dll"
   File "${DLLDIR}/libexpat-*.dll"
-  File "${DLLDIR}/libpng14-*.dll"
-  File "${DLLDIR}/intl.dll"
+  File "${DLLDIR}/libintl-*.dll"
+  File "${DLLDIR}/iconv.dll"
+  File "${DLLDIR}/libffi-*.dll"
+  File "${DLLDIR}/libpng??-*.dll"
   File "${DLLDIR}/libglib-2.0-*.dll"
   File "${DLLDIR}/libgthread-2.0-*.dll"
   File "${DLLDIR}/libgmodule-2.0-*.dll"
   File "${DLLDIR}/libgobject-2.0-*.dll"
-  File "${DLLDIR}/libfontconfig-*.dll"
-  File "${DLLDIR}/freetype6.dll"
-  File "${DLLDIR}/libpangoft2-1.0-*.dll"
+  File "${DLLDIR}/libgio-2.0-*.dll"
+  File "${DLLDIR}/libpixman-1-*.dll"
   File "${DLLDIR}/libcairo-*.dll"
-  File "${DLLDIR}/libpango-1.0-*.dll"
   File "${DLLDIR}/libpango-1.0-*.dll"
   File "${DLLDIR}/libpangocairo-1.0-*.dll"
   File "${DLLDIR}/libpangowin32-1.0-*.dll"
-  File "${DLLDIR}/libgdk_pixbuf-2.0-*.dll"
-  File "${DLLDIR}/libgio-2.0-*.dll"
   File "${DLLDIR}/libatk-1.0-*.dll"
-  File "${DLLDIR}/libgdk-win32-2.0-*.dll"
-  File "${DLLDIR}/libgtk-win32-2.0-*.dll"
-  File "${LIBDIR}/cpml/.libs/libcpml-1-*.dll"
-  File "${LIBDIR}/adg/.libs/libadg-1-*.dll"
+  File "${DLLDIR}/libgdk_pixbuf-2.0-*.dll"
+  File "${DLLDIR}/libgdk-3-*.dll"
+  File "${DLLDIR}/libgtk-3-*.dll"
+  File "${BUILDDIR}/src/cpml/.libs/libcpml-1-*.dll"
+  File "${BUILDDIR}/src/adg/.libs/libadg-1-*.dll"
+
+  SetOutPath "$INSTDIR\share\glib-2.0\schemas"
+  File "${USRDIR}/share/glib-2.0/schemas/gschemas.compiled"
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" $INSTDIR\adg-demo.exe
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" $INSTDIR\uninstall.exe
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" "$INSTDIR\adg-demo.exe"
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
 
   WriteUninstaller "$INSTDIR\uninstall.exe"
   ${EnvVarUpdate} $0 "PATH" "A" "HKCU" "$INSTDIR\bin"
 SectionEnd
 
 Section "Support for languages" SecLanguages
-  SetOutPath "$INSTDIR\data"
+  SetOutPath "$INSTDIR\share\locale"
 SectionEnd
 
-; Descriptions --------------------------------------------------
+; Descriptions
 
 LangString DESC_SecBase ${LANG_ENGLISH} "Base installation for running the demo program."
 LangString DESC_SecBase ${LANG_ITALIAN} "Installazione di base per eseguire il programma dimostrativo."
@@ -99,7 +126,7 @@ LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-; Uninstaller ---------------------------------------------------
+; Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
@@ -107,34 +134,41 @@ Section "Uninstall"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
   Delete "$INSTDIR\adg-demo.exe"
+  Delete "$INSTDIR\adg-128.png"
   Delete "$INSTDIR\adg-64.png"
+  Delete "$INSTDIR\adg-48.png"
+  Delete "$INSTDIR\adg-32.png"
+  Delete "$INSTDIR\adg-16.png"
   Delete "$INSTDIR\adg-demo.ui"
 
-  Delete "$INSTDIR\bin\libadg-1-*.dll"
-  Delete "$INSTDIR\bin\libcpml-1-*.dll"
-  Delete "$INSTDIR\bin\libgtk-win32-2.0-*.dll"
-  Delete "$INSTDIR\bin\libgdk-win32-2.0-*.dll"
-  Delete "$INSTDIR\bin\libatk-1.0-*.dll"
-  Delete "$INSTDIR\bin\libgio-2.0-*.dll"
-  Delete "$INSTDIR\bin\libgdk_pixbuf-2.0-*.dll"
-  Delete "$INSTDIR\bin\libpangowin32-1.0-*.dll"
-  Delete "$INSTDIR\bin\libpangocairo-1.0-*.dll"
-  Delete "$INSTDIR\bin\libpango-1.0-*.dll"
-  Delete "$INSTDIR\bin\libcairo-*.dll"
-  Delete "$INSTDIR\bin\libpangoft2-1.0-*.dll"
-  Delete "$INSTDIR\bin\freetype6.dll"
-  Delete "$INSTDIR\bin\libfontconfig-*.dll"
-  Delete "$INSTDIR\bin\libgobject-2.0-*.dll"
-  Delete "$INSTDIR\bin\libgmodule-2.0-*.dll"
-  Delete "$INSTDIR\bin\libglib-2.0-*.dll"
-  Delete "$INSTDIR\bin\intl.dll"
-  Delete "$INSTDIR\bin\libpng14-*.dll"
-  Delete "$INSTDIR\bin\libexpat-*.dll"
-  Delete "$INSTDIR\bin\zlib1.dll"
+  Delete "$INSTDIR\libgtk-3-*.dll"
+  Delete "$INSTDIR\libgdk-3-*.dll"
+  Delete "$INSTDIR\libgdk_pixbuf-2.0-*.dll"
+  Delete "$INSTDIR\libatk-1.0-*.dll"
+  Delete "$INSTDIR\libpangowin32-1.0-*.dll"
+  Delete "$INSTDIR\libpangocairo-1.0-*.dll"
+  Delete "$INSTDIR\libpango-1.0-*.dll"
+  Delete "$INSTDIR\libcairo-*.dll"
+  Delete "$INSTDIR\libpixman-1-*.dll"
+  Delete "$INSTDIR\libgio-2.0-*.dll"
+  Delete "$INSTDIR\libgobject-2.0-*.dll"
+  Delete "$INSTDIR\libgmodule-2.0-*.dll"
+  Delete "$INSTDIR\libgthread-2.0-*.dll"
+  Delete "$INSTDIR\libglib-2.0-*.dll"
+  Delete "$INSTDIR\libpng??-*.dll"
+  Delete "$INSTDIR\libffi-*.dll"
+  Delete "$INSTDIR\iconv.dll"
+  Delete "$INSTDIR\libintl-*.dll"
+  Delete "$INSTDIR\libexpat-*.dll"
+  Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\share\glib-2.0\schemas\gschemas.compiled"
 
   Delete "$INSTDIR\uninstall.exe"
   RMDir  "$INSTDIR\bin"
-  RMDir  "$INSTDIR\data"
+  RMDir  "$INSTDIR\share\glib-2.0\schemas"
+  RMDir  "$INSTDIR\share\glib-2.0"
+  RMDir  "$INSTDIR\share\locale"
+  RMDir  "$INSTDIR\share"
   RMDir  "$INSTDIR"
   ${un.EnvVarUpdate} $0 "PATH" "R" "HKCU" "$INSTDIR\bin"
 SectionEnd
