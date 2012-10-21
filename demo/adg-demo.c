@@ -4,8 +4,6 @@
 /* Force the reinclusion of adg.h */
 #undef __ADG_H__
 
-#include "demo.h"
-
 #include <adg.h>
 #include <string.h>
 #include <math.h>
@@ -991,11 +989,21 @@ static GtkWidget *
 _adg_about_window(GtkBuilder *builder)
 {
     GtkWidget *window;
+    GList *icon_list, *last_node;
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndAbout");
     g_assert(GTK_IS_ABOUT_DIALOG(window));
-
     g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
+
+    icon_list = gtk_window_get_default_icon_list();
+    last_node = g_list_last(icon_list);
+    if (last_node != NULL) {
+        /* The last icon is supposed to be the largest one:
+         * check adg_gtk_use_default_icons() implementation. */
+        GdkPixbuf *last_icon = last_node->data;
+        gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(window), last_icon);
+    }
+    g_list_free(icon_list);
 
     return window;
 }
@@ -1067,6 +1075,8 @@ _adg_main_window(GtkBuilder *builder)
     GtkWidget *button_edit, *button_save_as, *button_print;
     GtkWidget *button_about, *button_quit;
 
+    adg_gtk_use_default_icons(SRCDIR);
+
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
     part = _adg_part_new(builder);
     canvas = adg_canvas_new();
@@ -1118,7 +1128,7 @@ main(gint argc, gchar **argv)
     _adg_parse_args(&argc, &argv, &show_extents);
     adg_switch_extents(show_extents);
 
-    path = demo_find_data_file("adg-demo.ui", argv[0]);
+    path = adg_find_file("adg-demo.ui", adg_datadir(), BUILDDIR, NULL);
     if (path == NULL) {
         g_print(_("adg-demo.ui not found!\n"));
         return 1;
@@ -1129,6 +1139,7 @@ main(gint argc, gchar **argv)
 
     gtk_builder_set_translation_domain(builder, GETTEXT_PACKAGE);
     gtk_builder_add_from_file(builder, path, &error);
+    g_free(path);
 
     if (error != NULL) {
         g_critical("%s", error->message);

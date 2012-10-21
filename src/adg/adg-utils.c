@@ -359,3 +359,58 @@ _adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)
 
     return translation;
 }
+
+/**
+ * adg_find_file:
+ * @file: the file to search
+ * @...:  a NULL terminated list of paths where to look for
+ *        file existence.
+ *
+ * Searches @file in the provided paths and returns the full
+ * path to the first existing match. The check is performed
+ * using g_file_test() with the G_FILE_TEST_EXISTS test.
+ *
+ * This function has been picked up from the ntdisp project:
+ * http://dev.entidi.com/p/ntdisp/
+ *
+ * Returns: a newly allocated string containing the path
+ *          or NULL on errors. Free it with g_free() when
+ *          no longer needed.
+ *
+ * Since: 1.0
+ **/
+gchar *
+adg_find_file(const gchar *file, ...)
+{
+    va_list var_args;
+    gchar *path;
+    const gchar *base;
+
+    va_start(var_args, file);
+
+    while ((base = va_arg(var_args, const gchar *)) != NULL) {
+        path = g_build_filename(base, file, NULL);
+        if (g_file_test(path, G_FILE_TEST_EXISTS))
+            return path;
+        g_free(path);
+    }
+
+    return NULL;
+}
+
+/**
+ * adg_datadir:
+ *
+ * Gets the default directory where support files should
+ * be installed.
+ *
+ * Returns: a internally owned string with the base path
+ *          to the support files.
+ *
+ * Since: 1.0
+ **/
+const gchar *
+adg_datadir(void)
+{
+    return ADG_DATADIR;
+}

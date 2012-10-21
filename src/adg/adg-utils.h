@@ -61,6 +61,9 @@ gboolean        adg_is_boolean_value    (gboolean        value);
 gchar *         adg_string_replace      (const gchar    *str,
                                          const gchar    *from,
                                          const gchar    *to);
+gchar *         adg_find_file           (const gchar    *file,
+                                                         ...);
+const gchar *   adg_datadir             (void);
 
 G_END_DECLS
 

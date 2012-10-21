@@ -40,6 +40,7 @@ void            adg_gtk_window_hide_here        (GtkWindow      *window);
 void            adg_gtk_toggle_button_sensitivize
                                                 (GtkToggleButton*toggle_button,
                                                  GtkWidget      *widget);
+void            adg_gtk_use_default_icons       (const gchar    *fallback_path);
 
 G_END_DECLS
 

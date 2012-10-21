@@ -7,7 +7,6 @@
     <property name="border_width">6</property>
     <property name="title" translatable="yes">adg-demo - Demostration program</property>
     <property name="window_position">center</property>
-    <property name="icon">adg-64.png</property>
     <child>
       <object class="GtkVBox" id="mainBox">
         <property name="visible">True</property>
@@ -172,7 +171,6 @@ License along with this library; if not, write to the
 Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 Boston, MA  02110-1301, USA.</property>
     <property name="authors">Nicola Fontana  &lt;ntd at entidi.it&gt;</property>
-    <property name="logo">adg-64.png</property>
     <child internal-child="vbox">
       <object class="GtkVBox" id="aboutBox">
         <property name="spacing">2</property>

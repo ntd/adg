@@ -4,9 +4,9 @@
 /* Force the reinclusion of adg.h */
 #undef __ADG_H__
 
-#include "demo.h"
 #include <cpml.h>
 #include <math.h>
+#include <gtk/gtk.h>
 
 
 static void     parse_args              (gint           *p_argc,
@@ -105,7 +105,7 @@ main(gint argc, gchar **argv)
 
     parse_args(&argc, &argv);
 
-    path = demo_find_data_file("cpml-demo.ui", argv[0]);
+    path = adg_find_file("cpml-demo.ui", adg_datadir(), BUILDDIR, NULL);
     if (path == NULL) {
         g_warning(_("cpml-demo.ui not found!\n"));
         return 1;
@@ -116,6 +116,8 @@ main(gint argc, gchar **argv)
 
     gtk_builder_set_translation_domain(builder, GETTEXT_PACKAGE);
     gtk_builder_add_from_file(builder, path, &error);
+    g_free(path);
+
     if (error != NULL) {
         g_print("%s\n", error->message);
         return 2;

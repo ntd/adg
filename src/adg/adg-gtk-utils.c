@@ -139,3 +139,49 @@ adg_gtk_toggle_button_sensitivize(GtkToggleButton *toggle_button,
     is_active = gtk_toggle_button_get_active(toggle_button);
     gtk_widget_set_sensitive(widget, is_active);
 }
+
+/**
+ * adg_gtk_use_default_icons:
+ * @fallback_path: a fallback path
+ *
+ * Sets the default icon list of every #GtkWindow to a hand-coded
+ * list of ADG icons. Check gtk gtk_window_set_default_icon_list()
+ * for further details.
+ *
+ * If @fallback_path is specified and an icon is not found in the
+ * ADG data path, the file is looked also in that path. This
+ * feature has been mainly added to allow proper loading of icons
+ * from adg-demo and cpml-demo when uninstalled.
+ **/
+void
+adg_gtk_use_default_icons(const gchar *fallback_path)
+{
+    const gchar **p_file;
+    const gchar *files[] = {
+        "adg-16.png",
+        "adg-32.png",
+        "adg-48.png",
+        "adg-64.png",
+        "adg-128.png",
+        NULL
+    };
+    GList *list;
+    gchar *path;
+    GdkPixbuf *icon;
+
+    list = NULL;
+    for (p_file = files; *p_file != NULL; ++p_file) {
+        path = adg_find_file(*p_file, ADG_DATADIR, fallback_path, NULL);
+        if (path == NULL)
+            continue;
+        icon = gdk_pixbuf_new_from_file(path, NULL);
+        g_free(path);
+        if (icon != NULL)
+            list = g_list_append(list, icon);
+    }
+
+    if (list != NULL) {
+        gtk_window_set_default_icon_list(list);
+        g_list_free(list);
+    }
+}
