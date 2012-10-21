@@ -27,7 +27,8 @@ EXTRA_DIST=			COPYING \
 				INSTALL \
 				THANKS \
 				adg.doap \
-				build/configure-mingw \
+				build/configure-win32 \
+				build/configure-win64 \
 				docs/gnu/CONTRIBUTING.xml \
 				docs/gnu/HACKING.xml \
 				docs/gnu/NEWS.xml \

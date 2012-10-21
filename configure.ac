@@ -76,6 +76,11 @@ esac
 AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
 AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" = "mingw" -o "${guessed_host}" = "cygwin"])
 
+AS_IF([test "x${host_cpu}" = "xx86_64"],
+      [WINSUFFIX="win64"],[WINSUFFIX="win32"])
+AC_SUBST([WINSUFFIX])
+AM_SUBST_NOTMAKE([WINSUFFIX])
+
 
 # Check for programs
 

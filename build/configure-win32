@@ -1,0 +1,14 @@
+#! /bin/sh
+#
+# Configure a cross-building to win32 platform using the archlinux
+# toolchain found at http://github.com/ntd/aur-fedora-mingw
+
+$(dirname $0)/../configure \
+    --prefix= \
+    --host=i686-w64-mingw32 \
+    --disable-dependency-tracking \
+    --enable-pango \
+    --disable-gtk-doc \
+    --disable-introspection \
+    --disable-test-framework \
+    $*
