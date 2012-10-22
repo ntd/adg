@@ -6,6 +6,25 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.6.6">
+<title>ADG 0.6.6</title>
+
+<para>The project has been ported to GTK+3 also on Windows platforms.
+The helper scripts now build only GTK+3 installers.</para>
+
+<para>The recent porting of Fedora mingw packages to archlinux made
+possible to generate for the first time a win64 installer.</para>
+
+<para>adg-demo now embeds icons of different sizes, ranging from 16x16
+to 128x128 pixels. The look-up falls back to srcdir so the icons
+can be used also without installing the program. A bunch of new
+APIs has been added to help this relocation.</para>
+
+<para>The Windows installers received a lot of cosmetic improvements.
+The NSIS code has been cleaned up.</para>
+
+</simplesect>
+
 <simplesect id="NEWS.0.6.5">
 <title>ADG 0.6.5</title>
 
