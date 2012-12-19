@@ -15,10 +15,8 @@ else
 AM_CPPFLAGS+=			-DADG_DATADIR='"$(pkgdatadir)"'
 endif
 
-ADG_CFLAGS=			$(CAIRO_CFLAGS) \
-				$(GOBJECT_CFLAGS)
-ADG_LDFLAGS=			$(CAIRO_LIBS) \
-				$(GOBJECT_LIBS)
+ADG_CFLAGS=
+ADG_LIBADD=
 
 
 # file groups
@@ -158,6 +156,53 @@ CLEANFILES=			$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
 
+
+## Optional GTK+ related stuff
+
+if HAVE_GTK
+h_sources+=			adg-gtk-area.h \
+				adg-gtk-layout.h \
+				adg-gtk-utils.h
+private_h_sources+=		adg-gtk-area-private.h \
+				adg-gtk-layout-private.h
+c_sources+=			adg-gtk-utils.c
+endif
+
+if HAVE_GTK3
+c_sources+=			adg-gtk-area.c \
+				adg-gtk-layout.c
+ADG_CFLAGS+=			$(GTK3_CFLAGS)
+ADG_LIBADD+=			$(GTK3_LIBS)
+endif
+
+if HAVE_GTK2
+c_sources+=			adg-gtk-area-gtk2.c \
+				adg-gtk-layout-gtk2.c
+ADG_CFLAGS+=			$(GTK2_CFLAGS)
+ADG_LIBADD+=			$(GTK2_LIBS)
+endif
+
+
+## Optional pangocairo related stuff
+
+if HAVE_PANGO
+h_sources+=			adg-pango-style.h \
+				adg-text.h
+private_h_sources+=		adg-pango-style-private.h \
+				adg-text-private.h
+c_sources+=			adg-pango-style.c \
+				adg-text.c
+ADG_CFLAGS+=			$(PANGO_CFLAGS)
+ADG_LIBADD+=			$(PANGO_LIBS)
+endif
+
+
+ADG_CFLAGS+=			$(CAIRO_CFLAGS) \
+				$(GOBJECT_CFLAGS)
+ADG_LIBADD+=			$(CAIRO_LIBS) \
+				$(GOBJECT_LIBS)
+
+
 pkgconfig_DATA=			adg-1.pc
 
 adg_includedir=			$(includedir)/adg-1/adg
@@ -173,55 +218,10 @@ nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_c_sources)
 libadg_1_la_CFLAGS=		$(ADG_CFLAGS)
 libadg_1_la_LDFLAGS=		-no-undefined \
-				-version-info @ADG_LT_VERSION@ \
-				$(ADG_LDFLAGS)
-libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la
+				-version-info @ADG_LT_VERSION@
+libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la \
+				$(ADG_LIBADD)
 
-
-## Optional GTK+ related stuff
-if HAVE_GTK
-
-h_sources+=			adg-gtk-area.h \
-				adg-gtk-layout.h \
-				adg-gtk-utils.h
-private_h_sources+=		adg-gtk-area-private.h \
-				adg-gtk-layout-private.h
-c_sources+=			adg-gtk-utils.c
-ADG_CFLAGS+=			$(GTK3_CFLAGS) \
-				$(GTK2_CFLAGS)
-ADG_LDFLAGS+=			$(GTK3_LIBS) \
-				$(GTK2_LIBS)
-
-endif
-
-if HAVE_GTK3
-
-c_sources+=			adg-gtk-area.c \
-				adg-gtk-layout.c
-
-endif
-
-if HAVE_GTK2
-
-c_sources+=			adg-gtk-area-gtk2.c \
-				adg-gtk-layout-gtk2.c
-
-endif
-
-
-## Optional pangocairo related stuff
-if HAVE_PANGO
-
-h_sources+=			adg-pango-style.h \
-				adg-text.h
-private_h_sources+=		adg-pango-style-private.h \
-				adg-text-private.h
-c_sources+=			adg-pango-style.c \
-				adg-text.c
-ADG_CFLAGS+=			$(PANGO_CFLAGS)
-ADG_LDFLAGS+=			$(PANGO_LIBS)
-
-endif
 
 
 ## GObject introspection
@@ -266,7 +266,7 @@ Adg_1_0_gir_FILES=		adg-introspection.h \
 ## Dependency from CPML will be added manually because it is still an
 ## internal component, hence not yet installed at this point
 Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
-Adg_1_0_gir_LDFLAGS=		$(ADG_LDFLAGS)
+Adg_1_0_gir_LDFLAGS=
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
 				--warn-all \
 				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
