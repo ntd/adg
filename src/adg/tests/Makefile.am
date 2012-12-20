@@ -5,10 +5,7 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 AM_CFLAGS=			$(CAIRO_CFLAGS) \
 				$(GOBJECT2_CFLAGS)
-AM_LDFLAGS=			$(CAIRO_LIBS) \
-				$(GOBJECT2_LIBS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(top_builddir)/src/adg/libadg-1.la
+LDADD=				$(top_builddir)/src/adg/libadg-1.la
 
 
 # file groups
@@ -126,7 +123,6 @@ TEST_PROGS+=			test-text$(EXEEXT)
 test_text_SOURCES=		test-text.c \
 				$(test_internals)
 AM_CFLAGS+=			$(PANGO_CFLAGS)
-AM_LDFLAGS+=			$(PANGO_LIBS)
 endif
 
 if HAVE_GTK
@@ -138,8 +134,6 @@ test_gtk_layout_SOURCES=	test-gtk-layout.c \
 				$(test_internals)
 AM_CFLAGS+=			$(GTK3_CFLAGS) \
 				$(GTK2_CFLAGS)
-AM_LDFLAGS+=			$(GTK3_LIBS) \
-				$(GTK2_LIBS)
 endif
 
 endif

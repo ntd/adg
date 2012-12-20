@@ -46,10 +46,13 @@ CLEANFILES=			test-report.xml \
 				full-report.html
 
 SUBDIRS=			src \
-				demo \
 				po \
 				po-properties \
 				docs
+
+if HAVE_GTK
+SUBDIRS+=			demo
+endif
 
 
 # Creating ChangeLog files from git log:
