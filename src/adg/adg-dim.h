@@ -48,8 +48,9 @@ struct _AdgDim {
 struct _AdgDimClass {
     /*< private >*/
     AdgEntityClass       parent_class;
+
     /*< public >*/
-    /* Virtual Table */
+    /* Virtual table */
     gdouble             (*quote_angle)          (gdouble         angle);
     gchar *             (*default_value)        (AdgDim         *dim);
 };

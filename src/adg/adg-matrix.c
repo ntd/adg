@@ -64,7 +64,7 @@ adg_matrix_get_type(void)
  * Creates a new empty #AdgMatrix. The returned pointer
  * should be freed with g_free() when no longer needed.
  *
- * Returns: a newly created #AdgMatrix
+ * Returns: (transfer full): a newly created #AdgMatrix
  *
  * Since: 1.0
  **/

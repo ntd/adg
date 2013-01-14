@@ -51,6 +51,7 @@ struct _AdgStyle {
 struct _AdgStyleClass {
     /*< private >*/
     GObjectClass         parent_class;
+
     /*< public >*/
     /* Signals */
     void                (*invalidate)           (AdgStyle       *style);

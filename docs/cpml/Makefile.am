@@ -7,7 +7,8 @@ SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST" \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
-			--output-format=xml
+			--output-format=xml \
+			--default-includes="$(DOC_MODULE)-1/$(DOC_MODULE).h"
 MKHTML_OPTIONS=
 HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
 			--stringparam chunker.output.doctype-system 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
@@ -26,3 +27,19 @@ expand_content_files=
 include $(top_srcdir)/build/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE)-sections.txt
+
+
+# Use an hand-crafted cpml.hierarchy file instead of an empty one.
+# By default gtk-doc does not allow to have a file name that matches
+# the type name to avoid id conflicts between the main section and
+# the struct subsection: this is only allowed for GBoxed and GObject
+# types.
+# I *absolutely* want to have file names that match the type names,
+# so using a fake cpml.hierarchy let gtk-doc treat the plain C
+# structs of CPML as GBoxed types.
+
+EXTRA_DIST+=		cpml.hierarchy.fake
+
+scan-hook:
+	$(AM_V_at)test -f cpml.hierarchy || \
+	    cp $(abs_srcdir)/cpml.hierarchy.fake cpml.hierarchy

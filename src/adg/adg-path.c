@@ -292,7 +292,7 @@ adg_path_over_primitive(AdgPath *path)
  * adg_path_append:
  * @path: an #AdgPath
  * @type: a #cairo_data_type_t value
- * @Varargs:  point data, specified as #AdgPair pointers
+ * @...:  point data, specified as #AdgPair pointers
  *
  * Generic method to append a primitive to @path. The number of #AdgPair
  * pointers to pass as @Varargs depends on @type: #CPML_CLOSE does not
@@ -789,7 +789,7 @@ adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
 }
 
 /**
- * adg_path_chamfer
+ * adg_path_chamfer:
  * @path:   an #AdgPath
  * @delta1: the distance from the intersection point of the current primitive
  * @delta2: the distance from the intersection point of the next primitive

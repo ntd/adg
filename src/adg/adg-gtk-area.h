@@ -48,8 +48,9 @@ struct _AdgGtkArea {
 struct _AdgGtkAreaClass {
     /*< private >*/
     GtkDrawingAreaClass  parent_class;
+
     /*< public >*/
-    /* Virtual Table */
+    /* Signals */
     void                (*canvas_changed)       (AdgGtkArea     *area,
                                                  AdgCanvas      *old_canvas);
     void                (*extents_changed)      (AdgGtkArea     *area,

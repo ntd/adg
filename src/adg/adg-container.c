@@ -24,7 +24,7 @@
  *
  * The #AdgContainer is an entity that can contains more sub-entities.
  * Moreover, it can apply a common transformation to local and/or global
- * maps: see http://adg.entidi.com/tutorial/view/3 for further details.
+ * maps: see http://adg.entidi.com/home/details/ for further details.
  *
  * Adding an entity to a container will make a circular dependency
  * between the two objects. The container will also add a weak reference
@@ -40,6 +40,19 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * AdgContainerClass:
+ * @children: virtual method that gets the list of entities (that is
+ *            #AdgEntity and derived instances) owned by the container.
+ * @add:      signal that adds a new entity to the container.
+ * @remove:   signal that removes a specific entity from the container.
+ *
+ * #AdgContainer effectively stores a #GSList of children into its
+ * private data and keeps a reference to every children it owns.
  *
  * Since: 1.0
  **/
@@ -297,7 +310,7 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
  * The returned list is ordered from the most recently added child
  * to the oldest one.
  *
- * Returns: (element-type AdgEntity) (transfer container): a newly allocated #GSList of #AdgEntity or %NULL empty list or on errors
+ * Returns: (element-type AdgEntity) (transfer container): a newly allocated #GSList of #AdgEntity or %NULL on no children or errors
  *
  * Since: 1.0
  **/

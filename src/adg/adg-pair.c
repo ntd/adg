@@ -82,8 +82,7 @@ adg_pair_copy(AdgPair *pair, const AdgPair *src)
  *
  * Duplicates @pair.
  *
- * Returns: the duplicate of @pair: must be freed with g_free()
- *           when no longer needed.
+ * Returns: (transfer full): the duplicate of @pair: must be freed with g_free() when no longer needed.
  *
  * Since: 1.0
  **/

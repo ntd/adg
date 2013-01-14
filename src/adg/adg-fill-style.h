@@ -49,7 +49,9 @@ struct _AdgFillStyle {
 struct _AdgFillStyleClass {
     /*< private >*/
     AdgStyleClass        parent_class;
+
     /*< public >*/
+    /* Virtual table */
     void                (*set_extents)          (AdgFillStyle   *fill_style,
                                                  const CpmlExtents *extents);
 };

@@ -29,20 +29,17 @@
 
 G_BEGIN_DECLS
 
+#define _AdgSegment                     _CpmlSegment
 #define ADG_TYPE_SEGMENT                (adg_segment_get_type())
 
 
-#ifdef __GI_SCANNER__
-ADG_FORWARD_DECL(AdgSegment);
-#else
-typedef CpmlSegment AdgSegment;
-#endif
+typedef struct _AdgSegment AdgSegment;
 
 
 GType           adg_segment_get_type    (void) G_GNUC_CONST;
 AdgSegment *    adg_segment_dup         (const AdgSegment       *segment);
 AdgSegment *    adg_segment_deep_dup    (const AdgSegment       *segment);
-AdgSegment *    adg_segment_deep_copy   (AdgSegment             *segment,
+void            adg_segment_deep_copy   (AdgSegment             *segment,
                                          const AdgSegment       *src);
 
 G_END_DECLS

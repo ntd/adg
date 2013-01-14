@@ -47,6 +47,17 @@
  **/
 
 /**
+ * AdgTrailClass:
+ * @get_cpml_path: virtual method to get the #CpmlPath bound to the trail.
+ *
+ * The default @get_cpml_path calls the #AdgTrailCallback callback passed
+ * to adg_trail_new() during construction. No caching is performed in
+ * between.
+ *
+ * Since: 1.0
+ **/
+
+/**
  * AdgTrailCallback:
  * @trail: an #AdgTrail
  * @user_data: the general purpose pointer set by adg_trail_new()

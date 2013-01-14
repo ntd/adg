@@ -36,6 +36,27 @@
  * Since: 1.0
  **/
 
+/**
+ * AdgDimClass:
+ * @quote_angle:   virtual method that must return  the rotation angle of the
+ *                 quote (in radians) of the current dimension.
+ * @default_value: abstract virtual method that must return the default value
+ *                 (as a newly allocated string to be freed with g_free()) of
+ *                 the current dimension.
+ *
+ * The default implementation of @quote_angle flips the quote if it should be
+ * rotated in the bottom right half of the circle, that is:
+ *
+ * |[
+ * if 1/3 PI <= angle <= -3/4  PI; then angle += PI.
+ * ]|
+ *
+ * The virtual method @default_value instead *must* be implemented by any
+ * derived class. The default implementation will trigger an error if called.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 #include "adg-text-internal.h"

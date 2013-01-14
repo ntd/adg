@@ -29,14 +29,11 @@
 
 G_BEGIN_DECLS
 
+#define _AdgPair                _CpmlPair
 #define ADG_TYPE_PAIR           (adg_pair_get_type())
 
 
-#ifdef __GI_SCANNER__
-ADG_FORWARD_DECL(AdgPair);
-#else
-typedef CpmlPair AdgPair;
-#endif
+typedef struct _AdgPair AdgPair;
 
 
 GType           adg_pair_get_type       (void) G_GNUC_CONST;

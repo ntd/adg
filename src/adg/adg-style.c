@@ -36,6 +36,19 @@
  * Since: 1.0
  **/
 
+/**
+ * AdgStyleClass:
+ * @invalidate: virtual method to reset the style.
+ * @apply:      abstract virtual to apply a style to a cairo context.
+ *
+ * The default @invalidate handler does not do anything.
+ *
+ * The virtual method @apply *must* be implemented by any derived class.
+ * The default implementation will trigger an error if called.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 
@@ -52,7 +65,6 @@ enum {
     APPLY,
     LAST_SIGNAL
 };
-
 
 static void             _adg_dispose            (GObject        *object);
 static void             _adg_apply              (AdgStyle       *style,

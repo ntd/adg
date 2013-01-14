@@ -313,6 +313,7 @@ adg_adim_new(void)
  * @ref2: allow-none: second reference point
  * @org1: allow-none: first origin point
  * @org2: allow-none: second origin point
+ * @pos:  allow-none: the position point
  *
  * Creates a new angular dimension, specifing all the needed
  * properties in one shot using #AdgPair.

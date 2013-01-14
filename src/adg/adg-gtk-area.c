@@ -59,6 +59,22 @@
  * Since: 1.0
  **/
 
+/**
+ * AdgGtkAreaClass:
+ * @canvas_changed:  signals that a new #AdgCanvas is bound to this widget.
+ * @extents_changed: signals that the extents on the underling #AdgCanvas
+ *                   has been changed.
+ *
+ * The default @canvas_changed resets the internal initialization flag, so at
+ * the first call to the size_allocate() method the zoom factor is set to %1.
+ *
+ * The default @extents_changed signal does not do anything: it is intended as
+ * a hook for derived class for refreshing GUI elements (such as scrollbars)
+ * whenever the boundary box changes.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 #include <gtk/gtk.h>

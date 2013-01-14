@@ -69,8 +69,7 @@ adg_segment_get_type(void)
  * adg_segment_deep_dup() if it is required also the content
  * duplication.
  *
- * Returns: a shallow duplicate of @segment: must be freed
- *          with g_free() when no longer needed.
+ * Returns: (transfer full): a shallow duplicate of @segment: must be freed with g_free() when no longer needed.
  *
  * Since: 1.0
  **/
@@ -93,8 +92,7 @@ adg_segment_dup(const AdgSegment *segment)
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.
  *
- * Returns: a deep duplicate of @segment: must be freed
- *          with g_free() when no longer needed.
+ * Returns: (transfer full): a deep duplicate of @segment: must be freed with g_free() when no longer needed.
  *
  * Since: 1.0
  **/
@@ -154,25 +152,17 @@ adg_segment_deep_dup(const AdgSegment *segment)
  * The struct fields of @segment are left untouched and used only to
  * check if it is compatible with @src.
  *
- * Returns: @segment
- *
  * Since: 1.0
  **/
-AdgSegment *
+void
 adg_segment_deep_copy(AdgSegment *segment, const AdgSegment *src)
 {
-    size_t n;
+    g_return_if_fail(segment != NULL);
+    g_return_if_fail(src != NULL);
+    g_return_if_fail(segment->num_data == src->num_data);
 
-    g_return_val_if_fail(segment != NULL, segment);
-    g_return_val_if_fail(src != NULL, segment);
-    g_return_val_if_fail(segment->num_data == src->num_data, segment);
-
-    if (src->num_data <= 0)
-        return segment;
-
-    n = sizeof(cairo_path_data_t) * segment->num_data;
-
-    memcpy(segment->data, src->data, n);
-
-    return segment;
+    if (src->num_data > 0) {
+        size_t n = sizeof(cairo_path_data_t) * segment->num_data;
+        memcpy(segment->data, src->data, n);
+    }
 }

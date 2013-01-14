@@ -72,6 +72,12 @@ enum {
     PROP_HAS_FRAME
 };
 
+typedef struct {
+    GCallback       callback;
+    gpointer        user_data;
+} AdgClosure;
+
+
 
 static void         _adg_dispose            (GObject        *object);
 static void         _adg_finalize           (GObject        *object);

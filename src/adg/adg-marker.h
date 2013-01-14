@@ -48,8 +48,9 @@ struct _AdgMarker {
 struct _AdgMarkerClass {
     /*< private >*/
     AdgEntityClass      parent_class;
+
     /*< public >*/
-    /* Virtual Table */
+    /* Virtual table */
     AdgModel *          (*create_model)         (AdgMarker      *marker);
 };
 

@@ -268,8 +268,10 @@ adg_edges_new(void)
 
 /**
  * adg_edges_new_with_source:
+ * @source: (transfer none): the new source #AdgTrail
  *
  * Creates a new edges model explicitely specifying the source trail.
+ * The returned object will own a weak reference on @source.
  *
  * Returns: the newly created edges model
  *
@@ -308,9 +310,10 @@ adg_edges_get_source(AdgEdges *edges)
 /**
  * adg_edges_set_source:
  * @edges: an #AdgEdges
- * @source: the new source #AdgTrail
+ * @source: (transfer none): the new source #AdgTrail
  *
  * Sets @source as the source trail for @edges.
+ * After the call, @edges will own a weak reference on @source.
  *
  * Since: 1.0
  **/

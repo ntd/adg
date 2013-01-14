@@ -266,7 +266,6 @@ Adg_1_0_gir_FILES=		adg-introspection.h \
 ## Dependency from CPML will be added manually because it is still an
 ## internal component, hence not yet installed at this point
 Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
-Adg_1_0_gir_LDFLAGS=
 Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
 				--warn-all \
 				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir

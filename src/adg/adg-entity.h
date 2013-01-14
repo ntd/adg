@@ -38,15 +38,10 @@ G_BEGIN_DECLS
 
 
 /* Forward declarations */
-ADG_FORWARD_DECL(AdgCanvas);
-ADG_FORWARD_DECL(AdgStyle);
-ADG_FORWARD_DECL(AdgPoint);
-
-#ifdef __GI_SCANNER__
-ADG_FORWARD_DECL(AdgDress);
-#else
-typedef gint AdgDress;
-#endif
+ADG_TYPEDEF(struct _AdgCanvas AdgCanvas);
+ADG_TYPEDEF(struct _AdgStyle  AdgStyle);
+ADG_TYPEDEF(struct _AdgPoint  AdgPoint);
+ADG_TYPEDEF(gint              AdgDress);
 
 
 typedef struct _AdgEntity        AdgEntity;

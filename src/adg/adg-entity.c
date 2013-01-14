@@ -231,7 +231,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
-     * AdgEntity::global-changed
+     * AdgEntity::global-changed:
      * @entity: an #AdgEntity
      *
      * Emitted when the global map of @entity or any of its parent
@@ -250,7 +250,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_TYPE_NONE, 0);
 
     /**
-     * AdgEntity::local-changed
+     * AdgEntity::local-changed:
      * @entity: an #AdgEntity
      *
      * Emitted when the local map of @entity or any of its parent

@@ -42,7 +42,8 @@ struct _AdgTextualIface {
     /*< private >*/
     GTypeInterface base_iface;
 
-    /* Virtual Table */
+    /*< public >*/
+    /* Virtual table */
     void                (*set_font_dress)       (AdgTextual     *textual,
                                                  AdgDress        dress);
     AdgDress            (*get_font_dress)       (AdgTextual     *textual);

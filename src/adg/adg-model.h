@@ -56,18 +56,22 @@ struct _AdgModel {
 struct _AdgModelClass {
     /*< private >*/
     GObjectClass         parent_class;
+
     /*< public >*/
-    void                (*add_dependency)       (AdgModel         *model,
-                                                 AdgEntity        *entity);
-    void                (*remove_dependency)    (AdgModel         *model,
-                                                 AdgEntity        *entity);
+    /* Virtual table */
     const AdgPair *     (*named_pair)           (AdgModel         *model,
                                                  const gchar      *name);
+
+    /* Signals */
     void                (*set_named_pair)       (AdgModel         *model,
                                                  const gchar      *name,
                                                  const AdgPair    *pair);
     void                (*clear)                (AdgModel         *model);
     void                (*reset)                (AdgModel         *model);
+    void                (*add_dependency)       (AdgModel         *model,
+                                                 AdgEntity        *entity);
+    void                (*remove_dependency)    (AdgModel         *model,
+                                                 AdgEntity        *entity);
     void                (*changed)              (AdgModel         *model);
 };
 

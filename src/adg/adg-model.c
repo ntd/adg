@@ -31,6 +31,16 @@
  * Instead, it must be passed as subject to entities such as #AdgStroke
  * or #AdgHatch.
  *
+ * The relationships between model and view are handled by dependencies:
+ * whenever an #AdgModel changes (that is the #AdgModel:changed signal is
+ * emitted), every dependency of the model (#AdgEntity instances) is
+ * invalidated with adg_entity_invalidate().
+ *
+ * To help the interaction between model and view another concept is
+ * introduced: named pairs. This provides a way to abstract real values (the
+ * coordinates stored in #AdgPair) by accessing them using a string. To easily
+ * the access of named pairs from the view, use #AdgPoint instead of #AdgPair.
+ *
  * Since: 1.0
  **/
 
@@ -39,6 +49,39 @@
  *
  * All fields are private and should not be used directly.
  * Use its public methods instead.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * AdgModelClass:
+ * @named_pair:        virtual method that returns the #AdgPair bound to a
+ *                     given name.
+ * @set_named_pair:    signal for defining or undefining a new named pair.
+ * @clear:             signal for removing the internal cache data, if any.
+ * @reset:             signal used to redefine a model from scratch.
+ * @add_dependency:    signal for adding a new dependency.
+ * @remove_dependency: signal used to remove an old dependency.
+ * @changed:           signal for emitting an #AdgModel::changed signal.
+ *
+ * The default @named_pair implementation looks up the #AdgPair in an internal
+ * #GHashTable that uses the pair name as key and the #AdgPair struct as value.
+ *
+ * The default @set_named_pair implementation can be used for either adding
+ * (if the #AdgPair is not %NULL) or removing (if #AdgPair is %NULL) an item
+ * from the named pairs hash table.
+ *
+ * The default handler for @clear signals does not do anything.
+ *
+ * The default @reset involves the clearing of the internal cache data
+ * (done by emitting the #AdgModel::clear signal) and the destruction of the
+ * internal named pair hash table.
+ *
+ * The default @add_dependency and @remove_dependency implementations add and
+ * remove items from an internal #GSList of #AdgEntity.
+ *
+ * The default handler of the @changed signal calls adg_entity_invalidate()
+ * on every dependency by using adg_model_foreach_dependency().
  *
  * Since: 1.0
  **/
@@ -241,10 +284,10 @@ adg_model_class_init(AdgModelClass *klass)
      *
      * Resets the state of @model by destroying any named pair
      * associated to it. This step also involves the emission of the
-     * AdgModel:clear signal.
+     * #AdgModel::clear signal.
      *
      * This signal is intended to be used while redefining the model.
-     * A typical usage would be on these terms:
+     * A typical usage would be in these terms:
      *
      * |[
      * adg_model_reset(model);

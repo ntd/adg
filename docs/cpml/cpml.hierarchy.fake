@@ -1,0 +1,7 @@
+struct
+  CpmlPair
+  CpmlExtents
+  CpmlSegment
+  CpmlPrimitive
+  CpmlArc
+  CpmlCurve

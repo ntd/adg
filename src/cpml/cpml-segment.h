@@ -33,9 +33,10 @@ typedef cairo_path_t CpmlPath;
 typedef struct _CpmlSegment CpmlSegment;
 
 struct _CpmlSegment {
-        CpmlPath          *path;
-        cairo_path_data_t *data;
-        int                num_data;
+    /*< public >*/
+    CpmlPath          *path;
+    cairo_path_data_t *data;
+    int                num_data;
 };
 
 

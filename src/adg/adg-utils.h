@@ -27,7 +27,7 @@
 #define __ADG_UTILS_H__
 
 
-#define ADG_FORWARD_DECL(id)    typedef struct _##id id
+#define ADG_TYPEDEF(t)          typedef t
 
 #define ADG_DIR_RIGHT           0.
 #define ADG_DIR_DOWN            G_PI_2
@@ -39,15 +39,6 @@
 
 
 G_BEGIN_DECLS
-
-typedef struct _AdgClosure        AdgClosure;
-
-
-struct _AdgClosure {
-    GCallback       callback;
-    gpointer        user_data;
-};
-
 
 #if GLIB_MINOR_VERSION < 16
 gint            g_strcmp0               (const gchar    *s1,

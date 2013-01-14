@@ -51,8 +51,10 @@ struct _AdgContainerClass {
     AdgEntityClass       parent_class;
 
     /*< public >*/
-    /* Virtual Table */
+    /* Virtual table */
     GSList *    (*children)                     (AdgContainer   *container);
+
+    /* Signals */
     void        (*add)                          (AdgContainer   *container,
                                                  AdgEntity      *entity);
     void        (*remove)                       (AdgContainer   *container,

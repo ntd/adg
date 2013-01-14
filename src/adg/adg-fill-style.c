@@ -36,6 +36,20 @@
  * Since: 1.0
  **/
 
+/**
+ * AdgFillStyleClass:
+ * @set_extents: virtual method that specifies where a specific fill style
+ *               must be applied. It is called by #AdgHatch in the rendering
+ *               phase passing with its boundary box as argument.
+ *
+ * The default @set_extents@ implementation simply sets the extents owned by
+ * the fill style instance to the one provided, so the last call has
+ * precedence. Any derived class can override it to customize this behavior,
+ * for example to keep the greatest boundary box instead of the last one.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 #include "adg-style.h"
@@ -188,7 +202,7 @@ adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
  *
  * Gets the current pattern binded to @fill_style.
  *
- * Returns: the current pattern
+ * Returns: (transfer none): the current pattern
  *
  * Since: 1.0
  **/
@@ -219,11 +233,6 @@ adg_fill_style_get_pattern(AdgFillStyle *fill_style)
  *
  * Sets new extents on @fill_style. These extents are usually set
  * by the arrange() method of the entity using this filling style.
- * The default implementation simply sets the extents, so the
- * last one has precedence. Any fill style implementation can
- * override the set_extents() implementation to customize this
- * behavior, for example to keep the greatest boundary box instead
- * of the last one.
  *
  * Since: 1.0
  **/

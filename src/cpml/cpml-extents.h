@@ -32,6 +32,7 @@ CAIRO_BEGIN_DECLS
 typedef struct _CpmlExtents CpmlExtents;
 
 struct _CpmlExtents {
+    /*< public >*/
     int          is_defined;
     CpmlPair     org;
     CpmlVector   size;

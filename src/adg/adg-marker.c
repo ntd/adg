@@ -54,6 +54,19 @@
  * Since: 1.0
  **/
 
+/**
+ * AdgMarkerClass:
+ * @create_model: abstract virtual method that creates a model template for
+ *                all the markers used by this class.
+ *
+ * The @create_model method must be implemented by any #AdgMarker derived
+ * classes. The derived classes are expected to apply a single model (the one
+ * returned by this method) to every path endings by using different
+ * transformations.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 #include "adg-model.h"

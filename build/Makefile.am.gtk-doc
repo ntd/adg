@@ -104,7 +104,7 @@ setup-build.stamp:
 
 #### scan ####
 
-scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
+scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) scan-hook
 	@echo '  DOC   Scanning header files'
 	@_source_dir='' ; \
 	for i in $(DOC_SOURCE_DIR) ; do \
@@ -258,4 +258,4 @@ dist-hook: dist-check-gtkdoc dist-hook-local
 	@cd $(distdir) && rm -f $(DISTCLEANFILES)
 	@$(GTKDOC_REBASE) --online --relative --html-dir=$(distdir)/html
 
-.PHONY : dist-hook-local docs
+.PHONY : dist-hook-local docs scan-hook

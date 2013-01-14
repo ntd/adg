@@ -50,7 +50,9 @@ struct _AdgTrail {
 struct _AdgTrailClass {
     /*< private >*/
     AdgModelClass        parent_class;
+
     /*< public >*/
+    /* Virtual table */
     CpmlPath *          (*get_cpml_path)        (AdgTrail       *trail);
 };
 

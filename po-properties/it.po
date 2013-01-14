@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 22:41+0200\n"
+"POT-Creation-Date: 2013-01-14 23:09+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:182
+#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:198
 msgid "Factor"
 msgstr "Fattore"
 
@@ -151,7 +151,7 @@ msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:142
+#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:148
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
@@ -246,43 +246,43 @@ msgstr ""
 "Il valore alfa, dove 0 significa totalmente trasparente e 1 completamente "
 "opaco"
 
-#: src/adg/adg-container.c:124
+#: src/adg/adg-container.c:137
 msgid "Child"
 msgstr "Figlio"
 
-#: src/adg/adg-container.c:125
+#: src/adg/adg-container.c:138
 msgid "Can be used to add a new child to the container"
 msgstr "Può essere usato per aggiungere una nuova entità al contenitore"
 
-#: src/adg/adg-dim.c:133
+#: src/adg/adg-dim.c:154
 msgid "Dimension Dress"
 msgstr "Vestito Dimensione"
 
-#: src/adg/adg-dim.c:134
+#: src/adg/adg-dim.c:155
 msgid "The dress to use for rendering this dimension"
 msgstr "Il vestito da usare per il rendering di questa dimensione"
 
-#: src/adg/adg-dim.c:140
+#: src/adg/adg-dim.c:161
 msgid "First Reference"
 msgstr "Primo Riferimento"
 
-#: src/adg/adg-dim.c:141
+#: src/adg/adg-dim.c:162
 msgid "First reference point of the dimension"
 msgstr "Primo punto di riferimento della dimensione"
 
-#: src/adg/adg-dim.c:147
+#: src/adg/adg-dim.c:168
 msgid "Second Reference"
 msgstr "Secondo Riferimento"
 
-#: src/adg/adg-dim.c:148
+#: src/adg/adg-dim.c:169
 msgid "Second reference point of the dimension"
 msgstr "Secondo punto di riferimento della dimensione"
 
-#: src/adg/adg-dim.c:154 src/adg/adg-marker.c:137
+#: src/adg/adg-dim.c:175 src/adg/adg-marker.c:150
 msgid "Position"
 msgstr "Posizione"
 
-#: src/adg/adg-dim.c:155
+#: src/adg/adg-dim.c:176
 msgid ""
 "The reference position of the quote: it will be combined with \"level\" to "
 "get the real quote position"
@@ -290,11 +290,11 @@ msgstr ""
 "Il punto di riferimento per il posizionamento della quota: sarà combinato "
 "con il \"level\" per ottenere la posizione reale della quota"
 
-#: src/adg/adg-dim.c:161
+#: src/adg/adg-dim.c:182
 msgid "Level"
 msgstr "Livello"
 
-#: src/adg/adg-dim.c:162
+#: src/adg/adg-dim.c:183
 msgid ""
 "The dimension level, that is the factor to multiply the baseline spacing "
 "(defined in the dimension style) to get the offset from pos where the quote "
@@ -304,11 +304,11 @@ msgstr ""
 "tra le linee base (definito nello stile della dimensione) per ottenere "
 "l'offset dal punto di posizionamento dove la quota dovrebbe essere riportata"
 
-#: src/adg/adg-dim.c:168
+#: src/adg/adg-dim.c:189
 msgid "Outside"
 msgstr "Esterna"
 
-#: src/adg/adg-dim.c:169
+#: src/adg/adg-dim.c:190
 msgid ""
 "Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), "
 "must be extended outside the extension lines (ADG_THREE_STATE_ON) or should "
@@ -319,11 +319,11 @@ msgstr ""
 "estensione (ADG_THREE_STATE_ON) oppure questa decisione viene gestita "
 "automaticamente in base allo spazio disponibile"
 
-#: src/adg/adg-dim.c:175
+#: src/adg/adg-dim.c:196
 msgid "Detached Quote"
 msgstr "Quota Distaccata"
 
-#: src/adg/adg-dim.c:176
+#: src/adg/adg-dim.c:197
 msgid ""
 "Where the quote must be positioned: in the middle of the base line "
 "(ADG_THREE_STATE_OFF), near the pos point (ADG_THREE_STATE_ON) or should be "
@@ -334,21 +334,21 @@ msgstr ""
 "(ADG_THREE_STATE_ON) oppure se questa decisione è subordinata allo spazio "
 "disponibile"
 
-#: src/adg/adg-dim.c:182
+#: src/adg/adg-dim.c:203
 msgid "Value Template"
 msgstr "Template Valore"
 
-#: src/adg/adg-dim.c:183
+#: src/adg/adg-dim.c:204
 msgid ""
 "The template string to be used for generating the set value of the quote"
 msgstr ""
 "La stringa di template da usare per generare il valore nominale della quota"
 
-#: src/adg/adg-dim.c:189
+#: src/adg/adg-dim.c:210
 msgid "Minimum Value or Low Tolerance"
 msgstr "Valore Minimo o Tolleranza Inferiore"
 
-#: src/adg/adg-dim.c:190
+#: src/adg/adg-dim.c:211
 msgid ""
 "The minimum value allowed or the lowest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
@@ -356,11 +356,11 @@ msgstr ""
 "Il valore minimo ammesso o la tolleranza inferiore dal valore nominale (a "
 "seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
-#: src/adg/adg-dim.c:196
+#: src/adg/adg-dim.c:217
 msgid "Maximum Value or High Tolerance"
 msgstr "Valore Massimo o Tolleranza Superiore"
 
-#: src/adg/adg-dim.c:197
+#: src/adg/adg-dim.c:218
 msgid ""
 "The maximum value allowed or the highest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
@@ -599,11 +599,11 @@ msgstr ""
 "Specifica come le trasformazioni locali dell'entità corrente e dei suoi "
 "progenitori devono essere combinate per ottenere la matrice locale"
 
-#: src/adg/adg-fill-style.c:93
+#: src/adg/adg-fill-style.c:107
 msgid "Pattern"
 msgstr "Pattern"
 
-#: src/adg/adg-fill-style.c:94
+#: src/adg/adg-fill-style.c:108
 msgid "The cairo pattern set for this entity"
 msgstr "Il pattern cairo impostato per questa entità"
 
@@ -688,26 +688,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:175
+#: src/adg/adg-gtk-area.c:191
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:176
+#: src/adg/adg-gtk-area.c:192
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:183
+#: src/adg/adg-gtk-area.c:199
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:189
+#: src/adg/adg-gtk-area.c:205
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:190
+#: src/adg/adg-gtk-area.c:206
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -715,11 +715,11 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:196
+#: src/adg/adg-gtk-area.c:212
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:197
+#: src/adg/adg-gtk-area.c:213
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
@@ -805,19 +805,19 @@ msgstr ""
 msgid "The line dress to use for rendering the frame"
 msgstr "Il vestito da usare per disegnare le linee del riquadro"
 
-#: src/adg/adg-marker.c:123 src/adg/adg-stroke.c:110
+#: src/adg/adg-marker.c:136 src/adg/adg-stroke.c:110
 msgid "Trail"
 msgstr "Scia"
 
-#: src/adg/adg-marker.c:124
+#: src/adg/adg-marker.c:137
 msgid "The subject AdgTrail for this marker"
 msgstr "L'AdgTrail soggetto per questo indicatore"
 
-#: src/adg/adg-marker.c:130
+#: src/adg/adg-marker.c:143
 msgid "Segment Index"
 msgstr "Indice del Segmento"
 
-#: src/adg/adg-marker.c:131
+#: src/adg/adg-marker.c:144
 msgid ""
 "The segment on trail where this marker should be applied (where 0 means "
 "undefined segment, 1 the first segment and so on)"
@@ -825,7 +825,7 @@ msgstr ""
 "Il segmento dell'AdgTrail dove questo indicatore dovrebbe essere applicato "
 "(dove 0 significa nessun segmento, 1 il primo segmento e così via)"
 
-#: src/adg/adg-marker.c:138
+#: src/adg/adg-marker.c:151
 msgid ""
 "The position ratio inside the segment where to put the marker (0 means the "
 "start point while 1 means the end point)"
@@ -833,27 +833,27 @@ msgstr ""
 "Il ratio di posizione all'interno del segmento dove inserire l'indicatore (0 "
 "significa punto iniziale mentre 1 significa punto finale)"
 
-#: src/adg/adg-marker.c:144
+#: src/adg/adg-marker.c:157
 msgid "Marker Size"
 msgstr "Dimensione Indicatore"
 
-#: src/adg/adg-marker.c:145
+#: src/adg/adg-marker.c:158
 msgid "The size (in global space) of the marker"
 msgstr "La dimensione (in global space) dell'indicatore"
 
-#: src/adg/adg-marker.c:151
+#: src/adg/adg-marker.c:164
 msgid "Model"
 msgstr "Modello"
 
-#: src/adg/adg-marker.c:152
+#: src/adg/adg-marker.c:165
 msgid "A general purpose model usable by the marker implementations"
 msgstr "Un modello ad uso generale usato dall'implementazione dell'indicatore"
 
-#: src/adg/adg-model.c:144
+#: src/adg/adg-model.c:187
 msgid "Dependency"
 msgstr "Dipendenza"
 
-#: src/adg/adg-model.c:145
+#: src/adg/adg-model.c:188
 msgid ""
 "Can be used to add a new dependency from this model (this entity will be "
 "invalidated on model changed)"
@@ -902,7 +902,7 @@ msgstr "Angolo"
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:136
+#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:142
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
@@ -910,11 +910,11 @@ msgstr "Il vestito da usare per tracciare questa entità"
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
-#: src/adg/adg-table.c:135
+#: src/adg/adg-table.c:141
 msgid "Table Dress"
 msgstr "Vestito Tabella"
 
-#: src/adg/adg-table.c:143
+#: src/adg/adg-table.c:149
 msgid ""
 "If enabled, a frame using the proper dress found in this table style will be "
 "drawn around the table extents"
@@ -1078,11 +1078,11 @@ msgstr ""
 "Entità solitamente riservata per identificare il tipo di proiezione "
 "ortografica usata in questo disegno"
 
-#: src/adg/adg-trail.c:124
+#: src/adg/adg-trail.c:135
 msgid "Max Angle"
 msgstr "Angolo Massimo"
 
-#: src/adg/adg-trail.c:125
+#: src/adg/adg-trail.c:136
 msgid ""
 "Max arc angle to approximate with a single Bezier curve: check "
 "adg_trail_set_max_angle() for details"

@@ -29,13 +29,12 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_MATRIX  (adg_matrix_get_type())
+#define ADG_TYPE_MATRIX (adg_matrix_get_type())
 
 
-#ifdef __GI_SCANNER__
-ADG_FORWARD_DECL(AdgMatrix);
-#else
-typedef cairo_matrix_t AdgMatrix;
+ADG_TYPEDEF(cairo_matrix_t AdgMatrix);
+#if 0
+typedef struct _AdgMatrix AdgMatrix;
 #endif
 
 

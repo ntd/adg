@@ -48,9 +48,6 @@ struct _AdgGtkLayout {
 struct _AdgGtkLayoutClass {
     /*< private >*/
     AdgGtkAreaClass      parent_class;
-    /*< public >*/
-    /* Virtual Table */
-    void                (*canvas_changed)       (AdgGtkLayout     *layout);
 };
 
 

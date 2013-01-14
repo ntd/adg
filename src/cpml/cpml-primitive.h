@@ -40,6 +40,7 @@ typedef enum {
 } CpmlPrimitiveType;
 
 struct _CpmlPrimitive {
+    /*< public >*/
     CpmlSegment       *segment;
     cairo_path_data_t *org;
     cairo_path_data_t *data;

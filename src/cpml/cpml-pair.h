@@ -33,6 +33,7 @@ typedef struct _CpmlPair CpmlPair;
 typedef struct _CpmlPair CpmlVector;
 
 struct _CpmlPair {
+    /*< public >*/
     double  x, y;
 };
 

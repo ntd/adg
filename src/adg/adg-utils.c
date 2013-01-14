@@ -30,43 +30,25 @@
  **/
 
 /**
- * ADG_FORWARD_DECL:
- * @id: The name of a struct
+ * ADG_TYPEDEF:
+ * @t: the typedef content
  *
- * Forward declaration of struct @id. It is equivalent to a typical
- * struct forward declaration, for example:
- *
- * |[
- * ADG_FORWARD_DECL(test)
- * ]|
- *
- * will expand to:
+ * This is a really bad hack to fool gtk-doc. It performs the same job
+ * as the typedef reserved word but, being in the form of a macro, it
+ * it not properly understood by gtk-doc. This makes possible to force
+ * the parsing of a type such as in the following example:
  *
  * |[
- * typedef struct _test test
- * ]|
- *
- * This macro is needed to fake <command>gtk-doc</command>, because
- * up to now (v.1.12) it generates two conflicting links when using
- * forward declarations: the first in the source with the declaration
- * and the second where the type is defined. Using ADG_FORWARD_DECL()
- * instead of the usual typedef avoids the parsing of the declaration
- * in the first file (<command>gtk-doc</command> is not able to do C
- * preprocessing).
- *
- * The same principle can be applied in the definition file. Following
- * the previous example, you can use something like this where struct
- * _type is defined:
- *
- * |[
+ * ADG_TYPEDEF(cairo_matrix_t AdgMatrix);
  * #if 0
- * // This is declared in another file
- * typedef struct _type type;
+ * typedef struct _AdgMatrix AdgMatrix;
  * #endif
- * struct _type {
- * ...
- * };
  * ]|
+ *
+ * This kind of foolishness is needed in order to have the name of the
+ * generated file match the type without having a double id error.
+ * Check bug #593282 for details:
+ * http://bugzilla.gnome.org/show_bug.cgi?id=593282
  *
  * Since: 1.0
  **/
@@ -140,28 +122,28 @@
 #else
 /**
  * g_strcmp0:
- * @str1: a C string or %NULL
- * @str2: another C string or %NULL
+ * @s1: a C string or %NULL
+ * @s2: another C string or %NULL
  *
- * Compares @str1 and @str2 like strcmp(). Handles %NULL
+ * Compares @s1 and @s2 like strcmp(). Handles %NULL
  * gracefully by sorting it before non-%NULL strings.
  * This is a backward compatibility fallback for GLib
  * prior to 2.16.0
  *
- * Returns: -1, 0 or 1, if @str1 is <, == or > than @str2.
+ * Returns: -1, 0 or 1, if @s1 is <, == or > than @s2.
  *
  * Since: 1.0
  */
 int
-g_strcmp0(const char *str1, const char *str2)
+g_strcmp0(const char *s1, const char *s2)
 {
-    if (!str1)
-        return -(str1 != str2);
+    if (!s1)
+        return -(s1 != s2);
 
-    if (!str2)
-        return str1 != str2;
+    if (!s2)
+        return s1 != s2;
 
-    return strcmp(str1, str2);
+    return strcmp(s1, s2);
 }
 #endif
 

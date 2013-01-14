@@ -7,9 +7,12 @@ SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
 MKDB_OPTIONS=		--sgml-mode \
-			--output-format=xml
+			--output-format=xml \
+			--default-includes="$(DOC_MODULE)-1/$(DOC_MODULE).h"
 MKHTML_OPTIONS=
-FIXXREF_OPTIONS=
+HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
+			--stringparam chunker.output.doctype-system 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
+FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml
 HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
 IGNORE_HFILES=		adg.h \
@@ -59,8 +62,8 @@ expand_content_files=
 GTKDOC_CFLAGS=		-I$(top_srcdir)/src \
 			$(CAIRO_CFLAGS) \
 			$(GOBJECT2_CFLAGS)
-GTKDOC_LIBS=		$(top_builddir)/src/cpml/libcpml-1.la \
-			$(top_builddir)/src/adg/libadg-1.la \
+GTKDOC_LIBS=		$(top_builddir)/src/adg/libadg-1.la \
+			$(top_builddir)/src/cpml/libcpml-1.la \
 			$(CAIRO_LIBS) \
 			$(GOBJECT2_LIBS)
 
@@ -77,5 +80,5 @@ endif
 
 include $(top_srcdir)/build/Makefile.am.gtk-doc
 
-DISTCLEANFILES=		$(DOC_MODULE).types \
-			$(DOC_MODULE)-sections.txt
+DISTCLEANFILES=		$(DOC_MODULE)-sections.txt \
+			$(DOC_MODULE).types

@@ -38,8 +38,9 @@ G_BEGIN_DECLS
 
 
 /* Forward declarations */
-ADG_FORWARD_DECL(AdgTableRow);
-ADG_FORWARD_DECL(AdgTableCell);
+ADG_TYPEDEF(struct _AdgTableRow  AdgTableRow);
+ADG_TYPEDEF(struct _AdgTableCell AdgTableCell);
+
 
 typedef struct _AdgTable        AdgTable;
 typedef struct _AdgTableClass   AdgTableClass;

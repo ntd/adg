@@ -6,7 +6,7 @@ m4_define([cpml_version],adg_version)
 m4_define([cpml_api_version],adg_api_version)
 m4_define([cpml_lt_version],[1:0:0])
 
-m4_define([gtkdoc_prereq],[1.9])
+m4_define([gtkdoc_prereq],[1.12])dnl Support introspection annotations
 m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
 m4_define([gtk2_prereq],[2.12.0])
