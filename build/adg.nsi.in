@@ -14,9 +14,9 @@
 !include EnvVarUpdate.nsh
 
 Name "@PACKAGE_NAME@ @PACKAGE_VERSION@"
-OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-@WINSUFFIX@.exe"
+OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-win@ARCH@.exe"
 SetCompressor /SOLID lzma
-InstallDir "$PROGRAMFILES\@ADG_API_PACKAGE@"
+InstallDir "$PROGRAMFILES@ARCH@\@PACKAGE_NAME@"
 RequestExecutionLevel user
 
 ; ---------------------------------------------------------------

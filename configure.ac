@@ -76,10 +76,10 @@ esac
 AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
 AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" = "mingw" -o "${guessed_host}" = "cygwin"])
 
-AS_IF([test "x${host_cpu}" = "xx86_64"],
-      [WINSUFFIX="win64"],[WINSUFFIX="win32"])
-AC_SUBST([WINSUFFIX])
-AM_SUBST_NOTMAKE([WINSUFFIX])
+dnl -win$ARCH will be appended to the Windows installer file name
+AS_IF([test "x${host_cpu}" = "xx86_64"],[ARCH=64],[ARCH=32])
+AC_SUBST([ARCH])
+AM_SUBST_NOTMAKE([ARCH])
 
 
 # Check for programs
