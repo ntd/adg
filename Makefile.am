@@ -55,6 +55,16 @@ SUBDIRS+=			demo
 endif
 
 
+if OS_WINDOWS
+
+installer:
+	$(MAKENSIS) build/adg.nsi
+
+.phony: installer
+
+endif
+
+
 # Creating ChangeLog files from git log:
 # idea stolen from cairo/build/Makefile.am.changelog
 ChangeLog:

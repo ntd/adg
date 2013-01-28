@@ -69,6 +69,8 @@ Section "ADG canvas" SecBase
   SetOutPath "$INSTDIR"
   File /oname=adg-demo.exe  "${BUILDDIR}/demo/.libs/adg-demo-uninstalled.exe"
   File /oname=cpml-demo.exe "${BUILDDIR}/demo/.libs/cpml-demo-uninstalled.exe"
+
+  SetOutPath "$INSTDIR\share\adg"
   File "${BUILDDIR}/demo/adg-demo.ui"
   File "${SRCDIR}/demo/adg-16.png"
   File "${SRCDIR}/demo/adg-32.png"
@@ -159,20 +161,24 @@ Section "Uninstall"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
   RMDir  "$INSTDIR\bin"
 
+  Delete "$INSTDIR\share\adg\adg-demo.ui"
+  Delete "$INSTDIR\share\adg\adg-128.png"
+  Delete "$INSTDIR\share\adg\adg-64.png"
+  Delete "$INSTDIR\share\adg\adg-48.png"
+  Delete "$INSTDIR\share\adg\adg-32.png"
+  Delete "$INSTDIR\share\adg\adg-16.png"
+  RMDir  "$INSTDIR\share\adg"
+
   Delete "$INSTDIR\share\glib-2.0\schemas\gschemas.compiled"
   RMDir  "$INSTDIR\share\glib-2.0\schemas"
   RMDir  "$INSTDIR\share\glib-2.0"
+
   RMDir  "$INSTDIR\share\locale"
+
   RMDir  "$INSTDIR\share"
 
   Delete "$INSTDIR\adg-demo.exe"
   Delete "$INSTDIR\cpml-demo.exe"
-  Delete "$INSTDIR\adg-128.png"
-  Delete "$INSTDIR\adg-64.png"
-  Delete "$INSTDIR\adg-48.png"
-  Delete "$INSTDIR\adg-32.png"
-  Delete "$INSTDIR\adg-16.png"
-  Delete "$INSTDIR\adg-demo.ui"
   Delete "$INSTDIR\uninstall.exe"
   RMDir  "$INSTDIR"
 
