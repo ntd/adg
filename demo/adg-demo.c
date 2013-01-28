@@ -1,9 +1,23 @@
-/* Needed for localization support */
-#include <adg/adg-internal.h>
+/* ADG - Automatic Drawing Generation
+ * Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana <ntd at entidi.it>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
+ */
 
-/* Force the reinclusion of adg.h */
-#undef __ADG_H__
-
+#include "demo.h"
 #include <adg.h>
 #include <string.h>
 #include <math.h>
@@ -14,13 +28,6 @@
 
 /* Whether render the boxes to highlight the extents of every entity */
 static gboolean show_extents = FALSE;
-
-/* Whether the program is running installed or uninstalled */
-static gboolean is_installed = TRUE;
-
-/* The base directory where all files must be referred,
- * usually left unset _adg_init() on POSIX systems. */
-static gchar *basedir = NULL;
 
 
 typedef struct _DemoPart DemoPart;
@@ -82,7 +89,7 @@ _adg_version(void)
 }
 
 static void
-_adg_init(gint *p_argc, gchar **p_argv[])
+parse_args(gint *p_argc, gchar **p_argv[])
 {
     GOptionEntry entries[] = {
         {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
@@ -92,20 +99,6 @@ _adg_init(gint *p_argc, gchar **p_argv[])
         {NULL}
     };
     GError *error;
-    gchar  *name;
-
-    if (p_argc == NULL || p_argv == NULL || *p_argc < 1 || *p_argv[0] == NULL) {
-        g_error(_("Invalid arguments: arg[0] not set"));
-        g_assert_not_reached();
-    }
-
-    name = g_path_get_basename(*p_argv[0]);
-    if (name == NULL)
-        return;
-    is_installed = strstr(name, "uninstalled") == NULL;
-    g_free(name);
-
-    basedir = g_path_get_dirname(*p_argv[0]);
 
     error = NULL;
     gtk_init_with_args(p_argc, p_argv, _("- ADG demonstration program"),
@@ -114,30 +107,6 @@ _adg_init(gint *p_argc, gchar **p_argv[])
         g_error("%s", error->message);
         g_assert_not_reached();
     }
-}
-
-static gchar *
-_adg_file(const gchar *file_name)
-{
-    static gchar *pkg_data_dir = NULL;
-
-    if (! is_installed) {
-        /* Running uninstalled: look up the file in BUILDDIR before and
-         * in SRCDIR after, returning the first match */
-        return adg_find_file(file_name, BUILDDIR, SRCDIR, NULL);
-    }
-
-    /* Otherwise, look up the file only in PKGDATADIR */
-    if (pkg_data_dir == NULL) {
-#ifdef G_OS_WIN32
-        pkg_data_dir = g_build_filename(basedir != NULL ? basedir : "",
-                                        PKGDATADIR, NULL);
-#else
-        pkg_data_dir = g_strdup(PKGDATADIR);
-#endif
-    }
-
-    return adg_find_file(file_name, pkg_data_dir, NULL);
 }
 
 /**
@@ -1117,7 +1086,17 @@ _adg_main_window(GtkBuilder *builder)
     GtkWidget *button_edit, *button_save_as, *button_print;
     GtkWidget *button_about, *button_quit;
 
-    adg_gtk_use_default_icons(SRCDIR);
+    if (is_installed) {
+#ifdef G_OS_WIN32
+        gchar *icondir = g_build_filename(basedir, PKGDATADIR, NULL);
+        adg_gtk_use_default_icons(icondir);
+        g_free(icondir);
+#else
+        adg_gtk_use_default_icons(PKGDATADIR);
+#endif
+    } else {
+        adg_gtk_use_default_icons(SRCDIR);
+    }
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
     part = _adg_part_new(builder);
@@ -1166,12 +1145,13 @@ main(gint argc, gchar **argv)
     GError *error;
     GtkWidget *main_window;
 
-    _adg_init(&argc, &argv);
+    _demo_init(argc, argv);
+    parse_args(&argc, &argv);
     adg_switch_extents(show_extents);
 
-    path = _adg_file("adg-demo.ui");
+    path = _demo_file("adg-demo.ui");
     if (path == NULL) {
-        g_print(_("adg-demo.ui not found!\n"));
+        g_printerr(_("adg-demo.ui not found!\n"));
         return 1;
     }
 

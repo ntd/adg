@@ -142,19 +142,14 @@ adg_gtk_toggle_button_sensitivize(GtkToggleButton *toggle_button,
 
 /**
  * adg_gtk_use_default_icons:
- * @fallback_path: a fallback path
+ * @dir: the directory where the icons should be installed
  *
  * Sets the default icon list of every #GtkWindow to a hand-coded
  * list of ADG icons. Check gtk gtk_window_set_default_icon_list()
  * for further details.
- *
- * If @fallback_path is specified and an icon is not found in the
- * ADG data path, the file is looked also in that path. This
- * feature has been mainly added to allow proper loading of icons
- * from adg-demo and cpml-demo when uninstalled.
  **/
 void
-adg_gtk_use_default_icons(const gchar *fallback_path)
+adg_gtk_use_default_icons(const gchar *dir)
 {
     const gchar **p_file;
     const gchar *files[] = {
@@ -171,7 +166,7 @@ adg_gtk_use_default_icons(const gchar *fallback_path)
 
     list = NULL;
     for (p_file = files; *p_file != NULL; ++p_file) {
-        path = adg_find_file(*p_file, ADG_DATADIR, fallback_path, NULL);
+        path = adg_find_file(*p_file, dir, NULL);
         if (path == NULL)
             continue;
         icon = gdk_pixbuf_new_from_file(path, NULL);

@@ -6,15 +6,6 @@ SUBDIRS=			tests
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-
-## On windows, ADG_DATADIR is handled as a path relative
-## to the binary executable
-if OS_WINDOWS
-AM_CPPFLAGS+=			-DADG_DATADIR='""'
-else
-AM_CPPFLAGS+=			-DADG_DATADIR='"$(pkgdatadir)"'
-endif
-
 ADG_CFLAGS=
 ADG_LIBADD=
 

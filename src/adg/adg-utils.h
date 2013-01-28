@@ -54,7 +54,6 @@ gchar *         adg_string_replace      (const gchar    *str,
                                          const gchar    *to);
 gchar *         adg_find_file           (const gchar    *file,
                                                          ...);
-const gchar *   adg_datadir             (void);
 
 G_END_DECLS
 

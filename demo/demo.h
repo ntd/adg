@@ -17,32 +17,28 @@
  * Boston, MA  02110-1301, USA.
  */
 
+/* Needed for localization support */
+#include <adg/adg-internal.h>
 
-#if !defined(__ADG_H__)
-#error "Only <adg.h> can be included directly."
-#endif
+/* Force the reinclusion of adg.h */
+#undef __ADG_H__
 
 
-#ifndef __ADG_GTK_UTILS_H__
-#define __ADG_GTK_UTILS_H__
-
-#define ADG_GTK_MODIFIERS  (GDK_SHIFT_MASK | GDK_CONTROL_MASK | GDK_MOD1_MASK)
+#ifndef __DEMO_H__
+#define __DEMO_H__
 
 
 G_BEGIN_DECLS
 
-#if GTK_CHECK_VERSION(2, 14, 0)
-#else
-GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
-#endif
+gboolean is_installed;
+gchar *  basedir;
 
-void            adg_gtk_window_hide_here        (GtkWindow      *window);
-void            adg_gtk_toggle_button_sensitivize
-                                                (GtkToggleButton*toggle_button,
-                                                 GtkWidget      *widget);
-void            adg_gtk_use_default_icons       (const gchar    *dir);
+
+void        _demo_init          (gint            argc,
+                                 gchar          *argv[]);
+gchar *     _demo_file          (const gchar    *file_name);
 
 G_END_DECLS
 
 
-#endif /* __ADG_GTK_UTILS_H__ */
+#endif /* __DEMO_H__ */

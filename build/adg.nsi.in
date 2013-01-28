@@ -72,6 +72,7 @@ Section "ADG canvas" SecBase
 
   SetOutPath "$INSTDIR\share\adg"
   File "${BUILDDIR}/demo/adg-demo.ui"
+  File "${BUILDDIR}/demo/cpml-demo.ui"
   File "${SRCDIR}/demo/adg-16.png"
   File "${SRCDIR}/demo/adg-32.png"
   File "${SRCDIR}/demo/adg-48.png"
@@ -162,6 +163,7 @@ Section "Uninstall"
   RMDir  "$INSTDIR\bin"
 
   Delete "$INSTDIR\share\adg\adg-demo.ui"
+  Delete "$INSTDIR\share\adg\cpml-demo.ui"
   Delete "$INSTDIR\share\adg\adg-128.png"
   Delete "$INSTDIR\share\adg\adg-64.png"
   Delete "$INSTDIR\share\adg\adg-48.png"

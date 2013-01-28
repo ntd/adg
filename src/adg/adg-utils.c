@@ -379,20 +379,3 @@ adg_find_file(const gchar *file, ...)
 
     return NULL;
 }
-
-/**
- * adg_datadir:
- *
- * Gets the default directory where support files should
- * be installed.
- *
- * Returns: a internally owned string with the base path
- *          to the support files.
- *
- * Since: 1.0
- **/
-const gchar *
-adg_datadir(void)
-{
-    return ADG_DATADIR;
-}

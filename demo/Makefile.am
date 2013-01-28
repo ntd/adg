@@ -14,14 +14,20 @@ LDADD=				$(top_builddir)/src/adg/libadg-1.la
 bin_PROGRAMS=			adg-demo-uninstalled \
 				cpml-demo-uninstalled
 
-adg_demo_uninstalled_SOURCES=	adg-demo.c
+adg_demo_uninstalled_SOURCES=	adg-demo.c \
+				demo.c \
+				demo.h
 
 if HAVE_GTK3
-cpml_demo_uninstalled_SOURCES=	cpml-demo.c
+cpml_demo_uninstalled_SOURCES=	cpml-demo.c \
+				demo.c \
+				demo.h
 endif
 
 if HAVE_GTK2
 cpml_demo_uninstalled_SOURCES=	cpml-demo-gtk2.c
+				demo.c \
+				demo.h
 endif
 
 nodist_pkgdata_DATA=		adg-demo.ui \
