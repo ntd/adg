@@ -67,7 +67,8 @@ Section "ADG canvas" SecBase
   SectionIn RO
 
   SetOutPath "$INSTDIR"
-  File "${BUILDDIR}/demo/.libs/adg-demo.exe"
+  File /oname=adg-demo.exe  "${BUILDDIR}/demo/.libs/adg-demo-uninstalled.exe"
+  File /oname=cpml-demo.exe "${BUILDDIR}/demo/.libs/cpml-demo-uninstalled.exe"
   File "${BUILDDIR}/demo/adg-demo.ui"
   File "${SRCDIR}/demo/adg-16.png"
   File "${SRCDIR}/demo/adg-32.png"
@@ -104,6 +105,7 @@ Section "ADG canvas" SecBase
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" "$INSTDIR\adg-demo.exe"
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML test case.lnk" "$INSTDIR\cpml-demo.exe"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
 
   WriteUninstaller "$INSTDIR\uninstall.exe"
@@ -164,6 +166,7 @@ Section "Uninstall"
   RMDir  "$INSTDIR\share"
 
   Delete "$INSTDIR\adg-demo.exe"
+  Delete "$INSTDIR\cpml-demo.exe"
   Delete "$INSTDIR\adg-128.png"
   Delete "$INSTDIR\adg-64.png"
   Delete "$INSTDIR\adg-48.png"

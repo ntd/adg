@@ -12,6 +12,17 @@
 #define CHAMFER 0.3
 
 
+/* Whether render the boxes to highlight the extents of every entity */
+static gboolean show_extents = FALSE;
+
+/* Whether the program is running installed or uninstalled */
+static gboolean is_installed = TRUE;
+
+/* The base directory where all files must be referred,
+ * usually left unset _adg_init() on POSIX systems. */
+static gchar *basedir = NULL;
+
+
 typedef struct _DemoPart DemoPart;
 
 struct _DemoPart {
@@ -71,32 +82,63 @@ _adg_version(void)
 }
 
 static void
-_adg_parse_args(gint *p_argc, gchar **p_argv[], gboolean *show_extents)
+_adg_init(gint *p_argc, gchar **p_argv[])
 {
-    GError *error = NULL;
     GOptionEntry entries[] = {
         {"version", 'V', G_OPTION_FLAG_NO_ARG, G_OPTION_ARG_CALLBACK,
          (gpointer) _adg_version, _("Display version information"), NULL},
         {"show-extents", 'E', 0, G_OPTION_ARG_NONE,
-         NULL, _("Show the boundary boxes of every entity"), NULL},
+         &show_extents, _("Show the boundary boxes of every entity"), NULL},
         {NULL}
     };
+    GError *error;
+    gchar  *name;
 
-    entries[1].arg_data = show_extents;
-    *show_extents = FALSE;
+    if (p_argc == NULL || p_argv == NULL || *p_argc < 1 || *p_argv[0] == NULL) {
+        g_error(_("Invalid arguments: arg[0] not set"));
+        g_assert_not_reached();
+    }
+
+    name = g_path_get_basename(*p_argv[0]);
+    if (name == NULL)
+        return;
+    is_installed = strstr(name, "uninstalled") == NULL;
+    g_free(name);
+
+    basedir = g_path_get_dirname(*p_argv[0]);
+
+    error = NULL;
     gtk_init_with_args(p_argc, p_argv, _("- ADG demonstration program"),
                        entries, GETTEXT_PACKAGE, &error);
-
     if (error != NULL) {
-        gint error_code = error->code;
-
-        g_printerr("%s\n", error->message);
-
-        g_error_free(error);
-        exit(error_code);
+        g_error("%s", error->message);
+        g_assert_not_reached();
     }
 }
 
+static gchar *
+_adg_file(const gchar *file_name)
+{
+    static gchar *pkg_data_dir = NULL;
+
+    if (! is_installed) {
+        /* Running uninstalled: look up the file in BUILDDIR before and
+         * in SRCDIR after, returning the first match */
+        return adg_find_file(file_name, BUILDDIR, SRCDIR, NULL);
+    }
+
+    /* Otherwise, look up the file only in PKGDATADIR */
+    if (pkg_data_dir == NULL) {
+#ifdef G_OS_WIN32
+        pkg_data_dir = g_build_filename(basedir != NULL ? basedir : "",
+                                        PKGDATADIR, NULL);
+#else
+        pkg_data_dir = g_strdup(PKGDATADIR);
+#endif
+    }
+
+    return adg_find_file(file_name, pkg_data_dir, NULL);
+}
 
 /**
  * _adg_error:
@@ -1119,16 +1161,15 @@ _adg_main_window(GtkBuilder *builder)
 int
 main(gint argc, gchar **argv)
 {
-    gboolean show_extents;
     gchar *path;
     GtkBuilder *builder;
     GError *error;
     GtkWidget *main_window;
 
-    _adg_parse_args(&argc, &argv, &show_extents);
+    _adg_init(&argc, &argv);
     adg_switch_extents(show_extents);
 
-    path = adg_find_file("adg-demo.ui", adg_datadir(), BUILDDIR, NULL);
+    path = _adg_file("adg-demo.ui");
     if (path == NULL) {
         g_print(_("adg-demo.ui not found!\n"));
         return 1;
