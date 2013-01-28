@@ -25,7 +25,7 @@ cpml_demo_uninstalled_SOURCES=	cpml-demo.c \
 endif
 
 if HAVE_GTK2
-cpml_demo_uninstalled_SOURCES=	cpml-demo-gtk2.c
+cpml_demo_uninstalled_SOURCES=	cpml-demo-gtk2.c \
 				demo.c \
 				demo.h
 endif

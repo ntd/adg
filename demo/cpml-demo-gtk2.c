@@ -20,6 +20,7 @@
 #include "demo.h"
 #include <cpml.h>
 #include <math.h>
+#include <gtk/gtk.h>
 
 
 static void     parse_args              (gint           *p_argc,
