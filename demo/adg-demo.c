@@ -907,6 +907,30 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
         _adg_error(error->message, window);
 }
 
+static gboolean
+_adg_button_press(AdgGtkArea *area, GdkEventButton *event)
+{
+    if (event->button == 1) {
+        AdgMatrix map;
+        AdgCanvas *canvas = adg_gtk_area_get_canvas(area);
+        AdgEntity *entity;
+
+        canvas = adg_gtk_area_get_canvas(area);
+        entity = (AdgEntity *) canvas;
+
+        /* Restore the original local map */
+        cairo_matrix_init_translate(&map, 140, 180);
+        cairo_matrix_scale(&map, 8, 8);
+        adg_entity_set_local_map(entity, &map);
+
+        adg_gtk_area_reset(area);
+    } else if (event->button == 3) {
+        /* TODO: autoscale */
+    }
+
+    return FALSE;
+}
+
 static DemoPart *
 _adg_part_new(GtkBuilder *builder)
 {
@@ -945,6 +969,9 @@ _adg_part_new(GtkBuilder *builder)
     //_adg_part_link(part, &part->LD7, gtk_builder_get_object(builder, "editLD7"));
     _adg_part_link(part, &part->DHOLE, gtk_builder_get_object(builder, "editDHOLE"));
     _adg_part_link(part, &part->LHOLE, gtk_builder_get_object(builder, "editLHOLE"));
+
+    g_signal_connect(part->area, "button-press-event",
+                     G_CALLBACK(_adg_button_press), NULL);
 
     toggle_object = gtk_builder_get_object(builder, "GROOVE");
     _adg_part_link(part, &part->GROOVE, toggle_object);

@@ -26,25 +26,15 @@
           </packing>
         </child>
         <child>
-          <object class="GtkHBox" id="boxNotes">
-            <property name="border-width">6</property>
-            <property name="homogeneous">False</property>
-            <property name="spacing">6</property>
-            <child>
-              <object class="GtkLabel" id="note1Label">
-                <property name="wrap">True</property>
-                <property name="width-chars">-1</property>
-                <property name="label" translatable="yes">Rotate the mouse wheel to zoom in and out.
-Drag the mouse with the wheel pressed to pan.</property>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="note2Label">
-                <property name="wrap">True</property>
-                <property name="width-chars">60</property>
-                <property name="label" translatable="yes">Keep the shift key pressed while zooming or panning with the mouse to do the same in global space.</property>
-              </object>
-            </child>
+          <object class="GtkLabel" id="noteLabel">
+            <property name="xalign">0</property>
+            <property name="xpad">6</property>
+            <property name="width-chars">-1</property>
+            <property name="label" translatable="yes">
+Rotate the mouse wheel to zoom in and out, drag the mouse with the wheel pressed to pan.
+Keep the shift key pressed while zooming and panning with the mouse to do the same in global space.
+Left click to restore the original transformation maps, right click to autoscale the local map.
+            </property>
           </object>
           <packing>
             <property name="fill">True</property>
