@@ -14,6 +14,10 @@ test_internals=			test-internal.c \
 
 if HAVE_TEST_FRAMEWORK
 
+TEST_PROGS+=			test-utils$(EXEEXT)
+test_utils_SOURCES=		test-utils.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-model$(EXEEXT)
 test_model_SOURCES=		test-model.c \
 				$(test_internals)

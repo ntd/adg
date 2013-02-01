@@ -379,3 +379,43 @@ adg_find_file(const gchar *file, ...)
 
     return NULL;
 }
+
+/**
+ * adg_scale_factor:
+ * @scale: a string identifying the scale
+ *
+ * Converts a scale in the form x:y (where x and y are respectively
+ * two positive integers representing the numerator and denominator
+ * of a fraction) into its approximate double representation. Any
+ * garbage following x or y will be silently ignored, meaning that
+ * x+garbage:y+garbage is equivalent to x:y. Furthermore, the postfix
+ * :y can be omitted, in which case (double) x will be returned.
+ *
+ * x and y are converted by using atoi(), so refer to your C library
+ * documentation for details on the algorithm used.
+ *
+ * Returns: the (possibly approximated) double conversion of @scale
+ *          or %0 on errors.
+ **/
+gdouble
+adg_scale_factor(const gchar *scale)
+{
+    gint numerator, denominator;
+    const gchar *ptr;
+
+    g_return_val_if_fail(scale != NULL, 0);
+
+    numerator = atoi(scale);
+    if (numerator <= 0)
+        return 0;
+
+    ptr = strchr(scale, ':');
+    if (ptr == NULL)
+        return numerator;
+
+    denominator = atoi(ptr + 1);
+    if (denominator <= 0)
+        return 0;
+
+    return (gdouble) numerator / (gdouble) denominator;
+}

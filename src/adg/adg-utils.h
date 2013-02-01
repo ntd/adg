@@ -54,6 +54,7 @@ gchar *         adg_string_replace      (const gchar    *str,
                                          const gchar    *to);
 gchar *         adg_find_file           (const gchar    *file,
                                                          ...);
+gdouble         adg_scale_factor        (const gchar    *scale);
 
 G_END_DECLS
 
