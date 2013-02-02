@@ -63,6 +63,12 @@ void            adg_canvas_set_size_explicit    (AdgCanvas      *canvas,
                                                  gdouble         x,
                                                  gdouble         y);
 const AdgPair * adg_canvas_get_size             (AdgCanvas      *canvas);
+void            adg_canvas_set_scales           (AdgCanvas      *canvas,
+                                                 ...) G_GNUC_NULL_TERMINATED;
+void            adg_canvas_set_scales_valist    (AdgCanvas      *canvas,
+                                                 va_list         var_args);
+const GSList *  adg_canvas_scales               (AdgCanvas      *canvas);
+void            adg_canvas_autoscale            (AdgCanvas      *canvas);
 void            adg_canvas_set_background_dress (AdgCanvas      *canvas,
                                                  AdgDress        dress);
 AdgDress        adg_canvas_get_background_dress (AdgCanvas      *canvas);

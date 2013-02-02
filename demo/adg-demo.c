@@ -620,7 +620,6 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
 {
     AdgContainer *container;
     AdgEntity *entity;
-    AdgMatrix map;
 
     container = (AdgContainer *) canvas;
 
@@ -641,11 +640,6 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
     adg_container_add(container, entity);
 
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
-
-    cairo_matrix_init_translate(&map, 140, 180);
-    cairo_matrix_scale(&map, 8, 8);
-    adg_entity_set_local_map(ADG_ENTITY(container), &map);
-
     return canvas;
 }
 
@@ -910,22 +904,20 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 static gboolean
 _adg_button_press(AdgGtkArea *area, GdkEventButton *event)
 {
+    AdgCanvas *canvas;
+
+    if (event->button != 1 && event->button != 3)
+        return FALSE;
+
+    canvas = adg_gtk_area_get_canvas(area);
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), FALSE);
+
     if (event->button == 1) {
-        AdgMatrix map;
-        AdgCanvas *canvas = adg_gtk_area_get_canvas(area);
-        AdgEntity *entity;
-
-        canvas = adg_gtk_area_get_canvas(area);
-        entity = (AdgEntity *) canvas;
-
-        /* Restore the original local map */
-        cairo_matrix_init_translate(&map, 140, 180);
-        cairo_matrix_scale(&map, 8, 8);
-        adg_entity_set_local_map(entity, &map);
-
+        /* Restore the original zoom */
         adg_gtk_area_reset(area);
     } else if (event->button == 3) {
-        /* TODO: autoscale */
+        adg_canvas_autoscale(canvas);
+        gtk_widget_queue_draw((GtkWidget *) area);
     }
 
     return FALSE;
@@ -1131,6 +1123,7 @@ _adg_main_window(GtkBuilder *builder)
 
     _adg_canvas_init(canvas, part);
     adg_gtk_area_set_canvas(part->area, canvas);
+    adg_canvas_autoscale(canvas);
 
     g_assert(GTK_IS_WINDOW(window));
     button_edit = (GtkWidget *) gtk_builder_get_object(builder, "mainEdit");

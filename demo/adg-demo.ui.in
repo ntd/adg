@@ -33,7 +33,7 @@
             <property name="label" translatable="yes">
 Rotate the mouse wheel to zoom in and out, drag the mouse with the wheel pressed to pan.
 Keep the shift key pressed while zooming and panning with the mouse to do the same in global space.
-Left click to restore the original transformation maps, right click to autoscale the local map.
+Left click to restore paper zoom and position, right click to autoscale and center the drawing.
             </property>
           </object>
           <packing>
@@ -1304,7 +1304,7 @@ Boston, MA  02110-1301, USA.</property>
     <property name="upper">180</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
-    <property name="value">62.3</property>
+    <property name="value">55</property>
   </object>
   <object class="GtkAdjustment" id="adjB">
     <property name="lower">10</property>
@@ -1346,7 +1346,7 @@ Boston, MA  02110-1301, USA.</property>
     <property name="upper">25</property>
     <property name="step_increment">0.1</property>
     <property name="page_increment">1</property>
-    <property name="value">11.9</property>
+    <property name="value">13.8</property>
   </object>
   <object class="GtkAdjustment" id="adjLD3">
     <property name="lower">1</property>

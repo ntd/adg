@@ -249,6 +249,7 @@ adg_canvas_init(AdgCanvas *canvas)
 
     data->size.x = 0;
     data->size.y = 0;
+    data->scales = NULL;
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->title_block = NULL;
@@ -268,12 +269,18 @@ adg_canvas_init(AdgCanvas *canvas)
 static void
 _adg_dispose(GObject *object)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) object)->data;
+    AdgCanvas *canvas;
+    AdgCanvasPrivate *data;
+
+    canvas = (AdgCanvas *) object;
+    data = canvas->data;
 
     if (data->title_block) {
         g_object_unref(data->title_block);
         data->title_block = NULL;
     }
+
+    adg_canvas_set_scales(canvas, NULL);
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
@@ -410,7 +417,15 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgCanvas *
 adg_canvas_new(void)
 {
-    return g_object_new(ADG_TYPE_CANVAS, NULL);
+    AdgCanvas *canvas = g_object_new(ADG_TYPE_CANVAS, NULL);
+
+    /* Preset some common ISO scales for autoscaling purposes */
+    adg_canvas_set_scales(canvas,
+                          "10:1", "5:1", "3:1", "2:1",
+                          "1:1", "1:2", "1:3", "1:5", "1:10",
+                          NULL);
+
+    return canvas;
 }
 
 /**
@@ -479,6 +494,155 @@ adg_canvas_get_size(AdgCanvas *canvas)
 
     data = canvas->data;
     return &data->size;
+}
+
+/**
+ * adg_canvas_set_scales:
+ * @canvas: an #AdgCanvas
+ * @...: %NULL terminated list of strings
+ *
+ * Sets the scales allowed by @canvas. Every scale identifies a
+ * specific factor to be applied to the local matrix of @canvas.
+ * When adg_canvas_autoscale() will be called, the greatest
+ * scale that can render every entity inside a box of
+ * #AdgCanvas:size dimensions will be applied. The drawing will
+ * be centered inside that box.
+ *
+ * Every scale should be expressed with a string in the form of
+ * "x:y", where x and y are positive integers that identifies
+ * numerator an denominator of a fraction. That string itself
+ * will be put into the title block when used.
+ **/
+void
+adg_canvas_set_scales(AdgCanvas *canvas, ...)
+{
+    va_list var_args;
+
+    va_start(var_args, canvas);
+    adg_canvas_set_scales_valist(canvas, var_args);
+    va_end(var_args);
+}
+
+/**
+ * adg_canvas_set_scales_valist:
+ * @canvas: an #AdgCanvas
+ * @var_args: %NULL terminated list of strings
+ *
+ * Vararg variant of adg_canvas_set_scales().
+ **/
+void
+adg_canvas_set_scales_valist(AdgCanvas *canvas, va_list var_args)
+{
+    AdgCanvasPrivate *data;
+    const gchar *scale;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    data = canvas->data;
+
+    if (data->scales != NULL) {
+        g_slist_foreach(data->scales, (GFunc) g_free, NULL);
+        g_slist_free(data->scales);
+        data->scales = NULL;
+    }
+
+    while ((scale = va_arg(var_args, const gchar *)) != NULL)
+        data->scales = g_slist_prepend(data->scales, g_strdup(scale));
+
+    data->scales = g_slist_reverse(data->scales);
+}
+
+/**
+ * adg_canvas_scales:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the list of scales set on @canvas: check adg_canvas_set_scales()
+ * to get an idea of what scales are supposed to be.
+ *
+ * If no scales are set, %NULL is returned.
+ *
+ * Returns: (element-type utf8) (transfer none): the list of available scales or %NULL.
+ **/
+const GSList *
+adg_canvas_scales(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
+
+    data = canvas->data;
+    return data->scales;
+}
+
+/**
+ * adg_canvas_autoscale:
+ * @canvas: an #AdgCanvas
+ *
+ * Applies one scale per time, in the order they have been provided
+ * in the adg_canvas_set_scales() call, until the drawing can be
+ * entirely contained into the current paper. If successful, the
+ * scale of the title block is changed accordingly and the drawing
+ * is centered inside the paper.
+ **/
+void
+adg_canvas_autoscale(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+    GSList *scales, *scale;
+    AdgEntity *entity;
+    AdgMatrix map;
+    const CpmlExtents *extents;
+    AdgTitleBlock *title_block;
+    AdgPair delta;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(_ADG_OLD_ENTITY_CLASS->arrange != NULL);
+
+    data = canvas->data;
+    scales = data->scales;
+    entity = (AdgEntity *) canvas;
+    title_block = adg_canvas_get_title_block(canvas);
+
+    for (scale = scales; scale != NULL; scale = scale->next) {
+        const gchar *text = scale->data;
+        gdouble factor = adg_scale_factor(text);
+        if (factor <= 0)
+            continue;
+
+        cairo_matrix_init_scale(&map, factor, factor);
+        adg_entity_set_local_map(entity, &map);
+        adg_entity_local_changed(entity);
+
+        /* Arrange the entities inside the canvas, but not the canvas itself,
+         * just to get the bounding box of the drawing without the paper */
+        _ADG_OLD_ENTITY_CLASS->arrange(entity);
+        extents = adg_entity_get_extents(entity);
+
+        /* Just in case @canvas is emtpy */
+        if (! extents->is_defined)
+            return;
+
+        if (title_block != NULL)
+            adg_title_block_set_scale(title_block, text);
+
+        /* Bail out if paper size is not specified or invalid */
+        if (data->size.x <= 0 || data->size.y <= 0)
+            break;
+
+        /* If the drawing extents are fully contained inside the paper size,
+         * center the drawing in the paper and bail out */
+        delta.x = data->size.x - extents->size.x;
+        delta.y = data->size.y - extents->size.y;
+        if (delta.x >= 0 && delta.y >= 0) {
+            AdgMatrix transform;
+            cairo_matrix_init_translate(&transform,
+                                        delta.x / 2 - extents->org.x,
+                                        delta.y / 2 - extents->org.y);
+            adg_entity_transform_local_map(entity, &transform,
+                                           ADG_TRANSFORM_AFTER);
+            break;
+        }
+    }
 }
 
 /**
