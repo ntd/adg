@@ -888,13 +888,6 @@ _adg_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
     if (table_cell->value == value)
         return FALSE;
 
-    if (table_cell->value) {
-        alignment = adg_entity_get_parent(table_cell->value);
-        g_object_unref(alignment);
-    }
-
-    table_cell->value = value;
-
     if (value) {
         AdgEntity *table = (AdgEntity *) adg_table_cell_get_table(table_cell);
         alignment = (AdgEntity *) adg_alignment_new_explicit(0.5, 0);
@@ -903,6 +896,13 @@ _adg_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
         adg_container_add((AdgContainer *) alignment, value);
     }
 
+    if (table_cell->value) {
+        alignment = adg_entity_get_parent(table_cell->value);
+        adg_container_remove((AdgContainer *) alignment, table_cell->value);
+        g_object_unref(alignment);
+    }
+
+    table_cell->value = value;
     return TRUE;
 }
 
@@ -911,6 +911,9 @@ _adg_cell_set_value_pos(AdgTableCell *table_cell,
                         const AdgPair *from_factor, const AdgPair *to_factor)
 {
     AdgAlignment *alignment;
+
+    if (table_cell->value == NULL)
+        return;
 
     alignment = (AdgAlignment *) adg_entity_get_parent(table_cell->value);
 

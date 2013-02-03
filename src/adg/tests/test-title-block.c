@@ -161,12 +161,20 @@ _adg_test_logo(void)
     valid_entity = ADG_ENTITY(adg_hatch_new(NULL));
     invalid_entity = adg_test_invalid_pointer();
 
+    /* Prevent valid_entity from being destroyed
+     * the first time AdgTitleBlock:logo is set to NULL */
+    g_object_ref(valid_entity);
+
     /* Using the public APIs */
     adg_title_block_set_logo(title_block, valid_entity);
     logo = adg_title_block_logo(title_block);
     g_assert(logo == valid_entity);
 
     adg_title_block_set_logo(title_block, invalid_entity);
+    logo = adg_title_block_logo(title_block);
+    g_assert(logo == valid_entity);
+
+    adg_title_block_set_logo(title_block, valid_entity);
     logo = adg_title_block_logo(title_block);
     g_assert(logo == valid_entity);
 
@@ -185,12 +193,17 @@ _adg_test_logo(void)
     g_assert(logo == valid_entity);
     adg_entity_destroy(logo);
 
+    g_object_set(title_block, "logo", valid_entity, NULL);
+    g_object_get(title_block, "logo", &logo, NULL);
+    g_assert(logo == valid_entity);
+    adg_entity_destroy(logo);
+
     g_object_set(title_block, "logo", NULL, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
     g_assert(logo == NULL);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
-    adg_entity_destroy(valid_entity);
+    g_object_unref(valid_entity);
 }
 
 static void
@@ -202,6 +215,10 @@ _adg_test_projection(void)
     title_block = adg_title_block_new();
     valid_entity = ADG_ENTITY(adg_hatch_new(NULL));
     invalid_entity = adg_test_invalid_pointer();
+
+    /* Prevent valid_entity from being destroyed
+     * the first time AdgTitleBlock:projection is set to NULL */
+    g_object_ref(valid_entity);
 
     /* Using the public APIs */
     adg_title_block_set_projection(title_block, valid_entity);
@@ -232,7 +249,7 @@ _adg_test_projection(void)
     g_assert(projection == NULL);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
-    adg_entity_destroy(valid_entity);
+    g_object_unref(valid_entity);
 }
 
 static void
