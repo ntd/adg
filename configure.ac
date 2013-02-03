@@ -63,7 +63,7 @@ case "${host}" in
   *-*-cygwin*)
     guessed_host=cygwin
     ;;
-  *-*-minix)
+  *-*-minix*)
     guessed_host=minix
     ;;
   *-*-aix*)
@@ -93,7 +93,9 @@ AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
-AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
+AM_COND_IF([OS_WINDOWS],
+           [AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
+            AC_PATH_PROG([WINE],[wine])])
 
 
 # Check for libraries

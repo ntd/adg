@@ -5,6 +5,7 @@ TEST_PROGS=
 
 # test: run all tests in cwd and subdirs
 test: test-nonrecursive
+if OS_UNIX
 	@ for subdir in $(SUBDIRS) . ; do \
 	    test "$$subdir" = "." -o "$$subdir" = "po" || \
 	    ( cd $$subdir && $(MAKE) $(AM_MAKEFLAGS) $@ ) || exit $? ; \
@@ -13,6 +14,9 @@ test: test-nonrecursive
 # test-nonrecursive: run tests only in cwd
 test-nonrecursive: ${TEST_PROGS}
 	@test -z "${TEST_PROGS}" || G_DEBUG=gc-friendly MALLOC_CHECK_=2 MALLOC_PERTURB_=$$(($${RANDOM:-256} % 256)) ${GTESTER} --verbose ${TEST_PROGS}
+else
+test-nonrecursive:
+endif
 
 # test-report: run tests in subdirs and generate report
 # perf-report: run tests in subdirs with -m perf and generate report
