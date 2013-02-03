@@ -632,6 +632,48 @@ adg_gtk_area_has_autozoom(AdgGtkArea *area)
 }
 
 /**
+ * adg_gtk_area_reset:
+ * @area: an #AdgGtkArea
+ *
+ * Forcibly resets the zoom ratio and position of the canvas bound
+ * to @area. This means the canvas will be scaled and centered on
+ * the current available space.
+ **/
+void
+adg_gtk_area_reset(AdgGtkArea *area)
+{
+    AdgGtkAreaPrivate *data;
+    GtkWidget *parent;
+    const CpmlExtents *sheet;
+    GtkAllocation allocation;
+    AdgPair size;
+    gdouble zoom;
+
+    g_return_if_fail(ADG_GTK_IS_AREA(area));
+
+    data = area->data;
+    cairo_matrix_init_identity(&data->render_map);
+
+    sheet = _adg_get_extents(area);
+    if (!sheet->is_defined || sheet->size.x <= 0 || sheet->size.y <= 0)
+        return;
+
+    parent = gtk_widget_get_parent((GtkWidget *) area);
+    gtk_widget_get_allocation(parent, &allocation);
+    size.x = allocation.width;
+    size.y = allocation.height;
+    zoom = MIN(size.x / sheet->size.x, size.y / sheet->size.y);
+
+    cairo_matrix_scale(&data->render_map, zoom, zoom);
+    cairo_matrix_translate(&data->render_map,
+                           (size.x / zoom - sheet->size.x) / 2 - sheet->org.x,
+                           (size.y / zoom - sheet->size.y) / 2 - sheet->org.y);
+
+    /* Trigger a resize trying to hide the scrollbars on the parent */
+    gtk_widget_queue_resize(parent);
+}
+
+/**
  * adg_gtk_area_canvas_changed:
  * @area: an #AdgGtkArea
  * @old_canvas: the old canvas bound to @area
