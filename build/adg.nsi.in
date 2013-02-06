@@ -135,6 +135,7 @@ LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\CPML test case.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
