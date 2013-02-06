@@ -8,7 +8,8 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 AM_CFLAGS=			$(GTK3_CFLAGS) $(GTK2_CFLAGS) \
 				$(CAIRO_CFLAGS) \
 				$(GOBJECT2_CFLAGS)
-LDADD=				$(top_builddir)/src/adg/libadg-1.la
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/adg/libadg-1.la
 
 
 bin_PROGRAMS=			adg-demo-uninstalled \

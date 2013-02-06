@@ -5,7 +5,8 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 AM_CFLAGS=			$(CAIRO_CFLAGS) \
 				$(GOBJECT2_CFLAGS)
-LDADD=				$(top_builddir)/src/adg/libadg-1.la
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/adg/libadg-1.la
 
 
 # file groups
