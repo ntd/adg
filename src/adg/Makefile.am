@@ -17,6 +17,7 @@ h_sources=			adg-adim.h \
 				adg-canvas.h \
 				adg-color-style.h \
 				adg-container.h \
+				adg-dash.h \
 				adg-dim.h \
 				adg-dim-style.h \
 				adg-dress.h \
@@ -60,6 +61,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-canvas-private.h \
 				adg-color-style-private.h \
 				adg-container-private.h \
+				adg-dash-private.h \
 				adg-dim-private.h \
 				adg-dim-style-private.h \
 				adg-dress-private.h \
@@ -92,6 +94,7 @@ c_sources=			adg-adim.c \
 				adg-canvas.c \
 				adg-color-style.c \
 				adg-container.c \
+				adg-dash.c \
 				adg-dim.c \
 				adg-dim-style.c \
 				adg-dress.c \

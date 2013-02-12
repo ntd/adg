@@ -42,6 +42,7 @@
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
 #include "adg-style.h"
+#include "adg-dash.h"
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"
@@ -49,7 +50,6 @@
 
 G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
-/* XXX: http://dev.entidi.com/p/adg/issues/51/ */
 enum {
     PROP_0,
     PROP_COLOR_DRESS,
@@ -57,7 +57,8 @@ enum {
     PROP_CAP,
     PROP_JOIN,
     PROP_MITER_LIMIT,
-    PROP_ANTIALIAS
+    PROP_ANTIALIAS,
+    PROP_DASH
 };
 
 
@@ -69,6 +70,8 @@ static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static gboolean         _adg_change_dash        (AdgLineStyle   *style,
+                                                 const AdgDash  *dash);
 static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -131,6 +134,12 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
                              G_MININT, G_MAXINT, CAIRO_ANTIALIAS_DEFAULT,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ANTIALIAS, param);
+
+    param = g_param_spec_boxed("dash",
+                               P_("Dash Pattern"),
+                               P_("The dash pattern to be used while stroking a path"),
+                               ADG_TYPE_DASH, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DASH, param);
 }
 
 static void
@@ -146,9 +155,7 @@ adg_line_style_init(AdgLineStyle *line_style)
     data->join = CAIRO_LINE_JOIN_MITER;
     data->miter_limit = 10.;
     data->antialias = CAIRO_ANTIALIAS_DEFAULT;
-    data->dashes = NULL;
-    data->num_dashes = 0;
-    data->dash_offset = 0.;
+    data->dash = NULL;
 
     line_style->data = data;
 }
@@ -178,6 +185,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_ANTIALIAS:
         g_value_set_int(value, data->antialias);
         break;
+    case PROP_DASH:
+        g_value_set_boxed(value, data->dash);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -188,7 +198,11 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
+    AdgLineStyle *line_style;
+    AdgLineStylePrivate *data;
+
+    line_style = (AdgLineStyle *) object;
+    data = line_style->data;
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -208,6 +222,9 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_ANTIALIAS:
         data->antialias = g_value_get_int(value);
+        break;
+    case PROP_DASH:
+        _adg_change_dash(line_style, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -490,6 +507,100 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
     return data->antialias;
 }
 
+/**
+ * adg_line_style_set_dash:
+ * @line_style: an #AdgLineStyle object
+ * @dash: the new #AdgDash pattern
+ *
+ * Sets the dash pattern of @line_style to @dash: all future rendering with
+ * this line style will use this pattern.
+ *
+ * @line_style will embed a copy of @dash: this means that after this call,
+ * @dash can be freed (with adg_dash_destroy()) if no more needed.
+ *
+ * Since: 1.0
+ **/
+void
+adg_line_style_set_dash(AdgLineStyle *line_style, const AdgDash *dash)
+{
+    g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
+
+    if (_adg_change_dash(line_style, dash))
+        g_object_notify((GObject *) line_style, "dash");
+}
+
+/**
+ * adg_line_style_get_dash:
+ * @line_style: an #AdgLineStyle object
+ *
+ * Gets the dash pattern currently active on @line_style. A %NULL value is
+ * returned when no dash pattern is active.
+ *
+ * The returned pattern is owned by @line_style: you are not allowed to modify
+ * or free it. If something needs to be changed, work on a duplicate and reset
+ * the new pattern, such as:
+ *
+ * |[
+ * AdgDash *dash, *new_dash;
+ *
+ * dash = adg_line_style_get_dash(line_style);
+ * if (dash == NULL)
+ *     new_dash = adg_dash_new();
+ * else
+ *     new_dash = adg_dash_dup(dash);
+ *
+ * // ...modify new_dash as needed...
+ *
+ * adg_line_style_set_dash(line_style, new_dash);
+ * adg_dash_destroy(new_dash);
+ * ]|
+ *
+ * <note><para>
+ * Getting #AdgLineStyle:dash via the #GObject property mechanism returns
+ * a duplicate instead, so you must free it when done.
+ * </para></note>
+ *
+ * |[
+ * g_object_get(line_style, "dash", &dash, NULL);
+ * // Here dash is a duplicate: modifying it will not affect line_style
+ * adg_dash_destroy(dash);
+ * ]|
+ *
+ * Returns: the current dash pattern or %NULL on errors.
+ *
+ * Since: 1.0
+ **/
+const AdgDash *
+adg_line_style_get_dash(AdgLineStyle *line_style)
+{
+    AdgLineStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), NULL);
+
+    data = line_style->data;
+    return data->dash;
+}
+
+
+static gboolean
+_adg_change_dash(AdgLineStyle *line_style, const AdgDash *dash)
+{
+    AdgLineStylePrivate *data = line_style->data;
+
+    if (data->dash == dash)
+        return FALSE;
+
+    if (data->dash != NULL) {
+        adg_dash_destroy(data->dash);
+        data->dash = NULL;
+    }
+
+    if (dash != NULL) {
+        data->dash = adg_dash_dup(dash);
+    }
+
+    return TRUE;
+}
 
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
@@ -503,8 +614,10 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     cairo_set_miter_limit(cr, data->miter_limit);
     cairo_set_antialias(cr, data->antialias);
 
-    if (data->num_dashes > 0) {
-        g_return_if_fail(data->dashes != NULL);
-        cairo_set_dash(cr, data->dashes, data->num_dashes, data->dash_offset);
+    if (data->dash != NULL) {
+        cairo_set_dash(cr,
+                       adg_dash_get_dashes(data->dash),
+                       adg_dash_get_num_dashes(data->dash),
+                       adg_dash_get_offset(data->dash));
     }
 }

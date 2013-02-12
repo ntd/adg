@@ -75,6 +75,9 @@ void            adg_line_style_set_antialias    (AdgLineStyle   *line_style,
                                                  cairo_antialias_t antialias);
 cairo_antialias_t
                 adg_line_style_get_antialias    (AdgLineStyle   *line_style);
+void            adg_line_style_set_dash         (AdgLineStyle   *line_style,
+                                                 const AdgDash  *dash);
+const AdgDash * adg_line_style_get_dash         (AdgLineStyle   *line_style);
 
 
 G_END_DECLS

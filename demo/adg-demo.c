@@ -74,6 +74,7 @@ struct _DemoPart {
     AdgPath             *shape;
     AdgPath             *hatch;
     AdgPath             *hatch_contour;
+    AdgPath             *axis;
 
     /* Special entities */
     AdgTitleBlock       *title_block;
@@ -371,6 +372,22 @@ _adg_part_define_shape(DemoPart *part)
 }
 
 static void
+_adg_part_define_axis(DemoPart *part)
+{
+    AdgPath *path;
+
+    path = part->axis;
+
+    /* XXX: actually the end points can extend outside the shape
+     * only in local space. The proper extension values should be
+     * expressed in global space but actually is impossible to
+     * combine local and global space in the AdgPath API.
+     */
+    adg_path_move_to_explicit(path, -1, 0);
+    adg_path_line_to_explicit(path, part->A + 1, 0);
+}
+
+static void
 _adg_part_lock(DemoPart *part)
 {
     gtk_widget_set_sensitive(GTK_WIDGET(part->apply), FALSE);
@@ -615,6 +632,14 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
 
+static void
+_adg_demo_canvas_add_axis(AdgCanvas *canvas, AdgTrail *trail)
+{
+    AdgStroke *stroke = adg_stroke_new(trail);
+    adg_stroke_set_line_dress(stroke, ADG_DRESS_LINE_AXIS);
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
+}
+
 static AdgCanvas *
 _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
 {
@@ -640,6 +665,9 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
     adg_container_add(container, entity);
 
     _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
+
+    _adg_demo_canvas_add_axis(canvas, ADG_TRAIL(part->axis));
+
     return canvas;
 }
 
@@ -693,15 +721,18 @@ _adg_do_edit(DemoPart *part)
     adg_model_reset(ADG_MODEL(part->shape));
     adg_model_reset(ADG_MODEL(part->hatch));
     adg_model_reset(ADG_MODEL(part->hatch_contour));
+    adg_model_reset(ADG_MODEL(part->axis));
     adg_model_reset(ADG_MODEL(part->edges));
 
     _adg_part_define_title_block(part);
     _adg_part_define_shape(part);
     _adg_part_define_hatch(part);
+    _adg_part_define_axis(part);
 
     adg_model_changed(ADG_MODEL(part->shape));
     adg_model_changed(ADG_MODEL(part->hatch));
     adg_model_changed(ADG_MODEL(part->hatch_contour));
+    adg_model_changed(ADG_MODEL(part->axis));
     adg_model_changed(ADG_MODEL(part->edges));
 
     gtk_widget_queue_draw(GTK_WIDGET(part->area));
@@ -938,6 +969,7 @@ _adg_part_new(GtkBuilder *builder)
     part->shape = adg_path_new();
     part->hatch = adg_path_new();
     part->hatch_contour = adg_path_new();
+    part->axis = adg_path_new();
     part->title_block = adg_title_block_new();
     part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
 

@@ -41,6 +41,7 @@
 #include "adg-pattern.h"
 #include "adg-dress.h"
 #include "adg-color-style.h"
+#include "adg-dash.h"
 #include "adg-line-style.h"
 #include "adg-fill-style.h"
 #include "adg-dim-style.h"
@@ -49,6 +50,8 @@
 #include "adg-ruled-fill.h"
 
 #include "adg-dress-builtins.h"
+
+#define MM  *2.83464566927
 
 
 /**
@@ -222,6 +225,62 @@ _adg_dress_color_fill(void)
 }
 
 /**
+ * ADG_DRESS_COLOR_AXIS:
+ *
+ * The default builtin #AdgDress color for stroking #ADG_DRESS_LINE_AXIS
+ * lines. The fallback color is green.
+ *
+ * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
+ **/
+AdgDress
+_adg_dress_color_axis(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
+                                          "red", 0.,
+                                          "green", 0.75,
+                                          "blue", 0.25, NULL);
+
+        dress = adg_dress_new("color-axis", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_COLOR_HIDDEN:
+ *
+ * The default builtin #AdgDress color for stroking #ADG_DRESS_LINE_HIDDEN
+ * lines. The fallback color is gray.
+ *
+ * This dress will be resolved to an #AdgColorStyle instance.
+ *
+ * Since: 1.0
+ **/
+AdgDress
+_adg_dress_color_hidden(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgStyle *fallback = g_object_new(ADG_TYPE_COLOR_STYLE,
+                                          "red", 0.5,
+                                          "green", 0.5,
+                                          "blue", 0.5, NULL);
+
+        dress = adg_dress_new("color-hidden", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
  * ADG_DRESS_LINE:
  *
  * The default builtin #AdgDress line.
@@ -383,6 +442,72 @@ _adg_dress_line_frame(void)
                                           "width", 2., NULL);
 
         dress = adg_dress_new("line-frame", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_AXIS:
+ *
+ * The builtin #AdgDress line type used for rendering axis and
+ * centerlines.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
+ **/
+AdgDress
+_adg_dress_line_axis(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgDash *dash;
+        AdgStyle *fallback;
+
+        dash = adg_dash_new_with_dashes(4, 2 MM, 2 MM, 10 MM, 2 MM);
+        fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                "dash", dash,
+                                "color-dress", ADG_DRESS_COLOR_AXIS,
+                                "width", 0.25 MM, NULL);
+        adg_dash_destroy(dash);
+
+        dress = adg_dress_new("line-axis", fallback);
+        g_object_unref(fallback);
+    }
+
+    return dress;
+}
+
+/**
+ * ADG_DRESS_LINE_HIDDEN:
+ *
+ * The builtin #AdgDress line type used for rendering hidden
+ * lines and edges.
+ *
+ * This dress will be resolved to an #AdgLineStyle instance.
+ *
+ * Since: 1.0
+ **/
+AdgDress
+_adg_dress_line_hidden(void)
+{
+    static AdgDress dress = 0;
+
+    if (G_UNLIKELY(dress == 0)) {
+        AdgDash *dash;
+        AdgStyle *fallback;
+
+        dash = adg_dash_new_with_dashes(2, 6 MM, 6 MM);
+        fallback = g_object_new(ADG_TYPE_LINE_STYLE,
+                                "dash", dash,
+                                "color-dress", ADG_DRESS_COLOR_HIDDEN,
+                                "width", 0.25 MM, NULL);
+        adg_dash_destroy(dash);
+
+        dress = adg_dress_new("line-hidden", fallback);
         g_object_unref(fallback);
     }
 

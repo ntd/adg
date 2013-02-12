@@ -18,25 +18,19 @@
  */
 
 
-#ifndef __ADG_LINE_STYLE_PRIVATE_H__
-#define __ADG_LINE_STYLE_PRIVATE_H__
+#ifndef __ADG_DASH_PRIVATE_H__
+#define __ADG_DASH_PRIVATE_H__
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgLineStylePrivate AdgLineStylePrivate;
-
-struct _AdgLineStylePrivate {
-    AdgDress             color_dress;
-    double               width;
-    cairo_line_cap_t     cap;
-    cairo_line_join_t    join;
-    double               miter_limit;
-    cairo_antialias_t    antialias;
-    AdgDash             *dash;
+struct _AdgDash {
+    gint         num_dashes;
+    gdouble     *dashes;
+    gdouble      offset;
 };
 
 G_END_DECLS
 
 
-#endif /* __ADG_LINE_STYLE_PRIVATE_H__ */
+#endif /* __ADG_DASH_PRIVATE_H__ */

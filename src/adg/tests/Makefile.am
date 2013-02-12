@@ -95,6 +95,10 @@ TEST_PROGS+=			test-arrow$(EXEEXT)
 test_arrow_SOURCES=		test-arrow.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-dash$(EXEEXT)
+test_dash_SOURCES=		test-dash.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-color-style$(EXEEXT)
 test_color_style_SOURCES=	test-color-style.c \
 				$(test_internals)

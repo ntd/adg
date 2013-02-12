@@ -34,14 +34,18 @@ G_BEGIN_DECLS
 #define ADG_DRESS_COLOR_BACKGROUND      (_adg_dress_color_background())
 #define ADG_DRESS_COLOR_STROKE          (_adg_dress_color_stroke())
 #define ADG_DRESS_COLOR_DIMENSION       (_adg_dress_color_dimension())
-#define ADG_DRESS_COLOR_FILL            (_adg_dress_color_fill())
 #define ADG_DRESS_COLOR_ANNOTATION      (_adg_dress_color_annotation())
+#define ADG_DRESS_COLOR_FILL            (_adg_dress_color_fill())
+#define ADG_DRESS_COLOR_AXIS            (_adg_dress_color_axis())
+#define ADG_DRESS_COLOR_HIDDEN          (_adg_dress_color_hidden())
 #define ADG_DRESS_LINE                  (_adg_dress_line())
 #define ADG_DRESS_LINE_STROKE           (_adg_dress_line_stroke())
 #define ADG_DRESS_LINE_DIMENSION        (_adg_dress_line_dimension())
 #define ADG_DRESS_LINE_FILL             (_adg_dress_line_fill())
 #define ADG_DRESS_LINE_GRID             (_adg_dress_line_grid())
 #define ADG_DRESS_LINE_FRAME            (_adg_dress_line_frame())
+#define ADG_DRESS_LINE_AXIS             (_adg_dress_line_axis())
+#define ADG_DRESS_LINE_HIDDEN           (_adg_dress_line_hidden())
 #define ADG_DRESS_FONT                  (_adg_dress_font())
 #define ADG_DRESS_FONT_TEXT             (_adg_dress_font_text())
 #define ADG_DRESS_FONT_ANNOTATION       (_adg_dress_font_annotation())
@@ -58,6 +62,8 @@ AdgDress        _adg_dress_color_background     (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_stroke         (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_dimension      (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_fill           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_color_axis           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_color_hidden          (void) G_GNUC_CONST;
 AdgDress        _adg_dress_color_annotation     (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_stroke          (void) G_GNUC_CONST;
@@ -65,6 +71,8 @@ AdgDress        _adg_dress_line_dimension       (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_fill            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_grid            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_line_frame           (void) G_GNUC_CONST;
+AdgDress        _adg_dress_line_axis            (void) G_GNUC_CONST;
+AdgDress        _adg_dress_line_hidden          (void) G_GNUC_CONST;
 AdgDress        _adg_dress_font                 (void) G_GNUC_CONST;
 AdgDress        _adg_dress_font_text            (void) G_GNUC_CONST;
 AdgDress        _adg_dress_font_annotation      (void) G_GNUC_CONST;
