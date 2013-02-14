@@ -241,7 +241,7 @@ AC_ARG_WITH(girdir,
             [AS_HELP_STRING([--with-girdir=DIR],
                             [where the gir files are installed @<:@default=check@:>@])],
             [],[with_girdir=check])
-AS_IF([test "x${with_girdir}" = "xcheck"],
+AS_IF([test "x${enable_introspection}" = "xyes" -a "x${with_girdir}" = "xcheck"],
       [NTD_UNEXPAND([gobject-introspection-1.0],
                     [girdir],
                     [with_girdir="${NTD_UNEXPANDED}"])])
@@ -250,18 +250,16 @@ AC_ARG_WITH(typelibdir,
             [AS_HELP_STRING([--with-typelibdir=DIR],
                             [where the typelib files are installed @<:@default=check@:>@])],
             [],[with_typelibdir=check])
-AS_IF([test "x${with_typelibdir}" = "xcheck"],
+AS_IF([test "x${enable_introspection}" = "xyes" -a "x${with_typelibdir}" = "xcheck"],
       [NTD_UNEXPAND([gobject-introspection-1.0],
                     [typelibdir],
                     [with_typelibdir="${NTD_UNEXPANDED}"])])
 AC_SUBST([TYPELIBDIR],${with_typelibdir})
 AM_COND_IF([HAVE_INTROSPECTION],
-           [enable_introspection='yes'
-            report_introspection="
+           [report_introspection="
          Where to install gir files: ${with_girdir}
  Where to install the typelib files: ${with_typelibdir}"],
-           [enable_introspection='no'
-            report_introspection=""])
+           [report_introspection=""])
 
 dnl GLib test framework
 AC_ARG_ENABLE([test_framework],
