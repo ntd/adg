@@ -6,8 +6,6 @@ SUBDIRS=			tests
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-ADG_CFLAGS=
-ADG_LIBADD=
 
 
 # file groups
@@ -165,15 +163,11 @@ endif
 if HAVE_GTK3
 c_sources+=			adg-gtk-area.c \
 				adg-gtk-layout.c
-ADG_CFLAGS+=			$(GTK3_CFLAGS)
-ADG_LIBADD+=			$(GTK3_LIBS)
 endif
 
 if HAVE_GTK2
 c_sources+=			adg-gtk-area-gtk2.c \
 				adg-gtk-layout-gtk2.c
-ADG_CFLAGS+=			$(GTK2_CFLAGS)
-ADG_LIBADD+=			$(GTK2_LIBS)
 endif
 
 
@@ -186,15 +180,7 @@ private_h_sources+=		adg-pango-style-private.h \
 				adg-text-private.h
 c_sources+=			adg-pango-style.c \
 				adg-text.c
-ADG_CFLAGS+=			$(PANGO_CFLAGS)
-ADG_LIBADD+=			$(PANGO_LIBS)
 endif
-
-
-ADG_CFLAGS+=			$(CAIRO_CFLAGS) \
-				$(GOBJECT_CFLAGS)
-ADG_LIBADD+=			$(CAIRO_LIBS) \
-				$(GOBJECT_LIBS)
 
 
 pkgconfig_DATA=			adg-1.pc
@@ -210,11 +196,13 @@ libadg_1_la_SOURCES=		$(h_sources) \
 nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libadg_1_la_CFLAGS=		$(ADG_CFLAGS)
+libadg_1_la_CFLAGS=		$(CPML_CFLAGS) \
+				$(ADG_CFLAGS)
 libadg_1_la_LDFLAGS=		-no-undefined \
 				-version-info @ADG_LT_VERSION@
-libadg_1_la_LIBADD=		$(top_builddir)/src/cpml/libcpml-1.la \
-				$(ADG_LIBADD)
+libadg_1_la_LIBADD=		$(CPML_LIBS) \
+				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(ADG_LIBS)
 
 
 

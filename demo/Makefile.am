@@ -5,16 +5,11 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-DPKGDATADIR='"$(pkgdatadir)"' \
 				-DSRCDIR='"$(abs_srcdir)"' \
 				-DBUILDDIR='"$(abs_builddir)"'
-AM_CFLAGS=			$(GTK3_CFLAGS) $(GTK2_CFLAGS) \
-				$(CAIRO_CFLAGS) \
-				$(GOBJECT2_CFLAGS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(top_builddir)/src/adg/libadg-1.la
 
 # On Windows, do not spawn the command prompt window (shown by default)
 # by setting a flag in the PE header of the executables
 if OS_WINDOWS
-AM_CFLAGS+=			-mwindows
+AM_CFLAGS=			-mwindows
 endif
 
 
@@ -24,17 +19,30 @@ bin_PROGRAMS=			adg-demo-uninstalled \
 adg_demo_uninstalled_SOURCES=	adg-demo.c \
 				demo.c \
 				demo.h
+adg_demo_uninstalled_CFLAGS=	$(CPML_CFLAGS) \
+				$(ADG_CFLAGS)
+adg_demo_uninstalled_LDADD=	$(CPML_LIBS) \
+				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(ADG_LIBS) \
+				$(top_builddir)/src/adg/libadg-1.la
+
+# The CPML demo program uses the ADG library only marginally for
+# looking up the ui file (adg_find_file()) and for i18n.
+cpml_demo_uninstalled_SOURCES=	demo.c \
+				demo.h
+cpml_demo_uninstalled_CFLAGS=	$(CPML_CFLAGS) \
+				$(ADG_CFLAGS)
+cpml_demo_uninstalled_LDADD=	$(CPML_LIBS) \
+				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(ADG_LIBS) \
+				$(top_builddir)/src/adg/libadg-1.la
 
 if HAVE_GTK3
-cpml_demo_uninstalled_SOURCES=	cpml-demo.c \
-				demo.c \
-				demo.h
+cpml_demo_uninstalled_SOURCES+=	cpml-demo.c
 endif
 
 if HAVE_GTK2
-cpml_demo_uninstalled_SOURCES=	cpml-demo-gtk2.c \
-				demo.c \
-				demo.h
+cpml_demo_uninstalled_SOURCES+=	cpml-demo-gtk2.c
 endif
 
 nodist_pkgdata_DATA=		adg-demo.ui \

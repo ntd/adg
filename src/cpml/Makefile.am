@@ -6,8 +6,6 @@ SUBDIRS=			tests
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
-CPML_CFLAGS=			$(CAIRO_CFLAGS)
-CPML_LIBADD=			$(CAIRO_LIBS)
 
 
 # file groups
@@ -58,7 +56,7 @@ nodist_libcpml_1_la_SOURCES=	$(built_h_sources) \
 libcpml_1_la_CFLAGS=		$(CPML_CFLAGS)
 libcpml_1_la_LDFLAGS=		-no-undefined \
 				-version-info @CPML_LT_VERSION@
-libcpml_1_la_LIBADD=		$(CPML_LIBADD)
+libcpml_1_la_LIBADD=		$(CPML_LIBS)
 
 
 ## GObject introspection
