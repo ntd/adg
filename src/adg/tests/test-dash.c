@@ -80,8 +80,11 @@ _adg_test_offset(void)
 
     dash = adg_dash_new();
 
+    /* Ensure the default is 0 */
+    offset = adg_dash_get_offset(dash);
     g_assert_cmpfloat(offset, ==, 0);
 
+    /* Check some special values */
     adg_dash_set_offset(dash, G_MINDOUBLE);
     offset = adg_dash_get_offset(dash);
     g_assert_cmpfloat(offset, ==, G_MINDOUBLE);
