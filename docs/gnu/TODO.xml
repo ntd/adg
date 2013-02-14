@@ -21,8 +21,6 @@ to implement.</para>
    only when the two operands are properly defined primitives. Anyway
    those actions could be chained up in a lot of situations. For example,
    it is quite common to have a chamfer followed by a fillet.</listitem>
-   <listitem>By using wine, it should be possible (at least theoretically) to do
-   a "make check" while cross-building for windows.</listitem>
    <listitem override="disc">Hide the CPML APIs accessible from the CpmlPrimitive interface: use
    a private struct of function pointers to delegate the job to the
    different primitives.</listitem>
@@ -77,15 +75,15 @@ a 1.0.0 release.</para>
 project such as the ADG canvas. This means to build releases also
 for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 
-<itemizedlist mark="circle">
+<itemizedlist mark="disc">
    <listitem>Add autoscaling to AdgCanvas. In other words, there must be a way
    to select a specific scale from a finite set of predefined factors
    depending on the current extents of the canvas.</listitem>
    <listitem>Actually AdgLineStyle can change color, width, cap, join, miter
    limit and antialiasing of a line. The only thing remaining is
    the possibility to customize the dashing of a dashed line.</listitem>
-   <listitem>Provide some binary packages for major distributions, such as an
-   installable demo for Windows, a deb package and an rpm one.</listitem>
+   <listitem>Provide a Windows installer (32 and 64 platforms) for the demo
+   program to show what can be accomplished with the ADG canvas.</listitem>
 </itemizedlist>
 
 </simplesect>
