@@ -11,6 +11,12 @@ AM_CFLAGS=			$(GTK3_CFLAGS) $(GTK2_CFLAGS) \
 LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(top_builddir)/src/adg/libadg-1.la
 
+# On Windows, do not spawn the command prompt window (shown by default)
+# by setting a flag in the PE header of the executables
+if OS_WINDOWS
+AM_CFLAGS+=			-mwindows
+endif
+
 
 bin_PROGRAMS=			adg-demo-uninstalled \
 				cpml-demo-uninstalled
