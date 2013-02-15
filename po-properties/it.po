@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-02-15 15:22+0100\n"
-"PO-Revision-Date: 2010-09-28 16:40+0200\n"
+"PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -787,11 +787,11 @@ msgstr "Tipo di antialiasing da applicare durante il rendering delle linee"
 #: src/adg/adg-line-style.c:139
 #, fuzzy
 msgid "Dash Pattern"
-msgstr "Pattern"
+msgstr "Pattern Tratteggio"
 
 #: src/adg/adg-line-style.c:140
 msgid "The dash pattern to be used while stroking a path"
-msgstr ""
+msgstr "Il pattern del tratteggio da usare durante il disegno di un path"
 
 #: src/adg/adg-logo.c:95 src/adg/adg-projection.c:97
 msgid "Symbol Dress"

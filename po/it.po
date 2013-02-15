@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-02-15 15:26+0100\n"
-"PO-Revision-Date: 2010-09-28 16:40+0200\n"
+"PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -71,6 +71,14 @@ msgid ""
 "center the drawing.\n"
 "            "
 msgstr ""
+"\n"
+"Ruotare la rotella del mouse per ingrandire e rimpicciolire, trascinare il "
+"mouse con la rotella premuta per traslare.\n"
+"Tenere il tasto shift premuto durante zoom o traslazione con il mouse per "
+"fare lo stesso nello spazio globale.\n"
+"Click sinistro per ripristinare ingrandimento e posizione della carta, click "
+"destro per l'autoscaling e la centratura del disegno.\n"
+"            "
 
 #: ../demo/adg-demo.ui.in.h:7
 msgid "About adg-demo"
@@ -329,7 +337,7 @@ msgstr "Segmenti paralleli"
 
 #: ../demo/demo.c:38
 msgid "Invalid arguments: arg[0] not set"
-msgstr ""
+msgstr "Argomenti non validi: arg[0] è vuoto"
 
 #. Parallel lines: hang with an error message
 #: ../src/adg/adg-adim.c:1176
