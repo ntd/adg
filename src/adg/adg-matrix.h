@@ -29,13 +29,11 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_MATRIX (adg_matrix_get_type())
+#define _AdgMatrix	    _cairo_matrix
+#define ADG_TYPE_MATRIX     (adg_matrix_get_type())
 
 
-ADG_TYPEDEF(cairo_matrix_t AdgMatrix);
-#if 0
 typedef struct _AdgMatrix AdgMatrix;
-#endif
 
 
 GType            adg_matrix_get_type            (void) G_GNUC_CONST;

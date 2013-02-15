@@ -30,30 +30,6 @@
  **/
 
 /**
- * ADG_TYPEDEF:
- * @t: the typedef content
- *
- * This is a really bad hack to fool gtk-doc. It performs the same job
- * as the typedef reserved word but, being in the form of a macro, it
- * it not properly understood by gtk-doc. This makes possible to force
- * the parsing of a type such as in the following example:
- *
- * |[
- * ADG_TYPEDEF(cairo_matrix_t AdgMatrix);
- * #if 0
- * typedef struct _AdgMatrix AdgMatrix;
- * #endif
- * ]|
- *
- * This kind of foolishness is needed in order to have the name of the
- * generated file match the type without having a double id error.
- * Check bug #593282 for details:
- * http://bugzilla.gnome.org/show_bug.cgi?id=593282
- *
- * Since: 1.0
- **/
-
-/**
  * ADG_DIR_RIGHT:
  *
  * Symbolic constant for the right direction (in radians).

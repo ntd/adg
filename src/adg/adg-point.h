@@ -31,11 +31,6 @@ G_BEGIN_DECLS
 
 #define ADG_TYPE_POINT                  (adg_point_get_type())
 
-#if 0
-/* This is declared in adg-entity.h */
-typedef struct _AdgPoint  AdgPoint;
-#endif
-
 
 GType           adg_point_get_type              (void) G_GNUC_CONST;
 

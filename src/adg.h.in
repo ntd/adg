@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <cpml.h>
 
+#include "adg/adg-forward-declarations.h"
 #include "adg/adg-enums.h"
 #include "adg/adg-utils.h"
 #include "adg/adg-pair.h"

@@ -25,6 +25,7 @@ h_sources=			adg-adim.h \
 				adg-enums.h \
 				adg-fill-style.h \
 				adg-font-style.h \
+				adg-forward-declarations.h \
 				adg-hatch.h \
 				adg-ldim.h \
 				adg-line-style.h \

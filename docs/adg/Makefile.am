@@ -16,11 +16,6 @@ FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml
 HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
 IGNORE_HFILES=		adg.h \
-			adg-internal.h \
-			adg-introspection.h \
-			adg-text-internal.h \
-			adg-type-builtins.h \
-			adg-marshal.h \
 			adg-adim-private.h \
 			adg-alignment-private.h \
 			adg-arrow-private.h \
@@ -35,26 +30,32 @@ IGNORE_HFILES=		adg.h \
 			adg-entity-private.h \
 			adg-fill-style-private.h \
 			adg-font-style-private.h \
+			adg-forward-declarations.h \
 			adg-gtk-area-private.h \
 			adg-gtk-layout-private.h \
 			adg-hatch-private.h \
+			adg-internal.h \
+			adg-introspection.h \
 			adg-ldim-private.h \
 			adg-line-style-private.h \
 			adg-logo-private.h \
 			adg-marker-private.h \
+			adg-marshal.h \
 			adg-model-private.h \
-			adg-path-private.h \
 			adg-pango-style-private.h \
+			adg-path-private.h \
 			adg-projection-private.h \
 			adg-rdim-private.h \
 			adg-ruled-fill-private.h \
 			adg-stroke-private.h \
 			adg-table-private.h \
 			adg-table-style-private.h \
+			adg-text-internal.h \
 			adg-text-private.h \
 			adg-title-block-private.h \
 			adg-toy-text-private.h \
 			adg-trail-private.h \
+			adg-type-builtins.h \
 			test-internal.h
 HTML_IMAGES=
 content_files=

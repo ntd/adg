@@ -37,10 +37,6 @@ G_BEGIN_DECLS
 #define ADG_STYLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_STYLE, AdgStyleClass))
 
 
-#if 0
-/* This is declared in adg-entity.h */
-typedef struct _AdgStyle AdgStyle;
-#endif
 typedef struct _AdgStyleClass   AdgStyleClass;
 
 struct _AdgStyle {

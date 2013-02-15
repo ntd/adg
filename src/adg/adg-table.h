@@ -37,11 +37,6 @@ G_BEGIN_DECLS
 #define ADG_TABLE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_TABLE, AdgTableClass))
 
 
-/* Forward declarations */
-ADG_TYPEDEF(struct _AdgTableRow  AdgTableRow);
-ADG_TYPEDEF(struct _AdgTableCell AdgTableCell);
-
-
 typedef struct _AdgTable        AdgTable;
 typedef struct _AdgTableClass   AdgTableClass;
 

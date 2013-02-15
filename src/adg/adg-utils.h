@@ -27,8 +27,6 @@
 #define __ADG_UTILS_H__
 
 
-#define ADG_TYPEDEF(t)          typedef t
-
 #define ADG_DIR_RIGHT           0.
 #define ADG_DIR_DOWN            G_PI_2
 #define ADG_DIR_LEFT            G_PI

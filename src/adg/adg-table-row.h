@@ -32,12 +32,6 @@ G_BEGIN_DECLS
 #define ADG_TYPE_TABLE_ROW         (adg_table_row_get_type())
 
 
-#if 0
-/* AdgTableRow declared in adg-table.h */
-typedef struct _AdgTableRow  AdgTableRow;
-#endif
-
-
 GType           adg_table_row_get_type          (void) G_GNUC_CONST;
 
 AdgTableRow *   adg_table_row_dup               (const AdgTableRow  *table_row);

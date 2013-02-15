@@ -37,16 +37,8 @@ G_BEGIN_DECLS
 #define ADG_ENTITY_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_ENTITY, AdgEntityClass))
 
 
-/* Forward declarations */
-ADG_TYPEDEF(struct _AdgCanvas AdgCanvas);
-ADG_TYPEDEF(struct _AdgStyle  AdgStyle);
-ADG_TYPEDEF(struct _AdgPoint  AdgPoint);
-ADG_TYPEDEF(gint              AdgDress);
-
-
-typedef struct _AdgEntity        AdgEntity;
-typedef struct _AdgEntityClass   AdgEntityClass;
-
+typedef struct _AdgEntity       AdgEntity;
+typedef struct _AdgEntityClass  AdgEntityClass;
 
 struct _AdgEntity {
     /*< private >*/

@@ -43,6 +43,7 @@
 #include <adg/adg-marshal.h>
 
 /* ADG headers basically included by every source file */
+#include "adg-forward-declarations.h"
 #include "adg-enums.h"
 #include "adg-utils.h"
 #include "adg-pair.h"

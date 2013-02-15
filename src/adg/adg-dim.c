@@ -238,7 +238,7 @@ adg_dim_init(AdgDim *dim)
     data->max = NULL;
 
 #if 0
-    /* These ones are G_PARAM_CONSTRUCT, so initialized by GObject */
+    /* This one is G_PARAM_CONSTRUCT, so set by property inizialization */
     data->value = NULL
 #endif
 
