@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-15 15:22+0100\n"
+"POT-Creation-Date: 2013-02-15 20:50+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -80,11 +80,11 @@ msgstr "Angolo Freccia"
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
-#: src/adg/adg-canvas.c:152
+#: src/adg/adg-canvas.c:153
 msgid "Canvas Size"
 msgstr "Dimensione Canvas"
 
-#: src/adg/adg-canvas.c:153
+#: src/adg/adg-canvas.c:154
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
@@ -92,70 +92,78 @@ msgstr ""
 "La dimensione impostata per questo canvas: usare 0 per abilitare il "
 "dimensionamento automatico basato sui limiti del canvas"
 
-#: src/adg/adg-canvas.c:159
+#: src/adg/adg-canvas.c:160
+msgid "Valid Scales"
+msgstr "Scale Valide"
+
+#: src/adg/adg-canvas.c:161
+msgid "List of scales to be tested while autoscaling the drawing"
+msgstr "Elenco di scale da provare durante l'autoscalatura del disegno"
+
+#: src/adg/adg-canvas.c:167
 msgid "Background Dress"
 msgstr "Vestito Sfondo"
 
-#: src/adg/adg-canvas.c:160
+#: src/adg/adg-canvas.c:168
 msgid "The color dress to use for the canvas background"
 msgstr "Il vestito colore da usare come sfondo per il canvas"
 
-#: src/adg/adg-canvas.c:166 src/adg/adg-logo.c:109
+#: src/adg/adg-canvas.c:174 src/adg/adg-logo.c:109
 #: src/adg/adg-table-style.c:110
 msgid "Frame Dress"
 msgstr "Vestito Riquadro"
 
-#: src/adg/adg-canvas.c:167
+#: src/adg/adg-canvas.c:175
 msgid "Line dress to use while drawing the frame around the canvas"
 msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
-#: src/adg/adg-canvas.c:173
+#: src/adg/adg-canvas.c:181
 msgid "Title Block"
 msgstr "Blocco delle Iscrizioni"
 
-#: src/adg/adg-canvas.c:174
+#: src/adg/adg-canvas.c:182
 msgid "The title block to assign to this canvas"
 msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
-#: src/adg/adg-canvas.c:180
+#: src/adg/adg-canvas.c:188
 msgid "Top Margin"
 msgstr "Margine Superiore"
 
-#: src/adg/adg-canvas.c:181
+#: src/adg/adg-canvas.c:189
 msgid "The margin (in global space) to leave above the frame"
 msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
-#: src/adg/adg-canvas.c:187
+#: src/adg/adg-canvas.c:195
 msgid "Right Margin"
 msgstr "Margine Destro"
 
-#: src/adg/adg-canvas.c:188
+#: src/adg/adg-canvas.c:196
 msgid "The margin (in global space) to leave empty at the right of the frame"
 msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
-#: src/adg/adg-canvas.c:194
+#: src/adg/adg-canvas.c:202
 msgid "Bottom Margin"
 msgstr "Margine Inferiore"
 
-#: src/adg/adg-canvas.c:195
+#: src/adg/adg-canvas.c:203
 msgid "The margin (in global space) to leave empty below the frame"
 msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
-#: src/adg/adg-canvas.c:201
+#: src/adg/adg-canvas.c:209
 msgid "Left Margin"
 msgstr "Margine Sinistro"
 
-#: src/adg/adg-canvas.c:202
+#: src/adg/adg-canvas.c:210
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:208 src/adg/adg-table.c:148
+#: src/adg/adg-canvas.c:216 src/adg/adg-table.c:148
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
-#: src/adg/adg-canvas.c:209
+#: src/adg/adg-canvas.c:217
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
@@ -163,11 +171,11 @@ msgstr ""
 "Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
 "limiti dal canvas tenendo in considerazione i margini"
 
-#: src/adg/adg-canvas.c:215
+#: src/adg/adg-canvas.c:223
 msgid "Top Padding"
 msgstr "Spaziatura Superiore"
 
-#: src/adg/adg-canvas.c:216
+#: src/adg/adg-canvas.c:224
 msgid ""
 "The padding (in global space) to leave empty above between the drawing and "
 "the frame"
@@ -175,11 +183,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
 "cornice"
 
-#: src/adg/adg-canvas.c:222
+#: src/adg/adg-canvas.c:230
 msgid "Right Padding"
 msgstr "Spaziatura Destra"
 
-#: src/adg/adg-canvas.c:223
+#: src/adg/adg-canvas.c:231
 msgid ""
 "The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
@@ -187,11 +195,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:229
+#: src/adg/adg-canvas.c:237
 msgid "Bottom Padding"
 msgstr "Spaziatura Inferiore"
 
-#: src/adg/adg-canvas.c:230
+#: src/adg/adg-canvas.c:238
 msgid ""
 "The padding (in global space) to leave empty below between the drawing and "
 "the frame"
@@ -199,11 +207,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:236
+#: src/adg/adg-canvas.c:244
 msgid "Left Padding"
 msgstr "Spaziatura Sinistra"
 
-#: src/adg/adg-canvas.c:237
+#: src/adg/adg-canvas.c:245
 msgid ""
 "The padding (in global space) to leave empty at the left between the drawing "
 "and the frame"
