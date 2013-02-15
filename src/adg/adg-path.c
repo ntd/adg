@@ -315,7 +315,7 @@ adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
 }
 
 /**
- * adg_path_append_valist: (skip)
+ * adg_path_append_valist:
  * @path:     an #AdgPath
  * @type:     a #cairo_data_type_t value
  * @var_args: point data, specified as #AdgPair pointers
@@ -346,10 +346,10 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 }
 
 /**
- * adg_path_append_array: (skip)
+ * adg_path_append_array:
  * @path:  an #AdgPath
  * @type:  a #cairo_data_type_t value
- * @pairs: (array zero-terminated=1) (element-type Adg.Pair): point data, specified as a %NULL terminated array of #AdgPair pointers
+ * @pairs: (array zero-terminated=1) (element-type Adg.Pair) (transfer none): point data, specified as a %NULL terminated array of #AdgPair pointers
  *
  * A bindingable version of adg_path_append() that uses a %NULL terminated
  * array of pairs instead of variable argument list and friends.
@@ -359,6 +359,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * primitive element more data pairs than requested, something impossible
  * to do with adg_path_append() and adg_path_append_valist().
  *
+ * Rename to: adg_path_append
  * Since: 1.0
  **/
 void
@@ -514,7 +515,7 @@ adg_path_move_to(AdgPath *path, const AdgPair *pair)
 }
 
 /**
- * adg_path_move_to_explicit: (skip)
+ * adg_path_move_to_explicit:
  * @path: an #AdgPath
  * @x:    the new x coordinate
  * @y:    the new y coordinate
@@ -555,7 +556,7 @@ adg_path_line_to(AdgPath *path, const AdgPair *pair)
 }
 
 /**
- * adg_path_line_to_explicit: (skip)
+ * adg_path_line_to_explicit:
  * @path: an #AdgPath
  * @x:    the new x coordinate
  * @y:    the new y coordinate
@@ -597,7 +598,7 @@ adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
 }
 
 /**
- * adg_path_arc_to_explicit: (skip)
+ * adg_path_arc_to_explicit:
  * @path: an #AdgPath
  * @x1:   the x coordinate of an intermediate point
  * @y1:   the y coordinate of an intermediate point
@@ -647,7 +648,7 @@ adg_path_curve_to(AdgPath *path, const AdgPair *control1,
 }
 
 /**
- * adg_path_curve_to_explicit: (skip)
+ * adg_path_curve_to_explicit:
  * @path: an #AdgPath
  * @x1:   the x coordinate of the first control point
  * @y1:   the y coordinate of the first control point
@@ -763,7 +764,7 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
 }
 
 /**
- * adg_path_arc_explicit: (skip)
+ * adg_path_arc_explicit:
  * @path:  an #AdgPath
  * @xc:    x position of the center of the arc
  * @yc:    y position of the center of the arc
@@ -925,7 +926,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 }
 
 /**
- * adg_path_reflect_explicit: (skip)
+ * adg_path_reflect_explicit:
  * @path: an #AdgPath
  * @x:    the vector x component
  * @y:    the vector y component
