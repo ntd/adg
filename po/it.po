@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-25 22:52+0200\n"
+"POT-Creation-Date: 2013-02-15 15:26+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -31,27 +31,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../demo/adg-demo.c:81 ../demo/cpml-demo.c:175
+#: ../demo/adg-demo.c:97 ../demo/cpml-demo.c:192
 msgid "Display version information"
 msgstr "Stampa le informazioni sulla versione"
 
-#: ../demo/adg-demo.c:83
+#: ../demo/adg-demo.c:99
 msgid "Show the boundary boxes of every entity"
 msgstr "Mostrare il riquadro contenitore di ogni entità"
 
-#: ../demo/adg-demo.c:89
+#: ../demo/adg-demo.c:105
 msgid "- ADG demonstration program"
 msgstr "- Programma dimostrativo della ADG"
 
-#: ../demo/adg-demo.c:119
+#: ../demo/adg-demo.c:129
 msgid "Error from adg-demo"
 msgstr "Errore da adg-demo"
 
-#: ../demo/adg-demo.c:798
+#: ../demo/adg-demo.c:832
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: ../demo/adg-demo.c:1123
+#: ../demo/adg-demo.c:1206
 #, c-format
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
@@ -62,33 +62,29 @@ msgstr "adg-demo - Programma dimostrativo"
 
 #: ../demo/adg-demo.ui.in.h:2
 msgid ""
-"Rotate the mouse wheel to zoom in and out.\n"
-"Drag the mouse with the wheel pressed to pan."
+"\n"
+"Rotate the mouse wheel to zoom in and out, drag the mouse with the wheel "
+"pressed to pan.\n"
+"Keep the shift key pressed while zooming and panning with the mouse to do "
+"the same in global space.\n"
+"Left click to restore paper zoom and position, right click to autoscale and "
+"center the drawing.\n"
+"            "
 msgstr ""
-"Ruotare la rotella del mouse per ingrandire o rimpicciolire.Trascinare il "
-"mouse con la rotella premuta per traslare."
 
-#: ../demo/adg-demo.ui.in.h:4
-msgid ""
-"Keep the shift key pressed while zooming or panning with the mouse to do the "
-"same in global space."
-msgstr ""
-"Tenere il tasto shift premuto durante zoom o traslazione con il mouse per "
-"fare la stessa cosa nello spazio globale."
-
-#: ../demo/adg-demo.ui.in.h:5
+#: ../demo/adg-demo.ui.in.h:7
 msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
-#: ../demo/adg-demo.ui.in.h:6
+#: ../demo/adg-demo.ui.in.h:8
 msgid "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
 msgstr "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
 
-#: ../demo/adg-demo.ui.in.h:7
+#: ../demo/adg-demo.ui.in.h:9
 msgid "Demonstration program for the ADG library"
 msgstr "Programma dimostrativo della libreria ADG"
 
-#: ../demo/adg-demo.ui.in.h:8
+#: ../demo/adg-demo.ui.in.h:10
 msgid ""
 "The ADG library is free software; you can redistribute it and/or\n"
 "modify it under the terms of the GNU Lesser General Public\n"
@@ -121,175 +117,176 @@ msgstr ""
 "Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,\n"
 "Boston, MA  02110-1301, USA."
 
-#: ../demo/adg-demo.ui.in.h:22
+#: ../demo/adg-demo.ui.in.h:24
 msgid "Customize drawing"
 msgstr "Impostazioni disegno"
 
-#: ../demo/adg-demo.ui.in.h:23
+#: ../demo/adg-demo.ui.in.h:25
 msgid "_Diameter rail:"
 msgstr "_Diametro guida:"
 
-#: ../demo/adg-demo.ui.in.h:24
+#: ../demo/adg-demo.ui.in.h:26
 msgid "_Total length:"
 msgstr "Lunghezza _totale:"
 
-#: ../demo/adg-demo.ui.in.h:25
+#: ../demo/adg-demo.ui.in.h:27
 msgid "_B quote:"
 msgstr "Quota _B:"
 
-#: ../demo/adg-demo.ui.in.h:26
+#: ../demo/adg-demo.ui.in.h:28
 msgid "Diameter _2:"
 msgstr "Diametro _2:"
 
-#: ../demo/adg-demo.ui.in.h:27
+#: ../demo/adg-demo.ui.in.h:29
 msgid "Length 2:"
 msgstr "Lunghezza 2:"
 
-#: ../demo/adg-demo.ui.in.h:28
+#: ../demo/adg-demo.ui.in.h:30
 msgid "Diameter _3:"
 msgstr "Diametro _3:"
 
-#: ../demo/adg-demo.ui.in.h:29
+#: ../demo/adg-demo.ui.in.h:31
 msgid "Diameter _4:"
 msgstr "Diametro _4:"
 
-#: ../demo/adg-demo.ui.in.h:30
+#: ../demo/adg-demo.ui.in.h:32
 msgid "Length 3:"
 msgstr "Lunghezza 3:"
 
-#: ../demo/adg-demo.ui.in.h:31
+#: ../demo/adg-demo.ui.in.h:33
 msgid "<b>Body data</b>"
 msgstr "<b>Dati corpo</b>"
 
-#: ../demo/adg-demo.ui.in.h:32
+#: ../demo/adg-demo.ui.in.h:34
 msgid "_Head diameter:"
 msgstr "Diametro _testa:"
 
-#: ../demo/adg-demo.ui.in.h:33
+#: ../demo/adg-demo.ui.in.h:35
 msgid "Head tickness:"
 msgstr "Spessore testa:"
 
-#: ../demo/adg-demo.ui.in.h:34
+#: ../demo/adg-demo.ui.in.h:36
 msgid "Tablet diameter:"
 msgstr "Diametro pastiglia:"
 
-#: ../demo/adg-demo.ui.in.h:35
+#: ../demo/adg-demo.ui.in.h:37
 msgid "Cham_fered head"
 msgstr "Testa sm_ussata"
 
-#: ../demo/adg-demo.ui.in.h:36
+#: ../demo/adg-demo.ui.in.h:38
 msgid "_Rounded head"
 msgstr "Testa _raggiata"
 
-#: ../demo/adg-demo.ui.in.h:37
+#: ../demo/adg-demo.ui.in.h:39
 msgid "Head radius:"
 msgstr "Raggio testa:"
 
-#: ../demo/adg-demo.ui.in.h:38
+#: ../demo/adg-demo.ui.in.h:40
 msgid "<b>Head data</b>"
 msgstr "<b>Dati testa</b>"
 
-#: ../demo/adg-demo.ui.in.h:39
+#: ../demo/adg-demo.ui.in.h:41
 msgid "Hole diameter:"
 msgstr "Diametro foro:"
 
-#: ../demo/adg-demo.ui.in.h:40
+#: ../demo/adg-demo.ui.in.h:42
 msgid "Hole depth:"
 msgstr "Profondità foro:"
 
-#: ../demo/adg-demo.ui.in.h:41
+#: ../demo/adg-demo.ui.in.h:43
 msgid "<b>Rear hole data</b>"
 msgstr "<b>Dati foratura</b>"
 
-#: ../demo/adg-demo.ui.in.h:42
+#: ../demo/adg-demo.ui.in.h:44
 msgid "Groove machining"
 msgstr "Lavorazione scarico"
 
-#: ../demo/adg-demo.ui.in.h:43
+#: ../demo/adg-demo.ui.in.h:45
 msgid "Groove position:"
 msgstr "Posizione scarico:"
 
-#: ../demo/adg-demo.ui.in.h:44
+#: ../demo/adg-demo.ui.in.h:46
 msgid "Groove diameter:"
 msgstr "Diametro scarico:"
 
-#: ../demo/adg-demo.ui.in.h:45
+#: ../demo/adg-demo.ui.in.h:47
 msgid "Groove thickness:"
 msgstr "Spessore scarico:"
 
-#: ../demo/adg-demo.ui.in.h:46
+#: ../demo/adg-demo.ui.in.h:48
 msgid "<b>Additional machinings</b>"
 msgstr "<b>Lavorazioni aggiuntive</b>"
 
-#: ../demo/adg-demo.ui.in.h:47
+#: ../demo/adg-demo.ui.in.h:49
 msgid "Dimensions"
 msgstr "Dimensioni"
 
-#: ../demo/adg-demo.ui.in.h:48
+#: ../demo/adg-demo.ui.in.h:50
 msgid "_Title:"
 msgstr "_Titolo:"
 
-#: ../demo/adg-demo.ui.in.h:49
+#: ../demo/adg-demo.ui.in.h:51
 msgid "SAMPLE DRAWING"
 msgstr "DISEGNO CAMPIONE"
 
-#: ../demo/adg-demo.ui.in.h:50
+#: ../demo/adg-demo.ui.in.h:52
 msgid "_Drawing:"
 msgstr "D_isegno:"
 
-#: ../demo/adg-demo.ui.in.h:51
+#: ../demo/adg-demo.ui.in.h:53
 msgid "EXAMPLE"
 msgstr "ESEMPIO"
 
-#: ../demo/adg-demo.ui.in.h:52
+#: ../demo/adg-demo.ui.in.h:54
 msgid "A_uthor:"
 msgstr "_Autore:"
 
-#: ../demo/adg-demo.ui.in.h:53
+#: ../demo/adg-demo.ui.in.h:55
 msgid "D_ate:"
 msgstr "_Data:"
 
-#: ../demo/adg-demo.ui.in.h:54
+#: ../demo/adg-demo.ui.in.h:56
 msgid "<b>Metadata</b>"
 msgstr "<b>Metadati</b>"
 
-#: ../demo/adg-demo.ui.in.h:55
+#: ../demo/adg-demo.ui.in.h:57
 msgid "Title block"
 msgstr "Riquadro delle intestazioni"
 
-#: ../demo/adg-demo.ui.in.h:56
+#: ../demo/adg-demo.ui.in.h:58
 msgid "Save current drawing"
 msgstr "Salva disegno corrente"
 
-#: ../demo/adg-demo.ui.in.h:57
+#: ../demo/adg-demo.ui.in.h:59
 msgid "PNG _image"
 msgstr "_Immagine PNG"
 
-#: ../demo/adg-demo.ui.in.h:58
+#: ../demo/adg-demo.ui.in.h:60
 msgid "S_VG image"
 msgstr "Immagine S_VG"
 
-#: ../demo/adg-demo.ui.in.h:59
+#: ../demo/adg-demo.ui.in.h:61
 msgid "P_DF document"
 msgstr "Documento P_DF"
 
-#: ../demo/adg-demo.ui.in.h:60
+#: ../demo/adg-demo.ui.in.h:62
 msgid "_PostScript file"
 msgstr "File _PostScript"
 
-#: ../demo/adg-demo.ui.in.h:61
+#: ../demo/adg-demo.ui.in.h:63
 msgid "<b>File format</b>"
 msgstr "<b>Formato file</b>"
 
-#: ../demo/cpml-demo.c:110
+#: ../demo/cpml-demo.c:125
+#, c-format
 msgid "cpml-demo.ui not found!\n"
 msgstr "cpml-demo.ui non trovato!\n"
 
-#: ../demo/cpml-demo.c:179
+#: ../demo/cpml-demo.c:196
 msgid "- CPML demonstration program"
 msgstr "- Programma dimostrativo della CPML"
 
-#: ../demo/cpml-demo.c:362
+#: ../demo/cpml-demo.c:379
 #, c-format
 msgid "Unable to get arc info (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
 msgstr "Impossibile elaborare l'arco (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
@@ -330,18 +327,22 @@ msgstr "Curve parallele"
 msgid "Offset segments"
 msgstr "Segmenti paralleli"
 
+#: ../demo/demo.c:38
+msgid "Invalid arguments: arg[0] not set"
+msgstr ""
+
 #. Parallel lines: hang with an error message
-#: ../src/adg/adg-adim.c:1175
+#: ../src/adg/adg-adim.c:1176
 #, c-format
 msgid "%s: trying to set an angular dimension on parallel lines"
 msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
 
-#: ../src/adg/adg-container.c:403
+#: ../src/adg/adg-container.c:416
 #, c-format
 msgid "%s: signal `%s' is invalid for instance `%p'"
 msgstr "%s: segnale `%s' non valido per l'oggetto `%p'"
 
-#: ../src/adg/adg-container.c:524
+#: ../src/adg/adg-container.c:537
 #, c-format
 msgid ""
 "Attempting to add an entity with type %s to a container of type %s, but the "
@@ -350,7 +351,7 @@ msgstr ""
 "Si è provato ad aggiungere una entità di tipo %s ad un contenitore di tipo "
 "%s ma l'entità è già all'interno di un contenitore di tipo %s"
 
-#: ../src/adg/adg-container.c:558
+#: ../src/adg/adg-container.c:571
 #, c-format
 msgid ""
 "Attempting to remove an entity with type %s from a container of type %s, but "
@@ -359,7 +360,7 @@ msgstr ""
 "Si è provato ad eliminare una entità di tipo %s da un contenitore di tipo %s "
 "ma l'entità non è presente"
 
-#: ../src/adg/adg-dim.c:1295
+#: ../src/adg/adg-dim.c:1316
 #, c-format
 msgid "AdgDim::default_value not implemented for `%s'"
 msgstr "AdgDim::default_value non implementato da `%s'"
@@ -407,12 +408,12 @@ msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
 msgid "%s: `render' method not implemented for type `%s'"
 msgstr "%s: metodo `render' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-fill-style.c:277
+#: ../src/adg/adg-fill-style.c:286
 #, c-format
 msgid "%s: pattern undefined for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 
-#: ../src/adg/adg-marker.c:751
+#: ../src/adg/adg-marker.c:764
 #, c-format
 msgid "%s: `create_model' method not implemented for type `%s'"
 msgstr "%s: `create_model' non implementato dal tipo `%s'"
@@ -422,7 +423,7 @@ msgstr "%s: `create_model' non implementato dal tipo `%s'"
 msgid "%s: normalization of anamorphic matrices not supported"
 msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
 
-#: ../src/adg/adg-model.c:649
+#: ../src/adg/adg-model.c:692
 #, c-format
 msgid ""
 "%s: attempting to remove the nonexistent dependency on the entity with type "
@@ -431,7 +432,7 @@ msgstr ""
 "%s: si è provato ad eliminare un'inesistente dipendenza da un'entità di tipo "
 "%s in un modello di tipo %s"
 
-#: ../src/adg/adg-model.c:688
+#: ../src/adg/adg-model.c:731
 #, c-format
 msgid "%s: attempting to remove nonexistent `%s' named pair"
 msgstr "%s: si è provato ad eliminare l'inesistente named pair `%s'"
@@ -505,7 +506,7 @@ msgid "%s: trying to get a pair from an undefined point"
 msgstr "%s: si è provato ad ottenere le coordinate da un punto indefinito"
 
 #. The apply method must be defined
-#: ../src/adg/adg-style.c:184
+#: ../src/adg/adg-style.c:196
 #, c-format
 msgid "%s: `apply' method not implemented for type `%s'"
 msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
@@ -559,31 +560,45 @@ msgstr "DATA"
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
 
-#: ../src/adg/adg-trail.c:327
+#: ../src/adg/adg-trail.c:338
 #, c-format
 msgid ""
 "%s: you cannot access the path from the callback you provided to build it"
 msgstr "%s: accesso al path non consentito dalla funzione che deve definirlo"
 
-#: ../src/adg/adg-trail.c:370
+#: ../src/adg/adg-trail.c:381
 #, c-format
 msgid "%s: requested undefined segment for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 
-#: ../src/adg/adg-trail.c:386
+#: ../src/adg/adg-trail.c:397
 #, c-format
 msgid "%s: segment %u is out of range for type `%s'"
 msgstr "%s: il numero di segmento `%u' è sballato per il tipo `%s'"
 
-#: ../src/adg/adg-trail.c:451
+#: ../src/adg/adg-trail.c:462
 #, c-format
 msgid "%s: invalid path data"
 msgstr "%s: dati del path non validi"
 
-#: ../src/adg/adg-trail.c:537
+#: ../src/adg/adg-trail.c:548
 #, c-format
 msgid "%s: callback not defined for instance of type `%s'"
 msgstr "%s: callback non definita per un'istanza di tipo `%s'"
+
+#~ msgid ""
+#~ "Rotate the mouse wheel to zoom in and out.\n"
+#~ "Drag the mouse with the wheel pressed to pan."
+#~ msgstr ""
+#~ "Ruotare la rotella del mouse per ingrandire o rimpicciolire.Trascinare il "
+#~ "mouse con la rotella premuta per traslare."
+
+#~ msgid ""
+#~ "Keep the shift key pressed while zooming or panning with the mouse to do "
+#~ "the same in global space."
+#~ msgstr ""
+#~ "Tenere il tasto shift premuto durante zoom o traslazione con il mouse per "
+#~ "fare la stessa cosa nello spazio globale."
 
 #~ msgid "%s: `%s' cell name is yet used"
 #~ msgstr "%s: il nome di cella `%s' è già usato"

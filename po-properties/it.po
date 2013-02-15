@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-01-14 23:09+0100\n"
+"POT-Creation-Date: 2013-02-15 15:22+0100\n"
 "PO-Revision-Date: 2010-09-28 16:40+0200\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -368,80 +368,80 @@ msgstr ""
 "Il valore massimo ammesso o la tolleranza superiore dal valore nominale (a "
 "seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
-#: src/adg/adg-dim-style.c:117
+#: src/adg/adg-dim-style.c:118
 msgid "First Marker"
 msgstr "Primo Contrassegno"
 
-#: src/adg/adg-dim-style.c:118
+#: src/adg/adg-dim-style.c:119
 msgid "The template entity to use as first marker"
 msgstr "L'entità guida da usare per il primo contrassegno"
 
-#: src/adg/adg-dim-style.c:124
+#: src/adg/adg-dim-style.c:125
 msgid "Second Marker"
 msgstr "Secondo Contrassegno"
 
-#: src/adg/adg-dim-style.c:125
+#: src/adg/adg-dim-style.c:126
 msgid "The template entity to use as second marker"
 msgstr "L'entità guida da usare per il secondo contrassegno"
 
-#: src/adg/adg-dim-style.c:131 src/adg/adg-font-style.c:102
-#: src/adg/adg-line-style.c:95 src/adg/adg-table-style.c:96
+#: src/adg/adg-dim-style.c:132 src/adg/adg-font-style.c:102
+#: src/adg/adg-line-style.c:98 src/adg/adg-table-style.c:96
 msgid "Color Dress"
 msgstr "Vestito Colore"
 
-#: src/adg/adg-dim-style.c:132
+#: src/adg/adg-dim-style.c:133
 msgid "Color dress for the whole dimension"
 msgstr "Vestito colore da usare per l'intera dimensione"
 
-#: src/adg/adg-dim-style.c:138 src/adg/adg-table-style.c:124
+#: src/adg/adg-dim-style.c:139 src/adg/adg-table-style.c:124
 msgid "Value Dress"
 msgstr "Vestito Valore"
 
-#: src/adg/adg-dim-style.c:139
+#: src/adg/adg-dim-style.c:140
 msgid "Font dress for the nominal value of the dimension"
 msgstr "Vestito del font per il valore nominale della dimensione"
 
-#: src/adg/adg-dim-style.c:145
+#: src/adg/adg-dim-style.c:146
 msgid "Minimum Limit Dress"
 msgstr "Vestito Limite Minimo"
 
-#: src/adg/adg-dim-style.c:146
+#: src/adg/adg-dim-style.c:147
 msgid "Font dress for the lower limit value"
 msgstr "Vestito del font per il valore limite basso"
 
-#: src/adg/adg-dim-style.c:152
+#: src/adg/adg-dim-style.c:153
 msgid "Maximum Limit Dress"
 msgstr "Vestito Limite Massimo"
 
-#: src/adg/adg-dim-style.c:153
+#: src/adg/adg-dim-style.c:154
 msgid "Font dress for the upper limit value"
 msgstr "Vestito del font per il valore limite alto"
 
-#: src/adg/adg-dim-style.c:159 src/adg/adg-ruled-fill.c:111
-#: src/adg/adg-stroke.c:103
+#: src/adg/adg-dim-style.c:160 src/adg/adg-ruled-fill.c:111
+#: src/adg/adg-stroke.c:104
 msgid "Line Dress"
 msgstr "Vestito Linea"
 
-#: src/adg/adg-dim-style.c:160
+#: src/adg/adg-dim-style.c:161
 msgid "Line dress for the baseline and the extension lines"
 msgstr "Vestito della linea di quotatura e delle linee di estensione"
 
-#: src/adg/adg-dim-style.c:166
+#: src/adg/adg-dim-style.c:167
 msgid "From Offset"
 msgstr "Distanza Da"
 
-#: src/adg/adg-dim-style.c:167
+#: src/adg/adg-dim-style.c:168
 msgid ""
 "Offset (in global space) of the extension lines from the path to the quote"
 msgstr ""
 "Distanza (nello spazio globale) tra la linea di estensione e la forma da "
 "quotare"
 
-#: src/adg/adg-dim-style.c:173
+#: src/adg/adg-dim-style.c:174
 msgid "To Offset"
 msgstr "Distanza A"
 
-#: src/adg/adg-dim-style.c:174
+#: src/adg/adg-dim-style.c:175
 msgid ""
 "How many extend (in global space) the extension lines after hitting the "
 "baseline"
@@ -449,11 +449,11 @@ msgstr ""
 "Quanto allungare (nello spazio globale) le linee di estensione oltre la "
 "linea di quotatura"
 
-#: src/adg/adg-dim-style.c:180
+#: src/adg/adg-dim-style.c:181
 msgid "Beyond Length"
 msgstr "Lunghezza Oltre"
 
-#: src/adg/adg-dim-style.c:181
+#: src/adg/adg-dim-style.c:182
 msgid ""
 "How much the baseline should be extended (in global space) beyond the "
 "extension lines on dimensions with outside markers"
@@ -461,27 +461,27 @@ msgstr ""
 "Quanto la linea di quotatura si può allungare (nello spazio globale) oltre "
 "le linee di estensione nelle dimensioni con contrassegni esterni"
 
-#: src/adg/adg-dim-style.c:187
+#: src/adg/adg-dim-style.c:188
 msgid "Baseline Spacing"
 msgstr "Distanza Linee di Quotatura"
 
-#: src/adg/adg-dim-style.c:188
+#: src/adg/adg-dim-style.c:189
 msgid "Distance between two consecutive baselines while stacking dimensions"
 msgstr "Distanza tra due linee di quotatura nelle dimensioni sovrapposte"
 
-#: src/adg/adg-dim-style.c:194
+#: src/adg/adg-dim-style.c:195
 msgid "Limits Spacing"
 msgstr "Spaziatura Limiti"
 
-#: src/adg/adg-dim-style.c:195
+#: src/adg/adg-dim-style.c:196
 msgid "Distance between limits/tolerances"
 msgstr "Distanza tra i limiti/tolleranze"
 
-#: src/adg/adg-dim-style.c:201
+#: src/adg/adg-dim-style.c:202
 msgid "Quote Shift"
 msgstr "Spiazzamento Quota"
 
-#: src/adg/adg-dim-style.c:202
+#: src/adg/adg-dim-style.c:203
 msgid ""
 "Used to specify a smooth displacement (in global space) of the quote by "
 "taking as reference the perfect compact position (the middle of the baseline "
@@ -491,11 +491,11 @@ msgstr ""
 "con riferimento alla posizione compatta ideale (nelle comuni dimensioni "
 "lineari, la metà della linea di base, per esempio)"
 
-#: src/adg/adg-dim-style.c:208
+#: src/adg/adg-dim-style.c:209
 msgid "Limits Shift"
 msgstr "Scostamento dei Limiti"
 
-#: src/adg/adg-dim-style.c:209
+#: src/adg/adg-dim-style.c:210
 msgid ""
 "Used to specify a smooth displacement (in global space) for the limits/"
 "tolerances by taking as reference the perfect compact position"
@@ -503,21 +503,21 @@ msgstr ""
 "Useto per specificare un piccolo scostamento (in global space) per le "
 "tolleranze/limiti prendendo come riferimento la posizione compatta ideale"
 
-#: src/adg/adg-dim-style.c:215
+#: src/adg/adg-dim-style.c:216
 msgid "Number Format"
 msgstr "Formato Numero"
 
-#: src/adg/adg-dim-style.c:216
+#: src/adg/adg-dim-style.c:217
 msgid ""
 "The format (in printf style) of the numeric component of the basic value"
 msgstr ""
 "Il formato (in modalità printf) del componente numerico della quota nominale"
 
-#: src/adg/adg-dim-style.c:222
+#: src/adg/adg-dim-style.c:223
 msgid "Number Tag"
 msgstr "Tag di Quota"
 
-#: src/adg/adg-dim-style.c:223
+#: src/adg/adg-dim-style.c:224
 msgid "The tag to substitute inside the value template string"
 msgstr "Il tag da sostituire all'interno della stringa template del valore"
 
@@ -739,50 +739,59 @@ msgstr "Direzione"
 msgid "The inclination angle of the extension lines"
 msgstr "L'angolo di inclinazione delle linee di estensione"
 
-#: src/adg/adg-line-style.c:96
+#: src/adg/adg-line-style.c:99
 msgid "The color dress to bind to this line style"
 msgstr "Il vestito colore da allegare a questo stile di linea"
 
-#: src/adg/adg-line-style.c:102
+#: src/adg/adg-line-style.c:105
 msgid "Line Width"
 msgstr "Spessore Linea"
 
-#: src/adg/adg-line-style.c:103
+#: src/adg/adg-line-style.c:106
 msgid "The line thickness in device unit"
 msgstr "Lo spessore della linea in unità device"
 
-#: src/adg/adg-line-style.c:108
+#: src/adg/adg-line-style.c:111
 msgid "Line Cap"
 msgstr "Terminazione Linea"
 
-#: src/adg/adg-line-style.c:109
+#: src/adg/adg-line-style.c:112
 msgid "The line cap mode"
 msgstr "La modalità di terminazione della linea"
 
-#: src/adg/adg-line-style.c:115
+#: src/adg/adg-line-style.c:118
 msgid "Line Join"
 msgstr "Unione Linee"
 
-#: src/adg/adg-line-style.c:116
+#: src/adg/adg-line-style.c:119
 msgid "The line join mode"
 msgstr "La modalità di unione delle linee"
 
-#: src/adg/adg-line-style.c:122
+#: src/adg/adg-line-style.c:125
 msgid "Miter Limit"
 msgstr "Limite Punta"
 
-#: src/adg/adg-line-style.c:123
+#: src/adg/adg-line-style.c:126
 msgid "Whether the lines should be joined with a bevel instead of a miter"
 msgstr ""
 "Quando le linee devono essere unite da un trapezio invece che da un triangolo"
 
-#: src/adg/adg-line-style.c:129
+#: src/adg/adg-line-style.c:132
 msgid "Antialiasing Mode"
 msgstr "Modalità di Antialiasing"
 
-#: src/adg/adg-line-style.c:130
+#: src/adg/adg-line-style.c:133
 msgid "Type of antialiasing to do when rendering lines"
 msgstr "Tipo di antialiasing da applicare durante il rendering delle linee"
+
+#: src/adg/adg-line-style.c:139
+#, fuzzy
+msgid "Dash Pattern"
+msgstr "Pattern"
+
+#: src/adg/adg-line-style.c:140
+msgid "The dash pattern to be used while stroking a path"
+msgstr ""
 
 #: src/adg/adg-logo.c:95 src/adg/adg-projection.c:97
 msgid "Symbol Dress"
@@ -805,7 +814,7 @@ msgstr ""
 msgid "The line dress to use for rendering the frame"
 msgstr "Il vestito da usare per disegnare le linee del riquadro"
 
-#: src/adg/adg-marker.c:136 src/adg/adg-stroke.c:110
+#: src/adg/adg-marker.c:136 src/adg/adg-stroke.c:111
 msgid "Trail"
 msgstr "Scia"
 
@@ -902,11 +911,11 @@ msgstr "Angolo"
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:104 src/adg/adg-table.c:142
+#: src/adg/adg-stroke.c:105 src/adg/adg-table.c:142
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
-#: src/adg/adg-stroke.c:111
+#: src/adg/adg-stroke.c:112
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
