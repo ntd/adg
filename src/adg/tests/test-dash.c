@@ -27,6 +27,7 @@ _adg_test_dashes(void)
     AdgDash *dash;
     gint num_dashes;
     const gdouble *dashes;
+    const gdouble dashes_array[] = { 1., 2., 3. };
 
     dash = adg_dash_new();
     g_assert(dash != NULL);
@@ -56,6 +57,15 @@ _adg_test_dashes(void)
     g_assert_cmpint(num_dashes, ==, 0);
     dashes = adg_dash_get_dashes(dash);
     g_assert(dashes == NULL);
+
+    adg_dash_append_dashes_array(dash, 3, dashes_array);
+    num_dashes = adg_dash_get_num_dashes(dash);
+    g_assert_cmpint(num_dashes, ==, 3);
+    dashes = adg_dash_get_dashes(dash);
+    g_assert(dashes != NULL);
+    g_assert_cmpfloat(dashes[0], ==, 1.);
+    g_assert_cmpfloat(dashes[1], ==, 2.);
+    g_assert_cmpfloat(dashes[2], ==, 3.);
 
     adg_dash_destroy(dash);
 

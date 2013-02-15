@@ -56,6 +56,8 @@
 #include "adg-dash.h"
 #include "adg-dash-private.h"
 
+#include <string.h>
+
 
 GType
 adg_dash_get_type(void)
@@ -202,6 +204,31 @@ adg_dash_append_dashes_valist(AdgDash *dash, gint num_dashes, va_list var_args)
     while (num_dashes --) {
         length = va_arg(var_args, gdouble);
         adg_dash_append_dash(dash, length);
+    }
+}
+
+/**
+ * adg_dash_append_dashes_array:
+ * @dash: an #AdgDash instance
+ * @num_dashes: number of dashes to append
+ * @dashes: (array length=num_dashes): array of @num_dashes gdoubles
+ *
+ * Array version of adg_dash_append_dashes().
+ *
+ * Rename to: adg_dash_append_dashes
+ * Since: 1.0
+ **/
+void
+adg_dash_append_dashes_array(AdgDash *dash,
+                             gint num_dashes, const gdouble *dashes)
+{
+    g_return_if_fail(dash != NULL);
+
+    if (num_dashes > 0) {
+        gint old_dashes = dash->num_dashes;
+        dash->num_dashes += num_dashes;
+        dash->dashes = g_realloc(dash->dashes, sizeof(gdouble) * dash->num_dashes);
+        memcpy(dash->dashes + old_dashes, dashes, sizeof(gdouble) * num_dashes);
     }
 }
 
