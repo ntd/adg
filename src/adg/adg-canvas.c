@@ -94,6 +94,7 @@ G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER)
 enum {
     PROP_0,
     PROP_SIZE,
+    PROP_SCALES,
     PROP_BACKGROUND_DRESS,
     PROP_FRAME_DRESS,
     PROP_TITLE_BLOCK,
@@ -154,6 +155,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                ADG_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
+
+    param = g_param_spec_boxed("scales",
+                               P_("Valid Scales"),
+                               P_("List of scales to be tested while autoscaling the drawing"),
+                               G_TYPE_STRV,
+                               G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SCALES, param);
 
     param = adg_param_spec_dress("background-dress",
                                  P_("Background Dress"),
@@ -280,7 +288,10 @@ _adg_dispose(GObject *object)
         data->title_block = NULL;
     }
 
-    adg_canvas_set_scales(canvas, NULL);
+    if (data->scales != NULL) {
+        g_strfreev(data->scales);
+        data->scales = NULL;
+    }
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
@@ -296,6 +307,9 @@ _adg_get_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_SIZE:
         g_value_set_boxed(value, &data->size);
+        break;
+    case PROP_SCALES:
+        g_value_set_boxed(value, data->scales);
         break;
     case PROP_BACKGROUND_DRESS:
         g_value_set_int(value, data->background_dress);
@@ -353,6 +367,10 @@ _adg_set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_SIZE:
         adg_pair_copy(&data->size, g_value_get_boxed(value));
+        break;
+    case PROP_SCALES:
+        g_strfreev(data->scales);
+        data->scales = g_value_dup_boxed(value);
         break;
     case PROP_BACKGROUND_DRESS:
         data->background_dress = g_value_get_int(value);
@@ -417,15 +435,13 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgCanvas *
 adg_canvas_new(void)
 {
-    AdgCanvas *canvas = g_object_new(ADG_TYPE_CANVAS, NULL);
+    /* Some common ISO scales for presetting AdgCanvas:scales property */
+    const gchar *scales[] = {
+        "10:1", "5:1", "3:1", "2:1", "1:1", "1:2", "1:3", "1:5", "1:10",
+        NULL
+    };
 
-    /* Preset some common ISO scales for autoscaling purposes */
-    adg_canvas_set_scales(canvas,
-                          "10:1", "5:1", "3:1", "2:1",
-                          "1:1", "1:2", "1:3", "1:5", "1:10",
-                          NULL);
-
-    return canvas;
+    return g_object_new(ADG_TYPE_CANVAS, "scales", scales, NULL);
 }
 
 /**
@@ -512,6 +528,8 @@ adg_canvas_get_size(AdgCanvas *canvas)
  * "x:y", where x and y are positive integers that identifies
  * numerator an denominator of a fraction. That string itself
  * will be put into the title block when used.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_scales(AdgCanvas *canvas, ...)
@@ -529,31 +547,50 @@ adg_canvas_set_scales(AdgCanvas *canvas, ...)
  * @var_args: %NULL terminated list of strings
  *
  * Vararg variant of adg_canvas_set_scales().
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_set_scales_valist(AdgCanvas *canvas, va_list var_args)
 {
-    AdgCanvasPrivate *data;
+    gchar **scales;
     const gchar *scale;
+    gint n;
 
     g_return_if_fail(ADG_IS_CANVAS(canvas));
 
-    data = canvas->data;
-
-    if (data->scales != NULL) {
-        g_slist_foreach(data->scales, (GFunc) g_free, NULL);
-        g_slist_free(data->scales);
-        data->scales = NULL;
+    scales = NULL;
+    n = 0;
+    while ((scale = va_arg(var_args, const gchar *)) != NULL) {
+        ++n;
+        scales = g_realloc(scales, sizeof(const gchar *) * (n + 1));
+        scales[n-1] = g_strdup(scale);
+        scales[n] = NULL;
     }
 
-    while ((scale = va_arg(var_args, const gchar *)) != NULL)
-        data->scales = g_slist_prepend(data->scales, g_strdup(scale));
-
-    data->scales = g_slist_reverse(data->scales);
+    g_object_set(canvas, "scales", scales, NULL);
+    g_strfreev(scales);
 }
 
 /**
- * adg_canvas_scales:
+ * adg_canvas_set_scales_array:
+ * @canvas: an #AdgCanvas
+ * @scales: (in) (array zero-terminated=1) (allow-none): %NULL terminated array of scales
+ *
+ * Array variant of adg_canvas_set_scales().
+ *
+ * Rename to: adg_canvas_set_scales
+ * Since: 1.0
+ **/
+void
+adg_canvas_set_scales_array(AdgCanvas *canvas, gchar **scales)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_object_set(canvas, "scales", scales, NULL);
+}
+
+/**
+ * adg_canvas_get_scales:
  * @canvas: an #AdgCanvas
  *
  * Gets the list of scales set on @canvas: check adg_canvas_set_scales()
@@ -561,10 +598,12 @@ adg_canvas_set_scales_valist(AdgCanvas *canvas, va_list var_args)
  *
  * If no scales are set, %NULL is returned.
  *
- * Returns: (element-type utf8) (transfer none): the list of available scales or %NULL.
+ * Returns: (element-type utf8) (transfer none): the %NULL terminated list of valid scales.
+ *
+ * Since: 1.0
  **/
-const GSList *
-adg_canvas_scales(AdgCanvas *canvas)
+gchar **
+adg_canvas_get_scales(AdgCanvas *canvas)
 {
     AdgCanvasPrivate *data;
 
@@ -583,12 +622,14 @@ adg_canvas_scales(AdgCanvas *canvas)
  * entirely contained into the current paper. If successful, the
  * scale of the title block is changed accordingly and the drawing
  * is centered inside the paper.
+ *
+ * Since: 1.0
  **/
 void
 adg_canvas_autoscale(AdgCanvas *canvas)
 {
     AdgCanvasPrivate *data;
-    GSList *scales, *scale;
+    gchar **p_scale;
     AdgEntity *entity;
     AdgMatrix map;
     const CpmlExtents *extents;
@@ -599,13 +640,12 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     g_return_if_fail(_ADG_OLD_ENTITY_CLASS->arrange != NULL);
 
     data = canvas->data;
-    scales = data->scales;
     entity = (AdgEntity *) canvas;
     title_block = adg_canvas_get_title_block(canvas);
 
-    for (scale = scales; scale != NULL; scale = scale->next) {
-        const gchar *text = scale->data;
-        gdouble factor = adg_scale_factor(text);
+    for (p_scale = data->scales; *p_scale != NULL; ++p_scale) {
+        const gchar *scale = *p_scale;
+        gdouble factor = adg_scale_factor(scale);
         if (factor <= 0)
             continue;
 
@@ -623,7 +663,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
             return;
 
         if (title_block != NULL)
-            adg_title_block_set_scale(title_block, text);
+            adg_title_block_set_scale(title_block, scale);
 
         /* Bail out if paper size is not specified or invalid */
         if (data->size.x <= 0 || data->size.y <= 0)
@@ -1343,6 +1383,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     if (_ADG_OLD_ENTITY_CLASS->render)
         _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }
+
 
 #if GTK3_ENABLED || GTK2_ENABLED
 

@@ -202,6 +202,61 @@ _adg_test_size(void)
 }
 
 static void
+_adg_test_scales(void)
+{
+    AdgCanvas *canvas;
+    gchar **scales;
+    gchar *scales_array[] = { "a", "b", "c", NULL };
+
+    canvas = adg_canvas_new();
+
+    /* Using the public APIs */
+
+    /* By default, AdgCanvas:scales is preset to some value */
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales != NULL);
+
+    adg_canvas_set_scales(canvas, NULL);
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales == NULL);
+
+    adg_canvas_set_scales(canvas, "0", "1", NULL);
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales != NULL);
+    g_assert_cmpstr(scales[0], ==, "0");
+    g_assert_cmpstr(scales[1], ==, "1");
+    g_assert(scales[2] == NULL);
+
+    adg_canvas_set_scales_array(canvas, NULL);
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales == NULL);
+
+    adg_canvas_set_scales_array(canvas, scales_array);
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales != NULL);
+    g_assert_cmpstr(scales[0], ==, "a");
+    g_assert_cmpstr(scales[1], ==, "b");
+    g_assert_cmpstr(scales[2], ==, "c");
+    g_assert(scales[3] == NULL);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "scales", NULL, NULL);
+    g_object_get(canvas, "scales", &scales, NULL);
+    g_assert(scales == NULL);
+
+    g_object_set(canvas, "scales", scales_array, NULL);
+    g_object_get(canvas, "scales", &scales, NULL);
+    g_assert(scales != NULL);
+    g_assert_cmpstr(scales[0], ==, "a");
+    g_assert_cmpstr(scales[1], ==, "b");
+    g_assert_cmpstr(scales[2], ==, "c");
+    g_assert(scales[3] == NULL);
+    g_strfreev(scales);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
 _adg_test_top_margin(void)
 {
     AdgCanvas *canvas;
@@ -510,6 +565,8 @@ main(int argc, char *argv[])
                       _adg_test_title_block);
     adg_test_add_func("/adg/canvas/property/size",
                       _adg_test_size);
+    adg_test_add_func("/adg/canvas/property/scales",
+                      _adg_test_scales);
     adg_test_add_func("/adg/canvas/property/top-margin",
                       _adg_test_top_margin);
     adg_test_add_func("/adg/canvas/property/right-margin",

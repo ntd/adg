@@ -63,7 +63,9 @@ void            adg_canvas_set_scales           (AdgCanvas      *canvas,
                                                  ...) G_GNUC_NULL_TERMINATED;
 void            adg_canvas_set_scales_valist    (AdgCanvas      *canvas,
                                                  va_list         var_args);
-const GSList *  adg_canvas_scales               (AdgCanvas      *canvas);
+void            adg_canvas_set_scales_array     (AdgCanvas      *canvas,
+                                                 gchar         **scales);
+gchar **        adg_canvas_get_scales           (AdgCanvas      *canvas);
 void            adg_canvas_autoscale            (AdgCanvas      *canvas);
 void            adg_canvas_set_background_dress (AdgCanvas      *canvas,
                                                  AdgDress        dress);
