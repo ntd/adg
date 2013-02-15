@@ -22,4 +22,5 @@
 #error "cpml-introspection.h must be included by g-ir-scanner only."
 #endif
 
+#include <config.h>
 #include <cpml.h>

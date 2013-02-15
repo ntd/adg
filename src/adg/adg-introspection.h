@@ -23,9 +23,4 @@
 #endif
 
 #include <config.h>
-
-#ifdef PANGO_ENABLED
-#include <pango/pangocairo.h>
-#endif
-
 #include <adg.h>

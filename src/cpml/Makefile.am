@@ -60,6 +60,7 @@ libcpml_1_la_LIBADD=		$(CPML_LIBS)
 
 
 ## GObject introspection
+
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS=
 INTROSPECTION_SCANNER_ARGS=
@@ -67,17 +68,16 @@ INTROSPECTION_COMPILER_ARGS=
 
 if HAVE_INTROSPECTION
 
-INTROSPECTION_GIRS+=		Cpml-1.0.gir
 Cpml-1.0.gir: libcpml-1.la
 
+INTROSPECTION_GIRS+=		Cpml-1.0.gir
 Cpml_1_0_gir_LIBS=		libcpml-1.la
 Cpml_1_0_gir_INCLUDES=		cairo-1.0
-Cpml_1_0_gir_PACKAGES=		cairo
 Cpml_1_0_gir_FILES=		cpml-introspection.h \
 				$(h_sources) \
 				$(c_sources)
-Cpml_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
-Cpml_1_0_gir_SCANNERFLAGS=	--c-include="cpml.h" \
+Cpml_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \
+				--c-include="cpml.h" \
 				--warn-all
 girdir=				$(GIRDIR)
 dist_gir_DATA=			$(INTROSPECTION_GIRS)

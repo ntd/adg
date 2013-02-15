@@ -205,8 +205,8 @@ libadg_1_la_LIBADD=		$(CPML_LIBS) \
 				$(ADG_LIBS)
 
 
-
 ## GObject introspection
+
 -include $(INTROSPECTION_MAKEFILE)
 INTROSPECTION_GIRS=
 INTROSPECTION_SCANNER_ARGS=	--add-include-path=$(top_builddir)/src/cpml
@@ -214,43 +214,33 @@ INTROSPECTION_COMPILER_ARGS=	--includedir=$(top_builddir)/src/cpml
 
 if HAVE_INTROSPECTION
 
-INTROSPECTION_GIRS+=		Adg-1.0.gir
 Adg-1.0.gir: libadg-1.la
 
+INTROSPECTION_GIRS+=		Adg-1.0.gir
 Adg_1_0_gir_LIBS=		libadg-1.la
 Adg_1_0_gir_INCLUDES=
-Adg_1_0_gir_PACKAGES=
 
-if HAVE_GTK
 if HAVE_GTK3
-## GTK+3 includes all the needed dependencies
 Adg_1_0_gir_INCLUDES+=		Gtk-3.0
-Adg_1_0_gir_PACKAGES+=		gtk+-3.0
-else
-## GTK+2 includes all the needed dependencies
-Adg_1_0_gir_INCLUDES+=		Gtk-2.0
-Adg_1_0_gir_PACKAGES+=		gtk+-2.0
-endif
-else
-if HAVE_PANGO
-## pangocairo is a superset of the default dependencies
-Adg_1_0_gir_INCLUDES+=		PangoCairo-1.0
-Adg_1_0_gir_PACKAGES+=		pangocairo
-else
-Adg_1_0_gir_INCLUDES+=		GObject-2.0
-Adg_1_0_gir_PACKAGES+=		gobject-2.0
-endif
 endif
 
+if HAVE_GTK2
+Adg_1_0_gir_INCLUDES+=		Gtk-2.0
+endif
+
+if HAVE_PANGO
+Adg_1_0_gir_INCLUDES+=		PangoCairo-1.0
+endif
+
+Adg_1_0_gir_INCLUDES+=		Cpml-1.0 \
+				cairo-1.0 \
+				GObject-2.0
 Adg_1_0_gir_FILES=		adg-introspection.h \
 				$(h_sources) \
 				$(c_sources)
-## Dependency from CPML will be added manually because it is still an
-## internal component, hence not yet installed at this point
-Adg_1_0_gir_CFLAGS=		$(AM_CPPFLAGS)
-Adg_1_0_gir_SCANNERFLAGS=	--c-include='adg.h' \
-				--warn-all \
-				--include-uninstalled=$(top_builddir)/src/cpml/Cpml-1.0.gir
+Adg_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \
+				--c-include='adg.h' \
+				--warn-all
 girdir=				$(GIRDIR)
 dist_gir_DATA=			$(INTROSPECTION_GIRS)
 typelibdir=			$(TYPELIBDIR)
