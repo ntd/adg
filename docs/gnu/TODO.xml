@@ -4,7 +4,7 @@
 
 <chapter id="TODO">
 <title>Planned features</title>
-<subtitle>A very rough roadmap of ADG features implementation</subtitle>
+<subtitle>Indicative roadmap of ADG features implementation</subtitle>
 
 <para>The following list is roughly in reversed implementation order. All the
 improvements must be reflected in the demo programs, where applicable.</para>
@@ -75,15 +75,11 @@ a 1.0.0 release.</para>
 project such as the ADG canvas. This means to build releases also
 for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 
-<itemizedlist mark="disc">
-   <listitem>Add autoscaling to AdgCanvas. In other words, there must be a way
-   to select a specific scale from a finite set of predefined factors
-   depending on the current extents of the canvas.</listitem>
-   <listitem>Actually AdgLineStyle can change color, width, cap, join, miter
-   limit and antialiasing of a line. The only thing remaining is
-   the possibility to customize the dashing of a dashed line.</listitem>
-   <listitem>Provide a Windows installer (32 and 64 platforms) for the demo
-   program to show what can be accomplished with the ADG canvas.</listitem>
+<itemizedlist mark="circle">
+   <listitem>A binary action after a close-path primitive leaves the shape opened:
+   closing and filleting results in a non-closed original shape.</listitem>
+   <listitem>Add internationalization support to the installer: this includes also
+   the possibility to select the installation of language packs.</listitem>
 </itemizedlist>
 
 </simplesect>
@@ -95,6 +91,14 @@ for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 API: the 0.7.0 release will probably be a beta release.</para>
 
 <itemizedlist mark="disc">
+   <listitem>Add autoscaling to AdgCanvas. In other words, there must be a way
+   to select a specific scale from a finite set of predefined factors
+   depending on the current extents of the canvas.</listitem>
+   <listitem>Actually AdgLineStyle can change color, width, cap, join, miter
+   limit and antialiasing of a line. The only thing remaining is
+   the possibility to customize the dashing of a dashed line.</listitem>
+   <listitem>Provide a Windows installer (32 and 64 platforms) for the demo
+   program to show what can be accomplished with the ADG canvas.</listitem>
    <listitem>Provide a document with API guidelines take it as the holy bible!
    All the APIs must comply with the rules of this document.</listitem>
    <listitem>Try to cross compile and build a windows binary package. Check out
