@@ -1,10 +1,10 @@
-m4_define([adg_version],[0.6.6])
+m4_define([adg_version],[0.7.0])
 m4_define([adg_api_version],[1.0])
-m4_define([adg_lt_version],[1:0:0])
+m4_define([adg_lt_version],[2:0:0])
 
 m4_define([cpml_version],adg_version)
 m4_define([cpml_api_version],adg_api_version)
-m4_define([cpml_lt_version],[1:0:0])
+m4_define([cpml_lt_version],[1:1:0])
 
 m4_define([gtkdoc_prereq],[1.12])dnl Support introspection annotations
 m4_define([gobject_prereq],[2.10.1])
