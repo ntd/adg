@@ -220,6 +220,7 @@ Adg-1.0.gir: libadg-1.la
 INTROSPECTION_GIRS+=		Adg-1.0.gir
 Adg_1_0_gir_LIBS=		libadg-1.la
 Adg_1_0_gir_INCLUDES=
+Adg_1_0_gir_PACKAGES=
 
 if HAVE_GTK3
 Adg_1_0_gir_INCLUDES+=		Gtk-3.0
@@ -227,6 +228,9 @@ endif
 
 if HAVE_GTK2
 Adg_1_0_gir_INCLUDES+=		Gtk-2.0
+# gir doc says INCLUDES will already fetch the packages (it works for GTK+3)
+# but without this the build after a ./configure --with-gtk=gtk2 will fail
+Adg_1_0_gir_PACKAGES+=		gtk+-2.0
 endif
 
 if HAVE_PANGO
