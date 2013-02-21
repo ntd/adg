@@ -922,7 +922,7 @@ adg_dim_get_detached(AdgDim *dim)
 /**
  * adg_dim_set_value:
  * @dim: an #AdgDim
- * @value: the value text
+ * @value: (allow-none): the value text
  *
  * Explicitely sets the text to use as value. If @value is %NULL or
  * was never set, an automatic text is calculated using the format
@@ -970,8 +970,8 @@ adg_dim_get_value(AdgDim *dim)
 /**
  * adg_dim_set_limits:
  * @dim: an #AdgDim
- * @min: the new minumum value
- * @max: the new maximum value
+ * @min: (allow-none): the new minumum value
+ * @max: (allow-none): the new maximum value
  *
  * Shortcut to set both the limits at once.
  *
@@ -991,7 +991,7 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
 /**
  * adg_dim_set_min:
  * @dim: an #AdgDim
- * @min: the new minimum limit
+ * @min: (allow-none): the new minimum limit
  *
  * Sets the minimum value. Use %NULL as @min to disable it.
  *
@@ -1033,7 +1033,7 @@ adg_dim_get_min(AdgDim *dim)
 /**
  * adg_dim_set_max:
  * @dim: an #AdgDim
- * @max: the new maximum value
+ * @max: (allow-none): the new maximum value
  *
  * Sets the maximum value. Use %NULL as @max to disable it.
  *

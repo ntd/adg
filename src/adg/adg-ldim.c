@@ -275,9 +275,9 @@ adg_ldim_new(void)
 
 /**
  * adg_ldim_new_full:
- * @ref1: allow-none: the first reference point
- * @ref2: allow-none: the second reference point
- * @pos: allow-none: the position reference
+ * @ref1: (allow-none): the first reference point
+ * @ref2: (allow-none): the second reference point
+ * @pos: (allow-none): the position reference
  * @direction: angle where to extend the dimension
  *
  * Creates a new linear dimension, specifing all the needed properties in
@@ -347,9 +347,9 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 /**
  * adg_ldim_new_full_from_model:
  * @model: transfer-none: the model from which the named pairs are taken
- * @ref1: allow-none: the first reference point
- * @ref2: allow-none: the second reference point
- * @pos: allow-none: the position reference
+ * @ref1: (allow-none): the first reference point
+ * @ref2: (allow-none): the second reference point
+ * @pos: (allow-none): the position reference
  * @direction: angle where to extend the dimension
  *
  * Creates a new linear dimension, specifing all the needed properties in
