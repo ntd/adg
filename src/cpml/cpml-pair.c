@@ -91,13 +91,16 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
  * @pair: (out): the destination #CpmlPair
  * @src:  (in):  the source #CpmlPair
  *
- * Copies @src in @pair.
+ * Copies @src in @pair. If @src or @pair is %NULL, this function does
+ * nothing.
  *
  * Since: 1.0
  **/
 void
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
+    if (pair == NULL || src == NULL)
+        return;
     memcpy(pair, src, sizeof(CpmlPair));
 }
 

@@ -36,8 +36,6 @@ _cpml_test_pair_basic(void)
     cairo_path_data_t cairo_pair;
     CpmlPair pair;
 
-    g_test_message("Careful: manipulation APIs are not guarded against NULLs");
-
     equals = cpml_pair_equal(&org, &junk);
     g_assert(! equals);
 
@@ -47,12 +45,21 @@ _cpml_test_pair_basic(void)
     equals = cpml_pair_equal(NULL, NULL);
     g_assert(equals);
 
+    /* Just check the following calls will not crash */
+    cpml_pair_copy(NULL, &pair);
+    cpml_pair_copy(NULL, NULL);
+    cpml_pair_copy(&pair, NULL);
+
     cpml_pair_copy(&pair, &org);
     equals = cpml_pair_equal(&pair, &nord);
     g_assert(! equals);
 
     cpml_pair_to_cairo(&nord, &cairo_pair);
     cpml_pair_from_cairo(&pair, &cairo_pair);
+    equals = cpml_pair_equal(&pair, &nord);
+    g_assert(equals);
+
+    cpml_pair_copy(&pair, NULL);
     equals = cpml_pair_equal(&pair, &nord);
     g_assert(equals);
 
