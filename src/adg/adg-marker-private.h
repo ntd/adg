@@ -29,8 +29,8 @@ typedef struct _AdgMarkerPrivate AdgMarkerPrivate;
 struct _AdgMarkerPrivate {
     AdgTrail    *trail;
     guint        n_segment;
-    AdgSegment  *backup_segment;
-    AdgSegment   segment;
+    CpmlSegment *backup_segment;
+    CpmlSegment  segment;
     gdouble      pos;
     gdouble      size;
     AdgModel    *model;

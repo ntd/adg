@@ -396,7 +396,7 @@ adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
  *
  * Since: 1.0
  **/
-const AdgSegment *
+const CpmlSegment *
 adg_marker_get_segment(AdgMarker *marker)
 {
     AdgMarkerPrivate *data;
@@ -446,7 +446,7 @@ adg_marker_backup_segment(AdgMarker *marker)
         /* Backup the segment, if a segment to backup exists */
         if (adg_trail_put_segment(data->trail, data->n_segment,
                                   &data->segment))
-            data->backup_segment = adg_segment_deep_dup(&data->segment);
+            data->backup_segment = cpml_segment_deep_dup(&data->segment);
     }
 }
 
@@ -474,7 +474,7 @@ adg_marker_backup_segment(AdgMarker *marker)
  *
  * Since: 1.0
  **/
-const AdgSegment *
+const CpmlSegment *
 adg_marker_get_backup_segment(AdgMarker *marker)
 {
     AdgMarkerPrivate *data;
@@ -699,7 +699,7 @@ _adg_clear_trail(AdgMarker *marker)
 
     if (data->trail && data->backup_segment) {
         /* Restore the original segment in the old trail */
-        adg_segment_deep_copy(&data->segment, data->backup_segment);
+        cpml_segment_deep_copy(&data->segment, data->backup_segment);
         g_free(data->backup_segment);
         data->backup_segment = NULL;
     }
@@ -712,7 +712,7 @@ static gboolean
 _adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 {
     AdgMarkerPrivate *data;
-    AdgSegment segment = { 0 };
+    CpmlSegment segment = { 0 };
 
     g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
 

@@ -74,7 +74,8 @@ void            adg_path_append_primitive       (AdgPath        *path,
                                                  const CpmlPrimitive
                                                                 *primitive);
 void            adg_path_append_segment         (AdgPath        *path,
-                                                 const AdgSegment *segment);
+                                                 const CpmlSegment
+                                                                *segment);
 void            adg_path_append_cpml_path       (AdgPath        *path,
                                                  const CpmlPath *cpml_path);
 void            adg_path_move_to                (AdgPath        *path,

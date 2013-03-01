@@ -188,3 +188,125 @@ cpml_primitive_deep_dup(const CpmlPrimitive *primitive)
 
     return dst;
 }
+
+
+GType
+cpml_segment_get_type(void)
+{
+    static GType segment_type = 0;
+
+    if (G_UNLIKELY(segment_type == 0))
+        segment_type = g_boxed_type_register_static("CpmlSegment",
+                                                    (GBoxedCopyFunc) cpml_segment_dup,
+                                                    g_free);
+
+    return segment_type;
+}
+
+/**
+ * cpml_segment_dup:
+ * @segment: an #CpmlSegment structure
+ *
+ * Duplicates @segment. This function makes a shallow duplication,
+ * that is the internal pointers of the resulting segment struct
+ * refer to the same memory as the original @segment. Check out
+ * cpml_segment_deep_dup() if it is required also the content
+ * duplication.
+ *
+ * Returns: (transfer full): a shallow duplicate of @segment: must be freed with g_free() when no longer needed.
+ *
+ * Since: 1.0
+ **/
+CpmlSegment *
+cpml_segment_dup(const CpmlSegment *segment)
+{
+    return g_memdup(segment, sizeof(CpmlSegment));
+}
+
+/**
+ * cpml_segment_deep_dup:
+ * @segment: an #CpmlSegment structure
+ *
+ * Duplicates @segment. This function makes a deep duplication,
+ * that is it duplicates also the underlying data that defines
+ * the segment. The <structfield>path</structfield> field
+ * is set to %NULL as <structfield>data</structfield> is no
+ * more referring to the original cairo path.
+ *
+ * All the data is allocated in the same chunk of memory so freeing
+ * the returned pointer releases all the occupied memory.
+ *
+ * Returns: (transfer full): a deep duplicate of @segment: must be freed with g_free() when no longer needed.
+ *
+ * Since: 1.0
+ **/
+CpmlSegment *
+cpml_segment_deep_dup(const CpmlSegment *segment)
+{
+    CpmlSegment *dest;
+    int num_data;
+    gsize segment_size, data_size;
+    cairo_path_data_t *p_data;
+
+    g_return_val_if_fail(segment != NULL, NULL);
+
+    num_data = segment->num_data;
+    segment_size = sizeof(CpmlSegment);
+    data_size = segment->data ? sizeof(cairo_path_data_t) * num_data : 0;
+    dest = (CpmlSegment *) g_malloc(segment_size + data_size);
+    p_data = (cairo_path_data_t *) ((gchar *) dest + segment_size);
+
+    dest->path = NULL;
+
+    if (data_size > 0) {
+        dest->data = memcpy(p_data, segment->data, data_size);
+        dest->num_data = num_data;
+    } else {
+        dest->data = NULL;
+        dest->num_data = 0;
+    }
+
+    return dest;
+}
+
+/**
+ * cpml_segment_deep_copy:
+ * @segment: an #CpmlSegment structure
+ * @src: the source segment to copy
+ *
+ * Makes a deep copy of @src to @segment. For a shallow copy, check out
+ * the cpml_segment_copy() API provided by the CPML library.
+ *
+ * This could seem a somewhat unusual operation because @segment should
+ * be "compatible" with @src: it is expected that they have the same
+ * <structfield>num_data</structfield> value. Anyway, it is convenient
+ * in some situation, such as when restoring the original data from a
+ * deep duplicated source:
+ *
+ * |[
+ * CpmlSegment *backup;
+ *
+ * backup = cpml_segment_deep_dup(&segment);
+ * // Now &segment can be modified
+ * ...
+ * cpml_segment_deep_copy(&segment, backup);
+ * g_free(backup);
+ * ]|
+ *
+ * The struct fields of @segment are left untouched and used only to
+ * check if it is compatible with @src.
+ *
+ * Since: 1.0
+ **/
+void
+cpml_segment_deep_copy(CpmlSegment *segment, const CpmlSegment *src)
+{
+    g_return_if_fail(segment != NULL);
+    g_return_if_fail(src != NULL);
+    g_return_if_fail(segment->num_data == src->num_data);
+
+    if (src->num_data > 0) {
+        size_t n = sizeof(cairo_path_data_t) * segment->num_data;
+        memcpy(segment->data, src->data, n);
+    }
+}

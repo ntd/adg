@@ -38,6 +38,13 @@ GType           cpml_primitive_get_type (void) G_GNUC_CONST;
 CpmlPrimitive * cpml_primitive_dup      (const CpmlPrimitive    *primitive);
 CpmlPrimitive * cpml_primitive_deep_dup (const CpmlPrimitive    *primitive);
 
+#define         CPML_TYPE_SEGMENT       (cpml_segment_get_type())
+GType           cpml_segment_get_type   (void) G_GNUC_CONST;
+CpmlSegment *   cpml_segment_dup        (const CpmlSegment      *segment);
+CpmlSegment *   cpml_segment_deep_dup   (const CpmlSegment      *segment);
+void            cpml_segment_deep_copy  (CpmlSegment            *segment,
+                                         const CpmlSegment      *src);
+
 G_END_DECLS
 
 

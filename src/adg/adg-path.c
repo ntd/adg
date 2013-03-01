@@ -452,14 +452,14 @@ adg_path_append_primitive(AdgPath *path, const CpmlPrimitive *primitive)
 /**
  * adg_path_append_segment:
  * @path:    an #AdgPath
- * @segment: the #AdgSegment to append
+ * @segment: the #CpmlSegment to append
  *
  * Appends @segment to @path.
  *
  * Since: 1.0
  **/
 void
-adg_path_append_segment(AdgPath *path, const AdgSegment *segment)
+adg_path_append_segment(AdgPath *path, const CpmlSegment *segment)
 {
     AdgPathPrivate *data;
 
@@ -874,7 +874,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 {
     AdgModel *model;
     AdgMatrix matrix;
-    AdgSegment segment, *dup_segment;
+    CpmlSegment segment, *dup_segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(vector == NULL || vector->x != 0 || vector->y != 0);
@@ -910,7 +910,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     if (segment.num_data == 0 || segment.num_data == 0)
         return;
 
-    dup_segment = adg_segment_deep_dup(&segment);
+    dup_segment = cpml_segment_deep_dup(&segment);
     if (dup_segment == NULL)
         return;
 
@@ -1168,7 +1168,7 @@ _adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
 {
     AdgPathPrivate *data;
     AdgAction action;
-    AdgSegment segment;
+    CpmlSegment segment;
     CpmlPrimitive current;
     cairo_path_data_t current_org;
 

@@ -351,7 +351,7 @@ adg_trail_cpml_path(AdgTrail *trail)
  * adg_trail_put_segment:
  * @trail: an #AdgTrail
  * @n_segment: the segment to retrieve, where %1 is the first segment
- * @segment: the destination #AdgSegment
+ * @segment: the destination #CpmlSegment
  *
  * Convenient function to get a segment from @trail. The segment is
  * got from the CPML path: check out adg_trail_cpml_path() for
@@ -368,11 +368,11 @@ adg_trail_cpml_path(AdgTrail *trail)
  * Since: 1.0
  **/
 gboolean
-adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
+adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
 {
     CpmlPath *cpml_path;
     gboolean found;
-    AdgSegment iterator;
+    CpmlSegment iterator;
     guint cnt;
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
@@ -391,7 +391,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, AdgSegment *segment)
         found = cpml_segment_next(&iterator);
 
     if (found && segment)
-        memcpy(segment, &iterator, sizeof(AdgSegment));
+        memcpy(segment, &iterator, sizeof(CpmlSegment));
 
     if (!found)
         g_warning(_("%s: segment %u is out of range for type `%s'"),

@@ -38,7 +38,6 @@ h_sources=			adg-adim.h \
 				adg-projection.h \
 				adg-rdim.h \
 				adg-ruled-fill.h \
-				adg-segment.h \
 				adg-stroke.h \
 				adg-style.h \
 				adg-table.h \
@@ -112,7 +111,6 @@ c_sources=			adg-adim.c \
 				adg-projection.c \
 				adg-rdim.c \
 				adg-ruled-fill.c \
-				adg-segment.c \
 				adg-stroke.c \
 				adg-style.c \
 				adg-table.c \
