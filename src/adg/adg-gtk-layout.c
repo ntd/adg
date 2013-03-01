@@ -553,7 +553,7 @@ _adg_value_changed(AdgGtkLayout *layout)
     GtkWidget *widget;
     AdgGtkArea *area;
     AdgGtkLayoutPrivate *data;
-    AdgPair org;
+    CpmlPair org;
     AdgMatrix map;
 
     widget = (GtkWidget *) layout;

@@ -29,4 +29,7 @@
 #include "cpml/cpml-arc.h"
 #include "cpml/cpml-curve.h"
 
+#include <glib-object.h>
+#include "cpml/cpml-gobject.h"
+
 #endif /* __CPML_H__ */

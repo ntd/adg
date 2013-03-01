@@ -29,7 +29,7 @@
  * either set explicitely throught adg_point_set_pair() and
  * adg_point_set_pair_explicit() or taken from a model with
  * adg_point_set_pair_from_model(). It can be thought as an
- * #AdgPair on steroid, because it adds named pair support to
+ * #CpmlPair on steroid, because it adds named pair support to
  * a simple pair, enabling coordinates depending on #AdgModel.
  *
  * Since: 1.0
@@ -52,7 +52,7 @@
 
 
 struct _AdgPoint {
-    AdgPair      pair;
+    CpmlPair     pair;
     AdgModel    *model;
     gchar       *name;
     gboolean     is_uptodate;
@@ -170,7 +170,7 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
 /**
  * adg_point_set_pair:
  * @point: an #AdgPoint
- * @pair: the #AdgPair to use
+ * @pair: the #CpmlPair to use
  *
  * Sets an explicit pair in @point by using the given @pair. If
  * @point was linked to a named pair in a model, this link is
@@ -179,7 +179,7 @@ adg_point_copy(AdgPoint *point, const AdgPoint *src)
  * Since: 1.0
  **/
 void
-adg_point_set_pair(AdgPoint *point, const AdgPair *pair)
+adg_point_set_pair(AdgPoint *point, const CpmlPair *pair)
 {
     g_return_if_fail(point != NULL);
     g_return_if_fail(pair != NULL);
@@ -194,7 +194,7 @@ adg_point_set_pair(AdgPoint *point, const AdgPair *pair)
  * @y: the y coordinate of the point
  *
  * Works in the same way of adg_point_set_pair() but accept direct numbers
- * instead of an #AdgPair structure.
+ * instead of an #CpmlPair structure.
  *
  * Since: 1.0
  **/
@@ -281,7 +281,7 @@ adg_point_unset(AdgPoint *point)
  * @point: an #AdgPoint
  *
  * #AdgPoint is an evolution of the pair concept but internally the
- * relevant data is still stored in an #AdgPair struct. This function
+ * relevant data is still stored in an #CpmlPair struct. This function
  * gets the pointer to this struct, updating the value prior to
  * return it if needed (that is, if @point is linked to a not up
  * to date named pair).
@@ -290,13 +290,13 @@ adg_point_unset(AdgPoint *point)
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_point_get_pair(AdgPoint *point)
 {
     g_return_val_if_fail(point != NULL, NULL);
 
     if (!point->is_uptodate) {
-        const AdgPair *pair;
+        const CpmlPair *pair;
 
         if (point->model == NULL) {
             /* A point with explicit coordinates not up to date
@@ -316,7 +316,7 @@ adg_point_get_pair(AdgPoint *point)
         point->is_uptodate = TRUE;
     }
 
-    return (AdgPair *) point;
+    return (CpmlPair *) point;
 }
 
 /**
@@ -361,7 +361,7 @@ adg_point_get_name(AdgPoint *point)
  * adg_point_invalidate:
  * @point: an #AdgPoint
  *
- * Invalidates @point, forcing a refresh of its internal #AdgPair if
+ * Invalidates @point, forcing a refresh of its internal #CpmlPair if
  * the point is linked to a named pair. If @point is explicitely set,
  * this function has no effect.
  *

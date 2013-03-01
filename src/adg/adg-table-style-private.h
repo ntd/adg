@@ -33,8 +33,8 @@ struct _AdgTableStylePrivate {
     AdgDress    title_dress;
     AdgDress    value_dress;
     gdouble     row_height;
-    AdgPair     cell_padding;
-    AdgPair     cell_spacing;
+    CpmlPair    cell_padding;
+    CpmlPair    cell_spacing;
 };
 
 G_END_DECLS

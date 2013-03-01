@@ -54,7 +54,7 @@ struct _AdgPathClass {
 GType           adg_path_get_type               (void) G_GNUC_CONST;
 AdgPath *       adg_path_new                    (void);
 
-const AdgPair * adg_path_get_current_point      (AdgPath        *path);
+const CpmlPair *adg_path_get_current_point      (AdgPath        *path);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
 const AdgPrimitive *
                 adg_path_last_primitive         (AdgPath        *path);
@@ -69,7 +69,7 @@ void            adg_path_append_valist          (AdgPath        *path,
                                                  va_list         var_args);
 void            adg_path_append_array           (AdgPath        *path,
                                                  CpmlPrimitiveType type,
-                                                 const AdgPair **pairs);
+                                                 const CpmlPair**pairs);
 void            adg_path_append_primitive       (AdgPath        *path,
                                                  const AdgPrimitive
                                                                 *primitive);
@@ -78,27 +78,27 @@ void            adg_path_append_segment         (AdgPath        *path,
 void            adg_path_append_cpml_path       (AdgPath        *path,
                                                  const CpmlPath *cpml_path);
 void            adg_path_move_to                (AdgPath        *path,
-                                                 const AdgPair  *pair);
+                                                 const CpmlPair *pair);
 void            adg_path_move_to_explicit       (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_line_to                (AdgPath        *path,
-                                                 const AdgPair  *pair);
+                                                 const CpmlPair *pair);
 void            adg_path_line_to_explicit       (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_arc_to                 (AdgPath        *path,
-                                                 const AdgPair  *throught,
-                                                 const AdgPair  *pair);
+                                                 const CpmlPair *throught,
+                                                 const CpmlPair *pair);
 void            adg_path_arc_to_explicit        (AdgPath        *path,
                                                  gdouble         x1,
                                                  gdouble         y1,
                                                  gdouble         x2,
                                                  gdouble         y2);
 void            adg_path_curve_to               (AdgPath        *path,
-                                                 const AdgPair  *control1,
-                                                 const AdgPair  *control2,
-                                                 const AdgPair  *pair);
+                                                 const CpmlPair *control1,
+                                                 const CpmlPair *control2,
+                                                 const CpmlPair *pair);
 void            adg_path_curve_to_explicit      (AdgPath        *path,
                                                  gdouble         x1,
                                                  gdouble         y1,
@@ -109,7 +109,7 @@ void            adg_path_curve_to_explicit      (AdgPath        *path,
 void            adg_path_close                  (AdgPath        *path);
 
 void            adg_path_arc                    (AdgPath        *path,
-                                                 const AdgPair  *center,
+                                                 const CpmlPair *center,
                                                  gdouble         r,
                                                  gdouble         start,
                                                  gdouble         end);

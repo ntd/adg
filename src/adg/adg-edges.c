@@ -503,12 +503,12 @@ _adg_clear_cpml_path(AdgEdges *edges)
  * @segment: a #CpmlSegment
  * @threshold: a theshold value
  *
- * Collects a list of #AdgPair corners where the angle has a minimum
+ * Collects a list of #CpmlPair corners where the angle has a minimum
  * threshold incidence of @threshold. The threshold is considered as
  * the squared distance between the two unit vectors, the one before
  * and the one after every corner.
  *
- * Returns: a #GSList of #AdgPair: the list should be freed with
+ * Returns: a #GSList of #CpmlPair: the list should be freed with
  *          g_slist_free() and all the pairs freed with g_free()
  *          when no longer needed
  *
@@ -520,7 +520,7 @@ _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
     GSList *vertices;
     CpmlPrimitive primitive;
     CpmlVector old, new;
-    AdgPair pair;
+    CpmlPair pair;
 
     vertices = NULL;
     cpml_primitive_from_segment(&primitive, segment);
@@ -540,7 +540,7 @@ _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
             if (new.x == 0 ||
                 cpml_pair_squared_distance(&old, &new) > threshold) {
                 cpml_primitive_put_pair_at(&primitive, 0, &pair);
-                vertices = g_slist_prepend(vertices, adg_pair_dup(&pair));
+                vertices = g_slist_prepend(vertices, cpml_pair_dup(&pair));
             }
         }
 
@@ -555,7 +555,7 @@ static GSList *
 _adg_optimize_vertices(GSList *vertices)
 {
     GSList *vertex, *old_vertex;
-    AdgPair *pair, *old_pair;
+    CpmlPair *pair, *old_pair;
 
     /* Check for empty list */
     if (vertices == NULL)
@@ -593,7 +593,7 @@ _adg_path_build(const GSList *vertices)
     cairo_path_data_t line[4];
     GArray *array;
     const GSList *vertex, *vertex2;
-    const AdgPair *pair, *pair2;
+    const CpmlPair *pair, *pair2;
 
     line[0].header.type = CPML_MOVE;
     line[0].header.length = 2;

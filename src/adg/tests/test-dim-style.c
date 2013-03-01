@@ -189,9 +189,9 @@ static void
 _adg_limits_shift(void)
 {
     AdgDimStyle *dim_style;
-    AdgPair null_shift, identity_shift;
-    const AdgPair *shift;
-    AdgPair *shift_dup;
+    CpmlPair null_shift, identity_shift;
+    const CpmlPair *shift;
+    CpmlPair *shift_dup;
 
     dim_style = adg_dim_style_new();
     null_shift.x = 0;
@@ -573,9 +573,9 @@ static void
 _adg_quote_shift(void)
 {
     AdgDimStyle *dim_style;
-    AdgPair null_shift, identity_shift;
-    const AdgPair *shift;
-    AdgPair *shift_dup;
+    CpmlPair null_shift, identity_shift;
+    const CpmlPair *shift;
+    CpmlPair *shift_dup;
 
     dim_style = adg_dim_style_new();
     null_shift.x = 0;

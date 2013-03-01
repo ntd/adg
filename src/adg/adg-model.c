@@ -38,8 +38,8 @@
  *
  * To help the interaction between model and view another concept is
  * introduced: named pairs. This provides a way to abstract real values (the
- * coordinates stored in #AdgPair) by accessing them using a string. To easily
- * the access of named pairs from the view, use #AdgPoint instead of #AdgPair.
+ * coordinates stored in #CpmlPair) by accessing them using a string. To easily
+ * the access of named pairs from the view, use #AdgPoint instead of #CpmlPair.
  *
  * Since: 1.0
  **/
@@ -55,7 +55,7 @@
 
 /**
  * AdgModelClass:
- * @named_pair:        virtual method that returns the #AdgPair bound to a
+ * @named_pair:        virtual method that returns the #CpmlPair bound to a
  *                     given name.
  * @set_named_pair:    signal for defining or undefining a new named pair.
  * @clear:             signal for removing the internal cache data, if any.
@@ -64,11 +64,11 @@
  * @remove_dependency: signal used to remove an old dependency.
  * @changed:           signal for emitting an #AdgModel::changed signal.
  *
- * The default @named_pair implementation looks up the #AdgPair in an internal
- * #GHashTable that uses the pair name as key and the #AdgPair struct as value.
+ * The default @named_pair implementation looks up the #CpmlPair in an internal
+ * #GHashTable that uses the pair name as key and the #CpmlPair struct as value.
  *
  * The default @set_named_pair implementation can be used for either adding
- * (if the #AdgPair is not %NULL) or removing (if #AdgPair is %NULL) an item
+ * (if the #CpmlPair is not %NULL) or removing (if #CpmlPair is %NULL) an item
  * from the named pairs hash table.
  *
  * The default handler for @clear signals does not do anything.
@@ -101,7 +101,7 @@
  * AdgNamedPairFunc:
  * @model: the #AdgModel
  * @name: the name of the named pair
- * @pair: an #AdgPair
+ * @pair: an #CpmlPair
  * @user_data: a general purpose pointer
  *
  * Callback used by adg_model_foreach_named_pair().
@@ -146,12 +146,12 @@ static void             _adg_add_dependency     (AdgModel       *model,
                                                  AdgEntity      *entity);
 static void             _adg_remove_dependency  (AdgModel       *model,
                                                  AdgEntity      *entity);
-static const AdgPair *  _adg_named_pair         (AdgModel       *model,
+static const CpmlPair * _adg_named_pair         (AdgModel       *model,
                                                  const gchar    *name);
 static void             _adg_reset              (AdgModel       *model);
 static void             _adg_set_named_pair     (AdgModel       *model,
                                                  const gchar    *name,
-                                                 const AdgPair  *pair);
+                                                 const CpmlPair *pair);
 static void             _adg_changed            (AdgModel       *model);
 static void             _adg_named_pair_wrapper (gpointer        key,
                                                  gpointer        value,
@@ -232,7 +232,7 @@ adg_model_class_init(AdgModelClass *klass)
      * AdgModel::set-named-pair:
      * @model: an #AdgModel
      * @name: an arbitrary name
-     * @pair: an #AdgPair
+     * @pair: an #CpmlPair
      *
      * Adds, updates or deletes a named pair, accordling to the given
      * parameters.
@@ -490,7 +490,7 @@ adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
  * adg_model_set_named_pair:
  * @model: an #AdgModel
  * @name: the name to associate to the pair
- * @pair: the #AdgPair
+ * @pair: the #CpmlPair
  *
  * <note><para>
  * This function is only useful in model definitions, such as
@@ -505,7 +505,7 @@ adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
  **/
 void
 adg_model_set_named_pair(AdgModel *model, const gchar *name,
-                         const AdgPair *pair)
+                         const CpmlPair *pair)
 {
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(name != NULL);
@@ -535,7 +535,7 @@ void
 adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
                                   gdouble x, gdouble y)
 {
-    AdgPair pair;
+    CpmlPair pair;
 
     pair.x = x;
     pair.y = y;
@@ -551,11 +551,11 @@ adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
  * Gets the @name named pair associated to @model. The returned
  * pair is owned by @model and must not be modified or freed.
  *
- * Returns: the requested #AdgPair or %NULL if not found
+ * Returns: the requested #CpmlPair or %NULL if not found
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_model_get_named_pair(AdgModel *model, const gchar *name)
 {
     AdgModelClass *klass;
@@ -715,12 +715,12 @@ _adg_reset(AdgModel *model)
 }
 
 static void
-_adg_set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
+_adg_set_named_pair(AdgModel *model, const gchar *name, const CpmlPair *pair)
 {
     AdgModelPrivate *data;
     GHashTable **hash;
     gchar *key;
-    AdgPair *value;
+    CpmlPair *value;
 
     data = model->data;
     hash = &data->named_pairs;
@@ -736,7 +736,7 @@ _adg_set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
 
     /* Insert or update mode */
     key = g_strdup(name);
-    value = adg_pair_dup(pair);
+    value = cpml_pair_dup(pair);
 
     if (*hash == NULL)
         *hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -744,7 +744,7 @@ _adg_set_named_pair(AdgModel *model, const gchar *name, const AdgPair *pair)
     g_hash_table_insert(*hash, key, value);
 }
 
-static const AdgPair *
+static const CpmlPair *
 _adg_named_pair(AdgModel *model, const gchar *name)
 {
     AdgModelPrivate *data = model->data;
@@ -766,7 +766,7 @@ static void
 _adg_named_pair_wrapper(gpointer key, gpointer value, gpointer user_data)
 {
     const gchar *name;
-    AdgPair *pair;
+    CpmlPair *pair;
     AdgWrapperHelper *helper;
 
     name = key;

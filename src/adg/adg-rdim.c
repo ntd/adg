@@ -233,7 +233,8 @@ adg_rdim_new(void)
  * Since: 1.0
  **/
 AdgRDim *
-adg_rdim_new_full(const AdgPair *center, const AdgPair *radius, const AdgPair *pos)
+adg_rdim_new_full(const CpmlPair *center, const CpmlPair *radius,
+                  const CpmlPair *pos)
 {
     AdgRDim *rdim;
     AdgDim *dim;
@@ -263,7 +264,7 @@ adg_rdim_new_full(const AdgPair *center, const AdgPair *radius, const AdgPair *p
  * @pos_y: y coordinate of the quote text
  *
  * Does the same job of adg_rdim_full() but using specific coordinates
- * instead of AdgPair structures.
+ * instead of #CpmlPair structures.
  * data to get a valid quote.
  *
  * Returns: a newly created quote
@@ -275,7 +276,7 @@ adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
                            gdouble radius_x, gdouble radius_y,
                            gdouble pos_x,    gdouble pos_y)
 {
-    AdgPair center, radius, pos;
+    CpmlPair center, radius, pos;
 
     center.x = center_x;
     center.y = center_y;
@@ -377,8 +378,8 @@ _adg_arrange(AdgEntity *entity)
     AdgEntity *quote_entity;
     gboolean outside;
     const AdgMatrix *global, *local;
-    AdgPair ref2, base;
-    AdgPair pair;
+    CpmlPair ref2, base;
+    CpmlPair pair;
     CpmlExtents extents;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange != NULL)
@@ -548,8 +549,8 @@ _adg_update_geometry(AdgRDim *rdim)
     AdgRDimPrivate *data;
     AdgDim *dim;
     AdgDimStyle *dim_style;
-    const AdgPair *ref1, *ref2;
-    const AdgPair *pos;
+    const CpmlPair *ref1, *ref2;
+    const CpmlPair *pos;
     gdouble spacing, level, pos_distance;
     CpmlVector vector;
 

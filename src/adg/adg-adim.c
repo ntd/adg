@@ -94,7 +94,7 @@ static void             _adg_dispose_trail      (AdgADim        *adim);
 static void             _adg_dispose_markers    (AdgADim        *adim);
 static gboolean         _adg_get_info           (AdgADim        *adim,
                                                  CpmlVector      vector[],
-                                                 AdgPair        *center,
+                                                 CpmlPair       *center,
                                                  gdouble        *distance);
 static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
@@ -316,16 +316,16 @@ adg_adim_new(void)
  * @pos:  allow-none: the position point
  *
  * Creates a new angular dimension, specifing all the needed
- * properties in one shot using #AdgPair.
+ * properties in one shot using #CpmlPair.
  *
  * Returns: the newly created angular dimension entity
  *
  * Since: 1.0
  **/
 AdgADim *
-adg_adim_new_full(const AdgPair *ref1, const AdgPair *ref2,
-                  const AdgPair *org1, const AdgPair *org2,
-                  const AdgPair *pos)
+adg_adim_new_full(const CpmlPair *ref1, const CpmlPair *ref2,
+                  const CpmlPair *org1, const CpmlPair *org2,
+                  const CpmlPair *pos)
 {
     AdgADim *adim;
     AdgDim *dim;
@@ -377,7 +377,7 @@ adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
                            gdouble org2_x, gdouble org2_y,
                            gdouble pos_x,  gdouble pos_y)
 {
-    AdgPair ref1, ref2, org1, org2, pos;
+    CpmlPair ref1, ref2, org1, org2, pos;
 
     ref1.x = ref1_x;
     ref1.y = ref1_y;
@@ -496,7 +496,7 @@ adg_adim_set_org1_explicit(AdgADim *adim, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_adim_set_org1_from_pair(AdgADim *adim, const AdgPair *org1)
+adg_adim_set_org1_from_pair(AdgADim *adim, const CpmlPair *org1)
 {
     g_return_if_fail(org1 != NULL);
 
@@ -614,7 +614,7 @@ adg_adim_set_org2_explicit(AdgADim *adim, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_adim_set_org2_from_pair(AdgADim *adim, const AdgPair *org2)
+adg_adim_set_org2_from_pair(AdgADim *adim, const CpmlPair *org2)
 {
     g_return_if_fail(org2 != NULL);
 
@@ -813,8 +813,8 @@ _adg_arrange(AdgEntity *entity)
     AdgADimPrivate *data;
     AdgAlignment *quote;
     const AdgMatrix *global, *local;
-    AdgPair ref1, ref2, base1, base12, base2;
-    AdgPair pair;
+    CpmlPair ref1, ref2, base1, base12, base2;
+    CpmlPair pair;
     CpmlExtents extents;
     AdgEntity *marker_entity;
 
@@ -1145,12 +1145,12 @@ _adg_dispose_markers(AdgADim *adim)
 
 static gboolean
 _adg_get_info(AdgADim *adim, CpmlVector vector[],
-              AdgPair *center, gdouble *distance)
+              CpmlPair *center, gdouble *distance)
 {
     AdgDim *dim;
     AdgADimPrivate *data;
-    const AdgPair *ref1, *ref2, *pos;
-    const AdgPair *org1, *org2;
+    const CpmlPair *ref1, *ref2, *pos;
+    const CpmlPair *org1, *org2;
     gdouble factor;
 
     dim = (AdgDim *) adim;

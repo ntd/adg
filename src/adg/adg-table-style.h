@@ -74,11 +74,11 @@ void            adg_table_style_set_row_height  (AdgTableStyle  *table_style,
                                                  gdouble         height);
 gdouble         adg_table_style_get_row_height  (AdgTableStyle  *table_style);
 void            adg_table_style_set_cell_padding(AdgTableStyle  *table_style,
-                                                 const AdgPair  *padding);
-const AdgPair * adg_table_style_get_cell_padding(AdgTableStyle  *table_style);
+                                                 const CpmlPair *padding);
+const CpmlPair *adg_table_style_get_cell_padding(AdgTableStyle  *table_style);
 void            adg_table_style_set_cell_spacing(AdgTableStyle  *table_style,
-                                                 const AdgPair  *spacing);
-const AdgPair * adg_table_style_get_cell_spacing(AdgTableStyle  *table_style);
+                                                 const CpmlPair *spacing);
+const CpmlPair *adg_table_style_get_cell_spacing(AdgTableStyle  *table_style);
 
 G_END_DECLS
 

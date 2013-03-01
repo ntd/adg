@@ -44,7 +44,7 @@ typedef void    (*AdgDependencyFunc)            (AdgModel       *model,
                                                  gpointer        user_data);
 typedef void    (*AdgNamedPairFunc)             (AdgModel       *model,
                                                  const gchar    *name,
-                                                 AdgPair        *pair,
+                                                 CpmlPair       *pair,
                                                  gpointer        user_data);
 
 struct _AdgModel {
@@ -59,13 +59,13 @@ struct _AdgModelClass {
 
     /*< public >*/
     /* Virtual table */
-    const AdgPair *     (*named_pair)           (AdgModel         *model,
+    const CpmlPair *    (*named_pair)           (AdgModel         *model,
                                                  const gchar      *name);
 
     /* Signals */
     void                (*set_named_pair)       (AdgModel         *model,
                                                  const gchar      *name,
-                                                 const AdgPair    *pair);
+                                                 const CpmlPair   *pair);
     void                (*clear)                (AdgModel         *model);
     void                (*reset)                (AdgModel         *model);
     void                (*add_dependency)       (AdgModel         *model,
@@ -88,13 +88,13 @@ void            adg_model_foreach_dependency    (AdgModel         *model,
                                                  gpointer          user_data);
 void            adg_model_set_named_pair        (AdgModel         *model,
                                                  const gchar      *name,
-                                                 const AdgPair    *pair);
+                                                 const CpmlPair   *pair);
 void            adg_model_set_named_pair_explicit
                                                 (AdgModel         *model,
                                                  const gchar      *name,
                                                  gdouble           x,
                                                  gdouble           y);
-const AdgPair * adg_model_get_named_pair        (AdgModel         *model,
+const CpmlPair *adg_model_get_named_pair        (AdgModel         *model,
                                                  const gchar      *name);
 void            adg_model_foreach_named_pair    (AdgModel         *model,
                                                  AdgNamedPairFunc  callback,

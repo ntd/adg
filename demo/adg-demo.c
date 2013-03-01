@@ -135,7 +135,7 @@ static void
 _adg_path_add_hole(AdgPath *path, const DemoPart *part)
 {
     AdgModel *model;
-    AdgPair pair;
+    CpmlPair pair;
 
     model = ADG_MODEL(path);
     pair.x = part->LHOLE;
@@ -157,7 +157,7 @@ static void
 _adg_path_add_rail(AdgPath *path, const DemoPart *part, gdouble to_x)
 {
     AdgModel *model;
-    AdgPair pair;
+    CpmlPair pair;
 
     model = ADG_MODEL(path);
     pair.x = 0;
@@ -214,7 +214,7 @@ static void
 _adg_part_define_hatch(DemoPart *part)
 {
     AdgPath *path;
-    AdgPair pair;
+    CpmlPair pair;
 
     path = part->hatch;
     pair.x = 0;
@@ -243,7 +243,7 @@ _adg_part_define_shape(DemoPart *part)
 {
     AdgModel *model;
     AdgPath *path;
-    AdgPair pair, tmp;
+    CpmlPair pair, tmp;
     const AdgPrimitive *primitive;
 
     path = part->shape;

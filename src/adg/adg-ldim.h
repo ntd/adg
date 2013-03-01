@@ -55,9 +55,9 @@ struct _AdgLDimClass {
 GType           adg_ldim_get_type               (void) G_GNUC_CONST;
 
 AdgLDim *       adg_ldim_new                    (void);
-AdgLDim *       adg_ldim_new_full               (const AdgPair  *ref1,
-                                                 const AdgPair  *ref2,
-                                                 const AdgPair  *pos,
+AdgLDim *       adg_ldim_new_full               (const CpmlPair *ref1,
+                                                 const CpmlPair *ref2,
+                                                 const CpmlPair *pos,
                                                  gdouble         direction);
 AdgLDim *       adg_ldim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         ref1_y,

@@ -27,7 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 struct _AdgCanvasPrivate {
-    AdgPair        size;
+    CpmlPair       size;
     gchar        **scales;
     AdgDress       background_dress;
     AdgDress       frame_dress;

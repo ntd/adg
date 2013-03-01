@@ -25,9 +25,9 @@ static void
 _adg_alignment_factor(void)
 {
     AdgAlignment *alignment;
-    AdgPair null_factor, identity_factor;
-    const AdgPair *factor;
-    AdgPair *factor_dup;
+    CpmlPair null_factor, identity_factor;
+    const CpmlPair *factor;
+    CpmlPair *factor_dup;
 
     alignment = adg_alignment_new(NULL);
     null_factor.x = 0;

@@ -55,9 +55,9 @@ struct _AdgRDimClass {
 GType           adg_rdim_get_type               (void) G_GNUC_CONST;
 
 AdgRDim *       adg_rdim_new                    (void);
-AdgRDim *       adg_rdim_new_full               (const AdgPair  *center,
-                                                 const AdgPair  *radius,
-                                                 const AdgPair  *pos);
+AdgRDim *       adg_rdim_new_full               (const CpmlPair *center,
+                                                 const CpmlPair *radius,
+                                                 const CpmlPair *pos);
 AdgRDim *       adg_rdim_new_full_explicit      (gdouble         center_x,
                                                  gdouble         center_y,
                                                  gdouble         radius_x,

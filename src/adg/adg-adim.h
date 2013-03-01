@@ -54,11 +54,11 @@ struct _AdgADimClass {
 
 GType           adg_adim_get_type               (void) G_GNUC_CONST;
 AdgADim *       adg_adim_new                    (void);
-AdgADim *       adg_adim_new_full               (const AdgPair  *ref1,
-                                                 const AdgPair  *ref2,
-                                                 const AdgPair  *org1,
-                                                 const AdgPair  *org2,
-                                                 const AdgPair  *pos);
+AdgADim *       adg_adim_new_full               (const CpmlPair *ref1,
+                                                 const CpmlPair *ref2,
+                                                 const CpmlPair *org1,
+                                                 const CpmlPair *org2,
+                                                 const CpmlPair *pos);
 AdgADim *       adg_adim_new_full_explicit      (gdouble         ref1_x,
                                                  gdouble         ref1_y,
                                                  gdouble         ref2_x,
@@ -81,7 +81,7 @@ void            adg_adim_set_org1_explicit      (AdgADim        *adim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_adim_set_org1_from_pair     (AdgADim        *adim,
-                                                 const AdgPair  *org1);
+                                                 const CpmlPair *org1);
 void            adg_adim_set_org1_from_model    (AdgADim        *adim,
                                                  AdgModel       *model,
                                                  const gchar    *org1);
@@ -92,7 +92,7 @@ void            adg_adim_set_org2_explicit      (AdgADim        *adim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_adim_set_org2_from_pair     (AdgADim        *adim,
-                                                 const AdgPair  *org2);
+                                                 const CpmlPair *org2);
 void            adg_adim_set_org2_from_model    (AdgADim        *adim,
                                                  AdgModel       *model,
                                                  const gchar    *org2);

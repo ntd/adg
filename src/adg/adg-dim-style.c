@@ -201,14 +201,14 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_boxed("quote-shift",
                                P_("Quote Shift"),
                                P_("Used to specify a smooth displacement (in global space) of the quote by taking as reference the perfect compact position (the middle of the baseline on common linear dimension, for instance)"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_QUOTE_SHIFT, param);
 
     param = g_param_spec_boxed("limits-shift",
                                P_("Limits Shift"),
                                P_("Used to specify a smooth displacement (in global space) for the limits/tolerances by taking as reference the perfect compact position"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LIMITS_SHIFT, param);
 
@@ -379,10 +379,10 @@ _adg_set_property(GObject *object, guint prop_id,
         data->limits_spacing = g_value_get_double(value);
         break;
     case PROP_QUOTE_SHIFT:
-        adg_pair_copy(&data->quote_shift, g_value_get_boxed(value));
+        cpml_pair_copy(&data->quote_shift, g_value_get_boxed(value));
         break;
     case PROP_LIMITS_SHIFT:
-        adg_pair_copy(&data->limits_shift, g_value_get_boxed(value));
+        cpml_pair_copy(&data->limits_shift, g_value_get_boxed(value));
         break;
     case PROP_NUMBER_FORMAT:
         g_free(data->number_format);
@@ -915,7 +915,7 @@ adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
  * Since: 1.0
  **/
 void
-adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const CpmlPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
     g_object_set(dim_style, "quote-shift", shift, NULL);
@@ -932,7 +932,7 @@ adg_dim_style_set_quote_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;
@@ -954,7 +954,7 @@ adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
  * Since: 1.0
  **/
 void
-adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
+adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const CpmlPair *shift)
 {
     g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
     g_object_set(dim_style, "limits-shift", shift, NULL);
@@ -971,7 +971,7 @@ adg_dim_style_set_limits_shift(AdgDimStyle *dim_style, const AdgPair *shift)
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data;

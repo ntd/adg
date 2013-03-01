@@ -78,7 +78,7 @@ struct _AdgTableCell {
     gboolean       has_frame;
     AdgEntity     *title;
     AdgEntity     *value;
-    AdgPair        value_factor;
+    CpmlPair       value_factor;
     CpmlExtents    extents;
 };
 
@@ -90,8 +90,8 @@ static gboolean         _adg_cell_set_title     (AdgTableCell   *table_cell,
 static gboolean         _adg_cell_set_value     (AdgTableCell   *table_cell,
                                                  AdgEntity      *value);
 static void             _adg_cell_set_value_pos (AdgTableCell   *table_cell,
-                                                 const AdgPair  *from_factor,
-                                                 const AdgPair  *to_factor);
+                                                 const CpmlPair *from_factor,
+                                                 const CpmlPair *to_factor);
 
 
 GType
@@ -376,7 +376,7 @@ adg_table_cell_set_text_title(AdgTableCell *table_cell, const gchar *title)
     AdgTable *table;
     AdgEntity *entity;
     AdgTableStyle *table_style;
-    const AdgPair *padding;
+    const CpmlPair *padding;
     AdgDress table_dress, font_dress;
     AdgMatrix map;
 
@@ -479,7 +479,7 @@ adg_table_cell_set_text_value(AdgTableCell *table_cell, const gchar *value)
     AdgTable *table;
     AdgEntity *entity;
     AdgTableStyle *table_style;
-    const AdgPair *padding;
+    const CpmlPair *padding;
     AdgDress table_dress, font_dress;
     AdgMatrix map;
 
@@ -553,8 +553,8 @@ adg_table_cell_value(AdgTableCell *table_cell)
  **/
 void
 adg_table_cell_set_value_pos(AdgTableCell *table_cell,
-                             const AdgPair *from_factor,
-                             const AdgPair *to_factor)
+                             const CpmlPair *from_factor,
+                             const CpmlPair *to_factor)
 {
     g_return_if_fail(table_cell != NULL);
     _adg_cell_set_value_pos(table_cell, from_factor, to_factor);
@@ -569,7 +569,7 @@ adg_table_cell_set_value_pos(AdgTableCell *table_cell,
  * @to_y: the y alignment factor on the cell
  *
  * A convenient wrapper around adg_table_cell_set_value_pos()
- * that uses explicit factors instead of #AdgPair.
+ * that uses explicit factors instead of #CpmlPair.
  *
  * Since: 1.0
  **/
@@ -578,7 +578,7 @@ adg_table_cell_set_value_pos_explicit(AdgTableCell *table_cell,
                                       gdouble from_x, gdouble from_y,
                                       gdouble to_x, gdouble to_y)
 {
-    AdgPair from, to;
+    CpmlPair from, to;
 
     from.x = from_x;
     from.y = from_y;
@@ -709,14 +709,14 @@ adg_table_cell_get_extents(AdgTableCell *table_cell)
  *
  * Computes the minimum space needed to properly render @table_cell
  * and updates the size component of the internal #CpmlExtents struct,
- * returning it to the caller. The returned #AdgPair is owned by
+ * returning it to the caller. The returned #CpmlPair is owned by
  * @table_cell and should not be modified or freed.
  *
  * Returns: (transfer none): the minimum size required.
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_table_cell_size_request(AdgTableCell *table_cell,
                             const CpmlExtents *row_extents)
 {
@@ -813,7 +813,7 @@ adg_table_cell_arrange(AdgTableCell *table_cell, const CpmlExtents *layout)
     }
 
     if (table_cell->value) {
-        AdgPair to;
+        CpmlPair to;
 
         alignment = (AdgAlignment *) adg_entity_get_parent(table_cell->value);
         to.x = extents->size.x * table_cell->value_factor.x + extents->org.x;
@@ -908,7 +908,7 @@ _adg_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
 
 static void
 _adg_cell_set_value_pos(AdgTableCell *table_cell,
-                        const AdgPair *from_factor, const AdgPair *to_factor)
+                        const CpmlPair *from_factor, const CpmlPair *to_factor)
 {
     AdgAlignment *alignment;
 

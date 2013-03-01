@@ -58,13 +58,13 @@ struct _AdgADimPrivate {
     gdouble              angle1, angle2;
 
     struct {
-        AdgPair          base1, base12, base2;
+        CpmlPair         base1, base12, base2;
     }                    point;
 
     struct {
-        AdgPair          from1, from2;
-        AdgPair          base1, base12, base2;
-        AdgPair          to1, to2;
+        CpmlPair         from1, from2;
+        CpmlPair         base1, base12, base2;
+        CpmlPair         to1, to2;
     }                    shift;
 
     struct {

@@ -107,7 +107,7 @@ static gboolean         _adg_is_convex          (const AdgPrimitive
 static const gchar *    _adg_action_name        (AdgAction       action);
 static void             _adg_get_named_pair     (AdgModel       *model,
                                                  const gchar    *name,
-                                                 AdgPair        *pair,
+                                                 CpmlPair       *pair,
                                                  gpointer        user_data);
 static void             _adg_dup_reverse_named_pairs
                                                 (AdgModel       *model,
@@ -200,7 +200,7 @@ adg_path_new(void)
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_path_get_current_point(AdgPath *path)
 {
     AdgPathPrivate *data;
@@ -292,9 +292,9 @@ adg_path_over_primitive(AdgPath *path)
  * adg_path_append:
  * @path: an #AdgPath
  * @type: a #cairo_data_type_t value
- * @...:  point data, specified as #AdgPair pointers
+ * @...:  point data, specified as #CpmlPair pointers
  *
- * Generic method to append a primitive to @path. The number of #AdgPair
+ * Generic method to append a primitive to @path. The number of #CpmlPair
  * pointers to pass as @Varargs depends on @type: #CPML_CLOSE does not
  * require any pair, #CPML_MOVE and #CPML_LINE require one pair,
  * #CPML_ARC two pairs, #CPML_CURVE three pairs and so on.
@@ -318,7 +318,7 @@ adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
  * adg_path_append_valist:
  * @path:     an #AdgPath
  * @type:     a #cairo_data_type_t value
- * @var_args: point data, specified as #AdgPair pointers
+ * @var_args: point data, specified as #CpmlPair pointers
  *
  * va_list version of adg_path_append().
  *
@@ -328,7 +328,7 @@ void
 adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 {
     GArray *array;
-    AdgPair *pair;
+    CpmlPair *pair;
     gint length;
 
     length = _adg_primitive_length(type);
@@ -337,11 +337,11 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 
     array = g_array_new(TRUE, FALSE, sizeof(pair));
     while (-- length) {
-        pair = va_arg(var_args, AdgPair *);
+        pair = va_arg(var_args, CpmlPair *);
         g_array_append_val(array, pair);
     }
 
-    adg_path_append_array(path, type, (const AdgPair **) array->data);
+    adg_path_append_array(path, type, (const CpmlPair **) array->data);
     g_array_free(array, TRUE);
 }
 
@@ -349,7 +349,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * adg_path_append_array:
  * @path:  an #AdgPath
  * @type:  a #cairo_data_type_t value
- * @pairs: (array zero-terminated=1) (element-type Adg.Pair) (transfer none): point data, specified as a %NULL terminated array of #AdgPair pointers
+ * @pairs: (array zero-terminated=1) (element-type Adg.Pair) (transfer none): point data, specified as a %NULL terminated array of #CpmlPair pointers
  *
  * A bindingable version of adg_path_append() that uses a %NULL terminated
  * array of pairs instead of variable argument list and friends.
@@ -364,11 +364,11 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  **/
 void
 adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
-                      const AdgPair **pairs)
+                      const CpmlPair **pairs)
 {
     gint length;
     GArray *array;
-    const AdgPair **pair;
+    const CpmlPair **pair;
     cairo_path_data_t path_data;
 
     g_return_if_fail(ADG_IS_PATH(path));
@@ -509,7 +509,7 @@ adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
  * Since: 1.0
  **/
 void
-adg_path_move_to(AdgPath *path, const AdgPair *pair)
+adg_path_move_to(AdgPath *path, const CpmlPair *pair)
 {
     adg_path_append(path, CPML_MOVE, pair);
 }
@@ -521,14 +521,14 @@ adg_path_move_to(AdgPath *path, const AdgPair *pair)
  * @y:    the new y coordinate
  *
  * Convenient function to call adg_path_move_to() using explicit
- * coordinates instead of #AdgPair.
+ * coordinates instead of #CpmlPair.
  *
  * Since: 1.0
  **/
 void
 adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
 {
-    AdgPair p;
+    CpmlPair p;
 
     p.x = x;
     p.y = y;
@@ -550,7 +550,7 @@ adg_path_move_to_explicit(AdgPath *path, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_path_line_to(AdgPath *path, const AdgPair *pair)
+adg_path_line_to(AdgPath *path, const CpmlPair *pair)
 {
     adg_path_append(path, CPML_LINE, pair);
 }
@@ -562,14 +562,14 @@ adg_path_line_to(AdgPath *path, const AdgPair *pair)
  * @y:    the new y coordinate
  *
  * Convenient function to call adg_path_line_to() using explicit
- * coordinates instead of #AdgPair.
+ * coordinates instead of #CpmlPair.
  *
  * Since: 1.0
  **/
 void
 adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
 {
-    AdgPair p;
+    CpmlPair p;
 
     p.x = x;
     p.y = y;
@@ -592,7 +592,7 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
+adg_path_arc_to(AdgPath *path, const CpmlPair *throught, const CpmlPair *pair)
 {
     adg_path_append(path, CPML_ARC, throught, pair);
 }
@@ -606,7 +606,7 @@ adg_path_arc_to(AdgPath *path, const AdgPair *throught, const AdgPair *pair)
  * @y2:   the y coordinate of the end of the arc
  *
  * Convenient function to call adg_path_arc_to() using explicit
- * coordinates instead of #AdgPair.
+ * coordinates instead of #CpmlPair.
  *
  * Since: 1.0
  **/
@@ -614,7 +614,7 @@ void
 adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
                          gdouble x2, gdouble y2)
 {
-    AdgPair p[2];
+    CpmlPair p[2];
 
     p[0].x = x1;
     p[0].y = y1;
@@ -641,8 +641,8 @@ adg_path_arc_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
  * Since: 1.0
  **/
 void
-adg_path_curve_to(AdgPath *path, const AdgPair *control1,
-                  const AdgPair *control2, const AdgPair *pair)
+adg_path_curve_to(AdgPath *path, const CpmlPair *control1,
+                  const CpmlPair *control2, const CpmlPair *pair)
 {
     adg_path_append(path, CPML_CURVE, control1, control2, pair);
 }
@@ -658,7 +658,7 @@ adg_path_curve_to(AdgPath *path, const AdgPair *control1,
  * @y3:   the y coordinate of the end of the curve
  *
  * Convenient function to call adg_path_curve_to() using explicit
- * coordinates instead of #AdgPair.
+ * coordinates instead of #CpmlPair.
  *
  * Since: 1.0
  **/
@@ -666,7 +666,7 @@ void
 adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
                            gdouble x2, gdouble y2, gdouble x3, gdouble y3)
 {
-    AdgPair p[3];
+    CpmlPair p[3];
 
     p[0].x = x1;
     p[0].y = y1;
@@ -730,11 +730,11 @@ adg_path_close(AdgPath *path)
  * Since: 1.0
  **/
 void
-adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
+adg_path_arc(AdgPath *path, const CpmlPair *center, gdouble r,
              gdouble start, gdouble end)
 {
     AdgPathPrivate *data;
-    AdgPair p[3];
+    CpmlPair p[3];
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(center != NULL);
@@ -773,7 +773,7 @@ adg_path_arc(AdgPath *path, const AdgPair *center, gdouble r,
  * @end:   the end angle, in radians
  *
  * Convenient function to call adg_path_arc() using explicit
- * coordinates instead of #AdgPair.
+ * coordinates instead of #CpmlPair.
  *
  * Since: 1.0
  **/
@@ -781,7 +781,7 @@ void
 adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
                       gdouble start, gdouble end)
 {
-    AdgPair center;
+    CpmlPair center;
 
     center.x = xc;
     center.y = yc;
@@ -1214,7 +1214,7 @@ _adg_do_chamfer(AdgPath *path, AdgPrimitive *current)
     AdgPrimitive *last;
     gdouble delta1, delta2;
     gdouble len1, len2;
-    AdgPair pair;
+    CpmlPair pair;
 
     data = path->data;
     last = &data->last;
@@ -1255,7 +1255,7 @@ _adg_do_fillet(AdgPath *path, AdgPrimitive *current)
     AdgPathPrivate *data;
     AdgPrimitive *last, *current_dup, *last_dup;
     gdouble radius, offset, pos;
-    AdgPair center, vector, p[3];
+    CpmlPair center, vector, p[3];
 
     data = path->data;
     last = &data->last;
@@ -1350,7 +1350,7 @@ _adg_action_name(AdgAction action)
 
 static void
 _adg_get_named_pair(AdgModel *model, const gchar *name,
-                    AdgPair *pair, gpointer user_data)
+                    CpmlPair *pair, gpointer user_data)
 {
     GSList **named_pairs;
     AdgNamedPair *named_pair;

@@ -159,9 +159,9 @@ static void
 _adg_test_size(void)
 {
     AdgCanvas *canvas;
-    AdgPair null_size, sample_size;
-    const AdgPair *size;
-    AdgPair *size_dup;
+    CpmlPair null_size, sample_size;
+    const CpmlPair *size;
+    CpmlPair *size_dup;
 
     canvas = adg_canvas_new();
     null_size.x = 0;

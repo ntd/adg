@@ -294,7 +294,9 @@ AM_SUBST_NOTMAKE([ARCH])
 
 # Additional substitutions
 
-CPML_REQUIRES='cairo >= cairo_prereq'
+dnl The GObject dependency can be made optional by skipping
+dnl the building of the GObject wrappers.
+CPML_REQUIRES='cairo >= cairo_prereq gobject >= gobject_prereq'
 AM_COND_IF([HAVE_PANGO],
       [ADG_REQUIRES='pangocairo >= pangocairo_prereq'
        ADG_H_ADDITIONAL='
@@ -337,8 +339,8 @@ AM_SUBST_NOTMAKE([ADG_H_ADDITIONAL])
 AM_SUBST_NOTMAKE([ADG_CANVAS_H_ADDITIONAL])
 
 dnl CPML compiler flags and library dependencies
-CPML_CFLAGS="$CAIRO_CFLAGS"
-CPML_LIBS="$CAIRO_LIBS"
+CPML_CFLAGS="$CAIRO_CFLAGS $GOBJECT_CFLAGS"
+CPML_LIBS="$CAIRO_LIBS $GOBJECT_LIBS"
 AC_SUBST([CPML_CFLAGS])
 AC_SUBST([CPML_LIBS])
 

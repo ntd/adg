@@ -31,7 +31,7 @@ typedef struct _AdgPathPrivate   AdgPathPrivate;
 
 struct _AdgNamedPair {
     const gchar *name;
-    AdgPair      pair;
+    CpmlPair     pair;
 };
 
 enum _AdgAction {
@@ -56,7 +56,7 @@ struct _AdgOperation{
 
 struct _AdgPathPrivate {
     gboolean             cp_is_valid;
-    AdgPair              cp;
+    CpmlPair             cp;
 
     struct {
         CpmlPath         path;

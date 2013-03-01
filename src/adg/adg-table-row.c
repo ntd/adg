@@ -334,23 +334,23 @@ adg_table_row_get_extents(AdgTableRow *table_row)
  *
  * Computes the minimum space needed to properly render @table_row
  * and updates the size component of the internal #CpmlExtents struct,
- * returning it to the caller. The returned #AdgPair is owned by
+ * returning it to the caller. The returned #CpmlPair is owned by
  * @table_row and should not be modified or freed.
  *
  * Returns: (transfer none): the minimum size required.
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_table_row_size_request(AdgTableRow *table_row)
 {
     AdgTableStyle *table_style;
-    const AdgPair *spacing;
+    const CpmlPair *spacing;
     CpmlExtents *extents;
     CpmlVector *size;
     AdgTableCell *cell;
     GSList *cell_node;
-    const AdgPair *cell_size;
+    const CpmlPair *cell_size;
 
     g_return_val_if_fail(table_row != NULL, NULL);
 
@@ -404,7 +404,7 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
     CpmlExtents cell_layout;
     const CpmlExtents *cell_extents;
     AdgTableStyle *table_style;
-    const AdgPair *spacing;
+    const CpmlPair *spacing;
     AdgTableCell *cell;
     GSList *cell_node;
 

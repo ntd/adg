@@ -92,9 +92,9 @@ static void             _adg_choose_flags       (AdgLDim        *ldim,
                                                  gboolean       *to_outside,
                                                  gboolean       *to_detach);
 static void             _adg_update_quote       (AdgLDim        *ldim,
-                                                 AdgPair        *base1,
-                                                 AdgPair        *base2,
-                                                 AdgPair        *pos,
+                                                 CpmlPair       *base1,
+                                                 CpmlPair       *base2,
+                                                 CpmlPair       *pos,
                                                  gboolean        detach,
                                                  gboolean        outside,
                                                  gdouble         gap);
@@ -288,8 +288,8 @@ adg_ldim_new(void)
  * Since: 1.0
  **/
 AdgLDim *
-adg_ldim_new_full(const AdgPair *ref1, const AdgPair *ref2,
-                  const AdgPair *pos, gdouble direction)
+adg_ldim_new_full(const CpmlPair *ref1, const CpmlPair *ref2,
+                  const CpmlPair *pos, gdouble direction)
 {
     AdgLDim *ldim;
     AdgDim *dim;
@@ -330,9 +330,9 @@ adg_ldim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
                            gdouble ref2_x, gdouble ref2_y,
                            gdouble pos_x, gdouble pos_y, gdouble direction)
 {
-    AdgPair ref1;
-    AdgPair ref2;
-    AdgPair pos;
+    CpmlPair ref1;
+    CpmlPair ref2;
+    CpmlPair pos;
 
     ref1.x = ref1_x;
     ref1.y = ref1_y;
@@ -561,8 +561,8 @@ _adg_arrange(AdgEntity *entity)
     AdgDimStyle *dim_style;
     gboolean outside, detach;
     const AdgMatrix *local;
-    AdgPair ref1, ref2, pos, base1, base2;
-    AdgPair pair;
+    CpmlPair ref1, ref2, pos, base1, base2;
+    CpmlPair pair;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
@@ -749,8 +749,8 @@ _adg_update_geometry(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDim *dim;
-    const AdgPair *ref1, *ref2;
-    const AdgPair *pos;
+    const CpmlPair *ref1, *ref2;
+    const CpmlPair *pos;
     CpmlVector baseline, extension;
     gdouble d, k;
 
@@ -924,12 +924,12 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
 }
 
 static void
-_adg_update_quote(AdgLDim *ldim, AdgPair *base1, AdgPair *base2, AdgPair *pos,
+_adg_update_quote(AdgLDim *ldim, CpmlPair *base1, CpmlPair *base2, CpmlPair *pos,
                   gboolean detach, gboolean outside, gdouble gap)
 {
     AdgLDimPrivate *data;
     AdgEntity *quote_entity;
-    AdgPair middle, factor, org;
+    CpmlPair middle, factor, org;
     CpmlVector dir;
     AdgMatrix map;
 
@@ -946,7 +946,7 @@ _adg_update_quote(AdgLDim *ldim, AdgPair *base1, AdgPair *base2, AdgPair *pos,
 
     if (detach) {
         /* Detached quote: position the quote at "pos" */
-        AdgPair tmp_pair, quote_end;
+        CpmlPair tmp_pair, quote_end;
         CpmlVector vector;
         gdouble distance1, distance2, quote_size;
         gboolean on_side1;

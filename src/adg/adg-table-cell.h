@@ -60,8 +60,8 @@ void            adg_table_cell_set_text_value   (AdgTableCell   *table_cell,
                                                  const gchar    *value);
 AdgEntity *     adg_table_cell_value            (AdgTableCell   *table_cell);
 void            adg_table_cell_set_value_pos    (AdgTableCell   *table_cell,
-                                                 const AdgPair  *from_factor,
-                                                 const AdgPair  *to_factor);
+                                                 const CpmlPair *from_factor,
+                                                 const CpmlPair *to_factor);
 void            adg_table_cell_set_value_pos_explicit
                                                 (AdgTableCell   *table_cell,
                                                  gdouble         from_x,
@@ -76,7 +76,7 @@ void            adg_table_cell_switch_frame     (AdgTableCell   *table_cell,
 gboolean        adg_table_cell_has_frame        (AdgTableCell   *table_cell);
 const CpmlExtents *
                 adg_table_cell_get_extents      (AdgTableCell   *table_cell);
-const AdgPair * adg_table_cell_size_request     (AdgTableCell   *table_cell,
+const CpmlPair *adg_table_cell_size_request     (AdgTableCell   *table_cell,
                                                  const CpmlExtents *row_extents);
 const CpmlExtents *
                 adg_table_cell_arrange          (AdgTableCell   *table_cell,

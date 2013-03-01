@@ -54,11 +54,11 @@ GType           adg_canvas_get_type             (void) G_GNUC_CONST;
 
 AdgCanvas *     adg_canvas_new                  (void);
 void            adg_canvas_set_size             (AdgCanvas      *canvas,
-                                                 const AdgPair  *size);
+                                                 const CpmlPair *size);
 void            adg_canvas_set_size_explicit    (AdgCanvas      *canvas,
                                                  gdouble         x,
                                                  gdouble         y);
-const AdgPair * adg_canvas_get_size             (AdgCanvas      *canvas);
+const CpmlPair *adg_canvas_get_size             (AdgCanvas      *canvas);
 void            adg_canvas_set_scales           (AdgCanvas      *canvas,
                                                  ...) G_GNUC_NULL_TERMINATED;
 void            adg_canvas_set_scales_valist    (AdgCanvas      *canvas,

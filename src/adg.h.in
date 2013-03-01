@@ -27,7 +27,6 @@
 #include "adg/adg-forward-declarations.h"
 #include "adg/adg-enums.h"
 #include "adg/adg-utils.h"
-#include "adg/adg-pair.h"
 #include "adg/adg-matrix.h"
 #include "adg/adg-primitive.h"
 #include "adg/adg-segment.h"

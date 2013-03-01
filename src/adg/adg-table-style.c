@@ -137,14 +137,14 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
     param = g_param_spec_boxed("cell-padding",
                                P_("Cell Padding"),
                                P_("How much space from the bounding box must left inside every cell"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CELL_PADDING, param);
 
     param = g_param_spec_boxed("cell-spacing",
                                P_("Cell Spacing"),
                                P_("How much space to left between the cells"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CELL_SPACING, param);
 }
@@ -234,10 +234,10 @@ _adg_set_property(GObject *object, guint prop_id,
         data->row_height = g_value_get_double(value);
         break;
     case PROP_CELL_PADDING:
-        adg_pair_copy(&data->cell_padding, g_value_get_boxed(value));
+        cpml_pair_copy(&data->cell_padding, g_value_get_boxed(value));
         break;
     case PROP_CELL_SPACING:
-        adg_pair_copy(&data->cell_spacing, g_value_get_boxed(value));
+        cpml_pair_copy(&data->cell_spacing, g_value_get_boxed(value));
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -509,7 +509,7 @@ adg_table_style_get_row_height(AdgTableStyle *table_style)
  **/
 void
 adg_table_style_set_cell_padding(AdgTableStyle *table_style,
-                                 const AdgPair *padding)
+                                 const CpmlPair *padding)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
     g_object_set(table_style, "cell-padding", padding, NULL);
@@ -531,7 +531,7 @@ adg_table_style_set_cell_padding(AdgTableStyle *table_style,
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_table_style_get_cell_padding(AdgTableStyle *table_style)
 {
     AdgTableStylePrivate *data;
@@ -554,7 +554,7 @@ adg_table_style_get_cell_padding(AdgTableStyle *table_style)
  **/
 void
 adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
-                                 const AdgPair *spacing)
+                                 const CpmlPair *spacing)
 {
     g_return_if_fail(ADG_IS_TABLE_STYLE(table_style));
     g_object_set(table_style, "cell-spacing", spacing, NULL);
@@ -576,7 +576,7 @@ adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_table_style_get_cell_spacing(AdgTableStyle *table_style)
 {
     AdgTableStylePrivate *data;

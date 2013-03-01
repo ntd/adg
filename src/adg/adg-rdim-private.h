@@ -48,11 +48,11 @@ struct _AdgRDimPrivate {
     gdouble              angle;
 
     struct {
-        AdgPair          base;
+        CpmlPair         base;
     }                    point;
 
     struct {
-        AdgPair          base;
+        CpmlPair         base;
     }                    shift;
 
     struct {

@@ -104,7 +104,7 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
     param = g_param_spec_boxed("factor",
                                P_("Factor"),
                                P_("Portion of extents, either in x and y, the content will be displaced: a (0.5, 0.5) factor means the origin is the middle point of the extents"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 }
@@ -145,7 +145,7 @@ _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
     AdgAlignmentPrivate *data;
-    const AdgPair *pair;
+    const CpmlPair *pair;
 
     data = ((AdgAlignment *) object)->data;
 
@@ -153,7 +153,7 @@ _adg_set_property(GObject *object, guint prop_id,
     case PROP_FACTOR:
         pair = g_value_get_boxed(value);
         if (! cpml_pair_equal(&data->factor, pair)) {
-            adg_pair_copy(&data->factor, pair);
+            cpml_pair_copy(&data->factor, pair);
             adg_entity_invalidate((AdgEntity *) object);
         }
         break;
@@ -174,7 +174,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * Since: 1.0
  **/
 AdgAlignment *
-adg_alignment_new(const AdgPair *factor)
+adg_alignment_new(const CpmlPair *factor)
 {
     return g_object_new(ADG_TYPE_ALIGNMENT, "factor", factor, NULL);
 }
@@ -194,7 +194,7 @@ adg_alignment_new(const AdgPair *factor)
 AdgAlignment *
 adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
 {
-    AdgPair factor;
+    CpmlPair factor;
 
     factor.x = x_factor;
     factor.y = y_factor;
@@ -217,7 +217,7 @@ adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
  * Since: 1.0
  **/
 void
-adg_alignment_set_factor(AdgAlignment *alignment, const AdgPair *factor)
+adg_alignment_set_factor(AdgAlignment *alignment, const CpmlPair *factor)
 {
     g_return_if_fail(ADG_IS_ALIGNMENT(alignment));
     g_object_set(alignment, "factor", factor, NULL);
@@ -230,7 +230,7 @@ adg_alignment_set_factor(AdgAlignment *alignment, const AdgPair *factor)
  * @y_factor: y component of the factor
  *
  * Convenient wrapper around adg_alignment_set_factor() that accepts
- * explicit factors instead of an #AdgPair value.
+ * explicit factors instead of an #CpmlPair value.
  *
  * Since: 1.0
  **/
@@ -238,7 +238,7 @@ void
 adg_alignment_set_factor_explicit(AdgAlignment *alignment,
                                   gdouble x_factor, gdouble y_factor)
 {
-    AdgPair factor;
+    CpmlPair factor;
 
     factor.x = x_factor;
     factor.y = y_factor;
@@ -257,7 +257,7 @@ adg_alignment_set_factor_explicit(AdgAlignment *alignment,
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_alignment_get_factor(AdgAlignment *alignment)
 {
     AdgAlignmentPrivate *data;

@@ -574,7 +574,7 @@ _adg_value_changed(AdgGtkLayout *layout)
 {
     AdgGtkArea *area;
     AdgGtkLayoutPrivate *data;
-    AdgPair org;
+    CpmlPair org;
     AdgMatrix map;
 
     if (!GTK_WIDGET_REALIZED(layout))

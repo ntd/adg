@@ -482,7 +482,7 @@ adg_dim_set_ref1_explicit(AdgDim *dim, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_dim_set_ref1_from_pair(AdgDim *dim, const AdgPair *ref1)
+adg_dim_set_ref1_from_pair(AdgDim *dim, const CpmlPair *ref1)
 {
     g_return_if_fail(ref1 != NULL);
 
@@ -602,7 +602,7 @@ adg_dim_set_ref2_explicit(AdgDim *dim, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_dim_set_ref2_from_pair(AdgDim *dim, const AdgPair *ref2)
+adg_dim_set_ref2_from_pair(AdgDim *dim, const CpmlPair *ref2)
 {
     g_return_if_fail(ref2 != NULL);
 
@@ -722,7 +722,7 @@ adg_dim_set_pos_explicit(AdgDim *dim, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_dim_set_pos_from_pair(AdgDim *dim, const AdgPair *pos)
+adg_dim_set_pos_from_pair(AdgDim *dim, const CpmlPair *pos)
 {
     g_return_if_fail(pos != NULL);
 
@@ -1192,7 +1192,7 @@ _adg_arrange(AdgEntity *entity)
     AdgEntity *value_entity;
     AdgEntity *min_entity;
     AdgEntity *max_entity;
-    const AdgPair *shift;
+    const CpmlPair *shift;
     AdgMatrix map;
 
     dim = (AdgDim *) entity;
@@ -1275,10 +1275,10 @@ _adg_arrange(AdgEntity *entity)
 
     /* Limit values (min and max) */
     if (min_entity != NULL || max_entity != NULL) {
-        const AdgPair *limits_shift;
+        const CpmlPair *limits_shift;
         gdouble spacing;
-        AdgPair size;
-        AdgPair org_min, org_max;
+        CpmlPair size;
+        CpmlPair org_min, org_max;
 
         limits_shift = adg_dim_style_get_limits_shift(data->dim_style);
         spacing = adg_dim_style_get_limits_spacing(data->dim_style);

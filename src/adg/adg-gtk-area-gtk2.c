@@ -646,7 +646,7 @@ adg_gtk_area_reset(AdgGtkArea *area)
     GtkWidget *parent;
     const CpmlExtents *sheet;
     GtkAllocation allocation;
-    AdgPair size;
+    CpmlPair size;
     gdouble zoom;
 
     g_return_if_fail(ADG_GTK_IS_AREA(area));

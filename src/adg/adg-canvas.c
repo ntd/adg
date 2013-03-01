@@ -152,7 +152,7 @@ adg_canvas_class_init(AdgCanvasClass *klass)
     param = g_param_spec_boxed("size",
                                P_("Canvas Size"),
                                P_("The size set on this canvas: use 0 to have an automatic dimension based on the canvas extents"),
-                               ADG_TYPE_PAIR,
+                               CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
 
@@ -366,7 +366,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_SIZE:
-        adg_pair_copy(&data->size, g_value_get_boxed(value));
+        cpml_pair_copy(&data->size, g_value_get_boxed(value));
         break;
     case PROP_SCALES:
         g_strfreev(data->scales);
@@ -450,14 +450,14 @@ adg_canvas_new(void)
  * @size: the new size for the canvas
  *
  * Sets a specific size on @canvas. The x and/or y
- * components of the returned #AdgPair could be %0, in which
+ * components of the returned #CpmlPair could be %0, in which
  * case the size returned by adg_entity_get_extents() on
  * @canvas will be used instead.
  *
  * Since: 1.0
  **/
 void
-adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
+adg_canvas_set_size(AdgCanvas *canvas, const CpmlPair *size)
 {
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(size != NULL);
@@ -480,7 +480,7 @@ adg_canvas_set_size(AdgCanvas *canvas, const AdgPair *size)
 void
 adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
 {
-    AdgPair size;
+    CpmlPair size;
 
     size.x = x;
     size.y = y;
@@ -493,7 +493,7 @@ adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
  * @canvas: an #AdgCanvas
  *
  * Gets the specific size set on @canvas. The x and/or y
- * components of the returned #AdgPair could be %0, in which
+ * components of the returned #CpmlPair could be %0, in which
  * case the size returned by adg_entity_get_extents() on
  * @canvas will be used instead.
  *
@@ -501,7 +501,7 @@ adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
  *
  * Since: 1.0
  **/
-const AdgPair *
+const CpmlPair *
 adg_canvas_get_size(AdgCanvas *canvas)
 {
     AdgCanvasPrivate *data;
@@ -634,7 +634,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     AdgMatrix map;
     const CpmlExtents *extents;
     AdgTitleBlock *title_block;
-    AdgPair delta;
+    CpmlPair delta;
 
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(_ADG_OLD_ENTITY_CLASS->arrange != NULL);
@@ -1318,7 +1318,7 @@ _adg_arrange(AdgEntity *entity)
     if (data->title_block) {
         AdgEntity *title_block_entity;
         const CpmlExtents *title_block_extents;
-        AdgPair shift;
+        CpmlPair shift;
 
         title_block_entity = (AdgEntity *) data->title_block;
         adg_entity_arrange(title_block_entity);
@@ -1474,7 +1474,7 @@ void
 adg_canvas_set_page_setup(AdgCanvas *canvas, GtkPageSetup *page_setup)
 {
     gdouble top, right, bottom, left;
-    AdgPair size;
+    CpmlPair size;
 
     g_return_if_fail(ADG_IS_CANVAS(canvas));
 

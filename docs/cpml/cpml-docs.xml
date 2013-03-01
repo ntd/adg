@@ -12,6 +12,7 @@
     <xi:include href="xml/cpml-utils.xml"/>
     <xi:include href="xml/cpml-pair.xml"/>
     <xi:include href="xml/cpml-extents.xml"/>
+    <xi:include href="xml/cpml-gobject.xml"/>
   </part>
 
   <part id="Constructs">

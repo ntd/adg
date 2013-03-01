@@ -52,7 +52,7 @@ void            adg_table_row_set_height        (AdgTableRow    *table_row,
 gdouble         adg_table_row_get_height        (AdgTableRow    *table_row);
 const CpmlExtents *
                 adg_table_row_get_extents       (AdgTableRow    *table_row);
-const AdgPair * adg_table_row_size_request      (AdgTableRow    *table_row);
+const CpmlPair *adg_table_row_size_request      (AdgTableRow    *table_row);
 const CpmlExtents *
                 adg_table_row_arrange           (AdgTableRow    *table_row,
                                                  const CpmlExtents *layout);

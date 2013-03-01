@@ -27,8 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgAlignmentPrivate AdgAlignmentPrivate;
 
 struct _AdgAlignmentPrivate {
-    AdgPair      factor;
-
+    CpmlPair     factor;
     CpmlVector   shift;
 };
 

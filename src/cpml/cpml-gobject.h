@@ -1,5 +1,5 @@
-/* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana <ntd at entidi.it>
+/* CPML - Cairo Path Manipulation Library
+ * Copyright (C) 2008,2009,2010,2011,2012  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,30 +18,23 @@
  */
 
 
-#if !defined(__ADG_H__)
-#error "Only <adg.h> can be included directly."
+#if !defined(__CPML_H__)
+#error "Only <cpml/cpml.h> can be included directly."
 #endif
 
 
-#ifndef __ADG_PAIR_H__
-#define __ADG_PAIR_H__
+#ifndef __CPML_GOBJECT_H__
+#define __CPML_GOBJECT_H__
 
 
 G_BEGIN_DECLS
 
-#define _AdgPair                _CpmlPair
-#define ADG_TYPE_PAIR           (adg_pair_get_type())
+#define         CPML_TYPE_PAIR          (cpml_pair_get_type())
+GType           cpml_pair_get_type      (void) G_GNUC_CONST;
+CpmlPair *      cpml_pair_dup           (const CpmlPair  *pair);
 
-
-typedef struct _AdgPair AdgPair;
-
-
-GType           adg_pair_get_type       (void) G_GNUC_CONST;
-void            adg_pair_copy           (AdgPair        *pair,
-                                         const AdgPair  *src);
-AdgPair *       adg_pair_dup            (const AdgPair  *pair);
 
 G_END_DECLS
 
 
-#endif /* __ADG_PAIR_H__ */
+#endif /* __CPML_GOBJECT_H__ */

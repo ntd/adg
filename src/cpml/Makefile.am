@@ -87,3 +87,10 @@ CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)
 
 endif
+
+
+# Although actually GObject wrappers are always compiled,
+# this feature can be easily made optional if needed.
+
+h_sources+=			cpml-gobject.h
+c_sources+=			cpml-gobject.c

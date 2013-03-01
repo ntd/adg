@@ -25,9 +25,9 @@ static void
 _adg_cell_padding(void)
 {
     AdgTableStyle *table_style;
-    AdgPair null_padding, identity_padding;
-    const AdgPair *padding;
-    AdgPair *padding_dup;
+    CpmlPair null_padding, identity_padding;
+    const CpmlPair *padding;
+    CpmlPair *padding_dup;
 
     table_style = adg_table_style_new();
     null_padding.x = 0;
@@ -71,9 +71,9 @@ static void
 _adg_cell_spacing(void)
 {
     AdgTableStyle *table_style;
-    AdgPair null_spacing, identity_spacing;
-    const AdgPair *spacing;
-    AdgPair *spacing_dup;
+    CpmlPair null_spacing, identity_spacing;
+    const CpmlPair *spacing;
+    CpmlPair *spacing_dup;
 
     table_style = adg_table_style_new();
     null_spacing.x = 0;

@@ -47,8 +47,8 @@ struct _AdgDimStylePrivate {
     gdouble              beyond;
     gdouble              baseline_spacing;
     gdouble              limits_spacing;
-    AdgPair              quote_shift;
-    AdgPair              limits_shift;
+    CpmlPair             quote_shift;
+    CpmlPair             limits_shift;
     gchar               *number_format;
     gchar               *number_tag;
 };

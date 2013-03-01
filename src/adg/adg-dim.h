@@ -66,7 +66,7 @@ void            adg_dim_set_ref1_explicit       (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_dim_set_ref1_from_pair      (AdgDim         *dim,
-                                                 const AdgPair  *ref1);
+                                                 const CpmlPair *ref1);
 void            adg_dim_set_ref1_from_model     (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *ref1);
@@ -77,7 +77,7 @@ void            adg_dim_set_ref2_explicit       (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_dim_set_ref2_from_pair      (AdgDim         *dim,
-                                                 const AdgPair  *ref2);
+                                                 const CpmlPair *ref2);
 void            adg_dim_set_ref2_from_model     (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *ref2);
@@ -88,7 +88,7 @@ void            adg_dim_set_pos_explicit        (AdgDim         *dim,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_dim_set_pos_from_pair       (AdgDim         *dim,
-                                                 const AdgPair  *pos);
+                                                 const CpmlPair *pos);
 void            adg_dim_set_pos_from_model      (AdgDim         *dim,
                                                  AdgModel       *model,
                                                  const gchar    *pos);

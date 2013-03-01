@@ -93,11 +93,11 @@ void            adg_dim_style_set_limits_spacing(AdgDimStyle    *dim_style,
                                                  gdouble         spacing);
 gdouble         adg_dim_style_get_limits_spacing(AdgDimStyle    *dim_style);
 void            adg_dim_style_set_quote_shift   (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-const AdgPair * adg_dim_style_get_quote_shift   (AdgDimStyle    *dim_style);
+                                                 const CpmlPair *shift);
+const CpmlPair *adg_dim_style_get_quote_shift   (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_limits_shift  (AdgDimStyle    *dim_style,
-                                                 const AdgPair  *shift);
-const AdgPair * adg_dim_style_get_limits_shift  (AdgDimStyle    *dim_style);
+                                                 const CpmlPair *shift);
+const CpmlPair *adg_dim_style_get_limits_shift  (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_number_format (AdgDimStyle    *dim_style,
                                                  const gchar    *format);
 const gchar *   adg_dim_style_get_number_format (AdgDimStyle    *dim_style);

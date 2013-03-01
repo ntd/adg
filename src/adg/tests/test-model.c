@@ -25,8 +25,8 @@ static void
 _adg_test_named_pair(void)
 {
     AdgModel *model;
-    AdgPair valid_pair;
-    const AdgPair *named_pair;
+    CpmlPair valid_pair;
+    const CpmlPair *named_pair;
 
     model = ADG_MODEL(adg_path_new());
     valid_pair.x = -1234;

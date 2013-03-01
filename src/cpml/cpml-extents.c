@@ -142,7 +142,7 @@ cpml_extents_add(CpmlExtents *extents, const CpmlExtents *src)
 /**
  * cpml_extents_pair_add:
  * @extents: (inout): the source and destination #CpmlExtents
- * @src:     (in):    the #AdgPair to add
+ * @src:     (in):    the #CpmlPair to add
  *
  * Extends @extents, if required, to include @src. If @extents is
  * undefined, the origin of @extents is set to @src and its size

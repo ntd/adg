@@ -33,7 +33,6 @@ h_sources=			adg-adim.h \
 				adg-marker.h \
 				adg-matrix.h \
 				adg-model.h \
-				adg-pair.h \
 				adg-path.h \
 				adg-point.h \
 				adg-primitive.h \
@@ -109,7 +108,6 @@ c_sources=			adg-adim.c \
 				adg-marker.c \
 				adg-matrix.c \
 				adg-model.c \
-				adg-pair.c \
 				adg-path.c \
 				adg-point.c \
 				adg-primitive.c \

@@ -636,8 +636,8 @@ _adg_arrange(AdgEntity *entity)
     CpmlExtents extents = { 0 };
     CpmlExtents row_layout = { 0 };
     const CpmlExtents *row_extents;
-    const AdgPair *spacing;
-    const AdgPair *size;
+    const CpmlPair *spacing;
+    const CpmlPair *size;
     GSList *row_node;
     AdgTableRow *row;
 
@@ -719,7 +719,7 @@ _adg_arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
     AdgTablePrivate *data;
     AdgPath *path;
     AdgTrail *trail;
-    AdgPair pair;
+    CpmlPair pair;
     AdgDress dress;
 
     data = ((AdgTable *) entity)->data;
@@ -799,7 +799,7 @@ _adg_foreach_row(AdgTableRow *table_row, const AdgClosure *closure)
 static void
 _adg_append_frame(AdgTableCell *table_cell, AdgPath *path)
 {
-    AdgPair pair;
+    CpmlPair pair;
     const CpmlExtents *extents;
 
     if (! adg_table_cell_has_frame(table_cell))
