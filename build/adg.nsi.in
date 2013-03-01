@@ -1,10 +1,11 @@
-; ADG installer based on NSIS
+; @configure_input@
+;
+; ADG installer based on NSis
 ; Check http://nsis.sourceforge.net/ for details
 
 !define SRCDIR      "@abs_top_srcdir@"
 !define BUILDDIR    "@abs_top_builddir@"
-!define USRDIR      "@USRDIR@"
-!define DLLDIR      "${USRDIR}/bin"
+!define DLLDIR      "@DLLDIR@"
 
 ; ---------------------------------------------------------------
 ; 1. Header file

@@ -76,11 +76,6 @@ esac
 AM_CONDITIONAL([OS_UNIX],[test "${guessed_host}" != "mingw"])
 AM_CONDITIONAL([OS_WINDOWS],[test "${guessed_host}" = "mingw" -o "${guessed_host}" = "cygwin"])
 
-dnl -win$ARCH will be appended to the Windows installer file name
-AS_IF([test "x${host_cpu}" = "xx86_64"],[ARCH=64],[ARCH=32])
-AC_SUBST([ARCH])
-AM_SUBST_NOTMAKE([ARCH])
-
 
 # Check for programs
 
@@ -280,9 +275,23 @@ AM_CONDITIONAL([HAVE_TEST_FRAMEWORK],[test "x${enable_test_framework}" = "xyes"]
 AC_C_CONST
 
 
+# Windows substitutions for NSis installer
+
+dnl By default DLLDIR is set to "$prefix/bin", with "$prefix" got from
+dnl gobject-2.0.pc: all the DLLs *must* be under the same directory.
+AC_ARG_VAR([DLLDIR], Place where Windows DLLs must be picked from)
+AS_IF([test -z "$DLLDIR"],
+      [DLLDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)/bin"])
+AM_SUBST_NOTMAKE([DLLDIR])
+
+dnl -win$ARCH will be appended to the installer file name
+AS_IF([test "x${host_cpu}" = "xx86_64"],[ARCH=64],[ARCH=32])
+AC_SUBST([ARCH])
+AM_SUBST_NOTMAKE([ARCH])
+
+
 # Additional substitutions
 
-USRDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)"
 CPML_REQUIRES='cairo >= cairo_prereq'
 AM_COND_IF([HAVE_PANGO],
       [ADG_REQUIRES='pangocairo >= pangocairo_prereq'
@@ -319,13 +328,11 @@ AC_SUBST([ADG_LT_VERSION],adg_lt_version)
 AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_H_ADDITIONAL])
 AC_SUBST([ADG_CANVAS_H_ADDITIONAL])
-AC_SUBST([USRDIR])
 
 AM_SUBST_NOTMAKE([CPML_REQUIRES])
 AM_SUBST_NOTMAKE([ADG_REQUIRES])
 AM_SUBST_NOTMAKE([ADG_H_ADDITIONAL])
 AM_SUBST_NOTMAKE([ADG_CANVAS_H_ADDITIONAL])
-AM_SUBST_NOTMAKE([USRDIR])
 
 dnl CPML compiler flags and library dependencies
 CPML_CFLAGS="$CAIRO_CFLAGS"
