@@ -23,13 +23,13 @@
 
   <homepage rdf:resource="http://adg.entidi.com/"/>
   <license rdf:resource="http://www.gnu.org/licenses/lgpl-2.1.html"/>
-  <screenshots rdf:resource="http://sourceforge.net/project/screenshots.php?group_id=185095"/>
-  <download-page rdf:resource="http://sourceforge.net/project/showfiles.php?group_id=185095"/>
-  <bug-database rdf:resource="http://sourceforge.net/tracker/?atid=911897&amp;group_id=185095"/>
+  <screenshots rdf:resource="http://adg.entidi.com/home/hints/"/>
+  <download-page rdf:resource="http://adg.entidi.com/home/download/"/>
+  <bug-database rdf:resource="http://dev.entidi.com/p/adg/"/>
 
   <repository>
     <Repository>
-      <location rdf:resource="http://sourceforge.net/scm/?type=git&amp;group_id=185095"/>
+      <location rdf:resource="http://dev.entidi.com/p/adg/source/tree/master/"/>
       <anon-root rdf:resource="git://adg.git.sourceforge.net/gitroot/adg"/>
       <browse rdf:resource="http://adg.git.sourceforge.net/git/gitweb.cgi?p=adg"/>
     </Repository>
