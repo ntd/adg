@@ -32,6 +32,7 @@ EXTRA_DIST=			COPYING \
 				build/adg-header.bmp \
 				build/adg-welcome.bmp \
 				build/adg.ico \
+				build/gschemas.compiled \
 				docs/gnu/CONTRIBUTING.xml \
 				docs/gnu/HACKING.xml \
 				docs/gnu/NEWS.xml \

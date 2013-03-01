@@ -104,7 +104,7 @@ Section "ADG canvas" SecBase
   File "${BUILDDIR}/src/adg/.libs/libadg-1-*.dll"
 
   SetOutPath "$INSTDIR\share\glib-2.0\schemas"
-  File "${USRDIR}/share/glib-2.0/schemas/gschemas.compiled"
+  File "${SRCDIR}/build/gschemas.compiled"
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" "$INSTDIR\adg-demo.exe"
