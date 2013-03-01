@@ -38,7 +38,6 @@
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-marker.h"
-#include "adg-pattern.h"
 #include "adg-dress.h"
 #include "adg-color-style.h"
 #include "adg-dash.h"

@@ -40,15 +40,15 @@
 
 
 #include "adg-internal.h"
-#include "adg-pattern.h"
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
 #include "adg-style.h"
 #include "adg-fill-style.h"
-#include <math.h>
 
 #include "adg-ruled-fill.h"
 #include "adg-ruled-fill-private.h"
+
+#include <math.h>
 
 
 #define _ADG_OLD_STYLE_CLASS      ((AdgStyleClass *) adg_ruled_fill_parent_class)
@@ -328,7 +328,7 @@ static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFillStyle *fill_style;
-    AdgPattern *pattern;
+    cairo_pattern_t *pattern;
     const CpmlExtents *extents;
 
     fill_style = (AdgFillStyle *) style;

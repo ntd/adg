@@ -27,7 +27,6 @@
       <xi:include href="xml/adg-primitive.xml"/>
       <xi:include href="xml/adg-segment.xml"/>
       <xi:include href="xml/adg-matrix.xml"/>
-      <xi:include href="xml/adg-pattern.xml"/>
     </chapter>
   </part>
 

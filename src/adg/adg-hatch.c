@@ -42,7 +42,6 @@
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-stroke.h"
-#include "adg-pattern.h"
 #include "adg-style.h"
 #include "adg-fill-style.h"
 #include "adg-dress.h"

@@ -21,7 +21,7 @@
 #ifndef __ADG_H__
 #define __ADG_H__
 
-#include <glib-object.h>
+#include <cairo-gobject.h>
 #include <cpml.h>
 
 #include "adg/adg-forward-declarations.h"
@@ -29,7 +29,6 @@
 #include "adg/adg-utils.h"
 #include "adg/adg-pair.h"
 #include "adg/adg-matrix.h"
-#include "adg/adg-pattern.h"
 #include "adg/adg-primitive.h"
 #include "adg/adg-segment.h"
 #include "adg/adg-entity.h"

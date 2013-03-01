@@ -35,7 +35,6 @@ h_sources=			adg-adim.h \
 				adg-model.h \
 				adg-pair.h \
 				adg-path.h \
-				adg-pattern.h \
 				adg-point.h \
 				adg-primitive.h \
 				adg-projection.h \
@@ -112,7 +111,6 @@ c_sources=			adg-adim.c \
 				adg-model.c \
 				adg-pair.c \
 				adg-path.c \
-				adg-pattern.c \
 				adg-point.c \
 				adg-primitive.c \
 				adg-projection.c \

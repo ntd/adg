@@ -26,8 +26,8 @@ G_BEGIN_DECLS
 typedef struct _AdgFillStylePrivate AdgFillStylePrivate;
 
 struct _AdgFillStylePrivate {
-    AdgPattern  *pattern;
-    CpmlExtents  extents;
+    cairo_pattern_t *pattern;
+    CpmlExtents      extents;
 };
 
 G_END_DECLS

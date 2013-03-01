@@ -9,6 +9,7 @@ m4_define([cpml_lt_version],[1:1:0])
 m4_define([gtkdoc_prereq],[1.12])dnl Support introspection annotations
 m4_define([gobject_prereq],[2.10.1])
 m4_define([cairo_prereq],[1.7.4])
+m4_define([cairo_gobject_prereq],cairo_prereq)
 m4_define([gtk2_prereq],[2.12.0])
 m4_define([gtk3_prereq],[3.0.0])
 m4_define([pangocairo_prereq],[1.18.0])
@@ -131,6 +132,7 @@ AC_CONFIG_COMMANDS([default],
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
+PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject >= ]cairo_gobject_prereq)
 
 
 # Check for optional packages
@@ -341,8 +343,8 @@ AC_SUBST([CPML_CFLAGS])
 AC_SUBST([CPML_LIBS])
 
 dnl ADG compiler flags and library dependencies
-ADG_CFLAGS="$GOBJECT_CFLAGS"
-ADG_LIBS="$GOBJECT_LIBS"
+ADG_CFLAGS="$CAIRO_GOBJECT_CFLAGS"
+ADG_LIBS="$CAIRO_GOBJECT_LIBS"
 AM_COND_IF([HAVE_PANGO],
 	   [ADG_CFLAGS="$PANGO_CFLAGS $ADG_CFLAGS"
 	    ADG_LIBS="$PANGO_LIBS $ADG_LIBS"])

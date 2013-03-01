@@ -25,9 +25,9 @@ static void
 _adg_test_pattern(void)
 {
     AdgFillStyle *fill_style;
-    AdgPattern *valid_pattern_1, *valid_pattern_2;
-    const AdgPattern *pattern;
-    AdgPattern *pattern_dup;
+    cairo_pattern_t *valid_pattern_1, *valid_pattern_2;
+    const cairo_pattern_t *pattern;
+    cairo_pattern_t *pattern_dup;
 
     fill_style = ADG_FILL_STYLE(adg_ruled_fill_new());
     valid_pattern_1 = cairo_pattern_create_rgba(0, 0, 0, 0);

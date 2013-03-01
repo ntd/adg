@@ -53,7 +53,6 @@
 
 #include "adg-internal.h"
 #include "adg-style.h"
-#include "adg-pattern.h"
 
 #include "adg-fill-style.h"
 #include "adg-fill-style-private.h"
@@ -106,7 +105,7 @@ adg_fill_style_class_init(AdgFillStyleClass *klass)
     param = g_param_spec_boxed("pattern",
                                P_("Pattern"),
                                P_("The cairo pattern set for this entity"),
-                               ADG_TYPE_PATTERN,
+                               CAIRO_GOBJECT_TYPE_PATTERN,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_PATTERN, param);
 }
@@ -190,7 +189,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * Since: 1.0
  **/
 void
-adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
+adg_fill_style_set_pattern(AdgFillStyle *fill_style,
+                           cairo_pattern_t *pattern)
 {
     g_return_if_fail(ADG_IS_FILL_STYLE(fill_style));
     g_object_set(fill_style, "pattern", pattern, NULL);
@@ -206,7 +206,7 @@ adg_fill_style_set_pattern(AdgFillStyle *fill_style, AdgPattern *pattern)
  *
  * Since: 1.0
  **/
-AdgPattern *
+cairo_pattern_t *
 adg_fill_style_get_pattern(AdgFillStyle *fill_style)
 {
     AdgFillStylePrivate *data;

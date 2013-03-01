@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-15 20:50+0100\n"
+"POT-Creation-Date: 2013-03-01 13:10+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -607,11 +607,11 @@ msgstr ""
 "Specifica come le trasformazioni locali dell'entità corrente e dei suoi "
 "progenitori devono essere combinate per ottenere la matrice locale"
 
-#: src/adg/adg-fill-style.c:107
+#: src/adg/adg-fill-style.c:106
 msgid "Pattern"
 msgstr "Pattern"
 
-#: src/adg/adg-fill-style.c:108
+#: src/adg/adg-fill-style.c:107
 msgid "The cairo pattern set for this entity"
 msgstr "Il pattern cairo impostato per questa entità"
 
@@ -731,11 +731,11 @@ msgstr "Mappa di Render"
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
-#: src/adg/adg-hatch.c:93
+#: src/adg/adg-hatch.c:92
 msgid "Fill Dress"
 msgstr "Vestito Riempimento"
 
-#: src/adg/adg-hatch.c:94
+#: src/adg/adg-hatch.c:93
 msgid "The dress to use for filling this entity"
 msgstr "Il vestito da usare per riempire questa entità"
 
