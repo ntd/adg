@@ -23,7 +23,6 @@
     <chapter id="Core-gboxed">
       <title>GBoxed types</title>
       <xi:include href="xml/adg-point.xml"/>
-      <xi:include href="xml/adg-primitive.xml"/>
       <xi:include href="xml/adg-segment.xml"/>
       <xi:include href="xml/adg-matrix.xml"/>
     </chapter>

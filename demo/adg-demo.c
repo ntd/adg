@@ -244,7 +244,7 @@ _adg_part_define_shape(DemoPart *part)
     AdgModel *model;
     AdgPath *path;
     CpmlPair pair, tmp;
-    const AdgPrimitive *primitive;
+    const CpmlPrimitive *primitive;
 
     path = part->shape;
     model = ADG_MODEL(path);

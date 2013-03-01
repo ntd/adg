@@ -85,7 +85,7 @@ static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
 static CpmlPath *       _adg_read_cpml_path     (AdgPath        *path);
 static gint             _adg_primitive_length   (CpmlPrimitiveType type);
 static void             _adg_append_primitive   (AdgPath        *path,
-                                                 AdgPrimitive   *primitive);
+                                                 CpmlPrimitive  *primitive);
 static void             _adg_clear_operation    (AdgPath        *path);
 static gboolean         _adg_append_operation   (AdgPath        *path,
                                                  AdgAction       action,
@@ -95,14 +95,14 @@ static void             _adg_do_operation       (AdgPath        *path,
                                                                 *path_data);
 static void             _adg_do_action          (AdgPath        *path,
                                                  AdgAction       action,
-                                                 AdgPrimitive   *primitive);
+                                                 CpmlPrimitive  *primitive);
 static void             _adg_do_chamfer         (AdgPath        *path,
-                                                 AdgPrimitive   *current);
+                                                 CpmlPrimitive  *current);
 static void             _adg_do_fillet          (AdgPath        *path,
-                                                 AdgPrimitive   *current);
-static gboolean         _adg_is_convex          (const AdgPrimitive
+                                                 CpmlPrimitive  *current);
+static gboolean         _adg_is_convex          (const CpmlPrimitive
                                                                 *primitive1,
-                                                 const AdgPrimitive
+                                                 const CpmlPrimitive
                                                                 *primitive2);
 static const gchar *    _adg_action_name        (AdgAction       action);
 static void             _adg_get_named_pair     (AdgModel       *model,
@@ -249,7 +249,7 @@ adg_path_has_current_point(AdgPath *path)
  *
  * Since: 1.0
  **/
-const AdgPrimitive *
+const CpmlPrimitive *
 adg_path_last_primitive(AdgPath *path)
 {
     AdgPathPrivate *data;
@@ -276,7 +276,7 @@ adg_path_last_primitive(AdgPath *path)
  *
  * Since: 1.0
  **/
-const AdgPrimitive *
+const CpmlPrimitive *
 adg_path_over_primitive(AdgPath *path)
 {
     AdgPathPrivate *data;
@@ -389,7 +389,7 @@ adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
         g_warning(_("%s: null pair caught while parsing arguments"), G_STRLOC);
     } else {
         AdgPathPrivate *data;
-        AdgPrimitive primitive;
+        CpmlPrimitive primitive;
         cairo_path_data_t org;
 
         /* Save a copy of the current point as primitive origin */
@@ -415,7 +415,7 @@ adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
 /**
  * adg_path_append_primitive:
  * @path:      an #AdgPath
- * @primitive: the #AdgPrimitive to append
+ * @primitive: the #CpmlPrimitive to append
  *
  * Appends @primitive to @path. The primitive to add is considered the
  * continuation of the current path so the <structfield>org</structfield>
@@ -426,10 +426,10 @@ adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
  * Since: 1.0
  **/
 void
-adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
+adg_path_append_primitive(AdgPath *path, const CpmlPrimitive *primitive)
 {
     AdgPathPrivate *data;
-    AdgPrimitive *primitive_dup;
+    CpmlPrimitive *primitive_dup;
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(primitive != NULL);
@@ -442,7 +442,7 @@ adg_path_append_primitive(AdgPath *path, const AdgPrimitive *primitive)
 
     /* The primitive data could be modified by pending operations:
      * work on a copy */
-    primitive_dup = adg_primitive_deep_dup(primitive);
+    primitive_dup = cpml_primitive_deep_dup(primitive);
 
     _adg_append_primitive(path, primitive_dup);
 
@@ -1010,7 +1010,7 @@ _adg_primitive_length(CpmlPrimitiveType type)
 }
 
 static void
-_adg_append_primitive(AdgPath *path, AdgPrimitive *current)
+_adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *data;
     cairo_path_data_t *path_data;
@@ -1033,7 +1033,7 @@ _adg_append_primitive(AdgPath *path, AdgPrimitive *current)
                 (data->cpml.array)->len - length;
 
     /* Store the over primitive */
-    memcpy(&data->over, &data->last, sizeof(AdgPrimitive));
+    memcpy(&data->over, &data->last, sizeof(CpmlPrimitive));
 
     /* Set the last primitive for subsequent binary operations */
     data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
@@ -1169,7 +1169,7 @@ _adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
     AdgPathPrivate *data;
     AdgAction action;
     AdgSegment segment;
-    AdgPrimitive current;
+    CpmlPrimitive current;
     cairo_path_data_t current_org;
 
     data = path->data;
@@ -1191,7 +1191,7 @@ _adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
 }
 
 static void
-_adg_do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
+_adg_do_action(AdgPath *path, AdgAction action, CpmlPrimitive *primitive)
 {
     switch (action) {
     case ADG_ACTION_NONE:
@@ -1208,10 +1208,10 @@ _adg_do_action(AdgPath *path, AdgAction action, AdgPrimitive *primitive)
 }
 
 static void
-_adg_do_chamfer(AdgPath *path, AdgPrimitive *current)
+_adg_do_chamfer(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *data;
-    AdgPrimitive *last;
+    CpmlPrimitive *last;
     gdouble delta1, delta2;
     gdouble len1, len2;
     CpmlPair pair;
@@ -1250,17 +1250,17 @@ _adg_do_chamfer(AdgPath *path, AdgPrimitive *current)
 }
 
 static void
-_adg_do_fillet(AdgPath *path, AdgPrimitive *current)
+_adg_do_fillet(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *data;
-    AdgPrimitive *last, *current_dup, *last_dup;
+    CpmlPrimitive *last, *current_dup, *last_dup;
     gdouble radius, offset, pos;
     CpmlPair center, vector, p[3];
 
     data = path->data;
     last = &data->last;
-    current_dup = adg_primitive_deep_dup(current);
-    last_dup = adg_primitive_deep_dup(last);
+    current_dup = cpml_primitive_deep_dup(current);
+    last_dup = cpml_primitive_deep_dup(last);
     radius = data->operation.data.fillet.radius;
     offset = _adg_is_convex(last_dup, current_dup) ? -radius : radius;
 
@@ -1315,7 +1315,7 @@ _adg_do_fillet(AdgPath *path, AdgPrimitive *current)
 }
 
 static gboolean
-_adg_is_convex(const AdgPrimitive *primitive1, const AdgPrimitive *primitive2)
+_adg_is_convex(const CpmlPrimitive *primitive1, const CpmlPrimitive *primitive2)
 {
     CpmlVector v1, v2;
     gdouble angle1, angle2;

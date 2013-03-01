@@ -31,8 +31,12 @@ G_BEGIN_DECLS
 
 #define         CPML_TYPE_PAIR          (cpml_pair_get_type())
 GType           cpml_pair_get_type      (void) G_GNUC_CONST;
-CpmlPair *      cpml_pair_dup           (const CpmlPair  *pair);
+CpmlPair *      cpml_pair_dup           (const CpmlPair         *pair);
 
+#define         CPML_TYPE_PRIMITIVE     (cpml_primitive_get_type())
+GType           cpml_primitive_get_type (void) G_GNUC_CONST;
+CpmlPrimitive * cpml_primitive_dup      (const CpmlPrimitive    *primitive);
+CpmlPrimitive * cpml_primitive_deep_dup (const CpmlPrimitive    *primitive);
 
 G_END_DECLS
 

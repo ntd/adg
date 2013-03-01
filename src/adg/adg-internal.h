@@ -47,7 +47,6 @@
 #include "adg-enums.h"
 #include "adg-utils.h"
 #include "adg-matrix.h"
-#include "adg-primitive.h"
 #include "adg-segment.h"
 #include "adg-entity.h"
 

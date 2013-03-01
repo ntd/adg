@@ -35,7 +35,6 @@ h_sources=			adg-adim.h \
 				adg-model.h \
 				adg-path.h \
 				adg-point.h \
-				adg-primitive.h \
 				adg-projection.h \
 				adg-rdim.h \
 				adg-ruled-fill.h \
@@ -110,7 +109,6 @@ c_sources=			adg-adim.c \
 				adg-model.c \
 				adg-path.c \
 				adg-point.c \
-				adg-primitive.c \
 				adg-projection.c \
 				adg-rdim.c \
 				adg-ruled-fill.c \

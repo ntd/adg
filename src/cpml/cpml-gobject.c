@@ -35,7 +35,14 @@
 
 
 #include "cpml-internal.h"
+
 #include <glib-object.h>
+#include <string.h>
+
+#include "cpml-extents.h"
+#include "cpml-segment.h"
+#include "cpml-primitive.h"
+
 #include "cpml-gobject.h"
 
 
@@ -67,4 +74,117 @@ cpml_pair_dup(const CpmlPair *pair)
 {
     /* g_memdup() returns NULL if pair is NULL */
     return g_memdup(pair, sizeof(CpmlPair));
+}
+
+
+GType
+cpml_primitive_get_type(void)
+{
+    static GType primitive_type = 0;
+
+    if (G_UNLIKELY(primitive_type == 0))
+        primitive_type = g_boxed_type_register_static("CpmlPrimitive",
+                                                      (GBoxedCopyFunc) cpml_primitive_dup,
+                                                      g_free);
+
+    return primitive_type;
+}
+
+/**
+ * cpml_primitive_dup:
+ * @primitive: an #CpmlPrimitive structure
+ *
+ * Duplicates @primitive. This function makes a shallow duplication of
+ * @primitives, that is the internal pointers of the resulting primitive
+ * struct refer to the same memory as the original @primitive. Check
+ * out cpml_primitive_deep_dup() if it is required also the content
+ * duplication.
+ *
+ * Returns: (transfer full): a shallow duplicate of @primitive: must be
+ *                           freed with g_free() when no longer needed.
+ *
+ * Since: 1.0
+ **/
+CpmlPrimitive *
+cpml_primitive_dup(const CpmlPrimitive *primitive)
+{
+    return g_memdup(primitive, sizeof(CpmlPrimitive));
+}
+
+/**
+ * cpml_primitive_deep_dup:
+ * @primitive: an #CpmlPrimitive structure
+ *
+ * Duplicates @primitive. This function makes a deep duplication of
+ * @primitive, that is it duplicates also the definition data (both
+ * <structfield>org</structfield> and <structfield>data</structfield>).
+ *
+ * Furthermore, the new <structfield>segment</structfield> field will
+ * point to a fake duplicated segment with only its first primitive
+ * set (the first primitive of a segment should be a #CPML_MOVE).
+ * This is needed in order to let a #CPML_CLOSE work as expected.
+ *
+ * All the data is allocated in the same chunk of memory so freeing
+ * the returned pointer releases all the occupied memory.
+ *
+ * Returns: (transfer full): a deep duplicate of @primitive: must be
+ *                           freed with g_free() when no longer needed
+ *
+ * Since: 1.0
+ **/
+CpmlPrimitive *
+cpml_primitive_deep_dup(const CpmlPrimitive *primitive)
+{
+    const CpmlPrimitive *src;
+    CpmlPrimitive *dst;
+    gsize primitive_size, org_size, data_size, segment_size;
+    gchar *ptr;
+
+    src = primitive;
+    primitive_size = sizeof(CpmlPrimitive);
+
+    if (src->org != NULL)
+        org_size = sizeof(cairo_path_data_t);
+    else
+        org_size = 0;
+
+    if (src->data != NULL)
+        data_size = sizeof(cairo_path_data_t) * src->data->header.length;
+    else
+        data_size = 0;
+
+    if (src->segment != NULL && src->segment->data != NULL)
+        segment_size = sizeof(CpmlSegment) +
+            sizeof(cairo_path_data_t) * src->segment->data[0].header.length;
+    else
+        segment_size = 0;
+
+    dst = g_malloc(primitive_size + org_size + data_size + segment_size);
+    ptr = (gchar *) dst + primitive_size;
+
+    if (org_size > 0) {
+        dst->org = memcpy(ptr, src->org, org_size);
+        ptr += org_size;
+    } else {
+        dst->org = NULL;
+    }
+
+    if (data_size > 0) {
+        dst->data = memcpy(ptr, src->data, data_size);
+        ptr += data_size;
+    } else {
+        dst->data = NULL;
+    }
+
+    if (segment_size > 0) {
+        dst->segment = memcpy(ptr, src->segment, sizeof(CpmlSegment));
+        ptr += sizeof(CpmlSegment);
+        dst->segment->data = memcpy(ptr, src->segment->data,
+                                    sizeof(cairo_path_data_t) *
+                                    src->segment->data[0].header.length);
+    } else {
+        dst->segment = NULL;
+    }
+
+    return dst;
 }

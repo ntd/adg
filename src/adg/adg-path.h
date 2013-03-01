@@ -56,9 +56,9 @@ AdgPath *       adg_path_new                    (void);
 
 const CpmlPair *adg_path_get_current_point      (AdgPath        *path);
 gboolean        adg_path_has_current_point      (AdgPath        *path);
-const AdgPrimitive *
+const CpmlPrimitive *
                 adg_path_last_primitive         (AdgPath        *path);
-const AdgPrimitive *
+const CpmlPrimitive *
                 adg_path_over_primitive         (AdgPath        *path);
 
 void            adg_path_append                 (AdgPath        *path,
@@ -71,7 +71,7 @@ void            adg_path_append_array           (AdgPath        *path,
                                                  CpmlPrimitiveType type,
                                                  const CpmlPair**pairs);
 void            adg_path_append_primitive       (AdgPath        *path,
-                                                 const AdgPrimitive
+                                                 const CpmlPrimitive
                                                                 *primitive);
 void            adg_path_append_segment         (AdgPath        *path,
                                                  const AdgSegment *segment);
