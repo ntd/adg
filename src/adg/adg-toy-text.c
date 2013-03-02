@@ -267,7 +267,7 @@ _adg_arrange(AdgEntity *entity)
     if (data->font == NULL) {
         AdgDress dress;
         AdgFontStyle *font_style;
-        AdgMatrix ctm;
+        cairo_matrix_t ctm;
 
         dress = data->font_dress;
         font_style = (AdgFontStyle *) adg_entity_style(entity, dress);

@@ -79,12 +79,13 @@ void            adg_gtk_area_reset              (AdgGtkArea      *area);
 void            adg_gtk_area_canvas_changed     (AdgGtkArea      *area,
                                                  AdgCanvas       *old_canvas);
 void            adg_gtk_area_set_render_map     (AdgGtkArea      *area,
-                                                 const AdgMatrix *map);
+                                                 const cairo_matrix_t *map);
 void            adg_gtk_area_transform_render_map
                                                 (AdgGtkArea      *area,
-                                                 const AdgMatrix *transformation,
+                                                 const cairo_matrix_t *transformation,
                                                  AdgTransformMode mode);
-const AdgMatrix*adg_gtk_area_get_render_map     (AdgGtkArea      *area);
+const cairo_matrix_t*
+                adg_gtk_area_get_render_map     (AdgGtkArea      *area);
 void            adg_gtk_area_extents_changed    (AdgGtkArea      *area,
                                                  const CpmlExtents
                                                                  *old_extents);

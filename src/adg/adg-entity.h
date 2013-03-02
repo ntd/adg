@@ -63,52 +63,56 @@ struct _AdgEntityClass {
 };
 
 
-void             adg_switch_extents             (gboolean         state);
+void            adg_switch_extents              (gboolean         state);
 
-GType            adg_entity_get_type            (void) G_GNUC_CONST;
-void             adg_entity_destroy             (AdgEntity       *entity);
-AdgCanvas *      adg_entity_get_canvas          (AdgEntity       *entity);
-void             adg_entity_set_parent          (AdgEntity       *entity,
+GType           adg_entity_get_type             (void) G_GNUC_CONST;
+void            adg_entity_destroy              (AdgEntity       *entity);
+AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
+void            adg_entity_set_parent           (AdgEntity       *entity,
                                                  AdgEntity       *parent);
-AdgEntity *      adg_entity_get_parent          (AdgEntity       *entity);
-void             adg_entity_set_global_map      (AdgEntity       *entity,
-                                                 const AdgMatrix *map);
-void             adg_entity_transform_global_map(AdgEntity       *entity,
-                                                 const AdgMatrix *transformation,
+AdgEntity *     adg_entity_get_parent           (AdgEntity       *entity);
+void            adg_entity_set_global_map       (AdgEntity       *entity,
+                                                 const cairo_matrix_t *map);
+void            adg_entity_transform_global_map (AdgEntity       *entity,
+                                                 const cairo_matrix_t *transformation,
                                                  AdgTransformMode mode);
-const AdgMatrix *adg_entity_get_global_map      (AdgEntity       *entity);
-const AdgMatrix *adg_entity_get_global_matrix   (AdgEntity       *entity);
-void             adg_entity_set_local_map       (AdgEntity       *entity,
-                                                 const AdgMatrix *map);
-void             adg_entity_transform_local_map (AdgEntity       *entity,
-                                                 const AdgMatrix *transformation,
+const cairo_matrix_t *
+                adg_entity_get_global_map       (AdgEntity       *entity);
+const cairo_matrix_t *
+                adg_entity_get_global_matrix    (AdgEntity       *entity);
+void            adg_entity_set_local_map        (AdgEntity       *entity,
+                                                 const cairo_matrix_t *map);
+void            adg_entity_transform_local_map  (AdgEntity       *entity,
+                                                 const cairo_matrix_t *transformation,
                                                  AdgTransformMode mode);
-const AdgMatrix *adg_entity_get_local_map       (AdgEntity       *entity);
-const AdgMatrix *adg_entity_get_local_matrix    (AdgEntity       *entity);
-void             adg_entity_set_local_method    (AdgEntity       *entity,
+const cairo_matrix_t *
+                adg_entity_get_local_map        (AdgEntity       *entity);
+const cairo_matrix_t *
+                adg_entity_get_local_matrix     (AdgEntity       *entity);
+void            adg_entity_set_local_method     (AdgEntity       *entity,
                                                  AdgMixMethod     local_method);
-AdgMixMethod     adg_entity_get_local_method    (AdgEntity       *entity);
-void             adg_entity_set_extents         (AdgEntity       *entity,
+AdgMixMethod    adg_entity_get_local_method     (AdgEntity       *entity);
+void            adg_entity_set_extents          (AdgEntity       *entity,
                                                  const CpmlExtents *extents);
 const CpmlExtents *
-                 adg_entity_get_extents         (AdgEntity       *entity);
-void             adg_entity_set_style           (AdgEntity       *entity,
+                adg_entity_get_extents          (AdgEntity       *entity);
+void            adg_entity_set_style            (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  AdgStyle        *style);
-AdgStyle *       adg_entity_get_style           (AdgEntity       *entity,
+AdgStyle *      adg_entity_get_style            (AdgEntity       *entity,
                                                  AdgDress         dress);
-AdgStyle *       adg_entity_style               (AdgEntity       *entity,
+AdgStyle *      adg_entity_style                (AdgEntity       *entity,
                                                  AdgDress         dress);
-void             adg_entity_apply_dress         (AdgEntity       *entity,
+void            adg_entity_apply_dress          (AdgEntity       *entity,
                                                  AdgDress         dress,
                                                  cairo_t         *cr);
-void             adg_entity_global_changed      (AdgEntity       *entity);
-void             adg_entity_local_changed       (AdgEntity       *entity);
-void             adg_entity_invalidate          (AdgEntity       *entity);
-void             adg_entity_arrange             (AdgEntity       *entity);
-void             adg_entity_render              (AdgEntity       *entity,
+void            adg_entity_global_changed       (AdgEntity       *entity);
+void            adg_entity_local_changed        (AdgEntity       *entity);
+void            adg_entity_invalidate           (AdgEntity       *entity);
+void            adg_entity_arrange              (AdgEntity       *entity);
+void            adg_entity_render               (AdgEntity       *entity,
                                                  cairo_t         *cr);
-AdgPoint *       adg_entity_point               (AdgEntity       *entity,
+AdgPoint *      adg_entity_point                (AdgEntity       *entity,
                                                  AdgPoint        *point,
                                                  AdgPoint        *new_point);
 

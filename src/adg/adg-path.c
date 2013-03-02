@@ -111,7 +111,8 @@ static void             _adg_get_named_pair     (AdgModel       *model,
                                                  gpointer        user_data);
 static void             _adg_dup_reverse_named_pairs
                                                 (AdgModel       *model,
-                                                 const AdgMatrix*matrix);
+                                                 const cairo_matrix_t
+                                                                *matrix);
 
 
 static void
@@ -873,7 +874,7 @@ void
 adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 {
     AdgModel *model;
-    AdgMatrix matrix;
+    cairo_matrix_t matrix;
     CpmlSegment segment, *dup_segment;
 
     g_return_if_fail(ADG_IS_PATH(path));
@@ -1365,7 +1366,7 @@ _adg_get_named_pair(AdgModel *model, const gchar *name,
 }
 
 static void
-_adg_dup_reverse_named_pairs(AdgModel *model, const AdgMatrix *matrix)
+_adg_dup_reverse_named_pairs(AdgModel *model, const cairo_matrix_t *matrix)
 {
     AdgNamedPair *old_named_pair;
     AdgNamedPair named_pair;

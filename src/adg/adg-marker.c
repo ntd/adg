@@ -661,7 +661,7 @@ _adg_local_changed(AdgEntity *entity)
     AdgMarkerPrivate *data;
     CpmlPair pair;
     CpmlVector vector;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     data = ((AdgMarker *) entity)->data;
     if (data->trail == NULL)

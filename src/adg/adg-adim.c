@@ -812,7 +812,7 @@ _adg_arrange(AdgEntity *entity)
     AdgDim *dim;
     AdgADimPrivate *data;
     AdgAlignment *quote;
-    const AdgMatrix *global, *local;
+    const cairo_matrix_t *global, *local;
     CpmlPair ref1, ref2, base1, base12, base2;
     CpmlPair pair;
     CpmlExtents extents;
@@ -897,7 +897,7 @@ _adg_arrange(AdgEntity *entity)
     if (quote != NULL) {
         AdgEntity *quote_entity;
         gdouble angle;
-        AdgMatrix map;
+        cairo_matrix_t map;
 
         quote_entity = (AdgEntity *) quote;
         angle = adg_dim_quote_angle(dim, (data->angle1 + data->angle2) / 2 + G_PI_2);

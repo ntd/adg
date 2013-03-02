@@ -18,35 +18,29 @@
  */
 
 
-#ifndef __ADG_ENTITY_PRIVATE_H__
-#define __ADG_ENTITY_PRIVATE_H__
+#ifndef __ADG_MATRIX_FALLBACK_H__
+#define __ADG_MATRIX_FALLBACK_H__
 
 
 G_BEGIN_DECLS
 
-typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
-struct _AdgEntityPrivate {
-    AdgEntity           *parent;
-    cairo_matrix_t       global_map;
-    cairo_matrix_t       local_map;
-    AdgMixMethod         local_method;
-    GHashTable          *hash_styles;
+/* Backward compatibility: old cairo releases did not wrap cairo_matrix_t */
 
-    struct {
-        gboolean         is_defined;
-        cairo_matrix_t   matrix;
-    }                    global;
+#ifndef CAIRO_GOBJECT_TYPE_MATRIX
 
-    struct {
-        gboolean         is_defined;
-        cairo_matrix_t   matrix;
-    }                    local;
+#define ADG_MISSING_GBOXED_MATRIX       1
+#define CAIRO_GOBJECT_TYPE_MATRIX       (cairo_gobject_matrix_get_type())
 
-    CpmlExtents          extents;
-};
+GType           cairo_gobject_matrix_get_type
+                                        (void) G_GNUC_CONST;
+cairo_matrix_t *cairo_gobject_cairo_matrix_copy
+                                        (const cairo_matrix_t   *matrix);
+
+#endif /* CAIRO_GOBJECT_TYPE_MATRIX */
+
 
 G_END_DECLS
 
 
-#endif /* __ADG_ENTITY_PRIVATE_H__ */
+#endif /* __ADG_MATRIX_FALLBACK_H__ */

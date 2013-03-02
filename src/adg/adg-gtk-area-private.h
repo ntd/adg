@@ -27,14 +27,14 @@ G_BEGIN_DECLS
 typedef struct _AdgGtkAreaPrivate AdgGtkAreaPrivate;
 
 struct _AdgGtkAreaPrivate {
-    AdgCanvas   *canvas;
-    gdouble      factor;
-    gboolean     autozoom;
-    AdgMatrix    render_map;
+    AdgCanvas       *canvas;
+    gdouble          factor;
+    gboolean         autozoom;
+    cairo_matrix_t   render_map;
 
-    gboolean     initialized;
-    CpmlExtents  extents;
-    gdouble      x_event, y_event;
+    gboolean         initialized;
+    CpmlExtents      extents;
+    gdouble          x_event, y_event;
 };
 
 G_END_DECLS

@@ -84,6 +84,7 @@
 #include "adg-title-block.h"
 #include "adg-canvas.h"
 #include "adg-gtk-utils.h"
+#include "adg-matrix-fallback.h"
 
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
@@ -146,11 +147,11 @@ static gboolean _adg_motion_notify_event    (GtkWidget       *widget,
                                              GdkEventMotion  *event);
 static gboolean _adg_get_map                (GtkWidget       *widget,
                                              gboolean         local_space,
-                                             AdgMatrix       *map,
-                                             AdgMatrix       *inverted);
+                                             cairo_matrix_t  *map,
+                                             cairo_matrix_t  *inverted);
 static void     _adg_set_map                (GtkWidget       *widget,
                                              gboolean         local_space,
-                                             const AdgMatrix *map);
+                                             const cairo_matrix_t *map);
 static void     _adg_canvas_changed         (AdgGtkArea      *area,
                                              AdgCanvas       *old_canvas);
 static const CpmlExtents *
@@ -211,7 +212,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     param = g_param_spec_boxed("render-map",
                                P_("Render Map"),
                                P_("The transformation to be applied on the canvas before rendering it"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RENDER_MAP, param);
 
@@ -456,7 +457,7 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
  * Since: 1.0
  **/
 void
-adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
+adg_gtk_area_set_render_map(AdgGtkArea *area, const cairo_matrix_t *map)
 {
     g_return_if_fail(ADG_GTK_IS_AREA(area));
     g_object_set(area, "render-map", map, NULL);
@@ -473,7 +474,7 @@ adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
  * logically equivalent to the following:
  *
  * |[
- * AdgMatrix map;
+ * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_gtk_area_get_render_map(area));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_gtk_area_set_render_map(area, &map);
@@ -488,11 +489,11 @@ adg_gtk_area_set_render_map(AdgGtkArea *area, const AdgMatrix *map)
  **/
 void
 adg_gtk_area_transform_render_map(AdgGtkArea *area,
-                                  const AdgMatrix *transformation,
+                                  const cairo_matrix_t *transformation,
                                   AdgTransformMode mode)
 {
     AdgGtkAreaPrivate *data;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     g_return_if_fail(ADG_GTK_IS_AREA(area));
     g_return_if_fail(transformation != NULL);
@@ -515,7 +516,7 @@ adg_gtk_area_transform_render_map(AdgGtkArea *area,
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_gtk_area_get_render_map(AdgGtkArea *area)
 {
     AdgGtkAreaPrivate *data;
@@ -888,7 +889,7 @@ static gboolean
 _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
     gboolean zoom_in, zoom_out, local_space, global_space;
-    AdgMatrix map, inverted;
+    cairo_matrix_t map, inverted;
     AdgGtkAreaPrivate *data;
     double factor, x, y;
 
@@ -944,7 +945,7 @@ static gboolean
 _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
     gboolean translating, local_space, global_space;
-    AdgMatrix map, inverted;
+    cairo_matrix_t map, inverted;
     AdgGtkAreaPrivate *data;
     double x, y;
 
@@ -980,7 +981,7 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 
 static gboolean
 _adg_get_map(GtkWidget *widget, gboolean local_space,
-             AdgMatrix *map, AdgMatrix *inverted)
+             cairo_matrix_t *map, cairo_matrix_t *inverted)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;
@@ -1005,7 +1006,9 @@ _adg_get_map(GtkWidget *widget, gboolean local_space,
 }
 
 static void
-_adg_set_map(GtkWidget *widget, gboolean local_space, const AdgMatrix *map)
+_adg_set_map(GtkWidget *widget,
+             gboolean local_space,
+             const cairo_matrix_t *map)
 {
     AdgGtkAreaPrivate *data;
     AdgEntity *entity;

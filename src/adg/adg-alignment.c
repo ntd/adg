@@ -276,7 +276,7 @@ _adg_arrange(AdgEntity *entity)
     AdgAlignmentPrivate *data;
     const CpmlExtents *extents;
     CpmlExtents new_extents;
-    AdgMatrix ctm, ctm_inverted, old_map;
+    cairo_matrix_t ctm, ctm_inverted, old_map;
 
     if (_ADG_OLD_ENTITY_CLASS->arrange == NULL)
         return;

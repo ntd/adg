@@ -377,7 +377,7 @@ _adg_arrange(AdgEntity *entity)
     AdgAlignment *quote;
     AdgEntity *quote_entity;
     gboolean outside;
-    const AdgMatrix *global, *local;
+    const cairo_matrix_t *global, *local;
     CpmlPair ref2, base;
     CpmlPair pair;
     CpmlExtents extents;
@@ -450,7 +450,7 @@ _adg_arrange(AdgEntity *entity)
 
     /* Arrange the quote */
     if (quote != NULL) {
-        AdgMatrix map;
+        cairo_matrix_t map;
 
         adg_alignment_set_factor_explicit(quote, 1, 0);
 

@@ -58,7 +58,7 @@ cairo_font_options_t *
                 adg_font_style_new_options      (AdgFontStyle    *font_style);
 cairo_scaled_font_t *
                 adg_font_style_get_scaled_font  (AdgFontStyle    *font_style,
-                                                 const AdgMatrix *ctm);
+                                                 const cairo_matrix_t *ctm);
 void            adg_font_style_set_color_dress  (AdgFontStyle    *font_style,
                                                  AdgDress         dress);
 AdgDress        adg_font_style_get_color_dress  (AdgFontStyle    *font_style);

@@ -378,7 +378,7 @@ adg_table_cell_set_text_title(AdgTableCell *table_cell, const gchar *title)
     AdgTableStyle *table_style;
     const CpmlPair *padding;
     AdgDress table_dress, font_dress;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     g_return_if_fail(table_cell != NULL);
 
@@ -481,7 +481,7 @@ adg_table_cell_set_text_value(AdgTableCell *table_cell, const gchar *value)
     AdgTableStyle *table_style;
     const CpmlPair *padding;
     AdgDress table_dress, font_dress;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     g_return_if_fail(table_cell != NULL);
 
@@ -794,7 +794,7 @@ adg_table_cell_arrange(AdgTableCell *table_cell, const CpmlExtents *layout)
 {
     CpmlExtents *extents;
     AdgAlignment *alignment;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     /* Set the new extents */
     extents = &table_cell->extents;

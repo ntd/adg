@@ -84,6 +84,7 @@
 #include "adg-style.h"
 #include "adg-model.h"
 #include "adg-point.h"
+#include "adg-matrix-fallback.h"
 
 #include "adg-entity-private.h"
 
@@ -168,14 +169,14 @@ adg_entity_class_init(AdgEntityClass *klass)
     param = g_param_spec_boxed("global-map",
                                P_("Global Map"),
                                P_("The transformation to be combined with the parent ones to get the global matrix"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_GLOBAL_MAP, param);
 
     param = g_param_spec_boxed("local-map",
                                P_("Local Map"),
                                P_("The local transformation that could be used to compute the local matrix in the way specified by the #AdgEntity:local-method property"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
 
@@ -540,7 +541,7 @@ adg_entity_get_parent(AdgEntity *entity)
  * Since: 1.0
  **/
 void
-adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
+adg_entity_set_global_map(AdgEntity *entity, const cairo_matrix_t *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_object_set(entity, "global-map", map, NULL);
@@ -557,7 +558,7 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  * logically equivalent to the following:
  *
  * |[
- * AdgMatrix map;
+ * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_entity_get_global_map(entity));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_global_map(entity, &map);
@@ -567,11 +568,11 @@ adg_entity_set_global_map(AdgEntity *entity, const AdgMatrix *map)
  **/
 void
 adg_entity_transform_global_map(AdgEntity *entity,
-                                const AdgMatrix *transformation,
+                                const cairo_matrix_t *transformation,
                                 AdgTransformMode mode)
 {
     AdgEntityPrivate *data;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
@@ -595,7 +596,7 @@ adg_entity_transform_global_map(AdgEntity *entity,
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_entity_get_global_map(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
@@ -622,7 +623,7 @@ adg_entity_get_global_map(AdgEntity *entity)
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_entity_get_global_matrix(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
@@ -646,7 +647,7 @@ adg_entity_get_global_matrix(AdgEntity *entity)
  * Since: 1.0
  **/
 void
-adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
+adg_entity_set_local_map(AdgEntity *entity, const cairo_matrix_t *map)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_object_set(entity, "local-map", map, NULL);
@@ -663,7 +664,7 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  * logically equivalent to the following:
  *
  * |[
- * AdgMatrix map;
+ * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_entity_get_local_map(entity));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_local_map(entity, &map);
@@ -673,11 +674,11 @@ adg_entity_set_local_map(AdgEntity *entity, const AdgMatrix *map)
  **/
 void
 adg_entity_transform_local_map(AdgEntity *entity,
-                               const AdgMatrix *transformation,
+                               const cairo_matrix_t *transformation,
                                AdgTransformMode mode)
 {
     AdgEntityPrivate *data;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
@@ -700,7 +701,7 @@ adg_entity_transform_local_map(AdgEntity *entity,
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_entity_get_local_map(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
@@ -727,7 +728,7 @@ adg_entity_get_local_map(AdgEntity *entity)
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_entity_get_local_matrix(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
@@ -1184,8 +1185,8 @@ static void
 _adg_global_changed(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
-    const AdgMatrix *map;
-    AdgMatrix *matrix;
+    const cairo_matrix_t *map;
+    cairo_matrix_t *matrix;
 
     data = entity->data;
     map = &data->global_map;
@@ -1203,8 +1204,8 @@ static void
 _adg_local_changed(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
-    const AdgMatrix *map;
-    AdgMatrix *matrix;
+    const cairo_matrix_t *map;
+    cairo_matrix_t *matrix;
 
     data = entity->data;
     map = &data->local_map;

@@ -90,7 +90,7 @@ static GSList *         _adg_get_vertices       (CpmlSegment    *segment,
 static GSList *         _adg_optimize_vertices  (GSList         *vertices);
 static GArray *         _adg_path_build         (const GSList   *vertices);
 static void             _adg_path_transform     (GArray         *path_data,
-                                                 const AdgMatrix*map);
+                                                 const cairo_matrix_t*map);
 
 
 static void
@@ -430,7 +430,7 @@ _adg_get_cpml_path(AdgTrail *trail)
     gdouble threshold;
     CpmlSegment segment;
     GSList *vertices;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     edges = (AdgEdges *) trail;
     data = edges->data;
@@ -628,7 +628,7 @@ _adg_path_build(const GSList *vertices)
 }
 
 static void
-_adg_path_transform(GArray *path_data, const AdgMatrix *map)
+_adg_path_transform(GArray *path_data, const cairo_matrix_t *map)
 {
     guint n;
     cairo_path_data_t *data;

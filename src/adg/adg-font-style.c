@@ -345,11 +345,12 @@ adg_font_style_new_options(AdgFontStyle *font_style)
  * Since: 1.0
  **/
 cairo_scaled_font_t *
-adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
+adg_font_style_get_scaled_font(AdgFontStyle *font_style,
+                               const cairo_matrix_t *ctm)
 {
     AdgFontStylePrivate *data;
     cairo_font_options_t *options;
-    AdgMatrix matrix;
+    cairo_matrix_t matrix;
 
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
     g_return_val_if_fail(ctm != NULL, NULL);
@@ -358,7 +359,7 @@ adg_font_style_get_scaled_font(AdgFontStyle *font_style, const AdgMatrix *ctm)
 
     /* Check for cached font */
     if (data->font != NULL) {
-        AdgMatrix font_ctm;
+        cairo_matrix_t font_ctm;
 
         cairo_scaled_font_get_ctm(data->font, &font_ctm);
 
@@ -778,7 +779,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
     AdgFontStyle *font_style;
     AdgFontStylePrivate *data;
-    AdgMatrix ctm;
+    cairo_matrix_t ctm;
     cairo_scaled_font_t *font;
 
     font_style = (AdgFontStyle *) style;

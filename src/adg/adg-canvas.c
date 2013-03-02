@@ -631,7 +631,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     AdgCanvasPrivate *data;
     gchar **p_scale;
     AdgEntity *entity;
-    AdgMatrix map;
+    cairo_matrix_t map;
     const CpmlExtents *extents;
     AdgTitleBlock *title_block;
     CpmlPair delta;
@@ -674,7 +674,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
         delta.x = data->size.x - extents->size.x;
         delta.y = data->size.y - extents->size.y;
         if (delta.x >= 0 && delta.y >= 0) {
-            AdgMatrix transform;
+            cairo_matrix_t transform;
             cairo_matrix_init_translate(&transform,
                                         delta.x / 2 - extents->org.x,
                                         delta.y / 2 - extents->org.y);
@@ -1282,7 +1282,7 @@ _adg_arrange(AdgEntity *entity)
     data = ((AdgCanvas *) entity)->data;
 
     if (data->size.x > 0 || data->size.y > 0) {
-        const AdgMatrix *global = adg_entity_get_global_matrix(entity);
+        const cairo_matrix_t *global = adg_entity_get_global_matrix(entity);
         CpmlExtents paper;
 
         paper.org.x = 0;
@@ -1332,7 +1332,7 @@ _adg_arrange(AdgEntity *entity)
         /* The following block could be optimized by skipping tiny shift,
          * usually left by rounding errors */
         if (shift.x != 0 || shift.y != 0) {
-            AdgMatrix unglobal, map;
+            cairo_matrix_t unglobal, map;
             adg_matrix_copy(&unglobal, adg_entity_get_global_matrix(entity));
             cairo_matrix_invert(&unglobal);
 

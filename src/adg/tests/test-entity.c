@@ -68,10 +68,10 @@ static void
 _adg_test_global_map(void)
 {
     AdgEntity *entity;
-    const AdgMatrix *identity_map;
-    AdgMatrix null_map, dummy_map;
-    const AdgMatrix *global_map;
-    AdgMatrix *global_map_dup;
+    const cairo_matrix_t *identity_map;
+    cairo_matrix_t null_map, dummy_map;
+    const cairo_matrix_t *global_map;
+    cairo_matrix_t *global_map_dup;
 
     entity = ADG_ENTITY(adg_logo_new());
     identity_map = adg_matrix_identity();
@@ -126,10 +126,10 @@ static void
 _adg_test_local_map(void)
 {
     AdgEntity *entity;
-    const AdgMatrix *identity_map;
-    AdgMatrix null_map, dummy_map;
-    const AdgMatrix *local_map;
-    AdgMatrix *local_map_dup;
+    const cairo_matrix_t *identity_map;
+    cairo_matrix_t null_map, dummy_map;
+    const cairo_matrix_t *local_map;
+    cairo_matrix_t *local_map_dup;
 
     entity = ADG_ENTITY(adg_logo_new());
     identity_map = adg_matrix_identity();

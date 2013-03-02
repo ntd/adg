@@ -70,6 +70,7 @@ private_h_sources=		adg-adim-private.h \
 				adg-line-style-private.h \
 				adg-logo-private.h \
 				adg-marker-private.h \
+				adg-matrix-fallback.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-projection-private.h \

@@ -554,7 +554,7 @@ _adg_value_changed(AdgGtkLayout *layout)
     AdgGtkArea *area;
     AdgGtkLayoutPrivate *data;
     CpmlPair org;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     widget = (GtkWidget *) layout;
 

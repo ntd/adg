@@ -394,7 +394,7 @@ _adg_refresh_extents(AdgText *text)
 {
     AdgTextPrivate *data;
     AdgEntity *entity;
-    AdgMatrix ctm;
+    cairo_matrix_t ctm;
     CpmlExtents new_extents;
 
     data = text->data;

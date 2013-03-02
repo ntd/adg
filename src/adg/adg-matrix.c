@@ -20,20 +20,13 @@
 
 /**
  * SECTION:adg-matrix
- * @Section_Id:AdgMatrix
- * @title: AdgMatrix
- * @short_description: A wrapper for #cairo_matrix_t
+ * @Section_Id:Matrix
+ * @title: Matrix
+ * @short_description: #cairo_matrix_t enhancements and utilities.
  *
- * AdgMatrix is a wrapper in #GType syntax of the #cairo_matrix_t struct.
- *
- * Since: 1.0
- **/
-
-/**
- * AdgMatrix:
- *
- * Another name for #cairo_matrix_t: check its documentation for the
- * fields description and visibility details.
+ * This API provides a #GBoxed wrapper around #cairo_matrix_t
+ * (if not yet provided by cairo-gobject) * and augments its methods
+ * with some useful addition.
  *
  * Since: 1.0
  **/
@@ -43,35 +36,47 @@
 #include <string.h>
 #include <math.h>
 
+#include "adg-matrix-fallback.h"
+
+
+#ifdef ADG_MISSING_GBOXED_MATRIX
 
 GType
-adg_matrix_get_type(void)
+cairo_gobject_matrix_get_type(void)
 {
     static GType matrix_type = 0;
 
     if (G_UNLIKELY(matrix_type == 0))
-        matrix_type = g_boxed_type_register_static("AdgMatrix",
-                                                   (GBoxedCopyFunc) adg_matrix_dup,
+        matrix_type = g_boxed_type_register_static("CairoMatrix",
+                                                   (GBoxedCopyFunc) cairo_gobject_cairo_matrix_copy,
                                                    g_free);
 
     return matrix_type;
 }
 
+cairo_matrix_t *
+cairo_gobject_cairo_matrix_copy(const cairo_matrix_t *matrix)
+{
+    return g_memdup(matrix, sizeof(cairo_matrix_t));
+}
+
+#endif /* ADG_MISSING_GBOXED_MATRIX */
+
 
 /**
  * adg_matrix_new:
  *
- * Creates a new empty #AdgMatrix. The returned pointer
+ * Creates a new empty #cairo_matrix_t. The returned pointer
  * should be freed with g_free() when no longer needed.
  *
- * Returns: (transfer full): a newly created #AdgMatrix
+ * Returns: (transfer full): a newly created #cairo_matrix_t
  *
  * Since: 1.0
  **/
-AdgMatrix *
+cairo_matrix_t *
 adg_matrix_new(void)
 {
-    return g_new0(AdgMatrix, 1);
+    return g_new0(cairo_matrix_t, 1);
 }
 
 /**
@@ -83,13 +88,13 @@ adg_matrix_new(void)
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_matrix_identity(void)
 {
-    static AdgMatrix *identity_matrix = NULL;
+    static cairo_matrix_t *identity_matrix = NULL;
 
     if (G_UNLIKELY(identity_matrix == NULL)) {
-        identity_matrix = g_new(AdgMatrix, 1);
+        identity_matrix = g_new(cairo_matrix_t, 1);
         cairo_matrix_init_identity(identity_matrix);
     }
 
@@ -106,38 +111,38 @@ adg_matrix_identity(void)
  *
  * Since: 1.0
  **/
-const AdgMatrix *
+const cairo_matrix_t *
 adg_matrix_null(void)
 {
-    static AdgMatrix *null_matrix = NULL;
+    static cairo_matrix_t *null_matrix = NULL;
 
     if (G_UNLIKELY(null_matrix == NULL))
-        null_matrix = g_new0(AdgMatrix, 1);
+        null_matrix = g_new0(cairo_matrix_t, 1);
 
     return null_matrix;
 }
 
 /**
  * adg_matrix_copy:
- * @matrix: (out caller-allocates): the destination #AdgMatrix
- * @src:                            the source #AdgMatrix
+ * @matrix: (out caller-allocates): the destination #cairo_matrix_t
+ * @src:                            the source #cairo_matrix_t
  *
  * Copies @src to @matrix.
  *
  * Since: 1.0
  **/
 void
-adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
+adg_matrix_copy(cairo_matrix_t *matrix, const cairo_matrix_t *src)
 {
     g_return_if_fail(matrix != NULL);
     g_return_if_fail(src != NULL);
 
-    memcpy(matrix, src, sizeof(AdgMatrix));
+    memcpy(matrix, src, sizeof(cairo_matrix_t));
 }
 
 /**
  * adg_matrix_dup:
- * @matrix: the souce #AdgMatrix
+ * @matrix: the souce #cairo_matrix_t
  *
  * Duplicates @matrix.
  *
@@ -145,12 +150,12 @@ adg_matrix_copy(AdgMatrix *matrix, const AdgMatrix *src)
  *
  * Since: 1.0
  **/
-AdgMatrix *
-adg_matrix_dup(const AdgMatrix *matrix)
+cairo_matrix_t *
+adg_matrix_dup(const cairo_matrix_t *matrix)
 {
     g_return_val_if_fail(matrix != NULL, NULL);
 
-    return g_memdup(matrix, sizeof(AdgMatrix));
+    return g_memdup(matrix, sizeof(cairo_matrix_t));
 }
 
 /**
@@ -165,7 +170,7 @@ adg_matrix_dup(const AdgMatrix *matrix)
  * Since: 1.0
  **/
 gboolean
-adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
+adg_matrix_equal(const cairo_matrix_t *matrix1, const cairo_matrix_t *matrix2)
 {
     g_return_val_if_fail(matrix1 != NULL, FALSE);
     g_return_val_if_fail(matrix2 != NULL, FALSE);
@@ -181,7 +186,7 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
 
 /**
  * adg_matrix_normalize:
- * @matrix: (inout): the source/destination #AdgMatrix
+ * @matrix: (inout): the source/destination #cairo_matrix_t
  *
  * Gets rid of the scaling component of a matrix.
  *
@@ -190,7 +195,7 @@ adg_matrix_equal(const AdgMatrix *matrix1, const AdgMatrix *matrix2)
  * Since: 1.0
  **/
 gboolean
-adg_matrix_normalize(AdgMatrix *matrix)
+adg_matrix_normalize(cairo_matrix_t *matrix)
 {
     gdouble k;
 
@@ -222,7 +227,7 @@ adg_matrix_normalize(AdgMatrix *matrix)
 
 /**
  * adg_matrix_transform:
- * @matrix:         (inout): the source/destination #AdgMatrix
+ * @matrix:         (inout): the source/destination #cairo_matrix_t
  * @transformation:          the transformation to apply
  * @mode:           (in):    how @transformation should be applied
  *
@@ -232,10 +237,10 @@ adg_matrix_normalize(AdgMatrix *matrix)
  * Since: 1.0
  **/
 void
-adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
-                     AdgTransformMode mode)
+adg_matrix_transform(cairo_matrix_t *matrix,
+                     const cairo_matrix_t *transformation, AdgTransformMode mode)
 {
-    AdgMatrix normalized;
+    cairo_matrix_t normalized;
 
     g_return_if_fail(matrix != NULL);
     g_return_if_fail(transformation != NULL);
@@ -266,14 +271,14 @@ adg_matrix_transform(AdgMatrix *matrix, const AdgMatrix *transformation,
 
 /**
  * adg_matrix_dump:
- * @matrix: an #AdgMatrix
+ * @matrix: an #cairo_matrix_t
  *
  * Dumps the specified @matrix to stdout. Useful for debugging purposes.
  *
  * Since: 1.0
  **/
 void
-adg_matrix_dump(const AdgMatrix *matrix)
+adg_matrix_dump(const cairo_matrix_t *matrix)
 {
     g_return_if_fail(matrix != NULL);
 

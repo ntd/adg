@@ -29,29 +29,21 @@
 
 G_BEGIN_DECLS
 
-#define _AdgMatrix	    _cairo_matrix
-#define ADG_TYPE_MATRIX     (adg_matrix_get_type())
-
-
-typedef struct _AdgMatrix AdgMatrix;
-
-
-GType            adg_matrix_get_type            (void) G_GNUC_CONST;
-
-AdgMatrix *      adg_matrix_new                 (void);
-const AdgMatrix *adg_matrix_identity            (void) G_GNUC_CONST;
-const AdgMatrix *adg_matrix_null                (void) G_GNUC_CONST;
-
-void             adg_matrix_copy                (AdgMatrix       *matrix,
-                                                 const AdgMatrix *src);
-AdgMatrix *      adg_matrix_dup                 (const AdgMatrix *matrix);
-gboolean         adg_matrix_equal               (const AdgMatrix *matrix1,
-                                                 const AdgMatrix *matrix2);
-gboolean         adg_matrix_normalize           (AdgMatrix       *matrix);
-void             adg_matrix_transform           (AdgMatrix       *matrix,
-                                                 const AdgMatrix *transformation,
-                                                 AdgTransformMode mode);
-void             adg_matrix_dump                (const AdgMatrix *matrix);
+cairo_matrix_t *adg_matrix_new          (void);
+const cairo_matrix_t *
+                adg_matrix_identity     (void) G_GNUC_CONST;
+const cairo_matrix_t *
+                adg_matrix_null         (void) G_GNUC_CONST;
+void            adg_matrix_copy         (cairo_matrix_t         *matrix,
+                                         const cairo_matrix_t   *src);
+cairo_matrix_t *adg_matrix_dup          (const cairo_matrix_t   *matrix);
+gboolean        adg_matrix_equal        (const cairo_matrix_t   *matrix1,
+                                         const cairo_matrix_t   *matrix2);
+gboolean        adg_matrix_normalize    (cairo_matrix_t         *matrix);
+void            adg_matrix_transform    (cairo_matrix_t         *matrix,
+                                         const cairo_matrix_t   *transformation,
+                                         AdgTransformMode        mode);
+void            adg_matrix_dump         (const cairo_matrix_t   *matrix);
 
 G_END_DECLS
 

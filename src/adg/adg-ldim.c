@@ -560,7 +560,7 @@ _adg_arrange(AdgEntity *entity)
     AdgAlignment *quote;
     AdgDimStyle *dim_style;
     gboolean outside, detach;
-    const AdgMatrix *local;
+    const cairo_matrix_t *local;
     CpmlPair ref1, ref2, pos, base1, base2;
     CpmlPair pair;
 
@@ -859,7 +859,7 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
     AdgDim *dim;
     AdgThreeState outside, detached;
     AdgLDimPrivate *data;
-    const AdgMatrix *local, *global;
+    const cairo_matrix_t *local, *global;
     gdouble local_factor, global_factor;
     gdouble available_space, markers_space, quote_space;
 
@@ -931,7 +931,7 @@ _adg_update_quote(AdgLDim *ldim, CpmlPair *base1, CpmlPair *base2, CpmlPair *pos
     AdgEntity *quote_entity;
     CpmlPair middle, factor, org;
     CpmlVector dir;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     quote_entity = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     if (quote_entity == NULL)

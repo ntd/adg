@@ -1193,7 +1193,7 @@ _adg_arrange(AdgEntity *entity)
     AdgEntity *min_entity;
     AdgEntity *max_entity;
     const CpmlPair *shift;
-    AdgMatrix map;
+    cairo_matrix_t map;
 
     dim = (AdgDim *) entity;
     data = dim->data;

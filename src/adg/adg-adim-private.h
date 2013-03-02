@@ -68,7 +68,7 @@ struct _AdgADimPrivate {
     }                    shift;
 
     struct {
-        AdgMatrix        global_map;
+        cairo_matrix_t   global_map;
     }                    quote;
 
     struct {

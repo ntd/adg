@@ -156,10 +156,10 @@ static void
 _adg_test_render_map(void)
 {
     AdgGtkArea *area;
-    const AdgMatrix *identity_map;
-    AdgMatrix null_map, dummy_map;
-    const AdgMatrix *render_map;
-    AdgMatrix *render_map_dup;
+    const cairo_matrix_t *identity_map;
+    cairo_matrix_t null_map, dummy_map;
+    const cairo_matrix_t *render_map;
+    cairo_matrix_t *render_map_dup;
 
     area = ADG_GTK_AREA(adg_gtk_area_new());
     identity_map = adg_matrix_identity();

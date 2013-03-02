@@ -41,6 +41,7 @@ IGNORE_HFILES=		adg.h \
 			adg-logo-private.h \
 			adg-marker-private.h \
 			adg-marshal.h \
+			adg-matrix-fallback.h \
 			adg-model-private.h \
 			adg-pango-style-private.h \
 			adg-path-private.h \

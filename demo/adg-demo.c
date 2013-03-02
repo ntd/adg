@@ -870,7 +870,7 @@ _adg_print_page(GtkPrintOperation *operation, GtkPrintContext *context,
                 gint page_nr, AdgEntity *canvas)
 {
     cairo_t *cr = gtk_print_context_get_cairo_context(context);
-    AdgMatrix old_map;
+    cairo_matrix_t old_map;
 
     adg_matrix_copy(&old_map, adg_entity_get_global_map(canvas));;
 
