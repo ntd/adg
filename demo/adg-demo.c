@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007,2008,2009,2010,2011,2012,2013  Nicola Fontana <ntd at entidi.it>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -821,7 +821,7 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
 #include <cairo-ps.h>
         surface = cairo_ps_surface_create(file, 841, 595);
         cairo_ps_surface_dsc_comment(surface, "%%Title: " PACKAGE_STRING);
-        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyleft (C) 2006-2010 Fontana Nicola");
+        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyleft (C) 2006-2013 Fontana Nicola");
         cairo_ps_surface_dsc_comment(surface, "%%Orientation: Landscape");
         cairo_ps_surface_dsc_begin_setup(surface);
         cairo_ps_surface_dsc_begin_page_setup(surface);
