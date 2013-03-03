@@ -99,10 +99,9 @@ installer is supported upstream and it is based on the ArchLinux
 <para>The ADG build system is based on GNU autotools, the de-facto
 standard for handling free software projects. The following
 step-by-step instructions are included only for reference: you are
-free to install ADG in the way you prefer. Just remember to put
-the proper package version in the commands instead of the <code>0.6.0</code>
-placeholder version if copying and pasting from below.
-</para>
+free to install ADG in the way you prefer. Just remember if you
+are copying and pasting to put the proper package version instead
+of the <code>0.6.0</code> placeholder used in the examples.</para>
 
 <orderedlist>
    <listitem>Download the ADG tarball and put it somewhere into your file
