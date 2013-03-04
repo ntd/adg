@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-01 17:51+0100\n"
+"POT-Creation-Date: 2013-03-04 15:35+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:198
+#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:199
 msgid "Factor"
 msgstr "Fattore"
 
@@ -72,11 +72,11 @@ msgstr ""
 "posizionato: per esempio, usando (0.5, 0.5) l'origine si troverà al centro "
 "dell'esetensione"
 
-#: src/adg/adg-arrow.c:96
+#: src/adg/adg-arrow.c:102
 msgid "Arrow Angle"
 msgstr "Angolo Freccia"
 
-#: src/adg/adg-arrow.c:97
+#: src/adg/adg-arrow.c:103
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
@@ -159,7 +159,7 @@ msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:216 src/adg/adg-table.c:148
+#: src/adg/adg-canvas.c:216 src/adg/adg-table.c:154
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
@@ -561,21 +561,21 @@ msgstr ""
 "L'angolo che definisce quando considerare uno spigolo (se l'angolo dello "
 "spigolo è maggiore di questo valore) e quando ignorarlo"
 
-#: src/adg/adg-entity.c:162
+#: src/adg/adg-entity.c:163
 msgid "Parent Entity"
 msgstr "Entità Genitore"
 
-#: src/adg/adg-entity.c:163
+#: src/adg/adg-entity.c:164
 msgid "The parent entity of this entity or NULL if this is a top-level entity"
 msgstr ""
 "L'entità che contiene questa entità o NULL se l'entità corrente è una top-"
 "level"
 
-#: src/adg/adg-entity.c:169
+#: src/adg/adg-entity.c:170
 msgid "Global Map"
 msgstr "Trasformazione Globale"
 
-#: src/adg/adg-entity.c:170
+#: src/adg/adg-entity.c:171
 msgid ""
 "The transformation to be combined with the parent ones to get the global "
 "matrix"
@@ -583,23 +583,24 @@ msgstr ""
 "La trasformazione da combinare insieme a quelle dei progenitori per ottenere "
 "la matrice globale"
 
-#: src/adg/adg-entity.c:176
+#: src/adg/adg-entity.c:177
 msgid "Local Map"
 msgstr "Trasformazione Locale"
 
-#: src/adg/adg-entity.c:177
+#: src/adg/adg-entity.c:178
+#, fuzzy
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
-"the way specified by the #AdgEntity:local-method property"
+"the way specified by the #AdgEntity:local-mix property"
 msgstr ""
 "La trasformazione locale che può venir usata per calcolare la matrice locale "
 "nella modalità specificata dalla proprietà #AdgEntity:local-method"
 
-#: src/adg/adg-entity.c:183
+#: src/adg/adg-entity.c:184
 msgid "Local Mix Method"
 msgstr "Metodo di Combinazione Locale"
 
-#: src/adg/adg-entity.c:184
+#: src/adg/adg-entity.c:185
 msgid ""
 "Define how the local maps of the entity and its ancestors should be combined "
 "to get the local matrix"
@@ -696,26 +697,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:191
+#: src/adg/adg-gtk-area.c:192
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:192
+#: src/adg/adg-gtk-area.c:193
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:199
+#: src/adg/adg-gtk-area.c:200
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:205
+#: src/adg/adg-gtk-area.c:206
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:206
+#: src/adg/adg-gtk-area.c:207
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -723,11 +724,11 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:212
+#: src/adg/adg-gtk-area.c:213
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:213
+#: src/adg/adg-gtk-area.c:214
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
@@ -919,7 +920,7 @@ msgstr "Angolo"
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:105 src/adg/adg-table.c:142
+#: src/adg/adg-stroke.c:105 src/adg/adg-table.c:148
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
@@ -927,11 +928,11 @@ msgstr "Il vestito da usare per tracciare questa entità"
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
-#: src/adg/adg-table.c:141
+#: src/adg/adg-table.c:147
 msgid "Table Dress"
 msgstr "Vestito Tabella"
 
-#: src/adg/adg-table.c:149
+#: src/adg/adg-table.c:155
 msgid ""
 "If enabled, a frame using the proper dress found in this table style will be "
 "drawn around the table extents"
