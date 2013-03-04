@@ -111,7 +111,7 @@ adg_projection_class_init(AdgProjectionClass *klass)
                               P_("Projection Scheme"),
                               P_("The projection scheme to be represented"),
                               ADG_TYPE_PROJECTION_SCHEME,
-                              ADG_PROJECTION_UNDEFINED,
+                              ADG_PROJECTION_SCHEME_UNDEFINED,
                               G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SCHEME, param);
 
@@ -122,7 +122,7 @@ adg_projection_class_init(AdgProjectionClass *klass)
      * allows to specify a custom class finalization method */
     data_class = g_new(AdgProjectionClassPrivate, 1);
 
-    data_class->scheme = ADG_PROJECTION_UNDEFINED;
+    data_class->scheme = ADG_PROJECTION_SCHEME_UNDEFINED;
     data_class->symbol = NULL;
     data_class->axis = NULL;
     data_class->extents.is_defined = FALSE;
@@ -138,7 +138,7 @@ adg_projection_init(AdgProjection *projection)
 
     data->symbol_dress = ADG_DRESS_LINE;
     data->axis_dress = ADG_DRESS_LINE;
-    data->scheme = ADG_PROJECTION_UNDEFINED;
+    data->scheme = ADG_PROJECTION_SCHEME_UNDEFINED;
 
     projection->data = data;
 }
@@ -200,7 +200,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * Creates a new projection entity representing the selected @scheme.
  * If @scheme is invalid, a projection symbol without a scheme is
  * returned, that is #AdgProjection:scheme is set to
- * #ADG_PROJECTION_UNDEFINED, and a warning is raised.
+ * #ADG_PROJECTION_SCHEME_UNDEFINED, and a warning is raised.
  *
  * Returns: (transfer full): the newly created projection entity.
  *
@@ -331,12 +331,12 @@ adg_projection_set_scheme(AdgProjection *projection,
  * Since: 1.0
  **/
 AdgProjectionScheme
-adg_projection_get_scheme(AdgProjection  *projection)
+adg_projection_get_scheme(AdgProjection *projection)
 {
     AdgProjectionPrivate *data;
 
     g_return_val_if_fail(ADG_IS_PROJECTION(projection),
-                         ADG_PROJECTION_UNDEFINED);
+                         ADG_PROJECTION_SCHEME_UNDEFINED);
 
     data = projection->data;
 
@@ -385,11 +385,11 @@ _adg_arrange_class(AdgProjectionClass *projection_class,
     data_class->scheme = scheme;
 
     switch(scheme) {
-    case ADG_PROJECTION_UNDEFINED:
+    case ADG_PROJECTION_SCHEME_UNDEFINED:
         symbol = NULL;
         axis = NULL;
         break;
-    case ADG_PROJECTION_FIRST_ANGLE:
+    case ADG_PROJECTION_SCHEME_FIRST_ANGLE:
         symbol = adg_path_new();
         adg_path_move_to_explicit(symbol, 4, 19);
         adg_path_line_to_explicit(symbol, 24, 24);
@@ -407,7 +407,7 @@ _adg_arrange_class(AdgProjectionClass *projection_class,
         adg_path_move_to_explicit(axis, 39, 0);
         adg_path_line_to_explicit(axis, 39, 28);
         break;
-    case ADG_PROJECTION_THIRD_ANGLE:
+    case ADG_PROJECTION_SCHEME_THIRD_ANGLE:
         symbol = adg_path_new();
         adg_path_move_to_explicit(symbol, 29, 19);
         adg_path_line_to_explicit(symbol, 49, 24);
