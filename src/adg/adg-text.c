@@ -28,6 +28,11 @@
  *
  * The text entity is not subject to the local matrix, only its origin is.
  *
+ * <note><para>
+ * By default, the #AdgText:local-mix property is set to
+ * #ADG_MIX_ANCESTORS_NORMALIZED on #AdgText entities.
+ * </para></note>
+ *
  * Since: 1.0
  **/
 
@@ -50,6 +55,7 @@
 #include "adg-font-style.h"
 #include "adg-pango-style.h"
 #include "adg-textual.h"
+#include "adg-entity-private.h"
 
 #include "adg-text.h"
 #include "adg-text-private.h"
@@ -139,12 +145,18 @@ adg_text_init(AdgText *text)
 {
     AdgTextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(text, ADG_TYPE_TEXT,
                                                        AdgTextPrivate);
+    AdgEntityPrivate *entity_data = ((AdgEntity *) text)->data;
 
     data->font_dress = ADG_DRESS_FONT_TEXT;
     data->text = NULL;
     data->layout = NULL;
 
     text->data = data;
+
+    /* Initialize to custom default some AdgEntity field by directly
+     * accessing the private struct to avoid notify signal emissions
+     */
+    entity_data->local_mix = ADG_MIX_ANCESTORS_NORMALIZED;
 }
 
 static void
@@ -224,8 +236,6 @@ _adg_set_property(GObject *object, guint prop_id,
  * @text: the text
  *
  * Creates a new text entity using @text as its content.
- * The #AdgEntity:local-mix property is set by default to
- * #ADG_LOCAL_NORMALIZED.
  *
  * Returns: the newly created text entity
  *
@@ -235,7 +245,6 @@ AdgText *
 adg_text_new(const gchar *text)
 {
     return g_object_new(ADG_TYPE_TEXT,
-                        "local-mix", ADG_MIX_ANCESTORS_NORMALIZED,
                         "text", text, NULL);
 }
 
