@@ -22,6 +22,31 @@
 
 
 static void
+_adg_test_local_mix(void)
+{
+    AdgToyText *toy_text;
+    AdgEntity *entity;
+
+    /* Check default local mix method */
+    toy_text = adg_text_new("");
+    entity = (AdgEntity *) toy_text;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS_NORMALIZED);
+    adg_entity_destroy(entity);
+
+    /* Check local mix method overriding */
+    toy_text = g_object_new(ADG_TYPE_TEXT, "local-mix", ADG_MIX_DISABLED, NULL);
+    entity = (AdgEntity *) toy_text;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+
+    /* Check default mix using GObject methods */
+    toy_text = g_object_new(ADG_TYPE_TEXT, NULL);
+    entity = (AdgEntity *) toy_text;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS_NORMALIZED);
+    adg_entity_destroy(entity);
+}
+
+static void
 _adg_test_font_dress(void)
 {
     AdgToyText *toy_text;
@@ -117,6 +142,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_func("/adg/toy-text/local-mix", _adg_test_font_dress);
     adg_test_add_func("/adg/toy-text/font-dress", _adg_test_font_dress);
     adg_test_add_func("/adg/toy-text/text", _adg_test_text);
 
