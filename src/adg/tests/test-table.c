@@ -22,6 +22,31 @@
 
 
 static void
+_adg_test_local_mix(void)
+{
+    AdgTable *table;
+    AdgEntity *entity;
+
+    /* Check default local mix method */
+    table = adg_table_new();
+    entity = (AdgEntity *) table;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+
+    /* Check local mix method overriding */
+    table = g_object_new(ADG_TYPE_TABLE, "local-mix", ADG_MIX_ANCESTORS_NORMALIZED, NULL);
+    entity = (AdgEntity *) table;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS_NORMALIZED);
+    adg_entity_destroy(entity);
+
+    /* Check default mix using GObject methods */
+    table = g_object_new(ADG_TYPE_TABLE, NULL);
+    entity = (AdgEntity *) table;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+}
+
+static void
 _adg_test_table_dress(void)
 {
     AdgTable *table;
@@ -98,6 +123,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_func("/adg/table/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/table/table-dress", _adg_test_table_dress);
     adg_test_add_func("/adg/table/has-frame", _adg_test_has_frame);
 

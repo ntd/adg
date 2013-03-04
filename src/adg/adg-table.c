@@ -28,6 +28,11 @@
  * To define a table, you should add to it a serie of one or more
  * #AdgTableRow by using the #AdgTableRow specific APIs.
  *
+ * <note><para>
+ * By default, the #AdgText:local-mix property is set to
+ * #ADG_MIX_DISABLED on #AdgTable entities.
+ * </para></note>
+ *
  * Since: 1.0
  **/
 
@@ -53,6 +58,7 @@
 #include "adg-stroke.h"
 #include "adg-container.h"
 #include "adg-alignment.h"
+#include "adg-entity-private.h"
 
 #include "adg-table.h"
 #include "adg-table-private.h"
@@ -158,6 +164,7 @@ adg_table_init(AdgTable *table)
     AdgTablePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(table,
                                                         ADG_TYPE_TABLE,
                                                         AdgTablePrivate);
+    AdgEntityPrivate *entity_data = ((AdgEntity *) table)->data;
 
     data->table_dress = ADG_DRESS_TABLE;
     data->has_frame = TRUE;
@@ -169,6 +176,11 @@ adg_table_init(AdgTable *table)
     data->cell_names = NULL;
 
     table->data = data;
+
+    /* Initialize to custom default some AdgEntity field by directly
+     * accessing the private struct to avoid notify signal emissions
+     */
+    entity_data->local_mix = ADG_MIX_DISABLED;
 }
 
 static void
@@ -257,9 +269,7 @@ _adg_set_property(GObject *object, guint prop_id,
 /**
  * adg_table_new:
  *
- * Creates a new empty table entity. The #AdgEntity:local-mix
- * property is set by default to #ADG_MIX_DISABLED, that is the
- * table is not subject to any local transformations.
+ * Creates a new empty table entity.
  *
  * Returns: the newly created table entity
  *
@@ -268,9 +278,7 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgTable *
 adg_table_new(void)
 {
-    return g_object_new(ADG_TYPE_TABLE,
-                        "local-mix", ADG_MIX_DISABLED,
-                        NULL);
+    return g_object_new(ADG_TYPE_TABLE, NULL);
 }
 
 /**
