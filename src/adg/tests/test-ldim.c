@@ -59,6 +59,25 @@ _adg_test_direction(void)
     g_assert_cmpfloat(direction, !=, invalid_value);
 
     adg_entity_destroy(ADG_ENTITY(ldim));
+
+    /* Checking constructors */
+    ldim = adg_ldim_new();
+    direction = adg_ldim_get_direction(ldim);
+    g_assert_cmpfloat(direction, ==, ADG_DIR_RIGHT);
+    adg_entity_destroy(ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full(NULL, NULL, NULL, 2);
+    direction = adg_ldim_get_direction(ldim);
+    g_assert_cmpfloat(direction, ==, 2);
+    adg_entity_destroy(ADG_ENTITY(ldim));
+
+    ldim = adg_ldim_new_full_explicit(0, 1,
+                                      2, 3,
+                                      4, 5,
+                                      3);
+    direction = adg_ldim_get_direction(ldim);
+    g_assert_cmpfloat(direction, ==, 3);
+    adg_entity_destroy(ADG_ENTITY(ldim));
 }
 
 static void

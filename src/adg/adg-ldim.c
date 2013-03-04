@@ -306,6 +306,7 @@ adg_ldim_new_full(const CpmlPair *ref1, const CpmlPair *ref2,
     if (pos != NULL)
         adg_dim_set_pos_from_pair(dim, pos);
 
+    adg_ldim_set_direction(ldim, direction);
     return ldim;
 }
 
@@ -372,8 +373,6 @@ adg_ldim_new_full_from_model(AdgModel *model,
     ldim = adg_ldim_new();
     dim = (AdgDim *) ldim;
 
-    adg_ldim_set_direction(ldim, direction);
-
     if (ref1 != NULL)
         adg_dim_set_ref1_from_model(dim, model, ref1);
 
@@ -383,6 +382,7 @@ adg_ldim_new_full_from_model(AdgModel *model,
     if (pos != NULL)
         adg_dim_set_pos_from_model(dim, model, pos);
 
+    adg_ldim_set_direction(ldim, direction);
     return (AdgLDim *) dim;
 }
 
