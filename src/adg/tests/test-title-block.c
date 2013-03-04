@@ -22,6 +22,32 @@
 
 
 static void
+_adg_test_local_mix(void)
+{
+    AdgTitleBlock *title_block;
+    AdgEntity *entity;
+
+    /* Ensure the title block behaves exaclty like an AdgTable */
+
+    title_block = adg_title_block_new();
+    entity = (AdgEntity *) title_block;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+
+    /* Check local mix method overriding */
+    title_block = g_object_new(ADG_TYPE_TITLE_BLOCK, "local-mix", ADG_MIX_ANCESTORS_NORMALIZED, NULL);
+    entity = (AdgEntity *) title_block;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS_NORMALIZED);
+    adg_entity_destroy(entity);
+
+    /* Check default mix using GObject methods */
+    title_block = g_object_new(ADG_TYPE_TITLE_BLOCK, NULL);
+    entity = (AdgEntity *) title_block;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+}
+
+static void
 _adg_test_author(void)
 {
     AdgTitleBlock *title_block;
@@ -387,6 +413,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_func("/adg/title-block/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/title-block/author", _adg_test_author);
     adg_test_add_func("/adg/title-block/date", _adg_test_date);
     adg_test_add_func("/adg/title-block/drawing", _adg_test_drawing);
