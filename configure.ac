@@ -316,6 +316,8 @@ AM_COND_IF([HAVE_GTK],
 #include \"adg/adg-gtk-layout.h\"
 "
             ADG_CANVAS_H_ADDITIONAL='
+#include <gtk/gtk.h>
+
 void            adg_canvas_set_paper            (AdgCanvas      *canvas,
                                                  const gchar    *paper_name,
                                                  GtkPageOrientation orientation);

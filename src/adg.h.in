@@ -61,7 +61,7 @@
 #include "adg/adg-ldim.h"
 #include "adg/adg-rdim.h"
 #include "adg/adg-adim.h"
-@ADG_H_ADDITIONAL@
 #include "adg/adg-canvas.h"
+@ADG_H_ADDITIONAL@
 
 #endif /* __ADG_H__ */

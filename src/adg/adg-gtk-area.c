@@ -82,7 +82,7 @@
 #include "adg-container.h"
 #include "adg-table.h"
 #include "adg-title-block.h"
-#include "adg-canvas.h"
+#include <adg-canvas.h>
 #include "adg-gtk-utils.h"
 #include "adg-matrix-fallback.h"
 

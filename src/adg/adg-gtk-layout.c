@@ -46,7 +46,7 @@
 #include "adg-container.h"
 #include "adg-table.h"
 #include "adg-title-block.h"
-#include "adg-canvas.h"
+#include <adg-canvas.h>
 #include "adg-gtk-area.h"
 
 #include "adg-gtk-layout.h"

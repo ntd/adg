@@ -12,7 +12,7 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 h_sources=			adg-adim.h \
 				adg-alignment.h \
 				adg-arrow.h \
-				adg-canvas.h \
+				$(builddir)/adg-canvas.h \
 				adg-color-style.h \
 				adg-container.h \
 				adg-dash.h \

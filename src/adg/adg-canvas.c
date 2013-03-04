@@ -81,7 +81,7 @@
 #include "adg-dress.h"
 #include "adg-dress-builtins.h"
 
-#include "adg-canvas.h"
+#include <adg-canvas.h>
 #include "adg-canvas-private.h"
 
 
