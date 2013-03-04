@@ -208,14 +208,18 @@ _adg_test_scales(void)
     gchar **scales;
     gchar *scales_array[] = { "a", "b", "c", NULL };
 
+    /* By default, AdgCanvas:scales is prefilled with some default scales */
     canvas = adg_canvas_new();
+    scales = adg_canvas_get_scales(canvas);
+    g_assert(scales != NULL);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 
-    /* Using the public APIs */
-
-    /* By default, AdgCanvas:scales is preset to some value */
+    /* AdgCanvas:scales must be prefilled also when using g_object_new() */
+    canvas = g_object_new(ADG_TYPE_CANVAS, NULL);
     scales = adg_canvas_get_scales(canvas);
     g_assert(scales != NULL);
 
+    /* Using the public APIs */
     adg_canvas_set_scales(canvas, NULL);
     scales = adg_canvas_get_scales(canvas);
     g_assert(scales == NULL);

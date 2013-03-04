@@ -254,10 +254,15 @@ adg_canvas_init(AdgCanvas *canvas)
     AdgCanvasPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(canvas,
                                                          ADG_TYPE_CANVAS,
                                                          AdgCanvasPrivate);
+    const gchar *scales[] = {
+        "10:1", "5:1", "3:1", "2:1", "1:1", "1:2", "1:3", "1:5", "1:10",
+        NULL
+    };
+
 
     data->size.x = 0;
     data->size.y = 0;
-    data->scales = NULL;
+    data->scales = g_strdupv((gchar **) scales);
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
     data->title_block = NULL;
@@ -435,13 +440,7 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgCanvas *
 adg_canvas_new(void)
 {
-    /* Some common ISO scales for presetting AdgCanvas:scales property */
-    const gchar *scales[] = {
-        "10:1", "5:1", "3:1", "2:1", "1:1", "1:2", "1:3", "1:5", "1:10",
-        NULL
-    };
-
-    return g_object_new(ADG_TYPE_CANVAS, "scales", scales, NULL);
+    return g_object_new(ADG_TYPE_CANVAS, NULL);
 }
 
 /**
