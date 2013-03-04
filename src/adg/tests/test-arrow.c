@@ -22,15 +22,40 @@
 
 
 static void
+_adg_test_local_mix(void)
+{
+    AdgArrow *arrow;
+    AdgEntity *entity;
+
+    /* Check default local mix method */
+    arrow = adg_arrow_new();
+    entity = (AdgEntity *) arrow;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_PARENT);
+    adg_entity_destroy(entity);
+
+    /* Check local mix method overriding */
+    arrow = g_object_new(ADG_TYPE_ARROW, "local-mix", ADG_MIX_DISABLED, NULL);
+    entity = (AdgEntity *) arrow;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+    adg_entity_destroy(entity);
+
+    /* Check default mix using GObject methods */
+    arrow = g_object_new(ADG_TYPE_ARROW, NULL);
+    entity = (AdgEntity *) arrow;
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_PARENT);
+    adg_entity_destroy(entity);
+}
+
+static void
 _adg_test_angle(void)
 {
     AdgArrow *arrow;
     gdouble valid_value, invalid_value;
     gdouble angle;
 
-    arrow = adg_arrow_new();
     valid_value = -G_PI_2;
     invalid_value = G_PI + 1;
+    arrow = adg_arrow_new();
 
     /* Using the public APIs */
     adg_arrow_set_angle(arrow, valid_value);
@@ -58,7 +83,7 @@ _adg_test_angle(void)
     g_object_get(arrow, "angle", &angle, NULL);
     g_assert_cmpfloat(angle, !=, invalid_value);
 
-    adg_entity_destroy(ADG_ENTITY(arrow));
+    adg_entity_destroy((AdgEntity *) arrow);
 }
 
 
@@ -67,6 +92,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_func("/adg/arrow/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/arrow/angle", _adg_test_angle);
 
     return g_test_run();

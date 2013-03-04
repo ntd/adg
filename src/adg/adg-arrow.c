@@ -25,6 +25,11 @@
  * Contains parameters on how to draw arrows, providing a way to register a
  * custom rendering callback.
  *
+ * <note><para>
+ * By default, the #AdgEntity:local-mix property is set to #ADG_MIX_PARENT
+ * on #AdgArrow entities.
+ * </para></note>
+ *
  * Since: 1.0
  **/
 
@@ -43,6 +48,7 @@
 #include "adg-trail.h"
 #include "adg-path.h"
 #include "adg-marker.h"
+#include "adg-entity-private.h"
 
 #include "adg-arrow.h"
 #include "adg-arrow-private.h"
@@ -56,11 +62,11 @@ enum {
 };
 
 
-static void             _adg_get_property            (GObject        *object,
+static void             _adg_get_property       (GObject        *object,
                                                  guint           prop_id,
                                                  GValue         *value,
                                                  GParamSpec     *pspec);
-static void             _adg_set_property            (GObject        *object,
+static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
@@ -106,10 +112,16 @@ adg_arrow_init(AdgArrow *arrow)
     AdgArrowPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(arrow,
                                                         ADG_TYPE_ARROW,
                                                         AdgArrowPrivate);
+    AdgEntityPrivate *entity_data = ((AdgEntity *) arrow)->data;
 
     data->angle = G_PI/6;
 
     arrow->data = data;
+
+    /* Initialize to custom default some AdgEntity field by directly
+     * accessing the private struct to avoid notify signal emissions
+     */
+    entity_data->local_mix = ADG_MIX_PARENT;
 }
 
 static void
@@ -150,7 +162,6 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Creates a new undefined arrow entity. The position must be defined
  * by setting the #AdgMarker:trail and #AdgMarker:pos properties.
- * By default, an arrow as #AdgEntity:local-mix set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity
  *
@@ -159,9 +170,7 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgArrow *
 adg_arrow_new(void)
 {
-    return g_object_new(ADG_TYPE_ARROW,
-                        "local-mix", ADG_MIX_PARENT,
-                        NULL);
+    return g_object_new(ADG_TYPE_ARROW, NULL);
 }
 
 /**
