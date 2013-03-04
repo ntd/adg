@@ -253,6 +253,10 @@ _adg_test_scales(void)
     g_assert(scales[3] == NULL);
     g_strfreev(scales);
 
+    /* Check autoscale does not crash on no scales */
+    g_object_set(canvas, "scales", NULL, NULL);
+    adg_canvas_autoscale(canvas);
+
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
 

@@ -643,7 +643,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     entity = (AdgEntity *) canvas;
     title_block = adg_canvas_get_title_block(canvas);
 
-    for (p_scale = data->scales; *p_scale != NULL; ++p_scale) {
+    for (p_scale = data->scales; p_scale != NULL && *p_scale != NULL; ++p_scale) {
         const gchar *scale = *p_scale;
         gdouble factor = adg_scale_factor(scale);
         if (factor <= 0)
