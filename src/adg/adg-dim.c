@@ -1205,7 +1205,7 @@ _adg_arrange(AdgEntity *entity)
 
     if (data->quote.entity == NULL)
         data->quote.entity = g_object_new(ADG_TYPE_ALIGNMENT,
-                                          "local-method", ADG_MIX_NONE,
+                                          "local-mix", ADG_MIX_NONE,
                                           "parent", dim, NULL);
 
     quote_entity = (AdgEntity *) data->quote.entity;
@@ -1224,7 +1224,7 @@ _adg_arrange(AdgEntity *entity)
         value = klass->default_value ? klass->default_value(dim) : NULL;
 
         data->quote.value = g_object_new(ADG_TYPE_BEST_TEXT,
-                                         "local-method", ADG_MIX_PARENT,
+                                         "local-mix", ADG_MIX_PARENT,
                                          "font-dress", dress, NULL);
         adg_container_add(quote_container, (AdgEntity *) data->quote.value);
 
@@ -1243,7 +1243,7 @@ _adg_arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_min_dress(data->dim_style);
 
         data->quote.min = g_object_new(ADG_TYPE_BEST_TEXT,
-                                       "local-method", ADG_MIX_PARENT,
+                                       "local-mix", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.min);
@@ -1254,7 +1254,7 @@ _adg_arrange(AdgEntity *entity)
         AdgDress dress = adg_dim_style_get_max_dress(data->dim_style);
 
         data->quote.max = g_object_new(ADG_TYPE_BEST_TEXT,
-                                       "local-method", ADG_MIX_PARENT,
+                                       "local-mix", ADG_MIX_PARENT,
                                        "font-dress", dress, NULL);
 
         adg_container_add(quote_container, (AdgEntity *) data->quote.max);

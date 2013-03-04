@@ -99,7 +99,7 @@ enum {
     PROP_PARENT,
     PROP_GLOBAL_MAP,
     PROP_LOCAL_MAP,
-    PROP_LOCAL_METHOD
+    PROP_LOCAL_MIX
 };
 
 enum {
@@ -175,17 +175,17 @@ adg_entity_class_init(AdgEntityClass *klass)
 
     param = g_param_spec_boxed("local-map",
                                P_("Local Map"),
-                               P_("The local transformation that could be used to compute the local matrix in the way specified by the #AdgEntity:local-method property"),
+                               P_("The local transformation that could be used to compute the local matrix in the way specified by the #AdgEntity:local-mix property"),
                                CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
 
-    param = g_param_spec_enum("local-method",
+    param = g_param_spec_enum("local-mix",
                               P_("Local Mix Method"),
                               P_("Define how the local maps of the entity and its ancestors should be combined to get the local matrix"),
-                              ADG_TYPE_MIX_METHOD, ADG_MIX_ANCESTORS,
+                              ADG_TYPE_MIX, ADG_MIX_ANCESTORS,
                               G_PARAM_READWRITE);
-    g_object_class_install_property(gobject_class, PROP_LOCAL_METHOD, param);
+    g_object_class_install_property(gobject_class, PROP_LOCAL_MIX, param);
 
     /**
      * AdgEntity::destroy:
@@ -332,7 +332,7 @@ adg_entity_init(AdgEntity *entity)
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
-    data->local_method = ADG_MIX_ANCESTORS;
+    data->local_mix = ADG_MIX_ANCESTORS;
     data->hash_styles = NULL;
     data->global.is_defined = FALSE;
     adg_matrix_copy(&data->global.matrix, adg_matrix_null());
@@ -385,8 +385,8 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_LOCAL_MAP:
         g_value_set_boxed(value, &data->local_map);
         break;
-    case PROP_LOCAL_METHOD:
-        g_value_set_enum(value, data->local_method);
+    case PROP_LOCAL_MIX:
+        g_value_set_enum(value, data->local_mix);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -413,8 +413,8 @@ _adg_set_property(GObject *object, guint prop_id,
         adg_matrix_copy(&data->local_map, g_value_get_boxed(value));
         data->local.is_defined = FALSE;
         break;
-    case PROP_LOCAL_METHOD:
-        data->local_method = g_value_get_enum(value);
+    case PROP_LOCAL_MIX:
+        data->local_mix = g_value_get_enum(value);
         g_signal_emit(object, _adg_signals[LOCAL_CHANGED], 0);
         break;
     default:
@@ -722,7 +722,7 @@ adg_entity_get_local_map(AdgEntity *entity)
  *
  * The local matrix is computed in the arrange() phase by
  * combining all the local maps of the @entity hierarchy using
- * the method specified by the #AdgEntity:local-method property.
+ * the method specified by the #AdgEntity:local-mix property.
  *
  * Returns: the local matrix or %NULL on errors
  *
@@ -741,42 +741,42 @@ adg_entity_get_local_matrix(AdgEntity *entity)
 }
 
 /**
- * adg_entity_set_local_method:
+ * adg_entity_set_local_mix:
  * @entity: an #AdgEntity object
- * @local_method: new method
+ * @local_mix: new mix method
  *
  * Sets a new local mix method on @entity. The
- * #AdgEntity:local-method property defines how the local
- * matrix must be computed: check out the #AdgMixMethod
+ * #AdgEntity:local-mix property defines how the local
+ * matrix must be computed: check out the #AdgMix
  * documentation to know what are the availables methods
  * and how they affect the local matrix computation.
  *
- * Setting a different local method emits an #Adgentity::local-changed
- * signal on @entity.
+ * Setting a different local mix method emits an
+ * #Adgentity::local-changed signal on @entity.
  *
  * Since: 1.0
  **/
 void
-adg_entity_set_local_method(AdgEntity *entity, AdgMixMethod local_method)
+adg_entity_set_local_mix(AdgEntity *entity, AdgMix local_mix)
 {
     g_return_if_fail(ADG_IS_ENTITY(entity));
-    g_object_set(entity, "local-method", local_method, NULL);
+    g_object_set(entity, "local-mix", local_mix, NULL);
 }
 
 /**
- * adg_entity_get_local_method:
+ * adg_entity_get_local_mix:
  * @entity: an #AdgEntity object
  *
  * Gets the local mix method of @entity. Check out the
- * adg_entity_set_local_method() documentation to know what the
- * local method is used for.
+ * adg_entity_set_local_mix() documentation to know what the
+ * local mix method is used for.
  *
- * Returns: the local method of @entity or %ADG_MIX_UNDEFINED on errors
+ * Returns: the local mix method of @entity or %ADG_MIX_UNDEFINED on errors
  *
  * Since: 1.0
  **/
-AdgMixMethod
-adg_entity_get_local_method(AdgEntity *entity)
+AdgMix
+adg_entity_get_local_mix(AdgEntity *entity)
 {
     AdgEntityPrivate *data;
 
@@ -784,7 +784,7 @@ adg_entity_get_local_method(AdgEntity *entity)
 
     data = entity->data;
 
-    return data->local_method;
+    return data->local_mix;
 }
 
 /**
@@ -1211,7 +1211,7 @@ _adg_local_changed(AdgEntity *entity)
     map = &data->local_map;
     matrix = &data->local.matrix;
 
-    switch (data->local_method) {
+    switch (data->local_mix) {
     case ADG_MIX_DISABLED:
         adg_matrix_copy(matrix, adg_matrix_identity());
         break;
@@ -1253,7 +1253,7 @@ _adg_local_changed(AdgEntity *entity)
         adg_matrix_normalize(matrix);
         break;
     case ADG_MIX_UNDEFINED:
-        g_warning(_("%s: requested to mix the maps using an undefined method"),
+        g_warning(_("%s: requested to mix the maps using an undefined mix method"),
                   G_STRLOC);
         break;
     default:

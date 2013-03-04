@@ -69,7 +69,7 @@
  **/
 
 /**
- * AdgMixMethod:
+ * AdgMix:
  * @ADG_MIX_UNDEFINED: undefined method, mainly used to return an
  *                     error condition
  * @ADG_MIX_DISABLED:  the maps are completely ignored: the matrix is

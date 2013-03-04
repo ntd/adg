@@ -59,7 +59,7 @@ typedef enum {
     ADG_MIX_ANCESTORS_NORMALIZED,
     ADG_MIX_PARENT,
     ADG_MIX_PARENT_NORMALIZED
-} AdgMixMethod;
+} AdgMix;
 
 typedef enum {
     ADG_PROJECTION_SCHEME_UNDEFINED,

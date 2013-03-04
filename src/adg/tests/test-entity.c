@@ -181,42 +181,42 @@ _adg_test_local_map(void)
 }
 
 static void
-_adg_test_local_method(void)
+_adg_test_local_mix(void)
 {
     AdgEntity *entity;
-    AdgMixMethod valid_method1, valid_method2, invalid_method;
-    AdgMixMethod local_method;
+    AdgMix valid_mix1, valid_mix2, invalid_mix;
+    AdgMix local_mix;
 
     entity = ADG_ENTITY(adg_logo_new());
-    valid_method1 = ADG_MIX_UNDEFINED;
-    valid_method2 = ADG_MIX_ANCESTORS_NORMALIZED;
-    invalid_method = G_MAXINT;
+    valid_mix1 = ADG_MIX_UNDEFINED;
+    valid_mix2 = ADG_MIX_ANCESTORS_NORMALIZED;
+    invalid_mix = G_MAXINT;
 
     /* Using the public APIs */
-    adg_entity_set_local_method(entity, valid_method1);
-    local_method = adg_entity_get_local_method(entity);
-    g_assert_cmpint(local_method, ==, valid_method1);
+    adg_entity_set_local_mix(entity, valid_mix1);
+    local_mix = adg_entity_get_local_mix(entity);
+    g_assert_cmpint(local_mix, ==, valid_mix1);
 
-    adg_entity_set_local_method(entity, invalid_method);
-    local_method = adg_entity_get_local_method(entity);
-    g_assert_cmpint(local_method, !=, invalid_method);
+    adg_entity_set_local_mix(entity, invalid_mix);
+    local_mix = adg_entity_get_local_mix(entity);
+    g_assert_cmpint(local_mix, !=, invalid_mix);
 
-    adg_entity_set_local_method(entity, valid_method2);
-    local_method = adg_entity_get_local_method(entity);
-    g_assert_cmpint(local_method, ==, valid_method2);
+    adg_entity_set_local_mix(entity, valid_mix2);
+    local_mix = adg_entity_get_local_mix(entity);
+    g_assert_cmpint(local_mix, ==, valid_mix2);
 
     /* Using GObject property methods */
-    g_object_set(entity, "local-method", valid_method1, NULL);
-    g_object_get(entity, "local-method", &local_method, NULL);
-    g_assert_cmpint(local_method, ==, valid_method1);
+    g_object_set(entity, "local-mix", valid_mix1, NULL);
+    g_object_get(entity, "local-mix", &local_mix, NULL);
+    g_assert_cmpint(local_mix, ==, valid_mix1);
 
-    g_object_set(entity, "local-method", invalid_method, NULL);
-    g_object_get(entity, "local-method", &local_method, NULL);
-    g_assert_cmpint(local_method, ==, valid_method1);
+    g_object_set(entity, "local-mix", invalid_mix, NULL);
+    g_object_get(entity, "local-mix", &local_mix, NULL);
+    g_assert_cmpint(local_mix, ==, valid_mix1);
 
-    g_object_set(entity, "local-method", valid_method2, NULL);
-    g_object_get(entity, "local-method", &local_method, NULL);
-    g_assert_cmpint(local_method, ==, valid_method2);
+    g_object_set(entity, "local-mix", valid_mix2, NULL);
+    g_object_get(entity, "local-mix", &local_mix, NULL);
+    g_assert_cmpint(local_mix, ==, valid_mix2);
 
     adg_entity_destroy(entity);
 }
@@ -230,7 +230,7 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/entity/parent", _adg_test_parent);
     adg_test_add_func("/adg/entity/global-map", _adg_test_global_map);
     adg_test_add_func("/adg/entity/local-map", _adg_test_local_map);
-    adg_test_add_func("/adg/entity/local-method", _adg_test_local_method);
+    adg_test_add_func("/adg/entity/local-mix", _adg_test_local_mix);
 
     return g_test_run();
 }

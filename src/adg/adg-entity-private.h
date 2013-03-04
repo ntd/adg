@@ -30,7 +30,7 @@ struct _AdgEntityPrivate {
     AdgEntity           *parent;
     cairo_matrix_t       global_map;
     cairo_matrix_t       local_map;
-    AdgMixMethod         local_method;
+    AdgMix               local_mix;
     GHashTable          *hash_styles;
 
     struct {

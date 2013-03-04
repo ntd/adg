@@ -210,7 +210,7 @@ _adg_set_property(GObject *object, guint prop_id,
  * @text: the text
  *
  * Creates a new toy text entity using @text as its content.
- * The #AdgEntity:local-method property is set by default to
+ * The #AdgEntity:local-mix property is set by default to
  * #ADG_LOCAL_NORMALIZED.
  *
  * Returns: the newly created toy text entity
@@ -221,7 +221,7 @@ AdgToyText *
 adg_toy_text_new(const gchar *text)
 {
     return g_object_new(ADG_TYPE_TOY_TEXT,
-                        "local-method", ADG_MIX_ANCESTORS_NORMALIZED,
+                        "local-mix", ADG_MIX_ANCESTORS_NORMALIZED,
                         "text", text, NULL);
 }
 

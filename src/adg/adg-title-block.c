@@ -332,7 +332,7 @@ _adg_set_property(GObject *object, guint prop_id,
 /**
  * adg_title_block_new:
  *
- * Creates a new empty title block entity. The #AdgEntity:local-method
+ * Creates a new empty title block entity. The #AdgEntity:local-mix
  * property is set by default to #ADG_MIX_DISABLED, that is the
  * title block is not subject to any local transformations.
  *
@@ -344,7 +344,7 @@ AdgTitleBlock *
 adg_title_block_new(void)
 {
     return g_object_new(ADG_TYPE_TITLE_BLOCK,
-                        "local-method", ADG_MIX_DISABLED, NULL);
+                        "local-mix", ADG_MIX_DISABLED, NULL);
 }
 
 /**

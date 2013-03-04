@@ -89,9 +89,9 @@ const cairo_matrix_t *
                 adg_entity_get_local_map        (AdgEntity       *entity);
 const cairo_matrix_t *
                 adg_entity_get_local_matrix     (AdgEntity       *entity);
-void            adg_entity_set_local_method     (AdgEntity       *entity,
-                                                 AdgMixMethod     local_method);
-AdgMixMethod    adg_entity_get_local_method     (AdgEntity       *entity);
+void            adg_entity_set_local_mix        (AdgEntity       *entity,
+                                                 AdgMix           local_mix);
+AdgMix          adg_entity_get_local_mix        (AdgEntity       *entity);
 void            adg_entity_set_extents          (AdgEntity       *entity,
                                                  const CpmlExtents *extents);
 const CpmlExtents *
