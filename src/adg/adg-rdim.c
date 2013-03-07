@@ -221,9 +221,9 @@ adg_rdim_new(void)
 
 /**
  * adg_rdim_new_full:
- * @center: allow-none: center of the arc to quote
- * @radius: allow-none: where the quote must be applied on the arc
- * @pos: allow-none: position of the quote text
+ * @center: (allow-none): center of the arc to quote
+ * @radius: (allow-none): where the quote must be applied on the arc
+ * @pos:    (allow-none): position of the quote text
  *
  * Creates a new quote by specifying explicitely all the needed
  * data to get a valid quote.
@@ -290,10 +290,10 @@ adg_rdim_new_full_explicit(gdouble center_x, gdouble center_y,
 
 /**
  * adg_rdim_new_full_from_model:
- * @model: transfer-none: the model from which the named pairs are taken
- * @center: allow-none: the center point of the arc to quote
- * @radius: allow-none: an arbitrary point on the arc
- * @pos: allow-none: the position reference
+ * @model:  (transfer none): the model from which the named pairs are taken
+ * @center: (allow-none):    the center point of the arc to quote
+ * @radius: (allow-none):    an arbitrary point on the arc
+ * @pos:    (allow-none):    the position reference
  *
  * Creates a new radial dimension, specifing all the needed properties in
  * one shot and using named pairs from @model.
