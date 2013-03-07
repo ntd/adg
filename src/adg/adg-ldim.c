@@ -698,7 +698,6 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     const cairo_path_t *cairo_path;
 
     ldim = (AdgLDim *) entity;
-    dim = (AdgDim *) entity;
     data = ldim->data;
 
     if (!data->geometry.is_arranged) {
@@ -706,6 +705,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         return;
     }
 
+    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -765,18 +765,22 @@ _adg_update_geometry(AdgLDim *ldim)
     ref2_point = adg_dim_get_ref2(dim);
     pos_point =  adg_dim_get_pos(dim);
 
-    /* Check if the needed points are all properly defined */
+    /* Check if the needed points are all defined */
     if (! adg_point_update(ref1_point) ||
         ! adg_point_update(ref2_point) ||
         ! adg_point_update(pos_point))
-    {
-        data->geometry.is_arranged = FALSE;
         return FALSE;
-    }
 
     ref1 = (CpmlPair *) ref1_point;
     ref2 = (CpmlPair *) ref2_point;
     pos =  (CpmlPair *) pos_point;
+
+    /* Check if the given points have valid coordinates */
+    if (cpml_pair_equal(ref1, ref2)) {
+        g_warning(_("%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"),
+                  G_STRLOC, ref1->x, ref1->y);
+        return FALSE;
+    }
 
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);

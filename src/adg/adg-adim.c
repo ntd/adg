@@ -1174,6 +1174,19 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     org1 = (CpmlPair *) data->org1;
     org2 = (CpmlPair *) data->org2;
 
+    /* Check if the given points have valid coordinates */
+    if (cpml_pair_equal(ref1, org1)) {
+        g_warning(_("%s: ref1 and org1 cannot be coincidents (%lf, %lf)"),
+                  G_STRLOC, ref1->x, ref1->y);
+        return FALSE;
+    }
+
+    if (cpml_pair_equal(ref2, org2)) {
+        g_warning(_("%s: ref2 and org2 cannot be coincidents (%lf, %lf)"),
+                  G_STRLOC, ref2->x, ref2->y);
+        return FALSE;
+    }
+
     vector[0].x = ref1->x - org1->x;
     vector[0].y = ref1->y - org1->y;
     vector[2].x = ref2->x - org2->x;

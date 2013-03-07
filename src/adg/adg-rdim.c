@@ -569,13 +569,18 @@ _adg_update_geometry(AdgRDim *rdim)
     if (! adg_point_update(ref1_point) ||
         ! adg_point_update(ref2_point) ||
         ! adg_point_update(pos_point))
-    {
         return FALSE;
-    }
 
     ref1 = (CpmlPair *) ref1_point;
     ref2 = (CpmlPair *) ref2_point;
     pos =  (CpmlPair *) pos_point;
+
+    /* Check if the given points have valid coordinates */
+    if (cpml_pair_equal(ref1, ref2)) {
+        g_warning(_("%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"),
+                  G_STRLOC, ref1->x, ref1->y);
+        return FALSE;
+    }
 
     dim_style = _ADG_GET_DIM_STYLE(rdim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
