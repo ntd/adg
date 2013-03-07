@@ -46,14 +46,15 @@ CLEANFILES=			test-report.xml \
 				full-report.xml \
 				full-report.html
 
-SUBDIRS=			src \
-				po \
-				po-properties \
-				docs
+SUBDIRS=			src
 
 if HAVE_GTK
 SUBDIRS+=			demo
 endif
+
+SUBDIRS+=			po \
+				po-properties \
+				docs
 
 
 if OS_WINDOWS
