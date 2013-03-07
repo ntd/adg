@@ -114,7 +114,7 @@ void            adg_entity_render               (AdgEntity       *entity,
                                                  cairo_t         *cr);
 AdgPoint *      adg_entity_point                (AdgEntity       *entity,
                                                  AdgPoint        *point,
-                                                 AdgPoint        *new_point);
+                                                 const AdgPoint  *new_point);
 
 G_END_DECLS
 

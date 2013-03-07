@@ -1109,8 +1109,8 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * </para></note>
  *
  * A convenient method to set an #AdgPoint owned by @entity.
- * @point is the old value while @new_point is the new value. It
- * can be used for setting #AdgPoint in the private data, such as:
+ * @old_point is the old value while @new_point is the new value.
+ * It can be used for changing a private #AdgPoint struct, such as:
  *
  * |[
  * data->point = adg_entity_point(entity, data->point, new_point);
@@ -1119,40 +1119,41 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * This function takes care of the dependencies between @entity and
  * the eventual models bound to the old and new points.
  *
- * @point can be %NULL, in which case a clone of @new_point will be
- * returned. Also @new_point can be %NULL, in which case @point is
- * destroyed and %NULL will be returned.
+ * @old_point can be %NULL, in which case a clone of @new_point will
+ * be returned. Also @new_point can be %NULL, in which case @old_point
+ * is destroyed and %NULL will be returned.
  *
- * Returns: the new properly defined point
+ * Returns: (transfer full): the new properly defined point
  *
  * Since: 1.0
  **/
 AdgPoint *
-adg_entity_point(AdgEntity *entity, AdgPoint *point, AdgPoint *new_point)
+adg_entity_point(AdgEntity *entity, AdgPoint *old_point, const AdgPoint *new_point)
 {
+    AdgPoint *point;
+
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    if (!adg_point_equal(point, new_point)) {
+    point = NULL;
+
+    if (! adg_point_equal(old_point, new_point)) {
         AdgModel *old_model, *new_model;
 
-        old_model = point ? adg_point_get_model(point) : NULL;
-        new_model = new_point ? adg_point_get_model(new_point) : NULL;
+        old_model = old_point != NULL ? adg_point_get_model(old_point) : NULL;
+        new_model = new_point != NULL ? adg_point_get_model(new_point) : NULL;
 
         if (new_model != old_model) {
-            if (new_model)
+            /* Handle model-entity dependencies */
+            if (new_model != NULL)
                 adg_model_add_dependency(new_model, entity);
-            if (old_model)
+            if (old_model != NULL)
                 adg_model_remove_dependency(old_model, entity);
         }
 
-        if (new_point && point) {
-            adg_point_copy(point, new_point);
-        } else if (new_point) {
+        if (new_point != NULL)
             point = adg_point_dup(new_point);
-        } else {
-            adg_point_destroy(point);
-            point = NULL;
-        }
+        if (old_point != NULL)
+            adg_point_destroy(old_point);
     }
 
     return point;
