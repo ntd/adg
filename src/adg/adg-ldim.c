@@ -589,9 +589,9 @@ _adg_arrange(AdgEntity *entity)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     local = adg_entity_get_local_matrix(entity);
 
-    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
-    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
-    cpml_pair_copy(&pos, adg_point_get_pair(adg_dim_get_pos(dim)));
+    cpml_pair_copy(&ref1, (CpmlPair *) adg_dim_get_ref1(dim));
+    cpml_pair_copy(&ref2, (CpmlPair *) adg_dim_get_ref2(dim));
+    cpml_pair_copy(&pos,  (CpmlPair *) adg_dim_get_pos(dim));
     cpml_pair_copy(&base1, &data->geometry.base1);
     cpml_pair_copy(&base2, &data->geometry.base2);
 
@@ -749,24 +749,34 @@ _adg_update_geometry(AdgLDim *ldim)
 {
     AdgLDimPrivate *data;
     AdgDim *dim;
-    const CpmlPair *ref1, *ref2;
-    const CpmlPair *pos;
+    AdgPoint *ref1_point, *ref2_point, *pos_point;
+    const CpmlPair *ref1, *ref2, *pos;
     CpmlVector baseline, extension;
     gdouble d, k;
 
     data = ldim->data;
-    dim = (AdgDim *) ldim;
-    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
-    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
-    pos = adg_point_get_pair(adg_dim_get_pos(dim));
 
-    /* Check if the needed pairs are properly defined */
-    if (ref1 == NULL || ref2 == NULL || pos == NULL) {
+    /* Check for cached results */
+    if (data->geometry.is_arranged)
+        return TRUE;
+
+    dim = (AdgDim *) ldim;
+    ref1_point = adg_dim_get_ref1(dim);
+    ref2_point = adg_dim_get_ref2(dim);
+    pos_point =  adg_dim_get_pos(dim);
+
+    /* Check if the needed points are all properly defined */
+    if (! adg_point_update(ref1_point) ||
+        ! adg_point_update(ref2_point) ||
+        ! adg_point_update(pos_point))
+    {
         data->geometry.is_arranged = FALSE;
         return FALSE;
-    } else if (data->geometry.is_arranged) {
-        return TRUE;
     }
+
+    ref1 = (CpmlPair *) ref1_point;
+    ref2 = (CpmlPair *) ref2_point;
+    pos =  (CpmlPair *) pos_point;
 
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);

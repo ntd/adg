@@ -23,6 +23,10 @@ TEST_PROGS+=			test-model$(EXEEXT)
 test_model_SOURCES=		test-model.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-point$(EXEEXT)
+test_point_SOURCES=		test-point.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-trail$(EXEEXT)
 test_trail_SOURCES=		test-trail.c \
 				$(test_internals)

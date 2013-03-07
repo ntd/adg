@@ -37,8 +37,7 @@ _adg_test_org1(void)
 
     adg_point_set_pair_explicit(origin, 0, 0);
     adg_point_set_pair_explicit(explicit_point, 123, 321);
-    adg_model_set_named_pair(model, "named-pair",
-                             adg_point_get_pair(explicit_point));
+    adg_model_set_named_pair(model, "named-pair", (CpmlPair *) explicit_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     /* Ensure ADG does not consider an explicit point equals to
@@ -61,11 +60,9 @@ _adg_test_org1(void)
     org1 = adg_adim_get_org1(adim);
     g_assert(adg_point_equal(org1, explicit_point));
 
-    /* Checking the lazy assignment feature */
     adg_adim_set_org1_from_model(adim, model, "dummy");
     org1 = adg_adim_get_org1(adim);
     g_assert(org1 != NULL);
-    g_assert(adg_point_get_pair(org1) == NULL);
 
     adg_adim_set_org1_from_model(adim, model, "named-pair");
     org1 = adg_adim_get_org1(adim);
@@ -86,11 +83,9 @@ _adg_test_org1(void)
     g_assert(adg_point_equal(org1, explicit_point));
     adg_point_destroy(org1);
 
-    /* Checking the lazy assignment feature */
     adg_adim_set_org1_from_model(adim, model, "dummy");
     g_object_get(adim, "org1", &org1, NULL);
     g_assert(org1 != NULL);
-    g_assert(adg_point_get_pair(org1) == NULL);
     adg_point_destroy(org1);
 
     g_object_set(adim, "org1", model_point, NULL);
@@ -121,8 +116,7 @@ _adg_test_org2(void)
 
     adg_point_set_pair_explicit(origin, 0, 0);
     adg_point_set_pair_explicit(explicit_point, 123, 321);
-    adg_model_set_named_pair(model, "named-pair",
-                             adg_point_get_pair(explicit_point));
+    adg_model_set_named_pair(model, "named-pair", (CpmlPair *) explicit_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     /* Ensure ADG does not consider an explicit point equals to
@@ -145,11 +139,9 @@ _adg_test_org2(void)
     org2 = adg_adim_get_org2(adim);
     g_assert(adg_point_equal(org2, explicit_point));
 
-    /* Checking the lazy assignment feature */
     adg_adim_set_org2_from_model(adim, model, "dummy");
     org2 = adg_adim_get_org2(adim);
     g_assert(org2 != NULL);
-    g_assert(adg_point_get_pair(org2) == NULL);
 
     adg_adim_set_org2_from_model(adim, model, "named-pair");
     org2 = adg_adim_get_org2(adim);
@@ -170,11 +162,9 @@ _adg_test_org2(void)
     g_assert(adg_point_equal(org2, explicit_point));
     adg_point_destroy(org2);
 
-    /* Checking the lazy assignment feature */
     adg_adim_set_org2_from_model(adim, model, "dummy");
     g_object_get(adim, "org2", &org2, NULL);
     g_assert(org2 != NULL);
-    g_assert(adg_point_get_pair(org2) == NULL);
     adg_point_destroy(org2);
 
     g_object_set(adim, "org2", model_point, NULL);

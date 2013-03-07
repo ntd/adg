@@ -269,8 +269,7 @@ _adg_test_pos(void)
 
     adg_point_set_pair_explicit(origin, 0, 0);
     adg_point_set_pair_explicit(explicit_point, 123, 321);
-    adg_model_set_named_pair(model, "named-pair",
-                             adg_point_get_pair(explicit_point));
+    adg_model_set_named_pair(model, "named-pair", (CpmlPair *) explicit_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     /* Ensure ADG does not consider an explicit point equals to
@@ -293,11 +292,9 @@ _adg_test_pos(void)
     pos = adg_dim_get_pos(dim);
     g_assert(adg_point_equal(pos, explicit_point));
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_pos_from_model(dim, model, "dummy");
     pos = adg_dim_get_pos(dim);
     g_assert(pos != NULL);
-    g_assert(adg_point_get_pair(pos) == NULL);
 
     adg_dim_set_pos_from_model(dim, model, "named-pair");
     pos = adg_dim_get_pos(dim);
@@ -318,11 +315,9 @@ _adg_test_pos(void)
     g_assert(adg_point_equal(pos, explicit_point));
     adg_point_destroy(pos);
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_pos_from_model(dim, model, "dummy");
     g_object_get(dim, "pos", &pos, NULL);
     g_assert(pos != NULL);
-    g_assert(adg_point_get_pair(pos) == NULL);
     adg_point_destroy(pos);
 
     g_object_set(dim, "pos", model_point, NULL);
@@ -353,8 +348,7 @@ _adg_test_ref1(void)
 
     adg_point_set_pair_explicit(origin, 0, 0);
     adg_point_set_pair_explicit(explicit_point, 123, 321);
-    adg_model_set_named_pair(model, "named-pair",
-                             adg_point_get_pair(explicit_point));
+    adg_model_set_named_pair(model, "named-pair", (CpmlPair *) explicit_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     /* Ensure ADG does not consider an explicit point equals to
@@ -377,11 +371,9 @@ _adg_test_ref1(void)
     ref1 = adg_dim_get_ref1(dim);
     g_assert(adg_point_equal(ref1, explicit_point));
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_ref1_from_model(dim, model, "dummy");
     ref1 = adg_dim_get_ref1(dim);
     g_assert(ref1 != NULL);
-    g_assert(adg_point_get_pair(ref1) == NULL);
 
     adg_dim_set_ref1_from_model(dim, model, "named-pair");
     ref1 = adg_dim_get_ref1(dim);
@@ -402,11 +394,9 @@ _adg_test_ref1(void)
     g_assert(adg_point_equal(ref1, explicit_point));
     adg_point_destroy(ref1);
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_ref1_from_model(dim, model, "dummy");
     g_object_get(dim, "ref1", &ref1, NULL);
     g_assert(ref1 != NULL);
-    g_assert(adg_point_get_pair(ref1) == NULL);
     adg_point_destroy(ref1);
 
     g_object_set(dim, "ref1", model_point, NULL);
@@ -437,8 +427,7 @@ _adg_test_ref2(void)
 
     adg_point_set_pair_explicit(origin, 0, 0);
     adg_point_set_pair_explicit(explicit_point, 123, 321);
-    adg_model_set_named_pair(model, "named-pair",
-                             adg_point_get_pair(explicit_point));
+    adg_model_set_named_pair(model, "named-pair", (CpmlPair *) explicit_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     /* Ensure ADG does not consider an explicit point equals to
@@ -461,11 +450,9 @@ _adg_test_ref2(void)
     ref2 = adg_dim_get_ref2(dim);
     g_assert(adg_point_equal(ref2, explicit_point));
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_ref2_from_model(dim, model, "dummy");
     ref2 = adg_dim_get_ref2(dim);
     g_assert(ref2 != NULL);
-    g_assert(adg_point_get_pair(ref2) == NULL);
 
     adg_dim_set_ref2_from_model(dim, model, "named-pair");
     ref2 = adg_dim_get_ref2(dim);
@@ -486,11 +473,9 @@ _adg_test_ref2(void)
     g_assert(adg_point_equal(ref2, explicit_point));
     adg_point_destroy(ref2);
 
-    /* Checking the lazy assignment feature */
     adg_dim_set_ref2_from_model(dim, model, "dummy");
     g_object_get(dim, "ref2", &ref2, NULL);
     g_assert(ref2 != NULL);
-    g_assert(adg_point_get_pair(ref2) == NULL);
     adg_point_destroy(ref2);
 
     g_object_set(dim, "ref2", model_point, NULL);

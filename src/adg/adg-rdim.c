@@ -391,7 +391,7 @@ _adg_arrange(AdgEntity *entity)
     quote = adg_dim_get_quote(dim);
     quote_entity = (AdgEntity *) quote;
 
-    if (!_adg_update_geometry(rdim))
+    if (! _adg_update_geometry(rdim))
         return;
 
     _adg_update_entities(rdim);
@@ -410,7 +410,7 @@ _adg_arrange(AdgEntity *entity)
     local = adg_entity_get_local_matrix(entity);
     extents.is_defined = FALSE;
 
-    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
+    cpml_pair_copy(&ref2, (CpmlPair *) adg_dim_get_ref2(dim));
     cpml_pair_copy(&base, &data->point.base);
 
     cpml_pair_transform(&ref2, local);
@@ -537,7 +537,7 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    if (!_adg_update_geometry(rdim))
+    if (! _adg_update_geometry(rdim))
         return g_strdup("undef");
 
     return g_strdup_printf(format, data->radius);
@@ -549,23 +549,33 @@ _adg_update_geometry(AdgRDim *rdim)
     AdgRDimPrivate *data;
     AdgDim *dim;
     AdgDimStyle *dim_style;
-    const CpmlPair *ref1, *ref2;
-    const CpmlPair *pos;
+    AdgPoint *ref1_point, *ref2_point, *pos_point;
+    const CpmlPair *ref1, *ref2, *pos;
     gdouble spacing, level, pos_distance;
     CpmlVector vector;
 
     data = rdim->data;
 
+    /* Check for cached results */
     if (data->geometry_arranged)
         return TRUE;
 
     dim = (AdgDim *) rdim;
-    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
-    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
-    pos = adg_point_get_pair(adg_dim_get_pos(dim));
+    ref1_point = adg_dim_get_ref1(dim);
+    ref2_point = adg_dim_get_ref2(dim);
+    pos_point =  adg_dim_get_pos(dim);
 
-    if (ref1 == NULL || ref2 == NULL || pos == NULL)
+    /* Check if the needed points are all properly defined */
+    if (! adg_point_update(ref1_point) ||
+        ! adg_point_update(ref2_point) ||
+        ! adg_point_update(pos_point))
+    {
         return FALSE;
+    }
+
+    ref1 = (CpmlPair *) ref1_point;
+    ref2 = (CpmlPair *) ref2_point;
+    pos =  (CpmlPair *) pos_point;
 
     dim_style = _ADG_GET_DIM_STYLE(rdim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);

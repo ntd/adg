@@ -526,7 +526,7 @@ adg_dim_set_ref1_from_model(AdgDim *dim, AdgModel *model, const gchar *ref1)
  *
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
- * adg_point_get_pair() with the returned value must be able to
+ * adg_point_update() with the returned value must be able to
  * modify the internal cache.
  *
  * Returns: (transfer none): the first reference point.
@@ -646,7 +646,7 @@ adg_dim_set_ref2_from_model(AdgDim *dim, AdgModel *model, const gchar *ref2)
  *
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
- * adg_point_get_pair() with the returned value must be able to
+ * adg_point_update() with the returned value must be able to
  * modify the internal cache.
  *
  * Returns: (transfer none): the second reference point.
@@ -766,7 +766,7 @@ adg_dim_set_pos_from_model(AdgDim *dim, AdgModel *model, const gchar *pos)
  *
  * The returned point is internally owned and must not be freed
  * or modified. Anyway it is not const because a call to
- * adg_point_get_pair() with the returned value must be able to
+ * adg_point_update() with the returned value must be able to
  * modify the internal cache.
  *
  * Returns: (transfer none): the position point.

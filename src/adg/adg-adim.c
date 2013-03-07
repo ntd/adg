@@ -309,11 +309,11 @@ adg_adim_new(void)
 
 /**
  * adg_adim_new_full:
- * @ref1: allow-none: first reference point
- * @ref2: allow-none: second reference point
- * @org1: allow-none: first origin point
- * @org2: allow-none: second origin point
- * @pos:  allow-none: the position point
+ * @ref1: (allow-none): first reference point
+ * @ref2: (allow-none): second reference point
+ * @org1: (allow-none): first origin point
+ * @org2: (allow-none): second origin point
+ * @pos:  (allow-none): the position point
  *
  * Creates a new angular dimension, specifing all the needed
  * properties in one shot using #CpmlPair.
@@ -361,8 +361,8 @@ adg_adim_new_full(const CpmlPair *ref1, const CpmlPair *ref2,
  * @org1_y: the y coordinate of start point of the first line
  * @org2_x: the x coordinate of start point of the second line
  * @org2_y: the y coordinate of start point of the second line
- * @pos_x: the x coordinate of the position reference
- * @pos_y: the y coordinate of the position reference
+ * @pos_x:  the x coordinate of the position reference
+ * @pos_y:  the y coordinate of the position reference
  *
  * Wrappes adg_adim_new_full() with explicit values.
  *
@@ -395,12 +395,12 @@ adg_adim_new_full_explicit(gdouble ref1_x, gdouble ref1_y,
 
 /**
  * adg_adim_new_full_from_model:
- * @model: transfer-none: the model from which the named pairs are taken
- * @ref1: allow-none: the end point of the first line
- * @ref2: allow-none: the end point of the second line
- * @org1: allow-none: the origin of the first line
- * @org2: allow-none: the origin of the second line
- * @pos: allow-none: the position reference
+ * @model: (transfer none): the model from which the named pairs are taken
+ * @ref1:  (allow-none):    the end point of the first line
+ * @ref2:  (allow-none):    the end point of the second line
+ * @org1:  (allow-none):    the origin of the first line
+ * @org2:  (allow-none):    the origin of the second line
+ * @pos:   (allow-none):    the position reference
  *
  * Creates a new angular dimension, specifing all the needed properties
  * in one shot and using named pairs from @model.
@@ -537,11 +537,9 @@ adg_adim_set_org1_from_model(AdgADim *adim, AdgModel *model, const gchar *org1)
  * @adim: an #AdgADim
  *
  * Gets the #AdgADim:org1 point. The returned point is internally owned
- * and must not be freed or modified. Anyway, it is not const because
- * adg_point_get_pair() must be able to modify the internal cache of
- * the returned point.
+ * and must not be freed or modified.
  *
- * Returns: the first reference point
+ * Returns: (transfer none): the first reference point
  *
  * Since: 1.0
  **/
@@ -655,11 +653,9 @@ adg_adim_set_org2_from_model(AdgADim *adim, AdgModel *model, const gchar *org2)
  * @adim: an #AdgADim
  *
  * Gets the #AdgADim:org2 point. The returned point is internally owned
- * and must not be freed or modified. Anyway, it is not const because
- * adg_point_get_pair() must be able to modify the internal cache of
- * the returned point.
+ * and must not be freed or modified.
  *
- * Returns: the first reference point
+ * Returns: (transfer none): the second reference point
  *
  * Since: 1.0
  **/
@@ -823,7 +819,7 @@ _adg_arrange(AdgEntity *entity)
 
     adim = (AdgADim *) entity;
 
-    if (!_adg_update_geometry(adim))
+    if (! _adg_update_geometry(adim))
         return;
 
     dim = (AdgDim *) adim;
@@ -842,8 +838,8 @@ _adg_arrange(AdgEntity *entity)
     local = adg_entity_get_local_matrix(entity);
     extents.is_defined = FALSE;
 
-    cpml_pair_copy(&ref1, adg_point_get_pair(adg_dim_get_ref1(dim)));
-    cpml_pair_copy(&ref2, adg_point_get_pair(adg_dim_get_ref2(dim)));
+    cpml_pair_copy(&ref1, (CpmlPair *) adg_dim_get_ref1(dim));
+    cpml_pair_copy(&ref2, (CpmlPair *) adg_dim_get_ref2(dim));
     cpml_pair_copy(&base1, &data->point.base1);
     cpml_pair_copy(&base12, &data->point.base12);
     cpml_pair_copy(&base2, &data->point.base2);
@@ -995,7 +991,7 @@ _adg_default_value(AdgDim *dim)
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
 
-    if (!_adg_update_geometry(adim))
+    if (! _adg_update_geometry(adim))
         return g_strdup("undef");
 
     angle = (data->angle2 - data->angle1) * 180 / G_PI;
@@ -1018,9 +1014,11 @@ _adg_update_geometry(AdgADim *adim)
 
     data = adim->data;
 
+    /* Check for cached results */
     if (data->geometry_arranged)
         return TRUE;
-    else if (!_adg_get_info(adim, vector, &center, &distance))
+
+    if (! _adg_get_info(adim, vector, &center, &distance))
         return FALSE;
 
     dim_style = _ADG_GET_DIM_STYLE(adim);
@@ -1149,21 +1147,32 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 {
     AdgDim *dim;
     AdgADimPrivate *data;
+    AdgPoint *ref1_point, *ref2_point, *pos_point;
     const CpmlPair *ref1, *ref2, *pos;
     const CpmlPair *org1, *org2;
     gdouble factor;
 
     dim = (AdgDim *) adim;
     data = adim->data;
-    ref1 = adg_point_get_pair(adg_dim_get_ref1(dim));
-    ref2 = adg_point_get_pair(adg_dim_get_ref2(dim));
-    pos = adg_point_get_pair(adg_dim_get_pos(dim));
-    org1 = adg_point_get_pair(data->org1);
-    org2 = adg_point_get_pair(data->org2);
+    ref1_point = adg_dim_get_ref1(dim);
+    ref2_point = adg_dim_get_ref2(dim);
+    pos_point  = adg_dim_get_pos(dim);
 
-    if (ref1 == NULL || ref2 == NULL || pos == NULL ||
-        org1 == NULL || org2 == NULL)
+    /* Check if the needed points are all properly defined */
+    if (! adg_point_update(ref1_point) ||
+        ! adg_point_update(ref2_point) ||
+        ! adg_point_update(pos_point)  ||
+        ! adg_point_update(data->org1) ||
+        ! adg_point_update(data->org2))
+    {
         return FALSE;
+    }
+
+    ref1 = (CpmlPair *) ref1_point;
+    ref2 = (CpmlPair *) ref2_point;
+    pos  = (CpmlPair *) pos_point;
+    org1 = (CpmlPair *) data->org1;
+    org2 = (CpmlPair *) data->org2;
 
     vector[0].x = ref1->x - org1->x;
     vector[0].y = ref1->y - org1->y;

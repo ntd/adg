@@ -55,7 +55,7 @@ struct _AdgPoint {
     CpmlPair     pair;
     AdgModel    *model;
     gchar       *name;
-    gboolean     is_uptodate;
+    gboolean     up_to_date;
 };
 
 
@@ -206,7 +206,7 @@ adg_point_set_pair_explicit(AdgPoint *point, gdouble x, gdouble y)
     adg_point_unset(point);
     point->pair.x = x;
     point->pair.y = y;
-    point->is_uptodate = TRUE;
+    point->up_to_date = TRUE;
 }
 
 /**
@@ -243,20 +243,39 @@ adg_point_set_pair_from_model(AdgPoint *point,
     }
 
     /* Set the new named pair */
-    point->is_uptodate = FALSE;
+    point->up_to_date = FALSE;
     point->model = model;
     point->name = g_strdup(name);
+}
+
+/**
+ * adg_point_invalidate:
+ * @point: an #AdgPoint
+ *
+ * Invalidates @point, forcing a refresh of its internal #CpmlPair if
+ * the point is linked to a named pair. If @point is explicitely set,
+ * this function has no effect.
+ *
+ * Since: 1.0
+ **/
+void
+adg_point_invalidate(AdgPoint *point)
+{
+    g_return_if_fail(point != NULL);
+
+    if (point->model != NULL)
+        point->up_to_date = FALSE;
 }
 
 /**
  * adg_point_unset:
  * @point: a pointer to an #AdgPoint
  *
- * Unsets @point by resetting the internal "is_uptodate" flag.
- * This also means @point is unlinked from the model if it is
- * a named pair. In any cases, after this call the content of
- * @point is undefined, that is calling adg_point_get_pair()
- * will return %NULL.
+ * Unsets @point by resetting the internal %up_to_date flag and
+ * (eventually) unlinking it from the named pair it is bound to.
+ * After this call the content of @point is undefined, so a
+ * subsequent call to adg_point_get_pair() will return %NULL
+ * raising a warning.
  *
  * Since: 1.0
  **/
@@ -271,9 +290,51 @@ adg_point_unset(AdgPoint *point)
         g_free(point->name);
     }
 
-    point->is_uptodate = FALSE;
+    point->up_to_date = FALSE;
     point->model = NULL;
     point->name = NULL;
+}
+
+/**
+ * adg_point_update:
+ * @point: a pointer to an #AdgPoint
+ *
+ * Updates the internal #CpmlPair of @point. The internal
+ * implementation is protected against multiple calls so it
+ * can be called more times without harms.
+ *
+ * Returns: %TRUE if @point has been updated or %FALSE on errors,
+ *          i.e. when it is bound to a non-existent named pair.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_point_update(AdgPoint *point)
+{
+    AdgModel *model;
+    const CpmlPair *pair;
+
+    g_return_val_if_fail(point != NULL, FALSE);
+
+    if (point->up_to_date)
+        return TRUE;
+
+    model = point->model;
+    if (model == NULL) {
+        /* A point with explicit coordinates not up to date
+         * is an unexpected condition */
+        g_warning(_("%s: trying to get a pair from an undefined point"),
+                  G_STRLOC);
+        return FALSE;
+    }
+
+    pair = adg_model_get_named_pair(model, point->name);
+    if (pair == NULL)
+        return FALSE;
+
+    cpml_pair_copy(&point->pair, pair);
+    point->up_to_date = TRUE;
+    return TRUE;
 }
 
 /**
@@ -282,41 +343,28 @@ adg_point_unset(AdgPoint *point)
  *
  * #AdgPoint is an evolution of the pair concept but internally the
  * relevant data is still stored in an #CpmlPair struct. This function
- * gets the pointer to this struct, updating the value prior to
- * return it if needed (that is, if @point is linked to a not up
- * to date named pair).
+ * returns a copy of the internally owned pair.
  *
- * Returns: the pair of @point or %NULL if the named pair does not exist
+ * <note><para>
+ * The #CpmlPair is the first field of an #AdgPoint struct so casting
+ * is allowed between them and, in fact, it is often more convenient
+ * than calling this function. Just remember to update the internal
+ * pair by using adg_point_update() before.
+ * </para></note>
+ *
+ * Returns: (transfer full): the pair of @point or %NULL if the named pair does not exist
  *
  * Since: 1.0
  **/
-const CpmlPair *
+CpmlPair *
 adg_point_get_pair(AdgPoint *point)
 {
     g_return_val_if_fail(point != NULL, NULL);
 
-    if (!point->is_uptodate) {
-        const CpmlPair *pair;
+    if (! adg_point_update(point))
+        return NULL;
 
-        if (point->model == NULL) {
-            /* A point with explicit coordinates not up to date
-             * is an unexpected condition */
-            g_warning(_("%s: trying to get a pair from an undefined point"),
-                      G_STRLOC);
-            return NULL;
-        }
-
-        pair = adg_model_get_named_pair(point->model, point->name);
-
-        /* "Named pair not found" condition: return NULL without warnings */
-        if (pair == NULL)
-            return NULL;
-
-        cpml_pair_copy(&point->pair, pair);
-        point->is_uptodate = TRUE;
-    }
-
-    return (CpmlPair *) point;
+    return cpml_pair_dup(& point->pair);
 }
 
 /**
@@ -332,7 +380,7 @@ adg_point_get_pair(AdgPoint *point)
  * Since: 1.0
  **/
 AdgModel *
-adg_point_get_model(AdgPoint *point)
+adg_point_get_model(const AdgPoint *point)
 {
     g_return_val_if_fail(point != NULL, NULL);
     return point->model;
@@ -351,29 +399,10 @@ adg_point_get_model(AdgPoint *point)
  * Since: 1.0
  **/
 const gchar *
-adg_point_get_name(AdgPoint *point)
+adg_point_get_name(const AdgPoint *point)
 {
     g_return_val_if_fail(point != NULL, NULL);
     return point->name;
-}
-
-/**
- * adg_point_invalidate:
- * @point: an #AdgPoint
- *
- * Invalidates @point, forcing a refresh of its internal #CpmlPair if
- * the point is linked to a named pair. If @point is explicitely set,
- * this function has no effect.
- *
- * Since: 1.0
- **/
-void
-adg_point_invalidate(AdgPoint *point)
-{
-    g_return_if_fail(point != NULL);
-
-    if (point->model)
-        point->is_uptodate = FALSE;
 }
 
 /**
@@ -382,15 +411,20 @@ adg_point_invalidate(AdgPoint *point)
  * @point2: the second point to compare
  *
  * Compares @point1 and @point2 and returns %TRUE if the points are
- * equals. The comparison is made by matching also where the points
- * are bound. If you want to compare only the coordinates, use
- * cpml_pair_equal() directly on their pairs:
+ * equals. The comparison is made by checking also the named pairs
+ * they are bound to. If you want to compare only their coordinates,
+ * use cpml_pair_equal() directly on the #AdgPoint structs:
  *
  * |[
- * cpml_pair_equal(adg_point_get_pair(point1), adg_point_get_pair(point2));
+ * if (adg_point_update(point1) &&
+ *     adg_point_update(point2) &&
+ *     cpml_pair_equal((CpmlPair *) point1, (CpmlPair *) point2))
+ * {
+ *     ...
+ * }
  * ]|
  *
- * %NULL values are handled gracefully.
+ * %NULL points are handled gracefully.
  *
  * Returns: %TRUE if @point1 is equal to @point2, %FALSE otherwise
  *
@@ -411,7 +445,7 @@ adg_point_equal(const AdgPoint *point1, const AdgPoint *point2)
         return FALSE;
 
     /* Handle points bound to named pairs */
-    if (point1->model)
+    if (point1->model != NULL)
         return g_strcmp0(point1->name, point2->name) == 0;
 
     /* Handle points with explicit coordinates */

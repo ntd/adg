@@ -29,7 +29,7 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_POINT                  (adg_point_get_type())
+#define ADG_TYPE_POINT                          (adg_point_get_type())
 
 
 GType           adg_point_get_type              (void) G_GNUC_CONST;
@@ -47,11 +47,12 @@ void            adg_point_set_pair_explicit     (AdgPoint       *point,
 void            adg_point_set_pair_from_model   (AdgPoint       *point,
                                                  AdgModel       *model,
                                                  const gchar    *name);
-void            adg_point_unset                 (AdgPoint       *point);
-const CpmlPair *adg_point_get_pair              (AdgPoint       *point);
-AdgModel *      adg_point_get_model             (AdgPoint       *point);
-const gchar *   adg_point_get_name              (AdgPoint       *point);
 void            adg_point_invalidate            (AdgPoint       *point);
+void            adg_point_unset                 (AdgPoint       *point);
+gboolean        adg_point_update                (AdgPoint       *point);
+CpmlPair *      adg_point_get_pair              (AdgPoint       *point);
+AdgModel *      adg_point_get_model             (const AdgPoint *point);
+const gchar *   adg_point_get_name              (const AdgPoint *point);
 gboolean        adg_point_equal                 (const AdgPoint *point1,
                                                  const AdgPoint *point2);
 
