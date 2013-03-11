@@ -36,7 +36,7 @@
  * instead a bunch of pointers to the original #cairo_path_t struct:
  * modifying data throught this struct also changes the original path.
  *
- * Every #CpmlPath struct can contain more than one segment: the CPML
+ * Every #cairo_path_t struct can contain more than one segment: the CPML
  * library provides iteration APIs to browse the segments of a path.
  * Use cpml_segment_reset() to reset the iterator at the start of the
  * cairo path (will point the first segment) and cpml_segment_next()
@@ -50,21 +50,8 @@
  **/
 
 /**
- * CpmlPath:
- *
- * This is another name for the #cairo_path_t type. Although phisically
- * they are the same struct, #CpmlPath conceptually embodies an important
- * difference: it is a cairo path that can embed %CPML_ARC primitives.
- * This is not a native cairo primitive and having two different data
- * types is a good way to make clear when a function expect or not
- * embedded arc-to primitives.
- *
- * Since: 1.0
- **/
-
-/**
  * CpmlSegment:
- * @path:     the source #CpmlPath struct
+ * @path:     the source #cairo_path_t struct
  * @data:     the data points of the segment; the first primitive
  *            will always be a %CPML_MOVE
  * @num_data: size of @data
@@ -92,10 +79,10 @@ static int              reshape                 (CpmlSegment       *segment);
 
 /**
  * cpml_segment_from_cairo:
- * @segment: (out): a #CpmlSegment
- * @path:    (in):  the source #CpmlPath
+ * @segment: a #CpmlSegment
+ * @path: (type gpointer): the source #cairo_path_t
  *
- * Builds a CpmlSegment from a #CpmlPath structure. This operation
+ * Builds a CpmlSegment from a #cairo_path_t structure. This operation
  * involves stripping the duplicate %CPML_MOVE primitives at the
  * start of the path and setting <structfield>num_data</structfield>
  * field to the end of the contiguous line, that is when another
@@ -113,7 +100,7 @@ static int              reshape                 (CpmlSegment       *segment);
  * Since: 1.0
  **/
 int
-cpml_segment_from_cairo(CpmlSegment *segment, CpmlPath *path)
+cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *path)
 {
     /* The cairo path should be defined and in a perfect state */
     if (path == NULL || path->num_data == 0 ||
@@ -140,24 +127,6 @@ void
 cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 {
     memcpy(segment, src, sizeof(CpmlSegment));
-}
-
-/**
- * cpml_path_is_empty:
- * @path: a #CpmlPath (or a #cairo_path_t) pointer
- *
- * Checks if @path is empty. An invalid path is considered empty.
- *
- * Returns: (type gboolean): %1 if the path is empty or invalid,
- *                           %0 otherwise
- *
- * Since: 1.0
- **/
-int
-cpml_path_is_empty(const CpmlPath *path)
-{
-    cairo_path_t *cairo_path = (cairo_path_t *) path;
-    return path == NULL || cairo_path->data == NULL || cairo_path->num_data <= 0;
 }
 
 /**

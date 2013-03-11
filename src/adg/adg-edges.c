@@ -82,9 +82,9 @@ static void             _adg_set_property       (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             _adg_clear              (AdgModel       *model);
-static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
+static cairo_path_t *   _adg_get_cairo_path     (AdgTrail       *trail);
 static void             _adg_unset_source       (AdgEdges       *edges);
-static void             _adg_clear_cpml_path    (AdgEdges       *edges);
+static void             _adg_clear_cairo_path   (AdgEdges       *edges);
 static GSList *         _adg_get_vertices       (CpmlSegment    *segment,
                                                  gdouble         threshold);
 static GSList *         _adg_optimize_vertices  (GSList         *vertices);
@@ -114,7 +114,7 @@ adg_edges_class_init(AdgEdgesClass *klass)
 
     model_class->clear = _adg_clear;
 
-    trail_class->get_cpml_path = _adg_get_cpml_path;
+    trail_class->get_cairo_path = _adg_get_cairo_path;
 
     param = g_param_spec_object("source",
                                 P_("Source"),
@@ -148,8 +148,8 @@ adg_edges_init(AdgEdges *edges)
     data->critical_angle = G_PI / 45;
     data->axis_angle = 0;
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->cpml.array = NULL;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.array = NULL;
 
     edges->data = data;
 }
@@ -168,7 +168,7 @@ _adg_dispose(GObject *object)
 static void
 _adg_finalize(GObject *object)
 {
-    _adg_clear_cpml_path((AdgEdges *) object);
+    _adg_clear_cairo_path((AdgEdges *) object);
 
     if (_ADG_OLD_OBJECT_CLASS->finalize != NULL)
         _ADG_OLD_OBJECT_CLASS->finalize(object);
@@ -232,14 +232,14 @@ _adg_set_property(GObject *object, guint prop_id,
         tmp_double = g_value_get_double(value);
         if (data->axis_angle != tmp_double) {
             data->axis_angle = tmp_double;
-            _adg_clear_cpml_path(edges);
+            _adg_clear_cairo_path(edges);
         }
         break;
     case PROP_CRITICAL_ANGLE:
         tmp_double = g_value_get_double(value);
         if (data->critical_angle != tmp_double) {
             data->critical_angle = tmp_double;
-            _adg_clear_cpml_path(edges);
+            _adg_clear_cairo_path(edges);
         }
         break;
     default:
@@ -416,14 +416,14 @@ adg_edges_get_critical_angle(AdgEdges *edges)
 static void
 _adg_clear(AdgModel *model)
 {
-    _adg_clear_cpml_path((AdgEdges *) model);
+    _adg_clear_cairo_path((AdgEdges *) model);
 
     if (_ADG_OLD_MODEL_CLASS->clear != NULL)
         _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
-static CpmlPath *
-_adg_get_cpml_path(AdgTrail *trail)
+static cairo_path_t *
+_adg_get_cairo_path(AdgTrail *trail)
 {
     AdgEdges *edges;
     AdgEdgesPrivate *data;
@@ -436,10 +436,10 @@ _adg_get_cpml_path(AdgTrail *trail)
     data = edges->data;
 
     /* Check for cached path */
-    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS)
-        return &data->cpml.path;
+    if (data->cairo.path.status == CAIRO_STATUS_SUCCESS)
+        return &data->cairo.path;
 
-    _adg_clear_cpml_path((AdgEdges *) trail);
+    _adg_clear_cairo_path((AdgEdges *) trail);
 
     if (data->source != NULL) {
         adg_trail_put_segment(data->source, 1, &segment);
@@ -459,7 +459,7 @@ _adg_get_cpml_path(AdgTrail *trail)
         g_slist_foreach(vertices, (GFunc) cpml_pair_transform, &map);
 
         vertices = _adg_optimize_vertices(vertices);
-        data->cpml.array = _adg_path_build(vertices);
+        data->cairo.array = _adg_path_build(vertices);
 
         g_slist_foreach(vertices, (GFunc) g_free, NULL);
         g_slist_free(vertices);
@@ -467,14 +467,14 @@ _adg_get_cpml_path(AdgTrail *trail)
         /* Reapply the inverse of the previous transformation to
          * move the vertices to their original positions */
         cairo_matrix_invert(&map);
-        _adg_path_transform(data->cpml.array, &map);
+        _adg_path_transform(data->cairo.array, &map);
 
-        data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-        data->cpml.path.data = (cairo_path_data_t *) (data->cpml.array)->data;
-        data->cpml.path.num_data = (data->cpml.array)->len;
+        data->cairo.path.status = CAIRO_STATUS_SUCCESS;
+        data->cairo.path.data = (cairo_path_data_t *) (data->cairo.array)->data;
+        data->cairo.path.num_data = (data->cairo.array)->len;
     }
 
-    return &data->cpml.path;
+    return &data->cairo.path;
 }
 
 static void
@@ -484,18 +484,18 @@ _adg_unset_source(AdgEdges *edges)
 }
 
 static void
-_adg_clear_cpml_path(AdgEdges *edges)
+_adg_clear_cairo_path(AdgEdges *edges)
 {
     AdgEdgesPrivate *data = edges->data;
 
-    if (data->cpml.array != NULL) {
-        g_array_free(data->cpml.array, TRUE);
-        data->cpml.array = NULL;
+    if (data->cairo.array != NULL) {
+        g_array_free(data->cairo.array, TRUE);
+        data->cairo.array = NULL;
     }
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->cpml.path.data = NULL;
-    data->cpml.path.num_data = 0;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.data = NULL;
+    data->cairo.path.num_data = 0;
 }
 
 /**

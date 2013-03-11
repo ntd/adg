@@ -39,7 +39,7 @@ G_BEGIN_DECLS
 
 typedef struct _AdgTrail        AdgTrail;
 typedef struct _AdgTrailClass   AdgTrailClass;
-typedef CpmlPath * (*AdgTrailCallback) (AdgTrail *trail, gpointer user_data);
+typedef cairo_path_t * (*AdgTrailCallback) (AdgTrail *trail, gpointer user_data);
 
 struct _AdgTrail {
     /*< private >*/
@@ -53,7 +53,7 @@ struct _AdgTrailClass {
 
     /*< public >*/
     /* Virtual table */
-    CpmlPath *          (*get_cpml_path)        (AdgTrail       *trail);
+    cairo_path_t *  (*get_cairo_path)           (AdgTrail        *trail);
 };
 
 
@@ -62,7 +62,7 @@ AdgTrail *          adg_trail_new               (AdgTrailCallback callback,
                                                  gpointer         user_data);
 
 const cairo_path_t *adg_trail_get_cairo_path    (AdgTrail        *trail);
-CpmlPath *          adg_trail_cpml_path         (AdgTrail        *trail);
+cairo_path_t *      adg_trail_cairo_path        (AdgTrail        *trail);
 gboolean            adg_trail_put_segment       (AdgTrail        *trail,
                                                  guint            n_segment,
                                                  CpmlSegment     *segment);

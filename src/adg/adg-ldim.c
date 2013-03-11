@@ -102,7 +102,7 @@ static void             _adg_update_extents     (AdgLDim        *ldim);
 static void             _adg_unset_trail        (AdgLDim        *ldim);
 static void             _adg_dispose_trail      (AdgLDim        *ldim);
 static void             _adg_dispose_markers    (AdgLDim        *ldim);
-static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
+static cairo_path_t *   _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
@@ -168,19 +168,19 @@ adg_ldim_init(AdgLDim *ldim)
     data->has_extension1 = TRUE;
     data->has_extension2 = TRUE;
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->cpml.path.data = data->cpml.data;
-    data->cpml.path.num_data = G_N_ELEMENTS(data->cpml.data);
-    data->cpml.path.data[0] = move_to;
-    data->cpml.path.data[2] = line_to;
-    data->cpml.path.data[4] = move_to;
-    data->cpml.path.data[6] = line_to;
-    data->cpml.path.data[8] = move_to;
-    data->cpml.path.data[10] = line_to;
-    data->cpml.path.data[12] = move_to;
-    data->cpml.path.data[14] = line_to;
-    data->cpml.path.data[16] = move_to;
-    data->cpml.path.data[18] = line_to;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.data = data->cairo.data;
+    data->cairo.path.num_data = G_N_ELEMENTS(data->cairo.data);
+    data->cairo.path.data[0] = move_to;
+    data->cairo.path.data[2] = line_to;
+    data->cairo.path.data[4] = move_to;
+    data->cairo.path.data[6] = line_to;
+    data->cairo.path.data[8] = move_to;
+    data->cairo.path.data[10] = line_to;
+    data->cairo.path.data[12] = move_to;
+    data->cairo.path.data[14] = line_to;
+    data->cairo.path.data[16] = move_to;
+    data->cairo.path.data[18] = line_to;
 
     data->trail = NULL;
     data->marker1 = NULL;
@@ -579,7 +579,7 @@ _adg_arrange(AdgEntity *entity)
     _adg_update_entities(ldim);
 
     /* Check for cached result */
-    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
+    if (data->cairo.path.status == CAIRO_STATUS_SUCCESS) {
         adg_entity_set_global_map((AdgEntity *) quote, &data->quote.global_map);
         return;
     }
@@ -607,23 +607,23 @@ _adg_arrange(AdgEntity *entity)
 
     pair.x = ref1.x + data->shift.from.x;
     pair.y = ref1.y + data->shift.from.y;
-    cpml_pair_to_cairo(&pair, &data->cpml.data[13]);
+    cpml_pair_to_cairo(&pair, &data->cairo.data[13]);
 
-    cpml_pair_to_cairo(&base1, &data->cpml.data[1]);
+    cpml_pair_to_cairo(&base1, &data->cairo.data[1]);
 
     pair.x = base1.x + data->shift.to.x;
     pair.y = base1.y + data->shift.to.y;
-    cpml_pair_to_cairo(&pair, &data->cpml.data[15]);
+    cpml_pair_to_cairo(&pair, &data->cairo.data[15]);
 
     pair.x = ref2.x + data->shift.from.x;
     pair.y = ref2.y + data->shift.from.y;
-    cpml_pair_to_cairo(&pair, &data->cpml.data[17]);
+    cpml_pair_to_cairo(&pair, &data->cairo.data[17]);
 
-    cpml_pair_to_cairo(&base2, &data->cpml.data[3]);
+    cpml_pair_to_cairo(&base2, &data->cairo.data[3]);
 
     pair.x = base2.x + data->shift.to.x;
     pair.y = base2.y + data->shift.to.y;
-    cpml_pair_to_cairo(&pair, &data->cpml.data[19]);
+    cpml_pair_to_cairo(&pair, &data->cairo.data[19]);
 
     /* Calculate the outside segments */
     if (outside) {
@@ -631,48 +631,48 @@ _adg_arrange(AdgEntity *entity)
         CpmlVector vector;
 
         beyond = adg_dim_style_get_beyond(dim_style);
-        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
+        cpml_pair_from_cairo(&pair, &data->cairo.data[1]);
 
-        cpml_pair_from_cairo(&vector, &data->cpml.data[3]);
+        cpml_pair_from_cairo(&vector, &data->cairo.data[3]);
         vector.x -= pair.x;
         vector.y -= pair.y;
         cpml_vector_set_length(&vector, beyond);
 
-        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
-        cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
+        cpml_pair_from_cairo(&pair, &data->cairo.data[1]);
+        cpml_pair_to_cairo(&pair, &data->cairo.data[5]);
 
         pair.x -= vector.x;
         pair.y -= vector.y;
-        cpml_pair_to_cairo(&pair, &data->cpml.data[7]);
+        cpml_pair_to_cairo(&pair, &data->cairo.data[7]);
 
-        cpml_pair_from_cairo(&pair, &data->cpml.data[3]);
-        cpml_pair_to_cairo(&pair, &data->cpml.data[11]);
+        cpml_pair_from_cairo(&pair, &data->cairo.data[3]);
+        cpml_pair_to_cairo(&pair, &data->cairo.data[11]);
 
         pair.x += vector.x;
         pair.y += vector.y;
-        cpml_pair_to_cairo(&pair, &data->cpml.data[9]);
+        cpml_pair_to_cairo(&pair, &data->cairo.data[9]);
 
-        data->cpml.data[2].header.length = 2;
+        data->cairo.data[2].header.length = 2;
     } else {
-        data->cpml.data[2].header.length = 10;
+        data->cairo.data[2].header.length = 10;
     }
-    data->cpml.data[10].header.length = 2;
+    data->cairo.data[10].header.length = 2;
 
     _adg_update_quote(ldim, &base1, &base2, &pos, detach, outside,
                       adg_dim_style_get_quote_shift(dim_style)->x);
 
     /* Play with header lengths to show or hide the extension lines */
     if (data->has_extension1) {
-        data->cpml.data[14].header.length = data->has_extension2 ? 2 : 6;
+        data->cairo.data[14].header.length = data->has_extension2 ? 2 : 6;
     } else {
         gint n = ! outside && ! detach ? 2 : 10;
-        data->cpml.data[14].header.length = 2;
-        data->cpml.data[n].header.length += 4;
+        data->cairo.data[14].header.length = 2;
+        data->cairo.data[n].header.length += 4;
         if (!data->has_extension2)
-            data->cpml.data[n].header.length += 4;
+            data->cairo.data[n].header.length += 4;
     }
 
-    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
+    data->cairo.path.status = CAIRO_STATUS_SUCCESS;
 
     /* Update the markers, if present */
     if (data->trail != NULL) {
@@ -1000,12 +1000,12 @@ _adg_update_quote(AdgLDim *ldim, CpmlPair *base1, CpmlPair *base2, CpmlPair *pos
         /* Extends the base line to include the "quote_end" pair,
          * so a detached quote is properly underlined */
         if (outside) {
-            to_extend = &data->cpml.data[on_side1 ? 7 : 9];
+            to_extend = &data->cairo.data[on_side1 ? 7 : 9];
         } else {
-            to_extend = &data->cpml.data[9];
-            cpml_pair_to_cairo(&middle, &data->cpml.data[9]);
-            cpml_pair_to_cairo(on_side1 ? base1 : base2, &data->cpml.data[11]);
-            data->cpml.data[2].header.length = 6;
+            to_extend = &data->cairo.data[9];
+            cpml_pair_to_cairo(&middle, &data->cairo.data[9]);
+            cpml_pair_to_cairo(on_side1 ? base1 : base2, &data->cairo.data[11]);
+            data->cairo.data[2].header.length = 6;
         }
 
         /* Extend the base line only if needed */
@@ -1082,7 +1082,7 @@ _adg_unset_trail(AdgLDim *ldim)
     if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
 
 static void
@@ -1112,7 +1112,7 @@ _adg_dispose_markers(AdgLDim *ldim)
     }
 }
 
-static CpmlPath *
+static cairo_path_t *
 _adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
     AdgLDim *ldim;
@@ -1121,5 +1121,5 @@ _adg_trail_callback(AdgTrail *trail, gpointer user_data)
     ldim = (AdgLDim *) user_data;
     data = ldim->data;
 
-    return &data->cpml.path;
+    return &data->cairo.path;
 }

@@ -29,20 +29,18 @@
 
 CAIRO_BEGIN_DECLS
 
-typedef cairo_path_t CpmlPath;
 typedef struct _CpmlSegment CpmlSegment;
 
 struct _CpmlSegment {
     /*< public >*/
-    CpmlPath          *path;
+    cairo_path_t      *path;
     cairo_path_data_t *data;
     int                num_data;
 };
 
 
-int     cpml_path_is_empty              (const CpmlPath         *path);
 int     cpml_segment_from_cairo         (CpmlSegment            *segment,
-                                         CpmlPath               *path);
+                                         cairo_path_t           *path);
 void    cpml_segment_copy               (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
 void    cpml_segment_reset              (CpmlSegment            *segment);

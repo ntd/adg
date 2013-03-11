@@ -59,9 +59,9 @@ struct _AdgPathPrivate {
     CpmlPair             cp;
 
     struct {
-        CpmlPath         path;
+        cairo_path_t     path;
         GArray          *array;
-    }                    cpml;
+    }                    cairo;
 
     CpmlPrimitive        last;
     CpmlPrimitive        over;

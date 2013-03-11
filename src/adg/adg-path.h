@@ -60,7 +60,6 @@ const CpmlPrimitive *
                 adg_path_last_primitive         (AdgPath        *path);
 const CpmlPrimitive *
                 adg_path_over_primitive         (AdgPath        *path);
-
 void            adg_path_append                 (AdgPath        *path,
                                                  CpmlPrimitiveType type,
                                                  ...);
@@ -77,7 +76,8 @@ void            adg_path_append_segment         (AdgPath        *path,
                                                  const CpmlSegment
                                                                 *segment);
 void            adg_path_append_cpml_path       (AdgPath        *path,
-                                                 const CpmlPath *cpml_path);
+                                                 const cairo_path_t
+                                                                *cairo_path);
 void            adg_path_move_to                (AdgPath        *path,
                                                  const CpmlPair *pair);
 void            adg_path_move_to_explicit       (AdgPath        *path,

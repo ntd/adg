@@ -20,9 +20,9 @@
 
 /**
  * SECTION:adg-trail
- * @short_description: A bare model built around #CpmlPath
+ * @short_description: A bare model built around #cairo_path_t
  *
- * The #AdgTrail model is a really basic model built around the #CpmlPath
+ * The #AdgTrail model is a really basic model built around the #cairo_path_t
  * struct: for a full fledged path model consider using #AdgPath.
  *
  * A trail is a path model that demands all the implementation details to
@@ -48,9 +48,9 @@
 
 /**
  * AdgTrailClass:
- * @get_cpml_path: virtual method to get the #CpmlPath bound to the trail.
+ * @get_cairo_path: virtual method to get the #cairo_path_t bound to the trail.
  *
- * The default @get_cpml_path calls the #AdgTrailCallback callback passed
+ * The default @get_cairo_path calls the #AdgTrailCallback callback passed
  * to adg_trail_new() during construction. No caching is performed in
  * between.
  *
@@ -62,12 +62,12 @@
  * @trail: an #AdgTrail
  * @user_data: the general purpose pointer set by adg_trail_new()
  *
- * This is the callback used to generate the #CpmlPath and it is
- * called directly by adg_trail_cpml_path(). The caller owns
+ * This is the callback used to generate the #cairo_path_t and it is
+ * called directly by adg_trail_cairo_path(). The caller owns
  * the returned path, that is the finalization of the returned
- * #CpmlPath should be made by the caller when appropriate.
+ * #cairo_path_t should be made by the caller when appropriate.
  *
- * Returns: the #CpmlPath of this trail model
+ * Returns: the #cairo_path_t of this trail model
  *
  * Since: 1.0
  **/
@@ -86,6 +86,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_trail_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_trail_parent_class)
 
+#define EMPTY_PATH(p)          ((p) == NULL || (p)->data == NULL || (p)->num_data <= 0)
 
 G_DEFINE_TYPE(AdgTrail, adg_trail, ADG_TYPE_MODEL)
 
@@ -105,7 +106,7 @@ static void             _adg_set_property       (GObject        *object,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
 static void             _adg_clear              (AdgModel       *model);
-static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
+static cairo_path_t *   _adg_get_cairo_path     (AdgTrail       *trail);
 static GArray *         _adg_arc_to_curves      (GArray         *array,
                                                  const cairo_path_data_t *src,
                                                  gdouble         max_angle);
@@ -129,7 +130,7 @@ adg_trail_class_init(AdgTrailClass *klass)
 
     model_class->clear = _adg_clear;
 
-    klass->get_cpml_path = _adg_get_cpml_path;
+    klass->get_cairo_path = _adg_get_cairo_path;
 
     param = g_param_spec_double("max-angle",
                                 P_("Max Angle"),
@@ -209,10 +210,10 @@ _adg_set_property(GObject *object, guint prop_id,
 
 /**
  * adg_trail_new:
- * @callback: (scope notified): the #CpmlPath constructor function
+ * @callback: (scope notified): the #cairo_path_t constructor function
  * @user_data: generic pointer to pass to the callback
  *
- * Creates a new trail model. The #CpmlPath must be constructed by
+ * Creates a new trail model. The #cairo_path_t must be constructed by
  * the @callback function: #AdgTrail will not cache anything, so you
  * should implement any caching mechanism in the callback, if needed.
  *
@@ -242,8 +243,8 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * Gets a pointer to the cairo path of @trail. The returned path is
  * owned by @trail and must be considered read-only.
  *
- * This function gets the #CpmlPath of @trail by calling
- * adg_trail_cpml_path() and converts its #CPML_ARC primitives,
+ * This function gets the #cairo_path_t of @trail by calling
+ * adg_trail_cairo_path() and converts its #CPML_ARC primitives,
  * not recognized by cairo, into approximated Bézier curves
  * primitives (#CPML_CURVE). The conversion is cached, so any further
  * request is O(1). This cache is cleared only by the
@@ -258,7 +259,6 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 {
     AdgTrailPrivate *data;
     cairo_path_t *cairo_path;
-    CpmlPath *cpml_path;
     GArray *dst;
     const cairo_path_data_t *p_src;
     int i;
@@ -266,22 +266,21 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
     data = trail->data;
-    cairo_path = &data->cairo_path;
 
     /* Check for cached result */
-    if (cairo_path->data != NULL)
-        return cairo_path;
+    if (data->cairo_path.data != NULL)
+        return &data->cairo_path;
 
-    cpml_path = adg_trail_cpml_path(trail);
-    if (cpml_path_is_empty(cpml_path))
+    cairo_path = adg_trail_cairo_path(trail);
+    if (EMPTY_PATH(cairo_path))
         return NULL;
 
     dst = g_array_sized_new(FALSE, FALSE,
-                            sizeof(cairo_path_data_t), cpml_path->num_data);
+                            sizeof(cairo_path_data_t), cairo_path->num_data);
 
-    /* Cycle the CpmlPath and convert arcs to Bézier curves */
-    for (i = 0; i < cpml_path->num_data; i += p_src->header.length) {
-        p_src = (const cairo_path_data_t *) cpml_path->data + i;
+    /* Cycle the cairo_path_t and convert arcs to Bézier curves */
+    for (i = 0; i < cairo_path->num_data; i += p_src->header.length) {
+        p_src = (const cairo_path_data_t *) cairo_path->data + i;
 
         if ((CpmlPrimitiveType) p_src->header.type == CPML_ARC)
             dst = _adg_arc_to_curves(dst, p_src, data->max_angle);
@@ -289,6 +288,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
             dst = g_array_append_vals(dst, p_src, p_src->header.length);
     }
 
+    cairo_path = &data->cairo_path;
     cairo_path->status = CAIRO_STATUS_SUCCESS;
     cairo_path->num_data = dst->len;
     cairo_path->data = (cairo_path_data_t *) g_array_free(dst, FALSE);
@@ -297,12 +297,12 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 }
 
 /**
- * adg_trail_cpml_path:
+ * adg_trail_cairo_path:
  * @trail: an #AdgTrail
  *
- * Gets the CPML path structure defined by @trail. The returned
+ * Gets the cairo path structure defined by @trail. The returned
  * value is managed by the #AdgTrail implementation, that is this
- * function directly calls the #AdgTrailClass::get_cpml_path()
+ * function directly calls the #AdgTrailClass::get_cairo_path()
  * virtual method that any trail instance must have.
  *
  * Whenever used internally by the ADG project, the returned path
@@ -313,24 +313,24 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * should be able to modify the trail where they are applied).
  *
  * Any further call to this method will probably make the pointer
- * previously returned useless because the #CpmlPath could be
- * relocated and the old #CpmlPath will likely contain rubbish.
+ * previously returned useless because the #cairo_path_t could be
+ * relocated and the old #cairo_path_t will likely contain rubbish.
  *
- * Returns: (transfer none): a pointer to the #CpmlPath or %NULL on errors.
+ * Returns: (transfer none): a pointer to the #cairo_path_t or %NULL on errors.
  *
  * Since: 1.0
  **/
-CpmlPath *
-adg_trail_cpml_path(AdgTrail *trail)
+cairo_path_t *
+adg_trail_cairo_path(AdgTrail *trail)
 {
     AdgTrailClass *klass;
     AdgTrailPrivate *data;
-    CpmlPath *cpml_path;
+    cairo_path_t *cairo_path;
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
     klass = ADG_TRAIL_GET_CLASS(trail);
-    if (klass->get_cpml_path == NULL)
+    if (klass->get_cairo_path == NULL)
         return NULL;
 
     data = trail->data;
@@ -341,10 +341,10 @@ adg_trail_cpml_path(AdgTrail *trail)
     }
 
     data->in_construction = TRUE;
-    cpml_path = klass->get_cpml_path(trail);
+    cairo_path = klass->get_cairo_path(trail);
     data->in_construction = FALSE;
 
-    return cpml_path;
+    return cairo_path;
 }
 
 /**
@@ -354,7 +354,7 @@ adg_trail_cpml_path(AdgTrail *trail)
  * @segment: the destination #CpmlSegment
  *
  * Convenient function to get a segment from @trail. The segment is
- * got from the CPML path: check out adg_trail_cpml_path() for
+ * got from the cairo path: check out adg_trail_cairo_path() for
  * further information.
  *
  * When the segment is not found, either because @n_segment is out
@@ -370,7 +370,7 @@ adg_trail_cpml_path(AdgTrail *trail)
 gboolean
 adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
 {
-    CpmlPath *cpml_path;
+    cairo_path_t *cairo_path;
     gboolean found;
     CpmlSegment iterator;
     guint cnt;
@@ -383,9 +383,9 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
         return FALSE;
     }
 
-    cpml_path = adg_trail_cpml_path(trail);
-    found = !cpml_path_is_empty(cpml_path) &&
-        cpml_segment_from_cairo(&iterator, cpml_path);
+    cairo_path = adg_trail_cairo_path(trail);
+    found = ! EMPTY_PATH(cairo_path) &&
+        cpml_segment_from_cairo(&iterator, cairo_path);
 
     for (cnt = 1; found && cnt < n_segment; ++cnt)
         found = cpml_segment_next(&iterator);
@@ -421,13 +421,13 @@ adg_trail_get_extents(AdgTrail *trail)
     data = trail->data;
 
     if (!data->extents.is_defined) {
-        CpmlPath *cpml_path;
+        cairo_path_t *cairo_path;
         CpmlSegment segment;
         CpmlExtents extents;
 
-        cpml_path = adg_trail_cpml_path(trail);
-        if (!cpml_path_is_empty(cpml_path) &&
-            cpml_segment_from_cairo(&segment, cpml_path)) {
+        cairo_path = adg_trail_cairo_path(trail);
+        if (! EMPTY_PATH(cairo_path) &&
+            cpml_segment_from_cairo(&segment, cairo_path)) {
             do {
                 cpml_segment_put_extents(&segment, &extents);
                 cpml_extents_add(&data->extents, &extents);
@@ -539,8 +539,8 @@ _adg_clear(AdgModel *model)
         _ADG_OLD_MODEL_CLASS->clear(model);
 }
 
-static CpmlPath *
-_adg_get_cpml_path(AdgTrail *trail)
+static cairo_path_t *
+_adg_get_cairo_path(AdgTrail *trail)
 {
     AdgTrailPrivate *data = trail->data;
 

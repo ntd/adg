@@ -89,7 +89,7 @@ static void             _adg_update_entities    (AdgRDim        *rdim);
 static void             _adg_clear_trail        (AdgRDim        *rdim);
 static void             _adg_dispose_trail      (AdgRDim        *rdim);
 static void             _adg_dispose_marker     (AdgRDim        *rdim);
-static CpmlPath *       _adg_trail_callback     (AdgTrail       *trail,
+static cairo_path_t *   _adg_trail_callback     (AdgTrail       *trail,
                                                  gpointer        user_data);
 
 
@@ -149,13 +149,13 @@ adg_rdim_init(AdgRDim *rdim)
     data->shift.base.x = data->shift.base.y = 0;
     cairo_matrix_init_identity(&data->quote.global_map);
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
-    data->cpml.path.data = data->cpml.data;
-    data->cpml.path.num_data = G_N_ELEMENTS(data->cpml.data);
-    data->cpml.path.data[0] = move_to;
-    data->cpml.path.data[2] = line_to;
-    data->cpml.path.data[4] = move_to;
-    data->cpml.path.data[6] = line_to;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.data = data->cairo.data;
+    data->cairo.path.num_data = G_N_ELEMENTS(data->cairo.data);
+    data->cairo.path.data[0] = move_to;
+    data->cairo.path.data[2] = line_to;
+    data->cairo.path.data[4] = move_to;
+    data->cairo.path.data[6] = line_to;
 
     rdim->data = data;
 }
@@ -397,7 +397,7 @@ _adg_arrange(AdgEntity *entity)
     _adg_update_entities(rdim);
 
     /* Check for cached result */
-    if (data->cpml.path.status == CAIRO_STATUS_SUCCESS) {
+    if (data->cairo.path.status == CAIRO_STATUS_SUCCESS) {
         adg_entity_set_global_map(quote_entity, &data->quote.global_map);
         return;
     }
@@ -419,10 +419,10 @@ _adg_arrange(AdgEntity *entity)
     base.y += data->shift.base.y;
 
     /* baseline start */
-    cpml_pair_to_cairo(&base, &data->cpml.data[1]);
+    cpml_pair_to_cairo(&base, &data->cairo.data[1]);
 
     /* baseline end */
-    cpml_pair_to_cairo(&ref2, &data->cpml.data[3]);
+    cpml_pair_to_cairo(&ref2, &data->cairo.data[3]);
 
     if (outside) {
         AdgDimStyle *dim_style;
@@ -437,15 +437,15 @@ _adg_arrange(AdgEntity *entity)
         pair.x = ref2.x + vector.x;
         pair.y = ref2.y + vector.y;
 
-        data->cpml.data[2].header.length = 2;
+        data->cairo.data[2].header.length = 2;
 
         /* Outside segment start */
-        cpml_pair_to_cairo(&pair, &data->cpml.data[5]);
+        cpml_pair_to_cairo(&pair, &data->cairo.data[5]);
 
         /* Outside segment end */
-        cpml_pair_to_cairo(&ref2, &data->cpml.data[7]);
+        cpml_pair_to_cairo(&ref2, &data->cairo.data[7]);
     } else {
-        data->cpml.data[2].header.length = 6;
+        data->cairo.data[2].header.length = 6;
     }
 
     /* Arrange the quote */
@@ -454,7 +454,7 @@ _adg_arrange(AdgEntity *entity)
 
         adg_alignment_set_factor_explicit(quote, 1, 0);
 
-        cpml_pair_from_cairo(&pair, &data->cpml.data[1]);
+        cpml_pair_from_cairo(&pair, &data->cairo.data[1]);
         cairo_matrix_init_translate(&map, pair.x, pair.y);
         cairo_matrix_rotate(&map, data->angle);
         adg_entity_set_global_map(quote_entity, &map);
@@ -464,7 +464,7 @@ _adg_arrange(AdgEntity *entity)
         adg_matrix_copy(&data->quote.global_map, &map);
     }
 
-    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
+    data->cairo.path.status = CAIRO_STATUS_SUCCESS;
 
     /* Arrange the trail */
     if (data->trail != NULL) {
@@ -644,7 +644,7 @@ _adg_clear_trail(AdgRDim *rdim)
     if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
 
-    data->cpml.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
 }
 
 static void
@@ -669,7 +669,7 @@ _adg_dispose_marker(AdgRDim *rdim)
     }
 }
 
-static CpmlPath *
+static cairo_path_t *
 _adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
     AdgRDim *rdim;
@@ -678,5 +678,5 @@ _adg_trail_callback(AdgTrail *trail, gpointer user_data)
     rdim = (AdgRDim *) user_data;
     data = rdim->data;
 
-    return &data->cpml.path;
+    return &data->cairo.path;
 }

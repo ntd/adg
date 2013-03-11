@@ -27,14 +27,14 @@ G_BEGIN_DECLS
 typedef struct _AdgEdgesPrivate AdgEdgesPrivate;
 
 struct _AdgEdgesPrivate {
-    AdgTrail    *source;
-    gdouble      axis_angle;
-    gdouble      critical_angle;
+    AdgTrail        *source;
+    gdouble          axis_angle;
+    gdouble          critical_angle;
 
     struct {
-        CpmlPath path;
-        GArray  *array;
-    }            cpml;
+        cairo_path_t path;
+        GArray      *array;
+    }                cairo;
 };
 
 G_END_DECLS

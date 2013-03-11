@@ -22,15 +22,15 @@
  * SECTION:adg-path
  * @short_description: The basic model representing a generic path
  *
- * The #AdgPath model represents a virtual #CpmlPath: this class
+ * The #AdgPath model represents a virtual #cairo_path_t: this class
  * implements methods to create the path and provides additional
  * operations specific to technical drawings.
  *
- * #AdgPath overrides the get_cpml_path() method of the parent
+ * #AdgPath overrides the get_cairo_path() method of the parent
  * #AdgTrail class, avoiding the need of an #AdgTrailCallback.
  * The path is constructed programmaticaly: keep in mind any
- * method that modifies the path will invalidate the #CpmlPath
- * returned by adg_trail_get_cpml_path().
+ * method that modifies the path will invalidate the #cairo_path_t
+ * returned by adg_trail_get_cairo_path().
  *
  * Although some of the provided methods are clearly based on the
  * original cairo path manipulation API, their behavior could be
@@ -81,8 +81,8 @@ static void             _adg_finalize           (GObject        *object);
 static void             _adg_clear              (AdgModel       *model);
 static void             _adg_clear_parent       (AdgModel       *model);
 static void             _adg_changed            (AdgModel       *model);
-static CpmlPath *       _adg_get_cpml_path      (AdgTrail       *trail);
-static CpmlPath *       _adg_read_cpml_path     (AdgPath        *path);
+static cairo_path_t *   _adg_get_cairo_path     (AdgTrail       *trail);
+static cairo_path_t *   _adg_read_cairo_path    (AdgPath        *path);
 static gint             _adg_primitive_length   (CpmlPrimitiveType type);
 static void             _adg_append_primitive   (AdgPath        *path,
                                                  CpmlPrimitive  *primitive);
@@ -133,7 +133,7 @@ adg_path_class_init(AdgPathClass *klass)
     model_class->clear = _adg_clear;
     model_class->changed = _adg_changed;
 
-    trail_class->get_cpml_path = _adg_get_cpml_path;
+    trail_class->get_cairo_path = _adg_get_cairo_path;
 }
 
 static void
@@ -143,7 +143,7 @@ adg_path_init(AdgPath *path)
                                                        AdgPathPrivate);
 
     data->cp_is_valid = FALSE;
-    data->cpml.array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
+    data->cairo.array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
     data->operation.action = ADG_ACTION_NONE;
 
     path->data = data;
@@ -158,7 +158,7 @@ _adg_finalize(GObject *object)
     path = (AdgPath *) object;
     data = path->data;
 
-    g_array_free(data->cpml.array, TRUE);
+    g_array_free(data->cairo.array, TRUE);
     _adg_clear_operation(path);
 
     if (_ADG_OLD_OBJECT_CLASS->finalize)
@@ -469,34 +469,33 @@ adg_path_append_segment(AdgPath *path, const CpmlSegment *segment)
     data = path->data;
 
     _adg_clear_parent((AdgModel *) path);
-    data->cpml.array = g_array_append_vals(data->cpml.array,
-                                           segment->data, segment->num_data);
+    data->cairo.array = g_array_append_vals(data->cairo.array,
+                                            segment->data, segment->num_data);
 }
 
 /**
- * adg_path_append_cpml_path:
- * @path:      an #AdgPath
- * @cpml_path: the #cairo_path_t path to append
+ * adg_path_append_cairo_path:
+ * @path:                        an #AdgPath
+ * @cairo_path: (type gpointer): the #cairo_path_t path to append
  *
- * Appends a whole #CpmlPath to @path. #CpmlPath is a superset of
- * #cairo_path_t, so this function can be feeded with both.
+ * Appends a whole #cairo_path_t to @path.
  *
  * Since: 1.0
  **/
 void
-adg_path_append_cpml_path(AdgPath *path, const CpmlPath *cpml_path)
+adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 {
     AdgPathPrivate *data;
 
     g_return_if_fail(ADG_IS_PATH(path));
-    g_return_if_fail(cpml_path != NULL);
+    g_return_if_fail(cairo_path != NULL);
 
     data = path->data;
 
     _adg_clear_parent((AdgModel *) path);
-    data->cpml.array = g_array_append_vals(data->cpml.array,
-                                           cpml_path->data,
-                                           cpml_path->num_data);
+    data->cairo.array = g_array_append_vals(data->cairo.array,
+                                            cairo_path->data,
+                                            cairo_path->num_data);
 }
 
 /**
@@ -957,7 +956,7 @@ _adg_clear(AdgModel *model)
     path = (AdgPath *) model;
     data = path->data;
 
-    g_array_set_size(data->cpml.array, 0);
+    g_array_set_size(data->cairo.array, 0);
     _adg_clear_operation(path);
     _adg_clear_parent(model);
 }
@@ -978,24 +977,24 @@ _adg_changed(AdgModel *model)
         _ADG_OLD_MODEL_CLASS->changed(model);
 }
 
-static CpmlPath *
-_adg_get_cpml_path(AdgTrail *trail)
+static cairo_path_t *
+_adg_get_cairo_path(AdgTrail *trail)
 {
     _adg_clear_parent((AdgModel *) trail);
-    return _adg_read_cpml_path((AdgPath *) trail);
+    return _adg_read_cairo_path((AdgPath *) trail);
 }
 
-static CpmlPath *
-_adg_read_cpml_path(AdgPath *path)
+static cairo_path_t *
+_adg_read_cairo_path(AdgPath *path)
 {
     AdgPathPrivate *data = path->data;
 
-    /* Always regenerate the CpmlPath as it is a trivial operation */
-    data->cpml.path.status = CAIRO_STATUS_SUCCESS;
-    data->cpml.path.data = (cairo_path_data_t *) (data->cpml.array)->data;
-    data->cpml.path.num_data = (data->cpml.array)->len;
+    /* Always regenerate the cairo_path_t as it is a trivial operation */
+    data->cairo.path.status = CAIRO_STATUS_SUCCESS;
+    data->cairo.path.data = (cairo_path_data_t *) (data->cairo.array)->data;
+    data->cairo.path.num_data = (data->cairo.array)->len;
 
-    return &data->cpml.path;
+    return &data->cairo.path;
 }
 
 static gint
@@ -1024,13 +1023,13 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
     _adg_do_operation(path, path_data);
 
     /* Append the path data to the internal path array */
-    data->cpml.array = g_array_append_vals(data->cpml.array,
+    data->cairo.array = g_array_append_vals(data->cairo.array,
                                            path_data, length);
 
     /* Set path data to point to the recently appended cairo_path_data_t
      * primitive: the first struct is the header */
-    path_data = (cairo_path_data_t *) (data->cpml.array)->data +
-                (data->cpml.array)->len - length;
+    path_data = (cairo_path_data_t *) (data->cairo.array)->data +
+                (data->cairo.array)->len - length;
 
     /* Store the over primitive */
     memcpy(&data->over, &data->last, sizeof(CpmlPrimitive));
@@ -1129,25 +1128,25 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
         CpmlSegment segment;
         CpmlPrimitive current;
 
-        length = data->cpml.array->len;
+        length = data->cairo.array->len;
 
         /* Ensure the close path primitive is not the only data */
         g_return_val_if_fail(length > 1, FALSE);
 
         /* Allocate one more item once for all to accept the
          * conversion from a close to line-to primitive */
-        data->cpml.array = g_array_set_size(data->cpml.array, length + 1);
-        path_data = (cairo_path_data_t *) data->cpml.array->data;
-        --data->cpml.array->len;
+        data->cairo.array = g_array_set_size(data->cairo.array, length + 1);
+        path_data = (cairo_path_data_t *) data->cairo.array->data;
+        --data->cairo.array->len;
 
         /* Set segment and current (the first primitive of segment) */
-        cpml_segment_from_cairo(&segment, _adg_read_cpml_path(path));
+        cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path));
         while (cpml_segment_next(&segment))
             ;
         cpml_primitive_from_segment(&current, &segment);
 
         /* Convert close path to a line-to primitive */
-        ++data->cpml.array->len;
+        ++data->cairo.array->len;
         path_data[length - 1].header.type = CPML_LINE;
         path_data[length - 1].header.length = 2;
         path_data[length] = *current.org;
@@ -1158,7 +1157,6 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
 
         _adg_do_action(path, action, &current);
     }
-
 
     return TRUE;
 }
@@ -1174,7 +1172,7 @@ _adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
 
     data = path->data;
     action = data->operation.action;
-    cpml_segment_from_cairo(&segment, _adg_read_cpml_path(path));
+    cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path));
 
     /* Construct the current primitive, that is the primitive to be
      * mixed with the last primitive with the specified operation.

@@ -25,7 +25,7 @@
 G_BEGIN_DECLS
 
 /*
- * The cpml.data array is structured in the following way:
+ * The cairo.data array is structured in the following way:
  *
  * [0]  = MOVE_TO
  * [1]  = arc start
@@ -45,36 +45,36 @@ G_BEGIN_DECLS
 typedef struct _AdgADimPrivate AdgADimPrivate;
 
 struct _AdgADimPrivate {
-    AdgPoint            *org1;
-    AdgPoint            *org2;
-    gboolean             has_extension1;
-    gboolean             has_extension2;
+    AdgPoint             *org1;
+    AdgPoint             *org2;
+    gboolean              has_extension1;
+    gboolean              has_extension2;
 
-    AdgTrail            *trail;
-    AdgMarker           *marker1;
-    AdgMarker           *marker2;
+    AdgTrail             *trail;
+    AdgMarker            *marker1;
+    AdgMarker            *marker2;
 
-    gboolean             geometry_arranged;
-    gdouble              angle1, angle2;
-
-    struct {
-        CpmlPair         base1, base12, base2;
-    }                    point;
+    gboolean              geometry_arranged;
+    gdouble               angle1, angle2;
 
     struct {
-        CpmlPair         from1, from2;
-        CpmlPair         base1, base12, base2;
-        CpmlPair         to1, to2;
-    }                    shift;
+        CpmlPair          base1, base12, base2;
+    }                     point;
 
     struct {
-        cairo_matrix_t   global_map;
-    }                    quote;
+        CpmlPair          from1, from2;
+        CpmlPair          base1, base12, base2;
+        CpmlPair          to1, to2;
+    }                     shift;
 
     struct {
-        CpmlPath path;
+        cairo_matrix_t    global_map;
+    }                     quote;
+
+    struct {
+        cairo_path_t      path;
         cairo_path_data_t data[13];
-    }                    cpml;
+    }                     cairo;
 };
 
 G_END_DECLS
