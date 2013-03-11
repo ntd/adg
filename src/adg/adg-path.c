@@ -197,7 +197,7 @@ adg_path_new(void)
  * expect a current point to be defined otherwise will fail triggering
  * a warning. Check the description of every method for specific details.
  *
- * Returns: the current point or %NULL on no current point set or errors
+ * Returns: (transfer none): the current point or %NULL on no current point set or errors
  *
  * Since: 1.0
  **/
@@ -246,7 +246,7 @@ adg_path_has_current_point(AdgPath *path)
  * Gets the last primitive appended to @path. The returned struct
  * is owned by @path and should not be freed or modified.
  *
- * Returns: a pointer to the last appended primitive or %NULL on errors
+ * Returns: (transfer none): a pointer to the last appended primitive or %NULL on errors
  *
  * Since: 1.0
  **/
@@ -272,8 +272,7 @@ adg_path_last_primitive(AdgPath *path)
  * on @path. The returned struct is owned by @path and should not
  * be freed or modified.
  *
- * Returns: a pointer to the primitive before the last appended one
- *          or %NULL on errors
+ * Returns: (transfer none): a pointer to the primitive before the last appended one or %NULL on errors
  *
  * Since: 1.0
  **/
