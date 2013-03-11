@@ -143,7 +143,18 @@ adg_path_init(AdgPath *path)
                                                        AdgPathPrivate);
 
     data->cp_is_valid = FALSE;
+    data->cp.x = 0;
+    data->cp.y = 0;
+    data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
+    data->cairo.path.data = NULL;
+    data->cairo.path.num_data = 0;
     data->cairo.array = g_array_new(FALSE, FALSE, sizeof(cairo_path_data_t));
+    data->last.segment = NULL;
+    data->last.org = NULL;
+    data->last.data = NULL;
+    data->over.segment = NULL;
+    data->over.org = NULL;
+    data->over.data = NULL;
     data->operation.action = ADG_ACTION_NONE;
 
     path->data = data;
