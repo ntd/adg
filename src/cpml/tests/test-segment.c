@@ -85,13 +85,13 @@ static cairo_path_data_t noop_data[] = {
     { .point = { 8, 9 }}
 };
 
-CpmlPath path = {
+cairo_path_t path = {
     CAIRO_STATUS_SUCCESS,
     data,
     G_N_ELEMENTS(data)
 };
 
-CpmlPath noop_path = {
+cairo_path_t noop_path = {
     CAIRO_STATUS_SUCCESS,
     noop_data,
     G_N_ELEMENTS(noop_data)
@@ -101,18 +101,12 @@ CpmlPath noop_path = {
 static void
 _cpml_test_basic(void)
 {
-    cairo_bool_t found, empty;
+    cairo_bool_t found;
     CpmlSegment segment, segment_copy;
 
     /* Checking APIs */
-    empty = cpml_path_is_empty(NULL);
-    g_assert(empty);
-    empty = cpml_path_is_empty(&noop_path);
-    g_assert(! empty);
     found = cpml_segment_from_cairo(&segment, &noop_path);
     g_assert(! found);
-    empty = cpml_path_is_empty(&path);
-    g_assert(! empty);
 
     /* CPML entry point */
     found = cpml_segment_from_cairo(&segment, &path);

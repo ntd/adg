@@ -46,9 +46,8 @@ _cpml_test_pair_basic(void)
     g_assert(equals);
 
     /* Just check the following calls will not crash */
-    cpml_pair_copy(NULL, &pair);
-    cpml_pair_copy(NULL, NULL);
     cpml_pair_copy(&pair, NULL);
+    cpml_pair_copy(&pair, &pair);
 
     cpml_pair_copy(&pair, &org);
     equals = cpml_pair_equal(&pair, &nord);

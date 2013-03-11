@@ -45,7 +45,7 @@ static cairo_path_data_t data[] = {
     { .header = { CPML_CLOSE, 1 }}
 };
 
-CpmlPath path = {
+cairo_path_t path = {
     CAIRO_STATUS_SUCCESS,
     data,
     G_N_ELEMENTS(data)
@@ -143,7 +143,7 @@ _cpml_test_set_point(void)
 {
     gsize size;
     cairo_path_data_t data_copy[G_N_ELEMENTS(data)];
-    CpmlPath path_copy = {
+    cairo_path_t path_copy = {
         CAIRO_STATUS_SUCCESS,
         data_copy,
         G_N_ELEMENTS(data)

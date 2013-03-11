@@ -21,7 +21,7 @@
 #include "test-internal.h"
 
 
-static CpmlPath *
+static cairo_path_t *
 _adg_path_callback(AdgTrail *trail, gpointer user_data)
 {
     static cairo_path_data_t data[] = {
@@ -32,7 +32,7 @@ _adg_path_callback(AdgTrail *trail, gpointer user_data)
         { .header = { CPML_LINE, 2 }},
         { .point = { 4, 5 }}
     };
-    static CpmlPath path = {
+    static cairo_path_t path = {
         CAIRO_STATUS_SUCCESS,
         data,
         G_N_ELEMENTS(data)
