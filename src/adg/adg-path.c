@@ -988,13 +988,15 @@ static cairo_path_t *
 _adg_read_cairo_path(AdgPath *path)
 {
     AdgPathPrivate *data = path->data;
+    cairo_path_t *cairo_path = &data->cairo.path;
+    GArray *array = data->cairo.array;
 
     /* Always regenerate the cairo_path_t as it is a trivial operation */
-    data->cairo.path.status = CAIRO_STATUS_SUCCESS;
-    data->cairo.path.data = (cairo_path_data_t *) (data->cairo.array)->data;
-    data->cairo.path.num_data = (data->cairo.array)->len;
+    cairo_path->status = CAIRO_STATUS_SUCCESS;
+    cairo_path->data = (cairo_path_data_t *) array->data;
+    cairo_path->num_data = array->len;
 
-    return &data->cairo.path;
+    return cairo_path;
 }
 
 static gint
