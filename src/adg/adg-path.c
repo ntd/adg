@@ -360,7 +360,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * adg_path_append_array:
  * @path:  an #AdgPath
  * @type:  a #cairo_data_type_t value
- * @pairs: (array zero-terminated=1) (element-type Adg.Pair) (transfer none): point data, specified as a %NULL terminated array of #CpmlPair pointers
+ * @pairs: (array zero-terminated=1) (element-type Cpml.Pair) (transfer none): point data, specified as a %NULL terminated array of #CpmlPair pointers
  *
  * A bindingable version of adg_path_append() that uses a %NULL terminated
  * array of pairs instead of variable argument list and friends.
