@@ -33,6 +33,7 @@ src/adg/adg-pango-style.c
 src/adg/adg-path.c
 src/adg/adg-point.c
 src/adg/adg-projection.c
+src/adg/adg-rdim.c
 src/adg/adg-ruled-fill.c
 src/adg/adg-stroke.c
 src/adg/adg-style.c
