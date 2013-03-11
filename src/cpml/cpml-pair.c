@@ -71,8 +71,8 @@ static CpmlPair fallback_pair = { 0, 0 };
 
 /**
  * cpml_pair_from_cairo:
- * @pair:                     (out): the destination #CpmlPair
- * @path_data: (in) (type gpointer): the original path data point
+ * @pair:                                    the destination #CpmlPair
+ * @path_data: (allow-none) (type gpointer): the original path data point
  *
  * Sets @pair from a #cairo_path_data_t struct. @path_data should contains
  * a point data: it is up to the caller to be sure @path_data is valid.
@@ -82,14 +82,16 @@ static CpmlPair fallback_pair = { 0, 0 };
 void
 cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
 {
-    pair->x = path_data->point.x;
-    pair->y = path_data->point.y;
+    if (path_data != NULL) {
+        pair->x = path_data->point.x;
+        pair->y = path_data->point.y;
+    }
 }
 
 /**
  * cpml_pair_copy:
- * @pair: (out): the destination #CpmlPair
- * @src:  (in):  the source #CpmlPair
+ * @pair:              the destination #CpmlPair
+ * @src: (allow-none): the source #CpmlPair
  *
  * Copies @src in @pair. If @src or @pair is %NULL, this function does
  * nothing.
@@ -99,21 +101,20 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
 void
 cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
 {
-    if (pair == NULL || src == NULL)
-        return;
-    memcpy(pair, src, sizeof(CpmlPair));
+    if (src != NULL) {
+        memcpy(pair, src, sizeof(CpmlPair));
+    }
 }
 
 /**
  * cpml_pair_equal:
- * @pair: the first pair to compare
- * @src:  the second pair to compare
+ * @pair: (allow-none): the first pair to compare
+ * @src: (allow-none):  the second pair to compare
  *
  * Compares @pair to @src and returns 1 if the pairs are equals.
  * Two %NULL pairs are considered equal.
  *
- * Returns: (type gboolean): %1 if @pair is equal to @src,
- *                           %0 otherwise
+ * Returns: (type gboolean): %1 if @pair is equal to @src, %0 otherwise.
  *
  * Since: 1.0
  **/
@@ -131,8 +132,8 @@ cpml_pair_equal(const CpmlPair *pair, const CpmlPair *src)
 
 /**
  * cpml_pair_transform:
- * @pair:   (inout): the destination #CpmlPair struct
- * @matrix: (in):    the transformation matrix
+ * @pair:                 the destination #CpmlPair struct
+ * @matrix: (allow-none): the transformation matrix
  *
  * Shortcut to apply a specific transformation matrix to @pair.
  *
@@ -141,13 +142,15 @@ cpml_pair_equal(const CpmlPair *pair, const CpmlPair *src)
 void
 cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
 {
-    cairo_matrix_transform_point(matrix, &pair->x, &pair->y);
+    if (matrix != NULL) {
+        cairo_matrix_transform_point(matrix, &pair->x, &pair->y);
+    }
 }
 
 /**
  * cpml_pair_squared_distance:
- * @from: the first #CpmlPair struct
- * @to:   the second #CpmlPair struct
+ * @from: (allow-none): the first #CpmlPair struct
+ * @to: (allow-none):   the second #CpmlPair struct
  *
  * Gets the squared distance between @from and @to. This value is useful
  * for comparation purpose: if you need to get the real distance, use
@@ -178,8 +181,8 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_pair_distance:
- * @from: the first #CpmlPair struct
- * @to:   the second #CpmlPair struct
+ * @from: (allow-none): the first #CpmlPair struct
+ * @to: (allow-none):   the second #CpmlPair struct
  *
  * Gets the distance between @from and @to. If you need this value only
  * for comparation purpose, you could use cpm_pair_squared_distance()
@@ -243,8 +246,8 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 
 /**
  * cpml_pair_to_cairo:
- * @pair:                       (in):  the source #CpmlPair
- * @path_data: (out) (type gpointer): the path data point to modify
+ * @pair:                                          the source #CpmlPair
+ * @path_data: (out) (allow-none) (type gpointer): the path data point to modify
  *
  * Sets a #cairo_path_data_t struct to @pair. This is exactly the reverse
  * operation of cpml_pair_from_cairo().
@@ -254,15 +257,17 @@ cpml_pair_distance(const CpmlPair *from, const CpmlPair *to)
 void
 cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
 {
-    path_data->point.x = pair->x;
-    path_data->point.y = pair->y;
+    if (path_data != NULL) {
+        path_data->point.x = pair->x;
+        path_data->point.y = pair->y;
+    }
 }
 
 
 /**
  * cpml_vector_from_angle:
- * @vector: (out): the destination #CpmlVector
- * @angle:  (in):  angle of direction, in radians
+ * @vector: the destination #CpmlVector
+ * @angle:  angle of direction, in radians
  *
  * Calculates the coordinates of the point far %1 from the origin
  * in the @angle direction. The result is stored in @vector.
@@ -293,8 +298,8 @@ cpml_vector_from_angle(CpmlVector *vector, double angle)
 
 /**
  * cpml_vector_set_length:
- * @vector: (inout): a #CpmlVector
- * @length: (in):    the new length
+ * @vector: a #CpmlVector
+ * @length: the new length
  *
  * Imposes the specified @length to @vector. If the old length is %0
  * (and so the direction is not known), nothing happens. If @length
@@ -355,7 +360,7 @@ cpml_vector_angle(const CpmlVector *vector)
 
 /**
  * cpml_vector_normal:
- * @vector: (inout): the subject #CpmlVector
+ * @vector: the subject #CpmlVector
  *
  * Stores in @vector a vector normal to the original @vector.
  * The length is retained.
@@ -375,8 +380,8 @@ cpml_vector_normal(CpmlVector *vector)
 
 /**
  * cpml_vector_transform:
- * @vector: (inout): the destination #CpmlPair struct
- * @matrix: (in):    the transformation matrix
+ * @vector:               the destination #CpmlPair struct
+ * @matrix: (allow-none): the transformation matrix
  *
  * Shortcut to apply a specific transformation matrix to @vector.
  * It works in a similar way of cpml_pair_transform() but uses
@@ -388,5 +393,7 @@ cpml_vector_normal(CpmlVector *vector)
 void
 cpml_vector_transform(CpmlPair *vector, const cairo_matrix_t *matrix)
 {
-    cairo_matrix_transform_distance(matrix, &vector->x, &vector->y);
+    if (matrix != NULL) {
+        cairo_matrix_transform_distance(matrix, &vector->x, &vector->y);
+    }
 }
