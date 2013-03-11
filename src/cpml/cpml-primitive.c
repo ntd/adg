@@ -303,38 +303,52 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * of a close path is a valid operation and must returns the origin
  * of the segment.
  *
+ * Returns: (type gboolean): %1 if the point to be set is existent, %0 otherwise.
+ *
  * Since: 1.0
  **/
-void
+int
 cpml_primitive_set_point(CpmlPrimitive *primitive,
                          int n_point, const CpmlPair *pair)
 {
     cairo_path_data_t *point = _cpml_get_point(primitive, n_point);
 
-    if (point != NULL && pair != NULL)
+    if (point == NULL)
+        return 0;
+
+    if (pair != NULL)
         cpml_pair_to_cairo(pair, point);
+
+    return 1;
 }
 
 /**
  * cpml_primitive_put_point:
- * @primitive:                    a #CpmlPrimitive
- * @n_point:                      the index of the point to retrieve
- * @pair: (out caller-allocates): the destination #CpmlPair
+ * @primitive:                                 a #CpmlPrimitive
+ * @n_point:                                   the index of the point to retrieve
+ * @pair: (out caller-allocates) (allow-none): the destination #CpmlPair
  *
  * Gets the specified @n_point from @primitive and stores it into
  * @pair. The @n_point index is subject to the same rules explained
  * in the cpml_primitive_set_point() function.
  *
+ * Returns: (type gboolean): %1 if the point is found, %0 otherwise.
+ *
  * Since: 1.0
  **/
-void
+int
 cpml_primitive_put_point(const CpmlPrimitive *primitive,
                          int n_point, CpmlPair *pair)
 {
     const cairo_path_data_t *point = _cpml_get_point(primitive, n_point);
 
-    if (point != NULL)
+    if (point == NULL)
+        return 0;
+
+    if (pair != NULL)
         cpml_pair_from_cairo(pair, point);
+
+    return 1;
 }
 
 /**
