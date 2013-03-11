@@ -61,7 +61,6 @@
 
 
 #include "adg-internal.h"
-#include <string.h>
 
 #include "adg-model.h"
 #include "adg-trail.h"
@@ -72,6 +71,10 @@
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_path_parent_class)
 #define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_path_parent_class)
+
+#define REMAPPED(ptr, from, to) \
+    (ptr) == NULL ? NULL : \
+        (gpointer) ((to) + ((gchar *) (ptr) - (gchar *) (from)))
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL)
@@ -84,6 +87,11 @@ static void             _adg_changed            (AdgModel       *model);
 static cairo_path_t *   _adg_get_cairo_path     (AdgTrail       *trail);
 static cairo_path_t *   _adg_read_cairo_path    (AdgPath        *path);
 static gint             _adg_primitive_length   (CpmlPrimitiveType type);
+static void             _adg_primitive_remap    (CpmlPrimitive  *primitive,
+                                                 gpointer        to,
+                                                 const CpmlPrimitive
+                                                                *old,
+                                                 gconstpointer   from);
 static void             _adg_append_primitive   (AdgPath        *path,
                                                  CpmlPrimitive  *primitive);
 static void             _adg_clear_operation    (AdgPath        *path);
@@ -1022,11 +1030,21 @@ _adg_primitive_length(CpmlPrimitiveType type)
 }
 
 static void
+_adg_primitive_remap(CpmlPrimitive *primitive, gpointer to,
+                     const CpmlPrimitive *old, gconstpointer from)
+{
+    primitive->org =     REMAPPED(old->org,     from, to);
+    primitive->segment = REMAPPED(old->segment, from, to);
+    primitive->data =    REMAPPED(old->data,    from, to);
+}
+
+static void
 _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *data;
     cairo_path_data_t *path_data;
     int length;
+    gconstpointer old_data;
 
     data = path->data;
     path_data = current->data;
@@ -1036,6 +1054,7 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
     _adg_do_operation(path, path_data);
 
     /* Append the path data to the internal path array */
+    old_data = (data->cairo.array)->data;
     data->cairo.array = g_array_append_vals(data->cairo.array,
                                            path_data, length);
 
@@ -1044,8 +1063,9 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
     path_data = (cairo_path_data_t *) (data->cairo.array)->data +
                 (data->cairo.array)->len - length;
 
-    /* Store the over primitive */
-    memcpy(&data->over, &data->last, sizeof(CpmlPrimitive));
+    /* Store the last primitive into over */
+    _adg_primitive_remap(&data->over, (data->cairo.array)->data,
+                         &data->last, old_data);
 
     /* Set the last primitive for subsequent binary operations */
     data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
