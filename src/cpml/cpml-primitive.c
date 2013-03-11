@@ -92,7 +92,7 @@ static const _CpmlPrimitiveClass *
                 _cpml_class_from_obj    (const CpmlPrimitive     *primitive);
 static cairo_path_data_t *
                 _cpml_get_point         (const CpmlPrimitive     *primitive,
-                                         int     n_point);
+                                         int                      n_point);
 static void     _cpml_dump_point        (const cairo_path_data_t *path_data);
 
 
@@ -119,8 +119,8 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 
 /**
  * cpml_primitive_from_segment:
- * @primitive: (out): the destination #CpmlPrimitive struct
- * @segment:   (in):  the source segment
+ * @primitive:             the destination #CpmlPrimitive struct
+ * @segment: (allow-none): the source segment
  *
  * Initializes @primitive to the first primitive of @segment.
  *
@@ -131,20 +131,25 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 {
     primitive->segment = segment;
 
-    /* The first element of a CpmlSegment is always a CPML_MOVE,
-     * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
-     * so the origin is in the second data item */
-    primitive->org = segment->data + 1;
+    if (segment != NULL) {
+        /* The first element of a CpmlSegment is always a CPML_MOVE,
+         * as ensured by cpml_segment_from_cairo() and by the browsing APIs,
+         * so the origin is in the second data item */
+        primitive->org = segment->data + 1;
 
-    /* Also, the segment APIs ensure that @segment is prepended by
-     * only one CPML_MOVE */
-    primitive->data = segment->data + segment->data->header.length;
+        /* Also, the segment APIs ensure that @segment is prepended by
+         * only one CPML_MOVE */
+        primitive->data = segment->data + segment->data->header.length;
+    } else {
+        primitive->org = NULL;
+        primitive->data = NULL;
+    }
 }
 
 /**
  * cpml_primitive_copy:
- * @primitive: (out): the destination #CpmlPrimitive
- * @src:       (in):  the source #CpmlPrimitive
+ * @primitive:         the destination #CpmlPrimitive
+ * @src: (allow-none): the source #CpmlPrimitive
  *
  * Copies @src in @primitive. This is a shallow copy: the internal fields
  * of @primitive refer to the same memory as the original @src primitive.
@@ -154,12 +159,14 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 void
 cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
 {
-    memcpy(primitive, src, sizeof(CpmlPrimitive));
+    if (src != NULL) {
+        memcpy(primitive, src, sizeof(CpmlPrimitive));
+    }
 }
 
 /**
  * cpml_primitive_reset:
- * @primitive: (inout): a #CpmlPrimitive
+ * @primitive: a #CpmlPrimitive
  *
  * Resets @primitive so it refers to the first primitive of the
  * source segment.
@@ -174,14 +181,13 @@ cpml_primitive_reset(CpmlPrimitive *primitive)
 
 /**
  * cpml_primitive_next:
- * @primitive: (inout): a #CpmlPrimitive
+ * @primitive: a #CpmlPrimitive
  *
  * Changes @primitive so it refers to the next primitive on the
  * source segment. If there are no more primitives, @primitive is
  * not changed and 0 is returned.
  *
- * Returns: (type boolean): %1 on success,
- *                          %0 if no next primitive found or errors
+ * Returns: (type boolean): %1 on success, %0 if no next primitive found or errors.
  *
  * Since: 1.0
  **/
@@ -211,7 +217,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  * It is similar to cpml_primitive_type_get_n_points() but using
  * a @primitive instance instead of a type.
  *
- * Returns: the number of points or %0 on errors
+ * Returns: the number of points or %0 on errors.
  *
  * <!-- Virtual: n_points -->
  *
@@ -250,8 +256,8 @@ cpml_primitive_get_length(const CpmlPrimitive *primitive)
 
 /**
  * cpml_primitive_put_extents:
- * @primitive: (in):  a #CpmlPrimitive
- * @extents:   (out): where to store the extents
+ * @primitive:                       a #CpmlPrimitive
+ * @extents: (out caller-allocates): where to store the extents
  *
  * Abstracts the extents() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
@@ -279,9 +285,9 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_set_point:
- * @primitive: a #CpmlPrimitive
- * @n_point:   the index of the point to retrieve
- * @pair:      the source #CpmlPair
+ * @primitive:          a #CpmlPrimitive
+ * @n_point:            the index of the point to retrieve
+ * @pair: (allow-none): the source #CpmlPair
  *
  * Sets the specified @n_point of @primitive to @pair. The @n_point
  * index starts from 0: if @n_point is 0, the start point (the origin)
@@ -305,15 +311,15 @@ cpml_primitive_set_point(CpmlPrimitive *primitive,
 {
     cairo_path_data_t *point = _cpml_get_point(primitive, n_point);
 
-    if (point != NULL)
+    if (point != NULL && pair != NULL)
         cpml_pair_to_cairo(pair, point);
 }
 
 /**
  * cpml_primitive_put_point:
- * @primitive: (in):  a #CpmlPrimitive
- * @n_point:   (in):  the index of the point to retrieve
- * @pair:      (out): the destination #CpmlPair
+ * @primitive:                    a #CpmlPrimitive
+ * @n_point:                      the index of the point to retrieve
+ * @pair: (out caller-allocates): the destination #CpmlPair
  *
  * Gets the specified @n_point from @primitive and stores it into
  * @pair. The @n_point index is subject to the same rules explained
@@ -333,9 +339,9 @@ cpml_primitive_put_point(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_pair_at:
- * @primitive: (in):  a #CpmlPrimitive
- * @pos:       (in):  the position value
- * @pair:      (out): the destination #CpmlPair
+ * @primitive:                    a #CpmlPrimitive
+ * @pos:                          the position value
+ * @pair: (out caller-allocates): the destination #CpmlPair
  *
  * Abstracts the put_pair_at() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
@@ -367,9 +373,9 @@ cpml_primitive_put_pair_at(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_vector_at:
- * @primitive: (in):  a #CpmlPrimitive
- * @pos:       (in):  the position value
- * @vector:    (out): the destination #CpmlVector
+ * @primitive:                      a #CpmlPrimitive
+ * @pos:                            the position value
+ * @vector: (out caller-allocates): the destination #CpmlVector
  *
  * Abstracts the put_vector_at() family functions by providing a common
  * way to access the underlying primitive-specific implementation.
@@ -401,13 +407,13 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_get_closest_pos:
- * @primitive: a #CpmlPrimitive
- * @pair:      the coordinates of the subject point
+ * @primitive:          a #CpmlPrimitive
+ * @pair: (allow-none): the coordinates of the subject point
  *
  * Returns the pos value of the point on @primitive nearest to @pair.
  * The returned value is always clamped between %0 and %1.
  *
- * Returns: the requested pos value between %0 and %1, or %-1 on errors
+ * Returns: the requested pos value between %0 and %1, or %-1 on errors.
  *
  * <!-- Virtual: get_closest_pos -->
  *
@@ -417,8 +423,12 @@ double
 cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
                                const CpmlPair *pair)
 {
-    const _CpmlPrimitiveClass *class_data = _cpml_class_from_obj(primitive);
+    const _CpmlPrimitiveClass *class_data;
 
+    if (pair == NULL)
+        return -1;
+
+    class_data = _cpml_class_from_obj(primitive);
     if (class_data == NULL || class_data->get_closest_pos == NULL)
         return -1;
 
@@ -427,10 +437,10 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_intersections:
- * @primitive:  (in):  the first #CpmlPrimitive
- * @primitive2: (in):  the second #CpmlPrimitive
- * @n_dest:     (in):  maximum number of intersections to return
- * @dest:       (out): the destination buffer that can contain @n_dest #CpmlPair
+ * @primitive:                                                       the first #CpmlPrimitive
+ * @primitive2: (allow-none)                                         the second #CpmlPrimitive
+ * @n_dest:                                                          maximum number of intersections to return
+ * @dest: (out caller-allocates) (array length=n_dest) (allow-none): the destination buffer that can contain @n_dest #CpmlPair
  *
  * Finds the intersection points between the given primitives and
  * returns the result in @dest. The size of @dest should be enough
@@ -454,7 +464,7 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * </note>
  *
  * Returns: the number of intersection points found or 0 if the
- *          primitives do not intersect or on errors
+ *          primitives do not intersect or on errors.
  *
  * <!-- Virtual: put_intersections -->
  *
@@ -468,8 +478,10 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
     const _CpmlPrimitiveClass *class_data;
     size_t n_points, n_points2;
 
-    class_data = _cpml_class_from_obj(primitive);
+    if (primitive2 == NULL || dest == NULL)
+        return 0;
 
+    class_data = _cpml_class_from_obj(primitive);
     if (class_data == NULL || class_data->put_intersections == NULL)
         return 0;
 
@@ -491,10 +503,10 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_intersections_with_segment:
- * @primitive: (in):  a #CpmlPrimitive
- * @segment:   (in):  a #CpmlSegment
- * @n_dest:    (in):  maximum number of intersection pairs to return
- * @dest:      (out): the destination buffer of #CpmlPair
+ * @primitive:                                                       a #CpmlPrimitive
+ * @segment: (allow-none):                                           a #CpmlSegment
+ * @n_dest:                                                          maximum number of intersections to return
+ * @dest: (out caller-allocates) (array length=n_dest) (allow-none): the destination buffer that can contain @n_dest #CpmlPair
  *
  * Computes the intersections between @segment and @primitive by
  * sequentially scanning the primitives in @segment and looking
@@ -503,7 +515,8 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
  * If the intersections are more than @n_dest, only the first
  * @n_dest pairs are stored.
  *
- * Returns: the number of intersections found
+ * Returns: the number of intersection points found or 0 if the
+ *          items do not intersect or on errors.
  *
  * Since: 1.0
  **/
@@ -514,6 +527,9 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
 {
     CpmlPrimitive portion;
     size_t found;
+
+    if (segment == NULL || dest == NULL)
+        return 0;
 
     cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
     found = 0;
@@ -530,8 +546,8 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_offset:
- * @primitive: (inout): a #CpmlPrimitive
- * @offset:    (in):    distance for the computed offset primitive
+ * @primitive: a #CpmlPrimitive
+ * @offset:   distance for the computed offset primitive
  *
  * Given a primitive, computes the same (or approximated) parallel
  * primitive distant @offset from the original one and returns
@@ -557,8 +573,8 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
 
 /**
  * cpml_primitive_join:
- * @primitive:  (inout): the first #CpmlPrimitive
- * @primitive2: (inout): the second #CpmlPrimitive
+ * @primitive:                           the first #CpmlPrimitive
+ * @primitive2: (inout) (transfer none): the second #CpmlPrimitive
  *
  * Joins two primitive modifying the end point of @primitive and the
  * start point of @primitive2 so that the resulting points will overlap.
@@ -575,8 +591,7 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
  * </itemizedlist>
  * </important>
  *
- * Returns: (type boolean): %1 on success,
- *                          %0 if the primitives cannot be joint
+ * Returns: (type boolean): %1 on success, %0 if the primitives cannot be joint.
  *
  * <!-- Virtual: join -->
  *
@@ -618,8 +633,8 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
 
 /**
  * cpml_primitive_to_cairo:
- * @primitive: (in):    a #CpmlPrimitive
- * @cr:        (inout): the destination cairo context
+ * @primitive:                   a #CpmlPrimitive
+ * @cr: (inout) (transfer none): the destination cairo context
  *
  * Renders a single @primitive to the @cr cairo context.
  * As a special case, if the primitive is a #CPML_CLOSE, an
