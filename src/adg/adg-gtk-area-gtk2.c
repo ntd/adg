@@ -68,6 +68,7 @@
 #include "adg-title-block.h"
 #include <adg-canvas.h>
 #include "adg-gtk-utils.h"
+#include "adg-matrix-fallback.h"
 
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
@@ -178,7 +179,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     param = g_param_spec_boxed("render-map",
                                P_("Render Map"),
                                P_("The transformation to be applied on the canvas before rendering it"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_RENDER_MAP, param);
 
