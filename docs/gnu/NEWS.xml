@@ -6,6 +6,26 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.1">
+<title>ADG 0.7.1</title>
+
+<para>Out of the box support for <ulink url="http://github.com/pavouk/lgi/">LGI</ulink>
+(dynamic Lua bindings based on GObject introspection) is now
+provided upstream and effectively used for testing APIs. The
+introspection support has been improved, some APIs (AdgPoint
+related methods above all) have been protected against NULL and
+some bugs raised by the bindings work have been corrected.</para>
+
+<para>The GBoxed wrappers for cairo structs such as cairo_matrix_t have
+been dropped in favor of the native support provided by the
+cairo-gobject library.</para>
+
+<para>GObject wrappers for CPML structs such as pairs, primitives and
+segments has been moved to CPML itself. This makes redundant the
+presence of wrappers on the ADG side, simplyfing the work for the
+language bindings.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.0">
 <title>ADG 0.7.0</title>
 
@@ -20,7 +40,6 @@ hack has been dropped in favor of a private forwarder header.</para>
 
 <para>The dash pattern of AdgLineStyle can now be customized by binding
 to it an AdgDash instance.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.6.6">
@@ -39,7 +58,6 @@ APIs has been added to help this relocation.</para>
 
 <para>The Windows installers received a lot of cosmetic improvements.
 The NSIS code has been cleaned up.</para>
-
 </simplesect>
 
 <simplesect id="NEWS.0.6.5">
