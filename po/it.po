@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-15 15:26+0100\n"
+"POT-Creation-Date: 2013-03-14 10:05+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -339,8 +339,18 @@ msgstr "Segmenti paralleli"
 msgid "Invalid arguments: arg[0] not set"
 msgstr "Argomenti non validi: arg[0] è vuoto"
 
+#: ../src/adg/adg-adim.c:1179
+#, c-format
+msgid "%s: ref1 and org1 cannot be coincidents (%lf, %lf)"
+msgstr "%s: ref1 e org1 non possono coincidere (%lf, %lf)"
+
+#: ../src/adg/adg-adim.c:1185
+#, c-format
+msgid "%s: ref2 and org2 cannot be coincidents (%lf, %lf)"
+msgstr "%s: ref2 e org2 non possono coincidere (%lf, %lf)"
+
 #. Parallel lines: hang with an error message
-#: ../src/adg/adg-adim.c:1176
+#: ../src/adg/adg-adim.c:1198
 #, c-format
 msgid "%s: trying to set an angular dimension on parallel lines"
 msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
@@ -396,22 +406,22 @@ msgstr "(NON DEFINITO)"
 msgid "%s: the dress `%d' is undefined"
 msgstr "%s: il vestito `%d' non è definito"
 
-#: ../src/adg/adg-entity.c:897
+#: ../src/adg/adg-entity.c:898
 #, c-format
 msgid "%s: `%s' is not compatible with `%s' for `%s' dress"
 msgstr "%s: `%s' non è compatibile con `%s' per il vestito `%s'"
 
-#: ../src/adg/adg-entity.c:1255
+#: ../src/adg/adg-entity.c:1257
 #, c-format
-msgid "%s: requested to mix the maps using an undefined method"
+msgid "%s: requested to mix the maps using an undefined mix method"
 msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
 
-#: ../src/adg/adg-entity.c:1301
+#: ../src/adg/adg-entity.c:1303
 #, c-format
 msgid "%s: `arrange' method not implemented for type `%s'"
 msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
 
-#: ../src/adg/adg-entity.c:1317
+#: ../src/adg/adg-entity.c:1319
 #, c-format
 msgid "%s: `render' method not implemented for type `%s'"
 msgstr "%s: metodo `render' non implementato dal tipo `%s'"
@@ -421,12 +431,17 @@ msgstr "%s: metodo `render' non implementato dal tipo `%s'"
 msgid "%s: pattern undefined for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 
+#: ../src/adg/adg-ldim.c:780 ../src/adg/adg-rdim.c:580
+#, c-format
+msgid "%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"
+msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
+
 #: ../src/adg/adg-marker.c:764
 #, c-format
 msgid "%s: `create_model' method not implemented for type `%s'"
 msgstr "%s: `create_model' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-matrix.c:200
+#: ../src/adg/adg-matrix.c:205
 #, c-format
 msgid "%s: normalization of anamorphic matrices not supported"
 msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
@@ -456,44 +471,44 @@ msgid "Unhandled weight value (%d)"
 msgstr "Valore di weight inatteso (%d)"
 
 #. Not enough pairs have been provided
-#: ../src/adg/adg-path.c:388
+#: ../src/adg/adg-path.c:408
 #, c-format
 msgid "%s: null pair caught while parsing arguments"
 msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
 
-#: ../src/adg/adg-path.c:893
+#: ../src/adg/adg-path.c:912
 #, c-format
 msgid "%s: the axis of the reflection is not known"
 msgstr "%s: l'asse di riflessione non è conosciuta"
 
-#: ../src/adg/adg-path.c:1061
+#: ../src/adg/adg-path.c:1094
 #, c-format
 msgid "%s: a `%s' operation is still active while clearing the path"
 msgstr "%s: operazione `%s' ancora attiva durante l'azzeramento del path"
 
-#: ../src/adg/adg-path.c:1081
+#: ../src/adg/adg-path.c:1114
 #, c-format
 msgid "%s: requested a `%s' operation on a path without current primitive"
 msgstr "%s: richiesta l'operazione `%s' su un path senza primitiva attiva"
 
-#: ../src/adg/adg-path.c:1088
+#: ../src/adg/adg-path.c:1121
 #, c-format
 msgid "%s: requested a `%s' operation while a `%s' operation was active"
 msgstr "%s: richiesta l'operazione `%s' mentre l'operazione `%s' era in corso"
 
-#: ../src/adg/adg-path.c:1113
+#: ../src/adg/adg-path.c:1146
 #, c-format
 msgid "%s: `%d' operation not recognized"
 msgstr "%s: l'operazione `%d' non è conosciuta"
 
-#: ../src/adg/adg-path.c:1224
+#: ../src/adg/adg-path.c:1256
 #, c-format
 msgid ""
 "%s: first chamfer delta of `%lf' is greather than the available `%lf' length"
 msgstr ""
 "%s: il primo delta di smusso `%lf' è maggiore dello spazio disponibile `%lf'"
 
-#: ../src/adg/adg-path.c:1233
+#: ../src/adg/adg-path.c:1265
 #, c-format
 msgid ""
 "%s: second chamfer delta of `%lf' is greather than the available `%lf' length"
@@ -501,14 +516,14 @@ msgstr ""
 "%s: il secondo delta di smusso `%lf' è maggiore dello spazio disponibile `"
 "%lf'"
 
-#: ../src/adg/adg-path.c:1271
+#: ../src/adg/adg-path.c:1303
 #, c-format
 msgid "%s: fillet with radius of `%lf' is not applicable here"
 msgstr "%s: un raccordo di raggio `%lf' non è fattibile in questa posizione"
 
 #. A point with explicit coordinates not up to date
 #. * is an unexpected condition
-#: ../src/adg/adg-point.c:304
+#: ../src/adg/adg-point.c:326
 #, c-format
 msgid "%s: trying to get a pair from an undefined point"
 msgstr "%s: si è provato ad ottenere le coordinate da un punto indefinito"
@@ -563,7 +578,7 @@ msgstr "AUTORE"
 msgid "DATE"
 msgstr "DATA"
 
-#: ../src/adg/adg-toy-text.c:300
+#: ../src/adg/adg-toy-text.c:309
 #, c-format
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
@@ -593,20 +608,3 @@ msgstr "%s: dati del path non validi"
 #, c-format
 msgid "%s: callback not defined for instance of type `%s'"
 msgstr "%s: callback non definita per un'istanza di tipo `%s'"
-
-#~ msgid ""
-#~ "Rotate the mouse wheel to zoom in and out.\n"
-#~ "Drag the mouse with the wheel pressed to pan."
-#~ msgstr ""
-#~ "Ruotare la rotella del mouse per ingrandire o rimpicciolire.Trascinare il "
-#~ "mouse con la rotella premuta per traslare."
-
-#~ msgid ""
-#~ "Keep the shift key pressed while zooming or panning with the mouse to do "
-#~ "the same in global space."
-#~ msgstr ""
-#~ "Tenere il tasto shift premuto durante zoom o traslazione con il mouse per "
-#~ "fare la stessa cosa nello spazio globale."
-
-#~ msgid "%s: `%s' cell name is yet used"
-#~ msgstr "%s: il nome di cella `%s' è già usato"

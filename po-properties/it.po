@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-04 15:35+0100\n"
+"POT-Creation-Date: 2013-03-14 10:10+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -588,7 +588,6 @@ msgid "Local Map"
 msgstr "Trasformazione Locale"
 
 #: src/adg/adg-entity.c:178
-#, fuzzy
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
 "the way specified by the #AdgEntity:local-mix property"
@@ -794,7 +793,6 @@ msgid "Type of antialiasing to do when rendering lines"
 msgstr "Tipo di antialiasing da applicare durante il rendering delle linee"
 
 #: src/adg/adg-line-style.c:139
-#, fuzzy
 msgid "Dash Pattern"
 msgstr "Pattern Tratteggio"
 
@@ -1096,34 +1094,14 @@ msgstr ""
 "Entità solitamente riservata per identificare il tipo di proiezione "
 "ortografica usata in questo disegno"
 
-#: src/adg/adg-trail.c:135
+#: src/adg/adg-trail.c:136
 msgid "Max Angle"
 msgstr "Angolo Massimo"
 
-#: src/adg/adg-trail.c:136
+#: src/adg/adg-trail.c:137
 msgid ""
 "Max arc angle to approximate with a single Bezier curve: check "
 "adg_trail_set_max_angle() for details"
 msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
-
-#~ msgid "Horizontal adjustment"
-#~ msgstr "Regolazione orizzontale"
-
-#~ msgid ""
-#~ "The GtkAdjustment that determines the values of the horizontal position "
-#~ "for this viewport"
-#~ msgstr ""
-#~ "Il GtkAdjustment che determina il valore per il posizionamento "
-#~ "orizzontale di questa vista"
-
-#~ msgid "Vertical adjustment"
-#~ msgstr "Regolazione verticale"
-
-#~ msgid ""
-#~ "The GtkAdjustment that determines the values of the vertical position for "
-#~ "this viewport"
-#~ msgstr ""
-#~ "Il GtkAdjustment che determina il valore per il posizionamento verticale "
-#~ "di questa vista"
