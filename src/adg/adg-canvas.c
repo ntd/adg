@@ -1432,21 +1432,17 @@ adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
 
 /**
  * adg_canvas_set_page_setup:
- * @canvas: an #AdgCanvas
- * @page_setup: the page setup
+ * @canvas:                                   an #AdgCanvas
+ * @page_setup: (allow-none) (transfer none): the page setup
  *
  * A convenient function to setup the page of @canvas so it can
  * also be subsequentially used for printing. It is allowed to
  * pass %NULL for @page_setup to unset the setup data from @canvas.
  *
  * A reference to @page_setup is added, so there is no need to keep
- * alive this object outside this function. The @page_setup pointer
- * is stored in the associative key %_adg_page_setup and can be
- * retrieved at any time with:
- *
- * |[
- * page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
- * ]|
+ * alive this object outside this function. The internal @page_setup
+ * pointer is stored in the associative key %_adg_page_setup and
+ * can be retrieved at any time with adg_canvas_get_page_setup().
  *
  * The size and margins provided by @page_setup are used to set the
  * size and margins of @canvas much in the same way as what
@@ -1462,7 +1458,7 @@ adg_canvas_set_paper(AdgCanvas *canvas, const gchar *paper_name,
  * adg_canvas_set_page_setup(canvas, NULL);
  * // Now the only difference is that canvas is no more bound
  * // to the a4 page setup, so the following will return NULL:
- * page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
+ * page_setup = adg_canvas_get_page_setup(canvas);
  * // To restore the original status and have an autocomputed size:
  * adg_canvas_set_size(canvas, NULL);
  * ]|
@@ -1499,6 +1495,26 @@ adg_canvas_set_page_setup(AdgCanvas *canvas, GtkPageSetup *page_setup)
     g_object_ref(page_setup);
     g_object_set_data_full((GObject *) canvas, "_adg_page_setup",
                            page_setup, g_object_unref);
+}
+
+/**
+ * adg_canvas_get_page_setup:
+ * @canvas: an #AdgCanvas
+ *
+ * If adg_canvas_set_page_setup() is called, a #GtkPageSetup object
+ * is created and bound to @canvas. This metho returns a pointer
+ * to that internal object or %NULL if adg_canvas_set_page_setup()
+ * has not been called before.
+ *
+ * Returns: (allow-none) (transfer none): the #GtkPageSetup with size and margins of @canvas of %NULL on no setup found or errors.
+ *
+ * Since: 1.0
+ **/
+GtkPageSetup *
+adg_canvas_get_page_setup(AdgCanvas *canvas)
+{
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
+    return g_object_get_data((GObject *) canvas, "_adg_page_setup");
 }
 
 #endif

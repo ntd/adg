@@ -323,6 +323,7 @@ void            adg_canvas_set_paper            (AdgCanvas      *canvas,
                                                  GtkPageOrientation orientation);
 void            adg_canvas_set_page_setup       (AdgCanvas      *canvas,
                                                  GtkPageSetup   *page_setup);
+GtkPageSetup *  adg_canvas_get_page_setup       (AdgCanvas      *canvas);
 '],
            [ADG_CANVAS_H_ADDITIONAL=''])
 
