@@ -997,7 +997,7 @@ _adg_part_new(GtkBuilder *builder)
     g_signal_connect(part->area, "button-press-event",
                      G_CALLBACK(_adg_button_press), NULL);
 
-    toggle_object = gtk_builder_get_object(builder, "GROOVE");
+    toggle_object = gtk_builder_get_object(builder, "editGROOVE");
     _adg_part_link(part, &part->GROOVE, toggle_object);
 
     object = gtk_builder_get_object(builder, "editZGROOVE");
@@ -1024,10 +1024,10 @@ _adg_part_new(GtkBuilder *builder)
     g_signal_connect(toggle_object, "toggled",
                      G_CALLBACK(adg_gtk_toggle_button_sensitivize), object);
 
-    _adg_part_link(part, &part->TITLE, gtk_builder_get_object(builder, "txtTitle"));
-    _adg_part_link(part, &part->DRAWING, gtk_builder_get_object(builder, "txtDrawing"));
-    _adg_part_link(part, &part->AUTHOR, gtk_builder_get_object(builder, "txtAuthor"));
-    _adg_part_link(part, &part->DATE, gtk_builder_get_object(builder, "txtDate"));
+    _adg_part_link(part, &part->TITLE, gtk_builder_get_object(builder, "editTITLE"));
+    _adg_part_link(part, &part->DRAWING, gtk_builder_get_object(builder, "editDRAWING"));
+    _adg_part_link(part, &part->AUTHOR, gtk_builder_get_object(builder, "editAUTHOR"));
+    _adg_part_link(part, &part->DATE, gtk_builder_get_object(builder, "editDATE"));
 
     part->D5 = 4.5;
     part->RD34 = 1;

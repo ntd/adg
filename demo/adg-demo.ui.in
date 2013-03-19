@@ -774,7 +774,7 @@ Boston, MA  02110-1301, USA.</property>
                         <property name="n_columns">5</property>
                         <property name="row_spacing">6</property>
                         <child>
-                          <object class="GtkCheckButton" id="GROOVE">
+                          <object class="GtkCheckButton" id="editGROOVE">
                             <property name="label" translatable="yes">Groove machining</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -945,7 +945,7 @@ Boston, MA  02110-1301, USA.</property>
                             <property name="xalign">0</property>
                             <property name="label" translatable="yes">_Title:</property>
                             <property name="use-underline">True</property>
-                            <property name="mnemonic-widget">txtTitle</property>
+                            <property name="mnemonic-widget">editTITLE</property>
                           </object>
                           <packing>
                             <property name="x-options">GTK_FILL</property>
@@ -953,7 +953,7 @@ Boston, MA  02110-1301, USA.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="txtTitle">
+                          <object class="GtkEntry" id="editTITLE">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="text" translatable="yes">SAMPLE DRAWING</property>
@@ -969,7 +969,7 @@ Boston, MA  02110-1301, USA.</property>
                             <property name="xalign">0</property>
                             <property name="label" translatable="yes">_Drawing:</property>
                             <property name="use-underline">True</property>
-                            <property name="mnemonic-widget">txtDrawing</property>
+                            <property name="mnemonic-widget">editDRAWING</property>
                           </object>
                           <packing>
                             <property name="x-options">GTK_FILL</property>
@@ -979,7 +979,7 @@ Boston, MA  02110-1301, USA.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="txtDrawing">
+                          <object class="GtkEntry" id="editDRAWING">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="text" translatable="yes">EXAMPLE</property>
@@ -997,7 +997,7 @@ Boston, MA  02110-1301, USA.</property>
                             <property name="xalign">0</property>
                             <property name="label" translatable="yes">A_uthor:</property>
                             <property name="use-underline">True</property>
-                            <property name="mnemonic-widget">txtAuthor</property>
+                            <property name="mnemonic-widget">editAUTHOR</property>
                           </object>
                           <packing>
                             <property name="x-options">GTK_FILL</property>
@@ -1007,7 +1007,7 @@ Boston, MA  02110-1301, USA.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="txtAuthor">
+                          <object class="GtkEntry" id="editAUTHOR">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="text" translatable="no">adg-demo</property>
@@ -1025,7 +1025,7 @@ Boston, MA  02110-1301, USA.</property>
                             <property name="xalign">0</property>
                             <property name="label" translatable="yes">D_ate:</property>
                             <property name="use-underline">True</property>
-                            <property name="mnemonic-widget">txtDate</property>
+                            <property name="mnemonic-widget">editDATE</property>
                           </object>
                           <packing>
                             <property name="x-options">GTK_FILL</property>
@@ -1035,7 +1035,7 @@ Boston, MA  02110-1301, USA.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="txtDate">
+                          <object class="GtkEntry" id="editDATE">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="text" translatable="no">09/03/2011</property>
