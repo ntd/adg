@@ -26,28 +26,26 @@
           </packing>
         </child>
         <child>
-          <object class="GtkLabel" id="noteLabel">
-            <property name="xalign">0</property>
-            <property name="xpad">6</property>
-            <property name="width-chars">-1</property>
-            <property name="label" translatable="yes">
-Rotate the mouse wheel to zoom in and out, drag the mouse with the wheel pressed to pan.
-Keep the shift key pressed while zooming and panning with the mouse to do the same in global space.
-Left click to restore paper zoom and position, right click to autoscale and center the drawing.
-            </property>
-          </object>
-          <packing>
-            <property name="fill">True</property>
-            <property name="expand">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkHButtonBox" id="mainButtons">
             <property name="visible">True</property>
             <property name="border_width">6</property>
             <property name="spacing">12</property>
             <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="mainHelp">
+                <property name="label">gtk-help</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+                <property name="secondary">True</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="mainAbout">
                 <property name="label">gtk-about</property>
@@ -59,7 +57,7 @@ Left click to restore paper zoom and position, right click to autoscale and cent
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
                 <property name="secondary">True</property>
               </packing>
             </child>
@@ -74,7 +72,7 @@ Left click to restore paper zoom and position, right click to autoscale and cent
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -88,7 +86,7 @@ Left click to restore paper zoom and position, right click to autoscale and cent
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -102,7 +100,7 @@ Left click to restore paper zoom and position, right click to autoscale and cent
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -117,13 +115,14 @@ Left click to restore paper zoom and position, right click to autoscale and cent
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="pack_type">end</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="position">2</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -1144,6 +1143,62 @@ Boston, MA  02110-1301, USA.</property>
     </child>
     <action-widgets>
       <action-widget response="-4">btnClose</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkMessageDialog" id="wndHelp">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Help on adg-demo</property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="text" translatable="yes">How to use adg-demo</property>
+    <property name="secondary_text" translatable="yes">This demo is just a sample of what can be accomplished by using the ADG library. It is by no means intended to be the only kind of application possible.
+
+To better see the differences between local and global space, some mouse interaction is needed: &lt;b&gt;rotate&lt;/b&gt; the mouse wheel to zoom in and out in local space, &lt;b&gt;drag it&lt;/b&gt; with the wheel pressed to pan and keep the &lt;b&gt;shift pressed&lt;/b&gt; while zooming and panning to do the same in global space.
+
+A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom and position, a &lt;b&gt;right click&lt;/b&gt; will autoscale and center the drawing.</property>
+    <property name="secondary_use_markup">True</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="messagedialog-vbox1">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="messagedialog-action_area1">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <object class="GtkButton" id="btnClos">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">btnClos</action-widget>
     </action-widgets>
   </object>
   <object class="GtkFileChooserDialog" id="wndSaveAs">

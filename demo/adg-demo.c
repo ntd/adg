@@ -1048,6 +1048,18 @@ _adg_part_destroy(DemoPart *part)
 }
 
 static GtkWidget *
+_adg_help_window(GtkBuilder *builder)
+{
+    GtkWidget *window;
+
+    window = (GtkWidget *) gtk_builder_get_object(builder, "wndHelp");
+    g_assert(GTK_IS_MESSAGE_DIALOG(window));
+    g_signal_connect(window, "response", G_CALLBACK(gtk_widget_hide), NULL);
+
+    return window;
+}
+
+static GtkWidget *
 _adg_about_window(GtkBuilder *builder)
 {
     GtkWidget *window;
@@ -1135,7 +1147,7 @@ _adg_main_window(GtkBuilder *builder)
     DemoPart *part;
     AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_print;
-    GtkWidget *button_about, *button_quit;
+    GtkWidget *button_help, *button_about, *button_quit;
 
     if (is_installed) {
 #ifdef G_OS_WIN32
@@ -1157,6 +1169,10 @@ _adg_main_window(GtkBuilder *builder)
     adg_gtk_area_set_canvas(part->area, canvas);
     adg_canvas_autoscale(canvas);
 
+    button_help = (GtkWidget *) gtk_builder_get_object(builder, "mainHelp");
+    g_assert(GTK_IS_BUTTON(button_help));
+    button_about = (GtkWidget *) gtk_builder_get_object(builder, "mainAbout");
+    g_assert(GTK_IS_BUTTON(button_about));
     g_assert(GTK_IS_WINDOW(window));
     button_edit = (GtkWidget *) gtk_builder_get_object(builder, "mainEdit");
     g_assert(GTK_IS_BUTTON(button_edit));
@@ -1164,11 +1180,12 @@ _adg_main_window(GtkBuilder *builder)
     g_assert(GTK_IS_BUTTON(button_save_as));
     button_print = (GtkWidget *) gtk_builder_get_object(builder, "mainPrint");
     g_assert(GTK_IS_BUTTON(button_print));
-    button_about = (GtkWidget *) gtk_builder_get_object(builder, "mainAbout");
-    g_assert(GTK_IS_BUTTON(button_about));
     button_quit = (GtkWidget *) gtk_builder_get_object(builder, "mainQuit");
     g_assert(GTK_IS_BUTTON(button_quit));
 
+    g_signal_connect_swapped(button_help, "clicked",
+                             G_CALLBACK(gtk_dialog_run),
+                             _adg_help_window(builder));
     g_signal_connect_swapped(button_about, "clicked",
                              G_CALLBACK(gtk_dialog_run),
                              _adg_about_window(builder));
