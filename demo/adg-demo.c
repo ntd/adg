@@ -71,7 +71,7 @@ struct _DemoPart {
     GtkButton           *reset;
 
     /* Data models */
-    AdgPath             *shape;
+    AdgPath             *body;
     AdgPath             *hatch;
     AdgPath             *hatch_contour;
     AdgPath             *axis;
@@ -239,14 +239,14 @@ _adg_part_define_hatch(DemoPart *part)
 }
 
 static void
-_adg_part_define_shape(DemoPart *part)
+_adg_part_define_body(DemoPart *part)
 {
     AdgModel *model;
     AdgPath *path;
     CpmlPair pair, tmp;
     const CpmlPrimitive *primitive;
 
-    path = part->shape;
+    path = part->body;
     model = ADG_MODEL(path);
     pair.x = part->A - part->B - part->LD2;
     pair.y = part->D3 / 2;
@@ -378,7 +378,7 @@ _adg_part_define_axis(DemoPart *part)
 
     path = part->axis;
 
-    /* XXX: actually the end points can extend outside the shape
+    /* XXX: actually the end points can extend outside the body
      * only in local space. The proper extension values should be
      * expressed in global space but actually is impossible to
      * combine local and global space in the AdgPath API.
@@ -652,7 +652,7 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
                          GTK_PAGE_ORIENTATION_LANDSCAPE);
     adg_canvas_set_title_block(canvas, part->title_block);
 
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->shape)));
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->body)));
     adg_container_add(container, entity);
 
     entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hatch)));
@@ -664,7 +664,7 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
     adg_container_add(container, entity);
 
-    _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->shape));
+    _adg_demo_canvas_add_dimensions(canvas, ADG_MODEL(part->body));
 
     _adg_demo_canvas_add_axis(canvas, ADG_TRAIL(part->axis));
 
@@ -718,18 +718,18 @@ _adg_do_edit(DemoPart *part)
 
     _adg_part_lock(part);
 
-    adg_model_reset(ADG_MODEL(part->shape));
+    adg_model_reset(ADG_MODEL(part->body));
     adg_model_reset(ADG_MODEL(part->hatch));
     adg_model_reset(ADG_MODEL(part->hatch_contour));
     adg_model_reset(ADG_MODEL(part->axis));
     adg_model_reset(ADG_MODEL(part->edges));
 
     _adg_part_define_title_block(part);
-    _adg_part_define_shape(part);
+    _adg_part_define_body(part);
     _adg_part_define_hatch(part);
     _adg_part_define_axis(part);
 
-    adg_model_changed(ADG_MODEL(part->shape));
+    adg_model_changed(ADG_MODEL(part->body));
     adg_model_changed(ADG_MODEL(part->hatch));
     adg_model_changed(ADG_MODEL(part->hatch_contour));
     adg_model_changed(ADG_MODEL(part->axis));
@@ -966,12 +966,12 @@ _adg_part_new(GtkBuilder *builder)
     part->area = (AdgGtkArea *) gtk_builder_get_object(builder, "mainCanvas");
     part->apply = (GtkButton *) gtk_builder_get_object(builder, "btnApply");
     part->reset = (GtkButton *) gtk_builder_get_object(builder, "btnReset");
-    part->shape = adg_path_new();
+    part->body = adg_path_new();
     part->hatch = adg_path_new();
     part->hatch_contour = adg_path_new();
     part->axis = adg_path_new();
     part->title_block = adg_title_block_new();
-    part->edges = adg_edges_new_with_source(ADG_TRAIL(part->shape));
+    part->edges = adg_edges_new_with_source(ADG_TRAIL(part->body));
 
     g_assert(ADG_GTK_IS_AREA(part->area));
     g_assert(GTK_IS_BUTTON(part->apply));
