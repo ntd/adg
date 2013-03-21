@@ -117,15 +117,15 @@ adg_dress_get_type(void)
 
 /**
  * adg_dress_new:
- * @name: the dress name
- * @fallback: the fallback style
+ * @name:                      the dress name
+ * @fallback: (transfer full): the fallback style
  *
  * Creates a new dress. It is a convenient wrapper of adg_dress_new_full()
  * that uses as ancestor the G_TYPE_FROM_INSTANCE() of @fallback.
  *
  * After a succesfull call, a new reference is added to @fallback.
  *
- * Returns: (type gint) (transfer full): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
+ * Returns: (transfer none): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
  *
  * Since: 1.0
  **/
@@ -139,9 +139,9 @@ adg_dress_new(const gchar *name, AdgStyle *fallback)
 
 /**
  * adg_dress_new_full:
- * @name: the dress name
- * @fallback: the fallback style
- * @ancestor_type: the common ancestor type
+ * @name:                      the dress name
+ * @fallback: (transfer full): the fallback style
+ * @ancestor_type:             the common ancestor type
  *
  * Creates a new dress, explicitely setting the ancestor type.
  * If @fallback is not %NULL, @ancestor_type must be present in
@@ -156,7 +156,7 @@ adg_dress_new(const gchar *name, AdgStyle *fallback)
  * After a succesfull call, a new reference is added to @fallback
  * if needed.
  *
- * Returns: (type gint) (transfer full): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors
+ * Returns: (transfer none): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
  *
  * Since: 1.0
  **/
@@ -195,13 +195,12 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
 
 /**
  * adg_dress_from_name:
- * @name: (transfer none): the name of a dress
+ * @name: the name of a dress
  *
  * Gets the dress bound to a @name string. No warnings are raised
  * if the dress is not found.
  *
- * Returns: (transfer none): the #AdgDress code or
- *                           #ADG_DRESS_UNDEFINED if not found.
+ * Returns: (transfer none): the #AdgDress code or #ADG_DRESS_UNDEFINED if not found.
  *
  * Since: 1.0
  **/
@@ -220,7 +219,7 @@ adg_dress_from_name(const gchar *name)
  * if they have the same ancestor type as returned by
  * adg_dress_get_ancestor_type().
  *
- * Returns: %TRUE if the dresses are related, %FALSE otherwise
+ * Returns: %TRUE if the dresses are related, %FALSE otherwise.
  *
  * Since: 1.0
  **/
@@ -242,14 +241,14 @@ adg_dress_are_related(AdgDress dress1, AdgDress dress2)
 
 /**
  * adg_dress_set:
- * @dress: a pointer to an #AdgDress
- * @src: the source dress
+ * @dress: (transfer none): a pointer to an #AdgDress
+ * @src:                    the source dress
  *
  * Copies @src in @dress. This operation can be succesful only if
  * @dress is #ADG_DRESS_UNDEFINED or if it contains a dress related
  * to @src, that is adg_dress_are_related() returns %TRUE.
  *
- * Returns: %TRUE on copy done, %FALSE on copy failed or not needed
+ * Returns: %TRUE on copy done, %FALSE on copy failed or not needed.
  *
  * Since: 1.0
  **/
@@ -273,7 +272,7 @@ adg_dress_set(AdgDress *dress, AdgDress src)
  * Gets the name associated to @dress. No warnings are raised if
  * @dress is not found.
  *
- * Returns: the requested name or %NULL if not found
+ * Returns: the requested name or %NULL if not found.
  *
  * Since: 1.0
  **/
@@ -294,7 +293,7 @@ adg_dress_get_name(AdgDress dress)
  * acceptable by @dress.  No warnings are raised if @dress
  * is not found.
  *
- * Returns: the ancestor type or %0 on errors
+ * Returns: the ancestor type or %0 on errors.
  *
  * Since: 1.0
  **/
@@ -313,8 +312,8 @@ adg_dress_get_ancestor_type(AdgDress dress)
 
 /**
  * adg_dress_set_fallback:
- * @dress: an #AdgDress
- * @fallback: the new fallback style
+ * @dress:                     an #AdgDress
+ * @fallback: (transfer full): the new fallback style
  *
  * Associates a new @fallback style to @dress. If the dress does
  * not exist (it was not previously created by adg_dress_new()),
@@ -368,8 +367,7 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
  * are raised if the dress is not found. The returned style
  * is owned by dress and should not be freed or modified.
  *
- * Returns: (transfer none): the requested #AdgStyle derived instance
- *                           or %NULL if not set.
+ * Returns: (transfer none): the requested #AdgStyle derived instance or %NULL if not set.
  *
  * Since: 1.0
  **/
@@ -388,14 +386,14 @@ adg_dress_get_fallback(AdgDress dress)
 
 /**
  * adg_dress_style_is_compatible:
- * @dress: an #AdgDress
- * @style: the #AdgStyle to check
+ * @dress:                  an #AdgDress
+ * @style: (transfer none): the #AdgStyle to check
  *
  * Checks whether @style is compatible with @dress, that is if
  * @style has the ancestor style type (as returned by
  * adg_dress_get_ancestor_type()) in its hierarchy.
  *
- * Returns: %TRUE if @dress can accept @style, %FALSE otherwise
+ * Returns: %TRUE if @dress can accept @style, %FALSE otherwise.
  *
  * Since: 1.0
  **/
@@ -524,15 +522,15 @@ _adg_value_validate(GParamSpec *spec, GValue *value)
 
 /**
  * adg_param_spec_dress:
- * @name: canonical name
- * @nick: nickname of the param
+ * @name:  canonical name
+ * @nick:  nickname of the param
  * @blurb: brief desciption
  * @dress: the #AdgDress dress
  * @flags: a combination of #GParamFlags
  *
  * Creates a param spec to hold a dress value.
  *
- * Returns: (transfer none): the newly allocated #GParamSpec.
+ * Returns: (transfer full): the newly allocated #GParamSpec.
  *
  * Since: 1.0
  **/
