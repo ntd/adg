@@ -72,8 +72,7 @@ struct _DemoPart {
 
     /* Data models */
     AdgPath             *body;
-    AdgPath             *hatch;
-    AdgPath             *hatch_contour;
+    AdgPath             *hole;
     AdgPath             *axis;
 
     /* Special entities */
@@ -132,66 +131,34 @@ _adg_error(const gchar *message, GtkWindow *parent_window)
 }
 
 static void
-_adg_path_add_hole(AdgPath *path, const DemoPart *part)
+_adg_path_add_groove(AdgPath *path, const DemoPart *part)
 {
     AdgModel *model;
     CpmlPair pair;
 
     model = ADG_MODEL(path);
-    pair.x = part->LHOLE;
-    pair.y = 0;
 
-    adg_path_move_to(path, &pair);
-    adg_model_set_named_pair(model, "LHOLE", &pair);
-
-    pair.y = part->DHOLE / 2;
-    pair.x -= pair.y / SQRT3;
-    adg_path_line_to(path, &pair);
-
-    pair.x = 0;
-    adg_path_line_to(path, &pair);
-    adg_model_set_named_pair(model, "DHOLE", &pair);
-}
-
-static void
-_adg_path_add_rail(AdgPath *path, const DemoPart *part, gdouble to_x)
-{
-    AdgModel *model;
-    CpmlPair pair;
-
-    model = ADG_MODEL(path);
-    pair.x = 0;
+    pair.x = part->ZGROOVE;
     pair.y = part->D1 / 2;
-
     adg_path_line_to(path, &pair);
-    adg_model_set_named_pair(model, "D1I", &pair);
+    adg_model_set_named_pair(model, "DGROOVEI_X", &pair);
 
-    if (part->GROOVE && to_x > part->ZGROOVE) {
-        pair.x = part->ZGROOVE;
-        adg_path_line_to(path, &pair);
-        adg_model_set_named_pair(model, "DGROOVEI_X", &pair);
+    pair.y = part->D3 / 2;
+    adg_model_set_named_pair(model, "DGROOVEY_POS", &pair);
 
-        pair.y = part->D3 / 2;
-        adg_model_set_named_pair(model, "DGROOVEY_POS", &pair);
-
-        pair.y = part->DGROOVE / 2;
-        adg_path_line_to(path, &pair);
-        adg_model_set_named_pair(model, "DGROOVEI_Y", &pair);
-
-        pair.x += part->LGROOVE;
-        adg_path_line_to(path, &pair);
-
-        pair.y = part->D3 / 2;
-        adg_model_set_named_pair(model, "DGROOVEX_POS", &pair);
-
-        pair.y = part->D1 / 2;
-        adg_path_line_to(path, &pair);
-        adg_model_set_named_pair(model, "DGROOVEF_X", &pair);
-    }
-
-    pair.x = to_x;
+    pair.y = part->DGROOVE / 2;
     adg_path_line_to(path, &pair);
-    adg_model_set_named_pair(model, "D1F", &pair);
+    adg_model_set_named_pair(model, "DGROOVEI_Y", &pair);
+
+    pair.x += part->LGROOVE;
+    adg_path_line_to(path, &pair);
+
+    pair.y = part->D3 / 2;
+    adg_model_set_named_pair(model, "DGROOVEX_POS", &pair);
+
+    pair.y = part->D1 / 2;
+    adg_path_line_to(path, &pair);
+    adg_model_set_named_pair(model, "DGROOVEF_X", &pair);
 }
 
 
@@ -211,17 +178,33 @@ _adg_part_define_title_block(DemoPart *part)
 }
 
 static void
-_adg_part_define_hatch(DemoPart *part)
+_adg_part_define_hole(DemoPart *part)
 {
     AdgPath *path;
-    CpmlPair pair;
+    AdgModel *model;
+    CpmlPair pair, edge;
 
-    path = part->hatch;
-    pair.x = 0;
-    pair.y = (part->D1 + part->DHOLE) / 4;
+    path = part->hole;
+    model = ADG_MODEL(path);
 
-    _adg_path_add_hole(path, part);
+    pair.x = part->LHOLE;
+    pair.y = 0;
+
+    adg_path_move_to(path, &pair);
+    adg_model_set_named_pair(model, "LHOLE", &pair);
+
+    pair.y = part->DHOLE / 2;
+    pair.x -= pair.y / SQRT3;
     adg_path_line_to(path, &pair);
+    cpml_pair_copy(&edge, &pair);
+
+    pair.x = 0;
+    adg_path_line_to(path, &pair);
+    adg_model_set_named_pair(model, "DHOLE", &pair);
+
+    pair.y = (part->D1 + part->DHOLE) / 4;
+    adg_path_line_to(path, &pair);
+
     adg_path_curve_to_explicit(path,
                                part->LHOLE / 2, part->DHOLE / 2,
                                part->LHOLE + 2, part->D1 / 2,
@@ -229,13 +212,11 @@ _adg_part_define_hatch(DemoPart *part)
     adg_path_reflect(path, NULL);
     adg_path_close(path);
 
-    path = part->hatch_contour;
-    adg_path_move_to(path, &pair);
-    adg_path_curve_to_explicit(path,
-                               part->LHOLE / 2, part->DHOLE / 2,
-                               part->LHOLE + 2, part->D1 / 2,
-                               part->LHOLE + 2, 0);
-    adg_path_reflect(path, NULL);
+    /* No need to incomodate an AdgEdge model for two reasons:
+     * it is only a single line and it is always needed */
+    adg_path_move_to(path, &edge);
+    edge.y = -edge.y;
+    adg_path_line_to(path, &edge);
 }
 
 static void
@@ -248,12 +229,22 @@ _adg_part_define_body(DemoPart *part)
 
     path = part->body;
     model = ADG_MODEL(path);
+
+    pair.x = 0;
+    pair.y = part->D1 / 2;
+    adg_path_move_to(path, &pair);
+    adg_model_set_named_pair(model, "D1I", &pair);
+
+    if (part->GROOVE) {
+        _adg_path_add_groove(path, part);
+    }
+
     pair.x = part->A - part->B - part->LD2;
+    adg_path_line_to(path, &pair);
+    adg_model_set_named_pair(model, "D1F", &pair);
+
     pair.y = part->D3 / 2;
     adg_model_set_named_pair(model, "D2_POS", &pair);
-
-    _adg_path_add_hole(path, part);
-    _adg_path_add_rail(path, part, pair.x);
 
     pair.x += (part->D1 - part->D2) / 2;
     pair.y = part->D2 / 2;
@@ -655,10 +646,10 @@ _adg_canvas_init(AdgCanvas *canvas, DemoPart *part)
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->body)));
     adg_container_add(container, entity);
 
-    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hatch)));
+    entity = ADG_ENTITY(adg_hatch_new(ADG_TRAIL(part->hole)));
     adg_container_add(container, entity);
 
-    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->hatch_contour)));
+    entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->hole)));
     adg_container_add(container, entity);
 
     entity = ADG_ENTITY(adg_stroke_new(ADG_TRAIL(part->edges)));
@@ -719,19 +710,17 @@ _adg_do_edit(DemoPart *part)
     _adg_part_lock(part);
 
     adg_model_reset(ADG_MODEL(part->body));
-    adg_model_reset(ADG_MODEL(part->hatch));
-    adg_model_reset(ADG_MODEL(part->hatch_contour));
+    adg_model_reset(ADG_MODEL(part->hole));
     adg_model_reset(ADG_MODEL(part->axis));
     adg_model_reset(ADG_MODEL(part->edges));
 
     _adg_part_define_title_block(part);
     _adg_part_define_body(part);
-    _adg_part_define_hatch(part);
+    _adg_part_define_hole(part);
     _adg_part_define_axis(part);
 
     adg_model_changed(ADG_MODEL(part->body));
-    adg_model_changed(ADG_MODEL(part->hatch));
-    adg_model_changed(ADG_MODEL(part->hatch_contour));
+    adg_model_changed(ADG_MODEL(part->hole));
     adg_model_changed(ADG_MODEL(part->axis));
     adg_model_changed(ADG_MODEL(part->edges));
 
@@ -967,8 +956,7 @@ _adg_part_new(GtkBuilder *builder)
     part->apply = (GtkButton *) gtk_builder_get_object(builder, "btnApply");
     part->reset = (GtkButton *) gtk_builder_get_object(builder, "btnReset");
     part->body = adg_path_new();
-    part->hatch = adg_path_new();
-    part->hatch_contour = adg_path_new();
+    part->hole = adg_path_new();
     part->axis = adg_path_new();
     part->title_block = adg_title_block_new();
     part->edges = adg_edges_new_with_source(ADG_TRAIL(part->body));
