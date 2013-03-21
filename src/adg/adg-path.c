@@ -872,8 +872,8 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 
 /**
  * adg_path_reflect:
- * @path:   an #AdgPath
- * @vector: the slope of the axis
+ * @path:                 an #AdgPath
+ * @vector: (allow-none): the slope of the axis
  *
  * Reflects the first segment or @path around the axis passing
  * throught (0, 0) and with a @vector slope. The internal segment
