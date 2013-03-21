@@ -127,6 +127,10 @@ TEST_PROGS+=			test-table-style$(EXEEXT)
 test_table_style_SOURCES=	test-table-style.c \
 				$(test_internals)
 
+TEST_PROGS+=			test-dress$(EXEEXT)
+test_dress_SOURCES=		test-dress.c \
+				$(test_internals)
+
 TEST_PROGS+=			test-canvas$(EXEEXT)
 test_canvas_SOURCES=		test-canvas.c \
 				$(test_internals)
