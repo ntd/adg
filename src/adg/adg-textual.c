@@ -57,6 +57,7 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-textual.h"
 

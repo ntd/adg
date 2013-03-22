@@ -79,6 +79,7 @@
 #include "adg-style.h"
 #include "adg-color-style.h"
 #include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include <adg-canvas.h>
 #include "adg-canvas-private.h"

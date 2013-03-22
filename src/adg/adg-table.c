@@ -50,7 +50,6 @@
 
 #include "adg-model.h"
 #include "adg-trail.h"
-#include "adg-dress.h"
 #include "adg-style.h"
 #include "adg-table-style.h"
 #include "adg-path.h"
@@ -58,6 +57,8 @@
 #include "adg-container.h"
 #include "adg-alignment.h"
 #include "adg-entity-private.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-table.h"
 #include "adg-table-private.h"

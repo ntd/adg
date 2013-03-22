@@ -38,12 +38,13 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress.h"
 #include "adg-style.h"
 #include "adg-dash.h"
 #include "adg-line-style.h"
 #include "adg-model.h"
 #include "adg-trail.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-stroke.h"
 #include "adg-stroke-private.h"

@@ -45,6 +45,7 @@
 #include "adg-style.h"
 #include "adg-fill-style.h"
 #include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"

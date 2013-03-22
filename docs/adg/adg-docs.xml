@@ -75,6 +75,7 @@
   <part id="Rendering">
     <title>The rendering process</title>
     <xi:include href="xml/adg-dress.xml"/>
+    <xi:include href="xml/adg-param-dress.xml"/>
     <xi:include href="xml/adg-dash.xml"/>
     <chapter id="Rendering-style">
       <title>Style classes</title>

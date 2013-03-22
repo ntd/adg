@@ -23,7 +23,6 @@
  * @short_description: Customization of table rendering
  *
  * Contains parameters on how to build tables such as the lines to
- * use for frames and grids and the font dresses for titles or values.
  *
  * Since: 1.0
  */
@@ -39,8 +38,9 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress.h"
 #include "adg-style.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-table-style.h"
 #include "adg-table-style-private.h"

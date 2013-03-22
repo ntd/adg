@@ -39,9 +39,10 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress.h"
 #include "adg-style.h"
 #include "adg-dash.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-line-style.h"
 #include "adg-line-style-private.h"

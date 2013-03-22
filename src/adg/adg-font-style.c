@@ -41,6 +41,7 @@
 #include "adg-internal.h"
 #include "adg-style.h"
 #include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"

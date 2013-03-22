@@ -40,9 +40,10 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress.h"
 #include "adg-style.h"
 #include "adg-fill-style.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-ruled-fill.h"
 #include "adg-ruled-fill-private.h"

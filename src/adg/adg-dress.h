@@ -30,8 +30,6 @@
 G_BEGIN_DECLS
 
 #define ADG_VALUE_HOLDS_DRESS(value)    (G_TYPE_CHECK_VALUE_TYPE((value), ADG_TYPE_DRESS))
-#define ADG_TYPE_PARAM_SPEC_DRESS       (_adg_param_spec_dress_get_type())
-#define ADG_IS_PARAM_SPEC_DRESS(spec)   (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
 
 
 AdgDress        adg_dress_from_name             (const gchar    *name);
@@ -46,13 +44,6 @@ void            adg_dress_set_fallback          (AdgDress        dress,
 AdgStyle *      adg_dress_get_fallback          (AdgDress        dress);
 gboolean        adg_dress_style_is_compatible   (AdgDress        dress,
                                                  AdgStyle       *style);
-
-GType           _adg_param_spec_dress_get_type  (void) G_GNUC_CONST;
-GParamSpec *    adg_param_spec_dress            (const gchar    *name,
-                                                 const gchar    *nick,
-                                                 const gchar    *blurb,
-                                                 AdgDress        dress,
-                                                 GParamFlags     flags);
 
 G_END_DECLS
 

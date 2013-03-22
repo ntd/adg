@@ -69,6 +69,7 @@
 #include "adg-marker.h"
 #include "adg-dim-style.h"
 #include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"

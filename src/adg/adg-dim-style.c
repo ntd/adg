@@ -44,10 +44,11 @@
 #include "adg-font-style.h"
 #include "adg-dash.h"
 #include "adg-line-style.h"
-#include "adg-dress.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-marker.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-dim-style.h"
 #include "adg-dim-style-private.h"

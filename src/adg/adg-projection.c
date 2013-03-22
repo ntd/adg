@@ -39,10 +39,11 @@
 
 
 #include "adg-internal.h"
-#include "adg-dress.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-path.h"
+#include "adg-dress.h"
+#include "adg-param-dress.h"
 
 #include "adg-projection.h"
 #include "adg-projection-private.h"
