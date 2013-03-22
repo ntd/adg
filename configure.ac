@@ -296,7 +296,7 @@ AM_SUBST_NOTMAKE([ARCH])
 
 dnl The GObject dependency can be made optional by skipping
 dnl the building of the GObject wrappers.
-CPML_REQUIRES='cairo >= cairo_prereq gobject >= gobject_prereq'
+CPML_REQUIRES='cairo >= cairo_prereq gobject-2.0 >= gobject_prereq'
 AM_COND_IF([HAVE_PANGO],
       [ADG_REQUIRES='pangocairo >= pangocairo_prereq'
        ADG_H_ADDITIONAL='
