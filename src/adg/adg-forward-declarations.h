@@ -38,7 +38,6 @@ G_BEGIN_DECLS
 typedef struct _AdgCanvas       AdgCanvas;
 typedef struct _AdgStyle        AdgStyle;
 typedef struct _AdgPoint        AdgPoint;
-typedef gint                    AdgDress;
 
 /* Needed by adg-table.h */
 typedef struct _AdgTableRow     AdgTableRow;

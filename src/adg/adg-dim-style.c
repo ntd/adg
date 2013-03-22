@@ -45,7 +45,6 @@
 #include "adg-dash.h"
 #include "adg-line-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-marker.h"
@@ -284,19 +283,19 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        g_value_set_int(value, data->color_dress);
+        g_value_set_enum(value, data->color_dress);
         break;
     case PROP_VALUE_DRESS:
-        g_value_set_int(value, data->value_dress);
+        g_value_set_enum(value, data->value_dress);
         break;
     case PROP_MIN_DRESS:
-        g_value_set_int(value, data->min_dress);
+        g_value_set_enum(value, data->min_dress);
         break;
     case PROP_MAX_DRESS:
-        g_value_set_int(value, data->max_dress);
+        g_value_set_enum(value, data->max_dress);
         break;
     case PROP_LINE_DRESS:
-        g_value_set_int(value, data->line_dress);
+        g_value_set_enum(value, data->line_dress);
         break;
     case PROP_FROM_OFFSET:
         g_value_set_double(value, data->from_offset);
@@ -349,19 +348,19 @@ _adg_set_property(GObject *object, guint prop_id,
         _adg_set_marker(&data->marker2, g_value_get_object(value));
         break;
     case PROP_COLOR_DRESS:
-        data->color_dress = g_value_get_int(value);
+        data->color_dress = g_value_get_enum(value);
         break;
     case PROP_VALUE_DRESS:
-        data->value_dress = g_value_get_int(value);
+        data->value_dress = g_value_get_enum(value);
         break;
     case PROP_MIN_DRESS:
-        data->min_dress = g_value_get_int(value);
+        data->min_dress = g_value_get_enum(value);
         break;
     case PROP_MAX_DRESS:
-        data->max_dress = g_value_get_int(value);
+        data->max_dress = g_value_get_enum(value);
         break;
     case PROP_LINE_DRESS:
-        data->line_dress = g_value_get_int(value);
+        data->line_dress = g_value_get_enum(value);
         break;
     case PROP_FROM_OFFSET:
         data->from_offset = g_value_get_double(value);

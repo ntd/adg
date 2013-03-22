@@ -41,7 +41,6 @@
 #include "adg-internal.h"
 #include "adg-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 
 #include "adg-font-style.h"
 #include "adg-font-style-private.h"
@@ -193,7 +192,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        g_value_set_int(value, data->color_dress);
+        g_value_set_enum(value, data->color_dress);
         break;
     case PROP_FAMILY:
         g_value_set_string(value, data->family);
@@ -239,7 +238,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        data->color_dress = g_value_get_int(value);
+        data->color_dress = g_value_get_enum(value);
         break;
     case PROP_FAMILY:
         g_free(data->family);

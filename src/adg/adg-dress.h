@@ -29,19 +29,11 @@
 
 G_BEGIN_DECLS
 
-#define ADG_TYPE_DRESS                  (adg_dress_get_type())
 #define ADG_VALUE_HOLDS_DRESS(value)    (G_TYPE_CHECK_VALUE_TYPE((value), ADG_TYPE_DRESS))
-
 #define ADG_TYPE_PARAM_SPEC_DRESS       (_adg_param_spec_dress_get_type())
 #define ADG_IS_PARAM_SPEC_DRESS(spec)   (G_TYPE_CHECK_INSTANCE_TYPE((spec), ADG_TYPE_PARAM_SPEC_DRESS))
 
 
-GType           adg_dress_get_type              (void) G_GNUC_CONST;
-AdgDress        adg_dress_new                   (const gchar    *name,
-                                                 AdgStyle       *fallback);
-AdgDress        adg_dress_new_full              (const gchar    *name,
-                                                 AdgStyle       *fallback,
-                                                 GType           ancestor_type);
 AdgDress        adg_dress_from_name             (const gchar    *name);
 gboolean        adg_dress_set                   (AdgDress       *dress,
                                                  AdgDress        src);

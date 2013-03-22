@@ -39,7 +39,6 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-style.h"
 #include "adg-dash.h"
 #include "adg-line-style.h"
@@ -147,7 +146,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        g_value_set_int(value, data->line_dress);
+        g_value_set_enum(value, data->line_dress);
         break;
     case PROP_TRAIL:
         g_value_set_object(value, data->trail);
@@ -167,7 +166,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        data->line_dress = g_value_get_int(value);
+        data->line_dress = g_value_get_enum(value);
         break;
     case PROP_TRAIL:
         old_trail = data->trail;

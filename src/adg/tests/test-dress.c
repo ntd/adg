@@ -37,7 +37,7 @@
 static void
 _adg_test_generic(void)
 {
-    g_assert(adg_dress_get_name(ADG_DRESS_UNDEFINED) == NULL);
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_UNDEFINED), ==, "ADG_DRESS_UNDEFINED");
 
     g_assert(adg_dress_get_ancestor_type(ADG_DRESS_UNDEFINED) == 0);
 
@@ -246,58 +246,58 @@ static void
 _adg_test_builtins(void)
 {
     /* Check built-in names */
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR),                 ==, "color");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_BACKGROUND),      ==, "color-background");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_STROKE),          ==, "color-stroke");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_DIMENSION),       ==, "color-dimension");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_ANNOTATION),      ==, "color-annotation");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_FILL),            ==, "color-fill");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_AXIS),            ==, "color-axis");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_HIDDEN),          ==, "color-hidden");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE),                  ==, "line");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_STROKE),           ==, "line-stroke");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_DIMENSION),        ==, "line-dimension");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_FILL),             ==, "line-fill");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_GRID),             ==, "line-grid");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_FRAME),            ==, "line-frame");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_AXIS),             ==, "line-axis");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_HIDDEN),           ==, "line-hidden");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT),                  ==, "font");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_TEXT),             ==, "font-text");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_ANNOTATION),       ==, "font-annotation");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_QUOTE_TEXT),       ==, "font-quote-text");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_QUOTE_ANNOTATION), ==, "font-quote-annotation");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_DIMENSION),             ==, "dimension");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FILL),                  ==, "fill");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FILL_HATCH),            ==, "fill-hatch");
-    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_TABLE),                 ==, "table");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR),                 ==, "ADG_DRESS_COLOR");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_BACKGROUND),      ==, "ADG_DRESS_COLOR_BACKGROUND");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_STROKE),          ==, "ADG_DRESS_COLOR_STROKE");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_DIMENSION),       ==, "ADG_DRESS_COLOR_DIMENSION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_ANNOTATION),      ==, "ADG_DRESS_COLOR_ANNOTATION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_FILL),            ==, "ADG_DRESS_COLOR_FILL");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_AXIS),            ==, "ADG_DRESS_COLOR_AXIS");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_COLOR_HIDDEN),          ==, "ADG_DRESS_COLOR_HIDDEN");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE),                  ==, "ADG_DRESS_LINE");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_STROKE),           ==, "ADG_DRESS_LINE_STROKE");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_DIMENSION),        ==, "ADG_DRESS_LINE_DIMENSION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_FILL),             ==, "ADG_DRESS_LINE_FILL");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_GRID),             ==, "ADG_DRESS_LINE_GRID");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_FRAME),            ==, "ADG_DRESS_LINE_FRAME");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_AXIS),             ==, "ADG_DRESS_LINE_AXIS");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_LINE_HIDDEN),           ==, "ADG_DRESS_LINE_HIDDEN");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT),                  ==, "ADG_DRESS_FONT");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_TEXT),             ==, "ADG_DRESS_FONT_TEXT");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_ANNOTATION),       ==, "ADG_DRESS_FONT_ANNOTATION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_QUOTE_TEXT),       ==, "ADG_DRESS_FONT_QUOTE_TEXT");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FONT_QUOTE_ANNOTATION), ==, "ADG_DRESS_FONT_QUOTE_ANNOTATION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_DIMENSION),             ==, "ADG_DRESS_DIMENSION");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FILL),                  ==, "ADG_DRESS_FILL");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_FILL_HATCH),            ==, "ADG_DRESS_FILL_HATCH");
+    g_assert_cmpstr(adg_dress_get_name(ADG_DRESS_TABLE),                 ==, "ADG_DRESS_TABLE");
 
     /* Check built-in values */
-    g_assert_cmpint(adg_dress_from_name("color"),                 ==, ADG_DRESS_COLOR);
-    g_assert_cmpint(adg_dress_from_name("color-background"),      ==, ADG_DRESS_COLOR_BACKGROUND);
-    g_assert_cmpint(adg_dress_from_name("color-stroke"),          ==, ADG_DRESS_COLOR_STROKE);
-    g_assert_cmpint(adg_dress_from_name("color-dimension"),       ==, ADG_DRESS_COLOR_DIMENSION);
-    g_assert_cmpint(adg_dress_from_name("color-annotation"),      ==, ADG_DRESS_COLOR_ANNOTATION);
-    g_assert_cmpint(adg_dress_from_name("color-fill"),            ==, ADG_DRESS_COLOR_FILL);
-    g_assert_cmpint(adg_dress_from_name("color-axis"),            ==, ADG_DRESS_COLOR_AXIS);
-    g_assert_cmpint(adg_dress_from_name("color-hidden"),          ==, ADG_DRESS_COLOR_HIDDEN);
-    g_assert_cmpint(adg_dress_from_name("line"),                  ==, ADG_DRESS_LINE);
-    g_assert_cmpint(adg_dress_from_name("line-stroke"),           ==, ADG_DRESS_LINE_STROKE);
-    g_assert_cmpint(adg_dress_from_name("line-dimension"),        ==, ADG_DRESS_LINE_DIMENSION);
-    g_assert_cmpint(adg_dress_from_name("line-fill"),             ==, ADG_DRESS_LINE_FILL);
-    g_assert_cmpint(adg_dress_from_name("line-grid"),             ==, ADG_DRESS_LINE_GRID);
-    g_assert_cmpint(adg_dress_from_name("line-frame"),            ==, ADG_DRESS_LINE_FRAME);
-    g_assert_cmpint(adg_dress_from_name("line-axis"),             ==, ADG_DRESS_LINE_AXIS);
-    g_assert_cmpint(adg_dress_from_name("line-hidden"),           ==, ADG_DRESS_LINE_HIDDEN);
-    g_assert_cmpint(adg_dress_from_name("font"),                  ==, ADG_DRESS_FONT);
-    g_assert_cmpint(adg_dress_from_name("font-text"),             ==, ADG_DRESS_FONT_TEXT);
-    g_assert_cmpint(adg_dress_from_name("font-annotation"),       ==, ADG_DRESS_FONT_ANNOTATION);
-    g_assert_cmpint(adg_dress_from_name("font-quote-text"),       ==, ADG_DRESS_FONT_QUOTE_TEXT);
-    g_assert_cmpint(adg_dress_from_name("font-quote-annotation"), ==, ADG_DRESS_FONT_QUOTE_ANNOTATION);
-    g_assert_cmpint(adg_dress_from_name("dimension"),             ==, ADG_DRESS_DIMENSION);
-    g_assert_cmpint(adg_dress_from_name("fill"),                  ==, ADG_DRESS_FILL);
-    g_assert_cmpint(adg_dress_from_name("fill-hatch"),            ==, ADG_DRESS_FILL_HATCH);
-    g_assert_cmpint(adg_dress_from_name("table"),                 ==, ADG_DRESS_TABLE);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR"),                 ==, ADG_DRESS_COLOR);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_BACKGROUND"),      ==, ADG_DRESS_COLOR_BACKGROUND);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_STROKE"),          ==, ADG_DRESS_COLOR_STROKE);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_DIMENSION"),       ==, ADG_DRESS_COLOR_DIMENSION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_ANNOTATION"),      ==, ADG_DRESS_COLOR_ANNOTATION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_FILL"),            ==, ADG_DRESS_COLOR_FILL);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_AXIS"),            ==, ADG_DRESS_COLOR_AXIS);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_COLOR_HIDDEN"),          ==, ADG_DRESS_COLOR_HIDDEN);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE"),                  ==, ADG_DRESS_LINE);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_STROKE"),           ==, ADG_DRESS_LINE_STROKE);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_DIMENSION"),        ==, ADG_DRESS_LINE_DIMENSION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_FILL"),             ==, ADG_DRESS_LINE_FILL);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_GRID"),             ==, ADG_DRESS_LINE_GRID);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_FRAME"),            ==, ADG_DRESS_LINE_FRAME);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_AXIS"),             ==, ADG_DRESS_LINE_AXIS);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_LINE_HIDDEN"),           ==, ADG_DRESS_LINE_HIDDEN);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FONT"),                  ==, ADG_DRESS_FONT);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FONT_TEXT"),             ==, ADG_DRESS_FONT_TEXT);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FONT_ANNOTATION"),       ==, ADG_DRESS_FONT_ANNOTATION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FONT_QUOTE_TEXT"),       ==, ADG_DRESS_FONT_QUOTE_TEXT);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FONT_QUOTE_ANNOTATION"), ==, ADG_DRESS_FONT_QUOTE_ANNOTATION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_DIMENSION"),             ==, ADG_DRESS_DIMENSION);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FILL"),                  ==, ADG_DRESS_FILL);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_FILL_HATCH"),            ==, ADG_DRESS_FILL_HATCH);
+    g_assert_cmpint(adg_dress_from_name("ADG_DRESS_TABLE"),                 ==, ADG_DRESS_TABLE);
 }
 
 int

@@ -42,7 +42,6 @@
 
 #include "adg-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-font-style.h"
 
 #include "adg-pango-style.h"

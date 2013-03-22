@@ -40,7 +40,6 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-path.h"
@@ -151,10 +150,10 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
-        g_value_set_int(value, data->symbol_dress);
+        g_value_set_enum(value, data->symbol_dress);
         break;
     case PROP_AXIS_DRESS:
-        g_value_set_int(value, data->axis_dress);
+        g_value_set_enum(value, data->axis_dress);
         break;
     case PROP_SCHEME:
         g_value_set_enum(value, data->scheme);
@@ -177,10 +176,10 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
-        data->symbol_dress = g_value_get_int(value);
+        data->symbol_dress = g_value_get_enum(value);
         break;
     case PROP_AXIS_DRESS:
-        data->axis_dress = g_value_get_int(value);
+        data->axis_dress = g_value_get_enum(value);
         break;
     case PROP_SCHEME:
         data->scheme = g_value_get_enum(value);

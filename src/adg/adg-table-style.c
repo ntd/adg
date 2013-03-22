@@ -40,7 +40,6 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-style.h"
 
 #include "adg-table-style.h"
@@ -179,19 +178,19 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        g_value_set_int(value, data->color_dress);
+        g_value_set_enum(value, data->color_dress);
         break;
     case PROP_GRID_DRESS:
-        g_value_set_int(value, data->grid_dress);
+        g_value_set_enum(value, data->grid_dress);
         break;
     case PROP_FRAME_DRESS:
-        g_value_set_int(value, data->frame_dress);
+        g_value_set_enum(value, data->frame_dress);
         break;
     case PROP_TITLE_DRESS:
-        g_value_set_int(value, data->title_dress);
+        g_value_set_enum(value, data->title_dress);
         break;
     case PROP_VALUE_DRESS:
-        g_value_set_int(value, data->value_dress);
+        g_value_set_enum(value, data->value_dress);
         break;
     case PROP_ROW_HEIGHT:
         g_value_set_double(value, data->row_height);
@@ -216,19 +215,19 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
-        data->color_dress = g_value_get_int(value);
+        data->color_dress = g_value_get_enum(value);
         break;
     case PROP_GRID_DRESS:
-        data->grid_dress = g_value_get_int(value);
+        data->grid_dress = g_value_get_enum(value);
         break;
     case PROP_FRAME_DRESS:
-        data->frame_dress = g_value_get_int(value);
+        data->frame_dress = g_value_get_enum(value);
         break;
     case PROP_TITLE_DRESS:
-        data->title_dress = g_value_get_int(value);
+        data->title_dress = g_value_get_enum(value);
         break;
     case PROP_VALUE_DRESS:
-        data->value_dress = g_value_get_int(value);
+        data->value_dress = g_value_get_enum(value);
         break;
     case PROP_ROW_HEIGHT:
         data->row_height = g_value_get_double(value);

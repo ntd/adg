@@ -57,7 +57,6 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 
 #include "adg-textual.h"
 

@@ -45,7 +45,6 @@
 #include "adg-style.h"
 #include "adg-fill-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 
 #include "adg-hatch.h"
 #include "adg-hatch-private.h"
@@ -115,7 +114,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FILL_DRESS:
-        g_value_set_int(value, data->fill_dress);
+        g_value_set_enum(value, data->fill_dress);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -135,7 +134,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FILL_DRESS:
-        data->fill_dress = g_value_get_int(value);
+        data->fill_dress = g_value_get_enum(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);

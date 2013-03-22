@@ -79,7 +79,6 @@
 #include "adg-style.h"
 #include "adg-color-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 
 #include <adg-canvas.h>
 #include "adg-canvas-private.h"
@@ -317,10 +316,10 @@ _adg_get_property(GObject *object, guint prop_id,
         g_value_set_boxed(value, data->scales);
         break;
     case PROP_BACKGROUND_DRESS:
-        g_value_set_int(value, data->background_dress);
+        g_value_set_enum(value, data->background_dress);
         break;
     case PROP_FRAME_DRESS:
-        g_value_set_int(value, data->frame_dress);
+        g_value_set_enum(value, data->frame_dress);
         break;
     case PROP_TITLE_BLOCK:
         g_value_set_object(value, data->title_block);
@@ -378,10 +377,10 @@ _adg_set_property(GObject *object, guint prop_id,
         data->scales = g_value_dup_boxed(value);
         break;
     case PROP_BACKGROUND_DRESS:
-        data->background_dress = g_value_get_int(value);
+        data->background_dress = g_value_get_enum(value);
         break;
     case PROP_FRAME_DRESS:
-        data->frame_dress = g_value_get_int(value);
+        data->frame_dress = g_value_get_enum(value);
         break;
     case PROP_TITLE_BLOCK:
         title_block = g_value_get_object(value);

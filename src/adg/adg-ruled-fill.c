@@ -41,7 +41,6 @@
 
 #include "adg-internal.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-style.h"
 #include "adg-fill-style.h"
 
@@ -108,10 +107,10 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
     fill_style_class->set_extents = _adg_set_extents;
 
     param = adg_param_spec_dress("line-dress",
-                                  P_("Line Dress"),
-                                  P_("Dress to be used for rendering the lines"),
-                                  ADG_DRESS_LINE_FILL,
-                                  G_PARAM_READWRITE);
+                                 P_("Line Dress"),
+                                 P_("Dress to be used for rendering the lines"),
+                                 ADG_DRESS_LINE_FILL,
+                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LINE_DRESS, param);
 
     param = g_param_spec_double("spacing",
@@ -151,7 +150,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        g_value_set_int(value, data->line_dress);
+        g_value_set_enum(value, data->line_dress);
         break;
     case PROP_SPACING:
         g_value_set_double(value, data->spacing);
@@ -177,7 +176,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
-        data->line_dress = g_value_get_int(value);
+        data->line_dress = g_value_get_enum(value);
         break;
     case PROP_SPACING:
         data->spacing = g_value_get_double(value);

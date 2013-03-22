@@ -51,7 +51,6 @@
 #include "adg-model.h"
 #include "adg-trail.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-style.h"
 #include "adg-table-style.h"
 #include "adg-path.h"
@@ -235,7 +234,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
-        g_value_set_int(value, data->table_dress);
+        g_value_set_enum(value, data->table_dress);
         break;
     case PROP_HAS_FRAME:
         g_value_set_boolean(value, data->has_frame);
@@ -254,7 +253,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
-        data->table_dress = g_value_get_int(value);
+        data->table_dress = g_value_get_enum(value);
         break;
     case PROP_HAS_FRAME:
         data->has_frame = g_value_get_boolean(value);

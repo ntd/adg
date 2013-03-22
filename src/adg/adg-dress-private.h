@@ -27,7 +27,6 @@ G_BEGIN_DECLS
 typedef struct _AdgDressPrivate AdgDressPrivate;
 
 struct _AdgDressPrivate {
-    GQuark       quark;
     AdgStyle    *fallback;
     GType        ancestor_type;
 };

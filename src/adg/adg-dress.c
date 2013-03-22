@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-dress
- * @Section_Id:AdgDress
+ * @Section_Id:Dresses
  * @title: AdgDress
  * @short_description: The ADG way to associate styles to entities
  *
@@ -35,8 +35,109 @@
 
 /**
  * AdgDress:
+ * @ADG_DRESS_UNDEFINED:             undefined dress, used for notifying invalid
+ *                                   dresses.
+ * @ADG_DRESS_COLOR:                 default built-in color. This is a
+ *                                   pass-through dress, that is it does not
+ *                                   change the cairo context when it is
+ *                                   applied. This dress will be resolved to an
+ *                                   #AdgColorStyle instance.
+ * @ADG_DRESS_COLOR_BACKGROUND:      default built-in color to be used as the
+ *                                   #AdgCanvas background. This dress will be
+ *                                   resolved to an #AdgColorStyle instance.
+ * @ADG_DRESS_COLOR_STROKE:          default built-in color for #AdgStroke
+ *                                   entities. This dress will be resolved to
+ *                                   an #AdgColorStyle instance.
+ * @ADG_DRESS_COLOR_DIMENSION:       built-in color used by default in
+ *                                   #AdgDimStyle. This dress will be resolved
+ *                                   to an #AdgColorStyle instance.
+ * @ADG_DRESS_COLOR_ANNOTATION:      built-in color used for rendering
+ *                                   helper entities such as #AdgToyText,
+ *                                   #AdgTable and #AdgTitleBlock. This dress
+ *                                   will be resolved to an #AdgColorStyle
+ *                                   instance.
+ * @ADG_DRESS_COLOR_FILL:            built-in color used by default by
+ *                                   #AdgFillStyle based styles. This dress
+ *                                   will be resolved to an #AdgColorStyle
+ *                                   instance.
+ * @ADG_DRESS_COLOR_AXIS:            default built-in color for stroking
+ *                                   #ADG_DRESS_LINE_AXIS lines. This dress
+ *                                   will be resolved to an #AdgColorStyle
+ *                                   instance.
+ * @ADG_DRESS_COLOR_HIDDEN:          default built-in color for stroking
+ *                                   #ADG_DRESS_LINE_HIDDEN lines. This dress
+ *                                   will be resolved to an #AdgColorStyle
+ *                                   instance.
+ * @ADG_DRESS_LINE:                  default built-in line. This is a
+ *                                   pass-through dress, that is it does not
+ *                                   change the cairo context when it is
+ *                                   applied. This dress will be resolved to
+ *                                   an #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_STROKE:           built-in line type to be used by default
+ *                                   for rendering #AdgStroke entities.
+ *                                   This dress will be resolved to an
+ *                                   #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_DIMENSION:        built-in line type used by default for
+ *                                   rendering base and extension lines of
+ *                                   dimensions. This dress will be resolved
+ *                                   to an #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_FILL:             built-in line type used by #AdgFillStyle.
+ *                                   This dress will be resolved to an
+ *                                   #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_GRID:             built-in line type used for rendering
+ *                                   the grid of #AdgTable entities, that is
+ *                                   the frame of the cells. This dress will
+ *                                   be resolved to an #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_FRAME:            built-in line type used for rendering the
+ *                                   frame of #AdgTable entities, that is the
+ *                                   frame around the whole table. This dress
+ *                                   will be resolved to an #AdgLineStyle
+ *                                   instance.
+ * @ADG_DRESS_LINE_AXIS:             built-in line type used for rendering axis
+ *                                   and centerlines. This dress will be
+ *                                   resolved to an #AdgLineStyle instance.
+ * @ADG_DRESS_LINE_HIDDEN:           built-in line type used for rendering
+ *                                   hidden lines and edges. This dress will be
+ *                                   resolved to an #AdgLineStyle instance.
+ * @ADG_DRESS_FONT:                  default built-in font. This dress will be
+ *                                   resolved to an #AdgFontStyle instance.
+ * @ADG_DRESS_FONT_TEXT:             built-in font used by default for
+ *                                   rendering common text such as #AdgToyText
+*                                    or the value of #AdgTable entities. This
+*                                    dress will be resolved to an #AdgFontStyle
+*                                    instance.
+ * @ADG_DRESS_FONT_ANNOTATION:       built-in font used for rendering auxiliary
+ *                                   text, such as the titles on #AdgTable
+ *                                   entities. This dress will be resolved to
+ *                                   an #AdgFontStyle instance.
+ * @ADG_DRESS_FONT_QUOTE_TEXT:       built-in font used for rendering regular
+ *                                   text on dimension entities, such as the
+ *                                   nominal value and the notes of a quote.
+ *                                   This dress will be resolved to an
+ *                                   #AdgFontStyle instance.
+ * @ADG_DRESS_FONT_QUOTE_ANNOTATION: built-in font used for rendering auxiliary
+ *                                   text on dimension entities, such as the
+ *                                   min and max limits of a quote. This dress
+ *                                   will be resolved to an #AdgFontStyle
+ *                                   instance.
+ * @ADG_DRESS_DIMENSION:             default built-in for dimensions. This
+ *                                   dress will be resolved to an #AdgDimStyle
+ *                                   instance.
+ * @ADG_DRESS_FILL:                  default built-in for filling. This is a
+ *                                   pass-through dress, that is it does not
+ *                                   change the cairo context when it is
+ *                                   applied. This dress will be resolved to an
+ *                                   #AdgFillStyle derived instance.
+ * @ADG_DRESS_FILL_HATCH:            built-in dress used by default by
+ *                                   #AdgHatch instances. This dress will be
+ *                                   resolved to an #AdgFillStyle derived
+ *                                   instance.
+ * @ADG_DRESS_TABLE:                 default built-in for tables. This dress
+ *                                   will be resolved to an #AdgTableStyle
+ *                                   derived instance.
  *
- * An index representing a virtual #AdgStyle.
+ * An index representing a virtual #AdgStyle. The ADG comes equipped
+ * with some built-in dress.
  *
  * Since: 1.0
  **/
@@ -63,135 +164,33 @@
 
 
 #include "adg-internal.h"
+#include "adg-dash.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-marker.h"
+#include "adg-arrow.h"
 #include "adg-style.h"
-#include "adg-dress-builtins.h"
+#include "adg-color-style.h"
+#include "adg-line-style.h"
+#include "adg-text-internal.h"
+#include "adg-dim-style.h"
+#include "adg-fill-style.h"
+#include "adg-ruled-fill.h"
+#include "adg-table-style.h"
 
 #include "adg-dress.h"
 #include "adg-dress-private.h"
 
-
-typedef struct _AdgParamSpecDress AdgParamSpecDress;
-
-struct _AdgParamSpecDress {
-    GParamSpecInt parent;
-    AdgDress      source_dress;
-};
+#define MM  *2.83464566927
 
 
-static AdgDress         _adg_quark_to_dress     (GQuark          quark);
-static void             _adg_dress_to_string    (const GValue   *src,
-                                                 GValue         *dst);
-static void             _adg_string_to_dress    (const GValue   *src,
-                                                 GValue         *dst);
-static void             _adg_param_class_init   (GParamSpecClass*klass);
-static const gchar *    _adg_dress_name         (AdgDress        dress);
-static gboolean         _adg_dress_is_valid     (AdgDress        dress);
-static gboolean         _adg_dress_is_valid_with_log
-                                                (AdgDress        dress);
-static gboolean         _adg_value_validate     (GParamSpec     *spec,
-                                                 GValue         *value);
-static GArray *         _adg_array_singleton    (void) G_GNUC_CONST;
-static guint            _adg_array_append       (AdgDressPrivate*data);
-static AdgDressPrivate *_adg_array_lookup       (guint           n);
-static guint            _adg_array_len          (void);
+static GArray *         _adg_data_array             (void);
+static void             _adg_data_register          (AdgDress    dress,
+                                                     AdgStyle   *fallback,
+                                                     GType       ancestor_type);
+static void             _adg_data_register_builtins (void);
+static AdgDressPrivate *_adg_data_lookup            (AdgDress    dress);
 
-
-GType
-adg_dress_get_type(void)
-{
-    static GType type = 0;
-
-    if (G_UNLIKELY(type == 0)) {
-        const GTypeInfo info = { 0, };
-
-        type = g_type_register_static(G_TYPE_INT, "AdgDress", &info, 0);
-
-        g_value_register_transform_func(type, G_TYPE_STRING,
-                                        _adg_dress_to_string);
-        g_value_register_transform_func(G_TYPE_STRING, type,
-                                        _adg_string_to_dress);
-    }
-
-    return type;
-}
-
-/**
- * adg_dress_new:
- * @name:                      the dress name
- * @fallback: (transfer full): the fallback style
- *
- * Creates a new dress. It is a convenient wrapper of adg_dress_new_full()
- * that uses as ancestor the G_TYPE_FROM_INSTANCE() of @fallback.
- *
- * After a succesfull call, a new reference is added to @fallback.
- *
- * Returns: (transfer none): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
- *
- * Since: 1.0
- **/
-AdgDress
-adg_dress_new(const gchar *name, AdgStyle *fallback)
-{
-    g_return_val_if_fail(ADG_IS_STYLE(fallback), ADG_DRESS_UNDEFINED);
-
-    return adg_dress_new_full(name, fallback, G_TYPE_FROM_INSTANCE(fallback));
-}
-
-/**
- * adg_dress_new_full:
- * @name:                      the dress name
- * @fallback: (transfer full): the fallback style
- * @ancestor_type:             the common ancestor type
- *
- * Creates a new dress, explicitely setting the ancestor type.
- * If @fallback is not %NULL, @ancestor_type must be present in
- * its hierarchy: check out the adg_dress_style_is_compatible()
- * documentation to know what the ancestor type is used for.
- *
- * @fallback can be %NULL, in which case a "transparent" dress
- * is created. This kind of dress does not change the cairo
- * context because there is no style to apply. Any entity could
- * override it to change this behavior though.
- *
- * After a succesfull call, a new reference is added to @fallback
- * if needed.
- *
- * Returns: (transfer none): the new #AdgDress value or #ADG_DRESS_UNDEFINED on errors.
- *
- * Since: 1.0
- **/
-AdgDress
-adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
-{
-    GQuark quark;
-    AdgDress dress;
-    AdgDressPrivate data;
-
-    g_return_val_if_fail(name != NULL, ADG_DRESS_UNDEFINED);
-    g_return_val_if_fail(g_type_is_a(ancestor_type, ADG_TYPE_STYLE),
-                         ADG_DRESS_UNDEFINED);
-    g_return_val_if_fail(fallback == NULL ||
-                         G_TYPE_CHECK_INSTANCE_TYPE(fallback, ancestor_type),
-                         ADG_DRESS_UNDEFINED);
-
-    quark = g_quark_from_string(name);
-    dress = _adg_quark_to_dress(quark);
-
-    if (dress > 0) {
-        g_warning(_("%s: the `%s' name is yet used by the `%d' dress"),
-                  G_STRLOC, name, dress);
-        return ADG_DRESS_UNDEFINED;
-    }
-
-    data.quark = quark;
-    data.fallback = fallback;
-    data.ancestor_type = ancestor_type;
-
-    if (fallback != NULL)
-        g_object_ref(fallback);
-
-    return _adg_array_append(&data) - 1;
-}
 
 /**
  * adg_dress_from_name:
@@ -200,14 +199,17 @@ adg_dress_new_full(const gchar *name, AdgStyle *fallback, GType ancestor_type)
  * Gets the dress bound to a @name string. No warnings are raised
  * if the dress is not found.
  *
- * Returns: (transfer none): the #AdgDress code or #ADG_DRESS_UNDEFINED if not found.
+ * Returns: the #AdgDress value or #ADG_DRESS_UNDEFINED if not found.
  *
  * Since: 1.0
  **/
 AdgDress
 adg_dress_from_name(const gchar *name)
 {
-    return _adg_quark_to_dress(g_quark_try_string(name));
+    GEnumClass *dress_class = g_type_class_ref(ADG_TYPE_DRESS);
+    GEnumValue *enum_value = g_enum_get_value_by_name(dress_class, name);
+    g_type_class_unref(dress_class);
+    return enum_value != NULL ? enum_value->value : ADG_DRESS_UNDEFINED;
 }
 
 /**
@@ -241,8 +243,8 @@ adg_dress_are_related(AdgDress dress1, AdgDress dress2)
 
 /**
  * adg_dress_set:
- * @dress: (transfer none): a pointer to an #AdgDress
- * @src:                    the source dress
+ * @dress: a pointer to an #AdgDress
+ * @src:   the source dress
  *
  * Copies @src in @dress. This operation can be succesful only if
  * @dress is #ADG_DRESS_UNDEFINED or if it contains a dress related
@@ -279,10 +281,10 @@ adg_dress_set(AdgDress *dress, AdgDress src)
 const gchar *
 adg_dress_get_name(AdgDress dress)
 {
-    if (!_adg_dress_is_valid(dress))
-        return NULL;
-
-    return g_quark_to_string(_adg_array_lookup(dress)->quark);
+    GEnumClass *dress_class = g_type_class_ref(ADG_TYPE_DRESS);
+    GEnumValue *enum_value = g_enum_get_value(dress_class, dress);
+    g_type_class_unref(dress_class);
+    return enum_value != NULL ? enum_value->value_name : NULL;
 }
 
 /**
@@ -300,14 +302,8 @@ adg_dress_get_name(AdgDress dress)
 GType
 adg_dress_get_ancestor_type(AdgDress dress)
 {
-    AdgDressPrivate *data;
-
-    if (!_adg_dress_is_valid(dress))
-        return 0;
-
-    data = _adg_array_lookup(dress);
-
-    return data->ancestor_type;
+    AdgDressPrivate *data = _adg_data_lookup(dress);
+    return data != NULL ? data->ancestor_type : 0;
 }
 
 /**
@@ -331,12 +327,9 @@ adg_dress_get_ancestor_type(AdgDress dress)
 void
 adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 {
-    AdgDressPrivate *data;
+    AdgDressPrivate *data = _adg_data_lookup(dress);
 
-    if (!_adg_dress_is_valid_with_log(dress))
-        return;
-
-    data = _adg_array_lookup(dress);
+    g_return_if_fail(data != NULL);
 
     if (data->fallback == fallback)
         return;
@@ -344,7 +337,7 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
     /* Check if the new fallback style is compatible with this dress */
     if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
         g_warning(_("%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' has been provided"),
-                  G_STRLOC, dress, _adg_dress_name(dress),
+                  G_STRLOC, dress, adg_dress_get_name(dress),
                   g_type_name(data->ancestor_type),
                   g_type_name(G_TYPE_FROM_INSTANCE(fallback)));
         return;
@@ -374,14 +367,8 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 AdgStyle *
 adg_dress_get_fallback(AdgDress dress)
 {
-    AdgDressPrivate *data;
-
-    if (!_adg_dress_is_valid(dress))
-        return NULL;
-
-    data = _adg_array_lookup(dress);
-
-    return data->fallback;
+    AdgDressPrivate *data = _adg_data_lookup(dress);
+    return data != NULL ? data->fallback : NULL;
 }
 
 /**
@@ -409,33 +396,273 @@ adg_dress_style_is_compatible(AdgDress dress, AdgStyle *style)
 }
 
 
-static AdgDress
-_adg_quark_to_dress(GQuark quark)
+static GArray *
+_adg_data_array(void)
 {
-    AdgDress dress;
-    AdgDressPrivate *data;
+    /* The following register keeps track of the metadata bound to every
+     * #AdgDress value, such as the fallback style and the ancestor type.
+     *
+     * The AdgDress value is cohincident with the index of its metadata
+     * inside this register, that is if %ADG_DRESS_COLOR_BACKGROUND is 2,
+     * array->data[2] will contain its metadata.
+     */
+    static GArray *array = NULL;
 
-    for (dress = 0; dress < _adg_array_len(); ++dress) {
-        data = _adg_array_lookup(dress);
-
-        if (data->quark == quark)
-            return dress;
+    if (G_UNLIKELY(array == NULL)) {
+        array = g_array_new(FALSE, FALSE, sizeof(AdgDressPrivate));
+        _adg_data_register_builtins();
     }
 
-    return ADG_DRESS_UNDEFINED;
+    return array;
 }
 
 static void
-_adg_dress_to_string(const GValue *src, GValue *dst)
+_adg_data_register(AdgDress dress, AdgStyle *fallback, GType ancestor_type)
 {
-    g_value_set_string(dst, adg_dress_get_name(g_value_get_int(src)));
+    GArray         *array = _adg_data_array();
+    AdgDressPrivate data;
+
+    data.fallback = fallback;
+    data.ancestor_type = ancestor_type;
+
+    g_array_insert_vals(array, dress, g_memdup(&data, sizeof(data)), 1);
 }
 
 static void
-_adg_string_to_dress(const GValue *src, GValue *dst)
+_adg_data_register_builtins(void)
 {
-    g_value_set_int(dst, adg_dress_from_name(g_value_get_string(src)));
+    AdgDash *dash;
+    AdgMarker *arrow1, *arrow2;
+
+    _adg_data_register(ADG_DRESS_UNDEFINED,
+                       NULL,
+                       G_TYPE_INVALID);
+
+
+    /* Predefined colors */
+
+    _adg_data_register(ADG_DRESS_COLOR,
+                       NULL,
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_BACKGROUND,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "blue",  1.,
+                                    "green", 1.,
+                                    "red",   1.,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_STROKE,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_DIMENSION,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "red",   0.,
+                                    "green", 0.4,
+                                    "blue",  0.6,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_ANNOTATION,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "red",   0.4,
+                                    "green", 0.4,
+                                    "blue",  0.2,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_FILL,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "red",   0.25,
+                                    "green", 0.25,
+                                    "blue",  0.25,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_AXIS,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "red",   0.,
+                                    "green", 0.75,
+                                    "blue",  0.25,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+    _adg_data_register(ADG_DRESS_COLOR_HIDDEN,
+                       g_object_new(ADG_TYPE_COLOR_STYLE,
+                                    "red",   0.5,
+                                    "green", 0.5,
+                                    "blue",  0.5,
+                                    NULL),
+                       ADG_TYPE_COLOR_STYLE);
+
+
+    /* Predefined lines */
+
+    _adg_data_register(ADG_DRESS_LINE,
+                       NULL,
+                       ADG_TYPE_LINE_STYLE);
+
+    _adg_data_register(ADG_DRESS_LINE_STROKE,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_STROKE,
+                                    "width",       1.5,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+
+    _adg_data_register(ADG_DRESS_LINE_DIMENSION,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "width", 0.5,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+
+    _adg_data_register(ADG_DRESS_LINE_FILL,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_FILL,
+                                    "width",       0.5,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+
+    _adg_data_register(ADG_DRESS_LINE_GRID,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "antialias", CAIRO_ANTIALIAS_NONE,
+                                    "width",     1.,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+
+    _adg_data_register(ADG_DRESS_LINE_FRAME,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_ANNOTATION,
+                                    "antialias",   CAIRO_ANTIALIAS_NONE,
+                                    "width",       2.,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+
+
+    dash = adg_dash_new_with_dashes(4, 2 MM, 2 MM, 10 MM, 2 MM);
+    _adg_data_register(ADG_DRESS_LINE_AXIS,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_AXIS,
+                                    "width",       0.25 MM,
+                                    "dash",        dash,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+    adg_dash_destroy(dash);
+
+    dash = adg_dash_new_with_dashes(2, 6 MM, 6 MM);
+    _adg_data_register(ADG_DRESS_LINE_HIDDEN,
+                       g_object_new(ADG_TYPE_LINE_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_HIDDEN,
+                                    "width",       0.25 MM,
+                                    "dash",        dash,
+                                    NULL),
+                       ADG_TYPE_LINE_STYLE);
+    adg_dash_destroy(dash);
+
+
+    /* Predefined fonts */
+
+    _adg_data_register(ADG_DRESS_FONT,
+                       g_object_new(ADG_TYPE_BEST_FONT_STYLE,
+                                    "family", "Serif",
+                                    "size",   14.,
+                                    NULL),
+                       ADG_TYPE_BEST_FONT_STYLE);
+
+    _adg_data_register(ADG_DRESS_FONT_TEXT,
+                       g_object_new(ADG_TYPE_BEST_FONT_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_ANNOTATION,
+                                    "family",      "Sans",
+                                    "weight",      CAIRO_FONT_WEIGHT_BOLD,
+                                    "size",        12.,
+                                    NULL),
+                       ADG_TYPE_BEST_FONT_STYLE);
+
+    _adg_data_register(ADG_DRESS_FONT_ANNOTATION,
+                       g_object_new(ADG_TYPE_BEST_FONT_STYLE,
+                                    "color-dress", ADG_DRESS_COLOR_ANNOTATION,
+                                    "family",      "Sans",
+                                    "size",        8.,
+                                    NULL),
+                       ADG_TYPE_BEST_FONT_STYLE);
+
+    _adg_data_register(ADG_DRESS_FONT_QUOTE_TEXT,
+                       g_object_new(ADG_TYPE_BEST_FONT_STYLE,
+                                    "family", "Sans",
+                                    "weight", CAIRO_FONT_WEIGHT_BOLD,
+                                    "size",   12.,
+                                    NULL),
+                       ADG_TYPE_BEST_FONT_STYLE);
+
+    _adg_data_register(ADG_DRESS_FONT_QUOTE_ANNOTATION,
+                       g_object_new(ADG_TYPE_BEST_FONT_STYLE,
+                                    "family",      "Sans",
+                                    "size",        8.,
+                                    NULL),
+                       ADG_TYPE_BEST_FONT_STYLE);
+
+
+    /* Predefined dimension styles */
+
+    arrow1 = (AdgMarker *) adg_arrow_new();
+    arrow2 = (AdgMarker *) adg_arrow_new();
+    adg_marker_set_pos(arrow2, 1);
+    _adg_data_register(ADG_DRESS_DIMENSION,
+                       g_object_new(ADG_TYPE_DIM_STYLE,
+                                    "marker1", arrow1,
+                                    "marker2", arrow2,
+                                    NULL),
+                       ADG_TYPE_DIM_STYLE);
+    g_object_unref(arrow1);
+    g_object_unref(arrow2);
+
+
+    /* Predefined fill styles */
+
+    _adg_data_register(ADG_DRESS_FILL,
+                       NULL,
+                       ADG_TYPE_FILL_STYLE);
+
+    _adg_data_register(ADG_DRESS_FILL_HATCH,
+                       g_object_new(ADG_TYPE_RULED_FILL,
+                                    "line-dress", ADG_DRESS_LINE_FILL,
+                                    NULL),
+                       ADG_TYPE_FILL_STYLE);
+
+
+    /* Predefined table styles */
+
+    _adg_data_register(ADG_DRESS_TABLE,
+                       g_object_new(ADG_TYPE_TABLE_STYLE, NULL),
+                       ADG_TYPE_TABLE_STYLE);
 }
+
+static AdgDressPrivate *
+_adg_data_lookup(AdgDress dress)
+{
+    GArray *array = _adg_data_array();
+
+    if (dress >= array->len)
+        return NULL;
+
+    return ((AdgDressPrivate *) array->data) + dress;
+}
+
+
+typedef struct _AdgParamSpecDress AdgParamSpecDress;
+
+struct _AdgParamSpecDress {
+    GParamSpecInt parent;
+    AdgDress      source_dress;
+};
+
+
+static void             _adg_param_class_init   (GParamSpecClass*klass);
+static gboolean         _adg_value_validate     (GParamSpec     *spec,
+                                                 GValue         *value);
+
 
 GType
 _adg_param_spec_dress_get_type(void)
@@ -454,7 +681,7 @@ _adg_param_spec_dress_get_type(void)
             0,
         };
 
-        type = g_type_register_static(G_TYPE_PARAM_INT, "AdgParamSpecDress",
+        type = g_type_register_static(G_TYPE_PARAM_ENUM, "AdgParamSpecDress",
                                       &info, 0);
     }
 
@@ -468,35 +695,6 @@ _adg_param_class_init(GParamSpecClass *klass)
     klass->value_validate = _adg_value_validate;
 }
 
-static const gchar *
-_adg_dress_name(AdgDress dress)
-{
-    const gchar *name = adg_dress_get_name(dress);
-
-    if (name == NULL) {
-        name = _("(UNDEFINED)");
-    }
-
-    return name;
-}
-
-static gboolean
-_adg_dress_is_valid(AdgDress dress)
-{
-    return dress > 0 && dress < _adg_array_len();
-}
-
-static gboolean
-_adg_dress_is_valid_with_log(AdgDress dress)
-{
-    if (!_adg_dress_is_valid(dress)) {
-        g_warning(_("%s: the dress `%d' is undefined"), G_STRLOC, dress);
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
 static gboolean
 _adg_value_validate(GParamSpec *spec, GValue *value)
 {
@@ -505,7 +703,7 @@ _adg_value_validate(GParamSpec *spec, GValue *value)
     AdgDress wanted_dress;
 
     fspec = (AdgParamSpecDress *) spec;
-    dress = &value->data[0].v_int;
+    dress = (AdgDress *) &value->data[0].v_int;
     wanted_dress = *dress;
 
     /* Fallback to the source dress, returned in case of errors */
@@ -528,7 +726,10 @@ _adg_value_validate(GParamSpec *spec, GValue *value)
  * @dress: the #AdgDress dress
  * @flags: a combination of #GParamFlags
  *
- * Creates a param spec to hold a dress value.
+ * Creates a param spec to hold a dress value. This is similar to
+ * g_param_spec_enum() but rejects a new dress value if it is not
+ * related with the old one. The setting is performed via
+ * adg_dress_set(), so check its documentation for details.
  *
  * Returns: (transfer full): the newly allocated #GParamSpec.
  *
@@ -540,48 +741,9 @@ adg_param_spec_dress(const gchar *name, const gchar *nick, const gchar *blurb,
 {
     AdgParamSpecDress *fspec;
 
-    if (!_adg_dress_is_valid_with_log(dress))
-        return NULL;
-
     fspec = g_param_spec_internal(ADG_TYPE_PARAM_SPEC_DRESS,
                                   name, nick, blurb, flags);
     fspec->source_dress = dress;
 
     return (GParamSpec *) fspec;
-}
-
-
-static GArray *
-_adg_array_singleton(void)
-{
-    static GArray *array = NULL;
-
-    if (array == NULL) {
-        const AdgDressPrivate data = { 0, };
-
-        array = g_array_new(FALSE, FALSE, sizeof(AdgDressPrivate));
-
-        /* Reserve the first item for the undefined dress */
-        g_array_append_val(array, data);
-    }
-
-    return array;
-}
-
-static guint
-_adg_array_append(AdgDressPrivate *data)
-{
-    return g_array_append_val(_adg_array_singleton(), *data)->len;
-}
-
-static AdgDressPrivate *
-_adg_array_lookup(guint n)
-{
-    return &g_array_index(_adg_array_singleton(), AdgDressPrivate, n);
-}
-
-static guint
-_adg_array_len(void)
-{
-    return _adg_array_singleton()->len;
 }

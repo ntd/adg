@@ -69,7 +69,6 @@
 #include "adg-marker.h"
 #include "adg-dim-style.h"
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 
 #include "adg-dim.h"
 #include "adg-dim-private.h"
@@ -293,7 +292,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
-        g_value_set_int(value, data->dim_dress);
+        g_value_set_enum(value, data->dim_dress);
         break;
     case PROP_REF1:
         g_value_set_boxed(value, data->ref1);
@@ -342,7 +341,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
-        data->dim_dress = g_value_get_int(value);
+        data->dim_dress = g_value_get_enum(value);
         break;
     case PROP_REF1:
         data->ref1 = adg_entity_point(entity, data->ref1,

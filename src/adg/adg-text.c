@@ -50,7 +50,6 @@
 #include <pango/pangocairo.h>
 
 #include "adg-dress.h"
-#include "adg-dress-builtins.h"
 #include "adg-style.h"
 #include "adg-font-style.h"
 #include "adg-pango-style.h"
@@ -193,7 +192,7 @@ _adg_get_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
-        g_value_set_int(value, data->font_dress);
+        g_value_set_enum(value, data->font_dress);
         break;
     case PROP_TEXT:
         g_value_set_string(value, data->text);
@@ -216,7 +215,7 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
-        data->font_dress = g_value_get_int(value);
+        data->font_dress = g_value_get_enum(value);
         _adg_clear_layout(text);
         break;
     case PROP_TEXT:
