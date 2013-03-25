@@ -80,6 +80,14 @@ for different platforms, such as *BSD, OpenSolaris and Windows.</para>
    closing and filleting results in a non-closed original shape.</listitem>
    <listitem>Add internationalization support to the installer: this includes also
    the possibility to select the installation of language packs.</listitem>
+   <listitem>Improve the current internationalization support of the ADG: merge
+   po-properties/ into po/ and get rid of glib-gettext. Check the gleak
+   project for suggestions.</listitem>
+   <listitem override="disc">Provide a complete set of bindings based on GObject introspection and
+   develop a full-fledged adg-demo application with those bindings that
+   does the same job of adg-demo.c, in the same way.</listitem>
+   <listitem>Provide a persistent layer based on GSettings to keep track the data
+   entered in the last adg-demo session.</listitem>
 </itemizedlist>
 
 </simplesect>
