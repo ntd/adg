@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-14 10:05+0100\n"
+"POT-Creation-Date: 2013-03-25 20:44+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -31,27 +31,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../demo/adg-demo.c:97 ../demo/cpml-demo.c:192
+#: ../demo/adg-demo.c:96 ../demo/cpml-demo.c:192
 msgid "Display version information"
 msgstr "Stampa le informazioni sulla versione"
 
-#: ../demo/adg-demo.c:99
+#: ../demo/adg-demo.c:98
 msgid "Show the boundary boxes of every entity"
 msgstr "Mostrare il riquadro contenitore di ogni entità"
 
-#: ../demo/adg-demo.c:105
+#: ../demo/adg-demo.c:104
 msgid "- ADG demonstration program"
 msgstr "- Programma dimostrativo della ADG"
 
-#: ../demo/adg-demo.c:129
+#: ../demo/adg-demo.c:128
 msgid "Error from adg-demo"
 msgstr "Errore da adg-demo"
 
-#: ../demo/adg-demo.c:832
+#: ../demo/adg-demo.c:820
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: ../demo/adg-demo.c:1206
+#: ../demo/adg-demo.c:1210
 #, c-format
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
@@ -61,38 +61,18 @@ msgid "adg-demo - Demostration program"
 msgstr "adg-demo - Programma dimostrativo"
 
 #: ../demo/adg-demo.ui.in.h:2
-msgid ""
-"\n"
-"Rotate the mouse wheel to zoom in and out, drag the mouse with the wheel "
-"pressed to pan.\n"
-"Keep the shift key pressed while zooming and panning with the mouse to do "
-"the same in global space.\n"
-"Left click to restore paper zoom and position, right click to autoscale and "
-"center the drawing.\n"
-"            "
-msgstr ""
-"\n"
-"Ruotare la rotella del mouse per ingrandire e rimpicciolire, trascinare il "
-"mouse con la rotella premuta per traslare.\n"
-"Tenere il tasto shift premuto durante zoom o traslazione con il mouse per "
-"fare lo stesso nello spazio globale.\n"
-"Click sinistro per ripristinare ingrandimento e posizione della carta, click "
-"destro per l'autoscaling e la centratura del disegno.\n"
-"            "
-
-#: ../demo/adg-demo.ui.in.h:7
 msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
-#: ../demo/adg-demo.ui.in.h:8
+#: ../demo/adg-demo.ui.in.h:3
 msgid "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
 msgstr "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
 
-#: ../demo/adg-demo.ui.in.h:9
+#: ../demo/adg-demo.ui.in.h:4
 msgid "Demonstration program for the ADG library"
 msgstr "Programma dimostrativo della libreria ADG"
 
-#: ../demo/adg-demo.ui.in.h:10
+#: ../demo/adg-demo.ui.in.h:5
 msgid ""
 "The ADG library is free software; you can redistribute it and/or\n"
 "modify it under the terms of the GNU Lesser General Public\n"
@@ -125,163 +105,201 @@ msgstr ""
 "Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,\n"
 "Boston, MA  02110-1301, USA."
 
-#: ../demo/adg-demo.ui.in.h:24
+#: ../demo/adg-demo.ui.in.h:19
 msgid "Customize drawing"
 msgstr "Impostazioni disegno"
 
-#: ../demo/adg-demo.ui.in.h:25
+#: ../demo/adg-demo.ui.in.h:20
 msgid "_Diameter rail:"
 msgstr "_Diametro guida:"
 
-#: ../demo/adg-demo.ui.in.h:26
+#: ../demo/adg-demo.ui.in.h:21
 msgid "_Total length:"
 msgstr "Lunghezza _totale:"
 
-#: ../demo/adg-demo.ui.in.h:27
+#: ../demo/adg-demo.ui.in.h:22
 msgid "_B quote:"
 msgstr "Quota _B:"
 
-#: ../demo/adg-demo.ui.in.h:28
+#: ../demo/adg-demo.ui.in.h:23
 msgid "Diameter _2:"
 msgstr "Diametro _2:"
 
-#: ../demo/adg-demo.ui.in.h:29
+#: ../demo/adg-demo.ui.in.h:24
 msgid "Length 2:"
 msgstr "Lunghezza 2:"
 
-#: ../demo/adg-demo.ui.in.h:30
+#: ../demo/adg-demo.ui.in.h:25
 msgid "Diameter _3:"
 msgstr "Diametro _3:"
 
-#: ../demo/adg-demo.ui.in.h:31
+#: ../demo/adg-demo.ui.in.h:26
 msgid "Diameter _4:"
 msgstr "Diametro _4:"
 
-#: ../demo/adg-demo.ui.in.h:32
+#: ../demo/adg-demo.ui.in.h:27
 msgid "Length 3:"
 msgstr "Lunghezza 3:"
 
-#: ../demo/adg-demo.ui.in.h:33
+#: ../demo/adg-demo.ui.in.h:28
 msgid "<b>Body data</b>"
 msgstr "<b>Dati corpo</b>"
 
-#: ../demo/adg-demo.ui.in.h:34
+#: ../demo/adg-demo.ui.in.h:29
 msgid "_Head diameter:"
 msgstr "Diametro _testa:"
 
-#: ../demo/adg-demo.ui.in.h:35
+#: ../demo/adg-demo.ui.in.h:30
 msgid "Head tickness:"
 msgstr "Spessore testa:"
 
-#: ../demo/adg-demo.ui.in.h:36
+#: ../demo/adg-demo.ui.in.h:31
 msgid "Tablet diameter:"
 msgstr "Diametro pastiglia:"
 
-#: ../demo/adg-demo.ui.in.h:37
+#: ../demo/adg-demo.ui.in.h:32
 msgid "Cham_fered head"
 msgstr "Testa sm_ussata"
 
-#: ../demo/adg-demo.ui.in.h:38
+#: ../demo/adg-demo.ui.in.h:33
 msgid "_Rounded head"
 msgstr "Testa _raggiata"
 
-#: ../demo/adg-demo.ui.in.h:39
+#: ../demo/adg-demo.ui.in.h:34
 msgid "Head radius:"
 msgstr "Raggio testa:"
 
-#: ../demo/adg-demo.ui.in.h:40
+#: ../demo/adg-demo.ui.in.h:35
 msgid "<b>Head data</b>"
 msgstr "<b>Dati testa</b>"
 
-#: ../demo/adg-demo.ui.in.h:41
+#: ../demo/adg-demo.ui.in.h:36
 msgid "Hole diameter:"
 msgstr "Diametro foro:"
 
-#: ../demo/adg-demo.ui.in.h:42
+#: ../demo/adg-demo.ui.in.h:37
 msgid "Hole depth:"
 msgstr "Profondità foro:"
 
-#: ../demo/adg-demo.ui.in.h:43
+#: ../demo/adg-demo.ui.in.h:38
 msgid "<b>Rear hole data</b>"
 msgstr "<b>Dati foratura</b>"
 
-#: ../demo/adg-demo.ui.in.h:44
+#: ../demo/adg-demo.ui.in.h:39
 msgid "Groove machining"
 msgstr "Lavorazione scarico"
 
-#: ../demo/adg-demo.ui.in.h:45
+#: ../demo/adg-demo.ui.in.h:40
 msgid "Groove position:"
 msgstr "Posizione scarico:"
 
-#: ../demo/adg-demo.ui.in.h:46
+#: ../demo/adg-demo.ui.in.h:41
 msgid "Groove diameter:"
 msgstr "Diametro scarico:"
 
-#: ../demo/adg-demo.ui.in.h:47
+#: ../demo/adg-demo.ui.in.h:42
 msgid "Groove thickness:"
 msgstr "Spessore scarico:"
 
-#: ../demo/adg-demo.ui.in.h:48
+#: ../demo/adg-demo.ui.in.h:43
 msgid "<b>Additional machinings</b>"
 msgstr "<b>Lavorazioni aggiuntive</b>"
 
-#: ../demo/adg-demo.ui.in.h:49
+#: ../demo/adg-demo.ui.in.h:44
 msgid "Dimensions"
 msgstr "Dimensioni"
 
-#: ../demo/adg-demo.ui.in.h:50
+#: ../demo/adg-demo.ui.in.h:45
 msgid "_Title:"
 msgstr "_Titolo:"
 
-#: ../demo/adg-demo.ui.in.h:51
+#: ../demo/adg-demo.ui.in.h:46
 msgid "SAMPLE DRAWING"
 msgstr "DISEGNO CAMPIONE"
 
-#: ../demo/adg-demo.ui.in.h:52
+#: ../demo/adg-demo.ui.in.h:47
 msgid "_Drawing:"
 msgstr "D_isegno:"
 
-#: ../demo/adg-demo.ui.in.h:53
+#: ../demo/adg-demo.ui.in.h:48
 msgid "EXAMPLE"
 msgstr "ESEMPIO"
 
-#: ../demo/adg-demo.ui.in.h:54
+#: ../demo/adg-demo.ui.in.h:49
 msgid "A_uthor:"
 msgstr "_Autore:"
 
-#: ../demo/adg-demo.ui.in.h:55
+#: ../demo/adg-demo.ui.in.h:50
 msgid "D_ate:"
 msgstr "_Data:"
 
-#: ../demo/adg-demo.ui.in.h:56
+#: ../demo/adg-demo.ui.in.h:51
 msgid "<b>Metadata</b>"
 msgstr "<b>Metadati</b>"
 
-#: ../demo/adg-demo.ui.in.h:57
+#: ../demo/adg-demo.ui.in.h:52
 msgid "Title block"
 msgstr "Riquadro delle intestazioni"
 
-#: ../demo/adg-demo.ui.in.h:58
+#: ../demo/adg-demo.ui.in.h:53
+msgid "Help on adg-demo"
+msgstr "Aiuto di adg-demo"
+
+#: ../demo/adg-demo.ui.in.h:54
+msgid "How to use adg-demo"
+msgstr "Come usare adg-demo"
+
+#: ../demo/adg-demo.ui.in.h:55
+msgid ""
+"This demo is just a sample of what can be accomplished by using the ADG "
+"library. It is by no means intended to be the only kind of application "
+"possible.\n"
+"\n"
+"To better see the differences between local and global space, some mouse "
+"interaction is needed: <b>rotate</b> the mouse wheel to zoom in and out in "
+"local space, <b>drag it</b> with the wheel pressed to pan and keep the "
+"<b>shift pressed</b> while zooming and panning to do the same in global "
+"space.\n"
+"\n"
+"A <b>left click</b> on the drawing area will restore the paper zoom and "
+"position, a <b>right click</b> will autoscale and center the drawing."
+msgstr ""
+"Questo dimostrativo è solo un esempio di ciò che può essere sviluppato "
+"usando la libreria ADG. Non è assolutamente da considerare il solo tipo di "
+"applicazione possibile.\n"
+"\n"
+"Per vedere meglio le differenze tra spazio globale e locale, è necessario "
+"interagire con il mouse: <b>ruotare</b> la rotellina per ingrandire o "
+"rimpicciolire nello spazio locale, <b>trascinare</b> con la rotellina "
+"premuta per traslare e tenere il tasto <b>maiuscolo premuto</b> durante "
+"l'ingrandimento, il rimpicciolimento o la traslazione per eseguire le "
+"medesime operazioni nello spazio globale.\n"
+"\n"
+"Un <b>click sinistro</b> nell'area di disegno ripristinerà ingrandimento e "
+"posizione del foglio, un <b>click destro</b> autoscalerà e centrerà il "
+"disegno."
+
+#: ../demo/adg-demo.ui.in.h:60
 msgid "Save current drawing"
 msgstr "Salva disegno corrente"
 
-#: ../demo/adg-demo.ui.in.h:59
+#: ../demo/adg-demo.ui.in.h:61
 msgid "PNG _image"
 msgstr "_Immagine PNG"
 
-#: ../demo/adg-demo.ui.in.h:60
+#: ../demo/adg-demo.ui.in.h:62
 msgid "S_VG image"
 msgstr "Immagine S_VG"
 
-#: ../demo/adg-demo.ui.in.h:61
+#: ../demo/adg-demo.ui.in.h:63
 msgid "P_DF document"
 msgstr "Documento P_DF"
 
-#: ../demo/adg-demo.ui.in.h:62
+#: ../demo/adg-demo.ui.in.h:64
 msgid "_PostScript file"
 msgstr "File _PostScript"
 
-#: ../demo/adg-demo.ui.in.h:63
+#: ../demo/adg-demo.ui.in.h:65
 msgid "<b>File format</b>"
 msgstr "<b>Formato file</b>"
 
@@ -383,12 +401,7 @@ msgstr ""
 msgid "AdgDim::default_value not implemented for `%s'"
 msgstr "AdgDim::default_value non implementato da `%s'"
 
-#: ../src/adg/adg-dress.c:181
-#, c-format
-msgid "%s: the `%s' name is yet used by the `%d' dress"
-msgstr "%s: il nome `%s' è già usato dal vestito `%d'"
-
-#: ../src/adg/adg-dress.c:347
+#: ../src/adg/adg-dress.c:339
 #, c-format
 msgid ""
 "%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' "
@@ -396,15 +409,6 @@ msgid ""
 msgstr ""
 "%s: lo stile implicito di `%d' (%s) deve essere un tipo derivato da `%s' "
 "mentre è stato fornito `%s'"
-
-#: ../src/adg/adg-dress.c:479
-msgid "(UNDEFINED)"
-msgstr "(NON DEFINITO)"
-
-#: ../src/adg/adg-dress.c:495
-#, c-format
-msgid "%s: the dress `%d' is undefined"
-msgstr "%s: il vestito `%d' non è definito"
 
 #: ../src/adg/adg-entity.c:898
 #, c-format
@@ -460,12 +464,12 @@ msgstr ""
 msgid "%s: attempting to remove nonexistent `%s' named pair"
 msgstr "%s: si è provato ad eliminare l'inesistente named pair `%s'"
 
-#: ../src/adg/adg-pango-style.c:156
+#: ../src/adg/adg-pango-style.c:155
 #, c-format
 msgid "Unhandled slant value (%d)"
 msgstr "Valore di slant inatteso (%d)"
 
-#: ../src/adg/adg-pango-style.c:169
+#: ../src/adg/adg-pango-style.c:168
 #, c-format
 msgid "Unhandled weight value (%d)"
 msgstr "Valore di weight inatteso (%d)"
@@ -578,7 +582,7 @@ msgstr "AUTORE"
 msgid "DATE"
 msgstr "DATA"
 
-#: ../src/adg/adg-toy-text.c:309
+#: ../src/adg/adg-toy-text.c:308
 #, c-format
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
