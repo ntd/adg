@@ -174,13 +174,15 @@ _adg_set_property(GObject *object, guint prop_id,
         data->trail = g_value_get_object(value);
 
         if (data->trail != old_trail) {
-            if (data->trail) {
+            if (data->trail != NULL) {
+                g_object_ref(data->trail);
                 g_object_weak_ref((GObject *) data->trail,
                                   (GWeakNotify) _adg_unset_trail, object);
                 adg_model_add_dependency((AdgModel *) data->trail,
                                          (AdgEntity *) object);
             }
-            if (old_trail) {
+            if (old_trail != NULL) {
+                g_object_unref(data->trail);
                 g_object_weak_unref((GObject *) old_trail,
                                     (GWeakNotify) _adg_unset_trail, object);
                 adg_model_remove_dependency((AdgModel *) old_trail,
@@ -259,8 +261,8 @@ adg_stroke_get_line_dress(AdgStroke *stroke)
 
 /**
  * adg_stroke_set_trail:
- * @stroke: an #AdgStroke
- * @trail: the new #AdgTrail to bind
+ * @stroke:                              an #AdgStroke
+ * @trail: (allow-none) (transfer none): the new #AdgTrail to bind
  *
  * Sets @trail as the new trail to be stroked by @stroke.
  *
