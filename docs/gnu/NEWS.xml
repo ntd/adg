@@ -6,6 +6,21 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.2">
+<title>ADG 0.7.2</title>
+
+<para>Out of the box bindings are now fully working: the adg-demo
+program provided by <ulink url="http://adg.entidi.com/lua/">adg-lua</ulink> is
+in par with the official adg-demo in C.</para>
+
+<para>AdgDress is inherited from GEnum instead of being a handcrafted
+solution. A lot of specialized code have been removed, so the
+mapping between numbers and names in bindings is automatic.</para>
+
+<para>Consistency in widget names has been improved, allowing to
+simplify signal connections on the Lua side.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.1">
 <title>ADG 0.7.1</title>
 
