@@ -172,7 +172,6 @@ _adg_part_define_title_block(DemoPart *part)
                  "drawing", part->DRAWING,
                  "logo", adg_logo_new(),
                  "projection", adg_projection_new(ADG_PROJECTION_SCHEME_FIRST_ANGLE),
-                 "scale", "---",
                  "size", "A4",
                  NULL);
 }

@@ -640,7 +640,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
 
     data = canvas->data;
     entity = (AdgEntity *) canvas;
-    title_block = adg_canvas_get_title_block(canvas);
+    title_block = data->title_block;
 
     for (p_scale = data->scales; p_scale != NULL && *p_scale != NULL; ++p_scale) {
         const gchar *scale = *p_scale;
@@ -1244,12 +1244,24 @@ static void
 _adg_local_changed(AdgEntity *entity)
 {
     AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgTitleBlock *title_block = data->title_block;
 
     if (_ADG_OLD_ENTITY_CLASS->local_changed)
         _ADG_OLD_ENTITY_CLASS->local_changed(entity);
 
-    if (data->title_block)
-        adg_entity_local_changed((AdgEntity *) data->title_block);
+    if (title_block != NULL) {
+        const gchar *scale = adg_title_block_get_scale(title_block);
+
+        if (scale != NULL && scale[0] != '\0') {
+            const cairo_matrix_t *map = adg_entity_get_local_map(entity);
+            gdouble factor = adg_scale_factor(scale);
+
+            if (map->xx != factor || map->yy != factor)
+                adg_title_block_set_scale(title_block, "---");
+        }
+
+        adg_entity_local_changed((AdgEntity *) title_block);
+    }
 }
 
 static void
