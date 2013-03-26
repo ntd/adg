@@ -515,8 +515,8 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
  * Sets the dash pattern of @line_style to @dash: all future rendering with
  * this line style will use this pattern.
  *
- * @line_style will embed a copy of @dash: this means that after this call,
- * @dash can be freed (with adg_dash_destroy()) if no more needed.
+ * The @line_style will embed a copy of @dash: this means that, after this
+ * call, @dash can be freed (with adg_dash_destroy()) if no more needed.
  *
  * Since: 1.0
  **/
