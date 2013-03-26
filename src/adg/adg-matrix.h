@@ -29,7 +29,6 @@
 
 G_BEGIN_DECLS
 
-cairo_matrix_t *adg_matrix_new          (void);
 const cairo_matrix_t *
                 adg_matrix_identity     (void) G_GNUC_CONST;
 const cairo_matrix_t *

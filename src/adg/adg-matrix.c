@@ -64,22 +64,6 @@ cairo_gobject_cairo_matrix_copy(const cairo_matrix_t *matrix)
 
 
 /**
- * adg_matrix_new:
- *
- * Creates a new empty #cairo_matrix_t. The returned pointer
- * should be freed with g_free() when no longer needed.
- *
- * Returns: (transfer full): a newly created #cairo_matrix_t
- *
- * Since: 1.0
- **/
-cairo_matrix_t *
-adg_matrix_new(void)
-{
-    return g_new0(cairo_matrix_t, 1);
-}
-
-/**
  * adg_matrix_identity:
  *
  * A convenient constant providing an identity matrix.
