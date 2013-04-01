@@ -30,7 +30,7 @@
 CAIRO_BEGIN_DECLS
 
 typedef struct _CpmlPair CpmlPair;
-typedef struct _CpmlPair CpmlVector;
+typedef CpmlPair CpmlVector;
 
 struct _CpmlPair {
     /*< public >*/
