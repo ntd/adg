@@ -18,14 +18,17 @@
  */
 
 
-#ifndef __ADG_MATRIX_FALLBACK_H__
-#define __ADG_MATRIX_FALLBACK_H__
+#ifndef __ADG_CAIRO_FALLBACK_H__
+#define __ADG_CAIRO_FALLBACK_H__
 
 
 G_BEGIN_DECLS
 
 
-/* Backward compatibility: old cairo releases did not wrap cairo_matrix_t */
+/* Provide some GObject wrappers around cairo_matrix_t and cairo_pattern_t
+ * if cairo-gobject support has not been provided by cairo itself or
+ * if the cairo version is too old to provide them. */
+
 
 #ifndef CAIRO_GOBJECT_TYPE_MATRIX
 
@@ -40,7 +43,19 @@ cairo_matrix_t *cairo_gobject_cairo_matrix_copy
 #endif /* CAIRO_GOBJECT_TYPE_MATRIX */
 
 
+#ifndef CAIRO_GOBJECT_TYPE_PATTERN
+
+#define ADG_MISSING_GBOXED_PATTERN          1
+#define CAIRO_GOBJECT_TYPE_PATTERN          (cairo_gobject_pattern_get_type())
+
+GType   cairo_gobject_pattern_get_type      (void) G_GNUC_CONST;
+cairo_pattern_t *
+        cairo_gobject_cairo_pattern_copy    (const cairo_pattern_t  *pattern);
+
+#endif /* CAIRO_GOBJECT_TYPE_PATTERN */
+
+
 G_END_DECLS
 
 
-#endif /* __ADG_MATRIX_FALLBACK_H__ */
+#endif /* __ADG_CAIRO_FALLBACK_H__ */

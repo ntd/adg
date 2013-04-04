@@ -24,9 +24,8 @@
  * @title: Matrix
  * @short_description: #cairo_matrix_t enhancements and utilities.
  *
- * This API provides a #GBoxed wrapper around #cairo_matrix_t
- * (if not yet provided by cairo-gobject) * and augments its methods
- * with some useful addition.
+ * The following functions augment the cairo_matrix_t available methods
+ * providing some useful addition.
  *
  * Since: 1.0
  **/
@@ -35,32 +34,6 @@
 #include "adg-internal.h"
 #include <string.h>
 #include <math.h>
-
-#include "adg-matrix-fallback.h"
-
-
-#ifdef ADG_MISSING_GBOXED_MATRIX
-
-GType
-cairo_gobject_matrix_get_type(void)
-{
-    static GType matrix_type = 0;
-
-    if (G_UNLIKELY(matrix_type == 0))
-        matrix_type = g_boxed_type_register_static("CairoMatrix",
-                                                   (GBoxedCopyFunc) cairo_gobject_cairo_matrix_copy,
-                                                   g_free);
-
-    return matrix_type;
-}
-
-cairo_matrix_t *
-cairo_gobject_cairo_matrix_copy(const cairo_matrix_t *matrix)
-{
-    return g_memdup(matrix, sizeof(cairo_matrix_t));
-}
-
-#endif /* ADG_MISSING_GBOXED_MATRIX */
 
 
 /**

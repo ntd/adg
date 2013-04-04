@@ -53,6 +53,7 @@ built_h_sources=		adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
 				adg-arrow-private.h \
+				adg-cairo-fallback.h \
 				adg-canvas-private.h \
 				adg-color-style-private.h \
 				adg-container-private.h \
@@ -70,7 +71,6 @@ private_h_sources=		adg-adim-private.h \
 				adg-line-style-private.h \
 				adg-logo-private.h \
 				adg-marker-private.h \
-				adg-matrix-fallback.h \
 				adg-model-private.h \
 				adg-path-private.h \
 				adg-projection-private.h \
@@ -87,6 +87,7 @@ built_private_h_sources=	adg-marshal.h
 c_sources=			adg-adim.c \
 				adg-alignment.c \
 				adg-arrow.c \
+				adg-cairo-fallback.c \
 				adg-canvas.c \
 				adg-color-style.c \
 				adg-container.c \

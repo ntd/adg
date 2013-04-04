@@ -84,7 +84,7 @@
 #include "adg-style.h"
 #include "adg-model.h"
 #include "adg-point.h"
-#include "adg-matrix-fallback.h"
+#include "adg-cairo-fallback.h"
 
 #include "adg-entity-private.h"
 

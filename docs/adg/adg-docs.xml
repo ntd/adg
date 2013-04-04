@@ -24,6 +24,7 @@
       <title>GBoxed types</title>
       <xi:include href="xml/adg-point.xml"/>
       <xi:include href="xml/adg-matrix.xml"/>
+      <xi:include href="xml/adg-cairo-fallback.xml"/>
     </chapter>
   </part>
 

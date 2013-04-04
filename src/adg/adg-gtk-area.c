@@ -84,7 +84,7 @@
 #include "adg-title-block.h"
 #include <adg-canvas.h>
 #include "adg-gtk-utils.h"
-#include "adg-matrix-fallback.h"
+#include "adg-cairo-fallback.h"
 
 #include "adg-gtk-area.h"
 #include "adg-gtk-area-private.h"
