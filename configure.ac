@@ -117,7 +117,7 @@ AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
 ALL_LINGUAS="`grep -v '^#' "$srcdir/po/LINGUAS" | tr '\n' ' '`"
-IT_PROG_INTLTOOL(0.40.1)
+IT_PROG_INTLTOOL([0.35.0])
 AM_GLIB_GNU_GETTEXT
 GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
 AC_CONFIG_COMMANDS([default],
