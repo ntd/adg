@@ -132,7 +132,10 @@ AC_CONFIG_COMMANDS([default],
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
-PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject >= ]cairo_gobject_prereq)
+PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
+                  [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
+                                      [Defined if GObject support in cairo is present.])],
+                  [:])
 
 
 # Check for optional packages
