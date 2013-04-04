@@ -252,7 +252,7 @@ endif
 mkenums_command=		$(AM_V_GEN)$(GLIB_MKENUMS) \
 				--template
 genmarshal_command=		$(AM_V_GEN)$(GLIB_GENMARSHAL) \
-				--nostdinc --internal --prefix=adg_marshal
+				--nostdinc --prefix=adg_marshal
 
 
 adg-type-builtins.c: $(srcdir)/adg-type-builtins.c.mkenums $(srcdir)/adg-enums.h
