@@ -129,13 +129,6 @@ AC_CONFIG_COMMANDS([default],
 # Check for required packages
 
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
-
-AC_MSG_CHECKING([if glib-genmarshal supports --internal])
-AS_IF([$PKG_CONFIG --atleast-version 2.13.0 glib-2.0],
-      [AC_MSG_RESULT([yes])
-       GLIB_GENMARSHAL="$GLIB_GENMARSHAL --internal"],
-      [AC_MSG_RESULT([no])])
-
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
 PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
