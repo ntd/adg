@@ -6,6 +6,16 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.3">
+<title>ADG 0.7.3</title>
+
+<para>The compatibility of the project with outdated system has been improved
+in order to be able to install it on old web servers.</para>
+
+<para>Compilation without GTK+ support has been tested: the canvas is now
+properly working on a server without X server installed.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.2">
 <title>ADG 0.7.2</title>
 
