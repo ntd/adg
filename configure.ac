@@ -131,10 +131,6 @@ AC_CONFIG_COMMANDS([default],
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
-PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
-                  [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
-                                      [Defined if GObject support in cairo is present.])],
-                  [:])
 
 
 # Check for optional packages
@@ -259,6 +255,15 @@ AM_COND_IF([HAVE_INTROSPECTION],
          Where to install gir files: ${with_girdir}
  Where to install the typelib files: ${with_typelibdir}"],
            [report_introspection=""])
+
+dnl If introspection is used GObject support in cairo must be enabled,
+dnl that is the cairo-gobject library must be present. That support
+dnl was introduced since cairo 1.10.0.
+PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
+                  [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
+                                      [Defined if GObject support in cairo is present.])],
+                  [AS_IF([test "x${enable_introspection}" = "xyes"],
+                         [AC_MSG_ERROR([GObject introspection requires the cairo-gobject library])])])
 
 dnl GLib test framework
 AC_ARG_ENABLE([test_framework],
