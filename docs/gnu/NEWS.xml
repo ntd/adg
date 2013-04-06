@@ -9,7 +9,7 @@
 <simplesect id="NEWS.0.7.3">
 <title>ADG 0.7.3</title>
 
-<para>The compatibility of the project with outdated system has been improved
+<para>The compatibility of the project with outdated systems has been improved
 in order to be able to install it on old web servers.</para>
 
 <para>Compilation without GTK+ support has been tested: the canvas is now
