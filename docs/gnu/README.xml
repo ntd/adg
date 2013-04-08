@@ -47,7 +47,7 @@ bindings for higher level languages (the garbage-collected ones,
 above all). An application can then be developed using any
 specific language available, much in the same way as GNOME
 applications are conceived. Lua bindings are yet availables from
-the <ulink url="http://adg.entidi.com/adg-lua/">adg-lua</ulink> project.</para>
+the <ulink url="http://adg.entidi.com/lua/">adg-lua</ulink> project.</para>
 
 <para>The mathematical and geometrical algorithms, together with a bunch
 of other useful functions for manipulating cairo paths, are kept
