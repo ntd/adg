@@ -21,7 +21,7 @@
 /**
  * SECTION:adg-cairo-fallback
  * @title: Cairo wrappers
- * @short_description: GObject wrappers for cairo structs.
+ * @short_description: GObject wrappers for cairo structs
  *
  * If GObject support has not been compiled in cairo, either by
  * explicitely disabling it or because the installed cairo version

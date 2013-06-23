@@ -20,8 +20,8 @@
 
 /**
  * SECTION:adg-gtk-area
- * @short_description: A #GtkWidget specifically designed to contain
- *                     an #AdgCanvas entity
+ * @short_description: A widget specifically designed to contain
+ *                     an ADG canvas
  *
  * This is a #GtkDrawingArea derived object that provides an easy way
  * to show an ADG based canvas. The associated canvas can be set

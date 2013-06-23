@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-trail
- * @short_description: A bare model built around #cairo_path_t
+ * @short_description: A bare model built around cairo path
  *
  * The #AdgTrail model is a really basic model built around the #cairo_path_t
  * struct: for a full fledged path model consider using #AdgPath.

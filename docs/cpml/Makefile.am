@@ -6,13 +6,12 @@ DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/cpml
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST" \
 			--rebuild-sections
-MKDB_OPTIONS=		--sgml-mode \
+MKDB_OPTIONS=		--name-space=cpml \
+			--sgml-mode \
 			--output-format=xml \
 			--default-includes="$(DOC_MODULE)-1/$(DOC_MODULE).h"
 MKHTML_OPTIONS=
-HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
-			--stringparam chunker.output.doctype-system 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
-FIXXREF_OPTIONS=
+FIXXREF_OPTIONS=	$(EXTRA_DIR)
 HFILE_GLOB=		$(top_srcdir)/src/cpml/*.h
 CFILE_GLOB=		$(top_srcdir)/src/cpml/*.c
 IGNORE_HFILES=		cpml.h \

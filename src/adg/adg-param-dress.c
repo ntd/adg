@@ -22,7 +22,7 @@
  * SECTION:adg-param-dress
  * @Section_Id:AdgParamDress
  * @title: AdgParamDress
- * @short_description: Metadata for dress specification.
+ * @short_description: Metadata for dress specification
  *
  * The %ADG_TYPE_PARAM_DRESS type is a parameter specification
  * compatible with %G_TYPE_PARAM_ENUM that provides additional

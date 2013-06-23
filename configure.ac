@@ -37,6 +37,8 @@ m4_ifdef([AM_COND_IF],[],
          [AC_DEFUN([AM_COND_IF],
                    [AS_IF([test -z "$$1_TRUE"],[$2],[$3])])])
 
+AC_DEFUN([ADG_DEPENDENCY],
+         [EXTRADIR="$EXTRADIR --extra-dir=$($PKG_CONFIG --variable=prefix $1)/share/gtk-doc/html/$2"])
 
 # Check for host information
 
@@ -129,8 +131,11 @@ AC_CONFIG_COMMANDS([default],
 # Check for required packages
 
 PKG_CHECK_MODULES([GLIB],[glib-2.0])
+ADG_DEPENDENCY([glib-2.0],[glib])
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
+ADG_DEPENDENCY([gobject-2.0],[gobject])
 PKG_CHECK_MODULES([CAIRO],[cairo >= ]cairo_prereq)
+ADG_DEPENDENCY([cairo],[cairo])
 
 
 # Check for optional packages
@@ -144,7 +149,8 @@ AS_IF([test "x${enable_pango}" != "xno"],
       [PKG_CHECK_MODULES([PANGO],[pangocairo >= ]pangocairo_prereq,
                          [enable_pango=yes
                           AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
-                                             [Defined if the pango support is enabled.])],
+                                             [Defined if the pango support is enabled.])
+                          ADG_DEPENDENCY([pangocairo],[pango])],
                          [AS_IF([test "x${enable_pango}" = "xyes"],
                                 [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
                                 [enable_pango=no])])])
@@ -164,11 +170,16 @@ AS_CASE(["${with_gtk}"],
 
 # GTK+ autodetection, giving precedence to GTK+3
 AS_IF([test "x${gtk3_pkg}" = "xyes"],
-      [PKG_CHECK_MODULES([GTK3],[gtk+-3.0 >= ]gtk3_prereq,[gtk_pkg=gtk3],[:])])
+      [PKG_CHECK_MODULES([GTK3],[gtk+-3.0 >= ]gtk3_prereq,
+                         [gtk_pkg=gtk3
+                          ADG_DEPENDENCY([gtk+-3.0],[gtk3])],
+                         [:])])
 AS_IF([test "x${gtk2_pkg}" = "xyes" -a "x${gtk_pkg}" = "x"],
-      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,[gtk_pkg=gtk2],[:])])
+      [PKG_CHECK_MODULES([GTK2],[gtk+-2.0 >= ]gtk2_prereq,
+                         [gtk_pkg=gtk2
+                          ADG_DEPENDENCY([gtk+-2.0],[gtk2])],
+                         [:])])
 AS_IF([test "x${gtk_pkg}" != "x"],[with_gtk=${gtk_pkg}])
-
 
 # Handle "check" graceful degradation
 AS_IF([test "x${with_gtk}" = "xcheck"],[with_gtk=no])
@@ -368,6 +379,8 @@ AM_COND_IF([HAVE_GTK3],
 	    ADG_LIBS="$GTK3_LIBS $ADG_LIBS"])
 AC_SUBST([ADG_CFLAGS])
 AC_SUBST([ADG_LIBS])
+
+AC_SUBST([EXTRADIR])
 
 
 # Generation

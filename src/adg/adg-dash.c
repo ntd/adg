@@ -22,7 +22,7 @@
  * SECTION:adg-dash
  * @Section_Id:AdgDash
  * @title: AdgDash
- * @short_description: Dash pattern for line stroking.
+ * @short_description: Dash pattern for line stroking
  *
  * The #AdgDash boxed type wraps the values needed by cairo to
  * univoquely identify a dash pattern, an array of positive values. Each

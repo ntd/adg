@@ -22,7 +22,7 @@
  * SECTION:adg-matrix
  * @Section_Id:Matrix
  * @title: Matrix
- * @short_description: #cairo_matrix_t enhancements and utilities.
+ * @short_description: cairo matrix enhancements and utilities
  *
  * The following functions augment the cairo_matrix_t available methods
  * providing some useful addition.

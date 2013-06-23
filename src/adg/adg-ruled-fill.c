@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-ruled-fill
- * @short_description: A style composed of evenly spaced lines.
+ * @short_description: A style composed of evenly spaced lines
  *
  * The spacing between the lines could be changed using the
  * adg_ruled_fill_set_spacing() method. The angle of the lines should

@@ -31,6 +31,16 @@
     <xi:include href="xml/api-index-full.xml"/>
   </index>
 
+  <index id="Index-deprecated">
+    <title>Index of deprecated symbols</title>
+    <xi:include href="xml/api-index-deprecated.xml"/>
+  </index>
+
+  <index id="Index-1.0">
+    <title>Index of new symbols in 1.0</title>
+    <xi:include href="xml/api-index-1.0.xml"/>
+  </index>
+
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>
 
 </book>

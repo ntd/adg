@@ -6,13 +6,13 @@ DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
-MKDB_OPTIONS=		--sgml-mode \
+MKDB_OPTIONS=		--name-space=adg \
+			--sgml-mode \
 			--output-format=xml \
 			--default-includes="$(DOC_MODULE)-1/$(DOC_MODULE).h"
 MKHTML_OPTIONS=
-HTML_OPTIONS=		--stringparam chunker.output.doctype-public '-//W3C//DTD XHTML 1.0 Strict//EN' \
-			--stringparam chunker.output.doctype-system 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
-FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml
+FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml/html \
+			$(EXTRA_DIR)
 HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
 CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
 IGNORE_HFILES=		adg.h \
@@ -59,7 +59,11 @@ IGNORE_HFILES=		adg.h \
 			adg-type-builtins.h \
 			test-internal.h
 HTML_IMAGES=
-content_files=
+content_files=		CONTRIBUTING.xml \
+			HACKING.xml \
+			NEWS.xml \
+			README.xml \
+			TODO.xml
 expand_content_files=
 
 GTKDOC_CFLAGS=		-I$(top_srcdir)/src \
@@ -85,3 +89,5 @@ include $(top_srcdir)/build/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE)-sections.txt \
 			$(DOC_MODULE).types
+
+EXTRA_DIST+=		$(content_files)

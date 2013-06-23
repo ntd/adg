@@ -22,7 +22,7 @@
  * SECTION:cpml-gobject
  * @Section_Id:GObject
  * @title: GObject wrappers
- * @short_description: Collection of #GBoxed wrappers for CPML structs.
+ * @short_description: Collection of boxed wrappers for CPML structs
  *
  * These wrappers are supposed to make bindings development easier.
  * This file defines the wrappers and the functions needed for

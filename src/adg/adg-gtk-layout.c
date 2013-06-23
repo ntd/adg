@@ -20,7 +20,7 @@
 
 /**
  * SECTION:adg-gtk-layout
- * @short_description: A scrollable #AdgGtkArea based widget
+ * @short_description: A scrollable AdgGtkArea based widget
  *
  * This is an #AdgGtkArea derived object with scrolling capabilities.
  * It means an #AdgGtkLayout object can be added directly to a
