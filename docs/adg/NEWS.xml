@@ -6,11 +6,23 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.4">
+<title>ADG 0.7.4</title>
+
+<para>Improved documentation: the API reference manual is now kept in
+sync with the <ulink url="http://adg.entidi.com/">online documentation</ulink> by
+using a dedicated <ulink url="http://gtkdoc.entidi.com/">SilverStripe module</ulink>.
+This really simplifies the maintenance burden of the doc.</para>
+
+<para>A bug that was preventing the correct finalization of the returned
+cairo path from GObject introspection bindings has been corrected.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.3">
 <title>ADG 0.7.3</title>
 
-<para>The compatibility of the project with outdated systems has been improved
-in order to be able to install it on old web servers.</para>
+<para>The compatibility of the project with outdated systems has been
+improved in order to be able to install it on old web servers.</para>
 
 <para>Compilation without GTK+ support has been tested: the canvas is now
 properly working on a server without X server installed.</para>
