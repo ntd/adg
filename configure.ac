@@ -297,12 +297,11 @@ AC_C_CONST
 
 # Windows substitutions for NSis installer
 
-dnl By default DLLDIR is set to "$prefix/bin", with "$prefix" got from
-dnl gobject-2.0.pc: all the DLLs *must* be under the same directory.
-AC_ARG_VAR([DLLDIR], Place where Windows DLLs must be picked from)
-AS_IF([test -z "$DLLDIR"],
-      [DLLDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)/bin"])
-AM_SUBST_NOTMAKE([DLLDIR])
+dnl Get the USRDIR from gobject-2.0.pc: all the dependencies *must* be
+dnl installed under the same prefix.
+USRDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)"
+AC_SUBST([USRDIR])
+AM_SUBST_NOTMAKE([USRDIR])
 
 dnl -win$ARCH will be appended to the installer file name
 AS_IF([test "x${host_cpu}" = "xx86_64"],[ARCH=64],[ARCH=32])
