@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-25 20:44+0100\n"
+"POT-Creation-Date: 2013-08-14 19:08+0200\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -430,7 +430,7 @@ msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
 msgid "%s: `render' method not implemented for type `%s'"
 msgstr "%s: metodo `render' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-fill-style.c:286
+#: ../src/adg/adg-fill-style.c:287
 #, c-format
 msgid "%s: pattern undefined for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
@@ -445,7 +445,7 @@ msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
 msgid "%s: `create_model' method not implemented for type `%s'"
 msgstr "%s: `create_model' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-matrix.c:205
+#: ../src/adg/adg-matrix.c:162
 #, c-format
 msgid "%s: normalization of anamorphic matrices not supported"
 msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
