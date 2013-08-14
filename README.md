@@ -36,6 +36,10 @@ bindings for higher level languages (the garbage-collected ones,
 above all). An application can then be developed using any
 specific language available, much in the same way as
 [GNOME](http://www.gnome.org/) applications are conceived.
+Lua bindings based on [LGI](http://github.com/pavouk/lgi) are
+yet availables and effectively used upstream to test the APIs.
+The adg-lua (http://dev.entidi.com/p/adg-lua/) project
+provides code examples on how to use them.
 
 The mathematical and geometrical algorithms, together with a bunch
 of other useful functions for manipulating cairo paths, are kept
@@ -62,11 +66,17 @@ The ADG library has the following dependencies:
  * [GTK+](http://www.gtk.org/) 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the adg-demo program;
- * [gtk-doc](http://www.gtk.org/gtk-doc/) 1.9 or later (optional),
+ * [pango-cairo](http://www.pango.org/) 1.18.0 or later (optional)
+   to support a serious engine for rendering text instead of using
+   the default cairo "toy" APIs;
+ * [gtk-doc](http://www.gtk.org/gtk-doc/) 1.12 or later (optional),
    used to regenerate the API documentation
  * [GObject introspection](http://live.gnome.org/GObjectIntrospection)
    0.9.5 or later (optional) to dinamically generate bindings
    metadata.
+
+The required packages must be installed prior the ADG building:
+they should be availables on nearly every decent unix-like system.
 
 The ADG is mainly developed on GNU/Linux but its dependecies are
 known to be cross platform so a porting should be quite easy, if
