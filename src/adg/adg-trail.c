@@ -250,7 +250,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * request is O(1). This cache is cleared only by the
  * adg_model_clear() method.
  *
- * Returns: a pointer to the internal cairo path or %NULL on errors
+ * Returns: (transfer none): a pointer to the internal cairo path or %NULL on errors
  *
  * Since: 1.0
  **/
