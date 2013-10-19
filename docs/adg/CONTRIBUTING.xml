@@ -64,6 +64,6 @@ with further details as soon as the gettext support will be added.</para>
 <para>The ADG canvas is a free project (as in speech <emphasis>and</emphasis> as in beer): any
 code contribution will be publicly shared. For technical details on
 the way the code is implemented in the ADG project, please consult
-the <ulink url="http://adg.entidi.com/api/view/HACKING.html">dedicated section</ulink>.</para>
+the <ulink url="http://adg.entidi.com/adg/HACKING.html">dedicated section</ulink>.</para>
 </simplesect>
 </chapter>

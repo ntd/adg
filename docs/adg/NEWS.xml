@@ -32,7 +32,7 @@ properly working on a server without X server installed.</para>
 <title>ADG 0.7.2</title>
 
 <para>Out of the box bindings are now fully working: the adg-demo
-program provided by <ulink url="http://adg.entidi.com/lua/">adg-lua</ulink> is
+program provided by <ulink url="http://adg.entidi.com/home/bindings/">adg-lua</ulink> is
 in par with the official adg-demo in C.</para>
 
 <para>AdgDress is inherited from GEnum instead of being a handcrafted
