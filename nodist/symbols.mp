@@ -1,5 +1,7 @@
 % Miscellaneous symbols
 
+filenametemplate "%j-%c.mps";
+
 linecap := rounded;
 linejoin := rounded;
 
