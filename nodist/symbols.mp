@@ -7,7 +7,7 @@ linejoin := rounded;
 
 pen thin, thick;
 thin := pencircle scaled 3;
-thick := pencircle scaled 5;
+thick := thin scaled 2;
 
 
 beginfig(0) % Server
@@ -31,12 +31,12 @@ endfig;
 beginfig(1) % Database
 
 pickup thick;
-draw halfcircle scaled 400 yscaled 0.2 shifted (200, 200) --
-     halfcircle rotated 180 scaled 400 yscaled 0.2 shifted (200, 40) --
+draw halfcircle scaled 200 yscaled 0.2 shifted (100, 100) --
+     halfcircle rotated 180 scaled 200 yscaled 0.2 shifted (100, 20) --
      cycle;
 
 pickup thin;
-draw halfcircle rotated 180 scaled 400 yscaled 0.2 shifted (200, 200);
+draw halfcircle rotated 180 scaled 200 yscaled 0.2 shifted (100, 100);
 
 endfig;
 
@@ -64,17 +64,15 @@ endfig;
 beginfig(3) % Sheet
 
 pickup thick;
-draw (50, 0) -- (350, 0) -- (350, 300) -- (250, 400) -- (50, 400) -- cycle;
+draw (0, 0) -- (200, 0) -- (200, 180) -- (100, 280) -- (0, 280) -- cycle;
 linecap := butt;
-draw (350, 300) -- (250, 300) -- (250, 400);
+draw (200, 180) -- (100, 180) -- (100, 280);
 
 pickup thin;
-for n = 50 step 30 until 290:
-    draw (100, n) -- (300, n);
-endfor
-
-draw (100, 320) -- (250, 320);
-draw (100, 350) -- (250, 350);
+draw (170, 30) -- (30, 30) -- (30, 250) -- cycle;
+draw (115, 60) -- (60, 60) -- (60, 145) -- cycle;
+for n = 50 step 20 until 210: draw (30, n) -- (40, n); endfor
+linecap := rounded;
 
 endfig;
 
@@ -125,15 +123,15 @@ endfig;
 beginfig(6) % Tablet
 
 pickup thick;
-draw quartercircle rotated -90 scaled 120 shifted (280, 60) ..
-     quartercircle scaled 120 shifted (280, 340) ..
-     quartercircle rotated 90 scaled 120 shifted (120, 340) ..
-     quartercircle rotated 180 scaled 120 shifted (120, 60) .. cycle;
+draw quartercircle rotated -90 scaled 60 shifted (140, 30) ..
+     quartercircle scaled 60 shifted (140, 170) ..
+     quartercircle rotated 90 scaled 60 shifted (60, 170) ..
+     quartercircle rotated 180 scaled 60 shifted (60, 30) .. cycle;
 
 pickup thin;
-draw (90, 70) -- (90, 330) -- (310, 330) -- (310, 70) -- cycle;
-draw fullcircle scaled 50 shifted (200, 35);
-draw (150, 370) -- (250, 370) -- (240, 360) -- (160, 360) -- cycle;
+draw (45, 35) -- (45, 165) -- (155, 165) -- (155, 35) -- cycle;
+draw fullcircle scaled 25 shifted (100, 18);
+draw (75, 185) -- (125, 185) -- (120, 180) -- (80, 180) -- cycle;
 
 endfig;
 
@@ -160,6 +158,38 @@ draw (370, 10) .. {dir 135}(340, 20) .. (320, 30);
 draw (313, 35){dir 135} .. (280, 50) .. (290, 60) .. (250, 70) ..
      (220, 70) .. {dir 220}(185, 75);
 
+
+endfig;
+
+
+beginfig(8) % ADG logo
+
+pickup thick scaled 2;
+draw (20, 40) -- (100, 120) .. (140, 80) .. (100, 40) -- (100, 120);
+draw (180, 120) .. (140, 80) .. (180, 40) -- (180, 60) -- (170, 60);
+draw (100, 60) -- (60, 60);
+
+pickup thick;
+draw (0, 0) -- (210, 0) -- (210, 160) -- (0, 160) -- cycle;
+
+pickup thin;
+draw quartercircle rotated -90 scaled 80 shifted (160, 50) ..
+     quartercircle scaled 80 shifted (160, 110) ..
+     quartercircle rotated 90 scaled 80 shifted (50, 110) ..
+     quartercircle rotated 180 scaled 80 shifted (50, 50) .. cycle;
+
+endfig;
+
+
+beginfig(9) % Gear
+
+pickup thick;
+draw fullcircle scaled 100 shifted (115, 115);
+draw for n = 0 step 1 until 7:
+         subpath (n, n + 0.5) of fullcircle scaled 190 --
+         subpath (n + 0.5, n + 1) of fullcircle scaled 230 --
+     endfor
+  cycle shifted (115, 115);
 
 endfig;
 
