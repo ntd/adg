@@ -1,18 +1,72 @@
 \documentclass[tikz=true,border=20pt]{standalone}
 
+% Set some useful default
+\tikzset{%
+    node distance=150,
+    font=\sffamily\scriptsize,
+    every path/.style={
+	very thick,
+	>=stealth
+    },
+    every label/.style={
+	font=\sffamily\normalsize
+    }
+}
+
 \begin{document}
 \begin{tikzpicture}
 
-\node (adg) at (0,10) {\includegraphics[scale=0.2]{symbols-8}};
-\node (gear) at (5,10) {\includegraphics[scale=0.2]{symbols-9}};
-\node (server) at (0,0) {\includegraphics[scale=0.2]{symbols-0}};
-\node (database) at (5,0) {\includegraphics[scale=0.2]{symbols-1}};
-\node (printer) at (10,0) {\includegraphics[scale=0.2]{symbols-2}};
-\node (sheet) at (15,0) {\includegraphics[scale=0.2]{symbols-3}};
-\node (laptop) at (0,5) {\includegraphics[scale=0.2]{symbols-4}};
-\node (cloud) at (5,5) {\includegraphics[scale=0.2]{symbols-5}};
-\node (tablet) at (10,5) {\includegraphics[scale=0.2]{symbols-6}};
-\node (workstation) at (15,5) {\includegraphics[scale=0.2]{symbols-7}};
+\node[align=center, label=APPLICATION] (gear)
+    {\includegraphics[scale=0.2]{symbols-9}};
+\node[below of=gear, label=below:DATABASE] (database)
+    {\includegraphics[scale=0.2]{symbols-1}};
+\node[right of=gear, label=ADG CANVAS] (adg)
+    {\includegraphics[scale=0.2]{symbols-8}};
+\node[below of=adg, label=below:WORKSTATION] (workstation)
+    {\includegraphics[scale=0.2]{symbols-7}};
+\node[right of=adg, label=DRAWING FILE] (sheet)
+    {\includegraphics[scale=0.2]{symbols-3}};
+\node[below of=sheet] (printer)
+    {\includegraphics[scale=0.2]{symbols-2}};
+
+\draw [<->] (gear) -- (database);
+\draw [<->] (gear) -- (workstation);
+\draw [->] (gear) -- (adg);
+\draw [->] (adg) -- node[above] {PDF or PS} node[below]{BACKEND} (sheet);
+\draw [->] (adg) -- node[right, align=left] {XLIB\\BACKEND} (workstation);
+\draw [->] (sheet) -- (printer);
+
+\end{tikzpicture}
+\begin{tikzpicture}
+
+\node[align=center, label=APPLICATION] (gear)
+    {\includegraphics[scale=0.2]{symbols-9}};
+\node[below of=gear, label=below:DATABASE] (database)
+    {\includegraphics[scale=0.2]{symbols-1}};
+\node[right of=gear, label=ADG CANVAS] (adg)
+    {\includegraphics[scale=0.2]{symbols-8}};
+\node[below of=adg, label=below:SERVER] (server)
+    {\includegraphics[scale=0.2]{symbols-0}};
+\node[right of=adg, label=DRAWING FILE] (sheet)
+    {\includegraphics[scale=0.2]{symbols-3}};
+\node[right of=server] (cloud)
+    {\includegraphics[scale=0.2]{symbols-5}};
+\node[right of=cloud] (workstation)
+    {\includegraphics[scale=0.2]{symbols-7}};
+\node[above of=workstation] (laptop)
+    {\includegraphics[scale=0.2]{symbols-4}};
+\node[below of=workstation] (tablet)
+    {\includegraphics[scale=0.2]{symbols-6}};
+
+\draw [<->] (gear) -- (database);
+\draw [<->] (gear) -- (server);
+\draw [->] (gear) -- (adg);
+\draw [->] (adg) -- node[above] {PNG, PS or PDF} node[below]{BACKEND} (sheet);
+\draw [->] (sheet) -- (cloud);
+\draw [<->] (server) -- node[above] {WEB SERVER} (cloud);
+\draw [<->] (cloud) -- (laptop);
+\draw [<->] (cloud) -- (tablet);
+\draw [<->] (cloud) -- (workstation);
 
 \end{tikzpicture}
 \end{document}
