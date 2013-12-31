@@ -1,22 +1,26 @@
-\documentclass[tikz=true,border=20pt]{standalone}
+\documentclass[tikz=true,border=12pt]{standalone}
 
 % Set some useful default
 \tikzset{%
-    node distance=150,
     font=\sffamily\scriptsize,
+    shorten >= 5,
+    shorten <= 5,
+    every label/.style={
+	label distance=20
+    },
     every path/.style={
 	very thick,
 	>=stealth
     },
     every label/.style={
-	font=\sffamily\normalsize
+	font=\sffamily\small
     }
 }
 
 \begin{document}
-\begin{tikzpicture}
+\begin{tikzpicture}[node distance=150]
 
-\node[align=center, label=APPLICATION] (gear)
+\node[label=APPLICATION] (gear)
     {\includegraphics[scale=0.2]{symbols-9}};
 \node[below of=gear, label=below:DATABASE] (database)
     {\includegraphics[scale=0.2]{symbols-1}};
@@ -30,19 +34,19 @@
     {\includegraphics[scale=0.2]{symbols-2}};
 
 \draw [<->] (gear) -- (database);
-\draw [<->] (gear) -- (workstation);
+\draw [<->, shorten <= -5, shorten >= 8] (gear) -- (workstation);
 \draw [->] (gear) -- (adg);
-\draw [->] (adg) -- node[above] {PDF or PS} node[below]{BACKEND} (sheet);
-\draw [->] (adg) -- node[right, align=left] {XLIB\\BACKEND} (workstation);
+\draw [->] (adg) -- node[above=-2] {PDF or PS} node[below=-2]{BACKEND} (sheet);
+\draw [->] (adg) -- node[right=-2, align=left] {XLIB\\BACKEND} (workstation);
 \draw [->] (sheet) -- (printer);
 
-\node[yshift=75] at (adg)
+\node[yshift=60] at (adg)
     {Overview of a typical \textbf{desktop} application};
 
 \end{tikzpicture}
-\begin{tikzpicture}
+\begin{tikzpicture}[node distance=120]
 
-\node[align=center, label=APPLICATION] (gear)
+\node[label=APPLICATION] (gear)
     {\includegraphics[scale=0.2]{symbols-9}};
 \node[below of=gear, label=below:DATABASE] (database)
     {\includegraphics[scale=0.2]{symbols-1}};
@@ -62,16 +66,16 @@
     {\includegraphics[scale=0.2]{symbols-6}};
 
 \draw [<->] (gear) -- (database);
-\draw [<->] (gear) -- (server);
+\draw [<->, shorten <= -5] (gear) -- (server);
 \draw [->] (gear) -- (adg);
-\draw [->] (adg) -- node[above] {PNG, PS or PDF} node[below]{BACKEND} (sheet);
+\draw [->] (adg) -- node[above=-2] {PNG or PDF} node[below=-2]{BACKEND} (sheet);
 \draw [->] (sheet) -- (cloud);
-\draw [<->] (server) -- node[above] {WEB SERVER} (cloud);
+\draw [<->] (server) -- node[above=-2] {HTML} (cloud);
 \draw [<->] (cloud) -- (laptop);
 \draw [<->] (cloud) -- (tablet);
 \draw [<->] (cloud) -- (workstation);
 
-\node[xshift=75, yshift=75] at (adg)
+\node[xshift=75, yshift=60] at (adg)
     {Overview of a typical \textbf{web} application};
 
 \end{tikzpicture}
