@@ -36,6 +36,9 @@
 \draw [->] (adg) -- node[right, align=left] {XLIB\\BACKEND} (workstation);
 \draw [->] (sheet) -- (printer);
 
+\node[yshift=75] at (adg)
+    {Overview of a typical \textbf{desktop} application};
+
 \end{tikzpicture}
 \begin{tikzpicture}
 
@@ -67,6 +70,9 @@
 \draw [<->] (cloud) -- (laptop);
 \draw [<->] (cloud) -- (tablet);
 \draw [<->] (cloud) -- (workstation);
+
+\node[xshift=75, yshift=75] at (adg)
+    {Overview of a typical \textbf{web} application};
 
 \end{tikzpicture}
 \end{document}
