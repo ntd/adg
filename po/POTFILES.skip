@@ -1,3 +1,4 @@
 demo/adg-demo.ui
 demo/cpml-demo.ui
 demo/cpml-demo-gtk2.c
+_build/
