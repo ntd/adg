@@ -1,0 +1,25 @@
+language: c
+
+compiler:
+    - clang
+    - gcc
+
+before_install:
+    - sudo apt-get update -qq
+
+install:
+    - sudo apt-get -qq install libcairo2-dev libcairo-gobject2 gtk-doc-tools
+
+before_script:
+    - ./autogen.sh && mkdir -p linux && cd linux
+
+script:
+    - ../configure && make check
+
+after_script:
+    - cd ..
+
+notifications:
+    email:
+        recipients:
+            - ntd@entidi.it
