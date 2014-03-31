@@ -1,2 +1,10 @@
 /adg.0
 /adg.log
+/desktop.png
+/overview.pdf
+/web.png
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.mps
