@@ -32,6 +32,7 @@ static void     stroke_and_destroy      (cairo_t        *cr,
 
 static void     browsing                (GtkWidget      *widget,
                                          cairo_t        *cr);
+
 static void     browsing_segment        (GtkToggleButton*togglebutton,
                                          gpointer        user_data);
 static void     browsing_primitive      (GtkToggleButton*togglebutton,
@@ -43,6 +44,7 @@ static void     browsing_next           (GtkButton      *button,
 
 static gboolean arcs                    (GtkWidget      *widget,
                                          cairo_t        *cr);
+
 static void     arc3p                   (cairo_t        *cr,
                                          double          x1,
                                          double          y1,
@@ -53,10 +55,56 @@ static void     arc3p                   (cairo_t        *cr,
 
 static gboolean intersections           (GtkWidget      *widget,
                                          cairo_t        *cr);
+
 static gboolean offset_curves           (GtkWidget      *widget,
                                          cairo_t        *cr);
+
 static gboolean offset_segments         (GtkWidget      *widget,
                                          cairo_t        *cr);
+
+#ifdef GTK2_ENABLED
+
+static void
+browsing_gtk2(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+{
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    browsing(widget, cr);
+    cairo_destroy(cr);
+}
+
+static void
+arcs_gtk2(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
+{
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    arcs(widget, cr);
+    cairo_destroy(cr);
+}
+
+static void
+intersections_gtk2(GtkWidget *widget)
+{
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    intersections(widget, cr);
+    cairo_destroy(cr);
+}
+
+static void
+offset_curves_gtk2(GtkWidget *widget)
+{
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    offset_curves(widget, cr);
+    cairo_destroy(cr);
+}
+
+static void
+offset_segments_gtk2(GtkWidget *widget)
+{
+    cairo_t *cr = gdk_cairo_create(widget->window);
+    offset_segments(widget, cr);
+    cairo_destroy(cr);
+}
+
+#endif
 
 static void     circle_callback         (cairo_t        *cr);
 static void     piston_callback         (cairo_t        *cr);
@@ -172,8 +220,6 @@ main(gint argc, gchar **argv)
     g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtk_builder_get_object(builder, "tvPages"))),
                      "changed", G_CALLBACK(switch_page),
                      gtk_builder_get_object(builder, "nbPages"));
-    g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
-                     "draw", G_CALLBACK(browsing), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "optBrowsingSegment"),
                      "toggled", G_CALLBACK(browsing_segment), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "optBrowsingPrimitive"),
@@ -182,6 +228,22 @@ main(gint argc, gchar **argv)
                      "clicked", G_CALLBACK(browsing_reset), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingNext"),
                      "clicked", G_CALLBACK(browsing_next), NULL);
+#ifdef GTK2_ENABLED
+    g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
+                     "expose-event", G_CALLBACK(browsing_gtk2), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaArcs"),
+                     "expose-event", G_CALLBACK(arcs_gtk2), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaIntersections"),
+                     "expose-event", G_CALLBACK(intersections_gtk2), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaOffsetCurves"),
+                     "expose-event", G_CALLBACK(offset_curves_gtk2), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "areaOffsetSegments"),
+                     "expose-event", G_CALLBACK(offset_segments_gtk2), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
+                     "clicked", G_CALLBACK(gtk_main_quit), NULL);
+#else
+    g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
+                     "draw", G_CALLBACK(browsing), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaArcs"),
                      "draw", G_CALLBACK(arcs), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "areaIntersections"),
@@ -192,6 +254,7 @@ main(gint argc, gchar **argv)
                      "draw", G_CALLBACK(offset_segments), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnQuit"),
                      "clicked", G_CALLBACK(gtk_main_quit), NULL);
+#endif
 
     g_object_unref(builder);
 

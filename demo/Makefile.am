@@ -28,7 +28,8 @@ adg_demo_uninstalled_LDADD=	$(CPML_LIBS) \
 
 # The CPML demo program uses the ADG library only marginally for
 # looking up the ui file (adg_find_file()) and for i18n.
-cpml_demo_uninstalled_SOURCES=	demo.c \
+cpml_demo_uninstalled_SOURCES=	cpml-demo.c \
+				demo.c \
 				demo.h
 cpml_demo_uninstalled_CFLAGS=	$(CPML_CFLAGS) \
 				$(ADG_CFLAGS)
@@ -36,14 +37,6 @@ cpml_demo_uninstalled_LDADD=	$(CPML_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(ADG_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
-
-if HAVE_GTK3
-cpml_demo_uninstalled_SOURCES+=	cpml-demo.c
-endif
-
-if HAVE_GTK2
-cpml_demo_uninstalled_SOURCES+=	cpml-demo-gtk2.c
-endif
 
 nodist_pkgdata_DATA=		adg-demo.ui \
 				cpml-demo.ui
