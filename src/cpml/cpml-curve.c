@@ -48,7 +48,6 @@
  *           opposite or staggered.</listitem>
  * </itemizedlist>
  * </important>
- * </para>
  * <refsect2 id="offset">
  * <title>Offseting algorithm</title>
  * <para>
@@ -181,7 +180,6 @@
  *
  * </para>
  * </refsect2>
- * <para>
  *
  * Since: 1.0
  **/
