@@ -115,6 +115,18 @@ static void (*path_samples[]) (cairo_t *cr) = {
     line1_callback,
 };
 
+static void
+switch_page(GtkTreeSelection *selection, GtkNotebook *notebook)
+{
+    GList *list = gtk_tree_selection_get_selected_rows(selection, NULL);
+    if (list != NULL) {
+        GtkTreePath *path = g_list_first(list)->data;
+        gint page = path != NULL ? *gtk_tree_path_get_indices(path) : -1;
+        g_list_free_full(list, (GDestroyNotify) gtk_tree_path_free);
+        if (page >= 0)
+            gtk_notebook_set_current_page(notebook, page);
+    }
+}
 
 int
 main(gint argc, gchar **argv)
@@ -123,9 +135,24 @@ main(gint argc, gchar **argv)
     GtkBuilder *builder;
     GError *error;
     GtkWidget *window;
+    gchar *icons_dir;
 
     _demo_init(argc, argv);
     parse_args(&argc, &argv);
+
+    /* Prepend the package icons path */
+    if (is_installed) {
+#ifdef G_OS_WIN32
+        icons_dir = g_build_filename(basedir, PKGDATADIR, "icons", NULL);
+#else
+        icons_dir = g_strdup(PKGDATADIR "/icons");
+#endif
+    } else {
+        icons_dir = g_strdup(SRCDIR "/icons");
+    }
+
+    gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), icons_dir);
+    g_free(icons_dir);
 
     path = _demo_file("cpml-demo.ui");
     if (path == NULL) {
@@ -147,6 +174,9 @@ main(gint argc, gchar **argv)
 
     /* Connect signals */
     g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtk_builder_get_object(builder, "tvPages"))),
+                     "changed", G_CALLBACK(switch_page),
+                     gtk_builder_get_object(builder, "nbPages"));
     g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
                      "expose-event", G_CALLBACK(browsing), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "optBrowsingSegment"),

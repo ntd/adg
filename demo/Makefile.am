@@ -53,6 +53,13 @@ dist_pkgdata_DATA=		adg-16.png \
 				adg-64.png \
 				adg-128.png
 
+iconsdir=			$(pkgdatadir)/icons
+dist_icons_DATA=		icons/adg-arc.png \
+				icons/adg-browsing.png \
+				icons/adg-curve.png \
+				icons/adg-intersection.png \
+				icons/adg-segment.png
+
 
 EXTRA_DIST=			cpml-demo.ui.in \
 				adg-demo.ui.in
