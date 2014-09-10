@@ -24,8 +24,8 @@
  *
  * A style containing a single color expressed in RGB format.
  * #AdgColorStyle also supports the alpha compositing that should be
- * expressed with a double value between %0 and %1, where %0 is the
- * "completely transparent" value while %1 is "fully opaque".
+ * expressed with a double value between 0 and 1, where 0 is the
+ * "completely transparent" value while 1 is "fully opaque".
  *
  * Since: 1.0
  **/
@@ -204,8 +204,8 @@ adg_color_style_new(void)
  * @color_style: an #AdgColorStyle
  * @red: the new value
  *
- * Sets a new value for the red channel, where %0 means no red and
- * %1 is full red.
+ * Sets a new value for the red channel, where 0 means no red and
+ * 1 is full red.
  *
  * Since: 1.0
  **/
@@ -220,8 +220,8 @@ adg_color_style_set_red(AdgColorStyle *color_style, gdouble red)
  * adg_color_style_get_red:
  * @color_style: an #AdgColorStyle
  *
- * Gets the current value of the red channel, where %0 means no red and
- * %1 is full red.
+ * Gets the current value of the red channel, where 0 means no red and
+ * 1 is full red.
  *
  * Returns: the requested red value
  *
@@ -244,8 +244,8 @@ adg_color_style_get_red(AdgColorStyle *color_style)
  * @color_style: an #AdgColorStyle
  * @green: the new value
  *
- * Sets a new value for the green channel, where %0 means no green and
- * %1 is full green.
+ * Sets a new value for the green channel, where 0 means no green and
+ * 1 is full green.
  *
  * Since: 1.0
  **/
@@ -260,8 +260,8 @@ adg_color_style_set_green(AdgColorStyle *color_style, gdouble green)
  * adg_color_style_get_green:
  * @color_style: an #AdgColorStyle
  *
- * Gets the current value of the green channel, where %0 means no green and
- * %1 is full green.
+ * Gets the current value of the green channel, where 0 means no green and
+ * 1 is full green.
  *
  * Returns: the requested green value
  *
@@ -284,8 +284,8 @@ adg_color_style_get_green(AdgColorStyle *color_style)
  * @color_style: an #AdgColorStyle
  * @blue: the new value
  *
- * Sets a new value for the blue channel, where %0 means no blue and
- * %1 is full blue.
+ * Sets a new value for the blue channel, where 0 means no blue and
+ * 1 is full blue.
  *
  * Since: 1.0
  **/
@@ -300,8 +300,8 @@ adg_color_style_set_blue(AdgColorStyle *color_style, gdouble blue)
  * adg_color_style_get_blue:
  * @color_style: an #AdgColorStyle
  *
- * Gets the current value of the blue channel, where %0 means no blue and
- * %1 is full blue.
+ * Gets the current value of the blue channel, where 0 means no blue and
+ * 1 is full blue.
  *
  * Returns: the requested blue value
  *
@@ -346,7 +346,8 @@ adg_color_style_set_rgb(AdgColorStyle *color_style,
  * @blue: where to store the blue channel value
  *
  * Gets the values of the red, green and blue channels of @color_style.
- * Any of the pointer can be %NULL, in which case the value is not returned.
+ * Any of the pointer can be <constant>NULL</constant>, in which case
+ * the value is not returned.
  *
  * Since: 1.0
  **/
@@ -375,8 +376,8 @@ adg_color_style_put_rgb(AdgColorStyle *color_style,
  * @color_style: an #AdgColorStyle
  * @alpha: the new alpha
  *
- * Sets a new color alpha value, where %0 means completely transparent
- * and %1 is fully opaque.
+ * Sets a new color alpha value, where 0 means completely transparent
+ * and 1 is fully opaque.
  *
  * Since: 1.0
  **/
@@ -391,8 +392,8 @@ adg_color_style_set_alpha(AdgColorStyle *color_style, gdouble alpha)
  * adg_color_style_get_alpha:
  * @color_style: an #AdgColorStyle
  *
- * Gets the alpha channel value, where %0 means completely transparent
- * and %1 is fully opaque.
+ * Gets the alpha channel value, where 0 means completely transparent
+ * and 1 is fully opaque.
  *
  * Returns: the requested alpha value
  *

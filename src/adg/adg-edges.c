@@ -291,7 +291,7 @@ adg_edges_new_with_source(AdgTrail *source)
  * The returned object is owned by @edges and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the requested #AdgTrail or %NULL on errors.
+ * Returns: (transfer none): the requested #AdgTrail or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -377,7 +377,7 @@ adg_edges_get_axis_angle(AdgEdges *edges)
  * the #AdgEdges:critical-angle property.
  *
  * The critical angle defines what corner should generate an edge and
- * what not. Typical values are close to %0, being %0 the lowest angle
+ * what not. Typical values are close to 0, being 0 the lowest angle
  * where every corner generates an edge.
  *
  * Since: 1.0

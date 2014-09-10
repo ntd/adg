@@ -28,8 +28,8 @@
  * compatible with %G_TYPE_PARAM_ENUM that provides additional
  * validation: it rejects values that are incompatibles (that
  * is, that are not related) with the current one. Check the
- * adg_dress_is_related() documentation for details on what
- * "related" means.
+ * adg_dress_are_related() documentation for details on what
+ * <emphasis>related</emphasis> means.
  *
  * Internally, the value setting is performed by calling the
  * adg_dress_set() API.

@@ -20,7 +20,7 @@
 
 /**
  * SECTION:cpml-segment
- * @Section_Id:CpmlSegment
+ * @Section_Id:Segment
  * @title: CpmlSegment
  * @short_description: Contiguous segment that can be a fragment
  *                     or a whole cairo path
@@ -94,8 +94,7 @@ static int              reshape                 (CpmlSegment       *segment);
  * Also, the first primitive must be a %CPML_MOVE, so no
  * dependency on the cairo context is needed.
  *
- * Returns: (type gboolean): %1 if @segment has been succesfully computed,
- *                           %0 on errors
+ * Returns: (type gboolean): 1 if @segment has been succesfully computed, 0 on errors.
  *
  * Since: 1.0
  **/
@@ -151,8 +150,7 @@ cpml_segment_reset(CpmlSegment *segment)
  *
  * Modifies @segment to point to the next segment of the source cairo path.
  *
- * Returns: (type gboolean): %1 on success,
- *                           %0 if no next segment found or errors
+ * Returns: (type gboolean): 1 on success, 0 if no next segment found or errors.
  *
  * Since: 1.0
  **/
@@ -232,16 +230,16 @@ cpml_segment_put_extents(const CpmlSegment *segment, CpmlExtents *extents)
  * @pair:    the destination #CpmlPair
  *
  * Gets the coordinates of the point lying on @segment at position
- * @pos. @pos is an homogeneous factor where %0 is the start point,
- * %1 the end point, %0.5 the mid point and so on.
- * The relation %0 < @pos < %1 should be satisfied, although some
- * cases accept value outside this range.
+ * @pos. @pos is an homogeneous factor where 0 is the start point,
+ * 1 the end point, 0.5 the mid point and so on.
+ * The relation <constant>0 < @pos < 1</constant> should be satisfied,
+ * although some cases accept value outside this range.
  *
  * <important>
  * <title>TODO</title>
  * <itemizedlist>
  * <listitem>The actual implementation returns only the start and end points,
- *           that is only when @pos is %0 or %1.</listitem>
+ *           that is only when @pos is 0 or 1.</listitem>
  * </itemizedlist>
  * </important>
  *
@@ -272,16 +270,16 @@ cpml_segment_put_pair_at(const CpmlSegment *segment, double pos,
  * @vector:  the destination #CpmlVector
  *
  * Gets the steepness of the point lying on @segment at position
- * @pos. @pos is an homogeneous factor where %0 is the start point,
- * %1 the end point, %0.5 the mid point and so on.
- * The relation %0 < @pos < %1 should be satisfied, although some
- * cases accept value outside this range.
+ * @pos. @pos is an homogeneous factor where 0 is the start point,
+ * 1 the end point, 0.5 the mid point and so on.
+ * The relation <constant>0 < @pos < 1</constant> should be satisfied,
+ * although some cases accept value outside this range.
  *
  * <important>
  * <title>TODO</title>
  * <itemizedlist>
  * <listitem>The actual implementation returns only the start and end
- *           steepness, that is only when @pos is %0 or %1.</listitem>
+ *           steepness, that is only when @pos is 0 or 1.</listitem>
  * </itemizedlist>
  * </important>
  *
@@ -363,7 +361,8 @@ cpml_segment_put_intersections(const CpmlSegment *segment,
  * <title>TODO</title>
  * <itemizedlist>
  * <listitem>Closed path are not yet managed: an elegant solution is not
- *           so obvious: use cpml_close_offset() when available.</listitem>
+ *           so obvious: use <function>cpml_close_offset</function> when
+ *           will be available.</listitem>
  * <listitem>Degenerated primitives, such as lines of length 0, are not
  *           managed properly.</listitem>
  * </itemizedlist>
@@ -552,7 +551,7 @@ cpml_segment_dump(const CpmlSegment *segment)
  *
  * Sanitizes @segment by calling ensure_one_leading_move() and reshape().
  *
- * Returns: %1 on success, %0 on no leading MOVE_TOs or on errors
+ * Returns: 1 on success, 0 on no leading MOVE_TOs or on errors.
  **/
 static int
 normalize(CpmlSegment *segment)
@@ -571,7 +570,7 @@ normalize(CpmlSegment *segment)
  * <structname>CpmlSegment</structname> structure accordingly.
  * One, and only one, %CPML_MOVE primitive is left.
  *
- * Returns: %1 on success, %0 on no leading MOVE_TOs or on empty path
+ * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
  **/
 static int
 ensure_one_leading_move(CpmlSegment *segment)
@@ -621,7 +620,7 @@ ensure_one_leading_move(CpmlSegment *segment)
  * This function also checks that all the components of @segment
  * are valid primitives.
  *
- * Returns: %1 on success, %0 on invalid primitive found
+ * Returns: 1 on success, 0 on invalid primitive found.
  **/
 static int
 reshape(CpmlSegment *segment)

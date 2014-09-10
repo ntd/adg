@@ -36,10 +36,12 @@
  * A GDK mask of the key/mouse modifiers accepted by the GTK+ widgets
  * of the ADG library. This means the state of the specified modifiers
  * is always checked: for example %GDK_CONTROL_MASK and %GDK_SHIFT_MASK
- * are included, hence keeping %CTRL and %SHIFT pressed is different
- * from keeping only %SHIFT pressed. %GDK_LOCK_MASK instead is not
+ * are included, hence keeping <keycap>CTRL</keycap>
+ * and <keycap>SHIFT</keycap> pressed is different from keeping
+ * only <keycap>SHIFT</keycap> pressed. %GDK_LOCK_MASK instead is not
  * considered, so having it enabled or disabled does not make any
- * difference while monitoring the status %SHIFT or %CTRL.
+ * difference while monitoring the status <keycap>SHIFT</keycap>
+ * or <keycap>CTRL</keycap>.
  *
  * Since: 1.0
  **/
@@ -58,8 +60,10 @@
  * gtk_widget_get_window:
  * @widget: a #GtkWidget
  *
- * Returns the widget's window if it is realized, %NULL otherwise.
- * This is an API fallback for GTK+ prior to 2.14.
+ * Returns the widget's window if it is realized
+ * or <constant>NULL</constant> otherwise.
+ *
+ * This is a fallback API for GTK+ prior to 2.14.
  *
  * Return value: @widget's window.
  *

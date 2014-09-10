@@ -435,7 +435,8 @@ adg_dim_get_dim_dress(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @ref1 can be %NULL, in which case the point is destroyed.
+ * @ref1 can be <constant>NULL</constant>, in which case the
+ * point is destroyed.
  *
  * Since: 1.0
  **/
@@ -496,10 +497,10 @@ adg_dim_set_ref1_from_pair(AdgDim *dim, const CpmlPair *ref1)
  * @ref1: a named pair in @model
  *
  * Binds #AdgDim:ref1 to the @ref1 named pair of @model. If @model
- * is %NULL, the point will be unset. In any case, the old point
- * is silently discarded, unreferencing its model if that point
- * was bound to a named pair (hence, possibly destroying the model
- * if this was the last reference).
+ * is <constant>NULL</constant>, the point will be unset. In any case,
+ * the old point is silently discarded, unreferencing its model
+ * if that point was bound to a named pair (hence, possibly destroying
+ * the model if this was the last reference).
  *
  * The assignment is lazy so @ref1 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
@@ -555,7 +556,8 @@ adg_dim_get_ref1(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if it was the last reference).
  *
- * @ref2 can be %NULL, in which case the point is destroyed.
+ * @ref2 can be <constant>NULL</constant>, in which case
+ * the point is destroyed.
  *
  * Since: 1.0
  **/
@@ -616,10 +618,10 @@ adg_dim_set_ref2_from_pair(AdgDim *dim, const CpmlPair *ref2)
  * @ref2: a named pair in @model
  *
  * Binds #AdgDim:ref2 to the @ref2 named pair of @model. If @model
- * is %NULL, the point will be unset. In any case, the old point
- * is silently discarded, unreferencing its model if that point
- * was bound to a named pair (hence, possibly destroying the model
- * if this was the last reference).
+ * is <constant>NULL</constant>, the point will be unset. In any
+ * case, the old point is silently discarded, unreferencing its
+ * model if that point was bound to a named pair (hence, possibly
+ * destroying the model if this was the last reference).
  *
  * The assignment is lazy so @ref2 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
@@ -675,7 +677,8 @@ adg_dim_get_ref2(AdgDim *dim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if it was the last reference).
  *
- * @pos can be %NULL, in which case the point is destroyed.
+ * @pos can be <constant>NULL</constant>, in which case the
+ * point is destroyed.
  *
  * Since: 1.0
  **/
@@ -736,10 +739,10 @@ adg_dim_set_pos_from_pair(AdgDim *dim, const CpmlPair *pos)
  * @pos: a named pair in @model
  *
  * Binds #AdgDim:pos to the @pos named pair of @model. If @model
- * is %NULL, the point will be unset. In any case, the old point
- * is silently discarded, unreferencing its model if that point
- * was bound to a named pair (hence, possibly destroying the model
- * if this was the last reference).
+ * is <constant>NULL</constant>, the point will be unset. In any
+ * case, the old point is silently discarded, unreferencing its
+ * model if that point was bound to a named pair (hence,
+ * possibly destroying the model if this was the last reference).
  *
  * The assignment is lazy so @pos could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
@@ -924,14 +927,15 @@ adg_dim_get_detached(AdgDim *dim)
  * @dim: an #AdgDim
  * @value: (allow-none): the value text
  *
- * Explicitely sets the text to use as value. If @value is %NULL or
- * was never set, an automatic text is calculated using the format
- * specified in the current #AdgDimStyle and getting its value by
- * calling the default_value() virtual method.
+ * Explicitely sets the text to use as value. If @value
+ * is <constant>NULL</constant> or was never set, an automatic
+ * text is calculated using the format specified in the current
+ * #AdgDimStyle and getting its value by calling
+ * the <function>default_value</function> virtual method.
  *
  * Inside the template string, the "<>" tag (or whatever specified
  * by the #AdgDimStyle:number-tag property) is substituted with the
- * string returned by the default_value() virtual method.
+ * string returned by <function>default_value</function>.
  *
  * Since: 1.0
  **/
@@ -993,7 +997,8 @@ adg_dim_set_limits(AdgDim *dim, const gchar *min, const gchar *max)
  * @dim: an #AdgDim
  * @min: (allow-none): the new minimum limit
  *
- * Sets the minimum value. Use %NULL as @min to disable it.
+ * Sets the minimum value. Use <constant>NULL</constant>
+ * as @min to disable it.
  *
  * Since: 1.0
  **/
@@ -1010,7 +1015,8 @@ adg_dim_set_min(AdgDim *dim, const gchar *min)
  * adg_dim_get_min:
  * @dim: an #AdgDim
  *
- * Gets the minimum value text or %NULL on minimum value disabled.
+ * Gets the minimum value text or <constant>NULL</constant>
+ * on minimum value disabled.
  *
  * The string is internally owned and must not be freed or modified.
  *
@@ -1035,7 +1041,8 @@ adg_dim_get_min(AdgDim *dim)
  * @dim: an #AdgDim
  * @max: (allow-none): the new maximum value
  *
- * Sets the maximum value. Use %NULL as @max to disable it.
+ * Sets the maximum value. Use <constant>NULL</constant>
+ * as @max to disable it.
  *
  * Since: 1.0
  **/
@@ -1052,7 +1059,8 @@ adg_dim_set_max(AdgDim *dim, const gchar *max)
  * adg_dim_get_max:
  * @dim: an #AdgDim
  *
- * Gets the maximum value text or %NULL on maximum value disabled.
+ * Gets the maximum value text or <constant>NULL</constant>
+ * on maximum value disabled.
  *
  * The string is internally owned and must not be freed or modified.
  *

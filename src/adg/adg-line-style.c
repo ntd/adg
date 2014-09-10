@@ -533,8 +533,8 @@ adg_line_style_set_dash(AdgLineStyle *line_style, const AdgDash *dash)
  * adg_line_style_get_dash:
  * @line_style: an #AdgLineStyle object
  *
- * Gets the dash pattern currently active on @line_style. A %NULL value is
- * returned when no dash pattern is active.
+ * Gets the dash pattern currently active on @line_style.
+ * A <constant>NULL</constant> value is returned when no dash pattern is active.
  *
  * The returned pattern is owned by @line_style: you are not allowed to modify
  * or free it. If something needs to be changed, work on a duplicate and reset
@@ -566,7 +566,7 @@ adg_line_style_set_dash(AdgLineStyle *line_style, const AdgDash *dash)
  * adg_dash_destroy(dash);
  * </programlisting></informalexample>
  *
- * Returns: the current dash pattern or %NULL on errors.
+ * Returns: the current dash pattern or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

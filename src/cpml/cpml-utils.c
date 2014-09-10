@@ -52,7 +52,8 @@
  * @angle: an angle in radians
  *
  * Normalizes @angle, that is returns the equivalent radians value
- * between the range %M_PI (inclusive) and %-M_PI (exclusive).
+ * between the range <constant>M_PI</constant> (inclusive)
+ * and <constant>-M_PI</constant> (exclusive).
  *
  * Returns: an equivalent value in radians
  *

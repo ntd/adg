@@ -36,7 +36,7 @@
  * call adg_entity_local_changed() to update the marker position.
  *
  * Use adg_marker_set_pos() to select the position where the marker
- * should be put: %0 means the start point of the segment while %1
+ * should be put: 0 means the start point of the segment while 1
  * means the end point.
  *
  * The #AdgMarker:model property and APIs are intended only for marker
@@ -60,9 +60,9 @@
  *                all the markers used by this class.
  *
  * The @create_model method must be implemented by any #AdgMarker derived
- * classes. The derived classes are expected to apply a single model (the one
- * returned by this method) to every path endings by using different
- * transformations.
+ * classes. The derived classes are expected to apply a single model
+ * (the one returned by this method) to every path endings by using
+ * different transformations.
  *
  * Since: 1.0
  **/
@@ -270,8 +270,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * @marker: an #AdgMarker
  * @trail: the new trail to use
  *
- * Sets the #AdgMarker:trail property to @trail. It is allowed to pass
- * %NULL to clear the current trail.
+ * Sets the #AdgMarker:trail property to @trail. It is allowed to
+ * pass <constant>NULL</constant> to clear the current trail.
  *
  * This method could fail unexpectedly if the segment index specified
  * by the #AdgMarker:n-segment property is not present inside the new
@@ -296,7 +296,7 @@ adg_marker_set_trail(AdgMarker *marker, AdgTrail *trail)
  * The returned object is owned by @marker and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the requested trail or %NULL on errors.
+ * Returns: (transfer none): the requested trail or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -336,9 +336,9 @@ adg_marker_set_n_segment(AdgMarker *marker, guint n_segment)
  * @marker: an #AdgMarker
  *
  * Returns the segment of the associated trail where this marker
- * will be applied, where %1 is the first segment.
+ * will be applied, where 1 is the first segment.
  *
- * Returns: an index greather than %0 on success or %0 on errors
+ * Returns: an index greather than 0 on success or 0 on errors.
  *
  * Since: 1.0
  **/
@@ -364,7 +364,7 @@ adg_marker_get_n_segment(AdgMarker *marker)
  * A dependency between @trail and @marker is added, so when @trail
  * changes @marker is invalidated.
  *
- * A callback is added to #AdgTrail::remove-dependency so manually
+ * A callback is added to #AdgModel::remove-dependency so manually
  * removing the dependency (such as when @trail is destroyed) will
  * unlink @marker from it.
  *
@@ -392,7 +392,7 @@ adg_marker_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
  * is eventually a modified version of the backup segment, after
  * having applied the marker.
  *
- * Returns: the segment or %NULL on errors
+ * Returns: the segment or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -470,7 +470,7 @@ adg_marker_backup_segment(AdgMarker *marker)
  * #AdgMarker:trail or #AdgMarker:n-segment) the original segment
  * is automatically restored.
  *
- * Returns: the original segment or %NULL on errors
+ * Returns: the original segment or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -508,10 +508,10 @@ adg_marker_set_pos(AdgMarker *marker, gdouble pos)
  * @marker: an #AdgMarker
  *
  * Gets the current position of @marker. The returned value is a ratio
- * position referred to the segment associated to @marker: %0 means the
- * start point and %1 means the end point of the segment.
+ * position referred to the segment associated to @marker: 0 means the
+ * start point and 1 means the end point of the segment.
  *
- * Returns: the marker position
+ * Returns: the marker position.
  *
  * Since: 1.0
  **/
@@ -601,7 +601,7 @@ adg_marker_set_model(AdgMarker *marker, AdgModel *model)
  * instead. The returned object is owned by @marker and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the cached model or %NULL on errors.
+ * Returns: (transfer none): the cached model or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -626,11 +626,11 @@ adg_marker_get_model(AdgMarker *marker)
  * </para></note>
  *
  * Gets the model of @marker. If the model is not found, it is
- * automatically created by calling the create_model() virtual method.
- * The returned object is owned by @marker and should not be
- * freed or modified.
+ * automatically created by calling the <function>create_model</function>
+ * virtual method. The returned object is owned by @marker and
+ * should not be freed or modified.
  *
- * Returns: (transfer none): the current model or %NULL on errors.
+ * Returns: (transfer none): the current model or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

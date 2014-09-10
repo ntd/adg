@@ -463,7 +463,7 @@ adg_table_style_get_value_dress(AdgTableStyle *table_style)
  * @height: the new row heigth fallback
  *
  * Sets a new #AdgTableStyle:row-height fallback. @height must
- * be a valid row height greather than %0 or a warning will be
+ * be a valid row height greather than 0 or a warning will be
  * raised and this function will fail.
  *
  * Since: 1.0
@@ -481,7 +481,7 @@ adg_table_style_set_row_height(AdgTableStyle *table_style, gdouble height)
  *
  * Gets the row height fallback value.
  *
- * Returns: the fallback row height or %0 on errors.
+ * Returns: the fallback row height or 0 on errors.
  *
  * Since: 1.0
  **/
@@ -526,7 +526,7 @@ adg_table_style_set_cell_padding(AdgTableStyle *table_style,
  * left will always be equal to the padding on the right and the top
  * will always be equal to the bottom.
  *
- * Returns: (transfer none): the cell padding values or %NULL on errors.
+ * Returns: (transfer none): the cell padding values or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -571,7 +571,7 @@ adg_table_style_set_cell_spacing(AdgTableStyle *table_style,
  * left will always be equal to the spacing on the right and the top
  * will always be equal to the bottom.
  *
- * Returns: (transfer none): the cell spacing values or %NULL on errors.
+ * Returns: (transfer none): the cell spacing values or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

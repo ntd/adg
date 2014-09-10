@@ -29,7 +29,7 @@
  * #AdgTableRow by using the #AdgTableRow specific APIs.
  *
  * <note><para>
- * By default, the #AdgText:local-mix property is set to
+ * By default, the #AdgEntity:local-mix property is set to
  * #ADG_MIX_DISABLED on #AdgTable entities.
  * </para></note>
  *
@@ -285,7 +285,7 @@ adg_table_new(void)
  * adg_table_insert:
  * @table: an #AdgTable
  * @table_row: a valid #AdgTableRow
- * @before_row: (allow-none): an #AdgTableRow or %NULL
+ * @before_row: (allow-none): an #AdgTableRow or <constant>NULL</constant>
  *
  * Inserts @table_row inside the rows list of @table. If @before_row
  * is specified, @table_row is inserted before it.
@@ -395,13 +395,14 @@ adg_table_foreach_cell(AdgTable *table,
  * with adg_table_get_cell(). Internally the binding is handled with
  * an hash table, so accessing the cell this way is O(1).
  *
- * If @name is %NULL, any binding to @ŧable_cell will be removed.
- * This is quite inefficient because the whole hash table must be scanned.
+ * If @name is <constant>NULL</constant>, any binding to @ŧable_cell
+ * will be removed. This is quite inefficient because the whole hash
+ * table must be scanned.
  *
- * If @table_cell is %NULL, the key with @name in the hash table will
- * be removed.
+ * If @table_cell is <constant>NULL</constant>, the key with @name
+ * in the hash table will be removed.
  *
- * Both @name and @table_cell cannot be %NULL at the same time.
+ * Both @name and @table_cell cannot be <constant>NULL</constant> at the same time.
  *
  * Since: 1.0
  **/
@@ -446,7 +447,7 @@ adg_table_set_cell(AdgTable *table, const gchar *name,
  * instead. The returned object is owned by @table and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the requested style or %NULL on errors.
+ * Returns: (transfer none): the requested style or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -472,7 +473,7 @@ adg_table_get_table_style(AdgTable *table)
  * The returned cell is owned by @ŧable and must not be
  * modified or freed.
  *
- * Returns: (transfer none): the requested cell or %NULL if not found.
+ * Returns: (transfer none): the requested cell or <constant>NULL</constant> if not found.
  *
  * Since: 1.0
  **/
@@ -541,9 +542,9 @@ adg_table_get_table_dress(AdgTable *table)
  * @table: an #AdgTable
  * @new_state: the new state of the frame
  *
- * Sets the #AdgTable:has-frame property: %TRUE will draw a
- * frame around the whole table using the #AdgTableStyle:frame-dress
- * dress of the table style.
+ * Sets the #AdgTable:has-frame property: <constant>TRUE</constant>
+ * will draw a frame around the whole table using the
+ * #AdgTableStyle:frame-dress dress of the table style.
  *
  * Since: 1.0
  **/

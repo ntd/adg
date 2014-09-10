@@ -26,11 +26,11 @@
  * implements methods to create the path and provides additional
  * operations specific to technical drawings.
  *
- * #AdgPath overrides the get_cairo_path() method of the parent
- * #AdgTrail class, avoiding the need of an #AdgTrailCallback.
- * The path is constructed programmaticaly: keep in mind any
- * method that modifies the path will invalidate the #cairo_path_t
- * returned by adg_trail_get_cairo_path().
+ * #AdgPath overrides the <function>get_cairo_path</function> method
+ * of the parent #AdgTrail class, avoiding the need of an
+ * #AdgTrailCallback. The path is constructed programmatically: keep
+ * in mind any method that modifies the path will invalidate the
+ * #cairo_path_t returned by adg_trail_get_cairo_path().
  *
  * Although some of the provided methods are clearly based on the
  * original cairo path manipulation API, their behavior could be
@@ -43,9 +43,9 @@
  * As an example, following the rule of the less surprise, some
  * cairo functions guess the current point when it is not defined,
  * while the #AdgPath methods trigger a warning without other effect.
- * Furthermore, after cairo_path_close_path() a #CPML_MOVE primitive
- * to the starting point of the segment is automatically added by
- * cairo; in ADG, after an adg_path_close() the current point is unset.
+ * Furthermore, after cairo_close_path() a %CPML_MOVE primitive to
+ * the starting point of the segment is automatically added by cairo;
+ * in ADG, after an adg_path_close() the current point is unset.
  *
  * Since: 1.0
  **/
@@ -208,7 +208,7 @@ adg_path_new(void)
  * Gets the current point of @path, which is conceptually the
  * final point reached by the path so far.
  *
- * If there is no defined current point, %NULL is returned.
+ * If there is no defined current point, <constant>NULL</constant> is returned.
  * It is possible to check this in advance with
  * adg_path_has_current_point().
  *
@@ -216,7 +216,7 @@ adg_path_new(void)
  * expect a current point to be defined otherwise will fail triggering
  * a warning. Check the description of every method for specific details.
  *
- * Returns: (transfer none): the current point or %NULL on no current point set or errors
+ * Returns: (transfer none): the current point or <constant>NULL</constant> on no current point set or errors.
  *
  * Since: 1.0
  **/
@@ -265,7 +265,7 @@ adg_path_has_current_point(AdgPath *path)
  * Gets the last primitive appended to @path. The returned struct
  * is owned by @path and should not be freed or modified.
  *
- * Returns: (transfer none): a pointer to the last appended primitive or %NULL on errors
+ * Returns: (transfer none): a pointer to the last appended primitive or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -286,12 +286,12 @@ adg_path_last_primitive(AdgPath *path)
  * @path: an #AdgPath
  *
  * Gets the primitive before the last one appended to @path. The
- * "over" term comes from forth, where the %OVER operator works
- * on the stack in the same way as adg_path_over_primitive() works
- * on @path. The returned struct is owned by @path and should not
- * be freed or modified.
+ * "over" term comes from forth, where the <emphasis>OVER</emphasis>
+ * operator works on the stack in the same way as
+ * adg_path_over_primitive() works on @path. The returned struct
+ * is owned by @path and should not be freed or modified.
  *
- * Returns: (transfer none): a pointer to the primitive before the last appended one or %NULL on errors
+ * Returns: (transfer none): a pointer to the primitive before the last appended one or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -314,12 +314,12 @@ adg_path_over_primitive(AdgPath *path)
  * @...:  point data, specified as #CpmlPair pointers
  *
  * Generic method to append a primitive to @path. The number of #CpmlPair
- * pointers to pass as @Varargs depends on @type: #CPML_CLOSE does not
- * require any pair, #CPML_MOVE and #CPML_LINE require one pair,
- * #CPML_ARC two pairs, #CPML_CURVE three pairs and so on.
+ * pointers to pass as @Varargs depends on @type: %CPML_CLOSE does not
+ * require any pair, %CPML_MOVE and %CPML_LINE require one pair,
+ * %CPML_ARC two pairs, %CPML_CURVE three pairs and so on.
  *
- * All the needed pairs must be not %NULL pointers, otherwise the function
- * will fail. The pairs in excess, if any, will be ignored.
+ * All the needed pairs must be not <constant>NULL</constant> pointers,
+ * otherwise the function will fail. The pairs in excess, if any, are ignored.
  *
  * Since: 1.0
  **/
@@ -368,14 +368,15 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * adg_path_append_array:
  * @path:  an #AdgPath
  * @type:  a #cairo_data_type_t value
- * @pairs: (array zero-terminated=1) (element-type Cpml.Pair) (transfer none): point data, specified as a %NULL terminated array of #CpmlPair pointers
+ * @pairs: (array zero-terminated=1) (element-type Cpml.Pair) (transfer none): point data, specified as a <constant>NULL</constant> terminated array of #CpmlPair pointers.
  *
- * A bindingable version of adg_path_append() that uses a %NULL terminated
- * array of pairs instead of variable argument list and friends.
+ * A bindingable version of adg_path_append() that uses a
+ * <constant>NULL</constant> terminated array of pairs instead of variable
+ * argument list and friends.
  *
- * Furthermore, because of the list is %NULL terminated, an arbitrary
- * number of pairs can be passed in @pairs. This allows to embed in a
- * primitive element more data pairs than requested, something impossible
+ * Furthermore, because of the list is <constant>NULL</constant> terminated,
+ * an arbitrary number of pairs can be passed in @pairs. This allows to embed
+ * in a primitive element more data pairs than requested, something impossible
  * to do with adg_path_append() and adg_path_append_valist().
  *
  * Rename to: adg_path_append
@@ -706,10 +707,10 @@ adg_path_curve_to_explicit(AdgPath *path, gdouble x1, gdouble y1,
  * After this call the current point will be unset.
  *
  * The behavior of adg_path_close() is distinct from simply calling
- * adg_line_to() with the coordinates of the segment starting point.
- * When a closed segment is stroked, there are no caps on the ends.
- * Instead, there is a line join connecting the final and initial
- * primitive of the segment.
+ * adg_path_line_to() with the coordinates of the segment starting
+ * point. When a closed segment is stroked, there are no caps on the
+ * ends. Instead, there is a line join connecting the final and
+ * initial primitive of the segment.
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
@@ -740,9 +741,9 @@ adg_path_close(AdgPath *path)
  *
  * By explicitely setting the whole arc data, the start point could be
  * different from the current point. In this case, if @path has no
- * current point before the call a #CPML_MOVE to the start point of
+ * current point before the call a %CPML_MOVE to the start point of
  * the arc will be automatically prepended to the arc. If @path has a
- * current point, a #CPML_LINE to the start point of the arc will be
+ * current point, a %CPML_LINE to the start point of the arc will be
  * used instead of the "move to" primitive.
  *
  * Since: 1.0
@@ -820,7 +821,7 @@ adg_path_arc_explicit(AdgPath *path, gdouble xc, gdouble yc, gdouble r,
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
  *
- * An exception is a chamfer after a #CPML_CLOSE primitive. In this case,
+ * An exception is a chamfer after a %CPML_CLOSE primitive. In this case,
  * the second primitive is not required: the current close path is used
  * as first operand while the first primitive of the current segment is
  * used as second operand.
@@ -854,7 +855,7 @@ adg_path_chamfer(AdgPath *path, gdouble delta1, gdouble delta2)
  * terminated (by not providing the second primitive), any API accessing
  * the path in reading mode will raise a warning.
  *
- * An exception is a fillet after a #CPML_CLOSE primitive. In this case,
+ * An exception is a fillet after a %CPML_CLOSE primitive. In this case,
  * the second primitive is not required: the current close path is used
  * as first operand while the first primitive of the current segment is
  * used as second operand.
@@ -882,8 +883,8 @@ adg_path_fillet(AdgPath *path, gdouble radius)
  * The result is then reversed with cpml_segment_reverse() and
  * appended to the original path with adg_path_append_segment().
  *
- * For convenience, if @vector is %NULL the path is reversed
- * around the x axis (y=0).
+ * For convenience, if @vector is <constant>NULL</constant> the
+ * path is reversed around the x axis <constant>(y = 0)</constant>.
  *
  * Since: 1.0
  **/

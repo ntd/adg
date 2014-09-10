@@ -148,8 +148,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * adg_hatch_new:
  * @trail: the #AdgTrail to hatch
  *
- * Creates a new hatch entity.
- * @trail can be %NULL, in which case an empty hatch is created.
+ * Creates a new hatch entity. @trail can be <constant>NULL</constant>,
+ * in which case an empty hatch is created.
  *
  * Returns: the newly created hatch entity
  *

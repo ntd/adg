@@ -20,7 +20,7 @@
 
 /**
  * SECTION:cpml-pair
- * @Section_Id:CpmlPair
+ * @Section_Id:Pair
  * @title: CpmlPair
  * @short_description: Basic struct holding a couple of values
  *
@@ -93,8 +93,8 @@ cpml_pair_from_cairo(CpmlPair *pair, const cairo_path_data_t *path_data)
  * @pair:              the destination #CpmlPair
  * @src: (allow-none): the source #CpmlPair
  *
- * Copies @src in @pair. If @src or @pair is %NULL, this function does
- * nothing.
+ * Copies @src in @pair. If @src or @pair is <constant>NULL</constant>,
+ * this function does nothing.
  *
  * Since: 1.0
  **/
@@ -112,9 +112,9 @@ cpml_pair_copy(CpmlPair *pair, const CpmlPair *src)
  * @src: (allow-none):  the second pair to compare
  *
  * Compares @pair to @src and returns 1 if the pairs are equals.
- * Two %NULL pairs are considered equal.
+ * Two <constant>NULL</constant> pairs are considered equal.
  *
- * Returns: (type gboolean): %1 if @pair is equal to @src, %0 otherwise.
+ * Returns: (type gboolean): 1 if @pair is equal to @src, 0 otherwise.
  *
  * Since: 1.0
  **/
@@ -156,8 +156,8 @@ cpml_pair_transform(CpmlPair *pair, const cairo_matrix_t *matrix)
  * for comparation purpose: if you need to get the real distance, use
  * cpml_pair_distance().
  *
- * @from or @to could be %NULL, in which case the fallback (0, 0) pair
- * will be used.
+ * @from or @to could be <constant>NULL</constant>, in which case the
+ * fallback <constant>(0, 0)</constant> pair will be used.
  *
  * Returns: the squared distance
  *
@@ -185,11 +185,11 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * @to: (allow-none):   the second #CpmlPair struct
  *
  * Gets the distance between @from and @to. If you need this value only
- * for comparation purpose, you could use cpm_pair_squared_distance()
+ * for comparation purpose, you could use cpml_pair_squared_distance()
  * instead.
  *
- * @from or @to could be %NULL, in which case the fallback (0, 0) pair
- * will be used.
+ * @from or @to could be <constant>NULL</constant>, in which case the
+ * fallback <constant>(0, 0)</constant> pair will be used.
  *
  * The algorithm used is adapted from:
  * "Replacing Square Roots by Pythagorean Sums"
@@ -269,7 +269,7 @@ cpml_pair_to_cairo(const CpmlPair *pair, cairo_path_data_t *path_data)
  * @vector: the destination #CpmlVector
  * @angle:  angle of direction, in radians
  *
- * Calculates the coordinates of the point far %1 from the origin
+ * Calculates the coordinates of the point far 1 from the origin
  * in the @angle direction. The result is stored in @vector.
  *
  * Since: 1.0
@@ -301,9 +301,9 @@ cpml_vector_from_angle(CpmlVector *vector, double angle)
  * @vector: a #CpmlVector
  * @length: the new length
  *
- * Imposes the specified @length to @vector. If the old length is %0
+ * Imposes the specified @length to @vector. If the old length is 0
  * (and so the direction is not known), nothing happens. If @length
- * is %0, @vector is set to (0, 0).
+ * is 0, @vector is set to <constant>(0, 0)</constant>.
  *
  * The @length parameter can be negative, in which case the vector
  * is inverted.

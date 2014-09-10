@@ -228,7 +228,7 @@ adg_rdim_new(void)
  * Creates a new quote by specifying explicitely all the needed
  * data to get a valid quote.
  *
- * Returns: a newly created quote
+ * Returns: the newly created quote.
  *
  * Since: 1.0
  **/
@@ -263,11 +263,10 @@ adg_rdim_new_full(const CpmlPair *center, const CpmlPair *radius,
  * @pos_x: x coordinate of the quote text
  * @pos_y: y coordinate of the quote text
  *
- * Does the same job of adg_rdim_full() but using specific coordinates
- * instead of #CpmlPair structures.
- * data to get a valid quote.
+ * Does the same job of adg_rdim_new_full() but using specific
+ * coordinates instead of #CpmlPair structures.
  *
- * Returns: a newly created quote
+ * Returns: the newly created quote.
  *
  * Since: 1.0
  **/

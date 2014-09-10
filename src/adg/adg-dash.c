@@ -32,7 +32,7 @@
  *
  * Each "on" segment will have caps applied as if the segment were a
  * separate sub-path. In particular, it is valid to use an "on" length of
- * %0 with %CAIRO_LINE_CAP_ROUND or %CAIRO_LINE_CAP_SQUARE in order to
+ * 0 with %CAIRO_LINE_CAP_ROUND or %CAIRO_LINE_CAP_SQUARE in order to
  * distribute dots or squares along a path.
  *
  * Check the cairo_set_dash() documentation for further details:
@@ -238,7 +238,7 @@ adg_dash_append_dashes_array(AdgDash *dash,
  *
  * Gets the number of dashes stored inside this dash pattern.
  *
- * Returns: the number of dashes or %-1 if @dash is invalid.
+ * Returns: the number of dashes or -1 if @dash is invalid.
  *
  * Since: 1.0
  **/
@@ -256,7 +256,7 @@ adg_dash_get_num_dashes(const AdgDash *dash)
  * Gets the array of gdoubles containing the length of each dash of the
  * pattern of @dash.
  *
- * Returns: the array of lengths or %NULL on invalid @dash. The array is owned by @dash and must not be modified or freed.
+ * Returns: the array of lengths or <constant>NULL</constant> on invalid @dash. The array is owned by @dash and must not be modified or freed.
  *
  * Since: 1.0
  **/
@@ -308,7 +308,7 @@ adg_dash_set_offset(AdgDash *dash, gdouble offset)
  *
  * Gets the offset of the pattern in @dash.
  *
- * Returns: the offset of @dash or %0 on invalid @dash.
+ * Returns: the offset of @dash or 0 on invalid @dash.
  *
  * Since: 1.0
  **/

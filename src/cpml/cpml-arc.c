@@ -49,9 +49,9 @@
  * Using these CPML APIs you are free to use %CPML_ARC whenever
  * you want but, if you are directly accessing the struct fields, you
  * are responsible of converting arcs to curves before passing them
- * to cairo. In other words, do not directly feed #CpmlPath struct to
- * cairo (throught cairo_append_path() for example) or at least do not
- * expect it will work.
+ * to cairo. In other words, do not directly feed #cairo_data_path_t
+ * got from CPML to cairo (i.e. by using cairo_append_path()) or at
+ * least do not expect it will work if an arc is present.
  *
  * The conversion is provided by two APIs: cpml_arc_to_cairo() and
  * cpml_arc_to_curves(). The former directly renders to a cairo context
@@ -63,8 +63,10 @@
  * <important>
  * <title>TODO</title>
  * <itemizedlist>
- * <listitem>the get_closest_pos() method must be implemented;</listitem>
- * <listitem>the put_intersections() method must be implemented;</listitem>
+ * <listitem>the <function>get_closest_pos</function> method must be
+ *    implemented;</listitem>
+ * <listitem>the <function>put_intersections</function> method must be
+ *    implemented;</listitem>
  * </itemizedlist>
  * </important>
  *
@@ -148,10 +150,10 @@ _cpml_arc_get_class(void)
  * @end:    (out) (allow-none): where to store the ending angle
  *
  * Given an @arc, this function calculates and returns its basic data.
- * Any pointer can be %NULL, in which case the requested info is not
- * returned. This function can fail (when the three points lay on a
- * straight line, for example) in which case 0 is returned and no
- * data can be considered valid.
+ * Any pointer can be <constant>NULL</constant>, in which case the requested
+ * info is not returned. This function can fail (when the three points lay on
+ * a straight line, for example) in which case 0 is returned and no data can
+ * be considered valid.
  *
  * The radius @r can be 0 when the three points are coincidents: a
  * circle with radius 0 is considered a valid path.
@@ -160,16 +162,15 @@ _cpml_arc_get_class(void)
  * values these angles implicitely gives another important information:
  * the arc direction.
  *
- * If @start < @end the arc must be rendered with increasing angle
+ * If @start &lt; @end the arc must be rendered with increasing angle
  * value (clockwise direction using the ordinary cairo coordinate
  * system) while if @start > @end the arc must be rendered in reverse
  * order (that is counterclockwise in the cairo world). This is the
- * reason the angle values are returned in the range
- * { -M_PI < value < 3*M_PI } inclusive instead of the usual
- * { -M_PI < value < M_PI } range.
+ * reason the angle values are returned in the range <constant>-M_PI
+ * &lt; <varname>value</varname> &lt; 3 M_PI</constant> inclusive instead of
+ * the usual <constant>-M_PI &lt; <varname>value</varname> &lt; M_PI</constant>.
  *
- * Returns: (type boolean): %1 if the function worked succesfully,
- *                          %0 on errors
+ * Returns: (type boolean): 1 if the function worked succesfully, 0 on errors.
  *
  * Since: 1.0
  **/
@@ -215,7 +216,7 @@ cpml_arc_info(const CpmlPrimitive *arc, CpmlPair *center,
  * arcs natively, it is approximated using one or more Bézier curves.
  *
  * The number of curves used is dependent from the angle of the arc.
- * Anyway, this function uses internally the hardcoded %M_PI_2 value
+ * Anyway, this function uses internally the hardcoded M_PI_2 value
  * as threshold value. This means the maximum arc approximated by a
  * single curve will be a quarter of a circle and, consequently, a
  * whole circle will be approximated by 4 Bézier curves.

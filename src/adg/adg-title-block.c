@@ -368,7 +368,7 @@ adg_title_block_set_title(AdgTitleBlock *title_block, const gchar *title)
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: (transfer none): the title or %NULL on no title or errors.
+ * Returns: (transfer none): the title or <constant>NULL</constant> on no title or errors.
  *
  * Since: 1.0
  **/
@@ -408,7 +408,7 @@ adg_title_block_set_drawing(AdgTitleBlock *title_block, const gchar *drawing)
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: (transfer none): the drawing name or %NULL on no name or errors.
+ * Returns: (transfer none): the drawing name or <constant>NULL</constant> on no name or errors.
  *
  * Since: 1.0
  **/
@@ -445,11 +445,12 @@ adg_title_block_set_size(AdgTitleBlock *title_block, const gchar *size)
  * @title_block: an #AdgTitleBlock entity
  *
  * Gets the media size (a descriptive name) where this drawing will
- * be printed. Usually contains something like "A4" or "Letter".
+ * be printed. Usually contains something like <constant>"A4"</constant>
+ * or <constant>"Letter"</constant>.
  * The returned string is owned by @title_block and should not
  * be modifed or freed.
  *
- * Returns: (transfer none): the size or %NULL on no size or errors.
+ * Returns: (transfer none): the size or <constant>NULL</constant> on no size or errors.
  *
  * Since: 1.0
  **/
@@ -487,7 +488,7 @@ adg_title_block_set_scale(AdgTitleBlock *title_block, const gchar *scale)
  *
  * Gets the scale descriptive name of the drawing.
  *
- * Returns: (transfer none): the scale text or %NULL on no scale or errors.
+ * Returns: (transfer none): the scale text or <constant>NULL</constant> on no scale or errors.
  *
  * Since: 1.0
  **/
@@ -525,7 +526,7 @@ adg_title_block_set_author(AdgTitleBlock *title_block, const gchar *author)
  *
  * Gets the author's name of the drawing.
  *
- * Returns: (transfer none): the author or %NULL on no author or errors.
+ * Returns: (transfer none): the author or <constant>NULL</constant> on no author or errors.
  *
  * Since: 1.0
  **/
@@ -547,9 +548,9 @@ adg_title_block_get_author(AdgTitleBlock *title_block)
  * @date: the new date
  *
  * Sets a new date on the title block. By default the date is
- * set to %NULL and it will be implicitely rendered using the
- * preferred representation for the current local of the actual
- * date. This is roughly equivalent to:
+ * set to <constant>NULL</constant> and it will be implicitely
+ * rendered using the*preferred representation for the current
+ * local of the actual date. This is roughly equivalent to:
  *
  * <informalexample><programlisting language="C">
  * strftime(buffer, sizeof(buffer), "%x", now);
@@ -573,7 +574,7 @@ adg_title_block_set_date(AdgTitleBlock *title_block, const gchar *date)
  *
  * Gets the date of the rendering set on @title_block.
  *
- * Returns: (transfer none): the date or %NULL on no date or errors.
+ * Returns: (transfer none): the date or <constant>NULL</constant> on no date or errors.
  *
  * Since: 1.0
  **/
@@ -618,7 +619,7 @@ adg_title_block_set_logo(AdgTitleBlock *title_block, AdgEntity *logo)
  * The returned object is owned by @title_block and should not
  * be unreferenced although can be freely modified.
  *
- * Returns: (transfer none): the logo or %NULL on no logo or errors.
+ * Returns: (transfer none): the logo or <constant>NULL</constant> on no logo or errors.
  *
  * Since: 1.0
  **/
@@ -665,8 +666,7 @@ adg_title_block_set_projection(AdgTitleBlock *title_block,
  * The returned object is owned by @title_block and should not
  * be unreferenced although can be freely modified.
  *
- * Returns: (transfer none): the projection or
- *                           %NULL on no projection or errors.
+ * Returns: (transfer none): the projection or <constant>NULL</constant> on no projection or errors.
  *
  * Since: 1.0
  **/

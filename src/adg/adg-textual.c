@@ -202,8 +202,9 @@ adg_textual_get_font_dress(AdgTextual *textual)
  * @text: the new text to be set
  *
  * Sets a new text on @textual. If @text is the same as the old text
- * no actions are performed, otherwise the set_text() virtual method
- * is called and the #AdgTextual::text-changed signal is emitted.
+ * no actions are performed, otherwise the <function>set_text</function>
+ * virtual method is called and the #AdgTextual::text-changed signal
+ * is emitted.
  *
  * Since: 1.0
  **/

@@ -27,7 +27,7 @@
  * displacement of its content with an arbitrary fraction dependent
  * on the content itself.
  *
- * This shift is computed by multiplying the #AdgAligment:factor
+ * This shift is computed by multiplying the #AdgAlignment:factor
  * property with the extents of the bare content, with "bare" meaning
  * the children entities as they are rendered on the global matrix
  * *without* rotation components.
@@ -169,7 +169,7 @@ _adg_set_property(GObject *object, guint prop_id,
  *
  * Creates a new alignment container with the specified factor.
  *
- * Returns: the newly created alignment or %NULL on errors
+ * Returns: the newly created alignment or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -210,9 +210,9 @@ adg_alignment_new_explicit(gdouble x_factor, gdouble y_factor)
  * Sets a the #AdgAlignment:factor property to @factor on @alignment.
  * The factor is applied to the @alignment extents to compute the
  * displacement of the content, providing a way to for instance center
- * the content either vertically or horizontally. A pair factor of
- * (%0.5, %0) means the content will be centered horizontally in
- * reference to the normal flow without @alignment.
+ * the content either vertically or horizontally. A pair factor
+ * of <constant>(0.5, 0)</constant> means the content will be centered
+ * horizontally in reference to the normal flow without @alignment.
  *
  * Since: 1.0
  **/

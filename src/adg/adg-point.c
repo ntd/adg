@@ -98,7 +98,7 @@ adg_point_new(void)
  * The returned value should be freed with adg_point_destroy()
  * when no longer needed.
  *
- * Returns: the duplicated #AdgPoint struct or %NULL on errors
+ * Returns: the duplicated #AdgPoint struct or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -271,11 +271,11 @@ adg_point_invalidate(AdgPoint *point)
  * adg_point_unset:
  * @point: a pointer to an #AdgPoint
  *
- * Unsets @point by resetting the internal %up_to_date flag and
- * (eventually) unlinking it from the named pair it is bound to.
- * After this call the content of @point is undefined, so a
- * subsequent call to adg_point_get_pair() will return %NULL
- * raising a warning.
+ * Unsets @point by resetting the internal <varname>up_to_date</varname>
+ * flag and (eventually) unlinking it from the named pair it is bound
+ * to. After this call the content of @point is undefined, so a
+ * subsequent call to adg_point_get_pair() will
+ * return <constant>NULL</constant> raising a warning.
  *
  * Since: 1.0
  **/
@@ -303,8 +303,7 @@ adg_point_unset(AdgPoint *point)
  * implementation is protected against multiple calls so it
  * can be called more times without harms.
  *
- * Returns: %TRUE if @point has been updated or %FALSE on errors,
- *          i.e. when it is bound to a non-existent named pair.
+ * Returns: <constant>TRUE</constant> if @point has been updated or <constant>FALSE</constant> on errors, i.e. when it is bound to a non-existent named pair.
  *
  * Since: 1.0
  **/
@@ -352,7 +351,7 @@ adg_point_update(AdgPoint *point)
  * pair by using adg_point_update() before.
  * </para></note>
  *
- * Returns: (transfer full): the pair of @point or %NULL if the named pair does not exist
+ * Returns: (transfer full): the pair of @point or <constant>NULL</constant> if the named pair does not exist.
  *
  * Since: 1.0
  **/
@@ -372,10 +371,10 @@ adg_point_get_pair(AdgPoint *point)
  * @point: an #AdgPoint
  *
  * Gets the source model of the named pair bound to @point, or
- * returns %NULL if @point is an explicit pair. The returned
- * value is owned by @point.
+ * returns <constant>NULL</constant> if @point is an explicit
+ * pair. The returned value is owned by @point.
  *
- * Returns: (transfer none): an #AdgModel or %NULL.
+ * Returns: (transfer none): an #AdgModel or <constant>NULL</constant>.
  *
  * Since: 1.0
  **/
@@ -390,11 +389,12 @@ adg_point_get_model(const AdgPoint *point)
  * adg_point_get_name:
  * @point: an #AdgPoint
  *
- * Gets the name of the named pair bound to @point, or returns
- * %NULL if @point is an explicit pair. The returned value is
- * owned by @point and should not be modified or freed.
+ * Gets the name of the named pair bound to @point, or
+ * returns <constant>NULL</constant> if @point is an explicit
+ * pair. The returned value is owned by @point and should not
+ * be modified or freed.
  *
- * Returns: the name of the named pair or %NULL
+ * Returns: the name of the named pair or <constant>NULL</constant>.
  *
  * Since: 1.0
  **/
@@ -410,10 +410,11 @@ adg_point_get_name(const AdgPoint *point)
  * @point1: the first point to compare
  * @point2: the second point to compare
  *
- * Compares @point1 and @point2 and returns %TRUE if the points are
- * equals. The comparison is made by checking also the named pairs
- * they are bound to. If you want to compare only their coordinates,
- * use cpml_pair_equal() directly on the #AdgPoint structs:
+ * Compares @point1 and @point2 and returns <constant>TRUE</constant>
+ * if the points are equals. The comparison is made by checking also
+ * the named pairs they are bound to. If you want to compare only
+ * their coordinates, use cpml_pair_equal() directly on the
+ * #AdgPoint structs:
  *
  * <informalexample><programlisting language="C">
  * if (adg_point_update(point1) &&
@@ -424,9 +425,9 @@ adg_point_get_name(const AdgPoint *point)
  * }
  * </programlisting></informalexample>
  *
- * %NULL points are handled gracefully.
+ * <constant>NULL</constant> points are handled gracefully.
  *
- * Returns: %TRUE if @point1 is equal to @point2, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> if @point1 is equal to @point2, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/

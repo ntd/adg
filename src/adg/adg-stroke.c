@@ -202,7 +202,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * @trail: the #AdgTrail to stroke
  *
  * Creates a new stroke entity based on the @trail model.
- * @trail can be %NULL, in which case an empty stroke is created.
+ * @trail can be <constant>NULL</constant>, in which case
+ * an empty stroke is created.
  *
  * Returns: the newly created stroke entity
  *
@@ -283,7 +284,7 @@ adg_stroke_set_trail(AdgStroke *stroke, AdgTrail *trail)
  * The returned trail is owned by @stroke and should not
  * be freed or modified.
  *
- * Returns: (transfer none): the requested #AdgTrail or %NULL on errors.
+ * Returns: (transfer none): the requested #AdgTrail or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

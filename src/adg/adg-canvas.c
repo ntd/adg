@@ -41,11 +41,11 @@
  * adg_canvas_set_size_explicit() or the convenient
  * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
  * only one dimension and let the other one be computed automatically.
- * This is done by using the special value %0 that specifies a side
+ * This is done by using the special value 0 that specifies a side
  * must be autocalculated.
  *
  * By default either width and height must be autocalculated (are
- * set to %0), so the arrange() phase on the canvas is performed.
+ * set to 0), so the arrange() phase on the canvas is performed.
  * Margins and paddings are then added to the extents to get the
  * border coordinates and the final bounding box.
  *
@@ -449,7 +449,7 @@ adg_canvas_new(void)
  * @size: (transfer none): the new size for the canvas
  *
  * Sets a specific size on @canvas. The x and/or y
- * component of @size can be set to %0, in which case
+ * component of @size can be set to 0, in which case
  * the exact value will be autocalculated, that is the
  * size component returned by adg_entity_get_extents()
  * on @canvas will be used instead.
@@ -468,8 +468,8 @@ adg_canvas_set_size(AdgCanvas *canvas, const CpmlPair *size)
 /**
  * adg_canvas_set_size_explicit:
  * @canvas: an #AdgCanvas
- * @x:      the new width of the canvas or %0 to reset
- * @y:      the new height of the canvas or %0 to reset
+ * @x:      the new width of the canvas or 0 to reset
+ * @y:      the new height of the canvas or 0 to reset
  *
  * A convenient function to set the size of @canvas using
  * explicit coordinates. Check adg_canvas_set_size() for
@@ -493,11 +493,11 @@ adg_canvas_set_size_explicit(AdgCanvas *canvas, gdouble x, gdouble y)
  * @canvas: an #AdgCanvas
  *
  * Gets the specific size set on @canvas. The x and/or y
- * components of the returned #CpmlPair could be %0, in which
+ * components of the returned #CpmlPair could be 0, in which
  * case the size returned by adg_entity_get_extents() on @canvas
  * will be used instead.
  *
- * Returns: (transfer none): the explicit size set on this canvas or %NULL on errors.
+ * Returns: (transfer none): the explicit size set on this canvas or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -515,7 +515,7 @@ adg_canvas_get_size(AdgCanvas *canvas)
 /**
  * adg_canvas_set_scales:
  * @canvas: an #AdgCanvas
- * @...:    %NULL terminated list of strings
+ * @...:    <constant>NULL</constant> terminated list of strings
  *
  * Sets the scales allowed by @canvas. Every scale identifies a
  * specific factor to be applied to the local matrix of @canvas.
@@ -544,7 +544,7 @@ adg_canvas_set_scales(AdgCanvas *canvas, ...)
 /**
  * adg_canvas_set_scales_valist:
  * @canvas:   an #AdgCanvas
- * @var_args: %NULL terminated list of strings
+ * @var_args: <constant>NULL</constant> terminated list of strings
  *
  * Vararg variant of adg_canvas_set_scales().
  *
@@ -575,7 +575,7 @@ adg_canvas_set_scales_valist(AdgCanvas *canvas, va_list var_args)
 /**
  * adg_canvas_set_scales_array:
  * @canvas:                                         an #AdgCanvas
- * @scales: (array zero-terminated=1) (allow-none): %NULL terminated array of scales
+ * @scales: (array zero-terminated=1) (allow-none): <constant>NULL</constant> terminated array of scales
  *
  * Array variant of adg_canvas_set_scales().
  *
@@ -597,9 +597,9 @@ adg_canvas_set_scales_array(AdgCanvas *canvas, gchar **scales)
  * Gets the list of scales set on @canvas: check adg_canvas_set_scales()
  * to get an idea of what scales are supposed to be.
  *
- * If no scales are set, %NULL is returned.
+ * If no scales are set, <constant>NULL</constant> is returned.
  *
- * Returns: (element-type utf8) (transfer none): the %NULL terminated list of valid scales.
+ * Returns: (element-type utf8) (transfer none): the <constant>NULL</constant> terminated list of valid scales.
  *
  * Since: 1.0
  **/
@@ -801,7 +801,7 @@ adg_canvas_set_title_block(AdgCanvas *canvas,
  * The returned entity is owned by @canvas and should not be
  * modified or freed.
  *
- * Returns: (transfer none): the title block object or %NULL.
+ * Returns: (transfer none): the title block object or <constant>NULL</constant>.
  *
  * Since: 1.0
  **/
@@ -839,7 +839,7 @@ adg_canvas_set_top_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the top margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error.
+ * Returns: the requested margin or 0 on error.
  *
  * Since: 1.0
  **/
@@ -877,7 +877,7 @@ adg_canvas_set_right_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the right margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error.
+ * Returns: the requested margin or 0 on error.
  *
  * Since: 1.0
  **/
@@ -915,7 +915,7 @@ adg_canvas_set_bottom_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the bottom margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error.
+ * Returns: the requested margin or 0 on error.
  *
  * Since: 1.0
  **/
@@ -953,7 +953,7 @@ adg_canvas_set_left_margin(AdgCanvas *canvas, gdouble value)
  *
  * Gets the left margin (in global space) of @canvas.
  *
- * Returns: the requested margin or %0 on error.
+ * Returns: the requested margin or 0 on error.
  *
  * Since: 1.0
  **/
@@ -1020,9 +1020,9 @@ adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
  * @canvas:    an #AdgCanvas
  * @new_state: the new flag status
  *
- * Sets a new status on the #AdgCanvas:has-frame property: %TRUE
- * means a border around the canvas extents (less the margins)
- * should be rendered.
+ * Sets a new status on the #AdgCanvas:has-frame
+ * property: <constant>TRUE</constant> means a border around
+ * the canvas extents (less the margins) should be rendered.
  *
  * Since: 1.0
  **/
@@ -1039,7 +1039,8 @@ adg_canvas_switch_frame(AdgCanvas *canvas, gboolean new_state)
  *
  * Gets the current status of the #AdgCanvas:has-frame property,
  * that is whether a border around the canvas extents (less the
- * margins) should be rendered (%TRUE) or not (%FALSE).
+ * margins) should be rendered (<constant>TRUE</constant>) or not
+ * (<constant>FALSE</constant>).
  *
  * Returns: the current status of the frame flag.
  *
@@ -1079,7 +1080,7 @@ adg_canvas_set_top_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the top padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error.
+ * Returns: the requested padding or 0 on error.
  *
  * Since: 1.0
  **/
@@ -1117,7 +1118,7 @@ adg_canvas_set_right_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the right padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error.
+ * Returns: the requested padding or 0 on error.
  *
  * Since: 1.0
  **/
@@ -1156,7 +1157,7 @@ adg_canvas_set_bottom_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the bottom padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error.
+ * Returns: the requested padding or 0 on error.
  *
  * Since: 1.0
  **/
@@ -1194,7 +1195,7 @@ adg_canvas_set_left_padding(AdgCanvas *canvas, gdouble value)
  *
  * Gets the left padding (in global space) of @canvas.
  *
- * Returns: the requested padding or %0 on error.
+ * Returns: the requested padding or 0 on error.
  *
  * Since: 1.0
  **/
@@ -1414,9 +1415,10 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
  * gtk_paper_size_new(), so use any valid name accepted by
  * that function.
  *
- * To reset this size, you could use adg_canvas_set_size() with a
- * %NULL size: in this way the size will match the boundary boxes
- * of the entities contained by the canvas.
+ * To reset this size, you could use adg_canvas_set_size()
+ * with a <constant>NULL</constant> size: in this way the
+ * size will match the boundary boxes of the entities
+ * contained by the canvas.
  *
  * Furthermore, the margins will be set to their default values,
  * that is the margins returned by the #GtkPaperSize API.
@@ -1454,20 +1456,21 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  *
  * A convenient function to setup the page of @canvas so it can
  * also be subsequentially used for printing. It is allowed to
- * pass %NULL for @page_setup to unset the setup data from @canvas.
+ * pass <constant>NULL</constant> for @page_setup to unset the
+ * setup data from @canvas.
  *
  * A reference to @page_setup is added, so there is no need to keep
- * alive this object outside this function. The internal @page_setup
- * pointer is stored in the associative key %_adg_page_setup and
- * can be retrieved at any time with adg_canvas_get_page_setup().
+ * alive this object outside this function. The @page_setup pointer
+ * is stored in the associative key <constant>"_adg_page_setup"</constant>
+ * and can be retrieved at any time with adg_canvas_get_page_setup().
  *
  * The size and margins provided by @page_setup are used to set the
  * size and margins of @canvas much in the same way as what
  * adg_canvas_set_paper() does. This means if you set a page and
  * then unset it, the canvas will retain size and margins of the
  * original page although @page_setup will not be used for printing.
- * You must unset the size with adg_canvas_set_size() with a
- * %NULL size.
+ * You must unset the size with adg_canvas_set_size()
+ * with a <constant>NULL</constant> size.
  *
  * <informalexample><programlisting language="C">
  * // By default, canvas does not have an explicit size
@@ -1521,10 +1524,10 @@ adg_canvas_set_page_setup(AdgCanvas *canvas, GtkPageSetup *page_setup)
  *
  * If adg_canvas_set_page_setup() is called, a #GtkPageSetup object
  * is created and bound to @canvas. This metho returns a pointer
- * to that internal object or %NULL if adg_canvas_set_page_setup()
- * has not been called before.
+ * to that internal object or <constant>NULL</constant> if
+ * adg_canvas_set_page_setup() has not been called before.
  *
- * Returns: (allow-none) (transfer none): the #GtkPageSetup with size and margins of @canvas of %NULL on no setup found or errors.
+ * Returns: (allow-none) (transfer none): the #GtkPageSetup with size and margins of @canvas of <constant>NULL</constant> on no setup found or errors.
  *
  * Since: 1.0
  **/

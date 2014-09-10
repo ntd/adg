@@ -26,9 +26,7 @@
  *
  * These wrappers are supposed to make bindings development easier.
  * This file defines the wrappers and the functions needed for
- * implementing a #GBoxed type, most notably the #GBoxedCopyFunc
- * requested by g_boxed_type_register_static() (the #GBoxedFreeFunc
- * will usually be g_free()).
+ * implementing the CPML primitives as  #GBoxed type.
  *
  * Since: 1.0
  **/
@@ -230,8 +228,9 @@ cpml_segment_dup(const CpmlSegment *segment)
  * Duplicates @segment. This function makes a deep duplication,
  * that is it duplicates also the underlying data that defines
  * the segment. The <structfield>path</structfield> field
- * is set to %NULL as <structfield>data</structfield> is no
- * more referring to the original cairo path.
+ * is set to <constant>NULL</constant> as
+ * <structfield>data</structfield> is no more referring to the
+ * original cairo path.
  *
  * All the data is allocated in the same chunk of memory so freeing
  * the returned pointer releases all the occupied memory.

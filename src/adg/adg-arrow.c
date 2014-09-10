@@ -179,8 +179,8 @@ adg_arrow_new(void)
  * @pos: the position ratio on @trail
  *
  * Creates a new arrow on the first segment on @trail at position
- * @pos, where @pos is a ratio of the @trail length (being %0 the
- * start point, %1 the end point, %0.5 the middle point and so on).
+ * @pos, where @pos is a ratio of the @trail length (being 0 the
+ * start point, 1 the end point, 0.5 the middle point and so on).
  * By default, an arrow as #AdgEntity:local-mix set to #ADG_MIX_PARENT.
  *
  * Returns: the newly created arrow entity

@@ -135,7 +135,7 @@ adg_table_cell_dup(const AdgTableCell *table_cell)
  * adg_table_cell_set_value() or enable the frame with
  * adg_table_cell_switch_frame().
  *
- * Returns: (transfer full): the newly created cell or %NULL on errors.
+ * Returns: (transfer full): the newly created cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -161,7 +161,7 @@ adg_table_cell_new(AdgTableRow *table_row)
  *
  * Creates a new cell and inserts it rigthly before the @table_cell cell.
  *
- * Returns: (transfer full): the newly created cell or %NULL on errors.
+ * Returns: (transfer full): the newly created cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -193,7 +193,7 @@ adg_table_cell_new_before(AdgTableCell *before_cell)
  * A convenient wrapper to adg_table_cell_new() that allows to
  * specify the @width of @table_row all at once.
  *
- * Returns: (transfer full): the newly created cell or %NULL on errors.
+ * Returns: (transfer full): the newly created cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -219,13 +219,14 @@ adg_table_cell_new_with_width(AdgTableRow *table_row, gdouble width)
  * A convenient function to add a cell and specifies some common
  * used properties at once.
  *
- * If @name is %NULL, the created cell will not be a named cell.
- * Check adg_table_set_cell() for further details on what a named
- * cell is supposed to be..
+ * If @name is <constant>NULL</constant>, the created cell will
+ * not be a named cell. Check adg_table_set_cell() for further
+ * details on what a named cell is supposed to be.
  *
- * @title can be %NULL, in which case no title entity will be created.
+ * @title can be <constant>NULL</constant>, in which case no
+ * title entity will be created.
  *
- * Returns: (transfer full): the newly created cell or %NULL on errors.
+ * Returns: (transfer full): the newly created cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -343,9 +344,11 @@ adg_table_cell_get_table(AdgTableCell *table_cell)
  * eventual padding spaces specified by the table style.
  *
  * The old internal entity is unrefenrenced while the @title (if
- * not %NULL) is refenenced with g_object_ref_sink().
+ * not <constant>NULL</constant>) is refenenced with
+ * g_object_ref_sink().
  *
- * @title can be %NULL, in which case the old entity is removed.
+ * @title can be <constant>NULL</constant>, in which case the old
+ * entity is removed.
  *
  * Since: 1.0
  **/
@@ -423,7 +426,7 @@ adg_table_cell_set_text_title(AdgTableCell *table_cell, const gchar *title)
  * Gets the current title of @table_cell. The returned string is owned
  * by @table_cell and must not be modified or freed.
  *
- * Returns: (transfer none): the title entity or %NULL for undefined title.
+ * Returns: (transfer none): the title entity or <constant>NULL</constant> for undefined title.
  *
  * Since: 1.0
  **/
@@ -446,9 +449,10 @@ adg_table_cell_title(AdgTableCell *table_cell)
  * eventual padding spaces specified by the table style.
  *
  * The old internal entity is unrefenrenced while the @value (if
- * not %NULL) is refenenced with g_object_ref_sink().
+ * not <constant>NULL</constant>) is referenced with
+ * g_object_ref_sink().
  *
- * @value can be %NULL, in which case the old entity is removed.
+ * @value can be <constant>NULL</constant>, in which case the old entity is removed.
  *
  * Since: 1.0
  **/
@@ -525,7 +529,7 @@ adg_table_cell_set_text_value(AdgTableCell *table_cell, const gchar *value)
  * Gets the current value of @table_cell. The returned string is owned
  * by @table_cell and must not be modified or freed.
  *
- * Returns: (transfer none): the value entity or %NULL for undefined value.
+ * Returns: (transfer none): the value entity or <constant>NULL</constant> for undefined value.
  *
  * Since: 1.0
  **/
@@ -603,7 +607,7 @@ adg_table_cell_set_value_pos_explicit(AdgTableCell *table_cell,
  * outside the cell boundary box, luckely overwriting the adiacent
  * cells.
  *
- * Using %0 as @width means the width of the cell will be automatically
+ * Using 0 as @width means the width of the cell will be automatically
  * adjusted to the maximum width of its content.
  *
  * Negative width values are not allowed: this condition will raise
@@ -629,7 +633,7 @@ adg_table_cell_set_width(AdgTableCell *table_cell, gdouble width)
  *
  * Gets the width of @table_cell.
  *
- * Returns: the requested width or %0 on errors
+ * Returns: the requested width or 0 on errors.
  *
  * Since: 1.0
  **/
@@ -646,9 +650,10 @@ adg_table_cell_get_width(AdgTableCell *table_cell)
  * @table_cell: a valid #AdgTableCell
  * @has_frame: whether to draw or not the frame
  *
- * Sets the frame flag of @table_cell: if @has_frame is %TRUE, a frame around
- * @table_cell will be rendered using the #AdgTableStyle:cell-dress dress
- * of the table style.
+ * Sets the frame flag of @table_cell: if @has_frame is
+ * <constant>TRUE</constant>, a frame around @table_cell
+ * will be rendered using the #AdgTableStyle:frame-dress
+ * dress of the table style.
  *
  * Since: 1.0
  **/
@@ -690,7 +695,7 @@ adg_table_cell_has_frame(AdgTableCell *table_cell)
  * arrange() phase as in the other situation the extents will likely
  * be not up to date.
  *
- * Returns: the extents of @table_cell or %NULL on errors
+ * Returns: the extents of @table_cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -785,7 +790,7 @@ adg_table_cell_size_request(AdgTableCell *table_cell,
  * @layout->size.y is negative in order to have a valid size.
  * </para></note>
  *
- * Returns: the extents of @table_cell or %NULL on errors
+ * Returns: the extents of @table_cell or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

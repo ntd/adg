@@ -32,12 +32,13 @@
  *
  * The default implementation reacts to some mouse events: if you drag
  * the mouse keeping the wheel pressed, the canvas will be translated
- * (in local space by default and in global space if %SHIFT is pressed);
- * if the mouse wheel is rotated the canvas will be scaled up or down
- * according to the wheel direction by the factor specified in the
- * #AdgGtkArea:factor property (again, in local space by default and
- * in global space if %SHIFT is pressed). The adg_gtk_area_get_zoom()
- * method could be used to retrieve the current zoom coefficient.
+ * (in local space by default and in global space if <keycap>SHIFT</keycap>
+ * is pressed); if the mouse wheel is rotated the canvas will
+ * be scaled up or down according to the wheel direction by the factor
+ * specified in the #AdgGtkArea:factor property (again, in local space
+ * by default and in global space if <keycap>SHIFT</keycap> is pressed).
+ * The adg_gtk_area_get_zoom() method could be used to retrieve the
+ * current zoom coefficient.
  *
  * A new transformation layer is present between the global space
  * and the rendering: the #AdgGtkArea:render-map matrix. This
@@ -390,8 +391,7 @@ adg_gtk_area_set_canvas(AdgGtkArea *area, AdgCanvas *canvas)
  * Gets the canvas associated to @area. The returned canvas
  * is owned by @area and should not be modified or freed.
  *
- * Returns: (transfer none): the requested #AdgCanvas object or
- *          %NULL on errors
+ * Returns: (transfer none): the requested #AdgCanvas object or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -413,8 +413,8 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
  * @map: the new map
  *
  * Sets the new render transformation of @area to @map:
- * the old map is discarded. If @map is %NULL, the render
- * map is left unchanged.
+ * the old map is discarded. If @map is <constant>NULL</constant>,
+ * the render map is left unchanged.
  *
  * <note><para>
  * The render map is an implementation detail and this function
@@ -479,7 +479,7 @@ adg_gtk_area_transform_render_map(AdgGtkArea *area,
  *
  * Gets the render map.
  *
- * Returns: the requested map or %NULL on errors
+ * Returns: the requested map or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -514,7 +514,7 @@ adg_gtk_area_get_render_map(AdgGtkArea *area)
  * The canvas will be updated, meaning adg_entity_arrange()
  * is called before the extents computation.
  *
- * Returns: the extents of the @area canvas or %NULL on errors
+ * Returns: the extents of the @area canvas or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -531,8 +531,8 @@ adg_gtk_area_get_extents(AdgGtkArea *area)
  * @area: an #AdgGtkArea
  *
  * Gets the last zoom coefficient applied on the canvas of @area.
- * If the #AdgGtkArea:autozoom property is %FALSE, the value
- * returned should be always %1.
+ * If the #AdgGtkArea:autozoom property is <constant>FALSE</constant>,
+ * the value returned should be always 1.
  *
  * Returns: the current zoom coefficient
  *
@@ -730,7 +730,7 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
  * @allocation: the new allocation struct
  *
  * Scales the drawing according to the new allocation if
- * #AdgGtkArea:autozoom is %TRUE.
+ * #AdgGtkArea:autozoom is <constant>TRUE</constant>.
  *
  * TODO: the current implementation initially centers the canvas
  * on the allocation space. Further allocations (due to a

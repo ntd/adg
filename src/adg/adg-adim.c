@@ -449,7 +449,8 @@ adg_adim_new_full_from_model(AdgModel *model,
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @org1 can be %NULL, in which case the point is destroyed.
+ * @org1 can be <constant>NULL</constant>, in which case
+ * the point is destroyed.
  *
  * Since: 1.0
  **/
@@ -510,10 +511,10 @@ adg_adim_set_org1_from_pair(AdgADim *adim, const CpmlPair *org1)
  * @org1: a named pair in @model
  *
  * Binds #AdgADim:org1 to the @org1 named pair of @model. If @model
- * is %NULL, the point will be unset. In any case, the old point
- * is silently discarded, unreferencing its model if that point
- * was bound to a named pair (hence, possibly destroying the model
- * if this was the last reference).
+ * is <constant>NULL</constant>, the point will be unset. In any
+ * case, the old point is silently discarded, unreferencing its
+ * model if that point was bound to a named pair (hence, possibly
+ * destroying the model if this was the last reference).
  *
  * The assignment is lazy so @org1 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
@@ -565,7 +566,8 @@ adg_adim_get_org1(AdgADim *adim)
  * point was bound to a named pair (hence, possibly destroying
  * the model if this was the last reference).
  *
- * @org2 can be %NULL, in which case the point is destroyed.
+ * @org2 can be <constant>NULL</constant>, in which case
+ * the point is destroyed.
  *
  * Since: 1.0
  **/
@@ -626,10 +628,10 @@ adg_adim_set_org2_from_pair(AdgADim *adim, const CpmlPair *org2)
  * @org2: a named pair in @model
  *
  * Binds #AdgADim:org2 to the @org2 named pair of @model. If @model
- * is %NULL, the point will be unset. In any case, the old point
- * is silently discarded, unreferencing its model if that point
- * was bound to a named pair (hence, possibly destroying the model
- * if this was the last reference).
+ * is <constant>NULL</constant>, the point will be unset. In any
+ * case, the old point is silently discarded, unreferencing its
+ * model if that point was bound to a named pair (hence, possibly
+ * destroying the model if this was the last reference).
  *
  * The assignment is lazy so @org2 could be not be present in @model.
  * Anyway, at the first access to this point an error will be raised
@@ -676,8 +678,9 @@ adg_adim_get_org2(AdgADim *adim)
  * @adim: an #AdgADim entity
  * @new_state: the new state
  *
- * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
- * the first extension line of @adim.
+ * Shows (if @new_state is <constant>TRUE</constant>) or hides
+ * (if @new_state is <constant>FALSE</constant>) the first
+ * extension line of @adim.
  *
  * Since: 1.0
  **/
@@ -695,7 +698,7 @@ adg_adim_switch_extension1(AdgADim *adim, gboolean new_state)
  *
  * Checks if @adim should render the first extension line.
  *
- * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> on first extension line presents, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -716,8 +719,9 @@ adg_adim_has_extension1(AdgADim *adim)
  * @adim: an #AdgADim entity
  * @new_state: the new new_state
  *
- * Shows (if @new_state is %TRUE) or hides (if @new_state is %FALSE)
- * the second extension line of @adim.
+ * Shows (if @new_state is <constant>TRUE</constant>) or hides
+ * (if @new_state is <constant>FALSE</constant>) the second
+ * extension line of @adim.
  *
  * Since: 1.0
  **/
@@ -735,7 +739,7 @@ adg_adim_switch_extension2(AdgADim *adim, gboolean new_state)
  *
  * Checks if @adim should render the second extension line.
  *
- * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> on first extension line presents, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/

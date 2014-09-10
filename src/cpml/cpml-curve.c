@@ -32,19 +32,25 @@
  * <important>
  * <title>TODO</title>
  * <itemizedlist>
- * <listitem>the get_length() method must be implemented;</listitem>
- * <listitem>actually the put_extents() method is implemented by computing
- *           the bounding box of the control polygon and this will likely
- *           include some empty space: there is room for improvements;</listitem>
- * <listitem>the put_pair_at() method must be implemented;</listitem>
- * <listitem>the put_vector_at() method must be implemented;</listitem>
- * <listitem>the get_closest_pos() method must be implemented;</listitem>
- * <listitem>the put_intersections() method must be implemented;</listitem>
+ * <listitem>the <function>get_length</function> method must be
+ *           implemented;</listitem>
+ * <listitem>actually the <function>put_extents</function> method is
+ *           implemented by computing the bounding box of the control
+ *           polygon and this will likely include some empty space:
+ *           there is room for improvements;</listitem>
+ * <listitem>the <function>put_pair_at</function> method must be
+ *           implemented;</listitem>
+ * <listitem>the <function>put_vector_at</function> method must be
+ *           implemented;</listitem>
+ * <listitem>the <function>get_closest_pos</function> method must be
+ *           implemented;</listitem>
+ * <listitem>the <function>put_intersections</function> method must be
+ *           implemented;</listitem>
  * <listitem>by default, the offset curve is calculated by using the point
  *           at t=0.5 as reference: use a better candidate;</listitem>
- * <listitem>in the offset() implementation, when the equations are
- *           inconsistent, the alternative approach performs very bad
- *           if <varname>v0</varname> and <varname>v3</varname> are
+ * <listitem>in the <function>offset</function> implementation, when the
+ *           equations are inconsistent, the alternative approach performs
+ *           very bad if <varname>v0</varname> and <varname>v3</varname> are
  *           opposite or staggered.</listitem>
  * </itemizedlist>
  * </important>
@@ -172,7 +178,7 @@
  * </programlisting></informalexample>
  *
  * The whole process must be guarded against division by 0 exceptions.
- * If either <code>v0.x</code> and <code>v3.x</code> are %0, the first
+ * If either <code>v0.x</code> and <code>v3.x</code> are 0, the first
  * equation will be inconsistent. More in general, the
  * <code>v0.x &times; v3.y = v3.x &times; v3.y</code> condition must
  * be avoided. This is the first situation to avoid, in which case

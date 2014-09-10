@@ -120,9 +120,10 @@ adg_matrix_dup(const cairo_matrix_t *matrix)
  * @matrix1: the first operand
  * @matrix2: the second operand
  *
- * Compares @matrix1 and @matrix2 and returns %TRUE if the matrices are equal.
+ * Compares @matrix1 and @matrix2 and returns <constant>TRUE</constant>
+ * if the matrices are equal.
  *
- * Returns: %TRUE if @matrix1 is equal to @matrix2, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> if @matrix1 is equal to @matrix2, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -147,7 +148,7 @@ adg_matrix_equal(const cairo_matrix_t *matrix1, const cairo_matrix_t *matrix2)
  *
  * Gets rid of the scaling component of a matrix.
  *
- * Returns: %TRUE on success, %FALSE on errors
+ * Returns: <constant>TRUE</constant> on success, <constant>FALSE</constant> on errors.
  *
  * Since: 1.0
  **/

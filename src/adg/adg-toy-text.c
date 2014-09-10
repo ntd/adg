@@ -28,7 +28,7 @@
  * The toy text entity is not subject to the local matrix, only its origin is.
  *
  * <note><para>
- * By default, the #AdgToyText:local-mix property is set to
+ * By default, the #AdgEntity:local-mix property is set to
  * #ADG_MIX_ANCESTORS_NORMALIZED on #AdgToyText entities.
  * </para></note>
  *

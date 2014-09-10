@@ -20,7 +20,7 @@
 
 /**
  * SECTION:cpml-extents
- * @Section_Id:CpmlExtents
+ * @Section_Id:Extents
  * @title: CpmlExtents
  * @short_description: A rectangular area representing a bounding box
  *
@@ -32,7 +32,7 @@
 
 /**
  * CpmlExtents:
- * @is_defined: set to %0 when these extents are undefined
+ * @is_defined: set to 0 when these extents are undefined
  * @org: the lowest x,y coordinates
  * @size: the width (x) and height (y) of the extents
  *
@@ -92,11 +92,10 @@ cpml_extents_from_cairo_text(CpmlExtents *extents,
  * @src:     the second extents to compare
  *
  * Compares @extents to @src and returns 1 if the extents are equals.
- * Two %NULL or two undefined extents are considered equal, athough
- * %NULL extents are not equal to undefined extents.
+ * Two <constant>NULL</constant> or two undefined extents are considered equal,
+ * although <constant>NULL</constant> extents are not equal to undefined extents.
  *
- * Returns: (type gboolean): %1 if @extents is equal to @src,
- *                           %0 otherwise
+ * Returns: (type gboolean): 1 if @extents is equal to @src, 0 otherwise.
  *
  * Since: 1.0
  **/
@@ -182,11 +181,10 @@ cpml_extents_pair_add(CpmlExtents *extents, const CpmlPair *src)
  * @src:     the subject #CpmlExtents
  *
  * Checks wheter @src is enterely contained by @extents. If @extents
- * is undefined, %0 will be returned. If @src is undefined, %1 will
+ * is undefined, 0 will be returned. If @src is undefined, 1 will
  * be returned. The border of @extents is considered inside.
  *
- * Returns: (type gboolean): %1 if @src is totally inside @extents,
- *                           %0 otherwise
+ * Returns: (type gboolean): 1 if @src is totally inside @extents, 0 otherwise.
  *
  * Since: 1.0
  **/
@@ -221,10 +219,9 @@ cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
  * @src:     the subject #CpmlPair
  *
  * Checks wheter @src is inside @extents. If @extents is undefined,
- * %0 will be returned. The border of @extents is considered inside.
+ * 0 will be returned. The border of @extents is considered inside.
  *
- * Returns: (type gboolean): %1 if @src is inside @extents,
- *                           %0 otherwise
+ * Returns: (type gboolean): 1 if @src is inside @extents, 0 otherwise.
  *
  * Since: 1.0
  **/

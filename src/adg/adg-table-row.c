@@ -28,7 +28,7 @@
  * of an #AdgTable object.
  *
  * Every row is segmented into different cells. It must be populated
- * by using the #AdgCell APIs, such as adg_table_cell_new() or
+ * by using the #AdgTableCell APIs, such as adg_table_cell_new() or
  * adg_table_cell_new_before().
  *
  * Since: 1.0
@@ -105,7 +105,7 @@ adg_table_row_dup(const AdgTableRow *table_row)
  * row will be the fallback value provided by the table style:
  * you can override it by using adg_table_row_set_height().
  *
- * Returns: (transfer full): the newly created row or %NULL on errors.
+ * Returns: (transfer full): the newly created row or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -130,7 +130,7 @@ adg_table_row_new(AdgTable *table)
  * Creates a new empty row with default height and inserts it
  * just before @before_row.
  *
- * Returns: (transfer full): the newly created row or %NULL on errors.
+ * Returns: (transfer full): the newly created row or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -180,7 +180,7 @@ adg_table_row_free(AdgTableRow *table_row)
  * adg_table_row_insert:
  * @table_row: a valid #AdgTableRow
  * @table_cell: the #AdgTableCell to insert
- * @before_cell: (allow-none): an #AdgTableRow or %NULL
+ * @before_cell: (allow-none): an #AdgTableRow
  *
  * Inserts @table_cell inside @table_row. If @before_cell
  * is specified, @table_cell is inserted before it.
@@ -257,7 +257,7 @@ adg_table_row_foreach(AdgTableRow *table_row,
  * Returns the container table of @table_row. The returned table
  * is owned by @table_row and must not be modified or freed.
  *
- * Returns: (transfer none): the requested table or %NULL on errors.
+ * Returns: (transfer none): the requested table or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -275,7 +275,7 @@ adg_table_row_get_table(AdgTableRow *table_row)
  * @height: the new height
  *
  * Sets a new height on @table_row. The extents will be invalidated to
- * recompute the whole layout of the table. Specifying %0 in
+ * recompute the whole layout of the table. Specifying 0 in
  * @height will use the default height set in the table style.
  *
  * Since: 1.0
@@ -296,7 +296,7 @@ adg_table_row_set_height(AdgTableRow *table_row, gdouble height)
  *
  * Gets the height of @table_row.
  *
- * Returns: the requested height or %0 on errors
+ * Returns: the requested height or 0 on errors.
  *
  * Since: 1.0
  **/
@@ -316,7 +316,7 @@ adg_table_row_get_height(AdgTableRow *table_row)
  * the arrange() phase as in the other situation the extents will
  * likely be not up to date.
  *
- * Returns: (transfer none): the extents of @table_row or %NULL on errors.
+ * Returns: (transfer none): the extents of @table_row or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -393,7 +393,7 @@ adg_table_row_size_request(AdgTableRow *table_row)
  * @layout->size.y is negative in order to have a valid size.
  * </para></note>
  *
- * Returns: (transfer none): the extents of @table_row or %NULL on errors.
+ * Returns: (transfer none): the extents of @table_row or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

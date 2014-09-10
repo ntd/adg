@@ -421,8 +421,8 @@ adg_dim_style_new(void)
  *
  * Uses @marker as entity template to generate a new marker entity
  * when a call to adg_dim_style_marker1_new() is made. It is allowed
- * to pass %NULL as @marker, in which case the template data of the
- * first marker are unset.
+ * to pass <constant>NULL</constant> as @marker, in which case the
+ * template data of the first marker are unset.
  *
  * This method duplicates internally the property values of @marker,
  * so any further change to @marker does not affect @dim_style anymore.
@@ -443,13 +443,11 @@ adg_dim_style_set_marker1(AdgDimStyle *dim_style, AdgMarker *marker)
  * adg_dim_style_marker1_new:
  * @dim_style: an #AdgDimStyle
  *
- * Creates a new marker entity by cloning the #AdgMarker:marker1
+ * Creates a new marker entity by cloning the #AdgDimStyle:marker1
  * object. The returned entity should be unreferenced with
  * g_object_unref() when no longer needed.
  *
- * Returns: (transfer full): a newly created marker or %NULL
- *                           if the #AdgDimStyle:marker1 property
- *                           is not set or on errors.
+ * Returns: (transfer full): a newly created marker or <constant>NULL</constant> if the #AdgDimStyle:marker1 property is not set or on errors.
  *
  * Since: 1.0
  **/
@@ -472,8 +470,8 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
  *
  * Uses @marker as entity template to generate a new marker entity
  * when a call to adg_dim_style_marker2_new() is made. It is allowed
- * to pass %NULL as @marker, in which case the template data of the
- * second marker are unset.
+ * to pass <constant>NULL</constant> as @marker, in which case the
+ * template data of the second marker are unset.
  *
  * This method duplicates internally the property values of @marker,
  * so any further change to @marker does not affect @dim_style anymore.
@@ -494,13 +492,11 @@ adg_dim_style_set_marker2(AdgDimStyle *dim_style, AdgMarker *marker)
  * adg_dim_style_marker2_new:
  * @dim_style: an #AdgDimStyle
  *
- * Creates a new marker entity by cloning the #AdgMarker:marker2
+ * Creates a new marker entity by cloning the #AdgDimStyle:marker2
  * object. The returned entity should be unreferenced with
  * g_object_unref() when no longer needed.
  *
- * Returns: (transfer full): a newly created marker or %NULL
- *                           if the #AdgDimStyle:marker2 property
- *                           is not set or on errors.
+ * Returns: (transfer full): a newly created marker or <constant>NULL</constant> if the #AdgDimStyle:marker2 property is not set or on errors.
  *
  * Since: 1.0
  **/

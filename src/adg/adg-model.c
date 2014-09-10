@@ -32,7 +32,7 @@
  * or #AdgHatch.
  *
  * The relationships between model and view are handled by dependencies:
- * whenever an #AdgModel changes (that is the #AdgModel:changed signal is
+ * whenever an #AdgModel changes (that is the #AdgModel::changed signal is
  * emitted), every dependency of the model (#AdgEntity instances) is
  * invalidated with adg_entity_invalidate().
  *
@@ -64,12 +64,13 @@
  * @remove_dependency: signal used to remove an old dependency.
  * @changed:           signal for emitting an #AdgModel::changed signal.
  *
+ *
  * The default @named_pair implementation looks up the #CpmlPair in an internal
  * #GHashTable that uses the pair name as key and the #CpmlPair struct as value.
  *
  * The default @set_named_pair implementation can be used for either adding
- * (if the #CpmlPair is not %NULL) or removing (if #CpmlPair is %NULL) an item
- * from the named pairs hash table.
+ * (if the #CpmlPair is not <constant>NULL</constant>) or removing (if #CpmlPair
+ * is <constant>NULL</constant>) an item from the named pairs hash table.
  *
  * The default handler for @clear signals does not do anything.
  *
@@ -237,8 +238,8 @@ adg_model_class_init(AdgModelClass *klass)
      * Adds, updates or deletes a named pair, accordling to the given
      * parameters.
      *
-     * If @pair is %NULL, the @name named pair is searched and deleted.
-     * If it is not found, a warning is raised.
+     * If @pair is <constant>NULL</constant>, the @name named pair is
+     * searched and deleted. If it is not found, a warning is raised.
      *
      * Otherwise, the @name named pair is searched: if it is found,
      * its data are updated with @pair. If it is not found, a new
@@ -435,8 +436,7 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
  * Gets the list of entities dependending on @model. This list
  * is owned by @model and must not be modified or freed.
  *
- * Returns: (transfer none) (element-type Adg.Entity): a #GSList of
- *          dependencies or %NULL on error.
+ * Returns: (transfer none) (element-type Adg.Entity): a #GSList of dependencies or <constant>NULL</constant> on error.
  *
  * Since: 1.0
  **/
@@ -551,7 +551,7 @@ adg_model_set_named_pair_explicit(AdgModel *model, const gchar *name,
  * Gets the @name named pair associated to @model. The returned
  * pair is owned by @model and must not be modified or freed.
  *
- * Returns: the requested #CpmlPair or %NULL if not found
+ * Returns: the requested #CpmlPair or <constant>NULL</constant> if not found.
  *
  * Since: 1.0
  **/

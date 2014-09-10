@@ -98,13 +98,14 @@
 #else
 /**
  * g_strcmp0:
- * @s1: a C string or %NULL
- * @s2: another C string or %NULL
+ * @s1: a C string or <constant>NULL</constant>
+ * @s2: another C string or <constant>NULL</constant>
  *
- * Compares @s1 and @s2 like strcmp(). Handles %NULL
- * gracefully by sorting it before non-%NULL strings.
- * This is a backward compatibility fallback for GLib
- * prior to 2.16.0
+ * Compares @s1 and @s2 like strcmp(). Handles
+ * <constant>NULL</constant> gracefully by sorting it
+ * before non-<constant>NULL</constant> strings. This
+ * is a backward compatibility fallback for GLib prior
+ * to 2.16.0
  *
  * Returns: -1, 0 or 1, if @s1 is <, == or > than @s2.
  *
@@ -127,10 +128,11 @@ g_strcmp0(const char *s1, const char *s2)
  * adg_is_string_empty:
  * @str: the subject string
  *
- * Checks if @str is an empty string, that is if is %NULL or if
- * its first character is %'\0'.
+ * Checks if @str is an empty string, that is if is
+ * <constant>NULL</constant> or if its first character
+ * is <constant>'\0'</constant>.
  *
- * Returns: %TRUE if @str is an empty string, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> if @str is an empty string, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -147,7 +149,7 @@ adg_is_string_empty(const gchar *str)
  *
  * Checks if @value is a valid @enum_type value.
  *
- * Returns: %TRUE if @value is a valid @enum_type, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> if @value is a valid @enum_type, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -181,10 +183,11 @@ adg_is_enum_value(int value, GType enum_type)
  * adg_is_boolean_value:
  * @value: the gboolean value to check
  *
- * Checks if @value is a valid #gboolean value, that is if it is %TRUE
- * or %FALSE. No other values are accepted.
+ * Checks if @value is a valid #gboolean value, that is if it is
+ * <constant>TRUE</constant> or <constant>FALSE</constant>.
+ * No other values are accepted.
  *
- * Returns: %TRUE if @value is a valid #gboolean, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> if @value is a valid #gboolean, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -204,10 +207,10 @@ adg_is_boolean_value(gboolean value)
  * newly allocated string.
  *
  * @str and @from must be non-null valid C strings while @to can be
- * %NULL, in which case an empty string ("") will be implied.
+ * <constant>NULL</constant>, in which case an empty string
+ * (<constant>""</constant>) will be implied.
  *
- * Returns: a newly allocated string to be freed with g_free() or
- *          %NULL on errors
+ * Returns: a newly allocated string to be freed with g_free() or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -242,8 +245,9 @@ adg_string_replace(const gchar *str, const gchar *from, const gchar *to)
 
 /**
  * _adg_dgettext:
- * @domain: the translation domain to use, or %NULL to use
- *          the domain set with textdomain()
+ * @domain: the translation domain to use, or
+ *          <constant>NULL</constant> to use the domain set
+ *          with <function>textdomain</function>
  * @msgid:  message to translate
  *
  * A variant of dgettext() (or of g_dgettext(), if available) that
@@ -273,8 +277,9 @@ _adg_dgettext(const gchar *domain, const gchar *msgid)
 
 /**
  * _adg_dpgettext:
- * @domain:      the translation domain to use, or %NULL to use
- *               the domain set with textdomain()
+ * @domain:      the translation domain to use, or
+ *               <constant>NULL</constant> to use the domain set with
+ *               <function>textdomain</function>
  * @msgctxtid:   a combined message context and message id, separated
  *               by a \004 character
  * @msgidoffset: the offset of the message id in @msgctxid
@@ -370,8 +375,7 @@ adg_find_file(const gchar *file, ...)
  * x and y are converted by using atoi(), so refer to your C library
  * documentation for details on the algorithm used.
  *
- * Returns: the (possibly approximated) double conversion of @scale
- *          or %0 on errors.
+ * Returns: the (possibly approximated) double conversion of @scale or 0 on errors.
  **/
 gdouble
 adg_scale_factor(const gchar *scale)

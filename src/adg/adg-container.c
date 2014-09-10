@@ -310,7 +310,7 @@ adg_container_remove(AdgContainer *container, AdgEntity *entity)
  * The returned list is ordered from the most recently added child
  * to the oldest one.
  *
- * Returns: (element-type AdgEntity) (transfer container): a newly allocated #GSList of #AdgEntity or %NULL on no children or errors
+ * Returns: (element-type AdgEntity) (transfer container): a newly allocated #GSList of #AdgEntity or <constant>NULL</constant> on no children or errors
  *
  * Since: 1.0
  **/

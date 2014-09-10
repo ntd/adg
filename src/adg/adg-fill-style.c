@@ -42,10 +42,11 @@
  *               must be applied. It is called by #AdgHatch in the rendering
  *               phase passing with its boundary box as argument.
  *
- * The default @set_extents@ implementation simply sets the extents owned by
- * the fill style instance to the one provided, so the last call has
- * precedence. Any derived class can override it to customize this behavior,
- * for example to keep the greatest boundary box instead of the last one.
+ * The default <function>set_extents</function> implementation simply sets
+ * the extents owned by the fill style instance to the one provided, so the
+ * last call has precedence. Any derived class can override it to customize
+ * this behavior, for example to keep the greatest boundary box instead of
+ * the last one.
  *
  * Since: 1.0
  **/
@@ -230,7 +231,8 @@ adg_fill_style_get_pattern(AdgFillStyle *fill_style)
  *
  * Forcibly sets new extents on @fill_style. Any fill style class
  * that want to make some kind of customization can override the
- * set_extents() virtual method to intercept any extents change.
+ * <function>set_extents</function> virtual method to intercept
+ * any extents change.
  *
  * Sets new extents on @fill_style. These extents are usually set
  * by the arrange() method of the entity using this filling style.
@@ -261,7 +263,7 @@ adg_fill_style_set_extents(AdgFillStyle *fill_style,
  * this fill style should be applied: it will clamped by the
  * entities as needed.
  *
- * Returns: (transfer none): the extents of @fill_style or %NULL on errors.
+ * Returns: (transfer none): the extents of @fill_style or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/

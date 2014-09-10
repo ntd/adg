@@ -20,7 +20,7 @@
 
 /**
  * SECTION:cpml-primitive
- * @Section_Id:CpmlPrimitive
+ * @Section_Id:Primitive
  * @title: CpmlPrimitive
  * @short_description: Basic component of segments
  *
@@ -69,7 +69,7 @@
  * As for #CpmlSegment, also the primitive is unobtrusive. This
  * means CpmlPrimitive does not include any coordinates but instead
  * keeps pointers to the original segment (and, by transition, to
- * the underlying #CpmlPath struct).
+ * the underlying #cairo_data_path_t struct).
  *
  * Since: 1.0
  **/
@@ -102,7 +102,7 @@ static void     _cpml_dump_point        (const cairo_path_data_t *path_data);
  *
  * Gets the number of points required to identify the @type primitive.
  *
- * Returns: the number of points or %0 on errors
+ * Returns: the number of points or 0 on errors
  *
  * Since: 1.0
  **/
@@ -187,7 +187,7 @@ cpml_primitive_reset(CpmlPrimitive *primitive)
  * source segment. If there are no more primitives, @primitive is
  * not changed and 0 is returned.
  *
- * Returns: (type boolean): %1 on success, %0 if no next primitive found or errors.
+ * Returns: (type boolean): 1 on success, 0 if no next primitive found or errors.
  *
  * Since: 1.0
  **/
@@ -217,7 +217,7 @@ cpml_primitive_next(CpmlPrimitive *primitive)
  * It is similar to cpml_primitive_type_get_n_points() but using
  * a @primitive instance instead of a type.
  *
- * Returns: the number of points or %0 on errors.
+ * Returns: the number of points or 0 on errors.
  *
  * <!-- Virtual: n_points -->
  *
@@ -303,7 +303,7 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * of a close path is a valid operation and must returns the origin
  * of the segment.
  *
- * Returns: (type gboolean): %1 if the point to be set is existent, %0 otherwise.
+ * Returns: (type gboolean): 1 if the point to be set is existent, 0 otherwise.
  *
  * Since: 1.0
  **/
@@ -332,7 +332,7 @@ cpml_primitive_set_point(CpmlPrimitive *primitive,
  * @pair. The @n_point index is subject to the same rules explained
  * in the cpml_primitive_set_point() function.
  *
- * Returns: (type gboolean): %1 if the point is found, %0 otherwise.
+ * Returns: (type gboolean): 1 if the point is found, 0 otherwise.
  *
  * Since: 1.0
  **/
@@ -357,13 +357,14 @@ cpml_primitive_put_point(const CpmlPrimitive *primitive,
  * @pos:                          the position value
  * @pair: (out caller-allocates): the destination #CpmlPair
  *
- * Abstracts the put_pair_at() family functions by providing a common
- * way to access the underlying primitive-specific implementation.
+ * Abstracts the <function>put_pair_at</function> family functions by
+ * providing a common way to access the underlying primitive-specific
+ * implementation.
  *
  * It gets the coordinates of the point lying on @primitive
  * at position @pos. @pos is an homogeneous factor where 0 is the
  * start point, 1 the end point, 0.5 the mid point and so on.
- * @pos can be less than 0 or greater than %1, in which case the
+ * @pos can be less than 0 or greater than 1, in which case the
  * coordinates of @pair are interpolated.
  *
  * On errors, that is if the coordinates cannot be calculated for
@@ -391,13 +392,14 @@ cpml_primitive_put_pair_at(const CpmlPrimitive *primitive,
  * @pos:                            the position value
  * @vector: (out caller-allocates): the destination #CpmlVector
  *
- * Abstracts the put_vector_at() family functions by providing a common
- * way to access the underlying primitive-specific implementation.
+ * Abstracts the <function>put_vector_at</function> family functions by
+ * providing a common way to access the underlying primitive-specific
+ * implementation.
  *
  * It gets the steepness of the point at position @pos on @primitive.
  * @pos is an homogeneous factor where 0 is the start point, 1 the
  * end point, 0.5 the mid point and so on.
- * @pos can be less than 0 or greater than %1, in which case the
+ * @pos can be less than 0 or greater than 1, in which case the
  * coordinates of @pair are interpolated.
  *
  * On errors, that is if the steepness cannot be calculated for
@@ -425,9 +427,9 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive,
  * @pair: (allow-none): the coordinates of the subject point
  *
  * Returns the pos value of the point on @primitive nearest to @pair.
- * The returned value is always clamped between %0 and %1.
+ * The returned value is always clamped between 0 and 1.
  *
- * Returns: the requested pos value between %0 and %1, or %-1 on errors.
+ * Returns: the requested pos value between 0 and 1, or -1 on errors.
  *
  * <!-- Virtual: get_closest_pos -->
  *
@@ -461,9 +463,9 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * to store @n_dest #CpmlPair. The maximum number of intersections
  * is dependent on the type of the primitive involved in the
  * operation. If there are at least one Bézier curve involved, up to
- * %4 intersections could be returned. Otherwise, if there is an arc
- * the intersections will be %2 at maximum. For line primitives, there
- * is only %1 point (or %0 if the lines are parallel).
+ * 4 intersections could be returned. Otherwise, if there is an arc
+ * the intersections will be 2 at maximum. For line primitives, there
+ * is only 1 point (or 0 if the lines are parallel).
  *
  * <note>
  * <para>
@@ -605,7 +607,7 @@ cpml_primitive_offset(CpmlPrimitive *primitive, double offset)
  * </itemizedlist>
  * </important>
  *
- * Returns: (type boolean): %1 on success, %0 if the primitives cannot be joint.
+ * Returns: (type boolean): 1 on success, 0 if the primitives cannot be joint.
  *
  * <!-- Virtual: join -->
  *
@@ -771,7 +773,8 @@ _cpml_class_from_obj(const CpmlPrimitive *primitive)
  * of the segment.
  *
  * Returns: a pointer to the requested point (in cairo format)
- *          or %NULL if the point is outside the valid range
+ *          or <constant>NULL</constant> if the point is outside
+ *          the valid range.
  *
  * Since: 1.0
  **/

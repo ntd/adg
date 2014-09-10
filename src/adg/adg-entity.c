@@ -218,7 +218,8 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted after the parent entity has changed. The new parent
      * can be inspected using adg_entity_get_parent().
      *
-     * It is allowed for both old and new parent to be %NULL.
+     * It is allowed for both old and new parent to
+     * be <constant>NULL</constant>.
      *
      * Since: 1.0
      **/
@@ -428,8 +429,9 @@ _adg_set_property(GObject *object, guint prop_id,
  * adg_switch_extents:
  * @state: new extents state
  *
- * Strokes (if @state is %TRUE) a rectangle around every entity to
- * show their extents. Useful for debugging purposes.
+ * Strokes (if @state is <constant>TRUE</constant>) a rectangle
+ * around every entity to show their extents. Useful for
+ * debugging purposes.
  *
  * Since: 1.0
  **/
@@ -464,9 +466,7 @@ adg_entity_destroy(AdgEntity *entity)
  * that is the first #AdgCanvas instance. The returned object is
  * owned by @entity and should not be freed or modified.
  *
- * Returns: (transfer none): the requested canvas or %NULL on errors
- *                           or if there is no #AdgCanvas in the
- *                           @entity hierarchy.
+ * Returns: (transfer none): the requested canvas or <constant>NULL</constant> on errors or if there is no #AdgCanvas in the @entity hierarchy.
  *
  * Since: 1.0
  **/
@@ -512,8 +512,7 @@ adg_entity_set_parent(AdgEntity *entity, AdgEntity *parent)
  * Gets the parent of @entity. The returned object is owned
  * by @entity and should not be freed or modified.
  *
- * Returns: (transfer none): the parent entity or %NULL on errors
- *                           or if @entity is a toplevel.
+ * Returns: (transfer none): the parent entity or <constant>NULL</constant> on errors or if @entity is a toplevel.
  *
  * Since: 1.0
  **/
@@ -535,8 +534,8 @@ adg_entity_get_parent(AdgEntity *entity)
  * @map: the new map
  *
  * Sets the new global transformation of @entity to @map:
- * the old map is discarded. If @map is %NULL, the global
- * map is left unchanged.
+ * the old map is discarded. If @map is <constant>NULL</constant>,
+ * the global map is left unchanged.
  *
  * Since: 1.0
  **/
@@ -592,7 +591,7 @@ adg_entity_transform_global_map(AdgEntity *entity,
  * Gets the transformation to be used to compute the global matrix
  * of @entity.
  *
- * Returns: the requested map or %NULL on errors
+ * Returns: the requested map or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -619,7 +618,7 @@ adg_entity_get_global_map(AdgEntity *entity)
  * combining all the global maps of the @entity hierarchy using
  * the %ADG_MIX_ANCESTORS method.
  *
- * Returns: the global matrix or %NULL on errors
+ * Returns: the global matrix or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -641,8 +640,8 @@ adg_entity_get_global_matrix(AdgEntity *entity)
  * @map: the new map
  *
  * Sets the new local transformation of @entity to @map:
- * the old map is discarded. If @map is %NULL, the local
- * map is left unchanged.
+ * the old map is discarded. If @map is <constant>NULL</constant>,
+ * the local map is left unchanged.
  *
  * Since: 1.0
  **/
@@ -697,7 +696,7 @@ adg_entity_transform_local_map(AdgEntity *entity,
  * Gets the transformation to be used to compute the local matrix
  * of @entity and store it in @map.
  *
- * Returns: the requested map or %NULL on errors
+ * Returns: the requested map or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -724,7 +723,7 @@ adg_entity_get_local_map(AdgEntity *entity)
  * combining all the local maps of the @entity hierarchy using
  * the method specified by the #AdgEntity:local-mix property.
  *
- * Returns: the local matrix or %NULL on errors
+ * Returns: the local matrix or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -752,7 +751,7 @@ adg_entity_get_local_matrix(AdgEntity *entity)
  * and how they affect the local matrix computation.
  *
  * Setting a different local mix method emits an
- * #Adgentity::local-changed signal on @entity.
+ * #AdgEntity::local-changed signal on @entity.
  *
  * Since: 1.0
  **/
@@ -796,8 +795,8 @@ adg_entity_get_local_mix(AdgEntity *entity)
  * This function is only useful in entity implementations.
  * </para></note>
  *
- * Sets a new bounding box for @entity. @extents can be %NULL,
- * in which case the extents are unset.
+ * Sets a new bounding box for @entity. @extents can
+ * be <constant>NULL</constant>, in which case the extents are unset.
  *
  * Since: 1.0
  **/
@@ -832,7 +831,7 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * or implicitely with adg_entity_render()) in order to get
  * an up to date boundary box.
  *
- * Returns: the bounding box of @entity or %NULL on errors
+ * Returns: the bounding box of @entity or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -855,7 +854,8 @@ adg_entity_get_extents(AdgEntity *entity)
  * @style: the new style to use
  *
  * Overrides the style of @dress for @entity and its children.
- * If @style is %NULL, any previous override is removed.
+ * If @style is <constant>NULL</constant>, any previous
+ * override is removed.
  *
  * The new style must still be compatible with @dress: check out
  * the adg_dress_style_is_compatible() documentation to know
@@ -916,8 +916,7 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
  * instead. The returned object is owned by @entity and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the requested style or %NULL
- *                           if the @dress style is not overriden
+ * Returns: (transfer none): the requested style or <constant>NULL</constant> if the @dress style is not overriden.
  *
  * Since: 1.0
  **/
@@ -958,8 +957,7 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
  * The returned object is owned by @entity and should not be
  * freed or modified.
  *
- * Returns: (transfer none): the requested style or %NULL for
- *                           transparent dresses or errors.
+ * Returns: (transfer none): the requested style or <constant>NULL</constant> for transparent dresses or errors.
  *
  * Since: 1.0
  **/
@@ -1119,9 +1117,10 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * This function takes care of the dependencies between @entity and
  * the eventual models bound to the old and new points.
  *
- * @old_point can be %NULL, in which case a clone of @new_point will
- * be returned. Also @new_point can be %NULL, in which case @old_point
- * is destroyed and %NULL will be returned.
+ * @old_point can be <constant>NULL</constant>, in which case a
+ * clone of @new_point will be returned. Also @new_point can
+ * be <constant>NULL</constant>, in which case @old_point
+ * is destroyed and <constant>NULL</constant> will be returned.
  *
  * Returns: (transfer full): the new properly defined point
  *

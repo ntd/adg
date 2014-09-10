@@ -250,7 +250,7 @@ adg_trail_new(AdgTrailCallback callback, gpointer user_data)
  * request is O(1). This cache is cleared only by the
  * adg_model_clear() method.
  *
- * Returns: (transfer none): a pointer to the internal cairo path or %NULL on errors
+ * Returns: (transfer none): a pointer to the internal cairo path or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -302,7 +302,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  *
  * Gets the cairo path structure defined by @trail. The returned
  * value is managed by the #AdgTrail implementation, that is this
- * function directly calls the #AdgTrailClass::get_cairo_path()
+ * function directly calls the <function>get_cairo_path</function>
  * virtual method that any trail instance must have.
  *
  * Whenever used internally by the ADG project, the returned path
@@ -316,7 +316,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
  * previously returned useless because the #cairo_path_t could be
  * relocated and the old #cairo_path_t will likely contain rubbish.
  *
- * Returns: (transfer none): a pointer to the #cairo_path_t or %NULL on errors.
+ * Returns: (transfer none): a pointer to the #cairo_path_t or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -350,7 +350,7 @@ adg_trail_cairo_path(AdgTrail *trail)
 /**
  * adg_trail_put_segment:
  * @trail: an #AdgTrail
- * @n_segment: the segment to retrieve, where %1 is the first segment
+ * @n_segment: the segment to retrieve, where 1 is the first segment
  * @segment: the destination #CpmlSegment
  *
  * Convenient function to get a segment from @trail. The segment is
@@ -359,11 +359,11 @@ adg_trail_cairo_path(AdgTrail *trail)
  *
  * When the segment is not found, either because @n_segment is out
  * of range or because there is still no path bound to @trail, this
- * function will return %FALSE leaving @segment untouched. If the
- * segment is found and @segment is not %NULL, the resulting segment
- * is copied in @segment.
+ * function will return <constant>FALSE</constant> leaving @segment
+ * untouched. If the segment is found and @segment is
+ * not <constant>NULL</constant>, the resulting segment is copied in @segment.
  *
- * Returns: %TRUE on success or %FALSE on errors
+ * Returns: <constant>TRUE</constant> on success or <constant>FALSE</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -407,7 +407,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
  * Gets the extents of @trail. The returned pointer is owned by
  * @trail and should not be freed nor modified.
  *
- * Returns: the requested extents or %NULL on errors
+ * Returns: the requested extents or <constant>NULL</constant> on errors.
  *
  * Since: 1.0
  **/
@@ -481,7 +481,7 @@ adg_trail_dump(AdgTrail *trail)
  * used to fine tune the fitting algorithm: lower values mean
  * an arc will be approximated with more curves, lowering the
  * error but incrementing time and memory needed. The default
- * value of #G_PI_2 is usually good in most cases.
+ * value of %G_PI_2 is usually good in most cases.
  *
  * Check the cairo-arc.c source file (part of the cairo project)
  * for mathematical details. A copy can probably be consulted

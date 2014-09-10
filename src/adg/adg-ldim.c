@@ -430,8 +430,9 @@ adg_ldim_get_direction(AdgLDim *ldim)
  * @ldim: an #AdgLDim entity
  * @new_state: the new state
  *
- * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
- * the first extension line of @ldim.
+ * Shows (if @new_state is <constant>TRUE</constant>) or hide (if
+ * @new_state is <constant>FALSE</constant>) the first extension
+ * line of @ldim.
  *
  * Since: 1.0
  **/
@@ -449,7 +450,7 @@ adg_ldim_switch_extension1(AdgLDim *ldim, gboolean new_state)
  *
  * Checks if @ldim should render also the first extension line.
  *
- * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> on first extension line presents, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/
@@ -470,8 +471,9 @@ adg_ldim_has_extension1(AdgLDim *ldim)
  * @ldim: an #AdgLDim entity
  * @new_state: the new new_state
  *
- * Shows (if @new_state is %TRUE) or hide (if @new_state is %FALSE)
- * the second extension line of @ldim.
+ * Shows (if @new_state is <constant>TRUE</constant>) or hide (if
+ * @new_state is <constant>FALSE</constant>) the second extension
+ * line of @ldim.
  *
  * Since: 1.0
  **/
@@ -489,7 +491,7 @@ adg_ldim_switch_extension2(AdgLDim *ldim, gboolean new_state)
  *
  * Checks if @ldim should render also the second extension line.
  *
- * Returns: %TRUE on first extension line presents, %FALSE otherwise
+ * Returns: <constant>TRUE</constant> on first extension line presents, <constant>FALSE</constant> otherwise.
  *
  * Since: 1.0
  **/

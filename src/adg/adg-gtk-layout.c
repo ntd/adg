@@ -229,8 +229,8 @@ _adg_set_property(GObject *object, guint prop_id,
  * adg_gtk_layout_new:
  *
  * Creates a new empty #AdgGtkLayout. The widget is useful only after
- * an #AdgCanvas has been added either using the #AdgGtkLayout:canvas
- * property or with adg_gtk_layout_set_canvas().
+ * an #AdgCanvas has been added either using the #AdgGtkArea:canvas
+ * property or with adg_gtk_area_set_canvas().
  *
  * Returns: (transfer full): the newly created widget.
  *
@@ -246,8 +246,8 @@ adg_gtk_layout_new(void)
  * adg_gtk_layout_new_with_canvas:
  * @canvas: the #AdgCanvas shown by this widget
  *
- * Creates a new #AdgGtkLayout and sets the #AdgGtkLayout:canvas property
- * to @canvas.
+ * Creates a new #AdgGtkLayout and sets the #AdgGtkArea:canvas
+ * property to @canvas.
  *
  * Returns: (transfer full): the newly created widget.
  *
@@ -270,7 +270,7 @@ adg_gtk_layout_new_with_canvas(AdgCanvas *canvas)
  * The old adjustment, if present, is unreferenced.
  *
  * This is basically the same as manually setting the
- * #AdgGtkLayout:hadjustment property with g_object_set().
+ * #GtkScrollable:hadjustment property with g_object_set().
  *
  * Since: 1.0
  **/
@@ -316,7 +316,7 @@ adg_gtk_layout_get_hadjustment(AdgGtkLayout *layout)
  * The old adjustment, if present, is unreferenced.
  *
  * This is basically the same as manually setting the
- * #AdgGtkLayout:vadjustment property with g_object_set().
+ * #GtkScrollable:vadjustment property with g_object_set().
  *
  * Since: 1.0
  **/
