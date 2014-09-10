@@ -18,7 +18,7 @@
  */
 
 
-#if !defined(__GI_SCANNER__)
+#ifndef __GI_SCANNER__
 #error "cpml-introspection.h must be included by g-ir-scanner only."
 #endif
 

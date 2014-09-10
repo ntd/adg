@@ -454,7 +454,7 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
 /**
  * cpml_primitive_put_intersections:
  * @primitive:                                                       the first #CpmlPrimitive
- * @primitive2: (allow-none)                                         the second #CpmlPrimitive
+ * @primitive2: (allow-none):                                        the second #CpmlPrimitive
  * @n_dest:                                                          maximum number of intersections to return
  * @dest: (out caller-allocates) (array length=n_dest) (allow-none): the destination buffer that can contain @n_dest #CpmlPair
  *

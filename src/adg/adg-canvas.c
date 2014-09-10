@@ -573,13 +573,11 @@ adg_canvas_set_scales_valist(AdgCanvas *canvas, va_list var_args)
 }
 
 /**
- * adg_canvas_set_scales_array:
+ * adg_canvas_set_scales_array: (rename-to adg_canvas_set_scales)
  * @canvas:                                         an #AdgCanvas
  * @scales: (array zero-terminated=1) (allow-none): <constant>NULL</constant> terminated array of scales
  *
  * Array variant of adg_canvas_set_scales().
- *
- * Rename to: adg_canvas_set_scales
  *
  * Since: 1.0
  **/

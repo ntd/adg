@@ -365,7 +365,7 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 }
 
 /**
- * adg_path_append_array:
+ * adg_path_append_array: (rename-to adg_path_append)
  * @path:  an #AdgPath
  * @type:  a #cairo_data_type_t value
  * @pairs: (array zero-terminated=1) (element-type Cpml.Pair) (transfer none): point data, specified as a <constant>NULL</constant> terminated array of #CpmlPair pointers.
@@ -379,7 +379,6 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
  * in a primitive element more data pairs than requested, something impossible
  * to do with adg_path_append() and adg_path_append_valist().
  *
- * Rename to: adg_path_append
  * Since: 1.0
  **/
 void

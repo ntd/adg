@@ -208,14 +208,13 @@ adg_dash_append_dashes_valist(AdgDash *dash, gint num_dashes, va_list var_args)
 }
 
 /**
- * adg_dash_append_dashes_array:
+ * adg_dash_append_dashes_array: (rename-to adg_dash_append_dashes)
  * @dash: an #AdgDash instance
  * @num_dashes: number of dashes to append
  * @dashes: (array length=num_dashes): array of @num_dashes gdoubles
  *
  * Array version of adg_dash_append_dashes().
  *
- * Rename to: adg_dash_append_dashes
  * Since: 1.0
  **/
 void

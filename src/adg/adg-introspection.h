@@ -18,7 +18,7 @@
  */
 
 
-#if !defined(__GI_SCANNER__)
+#ifndef __GI_SCANNER__
 #error "adg-introspection.h must be included by g-ir-scanner only."
 #endif
 
