@@ -289,13 +289,13 @@ adg_model_class_init(AdgModelClass *klass)
      * This signal is intended to be used while redefining the model.
      * A typical usage would be in these terms:
      *
-     * |[
+     * <informalexample><programlisting language="C">
      * adg_model_reset(model);
      * // Definition of model. This also requires the redefinition of
      * // the named pairs because the old ones have been destroyed.
      * ...
      * adg_model_changed(model);
-     * ]|
+     * </programlisting></informalexample>
      *
      * Since: 1.0
      **/

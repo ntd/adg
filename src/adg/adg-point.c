@@ -415,14 +415,14 @@ adg_point_get_name(const AdgPoint *point)
  * they are bound to. If you want to compare only their coordinates,
  * use cpml_pair_equal() directly on the #AdgPoint structs:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * if (adg_point_update(point1) &&
  *     adg_point_update(point2) &&
  *     cpml_pair_equal((CpmlPair *) point1, (CpmlPair *) point2))
  * {
  *     ...
  * }
- * ]|
+ * </programlisting></informalexample>
  *
  * %NULL points are handled gracefully.
  *

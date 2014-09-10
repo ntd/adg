@@ -234,9 +234,9 @@ adg_table_row_remove(AdgTableRow *table_row, AdgTableCell *table_cell)
  * Invokes @callback on each cell of @table_row.
  * The callback should be declared as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * void callback(AdgTableCell *table_cell, gpointer user_data);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/

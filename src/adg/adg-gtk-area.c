@@ -473,12 +473,12 @@ adg_gtk_area_set_render_map(AdgGtkArea *area, const cairo_matrix_t *map)
  * applying @tranformation using the @mode operator. This is
  * logically equivalent to the following:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_gtk_area_get_render_map(area));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_gtk_area_set_render_map(area, &map);
- * ]|
+ * </programlisting></informalexample>
  *
  * <note><para>
  * The render map is an implementation detail and this function

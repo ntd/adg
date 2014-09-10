@@ -557,12 +557,12 @@ adg_entity_set_global_map(AdgEntity *entity, const cairo_matrix_t *map)
  * applying @tranformation using the @mode operator. This is
  * logically equivalent to the following:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_entity_get_global_map(entity));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_global_map(entity, &map);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -663,12 +663,12 @@ adg_entity_set_local_map(AdgEntity *entity, const cairo_matrix_t *map)
  * applying @tranformation using the @mode operator. This is
  * logically equivalent to the following:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * cairo_matrix_t map;
  * adg_matrix_copy(&map, adg_entity_get_local_map(entity));
  * adg_matrix_transform(&map, transformation, mode);
  * adg_entity_set_local_map(entity, &map);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -1112,9 +1112,9 @@ adg_entity_render(AdgEntity *entity, cairo_t *cr)
  * @old_point is the old value while @new_point is the new value.
  * It can be used for changing a private #AdgPoint struct, such as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * data->point = adg_entity_point(entity, data->point, new_point);
- * ]|
+ * </programlisting></informalexample>
  *
  * This function takes care of the dependencies between @entity and
  * the eventual models bound to the old and new points.

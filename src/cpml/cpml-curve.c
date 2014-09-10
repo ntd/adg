@@ -64,89 +64,89 @@
  *
  * Firstly, some useful variables are defined:
  *
- * |[
+ * <informalexample><programlisting>
  * v0 = unitvector(p[1] &minus; p[0]) &times; offset;
  * v3 = unitvector(p[3] &minus; p[2]) &times; offset;
  * p0 = p[0] + normal v0;
  * p3 = p[3] + normal v3.
- * ]|
+ * </programlisting></informalexample>
  *
  * The resulting curve must have the same slopes than the original
  * one at the start and end points. Forcing the same slopes means:
  *
- * |[
+ * <informalexample><programlisting>
  * p1 = p0 + k0 v0.
- * ]|
+ * </programlisting></informalexample>
  *
  * where %k0 is an arbitrary factor. Decomposing for %x and %y:
  *
- * |[
+ * <informalexample><programlisting>
  * p1.x = p0.x + k0 v0.x;
  * p1.y = p0.y + k0 v0.y.
- * ]|
+ * </programlisting></informalexample>
  *
  * and doing the same for the end point:
  *
- * |[
+ * <informalexample><programlisting>
  * p2.x = p3.x + k3 v3.x;
  * p2.y = p3.y + k3 v3.y.
- * ]|
+ * </programlisting></informalexample>
  *
  * This does not give a resolvable system, though. The curve will be
  * interpolated by forcing its path to pass throught %pm when
  * <varname>time</varname> is %m, where <code>0 &le; m &le; 1</code>.
  * Knowing the function of the cubic Bézier:
  *
- * |[
+ * <informalexample><programlisting>
  * C(t) = (1 &minus; t)³p0 + 3t(1 &minus; t)²p1 + 3t²(1 &minus; t)p2 + t³p3.
- * ]|
+ * </programlisting></informalexample>
  *
  * and forcing <code>t = m</code> and <code>C(t) = pm</code>:
  *
- * |[
+ * <informalexample><programlisting>
  * pm = (1 &minus; m)³p0 + 3m(1 &minus; m)²p1 + 3m²(1 &minus; m)p2 + m³p3.
  *
  * (1 &minus; m) p1 + m p2 = (pm &minus; (1 &minus; m)³p0 &minus; m³p3) / (3m (1 &minus; m)).
- * ]|
+ * </programlisting></informalexample>
  *
  * gives this final system:
  *
- * |[
+ * <informalexample><programlisting>
  * p1.x = p0.x + k0 v0.x;
  * p1.y = p0.y + k0 v0.y;
  * p2.x = p3.x + k3 v3.x;
  * p2.y = p3.y + k3 v3.y;
  * (1 &minus; m) p1.x + m p2.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m));
  * (1 &minus; m) p1.y + m p2.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)).
- * ]|
+ * </programlisting></informalexample>
  *
  * Substituting and resolving for %k0 and %k3:
  *
- * |[
+ * <informalexample><programlisting>
  * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.x &minus; m p3.x;
  * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.y &minus; m p3.y.
  *
  * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)²(1+2m) p0.x &minus; m²(3 &minus; 2m) p3.x) / (3m (1 &minus; m));
  * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)²(1+2m) p0.y &minus; m²(3 &minus; 2m) p3.y) / (3m (1 &minus; m)).
- * ]|
+ * </programlisting></informalexample>
  *
  * Letting:
  *
- * |[
+ * <informalexample><programlisting>
  * pk = (pm &minus; (1 &minus; m)²(1+2m) p0 &minus; m²(3 &minus; 2m) p3) / (3m (1 &minus; m)).
- * ]|
+ * </programlisting></informalexample>
  *
  * reduces the above to this final equations:
  *
- * |[
+ * <informalexample><programlisting>
  * (1 &minus; m) k0 v0.x + m k3 v3.x = pk.x;
  * (1 &minus; m) k0 v0.y + m k3 v3.y = pk.y.
- * ]|
+ * </programlisting></informalexample>
  *
  * If <code>v0.x &ne; 0</code>, the system can be resolved for %k0 and
  * %k3 calculated accordingly:
  *
- * |[
+ * <informalexample><programlisting>
  * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x);
  * (pk.x &minus; m k3 v3.x) v0.y / v0.x + m k3 v3.y = pk.y.
  *
@@ -155,12 +155,12 @@
  *
  * k3 = (pk.y &minus; pk.x v0.y / v0.x) / (m (v3.y &minus; v3.x v0.y / v0.x));
  * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x).
- * ]|
+ * </programlisting></informalexample>
  *
  * Otherwise, if <code>v3.x &ne; 0</code>, the system can be solved
  * for %k3 and %k0 calculated accordingly:
  *
- * |[
+ * <informalexample><programlisting>
  * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x);
  * (1 &minus; m) k0 v0.y + (pk.x &minus; (1 &minus; m) k0 v0.x) v3.y / v3.x = pk.y.
  *
@@ -169,7 +169,7 @@
  *
  * k0 = (pk.y &minus; pk.x v3.y / v3.x) / ((1 &minus; m) (v0.y &minus; v0.x v3.y / v3.x));
  * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x).
- * ]|
+ * </programlisting></informalexample>
  *
  * The whole process must be guarded against division by 0 exceptions.
  * If either <code>v0.x</code> and <code>v3.x</code> are %0, the first

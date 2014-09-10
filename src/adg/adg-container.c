@@ -282,12 +282,12 @@ adg_container_add(AdgContainer *container, AdgEntity *entity)
  * <varname>entity</varname> from <varname>container1</varname>
  * to <varname>container2</varname>:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * g_object_ref(entity);
  * adg_container_remove(container1, entity);
  * adg_container_add(container2, entity)
  * g_object_unref(entity);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -338,9 +338,9 @@ adg_container_children(AdgContainer *container)
  * Invokes @callback on each child of @container.
  * The callback should be declared as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * void callback(AdgEntity *entity, gpointer user_data);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/

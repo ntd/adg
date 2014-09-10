@@ -86,10 +86,10 @@ gtk_widget_get_window(GtkWidget *widget)
  * It can be used instead of gtk_widget_hide() or by connecting it
  * to a #GtkDialog::response signal, for instance:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * g_signal_connect(dialog, "response",
  *                  G_CALLBACK(adg_gtk_window_hide_here), NULL);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -116,14 +116,14 @@ adg_gtk_window_hide_here(GtkWindow *window)
  * Useful to set or reset the sensitiveness of @widget depending
  * of the state of a check button, for example:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * g_signal_connect(toggle_button, "toggled",
  *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget1);
  * g_signal_connect(toggle_button, "toggled",
  *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget2);
  * g_signal_connect(toggle_button, "toggled",
  *                  G_CALLBACK(adg_gtk_toggle_button_sensitivize), widget3);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/

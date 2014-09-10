@@ -67,9 +67,9 @@
  * String constant that embeds a UTF-8 encoded diameter (U+2300).
  * It can be used to prefix diameter quotes, such as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * adg_dim_set_value(dim, ADG_UTF8_DIAMETER "<>");
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -81,9 +81,9 @@
  * It is used to suffix by the default implementation of #AdgADim to
  * suffix the set value, but can be also used manually:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * adg_dim_set_value(dim, "<>" ADG_UTF8_DEGREE);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/

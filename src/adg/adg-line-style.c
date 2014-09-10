@@ -540,7 +540,7 @@ adg_line_style_set_dash(AdgLineStyle *line_style, const AdgDash *dash)
  * or free it. If something needs to be changed, work on a duplicate and reset
  * the new pattern, such as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * AdgDash *dash, *new_dash;
  *
  * dash = adg_line_style_get_dash(line_style);
@@ -553,18 +553,18 @@ adg_line_style_set_dash(AdgLineStyle *line_style, const AdgDash *dash)
  *
  * adg_line_style_set_dash(line_style, new_dash);
  * adg_dash_destroy(new_dash);
- * ]|
+ * </programlisting></informalexample>
  *
  * <note><para>
  * Getting #AdgLineStyle:dash via the #GObject property mechanism returns
  * a duplicate instead, so you must free it when done.
  * </para></note>
  *
- * |[
+ * <informalexample><programlisting language="C">
  * g_object_get(line_style, "dash", &dash, NULL);
  * // Here dash is a duplicate: modifying it will not affect line_style
  * adg_dash_destroy(dash);
- * ]|
+ * </programlisting></informalexample>
  *
  * Returns: the current dash pattern or %NULL on errors.
  *

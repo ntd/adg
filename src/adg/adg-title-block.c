@@ -551,10 +551,10 @@ adg_title_block_get_author(AdgTitleBlock *title_block)
  * preferred representation for the current local of the actual
  * date. This is roughly equivalent to:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * strftime(buffer, sizeof(buffer), "%x", now);
  * adg_title_block_set_date(title_block, buffer);
- * ]|
+ * </programlisting></informalexample>
  *
  * To not render any value, use an empty string as @date.
  *

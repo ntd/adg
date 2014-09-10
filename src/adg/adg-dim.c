@@ -47,9 +47,9 @@
  * The default implementation of @quote_angle flips the quote if it should be
  * rotated in the bottom right half of the circle, that is:
  *
- * |[
+ * <informalexample><programlisting>
  * if 1/3 PI <= angle <= -3/4  PI; then angle += PI.
- * ]|
+ * </programlisting></informalexample>
  *
  * The virtual method @default_value instead *must* be implemented by any
  * derived class. The default implementation will trigger an error if called.

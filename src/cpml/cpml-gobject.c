@@ -283,7 +283,7 @@ cpml_segment_deep_dup(const CpmlSegment *segment)
  * in some situation, such as when restoring the original data from a
  * deep duplicated source:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * CpmlSegment *backup;
  *
  * backup = cpml_segment_deep_dup(&segment);
@@ -291,7 +291,7 @@ cpml_segment_deep_dup(const CpmlSegment *segment)
  * ...
  * cpml_segment_deep_copy(&segment, backup);
  * g_free(backup);
- * ]|
+ * </programlisting></informalexample>
  *
  * The struct fields of @segment are left untouched and used only to
  * check if it is compatible with @src.

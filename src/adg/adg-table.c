@@ -345,9 +345,9 @@ adg_table_remove(AdgTable *table, AdgTableRow *table_row)
  * Invokes @callback on each row of @table.
  * The callback should be declared as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * void callback(AdgTableRow *table_row, gpointer user_data);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
@@ -371,9 +371,9 @@ adg_table_foreach(AdgTable *table, GCallback callback, gpointer user_data)
  * Invokes @callback on each cell of @table.
  * The callback should be declared as:
  *
- * |[
+ * <informalexample><programlisting language="C">
  * void callback(AdgTableCell *table_cell, gpointer user_data);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/

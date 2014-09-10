@@ -1469,7 +1469,7 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  * You must unset the size with adg_canvas_set_size() with a
  * %NULL size.
  *
- * |[
+ * <informalexample><programlisting language="C">
  * // By default, canvas does not have an explicit size
  * adg_canvas_set_page_setup(canvas, a4);
  * // Here canvas has the size and margins specified by a4
@@ -1479,7 +1479,7 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  * page_setup = adg_canvas_get_page_setup(canvas);
  * // To restore the original status and have an autocomputed size:
  * adg_canvas_set_size(canvas, NULL);
- * ]|
+ * </programlisting></informalexample>
  *
  * Since: 1.0
  **/
