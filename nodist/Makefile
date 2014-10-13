@@ -25,10 +25,13 @@ CLEAN_1=latexmk -C
 CONVERT=convert -flatten -density 150 -quality 90
 
 
-all: overview.pdf desktop.png web.png
+all: overview.pdf offset.pdf desktop.png web.png
 
 overview.pdf: overview.tex symbols-0.mps ALWAYS_OUTDATED
 	$(DOC)$(TEX2PDF) overview.tex
+
+offset.pdf: offset.tex ALWAYS_OUTDATED
+	$(DOC)$(TEX2PDF) offset.tex
 
 symbols-0.mps: symbols.mp
 	$(DOC)$(MP2MPS) symbols.mp

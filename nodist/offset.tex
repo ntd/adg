@@ -1,0 +1,303 @@
+\documentclass{scrartcl}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[english]{babel}
+
+% Allow to build the PDF with either lualatex (preferred) or pdflatex
+\usepackage{iftex}
+\ifLuaTeX
+    \usepackage{luatextra}
+\else
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+
+\title{B.A.I.O.C.A.}
+\subtitle{Bare Attempt to Improve Offset Curve Algorithm}
+\author{Giandomenico Rossi \and Nicola Fontana}
+\date{April 16, 2013}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+\setlength\parindent{0pt}
+\setlength\parskip{6pt}
+
+\newcommand\V[1]{\vec{#1}}
+\newcommand\D[1]{\dot{#1}}
+\newcommand\DV[1]{\D{\V{#1}}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Computer Aided Design (CAD) and related software is often based on cubic
+Bézier curves: the Postscript language and consecuentely the PDF file
+format are two widespread examples of such software. Defining an optimal
+algorithm for approximating a Bézier curve parallel to the original one
+at a specific distance (the so called ``offset curve'') is a big
+requirement in CAD drafting: it is heavily used while constructing
+derived entities (e.g., a fillet) or to express machining allowance.
+
+This document describes an algorithm suitable for CAD purposes. In those
+cases, the starting and ending points of the offset curve \textbf{must}
+have coordinates and slopes coincident with the perfect solution, so the
+continuity with previous and next offseted entity is preserved.
+\end{abstract}
+
+\section{Mathematic}
+
+The generic formula for a cubic Bézier curve is
+\begin{equation*}
+\V{B}(t) = b_0(t)\V{B}_0 + b_1(t)\V{B}_1 + b_2(t)\V{B}_2 + b_3(t)\V{B}_3
+\end{equation*}
+where
+\begin{equation*}
+\begin{split}
+\V{B}_i &\equiv ( B^i_x, B^i_y ) \in \mathbb{R}; \qquad i = 0,1,2,3 \\
+b_i(t)  &\equiv \binom{3}{i} t^i (1-t)^{3-i}. \\
+\end{split}
+\end{equation*}
+
+Given in $\{t_i\}_{i=0}^n$ a set of values for $t$ chosen in some
+manner with $t_0=0, t_n=1$ and in $R$ the required distance of the offset
+curve,
+\begin{equation}\label{eq:Ci}
+\V{C}_i = \V{B}(t_i) + R \left.
+\frac{\D{B}_y, -\D{B}_x}{\sqrt{\D{B}_x^2 + \D{B}_y^2}}
+    \,\right|_{t=t_i} \forall t_i
+\end{equation}
+is the equation of the offset curve that has in $\{\V{C}_i\}_{i=0}^n$ the
+set of its points and where $\DV{B} \equiv ( \D{B}_x, \D{B}_y ) \equiv
+\left( \frac{d}{dt} B_x(t), \frac{d}{dt} B_y(t) \right)$.
+
+We must find the Bézier curve
+\begin{equation}\label{eq:q}
+\V{Q}(t) = b_0(t) \V{Q}_0 + b_1(t) \V{Q}_1 + b_2(t) \V{Q}_2 + b_3(t) \V{Q}_3
+\end{equation}
+where
+\begin{equation*}
+\V{Q}_i \equiv ( Q^i_x, Q^i_y ) \in \mathbb{R} \qquad i = 0,1,2,3
+\end{equation*}
+which best fits \eqref{eq:Ci} within the needed constraints, that is:
+\begin{enumerate}
+\item $\V{Q}(0) = \V{C}_0$ and $\V{Q}(1) = \V{C}_n$ (interpolation);
+\item $\DV{Q}(0) = \DV{B}(0)$ and $\DV{Q}(1) = \DV{B}(1)$ (tangents),
+where $\DV{Q} \equiv \frac{d}{dt} \V{Q}(t)$.
+\end{enumerate}
+
+\medskip
+Condition 1 implies that
+\begin{equation}\label{eq:q03}
+\begin{split}
+    \V{Q}_0 &= \V{B}_0 + R \frac{\D{B}_{0y}, -\D{B}_{0x}}
+	{\| \DV{B}_0 \|}; \qquad
+	\| \DV{B}_i \| = \sqrt{\D{B}_{ix}^2 + \D{B}_{iy}^2} \\
+    \V{Q}_3 &= \V{B}_3 + R \frac{\D{B}_{3y}, -\D{B}_{3x}}
+	{\| \DV{B}_3 \|}. \\
+\end{split}
+\end{equation}
+
+Condition 2 implies that $\DV{Q}(0) \parallel \DV{B}(0)$ and that
+$\DV{Q}(1) \parallel \DV{B}(1)$.
+Given that
+\begin{equation}
+\begin{split}
+    \DV{B}(t) &= 3 \left(
+	g_0(t) \Delta \V{B}_0 +
+	g_1(t) \Delta \V{B}_1 +
+	g_2(t) \Delta \V{B}_2
+    \right). \qquad \Delta \V{B}_i = \V{B}_{i+1} - \V{B}_i \\
+    \DV{Q}(0) &= 3 ( \V{Q}_1 - \V{Q}_0 ) = 3 ( \V{B}_1 - \V{B}_0 ); \\
+    \DV{Q}(1) &= 3 ( \V{Q}_2 - \V{Q}_3 ) = 3 ( \V{B}_2 - \V{B}_3 ).
+\end{split}
+\end{equation}
+
+Condition 2 is hence equivalent to
+\begin{equation}\label{eq:q12}
+\begin{split}
+    \V{Q}_1 &= \V{Q}_0 + r \Delta \V{B}_0 \qquad r \in \mathbb{R}; \\
+    \V{Q}_2 &= \V{Q}_3 - s \Delta \V{B}_2 \qquad s \in \mathbb{R}.
+\end{split}
+\end{equation}
+
+Substituting \eqref{eq:q12} in \eqref{eq:q} we get
+\begin{equation*}
+\V{Q}(t) = b_0(t) \V{Q}_0 + b_1(t) \V{Q}_0 + b_1(t) r \Delta \V{B}_0 +
+b_2(t) \V{Q}_3 - b_2(t) s \Delta \V{B}_2 + b_3(t) \V{Q}_3.
+\end{equation*}
+
+Determine the value of $r$ and $s$ that minimizes the quantity
+$\phi = \sum \left[ \V{C}_i - \V{Q}(t_i) \right]^2$, equivalent to
+solve the system
+\begin{equation*}
+\begin{dcases}
+\frac{\delta\phi}{\delta r} = 0;\\
+\frac{\delta\phi}{\delta s} = 0.
+\end{dcases}
+\end{equation*}
+
+Now, given the conventions
+\begin{equation*}
+\begin{split}
+    b_i &\equiv b_i(t); \\
+    \sum &\equiv \sum_{i=0}^{n}; \\
+    \V{Q}_i \Delta \V{B}_j &\equiv Q_{ix} \Delta B_{jx} + Q_{iy} \Delta B_{jy}; \\
+\end{split}
+\end{equation*}
+we can develop further to get
+\begin{equation*}
+    \phi(r, s) = \sum \left( \V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 -
+    b_1 r \Delta \V{B}_0 - b_2 \V{Q}_3 + b_2 s \Delta \V{B}_2 - b_3 \V{Q}_3 \right)^2.
+\end{equation*}
+
+We need to solve the following linear system
+\begin{equation*}
+\begin{dcases}
+    \frac{\delta \phi}{\delta r} = 2 \sum \left(
+	\V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 - r b_1 \Delta \V{B}_0 -
+	b_2 \V{Q}_3 + s b_2 \Delta \V{B}_2 - b_3 \V{Q}_3
+    \right) \left( b_1 \Delta \V{B}_0 \right) &= 0; \\
+    \frac{\delta \phi}{\delta s} = 2 \sum \left(
+	\V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 - r b_1 \Delta \V{B}_0 -
+	b_2 \V{Q}_3 + s b_2 \Delta \V{B}_2 - b_3 \V{Q}_3
+    \right) \left( -b_2 \Delta \V{B}_2 \right) &= 0. \\
+\end{dcases}
+\end{equation*}
+from which, considering $\V{P}_i \equiv \Delta \V{B}_i$, we get
+\begin{equation*}
+\begin{dcases}
+    \sum \left(
+	b_1 \V{C}_i \V{P}_0 -
+	b_0 b_1 \V{Q}_0 \V{P}_0 -
+	b_1 b_1 \V{Q}_0 \V{P}_0 -
+	b_1 b_1 r \V{P}_0 \V{P}_0 -
+	b_1 b_2 \V{Q}_3 \V{P}_0 +
+	b_1 b_2 s \V{P}_2 \V{P}_0 -
+	b_1 b_3 \V{Q}_3 \V{P}_0
+    \right) &= 0; \\
+    \sum \left(
+	b_2 \V{C}_i \V{P}_2 -
+	b_0 b_2 \V{Q}_0 \V{P}_2 -
+	b_1 b_2 \V{Q}_0 \V{P}_2 -
+	b_1 b_2 r \V{P}_0 \V{P}_2 -
+	b_2 b_2 \V{Q}_3 \V{P}_2 +
+	b_2 b_2 s \V{P}_2 \V{P}_2 -
+	b_2 b_3 \V{Q}_3 \V{P}_2
+    \right) &= 0. \\
+\end{dcases}
+\end{equation*}
+
+Given the additional conventions
+\begin{equation}\label{eq:DE}
+\begin{split}
+    \V{D}_0 &\equiv \sum b_1 \V{C}_i \V{P}_0; \\
+    \V{D}_2 &\equiv \sum b_2 \V{C}_i \V{P}_2; \\
+    E_{jk} &\equiv \sum b_j b_k; \\
+\end{split}
+\end{equation}
+we can substitute to get
+\begin{equation*}
+\begin{dcases}
+\V{D}_0 -
+    E_{01} \V{Q}_0 \V{P}_0 -
+    E_{11} \V{Q}_0 \V{P}_0 -
+    E_{11} r \V{P}_0 \V{P}_0 -
+    E_{12} \V{Q}_3 \V{P}_0 +
+    E_{12} s \V{P}_2 \V{P}_0 -
+    E_{13} \V{Q}_3 \V{P}_0 &= 0; \\
+\V{D}_2 -
+    E_{02} \V{Q}_0 \V{P}_2 -
+    E_{12} \V{Q}_0 \V{P}_2 -
+    E_{12} r \V{P}_0 \V{P}_2 -
+    E_{22} \V{Q}_3 \V{P}_2 +
+    E_{22} s \V{P}_2 \V{P}_2 -
+    E_{23} \V{Q}_3 \V{P}_2 &= 0; \\
+\end{dcases}
+\end{equation*}
+and derive the following known terms
+\begin{equation}\label{eq:ACD}
+\begin{split}
+\V{A}_1 &= \V{D}_0 -
+    \V{Q}_0 \V{P}_0 (E_{01} + E_{11}) -
+    \V{Q}_3 \V{P}_0 (E_{12} + E_{13}); \\
+\V{A}_2 &= \V{D}_2 -
+    \V{Q}_0 \V{P}_2 (E_{02} + E_{12}) -
+    \V{Q}_3 \V{P}_2 (E_{22} + E_{23}); \\
+\V{A}_3 &= \V{P}_0 \V{P}_0 E_{11}; \\
+\V{A}_4 &= \V{P}_0 \V{P}_2 E_{12}; \\
+\V{A}_5 &= \V{P}_2 \V{P}_2 E_{22}. \\
+\end{split}
+\end{equation}
+
+The system is hence reduced to
+\begin{equation*}
+\begin{dcases}
+    s \V{A}_4 - r \V{A}_3 &= \V{A}_1\\
+    s \V{A}_5 - r \V{A}_4 &= \V{A}_2\\
+\end{dcases}
+\end{equation*}
+from which we can calculate $r$ and $s$
+\begin{equation}\label{eq:rs}
+\begin{split}
+    r &= \frac{\V{A}_2 \V{A}_4 - \V{A}_1 \V{A}_5}{\V{A}_3 \V{A}_5 - \V{A}_4 \V{A}_4}; \\
+    s &= \frac{\V{A}_2 \V{A}_3 - \V{A}_1 \V{A}_4}{\V{A}_3 \V{A}_5 - \V{A}_4 \V{A}_4}. \\
+\end{split}
+\end{equation}
+
+\section{Algorithm}
+
+\begin{enumerate}
+    \item Select $\{t_i\}_{i=0}^n$ as shown in section~\ref{sec:ti};
+    \item get $\V{Q}_0$ and $\V{Q}_3$ from \eqref{eq:q03};
+    \item compute $\{\V{C}_i\}_{i=0}^n$ with \eqref{eq:Ci};
+    \item calculate $\V{D}_0$, $\V{D}_2$, $E_{01}$, $E_{02}$, $E_{11}$,
+	$E_{12}$, $E_{13}$, $E_{22}$ and $E_{23}$ with \eqref{eq:DE};
+    \item calculate $\V{Q}_0 \V{P}_0$ and $\V{Q}_i \V{B}_j \forall (i,j =
+	0,1,2,3)$;
+    \item calculate $\V{A}_1$, $\V{A}_2$, $\V{A}_3$, $\V{A}_4$ and $\V{A}_5$ with
+	\eqref{eq:ACD};
+    \item calculate $r$ and $s$ with \eqref{eq:rs};
+    \item get $\V{Q}_1$ and $\V{Q}_2$ from \eqref{eq:q12}.
+\end{enumerate}
+
+$\V{Q}_0$ and $\V{Q}_3$ are respectively the starting and ending
+points of the offset Bézier curve while $\V{Q}_1$ and $\V{Q}_2$ are
+its control points.
+
+\section{Choosing $t_i$\label{sec:ti}}
+
+\subsection{Method 1: too lazy to think}
+
+\begin{equation*}
+\begin{split}
+    i &= 1 \dots N\\
+    t_i &= \frac{J}{N} \qquad J = (0, 1, \dots, N)
+\end{split}
+\end{equation*}
+
+\subsection{Method 2: too thoughtful to be lazy}
+
+Select some $\{b_i\}$ points on $B(t)$.
+
+\begin{equation*}
+\begin{split}
+    \| b_i \| &= \sqrt{b_i^2 - b_{i-1}^2} \\
+    d &= \sum \| b_i - b_{i-1} \| \\
+    t_0 &= 0 \\
+    t_i &= t_{i-1} + \frac{\| b_i - b_{i-1} \|}{d}\\
+\end{split}
+\end{equation*}
+
+\subsection{Method 3: let's root}
+
+\begin{equation*}
+\begin{split}
+    d &= \sum \sqrt{\| b_i - b_{i-1} \|} \\
+    t_0 &= 0 \\
+    t_i &= t_{i-1} + \frac{\sqrt{\| b_i - b_{i-1} \|}}{d}\\
+\end{split}
+\end{equation*}
+
+\end{document}
