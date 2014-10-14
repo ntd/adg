@@ -569,7 +569,6 @@ offset_curves(GtkWidget *widget, cairo_t *cr)
     CpmlSegment segment;
     CpmlPrimitive primitive;
     CpmlPair pair;
-    CpmlVector vector;
     double t;
 
     /* Add the Bézier curve samples */
@@ -600,20 +599,18 @@ offset_curves(GtkWidget *widget, cairo_t *cr)
         cpml_segment_from_cairo(&segment, path_copy);
         cpml_primitive_from_segment(&primitive, &segment);
 
-        /* Checking cpml_curve_put_pair_at_time and cpml_curve_put_vector_at_time */
+        /* Draw the rays for visual debugging */
         cairo_set_line_width(cr, 1.);
         for (t = 0; t < 1; t += 0.1) {
             cpml_curve_put_pair_at_time(&primitive, t, &pair);
-            cpml_curve_put_vector_at_time(&primitive, t, &vector);
-            cpml_vector_set_length(&vector, 20.);
-            cpml_vector_normal(&vector);
 
             cairo_new_sub_path(cr);
             cairo_arc(cr, pair.x, pair.y, 2.5, 0, M_PI*2);
             cairo_fill(cr);
 
             cairo_move_to(cr, pair.x, pair.y);
-            cairo_line_to(cr, pair.x + vector.x, pair.y + vector.y);
+            cpml_curve_put_offset_at_time(&primitive, t, 20., &pair);
+            cairo_line_to(cr, pair.x, pair.y);
             cairo_stroke(cr);
         }
 
