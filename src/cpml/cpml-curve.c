@@ -235,6 +235,38 @@ cpml_curve_put_vector_at_time(const CpmlPrimitive *curve,
     vector->y = 3 * t1_2 * p21.y + 6 * t1 * t * p32.y + 3 * t_2 * p43.y;
 }
 
+/**
+ * cpml_curve_put_offset_at_time:
+ * @curve:                        the #CpmlPrimitive curve data
+ * @t:                            the "time" value
+ * @offset:                       the offset distance
+ * @pair: (out caller-allocates): the destination pair
+ *
+ * Given the @curve Bézier cubic, find the coordinates at time @t
+ * (where 0 is the start and 1 is the end), offset that point at
+ * @offset distance and stores the result in @pair.
+ *
+ * The point to offset and the vector along which that point must
+ * be offseted are found calling cpml_curve_put_pair_at_time() and
+ * cpml_curve_put_vector_at_time() respectively.
+ *
+ * Since: 1.0
+ **/
+void
+cpml_curve_put_offset_at_time(const CpmlPrimitive *curve,
+                              double t, double offset,
+                              CpmlPair *pair)
+{
+    CpmlVector vector;
+
+    cpml_curve_put_vector_at_time(curve, t, &vector);
+    cpml_vector_normal(&vector);
+    cpml_vector_set_length(&vector, offset);
+
+    cpml_curve_put_pair_at_time(curve, t, pair);
+    pair->x += vector.x;
+    pair->y += vector.y;
+}
 
 static void
 put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
@@ -258,7 +290,7 @@ static void
 offset_handcraft(CpmlPrimitive *curve, double offset)
 {
     double m, mm;
-    CpmlVector v0, v3, vm, vtmp;
+    CpmlVector v0, v3;
     CpmlPair p0, p1, p2, p3, r;
 
     m = 0.5;
@@ -279,30 +311,16 @@ offset_handcraft(CpmlPrimitive *curve, double offset)
     v3.x = p3.x - p2.x;
     v3.y = p3.y - p2.y;
 
-    /* r = point in C(m) offseted the requested @offset distance */
-    cpml_curve_put_vector_at_time(curve, m, &vm);
-    cpml_vector_set_length(&vm, offset);
-    cpml_vector_normal(&vm);
-    cpml_curve_put_pair_at_time(curve, m, &r);
-    r.x += vm.x;
-    r.y += vm.y;
-
-    /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
-    cpml_pair_copy(&vtmp, &v0);
-    cpml_vector_set_length(&vtmp, offset);
-    cpml_vector_normal(&vtmp);
-    p0.x += vtmp.x;
-    p0.y += vtmp.y;
-
-    /* p3 = p3 + normal of v3 of @offset magnitude, as done for p0 */
-    cpml_pair_copy(&vtmp, &v3);
-    cpml_vector_set_length(&vtmp, offset);
-    cpml_vector_normal(&vtmp);
-    p3.x += vtmp.x;
-    p3.y += vtmp.y;
+    cpml_curve_put_offset_at_time(curve, m, offset, &r);
+    cpml_curve_put_offset_at_time(curve, 0, offset, &p0);
+    cpml_curve_put_offset_at_time(curve, 1, offset, &p3);
 
     if (v0.x*v3.y == v3.x*v0.y) {
         /* Inconsistent equations: use the alternative approach */
+        CpmlVector vm;
+        cpml_curve_put_vector_at_time(curve, m, &vm);
+        cpml_vector_normal(&vm);
+        cpml_vector_set_length(&vm, offset);
         p1.x = p0.x + v0.x + vm.x * 4/3;
         p1.y = p0.y + v0.y + vm.y * 4/3;
         p2.x = p3.x - v3.x + vm.x * 4/3;
