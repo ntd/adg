@@ -54,138 +54,6 @@
  *           opposite or staggered.</listitem>
  * </itemizedlist>
  * </important>
- * <refsect2 id="offset">
- * <title>Offseting algorithm</title>
- * <para>
- * Given a cubic Bézier primitive, it must be found the approximated
- * Bézier curve parallel to the original one at a specific distance
- * (the so called "offset curve"). The four points needed to build
- * the new curve must be returned.
- *
- * To solve the offset problem, a custom algorithm is used. First, the
- * resulting curve MUST have the same slope at the start and end point.
- * These constraints are not sufficient to resolve the system, so I let
- * the curve pass thought a given point (pm, known and got from the
- * original curve) at a given time (m, now hardcoded to 0.5).
- *
- * Firstly, some useful variables are defined:
- *
- * <informalexample><programlisting>
- * v0 = unitvector(p[1] &minus; p[0]) &times; offset;
- * v3 = unitvector(p[3] &minus; p[2]) &times; offset;
- * p0 = p[0] + normal v0;
- * p3 = p[3] + normal v3.
- * </programlisting></informalexample>
- *
- * The resulting curve must have the same slopes than the original
- * one at the start and end points. Forcing the same slopes means:
- *
- * <informalexample><programlisting>
- * p1 = p0 + k0 v0.
- * </programlisting></informalexample>
- *
- * where %k0 is an arbitrary factor. Decomposing for %x and %y:
- *
- * <informalexample><programlisting>
- * p1.x = p0.x + k0 v0.x;
- * p1.y = p0.y + k0 v0.y.
- * </programlisting></informalexample>
- *
- * and doing the same for the end point:
- *
- * <informalexample><programlisting>
- * p2.x = p3.x + k3 v3.x;
- * p2.y = p3.y + k3 v3.y.
- * </programlisting></informalexample>
- *
- * This does not give a resolvable system, though. The curve will be
- * interpolated by forcing its path to pass throught %pm when
- * <varname>time</varname> is %m, where <code>0 &le; m &le; 1</code>.
- * Knowing the function of the cubic Bézier:
- *
- * <informalexample><programlisting>
- * C(t) = (1 &minus; t)³p0 + 3t(1 &minus; t)²p1 + 3t²(1 &minus; t)p2 + t³p3.
- * </programlisting></informalexample>
- *
- * and forcing <code>t = m</code> and <code>C(t) = pm</code>:
- *
- * <informalexample><programlisting>
- * pm = (1 &minus; m)³p0 + 3m(1 &minus; m)²p1 + 3m²(1 &minus; m)p2 + m³p3.
- *
- * (1 &minus; m) p1 + m p2 = (pm &minus; (1 &minus; m)³p0 &minus; m³p3) / (3m (1 &minus; m)).
- * </programlisting></informalexample>
- *
- * gives this final system:
- *
- * <informalexample><programlisting>
- * p1.x = p0.x + k0 v0.x;
- * p1.y = p0.y + k0 v0.y;
- * p2.x = p3.x + k3 v3.x;
- * p2.y = p3.y + k3 v3.y;
- * (1 &minus; m) p1.x + m p2.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m));
- * (1 &minus; m) p1.y + m p2.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)).
- * </programlisting></informalexample>
- *
- * Substituting and resolving for %k0 and %k3:
- *
- * <informalexample><programlisting>
- * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)³p0.x &minus; m³p3.x) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.x &minus; m p3.x;
- * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)³p0.y &minus; m³p3.y) / (3m (1 &minus; m)) &minus; (1 &minus; m) p0.y &minus; m p3.y.
- *
- * (1 &minus; m) k0 v0.x + m k3 v3.x = (pm.x &minus; (1 &minus; m)²(1+2m) p0.x &minus; m²(3 &minus; 2m) p3.x) / (3m (1 &minus; m));
- * (1 &minus; m) k0 v0.y + m k3 v3.y = (pm.y &minus; (1 &minus; m)²(1+2m) p0.y &minus; m²(3 &minus; 2m) p3.y) / (3m (1 &minus; m)).
- * </programlisting></informalexample>
- *
- * Letting:
- *
- * <informalexample><programlisting>
- * pk = (pm &minus; (1 &minus; m)²(1+2m) p0 &minus; m²(3 &minus; 2m) p3) / (3m (1 &minus; m)).
- * </programlisting></informalexample>
- *
- * reduces the above to this final equations:
- *
- * <informalexample><programlisting>
- * (1 &minus; m) k0 v0.x + m k3 v3.x = pk.x;
- * (1 &minus; m) k0 v0.y + m k3 v3.y = pk.y.
- * </programlisting></informalexample>
- *
- * If <code>v0.x &ne; 0</code>, the system can be resolved for %k0 and
- * %k3 calculated accordingly:
- *
- * <informalexample><programlisting>
- * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x);
- * (pk.x &minus; m k3 v3.x) v0.y / v0.x + m k3 v3.y = pk.y.
- *
- * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x);
- * k3 m (v3.y &minus; v3.x v0.y / v0.x) = pk.y &minus; pk.x v0.y / v0.x.
- *
- * k3 = (pk.y &minus; pk.x v0.y / v0.x) / (m (v3.y &minus; v3.x v0.y / v0.x));
- * k0 = (pk.x &minus; m k3 v3.x) / ((1 &minus; m) v0.x).
- * </programlisting></informalexample>
- *
- * Otherwise, if <code>v3.x &ne; 0</code>, the system can be solved
- * for %k3 and %k0 calculated accordingly:
- *
- * <informalexample><programlisting>
- * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x);
- * (1 &minus; m) k0 v0.y + (pk.x &minus; (1 &minus; m) k0 v0.x) v3.y / v3.x = pk.y.
- *
- * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x);
- * k0 (1 &minus; m) (v0.y &minus; k0 v0.x v3.y / v3.x) = pk.y &minus; pk.x v3.y / v3.x.
- *
- * k0 = (pk.y &minus; pk.x v3.y / v3.x) / ((1 &minus; m) (v0.y &minus; v0.x v3.y / v3.x));
- * k3 = (pk.x &minus; (1 &minus; m) k0 v0.x) / (m v3.x).
- * </programlisting></informalexample>
- *
- * The whole process must be guarded against division by 0 exceptions.
- * If either <code>v0.x</code> and <code>v3.x</code> are 0, the first
- * equation will be inconsistent. More in general, the
- * <code>v0.x &times; v3.y = v3.x &times; v3.y</code> condition must
- * be avoided. This is the first situation to avoid, in which case
- * an alternative approach should be used.
- *
- * </para>
- * </refsect2>
  *
  * Since: 1.0
  **/
@@ -331,7 +199,7 @@ offset(CpmlPrimitive *curve, double offset)
 {
     double m, mm;
     CpmlVector v0, v3, vm, vtmp;
-    CpmlPair p0, p1, p2, p3, pm;
+    CpmlPair p0, p1, p2, p3, r;
 
     m = 0.5;
     mm = 1-m;
@@ -351,13 +219,13 @@ offset(CpmlPrimitive *curve, double offset)
     v3.x = p3.x - p2.x;
     v3.y = p3.y - p2.y;
 
-    /* pm = point in C(m) offseted the requested @offset distance */
+    /* r = point in C(m) offseted the requested @offset distance */
     cpml_curve_put_vector_at_time(curve, m, &vm);
     cpml_vector_set_length(&vm, offset);
     cpml_vector_normal(&vm);
-    cpml_curve_put_pair_at_time(curve, m, &pm);
-    pm.x += vm.x;
-    pm.y += vm.y;
+    cpml_curve_put_pair_at_time(curve, m, &r);
+    r.x += vm.x;
+    r.y += vm.y;
 
     /* p0 = p0 + normal of v0 of @offset magnitude (exact value) */
     cpml_pair_copy(&vtmp, &v0);
@@ -380,18 +248,18 @@ offset(CpmlPrimitive *curve, double offset)
         p2.x = p3.x - v3.x + vm.x * 4/3;
         p2.y = p3.y - v3.y + vm.y * 4/3;
     } else {
-        CpmlPair pk;
+        CpmlPair s;
         double k0, k3;
 
-        pk.x = (pm.x - mm*mm*(1+m+m)*p0.x - m*m*(1+mm+mm)*p3.x) / (3*m*(1-m));
-        pk.y = (pm.y - mm*mm*(1+m+m)*p0.y - m*m*(1+mm+mm)*p3.y) / (3*m*(1-m));
+        s.x = (r.x - mm*mm*(1+m+m)*p0.x - m*m*(1+mm+mm)*p3.x) / (3*m*(1-m));
+        s.y = (r.y - mm*mm*(1+m+m)*p0.y - m*m*(1+mm+mm)*p3.y) / (3*m*(1-m));
 
         if (v0.x != 0) {
-            k3 = (pk.y - pk.x*v0.y / v0.x) / (m*(v3.y - v3.x*v0.y / v0.x));
-            k0 = (pk.x - m*k3*v3.x) / (mm*v0.x);
+            k3 = (s.y - s.x*v0.y / v0.x) / (m*(v3.y - v3.x*v0.y / v0.x));
+            k0 = (s.x - m*k3*v3.x) / (mm*v0.x);
         } else {
-            k0 = (pk.y - pk.x*v3.y / v3.x) / (mm*(v0.y - v0.x*v3.y / v3.x));
-            k3 = (pk.x - mm*k0*v0.x) / (m*v3.x);
+            k0 = (s.y - s.x*v3.y / v3.x) / (mm*(v0.y - v0.x*v3.y / v3.x));
+            k3 = (s.x - mm*k0*v0.x) / (m*v3.x);
         }
 
         p1.x = p0.x + k0*v0.x;

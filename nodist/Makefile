@@ -25,10 +25,13 @@ CLEAN_1=latexmk -C
 CONVERT=convert -flatten -density 150 -quality 90
 
 
-all: overview.pdf baioca.pdf desktop.png web.png
+all: overview.pdf handcraft.pdf baioca.pdf desktop.png web.png
 
 overview.pdf: overview.tex symbols-0.mps ALWAYS_OUTDATED
 	$(DOC)$(TEX2PDF) overview.tex
+
+handcraft.pdf: handcraft.tex ALWAYS_OUTDATED
+	$(DOC)$(TEX2PDF) handcraft.tex
 
 baioca.pdf: baioca.tex ALWAYS_OUTDATED
 	$(DOC)$(TEX2PDF) baioca.tex
