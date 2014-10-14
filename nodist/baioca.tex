@@ -26,6 +26,7 @@
 \newcommand\V[1]{\vec{#1}}
 \newcommand\D[1]{\dot{#1}}
 \newcommand\DV[1]{\D{\V{#1}}}
+\newcommand\SP[2]{\langle #1, #2 \rangle}
 
 \begin{document}
 
@@ -138,53 +139,56 @@ solve the system
 \end{dcases}
 \end{equation*}
 
-Now, given the conventions
+Now, given the shortcuts
 \begin{equation*}
 \begin{split}
-    b_i &\equiv b_i(t); \\
     \sum &\equiv \sum_{i=0}^{n}; \\
-    \V{Q}_i \Delta \V{B}_j &\equiv Q_{ix} \Delta B_{jx} + Q_{iy} \Delta B_{jy}; \\
+    b_j &\equiv b_j(t_i); \\
 \end{split}
 \end{equation*}
 we can develop further to get
 \begin{equation*}
     \phi(r, s) = \sum \left( \V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 -
-    b_1 r \Delta \V{B}_0 - b_2 \V{Q}_3 + b_2 s \Delta \V{B}_2 - b_3 \V{Q}_3 \right)^2.
+    b_1 r \Delta \V{B}_0 - b_2 \V{Q}_3 + b_2 s \Delta \V{B}_2 - b_3 \V{Q}_3 \right)^2;
 \end{equation*}
 
-We need to solve the following linear system
+that, applied to the previous system, brings us to the following linear system
 \begin{equation*}
 \begin{dcases}
-    \frac{\delta \phi}{\delta r} = 2 \sum \left(
+    2 \sum \left(
 	\V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 - r b_1 \Delta \V{B}_0 -
 	b_2 \V{Q}_3 + s b_2 \Delta \V{B}_2 - b_3 \V{Q}_3
     \right) \left( b_1 \Delta \V{B}_0 \right) &= 0; \\
-    \frac{\delta \phi}{\delta s} = 2 \sum \left(
+    2 \sum \left(
 	\V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 - r b_1 \Delta \V{B}_0 -
 	b_2 \V{Q}_3 + s b_2 \Delta \V{B}_2 - b_3 \V{Q}_3
-    \right) \left( -b_2 \Delta \V{B}_2 \right) &= 0. \\
+    \right) \left( -b_2 \Delta \V{B}_2 \right) &= 0; \\
 \end{dcases}
 \end{equation*}
 from which, considering $\V{P}_i \equiv \Delta \V{B}_i$, we get
 \begin{equation*}
 \begin{dcases}
     \sum \left(
-	b_1 \V{C}_i \V{P}_0 -
-	b_0 b_1 \V{Q}_0 \V{P}_0 -
-	b_1 b_1 \V{Q}_0 \V{P}_0 -
-	b_1 b_1 r \V{P}_0 \V{P}_0 -
-	b_1 b_2 \V{Q}_3 \V{P}_0 +
-	b_1 b_2 s \V{P}_2 \V{P}_0 -
-	b_1 b_3 \V{Q}_3 \V{P}_0
+    \begin{split}
+	b_1       \SP{\V{C}_i}{\V{P}_0} -
+	b_0 b_1   \SP{\V{Q}_0}{\V{P}_0} -
+	b_1 b_1   \SP{\V{Q}_0}{\V{P}_0} -
+	r b_1 b_1 \SP{\V{P}_0}{\V{P}_0} \\ -
+	b_1 b_2   \SP{\V{Q}_3}{\V{P}_0} +
+	s b_1 b_2 \SP{\V{P}_2}{\V{P}_0} -
+	b_1 b_3   \SP{\V{Q}_3}{\V{P}_0}
+    \end{split}
     \right) &= 0; \\
     \sum \left(
-	b_2 \V{C}_i \V{P}_2 -
-	b_0 b_2 \V{Q}_0 \V{P}_2 -
-	b_1 b_2 \V{Q}_0 \V{P}_2 -
-	b_1 b_2 r \V{P}_0 \V{P}_2 -
-	b_2 b_2 \V{Q}_3 \V{P}_2 +
-	b_2 b_2 s \V{P}_2 \V{P}_2 -
-	b_2 b_3 \V{Q}_3 \V{P}_2
+    \begin{split}
+	b_2       \SP{\V{C}_i}{\V{P}_2} -
+	b_0 b_2   \SP{\V{Q}_0}{\V{P}_2} -
+	b_1 b_2   \SP{\V{Q}_0}{\V{P}_2} -
+	r b_1 b_2 \SP{\V{P}_0}{\V{P}_2} \\ -
+	b_2 b_2   \SP{\V{Q}_3}{\V{P}_2} +
+	s b_2 b_2 \SP{\V{P}_2}{\V{P}_2} -
+	b_2 b_3   \SP{\V{Q}_3}{\V{P}_2}
+    \end{split}
     \right) &= 0. \\
 \end{dcases}
 \end{equation*}
@@ -192,57 +196,59 @@ from which, considering $\V{P}_i \equiv \Delta \V{B}_i$, we get
 Given the additional conventions
 \begin{equation}\label{eq:DE}
 \begin{split}
-    \V{D}_0 &\equiv \sum b_1 \V{C}_i \V{P}_0; \\
-    \V{D}_2 &\equiv \sum b_2 \V{C}_i \V{P}_2; \\
+    D_0 &\equiv \sum b_1 \SP{\V{C}_i}{\V{P}_0}; \\
+    D_2 &\equiv \sum b_2 \SP{\V{C}_i}{\V{P}_2}; \\
     E_{jk} &\equiv \sum b_j b_k; \\
 \end{split}
 \end{equation}
 we can substitute to get
 \begin{equation*}
 \begin{dcases}
-\V{D}_0 -
-    E_{01} \V{Q}_0 \V{P}_0 -
-    E_{11} \V{Q}_0 \V{P}_0 -
-    E_{11} r \V{P}_0 \V{P}_0 -
-    E_{12} \V{Q}_3 \V{P}_0 +
-    E_{12} s \V{P}_2 \V{P}_0 -
-    E_{13} \V{Q}_3 \V{P}_0 &= 0; \\
-\V{D}_2 -
-    E_{02} \V{Q}_0 \V{P}_2 -
-    E_{12} \V{Q}_0 \V{P}_2 -
-    E_{12} r \V{P}_0 \V{P}_2 -
-    E_{22} \V{Q}_3 \V{P}_2 +
-    E_{22} s \V{P}_2 \V{P}_2 -
-    E_{23} \V{Q}_3 \V{P}_2 &= 0; \\
+\begin{split}
+    D_0 - E_{01}   \SP{\V{Q}_0}{\V{P}_0} -
+	  E_{11}   \SP{\V{Q}_0}{\V{P}_0} -
+	  r E_{11} \SP{\V{P}_0}{\V{P}_0} -
+	  E_{12}   \SP{\V{Q}_3}{\V{P}_0} \\ +
+	  s E_{12} \SP{\V{P}_2}{\V{P}_0} -
+	  E_{13}   \SP{\V{Q}_3}{\V{P}_0} &= 0;
+\end{split} \\
+\begin{split}
+    D_2 - E_{02}   \SP{\V{Q}_0}{\V{P}_2} -
+	  E_{12}   \SP{\V{Q}_0}{\V{P}_2} -
+	  r E_{12} \SP{\V{P}_0}{\V{P}_2} -
+	  E_{22}   \SP{\V{Q}_3}{\V{P}_2} \\ +
+	  s E_{22} \SP{\V{P}_2}{\V{P}_2} -
+	  E_{23}   \SP{\V{Q}_3}{\V{P}_2} &= 0;
+\end{split} \\
 \end{dcases}
 \end{equation*}
 and derive the following known terms
 \begin{equation}\label{eq:ACD}
 \begin{split}
-\V{A}_1 &= \V{D}_0 -
-    \V{Q}_0 \V{P}_0 (E_{01} + E_{11}) -
-    \V{Q}_3 \V{P}_0 (E_{12} + E_{13}); \\
-\V{A}_2 &= \V{D}_2 -
-    \V{Q}_0 \V{P}_2 (E_{02} + E_{12}) -
-    \V{Q}_3 \V{P}_2 (E_{22} + E_{23}); \\
-\V{A}_3 &= \V{P}_0 \V{P}_0 E_{11}; \\
-\V{A}_4 &= \V{P}_0 \V{P}_2 E_{12}; \\
-\V{A}_5 &= \V{P}_2 \V{P}_2 E_{22}. \\
+A_1 &= D_0 -
+    \SP{\V{Q}_0}{\V{P}_0} (E_{01} + E_{11}) -
+    \SP{\V{Q}_3}{\V{P}_0} (E_{12} + E_{13}); \\
+A_2 &= D_2 -
+    \SP{\V{Q}_0}{\V{P}_2} (E_{02} + E_{12}) -
+    \SP{\V{Q}_3}{\V{P}_2} (E_{22} + E_{23}); \\
+A_3 &= \SP{\V{P}_0}{\V{P}_0} E_{11}; \\
+A_4 &= \SP{\V{P}_0}{\V{P}_2} E_{12}; \\
+A_5 &= \SP{\V{P}_2}{\V{P}_2} E_{22}. \\
 \end{split}
 \end{equation}
 
 The system is hence reduced to
 \begin{equation*}
 \begin{dcases}
-    s \V{A}_4 - r \V{A}_3 &= \V{A}_1\\
-    s \V{A}_5 - r \V{A}_4 &= \V{A}_2\\
+    s A_4 - r A_3 &= A_1; \\
+    s A_5 - r A_4 &= A_2; \\
 \end{dcases}
 \end{equation*}
 from which we can calculate $r$ and $s$
 \begin{equation}\label{eq:rs}
 \begin{split}
-    r &= \frac{\V{A}_2 \V{A}_4 - \V{A}_1 \V{A}_5}{\V{A}_3 \V{A}_5 - \V{A}_4 \V{A}_4}; \\
-    s &= \frac{\V{A}_2 \V{A}_3 - \V{A}_1 \V{A}_4}{\V{A}_3 \V{A}_5 - \V{A}_4 \V{A}_4}. \\
+    r &= \frac{A_2 A_4 - A_1 A_5}{A_3 A_5 - A_4 A_4}; \\
+    s &= \frac{A_2 A_3 - A_1 A_4}{A_3 A_5 - A_4 A_4}. \\
 \end{split}
 \end{equation}
 
@@ -251,12 +257,11 @@ from which we can calculate $r$ and $s$
 \begin{enumerate}
     \item Select $\{t_i\}_{i=0}^n$ as shown in section~\ref{sec:ti};
     \item get $\V{Q}_0$ and $\V{Q}_3$ from \eqref{eq:q03};
+    \item calculate $\V{P}_0$ and $\V{P}_2$;
     \item compute $\{\V{C}_i\}_{i=0}^n$ with \eqref{eq:Ci};
-    \item calculate $\V{D}_0$, $\V{D}_2$, $E_{01}$, $E_{02}$, $E_{11}$,
+    \item calculate $D_0$, $D_2$, $E_{01}$, $E_{02}$, $E_{11}$,
 	$E_{12}$, $E_{13}$, $E_{22}$ and $E_{23}$ with \eqref{eq:DE};
-    \item calculate $\V{Q}_0 \V{P}_0$ and $\V{Q}_i \V{B}_j \forall (i,j =
-	0,1,2,3)$;
-    \item calculate $\V{A}_1$, $\V{A}_2$, $\V{A}_3$, $\V{A}_4$ and $\V{A}_5$ with
+    \item calculate $A_1$, $A_2$, $A_3$, $A_4$ and $A_5$ with
 	\eqref{eq:ACD};
     \item calculate $r$ and $s$ with \eqref{eq:rs};
     \item get $\V{Q}_1$ and $\V{Q}_2$ from \eqref{eq:q12}.
