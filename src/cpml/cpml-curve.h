@@ -26,15 +26,23 @@
 #ifndef __CPML_CURVE_H__
 #define __CPML_CURVE_H__
 
+typedef enum {
+    CPML_CURVE_OFFSET_ALGORITHM_NONE,
+    CPML_CURVE_OFFSET_ALGORITHM_DEFAULT,
+    CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT,
+    CPML_CURVE_OFFSET_ALGORITHM_BAIOCA,
+} CpmlCurveOffsetAlgorithm;
 
 CAIRO_BEGIN_DECLS
 
-void    cpml_curve_put_pair_at_time     (const CpmlPrimitive    *curve,
-                                         double                  t,
-                                         CpmlPair               *pair);
-void    cpml_curve_put_vector_at_time   (const CpmlPrimitive    *curve,
-                                         double                  t,
-                                         CpmlVector             *vector);
+CpmlCurveOffsetAlgorithm
+        cpml_curve_offset_algorithm     (CpmlCurveOffsetAlgorithm new_algorithm);
+void    cpml_curve_put_pair_at_time     (const CpmlPrimitive     *curve,
+                                         double                   t,
+                                         CpmlPair                *pair);
+void    cpml_curve_put_vector_at_time   (const CpmlPrimitive     *curve,
+                                         double                   t,
+                                         CpmlVector              *vector);
 
 CAIRO_END_DECLS
 

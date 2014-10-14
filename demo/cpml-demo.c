@@ -56,6 +56,8 @@ static void     arc3p                   (cairo_t        *cr,
 static gboolean intersections           (GtkWidget      *widget,
                                          cairo_t        *cr);
 
+static void     algorithm_changed       (GtkRadioButton *button,
+                                         GtkWidget      *area);
 static gboolean offset_curves           (GtkWidget      *widget,
                                          cairo_t        *cr);
 
@@ -228,6 +230,15 @@ main(gint argc, gchar **argv)
                      "clicked", G_CALLBACK(browsing_reset), NULL);
     g_signal_connect(gtk_builder_get_object(builder, "btnBrowsingNext"),
                      "clicked", G_CALLBACK(browsing_next), NULL);
+    g_signal_connect(gtk_builder_get_object(builder, "optAlgorithmDefault"),
+                     "toggled", G_CALLBACK(algorithm_changed),
+                     gtk_builder_get_object(builder, "areaOffsetCurves"));
+    g_signal_connect(gtk_builder_get_object(builder, "optAlgorithmBaioca"),
+                     "toggled", G_CALLBACK(algorithm_changed),
+                     gtk_builder_get_object(builder, "areaOffsetCurves"));
+    g_signal_connect(gtk_builder_get_object(builder, "optAlgorithmHandcraft"),
+                     "toggled", G_CALLBACK(algorithm_changed),
+                     gtk_builder_get_object(builder, "areaOffsetCurves"));
 #ifdef GTK2_ENABLED
     g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
                      "expose-event", G_CALLBACK(browsing_gtk2), NULL);
@@ -521,6 +532,33 @@ intersections(GtkWidget *widget, cairo_t *cr)
     return FALSE;
 }
 
+
+static void
+algorithm_changed(GtkRadioButton *button, GtkWidget *area)
+{
+    const gchar *button_name;
+    CpmlCurveOffsetAlgorithm new_algorithm;
+
+    if (! gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
+        return;
+
+
+    button_name = gtk_widget_get_name(GTK_WIDGET(button));
+
+    if (g_strcmp0(button_name, "DEFAULT") == 0) {
+        new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_DEFAULT;
+    } else if (g_strcmp0(button_name, "BAIOCA") == 0) {
+        new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_BAIOCA;
+    } else if (g_strcmp0(button_name, "HANDCRAFT") == 0) {
+        new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT;
+    } else {
+        g_warning("Unknown offset algorithm name (%s)", button_name);
+        new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_NONE;
+    }
+
+    cpml_curve_offset_algorithm(new_algorithm);
+    gtk_widget_queue_draw(area);
+}
 
 static gboolean
 offset_curves(GtkWidget *widget, cairo_t *cr)

@@ -46,14 +46,22 @@
  *           implemented;</listitem>
  * <listitem>the <function>put_intersections</function> method must be
  *           implemented;</listitem>
- * <listitem>by default, the offset curve is calculated by using the point
- *           at t=0.5 as reference: use a better candidate;</listitem>
- * <listitem>in the <function>offset</function> implementation, when the
- *           equations are inconsistent, the alternative approach performs
- *           very bad if <varname>v0</varname> and <varname>v3</varname> are
- *           opposite or staggered.</listitem>
  * </itemizedlist>
  * </important>
+ *
+ * Since: 1.0
+ **/
+
+
+/**
+ * CpmlCurveOffsetAlgorithm:
+ * @CPML_CURVE_OFFSET_ALGORITHM_NONE: unknown or no specific algorithm
+ * @CPML_CURVE_OFFSET_ALGORITHM_DEFAULT: default algorithm
+ * @CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT: handcraft algorithm
+ * @CPML_CURVE_OFFSET_ALGORITHM_BAIOCA: B.A.I.O.C.A. algorithm
+ *
+ * Enumeration of all available algorithms for offsetting a cubic Bézier
+ * curve.
  *
  * Since: 1.0
  **/
@@ -66,36 +74,88 @@
 #include "cpml-primitive-private.h"
 #include "cpml-curve.h"
 
+/* TODO: will be offset_baioca() once it is implemented */
+#define DEFAULT_ALGORITHM   offset_handcraft
+
 
 static void     put_extents             (const CpmlPrimitive    *curve,
-                                         CpmlExtents            *extents);
-static void     offset                  (CpmlPrimitive          *curve,
+                                         CpmlExtents            *extents); static void     offset_handcraft        (CpmlPrimitive          *curve,
                                          double                  offset);
+static void     offset_baioca           (CpmlPrimitive          *curve,
+                                         double                  offset);
+
+/* class_data is outside get_class so it can be modified by other methods */
+static _CpmlPrimitiveClass class_data = {
+    "curve to", 4,
+    NULL,
+    put_extents,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    DEFAULT_ALGORITHM,
+    NULL
+};
 
 
 const _CpmlPrimitiveClass *
 _cpml_curve_get_class(void)
 {
-    static _CpmlPrimitiveClass *p_class = NULL;
-
-    if (p_class == NULL) {
-        static _CpmlPrimitiveClass class_data = {
-            "curve to", 4,
-            NULL,
-            put_extents,
-            NULL,
-            NULL,
-            NULL,
-            NULL,
-            offset,
-            NULL
-        };
-        p_class = &class_data;
-    }
-
-    return p_class;
+    return &class_data;
 }
 
+/**
+ * cpml_curve_offset_algorithm:
+ * @new_algorithm: the new algorithm to use
+ *
+ * Selects the algorithm to use for offsetting Bézier curves and
+ * returns the old algorithm.
+ *
+ * You can use #CPML_CURVE_OFFSET_ALGORITHM_NONE (that does not
+ * change the current algorithm) if you are only interested in
+ * knowing which is the current algorithm used.
+ *
+ * <important><para>
+ * This function is <emphasis>not thread-safe</emphasis>. If you
+ * are changing the algorithm in a thread environment you must
+ * ensure by yourself no other threads are calling #CpmlCurve
+ * methods in the meantime.
+ * </para></important>
+ *
+ * Returns: the previous algorithm used.
+ *
+ * Since: 1.0
+ **/
+CpmlCurveOffsetAlgorithm
+cpml_curve_offset_algorithm(CpmlCurveOffsetAlgorithm new_algorithm)
+{
+    CpmlCurveOffsetAlgorithm old_algorithm;
+
+    /* Reverse lookup of the algorithm used */
+    if (class_data.offset == offset_baioca) {
+        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_BAIOCA;
+    } else if (class_data.offset == offset_handcraft) {
+        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT;
+    } else {
+        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_NONE;
+    }
+
+    switch (new_algorithm) {
+    case CPML_CURVE_OFFSET_ALGORITHM_NONE:
+        break;
+    case CPML_CURVE_OFFSET_ALGORITHM_DEFAULT:
+        class_data.offset = DEFAULT_ALGORITHM;
+        break;
+    case CPML_CURVE_OFFSET_ALGORITHM_BAIOCA:
+        class_data.offset = offset_baioca;
+        break;
+    case CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT:
+        class_data.offset = offset_handcraft;
+        break;
+    }
+
+    return old_algorithm;
+}
 
 /**
  * cpml_curve_put_pair_at_time:
@@ -195,7 +255,7 @@ put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 }
 
 static void
-offset(CpmlPrimitive *curve, double offset)
+offset_handcraft(CpmlPrimitive *curve, double offset)
 {
     double m, mm;
     CpmlVector v0, v3, vm, vtmp;
@@ -273,4 +333,10 @@ offset(CpmlPrimitive *curve, double offset)
     cpml_pair_to_cairo(&p1, &curve->data[1]);
     cpml_pair_to_cairo(&p2, &curve->data[2]);
     cpml_pair_to_cairo(&p3, &curve->data[3]);
+}
+
+static void
+offset_baioca(CpmlPrimitive *curve, double offset)
+{
+    /* TODO */
 }

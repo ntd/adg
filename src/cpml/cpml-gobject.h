@@ -45,6 +45,11 @@ CpmlSegment *   cpml_segment_deep_dup   (const CpmlSegment      *segment);
 void            cpml_segment_deep_copy  (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
 
+#define         CPML_TYPE_CURVE_OFFSET_ALGORITHM \
+                                        (cpml_curve_offset_algorithm_get_type())
+GType           cpml_curve_offset_algorithm_get_type
+                                        (void) G_GNUC_CONST;
+
 G_END_DECLS
 
 

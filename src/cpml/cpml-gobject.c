@@ -40,6 +40,7 @@
 #include "cpml-extents.h"
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
+#include "cpml-curve.h"
 
 #include "cpml-gobject.h"
 
@@ -308,4 +309,23 @@ cpml_segment_deep_copy(CpmlSegment *segment, const CpmlSegment *src)
         size_t n = sizeof(cairo_path_data_t) * segment->num_data;
         memcpy(segment->data, src->data, n);
     }
+}
+
+GType
+cpml_curve_offset_algorithm_get_type(void)
+{
+    static GType etype = 0;
+    if (G_UNLIKELY(etype == 0)) {
+        static const GEnumValue values[] = {
+            { CPML_CURVE_OFFSET_ALGORITHM_NONE, "CPML_CURVE_OFFSET_ALGORITHM_NONE", "none" },
+            { CPML_CURVE_OFFSET_ALGORITHM_DEFAULT, "CPML_CURVE_OFFSET_ALGORITHM_DEFAULT", "default" },
+            { CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT, "CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT", "handcraft" },
+            { CPML_CURVE_OFFSET_ALGORITHM_BAIOCA, "CPML_CURVE_OFFSET_ALGORITHM_BAIOCA", "baioca" },
+            { 0, NULL, NULL }
+        };
+
+        etype = g_enum_register_static("CpmlCurveOffsetAlgorithm", values);
+    }
+
+    return etype;
 }
