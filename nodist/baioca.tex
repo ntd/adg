@@ -273,36 +273,41 @@ its control points.
 
 \section{Choosing $t_i$\label{sec:ti}}
 
+To select the $\{t_i\}_{i=0}^n$ set of values for $t$ needed by
+the offsetting algorithm, we can use different methods. Here are some
+basic ones: no further research is performed to check the quality of
+the results.
+
 \subsection{Method 1: too lazy to think}
 
-\begin{equation*}
-\begin{split}
-    i &= 1 \dots N\\
-    t_i &= \frac{J}{N} \qquad J = (0, 1, \dots, N)
-\end{split}
-\end{equation*}
-
-\subsection{Method 2: too thoughtful to be lazy}
-
-Select some $\{b_i\}$ points on $B(t)$.
+The most obvious method is to directly use evenly spaced time values:
 
 \begin{equation*}
-\begin{split}
-    \| b_i \| &= \sqrt{b_i^2 - b_{i-1}^2} \\
-    d &= \sum \| b_i - b_{i-1} \| \\
-    t_0 &= 0 \\
-    t_i &= t_{i-1} + \frac{\| b_i - b_{i-1} \|}{d}\\
-\end{split}
+    t_i = \frac{i}{n}.
 \end{equation*}
 
-\subsection{Method 3: let's root}
+\subsection{Method 2: squared distances}
 
-\begin{equation*}
-\begin{split}
-    d &= \sum \sqrt{\| b_i - b_{i-1} \|} \\
-    t_0 &= 0 \\
-    t_i &= t_{i-1} + \frac{\sqrt{\| b_i - b_{i-1} \|}}{d}\\
-\end{split}
-\end{equation*}
+Let's select some $\{\V{D}_i\}$ points on $\V{B}(t)$, for instance by
+resolving the $t$ values got from the lazy method. The following formula
+will partition the Bézier curve proportionally to their squared
+distances:
+
+\begin{alignat*}{2}
+    t_0 &= 0; &\qquad d = \sum_{i=1}^n \left( \V{D}_i - \V{D}_{i-1} \right)^2 \\[-20pt]
+    t_i &= t_{i-1} + \frac{\left( \V{D}_i - \V{D}_{i-1} \right)^2}{d}. \\
+\end{alignat*}
+
+\subsection{Method 3: distances}
+
+A variant of the previous method that uses distances instead of squared
+distances. This is computationally more intensive because the norm of
+a vector $ \| \V{D} \| \equiv \sqrt{D_x^2 + D_y^2}$ requires a square
+root.
+
+\begin{alignat*}{2}
+    t_0 &= 0; &\qquad d = \sum_{i=1}^n \| \V{D}_i - \V{D}_{i-1} \| \\[-16pt]
+    t_i &= t_{i-1} + \frac{\| \V{D}_i - \V{D}_{i-1} \|}{d}. \\
+\end{alignat*}
 
 \end{document}
