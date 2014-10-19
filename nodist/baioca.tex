@@ -90,16 +90,7 @@ where $\DV{Q} \equiv \frac{d}{dt} \V{Q}(t)$.
 \end{enumerate}
 
 \medskip
-Condition 1 implies that
-\begin{equation}\label{eq:q03}
-\begin{aligned}[t]
-    \V{Q}_0 &= \V{B}_0 + R \frac{(\D{B}_{0y}, -\D{B}_{0x})}
-	{\| \DV{B}_0 \|};\\
-    \V{Q}_3 &= \V{B}_3 + R \frac{(\D{B}_{3y}, -\D{B}_{3x})}
-	{\| \DV{B}_3 \|}.
-\end{aligned}
-\qquad\| \DV{B}_i \| \equiv \sqrt{\D{B}_{ix}^2 + \D{B}_{iy}^2}
-\end{equation}
+Condition 1 implies that $Q_0 = C_1$ and $Q_3 = C_n$.
 
 Condition 2 implies that $\DV{Q}_0 = \DV{B}_0$ and
 $\DV{Q}_3 = \DV{B}_3$. Imposing by convention
@@ -251,9 +242,9 @@ from which we can calculate $r$ and $s$
 
 \begin{enumerate}
     \item Select $\{t_i\}_{i=0}^n$ as shown in section~\ref{sec:ti};
-    \item get $\V{Q}_0$ and $\V{Q}_3$ from \eqref{eq:q03};
+    \item compute $\{\V{C}_i\}_{i=0}^n$ with \eqref{eq:Ci}:
+	$\V{Q}_0 = C_0$ and $\V{Q}_3 = C_n$;
     \item calculate $\V{P}_0$ and $\V{P}_2$ with \eqref{eq:pi};
-    \item compute $\{\V{C}_i\}_{i=0}^n$ with \eqref{eq:Ci};
     \item calculate $D_0$, $D_2$, $E_{01}$, $E_{02}$, $E_{11}$,
 	$E_{12}$, $E_{13}$, $E_{22}$ and $E_{23}$ with \eqref{eq:DE};
     \item calculate $A_1$, $A_2$, $A_3$, $A_4$ and $A_5$ with
