@@ -372,6 +372,23 @@ Offseting complex segments</col>
                                 <property name="position">2</property>
                               </packing>
                             </child>
+                            <child>
+                              <object class="GtkRadioButton" id="optAlgorithmGeometrical">
+                                <property name="label">Geometrical</property>
+                                <property name="name">GEOMETRICAL</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">optAlgorithmDefault</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
                           </object>
                         </child>
                         <child type="label">

@@ -57,11 +57,29 @@
  * CpmlCurveOffsetAlgorithm:
  * @CPML_CURVE_OFFSET_ALGORITHM_NONE: unknown or no specific algorithm
  * @CPML_CURVE_OFFSET_ALGORITHM_DEFAULT: default algorithm
+ * @CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL: geometrical algorithm
  * @CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT: handcraft algorithm
  * @CPML_CURVE_OFFSET_ALGORITHM_BAIOCA: B.A.I.O.C.A. algorithm
  *
- * Enumeration of all available algorithms for offsetting a cubic Bézier
- * curve.
+ * Enumeration of all available algorithms for offsetting the B(t) cubic
+ * Bézier curve.
+ *
+ * The geometrical algorithm offset the control polygon, further applying a
+ * factor of 4/3 on the control points along the vector normal to B(0.5). That
+ * factor mix well with curves approximating arcs (the most common case). It
+ * is a stable algorithm, i.e. it can be used for every Bézier.
+ *
+ * The handcraft algorithm offsets the point at B(0.5) and it forces the
+ * condition the offset curve must pass through it (interpolation). If it
+ * fails, falls back to geometrical.
+ *
+ * The BAIOCA algorithm offsets a specific set of t values and try to minimize
+ * the error between those points and the offset curve. If it fails, falls
+ * back to geometrical. By default the set of t values is { 0, 0.25, 0.5,
+ * 0.75, 1 }. As implied by this description, using the set { 0, 0.5, 1 }
+ * is logical equivalent to the handcraft algorithm.
+ *
+ * The default algorith is #CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT.
  *
  * Since: 1.0
  **/
@@ -78,7 +96,10 @@
 
 
 static void     put_extents             (const CpmlPrimitive    *curve,
-                                         CpmlExtents            *extents); static void     offset_handcraft        (CpmlPrimitive          *curve,
+                                         CpmlExtents            *extents);
+static void     offset_geometrical      (CpmlPrimitive          *curve,
+                                         double                  offset);
+static void     offset_handcraft        (CpmlPrimitive          *curve,
                                          double                  offset);
 static void     offset_baioca           (CpmlPrimitive          *curve,
                                          double                  offset);
@@ -131,10 +152,12 @@ cpml_curve_offset_algorithm(CpmlCurveOffsetAlgorithm new_algorithm)
     CpmlCurveOffsetAlgorithm old_algorithm;
 
     /* Reverse lookup of the algorithm used */
-    if (class_data.offset == offset_baioca) {
-        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_BAIOCA;
-    } else if (class_data.offset == offset_handcraft) {
+    if (class_data.offset == offset_handcraft) {
         old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT;
+    } else if (class_data.offset == offset_baioca) {
+        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_BAIOCA;
+    } else if (class_data.offset == offset_geometrical) {
+        old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL;
     } else {
         old_algorithm = CPML_CURVE_OFFSET_ALGORITHM_NONE;
     }
@@ -144,6 +167,9 @@ cpml_curve_offset_algorithm(CpmlCurveOffsetAlgorithm new_algorithm)
         break;
     case CPML_CURVE_OFFSET_ALGORITHM_DEFAULT:
         class_data.offset = DEFAULT_ALGORITHM;
+        break;
+    case CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL:
+        class_data.offset = offset_geometrical;
         break;
     case CPML_CURVE_OFFSET_ALGORITHM_BAIOCA:
         class_data.offset = offset_baioca;
@@ -285,15 +311,11 @@ put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
     cpml_extents_pair_add(extents, &p4);
 }
 
-static void
-offset_handcraft(CpmlPrimitive *curve, double offset)
+static int
+geometrical(CpmlPrimitive *curve, double offset, double m)
 {
-    double m, mm;
-    CpmlVector v0, v3;
-    CpmlPair p0, p1, p2, p3, r;
-
-    m = 0.5;
-    mm = 1-m;
+    CpmlVector v0, v3, vm;
+    CpmlPair p0, p1, p2, p3;
 
     /* Firstly, convert the curve points from cairo format to cpml format
      * and store them (temporary) in p0..p3 */
@@ -310,46 +332,93 @@ offset_handcraft(CpmlPrimitive *curve, double offset)
     v3.x = p3.x - p2.x;
     v3.y = p3.y - p2.y;
 
-    cpml_curve_put_offset_at_time(curve, m, offset, &r);
     cpml_curve_put_offset_at_time(curve, 0, offset, &p0);
     cpml_curve_put_offset_at_time(curve, 1, offset, &p3);
 
-    if (v0.x*v3.y == v3.x*v0.y) {
-        /* Inconsistent equations: use the alternative approach */
-        CpmlVector vm;
-        cpml_curve_put_vector_at_time(curve, m, &vm);
-        cpml_vector_normal(&vm);
-        cpml_vector_set_length(&vm, offset);
-        p1.x = p0.x + v0.x + vm.x * 4/3;
-        p1.y = p0.y + v0.y + vm.y * 4/3;
-        p2.x = p3.x - v3.x + vm.x * 4/3;
-        p2.y = p3.y - v3.y + vm.y * 4/3;
-    } else {
-        CpmlPair s;
-        double k0, k3;
+    cpml_curve_put_vector_at_time(curve, m, &vm);
+    cpml_vector_normal(&vm);
+    cpml_vector_set_length(&vm, offset);
 
-        s.x = (r.x - mm*mm*(1+m+m)*p0.x - m*m*(1+mm+mm)*p3.x) / (3*m*(1-m));
-        s.y = (r.y - mm*mm*(1+m+m)*p0.y - m*m*(1+mm+mm)*p3.y) / (3*m*(1-m));
-
-        if (v0.x != 0) {
-            k3 = (s.y - s.x*v0.y / v0.x) / (m*(v3.y - v3.x*v0.y / v0.x));
-            k0 = (s.x - m*k3*v3.x) / (mm*v0.x);
-        } else {
-            k0 = (s.y - s.x*v3.y / v3.x) / (mm*(v0.y - v0.x*v3.y / v3.x));
-            k3 = (s.x - mm*k0*v0.x) / (m*v3.x);
-        }
-
-        p1.x = p0.x + k0*v0.x;
-        p1.y = p0.y + k0*v0.y;
-        p2.x = p3.x + k3*v3.x;
-        p2.y = p3.y + k3*v3.y;
-    }
+    p1.x = p0.x + v0.x + vm.x * 4/3;
+    p1.y = p0.y + v0.y + vm.y * 4/3;
+    p2.x = p3.x - v3.x + vm.x * 4/3;
+    p2.y = p3.y - v3.y + vm.y * 4/3;
 
     /* Return the new curve in the original array */
     cpml_pair_to_cairo(&p0, curve->org);
     cpml_pair_to_cairo(&p1, &curve->data[1]);
     cpml_pair_to_cairo(&p2, &curve->data[2]);
     cpml_pair_to_cairo(&p3, &curve->data[3]);
+
+    return 1;
+}
+
+static void
+offset_geometrical(CpmlPrimitive *curve, double offset)
+{
+    geometrical(curve, offset, 0.5);
+}
+
+static int
+handcraft(CpmlPrimitive *curve, double offset, double m)
+{
+    CpmlVector v0, v3;
+    CpmlPair p0, p1, p2, p3, r, s;
+    double mm, k0, k3;
+
+    /* Firstly, convert the curve points from cairo format to cpml format
+     * and store them (temporary) in p0..p3 */
+    cpml_pair_from_cairo(&p0, curve->org);
+    cpml_pair_from_cairo(&p1, &curve->data[1]);
+    cpml_pair_from_cairo(&p2, &curve->data[2]);
+    cpml_pair_from_cairo(&p3, &curve->data[3]);
+
+    /* v0 = p1-p0 */
+    v0.x = p1.x - p0.x;
+    v0.y = p1.y - p0.y;
+
+    /* v3 = p3-p2 */
+    v3.x = p3.x - p2.x;
+    v3.y = p3.y - p2.y;
+
+    if (v0.x*v3.y == v3.x*v0.y)
+        return 0;
+
+    cpml_curve_put_offset_at_time(curve, m, offset, &r);
+    cpml_curve_put_offset_at_time(curve, 0, offset, &p0);
+    cpml_curve_put_offset_at_time(curve, 1, offset, &p3);
+
+    mm = 1 - m;
+    s.x = (r.x - mm*mm*(1+m+m)*p0.x - m*m*(1+mm+mm)*p3.x) / (3*m*(1-m));
+    s.y = (r.y - mm*mm*(1+m+m)*p0.y - m*m*(1+mm+mm)*p3.y) / (3*m*(1-m));
+
+    if (v0.x != 0) {
+        k3 = (s.y - s.x*v0.y / v0.x) / (m*(v3.y - v3.x*v0.y / v0.x));
+        k0 = (s.x - m*k3*v3.x) / (mm*v0.x);
+    } else {
+        k0 = (s.y - s.x*v3.y / v3.x) / (mm*(v0.y - v0.x*v3.y / v3.x));
+        k3 = (s.x - mm*k0*v0.x) / (m*v3.x);
+    }
+
+    p1.x = p0.x + k0*v0.x;
+    p1.y = p0.y + k0*v0.y;
+    p2.x = p3.x + k3*v3.x;
+    p2.y = p3.y + k3*v3.y;
+
+    /* Return the new curve in the original array */
+    cpml_pair_to_cairo(&p0, curve->org);
+    cpml_pair_to_cairo(&p1, &curve->data[1]);
+    cpml_pair_to_cairo(&p2, &curve->data[2]);
+    cpml_pair_to_cairo(&p3, &curve->data[3]);
+
+    return 1;
+}
+
+static void
+offset_handcraft(CpmlPrimitive *curve, double offset)
+{
+    if (! handcraft(curve, offset, 0.5))
+        geometrical(curve, offset, 0.5);
 }
 
 /* Helper macro that returns the scalar product of two vectors */
@@ -443,21 +512,15 @@ baioca(CpmlPrimitive *curve, double offset, const double t[], int n)
 }
 
 static void
-select_ti_lazy(double t[], int n) {
-    int i;
-    for (i = 0; i <= n; ++i)
-        t[i] = (double) i / n;
-}
-
-static void
 offset_baioca(CpmlPrimitive *curve, double offset)
 {
-    int n = 4;
+    int i, n = 4;
     double t[n+1];
 
-    /* 1. Select t_i */
-    select_ti_lazy(t, n);
+    /* 1. Select t_i using the lazy method */
+    for (i = 0; i <= n; ++i)
+        t[i] = (double) i / n;
 
     if (! baioca(curve, offset, t, n))
-        offset_handcraft(curve, offset);
+        geometrical(curve, offset, 0.5);
 }

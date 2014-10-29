@@ -239,6 +239,9 @@ main(gint argc, gchar **argv)
     g_signal_connect(gtk_builder_get_object(builder, "optAlgorithmHandcraft"),
                      "toggled", G_CALLBACK(algorithm_changed),
                      gtk_builder_get_object(builder, "areaOffsetCurves"));
+    g_signal_connect(gtk_builder_get_object(builder, "optAlgorithmGeometrical"),
+                     "toggled", G_CALLBACK(algorithm_changed),
+                     gtk_builder_get_object(builder, "areaOffsetCurves"));
 #ifdef GTK2_ENABLED
     g_signal_connect(gtk_builder_get_object(builder, "areaBrowsing"),
                      "expose-event", G_CALLBACK(browsing_gtk2), NULL);
@@ -551,6 +554,8 @@ algorithm_changed(GtkRadioButton *button, GtkWidget *area)
         new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_BAIOCA;
     } else if (g_strcmp0(button_name, "HANDCRAFT") == 0) {
         new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT;
+    } else if (g_strcmp0(button_name, "GEOMETRICAL") == 0) {
+        new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL;
     } else {
         g_warning("Unknown offset algorithm name (%s)", button_name);
         new_algorithm = CPML_CURVE_OFFSET_ALGORITHM_NONE;
