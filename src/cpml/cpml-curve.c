@@ -355,34 +355,24 @@ offset_handcraft(CpmlPrimitive *curve, double offset)
 /* Helper macro that returns the scalar product of two vectors */
 #define SP(a,b) ((a).x * (b).x + (a).y * (b).y)
 
-static void
-select_ti_lazy(double t[], int n) {
-    int i;
-    for (i = 0; i <= n; ++i)
-        t[i] = (double) i / n;
-}
-
-static void
-offset_baioca(CpmlPrimitive *curve, double offset)
+static int
+baioca(CpmlPrimitive *curve, double offset, const double t[], int n)
 {
-    int i, n = 4;
-    double t[n+1], _t, _t2, _1t, _1t2;
+    int i;
+    double _t, _t2, _1t, _1t2;
     CpmlPair B0, B1, B2, B3;
     CpmlPair Q0, Q1, Q2, Q3;
     CpmlPair P0, P2, Ci;
     double b0, b1, b2, b3;
     double D0, D2, E01, E02, E11, E12, E13, E22, E23;
     double A1, A2, A3, A4, A5;
-    double r, s;
+    double r, s, divisor;
 
     /* Pick the CpmlPair from the original primitive */
     cpml_pair_from_cairo(&B0, curve->org);
     cpml_pair_from_cairo(&B1, &curve->data[1]);
     cpml_pair_from_cairo(&B2, &curve->data[2]);
     cpml_pair_from_cairo(&B3, &curve->data[3]);
-
-    /* 1. Select t_i */
-    select_ti_lazy(t, sizeof(t) / sizeof(t[0]) - 1);
 
     /* 3. Calculate P0 and P2 */
     P0.x = B1.x - B0.x;
@@ -430,8 +420,12 @@ offset_baioca(CpmlPrimitive *curve, double offset)
     A5 = SP(P2, P2) * E22;
 
     /* 6. Calculate r and s */
-    r = (A1 * A5 - A4 * A2) / (A3 * A5 - A4 * A4);
-    s = (A3 * A2 - A1 * A4) / (A3 * A5 - A4 * A4);
+    divisor = A3 * A5 - A4 * A4;
+    if (divisor == 0)
+        return 0;
+
+    r = (A1 * A5 - A4 * A2) / divisor;
+    s = (A3 * A2 - A1 * A4) / divisor;
 
     /* 7. Get Q1 and Q2 */
     Q1.x = Q0.x + r * P0.x;
@@ -444,4 +438,26 @@ offset_baioca(CpmlPrimitive *curve, double offset)
     cpml_pair_to_cairo(&Q1, &curve->data[1]);
     cpml_pair_to_cairo(&Q2, &curve->data[2]);
     cpml_pair_to_cairo(&Q3, &curve->data[3]);
+
+    return 1;
+}
+
+static void
+select_ti_lazy(double t[], int n) {
+    int i;
+    for (i = 0; i <= n; ++i)
+        t[i] = (double) i / n;
+}
+
+static void
+offset_baioca(CpmlPrimitive *curve, double offset)
+{
+    int n = 4;
+    double t[n+1];
+
+    /* 1. Select t_i */
+    select_ti_lazy(t, n);
+
+    if (! baioca(curve, offset, t, n))
+        offset_handcraft(curve, offset);
 }
