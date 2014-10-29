@@ -70,8 +70,8 @@
  * is a stable algorithm, i.e. it can be used for every Bézier.
  *
  * The handcraft algorithm offsets the point at B(0.5) and it forces the
- * condition the offset curve at t=0.5 must pass through the x or y coordinate
- * of that point. If it fails, falls back to geometrical.
+ * condition the offset curve at t=0.5 must pass through that point. If it
+ * fails, falls back to geometrical.
  *
  * The BAIOCA algorithm offsets a specific set of t values and try to minimize
  * the error between those points and the offset curve at the same t values.
