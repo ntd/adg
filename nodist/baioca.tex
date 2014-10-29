@@ -90,7 +90,7 @@ where $\DV{Q} \equiv \frac{d}{dt} \V{Q}(t)$.
 \end{enumerate}
 
 \medskip
-Condition 1 implies that $Q_0 = C_1$ and $Q_3 = C_n$.
+Condition 1 implies that $\V{Q}_0 = \V{C}_1$ and $\V{Q}_3 = \V{C}_n$.
 
 Condition 2 implies that $\DV{Q}_0 = \DV{B}_0$ and
 $\DV{Q}_3 = \DV{B}_3$. Imposing by convention
@@ -131,10 +131,10 @@ solve the system
 \end{dcases}
 \end{equation*}
 
-Now, given the shortcuts\footnote{Either $C_0$ and $C_n$ are not
-considered because they have been already used as $Q_0$ and $Q_3$ by the
-interpolation constraint.} $\sum \equiv \sum_{i=1}^{n-1}$ and
-$b_j \equiv b_j(t_i)$, we can write $\phi$ as
+Now, given the shortcuts\footnote{Either $i = 0$ and $i = n$ are not
+considered because $\V{C}_0$ and $\V{C}_n$ have been already used as
+$\V{Q}_0$ and $\V{Q}_3$ by the interpolation constraint.} $\sum \equiv
+\sum_{i=1}^{n-1}$ and $b_j \equiv b_j(t_i)$, we can write $\phi$ as
 \begin{equation*}
     \phi(r, s) = \sum \left[ \V{C}_i - b_0 \V{Q}_0 - b_1 \V{Q}_0 -
     r b_1 \V{P}_0 - b_2 \V{Q}_3 - s b_2 \V{P}_2 - b_3 \V{Q}_3 \right]^2;
@@ -243,7 +243,7 @@ from which we can calculate $r$ and $s$
 \begin{enumerate}
     \item Select $\{t_i\}_{i=0}^n$ as shown in section~\ref{sec:ti};
     \item compute $\{\V{C}_i\}_{i=0}^n$ with \eqref{eq:Ci}:
-	$\V{Q}_0 = C_0$ and $\V{Q}_3 = C_n$;
+	$\V{Q}_0 = \V{C}_0$ and $\V{Q}_3 = \V{C}_n$;
     \item calculate $\V{P}_0$ and $\V{P}_2$ with \eqref{eq:pi};
     \item calculate $D_0$, $D_2$, $E_{01}$, $E_{02}$, $E_{11}$,
 	$E_{12}$, $E_{13}$, $E_{22}$ and $E_{23}$ with \eqref{eq:DE};
