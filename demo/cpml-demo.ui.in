@@ -131,47 +131,41 @@ Offseting complex segments</col>
                             <property name="label_xalign">0</property>
                             <property name="shadow_type">none</property>
                             <child>
-                              <object class="GtkAlignment" id="algBrowsingSubject">
+                              <object class="GtkHBox" id="hbBrowsingSubject">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="left_padding">9</property>
+                                <property name="border_width">3</property>
                                 <child>
-                                  <object class="GtkHBox" id="hbBrowsingSubject">
+                                  <object class="GtkRadioButton" id="optBrowsingSegment">
+                                    <property name="label">CpmlSegment</property>
                                     <property name="visible">True</property>
-                                    <property name="can_focus">False</property>
-                                    <property name="border_width">3</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <object class="GtkRadioButton" id="optBrowsingSegment">
-                                        <property name="label">CpmlSegment</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="active">True</property>
-                                        <property name="draw_indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="optBrowsingPrimitive">
-                                        <property name="label">CpmlPrimitive</property>
-                                        <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">False</property>
-                                        <property name="draw_indicator">True</property>
-                                        <property name="group">optBrowsingSegment</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="active">True</property>
+                                    <property name="draw_indicator">True</property>
                                   </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">6</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="optBrowsingPrimitive">
+                                    <property name="label">CpmlPrimitive</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">False</property>
+                                    <property name="draw_indicator">True</property>
+                                    <property name="group">optBrowsingSegment</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">6</property>
+                                    <property name="position">1</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -323,65 +317,60 @@ Offseting complex segments</col>
                         <property name="label_xalign">0</property>
                         <property name="shadow_type">none</property>
                         <child>
-                          <object class="GtkAlignment" id="algOffsetAlgorithm">
+                          <object class="GtkHBox" id="hbOffsetAlgorithm">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="left_padding">9</property>
+                            <property name="border_width">3</property>
                             <child>
-                              <object class="GtkHBox" id="hbOffsetAlgorithm">
+                              <object class="GtkRadioButton" id="optAlgorithmDefault">
+                                <property name="label">Default</property>
+                                <property name="name">DEFAULT</property>
                                 <property name="visible">True</property>
-                                <property name="can_focus">False</property>
-                                <property name="border_width">3</property>
-                                <property name="spacing">6</property>
-                                <child>
-                                  <object class="GtkRadioButton" id="optAlgorithmDefault">
-                                    <property name="label">Default</property>
-                                    <property name="name">DEFAULT</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="active">True</property>
-                                    <property name="draw_indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="optAlgorithmBaioca">
-                                    <property name="label">B.A.I.O.C.A.</property>
-                                    <property name="name">BAIOCA</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">optAlgorithmDefault</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkRadioButton" id="optAlgorithmHandcraft">
-                                    <property name="label">Handcraft</property>
-                                    <property name="name">HANDCRAFT</property>
-                                    <property name="visible">True</property>
-                                    <property name="can_focus">True</property>
-                                    <property name="receives_default">False</property>
-                                    <property name="draw_indicator">True</property>
-                                    <property name="group">optAlgorithmDefault</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="active">True</property>
+                                <property name="draw_indicator">True</property>
                               </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="optAlgorithmBaioca">
+                                <property name="label">B.A.I.O.C.A.</property>
+                                <property name="name">BAIOCA</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">optAlgorithmDefault</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="optAlgorithmHandcraft">
+                                <property name="label">Handcraft</property>
+                                <property name="name">HANDCRAFT</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="draw_indicator">True</property>
+                                <property name="group">optAlgorithmDefault</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="padding">6</property>
+                                <property name="position">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
