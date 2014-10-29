@@ -70,14 +70,14 @@
  * is a stable algorithm, i.e. it can be used for every Bézier.
  *
  * The handcraft algorithm offsets the point at B(0.5) and it forces the
- * condition the offset curve must pass through it (interpolation). If it
- * fails, falls back to geometrical.
+ * condition the offset curve at t=0.5 must pass through the x or y coordinate
+ * of that point. If it fails, falls back to geometrical.
  *
  * The BAIOCA algorithm offsets a specific set of t values and try to minimize
- * the error between those points and the offset curve. If it fails, falls
- * back to geometrical. By default the set of t values is { 0, 0.25, 0.5,
- * 0.75, 1 }. As implied by this description, using the set { 0, 0.5, 1 }
- * is logical equivalent to the handcraft algorithm.
+ * the error between those points and the offset curve at the same t values.
+ * If it fails, falls back to geometrical. By default the set of t values is
+ * { 0, 0.25, 0.5, 0.75, 1 }. As implied by this description, using the set
+ * { 0, 0.5, 1 } is logically equivalent to the handcraft algorithm.
  *
  * The default algorith is #CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT.
  *
@@ -312,9 +312,9 @@ put_extents(const CpmlPrimitive *curve, CpmlExtents *extents)
 }
 
 static int
-geometrical(CpmlPrimitive *curve, double offset, double m)
+geometrical(CpmlPrimitive *curve, double offset, const CpmlVector *v)
 {
-    CpmlVector v0, v3, vm;
+    CpmlVector v0, v3;
     CpmlPair p0, p1, p2, p3;
 
     /* Firstly, convert the curve points from cairo format to cpml format
@@ -335,14 +335,10 @@ geometrical(CpmlPrimitive *curve, double offset, double m)
     cpml_curve_put_offset_at_time(curve, 0, offset, &p0);
     cpml_curve_put_offset_at_time(curve, 1, offset, &p3);
 
-    cpml_curve_put_vector_at_time(curve, m, &vm);
-    cpml_vector_normal(&vm);
-    cpml_vector_set_length(&vm, offset);
-
-    p1.x = p0.x + v0.x + vm.x * 4/3;
-    p1.y = p0.y + v0.y + vm.y * 4/3;
-    p2.x = p3.x - v3.x + vm.x * 4/3;
-    p2.y = p3.y - v3.y + vm.y * 4/3;
+    p1.x = p0.x + v0.x + v->x;
+    p1.y = p0.y + v0.y + v->y;
+    p2.x = p3.x - v3.x + v->x;
+    p2.y = p3.y - v3.y + v->y;
 
     /* Return the new curve in the original array */
     cpml_pair_to_cairo(&p0, curve->org);
@@ -356,7 +352,13 @@ geometrical(CpmlPrimitive *curve, double offset, double m)
 static void
 offset_geometrical(CpmlPrimitive *curve, double offset)
 {
-    geometrical(curve, offset, 0.5);
+    CpmlVector v;
+
+    cpml_curve_put_vector_at_time(curve, 0.5, &v);
+    cpml_vector_normal(&v);
+    cpml_vector_set_length(&v, offset * 4/3);
+
+    geometrical(curve, offset, &v);
 }
 
 static int
@@ -418,7 +420,7 @@ static void
 offset_handcraft(CpmlPrimitive *curve, double offset)
 {
     if (! handcraft(curve, offset, 0.5))
-        geometrical(curve, offset, 0.5);
+        offset_geometrical(curve, offset);
 }
 
 /* Helper macro that returns the scalar product of two vectors */
@@ -522,5 +524,5 @@ offset_baioca(CpmlPrimitive *curve, double offset)
         t[i] = (double) i / n;
 
     if (! baioca(curve, offset, t, n))
-        geometrical(curve, offset, 0.5);
+        offset_geometrical(curve, offset);
 }
