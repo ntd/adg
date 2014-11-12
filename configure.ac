@@ -6,13 +6,13 @@ m4_define([cpml_version],adg_version)
 m4_define([cpml_api_version],adg_api_version)
 m4_define([cpml_lt_version],[2:0:0])
 
-m4_define([gtkdoc_prereq],[1.12])dnl Support introspection annotations
-m4_define([gobject_prereq],[2.10.1])
-m4_define([cairo_prereq],[1.7.4])
-m4_define([gtk2_prereq],[2.12.0])
-m4_define([gtk3_prereq],[3.0.0])
-m4_define([pangocairo_prereq],[1.18.0])
-m4_define([gi_prereq],[0.9.5])dnl Picked up from clutter
+m4_define([gtkdoc_prereq],    [1.12]  )dnl Support introspection annotations
+m4_define([gobject_prereq],   [2.10.1])dnl Required by GTypeInitiallyUnowned (glib 2.10.0 was broken)
+m4_define([cairo_prereq],     [1.7.4] )dnl Required by cairo_scaled_font_text_to_glyphs()
+m4_define([gtk2_prereq],      [2.18.0])dnl Required by gtk_widget_get_allocation()
+m4_define([gtk3_prereq],      [3.0.0] )dnl First stable release
+m4_define([pangocairo_prereq],[1.10.0])dnl Cairo support in Pango
+m4_define([gi_prereq],        [1.0.0] )dnl First stable release
 
 
 # Initialization

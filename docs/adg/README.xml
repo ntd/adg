@@ -79,9 +79,9 @@ list can be <ulink url="http://cairographics.org/backends/">browsed online</ulin
    <listitem><ulink url="http://www.gtk.org/">GTK+</ulink> 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the <command>adg-demo</command> program;</listitem>
-   <listitem><ulink url="http://www.pango.org/">pango-cairo</ulink> 1.18.0 or later (optional)
+   <listitem><ulink url="http://www.pango.org/">pango</ulink> 1.18.0 or later (optional)
    to support a serious engine for rendering text instead of using
-   the default cairo "toy" APIs;</listitem>
+   the cairo "toy" APIs (only the pango-cairo module will be used);</listitem>
    <listitem><ulink url="http://www.gtk.org/gtk-doc/">gtk-doc</ulink> 1.12 or later (optional),
    used to regenerate the API documentation</listitem>
    <listitem><ulink url="http://live.gnome.org/GObjectIntrospection">GObject introspection</ulink>

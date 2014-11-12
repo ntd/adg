@@ -66,9 +66,9 @@ The ADG library has the following dependencies:
  * [GTK+](http://www.gtk.org/) 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the adg-demo program;
- * [pango-cairo](http://www.pango.org/) 1.18.0 or later (optional)
+ * [pango](http://www.pango.org/) 1.18.0 or later (optional)
    to support a serious engine for rendering text instead of using
-   the default cairo "toy" APIs;
+   the cairo "toy" APIs (only the pango-cairo module will be used);
  * [gtk-doc](http://www.gtk.org/gtk-doc/) 1.12 or later (optional),
    used to regenerate the API documentation
  * [GObject introspection](http://live.gnome.org/GObjectIntrospection)
