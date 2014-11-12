@@ -36,6 +36,11 @@ G_BEGIN_DECLS
 GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
 #endif
 
+#if GTK_CHECK_VERSION(2, 20, 0)
+#else
+gboolean        gtk_widget_get_realized         (GtkWidget      *widget);
+#endif
+
 void            adg_gtk_window_hide_here        (GtkWindow      *window);
 void            adg_gtk_toggle_button_sensitivize
                                                 (GtkToggleButton*toggle_button,

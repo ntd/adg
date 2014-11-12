@@ -79,6 +79,28 @@ gtk_widget_get_window(GtkWidget *widget)
 
 #endif
 
+#if GTK_CHECK_VERSION(2, 20, 0)
+#else
+
+/**
+ * gtk_widget_get_realized:
+ * @widget: a #GtkWidget
+ *
+ * Determines whether @widget is realized.
+ *
+ * Return value: %TRUE if @widget is realized, %FALSE otherwise
+ *
+ * Since: 1.0
+ **/
+gboolean
+gtk_widget_get_realized(GtkWidget *widget)
+{
+    g_return_val_if_fail(GTK_IS_WIDGET(widget), FALSE);
+    return GTK_WIDGET_REALIZED(widget);
+}
+
+#endif
+
 /**
  * adg_gtk_window_hide_here:
  * @window: a #GtkWindow

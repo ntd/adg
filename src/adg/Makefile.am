@@ -153,15 +153,8 @@ h_sources+=			adg-gtk-area.h \
 private_h_sources+=		adg-gtk-area-private.h \
 				adg-gtk-layout-private.h
 c_sources+=			adg-gtk-area.c \
+				adg-gtk-layout.c \
 				adg-gtk-utils.c
-endif
-
-if HAVE_GTK3
-c_sources+=			adg-gtk-layout.c
-endif
-
-if HAVE_GTK2
-c_sources+=			adg-gtk-layout-gtk2.c
 endif
 
 

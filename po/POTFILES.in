@@ -20,7 +20,6 @@ src/adg/adg-fill-style.c
 src/adg/adg-font-style.c
 src/adg/adg-gtk-area.c
 src/adg/adg-gtk-layout.c
-src/adg/adg-gtk-layout-gtk2.c
 src/adg/adg-hatch.c
 src/adg/adg-ldim.c
 src/adg/adg-line-style.c
