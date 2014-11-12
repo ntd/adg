@@ -1,0 +1,227 @@
+\documentclass{scrartcl}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[english]{babel}
+
+% Allow to build the PDF with either lualatex (preferred) or pdflatex
+\usepackage{iftex}
+\ifLuaTeX
+    \usepackage{luatextra}
+\else
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+
+\title{S.A.I.O.T.}
+\subtitle{Second Attempt to Improve the Offset Theory}
+\author{Giandomenico Rossi \and Nicola Fontana}
+\date{Oct 29, 2014}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+\setlength\parindent{0pt}
+\setlength\parskip{6pt}
+
+\newcommand\V[1]{\vec{#1}}
+\newcommand\D[1]{\dot{#1}}
+\newcommand\DV[1]{\D{\V{#1}}}
+\newcommand\SP[2]{\langle #1, #2 \rangle}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The results given by the BAIOCA algorithm in offsetting Bézier cubic
+curves are clearly suboptimal. The fact that it minimizes the mean
+square error between the original curve and the offset curve at the same
+time value poses an artifical constraint (that \textbf{same time value}
+thingy) that invalidate the whole theory. The optimal offset curve does
+not necessarily need to have its own offset points at the same time
+value of the original curve, and the fact that increasing the number of
+samples decreases the quality of the approximation given by BAIOCA seems
+to confirm that this is rarely the case.
+
+This algorithm explores a new way to solve the system that uses
+constraints not tied to the same time value.
+\end{abstract}
+
+\section{Mathematic}
+
+The generic formula for a cubic Bézier curve is
+\begin{equation*}
+    \V{B}(t) =
+	(1-t)^3 \V{B}_0 +
+	3t (1-t)^2 \V{B}_1 +
+	3t^2 (1-t) \V{B}_2 +
+	t^3 \V{B}_3,
+    \qquad t \in [ 0,1 ]
+\end{equation*}
+where $\V{B}_i \equiv ( B_{ix}, B_{iy} ) \in \mathbb{R} |_{i = 0,1,2,3}$
+are known terms.
+
+Let's call $\V{C}(t)$ the function that returns the offset of
+$\V{B}(t)$ at the specific distance $R$, that is
+\begin{equation}\label{eq:C}
+\V{C}(t) = \V{B}(t) + R
+    \frac{(\D{B}(t)_y, -\D{B}(t)_x)}{\sqrt{\D{B}(t)_x^2 + \D{B}(t)_y^2}},
+    \qquad t \in [ 0,1 ]
+\end{equation}
+where $\DV{B}(t) \equiv ( \D{B}(t)_x, \D{B}(t)_y ) \equiv \left( \frac{d}{dt}
+B_x(t), \frac{d}{dt} B_y(t) \right)$.
+
+We must find a Bézier curve
+\begin{equation}\label{eq:Q}
+    \V{Q}(t) =
+	(1-t)^3 \V{Q}_0 +
+	3t (1-t)^2 \V{Q}_1 +
+	3t^2 (1-t) \V{Q}_2 +
+	t^3 \V{Q}_3
+\end{equation}
+where $\V{Q}_i \equiv ( Q_{ix}, Q_{iy} ) \in \mathbb{R} |_{i = 0,1,2,3}$
+are the terms that must be found.
+
+The offset curve must respect the constraints described in the abstract
+of the BAIOCA algorithm, that is
+\begin{enumerate}
+\item $\V{Q}(0) = \V{C}(0)$ and $\V{Q}(1) = \V{C}(1)$ (interpolation);
+\item $\DV{Q}(0) = \DV{B}(0)$ and $\DV{Q}(1) = \DV{B}(1)$ (tangents),
+where $\DV{Q}(t) \equiv \frac{d}{dt} \V{Q}(t)$.
+\end{enumerate}
+
+\medskip
+Condition 1 implies that $\V{Q}_0$ and $\V{Q}_3$ can be calculated by
+directly using \eqref{eq:C}.
+
+Condition 2 implies that $\DV{Q}_0 = \DV{B}_0$ and
+$\DV{Q}_3 = \DV{B}_3$. Imposing by convention
+\begin{equation}\label{eq:pi}
+    \V{P}_i = \V{B}_{i+1} - \V{B}_i, \qquad i = 0, 1, 2
+\end{equation}
+we can calculate $\DV{B}_0$ and $\DV{B}_3$ directly from the hodograph
+of $\V{B}(t)$:
+\begin{align*}
+    \DV{B}(t) &= 3 \left[ (1-t)^2 \V{P}_0 + 2t(1-t) \V{P}_1 + t^2 \V{P}_2 \right]; \\
+    \DV{B}(0) &= 3 \V{P}_0 \equiv \DV{B}_0 = \DV{Q}_0 \\
+    \DV{B}(1) &= 3 \V{P}_2 \equiv \DV{B}_3 = \DV{Q}_3.
+\end{align*}
+Knowing that one of the properties of a Bézier curve is the start of the
+curve is tangent to the first section of the control polygon and the end
+is tangent to the last section, condition 2 is hence equivalent to:
+\begin{equation*}
+\begin{aligned}[t]
+    \V{Q}_1 &= \V{Q}_0 + \frac{r}{3} \DV{Q}_0 = \V{Q}_0 + r \V{P}_0, \\
+    \V{Q}_2 &= \V{Q}_3 + \frac{s}{3} \DV{Q}_3 = \V{Q}_3 + s \V{P}_2.
+\end{aligned}
+\qquad r, s \in \mathbb{R}
+\end{equation*}
+
+Substituting in \eqref{eq:Q} we get
+\begin{equation}\label{eq:QQ}
+    \V{Q}(t) =
+	(1-t)^3 \V{Q}_0 +
+	3t (1-t)^2 ( \V{Q}_0 + r \V{P}_0 ) +
+	3t^2 (1-t) ( \V{Q}_3 + s \V{P}_2 ) +
+	t^3\V{Q}_3.
+\end{equation}
+
+The hodograph of $\V{Q}(t)$ is then
+\begin{equation}\label{eq:QD}
+    \DV{Q}(t) = 3 \left[
+	(1-t)^2 r \V{P}_0 +
+	2t(1-t) (\V{Q}_3 + s \V{P}_2 - \V{Q}_0 - r \V{P}_0) -
+	t^2 s \V{P}_2
+    \right].
+\end{equation}
+
+We must find a couple of values for $r$ and $s$ that gives us a decent
+offset curve in most situations. Put in other words, we need to impose
+some additional constraint to be able to solve the system.
+
+Let consider a generic point in $\V{B}(t)$ at $t=m$ (where $m$ is chosen
+in some manner, typically $0.5$). Let impose that the offset curve passes
+throught $\V{C}(m)$ and let call $u$ the $t$ value\footnote{$m \neq u$
+is the original assumption that supposedly gives better results than the
+BAIOCA algorithm.} in which $\V{Q}(t) = \V{C}(m)$. Then, let impose the
+derivative in $\V{Q}(u)$ is equal to the derivative in $\V{B}(m)$.
+
+The above constraints can be expressed by the following system with 4
+equations and 3 variables ($r$, $s$ and $u$).
+\begin{equation*}
+\begin{dcases}
+    \V{Q}(u) = \V{B}(m)\\
+    \DV{Q}(u) = \DV{B}(m).
+\end{dcases}
+\end{equation*}
+
+The second condition, according to \eqref{eq:QD}, is equivalent to
+\begin{equation*}
+\begin{aligned}
+    (1-u)^2 r \V{P}_0 +
+	2u(1-u) (\V{Q}_3 + s \V{P}_2 - \V{Q}_0 - r \V{P}_0) -
+	u^2 s \V{P}_2 =
+	\frac{\DV{B}(m)}{3}; \\
+    3 \V{P}_0 (1-u)(1-3u) r + 3 \V{P}_2 u(2-3u) s =
+	\DV{B}(m) - 6u(1-u) (\V{Q}_3 - \V{Q}_0).
+\end{aligned}
+\end{equation*}
+
+By developing the system in $x$ and $y$
+\begin{equation*}
+\begin{dcases}
+    3 P_{0x} (1-u) (1-3u) r + 3 P_{2x} u (2-3u) s = \D{B}_x(m) - 6u (1-u) (Q_{3x} - Q_{0x}) \\
+    3 P_{0y} (1-u) (1-3u) r + 3 P_{2y} u (2-3u) s = \D{B}_y(m) - 6u (1-u) (Q_{3y} - Q_{0y})
+\end{dcases}
+\end{equation*}
+we can find $r$ and $s$ in $u$:
+\begin{equation*}
+\begin{dcases}
+    r &= \frac{\D{B}_x(m) P_{2y} - \D{B}_y(m) P_{2x} + 6u (1-u) [ P_{2x} (Q_{3y} - Q_{0y}) - P_{2y} (Q_{3x} - Q_{0x}) ]}
+	{3 (1-u) (1-3u) ( P_{0x} P_{2y} - P_{2x} P_{0y} )} \\
+    s &= \frac{\D{B}_y(m) P_{0x} - \D{B}_x(m) P_{0y} + 6u (1-u) [ P_{0y} (Q_{3x} - Q_{0x}) - P_{0x} (Q_{3y} - Q_{0y}) ]}
+	{3u (2-3u) ( P_{0x} P_{2y} - P_{2x} P_{0y} )}
+\end{dcases}
+\end{equation*}
+from which we derive the following known terms:
+\begin{equation}\label{eq:terms}
+\begin{aligned}[t]
+    A_1 &= P_{0x} P_{2y} - P_{2x} P_{0y}; \\
+    A_2 &= \D{B}_x(m) P_{2y} - \D{B}_y(m) P_{2x}; \\
+    A_3 &= 6 [ P_{2x} (Q_{3y} - Q_{0y}) - P_{2y} (Q_{3x} - Q_{0x}) ]; \\
+    A_4 &= \D{B}_y(m) P_{0x} - \D{B}_x(m) P_{0y}; \\
+    A_5 &= 6 [ P_{0y} (Q_{3x} - Q_{0x}) - P_{0x} (Q_{3y} - Q_{0y}) ].
+\end{aligned}
+\end{equation}
+
+The above system can hence be rewritten as
+\begin{equation}\label{eq:rs}
+\begin{dcases}
+    r &= \frac{A_2 + A_3 u (1-u)}{3 A_1 (1-u) (1-3u)} \\
+    s &= \frac{A_4 + A_5 u (1-u)}{3 A_1 u (2-3u)}
+\end{dcases}
+\end{equation}
+
+Now to calculate $u$ we can apply one equation from the first condition.
+
+From \eqref{eq:QQ} we know that
+\begin{equation*}
+    \V{Q}(u) =
+	(1-u)^3 \V{Q}_0 +
+	3u (1-u)^2 \V{Q}_0 +
+	3u^2 (1-u) \V{Q}_3 +
+	u^3 \V{Q}_3 +
+	3u (1-u)^2 \V{P}_0 r +
+	3u^2 (1-u) \V{P}_2 s.
+\end{equation*}
+
+Substituting $r$ and $s$ from \eqref{eq:rs} brings us to
+\begin{equation*}
+\begin{split}
+    \V{Q}(u) &= (1-u)^3 \V{Q}_0 + 3u (1-u)^2 \V{Q}_0 + u^3 \V{Q}_3 + 3u^2 (1-u) \V{Q}_3 \\
+     & \quad + u (1-u) \V{P}_0 \frac{A_2 + A_3 u (1-u)}{A_1 (1-3u)}
+	+ u (1-u) \V{P}_2 \frac{A_4 + A_5 u (u-1)}{A_1 (2-3u)}.
+\end{split}
+\end{equation*}
+
+\end{document}
