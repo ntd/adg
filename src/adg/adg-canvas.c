@@ -642,6 +642,10 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     entity = (AdgEntity *) canvas;
     title_block = data->title_block;
 
+    /* Manually calling the arrange() method instead of emitting the "arrange"
+     * signal does not invalidate the global matrix: let's do it right now */
+    adg_entity_global_changed(entity);
+
     for (p_scale = data->scales; p_scale != NULL && *p_scale != NULL; ++p_scale) {
         const gchar *scale = *p_scale;
         gdouble factor = adg_scale_factor(scale);
