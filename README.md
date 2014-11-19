@@ -1,5 +1,6 @@
 General information
 ===================
+[![Build Status](https://travis-ci.org/ntd/adg.svg?branch=master)](https://travis-ci.org/ntd/adg)
 
 Automatic Drawing Generation is GObject-based library that provides
 a non-interactive cairo canvas specifically designed for generating
