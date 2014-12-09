@@ -32,7 +32,7 @@
 #define ADG_DIR_LEFT            G_PI
 #define ADG_DIR_UP              -G_PI_2
 
-#define ADG_UTF8_DIAMETER       "\xE2\x8C\x80"
+#define ADG_UTF8_DIAMETER       "\xC3\xB8"
 #define ADG_UTF8_DEGREE         "\xC2\xB0"
 
 
