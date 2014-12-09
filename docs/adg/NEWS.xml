@@ -6,6 +6,23 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.5">
+<title>ADG 0.7.5</title>
+
+<para>The algorithm to use for offsetting Bézier curves is now selectable by
+calling the non-reentrant cpml_curve_offset_algorithm() function.</para>
+
+<para>A new offsetting algorithm (BAIOCA) has been implemented. It tries to
+minimizy the error between the offset curve and the ideal offset point
+on evenly spaced t values.</para>
+
+<para>The source code has been revamped to minimize the warnings raised by new
+versions of gcc, gtk-doc and gobject-introspection.</para>
+
+<para>The internal sources have been refactored to manage GTK+2 and GTK+3
+differences with the same codebase.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.4">
 <title>ADG 0.7.4</title>
 
