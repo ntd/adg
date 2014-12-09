@@ -13,7 +13,7 @@
 calling the non-reentrant cpml_curve_offset_algorithm() function.</para>
 
 <para>A new offsetting algorithm (BAIOCA) has been implemented. It tries to
-minimizy the error between the offset curve and the ideal offset point
+minimize the error between the offset curve and the ideal offset point
 on evenly spaced t values.</para>
 
 <para>The source code has been revamped to minimize the warnings raised by new
