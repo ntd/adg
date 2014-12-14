@@ -35,12 +35,12 @@ Native support for arcs and circles</col>
 Geometrical helper functions</col>
       </row>
       <row>
-        <col id="0" translatable="yes">adg-curve</col>
+        <col id="0">adg-curve</col>
         <col id="1" translatable="yes">&lt;b&gt;Offset curves&lt;/b&gt;
 Test bed for cubic Bézier offset</col>
       </row>
       <row>
-        <col id="0" translatable="yes">adg-segment</col>
+        <col id="0">adg-segment</col>
         <col id="1" translatable="yes">&lt;b&gt;Offset segments&lt;/b&gt;
 Offseting complex segments</col>
       </row>

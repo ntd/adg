@@ -7,10 +7,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: adg 1.0.x\n"
+"Project-Id-Version: adg 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-14 19:06+0200\n"
-"PO-Revision-Date: 2013-02-15 15:37+0100\n"
+"POT-Creation-Date: 2014-12-09 10:50+0100\n"
+"PO-Revision-Date: 2014-12-14 11:50+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -59,7 +59,7 @@ msgstr "Flag di Seconda Linea di Estensione Presente"
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:199
+#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:618
 msgid "Factor"
 msgstr "Fattore"
 
@@ -508,7 +508,7 @@ msgid ""
 "Used to specify a smooth displacement (in global space) for the limits/"
 "tolerances by taking as reference the perfect compact position"
 msgstr ""
-"Useto per specificare un piccolo scostamento (in global space) per le "
+"Usato per specificare un piccolo scostamento (in global space) per le "
 "tolleranze/limiti prendendo come riferimento la posizione compatta ideale"
 
 #: src/adg/adg-dim-style.c:216
@@ -607,11 +607,11 @@ msgstr ""
 "Specifica come le trasformazioni locali dell'entità corrente e dei suoi "
 "progenitori devono essere combinate per ottenere la matrice locale"
 
-#: src/adg/adg-fill-style.c:107
+#: src/adg/adg-fill-style.c:108
 msgid "Pattern"
 msgstr "Pattern"
 
-#: src/adg/adg-fill-style.c:108
+#: src/adg/adg-fill-style.c:109
 msgid "The cairo pattern set for this entity"
 msgstr "Il pattern cairo impostato per questa entità"
 
@@ -696,26 +696,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:192
+#: src/adg/adg-gtk-area.c:611
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:193
+#: src/adg/adg-gtk-area.c:612
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:200
+#: src/adg/adg-gtk-area.c:619
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:206
+#: src/adg/adg-gtk-area.c:625
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:207
+#: src/adg/adg-gtk-area.c:626
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -723,13 +723,37 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:213
+#: src/adg/adg-gtk-area.c:632
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:214
+#: src/adg/adg-gtk-area.c:633
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
+
+#: src/adg/adg-gtk-layout.c:424
+msgid "Horizontal adjustment"
+msgstr "Regolazione orizzontale"
+
+#: src/adg/adg-gtk-layout.c:425
+msgid ""
+"The GtkAdjustment that determines the values of the horizontal position for "
+"this viewport"
+msgstr ""
+"Il GtkAdjustment che specifica il valore della posizione orizzontale di "
+"questa viewport"
+
+#: src/adg/adg-gtk-layout.c:431
+msgid "Vertical adjustment"
+msgstr "Regolazione verticale"
+
+#: src/adg/adg-gtk-layout.c:432
+msgid ""
+"The GtkAdjustment that determines the values of the vertical position for "
+"this viewport"
+msgstr ""
+"Il GtkAdjustment che specifica il valore della posizione verticale di questa "
+"viewport"
 
 #: src/adg/adg-hatch.c:92
 msgid "Fill Dress"
@@ -865,11 +889,11 @@ msgstr "Modello"
 msgid "A general purpose model usable by the marker implementations"
 msgstr "Un modello ad uso generale usato dall'implementazione dell'indicatore"
 
-#: src/adg/adg-model.c:187
+#: src/adg/adg-model.c:188
 msgid "Dependency"
 msgstr "Dipendenza"
 
-#: src/adg/adg-model.c:188
+#: src/adg/adg-model.c:189
 msgid ""
 "Can be used to add a new dependency from this model (this entity will be "
 "invalidated on model changed)"

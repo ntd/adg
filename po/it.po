@@ -19,9 +19,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: adg 1.0.x\n"
+"Project-Id-Version: adg 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-14 19:08+0200\n"
+"POT-Creation-Date: 2014-12-14 17:39+0100\n"
 "PO-Revision-Date: 2013-02-15 15:37+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -31,7 +31,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../demo/adg-demo.c:96 ../demo/cpml-demo.c:192
+#: ../demo/adg-demo.c:96 ../demo/cpml-demo.c:299
 msgid "Display version information"
 msgstr "Stampa le informazioni sulla versione"
 
@@ -47,11 +47,11 @@ msgstr "- Programma dimostrativo della ADG"
 msgid "Error from adg-demo"
 msgstr "Errore da adg-demo"
 
-#: ../demo/adg-demo.c:820
+#: ../demo/adg-demo.c:799
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: ../demo/adg-demo.c:1210
+#: ../demo/adg-demo.c:1173
 #, c-format
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
@@ -284,72 +284,102 @@ msgid "Save current drawing"
 msgstr "Salva disegno corrente"
 
 #: ../demo/adg-demo.ui.in.h:61
+msgid "Guessed from e_xtension"
+msgstr "Rileva dall'e_stensione"
+
+#: ../demo/adg-demo.ui.in.h:62
 msgid "PNG _image"
 msgstr "_Immagine PNG"
 
-#: ../demo/adg-demo.ui.in.h:62
+#: ../demo/adg-demo.ui.in.h:63
 msgid "S_VG image"
 msgstr "Immagine S_VG"
 
-#: ../demo/adg-demo.ui.in.h:63
+#: ../demo/adg-demo.ui.in.h:64
 msgid "P_DF document"
 msgstr "Documento P_DF"
 
-#: ../demo/adg-demo.ui.in.h:64
+#: ../demo/adg-demo.ui.in.h:65
 msgid "_PostScript file"
 msgstr "File _PostScript"
 
-#: ../demo/adg-demo.ui.in.h:65
+#: ../demo/adg-demo.ui.in.h:66
 msgid "<b>File format</b>"
 msgstr "<b>Formato file</b>"
 
-#: ../demo/cpml-demo.c:125
+#: ../demo/cpml-demo.c:202
 #, c-format
 msgid "cpml-demo.ui not found!\n"
 msgstr "cpml-demo.ui non trovato!\n"
 
-#: ../demo/cpml-demo.c:196
+#: ../demo/cpml-demo.c:303
 msgid "- CPML demonstration program"
 msgstr "- Programma dimostrativo della CPML"
 
-#: ../demo/cpml-demo.c:379
+#: ../demo/cpml-demo.c:486
 #, c-format
 msgid "Unable to get arc info (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
 msgstr "Impossibile elaborare l'arco (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
 
 #: ../demo/cpml-demo.ui.in.h:1
-msgid "Browse CpmlSegment"
-msgstr "Naviga i CpmlSegment"
-
-#: ../demo/cpml-demo.ui.in.h:2
-msgid "Browse CpmlPrimitive"
-msgstr "Naviga le CpmlPrimitive"
+msgid ""
+"<b>Browsing</b>\n"
+"Primitives and segments"
+msgstr "Primitive e segmenti"
 
 #: ../demo/cpml-demo.ui.in.h:3
-msgid "RESET"
-msgstr "AZZERA"
-
-#: ../demo/cpml-demo.ui.in.h:4
-msgid "NEXT >>"
-msgstr "SEGUENTE >"
+msgid ""
+"<b>Arcs</b>\n"
+"Native support for arcs and circles"
+msgstr "Supporto nativo per archi e cerchi"
 
 #: ../demo/cpml-demo.ui.in.h:5
+msgid ""
+"<b>Intersections</b>\n"
+"Geometrical helper functions"
+msgstr "Funzioni geometriche di supporto"
+
+#: ../demo/cpml-demo.ui.in.h:7
+msgid ""
+"<b>Offset curves</b>\n"
+"Test bed for cubic Bézier offset"
+msgstr "Banco prova per l'offset delle Bézier cubiche"
+
+#: ../demo/cpml-demo.ui.in.h:9
+msgid ""
+"<b>Offset segments</b>\n"
+"Offseting complex segments"
+msgstr "Offset di segmenti complessi"
+
+#: ../demo/cpml-demo.ui.in.h:11
+msgid "Pages"
+msgstr "Pagine"
+
+#: ../demo/cpml-demo.ui.in.h:12
+msgid "<b>Browsing subject:</b>"
+msgstr "<b>Soggetto navigazione:</b>"
+
+#: ../demo/cpml-demo.ui.in.h:13
 msgid "Browsing"
 msgstr "Navigazione"
 
-#: ../demo/cpml-demo.ui.in.h:6
+#: ../demo/cpml-demo.ui.in.h:14
 msgid "Arcs"
 msgstr "Archi"
 
-#: ../demo/cpml-demo.ui.in.h:7
+#: ../demo/cpml-demo.ui.in.h:15
 msgid "Intersections"
 msgstr "Intersezioni"
 
-#: ../demo/cpml-demo.ui.in.h:8
+#: ../demo/cpml-demo.ui.in.h:16
+msgid "<b>Offset algorithm:</b>"
+msgstr "<b>Algoritmo di offset:</b>"
+
+#: ../demo/cpml-demo.ui.in.h:17
 msgid "Offset curves"
 msgstr "Curve parallele"
 
-#: ../demo/cpml-demo.ui.in.h:9
+#: ../demo/cpml-demo.ui.in.h:18
 msgid "Offset segments"
 msgstr "Segmenti paralleli"
 
@@ -357,18 +387,18 @@ msgstr "Segmenti paralleli"
 msgid "Invalid arguments: arg[0] not set"
 msgstr "Argomenti non validi: arg[0] è vuoto"
 
-#: ../src/adg/adg-adim.c:1179
+#: ../src/adg/adg-adim.c:1183
 #, c-format
 msgid "%s: ref1 and org1 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref1 e org1 non possono coincidere (%lf, %lf)"
 
-#: ../src/adg/adg-adim.c:1185
+#: ../src/adg/adg-adim.c:1189
 #, c-format
 msgid "%s: ref2 and org2 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref2 e org2 non possono coincidere (%lf, %lf)"
 
 #. Parallel lines: hang with an error message
-#: ../src/adg/adg-adim.c:1198
+#: ../src/adg/adg-adim.c:1202
 #, c-format
 msgid "%s: trying to set an angular dimension on parallel lines"
 msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
@@ -396,12 +426,12 @@ msgstr ""
 "Si è provato ad eliminare una entità di tipo %s da un contenitore di tipo %s "
 "ma l'entità non è presente"
 
-#: ../src/adg/adg-dim.c:1316
+#: ../src/adg/adg-dim.c:1324
 #, c-format
 msgid "AdgDim::default_value not implemented for `%s'"
 msgstr "AdgDim::default_value non implementato da `%s'"
 
-#: ../src/adg/adg-dress.c:339
+#: ../src/adg/adg-dress.c:338
 #, c-format
 msgid ""
 "%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' "
@@ -415,27 +445,27 @@ msgstr ""
 msgid "%s: `%s' is not compatible with `%s' for `%s' dress"
 msgstr "%s: `%s' non è compatibile con `%s' per il vestito `%s'"
 
-#: ../src/adg/adg-entity.c:1257
+#: ../src/adg/adg-entity.c:1256
 #, c-format
 msgid "%s: requested to mix the maps using an undefined mix method"
 msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
 
-#: ../src/adg/adg-entity.c:1303
+#: ../src/adg/adg-entity.c:1302
 #, c-format
 msgid "%s: `arrange' method not implemented for type `%s'"
 msgstr "%s: metodo `arrange' non implementato per dal tipo `%s'"
 
-#: ../src/adg/adg-entity.c:1319
+#: ../src/adg/adg-entity.c:1318
 #, c-format
 msgid "%s: `render' method not implemented for type `%s'"
 msgstr "%s: metodo `render' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-fill-style.c:287
+#: ../src/adg/adg-fill-style.c:289
 #, c-format
 msgid "%s: pattern undefined for type `%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo `%s'"
 
-#: ../src/adg/adg-ldim.c:780 ../src/adg/adg-rdim.c:580
+#: ../src/adg/adg-ldim.c:782 ../src/adg/adg-rdim.c:579
 #, c-format
 msgid "%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
@@ -445,7 +475,7 @@ msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
 msgid "%s: `create_model' method not implemented for type `%s'"
 msgstr "%s: `create_model' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-matrix.c:162
+#: ../src/adg/adg-matrix.c:163
 #, c-format
 msgid "%s: normalization of anamorphic matrices not supported"
 msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
@@ -527,7 +557,7 @@ msgstr "%s: un raccordo di raggio `%lf' non è fattibile in questa posizione"
 
 #. A point with explicit coordinates not up to date
 #. * is an unexpected condition
-#: ../src/adg/adg-point.c:326
+#: ../src/adg/adg-point.c:325
 #, c-format
 msgid "%s: trying to get a pair from an undefined point"
 msgstr "%s: si è provato ad ottenere le coordinate da un punto indefinito"
@@ -548,12 +578,12 @@ msgstr "%s: metodo `set_font_dress' non implementato dal tipo `%s'"
 msgid "%s: `get_font_dress' method not implemented for type `%s'"
 msgstr "%s: metodo `get_font_dress' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-textual.c:221
+#: ../src/adg/adg-textual.c:222
 #, c-format
 msgid "%s: `set_text' method not implemented for type `%s'"
 msgstr "%s: metodo `set_text' non implementato dal tipo `%s'"
 
-#: ../src/adg/adg-textual.c:280
+#: ../src/adg/adg-textual.c:281
 #, c-format
 msgid "%s: `dup_text' method not implemented for type `%s'"
 msgstr "%s: metodo `dup_text' non implementato dal tipo `%s'"
@@ -612,3 +642,6 @@ msgstr "%s: dati del path non validi"
 #, c-format
 msgid "%s: callback not defined for instance of type `%s'"
 msgstr "%s: callback non definita per un'istanza di tipo `%s'"
+
+#~ msgid "Undefined error"
+#~ msgstr "Errore generico"
