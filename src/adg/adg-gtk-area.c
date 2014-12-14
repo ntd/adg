@@ -638,10 +638,11 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
     /**
      * AdgGtkArea::canvas-changed:
      * @area: an #AdgGtkArea
-     * @old_canvas: the old #AdgCanvas object
+     * @old_canvas: (type AdgCanvas*): the old #AdgCanvas object
      *
-     * Emitted when the #AdgGtkArea has a new canvas. If the new canvas
-     * is the same as the old one, the signal is not emitted.
+     * Emitted after the canvas bound to @area has been changed. The old
+     * canvas accessible from @old_canvas while the new canvas can be got
+     * with the usual API, e.g. adg_gtk_area_get_canvas().
      *
      * Since: 1.0
      **/
