@@ -399,3 +399,47 @@ adg_scale_factor(const gchar *scale)
 
     return (gdouble) numerator / (gdouble) denominator;
 }
+
+/**
+ * adg_type_from_filename:
+ * @file: the full path to the file
+ *
+ * Gets the surface type from @file. The algorithm simply looks to the
+ * file name extension and tries to guess the correct surface type. If the
+ * guess fails, e.g. the extension does not exist or it is not usual, the
+ * function returns <constant>CAIRO_SURFACE_TYPE_XLIB</constant>. This is
+ * the value conventionally used to signal unrecognized file names.
+ *
+ * Returns: the surface type of @file or <constant>CAIRO_SURFACE_TYPE_XLIB</constant>.
+ **/
+cairo_surface_type_t
+adg_type_from_filename(const gchar *file)
+{
+    const gchar *p_suffix;
+    gchar *suffix;
+    cairo_surface_type_t type;
+
+    g_return_val_if_fail(file != NULL, CAIRO_SURFACE_TYPE_XLIB);
+
+    p_suffix = strrchr(file, '.');
+    if (p_suffix == NULL)
+        return CAIRO_SURFACE_TYPE_XLIB;
+
+    /* Put in suffix the lowercase extension without the leading dot */
+    suffix = g_ascii_strdown(p_suffix + 1, -1);
+
+    if (strcmp(suffix, "png") == 0) {
+        type = CAIRO_SURFACE_TYPE_IMAGE;
+    } else if (strcmp(suffix, "svg") == 0) {
+        type = CAIRO_SURFACE_TYPE_SVG;
+    } else if (strcmp(suffix, "pdf") == 0) {
+        type = CAIRO_SURFACE_TYPE_PDF;
+    } else if (strcmp(suffix, "ps") == 0) {
+        type = CAIRO_SURFACE_TYPE_PS;
+    } else {
+        type = CAIRO_SURFACE_TYPE_XLIB;
+    }
+
+    g_free(suffix);
+    return type;
+}

@@ -39,20 +39,21 @@
 G_BEGIN_DECLS
 
 #if GLIB_MINOR_VERSION < 16
-gint            g_strcmp0               (const gchar    *s1,
-                                         const gchar    *s2);
+gint                    g_strcmp0               (const gchar    *s1,
+                                                 const gchar    *s2);
 #endif
 
-gboolean        adg_is_string_empty     (const gchar    *str);
-gboolean        adg_is_enum_value       (int             value,
-                                         GType           enum_type);
-gboolean        adg_is_boolean_value    (gboolean        value);
-gchar *         adg_string_replace      (const gchar    *str,
-                                         const gchar    *from,
-                                         const gchar    *to);
-gchar *         adg_find_file           (const gchar    *file,
-                                                         ...);
-gdouble         adg_scale_factor        (const gchar    *scale);
+gboolean                adg_is_string_empty     (const gchar    *str);
+gboolean                adg_is_enum_value       (int             value,
+                                                 GType           enum_type);
+gboolean                adg_is_boolean_value    (gboolean        value);
+gchar *                 adg_string_replace      (const gchar    *str,
+                                                 const gchar    *from,
+                                                 const gchar    *to);
+gchar *                 adg_find_file           (const gchar    *file,
+                                                 ...);
+gdouble                 adg_scale_factor        (const gchar    *scale);
+cairo_surface_type_t    adg_type_from_filename  (const gchar    *file);
 
 G_END_DECLS
 

@@ -764,7 +764,8 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
 {
     GtkRadioButton *type_radio;
     gchar *file, *suffix;
-    cairo_surface_t *surface;
+    cairo_surface_type_t type;
+    GError *error;
 
     if (response != GTK_RESPONSE_OK) {
         gtk_widget_hide(GTK_WIDGET(window));
@@ -778,72 +779,34 @@ _adg_do_save_as(GtkWindow *window, GtkResponseType response, AdgCanvas *canvas)
     type_radio = _adg_group_get_active(g_object_get_data(G_OBJECT(window),
                                                          "type-group"));
     g_assert(GTK_IS_RADIO_BUTTON(type_radio));
+
     suffix = gtk_widget_get_tooltip_markup(GTK_WIDGET(type_radio));
-    g_assert(suffix != NULL);
-
-    if (!g_str_has_suffix(file, suffix)) {
-        gchar *tmp = file;
-        file = g_strconcat(file, suffix, NULL);
-        g_free(tmp);
-    }
-
-#ifdef CAIRO_HAS_PNG_FUNCTIONS
-    if (strcmp(suffix, ".png") == 0) {
-        surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, 800, 600);
-    } else
-#endif
-#ifdef CAIRO_HAS_SVG_SURFACE
-    if (strcmp(suffix, ".svg") == 0) {
-#include <cairo-svg.h>
-        surface = cairo_svg_surface_create(file, 841, 595);
-    } else
-#endif
-#ifdef CAIRO_HAS_PDF_SURFACE
-    if (strcmp(suffix, ".pdf") == 0) {
-#include <cairo-pdf.h>
-        surface = cairo_pdf_surface_create(file, 841, 595);
-    } else
-#endif
-#ifdef CAIRO_HAS_PS_SURFACE
-    if (strcmp(suffix, ".ps") == 0) {
-#include <cairo-ps.h>
-        surface = cairo_ps_surface_create(file, 841, 595);
-        cairo_ps_surface_dsc_comment(surface, "%%Title: " PACKAGE_STRING);
-        cairo_ps_surface_dsc_comment(surface, "%%Copyright: Copyleft (C) 2006-2013 Fontana Nicola");
-        cairo_ps_surface_dsc_comment(surface, "%%Orientation: Landscape");
-        cairo_ps_surface_dsc_begin_setup(surface);
-        cairo_ps_surface_dsc_begin_page_setup(surface);
-        cairo_ps_surface_dsc_comment(surface, "%%IncludeFeature: *PageSize A4");
-    } else
-#endif
-    {
-        _adg_error(_("Requested format not supported"), window);
-        surface = NULL;
-    }
-
-    if (surface) {
-        cairo_t *cr;
-        cairo_status_t status;
-
-        cr = cairo_create(surface);
-        cairo_surface_destroy(surface);
-        adg_entity_render(ADG_ENTITY(canvas), cr);
-
-        if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE) {
-            status = cairo_surface_write_to_png(surface, file);
-        } else {
-            cairo_show_page(cr);
-            status = cairo_status(cr);
+    if (suffix != NULL) {
+        /* Avoid double extension on the filename */
+        if (! g_str_has_suffix(file, suffix)) {
+            gchar *tmp = file;
+            file = g_strconcat(file, suffix, NULL);
+            g_free(tmp);
         }
+        g_free(suffix);
+    }
 
-        cairo_destroy(cr);
+    error = NULL;
+    type = adg_type_from_filename(file);
 
-        if (status != CAIRO_STATUS_SUCCESS)
-            _adg_error(cairo_status_to_string(status), window);
+    if (type == CAIRO_SURFACE_TYPE_XLIB) {
+        g_set_error(&error, ADG_CANVAS_ERROR, ADG_CANVAS_ERROR_SURFACE, "%s",
+                    _("Requested format not supported"));
+    } else {
+        adg_canvas_export(canvas, type, file, &error);
     }
 
     g_free(file);
-    g_free(suffix);
+    if (error != NULL) {
+        _adg_error(error->message, window);
+        g_error_free(error);
+    }
+
     gtk_widget_hide(GTK_WIDGET(window));
 }
 

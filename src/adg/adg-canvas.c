@@ -67,6 +67,25 @@
  * Since: 1.0
  **/
 
+/**
+ * ADG_CANVAS_ERROR:
+ *
+ * Error domain for canvas processing. Errors in this domain will be from the
+ * #AdgCanvasError enumeration. See #GError for information on error domains.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * AdgCanvasError:
+ * @ADG_CANVAS_ERROR_SURFACE: Invalid surface type.
+ * @ADG_CANVAS_ERROR_CAIRO: The underlying cairo library returned an error.
+ *
+ * Error codes returned by #AdgCanvas methods.
+ *
+ * Since: 1.0
+ **/
+
 
 #include "adg-internal.h"
 #if GTK3_ENABLED || GTK2_ENABLED
@@ -126,6 +145,17 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 
+
+GQuark
+adg_canvas_error_quark(void)
+{
+  static GQuark q;
+
+  if G_UNLIKELY (q == 0)
+    q = g_quark_from_static_string("adg-canvas-error-quark");
+
+  return q;
+}
 
 static void
 adg_canvas_class_init(AdgCanvasClass *klass)
@@ -1400,6 +1430,111 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     if (_ADG_OLD_ENTITY_CLASS->render)
         _ADG_OLD_ENTITY_CLASS->render(entity, cr);
+}
+
+/**
+ * adg_canvas_export:
+ * @canvas: an #AdgCanvas
+ * @type: the export format
+ * @file: the name of the resulting file
+ * @gerror: (allow-none): return location for errors
+ *
+ * A helper function that provides a bare export functionality.
+ * It basically exports the drawing in @canvas in the @file
+ * in the @type format. Any error will be reported in @gerror,
+ * if not <constant>NULL</constant>.
+ *
+ * Returns: <constant>TRUE</constant> on success, <constant>FALSE</constant> otherwise.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
+                  const gchar *file, GError **gerror)
+{
+    const CpmlPair *size;
+    gdouble top, bottom, left, right, width, height;
+    cairo_surface_t *surface;
+    cairo_t *cr;
+    cairo_status_t status;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), FALSE);
+    g_return_val_if_fail(file != NULL, FALSE);
+    g_return_val_if_fail(gerror == NULL || *gerror == NULL, FALSE);
+
+    size = adg_canvas_get_size(canvas);
+    top = adg_canvas_get_top_margin(canvas);
+    bottom = adg_canvas_get_bottom_margin(canvas);
+    left = adg_canvas_get_left_margin(canvas);
+    right = adg_canvas_get_right_margin(canvas);
+    width = size->x + left + right;
+    height = size->y + top + bottom;
+    surface = NULL;
+
+    switch (type) {
+    case CAIRO_SURFACE_TYPE_IMAGE:
+#ifdef CAIRO_HAS_PNG_FUNCTIONS
+        surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
+#endif
+        break;
+    case CAIRO_SURFACE_TYPE_PDF:
+#ifdef CAIRO_HAS_PDF_SURFACE
+        {
+            #include <cairo-pdf.h>
+            surface = cairo_pdf_surface_create(file, width, height);
+        }
+#endif
+        break;
+    case CAIRO_SURFACE_TYPE_PS:
+#ifdef CAIRO_HAS_PS_SURFACE
+        {
+            #include <cairo-ps.h>
+            surface = cairo_ps_surface_create(file, width, height);
+        }
+#endif
+        break;
+    case CAIRO_SURFACE_TYPE_SVG:
+#ifdef CAIRO_HAS_SVG_SURFACE
+        {
+            #include <cairo-svg.h>
+            surface = cairo_svg_surface_create(file, width, height);
+        }
+#endif
+        break;
+    default:
+        break;
+    }
+
+    if (surface == NULL) {
+        g_set_error(gerror, ADG_CANVAS_ERROR, ADG_CANVAS_ERROR_SURFACE,
+                    "unable to handle surface type '%d'",
+                    type);
+        return FALSE;
+    }
+
+    cairo_surface_set_device_offset(surface, left, top);
+    cr = cairo_create(surface);
+    cairo_surface_destroy(surface);
+
+    adg_entity_render(ADG_ENTITY(canvas), cr);
+
+    if (cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE) {
+        status = cairo_surface_write_to_png(surface, file);
+    } else {
+        cairo_show_page(cr);
+        status = cairo_status(cr);
+    }
+
+    cairo_destroy(cr);
+
+    if (status != CAIRO_STATUS_SUCCESS) {
+        g_set_error(gerror, ADG_CANVAS_ERROR, ADG_CANVAS_ERROR_CAIRO,
+                    "cairo reported '%s'",
+                    cairo_status_to_string(status));
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 

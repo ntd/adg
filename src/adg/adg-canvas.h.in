@@ -35,6 +35,8 @@ G_BEGIN_DECLS
 #define ADG_IS_CANVAS_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE((klass), ADG_TYPE_CANVAS))
 #define ADG_CANVAS_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS((obj), ADG_TYPE_CANVAS, AdgCanvasClass))
 
+#define ADG_CANVAS_ERROR            (adg_canvas_error_quark())
+
 
 typedef struct _AdgCanvasClass   AdgCanvasClass;
 
@@ -49,8 +51,14 @@ struct _AdgCanvasClass {
     AdgContainerClass    parent_class;
 };
 
+typedef enum {
+    ADG_CANVAS_ERROR_SURFACE,
+    ADG_CANVAS_ERROR_CAIRO,
+} AdgCanvasError;
+
 
 GType           adg_canvas_get_type             (void) G_GNUC_CONST;
+GQuark          adg_canvas_error_quark          (void);
 
 AdgCanvas *     adg_canvas_new                  (void);
 void            adg_canvas_set_size             (AdgCanvas      *canvas,
@@ -115,6 +123,10 @@ void            adg_canvas_set_paddings         (AdgCanvas      *canvas,
                                                  gdouble         right,
                                                  gdouble         bottom,
                                                  gdouble         left);
+gboolean        adg_canvas_export               (AdgCanvas      *canvas,
+                                                 cairo_surface_type_t type,
+                                                 const gchar    *file,
+                                                 GError        **gerror);
 @ADG_CANVAS_H_ADDITIONAL@
 
 G_END_DECLS

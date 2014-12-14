@@ -1216,11 +1216,10 @@ A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom 
                 <property name="border_width">6</property>
                 <property name="spacing">6</property>
                 <child>
-                  <object class="GtkRadioButton" id="saveAsPng">
-                    <property name="label" translatable="yes">PNG _image</property>
+                  <object class="GtkRadioButton" id="saveAs">
+                    <property name="label" translatable="yes">Guessed from e_xtension</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="tooltip_text">.png</property>
                     <property name="use_underline">True</property>
                     <property name="active">True</property>
                     <property name="draw_indicator">True</property>
@@ -1232,6 +1231,22 @@ A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom 
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkRadioButton" id="saveAsPng">
+                    <property name="label" translatable="yes">PNG _image</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tooltip_text">.png</property>
+                    <property name="use_underline">True</property>
+                    <property name="draw_indicator">True</property>
+                    <property name="group">saveAs</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="padding">6</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkRadioButton" id="saveAsSvg">
                     <property name="label" translatable="yes">S_VG image</property>
                     <property name="visible">True</property>
@@ -1239,12 +1254,12 @@ A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom 
                     <property name="tooltip_text">.svg</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">saveAsPng</property>
+                    <property name="group">saveAs</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="padding">6</property>
-                    <property name="position">1</property>
+                    <property name="position">2</property>
                   </packing>
                 </child>
                 <child>
@@ -1255,12 +1270,12 @@ A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom 
                     <property name="tooltip_text">.pdf</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">saveAsPng</property>
+                    <property name="group">saveAs</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="padding">6</property>
-                    <property name="position">2</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
                 <child>
@@ -1271,12 +1286,12 @@ A &lt;b&gt;left click&lt;/b&gt; on the drawing area will restore the paper zoom 
                     <property name="tooltip_text">.ps</property>
                     <property name="use_underline">True</property>
                     <property name="draw_indicator">True</property>
-                    <property name="group">saveAsPng</property>
+                    <property name="group">saveAs</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="padding">6</property>
-                    <property name="position">3</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
