@@ -1593,31 +1593,39 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  *
  * A convenient function to setup the page of @canvas so it can
  * also be subsequentially used for printing. It is allowed to
- * pass <constant>NULL</constant> for @page_setup to unset the
- * setup data from @canvas.
+ * pass <constant>NULL</constant> as @page_setup to restore the
+ * default page setup.
  *
  * A reference to @page_setup is added, so there is no need to keep
- * alive this object outside this function. The @page_setup pointer
- * can be retrieved at any time with adg_canvas_get_page_setup().
+ * alive this object after a call to this function. @page_setup can
+ * be retrieved at any time with adg_canvas_get_page_setup().
  *
- * The size and margins provided by @page_setup are used to set the
- * size and margins of @canvas much in the same way as what
- * adg_canvas_set_paper() does. This means if you set a page and
- * then unset it, the canvas will retain size and margins of the
- * original page although @page_setup will not be used for printing.
- * You must unset the size with adg_canvas_set_size()
- * with a <constant>NULL</constant> size.
+ * The size and margins provided by @page_setup are immediately
+ * used to set size and margins of @canvas. This means using
+ * <constant>NULL</constant> as @page_setup just releases the
+ * reference to the previous @page_setup object... all the page
+ * settings are still retained.
+ *
+ * If your intent is to restore the page settings to their
+ * default behavior (i.e., the canvas has no explicit size:
+ * width and height depend on the included entities and the
+ * margins are set to a default value), you should use
+ * adg_canvas_set_size() with a <constant>NULL</constant>
+ * size instead.
  *
  * <informalexample><programlisting language="C">
  * // By default, canvas does not have an explicit size
  * adg_canvas_set_page_setup(canvas, a4);
- * // Here canvas has the size and margins specified by a4
+ * g_object_unref(a4);
+ * // Now canvas has size and margins specified by a4
+ * // (and a4 should be a prefilled GtkPageSetup object).
  * adg_canvas_set_page_setup(canvas, NULL);
- * // Now the only difference is that canvas is no more bound
- * // to the a4 page setup, so the following will return NULL:
- * page_setup = adg_canvas_get_page_setup(canvas);
- * // To restore the original status and have an autocomputed size:
+ * // Now canvas is no more bound to a4 and that object (if
+ * // not referenced anywhere else) can be garbage-collected.
+ * // The page setup of canvas has not changed though.
  * adg_canvas_set_size(canvas, NULL);
+ * // Now the page settings of canvas have been restored to
+ * // their default behavior.
  * </programlisting></informalexample>
  *
  * Since: 1.0
