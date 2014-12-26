@@ -842,7 +842,7 @@ _adg_do_print(GtkWidget *button, AdgCanvas *canvas)
 
     window = (GtkWindow *) gtk_widget_get_toplevel(button);
     operation = gtk_print_operation_new();
-    page_setup = g_object_get_data(G_OBJECT(canvas), "_adg_page_setup");
+    page_setup = adg_canvas_get_page_setup(canvas);
     error = NULL;
 
     if (settings)

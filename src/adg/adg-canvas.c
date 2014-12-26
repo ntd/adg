@@ -1598,8 +1598,7 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  *
  * A reference to @page_setup is added, so there is no need to keep
  * alive this object outside this function. The @page_setup pointer
- * is stored in the associative key <constant>"_adg_page_setup"</constant>
- * and can be retrieved at any time with adg_canvas_get_page_setup().
+ * can be retrieved at any time with adg_canvas_get_page_setup().
  *
  * The size and margins provided by @page_setup are used to set the
  * size and margins of @canvas much in the same way as what
