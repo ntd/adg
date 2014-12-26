@@ -29,7 +29,7 @@
  * Tipically, the canvas contains the description and properties of
  * the media used, such as such as size (if relevant), margins,
  * border and paddings. This approach clearly follows the block model
- * of the CSS specifications level 2.
+ * of the CSS specification.
  *
  * The paddings specify the distance between the entities contained
  * by the canvas and the border. The margins specify the distance
@@ -41,19 +41,19 @@
  * adg_canvas_set_size_explicit() or the convenient
  * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
  * only one dimension and let the other one be computed automatically.
- * This is done by using the special value 0 that specifies a side
- * must be autocalculated.
+ * This can be done by setting it to <constant>0</constant>.
  *
- * By default either width and height must be autocalculated (are
- * set to 0), so the arrange() phase on the canvas is performed.
+ * By default either width and height are autocalculated, i.e. they
+ * are initially set to 0. In this case the arrange() phase is executed.
  * Margins and paddings are then added to the extents to get the
  * border coordinates and the final bounding box.
  *
- * When the size is explicitely set, instead, the final bounding
+ * Instead, when the size is explicitely set, the final bounding
  * box is forcibly set to this value without taking the canvas
  * extents into account. The margins are then subtracted to get
- * the coordinates of the border. In this case, the paddings are
- * simply ignored.
+ * the coordinates of the border. In this case the paddings are
+ * simply ignoredby the arrange phase. They are still used by
+ * adg_canvas_autoscale() though, if called.
  *
  * Since: 1.0
  **/
@@ -141,6 +141,8 @@ static void             _adg_invalidate         (AdgEntity      *entity);
 static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
+static void             _adg_apply_paddings     (AdgCanvas      *canvas,
+                                                 CpmlExtents    *extents);
 
 
 GQuark
@@ -649,6 +651,9 @@ adg_canvas_get_scales(AdgCanvas *canvas)
  * scale of the title block is changed accordingly and the drawing
  * is centered inside the paper.
  *
+ * The paddings are taken into account while computing the drawing
+ * extents.
+ *
  * Since: 1.0
  **/
 void
@@ -658,7 +663,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     gchar **p_scale;
     AdgEntity *entity;
     cairo_matrix_t map;
-    const CpmlExtents *extents;
+    CpmlExtents extents;
     AdgTitleBlock *title_block;
     CpmlPair delta;
 
@@ -686,11 +691,13 @@ adg_canvas_autoscale(AdgCanvas *canvas)
         /* Arrange the entities inside the canvas, but not the canvas itself,
          * just to get the bounding box of the drawing without the paper */
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
-        extents = adg_entity_get_extents(entity);
+        cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
         /* Just in case @canvas is emtpy */
-        if (! extents->is_defined)
+        if (! extents.is_defined)
             return;
+
+        _adg_apply_paddings(canvas, &extents);
 
         if (title_block != NULL)
             adg_title_block_set_scale(title_block, scale);
@@ -701,13 +708,13 @@ adg_canvas_autoscale(AdgCanvas *canvas)
 
         /* If the drawing extents are fully contained inside the paper size,
          * center the drawing in the paper and bail out */
-        delta.x = data->size.x - extents->size.x;
-        delta.y = data->size.y - extents->size.y;
+        delta.x = data->size.x - extents.size.x;
+        delta.y = data->size.y - extents.size.y;
         if (delta.x >= 0 && delta.y >= 0) {
             cairo_matrix_t transform;
             cairo_matrix_init_translate(&transform,
-                                        delta.x / 2 - extents->org.x,
-                                        delta.y / 2 - extents->org.y);
+                                        delta.x / 2 - extents.org.x,
+                                        delta.y / 2 - extents.org.y);
             adg_entity_transform_local_map(entity, &transform,
                                            ADG_TRANSFORM_AFTER);
             break;
@@ -1313,6 +1320,7 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
+    AdgCanvas *canvas;
     AdgCanvasPrivate *data;
     CpmlExtents extents;
 
@@ -1324,7 +1332,10 @@ _adg_arrange(AdgEntity *entity)
     /* The extents should be defined, otherwise there is no drawing */
     g_return_if_fail(extents.is_defined);
 
-    data = ((AdgCanvas *) entity)->data;
+    canvas = (AdgCanvas *) entity;
+    data = canvas->data;
+
+    _adg_apply_paddings(canvas, &extents);
 
     if (data->size.x > 0 || data->size.y > 0) {
         const cairo_matrix_t *global = adg_entity_get_global_matrix(entity);
@@ -1346,15 +1357,6 @@ _adg_arrange(AdgEntity *entity)
             extents.org.y = paper.org.y;
             extents.size.y = paper.size.y;
         }
-    }
-
-    if (data->size.x == 0) {
-        extents.org.x -= data->left_padding;
-        extents.size.x += data->left_padding + data->right_padding;
-    }
-    if (data->size.y == 0) {
-        extents.org.y -= data->top_padding;
-        extents.size.y += data->top_padding + data->bottom_padding;
     }
 
     /* Impose the new extents */
@@ -1428,6 +1430,18 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     if (_ADG_OLD_ENTITY_CLASS->render)
         _ADG_OLD_ENTITY_CLASS->render(entity, cr);
 }
+
+static void
+_adg_apply_paddings(AdgCanvas *canvas, CpmlExtents *extents)
+{
+    AdgCanvasPrivate *data = canvas->data;
+
+    extents->org.x -= data->left_padding;
+    extents->size.x += data->left_padding + data->right_padding;
+    extents->org.y -= data->top_padding;
+    extents->size.y += data->top_padding + data->bottom_padding;
+}
+
 
 /**
  * adg_canvas_export:
