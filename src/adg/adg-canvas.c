@@ -88,9 +88,6 @@
 
 
 #include "adg-internal.h"
-#if GTK3_ENABLED || GTK2_ENABLED
-#include <gtk/gtk.h>
-#endif
 
 #include "adg-container.h"
 #include "adg-table.h"
@@ -1539,6 +1536,7 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
 
 
 #if GTK3_ENABLED || GTK2_ENABLED
+#include <gtk/gtk.h>
 
 /**
  * adg_canvas_set_paper:
