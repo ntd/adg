@@ -170,6 +170,11 @@ _adg_test_size(void)
     sample_size.y = 321;
 
     /* Using the public APIs */
+    size = adg_canvas_get_size(canvas);
+
+    /* The default size is 0, 0 (anamorphic canvas) */
+    g_assert(cpml_pair_equal(size, &null_size));
+
     adg_canvas_set_size(canvas, &sample_size);
     size = adg_canvas_get_size(canvas);
     g_assert(cpml_pair_equal(size, &sample_size));
@@ -559,6 +564,168 @@ _adg_test_left_padding(void)
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
+static void
+_adg_method_set_margins(void)
+{
+    AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
+
+    adg_canvas_set_margins(canvas, 0, 2, 4, 6);
+
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 0);
+    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
+    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 6);
+
+    adg_canvas_set_margins(canvas, 1, 3, 5, 7);
+
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
+    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 3);
+    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 5);
+    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 7);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
+_adg_method_set_paddings(void)
+{
+    AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
+
+    adg_canvas_set_paddings(canvas, 0, 2, 4, 6);
+
+    g_assert_cmpfloat(adg_canvas_get_top_padding(canvas),    ==, 0);
+    g_assert_cmpfloat(adg_canvas_get_right_padding(canvas),  ==, 2);
+    g_assert_cmpfloat(adg_canvas_get_bottom_padding(canvas), ==, 4);
+    g_assert_cmpfloat(adg_canvas_get_left_padding(canvas),   ==, 6);
+
+    adg_canvas_set_paddings(canvas, 1, 3, 5, 7);
+
+    g_assert_cmpfloat(adg_canvas_get_top_padding(canvas),    ==, 1);
+    g_assert_cmpfloat(adg_canvas_get_right_padding(canvas),  ==, 3);
+    g_assert_cmpfloat(adg_canvas_get_bottom_padding(canvas), ==, 5);
+    g_assert_cmpfloat(adg_canvas_get_left_padding(canvas),   ==, 7);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+#if GTK3_ENABLED || GTK2_ENABLED
+static void
+_adg_method_set_paper(void)
+{
+    AdgCanvas *canvas;
+    const CpmlPair *size;
+    gdouble width, height;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+
+    size = adg_canvas_get_size(canvas);
+    g_assert_cmpfloat(size->x, ==, 0);
+    g_assert_cmpfloat(size->y, ==, 0);
+
+    adg_canvas_set_margins(canvas, 0, 0, 0, 0);
+    adg_canvas_set_paper(canvas, GTK_PAPER_NAME_A4,
+                         GTK_PAGE_ORIENTATION_LANDSCAPE);
+
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    !=, 0);
+    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  !=, 0);
+    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), !=, 0);
+    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   !=, 0);
+
+    size = adg_canvas_get_size(canvas);
+    width = size->x;
+    height = size->y;
+    g_assert_cmpfloat(width, !=, 0);
+    g_assert_cmpfloat(height, !=, 0);
+
+    adg_canvas_set_left_margin(canvas, 0);
+    adg_canvas_set_top_margin(canvas, 0);
+
+    size = adg_canvas_get_size(canvas);
+    g_assert_cmpfloat(width,  !=, size->x);
+    g_assert_cmpfloat(height, !=, size->y);
+    width = size->x;
+    height = size->y;
+
+    /* Ensure the page size is decreased when margins are increased */
+    adg_canvas_set_left_margin(canvas, adg_canvas_get_left_margin(canvas) + 1);
+    adg_canvas_set_top_margin(canvas, adg_canvas_get_top_margin(canvas) + 2);
+    size = adg_canvas_get_size(canvas);
+    g_assert_cmpfloat(size->x, ==, width - 1);
+    g_assert_cmpfloat(size->y, ==, height - 2);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
+_adg_method_get_page_setup(void)
+{
+    AdgCanvas *canvas;
+    GtkPageSetup *page_setup;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    page_setup = gtk_page_setup_new();
+
+    g_assert(adg_canvas_get_page_setup(canvas) == NULL);
+
+    adg_canvas_set_page_setup(canvas, page_setup);
+    g_assert(adg_canvas_get_page_setup(canvas) == page_setup);
+
+    /* canvas should still internally owns a reference to page_setup */
+    g_object_unref(page_setup);
+    g_assert(GTK_IS_PAGE_SETUP(adg_canvas_get_page_setup(canvas)));
+
+    adg_canvas_set_page_setup(canvas, NULL);
+    g_assert(adg_canvas_get_page_setup(canvas) == NULL);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
+_adg_method_set_page_setup(void)
+{
+    AdgCanvas *canvas;
+    GtkPageSetup *page_setup;
+    const CpmlPair *size;
+    gdouble width, height;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+    page_setup = gtk_page_setup_new();
+
+    gtk_page_setup_set_top_margin(page_setup,    1, GTK_UNIT_POINTS);
+    gtk_page_setup_set_right_margin(page_setup,  2, GTK_UNIT_POINTS);
+    gtk_page_setup_set_left_margin(page_setup,   3, GTK_UNIT_POINTS);
+    gtk_page_setup_set_bottom_margin(page_setup, 4, GTK_UNIT_POINTS);
+
+    adg_canvas_set_page_setup(canvas, page_setup);
+    g_object_unref(page_setup);
+
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
+    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
+    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 3);
+    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+
+    adg_canvas_set_page_setup(canvas, NULL);
+
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
+    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
+    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 3);
+    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+
+    size = adg_canvas_get_size(canvas);
+    width = size->x;
+    height = size->y;
+    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
+
+    /* When no page setup is bound to canvas, changing the margins
+     * should not change the page size */
+    adg_canvas_set_margins(canvas, 10, 20, 30, 40);
+    size = adg_canvas_get_size(canvas);
+    g_assert_cmpfloat(size->x, ==, width);
+    g_assert_cmpfloat(size->y, ==, height);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+#endif
 
 int
 main(int argc, char *argv[])
@@ -593,6 +760,18 @@ main(int argc, char *argv[])
                       _adg_test_bottom_padding);
     adg_test_add_func("/adg/canvas/property/left-padding",
                       _adg_test_left_padding);
+    adg_test_add_func("/adg/canvas/method/set_margins",
+                      _adg_method_set_margins);
+    adg_test_add_func("/adg/canvas/method/set_paddings",
+                      _adg_method_set_paddings);
+#if GTK3_ENABLED || GTK2_ENABLED
+    adg_test_add_func("/adg/canvas/method/set_paper",
+                      _adg_method_set_paper);
+    adg_test_add_func("/adg/canvas/method/get_page_setup",
+                      _adg_method_get_page_setup);
+    adg_test_add_func("/adg/canvas/method/set_page_setup",
+                      _adg_method_set_page_setup);
+#endif
 
     return g_test_run();
 }

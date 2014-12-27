@@ -22,6 +22,7 @@
 #define __TEST_INIT_H__
 
 #include <adg.h>
+#include <config.h>
 
 
 G_BEGIN_DECLS

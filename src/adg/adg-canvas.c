@@ -143,6 +143,10 @@ static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static void             _adg_apply_paddings     (AdgCanvas      *canvas,
                                                  CpmlExtents    *extents);
+static void             _adg_update_margin      (AdgCanvas      *canvas,
+                                                 gdouble        *margin,
+                                                 gdouble        *side,
+                                                 gdouble         new_margin);
 
 
 GQuark
@@ -424,16 +428,20 @@ _adg_set_property(GObject *object, guint prop_id,
         data->title_block = title_block;
         break;
     case PROP_TOP_MARGIN:
-        data->top_margin = g_value_get_double(value);
+        _adg_update_margin(canvas, &data->top_margin, &data->size.y,
+                           g_value_get_double(value));
         break;
     case PROP_RIGHT_MARGIN:
-        data->right_margin = g_value_get_double(value);
+        _adg_update_margin(canvas, &data->right_margin, &data->size.x,
+                           g_value_get_double(value));
         break;
     case PROP_BOTTOM_MARGIN:
-        data->bottom_margin = g_value_get_double(value);
+        _adg_update_margin(canvas, &data->bottom_margin, &data->size.y,
+                           g_value_get_double(value));
         break;
     case PROP_LEFT_MARGIN:
-        data->left_margin = g_value_get_double(value);
+        _adg_update_margin(canvas, &data->left_margin, &data->size.x,
+                           g_value_get_double(value));
         break;
     case PROP_HAS_FRAME:
         data->has_frame = g_value_get_boolean(value);
@@ -1552,25 +1560,43 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
 #if GTK3_ENABLED || GTK2_ENABLED
 #include <gtk/gtk.h>
 
+static void
+_adg_update_margin(AdgCanvas *canvas, gdouble *margin,
+                   gdouble *side, gdouble new_margin)
+{
+    GtkPageSetup *page_setup;
+    gdouble old_margin;
+
+    old_margin = *margin;
+    *margin = new_margin;
+
+    page_setup = adg_canvas_get_page_setup(canvas);
+    if (page_setup == NULL)
+        return;
+
+    *side += old_margin - new_margin;
+}
+
 /**
  * adg_canvas_set_paper:
  * @canvas:      an #AdgCanvas
  * @paper_name:  a paper name
  * @orientation: the page orientation
  *
- * A convenient function to set the size of @canvas using a
- * @paper_name and an @orientation value. This should be a
- * PWG 5101.1-2002 paper name and it will be passed as is to
- * gtk_paper_size_new(), so use any valid name accepted by
- * that function.
+ * A convenient function to set size and margins of @canvas
+ * using a @paper_name and an @orientation value. This should
+ * be a PWG 5101.1-2002 paper name and it will be passed as
+ * is to gtk_paper_size_new(), so use any valid name accepted
+ * by that function.
  *
- * To reset this size, you could use adg_canvas_set_size()
- * with a <constant>NULL</constant> size: in this way the
- * size will match the boundary boxes of the entities
- * contained by the canvas.
+ * This has the same effect as creating a #GtkPaperSetup object
+ * and binding it to @canvas with adg_canvas_set_page_setup():
+ * check its documentation for knowing the implications.
  *
- * Furthermore, the margins will be set to their default values,
- * that is the margins returned by the #GtkPaperSize API.
+ * To reset the size to its default behavior (i.e. autocalculate
+ * it from the entities) just call adg_canvas_set_size_explicit()
+ * passing <constant>0, 0</constant>.
+ *
  * If you want to use your own margins on a named paper size,
  * set them <emphasis>after</emphasis> the call to this function.
  *
@@ -1608,6 +1634,12 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  * pass <constant>NULL</constant> as @page_setup to restore the
  * default page setup.
  *
+ * When a canvas is bound to a page setup, the paper size is kept
+ * constant. This implies increasing or decreasing the margins
+ * respectively decreases or increases the page size of the
+ * relevant dimension, e.g. increasing the right margin decreases
+ * the width (the x component of the size).
+ *
  * A reference to @page_setup is added, so there is no need to keep
  * alive this object after a call to this function. @page_setup can
  * be retrieved at any time with adg_canvas_get_page_setup().
@@ -1618,12 +1650,9 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  * reference to the previous @page_setup object... all the page
  * settings are still retained.
  *
- * If your intent is to restore the page settings to their
- * default behavior (i.e., the canvas has no explicit size:
- * width and height depend on the included entities and the
- * margins are set to a default value), you should use
- * adg_canvas_set_size() with a <constant>NULL</constant>
- * size instead.
+ * If you want to use your own margins on a page setup,
+ * set them on canvas <emphasis>after</emphasis> the call to this
+ * function or set them on @page_setup <emphasis>before</emphasis>.
  *
  * <informalexample><programlisting language="C">
  * // By default, canvas does not have an explicit size
@@ -1635,8 +1664,8 @@ adg_canvas_set_paper(AdgCanvas *canvas,
  * // Now canvas is no more bound to a4 and that object (if
  * // not referenced anywhere else) can be garbage-collected.
  * // The page setup of canvas has not changed though.
- * adg_canvas_set_size(canvas, NULL);
- * // Now the page settings of canvas have been restored to
+ * adg_canvas_set_size_explicit(canvas, 0, 0);
+ * // Now the page size of canvas has been restored to
  * // their default behavior.
  * </programlisting></informalexample>
  *
@@ -1694,4 +1723,12 @@ adg_canvas_get_page_setup(AdgCanvas *canvas)
     return g_object_get_data((GObject *) canvas, "_adg_page_setup");
 }
 
+#else
+
+static void
+_adg_update_margin(AdgCanvas *canvas, gdouble *margin,
+                   gdouble *side, gdouble new_margin)
+{
+    *margin = new_margin;
+}
 #endif
