@@ -35,7 +35,7 @@ step	"Creating dummy ChangeLog, if needed" \
 
 # Not sure if I can remove these, they seem to be old relics
 step	"Calling internationalization scripts" \
-	"glib-gettextize -f && intltoolize -f"
+	"gettextize -f"
 
 # autoreconf interaction with libtool has been broken for ages:
 # explicitely calling libtoolize seems to avoid some problem

@@ -1,6 +1,6 @@
 /*.gmo
 /*.mo
-/Makefile.in.in
+/*.pot
 /POTFILES
-/adg-*.pot
-/stamp-it
+/remove-potcdate.sed
+/stamp-*

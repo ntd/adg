@@ -33,6 +33,7 @@ EXTRA_DIST=			COPYING \
 				build/adg-welcome.bmp \
 				build/adg.ico \
 				build/gschemas.compiled \
+				build/config.rpath \
 				$(BUILT_SOURCES)
 CLEANFILES=			test-report.xml \
 				test-report.html \
@@ -48,7 +49,6 @@ SUBDIRS+=			demo
 endif
 
 SUBDIRS+=			po \
-				po-properties \
 				docs
 
 

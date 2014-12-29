@@ -69,7 +69,7 @@
 #endif
 
 #define _(String)               _adg_dgettext(GETTEXT_PACKAGE, String)
-#define P_(String)              _adg_dgettext(GETTEXT_PACKAGE "-properties", String)
+#define P_(String)              _adg_dpgettext(GETTEXT_PACKAGE, "Property\004" String, 9)
 #define Q_(String)              _adg_dpgettext(GETTEXT_PACKAGE, String, 0)
 #define C_(Context,String)      _adg_dpgettext(GETTEXT_PACKAGE, Context "\004" String, strlen(Context) + 1)
 #define NC_(Context,String)     N_(String)

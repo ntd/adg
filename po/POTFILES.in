@@ -1,9 +1,7 @@
-[encoding: UTF-8]
-
 demo/adg-demo.c
-[type: gettext/glade] demo/adg-demo.ui.in
+demo/adg-demo.ui.in
 demo/cpml-demo.c
-[type: gettext/glade] demo/cpml-demo.ui.in
+demo/cpml-demo.ui.in
 demo/demo.c
 src/adg/adg-adim.c
 src/adg/adg-alignment.c

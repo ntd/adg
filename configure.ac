@@ -113,19 +113,12 @@ m4_ifset([LT_INIT],
 
 # I18n
 
+AM_GNU_GETTEXT_VERSION([0.19.3])
+AM_GNU_GETTEXT([external])
 AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
-ALL_LINGUAS="`grep -v '^#' "$srcdir/po/LINGUAS" | tr '\n' ' '`"
-IT_PROG_INTLTOOL([0.35.0])
-AM_GLIB_GNU_GETTEXT
-GLIB_DEFINE_LOCALEDIR([LOCALEDIR])
-AC_CONFIG_COMMANDS([default],
-                   [case "${CONFIG_FILES}" in *po-properties/Makefile.in*)
-        ${SED} -e "/POTFILES =/r po-properties/POTFILES" po-properties/Makefile.in > po-properties/Makefile
-    esac],
-                   [SED="${SED}"])
 
 
 # Check for required packages
@@ -399,7 +392,6 @@ AC_CONFIG_FILES([build/adg.nsi
                  demo/cpml-demo.ui
                  demo/adg-demo.ui
                  po/Makefile.in
-                 po-properties/Makefile.in
                  docs/Makefile
                  docs/cpml/Makefile
                  docs/cpml/bookinfo.xml
