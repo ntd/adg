@@ -51,7 +51,7 @@ struct _AdgStrokeClass {
 };
 
 
-GType           adg_stroke_get_type             (void) G_GNUC_CONST;
+GType           adg_stroke_get_type             (void);
 
 AdgStroke *     adg_stroke_new                  (AdgTrail       *trail);
 

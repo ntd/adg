@@ -57,7 +57,7 @@ struct _AdgTrailClass {
 };
 
 
-GType               adg_trail_get_type          (void) G_GNUC_CONST;
+GType               adg_trail_get_type          (void);
 AdgTrail *          adg_trail_new               (AdgTrailCallback callback,
                                                  gpointer         user_data);
 

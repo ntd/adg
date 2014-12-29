@@ -52,7 +52,7 @@ struct _AdgADimClass {
 };
 
 
-GType           adg_adim_get_type               (void) G_GNUC_CONST;
+GType           adg_adim_get_type               (void);
 AdgADim *       adg_adim_new                    (void);
 AdgADim *       adg_adim_new_full               (const CpmlPair *ref1,
                                                  const CpmlPair *ref2,

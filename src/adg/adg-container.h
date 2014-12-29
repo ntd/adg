@@ -62,7 +62,7 @@ struct _AdgContainerClass {
 };
 
 
-GType           adg_container_get_type          (void) G_GNUC_CONST;
+GType           adg_container_get_type          (void);
 
 AdgContainer *  adg_container_new               (void);
 GSList *        adg_container_children          (AdgContainer    *container);

@@ -51,7 +51,7 @@ struct _AdgTitleBlockClass {
 };
 
 
-GType           adg_title_block_get_type        (void) G_GNUC_CONST;
+GType           adg_title_block_get_type        (void);
 
 AdgTitleBlock * adg_title_block_new             (void);
 void            adg_title_block_set_logo        (AdgTitleBlock  *title_block,

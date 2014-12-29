@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 #define ADG_TYPE_TABLE_ROW         (adg_table_row_get_type())
 
 
-GType           adg_table_row_get_type          (void) G_GNUC_CONST;
+GType           adg_table_row_get_type          (void);
 
 AdgTableRow *   adg_table_row_dup               (const AdgTableRow  *table_row);
 AdgTableRow *   adg_table_row_new               (AdgTable       *table);

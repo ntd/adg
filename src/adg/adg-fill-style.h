@@ -57,7 +57,7 @@ struct _AdgFillStyleClass {
 };
 
 
-GType              adg_fill_style_get_type      (void) G_GNUC_CONST;
+GType              adg_fill_style_get_type      (void);
 void               adg_fill_style_set_pattern   (AdgFillStyle       *fill_style,
                                                  cairo_pattern_t    *pattern);
 cairo_pattern_t *  adg_fill_style_get_pattern   (AdgFillStyle       *fill_style);

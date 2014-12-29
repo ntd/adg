@@ -51,7 +51,7 @@ struct _AdgArrowClass {
 };
 
 
-GType           adg_arrow_get_type              (void) G_GNUC_CONST;
+GType           adg_arrow_get_type              (void);
 
 AdgArrow *      adg_arrow_new                   (void);
 AdgArrow *      adg_arrow_new_with_trail        (AdgTrail       *trail,

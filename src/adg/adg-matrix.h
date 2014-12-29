@@ -30,9 +30,9 @@
 G_BEGIN_DECLS
 
 const cairo_matrix_t *
-                adg_matrix_identity     (void) G_GNUC_CONST;
+                adg_matrix_identity     (void);
 const cairo_matrix_t *
-                adg_matrix_null         (void) G_GNUC_CONST;
+                adg_matrix_null         (void);
 void            adg_matrix_copy         (cairo_matrix_t         *matrix,
                                          const cairo_matrix_t   *src);
 cairo_matrix_t *adg_matrix_dup          (const cairo_matrix_t   *matrix);

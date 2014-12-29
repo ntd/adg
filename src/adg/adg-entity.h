@@ -65,7 +65,7 @@ struct _AdgEntityClass {
 
 void            adg_switch_extents              (gboolean         state);
 
-GType           adg_entity_get_type             (void) G_GNUC_CONST;
+GType           adg_entity_get_type             (void);
 void            adg_entity_destroy              (AdgEntity       *entity);
 AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 void            adg_entity_set_parent           (AdgEntity       *entity,

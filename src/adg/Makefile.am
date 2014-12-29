@@ -181,9 +181,7 @@ lib_LTLIBRARIES= 		libadg-1.la
 libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
 				$(c_sources)
-nodist_libadg_1_la_SOURCES=	$(built_h_sources) \
-				$(built_private_h_sources) \
-				$(built_c_sources)
+nodist_libadg_1_la_SOURCES=	$(built_c_sources)
 libadg_1_la_CFLAGS=		$(CPML_CFLAGS) \
 				$(ADG_CFLAGS)
 libadg_1_la_LDFLAGS=		-no-undefined \

@@ -52,7 +52,7 @@ struct _AdgDimStyleClass {
 };
 
 
-GType           adg_dim_style_get_type          (void) G_GNUC_CONST;
+GType           adg_dim_style_get_type          (void);
 AdgDimStyle *   adg_dim_style_new               (void);
 void            adg_dim_style_set_marker1       (AdgDimStyle    *dim_style,
                                                  AdgMarker      *marker);

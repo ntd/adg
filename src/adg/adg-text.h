@@ -51,7 +51,7 @@ struct _AdgTextClass {
 };
 
 
-GType           adg_text_get_type               (void) G_GNUC_CONST;
+GType           adg_text_get_type               (void);
 AdgText *       adg_text_new                    (const gchar    *text);
 
 G_END_DECLS

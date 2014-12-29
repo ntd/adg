@@ -52,7 +52,7 @@ struct _AdgFontStyleClass {
 };
 
 
-GType           adg_font_style_get_type         (void) G_GNUC_CONST;
+GType           adg_font_style_get_type         (void);
 AdgFontStyle *  adg_font_style_new              (void);
 cairo_font_options_t *
                 adg_font_style_new_options      (AdgFontStyle    *font_style);

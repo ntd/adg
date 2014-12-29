@@ -52,7 +52,7 @@ struct _AdgLogoClass {
 };
 
 
-GType           adg_logo_get_type             (void) G_GNUC_CONST;
+GType           adg_logo_get_type             (void);
 
 AdgLogo *       adg_logo_new                  (void);
 

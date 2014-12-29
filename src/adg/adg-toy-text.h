@@ -51,7 +51,7 @@ struct _AdgToyTextClass {
 };
 
 
-GType           adg_toy_text_get_type           (void) G_GNUC_CONST;
+GType           adg_toy_text_get_type           (void);
 AdgToyText *    adg_toy_text_new                (const gchar    *text);
 
 G_END_DECLS

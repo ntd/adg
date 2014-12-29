@@ -52,7 +52,7 @@ struct _AdgEdgesClass {
 };
 
 
-GType           adg_edges_get_type              (void) G_GNUC_CONST;
+GType           adg_edges_get_type              (void);
 AdgEdges *      adg_edges_new                   (void);
 AdgEdges *      adg_edges_new_with_source       (AdgTrail       *source);
 

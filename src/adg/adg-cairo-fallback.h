@@ -36,7 +36,7 @@ G_BEGIN_DECLS
 #define CAIRO_GOBJECT_TYPE_MATRIX       (cairo_gobject_matrix_get_type())
 
 GType           cairo_gobject_matrix_get_type
-                                        (void) G_GNUC_CONST;
+                                        (void);
 cairo_matrix_t *cairo_gobject_cairo_matrix_copy
                                         (const cairo_matrix_t   *matrix);
 
@@ -48,7 +48,7 @@ cairo_matrix_t *cairo_gobject_cairo_matrix_copy
 #define ADG_MISSING_GBOXED_PATTERN          1
 #define CAIRO_GOBJECT_TYPE_PATTERN          (cairo_gobject_pattern_get_type())
 
-GType   cairo_gobject_pattern_get_type      (void) G_GNUC_CONST;
+GType   cairo_gobject_pattern_get_type      (void);
 cairo_pattern_t *
         cairo_gobject_cairo_pattern_copy    (const cairo_pattern_t  *pattern);
 

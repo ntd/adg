@@ -52,7 +52,7 @@ struct _AdgAlignmentClass {
 };
 
 
-GType           adg_alignment_get_type          (void) G_GNUC_CONST;
+GType           adg_alignment_get_type          (void);
 
 AdgAlignment *  adg_alignment_new               (const CpmlPair *factor);
 AdgAlignment *  adg_alignment_new_explicit      (gdouble         x_factor,

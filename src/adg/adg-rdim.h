@@ -52,7 +52,7 @@ struct _AdgRDimClass {
 };
 
 
-GType           adg_rdim_get_type               (void) G_GNUC_CONST;
+GType           adg_rdim_get_type               (void);
 
 AdgRDim *       adg_rdim_new                    (void);
 AdgRDim *       adg_rdim_new_full               (const CpmlPair *center,

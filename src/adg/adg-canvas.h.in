@@ -57,7 +57,7 @@ typedef enum {
 } AdgCanvasError;
 
 
-GType           adg_canvas_get_type             (void) G_GNUC_CONST;
+GType           adg_canvas_get_type             (void);
 GQuark          adg_canvas_error_quark          (void);
 
 AdgCanvas *     adg_canvas_new                  (void);

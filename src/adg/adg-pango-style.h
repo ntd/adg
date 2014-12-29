@@ -52,7 +52,7 @@ struct _AdgPangoStyleClass {
 };
 
 
-GType           adg_pango_style_get_type        (void) G_GNUC_CONST;
+GType           adg_pango_style_get_type        (void);
 AdgPangoStyle * adg_pango_style_new             (void);
 PangoFontDescription *
                 adg_pango_style_get_description (AdgPangoStyle  *pango_style);

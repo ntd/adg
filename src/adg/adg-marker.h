@@ -55,7 +55,7 @@ struct _AdgMarkerClass {
 };
 
 
-GType               adg_marker_get_type         (void) G_GNUC_CONST;
+GType               adg_marker_get_type         (void);
 
 void                adg_marker_set_trail        (AdgMarker      *marker,
                                                  AdgTrail       *trail);

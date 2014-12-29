@@ -52,7 +52,7 @@ struct _AdgTableStyleClass {
 };
 
 
-GType           adg_table_style_get_type          (void) G_GNUC_CONST;
+GType           adg_table_style_get_type          (void);
 AdgTableStyle * adg_table_style_new               (void);
 
 void            adg_table_style_set_color_dress (AdgTableStyle  *table_style,

@@ -52,7 +52,7 @@ struct _AdgTableClass {
 };
 
 
-GType           adg_table_get_type              (void) G_GNUC_CONST;
+GType           adg_table_get_type              (void);
 
 AdgTable *      adg_table_new                   (void);
 

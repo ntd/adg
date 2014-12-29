@@ -59,7 +59,7 @@ struct _AdgGtkAreaClass {
 };
 
 
-GType           adg_gtk_area_get_type           (void) G_GNUC_CONST;
+GType           adg_gtk_area_get_type           (void);
 
 GtkWidget *     adg_gtk_area_new                (void);
 GtkWidget *     adg_gtk_area_new_with_canvas    (AdgCanvas       *canvas);

@@ -52,7 +52,7 @@ struct _AdgColorStyleClass {
 };
 
 
-GType           adg_color_style_get_type        (void) G_GNUC_CONST;
+GType           adg_color_style_get_type        (void);
 AdgColorStyle * adg_color_style_new             (void);
 
 void            adg_color_style_set_red         (AdgColorStyle  *color_style,

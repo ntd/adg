@@ -35,7 +35,7 @@ G_BEGIN_DECLS
 typedef struct _AdgDash AdgDash;
 
 
-GType           adg_dash_get_type               (void) G_GNUC_CONST;
+GType           adg_dash_get_type               (void);
 AdgDash *       adg_dash_dup                    (const AdgDash  *dash);
 
 AdgDash *       adg_dash_new                    (void);

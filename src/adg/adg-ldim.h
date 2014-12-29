@@ -52,7 +52,7 @@ struct _AdgLDimClass {
 };
 
 
-GType           adg_ldim_get_type               (void) G_GNUC_CONST;
+GType           adg_ldim_get_type               (void);
 
 AdgLDim *       adg_ldim_new                    (void);
 AdgLDim *       adg_ldim_new_full               (const CpmlPair *ref1,

@@ -32,7 +32,7 @@ G_BEGIN_DECLS
 #define ADG_TYPE_POINT                          (adg_point_get_type())
 
 
-GType           adg_point_get_type              (void) G_GNUC_CONST;
+GType           adg_point_get_type              (void);
 
 AdgPoint *      adg_point_new                   (void);
 AdgPoint *      adg_point_dup                   (const AdgPoint *src);

@@ -57,7 +57,7 @@ struct _AdgTextualIface {
 };
 
 
-GType           adg_textual_get_type            (void) G_GNUC_CONST;
+GType           adg_textual_get_type            (void);
 void            adg_textual_set_font_dress      (AdgTextual     *textual,
                                                  AdgDress        dress);
 AdgDress        adg_textual_get_font_dress      (AdgTextual     *textual);

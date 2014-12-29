@@ -48,7 +48,7 @@ typedef void (*AdgCallback) (void);
 
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
-const gpointer  adg_test_invalid_pointer        (void) G_GNUC_CONST;
+const gpointer  adg_test_invalid_pointer        (void);
 void            adg_test_add_func               (const char     *testpath,
                                                  AdgCallback     test_func);
 

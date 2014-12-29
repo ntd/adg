@@ -52,7 +52,7 @@ struct _AdgProjectionClass {
 };
 
 
-GType           adg_projection_get_type         (void) G_GNUC_CONST;
+GType           adg_projection_get_type         (void);
 
 AdgProjection * adg_projection_new              (AdgProjectionScheme scheme);
 

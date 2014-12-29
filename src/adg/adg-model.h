@@ -76,7 +76,7 @@ struct _AdgModelClass {
 };
 
 
-GType           adg_model_get_type              (void) G_GNUC_CONST;
+GType           adg_model_get_type              (void);
 
 void            adg_model_add_dependency        (AdgModel         *model,
                                                  AdgEntity        *entity);

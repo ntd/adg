@@ -57,7 +57,7 @@ struct _AdgStyleClass {
 };
 
 
-GType                   adg_style_get_type      (void) G_GNUC_CONST;
+GType                   adg_style_get_type      (void);
 
 void                    adg_style_invalidate    (AdgStyle       *style);
 void                    adg_style_apply         (AdgStyle       *style,

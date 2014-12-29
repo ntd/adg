@@ -56,7 +56,7 @@ struct _AdgDimClass {
 };
 
 
-GType           adg_dim_get_type                (void) G_GNUC_CONST;
+GType           adg_dim_get_type                (void);
 AdgDress        adg_dim_get_dim_dress           (AdgDim         *dim);
 void            adg_dim_set_dim_dress           (AdgDim         *dim,
                                                  AdgDress        dress);

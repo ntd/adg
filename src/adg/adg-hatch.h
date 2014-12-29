@@ -51,7 +51,7 @@ struct _AdgHatchClass {
 };
 
 
-GType           adg_hatch_get_type              (void) G_GNUC_CONST;
+GType           adg_hatch_get_type              (void);
 
 AdgHatch *      adg_hatch_new                   (AdgTrail       *trail);
 

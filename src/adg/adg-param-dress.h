@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 #define ADG_IS_PARAM_DRESS(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE((pspec), ADG_TYPE_PARAM_DRESS))
 
 
-GType           adg_param_dress_get_type        (void) G_GNUC_CONST;
+GType           adg_param_dress_get_type        (void);
 GParamSpec *    adg_param_spec_dress            (const gchar    *name,
                                                  const gchar    *nick,
                                                  const gchar    *blurb,

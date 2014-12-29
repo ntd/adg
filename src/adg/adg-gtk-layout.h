@@ -51,7 +51,7 @@ struct _AdgGtkLayoutClass {
 };
 
 
-GType           adg_gtk_layout_get_type         (void) G_GNUC_CONST;
+GType           adg_gtk_layout_get_type         (void);
 
 GtkWidget *     adg_gtk_layout_new              (void);
 GtkWidget *     adg_gtk_layout_new_with_canvas  (AdgCanvas      *canvas);
