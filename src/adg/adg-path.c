@@ -1091,7 +1091,7 @@ _adg_clear_operation(AdgPath *path)
     operation = &data->operation;
 
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning(_("%s: a `%s' operation is still active while clearing the path"),
+        g_warning(_("%s: a '%s' operation is still active while clearing the path"),
                   G_STRLOC, _adg_action_name(operation->action));
         operation->action = ADG_ACTION_NONE;
     }
@@ -1111,14 +1111,14 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
     data = path->data;
 
     if (data->last.data == NULL) {
-        g_warning(_("%s: requested a `%s' operation on a path without current primitive"),
+        g_warning(_("%s: requested a '%s' operation on a path without current primitive"),
                   G_STRLOC, _adg_action_name(action));
         return FALSE;
     }
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
-        g_warning(_("%s: requested a `%s' operation while a `%s' operation was active"),
+        g_warning(_("%s: requested a '%s' operation while a '%s' operation was active"),
                   G_STRLOC, _adg_action_name(action),
                   _adg_action_name(operation->action));
         /* XXX: http://dev.entidi.com/p/adg/issues/50/ */
@@ -1143,7 +1143,7 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
         return TRUE;
 
     default:
-        g_warning(_("%s: `%d' operation not recognized"), G_STRLOC, action);
+        g_warning(_("%s: %d path operation not recognized"), G_STRLOC, action);
         va_end(var_args);
         return FALSE;
     }
@@ -1253,7 +1253,7 @@ _adg_do_chamfer(AdgPath *path, CpmlPrimitive *current)
     len1 = cpml_primitive_get_length(last);
 
     if (delta1 >= len1) {
-        g_warning(_("%s: first chamfer delta of `%lf' is greather than the available `%lf' length"),
+        g_warning(_("%s: first chamfer delta of %lf is greather than the available %lf length"),
                   G_STRLOC, delta1, len1);
         return;
     }
@@ -1262,7 +1262,7 @@ _adg_do_chamfer(AdgPath *path, CpmlPrimitive *current)
     len2 = cpml_primitive_get_length(current);
 
     if (delta2 >= len2) {
-        g_warning(_("%s: second chamfer delta of `%lf' is greather than the available `%lf' length"),
+        g_warning(_("%s: second chamfer delta of %lf is greather than the available %lf length"),
                   G_STRLOC, delta1, len1);
         return;
     }
@@ -1300,7 +1300,7 @@ _adg_do_fillet(AdgPath *path, CpmlPrimitive *current)
     cpml_primitive_offset(current_dup, offset);
     cpml_primitive_offset(last_dup, offset);
     if (cpml_primitive_put_intersections(current_dup, last_dup, 1, &center) == 0) {
-        g_warning(_("%s: fillet with radius of `%lf' is not applicable here"),
+        g_warning(_("%s: fillet with radius of %lf is not applicable here"),
                   G_STRLOC, radius);
         g_free(current_dup);
         g_free(last_dup);

@@ -335,8 +335,8 @@ adg_dress_set_fallback(AdgDress dress, AdgStyle *fallback)
 
     /* Check if the new fallback style is compatible with this dress */
     if (fallback != NULL && !adg_dress_style_is_compatible(dress, fallback)) {
-        g_warning(_("%s: the fallback style of `%d' (%s) must be a `%s' derived type, but a `%s' has been provided"),
-                  G_STRLOC, dress, adg_dress_get_name(dress),
+        g_warning(_("%s: the fallback style of '%s' dress (%d) must be a '%s' derived type, but a '%s' has been provided"),
+                  G_STRLOC, adg_dress_get_name(dress), dress,
                   g_type_name(data->ancestor_type),
                   g_type_name(G_TYPE_FROM_INSTANCE(fallback)));
         return;

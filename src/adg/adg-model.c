@@ -728,7 +728,7 @@ _adg_set_named_pair(AdgModel *model, const gchar *name, const CpmlPair *pair)
     if (pair == NULL) {
         /* Delete mode: raise a warning if @name is not found */
         if (*hash == NULL || !g_hash_table_remove(*hash, name))
-            g_warning(_("%s: attempting to remove nonexistent `%s' named pair"),
+            g_warning(_("%s: attempting to remove nonexistent '%s' named pair"),
                       G_STRLOC, name);
 
         return;

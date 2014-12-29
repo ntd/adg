@@ -159,7 +159,7 @@ adg_textual_set_font_dress(AdgTextual *textual, AdgDress dress)
     /* The set_font_dress() method must be defined */
     iface = ADG_TEXTUAL_GET_IFACE(textual);
     if (iface->set_font_dress == NULL) {
-        g_warning(_("%s: `set_font_dress' method not implemented for type `%s'"),
+        g_warning(_("%s: 'set_font_dress' method not implemented for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(textual)));
         return;
     }
@@ -188,7 +188,7 @@ adg_textual_get_font_dress(AdgTextual *textual)
     /* The get_font_dress() method must be defined */
     iface = ADG_TEXTUAL_GET_IFACE(textual);
     if (iface->get_font_dress == NULL) {
-        g_warning(_("%s: `get_font_dress' method not implemented for type `%s'"),
+        g_warning(_("%s: 'get_font_dress' method not implemented for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(textual)));
         return ADG_DRESS_UNDEFINED;
     }
@@ -219,7 +219,7 @@ adg_textual_set_text(AdgTextual *textual, const gchar *text)
     /* The set_text() method must be defined */
     iface = ADG_TEXTUAL_GET_IFACE(textual);
     if (iface->set_text == NULL) {
-        g_warning(_("%s: `set_text' method not implemented for type `%s'"),
+        g_warning(_("%s: 'set_text' method not implemented for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(textual)));
         return;
     }
@@ -278,7 +278,7 @@ static gchar *
 _adg_dup_text(AdgTextual *textual, AdgTextualIface *iface)
 {
     if (iface->dup_text == NULL) {
-        g_warning(_("%s: `dup_text' method not implemented for type `%s'"),
+        g_warning(_("%s: 'dup_text' method not implemented for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(textual)));
         return NULL;
     }

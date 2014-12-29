@@ -761,7 +761,7 @@ _adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 static AdgModel *
 _adg_create_model(AdgMarker *marker)
 {
-    g_warning(_("%s: `create_model' method not implemented for type `%s'"),
+    g_warning(_("%s: 'create_model' method not implemented for type '%s'"),
               G_STRLOC, g_type_name(G_OBJECT_TYPE(marker)));
     return NULL;
 }

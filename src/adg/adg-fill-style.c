@@ -286,7 +286,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     AdgFillStylePrivate *data = ((AdgFillStyle *) style)->data;
 
     if (data->pattern == NULL)
-        g_warning(_("%s: pattern undefined for type `%s'"),
+        g_warning(_("%s: pattern undefined for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(style)));
     else
         cairo_set_source(cr, data->pattern);

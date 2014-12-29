@@ -378,7 +378,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
     g_return_val_if_fail(ADG_IS_TRAIL(trail), FALSE);
 
     if (n_segment == 0) {
-        g_warning(_("%s: requested undefined segment for type `%s'"),
+        g_warning(_("%s: requested undefined segment for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return FALSE;
     }
@@ -394,7 +394,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
         memcpy(segment, &iterator, sizeof(CpmlSegment));
 
     if (!found)
-        g_warning(_("%s: segment %u is out of range for type `%s'"),
+        g_warning(_("%s: segment %u is out of range for type '%s'"),
                   G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
 
     return found;
@@ -545,7 +545,7 @@ _adg_get_cairo_path(AdgTrail *trail)
     AdgTrailPrivate *data = trail->data;
 
     if (data->callback == NULL) {
-        g_warning(_("%s: callback not defined for instance of type `%s'"),
+        g_warning(_("%s: callback not defined for instance of type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(trail)));
         return NULL;
     }

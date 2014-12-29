@@ -413,7 +413,7 @@ adg_container_propagate_by_name(AdgContainer *container,
 
     if (!g_signal_parse_name(detailed_signal, G_TYPE_FROM_INSTANCE(container),
                              &signal_id, &detail, FALSE)) {
-        g_warning(_("%s: signal `%s' is invalid for instance `%p'"),
+        g_warning(_("%s: signal '%s' is invalid for instance %p"),
                   G_STRLOC, detailed_signal, container);
         return;
     }
