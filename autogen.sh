@@ -33,10 +33,6 @@ cd "$srcdir"
 step	"Creating dummy ChangeLog, if needed" \
 	"test -f './ChangeLog' || touch './ChangeLog'"
 
-# Not sure if I can remove these, they seem to be old relics
-step	"Calling internationalization scripts" \
-	"gettextize -f"
-
 # autoreconf interaction with libtool has been broken for ages:
 # explicitely calling libtoolize seems to avoid some problem
 step	"Calling libtoolize" \
