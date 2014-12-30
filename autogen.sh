@@ -3,8 +3,15 @@
 # Run this to generate the configuration scripts after a fresh
 # repository clone/checkout.
 #
+# USAGE: ./autogen.sh [--verbose]
+#
+# where --verbose shows stdout and stderr of every command (by
+# default they are redirect to /dev/null).
+#
 # This script does *not* call configure (as usually done in other
 # projects) because this would prevent VPATH builds.
+
+arg1=$1
 
 step() {
     local message="$1"
@@ -12,10 +19,16 @@ step() {
 
     printf "$message... "
 
-    if eval $command >/dev/null 2>&1; then
+    if test "$arg1" = --verbose; then
+	eval $command
+    else
+	eval $command >/dev/null 2>&1
+    fi
+    local result=$?
+
+    if test "$result" = "0"; then
 	printf "\033[32mok\033[0m\n"
     else
-	local result=$?
 	printf "\033[31mfailed\033[0m\n  ** \"$command\" returned $result\n"
 	exit $result
     fi
