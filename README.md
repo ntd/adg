@@ -32,15 +32,16 @@ Design overview
 The project is based on the [GObject](http://www.gtk.org/) library:
 the ADG canvas is developed in plain C using an object-oriented
 approach. Applications based on ADG are not expected to be
-developed in C, though: the basic idea is to have a set of language
-bindings for higher level languages (the garbage-collected ones,
-above all). An application can then be developed using any
-specific language available, much in the same way as
-[GNOME](http://www.gnome.org/) applications are conceived.
+developed in C, though: the basic idea is to have a set of bindings
+for higher level languages (the garbage-collected ones, above all).
+An application can then be developed using any specific language
+available, much in the same way as [GNOME](http://www.gnome.org/)
+applications are conceived.
+
 Lua bindings based on [LGI](http://github.com/pavouk/lgi) are
-yet availables and effectively used upstream to test the APIs.
-The adg-lua (http://dev.entidi.com/p/adg-lua/) project
-provides code examples on how to use them.
+already availables and effectively used upstream to test the APIs.
+The [adg-lua](http://dev.entidi.com/p/adg-lua/) project provides
+code examples on how to use them.
 
 The mathematical and geometrical algorithms, together with a bunch
 of other useful functions for manipulating cairo paths, are kept
