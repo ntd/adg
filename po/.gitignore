@@ -7,6 +7,7 @@
 /en@boldquot.header
 /en@quot.header
 /insert-header.sin
+/Makefile.in.in
 /POTFILES
 /quot.sed
 /remove-potcdate.sed

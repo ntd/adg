@@ -2,6 +2,7 @@
 /codeset.m4
 /compile
 /config.guess
+/config.rpath
 /config.sub
 /depcomp
 /extern-inline.m4

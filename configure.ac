@@ -113,6 +113,11 @@ m4_ifset([LT_INIT],
 
 # I18n
 
+dnl The following macro is required in order to be able to use
+dnl autopoint (formerly called gettextize) from autoreconf.
+dnl The argument is a trade-off between modern and supported.
+AM_GNU_GETTEXT_VERSION([0.17])
+
 AM_GNU_GETTEXT([external])
 AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
