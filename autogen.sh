@@ -51,6 +51,11 @@ step	"Creating dummy ChangeLog, if needed" \
 step	"Calling libtoolize" \
 	"libtoolize --automake"
 
+# GNU gettext seems to have timestamp problems with git:
+# https://bugzilla.gnome.org/show_bug.cgi?id=661128
+step	"Making adg.pot look older" \
+	"touch -t 200001010000 po/adg.pot"
+
 step	"Regenerating autotools files" \
 	"autoreconf -isf -Wall"
 
