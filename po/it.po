@@ -1,5 +1,5 @@
 # Italian translation for adg.
-# Copyright (C) 2010-2014 Nicola Fontana <ntd@entidi.it>
+# Copyright (C) 2010-2015 Nicola Fontana <ntd@entidi.it>
 # This file is distributed under the same license as adg package.
 #
 # NOTE PER IL TRADUTTORE
@@ -65,8 +65,8 @@ msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
 #: demo/adg-demo.ui.in:145
-msgid "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
-msgstr "Copyright (C) 2007,2008,2009,2010,2011,2012  Nicola Fontana"
+msgid "Copyright (C) 2007-2015  Nicola Fontana"
+msgstr "Copyright (C) 2007-2015  Nicola Fontana"
 
 #: demo/adg-demo.ui.in:146
 msgid "Demonstration program for the ADG library"
