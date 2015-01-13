@@ -263,7 +263,15 @@ _adg_dgettext(const gchar *domain, const gchar *msgid)
     static gboolean initialized = FALSE;
 
     if (G_UNLIKELY(!initialized)) {
+#ifdef G_OS_UNIX
         bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
+#else
+        /* On windows, LOCALEDIR is relative to the installation path */
+        gchar *path = g_build_filename(g_win32_get_package_installation_directory_of_module(NULL),
+                                       LOCALEDIR, NULL);
+        bindtextdomain(GETTEXT_PACKAGE, path);
+        g_free(path);
+#endif
         bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
         initialized = TRUE;
     }

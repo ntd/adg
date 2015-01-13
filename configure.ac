@@ -90,14 +90,21 @@ AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
-AM_COND_IF([OS_WINDOWS],
-           [AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
-            AC_PATH_PROG([WINE],[wine])])
 
 
 # Check for libraries
 
 AC_CHECK_LIB([m],[cos])
+
+
+# Cross-compilation requirements
+
+dnl GLib 2.16 is required by _adg_dgettext() for
+dnl g_win32_get_package_installation_directory_of_module()
+AM_COND_IF([OS_WINDOWS],
+           [AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
+            AC_PATH_PROG([WINE],[wine])
+            PKG_CHECK_MODULES([GLIB],[glib-2.0 >= 2.16])])
 
 
 # Libtool initialization
@@ -119,7 +126,7 @@ dnl The argument is a trade-off between modern and supported.
 AM_GNU_GETTEXT_VERSION([0.17])
 
 AM_GNU_GETTEXT([external])
-AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME-adg_api_version)
+AC_SUBST([ADG_API_PACKAGE],AC_PACKAGE_TARNAME)
 AC_SUBST([GETTEXT_PACKAGE],[${ADG_API_PACKAGE}])
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
                    [Define to the domain used by gettext.])
