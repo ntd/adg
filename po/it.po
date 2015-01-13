@@ -16,7 +16,7 @@
 #
 # canvas, named pair, path, top-level
 #
-# In ogni caso le parole 'quotate' non devono essre tradotte.
+# In ogni caso le parole 'fra apici' non devono essere tradotte.
 #
 msgid ""
 msgstr ""
