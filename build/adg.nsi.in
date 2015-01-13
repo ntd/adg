@@ -1,13 +1,45 @@
 ; @configure_input@
+; Installer script for ADG on Windows (both 32 and 64 bits)
+; Check NSIS website for details: http://nsis.sourceforge.net/
 ;
-; ADG installer based on NSis
-; Check http://nsis.sourceforge.net/ for details
+; ADG - Automatic Drawing Generation
+; Copyright (C) 2010-2015  Nicola Fontana <ntd at entidi.it>
+;
+; This file is free software; you can redistribute it and/or
+; modify it under the terms of the GNU Lesser General Public
+; License as published by the Free Software Foundation; either
+; version 2 of the License, or (at your option) any later version.
+;
+; This library is distributed in the hope that it will be useful,
+; but WITHOUT ANY WARRANTY; without even the implied warranty of
+; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+; Lesser General Public License for more details.
+;
+; You should have received a copy of the GNU Lesser General Public
+; License along with this library; if not, write to the
+; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+; Boston, MA  02110-1301, USA.
 
-!define SRCDIR      "@abs_top_srcdir@"
-!define BUILDDIR    "@abs_top_builddir@"
-!define USRDIR      "@USRDIR@"
-!define DLLDIR      "${USRDIR}/bin"
-!define LOCALEDIR   "${USRDIR}/share/locale"
+!define PACKAGE_NAME	"@PACKAGE@"
+!define PACKAGE_VERSION	"@PACKAGE_VERSION@"
+!define PACKAGE_ARCH	"@ARCH@"
+!define SRCDIR		"@abs_top_srcdir@"
+!define BUILDDIR	"@abs_top_builddir@"
+!define USRDIR		"@USRDIR@"
+!define DLLDIR		"${USRDIR}/bin"
+!define LOCALEDIR	"${USRDIR}/share/locale"
+
+Name "${PACKAGE_NAME} ${PACKAGE_VERSION}"
+OutFile "${PACKAGE_NAME}-${PACKAGE_VERSION}-win${PACKAGE_ARCH}.exe"
+SetCompressor /SOLID lzma
+InstallDir "$PROGRAMFILES${PACKAGE_ARCH}\${PACKAGE_NAME}"
+
+SetCompressor /SOLID lzma
+ShowInstDetails show
+ShowUninstDetails show
+SetDateSave on
+RequestExecutionLevel highest
+
 
 ; ---------------------------------------------------------------
 ; 1. Header file
@@ -16,11 +48,6 @@
 !include MUI2.nsh
 !include EnvVarUpdate.nsh
 
-Name "@PACKAGE_NAME@ @PACKAGE_VERSION@"
-OutFile "@abs_top_builddir@/@PACKAGE@-@PACKAGE_VERSION@-win@ARCH@.exe"
-SetCompressor /SOLID lzma
-InstallDir "$PROGRAMFILES@ARCH@\@PACKAGE_NAME@"
-RequestExecutionLevel user
 
 ; ---------------------------------------------------------------
 ; 2. Interface configuration
@@ -39,11 +66,12 @@ RequestExecutionLevel user
 !define MUI_WELCOMEFINISHPAGE_BITMAP "${SRCDIR}/build/adg-welcome.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "${SRCDIR}/build/adg-welcome.bmp"
 
+
 ; ---------------------------------------------------------------
 ; 3. Pages
 
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "@abs_top_srcdir@/COPYING"
+!insertmacro MUI_PAGE_LICENSE "${SRCDIR}/COPYING"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -53,18 +81,22 @@ RequestExecutionLevel user
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
+
 ; ---------------------------------------------------------------
 ; 4. Language files
 
 !insertmacro MUI_LANGUAGE "English"
 !insertmacro MUI_LANGUAGE "Italian"
 
+
 ; ---------------------------------------------------------------
 ; 5. Reserve files
 
 
 ; ---------------------------------------------------------------
-; I. Installer sections
+; 6. Sections
+
+; I. Introduction
 
 Section $(TITLE_SecBase) SecBase
   SectionIn RO
@@ -100,6 +132,7 @@ Section $(TITLE_SecBase) SecBase
   File "${DLLDIR}/libfreetype-*.dll"
   File "${DLLDIR}/libpixman-1-*.dll"
   File "${DLLDIR}/libcairo-*.dll"
+  File "${DLLDIR}/libcairo-gobject-*.dll"
   File "${DLLDIR}/libpango-1.0-*.dll"
   File "${DLLDIR}/libpangocairo-1.0-*.dll"
   File "${DLLDIR}/libpangowin32-1.0-*.dll"
@@ -122,16 +155,16 @@ Section $(TITLE_SecBase) SecBase
   ${EnvVarUpdate} $0 "PATH" "A" "HKCU" "$INSTDIR\bin"
 SectionEnd
 
+; II. Language support
+
+!include Locale.nsh
+
 Section $(TITLE_SecLanguages) SecLanguages
-  SetOutPath "$INSTDIR\share\locale\it\LC_MESSAGES"
-  File /oname=adg.mo "${SRCDIR}/po/it.gmo"
-  File "${LOCALEDIR}/it/LC_MESSAGES/glib20.mo"
-  File "${LOCALEDIR}/it/LC_MESSAGES/gdk-pixbuf.mo"
-  File "${LOCALEDIR}/it/LC_MESSAGES/gtk30.mo"
-  File "${LOCALEDIR}/it/LC_MESSAGES/gtk30-properties.mo"
+  ; TODO: this should iterate over po/LINGUAS
+  !insertmacro FileLocale "it"
 SectionEnd
 
-; Uninstaller
+; III. Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
@@ -146,6 +179,7 @@ Section "Uninstall"
   Delete "$INSTDIR\bin\libpangowin32-1.0-*.dll"
   Delete "$INSTDIR\bin\libpangocairo-1.0-*.dll"
   Delete "$INSTDIR\bin\libpango-1.0-*.dll"
+  Delete "$INSTDIR\bin\libcairo-gobject-*.dll"
   Delete "$INSTDIR\bin\libcairo-*.dll"
   Delete "$INSTDIR\bin\libpixman-1-*.dll"
   Delete "$INSTDIR\bin\libfreetype-*.dll"
@@ -180,15 +214,10 @@ Section "Uninstall"
   RMDir  "$INSTDIR\share\glib-2.0\schemas"
   RMDir  "$INSTDIR\share\glib-2.0"
 
-  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\adg.mo"
-  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gtk30-properties.mo"
-  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gtk30.mo"
-  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gdk-pixbuf.mo"
-  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\glib20.mo"
-  RMDir  "$INSTDIR\share\locale\it\LC_MESSAGES"
-  RMDir  "$INSTDIR\share\locale\it"
-  RMDir  "$INSTDIR\share\locale"
+  ; TODO: this should iterate over po/LINGUAS
+  !insertmacro DeleteLocale "it"
 
+  RMDir  "$INSTDIR\share\locale"
   RMDir  "$INSTDIR\share"
 
   Delete "$INSTDIR\adg-demo.exe"
@@ -199,23 +228,15 @@ Section "Uninstall"
   ${un.EnvVarUpdate} $0 "PATH" "R" "HKCU" "$INSTDIR\bin"
 SectionEnd
 
-; Internationalization
+
+; ---------------------------------------------------------------
+; 7. Internationalization
+
+!include Translations.nsh
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY
 FunctionEnd
-
-LangString TITLE_SecBase	${LANG_ENGLISH}		"ADG canvas"
-LangString TITLE_SecBase	${LANG_ITALIAN}		"Canvas ADG"
-
-LangString TITLE_SecLanguages	${LANG_ENGLISH}		"Support for languages"
-LangString TITLE_SecLanguages	${LANG_ITALIAN}		"Supporto lingue"
-
-LangString DESC_SecBase		${LANG_ENGLISH}		"Base installation for running the demo program."
-LangString DESC_SecBase		${LANG_ITALIAN}		"Installazione di base per eseguire il programma dimostrativo."
-
-LangString DESC_SecLanguages	${LANG_ENGLISH}		"Enable support for languages other than english."
-LangString DESC_SecLanguages	${LANG_ITALIAN}		"Abilitazione del supporto a lingue diverse dall'inglese."
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
