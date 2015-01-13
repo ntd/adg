@@ -1,0 +1,42 @@
+/* Borrowed from the GIMP and from Gnumeric:
+ * I don't really know what I'm doing here...
+ */
+
+#include <winver.h>
+
+#define _QUOTE(x)			#x
+#define QUOTE(x)			_QUOTE(x)
+
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION	PACKAGE_VERSIONS
+PRODUCTVERSION	PACKAGE_VERSIONS
+FILEFLAGSMASK	0
+FILEFLAGS	0
+FILEOS		VOS__WINDOWS32
+FILETYPE	VFT_APP
+FILESUBTYPE	VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+	BLOCK "040904B0"
+	BEGIN
+	    VALUE "CompanyName",	"Nicola Fontana <ntd at entidi.it>"
+	    VALUE "FileDescription",	"ADG cairo canvas demo"
+	    VALUE "FileVersion",	QUOTE(PACKAGE_VERSION)
+	    VALUE "InternalName",	QUOTE(PACKAGE_NAME)
+	    VALUE "OriginalFilename",	QUOTE(PACKAGE_NAME) ".exe"
+	    VALUE "ProductName",	QUOTE(PACKAGE_NAME)
+	    VALUE "ProductVersion",	QUOTE(PACKAGE_VERSION)
+	    VALUE "LegalCopyright",	"Copyright (C) 2007-2015"
+	END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+	VALUE "Translation", 0x409, 1200
+    END
+END
+
+#include "winuser.h"
+1	ICON	"adg.ico"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "adg.manifest"

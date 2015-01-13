@@ -97,13 +97,13 @@ AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
 AC_CHECK_LIB([m],[cos])
 
 
-# Cross-compilation requirements
-
 dnl GLib 2.16 is required by _adg_dgettext() for
 dnl g_win32_get_package_installation_directory_of_module()
 AM_COND_IF([OS_WINDOWS],
            [AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
             AC_PATH_PROG([WINE],[wine])
+            AC_ARG_VAR([WINDRES],[Command for Windows resources manipulation])
+            AC_CHECK_TOOL([WINDRES],[windres])
             PKG_CHECK_MODULES([GLIB],[glib-2.0 >= 2.16])])
 
 

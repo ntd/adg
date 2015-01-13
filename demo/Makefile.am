@@ -38,6 +38,21 @@ cpml_demo_uninstalled_LDADD=	$(CPML_LIBS) \
 				$(ADG_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
 
+
+if OS_WINDOWS
+%.rc.o: adg.manifest
+	$(AM_V_GEN)$(WINDRES) \
+	    --define PACKAGE_NAME="$*" \
+	    --define PACKAGE_VERSION="$(PACKAGE_VERSION)" \
+	    --define PACKAGE_VERSIONS=`echo $(PACKAGE_VERSION) | tr . ,` \
+	    $(srcdir)/adg.rc $@
+
+adg_demo_uninstalled_LDADD+=	adg-demo.rc.o
+cpml_demo_uninstalled_LDADD+=	cpml-demo.rc.o
+endif
+
+
+
 nodist_pkgdata_DATA=		adg-demo.ui \
 				cpml-demo.ui
 dist_pkgdata_DATA=		adg-16.png \
@@ -55,7 +70,10 @@ dist_icons_DATA=		icons/adg-arc.png \
 
 
 EXTRA_DIST=			cpml-demo.ui.in \
-				adg-demo.ui.in
+				adg-demo.ui.in \
+				adg.rc \
+				adg.ico \
+				adg.manifest
 
 
 # adg-demo-uninstalled and cpml-demo-uninstalled are renamed after installation:
