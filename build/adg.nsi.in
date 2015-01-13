@@ -7,6 +7,7 @@
 !define BUILDDIR    "@abs_top_builddir@"
 !define USRDIR      "@USRDIR@"
 !define DLLDIR      "${USRDIR}/bin"
+!define LOCALEDIR   "${USRDIR}/share/locale"
 
 ; ---------------------------------------------------------------
 ; 1. Header file
@@ -65,7 +66,7 @@ RequestExecutionLevel user
 ; ---------------------------------------------------------------
 ; I. Installer sections
 
-Section "ADG canvas" SecBase
+Section $(TITLE_SecBase) SecBase
   SectionIn RO
 
   SetOutPath "$INSTDIR"
@@ -114,34 +115,27 @@ Section "ADG canvas" SecBase
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" "$INSTDIR\adg-demo.exe"
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML test case.lnk" "$INSTDIR\cpml-demo.exe"
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk" "$INSTDIR\cpml-demo.exe"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
 
   WriteUninstaller "$INSTDIR\uninstall.exe"
   ${EnvVarUpdate} $0 "PATH" "A" "HKCU" "$INSTDIR\bin"
 SectionEnd
 
-Section "Support for languages" SecLanguages
-  SetOutPath "$INSTDIR\share\locale"
+Section $(TITLE_SecLanguages) SecLanguages
+  SetOutPath "$INSTDIR\share\locale\it\LC_MESSAGES"
+  File /oname=adg.mo "${SRCDIR}/po/it.gmo"
+  File "${LOCALEDIR}/it/LC_MESSAGES/glib20.mo"
+  File "${LOCALEDIR}/it/LC_MESSAGES/gdk-pixbuf.mo"
+  File "${LOCALEDIR}/it/LC_MESSAGES/gtk30.mo"
+  File "${LOCALEDIR}/it/LC_MESSAGES/gtk30-properties.mo"
 SectionEnd
-
-; Descriptions
-
-LangString DESC_SecBase ${LANG_ENGLISH} "Base installation for running the demo program."
-LangString DESC_SecBase ${LANG_ITALIAN} "Installazione di base per eseguire il programma dimostrativo."
-LangString DESC_SecLanguages ${LANG_ENGLISH} "Enable support for languages other than english."
-LangString DESC_SecLanguages ${LANG_ITALIAN} "Abilitazione del supporto a lingue diverse dall'inglese."
-
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ; Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
-  Delete "$SMPROGRAMS\ADG Canvas\CPML test case.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
@@ -186,6 +180,13 @@ Section "Uninstall"
   RMDir  "$INSTDIR\share\glib-2.0\schemas"
   RMDir  "$INSTDIR\share\glib-2.0"
 
+  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\adg.mo"
+  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gtk30-properties.mo"
+  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gtk30.mo"
+  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\gdk-pixbuf.mo"
+  Delete "$INSTDIR\share\locale\it\LC_MESSAGES\glib20.mo"
+  RMDir  "$INSTDIR\share\locale\it\LC_MESSAGES"
+  RMDir  "$INSTDIR\share\locale\it"
   RMDir  "$INSTDIR\share\locale"
 
   RMDir  "$INSTDIR\share"
@@ -197,3 +198,26 @@ Section "Uninstall"
 
   ${un.EnvVarUpdate} $0 "PATH" "R" "HKCU" "$INSTDIR\bin"
 SectionEnd
+
+; Internationalization
+
+Function .onInit
+  !insertmacro MUI_LANGDLL_DISPLAY
+FunctionEnd
+
+LangString TITLE_SecBase	${LANG_ENGLISH}		"ADG canvas"
+LangString TITLE_SecBase	${LANG_ITALIAN}		"Canvas ADG"
+
+LangString TITLE_SecLanguages	${LANG_ENGLISH}		"Support for languages"
+LangString TITLE_SecLanguages	${LANG_ITALIAN}		"Supporto lingue"
+
+LangString DESC_SecBase		${LANG_ENGLISH}		"Base installation for running the demo program."
+LangString DESC_SecBase		${LANG_ITALIAN}		"Installazione di base per eseguire il programma dimostrativo."
+
+LangString DESC_SecLanguages	${LANG_ENGLISH}		"Enable support for languages other than english."
+LangString DESC_SecLanguages	${LANG_ITALIAN}		"Abilitazione del supporto a lingue diverse dall'inglese."
+
+!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
+!insertmacro MUI_FUNCTION_DESCRIPTION_END
