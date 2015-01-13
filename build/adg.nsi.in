@@ -30,7 +30,7 @@
 !define LOCALEDIR	"${USRDIR}/share/locale"
 
 Name "${PACKAGE_NAME} ${PACKAGE_VERSION}"
-OutFile "${PACKAGE_NAME}-${PACKAGE_VERSION}-win${PACKAGE_ARCH}.exe"
+OutFile "${BUILDDIR}/${PACKAGE_NAME}-${PACKAGE_VERSION}-win${PACKAGE_ARCH}.exe"
 SetCompressor /SOLID lzma
 InstallDir "$PROGRAMFILES${PACKAGE_ARCH}\${PACKAGE_NAME}"
 
@@ -147,13 +147,19 @@ Section $(TITLE_SecBase) SecBase
   File "${SRCDIR}/build/gschemas.compiled"
 
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" "$INSTDIR\adg-demo.exe"
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk" "$INSTDIR\cpml-demo.exe"
-  CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" '"$INSTDIR\adg-demo.exe"'
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk" '"$INSTDIR\cpml-demo.exe"'
 
   WriteUninstaller "$INSTDIR\uninstall.exe"
   ${EnvVarUpdate} $0 "PATH" "A" "HKCU" "$INSTDIR\bin"
 SectionEnd
+
+Function .onInstSuccess
+  ; The uninstall shortcut is installed inside onInstSuccess so any
+  ; subsequent section (e.g. SecDocumentation) can install other
+  ; shortcuts *before* this one.
+  CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
+FunctionEnd
 
 ; II. Language support
 
@@ -164,11 +170,26 @@ Section $(TITLE_SecLanguages) SecLanguages
   !insertmacro FileLocale "it"
 SectionEnd
 
-; III. Uninstaller
+; III. Documentation
+
+Section $(TITLE_SecDocumentation) SecDocumentation
+  SetOutPath "$INSTDIR\share\gtk-doc\html\cpml"
+  File /r "${SRCDIR}/docs/cpml/html/*.*"
+
+  SetOutPath "$INSTDIR\share\gtk-doc\html\adg"
+  File /r "${SRCDIR}/docs/adg/html/*.*"
+
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML manual.lnk" '"$INSTDIR\share\gtk-doc\html\cpml\index.html"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG manual.lnk" '"$INSTDIR\share\gtk-doc\html\adg\index.html"'
+SectionEnd
+
+; IV. Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\CPML manual.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\ADG manual.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
@@ -218,6 +239,10 @@ Section "Uninstall"
   !insertmacro DeleteLocale "it"
 
   RMDir  "$INSTDIR\share\locale"
+  RMDir /r "$INSTDIR\share\gtk-doc\html\cpml"
+  RMDir /r "$INSTDIR\share\gtk-doc\html\adg"
+  RMDir  "$INSTDIR\share\gtk-doc\html"
+  RMDir  "$INSTDIR\share\gtk-doc"
   RMDir  "$INSTDIR\share"
 
   Delete "$INSTDIR\adg-demo.exe"
@@ -241,4 +266,5 @@ FunctionEnd
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDocumentation} $(DESC_SecDocumentation)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
