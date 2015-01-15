@@ -55,7 +55,7 @@ SUBDIRS+=			po \
 if OS_WINDOWS
 
 installer:
-	$(MAKENSIS) build/adg.nsi
+	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
 
 .phony: installer
 

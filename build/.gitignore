@@ -1,9 +1,9 @@
-/adg.nsi
 /codeset.m4
 /compile
 /config.guess
 /config.rpath
 /config.sub
+/Custom.nsh
 /depcomp
 /extern-inline.m4
 /fcntl-o.m4

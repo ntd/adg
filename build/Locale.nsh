@@ -21,10 +21,10 @@
 !macro FileLocale LOCALE
   SetOutPath "$INSTDIR\share\locale\${LOCALE}\LC_MESSAGES"
   File /oname=adg.mo "${SRCDIR}/po/${LOCALE}.gmo"
-  File "${LOCALEDIR}/${LOCALE}/LC_MESSAGES/glib20.mo"
-  File "${LOCALEDIR}/${LOCALE}/LC_MESSAGES/gdk-pixbuf.mo"
-  File "${LOCALEDIR}/${LOCALE}/LC_MESSAGES/gtk30.mo"
-  File "${LOCALEDIR}/${LOCALE}/LC_MESSAGES/gtk30-properties.mo"
+  File "${USRDIR}/share/locale/${LOCALE}/LC_MESSAGES/glib20.mo"
+  File "${USRDIR}/share/locale/${LOCALE}/LC_MESSAGES/gdk-pixbuf.mo"
+  File "${USRDIR}/share/locale/${LOCALE}/LC_MESSAGES/gtk30.mo"
+  File "${USRDIR}/share/locale/${LOCALE}/LC_MESSAGES/gtk30-properties.mo"
 !macroend
 
 !macro DeleteLocale LOCALE

@@ -1,4 +1,3 @@
-; @configure_input@
 ; Installer script for ADG on Windows (both 32 and 64 bits)
 ; Check NSIS website for details: http://nsis.sourceforge.net/
 ;
@@ -20,18 +19,16 @@
 ; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ; Boston, MA  02110-1301, USA.
 
-!define PACKAGE_NAME	"@PACKAGE@"
-!define PACKAGE_VERSION	"@PACKAGE_VERSION@"
-!define PACKAGE_ARCH	"@ARCH@"
-!define SRCDIR		"@abs_top_srcdir@"
-!define BUILDDIR	"@abs_top_builddir@"
-!define USRDIR		"@USRDIR@"
-!define DLLDIR		"${USRDIR}/bin"
-!define LOCALEDIR	"${USRDIR}/share/locale"
+
+; ---------------------------------------------------------------
+; 1. Header file
+
+!include "build/Custom.nsh"
+!include "MUI2.nsh"
+!include "${SRCDIR}/build/EnvVarUpdate.nsh"
 
 Name "${PACKAGE_NAME} ${PACKAGE_VERSION}"
-OutFile "${BUILDDIR}/${PACKAGE_NAME}-${PACKAGE_VERSION}-win${PACKAGE_ARCH}.exe"
-SetCompressor /SOLID lzma
+OutFile "${PACKAGE_NAME}-${PACKAGE_VERSION}-win${PACKAGE_ARCH}.exe"
 InstallDir "$PROGRAMFILES${PACKAGE_ARCH}\${PACKAGE_NAME}"
 
 SetCompressor /SOLID lzma
@@ -39,14 +36,6 @@ ShowInstDetails show
 ShowUninstDetails show
 SetDateSave on
 RequestExecutionLevel highest
-
-
-; ---------------------------------------------------------------
-; 1. Header file
-
-!addincludedir "${SRCDIR}/build"
-!include MUI2.nsh
-!include EnvVarUpdate.nsh
 
 
 ; ---------------------------------------------------------------
@@ -98,6 +87,8 @@ RequestExecutionLevel highest
 
 ; I. Introduction
 
+!define DLLDIR		"${USRDIR}/bin"
+
 Section $(TITLE_SecBase) SecBase
   SectionIn RO
 
@@ -115,8 +106,8 @@ Section $(TITLE_SecBase) SecBase
   File "${SRCDIR}/demo/adg-128.png"
 
   SetOutPath "$INSTDIR\bin"
-  File "${USRDIR}/bin/libwinpthread-*.dll"
-  File "${USRDIR}/bin/libgcc_s_*-1.dll"
+  File "${DLLDIR}/libwinpthread-*.dll"
+  File "${DLLDIR}/libgcc_s_*-1.dll"
   File "${DLLDIR}/zlib1.dll"
   File "${DLLDIR}/libbz2-*.dll"
   File "${DLLDIR}/libexpat-*.dll"
@@ -163,7 +154,7 @@ FunctionEnd
 
 ; II. Language support
 
-!include Locale.nsh
+!include "${SRCDIR}/build/Locale.nsh"
 
 Section $(TITLE_SecLanguages) SecLanguages
   ; TODO: this should iterate over po/LINGUAS
@@ -257,7 +248,7 @@ SectionEnd
 ; ---------------------------------------------------------------
 ; 7. Internationalization
 
-!include Translations.nsh
+!include "${SRCDIR}/build/Translations.nsh"
 
 Function .onInit
   !insertmacro MUI_LANGDLL_DISPLAY

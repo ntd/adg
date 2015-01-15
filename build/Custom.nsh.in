@@ -1,0 +1,8 @@
+; @configure_input@
+
+!define PACKAGE_NAME	"@PACKAGE@"
+!define PACKAGE_VERSION	"@PACKAGE_VERSION@"
+!define PACKAGE_ARCH	"@ARCH@"
+!define SRCDIR		"@abs_top_srcdir@"
+!define BUILDDIR	"@abs_top_builddir@"
+!define USRDIR		"@USRDIR@"

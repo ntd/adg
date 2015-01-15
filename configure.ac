@@ -388,7 +388,7 @@ AC_SUBST([EXTRADIR])
 
 # Generation
 
-AC_CONFIG_FILES([build/adg.nsi
+AC_CONFIG_FILES([build/Custom.nsh
                  Makefile
                  src/Makefile
                  src/cpml/cpml-1.pc
