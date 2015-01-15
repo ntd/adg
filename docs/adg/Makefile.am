@@ -2,7 +2,7 @@ include $(top_srcdir)/build/Makefile.am.common
 
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
-DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/adg
+DOC_SOURCE_DIR=		$(top_srcdir)/src/adg
 SCANGOBJ_OPTIONS=
 SCAN_OPTIONS=		--rebuild-types \
 			--rebuild-sections
@@ -13,8 +13,9 @@ MKDB_OPTIONS=		--name-space=adg \
 MKHTML_OPTIONS=
 FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml/html \
 			$(EXTRA_DIR)
-HFILE_GLOB=		$(top_srcdir)/src/adg/*.h
-CFILE_GLOB=		$(top_srcdir)/src/adg/*.c
+HFILE_GLOB=		$(DOC_SOURCE_DIR)/*.h
+EXTRA_HFILES=		$(top_builddir)/src/adg/adg-canvas.h
+CFILE_GLOB=		$(DOC_SOURCE_DIR)/*.c
 IGNORE_HFILES=		adg.h \
 			adg-adim-private.h \
 			adg-alignment-private.h \
