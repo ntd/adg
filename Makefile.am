@@ -72,8 +72,10 @@ _host/docs/adg/html/index.html:
 		--disable-nls \
 		--disable-introspection \
 		--disable-test-framework \
+		--without-glade-catalogdir \
 		--enable-gtk-doc \
-		--enable-gtk-doc-html && \
+		--enable-gtk-doc-html \
+		--enable-gtk-doc-pdf && \
 	make -j7 ; \
 	cd ..
 

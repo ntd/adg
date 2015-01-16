@@ -33,7 +33,7 @@ all kept up to date:</para>
 <para>The preferred way to create a patch is by using <command>git format-patch</command> to
 generate the file. A typical usage involves the following steps:</para>
 
-<informalexample><programlisting language="shell">git clone git://repo.or.cz/adg.git
+<informalexample><programlisting language="sh">git clone git://repo.or.cz/adg.git
 cd adg
 # Modify and test...
 git commit -a
@@ -56,7 +56,7 @@ common way to deal with the latter problem is to enable the
 <ulink url="http://dev.entidi.com/p/adg/source/tree/master/nodist/pre-commit">pre-commit</ulink>
 hook in your own repository:</para>
 
-<informalexample><programlisting language="shell">cd adg
+<informalexample><programlisting language="sh">cd adg
 cp nodist/pre-commit .git/hooks
 chmod 0755 .git/hooks/pre-commit</programlisting></informalexample>
 </simplesect>
@@ -70,7 +70,7 @@ API conventions. The prefixes must be <code>ADG</code>, <code>Adg</code> and <co
 and <code>CPML</code>, <code>Cpml</code> and <code>cpml</code> for the cairo path manipulation library. In
 addition, the following suggestions/rules also apply:</para>
 
-<informalexample><programlisting language="c">/* Method emitting "signal-name" */
+<informalexample><programlisting language="C">/* Method emitting "signal-name" */
 void            adg_object_signal_name          (AdgObject      *object,
                                                  /* Other parameters */);
 
@@ -131,7 +131,7 @@ circumstances some of them do not return a <emphasis>const</emphasis> value,
 this is done just to allow referencing and unreferencing an object,
 but still that object should be considered read-only. This means to
 change a property you should write something along these lines:</para>
-<informalexample><programlisting language="c">CpmlExtents extents;
+<informalexample><programlisting language="C">CpmlExtents extents;
 
 cpml_extents_copy(&amp;extents, adg_entity_get_extents(entity));
 /* Modify extents... */
@@ -141,7 +141,7 @@ adg_entity_set_extents(entity, &amp;extents);
 <para>The <emphasis>put</emphasis> version of a getter usually does not have the setter
 counterpart (because the returned value is typically computed) so the
 above will be reduced to:</para>
-<informalexample><programlisting language="c">CpmlExtents extents;
+<informalexample><programlisting language="C">CpmlExtents extents;
 
 cpml_segment_put_extents(segment, &amp;extents);
 /* Use extents... */

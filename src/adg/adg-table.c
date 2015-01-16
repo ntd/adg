@@ -395,7 +395,7 @@ adg_table_foreach_cell(AdgTable *table,
  * with adg_table_get_cell(). Internally the binding is handled with
  * an hash table, so accessing the cell this way is O(1).
  *
- * If @name is <constant>NULL</constant>, any binding to @ŧable_cell
+ * If @name is <constant>NULL</constant>, any binding to @table_cell
  * will be removed. This is quite inefficient because the whole hash
  * table must be scanned.
  *
@@ -470,7 +470,7 @@ adg_table_get_table_style(AdgTable *table)
  * Gets the cell named @name inside @table. Only named cells
  * can be retrieved by this method.
  *
- * The returned cell is owned by @ŧable and must not be
+ * The returned cell is owned by @table and must not be
  * modified or freed.
  *
  * Returns: (transfer none): the requested cell or <constant>NULL</constant> if not found.
