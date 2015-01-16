@@ -307,10 +307,9 @@ USRDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)"
 AC_SUBST([USRDIR])
 AM_SUBST_NOTMAKE([USRDIR])
 
-dnl -win$ARCH will be appended to the installer file name
-AS_IF([test "x${host_cpu}" = "xx86_64"],[ARCH=64],[ARCH=32])
-AC_SUBST([ARCH])
-AM_SUBST_NOTMAKE([ARCH])
+dnl -win$PACKAGE_ARCH will be appended to the installer file name
+AS_IF([test "x${host_cpu}" = "xx86_64"],[PACKAGE_ARCH=64],[PACKAGE_ARCH=32])
+AC_SUBST([PACKAGE_ARCH])
 
 
 # Additional substitutions

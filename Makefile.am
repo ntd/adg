@@ -54,10 +54,37 @@ SUBDIRS+=			po \
 
 if OS_WINDOWS
 
-installer:
-	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
+INSTALLER=adg-$(PACKAGE_VERSION)-win$(PACKAGE_ARCH).exe
+
+installer: $(INSTALLER)
 
 .phony: installer
+
+# The installer needs the docs but the MinGW toolchain does not have
+# gtk-doc installed. Issue #148: http://dev.entidi.com/p/adg/issues/148/
+_host/docs/adg/html/index.html:
+	-mkdir _host ; \
+	cd _host && \
+	$(abs_srcdir)/configure \
+		--prefix= \
+		--disable-dependency-tracking \
+		--disable-fast-install \
+		--disable-nls \
+		--disable-introspection \
+		--disable-test-framework \
+		--enable-gtk-doc \
+		--enable-gtk-doc-html && \
+	make -j7 ; \
+	cd ..
+
+clean-local:
+	-rm -fr _host
+
+$(INSTALLER): _host/docs/adg/html/index.html
+	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
+
+mostlyclean-local:
+	-rm $(INSTALLER)
 
 endif
 

@@ -165,10 +165,10 @@ SectionEnd
 
 Section $(TITLE_SecDocumentation) SecDocumentation
   SetOutPath "$INSTDIR\share\gtk-doc\html\cpml"
-  File /r "${SRCDIR}/docs/cpml/html/*.*"
+  File /r "${BUILDDIR}/_host/docs/cpml/html/*.*"
 
   SetOutPath "$INSTDIR\share\gtk-doc\html\adg"
-  File /r "${SRCDIR}/docs/adg/html/*.*"
+  File /r "${BUILDDIR}/_host/docs/adg/html/*.*"
 
   CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML manual.lnk" '"$INSTDIR\share\gtk-doc\html\cpml\index.html"'
   CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG manual.lnk" '"$INSTDIR\share\gtk-doc\html\adg\index.html"'
