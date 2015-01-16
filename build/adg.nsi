@@ -146,9 +146,8 @@ Section $(TITLE_SecBase) SecBase
 SectionEnd
 
 Function .onInstSuccess
-  ; The uninstall shortcut is installed inside onInstSuccess so any
-  ; subsequent section (e.g. SecDocumentation) can install other
-  ; shortcuts *before* this one.
+  ; The uninstall shortcut is installed inside onInstSuccess so any subsequent
+  ; section (e.g. SecHTML) can install other shortcuts *before* this one.
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk" "$INSTDIR\uninstall.exe"
 FunctionEnd
 
@@ -163,24 +162,38 @@ SectionEnd
 
 ; III. Documentation
 
-Section $(TITLE_SecDocumentation) SecDocumentation
+SectionGroup /e $(TITLE_SecDocumentation) SecDocumentation
+
+Section $(TITLE_SecHTML) SecHTML
   SetOutPath "$INSTDIR\share\gtk-doc\html\cpml"
   File /r "${BUILDDIR}/_host/docs/cpml/html/*.*"
 
   SetOutPath "$INSTDIR\share\gtk-doc\html\adg"
   File /r "${BUILDDIR}/_host/docs/adg/html/*.*"
 
-  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML manual.lnk" '"$INSTDIR\share\gtk-doc\html\cpml\index.html"'
-  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG manual.lnk" '"$INSTDIR\share\gtk-doc\html\adg\index.html"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML HTML manual.lnk" '"$INSTDIR\share\gtk-doc\html\cpml\index.html"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML PDF manual.lnk" '"$INSTDIR\share\gtk-doc\cpml.pdf"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG HTML manual.lnk" '"$INSTDIR\share\gtk-doc\html\adg\index.html"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG PDF manual.lnk" '"$INSTDIR\share\gtk-doc\adg.pdf"'
 SectionEnd
+
+Section /o $(TITLE_SecPDF) SecPDF
+  SetOutPath "$INSTDIR\share\gtk-doc"
+  File /r "${BUILDDIR}/_host/docs/cpml/cpml.pdf"
+  File /r "${BUILDDIR}/_host/docs/adg/adg.pdf"
+SectionEnd
+
+SectionGroupEnd
 
 ; IV. Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk"
-  Delete "$SMPROGRAMS\ADG Canvas\CPML manual.lnk"
-  Delete "$SMPROGRAMS\ADG Canvas\ADG manual.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\CPML HTML manual.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\CPML PDF manual.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\ADG HTML manual.lnk"
+  Delete "$SMPROGRAMS\ADG Canvas\ADG PDF manual.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
@@ -233,6 +246,10 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\share\gtk-doc\html\cpml"
   RMDir /r "$INSTDIR\share\gtk-doc\html\adg"
   RMDir  "$INSTDIR\share\gtk-doc\html"
+
+  Delete "$INSTDIR\share\gtk-doc\adg.pdf"
+  Delete "$INSTDIR\share\gtk-doc\cpml.pdf"
+
   RMDir  "$INSTDIR\share\gtk-doc"
   RMDir  "$INSTDIR\share"
 
@@ -258,4 +275,6 @@ FunctionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLanguages} $(DESC_SecLanguages)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDocumentation} $(DESC_SecDocumentation)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecHTML} $(DESC_SecHTML)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPDF} $(DESC_SecPDF)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END

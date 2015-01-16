@@ -62,7 +62,7 @@ installer: $(INSTALLER)
 
 # The installer needs the docs but the MinGW toolchain does not have
 # gtk-doc installed. Issue #148: http://dev.entidi.com/p/adg/issues/148/
-_host/docs/adg/html/index.html:
+_host/docs/adg/adg.pdf:
 	-mkdir _host ; \
 	cd _host && \
 	$(abs_srcdir)/configure \
@@ -82,7 +82,7 @@ _host/docs/adg/html/index.html:
 clean-local:
 	-rm -fr _host
 
-$(INSTALLER): _host/docs/adg/html/index.html
+$(INSTALLER): _host/docs/adg/adg.pdf $(srcdir)/build/adg.nsi
 	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
 
 mostlyclean-local:

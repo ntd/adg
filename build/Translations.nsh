@@ -30,8 +30,20 @@ LangString TITLE_SecLanguages		${LANG_ITALIAN}		"Supporto lingue"
 LangString DESC_SecLanguages		${LANG_ENGLISH}		"Enable support for languages other than english."
 LangString DESC_SecLanguages		${LANG_ITALIAN}		"Abilitazione del supporto a lingue diverse dall'inglese."
 
-LangString TITLE_SecDocumentation	${LANG_ENGLISH}		"HTML documentation"
-LangString TITLE_SecDocumentation	${LANG_ITALIAN}		"Documentazione HTML"
+LangString TITLE_SecDocumentation	${LANG_ENGLISH}		"Developer documentation"
+LangString TITLE_SecDocumentation	${LANG_ITALIAN}		"Documentazione di sviluppo"
 
-LangString DESC_SecDocumentation	${LANG_ENGLISH}		"Install documentation, that is reference manuals for both CPML and ADG libraries."
-LangString DESC_SecDocumentation	${LANG_ITALIAN}		"Installare la documentazione, ossia i manuali di riferimento delle librerie CPML e ADG."
+LangString DESC_SecDocumentation	${LANG_ENGLISH}		"Install reference manuals for both CPML and ADG libraries."
+LangString DESC_SecDocumentation	${LANG_ITALIAN}		"Installare i manuali di riferimento delle librerie CPML e ADG."
+
+LangString TITLE_SecHTML		${LANG_ENGLISH}		"HTML format"
+LangString TITLE_SecHTML		${LANG_ITALIAN}		"Formato HTML"
+
+LangString DESC_SecHTML			${LANG_ENGLISH}		"Install manuals in HTML format. This is the better supported option."
+LangString DESC_SecHTML			${LANG_ITALIAN}		"Installare i manuali in formato HTML. Questa è l'opzione supportata meglio."
+
+LangString TITLE_SecPDF			${LANG_ENGLISH}		"PDF documentation"
+LangString TITLE_SecPDF			${LANG_ITALIAN}		"Documentazione PDF"
+
+LangString DESC_SecPDF			${LANG_ENGLISH}		"Install manuals in PDF format."
+LangString DESC_SecPDF			${LANG_ITALIAN}		"Installare i manuali in formato PDF."
