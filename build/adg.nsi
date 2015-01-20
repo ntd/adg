@@ -172,15 +172,16 @@ Section $(TITLE_SecHTML) SecHTML
   File /r "${BUILDDIR}/_host/docs/adg/html/*.*"
 
   CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML HTML manual.lnk" '"$INSTDIR\share\gtk-doc\html\cpml\index.html"'
-  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML PDF manual.lnk" '"$INSTDIR\share\gtk-doc\cpml.pdf"'
   CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG HTML manual.lnk" '"$INSTDIR\share\gtk-doc\html\adg\index.html"'
-  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG PDF manual.lnk" '"$INSTDIR\share\gtk-doc\adg.pdf"'
 SectionEnd
 
 Section /o $(TITLE_SecPDF) SecPDF
   SetOutPath "$INSTDIR\share\gtk-doc"
   File /r "${BUILDDIR}/_host/docs/cpml/cpml.pdf"
   File /r "${BUILDDIR}/_host/docs/adg/adg.pdf"
+
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\CPML PDF manual.lnk" '"$INSTDIR\share\gtk-doc\cpml.pdf"'
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\ADG PDF manual.lnk" '"$INSTDIR\share\gtk-doc\adg.pdf"'
 SectionEnd
 
 SectionGroupEnd
