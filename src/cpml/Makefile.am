@@ -4,6 +4,7 @@ include $(top_srcdir)/build/Makefile.am.common
 SUBDIRS=			tests
 
 
+AM_CFLAGS=			$(CPML_CFLAGS)
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src
 
@@ -53,7 +54,6 @@ libcpml_1_la_SOURCES=		$(h_sources) \
 nodist_libcpml_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
-libcpml_1_la_CFLAGS=		$(CPML_CFLAGS)
 libcpml_1_la_LDFLAGS=		-no-undefined \
 				-version-info @CPML_LT_VERSION@
 libcpml_1_la_LIBADD=		$(CPML_LIBS)

@@ -4,6 +4,8 @@ include $(top_srcdir)/build/Makefile.am.common
 SUBDIRS=			tests
 
 
+AM_CFLAGS=			$(CPML_CFLAGS) \
+				$(ADG_CFLAGS)
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src \
 				-DLOCALEDIR=\""$(localedir)"\"
@@ -182,8 +184,6 @@ libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
 				$(c_sources)
 nodist_libadg_1_la_SOURCES=	$(built_c_sources)
-libadg_1_la_CFLAGS=		$(CPML_CFLAGS) \
-				$(ADG_CFLAGS)
 libadg_1_la_LDFLAGS=		-no-undefined \
 				-version-info @ADG_LT_VERSION@
 libadg_1_la_LIBADD=		$(CPML_LIBS) \
