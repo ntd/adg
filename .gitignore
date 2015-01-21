@@ -1,5 +1,8 @@
 .deps/
 .libs/
+*.gcov
+*.gcda
+*.gcno
 *.la
 *.lo
 *.loT

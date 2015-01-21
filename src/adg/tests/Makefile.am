@@ -158,3 +158,8 @@ endif
 
 # targets
 check_PROGRAMS=			$(TEST_PROGS)
+
+
+# Possibly remove files created on test coverage builds
+mostlyclean-local:
+	-rm -f *.gcda *gcno

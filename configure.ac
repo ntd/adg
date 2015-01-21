@@ -90,7 +90,21 @@ AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
-AC_PATH_PROG([GCOV],[gcov],[/usr/bin/gcov])
+
+
+# Check for coverage build
+
+dnl Coverage with gcov is available only for GNU gcc
+AS_IF([test "x$GNU" != "xyes"],
+      [AC_ARG_ENABLE([gcov],
+                     [AS_HELP_STRING([--enable-gcov],
+                                     [enable coverage build @<:@default=no@:>@])],
+                     [],[enable_gcov=no])])
+AS_IF([test "x$enable_gcov" = "xyes"],
+      [AC_ARG_VAR([GCOV])
+       AC_CHECK_TOOL([GCOV],[gcov],[/usr/bin/gcov])
+       CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"])
+AM_CONDITIONAL([ENABLE_GCOV],[test "x$enable_gcov" = "xyes"])
 
 
 # Check for libraries
@@ -286,6 +300,7 @@ AC_ARG_ENABLE([test_framework],
               [AS_HELP_STRING([--enable-test-framework],
                               [enable GLib test framework @<:@default=check@:>@])],
               [],[enable_test_framework=check])
+AS_IF([test "x$enable_gcov" = "xyes"], [enable_test_framework=yes])
 AS_IF([test "x${enable_test_framework}" != "xno"],
       [PKG_CHECK_EXISTS([glib-2.0 >= 2.16.0],
                         [enable_test_framework=yes],
@@ -425,5 +440,6 @@ AC_PACKAGE_NAME adg_version will be built with the following options:
              Install glade catalogs: ${enable_glade}${report_glade}
                 Build API reference: ${enable_gtk_doc}
              GObject instrospection: ${enable_introspection}${report_introspection}
+                Test coverage build: ${enable_gcov}
              Test framework support: ${enable_test_framework}
 ])

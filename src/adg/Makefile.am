@@ -268,4 +268,4 @@ coverage:
 mostlyclean-local:
 	-rm -f *.gcov
 
-.phony: coverage
+.PHONY: coverage

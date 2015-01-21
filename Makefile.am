@@ -86,25 +86,20 @@ $(INSTALLER): _host/docs/adg/adg.pdf $(srcdir)/build/adg.nsi
 mostlyclean-local:
 	-rm $(INSTALLER)
 
+.PHONY: installer
+
 endif
 
 
 coverage: src/cpml/cpml-primitive.c.gcov src/adg/adg-canvas.c.gcov
 
-src/cpml/cpml-primitive.c.gcov: coverage-check
+src/cpml/cpml-primitive.c.gcov:
 	$(MAKE) -C src/cpml $(AM_MAKEFLAGS) coverage
 
-src/adg/adg-canvas.c.gcov: coverage-check
+src/adg/adg-canvas.c.gcov:
 	$(MAKE) -C src/adg $(AM_MAKEFLAGS) coverage
 
-coverage-check: coverage-build
-	$(MAKE) $(AM_MAKEFLAGS) check-recursive
-
-coverage-build: clean
-	$(MAKE) $(AM_MAKEFLAGS) CFLAGS="-fprofile-arcs -ftest-coverage" all-recursive
-
-
-.phony: installer coverage coverage-check coverage-build
+.PHONY: coverage
 
 
 # Creating ChangeLog files from git log:
