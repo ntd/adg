@@ -1,6 +1,7 @@
 General information
 ===================
 [![Build Status](https://travis-ci.org/ntd/adg.svg?branch=master)](https://travis-ci.org/ntd/adg)
+[![Coverage Status](https://coveralls.io/repos/ntd/adg/badge.svg?branch=master)](https://coveralls.io/r/ntd/adg?branch=master)
 
 Automatic Drawing Generation is GObject-based library that provides
 a non-interactive cairo canvas specifically designed for generating
