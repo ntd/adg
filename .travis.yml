@@ -18,7 +18,7 @@ script:
     - ../configure --enable-gcov && make && make check
 
 after_success:
-    - if [ "$CC" = "gcc" ]; then coveralls -e demo -e src/cpml/tests -e src/adg/tests; fi
+    - if [ "$CC" = "gcc" ]; then coveralls -r .. -x c -e demo -e src/cpml/tests -e src/adg/tests --gcov-options '\-lp'; fi
 
 after_script:
     - cd ..
