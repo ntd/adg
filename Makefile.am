@@ -74,7 +74,7 @@ _host/docs/adg/adg.pdf:
 		--enable-gtk-doc \
 		--enable-gtk-doc-html \
 		--enable-gtk-doc-pdf && \
-	make -j7 ; \
+	$(MAKE) -j7 ; \
 	cd ..
 
 clean-local:
