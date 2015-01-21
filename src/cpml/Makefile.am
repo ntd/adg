@@ -94,3 +94,13 @@ endif
 
 h_sources+=			cpml-gobject.h
 c_sources+=			cpml-gobject.c
+
+
+coverage:
+	$(GCOV) $(srcdir)/*.c -s $(srcdir) -o .libs
+
+# Possibly remove files created by 'make coverage'
+mostlyclean-local:
+	-rm -f *.gcov
+
+.phony: coverage

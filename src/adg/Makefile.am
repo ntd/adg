@@ -259,3 +259,13 @@ adg-marshal.c: $(srcdir)/adg-marshal.genmarshal
 
 adg-marshal.h: $(srcdir)/adg-marshal.genmarshal
 	$(genmarshal_command) --header $(srcdir)/adg-marshal.genmarshal > $@
+
+
+coverage:
+	$(GCOV) $(srcdir)/*.c -s $(srcdir) -o .libs
+
+# Possibly remove files created by 'make coverage'
+mostlyclean-local:
+	-rm -f *.gcov
+
+.phony: coverage

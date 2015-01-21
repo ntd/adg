@@ -76,6 +76,11 @@ EXTRA_DIST=			cpml-demo.ui.in \
 				adg.manifest
 
 
+# Possibly remove files created by 'make coverage'
+mostlyclean-local:
+	-rm -f *.gcno
+
+
 # adg-demo-uninstalled and cpml-demo-uninstalled are renamed after installation:
 # the uninstalled version should not be checked for --help and --version.
 AM_INSTALLCHECK_STD_OPTIONS_EXEMPT= \
