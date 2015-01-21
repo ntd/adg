@@ -103,7 +103,8 @@ AS_IF([test "x$GNU" != "xyes"],
 AS_IF([test "x$enable_gcov" = "xyes"],
       [AC_ARG_VAR([GCOV])
        AC_CHECK_TOOL([GCOV],[gcov],[/usr/bin/gcov])
-       CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"])
+       CFLAGS="$CFLAGS --coverage"
+       LDFLAGS="$LDFLAGS --coverage"])
 AM_CONDITIONAL([ENABLE_GCOV],[test "x$enable_gcov" = "xyes"])
 
 
