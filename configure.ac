@@ -1,9 +1,7 @@
 m4_define([adg_version],[0.7.5])
-m4_define([adg_api_version],[1.0])
 m4_define([adg_lt_version],[3:0:0])
 
 m4_define([cpml_version],adg_version)
-m4_define([cpml_api_version],adg_api_version)
 m4_define([cpml_lt_version],[2:0:0])
 
 m4_define([gtkdoc_prereq],    [1.12]  )dnl Support introspection annotations
@@ -368,10 +366,8 @@ GtkPageSetup *  adg_canvas_get_page_setup       (AdgCanvas      *canvas);
 '],
            [ADG_CANVAS_H_ADDITIONAL=''])
 
-AC_SUBST([CPML_API_VERSION],cpml_api_version)
 AC_SUBST([CPML_LT_VERSION],cpml_lt_version)
 AC_SUBST([CPML_REQUIRES])
-AC_SUBST([ADG_API_VERSION],adg_api_version)
 AC_SUBST([ADG_LT_VERSION],adg_lt_version)
 AC_SUBST([ADG_REQUIRES])
 AC_SUBST([ADG_H_ADDITIONAL])
@@ -438,7 +434,6 @@ AC_MSG_NOTICE([generating report
 
 AC_PACKAGE_NAME adg_version will be built with the following options:
 ----------------------------------------------------------
-                  API compatibility: adg_api_version
                 CPML library to use: internal (cpml-adg_version)
          Build pango based entities: ${enable_pango}
                        GTK+ support: ${with_gtk}
