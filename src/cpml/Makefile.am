@@ -55,7 +55,7 @@ nodist_libcpml_1_la_SOURCES=	$(built_h_sources) \
 				$(built_private_h_sources) \
 				$(built_c_sources)
 libcpml_1_la_LDFLAGS=		-no-undefined \
-				-version-info @CPML_LT_VERSION@
+				-version-info $(CPML_LT_VERSION)
 libcpml_1_la_LIBADD=		$(CPML_LIBS)
 
 

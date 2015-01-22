@@ -185,7 +185,7 @@ libadg_1_la_SOURCES=		$(h_sources) \
 				$(c_sources)
 nodist_libadg_1_la_SOURCES=	$(built_c_sources)
 libadg_1_la_LDFLAGS=		-no-undefined \
-				-version-info @ADG_LT_VERSION@
+				-version-info $(ADG_LT_VERSION)
 libadg_1_la_LIBADD=		$(CPML_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(ADG_LIBS)
