@@ -1,7 +1,10 @@
 m4_define([adg_version],[0.7.5])
-m4_define([adg_lt_version],[3:0:0])
-
 m4_define([cpml_version],adg_version)
+
+dnl How to handle {adg,cmpl}_lt_version (current:revision:age):
+dnl - Code refactoring: bump revision only, don’t touch current nor age.
+dnl - New interfaces: set revision to 0, bump current and age.
+m4_define([adg_lt_version],[3:0:0])
 m4_define([cpml_lt_version],[2:0:0])
 
 m4_define([gtkdoc_prereq],    [1.12]  )dnl Support introspection annotations
