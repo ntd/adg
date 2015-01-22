@@ -32,9 +32,6 @@ to implement.</para>
    path by half <parameter>angle</parameter> in both directions, cut it with a circle centered
    at the end of the director path with radius <parameter>size</parameter> and close the
    resulting path (eventually filling it).</listitem>
-   <listitem>Investigate the use of <ulink url="http://www.gnome-db.org">libgda</ulink> as a sample
-   data provider and check if it is worth to add custom methods to
-   AdgModel to improve the interoperatibility between adg and libgda.</listitem>
    <listitem override="disc">Implement AdgText, a generic text management, using pango.</listitem>
    <listitem>Add a specialized GTK+ widget that allows the customization of the
    rendering process. This should be a tree widget that provides
@@ -57,6 +54,10 @@ to implement.</para>
    <listitem>Improve Bézier offset approximation algorithm, possibly enabling
    the feature of splitting the offset curve in more than one Bézier
    arc when the error is not acceptable.</listitem>
+   <listitem>Include a Lua shell in the Windows installer for interactively
+   playing with the ADG canvas on that platform.</listitem>
+   <listitem>Add support for DXF format. The best approach would be to implement
+   a new surface type directly into cairo.</listitem>
 </itemizedlist>
 
 </simplesect>
@@ -78,16 +79,14 @@ for different platforms, such as *BSD, OpenSolaris and Windows.</para>
 <itemizedlist mark="circle">
    <listitem>A binary action after a close-path primitive leaves the shape opened:
    closing and filleting results in a non-closed original shape.</listitem>
-   <listitem>Add internationalization support to the installer: this includes also
+   <listitem override="disc">Add internationalization support to the installer: this includes also
    the possibility to select the installation of language packs.</listitem>
-   <listitem>Improve the current internationalization support of the ADG: merge
+   <listitem override="disc">Improve the current internationalization support of the ADG: merge
    po-properties/ into po/ and get rid of glib-gettext. Check the gleak
    project for suggestions.</listitem>
    <listitem override="disc">Provide a complete set of bindings based on GObject introspection and
    develop a full-fledged adg-demo application with those bindings that
    does the same job of adg-demo.c, in the same way.</listitem>
-   <listitem>Provide a persistent layer based on GSettings to keep track the data
-   entered in the last adg-demo session.</listitem>
 </itemizedlist>
 
 </simplesect>
