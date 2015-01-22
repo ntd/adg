@@ -6,6 +6,26 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.7.6">
+<title>ADG 0.7.6</title>
+
+<para>Page margins and paddings are now managed consistently across
+the different surfaces and their behavior has been documented.</para>
+
+<para>The NSIS script for generating the Windows installers has been
+subject to many improvements: it can now optionally install
+ADG and CPML manuals (either in HTML and in PDF format) and the
+localization data (only italian for now). It should also handle
+the application icons properly.</para>
+
+<para>The adg_canvas_export() function can save a canvas to a file in
+one command. It needs a patched gobject-introspection though: see
+<ulink url="https://bugzilla.gnome.org/show_bug.cgi?id=743364">bug #743364</ulink>.</para>
+
+<para>The localization infrastructure has been improved up to the point
+<code>gettextize</code> and <code>intltool</code> are no more required.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.5">
 <title>ADG 0.7.5</title>
 
