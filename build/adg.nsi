@@ -137,6 +137,13 @@ Section $(TITLE_SecBase) SecBase
   SetOutPath "$INSTDIR\share\glib-2.0\schemas"
   File "${SRCDIR}/build/gschemas.compiled"
 
+  SetOutPath "$INSTDIR\share\icons"
+  File /r "${BUILDDIR}/_host/hicolor"
+  File /r "${BUILDDIR}/_host/minitheme"
+
+  SetOutPath "$INSTDIR\etc\gtk-3.0"
+  File "${SRCDIR}/build/settings.ini"
+
   CreateDirectory "$SMPROGRAMS\ADG Canvas"
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\ADG demonstration program.lnk" '"$INSTDIR\adg-demo.exe"'
   CreateShortcut  "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk" '"$INSTDIR\cpml-demo.exe"'
@@ -252,7 +259,12 @@ Section "Uninstall"
   Delete "$INSTDIR\share\gtk-doc\cpml.pdf"
   RMDir  "$INSTDIR\share\gtk-doc"
 
+  RMDir /r "$INSTDIR\share\icons"
   RMDir  "$INSTDIR\share"
+
+  Delete "$INSTDIR\etc\gtk-3.0\settings.ini"
+  RMDir  "$INSTDIR\etc\gtk-3.0"
+  RMDir  "$INSTDIR\etc"
 
   Delete "$INSTDIR\adg-demo.exe"
   Delete "$INSTDIR\cpml-demo.exe"

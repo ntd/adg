@@ -7,6 +7,8 @@ xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 				  exit 0 ; \
 				fi ; \
 				$(XSLTPROC) --novalid -o $@ $(xml2txt_stylesheet)
+hicolor_snapshot=		build/hicolor-snapshot-0.11.tar.bz2
+minitheme_snapshot=		build/minitheme-snapshot.tar.bz2
 ACLOCAL_AMFLAGS=		-I build
 AM_DISTCHECK_CONFIGURE_FLAGS=	--enable-pango \
 				--enable-gtk-doc \
@@ -27,13 +29,18 @@ EXTRA_DIST=			COPYING \
 				INSTALL \
 				THANKS \
 				adg.doap \
+				build/config.rpath \
 				build/configure-win32 \
 				build/configure-win64 \
+				build/adg.nsi \
 				build/adg-header.bmp \
 				build/adg-welcome.bmp \
 				build/adg.ico \
 				build/gschemas.compiled \
-				build/config.rpath \
+				build/settings.ini \
+				$(hicolor_snapshot) \
+				$(minitheme_snapshot) \
+				build/minitheme-snapshot.tar.bz2 \
 				$(BUILT_SOURCES)
 CLEANFILES=			test-report.xml \
 				test-report.html \
@@ -58,11 +65,13 @@ INSTALLER=adg-$(PACKAGE_VERSION)-win$(PACKAGE_ARCH).exe
 
 installer: $(INSTALLER)
 
+_host:
+	mkdir _host
+
 # The installer needs the docs but the MinGW toolchain does not have
 # gtk-doc installed. Issue #148: http://dev.entidi.com/p/adg/issues/148/
-_host/docs/adg/adg.pdf:
-	-mkdir _host ; \
-	cd _host && \
+_host/docs/adg/adg.pdf: _host $(srcdir)/configure
+	cd _host ; \
 	$(abs_srcdir)/configure \
 		--prefix= \
 		--disable-dependency-tracking \
@@ -77,16 +86,24 @@ _host/docs/adg/adg.pdf:
 	$(MAKE) -j7 ; \
 	cd ..
 
+_host/hicolor: _host $(srcdir)/$(hicolor_snapshot)
+	cd _host ; \
+	$(BZIP2) -dc $(abs_srcdir)/$(hicolor_snapshot) | $(TAR) xf - ; \
+	cd ..
+
+_host/minitheme: _host $(srcdir)/$(minitheme_snapshot)
+	cd _host ; \
+	$(BZIP2) -dc $(abs_srcdir)/$(minitheme_snapshot) | $(TAR) xf - ; \
+	cd ..
+
 clean-local:
 	-rm -fr _host
 
-$(INSTALLER): _host/docs/adg/adg.pdf $(srcdir)/build/adg.nsi
+$(INSTALLER): _host/docs/adg/adg.pdf _host/hicolor _host/minitheme $(srcdir)/build/adg.nsi
 	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
 
 mostlyclean-local:
 	-rm $(INSTALLER)
-
-.PHONY: installer
 
 endif
 
@@ -99,7 +116,7 @@ src/cpml/cpml-primitive.c.gcov:
 src/adg/adg-canvas.c.gcov:
 	$(MAKE) -C src/adg $(AM_MAKEFLAGS) coverage
 
-.PHONY: coverage
+.PHONY: installer coverage
 
 
 # Creating ChangeLog files from git log:

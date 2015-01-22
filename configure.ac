@@ -90,6 +90,10 @@ AC_PATH_PROG([GLIB_GENMARSHAL],[glib-genmarshal],[/usr/bin/glib-genmarshal])
 AC_PATH_PROG([GTESTER],[gtester],[/usr/bin/gtester])
 AC_PATH_PROG([GTESTER_REPORT],[gtester-report],[/usr/bin/gtester-report])
 AC_PATH_PROG([GLADE3],[glade-3],[/usr/bin/glade-3])
+AC_ARG_VAR([TAR])
+AC_PATH_PROG([TAR],[tar],[/usr/bin/tar])
+AC_ARG_VAR([BZIP2])
+AC_PATH_PROG([BZIP2],[bzip2],[/usr/bin/bzip2])
 
 
 # Check for coverage build
