@@ -42,6 +42,35 @@ G_BEGIN_DECLS
                                      #n1 " " #cmp " " #n2, __n1, #cmp, __n2, 'f'); \
     } while (0)
 
+/* Some backward compatible macros */
+#ifndef g_assert_true
+#define g_assert_true(expr)             do { if G_LIKELY (expr) ; else \
+                                               g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                                                    "'" #expr "' should be TRUE"); \
+                                           } while (0)
+#endif
+
+#ifndef g_assert_false
+#define g_assert_false(expr)            do { if G_LIKELY (!(expr)) ; else \
+                                               g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                                                    "'" #expr "' should be FALSE"); \
+                                           } while (0)
+#endif
+
+#ifndef g_assert_null
+#define g_assert_null(expr)             do { if G_LIKELY ((expr) == NULL) ; else \
+                                               g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                                                    "'" #expr "' should be NULL"); \
+                                           } while (0)
+#endif
+
+#ifndef g_assert_nonnull
+#define g_assert_nonnull(expr)          do { if G_LIKELY ((expr) != NULL) ; else \
+                                               g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                                                    "'" #expr "' should not be NULL"); \
+                                           } while (0)
+#endif
+
 
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);

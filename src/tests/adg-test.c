@@ -20,7 +20,6 @@
 
 #include <config.h>
 #include "adg-test.h"
-#include <stdlib.h>
 
 
 void
@@ -38,35 +37,112 @@ adg_test_invalid_pointer(void)
     return junk;
 }
 
+
+#if GLIB_CHECK_VERSION(2, 38, 0)
+
+/* Instead of using the deprecated fork approach (it does not always work)
+ * use the newly introduced g_test_set_nonfatal_assertions() API to avoid
+ * aborting the program and check the result at the end of the test.
+ */
+
+typedef struct {
+    GSList *errors;
+    GLogFunc old_logger;
+} _AdgFixture;
+
+
+typedef struct {
+    gchar *log_domain;
+    GLogLevelFlags log_level;
+    gchar *message;
+} _AdgCapture;
+
 static void
-_adg_log_handler(const gchar *log_domain, GLogLevelFlags log_level,
-                 const gchar *message, gpointer user_data)
+_adg_capture_handler(const gchar *log_domain, GLogLevelFlags log_level,
+                     const gchar *message, _AdgFixture *fixture)
+{
+    _AdgCapture *capture = g_new(_AdgCapture, 1);
+    capture->log_domain = g_strdup(log_domain);
+    capture->log_level = log_level;
+    capture->message = g_strdup(message);
+    fixture->errors = g_slist_append(fixture->errors, capture);
+}
+
+static void
+_adg_capture_free(_AdgCapture *capture)
+{
+    g_free(capture->log_domain);
+    g_free(capture->message);
+    g_free(capture);
+}
+
+static void
+_adg_setup(_AdgFixture *fixture, gconstpointer user_data)
+{
+    fixture->errors = NULL;
+    fixture->old_logger = g_log_set_default_handler((GLogFunc) _adg_capture_handler, fixture);
+}
+
+static void
+_adg_teardown(_AdgFixture *fixture, gconstpointer user_data)
+{
+    g_log_set_default_handler(fixture->old_logger, NULL);
+
+    if (g_test_failed()) {
+        GSList *node;
+        _AdgCapture *capture;
+
+        for (node = fixture->errors; node != NULL; node = node->next) {
+            capture = node->data;
+            g_log(capture->log_domain, capture->log_level,
+                  "%s", capture->message);
+        }
+    }
+
+    g_slist_free_full(fixture->errors, (GDestroyNotify) _adg_capture_free);
+}
+
+void
+adg_test_add_func(const char *testpath, GCallback test_func)
+{
+    g_test_set_nonfatal_assertions();
+    g_test_add(testpath, _AdgFixture, NULL,
+               _adg_setup, (gpointer) test_func, _adg_teardown);
+}
+
+#else
+
+#include <stdlib.h>
+
+static void
+_adg_null_handler(const gchar *log_domain, GLogLevelFlags log_level,
+                  const gchar *message, gpointer user_data)
 {
 }
 
 static void
-_adg_test_func(gconstpointer user_data)
+_adg_test_func(GCallback test_func)
 {
-    GCallback test_func;
-    GLogFunc previous_handler;
-
-    test_func = (GCallback) user_data;
+    GLogFunc handler = g_log_set_default_handler(_adg_null_handler, NULL);
 
     /* Run a test in a forked environment, without showing log messages */
-    previous_handler = g_log_set_default_handler(_adg_log_handler, NULL);
     if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDERR)) {
         test_func();
         exit(0);
     }
-    g_log_set_default_handler(previous_handler, NULL);
+
+    g_log_set_default_handler(handler, NULL);
 
     /* On failed test, rerun it without hiding the log messages */
     if (!g_test_trap_has_passed())
         test_func();
 }
 
+
 void
 adg_test_add_func(const char *testpath, GCallback test_func)
 {
     g_test_add_data_func(testpath, (gconstpointer) test_func, _adg_test_func);
 }
+
+#endif

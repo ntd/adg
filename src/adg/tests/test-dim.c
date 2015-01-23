@@ -150,7 +150,7 @@ _adg_test_max(void)
 
     adg_dim_set_max(dim, NULL);
     max = adg_dim_get_max(dim);
-    g_assert(max == NULL);
+    g_assert_null(max);
 
     /* Using GObject property methods */
     g_object_set(dim, "max", valid_text, NULL);
@@ -165,7 +165,7 @@ _adg_test_max(void)
 
     g_object_set(dim, "max", NULL, NULL);
     g_object_get(dim, "max", &max_dup, NULL);
-    g_assert(max_dup == NULL);
+    g_assert_null(max_dup);
 
     adg_entity_destroy(ADG_ENTITY(dim));
 }
@@ -193,7 +193,7 @@ _adg_test_min(void)
 
     adg_dim_set_min(dim, NULL);
     min = adg_dim_get_min(dim);
-    g_assert(min == NULL);
+    g_assert_null(min);
 
     /* Using GObject property methods */
     g_object_set(dim, "min", valid_text, NULL);
@@ -208,7 +208,7 @@ _adg_test_min(void)
 
     g_object_set(dim, "min", NULL, NULL);
     g_object_get(dim, "min", &min_dup, NULL);
-    g_assert(min_dup == NULL);
+    g_assert_null(min_dup);
 
     adg_entity_destroy(ADG_ENTITY(dim));
 }
@@ -275,55 +275,55 @@ _adg_test_pos(void)
 
     /* Ensure ADG does not consider an explicit point equals to
      * a point bound to a named pair with the same coordinates */
-    g_assert(!adg_point_equal(explicit_point, model_point));
+    g_assert_false(adg_point_equal(explicit_point, model_point));
 
     pos = adg_dim_get_pos(dim);
-    g_assert(pos == NULL);
+    g_assert_null(pos);
 
     /* Using the public APIs */
     adg_dim_set_pos_explicit(dim, 0, 0);
     pos = adg_dim_get_pos(dim);
-    g_assert(adg_point_equal(pos, origin));
+    g_assert_true(adg_point_equal(pos, origin));
 
     adg_dim_set_pos(dim, NULL);
     pos = adg_dim_get_pos(dim);
-    g_assert(pos == NULL);
+    g_assert_null(pos);
 
     adg_dim_set_pos(dim, explicit_point);
     pos = adg_dim_get_pos(dim);
-    g_assert(adg_point_equal(pos, explicit_point));
+    g_assert_true(adg_point_equal(pos, explicit_point));
 
     adg_dim_set_pos_from_model(dim, model, "dummy");
     pos = adg_dim_get_pos(dim);
-    g_assert(pos != NULL);
+    g_assert_nonnull(pos);
 
     adg_dim_set_pos_from_model(dim, model, "named-pair");
     pos = adg_dim_get_pos(dim);
-    g_assert(adg_point_equal(pos, model_point));
+    g_assert_true(adg_point_equal(pos, model_point));
 
     /* Using GObject property methods */
     g_object_set(dim, "pos", origin, NULL);
     g_object_get(dim, "pos", &pos, NULL);
-    g_assert(adg_point_equal(pos, origin));
+    g_assert_true(adg_point_equal(pos, origin));
     adg_point_destroy(pos);
 
     g_object_set(dim, "pos", NULL, NULL);
     g_object_get(dim, "pos", &pos, NULL);
-    g_assert(pos == NULL);
+    g_assert_null(pos);
 
     g_object_set(dim, "pos", explicit_point, NULL);
     g_object_get(dim, "pos", &pos, NULL);
-    g_assert(adg_point_equal(pos, explicit_point));
+    g_assert_true(adg_point_equal(pos, explicit_point));
     adg_point_destroy(pos);
 
     adg_dim_set_pos_from_model(dim, model, "dummy");
     g_object_get(dim, "pos", &pos, NULL);
-    g_assert(pos != NULL);
+    g_assert_nonnull(pos);
     adg_point_destroy(pos);
 
     g_object_set(dim, "pos", model_point, NULL);
     g_object_get(dim, "pos", &pos, NULL);
-    g_assert(adg_point_equal(pos, model_point));
+    g_assert_true(adg_point_equal(pos, model_point));
     adg_point_destroy(pos);
 
     adg_point_destroy(origin);
@@ -354,55 +354,55 @@ _adg_test_ref1(void)
 
     /* Ensure ADG does not consider an explicit point equals to
      * a point bound to a named pair with the same coordinates */
-    g_assert(!adg_point_equal(explicit_point, model_point));
+    g_assert_false(adg_point_equal(explicit_point, model_point));
 
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(ref1 == NULL);
+    g_assert_null(ref1);
 
     /* Using the public APIs */
     adg_dim_set_ref1_explicit(dim, 0, 0);
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(adg_point_equal(ref1, origin));
+    g_assert_true(adg_point_equal(ref1, origin));
 
     adg_dim_set_ref1(dim, NULL);
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(ref1 == NULL);
+    g_assert_null(ref1);
 
     adg_dim_set_ref1(dim, explicit_point);
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(adg_point_equal(ref1, explicit_point));
+    g_assert_true(adg_point_equal(ref1, explicit_point));
 
     adg_dim_set_ref1_from_model(dim, model, "dummy");
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(ref1 != NULL);
+    g_assert_nonnull(ref1);
 
     adg_dim_set_ref1_from_model(dim, model, "named-pair");
     ref1 = adg_dim_get_ref1(dim);
-    g_assert(adg_point_equal(ref1, model_point));
+    g_assert_true(adg_point_equal(ref1, model_point));
 
     /* Using GObject property methods */
     g_object_set(dim, "ref1", origin, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
-    g_assert(adg_point_equal(ref1, origin));
+    g_assert_true(adg_point_equal(ref1, origin));
     adg_point_destroy(ref1);
 
     g_object_set(dim, "ref1", NULL, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
-    g_assert(ref1 == NULL);
+    g_assert_null(ref1);
 
     g_object_set(dim, "ref1", explicit_point, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
-    g_assert(adg_point_equal(ref1, explicit_point));
+    g_assert_true(adg_point_equal(ref1, explicit_point));
     adg_point_destroy(ref1);
 
     adg_dim_set_ref1_from_model(dim, model, "dummy");
     g_object_get(dim, "ref1", &ref1, NULL);
-    g_assert(ref1 != NULL);
+    g_assert_nonnull(ref1);
     adg_point_destroy(ref1);
 
     g_object_set(dim, "ref1", model_point, NULL);
     g_object_get(dim, "ref1", &ref1, NULL);
-    g_assert(adg_point_equal(ref1, model_point));
+    g_assert_true(adg_point_equal(ref1, model_point));
     adg_point_destroy(ref1);
 
     adg_point_destroy(origin);
@@ -433,55 +433,55 @@ _adg_test_ref2(void)
 
     /* Ensure ADG does not consider an explicit point equals to
      * a point bound to a named pair with the same coordinates */
-    g_assert(!adg_point_equal(explicit_point, model_point));
+    g_assert_false(adg_point_equal(explicit_point, model_point));
 
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(ref2 == NULL);
+    g_assert_null(ref2);
 
     /* Using the public APIs */
     adg_dim_set_ref2_explicit(dim, 0, 0);
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(adg_point_equal(ref2, origin));
+    g_assert_true(adg_point_equal(ref2, origin));
 
     adg_dim_set_ref2(dim, NULL);
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(ref2 == NULL);
+    g_assert_null(ref2);
 
     adg_dim_set_ref2(dim, explicit_point);
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(adg_point_equal(ref2, explicit_point));
+    g_assert_true(adg_point_equal(ref2, explicit_point));
 
     adg_dim_set_ref2_from_model(dim, model, "dummy");
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(ref2 != NULL);
+    g_assert_nonnull(ref2);
 
     adg_dim_set_ref2_from_model(dim, model, "named-pair");
     ref2 = adg_dim_get_ref2(dim);
-    g_assert(adg_point_equal(ref2, model_point));
+    g_assert_true(adg_point_equal(ref2, model_point));
 
     /* Using GObject property methods */
     g_object_set(dim, "ref2", origin, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
-    g_assert(adg_point_equal(ref2, origin));
+    g_assert_true(adg_point_equal(ref2, origin));
     adg_point_destroy(ref2);
 
     g_object_set(dim, "ref2", NULL, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
-    g_assert(ref2 == NULL);
+    g_assert_null(ref2);
 
     g_object_set(dim, "ref2", explicit_point, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
-    g_assert(adg_point_equal(ref2, explicit_point));
+    g_assert_true(adg_point_equal(ref2, explicit_point));
     adg_point_destroy(ref2);
 
     adg_dim_set_ref2_from_model(dim, model, "dummy");
     g_object_get(dim, "ref2", &ref2, NULL);
-    g_assert(ref2 != NULL);
+    g_assert_nonnull(ref2);
     adg_point_destroy(ref2);
 
     g_object_set(dim, "ref2", model_point, NULL);
     g_object_get(dim, "ref2", &ref2, NULL);
-    g_assert(adg_point_equal(ref2, model_point));
+    g_assert_true(adg_point_equal(ref2, model_point));
     adg_point_destroy(ref2);
 
     adg_point_destroy(origin);
@@ -514,7 +514,7 @@ _adg_test_value(void)
 
     adg_dim_set_value(dim, NULL);
     value = adg_dim_get_value(dim);
-    g_assert(value == NULL);
+    g_assert_null(value);
 
     /* Using GObject property methods */
     g_object_set(dim, "value", valid_text, NULL);
@@ -529,7 +529,7 @@ _adg_test_value(void)
 
     g_object_set(dim, "value", NULL, NULL);
     g_object_get(dim, "value", &value_dup, NULL);
-    g_assert(value_dup == NULL);
+    g_assert_null(value_dup);
 
     adg_entity_destroy(ADG_ENTITY(dim));
 }

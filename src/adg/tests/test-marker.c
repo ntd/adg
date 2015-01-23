@@ -37,38 +37,38 @@ _adg_test_model(void)
     /* Using the public APIs */
     adg_marker_set_model(marker, NULL);
     model = adg_marker_get_model(marker);
-    g_assert(model == NULL);
+    g_assert_null(model);
 
     adg_marker_set_model(marker, valid_model);
     model = adg_marker_get_model(marker);
-    g_assert(model == valid_model);
+    g_assert_true(model == valid_model);
 
     adg_marker_set_model(marker, invalid_model);
     model = adg_marker_get_model(marker);
-    g_assert(model == valid_model);
+    g_assert_true(model == valid_model);
 
     adg_marker_set_model(marker, NULL);
     model = adg_marker_get_model(marker);
-    g_assert(model == NULL);
+    g_assert_null(model);
 
     /* Using GObject property methods */
     g_object_set(marker, "model", NULL, NULL);
     g_object_get(marker, "model", &model, NULL);
-    g_assert(model == NULL);
+    g_assert_null(model);
 
     g_object_set(marker, "model", valid_model, NULL);
     g_object_get(marker, "model", &model, NULL);
-    g_assert(model == valid_model);
+    g_assert_true(model == valid_model);
     g_object_unref(model);
 
     g_object_set(marker, "model", invalid_model, NULL);
     g_object_get(marker, "model", &model, NULL);
-    g_assert(model == valid_model);
+    g_assert_true(model == valid_model);
     g_object_unref(model);
 
     g_object_set(marker, "model", NULL, NULL);
     g_object_get(marker, "model", &model, NULL);
-    g_assert(model == NULL);
+    g_assert_null(model);
 
     adg_entity_destroy(ADG_ENTITY(marker));
     g_object_unref(valid_model);
@@ -172,48 +172,48 @@ _adg_test_trail(void)
     /* Using the public APIs */
     adg_marker_set_trail(marker, NULL);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     adg_marker_set_n_segment(marker, 1);
     adg_marker_set_trail(marker, valid_trail);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     adg_marker_set_n_segment(marker, 0);
     adg_marker_set_trail(marker, valid_trail);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
 
     adg_marker_set_trail(marker, invalid_trail);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
 
     adg_marker_set_trail(marker, NULL);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     /* Using GObject property methods */
     g_object_set(marker, "trail", NULL, NULL);
     g_object_get(marker, "trail", &trail, NULL);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     g_object_set(marker, "n-segment", 1, "trail", valid_trail, NULL);
     trail = adg_marker_get_trail(marker);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     g_object_set(marker, "n-segment", 0, "trail", valid_trail, NULL);
     g_object_get(marker, "trail", &trail, NULL);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
     g_object_unref(trail);
 
     g_object_set(marker, "trail", invalid_trail, NULL);
     g_object_get(marker, "trail", &trail, NULL);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
     g_object_unref(trail);
 
     g_object_set(marker, "trail", NULL, NULL);
     g_object_get(marker, "trail", &trail, NULL);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     adg_entity_destroy(ADG_ENTITY(marker));
     g_object_unref(valid_trail);

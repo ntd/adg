@@ -31,24 +31,24 @@ _adg_test_dashes(void)
     const gdouble dashes_array[] = { 1., 2., 3. };
 
     dash = adg_dash_new();
-    g_assert(dash != NULL);
+    g_assert_nonnull(dash);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 0);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes == NULL);
+    g_assert_null(dashes);
 
     adg_dash_append_dash(dash, 1234.);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 1);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes != NULL);
+    g_assert_nonnull(dashes);
     g_assert_cmpfloat(dashes[0], ==, 1234.);
 
     adg_dash_append_dashes(dash, 2, 0., 4321.);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes != NULL);
+    g_assert_nonnull(dashes);
     g_assert_cmpfloat(dashes[0], ==, 1234.);
     g_assert_cmpfloat(dashes[1], ==, 0.);
     g_assert_cmpfloat(dashes[2], ==, 4321.);
@@ -57,13 +57,13 @@ _adg_test_dashes(void)
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 0);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes == NULL);
+    g_assert_null(dashes);
 
     adg_dash_append_dashes_array(dash, 3, dashes_array);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes != NULL);
+    g_assert_nonnull(dashes);
     g_assert_cmpfloat(dashes[0], ==, 1.);
     g_assert_cmpfloat(dashes[1], ==, 2.);
     g_assert_cmpfloat(dashes[2], ==, 3.);
@@ -71,11 +71,11 @@ _adg_test_dashes(void)
     adg_dash_destroy(dash);
 
     dash = adg_dash_new_with_dashes(3, 1., 2., 3.);
-    g_assert(dash != NULL);
+    g_assert_nonnull(dash);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
-    g_assert(dashes != NULL);
+    g_assert_nonnull(dashes);
     g_assert_cmpfloat(dashes[0], ==, 1.);
     g_assert_cmpfloat(dashes[1], ==, 2.);
     g_assert_cmpfloat(dashes[2], ==, 3.);

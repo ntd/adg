@@ -36,30 +36,30 @@ _adg_test_parent(void)
     /* Using the public APIs */
     adg_entity_set_parent(entity, valid_container);
     parent = adg_entity_get_parent(entity);
-    g_assert(parent == valid_container);
+    g_assert_true(parent == valid_container);
 
     adg_entity_set_parent(entity, invalid_container);
     parent = adg_entity_get_parent(entity);
-    g_assert(parent == valid_container);
+    g_assert_true(parent == valid_container);
 
     adg_entity_set_parent(entity, NULL);
     parent = adg_entity_get_parent(entity);
-    g_assert(parent == NULL);
+    g_assert_null(parent);
 
     /* Using GObject property methods */
     g_object_set(entity, "parent", valid_container, NULL);
     g_object_get(entity, "parent", &parent, NULL);
-    g_assert(parent == valid_container);
+    g_assert_true(parent == valid_container);
     adg_entity_destroy(parent);
 
     g_object_set(entity, "parent", invalid_container, NULL);
     g_object_get(entity, "parent", &parent, NULL);
-    g_assert(parent == valid_container);
+    g_assert_true(parent == valid_container);
     adg_entity_destroy(parent);
 
     g_object_set(entity, "parent", NULL, NULL);
     g_object_get(entity, "parent", &parent, NULL);
-    g_assert(parent == NULL);
+    g_assert_null(parent);
 
     adg_entity_destroy(entity);
     adg_entity_destroy(valid_container);
@@ -86,38 +86,38 @@ _adg_test_global_map(void)
     /* Using the public APIs */
     adg_entity_set_global_map(entity, &null_map);
     global_map = adg_entity_get_global_map(entity);
-    g_assert(adg_matrix_equal(global_map, &null_map));
+    g_assert_true(adg_matrix_equal(global_map, &null_map));
 
     adg_entity_transform_global_map(entity, &dummy_map, ADG_TRANSFORM_AFTER);
     global_map = adg_entity_get_global_map(entity);
-    g_assert(adg_matrix_equal(global_map, &null_map));
+    g_assert_true(adg_matrix_equal(global_map, &null_map));
 
     adg_entity_set_global_map(entity, identity_map);
     global_map = adg_entity_get_global_map(entity);
-    g_assert(adg_matrix_equal(global_map, identity_map));
+    g_assert_true(adg_matrix_equal(global_map, identity_map));
 
     adg_entity_set_global_map(entity, NULL);
     global_map = adg_entity_get_global_map(entity);
-    g_assert(adg_matrix_equal(global_map, identity_map));
+    g_assert_true(adg_matrix_equal(global_map, identity_map));
 
     adg_entity_transform_global_map(entity, &dummy_map, ADG_TRANSFORM_BEFORE);
     global_map = adg_entity_get_global_map(entity);
-    g_assert(adg_matrix_equal(global_map, &dummy_map));
+    g_assert_true(adg_matrix_equal(global_map, &dummy_map));
 
     /* Using GObject property methods */
     g_object_set(entity, "global-map", &null_map, NULL);
     g_object_get(entity, "global-map", &global_map_dup, NULL);
-    g_assert(adg_matrix_equal(global_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(global_map_dup, &null_map));
     g_free(global_map_dup);
 
     g_object_set(entity, "global-map", NULL, NULL);
     g_object_get(entity, "global-map", &global_map_dup, NULL);
-    g_assert(adg_matrix_equal(global_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(global_map_dup, &null_map));
     g_free(global_map_dup);
 
     g_object_set(entity, "global-map", identity_map, NULL);
     g_object_get(entity, "global-map", &global_map_dup, NULL);
-    g_assert(adg_matrix_equal(global_map_dup, identity_map));
+    g_assert_true(adg_matrix_equal(global_map_dup, identity_map));
     g_free(global_map_dup);
 
     adg_entity_destroy(entity);
@@ -144,38 +144,38 @@ _adg_test_local_map(void)
     /* Using the public APIs */
     adg_entity_set_local_map(entity, &null_map);
     local_map = adg_entity_get_local_map(entity);
-    g_assert(adg_matrix_equal(local_map, &null_map));
+    g_assert_true(adg_matrix_equal(local_map, &null_map));
 
     adg_entity_transform_local_map(entity, &dummy_map, ADG_TRANSFORM_AFTER);
     local_map = adg_entity_get_local_map(entity);
-    g_assert(adg_matrix_equal(local_map, &null_map));
+    g_assert_true(adg_matrix_equal(local_map, &null_map));
 
     adg_entity_set_local_map(entity, identity_map);
     local_map = adg_entity_get_local_map(entity);
-    g_assert(adg_matrix_equal(local_map, identity_map));
+    g_assert_true(adg_matrix_equal(local_map, identity_map));
 
     adg_entity_set_local_map(entity, NULL);
     local_map = adg_entity_get_local_map(entity);
-    g_assert(adg_matrix_equal(local_map, identity_map));
+    g_assert_true(adg_matrix_equal(local_map, identity_map));
 
     adg_entity_transform_local_map(entity, &dummy_map, ADG_TRANSFORM_BEFORE);
     local_map = adg_entity_get_local_map(entity);
-    g_assert(adg_matrix_equal(local_map, &dummy_map));
+    g_assert_true(adg_matrix_equal(local_map, &dummy_map));
 
     /* Using GObject property methods */
     g_object_set(entity, "local-map", &null_map, NULL);
     g_object_get(entity, "local-map", &local_map_dup, NULL);
-    g_assert(adg_matrix_equal(local_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(local_map_dup, &null_map));
     g_free(local_map_dup);
 
     g_object_set(entity, "local-map", NULL, NULL);
     g_object_get(entity, "local-map", &local_map_dup, NULL);
-    g_assert(adg_matrix_equal(local_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(local_map_dup, &null_map));
     g_free(local_map_dup);
 
     g_object_set(entity, "local-map", identity_map, NULL);
     g_object_get(entity, "local-map", &local_map_dup, NULL);
-    g_assert(adg_matrix_equal(local_map_dup, identity_map));
+    g_assert_true(adg_matrix_equal(local_map_dup, identity_map));
     g_free(local_map_dup);
 
     adg_entity_destroy(entity);

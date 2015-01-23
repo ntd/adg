@@ -107,11 +107,11 @@ _cpml_test_basic(void)
 
     /* Checking APIs */
     found = cpml_segment_from_cairo(&segment, &noop_path);
-    g_assert(! found);
+    g_assert_false(found);
 
     /* CPML entry point */
     found = cpml_segment_from_cairo(&segment, &path);
-    g_assert(found);
+    g_assert_true(found);
 
     /* First segment */
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
@@ -119,28 +119,28 @@ _cpml_test_basic(void)
 
     /* Second segment */
     found = cpml_segment_next(&segment);
-    g_assert(found);
+    g_assert_true(found);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_CURVE);
 
     /* Third segment */
     found = cpml_segment_next(&segment);
-    g_assert(found);
+    g_assert_true(found);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_ARC);
 
     /* Forth segment */
     found = cpml_segment_next(&segment);
-    g_assert(found);
+    g_assert_true(found);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_CLOSE);
 
     /* Copy and boundaries check */
     cpml_segment_copy(&segment_copy, &segment);
     found = cpml_segment_next(&segment);
-    g_assert(! found);
+    g_assert_false(found);
     found = cpml_segment_next(&segment_copy);
-    g_assert(! found);
+    g_assert_false(found);
     cpml_segment_reset(&segment_copy);
     g_assert_cmpint(segment_copy.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment_copy.data[2].header.type, ==, CPML_LINE);

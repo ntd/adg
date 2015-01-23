@@ -38,35 +38,35 @@ _adg_alignment_factor(void)
 
     /* By default, the alignment should be initialized with a null factor */
     factor = adg_alignment_get_factor(alignment);
-    g_assert(cpml_pair_equal(factor, &null_factor));
+    g_assert_true(cpml_pair_equal(factor, &null_factor));
 
     /* Using the public APIs */
     adg_alignment_set_factor(alignment, &identity_factor);
     factor = adg_alignment_get_factor(alignment);
-    g_assert(cpml_pair_equal(factor, &identity_factor));
+    g_assert_true(cpml_pair_equal(factor, &identity_factor));
 
     adg_alignment_set_factor_explicit(alignment, 0, 0);
     factor = adg_alignment_get_factor(alignment);
-    g_assert(cpml_pair_equal(factor, &null_factor));
+    g_assert_true(cpml_pair_equal(factor, &null_factor));
 
     adg_alignment_set_factor(alignment, NULL);
     factor = adg_alignment_get_factor(alignment);
-    g_assert(cpml_pair_equal(factor, &null_factor));
+    g_assert_true(cpml_pair_equal(factor, &null_factor));
 
     /* Using GObject property methods */
     g_object_set(alignment, "factor", &identity_factor, NULL);
     g_object_get(alignment, "factor", &factor_dup, NULL);
-    g_assert(cpml_pair_equal(factor_dup, &identity_factor));
+    g_assert_true(cpml_pair_equal(factor_dup, &identity_factor));
     g_free(factor_dup);
 
     g_object_set(alignment, "factor", NULL, NULL);
     g_object_get(alignment, "factor", &factor_dup, NULL);
-    g_assert(cpml_pair_equal(factor_dup, &identity_factor));
+    g_assert_true(cpml_pair_equal(factor_dup, &identity_factor));
     g_free(factor_dup);
 
     g_object_set(alignment, "factor", &null_factor, NULL);
     g_object_get(alignment, "factor", &factor_dup, NULL);
-    g_assert(cpml_pair_equal(factor_dup, &null_factor));
+    g_assert_true(cpml_pair_equal(factor_dup, &null_factor));
     g_free(factor_dup);
 
     g_object_unref(alignment);

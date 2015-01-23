@@ -39,46 +39,46 @@ _adg_property_child(void)
     /* Using the public APIs */
     adg_container_add(container, NULL);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     adg_container_add(container, invalid_entity);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     adg_container_add(container, valid_entity);
     children = adg_container_children(container);
-    g_assert(children != NULL);
-    g_assert(children->data == valid_entity);
+    g_assert_nonnull(children);
+    g_assert_true(children->data == valid_entity);
     g_slist_free(children);
 
     adg_container_remove(container, invalid_entity);
     children = adg_container_children(container);
-    g_assert(children != NULL);
-    g_assert(children->data == valid_entity);
+    g_assert_nonnull(children);
+    g_assert_true(children->data == valid_entity);
     g_slist_free(children);
 
     adg_container_remove(container, valid_entity);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     /* Using GObject property methods */
     g_object_set(container, "child", NULL, NULL);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     g_object_set(container, "child", invalid_entity, NULL);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     g_object_set(container, "child", valid_entity, NULL);
     children = adg_container_children(container);
-    g_assert(children != NULL);
-    g_assert(children->data == valid_entity);
+    g_assert_nonnull(children);
+    g_assert_true(children->data == valid_entity);
     g_slist_free(children);
 
     adg_container_remove(container, valid_entity);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     adg_entity_destroy(ADG_ENTITY(container));
     adg_entity_destroy(valid_entity);
@@ -96,29 +96,29 @@ _adg_misc(void)
     entity2 = ADG_ENTITY(adg_title_block_new());
 
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     adg_container_add(container, entity1);
     children = adg_container_children(container);
-    g_assert(children != NULL);
+    g_assert_nonnull(children);
     g_assert_cmpint(g_slist_length(children), ==, 1);
     g_slist_free(children);
 
     adg_container_add(container, entity2);
     children = adg_container_children(container);
-    g_assert(children != NULL);
+    g_assert_nonnull(children);
     g_assert_cmpint(g_slist_length(children), ==, 2);
     g_slist_free(children);
 
     adg_entity_destroy(entity1);
     children = adg_container_children(container);
-    g_assert(children != NULL);
+    g_assert_nonnull(children);
     g_assert_cmpint(g_slist_length(children), ==, 1);
     g_slist_free(children);
 
     adg_entity_destroy(entity2);
     children = adg_container_children(container);
-    g_assert(children == NULL);
+    g_assert_null(children);
 
     adg_entity_destroy(ADG_ENTITY(container));
 }

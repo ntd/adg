@@ -61,29 +61,29 @@ _cpml_test_basic(void)
     CpmlPrimitive primitive, primitive_copy;
 
     found = cpml_segment_from_cairo(&segment, &path);
-    g_assert(found);
+    g_assert_true(found);
 
     /* Browsing API */
     cpml_primitive_from_segment(&primitive, &segment);
-    g_assert(primitive.data != NULL);
+    g_assert_nonnull(primitive.data);
     found = cpml_primitive_next(&primitive);
-    g_assert(found);
+    g_assert_true(found);
     found = cpml_primitive_next(&primitive);
-    g_assert(found);
+    g_assert_true(found);
     found = cpml_primitive_next(&primitive);
-    g_assert(found);
+    g_assert_true(found);
 
     /* Checking primitive copy and corner case browsing */
     cpml_primitive_copy(&primitive_copy, &primitive);
     found = cpml_primitive_next(&primitive);
-    g_assert(! found);
+    g_assert_false(found);
     cpml_primitive_reset(&primitive);
-    g_assert(primitive.data != NULL);
+    g_assert_nonnull(primitive.data);
     g_assert_cmpint((primitive.data)->header.type, ==, CPML_LINE);
     found = cpml_primitive_next(&primitive_copy);
-    g_assert(! found);
+    g_assert_false(found);
     cpml_primitive_reset(&primitive_copy);
-    g_assert(primitive_copy.data != NULL);
+    g_assert_nonnull(primitive_copy.data);
     g_assert_cmpint((primitive_copy.data)->header.type, ==, CPML_LINE);
 }
 

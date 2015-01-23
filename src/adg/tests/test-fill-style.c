@@ -37,30 +37,30 @@ _adg_test_pattern(void)
     /* Using the public APIs */
     adg_fill_style_set_pattern(fill_style, valid_pattern_1);
     pattern = adg_fill_style_get_pattern(fill_style);
-    g_assert(pattern == valid_pattern_1);
+    g_assert_true(pattern == valid_pattern_1);
 
     adg_fill_style_set_pattern(fill_style, NULL);
     pattern = adg_fill_style_get_pattern(fill_style);
-    g_assert(pattern == NULL);
+    g_assert_null(pattern);
 
     adg_fill_style_set_pattern(fill_style, valid_pattern_2);
     pattern = adg_fill_style_get_pattern(fill_style);
-    g_assert(pattern == valid_pattern_2);
+    g_assert_true(pattern == valid_pattern_2);
 
     /* Using GObject property methods */
     g_object_set(fill_style, "pattern", valid_pattern_1, NULL);
     g_object_get(fill_style, "pattern", &pattern_dup, NULL);
-    g_assert(pattern_dup == valid_pattern_1);
+    g_assert_true(pattern_dup == valid_pattern_1);
     cairo_pattern_destroy(pattern_dup);
 
     g_object_set(fill_style, "pattern", NULL, NULL);
     g_object_get(fill_style, "pattern", &pattern_dup, NULL);
-    g_assert(pattern_dup == NULL);
+    g_assert_null(pattern_dup);
     cairo_pattern_destroy(pattern_dup);
 
     g_object_set(fill_style, "pattern", valid_pattern_2, NULL);
     g_object_get(fill_style, "pattern", &pattern_dup, NULL);
-    g_assert(pattern_dup == valid_pattern_2);
+    g_assert_true(pattern_dup == valid_pattern_2);
     cairo_pattern_destroy(pattern_dup);
 
     cairo_pattern_destroy(valid_pattern_1);

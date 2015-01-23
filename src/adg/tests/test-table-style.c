@@ -39,30 +39,30 @@ _adg_cell_padding(void)
     /* Using the public APIs */
     adg_table_style_set_cell_padding(table_style, &identity_padding);
     padding = adg_table_style_get_cell_padding(table_style);
-    g_assert(cpml_pair_equal(padding, &identity_padding));
+    g_assert_true(cpml_pair_equal(padding, &identity_padding));
 
     adg_table_style_set_cell_padding(table_style, &null_padding);
     padding = adg_table_style_get_cell_padding(table_style);
-    g_assert(cpml_pair_equal(padding, &null_padding));
+    g_assert_true(cpml_pair_equal(padding, &null_padding));
 
     adg_table_style_set_cell_padding(table_style, NULL);
     padding = adg_table_style_get_cell_padding(table_style);
-    g_assert(cpml_pair_equal(padding, &null_padding));
+    g_assert_true(cpml_pair_equal(padding, &null_padding));
 
     /* Using GObject property methods */
     g_object_set(table_style, "cell-padding", &identity_padding, NULL);
     g_object_get(table_style, "cell-padding", &padding_dup, NULL);
-    g_assert(cpml_pair_equal(padding_dup, &identity_padding));
+    g_assert_true(cpml_pair_equal(padding_dup, &identity_padding));
     g_free(padding_dup);
 
     g_object_set(table_style, "cell-padding", NULL, NULL);
     g_object_get(table_style, "cell-padding", &padding_dup, NULL);
-    g_assert(cpml_pair_equal(padding_dup, &identity_padding));
+    g_assert_true(cpml_pair_equal(padding_dup, &identity_padding));
     g_free(padding_dup);
 
     g_object_set(table_style, "cell-padding", &null_padding, NULL);
     g_object_get(table_style, "cell-padding", &padding_dup, NULL);
-    g_assert(cpml_pair_equal(padding_dup, &null_padding));
+    g_assert_true(cpml_pair_equal(padding_dup, &null_padding));
     g_free(padding_dup);
 
     g_object_unref(table_style);
@@ -85,30 +85,30 @@ _adg_cell_spacing(void)
     /* Using the public APIs */
     adg_table_style_set_cell_spacing(table_style, &identity_spacing);
     spacing = adg_table_style_get_cell_spacing(table_style);
-    g_assert(cpml_pair_equal(spacing, &identity_spacing));
+    g_assert_true(cpml_pair_equal(spacing, &identity_spacing));
 
     adg_table_style_set_cell_spacing(table_style, &null_spacing);
     spacing = adg_table_style_get_cell_spacing(table_style);
-    g_assert(cpml_pair_equal(spacing, &null_spacing));
+    g_assert_true(cpml_pair_equal(spacing, &null_spacing));
 
     adg_table_style_set_cell_spacing(table_style, NULL);
     spacing = adg_table_style_get_cell_spacing(table_style);
-    g_assert(cpml_pair_equal(spacing, &null_spacing));
+    g_assert_true(cpml_pair_equal(spacing, &null_spacing));
 
     /* Using GObject property methods */
     g_object_set(table_style, "cell-spacing", &identity_spacing, NULL);
     g_object_get(table_style, "cell-spacing", &spacing_dup, NULL);
-    g_assert(cpml_pair_equal(spacing_dup, &identity_spacing));
+    g_assert_true(cpml_pair_equal(spacing_dup, &identity_spacing));
     g_free(spacing_dup);
 
     g_object_set(table_style, "cell-spacing", NULL, NULL);
     g_object_get(table_style, "cell-spacing", &spacing_dup, NULL);
-    g_assert(cpml_pair_equal(spacing_dup, &identity_spacing));
+    g_assert_true(cpml_pair_equal(spacing_dup, &identity_spacing));
     g_free(spacing_dup);
 
     g_object_set(table_style, "cell-spacing", &null_spacing, NULL);
     g_object_get(table_style, "cell-spacing", &spacing_dup, NULL);
-    g_assert(cpml_pair_equal(spacing_dup, &null_spacing));
+    g_assert_true(cpml_pair_equal(spacing_dup, &null_spacing));
     g_free(spacing_dup);
 
     g_object_unref(table_style);

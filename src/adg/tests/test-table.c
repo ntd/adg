@@ -92,28 +92,28 @@ _adg_test_has_frame(void)
     /* Using the public APIs */
     adg_table_switch_frame(table, FALSE);
     has_frame = adg_table_has_frame(table);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     adg_table_switch_frame(table, invalid_boolean);
     has_frame = adg_table_has_frame(table);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     adg_table_switch_frame(table, TRUE);
     has_frame = adg_table_has_frame(table);
-    g_assert(has_frame);
+    g_assert_true(has_frame);
 
     /* Using GObject property methods */
     g_object_set(table, "has-frame", FALSE, NULL);
     g_object_get(table, "has-frame", &has_frame, NULL);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     g_object_set(table, "has-frame", invalid_boolean, NULL);
     g_object_get(table, "has-frame", &has_frame, NULL);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     g_object_set(table, "has-frame", TRUE, NULL);
     g_object_get(table, "has-frame", &has_frame, NULL);
-    g_assert(has_frame);
+    g_assert_true(has_frame);
 
     adg_entity_destroy(ADG_ENTITY(table));
 }

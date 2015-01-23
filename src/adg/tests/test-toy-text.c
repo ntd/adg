@@ -116,7 +116,7 @@ _adg_test_text(void)
 
     adg_textual_set_text(textual, NULL);
     text = adg_textual_dup_text(textual);
-    g_assert(text == NULL);
+    g_assert_null(text);
     g_free(text);
 
     /* Using GObject property methods */
@@ -132,7 +132,7 @@ _adg_test_text(void)
 
     g_object_set(toy_text, "text", NULL, NULL);
     g_object_get(toy_text, "text", &text, NULL);
-    g_assert(text == NULL);
+    g_assert_null(text);
 
     adg_entity_destroy(ADG_ENTITY(toy_text));
 }

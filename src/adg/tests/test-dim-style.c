@@ -203,30 +203,30 @@ _adg_limits_shift(void)
     /* Using the public APIs */
     adg_dim_style_set_limits_shift(dim_style, &identity_shift);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift, &identity_shift));
 
     adg_dim_style_set_limits_shift(dim_style, &null_shift);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &null_shift));
+    g_assert_true(cpml_pair_equal(shift, &null_shift));
 
     adg_dim_style_set_limits_shift(dim_style, NULL);
     shift = adg_dim_style_get_limits_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &null_shift));
+    g_assert_true(cpml_pair_equal(shift, &null_shift));
 
     /* Using GObject property methods */
     g_object_set(dim_style, "limits-shift", &identity_shift, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "limits-shift", NULL, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "limits-shift", &null_shift, NULL);
     g_object_get(dim_style, "limits-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &null_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &null_shift));
     g_free(shift_dup);
 
     g_object_unref(dim_style);
@@ -327,32 +327,32 @@ _adg_marker1(void)
     /* Using the public APIs */
     adg_dim_style_set_marker1(dim_style, valid_marker);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker1(dim_style, invalid_marker);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker1(dim_style, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker == NULL);
+    g_assert_null(marker);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "marker1", valid_marker, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker1", invalid_marker, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker1", NULL, NULL);
     marker = adg_dim_style_marker1_new(dim_style);
-    g_assert(marker == NULL);
+    g_assert_null(marker);
 
     g_object_unref(dim_style);
     adg_entity_destroy(ADG_ENTITY(valid_marker));
@@ -371,32 +371,32 @@ _adg_marker2(void)
     /* Using the public APIs */
     adg_dim_style_set_marker2(dim_style, valid_marker);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker2(dim_style, invalid_marker);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     adg_dim_style_set_marker2(dim_style, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker == NULL);
+    g_assert_null(marker);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "marker2", valid_marker, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker2", invalid_marker, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker != NULL);
+    g_assert_nonnull(marker);
     adg_entity_destroy(ADG_ENTITY(marker));
 
     g_object_set(dim_style, "marker2", NULL, NULL);
     marker = adg_dim_style_marker2_new(dim_style);
-    g_assert(marker == NULL);
+    g_assert_null(marker);
 
     g_object_unref(dim_style);
     adg_entity_destroy(ADG_ENTITY(valid_marker));
@@ -507,7 +507,7 @@ _adg_number_format(void)
 
     adg_dim_style_set_number_format(dim_style, NULL);
     number_format = adg_dim_style_get_number_format(dim_style);
-    g_assert(number_format == NULL);
+    g_assert_null(number_format);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "number-format", valid_text_1, NULL);
@@ -522,7 +522,7 @@ _adg_number_format(void)
 
     g_object_set(dim_style, "number-format", NULL, NULL);
     g_object_get(dim_style, "number-format", &number_format_dup, NULL);
-    g_assert(number_format_dup == NULL);
+    g_assert_null(number_format_dup);
 
     g_object_unref(dim_style);
 }
@@ -550,7 +550,7 @@ _adg_number_tag(void)
 
     adg_dim_style_set_number_tag(dim_style, NULL);
     number_tag = adg_dim_style_get_number_tag(dim_style);
-    g_assert(number_tag == NULL);
+    g_assert_null(number_tag);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "number-tag", valid_text_1, NULL);
@@ -565,7 +565,7 @@ _adg_number_tag(void)
 
     g_object_set(dim_style, "number-tag", NULL, NULL);
     g_object_get(dim_style, "number-tag", &number_tag_dup, NULL);
-    g_assert(number_tag_dup == NULL);
+    g_assert_null(number_tag_dup);
 
     g_object_unref(dim_style);
 }
@@ -587,30 +587,30 @@ _adg_quote_shift(void)
     /* Using the public APIs */
     adg_dim_style_set_quote_shift(dim_style, &identity_shift);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift, &identity_shift));
 
     adg_dim_style_set_quote_shift(dim_style, &null_shift);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &null_shift));
+    g_assert_true(cpml_pair_equal(shift, &null_shift));
 
     adg_dim_style_set_quote_shift(dim_style, NULL);
     shift = adg_dim_style_get_quote_shift(dim_style);
-    g_assert(cpml_pair_equal(shift, &null_shift));
+    g_assert_true(cpml_pair_equal(shift, &null_shift));
 
     /* Using GObject property methods */
     g_object_set(dim_style, "quote-shift", &identity_shift, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "quote-shift", NULL, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &identity_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &identity_shift));
     g_free(shift_dup);
 
     g_object_set(dim_style, "quote-shift", &null_shift, NULL);
     g_object_get(dim_style, "quote-shift", &shift_dup, NULL);
-    g_assert(cpml_pair_equal(shift_dup, &null_shift));
+    g_assert_true(cpml_pair_equal(shift_dup, &null_shift));
     g_free(shift_dup);
 
     g_object_unref(dim_style);

@@ -94,28 +94,28 @@ _adg_test_has_extension1(void)
     /* Using the public APIs */
     adg_ldim_switch_extension1(ldim, FALSE);
     has_extension1 = adg_ldim_has_extension1(ldim);
-    g_assert(!has_extension1);
+    g_assert_false(has_extension1);
 
     adg_ldim_switch_extension1(ldim, invalid_boolean);
     has_extension1 = adg_ldim_has_extension1(ldim);
-    g_assert(!has_extension1);
+    g_assert_false(has_extension1);
 
     adg_ldim_switch_extension1(ldim, TRUE);
     has_extension1 = adg_ldim_has_extension1(ldim);
-    g_assert(has_extension1);
+    g_assert_true(has_extension1);
 
     /* Using GObject property methods */
     g_object_set(ldim, "has-extension1", FALSE, NULL);
     g_object_get(ldim, "has-extension1", &has_extension1, NULL);
-    g_assert(!has_extension1);
+    g_assert_false(has_extension1);
 
     g_object_set(ldim, "has-extension1", invalid_boolean, NULL);
     g_object_get(ldim, "has-extension1", &has_extension1, NULL);
-    g_assert(!has_extension1);
+    g_assert_false(has_extension1);
 
     g_object_set(ldim, "has-extension1", TRUE, NULL);
     g_object_get(ldim, "has-extension1", &has_extension1, NULL);
-    g_assert(has_extension1);
+    g_assert_true(has_extension1);
 
     adg_entity_destroy(ADG_ENTITY(ldim));
 }
@@ -133,28 +133,28 @@ _adg_test_has_extension2(void)
     /* Using the public APIs */
     adg_ldim_switch_extension2(ldim, FALSE);
     has_extension2 = adg_ldim_has_extension2(ldim);
-    g_assert(!has_extension2);
+    g_assert_false(has_extension2);
 
     adg_ldim_switch_extension2(ldim, invalid_boolean);
     has_extension2 = adg_ldim_has_extension2(ldim);
-    g_assert(!has_extension2);
+    g_assert_false(has_extension2);
 
     adg_ldim_switch_extension2(ldim, TRUE);
     has_extension2 = adg_ldim_has_extension2(ldim);
-    g_assert(has_extension2);
+    g_assert_true(has_extension2);
 
     /* Using GObject property methods */
     g_object_set(ldim, "has-extension2", FALSE, NULL);
     g_object_get(ldim, "has-extension2", &has_extension2, NULL);
-    g_assert(!has_extension2);
+    g_assert_false(has_extension2);
 
     g_object_set(ldim, "has-extension2", invalid_boolean, NULL);
     g_object_get(ldim, "has-extension2", &has_extension2, NULL);
-    g_assert(!has_extension2);
+    g_assert_false(has_extension2);
 
     g_object_set(ldim, "has-extension2", TRUE, NULL);
     g_object_get(ldim, "has-extension2", &has_extension2, NULL);
-    g_assert(has_extension2);
+    g_assert_true(has_extension2);
 
     adg_entity_destroy(ADG_ENTITY(ldim));
 }

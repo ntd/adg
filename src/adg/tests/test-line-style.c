@@ -251,10 +251,10 @@ _adg_test_dash(void)
 
     /* Checking default value */
     dash = adg_line_style_get_dash(line_style);
-    g_assert(dash == NULL);
+    g_assert_null(dash);
     dash = (AdgDash *) 0xdead;
     g_object_get(line_style, "dash", &dash, NULL);
-    g_assert(dash == NULL);
+    g_assert_null(dash);
 
     /* Using the public APIs */
     new_dash = adg_dash_new_with_dashes(3, 1, 2, 3);
@@ -286,7 +286,7 @@ _adg_test_dash(void)
     /* Checking the unset of dash */
     adg_line_style_set_dash(line_style, NULL);
     dash = adg_line_style_get_dash(line_style);
-    g_assert(dash == NULL);
+    g_assert_null(dash);
 
     g_object_unref(line_style);
 }

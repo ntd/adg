@@ -30,7 +30,7 @@ _adg_test_generic(void)
     CpmlPair dummy_pair = { 3.4, 5.6 };
 
     point = adg_point_new();
-    g_assert(point != NULL);
+    g_assert_nonnull(point);
 
     adg_point_set_pair_explicit(point, 1, 2);
     pair = (CpmlPair *) point;
@@ -38,24 +38,24 @@ _adg_test_generic(void)
     g_assert_cmpfloat(pair->y, ==, 2);
 
     pair = adg_point_get_pair(point);
-    g_assert(pair != NULL);
+    g_assert_nonnull(pair);
     g_assert_cmpfloat(pair->x, ==, 1);
     g_assert_cmpfloat(pair->y, ==, 2);
 
     dup_point = adg_point_dup(point);
-    g_assert(dup_point != NULL);
-    g_assert(dup_point != point);
+    g_assert_nonnull(dup_point);
+    g_assert_true(dup_point != point);
 
     /* Should be a noop with explicit pairs */
     adg_point_invalidate(point);
 
     dup_pair = adg_point_get_pair(dup_point);
-    g_assert(dup_pair != NULL);
-    g_assert(dup_pair != pair);
+    g_assert_nonnull(dup_pair);
+    g_assert_true(dup_pair != pair);
 
     g_assert_cmpfloat(pair->x, ==, dup_pair->x);
     g_assert_cmpfloat(pair->y, ==, dup_pair->y);
-    g_assert(adg_point_equal(point, dup_point));
+    g_assert_true(adg_point_equal(point, dup_point));
 
     g_free(dup_pair);
     adg_point_destroy(dup_point);
@@ -69,16 +69,16 @@ _adg_test_generic(void)
 
     g_assert_cmpfloat(dup_pair->x, ==, 3.4);
     g_assert_cmpfloat(dup_pair->y, ==, 5.6);
-    g_assert(! adg_point_equal(point, dup_point));
+    g_assert_false(adg_point_equal(point, dup_point));
 
     adg_point_copy(dup_point, point);
     dup_pair = adg_point_get_pair(dup_point);
-    g_assert(dup_pair != NULL);
-    g_assert(dup_pair != pair);
+    g_assert_nonnull(dup_pair);
+    g_assert_nonnull(dup_pair);
 
     g_assert_cmpfloat(pair->x, ==, dup_pair->x);
     g_assert_cmpfloat(pair->y, ==, dup_pair->y);
-    g_assert(adg_point_equal(point, dup_point));
+    g_assert_true(adg_point_equal(point, dup_point));
 
     g_free(pair);
     g_free(dup_pair);
@@ -95,40 +95,40 @@ _adg_test_named_pair(void)
     CpmlPair *pair;
 
     explicit_point = adg_point_new();
-    g_assert(explicit_point != NULL);
+    g_assert_nonnull(explicit_point);
     adg_point_set_pair(explicit_point, &p1);
 
     explicit_point2 = adg_point_new();
-    g_assert(explicit_point2 != NULL);
+    g_assert_nonnull(explicit_point2);
     adg_point_set_pair_explicit(explicit_point2, p1.x, p1.y);
 
     /* Checking comparison APIs */
-    g_assert(adg_point_equal(explicit_point, explicit_point2));
+    g_assert_true(adg_point_equal(explicit_point, explicit_point2));
     adg_point_set_pair_explicit(explicit_point2, 78, 90);
-    g_assert(! adg_point_equal(explicit_point, explicit_point2));
+    g_assert_false(adg_point_equal(explicit_point, explicit_point2));
     pair = (CpmlPair *) explicit_point2;
     g_assert_cmpfloat(pair->x, ==, 78);
     g_assert_cmpfloat(pair->y, ==, 90);
 
     pair = adg_point_get_pair(explicit_point);
-    g_assert(cpml_pair_equal(pair, &p1));
+    g_assert_true(cpml_pair_equal(pair, &p1));
     g_free(pair);
 
     model = ADG_MODEL(adg_path_new());
-    g_assert(model != NULL);
+    g_assert_nonnull(model);
     adg_model_set_named_pair(model, "named-pair", &p1);
 
     model_point = adg_point_new();
-    g_assert(model_point != NULL);
+    g_assert_nonnull(model_point);
     adg_point_set_pair_from_model(model_point, model, "named-pair");
 
     pair = adg_point_get_pair(model_point);
-    g_assert(cpml_pair_equal(pair, &p1));
+    g_assert_true(cpml_pair_equal(pair, &p1));
     g_free(pair);
 
     /* Ensure ADG does not consider an explicit point equals to
      * a point bound to a named pair with the same coordinates */
-    g_assert(! adg_point_equal(explicit_point, model_point));
+    g_assert_false(adg_point_equal(explicit_point, model_point));
 
     /* Check for lazy evaluation of named pairs */
     adg_point_set_pair_from_model(model_point, model, "unexistent-pair");
@@ -137,21 +137,21 @@ _adg_test_named_pair(void)
     g_assert_cmpfloat(pair->y, ==, p1.y);
 
     /* Check behavior on undefined named pair */
-    g_assert(! adg_point_update(model_point));
-    g_assert(adg_point_get_pair(model_point) == NULL);
+    g_assert_false(adg_point_update(model_point));
+    g_assert_null(adg_point_get_pair(model_point));
 
     adg_point_set_pair_from_model(model_point, model, "named-pair");
-    g_assert(adg_point_update(model_point));
+    g_assert_true(adg_point_update(model_point));
 
     /* Check for case sensitiveness */
     adg_point_set_pair_from_model(model_point, model, "Named-Pair");
-    g_assert(adg_point_get_pair(model_point) == NULL);
-    g_assert(! adg_point_update(model_point));
+    g_assert_null(adg_point_get_pair(model_point));
+    g_assert_false(adg_point_update(model_point));
 
     /* Check if adg_point_get_pair() triggers an adg_point_update() */
     adg_point_set_pair_from_model(model_point, model, "named-pair");
     pair = adg_point_get_pair(model_point);
-    g_assert(cpml_pair_equal(pair, &p1));
+    g_assert_true(cpml_pair_equal(pair, &p1));
     g_free(pair);
 
     adg_point_destroy(explicit_point);

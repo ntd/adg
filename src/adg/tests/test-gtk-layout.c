@@ -37,43 +37,45 @@ _adg_test_hadjustment(void)
     /* Using the public APIs */
     g_test_message("The implementation must provide a fallback adjustment");
     hadjustment = adg_gtk_layout_get_hadjustment(layout);
-    g_assert(GTK_IS_ADJUSTMENT(hadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(hadjustment));
 
     adg_gtk_layout_set_hadjustment(layout, NULL);
     hadjustment = adg_gtk_layout_get_hadjustment(layout);
-    g_assert(GTK_IS_ADJUSTMENT(hadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(hadjustment));
 
     adg_gtk_layout_set_hadjustment(layout, valid_adjustment);
     hadjustment = adg_gtk_layout_get_hadjustment(layout);
-    g_assert(hadjustment == valid_adjustment);
+    g_assert_true(hadjustment == valid_adjustment);
 
     adg_gtk_layout_set_hadjustment(layout, invalid_adjustment);
     hadjustment = adg_gtk_layout_get_hadjustment(layout);
-    g_assert(hadjustment == valid_adjustment);
+    g_assert_true(hadjustment == valid_adjustment);
 
     adg_gtk_layout_set_hadjustment(layout, NULL);
     hadjustment = adg_gtk_layout_get_hadjustment(layout);
-    g_assert(hadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(hadjustment));
+    g_assert_true(hadjustment != valid_adjustment);
+    g_assert_true(GTK_IS_ADJUSTMENT(hadjustment));
 
     /* Using GObject property methods */
     g_object_set(layout, "hadjustment", NULL, NULL);
     g_object_get(layout, "hadjustment", &hadjustment, NULL);
-    g_assert(GTK_IS_ADJUSTMENT(hadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(hadjustment));
     g_object_unref(hadjustment);
 
     g_object_set(layout, "hadjustment", valid_adjustment, NULL);
     g_object_get(layout, "hadjustment", &hadjustment, NULL);
-    g_assert(hadjustment == valid_adjustment);
+    g_assert_true(hadjustment == valid_adjustment);
     g_object_unref(hadjustment);
 
     g_object_set(layout, "hadjustment", invalid_adjustment, NULL);
     g_object_get(layout, "hadjustment", &hadjustment, NULL);
-    g_assert(hadjustment == valid_adjustment);
+    g_assert_true(hadjustment == valid_adjustment);
     g_object_unref(hadjustment);
 
     g_object_set(layout, "hadjustment", NULL, NULL);
     g_object_get(layout, "hadjustment", &hadjustment, NULL);
-    g_assert(hadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(hadjustment));
+    g_assert_true(hadjustment != valid_adjustment);
+    g_assert_true(GTK_IS_ADJUSTMENT(hadjustment));
     g_object_unref(hadjustment);
 
     gtk_widget_destroy(GTK_WIDGET(layout));
@@ -95,43 +97,45 @@ _adg_test_vadjustment(void)
     /* Using the public APIs */
     g_test_message("The implementation must provide a fallback adjustment");
     vadjustment = adg_gtk_layout_get_vadjustment(layout);
-    g_assert(GTK_IS_ADJUSTMENT(vadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(vadjustment));
 
     adg_gtk_layout_set_vadjustment(layout, NULL);
     vadjustment = adg_gtk_layout_get_vadjustment(layout);
-    g_assert(GTK_IS_ADJUSTMENT(vadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(vadjustment));
 
     adg_gtk_layout_set_vadjustment(layout, valid_adjustment);
     vadjustment = adg_gtk_layout_get_vadjustment(layout);
-    g_assert(vadjustment == valid_adjustment);
+    g_assert_true(vadjustment == valid_adjustment);
 
     adg_gtk_layout_set_vadjustment(layout, invalid_adjustment);
     vadjustment = adg_gtk_layout_get_vadjustment(layout);
-    g_assert(vadjustment == valid_adjustment);
+    g_assert_true(vadjustment == valid_adjustment);
 
     adg_gtk_layout_set_vadjustment(layout, NULL);
     vadjustment = adg_gtk_layout_get_vadjustment(layout);
-    g_assert(vadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(vadjustment));
+    g_assert_true(vadjustment != valid_adjustment);
+    g_assert_true(GTK_IS_ADJUSTMENT(vadjustment));
 
     /* Using GObject property methods */
     g_object_set(layout, "vadjustment", NULL, NULL);
     g_object_get(layout, "vadjustment", &vadjustment, NULL);
-    g_assert(GTK_IS_ADJUSTMENT(vadjustment));
+    g_assert_true(GTK_IS_ADJUSTMENT(vadjustment));
     g_object_unref(vadjustment);
 
     g_object_set(layout, "vadjustment", valid_adjustment, NULL);
     g_object_get(layout, "vadjustment", &vadjustment, NULL);
-    g_assert(vadjustment == valid_adjustment);
+    g_assert_true(vadjustment == valid_adjustment);
     g_object_unref(vadjustment);
 
     g_object_set(layout, "vadjustment", invalid_adjustment, NULL);
     g_object_get(layout, "vadjustment", &vadjustment, NULL);
-    g_assert(vadjustment == valid_adjustment);
+    g_assert_true(vadjustment == valid_adjustment);
     g_object_unref(vadjustment);
 
     g_object_set(layout, "vadjustment", NULL, NULL);
     g_object_get(layout, "vadjustment", &vadjustment, NULL);
-    g_assert(vadjustment != valid_adjustment && GTK_IS_ADJUSTMENT(vadjustment));
+    g_assert_true(vadjustment != valid_adjustment);
+    g_assert_true(GTK_IS_ADJUSTMENT(vadjustment));
     g_object_unref(vadjustment);
 
     gtk_widget_destroy(GTK_WIDGET(layout));

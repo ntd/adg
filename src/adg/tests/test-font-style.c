@@ -117,7 +117,7 @@ _adg_test_family(void)
 
     adg_font_style_set_family(font_style, NULL);
     family = adg_font_style_get_family(font_style);
-    g_assert(family == NULL);
+    g_assert_null(family);
 
     /* Using GObject property methods */
     g_object_set(font_style, "family", valid_text_1, NULL);
@@ -132,7 +132,7 @@ _adg_test_family(void)
 
     g_object_set(font_style, "family", NULL, NULL);
     g_object_get(font_style, "family", &family_dup, NULL);
-    g_assert(family_dup == NULL);
+    g_assert_null(family_dup);
 
     g_object_unref(font_style);
 }

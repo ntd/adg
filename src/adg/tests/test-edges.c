@@ -36,30 +36,30 @@ _adg_test_source(void)
     /* Using the public APIs */
     adg_edges_set_source(edges, valid_trail);
     source = adg_edges_get_source(edges);
-    g_assert(source == valid_trail);
+    g_assert_true(source == valid_trail);
 
     adg_edges_set_source(edges, invalid_trail);
     source = adg_edges_get_source(edges);
-    g_assert(source == valid_trail);
+    g_assert_true(source == valid_trail);
 
     adg_edges_set_source(edges, NULL);
     source = adg_edges_get_source(edges);
-    g_assert(source == NULL);
+    g_assert_null(source);
 
     /* Using GObject property methods */
     g_object_set(edges, "source", valid_trail, NULL);
     g_object_get(edges, "source", &source, NULL);
-    g_assert(source == valid_trail);
+    g_assert_true(source == valid_trail);
     g_object_unref(source);
 
     g_object_set(edges, "source", invalid_trail, NULL);
     g_object_get(edges, "source", &source, NULL);
-    g_assert(source == valid_trail);
+    g_assert_true(source == valid_trail);
     g_object_unref(source);
 
     g_object_set(edges, "source", NULL, NULL);
     g_object_get(edges, "source", &source, NULL);
-    g_assert(source == NULL);
+    g_assert_null(source);
 
     g_object_unref(edges);
     g_object_unref(valid_trail);

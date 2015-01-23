@@ -34,21 +34,21 @@ _cpml_test_basic(void)
 
     g_test_message("By convention, undefined extents are not equal to invalid extents");
     equals = cpml_extents_equal(&extents, &extents2);
-    g_assert(equals);
+    g_assert_true(equals);
     equals = cpml_extents_equal(&extents, NULL);
-    g_assert(! equals);
+    g_assert_false(equals);
     equals = cpml_extents_equal(NULL, &extents);
-    g_assert(! equals);
+    g_assert_false(equals);
     equals = cpml_extents_equal(NULL, NULL);
-    g_assert(equals);
+    g_assert_true(equals);
 
     extents.is_defined = 1;
     equals = cpml_extents_equal(&extents, &extents2);
-    g_assert(! equals);
+    g_assert_false(equals);
 
     cpml_extents_copy(&extents2, &extents);
     equals = cpml_extents_equal(&extents, &extents2);
-    g_assert(equals);
+    g_assert_true(equals);
 }
 
 static void
@@ -66,53 +66,53 @@ _cpml_test_add(void)
 
     g_test_message("By convention, nothing is inside undefined extents...");
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
     is_inside = cpml_extents_pair_is_inside(&extents, &org);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
 
     cpml_extents_pair_add(&extents, &pair1);
     equals = cpml_extents_equal(&extents, &extents2);
-    g_assert(! equals);
+    g_assert_false(equals);
 
     g_test_message("...but undefined extents are always inside defined extents");
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     is_inside = cpml_extents_pair_is_inside(&extents, &pair1);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
     is_inside = cpml_extents_pair_is_inside(&extents, &pair2);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
 
     cpml_extents_pair_add(&extents2, &pair1);
     equals = cpml_extents_equal(&extents, &extents2);
-    g_assert(equals);
+    g_assert_true(equals);
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     cpml_extents_pair_add(&extents, &pair2);
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
     is_inside = cpml_extents_pair_is_inside(&extents, &pair1);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
     is_inside = cpml_extents_pair_is_inside(&extents, &pair2);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     cpml_extents_pair_add(&extents2, &pair2);
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     is_inside = cpml_extents_is_inside(&extents2, &extents);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     cpml_extents_pair_add(&extents2, &org);
     is_inside = cpml_extents_is_inside(&extents, &extents2);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
 
     /* The following test fails on FreeBSD 8.2, probably due
      * to rounding problems:
      *
      * is_inside = cpml_extents_is_inside(&extents2, &extents);
-     * g_assert(is_inside);
+     * g_assert_true(is_inside);
      */
 }
 
@@ -131,19 +131,19 @@ _cpml_test_transform(void)
     extents.size.y = 5;
 
     is_inside = cpml_extents_pair_is_inside(&extents, &nord);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
 
     cairo_matrix_init_translate(&matrix, -extents.org.x - 1, -extents.org.y - 1);
     cpml_extents_transform(&extents, &matrix);
 
     is_inside = cpml_extents_pair_is_inside(&extents, &nord);
-    g_assert(is_inside);
+    g_assert_true(is_inside);
 
     cairo_matrix_init_scale(&matrix, 0.01, 0.01);
     cpml_extents_transform(&extents, &matrix);
 
     is_inside = cpml_extents_pair_is_inside(&extents, &nord);
-    g_assert(! is_inside);
+    g_assert_false(is_inside);
 }
 
 

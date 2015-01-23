@@ -71,7 +71,7 @@ _adg_test_author(void)
 
     adg_title_block_set_author(title_block, NULL);
     author = adg_title_block_get_author(title_block);
-    g_assert(author == NULL);
+    g_assert_null(author);
 
     /* Using GObject property methods */
     g_object_set(title_block, "author", valid_text, NULL);
@@ -86,7 +86,7 @@ _adg_test_author(void)
 
     g_object_set(title_block, "author", NULL, NULL);
     g_object_get(title_block, "author", &author_dup, NULL);
-    g_assert(author_dup == NULL);
+    g_assert_null(author_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
 }
@@ -114,7 +114,7 @@ _adg_test_date(void)
 
     adg_title_block_set_date(title_block, NULL);
     date = adg_title_block_get_date(title_block);
-    g_assert(date != NULL);
+    g_assert_nonnull(date);
 
     /* Using GObject property methods */
     g_object_set(title_block, "date", valid_text, NULL);
@@ -129,7 +129,7 @@ _adg_test_date(void)
 
     g_object_set(title_block, "date", NULL, NULL);
     g_object_get(title_block, "date", &date_dup, NULL);
-    g_assert(date_dup != NULL);
+    g_assert_nonnull(date_dup);
     g_free(date_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
@@ -158,7 +158,7 @@ _adg_test_drawing(void)
 
     adg_title_block_set_drawing(title_block, NULL);
     drawing = adg_title_block_get_drawing(title_block);
-    g_assert(drawing == NULL);
+    g_assert_null(drawing);
 
     /* Using GObject property methods */
     g_object_set(title_block, "drawing", valid_text, NULL);
@@ -173,7 +173,7 @@ _adg_test_drawing(void)
 
     g_object_set(title_block, "drawing", NULL, NULL);
     g_object_get(title_block, "drawing", &drawing_dup, NULL);
-    g_assert(drawing_dup == NULL);
+    g_assert_null(drawing_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
 }
@@ -195,39 +195,39 @@ _adg_test_logo(void)
     /* Using the public APIs */
     adg_title_block_set_logo(title_block, valid_entity);
     logo = adg_title_block_logo(title_block);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
 
     adg_title_block_set_logo(title_block, invalid_entity);
     logo = adg_title_block_logo(title_block);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
 
     adg_title_block_set_logo(title_block, valid_entity);
     logo = adg_title_block_logo(title_block);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
 
     adg_title_block_set_logo(title_block, NULL);
     logo = adg_title_block_logo(title_block);
-    g_assert(logo == NULL);
+    g_assert_null(logo);
 
     /* Using GObject property methods */
     g_object_set(title_block, "logo", valid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
     adg_entity_destroy(logo);
 
     g_object_set(title_block, "logo", invalid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
     adg_entity_destroy(logo);
 
     g_object_set(title_block, "logo", valid_entity, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
-    g_assert(logo == valid_entity);
+    g_assert_true(logo == valid_entity);
     adg_entity_destroy(logo);
 
     g_object_set(title_block, "logo", NULL, NULL);
     g_object_get(title_block, "logo", &logo, NULL);
-    g_assert(logo == NULL);
+    g_assert_null(logo);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
     g_object_unref(valid_entity);
@@ -250,30 +250,30 @@ _adg_test_projection(void)
     /* Using the public APIs */
     adg_title_block_set_projection(title_block, valid_entity);
     projection = adg_title_block_projection(title_block);
-    g_assert(projection == valid_entity);
+    g_assert_true(projection == valid_entity);
 
     adg_title_block_set_projection(title_block, invalid_entity);
     projection = adg_title_block_projection(title_block);
-    g_assert(projection == valid_entity);
+    g_assert_true(projection == valid_entity);
 
     adg_title_block_set_projection(title_block, NULL);
     projection = adg_title_block_projection(title_block);
-    g_assert(projection == NULL);
+    g_assert_null(projection);
 
     /* Using GObject property methods */
     g_object_set(title_block, "projection", valid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
-    g_assert(projection == valid_entity);
+    g_assert_true(projection == valid_entity);
     adg_entity_destroy(projection);
 
     g_object_set(title_block, "projection", invalid_entity, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
-    g_assert(projection == valid_entity);
+    g_assert_true(projection == valid_entity);
     adg_entity_destroy(projection);
 
     g_object_set(title_block, "projection", NULL, NULL);
     g_object_get(title_block, "projection", &projection, NULL);
-    g_assert(projection == NULL);
+    g_assert_null(projection);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
     g_object_unref(valid_entity);
@@ -302,7 +302,7 @@ _adg_test_scale(void)
 
     adg_title_block_set_scale(title_block, NULL);
     scale = adg_title_block_get_scale(title_block);
-    g_assert(scale == NULL);
+    g_assert_null(scale);
 
     /* Using GObject property methods */
     g_object_set(title_block, "scale", valid_text, NULL);
@@ -317,7 +317,7 @@ _adg_test_scale(void)
 
     g_object_set(title_block, "scale", NULL, NULL);
     g_object_get(title_block, "scale", &scale_dup, NULL);
-    g_assert(scale_dup == NULL);
+    g_assert_null(scale_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
 }
@@ -345,7 +345,7 @@ _adg_test_size(void)
 
     adg_title_block_set_size(title_block, NULL);
     size = adg_title_block_get_size(title_block);
-    g_assert(size == NULL);
+    g_assert_null(size);
 
     /* Using GObject property methods */
     g_object_set(title_block, "size", valid_text, NULL);
@@ -360,7 +360,7 @@ _adg_test_size(void)
 
     g_object_set(title_block, "size", NULL, NULL);
     g_object_get(title_block, "size", &size_dup, NULL);
-    g_assert(size_dup == NULL);
+    g_assert_null(size_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
 }
@@ -388,7 +388,7 @@ _adg_test_title(void)
 
     adg_title_block_set_title(title_block, NULL);
     title = adg_title_block_get_title(title_block);
-    g_assert(title == NULL);
+    g_assert_null(title);
 
     /* Using GObject property methods */
     g_object_set(title_block, "title", valid_text, NULL);
@@ -403,7 +403,7 @@ _adg_test_title(void)
 
     g_object_set(title_block, "title", NULL, NULL);
     g_object_get(title_block, "title", &title_dup, NULL);
-    g_assert(title_dup == NULL);
+    g_assert_null(title_dup);
 
     adg_entity_destroy(ADG_ENTITY(title_block));
 }

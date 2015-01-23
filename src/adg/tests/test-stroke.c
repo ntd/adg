@@ -78,38 +78,38 @@ _adg_test_trail(void)
     /* Using the public APIs */
     adg_stroke_set_trail(stroke, NULL);
     trail = adg_stroke_get_trail(stroke);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     adg_stroke_set_trail(stroke, valid_trail);
     trail = adg_stroke_get_trail(stroke);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
 
     adg_stroke_set_trail(stroke, invalid_trail);
     trail = adg_stroke_get_trail(stroke);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
 
     adg_stroke_set_trail(stroke, NULL);
     trail = adg_stroke_get_trail(stroke);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     /* Using GObject property methods */
     g_object_set(stroke, "trail", NULL, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     g_object_set(stroke, "trail", valid_trail, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
     g_object_unref(trail);
 
     g_object_set(stroke, "trail", invalid_trail, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
-    g_assert(trail == valid_trail);
+    g_assert_true(trail == valid_trail);
     g_object_unref(trail);
 
     g_object_set(stroke, "trail", NULL, NULL);
     g_object_get(stroke, "trail", &trail, NULL);
-    g_assert(trail == NULL);
+    g_assert_null(trail);
 
     adg_entity_destroy(ADG_ENTITY(stroke));
     g_object_unref(valid_trail);

@@ -37,38 +37,38 @@ _adg_test_canvas(void)
     /* Using the public APIs */
     adg_gtk_area_set_canvas(area, NULL);
     canvas = adg_gtk_area_get_canvas(area);
-    g_assert(canvas == NULL);
+    g_assert_null(canvas);
 
     adg_gtk_area_set_canvas(area, valid_canvas);
     canvas = adg_gtk_area_get_canvas(area);
-    g_assert(canvas == valid_canvas);
+    g_assert_true(canvas == valid_canvas);
 
     adg_gtk_area_set_canvas(area, invalid_canvas);
     canvas = adg_gtk_area_get_canvas(area);
-    g_assert(canvas == valid_canvas);
+    g_assert_true(canvas == valid_canvas);
 
     adg_gtk_area_set_canvas(area, NULL);
     canvas = adg_gtk_area_get_canvas(area);
-    g_assert(canvas == NULL);
+    g_assert_null(canvas);
 
     /* Using GObject property methods */
     g_object_set(area, "canvas", NULL, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
-    g_assert(canvas == NULL);
+    g_assert_null(canvas);
 
     g_object_set(area, "canvas", valid_canvas, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
-    g_assert(canvas == valid_canvas);
+    g_assert_true(canvas == valid_canvas);
     adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", invalid_canvas, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
-    g_assert(canvas == valid_canvas);
+    g_assert_true(canvas == valid_canvas);
     adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", NULL, NULL);
     g_object_get(area, "canvas", &canvas, NULL);
-    g_assert(canvas == NULL);
+    g_assert_null(canvas);
 
     gtk_widget_destroy(GTK_WIDGET(area));
     adg_entity_destroy(ADG_ENTITY(valid_canvas));
@@ -127,28 +127,28 @@ _adg_test_autozoom(void)
     /* Using the public APIs */
     adg_gtk_area_switch_autozoom(area, FALSE);
     has_autozoom = adg_gtk_area_has_autozoom(area);
-    g_assert(!has_autozoom);
+    g_assert_false(has_autozoom);
 
     adg_gtk_area_switch_autozoom(area, invalid_boolean);
     has_autozoom = adg_gtk_area_has_autozoom(area);
-    g_assert(!has_autozoom);
+    g_assert_false(has_autozoom);
 
     adg_gtk_area_switch_autozoom(area, TRUE);
     has_autozoom = adg_gtk_area_has_autozoom(area);
-    g_assert(has_autozoom);
+    g_assert_true(has_autozoom);
 
     /* Using GObject property methods */
     g_object_set(area, "autozoom", invalid_boolean, NULL);
     g_object_get(area, "autozoom", &has_autozoom, NULL);
-    g_assert(has_autozoom);
+    g_assert_true(has_autozoom);
 
     g_object_set(area, "autozoom", FALSE, NULL);
     g_object_get(area, "autozoom", &has_autozoom, NULL);
-    g_assert(!has_autozoom);
+    g_assert_false(has_autozoom);
 
     g_object_set(area, "autozoom", TRUE, NULL);
     g_object_get(area, "autozoom", &has_autozoom, NULL);
-    g_assert(has_autozoom);
+    g_assert_true(has_autozoom);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -174,38 +174,38 @@ _adg_test_render_map(void)
     /* Using the public APIs */
     adg_gtk_area_set_render_map(area, &null_map);
     render_map = adg_gtk_area_get_render_map(area);
-    g_assert(adg_matrix_equal(render_map, &null_map));
+    g_assert_true(adg_matrix_equal(render_map, &null_map));
 
     adg_gtk_area_transform_render_map(area, &dummy_map, ADG_TRANSFORM_AFTER);
     render_map = adg_gtk_area_get_render_map(area);
-    g_assert(adg_matrix_equal(render_map, &null_map));
+    g_assert_true(adg_matrix_equal(render_map, &null_map));
 
     adg_gtk_area_set_render_map(area, identity_map);
     render_map = adg_gtk_area_get_render_map(area);
-    g_assert(adg_matrix_equal(render_map, identity_map));
+    g_assert_true(adg_matrix_equal(render_map, identity_map));
 
     adg_gtk_area_set_render_map(area, NULL);
     render_map = adg_gtk_area_get_render_map(area);
-    g_assert(adg_matrix_equal(render_map, identity_map));
+    g_assert_true(adg_matrix_equal(render_map, identity_map));
 
     adg_gtk_area_transform_render_map(area, &dummy_map, ADG_TRANSFORM_BEFORE);
     render_map = adg_gtk_area_get_render_map(area);
-    g_assert(adg_matrix_equal(render_map, &dummy_map));
+    g_assert_true(adg_matrix_equal(render_map, &dummy_map));
 
     /* Using GObject property methods */
     g_object_set(area, "render-map", &null_map, NULL);
     g_object_get(area, "render-map", &render_map_dup, NULL);
-    g_assert(adg_matrix_equal(render_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(render_map_dup, &null_map));
     g_free(render_map_dup);
 
     g_object_set(area, "render-map", NULL, NULL);
     g_object_get(area, "render-map", &render_map_dup, NULL);
-    g_assert(adg_matrix_equal(render_map_dup, &null_map));
+    g_assert_true(adg_matrix_equal(render_map_dup, &null_map));
     g_free(render_map_dup);
 
     g_object_set(area, "render-map", identity_map, NULL);
     g_object_get(area, "render-map", &render_map_dup, NULL);
-    g_assert(adg_matrix_equal(render_map_dup, identity_map));
+    g_assert_true(adg_matrix_equal(render_map_dup, identity_map));
     g_free(render_map_dup);
 
     gtk_widget_destroy(GTK_WIDGET(area));

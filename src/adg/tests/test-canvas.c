@@ -119,38 +119,38 @@ _adg_test_title_block(void)
     /* Using the public APIs */
     adg_canvas_set_title_block(canvas, NULL);
     title_block = adg_canvas_get_title_block(canvas);
-    g_assert(title_block == NULL);
+    g_assert_null(title_block);
 
     adg_canvas_set_title_block(canvas, valid_title_block);
     title_block = adg_canvas_get_title_block(canvas);
-    g_assert(title_block == valid_title_block);
+    g_assert_true(title_block == valid_title_block);
 
     adg_canvas_set_title_block(canvas, invalid_title_block);
     title_block = adg_canvas_get_title_block(canvas);
-    g_assert(title_block == valid_title_block);
+    g_assert_true(title_block == valid_title_block);
 
     adg_canvas_set_title_block(canvas, NULL);
     title_block = adg_canvas_get_title_block(canvas);
-    g_assert(title_block == NULL);
+    g_assert_null(title_block);
 
     /* Using GObject property methods */
     g_object_set(canvas, "title-block", NULL, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
-    g_assert(title_block == NULL);
+    g_assert_null(title_block);
 
     g_object_set(canvas, "title-block", valid_title_block, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
-    g_assert(title_block == valid_title_block);
+    g_assert_true(title_block == valid_title_block);
     adg_entity_destroy(ADG_ENTITY(title_block));
 
     g_object_set(canvas, "title-block", invalid_title_block, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
-    g_assert(title_block == valid_title_block);
+    g_assert_true(title_block == valid_title_block);
     adg_entity_destroy(ADG_ENTITY(title_block));
 
     g_object_set(canvas, "title-block", NULL, NULL);
     g_object_get(canvas, "title-block", &title_block, NULL);
-    g_assert(title_block == NULL);
+    g_assert_null(title_block);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
     adg_entity_destroy(ADG_ENTITY(valid_title_block));
@@ -174,34 +174,34 @@ _adg_test_size(void)
     size = adg_canvas_get_size(canvas);
 
     /* The default size is 0, 0 (anamorphic canvas) */
-    g_assert(cpml_pair_equal(size, &null_size));
+    g_assert_true(cpml_pair_equal(size, &null_size));
 
     adg_canvas_set_size(canvas, &sample_size);
     size = adg_canvas_get_size(canvas);
-    g_assert(cpml_pair_equal(size, &sample_size));
+    g_assert_true(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size(canvas, NULL);
     size = adg_canvas_get_size(canvas);
-    g_assert(cpml_pair_equal(size, &sample_size));
+    g_assert_true(cpml_pair_equal(size, &sample_size));
 
     adg_canvas_set_size_explicit(canvas, 0, 0);
     size = adg_canvas_get_size(canvas);
-    g_assert(cpml_pair_equal(size, &null_size));
+    g_assert_true(cpml_pair_equal(size, &null_size));
 
     /* Using GObject property methods */
     g_object_set(canvas, "size", &sample_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(cpml_pair_equal(size_dup, &sample_size));
+    g_assert_true(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", NULL, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(cpml_pair_equal(size_dup, &sample_size));
+    g_assert_true(cpml_pair_equal(size_dup, &sample_size));
     g_free(size_dup);
 
     g_object_set(canvas, "size", &null_size, NULL);
     g_object_get(canvas, "size", &size_dup, NULL);
-    g_assert(cpml_pair_equal(size_dup, &null_size));
+    g_assert_true(cpml_pair_equal(size_dup, &null_size));
     g_free(size_dup);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
@@ -217,50 +217,50 @@ _adg_test_scales(void)
     /* By default, AdgCanvas:scales is prefilled with some default scales */
     canvas = adg_canvas_new();
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales != NULL);
+    g_assert_nonnull(scales);
     adg_entity_destroy(ADG_ENTITY(canvas));
 
     /* AdgCanvas:scales must be prefilled also when using g_object_new() */
     canvas = g_object_new(ADG_TYPE_CANVAS, NULL);
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales != NULL);
+    g_assert_nonnull(scales);
 
     /* Using the public APIs */
     adg_canvas_set_scales(canvas, NULL);
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales == NULL);
+    g_assert_null(scales);
 
     adg_canvas_set_scales(canvas, "0", "1", NULL);
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales != NULL);
+    g_assert_nonnull(scales);
     g_assert_cmpstr(scales[0], ==, "0");
     g_assert_cmpstr(scales[1], ==, "1");
-    g_assert(scales[2] == NULL);
+    g_assert_null(scales[2]);
 
     adg_canvas_set_scales_array(canvas, NULL);
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales == NULL);
+    g_assert_null(scales);
 
     adg_canvas_set_scales_array(canvas, scales_array);
     scales = adg_canvas_get_scales(canvas);
-    g_assert(scales != NULL);
+    g_assert_nonnull(scales);
     g_assert_cmpstr(scales[0], ==, "a");
     g_assert_cmpstr(scales[1], ==, "b");
     g_assert_cmpstr(scales[2], ==, "c");
-    g_assert(scales[3] == NULL);
+    g_assert_null(scales[3]);
 
     /* Using GObject property methods */
     g_object_set(canvas, "scales", NULL, NULL);
     g_object_get(canvas, "scales", &scales, NULL);
-    g_assert(scales == NULL);
+    g_assert_null(scales);
 
     g_object_set(canvas, "scales", scales_array, NULL);
     g_object_get(canvas, "scales", &scales, NULL);
-    g_assert(scales != NULL);
+    g_assert_nonnull(scales);
     g_assert_cmpstr(scales[0], ==, "a");
     g_assert_cmpstr(scales[1], ==, "b");
     g_assert_cmpstr(scales[2], ==, "c");
-    g_assert(scales[3] == NULL);
+    g_assert_null(scales[3]);
     g_strfreev(scales);
 
     /* Check autoscale does not crash on no scales */
@@ -411,28 +411,28 @@ _adg_test_has_frame(void)
     /* Using the public APIs */
     adg_canvas_switch_frame(canvas, FALSE);
     has_frame = adg_canvas_has_frame(canvas);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     adg_canvas_switch_frame(canvas, invalid_boolean);
     has_frame = adg_canvas_has_frame(canvas);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     adg_canvas_switch_frame(canvas, TRUE);
     has_frame = adg_canvas_has_frame(canvas);
-    g_assert(has_frame);
+    g_assert_true(has_frame);
 
     /* Using GObject property methods */
     g_object_set(canvas, "has-frame", FALSE, NULL);
     g_object_get(canvas, "has-frame", &has_frame, NULL);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     g_object_set(canvas, "has-frame", invalid_boolean, NULL);
     g_object_get(canvas, "has-frame", &has_frame, NULL);
-    g_assert(!has_frame);
+    g_assert_false(has_frame);
 
     g_object_set(canvas, "has-frame", TRUE, NULL);
     g_object_get(canvas, "has-frame", &has_frame, NULL);
-    g_assert(has_frame);
+    g_assert_true(has_frame);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -666,17 +666,17 @@ _adg_method_get_page_setup(void)
     canvas = ADG_CANVAS(adg_canvas_new());
     page_setup = gtk_page_setup_new();
 
-    g_assert(adg_canvas_get_page_setup(canvas) == NULL);
+    g_assert_null(adg_canvas_get_page_setup(canvas));
 
     adg_canvas_set_page_setup(canvas, page_setup);
-    g_assert(adg_canvas_get_page_setup(canvas) == page_setup);
+    g_assert_true(adg_canvas_get_page_setup(canvas) == page_setup);
 
     /* canvas should still internally owns a reference to page_setup */
     g_object_unref(page_setup);
-    g_assert(GTK_IS_PAGE_SETUP(adg_canvas_get_page_setup(canvas)));
+    g_assert_true(GTK_IS_PAGE_SETUP(adg_canvas_get_page_setup(canvas)));
 
     adg_canvas_set_page_setup(canvas, NULL);
-    g_assert(adg_canvas_get_page_setup(canvas) == NULL);
+    g_assert_null(adg_canvas_get_page_setup(canvas));
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
