@@ -26,22 +26,6 @@
 
 G_BEGIN_DECLS
 
-/* Redefine the g_assert_cmpfloat() macro by using "float" instead of
- * "long double" helper variables. This is needed by FreeBSD to pass
- * the tests: g_value_get_double() seems to suffer a precision loss on
- * this OS that invalidates the comparation between doubles.
- */
-#undef g_assert_cmpfloat
-#define g_assert_cmpfloat(n1,cmp,n2) \
-    do { \
-        float __n1 = (n1), __n2 = (n2); \
-        if (__n1 cmp __n2) \
-            ; \
-        else \
-          g_assertion_message_cmpnum(G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
-                                     #n1 " " #cmp " " #n2, __n1, #cmp, __n2, 'f'); \
-    } while (0)
-
 /* Some backward compatible macros */
 #ifndef g_assert_true
 #define g_assert_true(expr)             do { if G_LIKELY (expr) ; else \

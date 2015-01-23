@@ -108,12 +108,8 @@ _cpml_test_add(void)
     is_inside = cpml_extents_is_inside(&extents, &extents2);
     g_assert_false(is_inside);
 
-    /* The following test fails on FreeBSD 8.2, probably due
-     * to rounding problems:
-     *
-     * is_inside = cpml_extents_is_inside(&extents2, &extents);
-     * g_assert_true(is_inside);
-     */
+    is_inside = cpml_extents_is_inside(&extents2, &extents);
+    g_assert_true(is_inside);
 }
 
 static void
