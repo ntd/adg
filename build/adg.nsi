@@ -105,6 +105,13 @@ Section $(TITLE_SecBase) SecBase
   File "${SRCDIR}/demo/adg-64.png"
   File "${SRCDIR}/demo/adg-128.png"
 
+  SetOutPath "$INSTDIR\share\adg\icons"
+  File "${SRCDIR}/demo/icons/adg-arc.png"
+  File "${SRCDIR}/demo/icons/adg-browsing.png"
+  File "${SRCDIR}/demo/icons/adg-curve.png"
+  File "${SRCDIR}/demo/icons/adg-intersection.png"
+  File "${SRCDIR}/demo/icons/adg-segment.png"
+
   SetOutPath "$INSTDIR\bin"
   File "${DLLDIR}/libwinpthread-*.dll"
   File "${DLLDIR}/libgcc_*-*.dll"
@@ -233,6 +240,13 @@ Section "Uninstall"
   Delete "$INSTDIR\bin\libcpml-1-*.dll"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
   RMDir  "$INSTDIR\bin"
+
+  Delete "$INSTDIR\share\adg\icons\adg-segment.png"
+  Delete "$INSTDIR\share\adg\icons\adg-intersection.png"
+  Delete "$INSTDIR\share\adg\icons\adg-curve.png"
+  Delete "$INSTDIR\share\adg\icons\adg-browsing.png"
+  Delete "$INSTDIR\share\adg\icons\adg-arc.png"
+  RMDir  "$INSTDIR\share\adg\icons"
 
   Delete "$INSTDIR\share\adg\adg-demo.ui"
   Delete "$INSTDIR\share\adg\cpml-demo.ui"
