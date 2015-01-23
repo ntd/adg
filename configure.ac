@@ -410,6 +410,7 @@ AC_SUBST([EXTRADIR])
 AC_CONFIG_FILES([build/Custom.nsh
                  Makefile
                  src/Makefile
+                 src/tests/Makefile
                  src/cpml/cpml-1.pc
                  src/cpml/Makefile
                  src/cpml/tests/Makefile

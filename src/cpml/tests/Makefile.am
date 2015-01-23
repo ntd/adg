@@ -2,37 +2,32 @@ include $(top_srcdir)/build/Makefile.am.common
 
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
-				-I$(top_builddir)/src
-AM_CFLAGS=			$(GLIB_CFLAGS) \
+				-I$(top_srcdir)/src/tests
+AM_CFLAGS=			$(GOBJECT_CFLAGS) \
 				$(CAIRO_CFLAGS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(GLIB_LIBS)
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
 
-
-# file groups
-test_internals=			test-internal.c \
-				test-internal.h
 
 if HAVE_TEST_FRAMEWORK
 
+LDADD+=				$(top_builddir)/src/tests/libadgtest.la
+
 TEST_PROGS+=			test-pair$(EXEEXT)
-test_pair_SOURCES=		test-pair.c \
-				$(test_internals)
+test_pair_SOURCES=		test-pair.c
 
 TEST_PROGS+=			test-extents$(EXEEXT)
-test_extents_SOURCES=		test-extents.c \
-				$(test_internals)
+test_extents_SOURCES=		test-extents.c
 
 TEST_PROGS+=			test-segment$(EXEEXT)
-test_segment_SOURCES=		test-segment.c \
-				$(test_internals)
+test_segment_SOURCES=		test-segment.c
 
 TEST_PROGS+=			test-primitive$(EXEEXT)
-test_primitive_SOURCES=		test-primitive.c \
-				$(test_internals)
-
+test_primitive_SOURCES=		test-primitive.c
 
 endif
+
+
+LDADD+=				$(GOBJECT_LIBS)
 
 
 # targets

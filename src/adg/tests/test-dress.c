@@ -18,7 +18,8 @@
  */
 
 
-#include "test-internal.h"
+#include <adg-test.h>
+#include <adg.h>
 
 /* ADG_TYPE_BEST_FONT_STYLE must be defined in order to check
  * style resolution from font dresses, but its definition is

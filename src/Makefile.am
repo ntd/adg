@@ -1,6 +1,7 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-SUBDIRS=			cpml \
+SUBDIRS=			tests \
+				cpml \
 				adg
 
 if HAVE_GLADE

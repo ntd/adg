@@ -18,7 +18,8 @@
  */
 
 
-#include "test-internal.h"
+#include <adg-test.h>
+#include <cpml.h>
 
 
 static void
@@ -149,11 +150,11 @@ _cpml_test_transform(void)
 int
 main(int argc, char *argv[])
 {
-    cpml_test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
-    cpml_test_add_func("/cpml/extents/basic", _cpml_test_basic);
-    cpml_test_add_func("/cpml/extents/add", _cpml_test_add);
-    cpml_test_add_func("/cpml/extents/transform", _cpml_test_transform);
+    adg_test_add_func("/cpml/extents/basic", _cpml_test_basic);
+    adg_test_add_func("/cpml/extents/add", _cpml_test_add);
+    adg_test_add_func("/cpml/extents/transform", _cpml_test_transform);
 
     return g_test_run();
 }

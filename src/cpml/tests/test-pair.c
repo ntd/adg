@@ -18,7 +18,8 @@
  */
 
 
-#include "test-internal.h"
+#include <adg-test.h>
+#include <cpml.h>
 #include <math.h>
 
 
@@ -249,14 +250,14 @@ _cpml_test_vector_transform(void)
 int
 main(int argc, char *argv[])
 {
-    cpml_test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
-    cpml_test_add_func("/cpml/pair/basic", _cpml_test_pair_basic);
-    cpml_test_add_func("/cpml/pair/transform", _cpml_test_pair_transform);
-    cpml_test_add_func("/cpml/pair/distance", _cpml_test_pair_distance);
-    cpml_test_add_func("/cpml/vector/angle", _cpml_test_vector_angle);
-    cpml_test_add_func("/cpml/vector/length", _cpml_test_vector_length);
-    cpml_test_add_func("/cpml/vector/transform", _cpml_test_vector_transform);
+    adg_test_add_func("/cpml/pair/basic", _cpml_test_pair_basic);
+    adg_test_add_func("/cpml/pair/transform", _cpml_test_pair_transform);
+    adg_test_add_func("/cpml/pair/distance", _cpml_test_pair_distance);
+    adg_test_add_func("/cpml/vector/angle", _cpml_test_vector_angle);
+    adg_test_add_func("/cpml/vector/length", _cpml_test_vector_length);
+    adg_test_add_func("/cpml/vector/transform", _cpml_test_vector_transform);
 
     return g_test_run();
 }

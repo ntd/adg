@@ -18,11 +18,10 @@
  */
 
 
-#ifndef __TEST_INIT_H__
-#define __TEST_INIT_H__
+#ifndef __ADG_TEST_H__
+#define __ADG_TEST_H__
 
-#include <adg.h>
-#include <config.h>
+#include <glib-object.h>
 
 
 G_BEGIN_DECLS
@@ -43,16 +42,14 @@ G_BEGIN_DECLS
                                      #n1 " " #cmp " " #n2, __n1, #cmp, __n2, 'f'); \
     } while (0)
 
-typedef void (*AdgCallback) (void);
-
 
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
 const gpointer  adg_test_invalid_pointer        (void);
-void            adg_test_add_func               (const char     *testpath,
-                                                 AdgCallback     test_func);
+void            adg_test_add_func               (const gchar     *testpath,
+                                                 GCallback       test_func);
 
 G_END_DECLS
 
 
-#endif /* __TEST_INIT_H__ */
+#endif /* __ADG_TEST_H__ */

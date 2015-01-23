@@ -18,7 +18,8 @@
  */
 
 
-#include "test-internal.h"
+#include <adg-test.h>
+#include <adg.h>
 
 
 static void

@@ -19,36 +19,41 @@
 
 
 #include <config.h>
-#include "test-internal.h"
-
-
-typedef void  (*CpmlCallback)              (void);
+#include "adg-test.h"
+#include <stdlib.h>
 
 
 void
-cpml_test_init(int *p_argc, char **p_argv[])
+adg_test_init(int *p_argc, char **p_argv[])
 {
     g_test_init(p_argc, p_argv, NULL);
     g_log_set_always_fatal(0);
     g_test_bug_base("http://dev.entidi.com/p/adg/issues/%s/");
 }
 
+const gpointer
+adg_test_invalid_pointer(void)
+{
+    static int junk[10] = { 0 };
+    return junk;
+}
+
 static void
-_cpml_log_handler(const gchar *log_domain, GLogLevelFlags log_level,
-                  const gchar *message, gpointer user_data)
+_adg_log_handler(const gchar *log_domain, GLogLevelFlags log_level,
+                 const gchar *message, gpointer user_data)
 {
 }
 
 static void
-_cpml_test_func(gconstpointer user_data)
+_adg_test_func(gconstpointer user_data)
 {
-    CpmlCallback test_func;
+    GCallback test_func;
     GLogFunc previous_handler;
 
-    test_func = (CpmlCallback) user_data;
+    test_func = (GCallback) user_data;
 
     /* Run a test in a forked environment, without showing log messages */
-    previous_handler = g_log_set_default_handler(_cpml_log_handler, NULL);
+    previous_handler = g_log_set_default_handler(_adg_log_handler, NULL);
     if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDERR)) {
         test_func();
         exit(0);
@@ -61,7 +66,7 @@ _cpml_test_func(gconstpointer user_data)
 }
 
 void
-cpml_test_add_func(const char *testpath, void (*test_func)(void))
+adg_test_add_func(const char *testpath, GCallback test_func)
 {
-    g_test_add_data_func(testpath, (gconstpointer) test_func, _cpml_test_func);
+    g_test_add_data_func(testpath, (gconstpointer) test_func, _adg_test_func);
 }

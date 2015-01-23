@@ -18,7 +18,8 @@
  */
 
 
-#include "test-internal.h"
+#include <adg-test.h>
+#include <cpml.h>
 #include <string.h>
 
 
@@ -343,13 +344,13 @@ _cpml_test_put_point(void)
 int
 main(int argc, char *argv[])
 {
-    cpml_test_init(&argc, &argv);
+    adg_test_init(&argc, &argv);
 
-    cpml_test_add_func("/cpml/primitive/basic", _cpml_test_basic);
-    cpml_test_add_func("/cpml/primitive/type_get_n_points", _cpml_test_type_get_n_points);
-    cpml_test_add_func("/cpml/primitive/get_n_points", _cpml_test_get_n_points);
-    cpml_test_add_func("/cpml/primitive/set_point", _cpml_test_set_point);
-    cpml_test_add_func("/cpml/primitive/put_point", _cpml_test_put_point);
+    adg_test_add_func("/cpml/primitive/basic", _cpml_test_basic);
+    adg_test_add_func("/cpml/primitive/type_get_n_points", _cpml_test_type_get_n_points);
+    adg_test_add_func("/cpml/primitive/get_n_points", _cpml_test_get_n_points);
+    adg_test_add_func("/cpml/primitive/set_point", _cpml_test_set_point);
+    adg_test_add_func("/cpml/primitive/put_point", _cpml_test_put_point);
 
     return g_test_run();
 }
