@@ -207,8 +207,8 @@ cpml_extents_is_inside(const CpmlExtents *extents, const CpmlExtents *src)
 
     pe.x += extents->size.x;
     pe.y += extents->size.y;
-    ps.x += extents->size.x;
-    ps.y += extents->size.y;
+    ps.x += src->size.x;
+    ps.y += src->size.y;
 
     return ps.x <= pe.x && ps.y <= pe.y;
 }
