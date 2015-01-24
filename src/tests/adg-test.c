@@ -38,7 +38,7 @@ adg_test_invalid_pointer(void)
 }
 
 
-#if GLIB_CHECK_VERSION(2, 38, 0)
+#if 0// GLIB_CHECK_VERSION(2, 38, 0)
 
 /* Instead of using the deprecated fork approach (it does not always work)
  * use the newly introduced g_test_set_nonfatal_assertions() API to avoid
