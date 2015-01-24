@@ -117,15 +117,16 @@ AM_CONDITIONAL([ENABLE_GCOV],[test "x$enable_gcov" = "xyes"])
 
 AC_CHECK_LIB([m],[cos])
 
-
-dnl GLib 2.16 is required by _adg_dgettext() for
-dnl g_win32_get_package_installation_directory_of_module()
+dnl On Windows, GLib 2.16 is required by _adg_dgettext() for the
+dnl g_win32_get_package_installation_directory_of_module() API.
+dnl On other platforms, it just needs to be in sync with GObject.
 AM_COND_IF([OS_WINDOWS],
            [AC_PATH_PROG([MAKENSIS],[makensis],[/usr/bin/makensis])
             AC_PATH_PROG([WINE],[wine])
             AC_ARG_VAR([WINDRES],[Command for Windows resources manipulation])
             AC_CHECK_TOOL([WINDRES],[windres])
-            PKG_CHECK_MODULES([GLIB],[glib-2.0 >= 2.16])])
+            glib_prereq=2.16.0],
+           [glib_prereq=]gobject_prereq)
 
 
 # Libtool initialization
@@ -155,7 +156,8 @@ AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE],["${ADG_API_PACKAGE}"],
 
 # Check for required packages
 
-PKG_CHECK_MODULES([GLIB],[glib-2.0])
+PKG_CHECK_MODULES([GLIB],[glib-2.0 >= ]${glib_prereq},
+                  [glib_postfix=" (glib-$($PKG_CONFIG --modversion glib-2.0))"])
 ADG_DEPENDENCY([glib-2.0],[glib])
 PKG_CHECK_MODULES([GOBJECT],[gobject-2.0 >= ]gobject_prereq)
 ADG_DEPENDENCY([gobject-2.0],[gobject])
@@ -175,7 +177,8 @@ AS_IF([test "x${enable_pango}" != "xno"],
                          [enable_pango=yes
                           AC_DEFINE_UNQUOTED([PANGO_ENABLED],[1],
                                              [Defined if the pango support is enabled.])
-                          ADG_DEPENDENCY([pangocairo],[pango])],
+                          ADG_DEPENDENCY([pangocairo],[pango])
+                          pango_postfix=" (pangocairo-$($PKG_CONFIG --modversion pangocairo))"],
                          [AS_IF([test "x${enable_pango}" = "xyes"],
                                 [AC_MSG_ERROR([${PANGO_PKG_ERRORS} and pango support requested])],
                                 [enable_pango=no])])])
@@ -214,10 +217,12 @@ AS_IF([test "x${with_gtk}" != "xno" -a "x${gtk_pkg}" = "x"],
       [AC_MSG_ERROR([GTK+ support explicitely required but no valid GTK+ found])])
 
 AS_IF([test "x${with_gtk}" = "xgtk3"],
-      [AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
+      [gtk_postfix=" (gtk+-$($PKG_CONFIG --modversion gtk+-3.0))"
+       AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
                           [Defined if the GTK+3 support is enabled.])])
 AS_IF([test "x${with_gtk}" = "xgtk2"],
-      [AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
+      [gtk_postfix=" (gtk+-$($PKG_CONFIG --modversion gtk+-2.0))"
+       AC_DEFINE_UNQUOTED([GTK2_ENABLED],[1],
                           [Defined if the GTK+2 support is enabled.])])
 
 AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" != "xno"])
@@ -265,6 +270,8 @@ AC_SUBST([GLADE_CATALOGDIR],${with_glade_catalogdir})
 
 dnl gtk-doc
 GTK_DOC_CHECK(gtkdoc_prereq)
+AS_IF([test "x$enable_gtk_doc" = "xyes"],
+      [gtkdoc_postfix=" (gtk-doc-$($PKG_CONFIG --modversion gtk-doc))"])
 
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
@@ -439,11 +446,11 @@ AC_MSG_NOTICE([generating report
 AC_PACKAGE_NAME adg_version will be built with the following options:
 ----------------------------------------------------------
                 CPML library to use: internal (cpml-adg_version)
-         Build pango based entities: ${enable_pango}
-                       GTK+ support: ${with_gtk}
+         Build pango based entities: ${enable_pango}${pango_postfix}
+                       GTK+ support: ${with_gtk}${gtk_postfix}
              Install glade catalogs: ${enable_glade}${report_glade}
-                Build API reference: ${enable_gtk_doc}
+                Build API reference: ${enable_gtk_doc}${gtkdoc_postfix}
              GObject instrospection: ${enable_introspection}${report_introspection}
                 Test coverage build: ${enable_gcov}
-             Test framework support: ${enable_test_framework}
+             Test framework support: ${enable_test_framework}${glib_postfix}
 ])
