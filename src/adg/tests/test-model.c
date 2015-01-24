@@ -40,8 +40,8 @@ _adg_test_named_pair(void)
     named_pair = adg_model_get_named_pair(model, "Not existent");
     g_assert_null(named_pair);
 
-    adg_model_set_named_pair(model, "Latin1: àèìòù", &valid_pair);
-    named_pair = adg_model_get_named_pair(model, "Latin1: àèìòù");
+    adg_model_set_named_pair(model, "UTF-8 name: àèìòù", &valid_pair);
+    named_pair = adg_model_get_named_pair(model, "UTF-8 name: àèìòù");
     g_assert_true(cpml_pair_equal(named_pair, &valid_pair));
 
     g_object_unref(model);
