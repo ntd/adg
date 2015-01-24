@@ -4,8 +4,8 @@ include $(top_srcdir)/build/Makefile.am.common
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_srcdir)/src/tests \
 				-I$(top_builddir)/src
-AM_CFLAGS=			$(GOBJECT_CFLAGS) \
-				$(CAIRO_CFLAGS)
+AM_CFLAGS=			$(CAIRO_CFLAGS) \
+				$(GOBJECT_CFLAGS)
 LDADD=				$(top_builddir)/src/adg/libadg-1.la \
 				$(top_builddir)/src/cpml/libcpml-1.la
 
@@ -122,13 +122,16 @@ test_gtk_layout_SOURCES=	test-gtk-layout.c
 
 AM_CFLAGS+=			$(GTK3_CFLAGS) \
 				$(GTK2_CFLAGS)
+LDADD+=				$(GTK3_LIBS) \
+				$(GTK2_LIBS)
 
 endif
 
 endif
 
 
-LDADD+=				$(GOBJECT_LIBS)
+LDADD+=				$(CAIRO_LIBS) \
+				$(GOBJECT_LIBS)
 
 
 # targets

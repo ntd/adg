@@ -3,8 +3,8 @@ include $(top_srcdir)/build/Makefile.am.common
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_srcdir)/src/tests
-AM_CFLAGS=			$(GOBJECT_CFLAGS) \
-				$(CAIRO_CFLAGS)
+AM_CFLAGS=			$(CAIRO_CFLAGS) \
+				$(GOBJECT_CFLAGS)
 LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
 
 
@@ -27,7 +27,8 @@ test_primitive_SOURCES=		test-primitive.c
 endif
 
 
-LDADD+=				$(GOBJECT_LIBS)
+LDADD+=				$(CAIRO_LIBS) \
+				$(GOBJECT_LIBS)
 
 
 # targets
