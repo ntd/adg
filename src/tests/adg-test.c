@@ -142,7 +142,8 @@ _adg_test_func(GCallback test_func)
 void
 adg_test_add_func(const char *testpath, GCallback test_func)
 {
-    g_test_add_data_func(testpath, (gconstpointer) test_func, _adg_test_func);
+    g_test_add_data_func(testpath, (gconstpointer) test_func,
+                         (GTestDataFunc) _adg_test_func);
 }
 
 #endif
