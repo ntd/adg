@@ -40,8 +40,10 @@ _adg_test_named_pair(void)
     named_pair = adg_model_get_named_pair(model, "Not existent");
     g_assert_null(named_pair);
 
-    adg_model_set_named_pair(model, "UTF-8 name: àèìòù", &valid_pair);
-    named_pair = adg_model_get_named_pair(model, "UTF-8 name: àèìòù");
+    /* Using \u UTF-8 encoded "aeiou" with grave accents */
+    adg_model_set_named_pair(model, "UTF-8 name: \xc3\xa0\xc3\xa8\xc3\xac\xc3\xb2\xc3\xb9", &valid_pair);
+
+    named_pair = adg_model_get_named_pair(model, "UTF-8 name: \xc3\xa0\xc3\xa8\xc3\xac\xc3\xb2\xc3\xb9");
     g_assert_true(cpml_pair_equal(named_pair, &valid_pair));
 
     g_object_unref(model);
