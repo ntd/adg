@@ -103,11 +103,14 @@
  *
  * Compares @s1 and @s2 like strcmp(). Handles
  * <constant>NULL</constant> gracefully by sorting it
- * before non-<constant>NULL</constant> strings. This
- * is a backward compatibility fallback for GLib prior
- * to 2.16.0
+ * before non-<constant>NULL</constant> strings.
+ * Comparing two <constant>NULL</constant> pointers
+ * returns 0.
  *
- * Returns: -1, 0 or 1, if @s1 is <, == or > than @s2.
+ * This is a backward compatibility fallback for GLib
+ * prior to 2.16.0.
+ *
+ * Returns: an integer less than, equal to, or greater than zero, if @s1 is less than, equal to or greater than @s2.
  *
  * Since: 1.0
  */
