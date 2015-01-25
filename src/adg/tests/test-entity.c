@@ -232,6 +232,9 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/entity/global-map", _adg_test_global_map);
     adg_test_add_func("/adg/entity/local-map", _adg_test_local_map);
     adg_test_add_func("/adg/entity/local-mix", _adg_test_local_mix);
+    /* ADG_TYPE_ENTITY is an abstract type so it cannot be allocated:
+     * adg_test_add_property_check("/adg/entity/property/???", ADG_TYPE_ENTITY);
+     */
 
     return g_test_run();
 }

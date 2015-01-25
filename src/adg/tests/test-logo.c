@@ -151,9 +151,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/logo/frame-dress", _adg_test_frame_dress);
-    adg_test_add_func("/adg/logo/screen-dress", _adg_test_screen_dress);
-    adg_test_add_func("/adg/logo/symbol-dress", _adg_test_symbol_dress);
+    adg_test_add_func("/adg/logo/property/frame-dress", _adg_test_frame_dress);
+    adg_test_add_func("/adg/logo/property/screen-dress", _adg_test_screen_dress);
+    adg_test_add_func("/adg/logo/property/symbol-dress", _adg_test_symbol_dress);
+    adg_test_add_property_check("/adg/logo/property/???", ADG_TYPE_LOGO);
 
     return g_test_run();
 }

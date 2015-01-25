@@ -112,6 +112,9 @@ main(int argc, char *argv[])
 
     adg_test_add_func("/adg/model/named-pair", _adg_test_named_pair);
     adg_test_add_func("/adg/model/dependency", _adg_test_dependency);
+    /* ADG_TYPE_MODEL is an abstract type so it cannot be allocated:
+     * adg_test_add_property_check("/adg/model/property/???", ADG_TYPE_MODEL);
+     */
 
     return g_test_run();
 }

@@ -143,9 +143,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/text/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/text/font-dress", _adg_test_font_dress);
-    adg_test_add_func("/adg/text/string", _adg_test_text);
+    adg_test_add_func("/adg/text/property/local-mix", _adg_test_local_mix);
+    adg_test_add_func("/adg/text/property/font-dress", _adg_test_font_dress);
+    adg_test_add_func("/adg/text/property/string", _adg_test_text);
+    adg_test_add_property_check("/adg/text/property/???", ADG_TYPE_TEXT);
 
     return g_test_run();
 }

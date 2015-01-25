@@ -704,22 +704,23 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/dim-style/baseline-spacing", _adg_baseline_spacing);
-    adg_test_add_func("/adg/dim-style/beyond", _adg_beyond);
-    adg_test_add_func("/adg/dim-style/color-dress", _adg_color_dress);
-    adg_test_add_func("/adg/dim-style/from-offset", _adg_from_offset);
-    adg_test_add_func("/adg/dim-style/limits-shift", _adg_limits_shift);
-    adg_test_add_func("/adg/dim-style/limits-spacing", _adg_limits_spacing);
-    adg_test_add_func("/adg/dim-style/line-dress", _adg_line_dress);
-    adg_test_add_func("/adg/dim-style/marker1", _adg_marker1);
-    adg_test_add_func("/adg/dim-style/marker2", _adg_marker2);
-    adg_test_add_func("/adg/dim-style/max-dress", _adg_max_dress);
-    adg_test_add_func("/adg/dim-style/min-dress", _adg_min_dress);
-    adg_test_add_func("/adg/dim-style/number-format", _adg_number_format);
-    adg_test_add_func("/adg/dim-style/number-tag", _adg_number_tag);
-    adg_test_add_func("/adg/dim-style/quote-shift", _adg_quote_shift);
-    adg_test_add_func("/adg/dim-style/to-offset", _adg_to_offset);
-    adg_test_add_func("/adg/dim-style/value-dress", _adg_value_dress);
+    adg_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_baseline_spacing);
+    adg_test_add_func("/adg/dim-style/property/beyond", _adg_beyond);
+    adg_test_add_func("/adg/dim-style/property/color-dress", _adg_color_dress);
+    adg_test_add_func("/adg/dim-style/property/from-offset", _adg_from_offset);
+    adg_test_add_func("/adg/dim-style/property/limits-shift", _adg_limits_shift);
+    adg_test_add_func("/adg/dim-style/property/limits-spacing", _adg_limits_spacing);
+    adg_test_add_func("/adg/dim-style/property/line-dress", _adg_line_dress);
+    adg_test_add_func("/adg/dim-style/property/marker1", _adg_marker1);
+    adg_test_add_func("/adg/dim-style/property/marker2", _adg_marker2);
+    adg_test_add_func("/adg/dim-style/property/max-dress", _adg_max_dress);
+    adg_test_add_func("/adg/dim-style/property/min-dress", _adg_min_dress);
+    adg_test_add_func("/adg/dim-style/property/number-format", _adg_number_format);
+    adg_test_add_func("/adg/dim-style/property/number-tag", _adg_number_tag);
+    adg_test_add_func("/adg/dim-style/property/quote-shift", _adg_quote_shift);
+    adg_test_add_func("/adg/dim-style/property/to-offset", _adg_to_offset);
+    adg_test_add_func("/adg/dim-style/property/value-dress", _adg_value_dress);
+    adg_test_add_property_check("/adg/dim-style/property/???", ADG_TYPE_DIM_STYLE);
 
     return g_test_run();
 }

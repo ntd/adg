@@ -217,10 +217,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/gtk/area/canvas", _adg_test_canvas);
-    adg_test_add_func("/adg/gtk/area/factor", _adg_test_factor);
-    adg_test_add_func("/adg/gtk/area/autozoom", _adg_test_autozoom);
-    adg_test_add_func("/adg/gtk/area/render-map", _adg_test_render_map);
+    adg_test_add_func("/adg/gtk/area/property/canvas", _adg_test_canvas);
+    adg_test_add_func("/adg/gtk/area/property/factor", _adg_test_factor);
+    adg_test_add_func("/adg/gtk/area/property/autozoom", _adg_test_autozoom);
+    adg_test_add_func("/adg/gtk/area/property/render-map", _adg_test_render_map);
+    adg_test_add_property_check("/adg/gtk/area/property/???", ADG_GTK_TYPE_AREA);
 
     return g_test_run();
 }

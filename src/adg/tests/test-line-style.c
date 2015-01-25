@@ -297,13 +297,14 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/line-style/color-dress", _adg_test_color_dress);
-    adg_test_add_func("/adg/line-style/width", _adg_test_width);
-    adg_test_add_func("/adg/line-style/cap", _adg_test_cap);
-    adg_test_add_func("/adg/line-style/join", _adg_test_join);
-    adg_test_add_func("/adg/line-style/miter-limit", _adg_test_miter_limit);
-    adg_test_add_func("/adg/line-style/antialias", _adg_test_antialias);
-    adg_test_add_func("/adg/line-style/dash", _adg_test_dash);
+    adg_test_add_func("/adg/line-style/property/color-dress", _adg_test_color_dress);
+    adg_test_add_func("/adg/line-style/property/width", _adg_test_width);
+    adg_test_add_func("/adg/line-style/property/cap", _adg_test_cap);
+    adg_test_add_func("/adg/line-style/property/join", _adg_test_join);
+    adg_test_add_func("/adg/line-style/property/miter-limit", _adg_test_miter_limit);
+    adg_test_add_func("/adg/line-style/property/antialias", _adg_test_antialias);
+    adg_test_add_func("/adg/line-style/property/dash", _adg_test_dash);
+    adg_test_add_property_check("/adg/line-style/property/???", ADG_TYPE_LINE_STYLE);
 
     return g_test_run();
 }

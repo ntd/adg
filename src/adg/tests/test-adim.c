@@ -268,6 +268,7 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/adim/property/org2", _adg_test_org2);
     adg_test_add_func("/adg/adim/property/has-extension1", _adg_test_has_extension1);
     adg_test_add_func("/adg/adim/property/has-extension2", _adg_test_has_extension2);
+    adg_test_add_property_check("/adg/adim/property/???", ADG_TYPE_ADIM);
 
     return g_test_run();
 }

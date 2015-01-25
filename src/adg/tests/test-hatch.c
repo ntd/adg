@@ -69,7 +69,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/hatch/fill-dress", _adg_test_fill_dress);
+    adg_test_add_func("/adg/hatch/property/fill-dress", _adg_test_fill_dress);
+    adg_test_add_property_check("/adg/hatch/property/???", ADG_TYPE_HATCH);
 
     return g_test_run();
 }

@@ -124,9 +124,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/table/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/table/table-dress", _adg_test_table_dress);
-    adg_test_add_func("/adg/table/has-frame", _adg_test_has_frame);
+    adg_test_add_func("/adg/table/property/local-mix", _adg_test_local_mix);
+    adg_test_add_func("/adg/table/property/table-dress", _adg_test_table_dress);
+    adg_test_add_func("/adg/table/property/has-frame", _adg_test_has_frame);
+    adg_test_add_property_check("/adg/table/property/???", ADG_TYPE_TABLE);
 
     return g_test_run();
 }

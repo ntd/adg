@@ -93,8 +93,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/arrow/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/arrow/angle", _adg_test_angle);
+    adg_test_add_func("/adg/arrow/property/local-mix", _adg_test_local_mix);
+    adg_test_add_func("/adg/arrow/property/angle", _adg_test_angle);
+    adg_test_add_property_check("/adg/arrow/property/???", ADG_TYPE_ARROW);
 
     return g_test_run();
 }

@@ -121,8 +121,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/stroke/line-dress", _adg_test_line_dress);
-    adg_test_add_func("/adg/stroke/trail", _adg_test_trail);
+    adg_test_add_func("/adg/stroke/property/line-dress", _adg_test_line_dress);
+    adg_test_add_func("/adg/stroke/property/trail", _adg_test_trail);
+    adg_test_add_property_check("/adg/stroke/property/???", ADG_TYPE_STROKE);
 
     return g_test_run();
 }

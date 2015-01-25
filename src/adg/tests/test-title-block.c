@@ -414,15 +414,16 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/title-block/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/title-block/author", _adg_test_author);
-    adg_test_add_func("/adg/title-block/date", _adg_test_date);
-    adg_test_add_func("/adg/title-block/drawing", _adg_test_drawing);
-    adg_test_add_func("/adg/title-block/logo", _adg_test_logo);
-    adg_test_add_func("/adg/title-block/projection", _adg_test_projection);
-    adg_test_add_func("/adg/title-block/scale", _adg_test_scale);
-    adg_test_add_func("/adg/title-block/size", _adg_test_size);
-    adg_test_add_func("/adg/title-block/title", _adg_test_title);
+    adg_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
+    adg_test_add_func("/adg/title-block/property/author", _adg_test_author);
+    adg_test_add_func("/adg/title-block/property/date", _adg_test_date);
+    adg_test_add_func("/adg/title-block/property/drawing", _adg_test_drawing);
+    adg_test_add_func("/adg/title-block/property/logo", _adg_test_logo);
+    adg_test_add_func("/adg/title-block/property/projection", _adg_test_projection);
+    adg_test_add_func("/adg/title-block/property/scale", _adg_test_scale);
+    adg_test_add_func("/adg/title-block/property/size", _adg_test_size);
+    adg_test_add_func("/adg/title-block/property/title", _adg_test_title);
+    adg_test_add_property_check("/adg/title-block/property/???", ADG_TYPE_TITLE_BLOCK);
 
     return g_test_run();
 }
