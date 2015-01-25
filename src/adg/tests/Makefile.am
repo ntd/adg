@@ -90,6 +90,9 @@ test_line_style_SOURCES=	test-line-style.c
 TEST_PROGS+=			test-fill-style$(EXEEXT)
 test_fill_style_SOURCES=	test-fill-style.c
 
+TEST_PROGS+=			test-ruled-fill$(EXEEXT)
+test_ruled_fill_SOURCES=	test-ruled-fill.c
+
 TEST_PROGS+=			test-font-style$(EXEEXT)
 test_font_style_SOURCES=	test-font-style.c
 
