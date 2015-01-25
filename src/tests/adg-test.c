@@ -28,7 +28,7 @@ adg_test_init(int *p_argc, char **p_argv[])
 #if GLIB_CHECK_VERSION(2, 34, 0)
 #else
     /* On GLib older than 2.34.0 g_type_init() *must* be called */
-    g_type_init(NULL);
+    g_type_init();
 #endif
     g_test_init(p_argc, p_argv, NULL);
     g_log_set_always_fatal(0);
