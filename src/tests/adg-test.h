@@ -61,6 +61,11 @@ void            adg_test_init                   (int            *p_argc,
 const gpointer  adg_test_invalid_pointer        (void);
 void            adg_test_add_func               (const gchar     *testpath,
                                                  GCallback       test_func);
+void            adg_test_add_func_full          (const char     *testpath,
+                                                 GCallback       test_func,
+                                                 gpointer        user_data);
+void            adg_test_add_property_check     (const gchar    *testpath,
+                                                 GType           type);
 
 G_END_DECLS
 
