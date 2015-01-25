@@ -344,12 +344,9 @@ _adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)
  * path to the first existing match. The check is performed
  * using g_file_test() with the G_FILE_TEST_EXISTS test.
  *
- * This function has been picked up from the ntdisp project:
- * http://dev.entidi.com/p/ntdisp/
+ * The result should be freed with g_free() when no longer needed.
  *
- * Returns: a newly allocated string containing the path
- *          or NULL on errors. Free it with g_free() when
- *          no longer needed.
+ * Returns: a newly allocated string containing the path or <constant>NULL</constant> if not found or on errors.
  *
  * Since: 1.0
  **/
@@ -359,6 +356,8 @@ adg_find_file(const gchar *file, ...)
     va_list var_args;
     gchar *path;
     const gchar *base;
+
+    g_return_val_if_fail(file != NULL, NULL);
 
     va_start(var_args, file);
 
