@@ -451,3 +451,15 @@ adg_type_from_filename(const gchar *file)
     g_free(suffix);
     return type;
 }
+
+/**
+ * adg_nop:
+ *
+ * A function that does nothing. It can be used as
+ * <constant>/dev/null</constant> when callback are required, e.g. with
+ * g_log_set_default_handler().
+ **/
+void
+adg_nop(void)
+{
+}
