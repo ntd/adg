@@ -114,24 +114,27 @@ adg_test_add_func(const char *testpath, GCallback test_func)
 
 #include <stdlib.h>
 
+/* Using adg_nop() would require to pull in the whole libadg library:
+ * better to replicate that trivial function instead.
+ */
 static void
-_adg_null_handler(const gchar *log_domain, GLogLevelFlags log_level,
-                  const gchar *message, gpointer user_data)
+_adg_nop(void)
 {
 }
+
 
 static void
 _adg_test_func(GCallback test_func)
 {
-    GLogFunc handler = g_log_set_default_handler(_adg_null_handler, NULL);
+    GLogFunc old_logger;
 
     /* Run a test in a forked environment, without showing log messages */
+    old_logger = g_log_set_default_handler((GLogFunc) _adg_nop, NULL);
     if (g_test_trap_fork(0, G_TEST_TRAP_SILENCE_STDERR)) {
         test_func();
         exit(0);
     }
-
-    g_log_set_default_handler(handler, NULL);
+    g_log_set_default_handler(old_logger, NULL);
 
     /* On failed test, rerun it without hiding the log messages */
     if (!g_test_trap_has_passed())
