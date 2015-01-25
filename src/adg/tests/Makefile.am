@@ -121,6 +121,9 @@ test_gtk_area_SOURCES=		test-gtk-area.c
 TEST_PROGS+=			test-gtk-layout$(EXEEXT)
 test_gtk_layout_SOURCES=	test-gtk-layout.c
 
+TEST_PROGS+=			test-gtk-utils$(EXEEXT)
+test_gtk_utils_SOURCES=		test-gtk-utils.c
+
 AM_CFLAGS+=			$(GTK3_CFLAGS) \
 				$(GTK2_CFLAGS)
 LDADD+=				$(GTK3_LIBS) \
