@@ -23,6 +23,75 @@
 
 
 static void
+_adg_test_strcmp0(void)
+{
+    g_assert_cmpint(g_strcmp0(NULL, NULL), ==, 0);
+    g_assert_cmpint(g_strcmp0("", ""), ==, 0);
+    g_assert_cmpint(g_strcmp0(NULL, "test"), <, 0);
+    g_assert_cmpint(g_strcmp0("test", NULL), >, 0);
+    g_assert_cmpint(g_strcmp0("test", "test"), ==, 0);
+}
+
+static void
+_adg_test_is_string_empty(void)
+{
+    g_assert_true(adg_is_string_empty(""));
+    g_assert_true(adg_is_string_empty(NULL));
+    g_assert_false(adg_is_string_empty("test"));
+}
+
+static void
+_adg_test_is_enum_value(void)
+{
+    g_assert_true(adg_is_enum_value(ADG_THREE_STATE_ON, ADG_TYPE_THREE_STATE));
+    g_assert_false(adg_is_enum_value(-1, ADG_TYPE_THREE_STATE));
+    g_assert_false(adg_is_enum_value(485, ADG_TYPE_THREE_STATE));
+}
+
+static void
+_adg_test_is_boolean_value(void)
+{
+    g_assert_true(adg_is_boolean_value(TRUE));
+    g_assert_true(adg_is_boolean_value(FALSE));
+    g_assert_false(adg_is_boolean_value(177));
+}
+
+static void
+_adg_test_string_replace(void)
+{
+    gchar *result;
+
+    g_assert_null(adg_string_replace(NULL, "first", "second"));
+    g_assert_null(adg_string_replace("original", NULL, "second"));
+    g_assert_null(adg_string_replace("original", NULL, "second"));
+
+    result = adg_string_replace("The first arg", "first", "second");
+    g_assert_cmpstr(result, ==, "The second arg");
+    g_free(result);
+
+    result = adg_string_replace("The first arg", "first", NULL);
+    g_assert_cmpstr(result, ==, "The  arg");
+    g_free(result);
+}
+
+static void
+_adg_test_find_file(void)
+{
+    gchar *result;
+
+    g_assert_null(adg_find_file(NULL));
+    g_assert_null(adg_find_file("test-utils.c", NULL));
+
+    result = adg_find_file("test-utils.c", SRCDIR, NULL);
+    g_assert_nonnull(result);
+    g_free(result);
+
+    result = adg_find_file("test-utils.c", "unexistentdirectory", SRCDIR, NULL);
+    g_assert_nonnull(result);
+    g_free(result);
+}
+
+static void
 _adg_test_scale_factor(void)
 {
     g_assert_cmpfloat(adg_scale_factor(""), ==, 0);
@@ -41,13 +110,31 @@ _adg_test_scale_factor(void)
     g_assert_cmpfloat(adg_scale_factor("1:"), ==, 0);
 }
 
+static void
+_adg_test_type_from_filename(void)
+{
+    g_assert_cmpint(adg_type_from_filename("noextension"), ==, CAIRO_SURFACE_TYPE_XLIB);
+    g_assert_cmpint(adg_type_from_filename("a.png"), ==, CAIRO_SURFACE_TYPE_IMAGE);
+    g_assert_cmpint(adg_type_from_filename("a.PNG"), ==, CAIRO_SURFACE_TYPE_IMAGE);
+    g_assert_cmpint(adg_type_from_filename("a.svg"), ==, CAIRO_SURFACE_TYPE_SVG);
+    g_assert_cmpint(adg_type_from_filename("a.pdf"), ==, CAIRO_SURFACE_TYPE_PDF);
+    g_assert_cmpint(adg_type_from_filename("a.ps"), ==, CAIRO_SURFACE_TYPE_PS);
+    g_assert_cmpint(adg_type_from_filename("a.unknown"), ==, CAIRO_SURFACE_TYPE_XLIB);
+}
 
 int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/utils/scale-factor", _adg_test_scale_factor);
+    adg_test_add_func("/adg/fallback/strcpm0", _adg_test_strcmp0);
+    adg_test_add_func("/adg/function/is-string-empty", _adg_test_is_string_empty);
+    adg_test_add_func("/adg/function/is-enum-value", _adg_test_is_enum_value);
+    adg_test_add_func("/adg/function/is-boolean-value", _adg_test_is_boolean_value);
+    adg_test_add_func("/adg/function/string-replace", _adg_test_string_replace);
+    adg_test_add_func("/adg/function/find-file", _adg_test_find_file);
+    adg_test_add_func("/adg/function/scale-factor", _adg_test_scale_factor);
+    adg_test_add_func("/adg/function/type-from-filename", _adg_test_type_from_filename);
 
     return g_test_run();
 }

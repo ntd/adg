@@ -3,7 +3,8 @@ include $(top_srcdir)/build/Makefile.am.common
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_srcdir)/src/tests \
-				-I$(top_builddir)/src
+				-I$(top_builddir)/src \
+				-DSRCDIR=\"$(srcdir)\"
 AM_CFLAGS=			$(CAIRO_CFLAGS) \
 				$(GOBJECT_CFLAGS)
 LDADD=				$(top_builddir)/src/adg/libadg-1.la \
