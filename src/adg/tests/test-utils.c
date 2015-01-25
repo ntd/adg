@@ -122,6 +122,14 @@ _adg_test_type_from_filename(void)
     g_assert_cmpint(adg_type_from_filename("a.unknown"), ==, CAIRO_SURFACE_TYPE_XLIB);
 }
 
+static void
+_adg_test_nop(void)
+{
+    /* Just check for this function existence */
+    adg_nop();
+}
+
+
 int
 main(int argc, char *argv[])
 {
@@ -135,6 +143,7 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/function/find-file", _adg_test_find_file);
     adg_test_add_func("/adg/function/scale-factor", _adg_test_scale_factor);
     adg_test_add_func("/adg/function/type-from-filename", _adg_test_type_from_filename);
+    adg_test_add_func("/adg/function/nop", _adg_test_nop);
 
     return g_test_run();
 }
