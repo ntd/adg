@@ -182,14 +182,14 @@ _adg_property_check(GCallback test_func, gconstpointer user_data)
 
     type = GPOINTER_TO_INT(user_data);
     object = g_object_new(type, NULL);
+    result = GINT_TO_POINTER(0xdead);
+    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
 
     g_object_set(object, "unknown", NULL, NULL);
-    result = GINT_TO_POINTER(1);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 1);
     g_object_get(object, "unknown", &result, NULL);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 1);
+    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
     g_object_get(object, "unexistent", &result, NULL);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 1);
+    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
 
     g_object_unref(object);
 }
