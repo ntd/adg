@@ -15,7 +15,7 @@ before_script:
     - ./autogen.sh --verbose && mkdir -p _build && cd _build
 
 script:
-    - ../configure --enable-gcov && make && make check
+    - ../configure --enable-gcov && make && make V=1 check
 
 after_success:
     - if [ "$CC" = "gcc" ]; then coveralls -r .. -x c -e demo -e src/tests -e src/cpml/tests -e src/adg/tests --gcov-options '\-lp'; fi
