@@ -1,4 +1,8 @@
 TEST_PROGS=
+ADG_GTESTER = $(ADG_GTESTER_$(V))
+ADG_GTESTER_ = $(ADG_GTESTER_$(AM_DEFAULT_VERBOSITY))
+ADG_GTESTER_0 = ADG_QUIET=1 $(ADG_GTESTER_1)
+ADG_GTESTER_1 = G_DEBUG=gc-friendly MALLOC_CHECK_=2 MALLOC_PERTURB_=$$(($${RANDOM:-256} % 256)) $(GTESTER) --verbose
 
 
 ### testing rules
@@ -12,8 +16,8 @@ if OS_UNIX
 	  done
 
 # test-nonrecursive: run tests only in cwd
-test-nonrecursive: ${TEST_PROGS}
-	@test -z "${TEST_PROGS}" || G_DEBUG=gc-friendly MALLOC_CHECK_=2 MALLOC_PERTURB_=$$(($${RANDOM:-256} % 256)) ${GTESTER} --verbose ${TEST_PROGS}
+test-nonrecursive: $(TEST_PROGS)
+	@test -z "$(TEST_PROGS)" || $(ADG_GTESTER) $(TEST_PROGS)
 else
 test-nonrecursive:
 endif
