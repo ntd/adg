@@ -55,6 +55,8 @@
 #include "adg/adg-container.h"
 #include "adg/adg-alignment.h"
 #include "adg/adg-table.h"
+#include "adg/adg-table-row.h"
+#include "adg/adg-table-cell.h"
 #include "adg/adg-title-block.h"
 #include "adg/adg-arrow.h"
 #include "adg/adg-dim.h"
