@@ -110,19 +110,20 @@ adg_table_cell_get_type(void)
 
 /**
  * adg_table_cell_dup:
- * @table_cell: an #AdgTableCell structure
+ * @src: an #AdgTableCell structure
  *
- * Duplicates @table_cell. The returned duplicate should be freed
+ * Duplicates @src. The returned duplicate should be freed
  * with adg_table_cell_free() when no longer needed.
  *
- * Returns: (transfer full): a duplicate of @table_cell.
+ * Returns: (transfer full): a duplicate of @src.
  *
  * Since: 1.0
  **/
 AdgTableCell *
-adg_table_cell_dup(const AdgTableCell *table_cell)
+adg_table_cell_dup(const AdgTableCell *src)
 {
-    return g_memdup(table_cell, sizeof(AdgTableCell));
+    g_return_val_if_fail(src != NULL, NULL);
+    return g_memdup(src, sizeof(AdgTableCell));
 }
 
 /**
