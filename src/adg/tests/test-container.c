@@ -129,8 +129,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/container/type/object", ADG_TYPE_CONTAINER);
+
     adg_test_add_func("/adg/container/property/child", _adg_property_child);
-    adg_test_add_property_check("/adg/container/property/???", ADG_TYPE_CONTAINER);
 
     adg_test_add_func("/adg/container/misc", _adg_misc);
 

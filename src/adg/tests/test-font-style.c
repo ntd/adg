@@ -344,6 +344,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/font-style/type/object", ADG_TYPE_FONT_STYLE);
+
     adg_test_add_func("/adg/font-style/property/antialias", _adg_test_antialias);
     adg_test_add_func("/adg/font-style/property/color-dress", _adg_test_color_dress);
     adg_test_add_func("/adg/font-style/property/family", _adg_test_family);
@@ -353,7 +355,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/font-style/property/slant", _adg_test_slant);
     adg_test_add_func("/adg/font-style/property/subpixel-order", _adg_test_subpixel_order);
     adg_test_add_func("/adg/font-style/property/weight", _adg_test_weight);
-    adg_test_add_property_check("/adg/font-style/property/???", ADG_TYPE_FONT_STYLE);
 
     return g_test_run();
 }

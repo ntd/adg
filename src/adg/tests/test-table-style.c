@@ -366,6 +366,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/table-style/type/object", ADG_TYPE_TABLE_STYLE);
+
     adg_test_add_func("/adg/table-style/property/cell-padding", _adg_cell_padding);
     adg_test_add_func("/adg/table-style/property/cell-spacing", _adg_cell_spacing);
     adg_test_add_func("/adg/table-style/property/color-dress", _adg_color_dress);
@@ -374,7 +376,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/table-style/property/row-height", _adg_row_height);
     adg_test_add_func("/adg/table-style/property/title-dress", _adg_title_dress);
     adg_test_add_func("/adg/table-style/property/value-dress", _adg_value_dress);
-    adg_test_add_property_check("/adg/table-style/property/???", ADG_TYPE_TABLE_STYLE);
 
     return g_test_run();
 }

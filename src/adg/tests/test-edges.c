@@ -135,10 +135,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/edges/type/object", ADG_TYPE_EDGES);
+
     adg_test_add_func("/adg/edges/property/source", _adg_test_source);
     adg_test_add_func("/adg/edges/property/axis-angle", _adg_test_axis_angle);
     adg_test_add_func("/adg/edges/property/critical-angle", _adg_test_critical_angle);
-    adg_test_add_property_check("/adg/edges/property/???", ADG_TYPE_EDGES);
 
     return g_test_run();
 }

@@ -540,6 +540,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/dim/type/object", ADG_TYPE_DIM);
+
     adg_test_add_func("/adg/dim/property/detached", _adg_test_detached);
     adg_test_add_func("/adg/dim/property/dim-dress", _adg_test_dim_dress);
     adg_test_add_func("/adg/dim/property/level", _adg_test_level);
@@ -550,9 +552,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/dim/property/ref1", _adg_test_ref1);
     adg_test_add_func("/adg/dim/property/ref2", _adg_test_ref2);
     adg_test_add_func("/adg/dim/property/value", _adg_test_value);
-    /* ADG_TYPE_DIM is an abstract type so it cannot be allocated:
-     * adg_test_add_property_check("/adg/dim/property/???", ADG_TYPE_DIM);
-     */
 
     return g_test_run();
 }

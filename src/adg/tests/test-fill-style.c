@@ -74,10 +74,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/fill-style/type/object", ADG_TYPE_FILL_STYLE);
+
     adg_test_add_func("/adg/fill-style/property/pattern", _adg_test_pattern);
-    /* ADG_TYPE_FILL_STYLE is an abstract type so it cannot be allocated:
-     * adg_test_add_property_check("/adg/fill-style/property/???", ADG_TYPE_FILL_STYLE);
-     */
 
     return g_test_run();
 }

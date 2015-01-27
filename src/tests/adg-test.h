@@ -64,7 +64,7 @@ void            adg_test_add_func               (const gchar     *testpath,
 void            adg_test_add_func_full          (const char     *testpath,
                                                  GCallback       test_func,
                                                  gpointer        user_data);
-void            adg_test_add_property_check     (const gchar    *testpath,
+void            adg_test_add_object_checks      (const gchar    *testpath,
                                                  GType           type);
 
 G_END_DECLS

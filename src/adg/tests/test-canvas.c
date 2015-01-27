@@ -733,6 +733,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/canvas/type/object", ADG_TYPE_CANVAS);
+
     adg_test_add_func("/adg/canvas/property/background-dress", _adg_test_background_dress);
     adg_test_add_func("/adg/canvas/property/frame-dress", _adg_test_frame_dress);
     adg_test_add_func("/adg/canvas/property/title-block", _adg_test_title_block);
@@ -747,7 +749,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/canvas/property/right-padding", _adg_test_right_padding);
     adg_test_add_func("/adg/canvas/property/bottom-padding", _adg_test_bottom_padding);
     adg_test_add_func("/adg/canvas/property/left-padding", _adg_test_left_padding);
-    adg_test_add_property_check("/adg/canvas/property/???", ADG_TYPE_CANVAS);
 
     adg_test_add_func("/adg/canvas/method/set_margins", _adg_method_set_margins);
     adg_test_add_func("/adg/canvas/method/set_paddings", _adg_method_set_paddings);

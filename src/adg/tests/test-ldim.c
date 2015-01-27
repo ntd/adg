@@ -165,10 +165,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/ldim/type/object", ADG_TYPE_LDIM);
+
     adg_test_add_func("/adg/ldim/property/direction", _adg_test_direction);
     adg_test_add_func("/adg/ldim/property/has-extension1", _adg_test_has_extension1);
     adg_test_add_func("/adg/ldim/property/has-extension2", _adg_test_has_extension2);
-    adg_test_add_property_check("/adg/ldim/property/???", ADG_TYPE_LDIM);
 
     return g_test_run();
 }

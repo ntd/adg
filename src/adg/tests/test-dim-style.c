@@ -704,6 +704,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/dim-style/type/object", ADG_TYPE_DIM_STYLE);
+
     adg_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_baseline_spacing);
     adg_test_add_func("/adg/dim-style/property/beyond", _adg_beyond);
     adg_test_add_func("/adg/dim-style/property/color-dress", _adg_color_dress);
@@ -720,7 +722,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/dim-style/property/quote-shift", _adg_quote_shift);
     adg_test_add_func("/adg/dim-style/property/to-offset", _adg_to_offset);
     adg_test_add_func("/adg/dim-style/property/value-dress", _adg_value_dress);
-    adg_test_add_property_check("/adg/dim-style/property/???", ADG_TYPE_DIM_STYLE);
 
     return g_test_run();
 }

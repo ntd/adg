@@ -91,29 +91,54 @@ adg_test_add_func(const char *testpath, GCallback test_func)
 }
 
 static void
-_adg_property_check(GCallback test_func, gconstpointer user_data)
+_adg_object_checks(gconstpointer user_data)
 {
-    gpointer result;
-    GType type;
-    GObject *object;
+    GType type = GPOINTER_TO_INT(user_data);
+    g_assert_true(G_TYPE_IS_OBJECT(type));
 
-    type = GPOINTER_TO_INT(user_data);
-    object = g_object_new(type, NULL);
-    result = GINT_TO_POINTER(0xdead);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
+    if (! G_TYPE_IS_ABSTRACT(type)) {
+        gpointer result = GINT_TO_POINTER(0xdead);
+        GObject *object = g_object_new(type, NULL);
 
-    g_object_set(object, "unknown", NULL, NULL);
-    g_object_get(object, "unknown", &result, NULL);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
-    g_object_get(object, "unexistent", &result, NULL);
-    g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
+        g_assert_nonnull(object);
+        g_assert_true(G_IS_OBJECT(object));
 
-    g_object_unref(object);
+        /* Check that unknown or unexistent properties does
+         * not return values (result should pass unmodified)
+         */
+        g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
+        g_object_set(object, "unknown", NULL, NULL);
+        g_object_get(object, "unknown", &result, NULL);
+        g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
+        g_object_get(object, "unexistent", &result, NULL);
+        g_assert_cmpint(GPOINTER_TO_INT(result), ==, 0xdead);
+
+        /* Check object lifetime: this can be done with a weak pointer
+         * that will "nullifies" result after object is destructed
+         */
+        g_object_add_weak_pointer(object, &result);
+        g_object_ref(object);
+        g_object_unref(object);
+        g_assert_nonnull(result);
+        g_object_unref(object);
+        g_assert_null(result);
+
+        result = GINT_TO_POINTER(0xdead);
+        object = g_object_new(type, NULL);
+
+        g_object_add_weak_pointer(object, &result);
+        g_assert_nonnull(result);
+        g_object_ref(object);
+        g_object_ref(object);
+        g_object_run_dispose(object);
+        g_assert_null(result);
+    }
 }
 
 void
-adg_test_add_property_check(const gchar *testpath, GType type)
+adg_test_add_object_checks(const gchar *testpath, GType type)
 {
-    adg_test_add_func_full(testpath, G_CALLBACK(_adg_property_check),
+    adg_test_add_func_full(testpath,
+                           G_CALLBACK(_adg_object_checks),
                            GINT_TO_POINTER(type));
 }

@@ -414,6 +414,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/title-block/type/object", ADG_TYPE_TITLE_BLOCK);
+
     adg_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/title-block/property/author", _adg_test_author);
     adg_test_add_func("/adg/title-block/property/date", _adg_test_date);
@@ -423,7 +425,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/adg/title-block/property/scale", _adg_test_scale);
     adg_test_add_func("/adg/title-block/property/size", _adg_test_size);
     adg_test_add_func("/adg/title-block/property/title", _adg_test_title);
-    adg_test_add_property_check("/adg/title-block/property/???", ADG_TYPE_TITLE_BLOCK);
 
     return g_test_run();
 }

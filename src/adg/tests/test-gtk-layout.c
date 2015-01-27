@@ -148,9 +148,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/gtk/layout/type/object", ADG_GTK_TYPE_LAYOUT);
+
     adg_test_add_func("/adg/gtk/layout/hadjustment", _adg_test_hadjustment);
     adg_test_add_func("/adg/gtk/layout/vadjustment", _adg_test_vadjustment);
-    adg_test_add_property_check("/adg/gtk/layout/property/???", ADG_GTK_TYPE_LAYOUT);
 
     return g_test_run();
 }

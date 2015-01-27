@@ -265,14 +265,13 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/marker/type/object", ADG_TYPE_MARKER);
+
     adg_test_add_func("/adg/marker/property/model", _adg_test_model);
     adg_test_add_func("/adg/marker/property/n-segment", _adg_test_n_segment);
     adg_test_add_func("/adg/marker/property/pos", _adg_test_pos);
     adg_test_add_func("/adg/marker/property/size", _adg_test_size);
     adg_test_add_func("/adg/marker/property/trail", _adg_test_trail);
-    /* ADG_TYPE_MARKER is an abstract type so it cannot be allocated:
-     * adg_test_add_property_check("/adg/marker/property/???", ADG_TYPE_MARKER);
-     */
 
     return g_test_run();
 }

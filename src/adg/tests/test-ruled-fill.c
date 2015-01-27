@@ -151,10 +151,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_object_checks("/adg/ruled-fill/type/object", ADG_TYPE_RULED_FILL);
+
     adg_test_add_func("/adg/ruled-fill/property/angle", _adg_test_angle);
     adg_test_add_func("/adg/ruled-fill/property/line-dress", _adg_test_line_dress);
     adg_test_add_func("/adg/ruled-fill/property/spacing", _adg_test_spacing);
-    adg_test_add_property_check("/adg/ruled-fill/property/???", ADG_TYPE_RULED_FILL);
 
     return g_test_run();
 }
