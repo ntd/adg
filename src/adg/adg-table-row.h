@@ -34,7 +34,7 @@ G_BEGIN_DECLS
 
 GType           adg_table_row_get_type          (void);
 
-AdgTableRow *   adg_table_row_dup               (const AdgTableRow  *table_row);
+AdgTableRow *   adg_table_row_dup               (const AdgTableRow *src);
 AdgTableRow *   adg_table_row_new               (AdgTable       *table);
 AdgTableRow *   adg_table_row_new_before        (AdgTableRow    *before_row);
 void            adg_table_row_free              (AdgTableRow    *table_row);

@@ -81,19 +81,20 @@ adg_table_row_get_type(void)
 
 /**
  * adg_table_row_dup:
- * @table_row: an #AdgTableRow structure
+ * @src: an #AdgTableRow structure
  *
- * Duplicates @table_row. The returned duplicate should be freed
+ * Duplicates @src. The returned duplicate should be freed
  * with adg_table_row_free() when no longer needed.
  *
- * Returns: (transfer full): a duplicate of @table_row.
+ * Returns: (transfer full): a duplicate of @src.
  *
  * Since: 1.0
  **/
 AdgTableRow *
-adg_table_row_dup(const AdgTableRow *table_row)
+adg_table_row_dup(const AdgTableRow *src)
 {
-    return g_memdup(table_row, sizeof(AdgTableRow));
+    g_return_val_if_fail(src != NULL, NULL);
+    return g_memdup(src, sizeof(AdgTableRow));
 }
 
 /**
