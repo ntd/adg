@@ -27,6 +27,11 @@ typedef struct {
     gpointer data;
 } _FuncData;
 
+typedef struct {
+    GType type;
+    gpointer instance;
+} _BoxedData;
+
 
 /* Using adg_nop() would require to pull in the whole libadg stack:
  * better to replicate that trivial function instead.
@@ -87,6 +92,34 @@ void
 adg_test_add_func(const char *testpath, GCallback test_func)
 {
     adg_test_add_func_full(testpath, test_func, NULL);
+}
+
+static void
+_adg_boxed_checks(_BoxedData *boxed_data)
+{
+    gpointer replica;
+
+    g_assert_true(G_TYPE_IS_BOXED(boxed_data->type));
+
+    g_assert_null(g_boxed_copy(boxed_data->type, NULL));
+
+    replica = g_boxed_copy(boxed_data->type, boxed_data->instance);
+    g_assert_nonnull(replica);
+
+    g_boxed_free(boxed_data->type, replica);
+    g_boxed_free(boxed_data->type, boxed_data->instance);
+
+    g_free(boxed_data);
+}
+
+void
+adg_test_add_boxed_checks(const gchar *testpath, GType type, gpointer instance)
+{
+    _BoxedData *boxed_data = g_new(_BoxedData, 1);
+    boxed_data->type = type;
+    boxed_data->instance = instance;
+
+    adg_test_add_func_full(testpath, G_CALLBACK(_adg_boxed_checks), boxed_data);
 }
 
 static void

@@ -117,6 +117,8 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
+    adg_test_add_boxed_checks("/adg/dash/type/boxed", ADG_TYPE_DASH, adg_dash_new());
+
     adg_test_add_func("/adg/dash/property/dashes", _adg_test_dashes);
     adg_test_add_func("/adg/dash/property/offset", _adg_test_offset);
 
