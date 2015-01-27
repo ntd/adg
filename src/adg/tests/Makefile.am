@@ -48,6 +48,9 @@ test_hatch_SOURCES=		test-hatch.c
 TEST_PROGS+=			test-toy-text$(EXEEXT)
 test_toy_text_SOURCES=		test-toy-text.c
 
+TEST_PROGS+=			test-table-row$(EXEEXT)
+test_table_row_SOURCES=		test-table-row.c
+
 TEST_PROGS+=			test-table$(EXEEXT)
 test_table_SOURCES=		test-table.c
 
