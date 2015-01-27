@@ -494,7 +494,11 @@ adg_entity_get_canvas(AdgEntity *entity)
  * This function is only useful in entity implementations.
  * </para></note>
  *
- * Sets a new parent on @entity.
+ * Sets a new parent on @entity. Changing the @parent of an entity
+ * emits the #AdgEntity::parent-set signal on it.
+ *
+ * There is no reference management at this level: they should be
+ * handled at a higher level, e.g. by #AdgContainer.
  *
  * Since: 1.0
  **/
@@ -1168,17 +1172,11 @@ _adg_set_parent(AdgEntity *entity, AdgEntity *parent)
     data = entity->data;
     old_parent = data->parent;
 
-    if (parent)
-        g_object_ref(parent);
-
     data->parent = parent;
     data->global.is_defined = FALSE;
     data->local.is_defined = FALSE;
 
     g_signal_emit(entity, _adg_signals[PARENT_SET], 0, old_parent);
-
-    if (old_parent)
-        g_object_unref(old_parent);
 }
 
 static void
