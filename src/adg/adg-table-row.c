@@ -101,7 +101,7 @@ adg_table_row_dup(const AdgTableRow *table_row)
  * @table: an #AdgTable
  *
  * Creates a new empty row and appends it at the end of the rows
- * yet present in @table. By default, the height of this new
+ * already present in @table. By default, the height of this new
  * row will be the fallback value provided by the table style:
  * you can override it by using adg_table_row_set_height().
  *
