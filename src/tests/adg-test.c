@@ -25,17 +25,16 @@
 typedef struct {
     void (*func)(gpointer);
     gpointer data;
-} _TestData;
+} _FuncData;
 
 
-/* Using adg_nop() would require to pull in the whole libadg library:
+/* Using adg_nop() would require to pull in the whole libadg stack:
  * better to replicate that trivial function instead.
  */
 static void
 _adg_nop(void)
 {
 }
-
 
 void
 adg_test_init(int *p_argc, char **p_argv[])
@@ -67,21 +66,21 @@ adg_test_invalid_pointer(void)
 }
 
 static void
-_adg_test_func(_TestData *test_data)
+_adg_test_func(_FuncData *func_data)
 {
-    test_data->func(test_data->data);
-    g_free(test_data);
+    func_data->func(func_data->data);
+    g_free(func_data);
 }
 
 void
 adg_test_add_func_full(const char *testpath,
                        GCallback test_func, gpointer user_data)
 {
-    _TestData *test_data = g_new(_TestData, 1);
-    test_data->func = (gpointer) test_func;
-    test_data->data = user_data;
+    _FuncData *func_data = g_new(_FuncData, 1);
+    func_data->func = (gpointer) test_func;
+    func_data->data = user_data;
 
-    g_test_add_data_func(testpath, test_data, (GTestDataFunc) _adg_test_func);
+    g_test_add_data_func(testpath, func_data, (GTestDataFunc) _adg_test_func);
 }
 
 void
