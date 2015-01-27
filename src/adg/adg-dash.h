@@ -36,7 +36,7 @@ typedef struct _AdgDash AdgDash;
 
 
 GType           adg_dash_get_type               (void);
-AdgDash *       adg_dash_dup                    (const AdgDash  *dash);
+AdgDash *       adg_dash_dup                    (const AdgDash  *src);
 
 AdgDash *       adg_dash_new                    (void);
 AdgDash *       adg_dash_new_with_dashes        (gint            num_dashes,

@@ -74,26 +74,26 @@ adg_dash_get_type(void)
 
 /**
  * adg_dash_dup:
- * @dash: an #AdgDash instance
+ * @src: an #AdgDash instance
  *
- * Duplicates @dash.
+ * Duplicates @src. The returned value must be freed with adg_dash_destroy()
+ * when no longer needed.
  *
- * Returns: (transfer full): the duplicate of @dash: must be freed with adg_dash_destroy() when no longer needed.
+ * Returns: (transfer full): the duplicate of @src.
  *
  * Since: 1.0
  **/
 AdgDash *
-adg_dash_dup(const AdgDash *dash)
+adg_dash_dup(const AdgDash *src)
 {
-    AdgDash *dup;
+    AdgDash *dash;
 
-    if (dash == NULL)
-        return NULL;
+    g_return_val_if_fail(src != NULL, NULL);
 
-    dup = g_memdup(dash, sizeof(AdgDash));
-    dup->dashes = g_memdup(dash->dashes, sizeof(gdouble) * dash->num_dashes);
+    dash = g_memdup(src, sizeof(AdgDash));
+    dash->dashes = g_memdup(src->dashes, sizeof(gdouble) * src->num_dashes);
 
-    return dup;
+    return dash;
 }
 
 /**
