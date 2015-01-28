@@ -324,6 +324,7 @@ _adg_arrange(AdgEntity *entity)
 {
     AdgStroke *stroke;
     AdgStrokePrivate *data;
+    const CpmlExtents *trail_extents;
     CpmlExtents extents;
 
     /* Check for cached result */
@@ -332,11 +333,15 @@ _adg_arrange(AdgEntity *entity)
 
     stroke = (AdgStroke *) entity;
     data = stroke->data;
+    trail_extents = adg_trail_get_extents(data->trail);
 
-    cpml_extents_copy(&extents, adg_trail_get_extents(data->trail));
+    /* Ensure a trail is bound to this entity */
+    if (trail_extents == NULL)
+        return;
+
+    cpml_extents_copy(&extents, trail_extents);
     cpml_extents_transform(&extents, adg_entity_get_local_matrix(entity));
     cpml_extents_transform(&extents, adg_entity_get_global_matrix(entity));
-
     adg_entity_set_extents(entity, &extents);
 }
 
