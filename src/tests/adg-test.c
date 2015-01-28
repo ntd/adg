@@ -206,9 +206,26 @@ _adg_entity_checks(gconstpointer user_data)
 
     if (! G_TYPE_IS_ABSTRACT(type)) {
         AdgEntity *entity = g_object_new(type, NULL);
+        const CpmlExtents *extents;
 
         g_assert_nonnull(entity);
         g_assert_true(ADG_IS_ENTITY(entity));
+
+        /* Ensure that the entity extents are not initially defined */
+        extents = adg_entity_get_extents(entity);
+        g_assert_false(extents->is_defined);
+
+        adg_entity_arrange(entity);
+        extents = adg_entity_get_extents(entity);
+        if (extents->is_defined) {
+            /* RENDERABLE ENTITY */
+            /* Check that invalidate() clears the cached extents */
+            adg_entity_invalidate(entity);
+            extents = adg_entity_get_extents(entity);
+            g_assert_false(extents->is_defined);
+        } else {
+            /* NON-RENDERABLE ENTITY (e.g., empty container) */
+        }
 
         g_object_unref(entity);
     }
