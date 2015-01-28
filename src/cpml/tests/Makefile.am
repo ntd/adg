@@ -24,6 +24,9 @@ test_segment_SOURCES=		test-segment.c
 TEST_PROGS+=			test-primitive$(EXEEXT)
 test_primitive_SOURCES=		test-primitive.c
 
+TEST_PROGS+=			test-gobject$(EXEEXT)
+test_primitive_SOURCES=		test-gobject.c
+
 endif
 
 
