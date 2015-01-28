@@ -154,6 +154,11 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/projection/type/object", ADG_TYPE_PROJECTION);
     adg_test_add_entity_checks("/adg/projection/type/entity", ADG_TYPE_PROJECTION);
 
+    adg_test_add_global_space_checks("/adg/projection/behavior/global-space",
+                                     adg_projection_new(ADG_PROJECTION_SCHEME_FIRST_ANGLE));
+    adg_test_add_local_space_checks("/adg/projection/behavior/local-space",
+                                    adg_projection_new(ADG_PROJECTION_SCHEME_THIRD_ANGLE));
+
     adg_test_add_func("/adg/projection/property/axis-dress", _adg_test_axis_dress);
     adg_test_add_func("/adg/projection/property/scheme", _adg_test_scheme);
     adg_test_add_func("/adg/projection/property/symbol-dress", _adg_test_symbol_dress);

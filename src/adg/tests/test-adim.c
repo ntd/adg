@@ -267,6 +267,15 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/adim/type/object", ADG_TYPE_ADIM);
     adg_test_add_entity_checks("/adg/adim/type/entity", ADG_TYPE_ADIM);
 
+    adg_test_add_global_space_checks("/adg/adim/behavior/global-space",
+                                     adg_adim_new_full_explicit(1, 2, 3, 4,
+                                                                9, 6, 7, 8,
+                                                                9, 10));
+    adg_test_add_local_space_checks("/adg/adim/behavior/local-space",
+                                    adg_adim_new_full_explicit(4, 3, 2, 1,
+                                                               8, 7, 6, 9,
+                                                               10, 9));
+
     adg_test_add_func("/adg/adim/property/org1", _adg_test_org1);
     adg_test_add_func("/adg/adim/property/org2", _adg_test_org2);
     adg_test_add_func("/adg/adim/property/has-extension1", _adg_test_has_extension1);

@@ -146,6 +146,8 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/text/type/object", ADG_TYPE_TEXT);
     adg_test_add_entity_checks("/adg/text/type/entity", ADG_TYPE_TEXT);
 
+    adg_test_add_global_space_checks("/adg/text/behavior/global-space", adg_text_new("Testing"));
+
     adg_test_add_func("/adg/text/property/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/text/property/font-dress", _adg_test_font_dress);
     adg_test_add_func("/adg/text/property/string", _adg_test_text);

@@ -119,10 +119,21 @@ _adg_test_trail(void)
 int
 main(int argc, char *argv[])
 {
+    AdgPath *path;
+
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/stroke/type/object", ADG_TYPE_STROKE);
     adg_test_add_entity_checks("/adg/stroke/type/entity", ADG_TYPE_STROKE);
+
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 1, 2);
+    adg_path_line_to_explicit(path, 4, 5);
+    adg_path_line_to_explicit(path, 7, 8);
+    adg_path_close(path);
+    adg_test_add_global_space_checks("/adg/stroke/behavior/global-space", adg_stroke_new(ADG_TRAIL(path)));
+    adg_test_add_local_space_checks("/adg/stroke/behavior/local-space", adg_stroke_new(ADG_TRAIL(path)));
+    g_object_unref(path);
 
     adg_test_add_func("/adg/stroke/property/line-dress", _adg_test_line_dress);
     adg_test_add_func("/adg/stroke/property/trail", _adg_test_trail);

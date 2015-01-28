@@ -417,6 +417,8 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/title-block/type/object", ADG_TYPE_TITLE_BLOCK);
     adg_test_add_entity_checks("/adg/title-block/type/entity", ADG_TYPE_TITLE_BLOCK);
 
+    adg_test_add_global_space_checks("/adg/title-block/behavior/global-space", adg_title_block_new());
+
     adg_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/title-block/property/author", _adg_test_author);
     adg_test_add_func("/adg/title-block/property/date", _adg_test_date);

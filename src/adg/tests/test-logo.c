@@ -154,6 +154,9 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/logo/type/object", ADG_TYPE_LOGO);
     adg_test_add_entity_checks("/adg/logo/type/entity", ADG_TYPE_LOGO);
 
+    adg_test_add_global_space_checks("/adg/logo/behavior/global-space", adg_logo_new());
+    adg_test_add_local_space_checks("/adg/logo/behavior/local-space", adg_logo_new());
+
     adg_test_add_func("/adg/logo/property/frame-dress", _adg_test_frame_dress);
     adg_test_add_func("/adg/logo/property/screen-dress", _adg_test_screen_dress);
     adg_test_add_func("/adg/logo/property/symbol-dress", _adg_test_symbol_dress);

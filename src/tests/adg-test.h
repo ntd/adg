@@ -73,6 +73,10 @@ void            adg_test_add_object_checks      (const gchar    *testpath,
                                                  GType           type);
 void            adg_test_add_entity_checks      (const gchar    *testpath,
                                                  GType           type);
+void            adg_test_add_global_space_checks(const gchar    *testpath,
+                                                 gpointer        entity);
+void            adg_test_add_local_space_checks (const gchar    *testpath,
+                                                 gpointer        entity);
 
 G_END_DECLS
 

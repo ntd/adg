@@ -76,10 +76,19 @@ _adg_alignment_factor(void)
 int
 main(int argc, char *argv[])
 {
+    AdgAlignment *alignment;
+
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/alignment/type/object", ADG_TYPE_ALIGNMENT);
     adg_test_add_entity_checks("/adg/alignment/type/entity", ADG_TYPE_ALIGNMENT);
+
+    alignment = adg_alignment_new_explicit(0.5, 0.5);
+    adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(adg_logo_new()));
+    adg_test_add_global_space_checks("/adg/alignment/behavior/global-space", alignment);
+    alignment = adg_alignment_new_explicit(0.5, 0.5);
+    adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(adg_logo_new()));
+    adg_test_add_local_space_checks("/adg/alignment/behavior/local-space", alignment);
 
     adg_test_add_func("/adg/alignment/property/factor", _adg_alignment_factor);
 

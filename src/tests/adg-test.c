@@ -238,3 +238,113 @@ adg_test_add_entity_checks(const gchar *testpath, GType type)
                            G_CALLBACK(_adg_entity_checks),
                            GINT_TO_POINTER(type));
 }
+
+static cairo_t *
+_adg_cairo_context(void)
+{
+    cairo_surface_t *surface;
+    cairo_t *cr;
+
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
+    cr = cairo_create(surface);
+    cairo_surface_destroy(surface);
+
+    return cr;
+}
+
+static void
+_adg_global_space_checks(AdgEntity *entity)
+{
+    cairo_t *cr;
+    const CpmlExtents *extents;
+    cairo_matrix_t scale2X;
+    gdouble width, height;
+
+    cr = _adg_cairo_context();
+    cairo_matrix_init_scale(&scale2X, 2, 2);
+
+    /* Store the original extents size in width/height */
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_true(extents->is_defined);
+    width = extents->size.x;
+    height = extents->size.y;
+
+    /* Check that a zoom in global space scales is roughly equivalent to
+     * the same zoom on extents too (not excactly because of fonts) */
+    adg_entity_transform_global_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
+    adg_entity_invalidate(entity);
+    g_assert_false(extents->is_defined);
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_cmpfloat(extents->size.x, >, width * 1.7);
+    g_assert_cmpfloat(extents->size.x, <, width * 2.3);
+    g_assert_cmpfloat(extents->size.y, >, height * 1.7);
+    g_assert_cmpfloat(extents->size.y, <, height * 2.3);
+
+    /* Restore the original global scale */
+    cairo_matrix_invert(&scale2X);
+    adg_entity_transform_global_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
+    adg_entity_invalidate(entity);
+    g_assert_false(extents->is_defined);
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_cmpfloat(extents->size.x, ==, width);
+    g_assert_cmpfloat(extents->size.y, ==, height);
+
+    cairo_destroy(cr);
+    g_object_unref(entity);
+}
+
+void
+adg_test_add_global_space_checks(const gchar *testpath, gpointer entity)
+{
+    adg_test_add_func_full(testpath, G_CALLBACK(_adg_global_space_checks), entity);
+}
+
+static void
+_adg_local_space_checks(AdgEntity *entity)
+{
+    cairo_t *cr;
+    const CpmlExtents *extents;
+    cairo_matrix_t scale2X;
+    gdouble width, height;
+
+    cr = _adg_cairo_context();
+    cairo_matrix_init_scale(&scale2X, 2, 2);
+
+    /* Store the original extents size in width/height */
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_true(extents->is_defined);
+    width = extents->size.x;
+    height = extents->size.y;
+
+    /* Check that a scale in local space somewhat scales the extents too */
+    adg_entity_transform_local_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
+    adg_entity_invalidate(entity);
+    g_assert_false(extents->is_defined);
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_cmpfloat(extents->size.x, >, width);
+    g_assert_cmpfloat(extents->size.y, >, height);
+
+    /* Restore the original local scale */
+    cairo_matrix_invert(&scale2X);
+    adg_entity_transform_local_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
+    adg_entity_invalidate(entity);
+    g_assert_false(extents->is_defined);
+    adg_entity_render(entity, cr);
+    extents = adg_entity_get_extents(entity);
+    g_assert_cmpfloat(extents->size.x, ==, width);
+    g_assert_cmpfloat(extents->size.y, ==, height);
+
+    cairo_destroy(cr);
+    g_object_unref(entity);
+}
+
+void
+adg_test_add_local_space_checks(const gchar *testpath, gpointer entity)
+{
+    adg_test_add_func_full(testpath, G_CALLBACK(_adg_local_space_checks), entity);
+}

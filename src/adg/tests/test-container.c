@@ -127,10 +127,18 @@ _adg_misc(void)
 int
 main(int argc, char *argv[])
 {
+    AdgContainer *container;
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/container/type/object", ADG_TYPE_CONTAINER);
     adg_test_add_entity_checks("/adg/container/type/entity", ADG_TYPE_CONTAINER);
+
+    container = adg_container_new();
+    adg_container_add(container, ADG_ENTITY(adg_logo_new()));
+    adg_test_add_global_space_checks("/adg/container/behavior/global-space", container);
+    container = adg_container_new();
+    adg_container_add(container, ADG_ENTITY(adg_logo_new()));
+    adg_test_add_local_space_checks("/adg/container/behavior/local-space", container);
 
     adg_test_add_func("/adg/container/property/child", _adg_property_child);
 
