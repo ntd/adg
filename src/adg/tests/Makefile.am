@@ -18,6 +18,9 @@ LDADD+=				$(top_builddir)/src/tests/libadgtest.la
 TEST_PROGS+=			test-utils$(EXEEXT)
 test_utils_SOURCES=		test-utils.c
 
+TEST_PROGS+=			test-type-builtins$(EXEEXT)
+test_type_builtins_SOURCES=	test-type-builtins.c
+
 TEST_PROGS+=			test-model$(EXEEXT)
 test_model_SOURCES=		test-model.c
 
