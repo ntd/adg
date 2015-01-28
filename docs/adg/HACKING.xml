@@ -6,28 +6,34 @@
 <title>Code contributions</title>
 <subtitle>Conventions used by the ADG canvas project</subtitle>
 
-<para>This is a high-level guide to how the ADG project is organized and
-how to get started hacking on it. The following statements should be
-considered recommendations, not rules.</para>
+<para>This is a high-level guide on how the ADG project is organized and
+how to get started hacking on it. Just keep in mind the following
+statements should be considered recommendations, not rules.</para>
 
 
 <simplesect id="HACKING.patches">
 <title>Hints on how to submit patches</title>
 
-<para>Any patch worth the inclusion in the mainstream could be submitted to the
-<ulink url="http://dev.entidi.com/p/adg/issues/">bug tracker</ulink> or by using the
-<ulink url="http://lists.sourceforge.net/lists/listinfo/adg-devel">mailing list</ulink>.
-The former is preferred when the patch addresses some specific issue while
-the latter is a better choice for generic patches and proofs of concept.</para>
+<para>Any patch worth the inclusion in the mainstream can be submitted in
+different ways:</para>
 
-<para>The project uses <ulink url="http://git-scm.com/">git</ulink> as version control system
-and the repositories could be found at different places. The following are
-all kept up to date:</para>
+<itemizedlist>
+<listitem>attach it to the <ulink url="http://dev.entidi.com/p/adg/issues/">bug tracker</ulink>
+   when a specific issue is addressed;</listitem>
+<listitem>via <ulink url="http://lists.sourceforge.net/lists/listinfo/adg-devel">mailing list</ulink>
+   if the patch probably needs further discussion;</listitem>
+<listitem>send a pull request in any of the public git repository listed
+   belowif you are already registered in one of them.</listitem>
+</itemizedlist>
+
+<para>The project uses <ulink url="http://git-scm.com/">git</ulink> as version control system.
+In the following the public repository that we keep up to date:</para>
 
 <orderedlist>
-   <listitem><ulink url="http://repo.or.cz/w/adg.git">repo.cz</ulink></listitem>
-   <listitem><ulink url="http://p.sf.net/adg/git">SourceForge</ulink></listitem>
+   <listitem><ulink url="http://github.com/ntd/adg">GitHub</ulink></listitem>
    <listitem><ulink url="http://gitorious.org/adg">Gitorious</ulink></listitem>
+   <listitem><ulink url="http://p.sf.net/adg/git">SourceForge</ulink></listitem>
+   <listitem><ulink url="http://repo.or.cz/w/adg.git">repo.cz</ulink></listitem>
 </orderedlist>
 
 <para>The preferred way to create a patch is by using <command>git format-patch</command> to
@@ -39,7 +45,7 @@ cd adg
 git commit -a
 # Write the commit message
 git format-patch HEAD^
-# You have just created a proper patch file: send it</programlisting></informalexample>
+# A 0001-* file with your patch has been created</programlisting></informalexample>
 </simplesect>
 
 <simplesect id="HACKING.style">
@@ -108,10 +114,9 @@ void            adg_object_set_value_explicit   (AdgObject      *object,
                                                  gdouble         value_y);
 void            adg_object_set_value_from_model (AdgADim        *adim,
                                                  AdgModel       *model,
-                                                 const gchar    *named_pair);
-</programlisting></informalexample>
+                                                 const gchar    *named_pair);</programlisting></informalexample>
 
-<para>The method should be grouped by argument, that is methods working on the
+<para>The methods should be grouped by argument, that is methods working on the
 same subject should be adjacents. The constructors must be the first ones
 while the helper methods for signal emission should be the last ones.
 It is preferable to keep the setter before the getter in the list.</para>
@@ -135,8 +140,7 @@ change a property you should write something along these lines:</para>
 
 cpml_extents_copy(&amp;extents, adg_entity_get_extents(entity));
 /* Modify extents... */
-adg_entity_set_extents(entity, &amp;extents);
-</programlisting></informalexample>
+adg_entity_set_extents(entity, &amp;extents);</programlisting></informalexample>
 
 <para>The <emphasis>put</emphasis> version of a getter usually does not have the setter
 counterpart (because the returned value is typically computed) so the
@@ -144,7 +148,6 @@ above will be reduced to:</para>
 <informalexample><programlisting language="C">CpmlExtents extents;
 
 cpml_segment_put_extents(segment, &amp;extents);
-/* Use extents... */
-</programlisting></informalexample>
+/* Use extents... */</programlisting></informalexample>
 </simplesect>
 </chapter>
