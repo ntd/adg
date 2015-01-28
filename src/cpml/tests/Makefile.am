@@ -25,7 +25,7 @@ TEST_PROGS+=			test-primitive$(EXEEXT)
 test_primitive_SOURCES=		test-primitive.c
 
 TEST_PROGS+=			test-gobject$(EXEEXT)
-test_primitive_SOURCES=		test-gobject.c
+test_gobject_SOURCES=		test-gobject.c
 
 endif
 
