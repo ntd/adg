@@ -2,18 +2,15 @@ include $(top_srcdir)/build/Makefile.am.common
 
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
-				-I$(top_srcdir)/src/tests \
 				-I$(top_builddir)/src \
+				-I$(top_srcdir)/src/tests \
 				-DSRCDIR=\"$(srcdir)\"
 AM_CFLAGS=			$(CAIRO_CFLAGS) \
 				$(GOBJECT_CFLAGS)
 LDADD=				$(top_builddir)/src/adg/libadg-1.la \
-				$(top_builddir)/src/cpml/libcpml-1.la
+				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/tests/libadgtest.la
 
-
-if HAVE_TEST_FRAMEWORK
-
-LDADD+=				$(top_builddir)/src/tests/libadgtest.la
 
 TEST_PROGS+=			test-utils$(EXEEXT)
 test_utils_SOURCES=		test-utils.c
@@ -118,15 +115,12 @@ TEST_PROGS+=			test-canvas$(EXEEXT)
 test_canvas_SOURCES=		test-canvas.c
 
 if HAVE_PANGO
-
 TEST_PROGS+=			test-text$(EXEEXT)
 test_text_SOURCES=		test-text.c
 AM_CFLAGS+=			$(PANGO_CFLAGS)
-
 endif
 
 if HAVE_GTK
-
 TEST_PROGS+=			test-gtk-area$(EXEEXT)
 test_gtk_area_SOURCES=		test-gtk-area.c
 
@@ -140,11 +134,7 @@ AM_CFLAGS+=			$(GTK3_CFLAGS) \
 				$(GTK2_CFLAGS)
 LDADD+=				$(GTK3_LIBS) \
 				$(GTK2_LIBS)
-
 endif
-
-endif
-
 
 LDADD+=				$(CAIRO_LIBS) \
 				$(GOBJECT_LIBS)

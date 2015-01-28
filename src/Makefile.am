@@ -1,8 +1,13 @@
 include $(top_srcdir)/build/Makefile.am.common
 
-SUBDIRS=			tests \
-				cpml \
+
+SUBDIRS=
+if HAVE_TEST_FRAMEWORK
+SUBDIRS+=			tests
+endif
+SUBDIRS+=			cpml \
 				adg
+
 
 if HAVE_GLADE
 adg_catalogdir=			$(GLADE_CATALOGDIR)

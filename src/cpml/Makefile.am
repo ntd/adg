@@ -1,7 +1,9 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 
+if HAVE_TEST_FRAMEWORK
 SUBDIRS=			tests
+endif
 
 
 AM_CFLAGS=			$(CPML_CFLAGS)

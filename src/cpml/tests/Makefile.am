@@ -5,12 +5,9 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_srcdir)/src/tests
 AM_CFLAGS=			$(CAIRO_CFLAGS) \
 				$(GOBJECT_CFLAGS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la
+LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(top_builddir)/src/tests/libadgtest.la
 
-
-if HAVE_TEST_FRAMEWORK
-
-LDADD+=				$(top_builddir)/src/tests/libadgtest.la
 
 TEST_PROGS+=			test-pair$(EXEEXT)
 test_pair_SOURCES=		test-pair.c
@@ -26,8 +23,6 @@ test_primitive_SOURCES=		test-primitive.c
 
 TEST_PROGS+=			test-gobject$(EXEEXT)
 test_gobject_SOURCES=		test-gobject.c
-
-endif
 
 
 LDADD+=				$(CAIRO_LIBS) \
