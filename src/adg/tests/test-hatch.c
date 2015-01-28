@@ -70,6 +70,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/hatch/type/object", ADG_TYPE_HATCH);
+    adg_test_add_entity_checks("/adg/hatch/type/entity", ADG_TYPE_HATCH);
 
     adg_test_add_func("/adg/hatch/property/fill-dress", _adg_test_fill_dress);
 

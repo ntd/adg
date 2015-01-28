@@ -1,12 +1,13 @@
 include $(top_srcdir)/build/Makefile.am.common
 
 
-AM_CPPFLAGS=			-I$(top_srcdir)/src \
-				-I$(top_srcdir)/src/tests
-AM_CFLAGS=			$(CAIRO_CFLAGS) \
-				$(GOBJECT_CFLAGS)
-LDADD=				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(top_builddir)/src/tests/libadgtest.la
+AM_CPPFLAGS=			-I$(top_srcdir)/src/tests \
+				-I$(top_srcdir)/src
+AM_CFLAGS=			$(ADG_CFLAGS)
+LDADD=				$(top_builddir)/src/tests/libadgtest.la \
+				$(top_builddir)/src/adg/libadg-1.la \
+				$(top_builddir)/src/cpml/libcpml-1.la \
+				$(ADG_LIBS)
 
 
 TEST_PROGS+=			test-pair$(EXEEXT)
@@ -23,10 +24,6 @@ test_primitive_SOURCES=		test-primitive.c
 
 TEST_PROGS+=			test-gobject$(EXEEXT)
 test_gobject_SOURCES=		test-gobject.c
-
-
-LDADD+=				$(CAIRO_LIBS) \
-				$(GOBJECT_LIBS)
 
 
 # targets

@@ -18,7 +18,7 @@
  */
 
 
-#include <config.h>
+#include "adg-internal.h"
 #include "adg-test.h"
 
 
@@ -195,5 +195,29 @@ adg_test_add_object_checks(const gchar *testpath, GType type)
 {
     adg_test_add_func_full(testpath,
                            G_CALLBACK(_adg_object_checks),
+                           GINT_TO_POINTER(type));
+}
+
+static void
+_adg_entity_checks(gconstpointer user_data)
+{
+    GType type = GPOINTER_TO_INT(user_data);
+    g_assert_true(g_type_is_a(type, ADG_TYPE_ENTITY));
+
+    if (! G_TYPE_IS_ABSTRACT(type)) {
+        AdgEntity *entity = g_object_new(type, NULL);
+
+        g_assert_nonnull(entity);
+        g_assert_true(ADG_IS_ENTITY(entity));
+
+        g_object_unref(entity);
+    }
+}
+
+void
+adg_test_add_entity_checks(const gchar *testpath, GType type)
+{
+    adg_test_add_func_full(testpath,
+                           G_CALLBACK(_adg_entity_checks),
                            GINT_TO_POINTER(type));
 }

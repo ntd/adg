@@ -734,6 +734,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/canvas/type/object", ADG_TYPE_CANVAS);
+    adg_test_add_entity_checks("/adg/canvas/type/entity", ADG_TYPE_CANVAS);
 
     adg_test_add_func("/adg/canvas/property/background-dress", _adg_test_background_dress);
     adg_test_add_func("/adg/canvas/property/frame-dress", _adg_test_frame_dress);

@@ -130,6 +130,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/container/type/object", ADG_TYPE_CONTAINER);
+    adg_test_add_entity_checks("/adg/container/type/entity", ADG_TYPE_CONTAINER);
 
     adg_test_add_func("/adg/container/property/child", _adg_property_child);
 

@@ -5,11 +5,11 @@ AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src \
 				-I$(top_srcdir)/src/tests \
 				-DSRCDIR=\"$(srcdir)\"
-AM_CFLAGS=			$(CAIRO_CFLAGS) \
-				$(GOBJECT_CFLAGS)
-LDADD=				$(top_builddir)/src/adg/libadg-1.la \
+AM_CFLAGS=			$(ADG_CFLAGS)
+LDADD=				$(top_builddir)/src/tests/libadgtest.la \
+				$(top_builddir)/src/adg/libadg-1.la \
 				$(top_builddir)/src/cpml/libcpml-1.la \
-				$(top_builddir)/src/tests/libadgtest.la
+				$(ADG_LIBS)
 
 
 TEST_PROGS+=			test-utils$(EXEEXT)
@@ -130,14 +130,7 @@ test_gtk_layout_SOURCES=	test-gtk-layout.c
 TEST_PROGS+=			test-gtk-utils$(EXEEXT)
 test_gtk_utils_SOURCES=		test-gtk-utils.c
 
-AM_CFLAGS+=			$(GTK3_CFLAGS) \
-				$(GTK2_CFLAGS)
-LDADD+=				$(GTK3_LIBS) \
-				$(GTK2_LIBS)
 endif
-
-LDADD+=				$(CAIRO_LIBS) \
-				$(GOBJECT_LIBS)
 
 
 # targets

@@ -266,6 +266,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/marker/type/object", ADG_TYPE_MARKER);
+    adg_test_add_entity_checks("/adg/marker/type/entity", ADG_TYPE_MARKER);
 
     adg_test_add_func("/adg/marker/property/model", _adg_test_model);
     adg_test_add_func("/adg/marker/property/n-segment", _adg_test_n_segment);

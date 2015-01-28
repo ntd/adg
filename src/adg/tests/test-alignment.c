@@ -79,6 +79,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/alignment/type/object", ADG_TYPE_ALIGNMENT);
+    adg_test_add_entity_checks("/adg/alignment/type/entity", ADG_TYPE_ALIGNMENT);
 
     adg_test_add_func("/adg/alignment/property/factor", _adg_alignment_factor);
 

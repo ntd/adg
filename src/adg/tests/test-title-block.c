@@ -415,6 +415,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/title-block/type/object", ADG_TYPE_TITLE_BLOCK);
+    adg_test_add_entity_checks("/adg/title-block/type/entity", ADG_TYPE_TITLE_BLOCK);
 
     adg_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
     adg_test_add_func("/adg/title-block/property/author", _adg_test_author);

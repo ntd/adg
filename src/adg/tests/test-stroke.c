@@ -122,6 +122,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/stroke/type/object", ADG_TYPE_STROKE);
+    adg_test_add_entity_checks("/adg/stroke/type/entity", ADG_TYPE_STROKE);
 
     adg_test_add_func("/adg/stroke/property/line-dress", _adg_test_line_dress);
     adg_test_add_func("/adg/stroke/property/trail", _adg_test_trail);

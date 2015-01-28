@@ -42,6 +42,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/rdim/type/object", ADG_TYPE_RDIM);
+    adg_test_add_entity_checks("/adg/rdim/type/entity", ADG_TYPE_RDIM);
 
     adg_test_add_func("/adg/rdim/property/value", _adg_test_value);
 

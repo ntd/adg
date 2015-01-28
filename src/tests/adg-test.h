@@ -71,6 +71,8 @@ void            adg_test_add_boxed_checks       (const gchar    *testpath,
                                                  gpointer        instance);
 void            adg_test_add_object_checks      (const gchar    *testpath,
                                                  GType           type);
+void            adg_test_add_entity_checks      (const gchar    *testpath,
+                                                 GType           type);
 
 G_END_DECLS
 
