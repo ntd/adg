@@ -95,6 +95,29 @@ adg_test_add_func(const char *testpath, GCallback test_func)
 }
 
 static void
+_adg_enum_checks(gconstpointer user_data)
+{
+    GType type;
+    gpointer class;
+
+    type = GPOINTER_TO_INT(user_data);
+    g_assert_true(G_TYPE_IS_ENUM(type));
+
+    class = g_type_class_ref(type);
+    g_assert_nonnull(class);
+
+    g_assert_null(g_enum_get_value(class, -1));
+    g_assert_nonnull(g_enum_get_value(class, 0));
+    g_assert_null(g_enum_get_value_by_name(class, "unexistent value"));
+}
+
+void
+adg_test_add_enum_checks(const gchar *testpath, GType type)
+{
+    adg_test_add_func_full(testpath, G_CALLBACK(_adg_enum_checks), GINT_TO_POINTER(type));
+}
+
+static void
 _adg_boxed_checks(_BoxedData *boxed_data)
 {
     gpointer replica;
