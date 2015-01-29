@@ -750,6 +750,8 @@ _cpml_class_from_type(CpmlPrimitiveType type)
 static const _CpmlPrimitiveClass *
 _cpml_class_from_obj(const CpmlPrimitive *primitive)
 {
+    if (primitive == NULL)
+        return NULL;
     return _cpml_class_from_type(primitive->data->header.type);
 }
 
