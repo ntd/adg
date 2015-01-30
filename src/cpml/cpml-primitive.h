@@ -71,6 +71,8 @@ void            cpml_primitive_put_vector_at
                                            (const CpmlPrimitive *primitive,
                                             double               pos,
                                             CpmlVector          *vector);
+int             cpml_primitive_is_inside   (const CpmlPrimitive *primitive,
+                                            const CpmlPair      *pair);
 double          cpml_primitive_get_closest_pos
                                            (const CpmlPrimitive *primitive,
                                             const CpmlPair      *pair);

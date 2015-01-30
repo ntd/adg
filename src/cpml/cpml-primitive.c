@@ -422,6 +422,27 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive,
 }
 
 /**
+ * cpml_primitive_is_inside:
+ * @primitive: a #CpmlPrimitive
+ * @pair:      the coordinates of the subject point
+ *
+ * Checks if @pair is inside the bounding box of @primitive. This
+ * can be useful e.g. to verify if an intersection point is a real
+ * intersection or an hypothetical one.
+ *
+ * Returns: 1 if @pair is inside the bounding box of @primitive, 0 otherwise.
+ *
+ * Since: 1.0
+ **/
+int
+cpml_primitive_is_inside(const CpmlPrimitive *primitive, const CpmlPair *pair)
+{
+    CpmlExtents extents = { 0 };
+    cpml_primitive_put_extents(primitive, &extents);
+    return cpml_extents_pair_is_inside(&extents, pair);
+}
+
+/**
  * cpml_primitive_get_closest_pos:
  * @primitive: a #CpmlPrimitive
  * @pair:      the coordinates of the subject point
@@ -466,6 +487,23 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * 4 intersections could be returned. Otherwise, if there is an arc
  * the intersections will be 2 at maximum. For line primitives, there
  * is only 1 point (or 0 if the lines are parallel).
+ *
+ * Also hypothetical intersections are returned, that is intersections
+ * made by extending the primitives outside their bounds. This means e.g.
+ * two lines always return one intersection if they are not parallel. To
+ * discriminate real intersections you should check the returned points
+ * with cpml_primitive_is_inside(), for example:
+ *
+ * <informalexample><programlisting language="C">
+ * if (cpml_primitive_put_intersections(line1, line2, 1, &pair) == 0) {
+ *     // line1 and line2 are parallels
+ * } else if (cpml_primitive_is_inside(line1, &pair) &&
+ *            cpml_primitive_is_inside(line2, &pair)) {
+ *     // This is a real intersection
+ * } else {
+ *     // This is an hypothetical intersection
+ * }
+ * </programlisting></informalexample>
  *
  * <note>
  * <para>
