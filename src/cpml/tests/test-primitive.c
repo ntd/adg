@@ -541,6 +541,45 @@ _cpml_test_join(void)
     g_assert_cmpfloat((primitive2.org)->point.y, ==, 0);
 }
 
+static int
+_cpml_path_length(cairo_t *cr)
+{
+    cairo_path_t *path = cairo_copy_path(cr);
+    int length = path->num_data;
+    cairo_path_destroy(path);
+
+    return length;
+}
+
+static void
+_cpml_test_to_cairo(void)
+{
+    cairo_t *cr;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    int length, last_length;
+
+    cr = adg_test_cairo_context();
+    cpml_segment_from_cairo(&segment, &path);
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+    cpml_primitive_to_cairo(NULL, cr);
+    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+    cpml_primitive_to_cairo(&primitive, NULL);
+    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+
+    length = 0;
+    do {
+        last_length = length;
+        cpml_primitive_to_cairo(&primitive, cr);
+        length = _cpml_path_length(cr);
+        g_assert_cmpint(length, >, last_length);
+    } while (cpml_primitive_next(&primitive));
+
+    cairo_destroy(cr);
+}
+
 static void
 _cpml_test_dump(void)
 {
@@ -628,6 +667,7 @@ main(int argc, char *argv[])
     adg_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
     adg_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
     adg_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
+    adg_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
     adg_test_add_func("/cpml/primitive/method/dump", _cpml_test_dump);
 
     adg_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
