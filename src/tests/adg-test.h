@@ -21,6 +21,7 @@
 #ifndef __ADG_TEST_H__
 #define __ADG_TEST_H__
 
+#include <cairo.h>
 #include <glib-object.h>
 
 
@@ -59,6 +60,7 @@ G_BEGIN_DECLS
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
 const gpointer  adg_test_invalid_pointer        (void);
+cairo_t *       adg_test_cairo_context          (void);
 void            adg_test_add_func               (const gchar     *testpath,
                                                  GCallback       test_func);
 void            adg_test_add_func_full          (const char     *testpath,

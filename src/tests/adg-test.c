@@ -70,6 +70,19 @@ adg_test_invalid_pointer(void)
     return junk;
 }
 
+cairo_t *
+adg_test_cairo_context(void)
+{
+    cairo_surface_t *surface;
+    cairo_t *cr;
+
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
+    cr = cairo_create(surface);
+    cairo_surface_destroy(surface);
+
+    return cr;
+}
+
 static void
 _adg_test_func(_FuncData *func_data)
 {
@@ -239,19 +252,6 @@ adg_test_add_entity_checks(const gchar *testpath, GType type)
                            GINT_TO_POINTER(type));
 }
 
-static cairo_t *
-_adg_cairo_context(void)
-{
-    cairo_surface_t *surface;
-    cairo_t *cr;
-
-    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
-    cr = cairo_create(surface);
-    cairo_surface_destroy(surface);
-
-    return cr;
-}
-
 static void
 _adg_global_space_checks(AdgEntity *entity)
 {
@@ -260,7 +260,7 @@ _adg_global_space_checks(AdgEntity *entity)
     cairo_matrix_t scale2X;
     gdouble width, height;
 
-    cr = _adg_cairo_context();
+    cr = adg_test_cairo_context();
     cairo_matrix_init_scale(&scale2X, 2, 2);
 
     /* Store the original extents size in width/height */
@@ -310,7 +310,7 @@ _adg_local_space_checks(AdgEntity *entity)
     cairo_matrix_t scale2X;
     gdouble width, height;
 
-    cr = _adg_cairo_context();
+    cr = adg_test_cairo_context();
     cairo_matrix_init_scale(&scale2X, 2, 2);
 
     /* Store the original extents size in width/height */
