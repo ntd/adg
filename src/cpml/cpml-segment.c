@@ -188,6 +188,9 @@ cpml_segment_get_length(const CpmlSegment *segment)
     CpmlPrimitive primitive;
     double length;
 
+    if (segment == NULL)
+        return 0;
+
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
     length = 0;
 
