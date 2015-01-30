@@ -23,7 +23,7 @@
 
 
 static void
-_cpml_test_basic(void)
+_cpml_test_misc(void)
 {
     CpmlExtents extents = { 0 };
     CpmlExtents extents2 = { 0 };
@@ -148,9 +148,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/extents/basic", _cpml_test_basic);
-    adg_test_add_func("/cpml/extents/add", _cpml_test_add);
-    adg_test_add_func("/cpml/extents/transform", _cpml_test_transform);
+    adg_test_add_func("/cpml/extents/behavior/misc", _cpml_test_misc);
+
+    adg_test_add_func("/cpml/extents/method/add", _cpml_test_add);
+    adg_test_add_func("/cpml/extents/method/transform", _cpml_test_transform);
 
     return g_test_run();
 }

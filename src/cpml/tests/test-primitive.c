@@ -54,6 +54,49 @@ cairo_path_t path = {
 
 
 static void
+_cpml_test_browsing(void)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive, primitive_copy;
+
+    cpml_segment_from_cairo(&segment, &path);
+
+    cpml_primitive_from_segment(&primitive, &segment);
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
+    g_assert_cmpint((primitive.data)->header.type, ==, CPML_LINE);
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 2);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 3);
+    g_assert_cmpint((primitive.data)->header.type, ==, CPML_ARC);
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 6);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 7);
+    g_assert_cmpint((primitive.data)->header.type, ==, CPML_CURVE);
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 12);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 13);
+    g_assert_cmpint((primitive.data)->header.type, ==, CPML_CLOSE);
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    cpml_primitive_reset(&primitive);
+    g_assert_true(cpml_primitive_next(&primitive));
+    cpml_primitive_reset(&primitive);
+    cpml_primitive_reset(&primitive);
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    cpml_primitive_copy(&primitive_copy, &primitive);
+    g_assert_false(cpml_primitive_next(&primitive_copy));
+    cpml_primitive_reset(&primitive);
+    g_assert_false(cpml_primitive_next(&primitive_copy));
+    cpml_primitive_reset(&primitive_copy);
+    g_assert_true(cpml_primitive_next(&primitive_copy));
+}
+
+static void
 _cpml_test_from_segment(void)
 {
     CpmlSegment segment;
@@ -610,54 +653,13 @@ _cpml_test_dump(void)
 #endif
 }
 
-static void
-_cpml_test_browsing(void)
-{
-    CpmlSegment segment;
-    CpmlPrimitive primitive, primitive_copy;
-
-    cpml_segment_from_cairo(&segment, &path);
-
-    cpml_primitive_from_segment(&primitive, &segment);
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
-    g_assert_cmpint((primitive.data)->header.type, ==, CPML_LINE);
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 2);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 3);
-    g_assert_cmpint((primitive.data)->header.type, ==, CPML_ARC);
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 6);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 7);
-    g_assert_cmpint((primitive.data)->header.type, ==, CPML_CURVE);
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 12);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 13);
-    g_assert_cmpint((primitive.data)->header.type, ==, CPML_CLOSE);
-    g_assert_false(cpml_primitive_next(&primitive));
-
-    cpml_primitive_reset(&primitive);
-    g_assert_true(cpml_primitive_next(&primitive));
-    cpml_primitive_reset(&primitive);
-    cpml_primitive_reset(&primitive);
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_false(cpml_primitive_next(&primitive));
-
-    cpml_primitive_copy(&primitive_copy, &primitive);
-    g_assert_false(cpml_primitive_next(&primitive_copy));
-    cpml_primitive_reset(&primitive);
-    g_assert_false(cpml_primitive_next(&primitive_copy));
-    cpml_primitive_reset(&primitive_copy);
-    g_assert_true(cpml_primitive_next(&primitive_copy));
-}
-
 
 int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
+
+    adg_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
 
     adg_test_add_func("/cpml/primitive/method/from-segment", _cpml_test_from_segment);
     adg_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
@@ -669,8 +671,6 @@ main(int argc, char *argv[])
     adg_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
     adg_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
     adg_test_add_func("/cpml/primitive/method/dump", _cpml_test_dump);
-
-    adg_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
 
     return g_test_run();
 }

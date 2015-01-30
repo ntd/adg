@@ -31,7 +31,7 @@ static CpmlPair junk = { .x = -12345.54321, .y = 9876543210.123456789 };
 
 
 static void
-_cpml_test_pair_basic(void)
+_cpml_test_pair_misc(void)
 {
     cairo_bool_t equals;
     cairo_path_data_t cairo_pair;
@@ -252,12 +252,13 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/pair/basic", _cpml_test_pair_basic);
-    adg_test_add_func("/cpml/pair/transform", _cpml_test_pair_transform);
-    adg_test_add_func("/cpml/pair/distance", _cpml_test_pair_distance);
-    adg_test_add_func("/cpml/vector/angle", _cpml_test_vector_angle);
-    adg_test_add_func("/cpml/vector/length", _cpml_test_vector_length);
-    adg_test_add_func("/cpml/vector/transform", _cpml_test_vector_transform);
+    adg_test_add_func("/cpml/pair/behavior/misc", _cpml_test_pair_misc);
+
+    adg_test_add_func("/cpml/pair/method/transform", _cpml_test_pair_transform);
+    adg_test_add_func("/cpml/pair/method/distance", _cpml_test_pair_distance);
+    adg_test_add_func("/cpml/vector/method/angle", _cpml_test_vector_angle);
+    adg_test_add_func("/cpml/vector/method/length", _cpml_test_vector_length);
+    adg_test_add_func("/cpml/vector/method/transform", _cpml_test_vector_transform);
 
     return g_test_run();
 }

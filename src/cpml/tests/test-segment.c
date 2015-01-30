@@ -100,7 +100,7 @@ cairo_path_t noop_path = {
 
 
 static void
-_cpml_test_basic(void)
+_cpml_test_misc(void)
 {
     cairo_bool_t found;
     CpmlSegment segment, segment_copy;
@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/segment/basic", _cpml_test_basic);
+    adg_test_add_func("/cpml/segment/behavior/misc", _cpml_test_misc);
 
     return g_test_run();
 }
