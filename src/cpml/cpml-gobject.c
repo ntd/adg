@@ -60,7 +60,7 @@ cpml_pair_get_type(void)
 
 /**
  * cpml_pair_dup:
- * @pair: an #CpmlPair structure
+ * @pair: a #CpmlPair structure
  *
  * Duplicates @pair.
  *
@@ -91,7 +91,7 @@ cpml_primitive_get_type(void)
 
 /**
  * cpml_primitive_dup:
- * @primitive: an #CpmlPrimitive structure
+ * @primitive: a #CpmlPrimitive structure
  *
  * Duplicates @primitive. This function makes a shallow duplication of
  * @primitives, that is the internal pointers of the resulting primitive
@@ -206,7 +206,7 @@ cpml_segment_get_type(void)
 
 /**
  * cpml_segment_dup:
- * @segment: an #CpmlSegment structure
+ * @segment: a #CpmlSegment structure
  *
  * Duplicates @segment. This function makes a shallow duplication,
  * that is the internal pointers of the resulting segment struct
@@ -226,7 +226,7 @@ cpml_segment_dup(const CpmlSegment *segment)
 
 /**
  * cpml_segment_deep_dup:
- * @segment: an #CpmlSegment structure
+ * @segment: a #CpmlSegment structure
  *
  * Duplicates @segment. This function makes a deep duplication,
  * that is it duplicates also the underlying data that defines
@@ -273,7 +273,7 @@ cpml_segment_deep_dup(const CpmlSegment *segment)
 
 /**
  * cpml_segment_deep_copy:
- * @segment: an #CpmlSegment structure
+ * @segment: a #CpmlSegment structure
  * @src: the source segment to copy
  *
  * Makes a deep copy of @src to @segment. For a shallow copy, check out
