@@ -518,6 +518,9 @@ cpml_segment_to_cairo(const CpmlSegment *segment, cairo_t *cr)
 {
     CpmlPrimitive primitive;
 
+    if (segment == NULL || cr == NULL)
+        return;
+
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
     do {
