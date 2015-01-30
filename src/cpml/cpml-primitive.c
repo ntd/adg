@@ -119,8 +119,8 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 
 /**
  * cpml_primitive_from_segment:
- * @primitive:             the destination #CpmlPrimitive struct
- * @segment: (allow-none): the source segment
+ * @primitive: the destination #CpmlPrimitive struct
+ * @segment:   the source segment
  *
  * Initializes @primitive to the first primitive of @segment.
  *
@@ -148,8 +148,8 @@ cpml_primitive_from_segment(CpmlPrimitive *primitive, CpmlSegment *segment)
 
 /**
  * cpml_primitive_copy:
- * @primitive:         the destination #CpmlPrimitive
- * @src: (allow-none): the source #CpmlPrimitive
+ * @primitive: the destination #CpmlPrimitive
+ * @src:       the source #CpmlPrimitive
  *
  * Copies @src in @primitive. This is a shallow copy: the internal fields
  * of @primitive refer to the same memory as the original @src primitive.
@@ -423,8 +423,8 @@ cpml_primitive_put_vector_at(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_get_closest_pos:
- * @primitive:          a #CpmlPrimitive
- * @pair: (allow-none): the coordinates of the subject point
+ * @primitive: a #CpmlPrimitive
+ * @pair:      the coordinates of the subject point
  *
  * Returns the pos value of the point on @primitive nearest to @pair.
  * The returned value is always clamped between 0 and 1.
@@ -453,10 +453,10 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_intersections:
- * @primitive:                                                       the first #CpmlPrimitive
- * @primitive2: (allow-none):                                        the second #CpmlPrimitive
- * @n_dest:                                                          maximum number of intersections to return
- * @dest: (out caller-allocates) (array length=n_dest) (allow-none): the destination buffer that can contain @n_dest #CpmlPair
+ * @primitive:                                          the first #CpmlPrimitive
+ * @primitive2:                                         the second #CpmlPrimitive
+ * @n_dest:                                             maximum number of intersections to return
+ * @dest: (out caller-allocates) (array length=n_dest): the destination buffer that can contain @n_dest #CpmlPair
  *
  * Finds the intersection points between the given primitives and
  * returns the result in @dest. The size of @dest should be enough
@@ -523,10 +523,10 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_intersections_with_segment:
- * @primitive:                                                       a #CpmlPrimitive
- * @segment: (allow-none):                                           a #CpmlSegment
- * @n_dest:                                                          maximum number of intersections to return
- * @dest: (out caller-allocates) (array length=n_dest) (allow-none): the destination buffer that can contain @n_dest #CpmlPair
+ * @primitive:                                          a #CpmlPrimitive
+ * @segment:                                            a #CpmlSegment
+ * @n_dest:                                             maximum number of intersections to return
+ * @dest: (out caller-allocates) (array length=n_dest): the destination buffer that can contain @n_dest #CpmlPair
  *
  * Computes the intersections between @segment and @primitive by
  * sequentially scanning the primitives in @segment and looking
