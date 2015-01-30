@@ -101,9 +101,9 @@ static int              reshape                 (CpmlSegment       *segment);
 int
 cpml_segment_from_cairo(CpmlSegment *segment, cairo_path_t *path)
 {
-    /* The cairo path should be defined and in a perfect state */
-    if (path == NULL || path->num_data == 0 ||
-        path->status != CAIRO_STATUS_SUCCESS)
+    /* segment and  path must be non-NULL and path must be valid */
+    if (path == NULL || segment == NULL ||
+        path->num_data == 0 || path->status != CAIRO_STATUS_SUCCESS)
         return 0;
 
     segment->path = path;
