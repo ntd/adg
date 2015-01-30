@@ -83,6 +83,16 @@ adg_test_cairo_context(void)
     return cr;
 }
 
+int
+adg_test_cairo_num_data(cairo_t *cr)
+{
+    cairo_path_t *path = cairo_copy_path(cr);
+    int length = path->num_data;
+    cairo_path_destroy(path);
+
+    return length;
+}
+
 static void
 _adg_test_func(_FuncData *func_data)
 {

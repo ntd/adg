@@ -61,7 +61,8 @@ void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
 const gpointer  adg_test_invalid_pointer        (void);
 cairo_t *       adg_test_cairo_context          (void);
-void            adg_test_add_func               (const gchar     *testpath,
+int             adg_test_cairo_num_data         (cairo_t        *cr);
+void            adg_test_add_func               (const gchar    *testpath,
                                                  GCallback       test_func);
 void            adg_test_add_func_full          (const char     *testpath,
                                                  GCallback       test_func,

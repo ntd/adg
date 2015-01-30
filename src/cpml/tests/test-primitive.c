@@ -584,16 +584,6 @@ _cpml_test_join(void)
     g_assert_cmpfloat((primitive2.org)->point.y, ==, 0);
 }
 
-static int
-_cpml_path_length(cairo_t *cr)
-{
-    cairo_path_t *path = cairo_copy_path(cr);
-    int length = path->num_data;
-    cairo_path_destroy(path);
-
-    return length;
-}
-
 static void
 _cpml_test_to_cairo(void)
 {
@@ -606,17 +596,17 @@ _cpml_test_to_cairo(void)
     cpml_segment_from_cairo(&segment, &path);
     cpml_primitive_from_segment(&primitive, &segment);
 
-    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
     cpml_primitive_to_cairo(NULL, cr);
-    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
     cpml_primitive_to_cairo(&primitive, NULL);
-    g_assert_cmpint(_cpml_path_length(cr), ==, 0);
+    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
 
     length = 0;
     do {
         last_length = length;
         cpml_primitive_to_cairo(&primitive, cr);
-        length = _cpml_path_length(cr);
+        length = adg_test_cairo_num_data(cr);
         g_assert_cmpint(length, >, last_length);
     } while (cpml_primitive_next(&primitive));
 
