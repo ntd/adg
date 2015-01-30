@@ -498,21 +498,25 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
         return 0;
 
     class_data = _cpml_class_from_obj(primitive);
-    if (class_data == NULL || class_data->put_intersections == NULL)
+    if (class_data == NULL)
         return 0;
 
     n_points = cpml_primitive_get_n_points(primitive);
     n_points2 = cpml_primitive_get_n_points(primitive2);
 
+    /* Check if the primitives can intersect */
     if (n_points == 0 || n_points2 == 0)
         return 0;
 
     /* Primitives reordering: the first must be the more complex one */
     if (n_points < n_points2) {
-        const CpmlPrimitive *old_primitive2 = primitive2;
-        primitive2 = primitive;
-        primitive = old_primitive2;
+        return cpml_primitive_put_intersections(primitive2, primitive,
+                                                n_dest, dest);
     }
+
+    /* Check if put_intersections is implemented */
+    if (class_data->put_intersections == NULL)
+        return 0;
 
     return class_data->put_intersections(primitive, primitive2, n_dest, dest);
 }
