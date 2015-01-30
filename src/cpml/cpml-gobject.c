@@ -112,7 +112,7 @@ cpml_primitive_dup(const CpmlPrimitive *primitive)
 
 /**
  * cpml_primitive_deep_dup:
- * @primitive: an #CpmlPrimitive structure
+ * @primitive: a #CpmlPrimitive structure
  *
  * Duplicates @primitive. This function makes a deep duplication of
  * @primitive, that is it duplicates also the definition data (both
@@ -138,6 +138,8 @@ cpml_primitive_deep_dup(const CpmlPrimitive *primitive)
     CpmlPrimitive *dst;
     gsize primitive_size, org_size, data_size, segment_size;
     gchar *ptr;
+
+    g_return_val_if_fail(primitive != NULL, NULL);
 
     src = primitive;
     primitive_size = sizeof(CpmlPrimitive);
