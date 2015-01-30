@@ -378,22 +378,22 @@ _cpml_test_put_intersections(void)
 {
     cairo_path_data_t path1_data[] = {
         { .header = { CPML_MOVE, 2 }},
-        { .point = { -2, 1 }},
+        { .point = { 98, 1 }},
 
         { .header = { CPML_LINE, 2 }},
-        { .point = { 2, 1 }},
+        { .point = { 102, 1 }},
 
         { .header = { CPML_LINE, 2 }},
-        { .point = { 2, 0 }},
+        { .point = { 102, 0 }},
 
         { .header = { CPML_LINE, 2 }},
-        { .point = { -2, 0 }}
+        { .point = { 98, 0 }}
     }, path2_data[] = {
         { .header = { CPML_MOVE, 2 }},
-        { .point = { 0, -1 }},
+        { .point = { 100, -1 }},
 
         { .header = { CPML_LINE, 2 }},
-        { .point = { 0, 2 }}
+        { .point = { 100, 2 }}
     };
     cairo_path_t path1 = {
         CAIRO_STATUS_SUCCESS,
@@ -420,19 +420,30 @@ _cpml_test_put_intersections(void)
     g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 0, pair), ==, 0);
     g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, NULL), ==, 0);
 
-    /* The first primitive of path1 intersects path2 in (0, 1) */
+    /* The first primitive of path1 intersects (really) path2 in (0, 1) */
     g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 0);
+    g_assert_cmpfloat(pair[0].x, ==, 100);
     g_assert_cmpfloat(pair[0].y, ==, 1);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive, pair), ==, 1);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 1);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 1);
+    g_assert_cmpfloat(pair[0].x, ==, 100);
+    g_assert_cmpfloat(pair[0].y, ==, 1);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 1);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive, pair), ==, 1);
 
     /* The second primitive does not intersect */
     cpml_primitive_next(&primitive2);
     g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 0);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 0);
 
     /* The third primitive intersects in (0, 0) */
     cpml_primitive_next(&primitive2);
     g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 0);
+    g_assert_cmpfloat(pair[0].x, ==, 100);
+    g_assert_cmpfloat(pair[0].y, ==, 0);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 1);
+    g_assert_cmpfloat(pair[0].x, ==, 100);
     g_assert_cmpfloat(pair[0].y, ==, 0);
 
     g_assert_cmpint(cpml_primitive_put_intersections_with_segment(NULL, &segment, 2, pair), ==, 0);
@@ -441,12 +452,44 @@ _cpml_test_put_intersections(void)
     g_assert_cmpint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 0, pair), ==, 0);
     g_assert_cmpint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 2, NULL), ==, 0);
 
-    /* path2 intesects path1 in two points */
+    /* path2 intesects the whole path1 in two points */
     g_assert_cmpint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 2, pair), ==, 2);
-    g_assert_cmpfloat(pair[0].x, ==, 0);
+    g_assert_cmpfloat(pair[0].x, ==, 100);
     g_assert_cmpfloat(pair[0].y, ==, 1);
-    g_assert_cmpfloat(pair[1].x, ==, 0);
+    g_assert_cmpfloat(pair[1].x, ==, 100);
     g_assert_cmpfloat(pair[1].y, ==, 0);
+
+    cpml_segment_from_cairo(&segment, &path);
+    cpml_primitive_from_segment(&primitive2, &segment);
+
+    /* Check line-line intesection */
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 1);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 1);
+
+    /* Check the returned intersection is an hypothetical intersection */
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 0);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive, pair), ==, 0);
+
+    /* Check line-arc intesection */
+    cpml_primitive_next(&primitive2);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 0);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 0);
+
+    /* Check line-curve intesection */
+    cpml_primitive_next(&primitive2);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 0);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 0);
+
+    /* Check line-close intesection */
+    cpml_primitive_next(&primitive2);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive2, &primitive, 2, pair), ==, 1);
+    g_assert_cmpint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 1);
+
+    /* Check the returned intersection is an hypothetical intersection */
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 0);
+    g_assert_cmpint(cpml_primitive_is_inside(&primitive, pair), ==, 0);
+
+    g_assert_false(cpml_primitive_next(&primitive2));
 }
 
 static void
