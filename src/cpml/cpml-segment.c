@@ -386,6 +386,9 @@ cpml_segment_offset(CpmlSegment *segment, double offset)
     cairo_path_data_t org, *old_org;
     int first_cycle;
 
+    if (segment == NULL)
+        return;
+
     cpml_primitive_from_segment(&primitive, segment);
     first_cycle = 1;
 
