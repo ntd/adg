@@ -212,6 +212,148 @@ _cpml_test_put_intersections(void)
 }
 
 static void
+_cpml_test_offset(void)
+{
+    CpmlSegment original, *segment;
+
+    /* Check a NULL segment does not crash the process */
+    cpml_segment_offset(NULL, 1);
+
+    cpml_segment_from_cairo(&original, &path);
+
+    /* Working on a duplicate of the first segment to avoid modifying path */
+    segment = cpml_segment_deep_dup(&original);
+    cpml_segment_offset(segment, 1);
+
+    g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, 0);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, 1);
+
+    g_assert_cmpint(segment->data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[3].point.x, ==, 1);
+    g_assert_cmpfloat(segment->data[3].point.y, ==, 1);
+
+    g_assert_cmpint(segment->data[4].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[5].point.x, ==, 1);
+    g_assert_cmpfloat(segment->data[5].point.y, ==, 2);
+
+    /* TODO: provide tests for arcs and curves */
+
+    g_free(segment);
+}
+
+static void
+_cpml_test_transform(void)
+{
+    CpmlSegment original, *segment;
+    cairo_matrix_t matrix;
+
+    cpml_segment_from_cairo(&original, &path);
+
+    /* Working on a duplicate of the first segment to avoid modifying path */
+    segment = cpml_segment_deep_dup(&original);
+
+    /* Check invalid args does not crash the process */
+    cpml_segment_transform(NULL, &matrix);
+    cpml_segment_transform(segment, NULL);
+
+    cairo_matrix_init_translate(&matrix, 1, 2);
+    cpml_segment_transform(segment, &matrix);
+
+    g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, 1);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, 2);
+
+    g_assert_cmpint(segment->data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[3].point.x, ==, 3);
+    g_assert_cmpfloat(segment->data[3].point.y, ==, 2);
+
+    g_assert_cmpint(segment->data[4].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[5].point.x, ==, 3);
+    g_assert_cmpfloat(segment->data[5].point.y, ==, 4);
+
+    g_free(segment);
+}
+
+static void
+_cpml_test_reverse(void)
+{
+    CpmlSegment original, *segment;
+
+    /* Check a NULL segment does not crash the process */
+    cpml_segment_reverse(NULL);
+
+    cpml_segment_from_cairo(&original, &path);
+
+    /* First segment: work on a duplicate to avoid modifying path */
+    segment = cpml_segment_deep_dup(&original);
+    cpml_segment_reverse(segment);
+
+    g_assert_cmpint(segment->num_data, ==, 6);
+
+    g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, 2);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, 2);
+
+    g_assert_cmpint(segment->data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[3].point.x, ==, 2);
+    g_assert_cmpfloat(segment->data[3].point.y, ==, 0);
+
+    g_assert_cmpint(segment->data[4].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment->data[5].point.x, ==, 0);
+    g_assert_cmpfloat(segment->data[5].point.y, ==, 0);
+
+    g_free(segment);
+
+    /* TODO: the second segment is an invalid CPML segment because
+     * it is followed by a segment without a leading move_to.
+     * Find a decent reverse algorithm and document it.
+     * I'm just skipping that segment for now.
+     */
+    cpml_segment_next(&original);
+
+    /* Third segment */
+    cpml_segment_next(&original);
+    segment = cpml_segment_deep_dup(&original);
+    cpml_segment_reverse(segment);
+
+    g_assert_cmpint(segment->num_data, ==, 8);
+
+    g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, 22);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, 23);
+
+    g_assert_cmpint(segment->data[2].header.type, ==, CPML_ARC);
+    g_assert_cmpfloat(segment->data[3].point.x, ==, 20);
+    g_assert_cmpfloat(segment->data[3].point.y, ==, 21);
+    g_assert_cmpfloat(segment->data[4].point.x, ==, 18);
+    g_assert_cmpfloat(segment->data[4].point.y, ==, 19);
+
+    g_assert_cmpint(segment->data[5].header.type, ==, CPML_ARC);
+    g_assert_cmpfloat(segment->data[6].point.x, ==, 16);
+    g_assert_cmpfloat(segment->data[6].point.y, ==, 17);
+    g_assert_cmpfloat(segment->data[7].point.x, ==, 14);
+    g_assert_cmpfloat(segment->data[7].point.y, ==, 15);
+
+    g_free(segment);
+
+    /* Forth segment */
+    cpml_segment_next(&original);
+    segment = cpml_segment_deep_dup(&original);
+    cpml_segment_reverse(segment);
+
+    g_assert_cmpint(segment->num_data, ==, 3);
+
+    g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, 24);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, 25);
+
+    g_assert_cmpint(segment->data[2].header.type, ==, CPML_CLOSE);
+
+    g_free(segment);
+}
+
+static void
 _cpml_test_to_cairo(void)
 {
     cairo_t *cr;
@@ -279,6 +421,9 @@ main(int argc, char *argv[])
     adg_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
     adg_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);
     adg_test_add_func("/cpml/segment/method/put-intersections", _cpml_test_put_intersections);
+    adg_test_add_func("/cpml/segment/method/offset", _cpml_test_offset);
+    adg_test_add_func("/cpml/segment/method/transform", _cpml_test_transform);
+    adg_test_add_func("/cpml/segment/method/reverse", _cpml_test_reverse);
     adg_test_add_func("/cpml/segment/method/to-cairo", _cpml_test_to_cairo);
     adg_test_add_func("/cpml/segment/method/dump", _cpml_test_dump);
 
