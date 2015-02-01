@@ -450,9 +450,10 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * Reverses @segment in-place. The resulting rendering will be the same,
  * but with the primitives generated in reverse order.
  *
- * It is assumed that @segment has yet been sanitized, that is returned
- * by some CPML API function or it is a path yet conforming to the
- * segment rules described by the cpml_segment_from_cairo() function.
+ * It is assumed that @segment has already been sanitized, such as when
+ * it is returned by some CPML function or it is a cairo path already
+ * conforming to the * segment rules described by the
+ * cpml_segment_from_cairo() function.
  *
  * Since: 1.0
  **/
@@ -475,7 +476,7 @@ cpml_segment_reverse(CpmlSegment *segment)
     end_y = segment->data[1].point.y;
 
     n = segment->data->header.length;
-    data->header.type = CAIRO_PATH_CLOSE_PATH;
+    data->header.type = CPML_MOVE;
     data->header.length = n;
 
     while (n < segment->num_data) {
