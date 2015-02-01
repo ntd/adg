@@ -481,7 +481,10 @@ cpml_segment_reverse(CpmlSegment *segment)
 
     while (n < segment->num_data) {
         src_data = segment->data + n;
-        n_points = cpml_primitive_type_get_n_points(src_data->header.type);
+        /* While usually CPML_CLOSE is treated as a CPML_LINE, in this case
+         * it must not, because it does not have a trailing data point */
+        n_points = src_data->header.type == CAIRO_PATH_CLOSE_PATH ? 1 :
+            cpml_primitive_type_get_n_points(src_data->header.type);
         length = src_data->header.length;
         n += length;
         dst_data = data + segment->num_data - n + data->header.length;
