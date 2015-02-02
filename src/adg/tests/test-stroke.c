@@ -135,8 +135,8 @@ main(int argc, char *argv[])
     adg_test_add_local_space_checks("/adg/stroke/behavior/local-space", adg_stroke_new(ADG_TRAIL(path)));
     g_object_unref(path);
 
-    adg_test_add_func("/adg/stroke/property/line-dress", _adg_test_line_dress);
-    adg_test_add_func("/adg/stroke/property/trail", _adg_test_trail);
+    g_test_add_func("/adg/stroke/property/line-dress", _adg_test_line_dress);
+    g_test_add_func("/adg/stroke/property/trail", _adg_test_trail);
 
     return g_test_run();
 }

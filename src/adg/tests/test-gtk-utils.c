@@ -113,11 +113,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/fallback/widget_get_window", _adg_test_widget_get_window);
-    adg_test_add_func("/adg/fallback/widget_get_realized", _adg_test_widget_get_realized);
-    adg_test_add_func("/adg/function/window-hide-here", _adg_test_window_hide_here);
-    adg_test_add_func("/adg/function/toggle-button-sensitivize", _adg_test_toggle_button_sensitivize);
-    adg_test_add_func("/adg/function/use-default-icons", _adg_test_use_default_icons);
+    g_test_add_func("/adg/fallback/widget_get_window", _adg_test_widget_get_window);
+    g_test_add_func("/adg/fallback/widget_get_realized", _adg_test_widget_get_realized);
+    g_test_add_func("/adg/function/window-hide-here", _adg_test_window_hide_here);
+    g_test_add_func("/adg/function/toggle-button-sensitivize", _adg_test_toggle_button_sensitivize);
+    g_test_add_func("/adg/function/use-default-icons", _adg_test_use_default_icons);
 
     return g_test_run();
 }

@@ -175,9 +175,9 @@ main(int argc, char *argv[])
                                     adg_ldim_new_full_explicit(1, 5, 2, 4,
                                                                9, 7, 3));
 
-    adg_test_add_func("/adg/ldim/property/direction", _adg_test_direction);
-    adg_test_add_func("/adg/ldim/property/has-extension1", _adg_test_has_extension1);
-    adg_test_add_func("/adg/ldim/property/has-extension2", _adg_test_has_extension2);
+    g_test_add_func("/adg/ldim/property/direction", _adg_test_direction);
+    g_test_add_func("/adg/ldim/property/has-extension1", _adg_test_has_extension1);
+    g_test_add_func("/adg/ldim/property/has-extension2", _adg_test_has_extension2);
 
     return g_test_run();
 }

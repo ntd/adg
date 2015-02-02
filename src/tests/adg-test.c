@@ -23,11 +23,6 @@
 
 
 typedef struct {
-    void (*func)(gpointer);
-    gpointer data;
-} _FuncData;
-
-typedef struct {
     GType type;
     gpointer instance;
 } _BoxedData;
@@ -94,30 +89,6 @@ adg_test_cairo_num_data(cairo_t *cr)
 }
 
 static void
-_adg_test_func(_FuncData *func_data)
-{
-    func_data->func(func_data->data);
-    g_free(func_data);
-}
-
-void
-adg_test_add_func_full(const char *testpath,
-                       GCallback test_func, gpointer user_data)
-{
-    _FuncData *func_data = g_new(_FuncData, 1);
-    func_data->func = (gpointer) test_func;
-    func_data->data = user_data;
-
-    g_test_add_data_func(testpath, func_data, (GTestDataFunc) _adg_test_func);
-}
-
-void
-adg_test_add_func(const char *testpath, GCallback test_func)
-{
-    adg_test_add_func_full(testpath, test_func, NULL);
-}
-
-static void
 _adg_enum_checks(gconstpointer user_data)
 {
     GType type;
@@ -137,7 +108,8 @@ _adg_enum_checks(gconstpointer user_data)
 void
 adg_test_add_enum_checks(const gchar *testpath, GType type)
 {
-    adg_test_add_func_full(testpath, G_CALLBACK(_adg_enum_checks), GINT_TO_POINTER(type));
+    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
+                         (gpointer) _adg_enum_checks);
 }
 
 static void
@@ -165,7 +137,8 @@ adg_test_add_boxed_checks(const gchar *testpath, GType type, gpointer instance)
     boxed_data->type = type;
     boxed_data->instance = instance;
 
-    adg_test_add_func_full(testpath, G_CALLBACK(_adg_boxed_checks), boxed_data);
+    g_test_add_data_func(testpath, boxed_data,
+                         (gpointer) _adg_boxed_checks);
 }
 
 static void
@@ -216,9 +189,8 @@ _adg_object_checks(gconstpointer user_data)
 void
 adg_test_add_object_checks(const gchar *testpath, GType type)
 {
-    adg_test_add_func_full(testpath,
-                           G_CALLBACK(_adg_object_checks),
-                           GINT_TO_POINTER(type));
+    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
+                         (gpointer) _adg_object_checks);
 }
 
 static void
@@ -257,9 +229,8 @@ _adg_entity_checks(gconstpointer user_data)
 void
 adg_test_add_entity_checks(const gchar *testpath, GType type)
 {
-    adg_test_add_func_full(testpath,
-                           G_CALLBACK(_adg_entity_checks),
-                           GINT_TO_POINTER(type));
+    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
+                         (gpointer) _adg_entity_checks);
 }
 
 static void
@@ -309,7 +280,8 @@ _adg_global_space_checks(AdgEntity *entity)
 void
 adg_test_add_global_space_checks(const gchar *testpath, gpointer entity)
 {
-    adg_test_add_func_full(testpath, G_CALLBACK(_adg_global_space_checks), entity);
+    g_test_add_data_func(testpath, entity,
+                         (gpointer) _adg_global_space_checks);
 }
 
 static void
@@ -356,5 +328,6 @@ _adg_local_space_checks(AdgEntity *entity)
 void
 adg_test_add_local_space_checks(const gchar *testpath, gpointer entity)
 {
-    adg_test_add_func_full(testpath, G_CALLBACK(_adg_local_space_checks), entity);
+    g_test_add_data_func(testpath, entity,
+                         (gpointer) _adg_local_space_checks);
 }

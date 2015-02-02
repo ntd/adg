@@ -346,15 +346,15 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/font-style/type/object", ADG_TYPE_FONT_STYLE);
 
-    adg_test_add_func("/adg/font-style/property/antialias", _adg_test_antialias);
-    adg_test_add_func("/adg/font-style/property/color-dress", _adg_test_color_dress);
-    adg_test_add_func("/adg/font-style/property/family", _adg_test_family);
-    adg_test_add_func("/adg/font-style/property/hint-metrics", _adg_test_hint_metrics);
-    adg_test_add_func("/adg/font-style/property/hint-style", _adg_test_hint_style);
-    adg_test_add_func("/adg/font-style/property/size", _adg_test_size);
-    adg_test_add_func("/adg/font-style/property/slant", _adg_test_slant);
-    adg_test_add_func("/adg/font-style/property/subpixel-order", _adg_test_subpixel_order);
-    adg_test_add_func("/adg/font-style/property/weight", _adg_test_weight);
+    g_test_add_func("/adg/font-style/property/antialias", _adg_test_antialias);
+    g_test_add_func("/adg/font-style/property/color-dress", _adg_test_color_dress);
+    g_test_add_func("/adg/font-style/property/family", _adg_test_family);
+    g_test_add_func("/adg/font-style/property/hint-metrics", _adg_test_hint_metrics);
+    g_test_add_func("/adg/font-style/property/hint-style", _adg_test_hint_style);
+    g_test_add_func("/adg/font-style/property/size", _adg_test_size);
+    g_test_add_func("/adg/font-style/property/slant", _adg_test_slant);
+    g_test_add_func("/adg/font-style/property/subpixel-order", _adg_test_subpixel_order);
+    g_test_add_func("/adg/font-style/property/weight", _adg_test_weight);
 
     return g_test_run();
 }

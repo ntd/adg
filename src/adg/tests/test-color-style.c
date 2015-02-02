@@ -190,10 +190,10 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/color-style/type/object", ADG_TYPE_COLOR_STYLE);
 
-    adg_test_add_func("/adg/color-style/property/alpha", _adg_test_alpha);
-    adg_test_add_func("/adg/color-style/property/blue", _adg_test_blue);
-    adg_test_add_func("/adg/color-style/property/green", _adg_test_green);
-    adg_test_add_func("/adg/color-style/property/red", _adg_test_red);
+    g_test_add_func("/adg/color-style/property/alpha", _adg_test_alpha);
+    g_test_add_func("/adg/color-style/property/blue", _adg_test_blue);
+    g_test_add_func("/adg/color-style/property/green", _adg_test_green);
+    g_test_add_func("/adg/color-style/property/red", _adg_test_red);
 
     return g_test_run();
 }

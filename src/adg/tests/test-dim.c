@@ -543,16 +543,16 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/dim/type/object", ADG_TYPE_DIM);
     adg_test_add_entity_checks("/adg/dim/type/entity", ADG_TYPE_DIM);
 
-    adg_test_add_func("/adg/dim/property/detached", _adg_test_detached);
-    adg_test_add_func("/adg/dim/property/dim-dress", _adg_test_dim_dress);
-    adg_test_add_func("/adg/dim/property/level", _adg_test_level);
-    adg_test_add_func("/adg/dim/property/max", _adg_test_max);
-    adg_test_add_func("/adg/dim/property/min", _adg_test_min);
-    adg_test_add_func("/adg/dim/property/outside", _adg_test_outside);
-    adg_test_add_func("/adg/dim/property/pos", _adg_test_pos);
-    adg_test_add_func("/adg/dim/property/ref1", _adg_test_ref1);
-    adg_test_add_func("/adg/dim/property/ref2", _adg_test_ref2);
-    adg_test_add_func("/adg/dim/property/value", _adg_test_value);
+    g_test_add_func("/adg/dim/property/detached", _adg_test_detached);
+    g_test_add_func("/adg/dim/property/dim-dress", _adg_test_dim_dress);
+    g_test_add_func("/adg/dim/property/level", _adg_test_level);
+    g_test_add_func("/adg/dim/property/max", _adg_test_max);
+    g_test_add_func("/adg/dim/property/min", _adg_test_min);
+    g_test_add_func("/adg/dim/property/outside", _adg_test_outside);
+    g_test_add_func("/adg/dim/property/pos", _adg_test_pos);
+    g_test_add_func("/adg/dim/property/ref1", _adg_test_ref1);
+    g_test_add_func("/adg/dim/property/ref2", _adg_test_ref2);
+    g_test_add_func("/adg/dim/property/value", _adg_test_value);
 
     return g_test_run();
 }

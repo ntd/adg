@@ -649,18 +649,18 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
+    g_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
 
-    adg_test_add_func("/cpml/primitive/method/from-segment", _cpml_test_from_segment);
-    adg_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
-    adg_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
-    adg_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
-    adg_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
-    adg_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
-    adg_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
-    adg_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
-    adg_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
-    adg_test_add_func("/cpml/primitive/method/dump", _cpml_test_dump);
+    g_test_add_func("/cpml/primitive/method/from-segment", _cpml_test_from_segment);
+    g_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
+    g_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
+    g_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
+    g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
+    g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
+    g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
+    g_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
+    g_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
+    g_test_add_func("/cpml/primitive/method/dump", _cpml_test_dump);
 
     return g_test_run();
 }

@@ -159,9 +159,9 @@ main(int argc, char *argv[])
     adg_test_add_local_space_checks("/adg/projection/behavior/local-space",
                                     adg_projection_new(ADG_PROJECTION_SCHEME_THIRD_ANGLE));
 
-    adg_test_add_func("/adg/projection/property/axis-dress", _adg_test_axis_dress);
-    adg_test_add_func("/adg/projection/property/scheme", _adg_test_scheme);
-    adg_test_add_func("/adg/projection/property/symbol-dress", _adg_test_symbol_dress);
+    g_test_add_func("/adg/projection/property/axis-dress", _adg_test_axis_dress);
+    g_test_add_func("/adg/projection/property/scheme", _adg_test_scheme);
+    g_test_add_func("/adg/projection/property/symbol-dress", _adg_test_symbol_dress);
 
     return g_test_run();
 }

@@ -157,9 +157,9 @@ main(int argc, char *argv[])
     adg_test_add_global_space_checks("/adg/logo/behavior/global-space", adg_logo_new());
     adg_test_add_local_space_checks("/adg/logo/behavior/local-space", adg_logo_new());
 
-    adg_test_add_func("/adg/logo/property/frame-dress", _adg_test_frame_dress);
-    adg_test_add_func("/adg/logo/property/screen-dress", _adg_test_screen_dress);
-    adg_test_add_func("/adg/logo/property/symbol-dress", _adg_test_symbol_dress);
+    g_test_add_func("/adg/logo/property/frame-dress", _adg_test_frame_dress);
+    g_test_add_func("/adg/logo/property/screen-dress", _adg_test_screen_dress);
+    g_test_add_func("/adg/logo/property/symbol-dress", _adg_test_symbol_dress);
 
     return g_test_run();
 }

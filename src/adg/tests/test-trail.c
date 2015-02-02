@@ -83,7 +83,7 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/trail/type/object", ADG_TYPE_TRAIL);
 
-    adg_test_add_func("/adg/trail/property/max-angle", _adg_test_max_angle);
+    g_test_add_func("/adg/trail/property/max-angle", _adg_test_max_angle);
 
     return g_test_run();
 }

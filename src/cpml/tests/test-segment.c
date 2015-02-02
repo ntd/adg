@@ -416,16 +416,16 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/segment/behavior/browsing", _cpml_test_browsing);
+    g_test_add_func("/cpml/segment/behavior/browsing", _cpml_test_browsing);
 
-    adg_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
-    adg_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);
-    adg_test_add_func("/cpml/segment/method/put-intersections", _cpml_test_put_intersections);
-    adg_test_add_func("/cpml/segment/method/offset", _cpml_test_offset);
-    adg_test_add_func("/cpml/segment/method/transform", _cpml_test_transform);
-    adg_test_add_func("/cpml/segment/method/reverse", _cpml_test_reverse);
-    adg_test_add_func("/cpml/segment/method/to-cairo", _cpml_test_to_cairo);
-    adg_test_add_func("/cpml/segment/method/dump", _cpml_test_dump);
+    g_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
+    g_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);
+    g_test_add_func("/cpml/segment/method/put-intersections", _cpml_test_put_intersections);
+    g_test_add_func("/cpml/segment/method/offset", _cpml_test_offset);
+    g_test_add_func("/cpml/segment/method/transform", _cpml_test_transform);
+    g_test_add_func("/cpml/segment/method/reverse", _cpml_test_reverse);
+    g_test_add_func("/cpml/segment/method/to-cairo", _cpml_test_to_cairo);
+    g_test_add_func("/cpml/segment/method/dump", _cpml_test_dump);
 
     return g_test_run();
 }

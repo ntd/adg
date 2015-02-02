@@ -76,7 +76,7 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/fill-style/type/object", ADG_TYPE_FILL_STYLE);
 
-    adg_test_add_func("/adg/fill-style/property/pattern", _adg_test_pattern);
+    g_test_add_func("/adg/fill-style/property/pattern", _adg_test_pattern);
 
     return g_test_run();
 }

@@ -167,8 +167,8 @@ main(int argc, char *argv[])
 
     adg_test_add_boxed_checks("/adg/point/type/boxed", ADG_TYPE_POINT, adg_point_new());
 
-    adg_test_add_func("/adg/point/behavior/generic", _adg_test_generic);
-    adg_test_add_func("/adg/point/behavior/named-pair", _adg_test_named_pair);
+    g_test_add_func("/adg/point/behavior/generic", _adg_test_generic);
+    g_test_add_func("/adg/point/behavior/named-pair", _adg_test_named_pair);
 
     return g_test_run();
 }

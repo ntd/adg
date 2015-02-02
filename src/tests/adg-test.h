@@ -62,11 +62,6 @@ void            adg_test_init                   (int            *p_argc,
 const gpointer  adg_test_invalid_pointer        (void);
 cairo_t *       adg_test_cairo_context          (void);
 int             adg_test_cairo_num_data         (cairo_t        *cr);
-void            adg_test_add_func               (const gchar    *testpath,
-                                                 GCallback       test_func);
-void            adg_test_add_func_full          (const char     *testpath,
-                                                 GCallback       test_func,
-                                                 gpointer        user_data);
 void            adg_test_add_enum_checks        (const gchar    *testpath,
                                                  GType           type);
 void            adg_test_add_boxed_checks       (const gchar    *testpath,

@@ -706,22 +706,22 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/dim-style/type/object", ADG_TYPE_DIM_STYLE);
 
-    adg_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_baseline_spacing);
-    adg_test_add_func("/adg/dim-style/property/beyond", _adg_beyond);
-    adg_test_add_func("/adg/dim-style/property/color-dress", _adg_color_dress);
-    adg_test_add_func("/adg/dim-style/property/from-offset", _adg_from_offset);
-    adg_test_add_func("/adg/dim-style/property/limits-shift", _adg_limits_shift);
-    adg_test_add_func("/adg/dim-style/property/limits-spacing", _adg_limits_spacing);
-    adg_test_add_func("/adg/dim-style/property/line-dress", _adg_line_dress);
-    adg_test_add_func("/adg/dim-style/property/marker1", _adg_marker1);
-    adg_test_add_func("/adg/dim-style/property/marker2", _adg_marker2);
-    adg_test_add_func("/adg/dim-style/property/max-dress", _adg_max_dress);
-    adg_test_add_func("/adg/dim-style/property/min-dress", _adg_min_dress);
-    adg_test_add_func("/adg/dim-style/property/number-format", _adg_number_format);
-    adg_test_add_func("/adg/dim-style/property/number-tag", _adg_number_tag);
-    adg_test_add_func("/adg/dim-style/property/quote-shift", _adg_quote_shift);
-    adg_test_add_func("/adg/dim-style/property/to-offset", _adg_to_offset);
-    adg_test_add_func("/adg/dim-style/property/value-dress", _adg_value_dress);
+    g_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_baseline_spacing);
+    g_test_add_func("/adg/dim-style/property/beyond", _adg_beyond);
+    g_test_add_func("/adg/dim-style/property/color-dress", _adg_color_dress);
+    g_test_add_func("/adg/dim-style/property/from-offset", _adg_from_offset);
+    g_test_add_func("/adg/dim-style/property/limits-shift", _adg_limits_shift);
+    g_test_add_func("/adg/dim-style/property/limits-spacing", _adg_limits_spacing);
+    g_test_add_func("/adg/dim-style/property/line-dress", _adg_line_dress);
+    g_test_add_func("/adg/dim-style/property/marker1", _adg_marker1);
+    g_test_add_func("/adg/dim-style/property/marker2", _adg_marker2);
+    g_test_add_func("/adg/dim-style/property/max-dress", _adg_max_dress);
+    g_test_add_func("/adg/dim-style/property/min-dress", _adg_min_dress);
+    g_test_add_func("/adg/dim-style/property/number-format", _adg_number_format);
+    g_test_add_func("/adg/dim-style/property/number-tag", _adg_number_tag);
+    g_test_add_func("/adg/dim-style/property/quote-shift", _adg_quote_shift);
+    g_test_add_func("/adg/dim-style/property/to-offset", _adg_to_offset);
+    g_test_add_func("/adg/dim-style/property/value-dress", _adg_value_dress);
 
     return g_test_run();
 }

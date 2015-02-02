@@ -148,10 +148,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/extents/behavior/misc", _cpml_test_misc);
+    g_test_add_func("/cpml/extents/behavior/misc", _cpml_test_misc);
 
-    adg_test_add_func("/cpml/extents/method/add", _cpml_test_add);
-    adg_test_add_func("/cpml/extents/method/transform", _cpml_test_transform);
+    g_test_add_func("/cpml/extents/method/add", _cpml_test_add);
+    g_test_add_func("/cpml/extents/method/transform", _cpml_test_transform);
 
     return g_test_run();
 }

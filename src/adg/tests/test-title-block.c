@@ -419,15 +419,15 @@ main(int argc, char *argv[])
 
     adg_test_add_global_space_checks("/adg/title-block/behavior/global-space", adg_title_block_new());
 
-    adg_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/title-block/property/author", _adg_test_author);
-    adg_test_add_func("/adg/title-block/property/date", _adg_test_date);
-    adg_test_add_func("/adg/title-block/property/drawing", _adg_test_drawing);
-    adg_test_add_func("/adg/title-block/property/logo", _adg_test_logo);
-    adg_test_add_func("/adg/title-block/property/projection", _adg_test_projection);
-    adg_test_add_func("/adg/title-block/property/scale", _adg_test_scale);
-    adg_test_add_func("/adg/title-block/property/size", _adg_test_size);
-    adg_test_add_func("/adg/title-block/property/title", _adg_test_title);
+    g_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
+    g_test_add_func("/adg/title-block/property/author", _adg_test_author);
+    g_test_add_func("/adg/title-block/property/date", _adg_test_date);
+    g_test_add_func("/adg/title-block/property/drawing", _adg_test_drawing);
+    g_test_add_func("/adg/title-block/property/logo", _adg_test_logo);
+    g_test_add_func("/adg/title-block/property/projection", _adg_test_projection);
+    g_test_add_func("/adg/title-block/property/scale", _adg_test_scale);
+    g_test_add_func("/adg/title-block/property/size", _adg_test_size);
+    g_test_add_func("/adg/title-block/property/title", _adg_test_title);
 
     return g_test_run();
 }

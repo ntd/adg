@@ -306,11 +306,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/dress/generic",  _adg_test_generic);
-    adg_test_add_func("/adg/dress/set",      _adg_test_set);
-    adg_test_add_func("/adg/dress/ancestor", _adg_test_ancestor);
-    adg_test_add_func("/adg/dress/related",  _adg_test_related);
-    adg_test_add_func("/adg/dress/builtins", _adg_test_builtins);
+    g_test_add_func("/adg/dress/generic",  _adg_test_generic);
+    g_test_add_func("/adg/dress/set",      _adg_test_set);
+    g_test_add_func("/adg/dress/ancestor", _adg_test_ancestor);
+    g_test_add_func("/adg/dress/related",  _adg_test_related);
+    g_test_add_func("/adg/dress/builtins", _adg_test_builtins);
 
     return g_test_run();
 }

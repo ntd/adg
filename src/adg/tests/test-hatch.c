@@ -83,7 +83,7 @@ main(int argc, char *argv[])
     adg_test_add_local_space_checks("/adg/hatch/behavior/local-space", adg_hatch_new(ADG_TRAIL(path)));
     g_object_unref(path);
 
-    adg_test_add_func("/adg/hatch/property/fill-dress", _adg_test_fill_dress);
+    g_test_add_func("/adg/hatch/property/fill-dress", _adg_test_fill_dress);
 
     return g_test_run();
 }

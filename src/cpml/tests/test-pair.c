@@ -252,13 +252,13 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/cpml/pair/behavior/misc", _cpml_test_pair_misc);
+    g_test_add_func("/cpml/pair/behavior/misc", _cpml_test_pair_misc);
 
-    adg_test_add_func("/cpml/pair/method/transform", _cpml_test_pair_transform);
-    adg_test_add_func("/cpml/pair/method/distance", _cpml_test_pair_distance);
-    adg_test_add_func("/cpml/vector/method/angle", _cpml_test_vector_angle);
-    adg_test_add_func("/cpml/vector/method/length", _cpml_test_vector_length);
-    adg_test_add_func("/cpml/vector/method/transform", _cpml_test_vector_transform);
+    g_test_add_func("/cpml/pair/method/transform", _cpml_test_pair_transform);
+    g_test_add_func("/cpml/pair/method/distance", _cpml_test_pair_distance);
+    g_test_add_func("/cpml/vector/method/angle", _cpml_test_vector_angle);
+    g_test_add_func("/cpml/vector/method/length", _cpml_test_vector_length);
+    g_test_add_func("/cpml/vector/method/transform", _cpml_test_vector_transform);
 
     return g_test_run();
 }

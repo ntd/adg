@@ -96,8 +96,8 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/arrow/type/object", ADG_TYPE_ARROW);
     adg_test_add_entity_checks("/adg/arrow/type/entity", ADG_TYPE_ARROW);
 
-    adg_test_add_func("/adg/arrow/property/local-mix", _adg_test_local_mix);
-    adg_test_add_func("/adg/arrow/property/angle", _adg_test_angle);
+    g_test_add_func("/adg/arrow/property/local-mix", _adg_test_local_mix);
+    g_test_add_func("/adg/arrow/property/angle", _adg_test_angle);
 
     return g_test_run();
 }

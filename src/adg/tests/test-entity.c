@@ -231,10 +231,10 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/entity/type/object", ADG_TYPE_ENTITY);
     adg_test_add_entity_checks("/adg/entity/type/entity", ADG_TYPE_ENTITY);
 
-    adg_test_add_func("/adg/entity/parent", _adg_test_parent);
-    adg_test_add_func("/adg/entity/global-map", _adg_test_global_map);
-    adg_test_add_func("/adg/entity/local-map", _adg_test_local_map);
-    adg_test_add_func("/adg/entity/local-mix", _adg_test_local_mix);
+    g_test_add_func("/adg/entity/parent", _adg_test_parent);
+    g_test_add_func("/adg/entity/global-map", _adg_test_global_map);
+    g_test_add_func("/adg/entity/local-map", _adg_test_local_map);
+    g_test_add_func("/adg/entity/local-mix", _adg_test_local_mix);
 
     return g_test_run();
 }

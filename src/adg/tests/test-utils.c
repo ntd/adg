@@ -135,15 +135,15 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_func("/adg/fallback/strcpm0", _adg_test_strcmp0);
-    adg_test_add_func("/adg/function/is-string-empty", _adg_test_is_string_empty);
-    adg_test_add_func("/adg/function/is-enum-value", _adg_test_is_enum_value);
-    adg_test_add_func("/adg/function/is-boolean-value", _adg_test_is_boolean_value);
-    adg_test_add_func("/adg/function/string-replace", _adg_test_string_replace);
-    adg_test_add_func("/adg/function/find-file", _adg_test_find_file);
-    adg_test_add_func("/adg/function/scale-factor", _adg_test_scale_factor);
-    adg_test_add_func("/adg/function/type-from-filename", _adg_test_type_from_filename);
-    adg_test_add_func("/adg/function/nop", _adg_test_nop);
+    g_test_add_func("/adg/fallback/strcpm0", _adg_test_strcmp0);
+    g_test_add_func("/adg/function/is-string-empty", _adg_test_is_string_empty);
+    g_test_add_func("/adg/function/is-enum-value", _adg_test_is_enum_value);
+    g_test_add_func("/adg/function/is-boolean-value", _adg_test_is_boolean_value);
+    g_test_add_func("/adg/function/string-replace", _adg_test_string_replace);
+    g_test_add_func("/adg/function/find-file", _adg_test_find_file);
+    g_test_add_func("/adg/function/scale-factor", _adg_test_scale_factor);
+    g_test_add_func("/adg/function/type-from-filename", _adg_test_type_from_filename);
+    g_test_add_func("/adg/function/nop", _adg_test_nop);
 
     return g_test_run();
 }

@@ -140,9 +140,9 @@ main(int argc, char *argv[])
     adg_container_add(container, ADG_ENTITY(adg_logo_new()));
     adg_test_add_local_space_checks("/adg/container/behavior/local-space", container);
 
-    adg_test_add_func("/adg/container/property/child", _adg_property_child);
+    g_test_add_func("/adg/container/property/child", _adg_property_child);
 
-    adg_test_add_func("/adg/container/misc", _adg_misc);
+    g_test_add_func("/adg/container/misc", _adg_misc);
 
     return g_test_run();
 }

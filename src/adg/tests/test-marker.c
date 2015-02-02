@@ -268,11 +268,11 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/marker/type/object", ADG_TYPE_MARKER);
     adg_test_add_entity_checks("/adg/marker/type/entity", ADG_TYPE_MARKER);
 
-    adg_test_add_func("/adg/marker/property/model", _adg_test_model);
-    adg_test_add_func("/adg/marker/property/n-segment", _adg_test_n_segment);
-    adg_test_add_func("/adg/marker/property/pos", _adg_test_pos);
-    adg_test_add_func("/adg/marker/property/size", _adg_test_size);
-    adg_test_add_func("/adg/marker/property/trail", _adg_test_trail);
+    g_test_add_func("/adg/marker/property/model", _adg_test_model);
+    g_test_add_func("/adg/marker/property/n-segment", _adg_test_n_segment);
+    g_test_add_func("/adg/marker/property/pos", _adg_test_pos);
+    g_test_add_func("/adg/marker/property/size", _adg_test_size);
+    g_test_add_func("/adg/marker/property/trail", _adg_test_trail);
 
     return g_test_run();
 }

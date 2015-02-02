@@ -186,11 +186,11 @@ main(int argc, char *argv[])
     adg_test_add_boxed_checks("/cpml/pair/type/boxed", CPML_TYPE_PAIR, g_new0(CpmlPair, 1));
 
     adg_test_add_boxed_checks("/cpml/primitive/type/boxed", CPML_TYPE_PRIMITIVE, g_new0(CpmlPrimitive, 1));
-    adg_test_add_func("/cpml/primitive/method/deep-dup", _cpml_test_primitive_deep_dup);
+    g_test_add_func("/cpml/primitive/method/deep-dup", _cpml_test_primitive_deep_dup);
 
     adg_test_add_boxed_checks("/cpml/segment/type/boxed", CPML_TYPE_SEGMENT, g_new0(CpmlSegment, 1));
-    adg_test_add_func("/cpml/segment/method/deep-dup", _cpml_test_segment_deep_dup);
-    adg_test_add_func("/cpml/segment/method/deep-copy", _cpml_test_segment_deep_copy);
+    g_test_add_func("/cpml/segment/method/deep-dup", _cpml_test_segment_deep_dup);
+    g_test_add_func("/cpml/segment/method/deep-copy", _cpml_test_segment_deep_copy);
 
     adg_test_add_enum_checks("/cpml/curve-offset-algorithm/type/enum", CPML_TYPE_CURVE_OFFSET_ALGORITHM);
 

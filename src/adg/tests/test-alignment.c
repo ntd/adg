@@ -90,7 +90,7 @@ main(int argc, char *argv[])
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(adg_logo_new()));
     adg_test_add_local_space_checks("/adg/alignment/behavior/local-space", alignment);
 
-    adg_test_add_func("/adg/alignment/property/factor", _adg_alignment_factor);
+    g_test_add_func("/adg/alignment/property/factor", _adg_alignment_factor);
 
     return g_test_run();
 }
