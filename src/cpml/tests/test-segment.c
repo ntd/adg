@@ -381,10 +381,9 @@ _cpml_test_to_cairo(void)
 }
 
 static void
-_cpml_test_dump(void)
+_cpml_test_dump(gint i)
 {
-#if GLIB_CHECK_VERSION(2, 38, 0)
-    if (g_test_subprocess()) {
+    if (i == 1) {
         CpmlSegment segment;
 
         /* This should not crash the process */
@@ -395,19 +394,15 @@ _cpml_test_dump(void)
 
         cpml_segment_next(&segment);
         cpml_segment_dump(&segment);
-
-        return;
+    } else {
+        g_test_trap_assert_passed();
+        g_test_trap_assert_stderr_unmatched("?");
+        g_test_trap_assert_stdout("*NULL*");
+        g_test_trap_assert_stdout("*move*");
+        g_test_trap_assert_stdout("*line*");
+        g_test_trap_assert_stdout("*curve*");
+        g_test_trap_assert_stdout_unmatched("*arc*");
     }
-
-    g_test_trap_subprocess(NULL, 0, 0);
-    g_test_trap_assert_passed();
-    g_test_trap_assert_stderr_unmatched("?");
-    g_test_trap_assert_stdout("*NULL*");
-    g_test_trap_assert_stdout("*move*");
-    g_test_trap_assert_stdout("*line*");
-    g_test_trap_assert_stdout("*curve*");
-    g_test_trap_assert_stdout_unmatched("*arc*");
-#endif
 }
 
 
@@ -425,7 +420,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/segment/method/transform", _cpml_test_transform);
     g_test_add_func("/cpml/segment/method/reverse", _cpml_test_reverse);
     g_test_add_func("/cpml/segment/method/to-cairo", _cpml_test_to_cairo);
-    g_test_add_func("/cpml/segment/method/dump", _cpml_test_dump);
+    adg_test_add_traps("/cpml/segment/method/dump", _cpml_test_dump, 1);
 
     return g_test_run();
 }

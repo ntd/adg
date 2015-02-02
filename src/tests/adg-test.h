@@ -57,6 +57,36 @@ G_BEGIN_DECLS
 #endif
 
 
+/* The following type is used by adg_test_add_traps() to handle
+ * in a consistent way trap assertions. The AdgTrapsFunc function
+ * must implement one or more code fragments and a serie of
+ * assertions to be applied on all those fragments, e.g.:
+ *
+ * <informalexample><programlisting language="C">
+ * static void
+ * traps_function(gint i)
+ * {
+ *     switch (i) {
+ *     case 1:
+ *         // First code fragment
+ *         g_print("This will be successful");
+ *         break;
+ *     case 2:
+ *         // Second code fragment
+ *         g_print("This will fail");
+ *         break;
+ *     default:
+ *         // Assertions
+ *         g_test_trap_assert_passed();
+ *         g_test_trap_assert_stdout("*successful*");
+ *         break;
+ *     }
+ * }
+ * </programlisting></informalexample>
+ */
+typedef void (*AdgTrapsFunc)(gint i);
+
+
 void            adg_test_init                   (int            *p_argc,
                                                  char          **p_argv[]);
 const gpointer  adg_test_invalid_pointer        (void);
@@ -75,6 +105,9 @@ void            adg_test_add_global_space_checks(const gchar    *testpath,
                                                  gpointer        entity);
 void            adg_test_add_local_space_checks (const gchar    *testpath,
                                                  gpointer        entity);
+void            adg_test_add_traps              (const gchar    *testpath,
+                                                 AdgTrapsFunc    func,
+                                                 gint            n_fragments);
 
 G_END_DECLS
 

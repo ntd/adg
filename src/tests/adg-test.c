@@ -27,6 +27,11 @@ typedef struct {
     gpointer instance;
 } _BoxedData;
 
+typedef struct {
+    AdgTrapsFunc func;
+    gint n_fragments;
+} _TrapsData;
+
 
 /* Using adg_nop() would require to pull in the whole libadg stack:
  * better to replicate that trivial function instead.
@@ -330,4 +335,63 @@ adg_test_add_local_space_checks(const gchar *testpath, gpointer entity)
 {
     g_test_add_data_func(testpath, entity,
                          (gpointer) _adg_local_space_checks);
+}
+
+#if GLIB_CHECK_VERSION(2, 38, 0)
+
+static void
+_adg_trap(AdgTrapsFunc func, gint i)
+{
+    if (g_test_subprocess()) {
+        func(i);
+        return;
+    }
+    g_test_trap_subprocess(NULL, 0, 0);
+    func(0);
+}
+
+#else
+
+#include <stdlib.h>
+
+#define ADG_TEST_TRAP_FLAGS     (G_TEST_TRAP_SILENCE_STDOUT | G_TEST_TRAP_SILENCE_STDERR)
+
+static void
+_adg_trap(AdgTrapsFunc func, gint i)
+{
+    if (g_test_trap_fork(0, ADG_TEST_TRAP_FLAGS)) {
+        func(i);
+        exit(0);
+    }
+    func(0);
+}
+
+#endif
+
+static void
+_adg_traps(_TrapsData *traps_data)
+{
+    AdgTrapsFunc func = traps_data->func;
+    gint n_fragments = traps_data->n_fragments;
+    gint i;
+
+    g_free(traps_data);
+
+    for (i = 1; i <= n_fragments; ++i) {
+        g_printerr("\b\b\b%2d ", i);
+        _adg_trap(func, i);
+    }
+}
+
+void
+adg_test_add_traps(const gchar *testpath, AdgTrapsFunc func, gint n_fragments)
+{
+    _TrapsData *traps_data;
+
+    g_return_if_fail(n_fragments > 0);
+
+    traps_data = g_new(_TrapsData, 1);
+    traps_data->func = func;
+    traps_data->n_fragments = n_fragments;
+    g_test_add_data_func(testpath, traps_data, (gpointer) _adg_traps);
 }

@@ -614,10 +614,9 @@ _cpml_test_to_cairo(void)
 }
 
 static void
-_cpml_test_dump(void)
+_cpml_test_dump(gint i)
 {
-#if GLIB_CHECK_VERSION(2, 38, 0)
-    if (g_test_subprocess()) {
+    if (i == 1) {
         CpmlSegment segment;
         CpmlPrimitive primitive;
 
@@ -630,17 +629,13 @@ _cpml_test_dump(void)
 
         cpml_primitive_next(&primitive);
         cpml_primitive_dump(&primitive, 1);
-
-        return;
+    } else {
+        g_test_trap_assert_passed();
+        g_test_trap_assert_stderr_unmatched("?");
+        g_test_trap_assert_stdout("*NULL*");
+        g_test_trap_assert_stdout("*move*");
+        g_test_trap_assert_stdout("*line*");
     }
-
-    g_test_trap_subprocess(NULL, 0, 0);
-    g_test_trap_assert_passed();
-    g_test_trap_assert_stderr_unmatched("?");
-    g_test_trap_assert_stdout("*NULL*");
-    g_test_trap_assert_stdout("*move*");
-    g_test_trap_assert_stdout("*line*");
-#endif
 }
 
 
@@ -660,7 +655,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
     g_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
     g_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
-    g_test_add_func("/cpml/primitive/method/dump", _cpml_test_dump);
+    adg_test_add_traps("/cpml/primitive/method/dump", _cpml_test_dump, 1);
 
     return g_test_run();
 }
