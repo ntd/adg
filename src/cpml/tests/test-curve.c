@@ -167,11 +167,6 @@ _cpml_test_offset_at_time(void)
 {
     CpmlPair pair;
 
-    /* TODO: test some other points other than 0 and 1, also
-     *       outside the 0..1 domainother offset algorithms */
-
-    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT);
-
     cpml_curve_put_offset_at_time(&curve, 0, 1, &pair);
     g_assert_cmpfloat(pair.x, ==, 0);
     g_assert_cmpfloat(pair.y, ==, 1);
@@ -180,25 +175,18 @@ _cpml_test_offset_at_time(void)
     g_assert_cmpfloat(pair.x, ==, 2);
     g_assert_cmpfloat(pair.y, ==, 5);
 
-    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL);
-
-    cpml_curve_put_offset_at_time(&curve, 0, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
+    cpml_curve_put_offset_at_time(&curve, 0, 2, &pair);
+    g_assert_cmpfloat(pair.x, ==, -1);
     g_assert_cmpfloat(pair.y, ==, 1);
 
-    cpml_curve_put_offset_at_time(&curve, 1, 1, &pair);
+    cpml_curve_put_offset_at_time(&curve, 0.5, 0, &pair);
     g_assert_cmpfloat(pair.x, ==, 2);
-    g_assert_cmpfloat(pair.y, ==, 5);
+    g_assert_cmpfloat(pair.y, ==, 3);
 
-    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_BAIOCA);
-
-    cpml_curve_put_offset_at_time(&curve, 0, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
-
-    cpml_curve_put_offset_at_time(&curve, 1, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 2);
-    g_assert_cmpfloat(pair.y, ==, 5);
+    cpml_curve_put_offset_at_time(&curve, 0.5, G_SQRT2, &pair);
+    /* Check only the first 5 digits to avoid rounding errors */
+    g_assert_cmpint((pair.x + 0.00005) * 10000, ==, 10000);
+    g_assert_cmpint((pair.y + 0.00005) * 10000, ==, 40000);
 }
 
 
