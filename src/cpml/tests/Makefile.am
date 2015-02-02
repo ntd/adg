@@ -22,6 +22,9 @@ test_segment_SOURCES=		test-segment.c
 TEST_PROGS+=			test-primitive$(EXEEXT)
 test_primitive_SOURCES=		test-primitive.c
 
+TEST_PROGS+=			test-curve$(EXEEXT)
+test_curve_SOURCES=		test-curve.c
+
 TEST_PROGS+=			test-gobject$(EXEEXT)
 test_gobject_SOURCES=		test-gobject.c
 
