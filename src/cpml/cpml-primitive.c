@@ -666,7 +666,7 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
     end1 = _cpml_get_point(primitive, -1);
     start2 = _cpml_get_point(primitive2, 0);
 
-    /* Check if the primitives are already connected */
+    /* Check if the primitives are yet connected */
     if (end1->point.x == start2->point.x && end1->point.y == start2->point.y)
         return 1;
 
@@ -750,11 +750,6 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, int org_also)
     int type;
     const _CpmlPrimitiveClass *class_data;
     size_t n, n_points;
-
-    if (primitive == NULL) {
-        printf("NULL primitive\n");
-        return;
-    }
 
     data = primitive->data;
     type = data->header.type;
