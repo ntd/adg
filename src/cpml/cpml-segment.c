@@ -466,9 +466,6 @@ cpml_segment_reverse(CpmlSegment *segment)
     size_t n_points, n_point;
     const cairo_path_data_t *src_data;
 
-    if (segment == NULL)
-        return;
-
     data_size = sizeof(cairo_path_data_t) * segment->num_data;
     data = malloc(data_size);
     end_x = segment->data[1].point.x;
