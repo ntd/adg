@@ -421,9 +421,6 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
     cairo_path_data_t *data;
     size_t n_points;
 
-    if (segment == NULL || matrix == NULL)
-        return;
-
     cpml_primitive_from_segment(&primitive, segment);
     cairo_matrix_transform_point(matrix, &(primitive.org)->point.x,
                                  &(primitive.org)->point.y);
