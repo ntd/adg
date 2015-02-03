@@ -149,13 +149,137 @@ _cpml_test_browsing(void)
 }
 
 static void
+_cpml_test_sanity_from_cairo(gint i)
+{
+    CpmlSegment segment;
+
+    switch (i) {
+    case 1:
+        cpml_segment_from_cairo(NULL, &path);
+        break;
+    case 2:
+        cpml_segment_from_cairo(&segment, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_get_length(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_get_length(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_put_intersections(gint i)
+{
+    CpmlSegment segment;
+    CpmlPair pair;
+
+    switch (i) {
+    case 1:
+        cpml_segment_put_intersections(NULL, &segment, 2, &pair);
+        break;
+    case 2:
+        cpml_segment_put_intersections(&segment, NULL, 2, &pair);
+        break;
+    case 3:
+        cpml_segment_put_intersections(&segment, &segment, 2, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_offset(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_offset(NULL, 1);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_transform(gint i)
+{
+    CpmlSegment segment;
+    cairo_matrix_t matrix;
+
+    switch (i) {
+    case 1:
+        cpml_segment_transform(NULL, &matrix);
+        break;
+    case 2:
+        cpml_segment_transform(&segment, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_reverse(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_reverse(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_to_cairo(gint i)
+{
+    CpmlSegment segment;
+
+    switch (i) {
+    case 1:
+        cpml_segment_to_cairo(NULL, adg_test_cairo_context());
+        break;
+    case 2:
+        cpml_segment_to_cairo(&segment, NULL);
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_dump(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_dump(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_from_cairo(void)
 {
     CpmlSegment segment;
-    g_assert_cmpint(cpml_segment_from_cairo(NULL, &path), ==, 0);
-    g_assert_cmpint(cpml_segment_from_cairo(&segment, NULL), ==, 0);
-    g_assert_cmpint(cpml_segment_from_cairo(NULL, NULL), ==, 0);
-
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &noop_path), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &path), ==, 1);
 }
@@ -166,7 +290,6 @@ _cpml_test_get_length(void)
     CpmlSegment segment;
     cpml_segment_from_cairo(&segment, &path);
 
-    g_assert_cmpfloat(cpml_segment_get_length(NULL), ==, 0);
 
     /* First segment */
     g_assert_cmpfloat(cpml_segment_get_length(&segment), ==, 4);
@@ -195,10 +318,7 @@ _cpml_test_put_intersections(void)
     cpml_segment_from_cairo(&segment1, &path);
     cpml_segment_from_cairo(&segment2, &y1_path);
 
-    g_assert_cmpuint(cpml_segment_put_intersections(NULL, &segment2, 2, pair), ==, 0);
-    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, NULL, 2, pair), ==, 0);
     g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 0, pair), ==, 0);
-    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 2, NULL), ==, 0);
 
     /* The first segment of path intersects y1_path in (2, 1) */
     g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 2, pair), ==, 1);
@@ -215,9 +335,6 @@ static void
 _cpml_test_offset(void)
 {
     CpmlSegment original, *segment;
-
-    /* Check a NULL segment does not crash the process */
-    cpml_segment_offset(NULL, 1);
 
     cpml_segment_from_cairo(&original, &path);
 
@@ -253,10 +370,6 @@ _cpml_test_transform(void)
     /* Working on a duplicate of the first segment to avoid modifying path */
     segment = cpml_segment_deep_dup(&original);
 
-    /* Check invalid args does not crash the process */
-    cpml_segment_transform(NULL, &matrix);
-    cpml_segment_transform(segment, NULL);
-
     cairo_matrix_init_translate(&matrix, 1, 2);
     cpml_segment_transform(segment, &matrix);
 
@@ -279,9 +392,6 @@ static void
 _cpml_test_reverse(void)
 {
     CpmlSegment original, *segment;
-
-    /* Check a NULL segment does not crash the process */
-    cpml_segment_reverse(NULL);
 
     cpml_segment_from_cairo(&original, &path);
 
@@ -364,10 +474,6 @@ _cpml_test_to_cairo(void)
     cpml_segment_from_cairo(&segment, &path);
 
     g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
-    cpml_segment_to_cairo(NULL, cr);
-    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
-    cpml_segment_to_cairo(&segment, NULL);
-    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
 
     length = 0;
     do {
@@ -383,25 +489,23 @@ _cpml_test_to_cairo(void)
 static void
 _cpml_test_dump(gint i)
 {
-    if (i == 1) {
-        CpmlSegment segment;
+    CpmlSegment segment;
 
-        /* This should not crash the process */
-        cpml_segment_dump(NULL);
-
+    switch (i) {
+    case 1:
         cpml_segment_from_cairo(&segment, &path);
         cpml_segment_dump(&segment);
-
         cpml_segment_next(&segment);
         cpml_segment_dump(&segment);
-    } else {
+        break;
+    default:
         g_test_trap_assert_passed();
         g_test_trap_assert_stderr_unmatched("?");
-        g_test_trap_assert_stdout("*NULL*");
         g_test_trap_assert_stdout("*move*");
         g_test_trap_assert_stdout("*line*");
         g_test_trap_assert_stdout("*curve*");
         g_test_trap_assert_stdout_unmatched("*arc*");
+        break;
     }
 }
 
@@ -412,6 +516,15 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     g_test_add_func("/cpml/segment/behavior/browsing", _cpml_test_browsing);
+
+    adg_test_add_traps("/cpml/segment/sanity/from-cairo", _cpml_test_sanity_from_cairo, 2);
+    adg_test_add_traps("/cpml/segment/sanity/get-length", _cpml_test_sanity_get_length, 1);
+    adg_test_add_traps("/cpml/segment/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
+    adg_test_add_traps("/cpml/segment/sanity/offset", _cpml_test_sanity_offset, 1);
+    adg_test_add_traps("/cpml/segment/sanity/transform", _cpml_test_sanity_transform, 2);
+    adg_test_add_traps("/cpml/segment/sanity/reverse", _cpml_test_sanity_reverse, 1);
+    adg_test_add_traps("/cpml/segment/sanity/to-cairo", _cpml_test_sanity_to_cairo, 2);
+    adg_test_add_traps("/cpml/segment/sanity/dump", _cpml_test_sanity_dump, 1);
 
     g_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
     g_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);

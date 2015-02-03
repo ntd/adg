@@ -97,6 +97,90 @@ _cpml_test_browsing(void)
 }
 
 static void
+_cpml_test_sanity_get_length(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_get_length(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_put_intersections(gint i)
+{
+    CpmlPrimitive primitive;
+    CpmlPair pair;
+
+    switch (i) {
+    case 1:
+        cpml_primitive_put_intersections(&primitive, NULL, 2, &pair);
+        break;
+    case 2:
+        cpml_primitive_put_intersections(NULL, &primitive, 2, &pair);
+        break;
+    case 3:
+        cpml_primitive_put_intersections(&primitive, &primitive, 2, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_join(gint i)
+{
+    CpmlPrimitive primitive;
+
+    switch (i) {
+    case 1:
+        cpml_primitive_join(NULL, &primitive);
+        break;
+    case 2:
+        cpml_primitive_join(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_dump(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_segment_dump(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_to_cairo(gint i)
+{
+    CpmlPrimitive primitive;
+
+    switch (i) {
+    case 1:
+        cpml_primitive_to_cairo(NULL, adg_test_cairo_context());
+        break;
+    case 2:
+        cpml_primitive_to_cairo(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_from_segment(void)
 {
     CpmlSegment segment;
@@ -399,8 +483,6 @@ _cpml_test_get_length(void)
     CpmlSegment segment;
     CpmlPrimitive primitive;
 
-    g_assert_cmpfloat(cpml_primitive_get_length(NULL), ==, 0);
-
     cpml_segment_from_cairo(&segment, &rectangle);
 
     cpml_primitive_from_segment(&primitive, &segment);
@@ -457,11 +539,7 @@ _cpml_test_put_intersections(void)
     cpml_segment_from_cairo(&segment, &path1);
     cpml_primitive_from_segment(&primitive2, &segment);
 
-    g_assert_cmpuint(cpml_primitive_put_intersections(NULL, &primitive2, 2, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections(&primitive, NULL, 2, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections(NULL, NULL, 2, pair), ==, 0);
     g_assert_cmpuint(cpml_primitive_put_intersections(&primitive, &primitive2, 0, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, NULL), ==, 0);
 
     /* The first primitive of path1 intersects (really) path2 in (0, 1) */
     g_assert_cmpuint(cpml_primitive_put_intersections(&primitive, &primitive2, 2, pair), ==, 1);
@@ -597,10 +675,6 @@ _cpml_test_to_cairo(void)
     cpml_primitive_from_segment(&primitive, &segment);
 
     g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
-    cpml_primitive_to_cairo(NULL, cr);
-    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
-    cpml_primitive_to_cairo(&primitive, NULL);
-    g_assert_cmpint(adg_test_cairo_num_data(cr), ==, 0);
 
     length = 0;
     do {
@@ -616,20 +690,19 @@ _cpml_test_to_cairo(void)
 static void
 _cpml_test_dump(gint i)
 {
-    if (i == 1) {
-        CpmlSegment segment;
-        CpmlPrimitive primitive;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
 
-        /* This should not crash the process */
-        cpml_primitive_dump(NULL, 1);
-
+    switch (i) {
+    case 1:
         cpml_segment_from_cairo(&segment, &path);
         cpml_primitive_from_segment(&primitive, &segment);
         cpml_primitive_dump(&primitive, 1);
 
         cpml_primitive_next(&primitive);
         cpml_primitive_dump(&primitive, 1);
-    } else {
+        break;
+    case 2:
         g_test_trap_assert_passed();
         g_test_trap_assert_stderr_unmatched("?");
         g_test_trap_assert_stdout("*NULL*");
@@ -645,6 +718,12 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     g_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
+
+    adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
+    adg_test_add_traps("/cpml/primitive/sanity/join", _cpml_test_sanity_join, 2);
+    adg_test_add_traps("/cpml/primitive/sanity/to-cairo", _cpml_test_sanity_to_cairo, 2);
+    adg_test_add_traps("/cpml/primitive/sanity/dump", _cpml_test_sanity_dump, 1);
 
     g_test_add_func("/cpml/primitive/method/from-segment", _cpml_test_from_segment);
     g_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
