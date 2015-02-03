@@ -97,11 +97,43 @@ _cpml_test_browsing(void)
 }
 
 static void
+_cpml_test_sanity_from_segment(gint i)
+{
+    CpmlPrimitive primitive;
+    CpmlSegment segment;
+
+    switch (i) {
+    case 1:
+        cpml_primitive_from_segment(NULL, &segment);
+        break;
+    case 2:
+        cpml_primitive_from_segment(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_get_n_points(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_primitive_get_n_points(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_get_length(gint i)
 {
     switch (i) {
     case 1:
-        cpml_segment_get_length(NULL);
+        cpml_primitive_get_length(NULL);
         break;
     default:
         g_test_trap_assert_failed();
@@ -117,13 +149,36 @@ _cpml_test_sanity_put_intersections(gint i)
 
     switch (i) {
     case 1:
-        cpml_primitive_put_intersections(&primitive, NULL, 2, &pair);
+        cpml_primitive_put_intersections(NULL, &primitive, 2, &pair);
         break;
     case 2:
-        cpml_primitive_put_intersections(NULL, &primitive, 2, &pair);
+        cpml_primitive_put_intersections(&primitive, NULL, 2, &pair);
         break;
     case 3:
         cpml_primitive_put_intersections(&primitive, &primitive, 2, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
+_cpml_test_sanity_put_intersections_with_segment(gint i)
+{
+    CpmlPrimitive primitive;
+    CpmlSegment segment;
+    CpmlPair pair;
+
+    switch (i) {
+    case 1:
+        cpml_primitive_put_intersections_with_segment(NULL, &segment, 2, &pair);
+        break;
+    case 2:
+        cpml_primitive_put_intersections_with_segment(&primitive, NULL, 2, &pair);
+        break;
+    case 3:
+        cpml_primitive_put_intersections_with_segment(&primitive, &segment, 2, NULL);
         break;
     default:
         g_test_trap_assert_failed();
@@ -187,16 +242,6 @@ _cpml_test_from_segment(void)
     CpmlPrimitive primitive;
 
     g_assert_true(cpml_segment_from_cairo(&segment, &path));
-
-    cpml_primitive_from_segment(&primitive, &segment);
-    g_assert_nonnull(primitive.segment);
-    g_assert_nonnull(primitive.org);
-    g_assert_nonnull(primitive.data);
-
-    cpml_primitive_from_segment(&primitive, NULL);
-    g_assert_null(primitive.segment);
-    g_assert_null(primitive.org);
-    g_assert_null(primitive.data);
 
     cpml_primitive_from_segment(&primitive, &segment);
     g_assert_nonnull(primitive.segment);
@@ -567,11 +612,7 @@ _cpml_test_put_intersections(void)
     g_assert_cmpfloat(pair[0].x, ==, 100);
     g_assert_cmpfloat(pair[0].y, ==, 0);
 
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(NULL, &segment, 2, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, NULL, 2, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(NULL, NULL, 2, pair), ==, 0);
     g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 0, pair), ==, 0);
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 2, NULL), ==, 0);
 
     /* path2 intesects the whole path1 in two points */
     g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 2, pair), ==, 2);
@@ -719,8 +760,11 @@ main(int argc, char *argv[])
 
     g_test_add_func("/cpml/primitive/behavior/browsing", _cpml_test_browsing);
 
+    adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_test_sanity_from_segment, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
     adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
+    adg_test_add_traps("/cpml/primitive/sanity/put-intersections-with-segment", _cpml_test_sanity_put_intersections_with_segment, 3);
     adg_test_add_traps("/cpml/primitive/sanity/join", _cpml_test_sanity_join, 2);
     adg_test_add_traps("/cpml/primitive/sanity/to-cairo", _cpml_test_sanity_to_cairo, 2);
     adg_test_add_traps("/cpml/primitive/sanity/dump", _cpml_test_sanity_dump, 1);

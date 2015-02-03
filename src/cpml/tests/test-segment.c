@@ -185,6 +185,8 @@ _cpml_test_sanity_put_intersections(gint i)
     CpmlSegment segment;
     CpmlPair pair;
 
+    cpml_segment_from_cairo(&segment, &path);
+
     switch (i) {
     case 1:
         cpml_segment_put_intersections(NULL, &segment, 2, &pair);
