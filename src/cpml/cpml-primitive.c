@@ -711,9 +711,6 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
     cairo_path_t path;
     cairo_path_data_t *path_data;
 
-    if (primitive == NULL || cr == NULL)
-        return;
-
     cairo_move_to(cr, primitive->org->point.x, primitive->org->point.y);
 
     type = primitive->data->header.type;
