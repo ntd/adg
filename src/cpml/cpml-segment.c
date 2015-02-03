@@ -337,9 +337,6 @@ cpml_segment_put_intersections(const CpmlSegment *segment,
     cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
     total = 0;
 
-    if (segment == NULL || segment2 == NULL || dest == NULL)
-        return 0;
-
     do {
         partial = cpml_primitive_put_intersections_with_segment(&portion,
                                                                 segment2,
