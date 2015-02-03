@@ -70,7 +70,6 @@
 #include "cpml-segment.h"
 #include "cpml-primitive.h"
 #include "cpml-curve.h"
-#include <stdio.h>
 #include <string.h>
 
 static int              normalize               (CpmlSegment       *segment);
@@ -551,16 +550,10 @@ void
 cpml_segment_dump(const CpmlSegment *segment)
 {
     CpmlPrimitive primitive;
-    int first_call;
-
-    if (segment == NULL) {
-        printf("NULL segment\n");
-        return;
-    }
+    int first_call = 1;
 
     cpml_primitive_from_segment(&primitive, (CpmlSegment *) segment);
 
-    first_call = 1;
     do {
         cpml_primitive_dump(&primitive, first_call);
         first_call = 0;
