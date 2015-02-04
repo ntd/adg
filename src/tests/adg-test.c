@@ -347,6 +347,7 @@ _adg_trap(AdgTrapsFunc func, gint i)
         return;
     }
     g_test_trap_subprocess(NULL, 0, 0);
+    g_print("\b\b\b%2d ", i);
     func(0);
 }
 
@@ -363,6 +364,7 @@ _adg_trap(AdgTrapsFunc func, gint i)
         func(i);
         exit(0);
     }
+    g_print("\b\b\b%2d ", i);
     func(0);
 }
 
@@ -378,7 +380,6 @@ _adg_traps(_TrapsData *traps_data)
     g_free(traps_data);
 
     for (i = 1; i <= n_fragments; ++i) {
-        g_printerr("\b\b\b%2d ", i);
         _adg_trap(func, i);
     }
 }
