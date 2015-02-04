@@ -317,9 +317,9 @@ cpml_primitive_set_point(CpmlPrimitive *primitive,
 
 /**
  * cpml_primitive_put_point:
- * @primitive:                                 a #CpmlPrimitive
- * @n_point:                                   the index of the point to retrieve
- * @pair: (out caller-allocates) (allow-none): the destination #CpmlPair
+ * @primitive:                    a #CpmlPrimitive
+ * @n_point:                      the index of the point to retrieve
+ * @pair: (out caller-allocates): the destination #CpmlPair
  *
  * Gets the specified @n_point from @primitive and stores it into
  * @pair. The @n_point index is subject to the same rules explained
@@ -338,9 +338,7 @@ cpml_primitive_put_point(const CpmlPrimitive *primitive,
     if (point == NULL)
         return 0;
 
-    if (pair != NULL)
-        cpml_pair_from_cairo(pair, point);
-
+    cpml_pair_from_cairo(pair, point);
     return 1;
 }
 
