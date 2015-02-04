@@ -93,6 +93,85 @@ adg_test_cairo_num_data(cairo_t *cr)
     return length;
 }
 
+const cairo_path_t *
+adg_test_path(void)
+{
+    static cairo_path_data_t data[] = {
+
+        /* First segment: a valid segment with all primitive types */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 0, 1 }},
+        { .header = { CPML_LINE, 2 }},
+        { .point = { 3, 1 }},
+        { .header = { CPML_ARC, 3 }},
+        { .point = { 4, 5 }},
+        { .point = { 6, 7 }},
+        { .header = { CPML_CURVE, 4 }},
+        { .point = { 8, 9 }},
+        { .point = { 10, 11 }},
+        { .point = { -2, 2 }},
+        { .header = { CPML_CLOSE, 1 }},
+
+        /* Useless CPML_MOVE */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 0, 0 }},
+
+        /* Second segment: a couple of lines of length 1 and 2;
+         * line 2 intersects line 1 of the first segment in (1, 1) */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 0, 0 }},
+        { .header = { CPML_LINE, 2 }},
+        { .point = { 1, 0 }},
+        { .header = { CPML_LINE, 2 }},
+        { .point = { 1, 2 }},
+
+        /* Another useless CPML_MOVE with useless embedded data */
+        { .header = { CPML_MOVE, 4 }},
+        { .point = { 1, 2 }},
+        { .point = { 3, 4 }},
+        { .point = { 5, 6 }},
+
+        /* Third segment: a Bézier curve with a trailing CPML_CLOSE */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 10, 13 }},
+        { .header = { CPML_CURVE, 4 }},
+        { .point = { 8, 9 }},
+        { .point = { 10, 11 }},
+        { .point = { 12, 13 }},
+        { .header = { CPML_CLOSE, 1 }},
+
+        /* A valid cairo segment considered invalid by CPML
+         * because does not have a leading CPML_MOVE */
+        { .header = { CPML_LINE, 2 }},
+        { .point = { 10, 0 }},
+        { .header = { CPML_CLOSE, 1 }},
+
+        /* Another valid cairo segment invalid in CPML */
+        { .header = { CPML_CLOSE, 1 }},
+
+        /* Forth segment: a couple of arcs */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 14, 15 }},
+        { .header = { CPML_ARC, 3 }},
+        { .point = { 16, 17 }},
+        { .point = { 18, 19 }},
+        { .header = { CPML_ARC, 3 }},
+        { .point = { 20, 21 }},
+        { .point = { 22, 23 }},
+
+        /* Fifth segment: a floating CPML_CLOSE */
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 24, 25 }},
+        { .header = { CPML_CLOSE, 1 }}
+    };
+    static cairo_path_t path = {
+        CAIRO_STATUS_SUCCESS,
+        data,
+        G_N_ELEMENTS(data)
+    };
+    return &path;
+}
+
 static void
 _adg_enum_checks(gconstpointer user_data)
 {
