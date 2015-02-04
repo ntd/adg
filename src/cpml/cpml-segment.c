@@ -442,10 +442,9 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
  * Reverses @segment in-place. The resulting rendering will be the same,
  * but with the primitives generated in reverse order.
  *
- * It is assumed that @segment has already been sanitized, such as when
- * it is returned by some CPML function or it is a cairo path already
- * conforming to the * segment rules described by the
- * cpml_segment_from_cairo() function.
+ * It is assumed that @segment has already been sanitized, e.g. when it
+ * is returned by some CPML API or it is a cairo path already conforming
+ * to the segment rules described in cpml_segment_from_cairo().
  *
  * Since: 1.0
  **/
@@ -461,22 +460,23 @@ cpml_segment_reverse(CpmlSegment *segment)
 
     data_size = sizeof(cairo_path_data_t) * segment->num_data;
     data = malloc(data_size);
-    end_x = segment->data[1].point.x;
-    end_y = segment->data[1].point.y;
+    src_data = segment->data;
+    dst_data = data + segment->num_data;
+    end_x = src_data[1].point.x;
+    end_y = src_data[1].point.y;
 
-    n = segment->data->header.length;
+    n = src_data->header.length;
     data->header.type = CPML_MOVE;
     data->header.length = n;
 
     while (n < segment->num_data) {
         src_data = segment->data + n;
-        /* While usually CPML_CLOSE is treated as a CPML_LINE, in this case
-         * it must not, because it does not have a trailing data point */
-        n_points = src_data->header.type == CAIRO_PATH_CLOSE_PATH ? 1 :
-            cpml_primitive_type_get_n_points(src_data->header.type);
+        if (src_data->header.type == CAIRO_PATH_CLOSE_PATH)
+            break;
+        n_points = cpml_primitive_type_get_n_points(src_data->header.type);
         length = src_data->header.length;
         n += length;
-        dst_data = data + segment->num_data - n + data->header.length;
+        dst_data -= length;
         dst_data->header.type = src_data->header.type;
         dst_data->header.length = length;
 
@@ -494,11 +494,17 @@ cpml_segment_reverse(CpmlSegment *segment)
         }
     }
 
-    data[1].point.x = end_x;
-    data[1].point.y = end_y;
-    memcpy(segment->data, data, data_size);
+    if (src_data->header.type == CAIRO_PATH_CLOSE_PATH) {
+        memcpy(segment->data + segment->data->header.length, dst_data,
+               data_size - ((char *) dst_data - (char *) data));
+    } else {
+        memcpy(segment->data, data, data_size);
+    }
 
     free(data);
+
+    segment->data[1].point.x = end_x;
+    segment->data[1].point.y = end_y;
 }
 
 /**
