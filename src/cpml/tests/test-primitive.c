@@ -72,6 +72,8 @@ _cpml_test_sanity_from_segment(gint i)
     CpmlPrimitive primitive;
     CpmlSegment segment;
 
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+
     switch (i) {
     case 1:
         cpml_primitive_from_segment(NULL, &segment);
@@ -137,18 +139,28 @@ _cpml_test_sanity_get_length(gint i)
 static void
 _cpml_test_sanity_put_intersections(gint i)
 {
-    CpmlPrimitive primitive;
+    CpmlSegment segment;
+    CpmlPrimitive primitive1, primitive2;
     CpmlPair pair;
+
+    /* Set primitive1 to 1.1 and primitive 2 to 2.2,
+     * so there is an intersection point in (1, 1) */
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive1, &segment);
+
+    cpml_segment_next(&segment);
+    cpml_primitive_from_segment(&primitive2, &segment);
+    cpml_primitive_next(&primitive2);
 
     switch (i) {
     case 1:
-        cpml_primitive_put_intersections(NULL, &primitive, 2, &pair);
+        cpml_primitive_put_intersections(NULL, &primitive2, 2, &pair);
         break;
     case 2:
-        cpml_primitive_put_intersections(&primitive, NULL, 2, &pair);
+        cpml_primitive_put_intersections(&primitive1, NULL, 2, &pair);
         break;
     case 3:
-        cpml_primitive_put_intersections(&primitive, &primitive, 2, NULL);
+        cpml_primitive_put_intersections(&primitive1, &primitive2, 2, NULL);
         break;
     default:
         g_test_trap_assert_failed();
@@ -162,6 +174,13 @@ _cpml_test_sanity_put_intersections_with_segment(gint i)
     CpmlPrimitive primitive;
     CpmlSegment segment;
     CpmlPair pair;
+
+    /* Set primitive 1.1 and segment to 2
+     * so there is an intersection point in (1,1) */
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    cpml_segment_next(&segment);
 
     switch (i) {
     case 1:
@@ -182,7 +201,11 @@ _cpml_test_sanity_put_intersections_with_segment(gint i)
 static void
 _cpml_test_sanity_join(gint i)
 {
+    CpmlSegment segment;
     CpmlPrimitive primitive;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
 
     switch (i) {
     case 1:
@@ -213,7 +236,11 @@ _cpml_test_sanity_dump(gint i)
 static void
 _cpml_test_sanity_to_cairo(gint i)
 {
+    CpmlSegment segment;
     CpmlPrimitive primitive;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
 
     switch (i) {
     case 1:

@@ -71,8 +71,6 @@ _cpml_test_sanity_from_cairo(gint i)
     cairo_path_t *path = (cairo_path_t *) adg_test_path();
     CpmlSegment segment;
 
-    cpml_segment_from_cairo(&segment, path);
-
     switch (i) {
     case 1:
         cpml_segment_from_cairo(NULL, path);
@@ -102,20 +100,23 @@ _cpml_test_sanity_get_length(gint i)
 static void
 _cpml_test_sanity_put_intersections(gint i)
 {
-    CpmlSegment segment;
+    CpmlSegment segment1, segment2;
     CpmlPair pair;
 
-    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    /* Segment 1 and segment 2 intersects at least in (1,1) */
+    cpml_segment_from_cairo(&segment1, (cairo_path_t *) adg_test_path());
+    cpml_segment_copy(&segment2, &segment1);
+    cpml_segment_next(&segment2);
 
     switch (i) {
     case 1:
-        cpml_segment_put_intersections(NULL, &segment, 2, &pair);
+        cpml_segment_put_intersections(NULL, &segment2, 2, &pair);
         break;
     case 2:
-        cpml_segment_put_intersections(&segment, NULL, 2, &pair);
+        cpml_segment_put_intersections(&segment1, NULL, 2, &pair);
         break;
     case 3:
-        cpml_segment_put_intersections(&segment, &segment, 2, NULL);
+        cpml_segment_put_intersections(&segment1, &segment2, 2, NULL);
         break;
     default:
         g_test_trap_assert_failed();
