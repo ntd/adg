@@ -181,9 +181,6 @@ put_intersections(const CpmlPrimitive *line, const CpmlPrimitive *primitive,
 {
     CpmlPair p1_4[4];
 
-    if (n_dest == 0)
-        return 0;
-
     cpml_primitive_put_point(line, 0, &p1_4[0]);
     cpml_primitive_put_point(line, -1, &p1_4[1]);
     cpml_primitive_put_point(primitive, 0, &p1_4[2]);
@@ -233,10 +230,8 @@ intersection(const CpmlPair *p1_4, CpmlPair *dest, double *get_factor)
     factor = ((p1_4[0].y - p1_4[2].y) * v[1].x -
               (p1_4[0].x - p1_4[2].x) * v[1].y) / factor;
 
-    if (dest != NULL) {
-        dest->x = p1_4[0].x + v[0].x * factor;
-        dest->y = p1_4[0].y + v[0].y * factor;
-    }
+    dest->x = p1_4[0].x + v[0].x * factor;
+    dest->y = p1_4[0].y + v[0].y * factor;
 
     if (get_factor != NULL)
         *get_factor = factor;

@@ -519,8 +519,7 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
     const _CpmlPrimitiveClass *class_data;
     size_t n_points, n_points2;
 
-    class_data = _cpml_class_from_obj(primitive);
-    if (class_data == NULL)
+    if (n_dest == 0)
         return 0;
 
     n_points = cpml_primitive_get_n_points(primitive);
@@ -537,7 +536,8 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
     }
 
     /* Check if put_intersections is implemented */
-    if (class_data->put_intersections == NULL)
+    class_data = _cpml_class_from_obj(primitive);
+    if (class_data == NULL || class_data->put_intersections == NULL)
         return 0;
 
     return class_data->put_intersections(primitive, primitive2, n_dest, dest);
