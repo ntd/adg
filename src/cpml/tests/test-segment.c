@@ -226,7 +226,7 @@ _cpml_test_from_cairo(void)
     };
     cairo_path_t empty_path = {
         CAIRO_STATUS_SUCCESS,
-        noop_data,
+        adg_test_path()->data,
         0
     };
 
