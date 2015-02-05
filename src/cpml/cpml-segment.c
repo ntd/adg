@@ -83,16 +83,17 @@ static int              reshape                 (CpmlSegment       *segment);
  * @path: (type gpointer): the source #cairo_path_t
  *
  * Builds a CpmlSegment from a #cairo_path_t structure. This operation
- * involves stripping the duplicate %CPML_MOVE primitives at the
- * start of the path and setting <structfield>num_data</structfield>
- * field to the end of the contiguous line, that is when another
- * %CPML_MOVE primitive is found or at the end of the path.
- * A pointer to the source cairo path is kept though.
+ * involves stripping duplicate %CPML_MOVE primitives at the beginning
+ * of @path and including all the primitives up to the end of the
+ * contiguous line, that is before a %CPML_MOVE, when the original path
+ * data finish or up to a %CPML_CLOSE. This is done unobtrusively by
+ * setting the @segment fields appropriately, i.e. @path is not touched.
  *
- * This function will fail if @path is null, empty or if its
+ * The first primitive must be a %CPML_MOVE, so no dependency on the
+ * cairo context (to know the current position) is needed.
+ *
+ * This function will fail if @path is empty or if its
  * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
- * Also, the first primitive must be a %CPML_MOVE, so no
- * dependency on the cairo context is needed.
  *
  * Returns: (type gboolean): 1 if @segment has been succesfully computed, 0 on errors.
  *
@@ -575,39 +576,41 @@ normalize(CpmlSegment *segment)
  * ensure_one_leading_move:
  * @segment: a #CpmlSegment
  *
- * Strips the leading %CPML_MOVE primitives, updating the
- * <structname>CpmlSegment</structname> structure accordingly.
- * One, and only one, %CPML_MOVE primitive is left.
+ * Jumps to the first %CPML_MOVE primitives and skips all eventual
+ * subsequent %CPML_MOVE but the last. This is done unobtrusively,
+ * by updating the <structname>CpmlSegment</structname> fields
+ * accordingly. One, and only one, %CPML_MOVE primitive is left.
  *
  * Returns: 1 on success, 0 on no leading MOVE_TOs or on empty path
  **/
 static int
 ensure_one_leading_move(CpmlSegment *segment)
 {
-    cairo_path_data_t *new_data;
-    int new_num_data, move_length;
+    cairo_path_data_t *new_data = segment->data;
+    int new_num_data = segment->num_data;
+    int length;
 
-    /* Check for at least one move to */
-    if (segment->data->header.type != CAIRO_PATH_MOVE_TO)
-        return 0;
+    /* Look up the first MOVE_TO */
+    while (new_data->header.type != CAIRO_PATH_MOVE_TO) {
+        length = new_data->header.length;
+        new_data += length;
+        new_num_data -= length;
 
-    new_data = segment->data;
-    new_num_data = segment->num_data;
-
-    while (1) {
-        move_length = new_data->header.length;
-
-        /* Check for the end of cairo path data, that is when
-         * @segment is composed by only CAIRO_PATH_MOVE_TO */
-        if (new_num_data <= move_length)
+        /* Guard against the end of cairo path data */
+        if (new_num_data <= length)
             return 0;
+    }
 
-        /* Check if this is the last CAIRO_PATH_MOVE_TO */
-        if (new_data[move_length].header.type != CAIRO_PATH_MOVE_TO)
-            break;
+    /* Skip all duplicate MOVE_TO */
+    length = 0;
+    while (new_data[length].header.type == CAIRO_PATH_MOVE_TO) {
+        new_data += length;
+        new_num_data -= length;
+        length = new_data->header.length;
 
-        new_data += move_length;
-        new_num_data -= move_length;
+        /* Guard against the end of cairo path data */
+        if (new_num_data <= length)
+            return 0;
     }
 
     segment->data = new_data;
@@ -621,10 +624,11 @@ ensure_one_leading_move(CpmlSegment *segment)
  * @segment: a #CpmlSegment
  *
  * Looks for the segment termination, that is the end of the underlying
- * cairo path or a %CPML_MOVE operation. <structfield>num_data</structfield>
- * field is modified to properly point to the end of @segment.
- * @segment must have only one leading %CPML_MOVE and it is supposed
- * to be non-empty, conditions yet imposed by the ensure_one_leading_move().
+ * cairo path or if the current primitive is a %CPML_MOVE or if the
+ * last primitive was a %CPML_CLOSE. <structfield>num_data</structfield>
+ * field is modified to properly point to the end of @segment. @segment
+ * must have only one leading %CPML_MOVE and it is supposed to be non-empty,
+ * conditions already imposed by ensure_one_leading_move().
  *
  * This function also checks that all the components of @segment
  * are valid primitives.
@@ -636,28 +640,38 @@ reshape(CpmlSegment *segment)
 {
     const cairo_path_data_t *data;
     int trailing_data, new_num_data, length;
+    cairo_path_data_type_t type;
+    size_t n_points;
 
     data = segment->data;
     new_num_data = 0;
     trailing_data = segment->num_data;
+    type = data->header.type;
+    length = data->header.length;
 
-    while (1) {
-        length = data->header.length;
-        new_num_data += length;
-        trailing_data -= length;
-        data += length;
-
+    do {
         /* Check for invalid data size */
+        trailing_data -= length;
         if (trailing_data < 0)
             return 0;
 
-        if (trailing_data == 0 || data->header.type == CAIRO_PATH_MOVE_TO)
+        new_num_data += length;
+
+        /* A CPML_CLOSE ends the current segment */
+        if (type == CAIRO_PATH_CLOSE_PATH)
             break;
 
-        /* Ensure that all the components are valid primitives */
-        if (cpml_primitive_type_get_n_points(data->header.type) == 0)
+        data += length;
+        type = data->header.type;
+        if (type == CAIRO_PATH_MOVE_TO)
+            break;
+
+        /* Ensure the next primitive is valid and has enough data points */
+        length = data->header.length;
+        n_points = type == CAIRO_PATH_CLOSE_PATH ? 1 : cpml_primitive_type_get_n_points(type);
+        if (length < 1 || n_points == 0 || length < n_points)
             return 0;
-    }
+    } while (trailing_data > 0);
 
     segment->num_data = new_num_data;
     return 1;
