@@ -26,7 +26,7 @@ static void
 _cpml_test_browsing(void)
 {
     CpmlSegment segment;
-    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    g_assert_cmpint(cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path()), ==, 1);
 
     /* First segment */
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
@@ -34,35 +34,44 @@ _cpml_test_browsing(void)
 
     cpml_segment_reset(&segment);
     cpml_segment_reset(&segment);
+    g_assert_cmpint(segment.num_data, ==, 12);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpint(segment.data[4].header.type, ==, CPML_ARC);
+    g_assert_cmpint(segment.data[7].header.type, ==, CPML_CURVE);
+    g_assert_cmpint(segment.data[11].header.type, ==, CPML_CLOSE);
 
     /* Second segment */
     g_assert_cmpint(cpml_segment_next(&segment), ==, 1);
+    g_assert_cmpint(segment.num_data, ==, 6);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
     g_assert_cmpint(segment.data[4].header.type, ==, CPML_LINE);
 
     /* Third segment */
     g_assert_cmpint(cpml_segment_next(&segment), ==, 1);
+    g_assert_cmpint(segment.num_data, ==, 7);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_CURVE);
+    g_assert_cmpint(segment.data[6].header.type, ==, CPML_CLOSE);
 
     /* Forth segment */
     g_assert_cmpint(cpml_segment_next(&segment), ==, 1);
+    g_assert_cmpint(segment.num_data, ==, 8);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_ARC);
+    g_assert_cmpint(segment.data[5].header.type, ==, CPML_ARC);
 
     /* Fifth segment */
     g_assert_cmpint(cpml_segment_next(&segment), ==, 1);
+    g_assert_cmpint(segment.num_data, ==, 3);
     g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
     g_assert_cmpint(segment.data[2].header.type, ==, CPML_CLOSE);
 
     g_assert_cmpint(cpml_segment_next(&segment), ==, 0);
 
     cpml_segment_reset(&segment);
-    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpint(segment.num_data, ==, 12);
 }
 
 static void
@@ -290,9 +299,7 @@ _cpml_test_put_intersections(void)
 
     cpml_segment_next(&segment2);
 
-    /* The third segment intersects the first segment 5 times.
-     * TODO: check if this is true */
-    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 5);
+    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 1);
 }
 
 static void
