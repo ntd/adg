@@ -228,6 +228,12 @@ _cpml_test_from_cairo(void)
         { .header = { CPML_MOVE, 2 }},
         { .point = { 8, 9 }}
     };
+    cairo_path_data_t invalid_primitive[] = {
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 0, 1 }},
+        { .header = { CPML_ARC, 2 }}, /* Should be CPML_ARC, 3 */
+        { .point = { 2, 3 }}
+    };
     cairo_path_t noop_path = {
         CAIRO_STATUS_SUCCESS,
         noop_data,
@@ -238,9 +244,27 @@ _cpml_test_from_cairo(void)
         adg_test_path()->data,
         0
     };
+    cairo_path_t basic_path = {
+        CAIRO_STATUS_SUCCESS,
+        adg_test_path()->data,
+        4
+    };
+    cairo_path_t invalid_path1 = {
+        CAIRO_STATUS_SUCCESS,
+        adg_test_path()->data,
+        3 /* Should be 4 */
+    };
+    cairo_path_t invalid_path2 = {
+        CAIRO_STATUS_SUCCESS,
+        invalid_primitive,
+        G_N_ELEMENTS(invalid_primitive)
+    };
 
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &noop_path), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &empty_path), ==, 0);
+    g_assert_cmpint(cpml_segment_from_cairo(&segment, &basic_path), ==, 1);
+    g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path1), ==, 0);
+    g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path2), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path()), ==, 1);
 }
 
