@@ -418,10 +418,10 @@ adg_marker_get_segment(AdgMarker *marker)
  *
  * Duplicates the current subject segment for backup purpose: this
  * segment can be accessed by adg_marker_get_backup_segment().
- * Obviously, a current segment should exist (either the
- * #AdgMarker:trail and #AdgMarker:n-segment properties must be
- * properly defined) or this method will fail without further
- * processing.
+ *
+ * A current segment should exist (i.e. both #AdgMarker:trail and
+ * #AdgMarker:n-segment properties must be properly set) or this
+ * method will fail without further processing.
  *
  * When the subject segment is changed (either by changing
  * #AdgMarker:trail or #AdgMarker:n-segment) the original segment
@@ -447,6 +447,8 @@ adg_marker_backup_segment(AdgMarker *marker)
         if (adg_trail_put_segment(data->trail, data->n_segment,
                                   &data->segment))
             data->backup_segment = cpml_segment_deep_dup(&data->segment);
+        else
+            data->backup_segment = NULL;
     }
 }
 
@@ -658,28 +660,29 @@ adg_marker_model(AdgMarker *marker)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    AdgMarkerPrivate *data;
-    CpmlPair pair;
-    CpmlVector vector;
-    cairo_matrix_t map;
+    AdgMarkerPrivate *data = ((AdgMarker *) entity)->data;
 
-    data = ((AdgMarker *) entity)->data;
-    if (data->trail == NULL)
-        return;
+    /* On invalid segments, segment.data is not set: do not crash */
+    if (data->segment.data != NULL) {
+        CpmlPair pair;
+        CpmlVector vector;
+        cairo_matrix_t map;
 
-    cpml_segment_put_pair_at(&data->segment, data->pos, &pair);
-    cpml_segment_put_vector_at(&data->segment, data->pos, &vector);
-    cpml_vector_set_length(&vector, data->size);
+        cpml_segment_put_pair_at(&data->segment, data->pos, &pair);
+        cpml_segment_put_vector_at(&data->segment, data->pos, &vector);
+        cpml_vector_set_length(&vector, data->size);
 
-    if (data->pos > 0.5) {
-        vector.x = -vector.x;
-        vector.y = -vector.y;
+        if (data->pos > 0.5) {
+            vector.x = -vector.x;
+            vector.y = -vector.y;
+        }
+
+        cairo_matrix_init(&map, vector.x, vector.y,
+                          -vector.y, vector.x, pair.x, pair.y);
+
+        adg_entity_set_local_map(entity, &map);
     }
 
-    cairo_matrix_init(&map, vector.x, vector.y,
-                      -vector.y, vector.x, pair.x, pair.y);
-
-    adg_entity_set_local_map(entity, &map);
 
     if (_ADG_OLD_ENTITY_CLASS->local_changed)
         _ADG_OLD_ENTITY_CLASS->local_changed(entity);
@@ -716,7 +719,7 @@ _adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
 
     g_return_val_if_fail(trail == NULL || ADG_IS_TRAIL(trail), FALSE);
 
-    /* Segment validation, but only if n_segment is specified */
+    /* Segment validation, but only if trail and n_segment are specified */
     if (trail && n_segment > 0 && !adg_trail_put_segment(trail, n_segment, &segment))
         return FALSE;
 
