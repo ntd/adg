@@ -148,6 +148,7 @@ get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
 {
     CpmlPair p1_4[4];
     CpmlVector normal;
+    CpmlPair dummy;
     double pos;
 
     cpml_primitive_put_point(line, 0, &p1_4[0]);
@@ -164,7 +165,8 @@ get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
 
     /* Ensure to return 0 if intersection() fails */
     pos = 0;
-    intersection(p1_4, NULL, &pos);
+    /* The destination pair cannot be NULL to avoid crashes */
+    intersection(p1_4, &dummy, &pos);
 
     /* Clamp the result to 0..1 */
     if (pos < 0)
