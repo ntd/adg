@@ -75,7 +75,6 @@
 
 #include "adg-internal.h"
 #include <math.h>
-#include <string.h>
 
 #include "adg-model.h"
 
@@ -391,7 +390,7 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
         found = cpml_segment_next(&iterator);
 
     if (found && segment)
-        memcpy(segment, &iterator, sizeof(CpmlSegment));
+        cpml_segment_copy(segment, &iterator);
 
     if (!found)
         g_warning(_("%s: segment %u is out of range for type '%s'"),
