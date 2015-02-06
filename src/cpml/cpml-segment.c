@@ -586,36 +586,28 @@ normalize(CpmlSegment *segment)
 static int
 ensure_one_leading_move(CpmlSegment *segment)
 {
-    cairo_path_data_t *new_data = segment->data;
-    int new_num_data = segment->num_data;
-    int length;
+    cairo_path_data_t *data = segment->data;
+    int length, num_data = segment->num_data;
 
     /* Look up the first MOVE_TO */
-    while (new_data->header.type != CAIRO_PATH_MOVE_TO) {
-        length = new_data->header.length;
-        new_data += length;
-        new_num_data -= length;
-
-        /* Guard against the end of cairo path data */
-        if (new_num_data <= length)
-            return 0;
+    while (num_data > 0 && data->header.type != CPML_MOVE) {
+        length = data->header.length;
+        data += length;
+        num_data -= length;
     }
 
-    /* Skip all duplicate MOVE_TO */
-    length = 0;
-    while (new_data[length].header.type == CAIRO_PATH_MOVE_TO) {
-        new_data += length;
-        new_num_data -= length;
-        length = new_data->header.length;
-
-        /* Guard against the end of cairo path data */
-        if (new_num_data <= length)
-            return 0;
+    /* Skip all duplicate CPML_MOVE but the last one */
+    while (length = data->header.length,
+           num_data > length && data[length].header.type == CPML_MOVE) {
+        data += length;
+        num_data -= length;
     }
 
-    segment->data = new_data;
-    segment->num_data = new_num_data;
+    if (num_data <= length)
+        return 0;
 
+    segment->data = data;
+    segment->num_data = num_data;
     return 1;
 }
 
@@ -638,41 +630,41 @@ ensure_one_leading_move(CpmlSegment *segment)
 static int
 reshape(CpmlSegment *segment)
 {
-    const cairo_path_data_t *data;
-    int trailing_data, new_num_data, length;
+    cairo_path_data_t *data = segment->data;
     cairo_path_data_type_t type;
-    size_t n_points;
+    int length, n_points, num_data = 0;
 
-    data = segment->data;
-    new_num_data = 0;
-    trailing_data = segment->num_data;
-    type = data->header.type;
+    /* Always include the trailing CPML_MOVE */
     length = data->header.length;
+    data += length;
+    num_data += length;
 
-    do {
-        /* Check for invalid data size */
-        trailing_data -= length;
-        if (trailing_data < 0)
-            return 0;
-
-        new_num_data += length;
-
-        /* A CPML_CLOSE ends the current segment */
-        if (type == CAIRO_PATH_CLOSE_PATH)
-            break;
-
-        data += length;
+    while (num_data < segment->num_data) {
         type = data->header.type;
-        if (type == CAIRO_PATH_MOVE_TO)
+
+        /* A CPML_MOVE is usually the start of the next segment */
+        if (type == CPML_MOVE)
             break;
+
+        length = data->header.length;
+        data += length;
+        num_data += length;
 
         /* Ensure the next primitive is valid and has enough data points */
-        length = data->header.length;
-        n_points = type == CAIRO_PATH_CLOSE_PATH ? 1 : cpml_primitive_type_get_n_points(type);
+        n_points = type == CPML_CLOSE ? 1 : cpml_primitive_type_get_n_points(type);
         if (length < 1 || n_points == 0 || length < n_points)
             return 0;
-    } while (trailing_data > 0);
 
-    segment->num_data = new_num_data;
+        /* A CPML_CLOSE ends the current segment */
+        if (type == CPML_CLOSE)
+            break;
+    }
+
+    /* The sum of the primitive lengths must *not* be greater than
+     * the whole segment length */
+    if (num_data > segment->num_data)
+        return 0;
+
+    segment->num_data = num_data;
     return 1;
 }
