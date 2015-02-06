@@ -75,6 +75,67 @@ _adg_test_max_angle(void)
     g_object_unref(trail);
 }
 
+static void
+_adg_test_put_segment(void)
+{
+    AdgTrail *trail;
+    AdgPath *path;
+    CpmlSegment segment;
+
+    path = adg_path_new();
+
+    /* First segment: a simple CPML_LINE */
+    adg_path_move_to_explicit(path, 1, 2);
+    adg_path_line_to_explicit(path, 3, 4);
+
+    /* Second segment: a closed curve with a bogus CPML_MOVE prepended */
+    adg_path_move_to_explicit(path, 5, 6);
+    adg_path_move_to_explicit(path, 7, 8);
+    adg_path_curve_to_explicit(path, 9, 10, 11, 12, 13, 14);
+    adg_path_close(path);
+
+    /* Junk */
+    adg_path_close(path);
+    adg_path_arc_to_explicit(path, 15, 16, 17, 18);
+
+    /* Third segment: a closed CPML_ARC */
+    adg_path_move_to_explicit(path, 19, 20);
+    adg_path_arc_to_explicit(path, 21, 22, 23, 24);
+    adg_path_close(path);
+
+    /* Other junk */
+    adg_path_line_to_explicit(path, 25, 26);
+
+    trail = ADG_TRAIL(path);
+
+    /* Sanity checks */
+    g_assert_false(adg_trail_put_segment(NULL, 1, &segment));
+    g_assert_false(adg_trail_put_segment(trail, 0, &segment));
+    g_assert_true(adg_trail_put_segment(trail, 1, NULL));
+
+    /* Check segment browsing */
+    g_assert_true(adg_trail_put_segment(trail, 1, &segment));
+    g_assert_cmpint(segment.num_data, ==, 4);
+    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+
+    g_assert_true(adg_trail_put_segment(trail, 2, &segment));
+    g_assert_cmpint(segment.num_data, ==, 7);
+    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpint(segment.data[2].header.type, ==, CPML_CURVE);
+    g_assert_cmpint(segment.data[6].header.type, ==, CPML_CLOSE);
+
+    g_assert_true(adg_trail_put_segment(trail, 3, &segment));
+    g_assert_cmpint(segment.num_data, ==, 6);
+    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpint(segment.data[2].header.type, ==, CPML_ARC);
+    g_assert_cmpint(segment.data[5].header.type, ==, CPML_CLOSE);
+
+    g_assert_false(adg_trail_put_segment(trail, 4, &segment));
+
+    g_object_unref(path);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -84,6 +145,8 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/trail/type/object", ADG_TYPE_TRAIL);
 
     g_test_add_func("/adg/trail/property/max-angle", _adg_test_max_angle);
+
+    g_test_add_func("/adg/trail/method/put-segment", _adg_test_put_segment);
 
     return g_test_run();
 }
