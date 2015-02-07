@@ -136,6 +136,29 @@ _cpml_test_sanity_get_length(gint i)
 }
 
 static void
+_cpml_test_sanity_put_extents(gint i)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlExtents extents;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    switch (i) {
+    case 1:
+        cpml_primitive_put_extents(NULL, &extents);
+        break;
+    case 2:
+        cpml_primitive_put_extents(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_set_point(gint i)
 {
     CpmlSegment segment;
@@ -401,6 +424,55 @@ _cpml_test_get_length(void)
 
     cpml_primitive_next(&primitive);
     g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 2);
+}
+
+static void
+_cpml_test_put_extents(void)
+{
+    gsize data_size;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlExtents extents;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+
+    /* Line */
+    cpml_primitive_from_segment(&primitive, &segment);
+    cpml_primitive_put_extents(&primitive, &extents);
+    g_assert_true(extents.is_defined);
+    g_assert_cmpfloat(extents.org.x, ==, 0);
+    g_assert_cmpfloat(extents.org.y, ==, 1);
+    g_assert_cmpfloat(extents.size.x, ==, 3);
+    g_assert_cmpfloat(extents.size.y, ==, 0);
+
+    /* Arc: the extents are computed precisely... let's ensure
+     * at least all the 3 points are included */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_put_extents(&primitive, &extents);
+    g_assert_true(extents.is_defined);
+    g_assert_cmpfloat(extents.org.x, <=, 3);
+    g_assert_cmpfloat(extents.org.y, <=, 1);
+    g_assert_cmpfloat(extents.size.x, >=, 3);
+    g_assert_cmpfloat(extents.size.y, >=, 6);
+
+    /* Curve: actually the extents are computed by using the
+     * convex hull (hence the exact coordinates of the points) */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_put_extents(&primitive, &extents);
+    g_assert_true(extents.is_defined);
+    g_assert_cmpfloat(extents.org.x, ==, -2);
+    g_assert_cmpfloat(extents.org.y, ==, 2);
+    g_assert_cmpfloat(extents.size.x, ==, 12);
+    g_assert_cmpfloat(extents.size.y, ==, 9);
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_put_extents(&primitive, &extents);
+    g_assert_true(extents.is_defined);
+    g_assert_cmpfloat(extents.org.x, ==, -2);
+    g_assert_cmpfloat(extents.org.y, ==, 1);
+    g_assert_cmpfloat(extents.size.x, ==, 2);
+    g_assert_cmpfloat(extents.size.y, ==, 1);
 }
 
 static void
@@ -805,6 +877,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/copy", _cpml_test_sanity_copy, 2);
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
     adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/put-extents", _cpml_test_sanity_put_extents, 2);
     adg_test_add_traps("/cpml/primitive/sanity/set-point", _cpml_test_sanity_set_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
@@ -818,6 +891,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
+    g_test_add_func("/cpml/primitive/method/put-extents", _cpml_test_put_extents);
     g_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
     g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
