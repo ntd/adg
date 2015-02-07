@@ -101,6 +101,29 @@ _cpml_test_sanity_get_n_points(gint i)
 }
 
 static void
+_cpml_test_sanity_set_point(gint i)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair = { 1, 1 };
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    switch (i) {
+    case 1:
+        cpml_primitive_set_point(NULL, 1, &pair);
+        break;
+    case 2:
+        cpml_primitive_set_point(&primitive, 1, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_put_point(gint i)
 {
     CpmlSegment segment;
@@ -737,6 +760,7 @@ main(int argc, char *argv[])
 
     adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_test_sanity_from_segment, 1);
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/set-point", _cpml_test_sanity_set_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
