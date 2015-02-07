@@ -56,6 +56,19 @@ G_BEGIN_DECLS
                                            } while (0)
 #endif
 
+/* This macro is similar to g_assert_cmpfloat with the == operator but
+ * considers only the first 3 decimal digits. This can be used instead of
+ * the strict equality to avoid some false assertions due to rounding problems.
+ **/
+#define adg_assert_isapprox(n1,n2)  G_STMT_START { \
+                                        long double __n3 = (n1), __n4 = (n2); \
+                                        gint64 __n1 = __n3 * 1000 + (__n3 > 0 ? +0.5 : -0.5), \
+                                               __n2 = __n4 * 1000 + (__n4 > 0 ? +0.5 : -0.5); \
+                                        if (__n1 == __n2) ; else \
+                                          g_assertion_message_cmpnum (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                            #n1 " is not approximately equal to " #n2, __n3, "~=", __n4, 'f'); \
+                                    } G_STMT_END
+
 
 /* The following type is used by adg_test_add_traps() to handle
  * in a consistent way trap assertions. The AdgTrapsFunc function
