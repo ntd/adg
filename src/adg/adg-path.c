@@ -1151,7 +1151,7 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
     operation->action = action;
     va_end(var_args);
 
-    if (data->last.data[0].header.type == CAIRO_PATH_CLOSE_PATH) {
+    if (data->last.data[0].header.type == CPML_CLOSE) {
         /* Special case: an action with the close primitive should
          * be resolved now by changing the close primitive to a
          * line-to and using it as second operand and use the first

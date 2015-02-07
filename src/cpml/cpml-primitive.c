@@ -811,7 +811,7 @@ _cpml_get_point(const CpmlPrimitive *primitive, int n_point)
         return primitive->org;
 
     /* The CPML_CLOSE special case */
-    if (primitive->data->header.type == CAIRO_PATH_CLOSE_PATH &&
+    if (primitive->data->header.type == CPML_CLOSE &&
         (n_point == 1 || n_point == -1))
         return &primitive->segment->data[1];
 

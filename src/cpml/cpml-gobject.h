@@ -29,26 +29,29 @@
 
 G_BEGIN_DECLS
 
-#define         CPML_TYPE_PAIR          (cpml_pair_get_type())
-GType           cpml_pair_get_type      (void);
-CpmlPair *      cpml_pair_dup           (const CpmlPair         *pair);
+#define         CPML_TYPE_PAIR              (cpml_pair_get_type())
+GType           cpml_pair_get_type          (void);
+CpmlPair *      cpml_pair_dup               (const CpmlPair         *pair);
 
-#define         CPML_TYPE_PRIMITIVE     (cpml_primitive_get_type())
-GType           cpml_primitive_get_type (void);
-CpmlPrimitive * cpml_primitive_dup      (const CpmlPrimitive    *primitive);
-CpmlPrimitive * cpml_primitive_deep_dup (const CpmlPrimitive    *primitive);
+#define         CPML_TYPE_PRIMITIVE_TYPE    (cpml_primitive_type_get_type())
+GType           cpml_primitive_type_get_type(void);
 
-#define         CPML_TYPE_SEGMENT       (cpml_segment_get_type())
-GType           cpml_segment_get_type   (void);
-CpmlSegment *   cpml_segment_dup        (const CpmlSegment      *segment);
-CpmlSegment *   cpml_segment_deep_dup   (const CpmlSegment      *segment);
-void            cpml_segment_deep_copy  (CpmlSegment            *segment,
-                                         const CpmlSegment      *src);
+#define         CPML_TYPE_PRIMITIVE         (cpml_primitive_get_type())
+GType           cpml_primitive_get_type     (void);
+CpmlPrimitive * cpml_primitive_dup          (const CpmlPrimitive    *primitive);
+CpmlPrimitive * cpml_primitive_deep_dup     (const CpmlPrimitive    *primitive);
+
+#define         CPML_TYPE_SEGMENT           (cpml_segment_get_type())
+GType           cpml_segment_get_type       (void);
+CpmlSegment *   cpml_segment_dup            (const CpmlSegment      *segment);
+CpmlSegment *   cpml_segment_deep_dup       (const CpmlSegment      *segment);
+void            cpml_segment_deep_copy      (CpmlSegment            *segment,
+                                             const CpmlSegment      *src);
 
 #define         CPML_TYPE_CURVE_OFFSET_ALGORITHM \
-                                        (cpml_curve_offset_algorithm_get_type())
+                                            (cpml_curve_offset_algorithm_get_type())
 GType           cpml_curve_offset_algorithm_get_type
-                                        (void);
+                                            (void);
 
 G_END_DECLS
 

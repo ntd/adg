@@ -331,3 +331,23 @@ cpml_curve_offset_algorithm_get_type(void)
 
     return etype;
 }
+
+GType
+cpml_primitive_type_get_type(void)
+{
+    static GType etype = 0;
+    if (G_UNLIKELY(etype == 0)) {
+        static const GEnumValue values[] = {
+            { CPML_MOVE,  "CPML_MOVE",  "move" },
+            { CPML_LINE,  "CPML_LINE",  "line" },
+            { CPML_ARC,   "CPML_ARC",   "arc" },
+            { CPML_CURVE, "CPML_CURVE", "curve" },
+            { CPML_CLOSE, "CPML_CLOSE", "close" },
+            { 0, NULL, NULL }
+        };
+
+        etype = g_enum_register_static("CpmlPrimitiveType", values);
+    }
+
+    return etype;
+}

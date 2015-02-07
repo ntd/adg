@@ -281,7 +281,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
     for (i = 0; i < cairo_path->num_data; i += p_src->header.length) {
         p_src = (const cairo_path_data_t *) cairo_path->data + i;
 
-        if ((CpmlPrimitiveType) p_src->header.type == CPML_ARC)
+        if (p_src->header.type == CPML_ARC)
             dst = _adg_arc_to_curves(dst, p_src, data->max_angle);
         else
             dst = g_array_append_vals(dst, p_src, p_src->header.length);

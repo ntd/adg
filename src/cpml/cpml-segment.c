@@ -424,7 +424,7 @@ cpml_segment_transform(CpmlSegment *segment, const cairo_matrix_t *matrix)
 
     do {
         data = primitive.data;
-        if (data->header.type != CAIRO_PATH_CLOSE_PATH) {
+        if (data->header.type != CPML_CLOSE) {
             n_points = cpml_primitive_get_n_points(&primitive);
 
             while (--n_points > 0) {
@@ -472,7 +472,7 @@ cpml_segment_reverse(CpmlSegment *segment)
 
     while (n < segment->num_data) {
         src_data = segment->data + n;
-        if (src_data->header.type == CAIRO_PATH_CLOSE_PATH)
+        if (src_data->header.type == CPML_CLOSE)
             break;
         n_points = cpml_primitive_type_get_n_points(src_data->header.type);
         length = src_data->header.length;
@@ -495,7 +495,7 @@ cpml_segment_reverse(CpmlSegment *segment)
         }
     }
 
-    if (src_data->header.type == CAIRO_PATH_CLOSE_PATH) {
+    if (src_data->header.type == CPML_CLOSE) {
         memcpy(segment->data + segment->data->header.length, dst_data,
                data_size - ((char *) dst_data - (char *) data));
     } else {
