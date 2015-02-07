@@ -159,6 +159,29 @@ _cpml_test_sanity_put_extents(gint i)
 }
 
 static void
+_cpml_test_sanity_put_pair_at(gint i)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    switch (i) {
+    case 1:
+        cpml_primitive_put_pair_at(NULL, 1, &pair);
+        break;
+    case 2:
+        cpml_primitive_put_pair_at(&primitive, 1, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_set_point(gint i)
 {
     CpmlSegment segment;
@@ -473,6 +496,68 @@ _cpml_test_put_extents(void)
     g_assert_cmpfloat(extents.org.y, ==, 1);
     g_assert_cmpfloat(extents.size.x, ==, 2);
     g_assert_cmpfloat(extents.size.y, ==, 1);
+}
+
+static void
+_cpml_test_put_pair_at(void)
+{
+    gsize data_size;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+
+    /* Line */
+    cpml_primitive_from_segment(&primitive, &segment);
+    cpml_primitive_put_pair_at(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_pair_at(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 3);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
+    g_assert_cmpfloat(pair.x, ==, 1.5);
+    g_assert_cmpfloat(pair.y, ==, 1);
+
+    /* Arc */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_put_pair_at(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, 3);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_pair_at(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 6);
+    g_assert_cmpfloat(pair.y, ==, 7);
+    cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
+    g_assert_cmpfloat(pair.x, >, 3);
+    g_assert_cmpfloat(pair.x, <, 6);
+    g_assert_cmpfloat(pair.y, >, 1);
+    g_assert_cmpfloat(pair.y, <, 7);
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+    /* TODO: not yet implemented
+     * cpml_primitive_put_pair_at(&primitive, 0, &pair);
+     * g_assert_cmpfloat(pair.x, ==, 6);
+     * g_assert_cmpfloat(pair.y, ==, 7);
+     * cpml_primitive_put_pair_at(&primitive, 1, &pair);
+     * g_assert_cmpfloat(pair.x, ==, -2);
+     * g_assert_cmpfloat(pair.y, ==, 2);
+     * cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
+     * g_assert_cmpfloat(pair.x, ==, 1);
+     * g_assert_cmpfloat(pair.y, ==, 1); */
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_put_pair_at(&primitive, 0, &pair);
+    g_assert_cmpfloat(pair.x, ==, -2);
+    g_assert_cmpfloat(pair.y, ==, 2);
+    cpml_primitive_put_pair_at(&primitive, 1, &pair);
+    g_assert_cmpfloat(pair.x, ==, 0);
+    g_assert_cmpfloat(pair.y, ==, 1);
+    cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
+    g_assert_cmpfloat(pair.x, ==, -1);
+    g_assert_cmpfloat(pair.y, ==, 1.5);
 }
 
 static void
@@ -878,6 +963,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
     adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/put-extents", _cpml_test_sanity_put_extents, 2);
+    adg_test_add_traps("/cpml/primitive/sanity/put-pair-at", _cpml_test_sanity_put_pair_at, 2);
     adg_test_add_traps("/cpml/primitive/sanity/set-point", _cpml_test_sanity_set_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
@@ -892,6 +978,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
     g_test_add_func("/cpml/primitive/method/put-extents", _cpml_test_put_extents);
+    g_test_add_func("/cpml/primitive/method/put-pair-at", _cpml_test_put_pair_at);
     g_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
     g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
