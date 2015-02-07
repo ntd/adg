@@ -173,12 +173,12 @@ adg_test_path(void)
 }
 
 static void
-_adg_enum_checks(gconstpointer user_data)
+_adg_enum_checks(const GType *p_type)
 {
     GType type;
     gpointer class;
 
-    type = GPOINTER_TO_INT(user_data);
+    type = *p_type;
     g_assert_true(G_TYPE_IS_ENUM(type));
 
     class = g_type_class_ref(type);
@@ -192,8 +192,10 @@ _adg_enum_checks(gconstpointer user_data)
 void
 adg_test_add_enum_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_enum_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_enum_checks, g_free);
 }
 
 static void
