@@ -123,6 +123,19 @@ _cpml_test_sanity_get_n_points(gint i)
 }
 
 static void
+_cpml_test_sanity_get_length(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_primitive_get_length(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_set_point(gint i)
 {
     CpmlSegment segment;
@@ -161,19 +174,6 @@ _cpml_test_sanity_put_point(gint i)
         break;
     case 2:
         cpml_primitive_put_point(&primitive, 0, NULL);
-        break;
-    default:
-        g_test_trap_assert_failed();
-        break;
-    }
-}
-
-static void
-_cpml_test_sanity_get_length(gint i)
-{
-    switch (i) {
-    case 1:
-        cpml_primitive_get_length(NULL);
         break;
     default:
         g_test_trap_assert_failed();
@@ -388,6 +388,22 @@ _cpml_test_get_n_points(void)
 }
 
 static void
+_cpml_test_get_length(void)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_segment_next(&segment);
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 1);
+
+    cpml_primitive_next(&primitive);
+    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 2);
+}
+
+static void
 _cpml_test_set_point(void)
 {
     gsize data_size;
@@ -583,22 +599,6 @@ _cpml_test_put_point(void)
     cpml_primitive_put_point(&primitive, 2, &pair);
     g_assert_cmpfloat(pair.x, ==, 0);
     g_assert_cmpfloat(pair.y, ==, 1);
-}
-
-static void
-_cpml_test_get_length(void)
-{
-    CpmlSegment segment;
-    CpmlPrimitive primitive;
-
-    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
-    cpml_segment_next(&segment);
-    cpml_primitive_from_segment(&primitive, &segment);
-
-    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 1);
-
-    cpml_primitive_next(&primitive);
-    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 2);
 }
 
 static void
@@ -804,9 +804,9 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_test_sanity_from_segment, 1);
     adg_test_add_traps("/cpml/primitive/sanity/copy", _cpml_test_sanity_copy, 2);
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/set-point", _cpml_test_sanity_set_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
-    adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections-with-segment", _cpml_test_sanity_put_intersections_with_segment, 3);
     adg_test_add_traps("/cpml/primitive/sanity/join", _cpml_test_sanity_join, 2);
@@ -817,9 +817,9 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/copy", _cpml_test_copy);
     g_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
+    g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
     g_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
     g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
-    g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
     g_test_add_func("/cpml/primitive/method/put-intersections-with-segment", _cpml_test_put_intersections_with_segment);
     g_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
