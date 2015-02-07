@@ -192,6 +192,8 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/segment/method/deep-dup", _cpml_test_segment_deep_dup);
     g_test_add_func("/cpml/segment/method/deep-copy", _cpml_test_segment_deep_copy);
 
+    adg_test_add_enum_checks("/cpml/cpml-primitive-type/type/enum", CPML_TYPE_PRIMITIVE_TYPE);
+
     adg_test_add_enum_checks("/cpml/curve-offset-algorithm/type/enum", CPML_TYPE_CURVE_OFFSET_ALGORITHM);
 
     return g_test_run();
