@@ -498,7 +498,6 @@ _cpml_test_get_length(void)
 static void
 _cpml_test_put_extents(void)
 {
-    gsize data_size;
     CpmlSegment segment;
     CpmlPrimitive primitive;
     CpmlExtents extents;
@@ -547,7 +546,6 @@ _cpml_test_put_extents(void)
 static void
 _cpml_test_put_pair_at(void)
 {
-    gsize data_size;
     CpmlSegment segment;
     CpmlPrimitive primitive;
     CpmlPair pair;
@@ -609,7 +607,6 @@ _cpml_test_put_pair_at(void)
 static void
 _cpml_test_put_vector_at(void)
 {
-    gsize data_size;
     CpmlSegment segment;
     CpmlPrimitive primitive;
     CpmlVector vector;
@@ -673,7 +670,6 @@ _cpml_test_put_vector_at(void)
 static void
 _cpml_test_get_closest_pos(void)
 {
-    gsize data_size;
     CpmlSegment segment;
     CpmlPrimitive primitive;
     CpmlPair pair;
