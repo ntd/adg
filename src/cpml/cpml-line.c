@@ -154,8 +154,8 @@ get_closest_pos(const CpmlPrimitive *line, const CpmlPair *pair)
     cpml_primitive_put_point(line, 0, &p1_4[0]);
     cpml_primitive_put_point(line, -1, &p1_4[1]);
 
-    normal.x = p1_4[1].x - p1_4[2].x;
-    normal.y = p1_4[1].y - p1_4[2].y;
+    normal.x = p1_4[1].x - p1_4[0].x;
+    normal.y = p1_4[1].y - p1_4[0].y;
     cpml_vector_normal(&normal);
 
     cpml_pair_copy(&p1_4[2], pair);
