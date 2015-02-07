@@ -309,9 +309,7 @@ cpml_primitive_set_point(CpmlPrimitive *primitive,
     if (point == NULL)
         return 0;
 
-    if (pair != NULL)
-        cpml_pair_to_cairo(pair, point);
-
+    cpml_pair_to_cairo(pair, point);
     return 1;
 }
 
