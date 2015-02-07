@@ -228,9 +228,9 @@ adg_test_add_boxed_checks(const gchar *testpath, GType type, gpointer instance)
 }
 
 static void
-_adg_object_checks(gconstpointer user_data)
+_adg_object_checks(const GType *p_type)
 {
-    GType type = GPOINTER_TO_INT(user_data);
+    GType type = *p_type;
     g_assert_true(G_TYPE_IS_OBJECT(type));
 
     if (! G_TYPE_IS_ABSTRACT(type)) {
@@ -275,14 +275,16 @@ _adg_object_checks(gconstpointer user_data)
 void
 adg_test_add_object_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_object_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_object_checks, g_free);
 }
 
 static void
-_adg_entity_checks(gconstpointer user_data)
+_adg_entity_checks(const GType *p_type)
 {
-    GType type = GPOINTER_TO_INT(user_data);
+    GType type = *p_type;
     g_assert_true(g_type_is_a(type, ADG_TYPE_ENTITY));
 
     if (! G_TYPE_IS_ABSTRACT(type)) {
@@ -315,8 +317,10 @@ _adg_entity_checks(gconstpointer user_data)
 void
 adg_test_add_entity_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_entity_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_entity_checks, g_free);
 }
 
 static void
