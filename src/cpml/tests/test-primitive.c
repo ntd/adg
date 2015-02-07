@@ -427,7 +427,7 @@ _cpml_test_copy(void)
     CpmlPrimitive primitive = { NULL, NULL, NULL };
 
     cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
-    cpml_primitive_from_segment(&primitive, &segment);
+    cpml_primitive_from_segment(&original, &segment);
 
     g_assert_false(original.segment == primitive.segment);
     g_assert_false(original.org == primitive.org);
