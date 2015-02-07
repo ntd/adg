@@ -293,7 +293,7 @@ _cpml_test_get_length(void)
     cpml_segment_next(&segment);
 
     /* Forth segment */
-    g_assert_cmpfloat(cpml_segment_get_length(&segment), ==, 0);
+    adg_assert_isapprox(cpml_segment_get_length(&segment), 13.114);
 
     cpml_segment_next(&segment);
 

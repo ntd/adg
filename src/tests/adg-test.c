@@ -153,10 +153,10 @@ adg_test_path(void)
         { .header = { CPML_MOVE, 2 }},
         { .point = { 14, 15 }},
         { .header = { CPML_ARC, 3 }},
-        { .point = { 16, 17 }},
+        { .point = { 17, 16 }},
         { .point = { 18, 19 }},
         { .header = { CPML_ARC, 3 }},
-        { .point = { 20, 21 }},
+        { .point = { 21, 20 }},
         { .point = { 22, 23 }},
 
         /* Fifth segment: a floating CPML_CLOSE */
