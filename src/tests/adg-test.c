@@ -153,10 +153,10 @@ adg_test_path(void)
         { .header = { CPML_MOVE, 2 }},
         { .point = { 14, 15 }},
         { .header = { CPML_ARC, 3 }},
-        { .point = { 16, 17 }},
+        { .point = { 17, 16 }},
         { .point = { 18, 19 }},
         { .header = { CPML_ARC, 3 }},
-        { .point = { 20, 21 }},
+        { .point = { 21, 20 }},
         { .point = { 22, 23 }},
 
         /* Fifth segment: a floating CPML_CLOSE */
@@ -173,12 +173,12 @@ adg_test_path(void)
 }
 
 static void
-_adg_enum_checks(gconstpointer user_data)
+_adg_enum_checks(const GType *p_type)
 {
     GType type;
     gpointer class;
 
-    type = GPOINTER_TO_INT(user_data);
+    type = *p_type;
     g_assert_true(G_TYPE_IS_ENUM(type));
 
     class = g_type_class_ref(type);
@@ -192,8 +192,10 @@ _adg_enum_checks(gconstpointer user_data)
 void
 adg_test_add_enum_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_enum_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_enum_checks, g_free);
 }
 
 static void
@@ -226,9 +228,9 @@ adg_test_add_boxed_checks(const gchar *testpath, GType type, gpointer instance)
 }
 
 static void
-_adg_object_checks(gconstpointer user_data)
+_adg_object_checks(const GType *p_type)
 {
-    GType type = GPOINTER_TO_INT(user_data);
+    GType type = *p_type;
     g_assert_true(G_TYPE_IS_OBJECT(type));
 
     if (! G_TYPE_IS_ABSTRACT(type)) {
@@ -273,14 +275,16 @@ _adg_object_checks(gconstpointer user_data)
 void
 adg_test_add_object_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_object_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_object_checks, g_free);
 }
 
 static void
-_adg_entity_checks(gconstpointer user_data)
+_adg_entity_checks(const GType *p_type)
 {
-    GType type = GPOINTER_TO_INT(user_data);
+    GType type = *p_type;
     g_assert_true(g_type_is_a(type, ADG_TYPE_ENTITY));
 
     if (! G_TYPE_IS_ABSTRACT(type)) {
@@ -313,8 +317,10 @@ _adg_entity_checks(gconstpointer user_data)
 void
 adg_test_add_entity_checks(const gchar *testpath, GType type)
 {
-    g_test_add_data_func(testpath, GINT_TO_POINTER(type),
-                         (gpointer) _adg_entity_checks);
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func_full(testpath, p_type,
+                              (gpointer) _adg_entity_checks, g_free);
 }
 
 static void
