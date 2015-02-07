@@ -205,6 +205,29 @@ _cpml_test_sanity_put_vector_at(gint i)
 }
 
 static void
+_cpml_test_sanity_get_closest_pos(gint i)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair = { 1, 1 };
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    switch (i) {
+    case 1:
+        cpml_primitive_get_closest_pos(NULL, &pair);
+        break;
+    case 2:
+        cpml_primitive_get_closest_pos(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_set_point(gint i)
 {
     CpmlSegment segment;
@@ -648,6 +671,69 @@ _cpml_test_put_vector_at(void)
 }
 
 static void
+_cpml_test_get_closest_pos(void)
+{
+    gsize data_size;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+    CpmlPair pair;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    /* Line */
+    pair.x = 0; pair.y = 1;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    pair.x = 3; pair.y = 1;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    pair.x = -1; pair.y = -1;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    pair.x = 4; pair.y = 2;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    pair.x = 1.5; pair.y = 0;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0.5);
+
+    /* Arc */
+    cpml_primitive_next(&primitive);
+    /* TODO: not yet implemented
+     * pair.x = 3; pair.y = 1;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * pair.x = 6; pair.y = 7;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * pair.x = 0; pair.y = 0;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * pair.x = 10; pair.y = 10;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     */
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+    /* TODO: not yet implemented
+     * pair.x = 6; pair.y = 7;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * pair.x = -2; pair.y = 2;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * pair.x = 10; pair.y = 10;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * pair.x = 0; pair.y = 0;
+     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     */
+
+    /* Close */
+    cpml_primitive_next(&primitive);
+    pair.x = -2; pair.y = 2;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    pair.x = 0; pair.y = 1;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    pair.x = -3; pair.y = 3;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    pair.x = 1; pair.y = 0;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    pair.x = -1; pair.y = 1.5;
+    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0.5);
+}
+
+static void
 _cpml_test_set_point(void)
 {
     gsize data_size;
@@ -1052,6 +1138,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/put-extents", _cpml_test_sanity_put_extents, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-pair-at", _cpml_test_sanity_put_pair_at, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-vector-at", _cpml_test_sanity_put_vector_at, 2);
+    adg_test_add_traps("/cpml/primitive/sanity/get-closest-pos", _cpml_test_sanity_get_closest_pos, 2);
     adg_test_add_traps("/cpml/primitive/sanity/set-point", _cpml_test_sanity_set_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
@@ -1068,6 +1155,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/put-extents", _cpml_test_put_extents);
     g_test_add_func("/cpml/primitive/method/put-pair-at", _cpml_test_put_pair_at);
     g_test_add_func("/cpml/primitive/method/put-vector-at", _cpml_test_put_vector_at);
+    g_test_add_func("/cpml/primitive/method/get-closest-pos", _cpml_test_get_closest_pos);
     g_test_add_func("/cpml/primitive/method/set-point", _cpml_test_set_point);
     g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
