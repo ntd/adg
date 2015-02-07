@@ -358,6 +358,19 @@ _cpml_test_sanity_join(gint i)
 }
 
 static void
+_cpml_test_sanity_offset(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_primitive_offset(NULL, 1);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_dump(gint i)
 {
     switch (i) {
@@ -1022,6 +1035,77 @@ _cpml_test_put_intersections_with_segment(void)
 }
 
 static void
+_cpml_test_offset(void)
+{
+    CpmlSegment original, *segment;
+    CpmlPrimitive primitive, line, curve;
+
+    /* Work on a copy to avoid modifying the original cairo path */
+    cpml_segment_from_cairo(&original, (cairo_path_t *) adg_test_path());
+    segment = cpml_segment_deep_dup(&original);
+    cpml_primitive_from_segment(&primitive, segment);
+
+    /* Line */
+    cpml_primitive_copy(&line, &primitive);
+    cpml_primitive_offset(&primitive, 1);
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 2);
+    g_assert_cmpfloat(primitive.data[1].point.x, ==, 3);
+    g_assert_cmpfloat(primitive.data[1].point.y, ==, 2);
+    cpml_primitive_offset(&primitive, -1);
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
+    g_assert_cmpfloat(primitive.data[1].point.x, ==, 3);
+    g_assert_cmpfloat(primitive.data[1].point.y, ==, 1);
+
+    /* Arc */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_offset(&primitive, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 2.003);
+    adg_assert_isapprox((primitive.org)->point.y, 0.923);
+    adg_assert_isapprox(primitive.data[1].point.x, 3.156);
+    adg_assert_isapprox(primitive.data[1].point.y, 5.537);
+    adg_assert_isapprox(primitive.data[2].point.x, 5.463);
+    adg_assert_isapprox(primitive.data[2].point.y, 7.844);
+    cpml_primitive_offset(&primitive, -1);
+    g_assert_cmpfloat((primitive.org)->point.x, ==, 3);
+    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
+    g_assert_cmpfloat(primitive.data[1].point.x, ==, 4);
+    g_assert_cmpfloat(primitive.data[1].point.y, ==, 5);
+    g_assert_cmpfloat(primitive.data[2].point.x, ==, 6);
+    g_assert_cmpfloat(primitive.data[2].point.y, ==, 7);
+
+    /* Curve: try with different algorithms */
+    /* TODO */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_copy(&curve, &primitive);
+
+    /* Close: this primitive does not own data points but should
+     * modify the points of the previous and next primitives */
+    cpml_primitive_next(&primitive);
+    cpml_primitive_offset(&primitive, 1);
+    g_assert_cmpfloat((curve.org)->point.x, ==, 6);
+    g_assert_cmpfloat((curve.org)->point.y, ==, 7);
+    adg_assert_isapprox(curve.data[3].point.x, -1.553);
+    adg_assert_isapprox(curve.data[3].point.y, 2.894);
+    adg_assert_isapprox((line.org)->point.x, 0.447);
+    adg_assert_isapprox((line.org)->point.y, 1.894);
+    g_assert_cmpfloat(line.data[1].point.x, ==, 3);
+    g_assert_cmpfloat(line.data[1].point.y, ==, 1);
+    cpml_primitive_offset(&primitive, -1);
+    adg_assert_isapprox((curve.org)->point.x, 6);
+    adg_assert_isapprox((curve.org)->point.y, 7);
+    adg_assert_isapprox(curve.data[3].point.x, -2);
+    adg_assert_isapprox(curve.data[3].point.y, 2);
+    adg_assert_isapprox((line.org)->point.x, 0);
+    adg_assert_isapprox((line.org)->point.y, 1);
+    adg_assert_isapprox(line.data[1].point.x, 3);
+    adg_assert_isapprox(line.data[1].point.y, 1);
+
+    g_free(segment);
+}
+
+static void
 _cpml_test_join(void)
 {
     cairo_path_data_t path_data[] = {
@@ -1139,6 +1223,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/put-point", _cpml_test_sanity_put_point, 2);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
     adg_test_add_traps("/cpml/primitive/sanity/put-intersections-with-segment", _cpml_test_sanity_put_intersections_with_segment, 3);
+    adg_test_add_traps("/cpml/primitive/sanity/offset", _cpml_test_sanity_offset, 1);
     adg_test_add_traps("/cpml/primitive/sanity/join", _cpml_test_sanity_join, 2);
     adg_test_add_traps("/cpml/primitive/sanity/to-cairo", _cpml_test_sanity_to_cairo, 2);
     adg_test_add_traps("/cpml/primitive/sanity/dump", _cpml_test_sanity_dump, 1);
@@ -1156,6 +1241,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/primitive/method/put-point", _cpml_test_put_point);
     g_test_add_func("/cpml/primitive/method/put-intersections", _cpml_test_put_intersections);
     g_test_add_func("/cpml/primitive/method/put-intersections-with-segment", _cpml_test_put_intersections_with_segment);
+    g_test_add_func("/cpml/primitive/method/offset", _cpml_test_offset);
     g_test_add_func("/cpml/primitive/method/join", _cpml_test_join);
     g_test_add_func("/cpml/primitive/method/to-cairo", _cpml_test_to_cairo);
     adg_test_add_traps("/cpml/primitive/method/dump", _cpml_test_dump, 1);
