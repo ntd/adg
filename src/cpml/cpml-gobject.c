@@ -271,48 +271,6 @@ cpml_segment_deep_dup(const CpmlSegment *segment)
     return dest;
 }
 
-/**
- * cpml_segment_deep_copy:
- * @segment: a #CpmlSegment structure
- * @src: the source segment to copy
- *
- * Makes a deep copy of @src to @segment. For a shallow copy, check out
- * the cpml_segment_copy() API provided by the CPML library.
- *
- * This could seem a somewhat unusual operation because @segment should
- * be "compatible" with @src: it is expected that they have the same
- * <structfield>num_data</structfield> value. Anyway, it is convenient
- * in some situation, such as when restoring the original data from a
- * deep duplicated source:
- *
- * <informalexample><programlisting language="C">
- * CpmlSegment *backup;
- *
- * backup = cpml_segment_deep_dup(&segment);
- * // Now &segment can be modified
- * ...
- * cpml_segment_deep_copy(&segment, backup);
- * g_free(backup);
- * </programlisting></informalexample>
- *
- * The struct fields of @segment are left untouched and used only to
- * check if it is compatible with @src.
- *
- * Since: 1.0
- **/
-void
-cpml_segment_deep_copy(CpmlSegment *segment, const CpmlSegment *src)
-{
-    g_return_if_fail(segment != NULL);
-    g_return_if_fail(src != NULL);
-    g_return_if_fail(segment->num_data == src->num_data);
-
-    if (src->num_data > 0) {
-        size_t n = sizeof(cairo_path_data_t) * segment->num_data;
-        memcpy(segment->data, src->data, n);
-    }
-}
-
 GType
 cpml_curve_offset_algorithm_get_type(void)
 {

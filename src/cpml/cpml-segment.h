@@ -43,6 +43,8 @@ int     cpml_segment_from_cairo         (CpmlSegment            *segment,
                                          cairo_path_t           *path);
 void    cpml_segment_copy               (CpmlSegment            *segment,
                                          const CpmlSegment      *src);
+int     cpml_segment_copy_data          (CpmlSegment            *segment,
+                                         const CpmlSegment      *src);
 void    cpml_segment_reset              (CpmlSegment            *segment);
 int     cpml_segment_next               (CpmlSegment            *segment);
 double  cpml_segment_get_length         (const CpmlSegment      *segment);

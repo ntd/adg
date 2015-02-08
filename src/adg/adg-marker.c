@@ -702,7 +702,7 @@ _adg_clear_trail(AdgMarker *marker)
 
     if (data->trail && data->backup_segment) {
         /* Restore the original segment in the old trail */
-        cpml_segment_deep_copy(&data->segment, data->backup_segment);
+        cpml_segment_copy_data(&data->segment, data->backup_segment);
         g_free(data->backup_segment);
         data->backup_segment = NULL;
     }

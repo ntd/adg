@@ -45,8 +45,6 @@ CpmlPrimitive * cpml_primitive_deep_dup     (const CpmlPrimitive    *primitive);
 GType           cpml_segment_get_type       (void);
 CpmlSegment *   cpml_segment_dup            (const CpmlSegment      *segment);
 CpmlSegment *   cpml_segment_deep_dup       (const CpmlSegment      *segment);
-void            cpml_segment_deep_copy      (CpmlSegment            *segment,
-                                             const CpmlSegment      *src);
 
 #define         CPML_TYPE_CURVE_OFFSET_ALGORITHM \
                                             (cpml_curve_offset_algorithm_get_type())

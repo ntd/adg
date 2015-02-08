@@ -129,6 +129,49 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
 }
 
 /**
+ * cpml_segment_copy_data:
+ * @segment: a #CpmlSegment structure
+ * @src: the source segment to copy
+ *
+ * Copies only the <structfield>data</structfield> from @src to @segment.
+ * For a shallow copy, check out cpml_segment_copy().
+ *
+ * This could seem a somewhat unusual operation because @segment should
+ * be compatible with @src, i.e. it is expected that they have the same
+ * <structfield>num_data</structfield> value. Anyway it is convenient
+ * in some situation, such as when restoring the original data from a
+ * backup segment, e.g.:
+ *
+ * <informalexample><programlisting language="C">
+ * CpmlSegment *backup;
+ *
+ * backup = cpml_segment_deep_dup(&segment);
+ * // Now &segment can be freely modified
+ * ...
+ * // Let's restore &segment to its original value
+ * cpml_segment_copy_data(&segment, backup);
+ * g_free(backup);
+ * </programlisting></informalexample>
+ *
+ * Returns: (type gboolean): 1 if the data has been succesfully copied, 0 on errors.
+ *
+ * Since: 1.0
+ **/
+int
+cpml_segment_copy_data(CpmlSegment *segment, const CpmlSegment *src)
+{
+    if (segment->num_data != src->num_data)
+        return 0;
+
+    if (src->num_data > 0) {
+        size_t n = sizeof(cairo_path_data_t) * segment->num_data;
+        memcpy(segment->data, src->data, n);
+    }
+
+    return 1;
+}
+
+/**
  * cpml_segment_reset:
  * @segment: a #CpmlSegment
  *

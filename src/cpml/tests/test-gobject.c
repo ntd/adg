@@ -136,47 +136,6 @@ _cpml_test_segment_deep_dup(void)
     g_free(dup_segment);
 }
 
-static void
-_cpml_test_segment_deep_copy(void)
-{
-    CpmlSegment original, *segment, *dup_segment;
-
-    original.path = &path;
-    original.data = data;
-    original.num_data = G_N_ELEMENTS(data);
-
-    /* Check it does not crash with NULL values */
-    cpml_segment_deep_copy(NULL, NULL);
-    cpml_segment_deep_copy(NULL, &original);
-    cpml_segment_deep_copy(&original, NULL);
-
-    /* Test full deep copy */
-    segment = cpml_segment_deep_dup(&original);
-    dup_segment = cpml_segment_deep_dup(segment);
-    dup_segment->data[0].point.x = 123;
-    dup_segment->data[0].point.y = 456;
-    dup_segment->data[2].point.x = 789;
-    dup_segment->data[2].point.y = 101;
-    cpml_segment_deep_copy(segment, dup_segment);
-    g_assert_cmpfloat(segment->data[0].point.x, ==, 123);
-    g_assert_cmpfloat(segment->data[0].point.y, ==, 456);
-    g_assert_cmpfloat(segment->data[2].point.x, ==, 789);
-    g_assert_cmpfloat(segment->data[2].point.y, ==, 101);
-    g_free(dup_segment);
-    g_free(segment);
-
-    /* Check segments with different num_data are not copied */
-    segment = cpml_segment_deep_dup(&original);
-    g_assert_cmpfloat(segment->data[0].point.x, !=, 123);
-    dup_segment = cpml_segment_deep_dup(segment);
-    dup_segment->num_data = 12;
-    dup_segment->data[0].point.x = 123;
-    cpml_segment_deep_copy(segment, dup_segment);
-    g_assert_cmpfloat(segment->data[0].point.x, !=, 123);
-    g_free(dup_segment);
-    g_free(segment);
-}
-
 
 int
 main(int argc, char *argv[])
@@ -190,7 +149,6 @@ main(int argc, char *argv[])
 
     adg_test_add_boxed_checks("/cpml/segment/type/boxed", CPML_TYPE_SEGMENT, g_new0(CpmlSegment, 1));
     g_test_add_func("/cpml/segment/method/deep-dup", _cpml_test_segment_deep_dup);
-    g_test_add_func("/cpml/segment/method/deep-copy", _cpml_test_segment_deep_copy);
 
     adg_test_add_enum_checks("/cpml/cpml-primitive-type/type/enum", CPML_TYPE_PRIMITIVE_TYPE);
 

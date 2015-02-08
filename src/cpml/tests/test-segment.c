@@ -94,6 +94,25 @@ _cpml_test_sanity_from_cairo(gint i)
 }
 
 static void
+_cpml_test_sanity_copy_data(gint i)
+{
+    CpmlSegment segment;
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+
+    switch (i) {
+    case 1:
+        cpml_segment_copy_data(NULL, &segment);
+        break;
+    case 2:
+        cpml_segment_copy_data(&segment, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_get_length(gint i)
 {
     switch (i) {
@@ -266,6 +285,46 @@ _cpml_test_from_cairo(void)
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path1), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path2), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path()), ==, 1);
+}
+
+static void
+_cpml_test_copy_data(void)
+{
+    CpmlSegment original, *segment;
+
+    /* Let's take the second segment as source */
+    cpml_segment_from_cairo(&original, (cairo_path_t *) adg_test_path());
+    cpml_segment_next(&original);
+    g_assert_cmpint(original.num_data, ==, 6);
+
+    /* Check incompatible segments are not copied */
+    segment = cpml_segment_deep_dup(&original);
+    ++segment->num_data;
+    g_assert_cmpint(cpml_segment_copy_data(segment, &original), ==, 0);
+    --segment->num_data;
+
+    /* Test data copy */
+    ++segment->data[1].point.x;
+    ++segment->data[1].point.y;
+    ++segment->data[3].point.x;
+    ++segment->data[3].point.y;
+    ++segment->data[5].point.x;
+    ++segment->data[5].point.y;
+    g_assert_cmpfloat(segment->data[1].point.x, !=, original.data[1].point.x);
+    g_assert_cmpfloat(segment->data[1].point.y, !=, original.data[1].point.y);
+    g_assert_cmpfloat(segment->data[3].point.x, !=, original.data[3].point.x);
+    g_assert_cmpfloat(segment->data[3].point.y, !=, original.data[3].point.y);
+    g_assert_cmpfloat(segment->data[5].point.x, !=, original.data[5].point.x);
+    g_assert_cmpfloat(segment->data[5].point.y, !=, original.data[5].point.y);
+    g_assert_cmpint(cpml_segment_copy_data(segment, &original), ==, 1);
+    g_assert_cmpfloat(segment->data[1].point.x, ==, original.data[1].point.x);
+    g_assert_cmpfloat(segment->data[1].point.y, ==, original.data[1].point.y);
+    g_assert_cmpfloat(segment->data[3].point.x, ==, original.data[3].point.x);
+    g_assert_cmpfloat(segment->data[3].point.y, ==, original.data[3].point.y);
+    g_assert_cmpfloat(segment->data[5].point.x, ==, original.data[5].point.x);
+    g_assert_cmpfloat(segment->data[5].point.y, ==, original.data[5].point.y);
+
+    g_free(segment);
 }
 
 static void
@@ -490,6 +549,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/segment/behavior/browsing", _cpml_test_browsing);
 
     adg_test_add_traps("/cpml/segment/sanity/from-cairo", _cpml_test_sanity_from_cairo, 2);
+    adg_test_add_traps("/cpml/segment/sanity/copy-data", _cpml_test_sanity_copy_data, 2);
     adg_test_add_traps("/cpml/segment/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/segment/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
     adg_test_add_traps("/cpml/segment/sanity/offset", _cpml_test_sanity_offset, 1);
@@ -499,6 +559,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/segment/sanity/dump", _cpml_test_sanity_dump, 1);
 
     g_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
+    g_test_add_func("/cpml/segment/method/copy-data", _cpml_test_copy_data);
     g_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);
     g_test_add_func("/cpml/segment/method/put-intersections", _cpml_test_put_intersections);
     g_test_add_func("/cpml/segment/method/offset", _cpml_test_offset);
