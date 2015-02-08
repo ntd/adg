@@ -128,7 +128,6 @@ gboolean        adg_canvas_export               (AdgCanvas      *canvas,
                                                  const gchar    *file,
                                                  GError        **gerror);
 @ADG_CANVAS_H_ADDITIONAL@
-
 G_END_DECLS
 
 
