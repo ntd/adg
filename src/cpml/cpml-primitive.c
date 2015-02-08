@@ -158,6 +158,49 @@ cpml_primitive_copy(CpmlPrimitive *primitive, const CpmlPrimitive *src)
 }
 
 /**
+ * cpml_primitive_copy_data:
+ * @primitive: the destination #CpmlPrimitive
+ * @src:       the source primitive to copy
+ *
+ * Copies the memory referenced by the <structfield>org</structfield>
+ * and <structfield>data</structfield> fields from @src to @primitive.
+ * For a shallow copy, check out cpml_primitive_copy().
+ *
+ * This could seem a somewhat unusual operation because @primitive
+ * should contain the same primitive as @src (i.e., the
+ * <structfield>data->header</structfield> field must be the same)
+ * but it can be convenient in some situation, such as when restoring
+ * the original data from a backup primitive, e.g.:
+ *
+ * <informalexample><programlisting language="C">
+ * CpmlPrimitive *backup;
+ *
+ * backup = cpml_primitive_deep_dup(&primitive);
+ * // Now &primitive points can be freely modified
+ * ...
+ * // Let's restore &primitive original points
+ * cpml_primitive_copy_data(&primitive, backup);
+ * g_free(backup);
+ * </programlisting></informalexample>
+ *
+ * Returns: (type gboolean): 1 if the data has been succesfully copied, 0 on errors.
+ *
+ * Since: 1.0
+ **/
+int
+cpml_primitive_copy_data(CpmlPrimitive *primitive, const CpmlPrimitive *src)
+{
+    if (primitive->data[0].header.type != src->data[0].header.type ||
+        primitive->data[0].header.length != src->data[0].header.length)
+        return 0;
+
+    memcpy(primitive->org, src->org, sizeof(cairo_path_data_t));
+    memcpy(primitive->data, src->data,
+           sizeof(cairo_path_data_t) * src->data[0].header.length);
+    return 1;
+}
+
+/**
  * cpml_primitive_reset:
  * @primitive: (inout): a #CpmlPrimitive
  *

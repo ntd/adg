@@ -51,6 +51,8 @@ void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
                                             CpmlSegment         *segment);
 void            cpml_primitive_copy        (CpmlPrimitive       *primitive,
                                             const CpmlPrimitive *src);
+int             cpml_primitive_copy_data   (CpmlPrimitive       *primitive,
+                                            const CpmlPrimitive *src);
 void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
 int             cpml_primitive_next        (CpmlPrimitive       *primitive);
 size_t          cpml_primitive_get_n_points(const CpmlPrimitive *primitive);

@@ -110,6 +110,28 @@ _cpml_test_sanity_copy(gint i)
 }
 
 static void
+_cpml_test_sanity_copy_data(gint i)
+{
+    CpmlPrimitive primitive;
+    CpmlSegment segment;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    switch (i) {
+    case 1:
+        cpml_primitive_copy_data(NULL, &primitive);
+        break;
+    case 2:
+        cpml_primitive_copy_data(&primitive, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_get_n_points(gint i)
 {
     switch (i) {
@@ -438,6 +460,50 @@ _cpml_test_copy(void)
     g_assert_true(original.segment == primitive.segment);
     g_assert_true(original.org == primitive.org);
     g_assert_true(original.data == primitive.data);
+}
+
+static void
+_cpml_test_copy_data(void)
+{
+    CpmlSegment segment;
+    CpmlPrimitive original, *primitive;
+    int n;
+
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    cpml_primitive_from_segment(&original, &segment);
+
+    /* Check incompatible primitives are not copied */
+    primitive = cpml_primitive_deep_dup(&original);
+    ++primitive->data[0].header.length;
+    g_assert_cmpint(cpml_primitive_copy_data(primitive, &original), ==, 0);
+    --primitive->data[0].header.length;
+    ++primitive->data[0].header.type;
+    g_assert_cmpint(cpml_primitive_copy_data(primitive, &original), ==, 0);
+    --primitive->data[0].header.type;
+
+    do {
+        primitive = cpml_primitive_deep_dup(&original);
+        ++primitive->org->point.x;
+        ++primitive->org->point.y;
+        for (n = 1; n < primitive->data[0].header.length; ++n) {
+            ++primitive->data[n].point.x;
+            ++primitive->data[n].point.y;
+        }
+        g_assert_cmpfloat(primitive->org->point.x, !=, original.org->point.x);
+        g_assert_cmpfloat(primitive->org->point.y, !=, original.org->point.y);
+        for (n = 1; n < primitive->data[0].header.length; ++n) {
+            g_assert_cmpfloat(primitive->data[n].point.x, !=, original.data[n].point.x);
+            g_assert_cmpfloat(primitive->data[n].point.y, !=, original.data[n].point.y);
+        }
+        g_assert_cmpint(cpml_primitive_copy_data(primitive, &original), ==, 1);
+        g_assert_cmpfloat(primitive->org->point.x, ==, original.org->point.x);
+        g_assert_cmpfloat(primitive->org->point.y, ==, original.org->point.y);
+        for (n = 1; n < primitive->data[0].header.length; ++n) {
+            g_assert_cmpfloat(primitive->data[n].point.x, ==, original.data[n].point.x);
+            g_assert_cmpfloat(primitive->data[n].point.y, ==, original.data[n].point.y);
+        }
+        g_free(primitive);
+    } while (cpml_primitive_next(&original));
 }
 
 static void
@@ -1207,6 +1273,7 @@ main(int argc, char *argv[])
 
     adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_test_sanity_from_segment, 1);
     adg_test_add_traps("/cpml/primitive/sanity/copy", _cpml_test_sanity_copy, 2);
+    adg_test_add_traps("/cpml/primitive/sanity/copy-data", _cpml_test_sanity_copy_data, 2);
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_test_sanity_get_n_points, 1);
     adg_test_add_traps("/cpml/primitive/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/primitive/sanity/put-extents", _cpml_test_sanity_put_extents, 2);
@@ -1224,6 +1291,7 @@ main(int argc, char *argv[])
 
     g_test_add_func("/cpml/primitive/method/from-segment", _cpml_test_from_segment);
     g_test_add_func("/cpml/primitive/method/copy", _cpml_test_copy);
+    g_test_add_func("/cpml/primitive/method/copy-data", _cpml_test_copy_data);
     g_test_add_func("/cpml/primitive/method/type-get-n-points", _cpml_test_type_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-n-points", _cpml_test_get_n_points);
     g_test_add_func("/cpml/primitive/method/get-length", _cpml_test_get_length);
