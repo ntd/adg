@@ -94,6 +94,25 @@ _cpml_test_sanity_from_cairo(gint i)
 }
 
 static void
+_cpml_test_sanity_copy(gint i)
+{
+    CpmlSegment segment;
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+
+    switch (i) {
+    case 1:
+        cpml_segment_copy(NULL, &segment);
+        break;
+    case 2:
+        cpml_segment_copy(&segment, NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_test_sanity_copy_data(gint i)
 {
     CpmlSegment segment;
@@ -285,6 +304,22 @@ _cpml_test_from_cairo(void)
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path1), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, &invalid_path2), ==, 0);
     g_assert_cmpint(cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path()), ==, 1);
+}
+
+static void
+_cpml_test_copy(void)
+{
+    CpmlSegment original;
+    CpmlSegment segment = { NULL, NULL, 0 };
+
+    cpml_segment_from_cairo(&original, (cairo_path_t *) adg_test_path());
+    g_assert_true(segment.path != original.path);
+    g_assert_true(segment.data != original.data);
+    g_assert_cmpint(segment.num_data, !=, original.num_data);
+    cpml_segment_copy(&segment, &original);
+    g_assert_true(segment.path == original.path);
+    g_assert_true(segment.data == original.data);
+    g_assert_cmpint(segment.num_data, ==, original.num_data);
 }
 
 static void
@@ -549,6 +584,7 @@ main(int argc, char *argv[])
     g_test_add_func("/cpml/segment/behavior/browsing", _cpml_test_browsing);
 
     adg_test_add_traps("/cpml/segment/sanity/from-cairo", _cpml_test_sanity_from_cairo, 2);
+    adg_test_add_traps("/cpml/segment/sanity/copy", _cpml_test_sanity_copy, 2);
     adg_test_add_traps("/cpml/segment/sanity/copy-data", _cpml_test_sanity_copy_data, 2);
     adg_test_add_traps("/cpml/segment/sanity/get-length", _cpml_test_sanity_get_length, 1);
     adg_test_add_traps("/cpml/segment/sanity/put-intersections", _cpml_test_sanity_put_intersections, 3);
@@ -559,6 +595,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/segment/sanity/dump", _cpml_test_sanity_dump, 1);
 
     g_test_add_func("/cpml/segment/method/from-cairo", _cpml_test_from_cairo);
+    g_test_add_func("/cpml/segment/method/copy", _cpml_test_copy);
     g_test_add_func("/cpml/segment/method/copy-data", _cpml_test_copy_data);
     g_test_add_func("/cpml/segment/method/get-length", _cpml_test_get_length);
     g_test_add_func("/cpml/segment/method/put-intersections", _cpml_test_put_intersections);
