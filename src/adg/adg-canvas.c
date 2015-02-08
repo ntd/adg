@@ -100,6 +100,16 @@
 #include <adg-canvas.h>
 #include "adg-canvas-private.h"
 
+#ifdef CAIRO_HAS_PS_SURFACE
+#include <cairo-ps.h>
+#endif
+#ifdef CAIRO_HAS_PDF_SURFACE
+#include <cairo-pdf.h>
+#endif
+#ifdef CAIRO_HAS_SVG_SURFACE
+#include <cairo-svg.h>
+#endif
+
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_canvas_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
@@ -1491,35 +1501,26 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
     surface = NULL;
 
     switch (type) {
-    case CAIRO_SURFACE_TYPE_IMAGE:
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
+    case CAIRO_SURFACE_TYPE_IMAGE:
         surface = cairo_image_surface_create(CAIRO_FORMAT_RGB24, width, height);
-#endif
         break;
-    case CAIRO_SURFACE_TYPE_PDF:
+#endif
 #ifdef CAIRO_HAS_PDF_SURFACE
-        {
-            #include <cairo-pdf.h>
-            surface = cairo_pdf_surface_create(file, width, height);
-        }
-#endif
+    case CAIRO_SURFACE_TYPE_PDF:
+        surface = cairo_pdf_surface_create(file, width, height);
         break;
-    case CAIRO_SURFACE_TYPE_PS:
+#endif
 #ifdef CAIRO_HAS_PS_SURFACE
-        {
-            #include <cairo-ps.h>
-            surface = cairo_ps_surface_create(file, width, height);
-        }
-#endif
+    case CAIRO_SURFACE_TYPE_PS:
+        surface = cairo_ps_surface_create(file, width, height);
         break;
-    case CAIRO_SURFACE_TYPE_SVG:
+#endif
 #ifdef CAIRO_HAS_SVG_SURFACE
-        {
-            #include <cairo-svg.h>
-            surface = cairo_svg_surface_create(file, width, height);
-        }
-#endif
+    case CAIRO_SURFACE_TYPE_SVG:
+        surface = cairo_svg_surface_create(file, width, height);
         break;
+#endif
     default:
         break;
     }
