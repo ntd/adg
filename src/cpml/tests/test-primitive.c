@@ -586,10 +586,8 @@ _cpml_test_put_pair_at(void)
     g_assert_cmpfloat(pair.x, ==, 6);
     g_assert_cmpfloat(pair.y, ==, 7);
     cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
-    g_assert_cmpfloat(pair.x, >, 3);
-    g_assert_cmpfloat(pair.x, <, 6);
-    g_assert_cmpfloat(pair.y, >, 1);
-    g_assert_cmpfloat(pair.y, <, 7);
+    adg_assert_isapprox(pair.x, 3.669);
+    adg_assert_isapprox(pair.y, 4.415);
 
     /* Close */
     cpml_primitive_next(&primitive);
@@ -641,18 +639,14 @@ _cpml_test_put_vector_at(void)
     /* Arc */
     cpml_primitive_next(&primitive);
     cpml_primitive_put_vector_at(&primitive, 0, &vector);
-    g_assert_cmpfloat(vector.x, >, -0.077);
-    g_assert_cmpfloat(vector.x, <, -0.076);
-    g_assert_cmpfloat(vector.y, >, 0.997);
-    g_assert_cmpfloat(vector.y, <, 0.998);
+    adg_assert_isapprox(vector.x, -0.077);
+    adg_assert_isapprox(vector.y, 0.997);
     cpml_primitive_put_vector_at(&primitive, 1, &vector);
-    g_assert_cmpfloat(vector.x, >, 0.843);
-    g_assert_cmpfloat(vector.y, <, 0.844);
+    adg_assert_isapprox(vector.x, 0.844);
+    adg_assert_isapprox(vector.y, 0.537);
     cpml_primitive_put_vector_at(&primitive, 0.5, &vector);
-    g_assert_cmpfloat(vector.x, >, 0.447);
-    g_assert_cmpfloat(vector.x, <, 0.448);
-    g_assert_cmpfloat(vector.y, >, 0.894);
-    g_assert_cmpfloat(vector.y, <, 0.895);
+    adg_assert_isapprox(vector.x, 0.447);
+    adg_assert_isapprox(vector.y, 0.894);
 
     /* Close */
     cpml_primitive_next(&primitive);
