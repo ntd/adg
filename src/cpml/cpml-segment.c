@@ -133,8 +133,8 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
  * @segment: a #CpmlSegment structure
  * @src: the source segment to copy
  *
- * Copies only the <structfield>data</structfield> from @src to @segment.
- * For a shallow copy, check out cpml_segment_copy().
+ * Copies the memory referenced by the <structfield>data</structfield> field
+ * from @src to @segment. For a shallow copy, check out cpml_segment_copy().
  *
  * This could seem a somewhat unusual operation because @segment should
  * be compatible with @src, i.e. it is expected that they have the same
@@ -146,9 +146,9 @@ cpml_segment_copy(CpmlSegment *segment, const CpmlSegment *src)
  * CpmlSegment *backup;
  *
  * backup = cpml_segment_deep_dup(&segment);
- * // Now &segment can be freely modified
+ * // Now &segment points can be freely modified
  * ...
- * // Let's restore &segment to its original value
+ * // Let's restore &segment original points
  * cpml_segment_copy_data(&segment, backup);
  * g_free(backup);
  * </programlisting></informalexample>
