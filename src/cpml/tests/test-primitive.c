@@ -1099,24 +1099,28 @@ _cpml_test_offset(void)
 {
     CpmlSegment original, *segment;
     CpmlPrimitive primitive, line, curve;
+    CpmlPrimitive *backup;
 
     /* Work on a copy to avoid modifying the original cairo path */
     cpml_segment_from_cairo(&original, (cairo_path_t *) adg_test_path());
     segment = cpml_segment_deep_dup(&original);
     cpml_primitive_from_segment(&primitive, segment);
 
+    /* Offsetting and de-offsetting can introduce rounding errors
+     * so we use adg_assert_isapprox instead of g_assert_cmpfloat */
+
     /* Line */
     cpml_primitive_copy(&line, &primitive);
     cpml_primitive_offset(&primitive, 1);
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 2);
-    g_assert_cmpfloat(primitive.data[1].point.x, ==, 3);
-    g_assert_cmpfloat(primitive.data[1].point.y, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 3);
+    adg_assert_isapprox(primitive.data[1].point.y, 2);
     cpml_primitive_offset(&primitive, -1);
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
-    g_assert_cmpfloat(primitive.data[1].point.x, ==, 3);
-    g_assert_cmpfloat(primitive.data[1].point.y, ==, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 1);
+    adg_assert_isapprox(primitive.data[1].point.x, 3);
+    adg_assert_isapprox(primitive.data[1].point.y, 1);
 
     /* Arc */
     cpml_primitive_next(&primitive);
@@ -1128,30 +1132,71 @@ _cpml_test_offset(void)
     adg_assert_isapprox(primitive.data[2].point.x, 5.463);
     adg_assert_isapprox(primitive.data[2].point.y, 7.844);
     cpml_primitive_offset(&primitive, -1);
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 3);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
-    g_assert_cmpfloat(primitive.data[1].point.x, ==, 4);
-    g_assert_cmpfloat(primitive.data[1].point.y, ==, 5);
-    g_assert_cmpfloat(primitive.data[2].point.x, ==, 6);
-    g_assert_cmpfloat(primitive.data[2].point.y, ==, 7);
+    adg_assert_isapprox((primitive.org)->point.x, 3);
+    adg_assert_isapprox((primitive.org)->point.y, 1);
+    adg_assert_isapprox(primitive.data[1].point.x, 4);
+    adg_assert_isapprox(primitive.data[1].point.y, 5);
+    adg_assert_isapprox(primitive.data[2].point.x, 6);
+    adg_assert_isapprox(primitive.data[2].point.y, 7);
 
-    /* Curve: try with different algorithms */
-    /* TODO */
+    /* Curve */
     cpml_primitive_next(&primitive);
     cpml_primitive_copy(&curve, &primitive);
+    /* The offset algorithm for curves is an approximation, so
+     * offsetting +1 and -1 does not return the original curve.
+     * Keeping a backup around to restore the original data.
+     */
+    backup = cpml_primitive_deep_dup(&curve);
+    /* Testing different algorithms */
+    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL);
+    cpml_primitive_offset(&primitive, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 5.293);
+    adg_assert_isapprox((primitive.org)->point.y, 7.707);
+    adg_assert_isapprox(primitive.data[1].point.x, 7.889);
+    adg_assert_isapprox(primitive.data[1].point.y, 8.515);
+    adg_assert_isapprox(primitive.data[2].point.x, 11.196);
+    adg_assert_isapprox(primitive.data[2].point.y, 9.007);
+    adg_assert_isapprox(primitive.data[3].point.x, -1.4);
+    adg_assert_isapprox(primitive.data[3].point.y, 1.2);
+    cpml_primitive_copy_data(&primitive, backup);
+    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_BAIOCA);
+    cpml_primitive_offset(&primitive, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 5.293);
+    adg_assert_isapprox((primitive.org)->point.y, 7.707);
+    adg_assert_isapprox(primitive.data[1].point.x, 6.901);
+    adg_assert_isapprox(primitive.data[1].point.y, 9.315);
+    adg_assert_isapprox(primitive.data[2].point.x, 10.806);
+    adg_assert_isapprox(primitive.data[2].point.y, 10.355);
+    adg_assert_isapprox(primitive.data[3].point.x, -1.4);
+    adg_assert_isapprox(primitive.data[3].point.y, 1.2);
+    cpml_primitive_copy_data(&primitive, backup);
+    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT);
+    cpml_primitive_offset(&primitive, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 5.293);
+    adg_assert_isapprox((primitive.org)->point.y, 7.707);
+    adg_assert_isapprox(primitive.data[1].point.x, -5.758);
+    adg_assert_isapprox(primitive.data[1].point.y, -3.344);
+    adg_assert_isapprox(primitive.data[2].point.x, 24.987);
+    adg_assert_isapprox(primitive.data[2].point.y, 20.99);
+    adg_assert_isapprox(primitive.data[3].point.x, -1.4);
+    adg_assert_isapprox(primitive.data[3].point.y, 1.2);
+    cpml_primitive_copy_data(&primitive, backup);
+
+    g_free(backup);
+    cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_DEFAULT);
 
     /* Close: this primitive does not own data points but should
      * modify the points of the previous and next primitives */
     cpml_primitive_next(&primitive);
     cpml_primitive_offset(&primitive, 1);
-    g_assert_cmpfloat((curve.org)->point.x, ==, 6);
-    g_assert_cmpfloat((curve.org)->point.y, ==, 7);
+    adg_assert_isapprox((curve.org)->point.x, 6);
+    adg_assert_isapprox((curve.org)->point.y, 7);
     adg_assert_isapprox(curve.data[3].point.x, -1.553);
     adg_assert_isapprox(curve.data[3].point.y, 2.894);
     adg_assert_isapprox((line.org)->point.x, 0.447);
     adg_assert_isapprox((line.org)->point.y, 1.894);
-    g_assert_cmpfloat(line.data[1].point.x, ==, 3);
-    g_assert_cmpfloat(line.data[1].point.y, ==, 1);
+    adg_assert_isapprox(line.data[1].point.x, 3);
+    adg_assert_isapprox(line.data[1].point.y, 1);
     cpml_primitive_offset(&primitive, -1);
     adg_assert_isapprox((curve.org)->point.x, 6);
     adg_assert_isapprox((curve.org)->point.y, 7);
