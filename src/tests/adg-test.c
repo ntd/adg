@@ -19,6 +19,11 @@
 
 
 #include "adg-internal.h"
+#include "adg-model.h"
+#include "adg-trail.h"
+#include "adg-path.h"
+#include "adg-container.h"
+#include "adg-stroke.h"
 #include "adg-test.h"
 
 
@@ -325,6 +330,109 @@ adg_test_add_entity_checks(const gchar *testpath, GType type)
     GType *p_type = g_new(GType, 1);
     *p_type = type;
     g_test_add_data_func(testpath, p_type, (gpointer) _adg_entity_checks);
+}
+
+static void
+_adg_increment(GObject *object, gint *counter)
+{
+    ++(*counter);
+}
+
+static void
+_adg_container_checks(GType *p_type)
+{
+    GType type = *p_type;
+
+    g_free(p_type);
+
+    g_assert_true(g_type_is_a(type, ADG_TYPE_CONTAINER));
+
+    if (! G_TYPE_IS_ABSTRACT(type)) {
+        AdgContainer *container;
+        AdgPath *path;
+        AdgStroke *stroke;
+        const CpmlExtents *extents;
+        gint counter;
+
+        container = g_object_new(type, NULL);
+
+        g_assert_nonnull(container);
+        g_assert_true(ADG_IS_CONTAINER(container));
+
+        counter = 0;
+        adg_container_foreach(container, G_CALLBACK(_adg_increment), &counter);
+        g_assert_cmpint(counter, ==, 0);
+
+        path = adg_path_new();
+        adg_path_move_to_explicit(path, -123456, -789012);
+        adg_path_line_to_explicit(path, 654321, 210987);
+        stroke = adg_stroke_new(ADG_TRAIL(path));
+        g_object_unref(path);
+
+        /* stroke has a floating reference that will be owned by container */
+        g_assert_null(adg_entity_get_parent(ADG_ENTITY(stroke)));
+        adg_container_add(container, ADG_ENTITY(stroke));
+        g_assert_true(adg_entity_get_parent(ADG_ENTITY(stroke)) == ADG_ENTITY(container));
+
+        /* Ensure container-add add a reference to stroke */
+        g_assert_true(ADG_IS_STROKE(stroke));
+
+        /* The following command should basically be a no-op */
+        adg_container_add(container, ADG_ENTITY(stroke));
+
+        counter = 0;
+        adg_container_foreach(container, G_CALLBACK(_adg_increment), &counter);
+        g_assert_cmpint(counter, ==, 1);
+
+        /* Check the extents are *at least* as big as stroke. We cannot use
+         * equality because some container can have margins (e.g. AdgCanvas) */
+        adg_entity_arrange(ADG_ENTITY(container));
+        extents = adg_entity_get_extents(ADG_ENTITY(container));
+        g_assert_true(extents->is_defined);
+        g_assert_cmpfloat(extents->org.x, <=, -123456);
+        g_assert_cmpfloat(extents->org.y, <=, -789012);
+        g_assert_cmpfloat(extents->size.x, >=, 123456 + 654321);
+        g_assert_cmpfloat(extents->size.y, >=, 789012 + 210987);
+
+        /* Keep stroke around */
+        g_object_ref(stroke);
+        adg_container_remove(container, ADG_ENTITY(stroke));
+        g_assert_null(adg_entity_get_parent(ADG_ENTITY(stroke)));
+
+        counter = 0;
+        adg_container_foreach(container, G_CALLBACK(_adg_increment), &counter);
+        g_assert_cmpint(counter, ==, 0);
+
+        adg_entity_arrange(ADG_ENTITY(container));
+        g_assert_cmpfloat(extents->org.x, >, -123456);
+        g_assert_cmpfloat(extents->org.y, >, -789012);
+        g_assert_cmpfloat(extents->size.x, <, 123456 + 654321);
+        g_assert_cmpfloat(extents->size.y, <, 789012 + 210987);
+
+        /* Check destroying a child remove it from container */
+        adg_container_add(container, ADG_ENTITY(stroke));
+        g_object_unref(stroke);
+
+        counter = 0;
+        adg_container_foreach(container, G_CALLBACK(_adg_increment), &counter);
+        g_assert_cmpint(counter, ==, 1);
+
+        g_object_run_dispose(G_OBJECT(stroke));
+
+        counter = 0;
+        adg_container_foreach(container, G_CALLBACK(_adg_increment), &counter);
+        g_assert_cmpint(counter, ==, 0);
+
+        g_object_unref(container);
+    }
+}
+
+void
+adg_test_add_container_checks(const gchar *testpath, GType type)
+{
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func(testpath, p_type, (gpointer) _adg_container_checks);
 }
 
 static void
