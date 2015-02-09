@@ -82,6 +82,7 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/alignment/type/object", ADG_TYPE_ALIGNMENT);
     adg_test_add_entity_checks("/adg/alignment/type/entity", ADG_TYPE_ALIGNMENT);
+    adg_test_add_container_checks("/adg/alignment/type/container", ADG_TYPE_ALIGNMENT);
 
     alignment = adg_alignment_new_explicit(0.5, 0.5);
     adg_container_add(ADG_CONTAINER(alignment), ADG_ENTITY(adg_logo_new()));
