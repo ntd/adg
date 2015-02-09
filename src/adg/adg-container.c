@@ -26,11 +26,11 @@
  * Moreover, it can apply a common transformation to local and/or global
  * maps: see http://adg.entidi.com/home/details/ for further details.
  *
- * Adding an entity to a container will make a circular dependency
- * between the two objects. The container will also add a weak reference
- * to the child entity to intercept when the entity is manually
- * destroyed (usually by calling g_object_unref()) and remove the child
- * reference from the internal children list.
+ * Adding an entity to a container will create a strong reference to the
+ * container in the entity and a weak reference to the entity on the
+ * container. This way the container will be able to destroy its children
+ * when destroyed and it will be able to update its children when an entity
+ * is destroyed.
  *
  * Since: 1.0
  **/
@@ -52,7 +52,7 @@
  * @remove:   signal that removes a specific entity from the container.
  *
  * #AdgContainer effectively stores a #GSList of children into its
- * private data and keeps a reference to every children it owns.
+ * private data and keeps a reference to every child it owns.
  *
  * Since: 1.0
  **/
@@ -522,7 +522,7 @@ _adg_children(AdgContainer *container)
 {
     AdgContainerPrivate *data = container->data;
 
-    /* The NULL case is yet managed by GLib */
+    /* The NULL case is already managed by GLib */
     return g_slist_copy(data->children);
 }
 
