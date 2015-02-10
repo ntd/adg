@@ -21,6 +21,70 @@
 #include <adg-test.h>
 #include <adg.h>
 
+static AdgCanvas *
+_adg_non_empty_canvas(void)
+{
+    AdgPath *path;
+    AdgStroke *stroke;
+    AdgCanvas *canvas;
+
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to_explicit(path, 1, 1);
+    stroke = adg_stroke_new(ADG_TRAIL(path));
+    g_object_unref(path);
+
+    canvas = adg_canvas_new();
+    adg_canvas_set_margins(canvas, 0, 0, 0, 0);
+    adg_canvas_set_paddings(canvas, 0, 0, 0, 0);
+
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
+
+    /* */
+    g_object_weak_ref(G_OBJECT(canvas),
+                      (GWeakNotify) g_object_run_dispose, stroke);
+
+    return canvas;
+}
+
+static void
+_adg_behavior_entity(void)
+{
+    AdgCanvas *canvas;
+    const CpmlExtents *extents;
+    AdgTitleBlock *title_block;
+
+    canvas = _adg_non_empty_canvas();
+
+    adg_entity_arrange(ADG_ENTITY(canvas));
+    extents = adg_entity_get_extents(ADG_ENTITY(canvas));
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->size.x, ==, 1);
+    g_assert_cmpfloat(extents->size.y, ==, 1);
+
+    adg_entity_invalidate(ADG_ENTITY(canvas));
+    extents = adg_entity_get_extents(ADG_ENTITY(canvas));
+    g_assert_false(extents->is_defined);
+
+    title_block = adg_title_block_new();
+    adg_canvas_set_title_block(canvas, title_block);
+    adg_entity_arrange(ADG_ENTITY(canvas));
+    extents = adg_entity_get_extents(ADG_ENTITY(canvas));
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->size.x, >, 1);
+    g_assert_cmpfloat(extents->size.y, >, 1);
+    g_assert_cmpfloat(extents->size.x, <, 5000);
+    g_assert_cmpfloat(extents->size.y, <, 5000);
+
+    adg_canvas_set_size_explicit(canvas, 5000, 5000);
+    adg_entity_arrange(ADG_ENTITY(canvas));
+    extents = adg_entity_get_extents(ADG_ENTITY(canvas));
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->size.x, ==, 5000);
+    g_assert_cmpfloat(extents->size.y, ==, 5000);
+
+    g_object_run_dispose(G_OBJECT(canvas));
+}
 
 static void
 _adg_behavior_misc(void)
@@ -581,8 +645,9 @@ _adg_method_autoscale(void)
     adg_canvas_set_scales(canvas, NULL);
     adg_canvas_autoscale(canvas);
 
-    /* Set an arbitrary size on canvas */
-    adg_canvas_set_scales(canvas, "10:1", "1 a 1", "1:2", "1:10 ", NULL);
+    /* Set an arbitrary size on canvas: the first three scales
+     * are invalids and should be ignored*/
+    adg_canvas_set_scales(canvas, "0", "-1:1", "1:0", "10:1", "1 a 1", "1:2", "1:10 ", NULL);
     adg_canvas_set_size_explicit(canvas, 100, 100);
 
     /* Check the scale will be reported on the title block */
@@ -646,6 +711,47 @@ _adg_method_set_margins(void)
     g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 3);
     g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 5);
     g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 7);
+
+    g_object_run_dispose(G_OBJECT(canvas));
+}
+
+static void
+_adg_method_apply_margins(void)
+{
+    AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
+    CpmlExtents extents = {
+        .is_defined = 1,
+        .org = { 0, 0 },
+        .size = { 10, 10 }
+    };
+
+    /* Sanity checks */
+    adg_canvas_apply_margins(canvas, NULL);
+    //adg_canvas_apply_margins(NULL, &extents);
+
+    adg_canvas_set_margins(canvas, 1, 2, 3, 4);
+
+    adg_canvas_apply_margins(canvas, &extents);
+
+    g_assert_cmpfloat(extents.org.x,  ==, -4);
+    g_assert_cmpfloat(extents.org.y,  ==, -1);
+    g_assert_cmpfloat(extents.size.x, ==, 16);
+    g_assert_cmpfloat(extents.size.y, ==, 14);
+
+    adg_canvas_apply_margins(canvas, &extents);
+
+    g_assert_cmpfloat(extents.org.x,  ==, -8);
+    g_assert_cmpfloat(extents.org.y,  ==, -2);
+    g_assert_cmpfloat(extents.size.x, ==, 22);
+    g_assert_cmpfloat(extents.size.y, ==, 18);
+
+    extents.is_defined = 0;
+    adg_canvas_apply_margins(canvas, &extents);
+
+    g_assert_cmpfloat(extents.org.x,  ==, -8);
+    g_assert_cmpfloat(extents.org.y,  ==, -2);
+    g_assert_cmpfloat(extents.size.x, ==, 22);
+    g_assert_cmpfloat(extents.size.y, ==, 18);
 
     g_object_run_dispose(G_OBJECT(canvas));
 }
@@ -791,6 +897,7 @@ _adg_method_set_page_setup(void)
 }
 #endif
 
+
 int
 main(int argc, char *argv[])
 {
@@ -800,7 +907,10 @@ main(int argc, char *argv[])
     adg_test_add_entity_checks("/adg/canvas/type/entity", ADG_TYPE_CANVAS);
     adg_test_add_container_checks("/adg/canvas/type/container", ADG_TYPE_CANVAS);
 
+    g_test_add_func("/adg/canvas/behavior/entity", _adg_behavior_entity);
     g_test_add_func("/adg/canvas/behavior/misc", _adg_behavior_misc);
+    adg_test_add_global_space_checks("/adg/canvas/behavior/global-space", _adg_non_empty_canvas());
+    adg_test_add_local_space_checks("/adg/canvas/behavior/local-space", _adg_non_empty_canvas());
 
     g_test_add_func("/adg/canvas/property/background-dress", _adg_property_background_dress);
     g_test_add_func("/adg/canvas/property/frame-dress", _adg_property_frame_dress);
@@ -819,6 +929,7 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg/canvas/method/autoscale", _adg_method_autoscale);
     g_test_add_func("/adg/canvas/method/set-margins", _adg_method_set_margins);
+    g_test_add_func("/adg/canvas/method/apply-margins", _adg_method_apply_margins);
     g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
 #if GTK3_ENABLED || GTK2_ENABLED
     g_test_add_func("/adg/canvas/method/set-paper", _adg_method_set_paper);
