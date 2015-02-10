@@ -1050,23 +1050,25 @@ adg_canvas_set_margins(AdgCanvas *canvas,
  * @extents: where apply the margins
  *
  * A convenient function to apply the margins of @canvas to the
- * arbitrary #CpmlExtents struct @extents.
+ * arbitrary #CpmlExtents struct @extents. "Apply" means @extents
+ * are enlarged of the specific margin values.
  *
  * Since: 1.0
  **/
 void
 adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
 {
-    AdgCanvasPrivate *data;
-
     g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(extents != NULL);
 
-    data = canvas->data;
+    if (extents->is_defined) {
+        AdgCanvasPrivate *data = canvas->data;
 
-    extents->org.x -= data->left_margin;
-    extents->org.y -= data->top_margin;
-    extents->size.x += data->left_margin + data->right_margin;
-    extents->size.y += data->top_margin + data->bottom_margin;
+        extents->org.x -= data->left_margin;
+        extents->org.y -= data->top_margin;
+        extents->size.x += data->left_margin + data->right_margin;
+        extents->size.y += data->top_margin + data->bottom_margin;
+    }
 }
 
 /**
