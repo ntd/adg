@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_source(void)
+_adg_property_source(void)
 {
     AdgEdges *edges;
     AdgTrail *valid_trail, *invalid_trail;
@@ -66,7 +66,7 @@ _adg_test_source(void)
 }
 
 static void
-_adg_test_axis_angle(void)
+_adg_property_axis_angle(void)
 {
     AdgEdges *edges;
     gdouble valid_value, invalid_value;
@@ -98,7 +98,7 @@ _adg_test_axis_angle(void)
 }
 
 static void
-_adg_test_critical_angle(void)
+_adg_property_critical_angle(void)
 {
     AdgEdges *edges;
     gdouble valid_value, invalid_value;
@@ -137,9 +137,9 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/edges/type/object", ADG_TYPE_EDGES);
 
-    g_test_add_func("/adg/edges/property/source", _adg_test_source);
-    g_test_add_func("/adg/edges/property/axis-angle", _adg_test_axis_angle);
-    g_test_add_func("/adg/edges/property/critical-angle", _adg_test_critical_angle);
+    g_test_add_func("/adg/edges/property/source", _adg_property_source);
+    g_test_add_func("/adg/edges/property/axis-angle", _adg_property_axis_angle);
+    g_test_add_func("/adg/edges/property/critical-angle", _adg_property_critical_angle);
 
     return g_test_run();
 }

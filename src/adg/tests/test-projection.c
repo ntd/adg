@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_axis_dress(void)
+_adg_property_axis_dress(void)
 {
     AdgProjection *projection;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -64,7 +64,7 @@ _adg_test_axis_dress(void)
 }
 
 static void
-_adg_test_scheme(void)
+_adg_property_scheme(void)
 {
     AdgProjection *projection;
     AdgProjectionScheme valid_scheme_1, valid_scheme_2, invalid_scheme;
@@ -105,7 +105,7 @@ _adg_test_scheme(void)
 }
 
 static void
-_adg_test_symbol_dress(void)
+_adg_property_symbol_dress(void)
 {
     AdgProjection *projection;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -159,9 +159,9 @@ main(int argc, char *argv[])
     adg_test_add_local_space_checks("/adg/projection/behavior/local-space",
                                     adg_projection_new(ADG_PROJECTION_SCHEME_THIRD_ANGLE));
 
-    g_test_add_func("/adg/projection/property/axis-dress", _adg_test_axis_dress);
-    g_test_add_func("/adg/projection/property/scheme", _adg_test_scheme);
-    g_test_add_func("/adg/projection/property/symbol-dress", _adg_test_symbol_dress);
+    g_test_add_func("/adg/projection/property/axis-dress", _adg_property_axis_dress);
+    g_test_add_func("/adg/projection/property/scheme", _adg_property_scheme);
+    g_test_add_func("/adg/projection/property/symbol-dress", _adg_property_symbol_dress);
 
     return g_test_run();
 }

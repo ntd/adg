@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_angle(void)
+_adg_property_angle(void)
 {
     AdgRuledFill *ruled_fill;
     gdouble angle;
@@ -68,7 +68,7 @@ _adg_test_angle(void)
 }
 
 static void
-_adg_test_line_dress(void)
+_adg_property_line_dress(void)
 {
     AdgRuledFill *ruled_fill;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -109,7 +109,7 @@ _adg_test_line_dress(void)
 }
 
 static void
-_adg_test_spacing(void)
+_adg_property_spacing(void)
 {
     AdgRuledFill *ruled_fill;
     gdouble spacing;
@@ -153,9 +153,9 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/ruled-fill/type/object", ADG_TYPE_RULED_FILL);
 
-    g_test_add_func("/adg/ruled-fill/property/angle", _adg_test_angle);
-    g_test_add_func("/adg/ruled-fill/property/line-dress", _adg_test_line_dress);
-    g_test_add_func("/adg/ruled-fill/property/spacing", _adg_test_spacing);
+    g_test_add_func("/adg/ruled-fill/property/angle", _adg_property_angle);
+    g_test_add_func("/adg/ruled-fill/property/line-dress", _adg_property_line_dress);
+    g_test_add_func("/adg/ruled-fill/property/spacing", _adg_property_spacing);
 
     return g_test_run();
 }

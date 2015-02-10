@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_parent(void)
+_adg_property_parent(void)
 {
     AdgEntity *entity;
     AdgEntity *valid_container, *invalid_container;
@@ -66,7 +66,7 @@ _adg_test_parent(void)
 }
 
 static void
-_adg_test_global_map(void)
+_adg_property_global_map(void)
 {
     AdgEntity *entity;
     const cairo_matrix_t *identity_map;
@@ -124,7 +124,7 @@ _adg_test_global_map(void)
 }
 
 static void
-_adg_test_local_map(void)
+_adg_property_local_map(void)
 {
     AdgEntity *entity;
     const cairo_matrix_t *identity_map;
@@ -182,7 +182,7 @@ _adg_test_local_map(void)
 }
 
 static void
-_adg_test_local_mix(void)
+_adg_property_local_mix(void)
 {
     AdgEntity *entity;
     AdgMix valid_mix1, valid_mix2, invalid_mix;
@@ -231,10 +231,10 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/entity/type/object", ADG_TYPE_ENTITY);
     adg_test_add_entity_checks("/adg/entity/type/entity", ADG_TYPE_ENTITY);
 
-    g_test_add_func("/adg/entity/parent", _adg_test_parent);
-    g_test_add_func("/adg/entity/global-map", _adg_test_global_map);
-    g_test_add_func("/adg/entity/local-map", _adg_test_local_map);
-    g_test_add_func("/adg/entity/local-mix", _adg_test_local_mix);
+    g_test_add_func("/adg/entity/property/parent", _adg_property_parent);
+    g_test_add_func("/adg/entity/property/global-map", _adg_property_global_map);
+    g_test_add_func("/adg/entity/property/local-map", _adg_property_local_map);
+    g_test_add_func("/adg/entity/property/local-mix", _adg_property_local_mix);
 
     return g_test_run();
 }

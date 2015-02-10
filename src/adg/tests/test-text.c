@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_local_mix(void)
+_adg_property_local_mix(void)
 {
     AdgText *text;
     AdgEntity *entity;
@@ -48,7 +48,7 @@ _adg_test_local_mix(void)
 }
 
 static void
-_adg_test_font_dress(void)
+_adg_property_font_dress(void)
 {
     AdgText *text;
     AdgTextual *textual;
@@ -91,7 +91,7 @@ _adg_test_font_dress(void)
 }
 
 static void
-_adg_test_text(void)
+_adg_property_text(void)
 {
     AdgText *text;
     AdgTextual *textual;
@@ -148,9 +148,9 @@ main(int argc, char *argv[])
 
     adg_test_add_global_space_checks("/adg/text/behavior/global-space", adg_text_new("Testing"));
 
-    g_test_add_func("/adg/text/property/local-mix", _adg_test_local_mix);
-    g_test_add_func("/adg/text/property/font-dress", _adg_test_font_dress);
-    g_test_add_func("/adg/text/property/string", _adg_test_text);
+    g_test_add_func("/adg/text/property/local-mix", _adg_property_local_mix);
+    g_test_add_func("/adg/text/property/font-dress", _adg_property_font_dress);
+    g_test_add_func("/adg/text/property/string", _adg_property_text);
 
     return g_test_run();
 }

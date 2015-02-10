@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_model(void)
+_adg_property_model(void)
 {
     AdgMarker *marker;
     AdgModel *valid_model, *invalid_model, *model;
@@ -75,7 +75,7 @@ _adg_test_model(void)
 }
 
 static void
-_adg_test_n_segment(void)
+_adg_property_n_segment(void)
 {
     AdgMarker *marker;
     AdgTrail *trail;
@@ -120,7 +120,7 @@ _adg_test_n_segment(void)
 }
 
 static void
-_adg_test_pos(void)
+_adg_property_pos(void)
 {
     AdgMarker *marker;
     gdouble valid_pos1, valid_pos2, invalid_pos, pos;
@@ -160,7 +160,7 @@ _adg_test_pos(void)
 }
 
 static void
-_adg_test_trail(void)
+_adg_property_trail(void)
 {
     AdgMarker *marker;
     AdgTrail *valid_trail, *invalid_trail, *trail;
@@ -220,7 +220,7 @@ _adg_test_trail(void)
 }
 
 static void
-_adg_test_size(void)
+_adg_property_size(void)
 {
     AdgMarker *marker;
     gdouble valid_size1, valid_size2, invalid_size, size;
@@ -268,11 +268,11 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/marker/type/object", ADG_TYPE_MARKER);
     adg_test_add_entity_checks("/adg/marker/type/entity", ADG_TYPE_MARKER);
 
-    g_test_add_func("/adg/marker/property/model", _adg_test_model);
-    g_test_add_func("/adg/marker/property/n-segment", _adg_test_n_segment);
-    g_test_add_func("/adg/marker/property/pos", _adg_test_pos);
-    g_test_add_func("/adg/marker/property/size", _adg_test_size);
-    g_test_add_func("/adg/marker/property/trail", _adg_test_trail);
+    g_test_add_func("/adg/marker/property/model", _adg_property_model);
+    g_test_add_func("/adg/marker/property/n-segment", _adg_property_n_segment);
+    g_test_add_func("/adg/marker/property/pos", _adg_property_pos);
+    g_test_add_func("/adg/marker/property/size", _adg_property_size);
+    g_test_add_func("/adg/marker/property/trail", _adg_property_trail);
 
     return g_test_run();
 }

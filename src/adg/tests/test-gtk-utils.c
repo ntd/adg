@@ -36,14 +36,14 @@ gtk_widget_get_visible(GtkWidget *widget)
 
 
 static void
-_adg_test_widget_get_window(void)
+_adg_method_widget_get_window(void)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_assert_null(gtk_widget_get_window(window));
 }
 
 static void
-_adg_test_widget_get_realized(void)
+_adg_method_widget_get_realized(void)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     g_assert_false(gtk_widget_get_realized(window));
@@ -51,7 +51,7 @@ _adg_test_widget_get_realized(void)
 }
 
 static void
-_adg_test_window_hide_here(void)
+_adg_method_window_hide_here(void)
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
@@ -68,7 +68,7 @@ _adg_test_window_hide_here(void)
 }
 
 static void
-_adg_test_toggle_button_sensitivize(void)
+_adg_method_toggle_button_sensitivize(void)
 {
     GtkToggleButton *button = (GtkToggleButton *) gtk_toggle_button_new();
     GtkWidget *widget = gtk_toggle_button_new();
@@ -86,7 +86,7 @@ _adg_test_toggle_button_sensitivize(void)
 }
 
 static void
-_adg_test_use_default_icons(void)
+_adg_method_use_default_icons(void)
 {
     GList *list;
 
@@ -113,11 +113,11 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/adg/fallback/widget_get_window", _adg_test_widget_get_window);
-    g_test_add_func("/adg/fallback/widget_get_realized", _adg_test_widget_get_realized);
-    g_test_add_func("/adg/function/window-hide-here", _adg_test_window_hide_here);
-    g_test_add_func("/adg/function/toggle-button-sensitivize", _adg_test_toggle_button_sensitivize);
-    g_test_add_func("/adg/function/use-default-icons", _adg_test_use_default_icons);
+    g_test_add_func("/adg/method/widget-get-window", _adg_method_widget_get_window);
+    g_test_add_func("/adg/method/widget-get-realized", _adg_method_widget_get_realized);
+    g_test_add_func("/adg/method/window-hide-here", _adg_method_window_hide_here);
+    g_test_add_func("/adg/method/toggle-button-sensitivize", _adg_method_toggle_button_sensitivize);
+    g_test_add_func("/adg/method/use-default-icons", _adg_method_use_default_icons);
 
     return g_test_run();
 }

@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_local_mix(void)
+_adg_property_local_mix(void)
 {
     AdgArrow *arrow;
     AdgEntity *entity;
@@ -48,7 +48,7 @@ _adg_test_local_mix(void)
 }
 
 static void
-_adg_test_angle(void)
+_adg_property_angle(void)
 {
     AdgArrow *arrow;
     gdouble valid_value, invalid_value;
@@ -96,8 +96,8 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/arrow/type/object", ADG_TYPE_ARROW);
     adg_test_add_entity_checks("/adg/arrow/type/entity", ADG_TYPE_ARROW);
 
-    g_test_add_func("/adg/arrow/property/local-mix", _adg_test_local_mix);
-    g_test_add_func("/adg/arrow/property/angle", _adg_test_angle);
+    g_test_add_func("/adg/arrow/property/local-mix", _adg_property_local_mix);
+    g_test_add_func("/adg/arrow/property/angle", _adg_property_angle);
 
     return g_test_run();
 }

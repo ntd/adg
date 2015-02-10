@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_value(void)
+_adg_property_value(void)
 {
     AdgDim *dim;
     const gchar *value;
@@ -51,7 +51,7 @@ main(int argc, char *argv[])
      *                                 adg_rdim_new_full_explicit(1, 5, 2, 4, 9, 7));
      */
 
-    g_test_add_func("/adg/rdim/property/value", _adg_test_value);
+    g_test_add_func("/adg/rdim/property/value", _adg_property_value);
 
     return g_test_run();
 }

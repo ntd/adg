@@ -44,7 +44,7 @@ _adg_path_callback(AdgTrail *trail, gpointer user_data)
 
 
 static void
-_adg_test_max_angle(void)
+_adg_property_max_angle(void)
 {
     AdgTrail *trail;
     gdouble valid_value, invalid_value;
@@ -76,7 +76,7 @@ _adg_test_max_angle(void)
 }
 
 static void
-_adg_test_put_segment(void)
+_adg_method_put_segment(void)
 {
     AdgTrail *trail;
     AdgPath *path;
@@ -144,9 +144,9 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/trail/type/object", ADG_TYPE_TRAIL);
 
-    g_test_add_func("/adg/trail/property/max-angle", _adg_test_max_angle);
+    g_test_add_func("/adg/trail/property/max-angle", _adg_property_max_angle);
 
-    g_test_add_func("/adg/trail/method/put-segment", _adg_test_put_segment);
+    g_test_add_func("/adg/trail/method/put-segment", _adg_method_put_segment);
 
     return g_test_run();
 }

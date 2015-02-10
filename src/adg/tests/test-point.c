@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_generic(void)
+_adg_behavior_misc(void)
 {
     AdgPoint *point, *dup_point;
     CpmlPair *pair,  *dup_pair;
@@ -87,7 +87,7 @@ _adg_test_generic(void)
 }
 
 static void
-_adg_test_named_pair(void)
+_adg_behavior_named_pair(void)
 {
     CpmlPair p1 = { 123, 456 };
     AdgPoint *explicit_point, *explicit_point2, *model_point;
@@ -167,8 +167,8 @@ main(int argc, char *argv[])
 
     adg_test_add_boxed_checks("/adg/point/type/boxed", ADG_TYPE_POINT, adg_point_new());
 
-    g_test_add_func("/adg/point/behavior/generic", _adg_test_generic);
-    g_test_add_func("/adg/point/behavior/named-pair", _adg_test_named_pair);
+    g_test_add_func("/adg/point/behavior/misc", _adg_behavior_misc);
+    g_test_add_func("/adg/point/behavior/named-pair", _adg_behavior_named_pair);
 
     return g_test_run();
 }

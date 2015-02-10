@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_alpha(void)
+_adg_property_alpha(void)
 {
     AdgColorStyle *color_style;
     gdouble valid_alpha1, valid_alpha2, invalid_alpha, alpha;
@@ -63,7 +63,7 @@ _adg_test_alpha(void)
 }
 
 static void
-_adg_test_blue(void)
+_adg_property_blue(void)
 {
     AdgColorStyle *color_style;
     gdouble valid_blue1, valid_blue2, invalid_blue, blue;
@@ -103,7 +103,7 @@ _adg_test_blue(void)
 }
 
 static void
-_adg_test_green(void)
+_adg_property_green(void)
 {
     AdgColorStyle *color_style;
     gdouble valid_green1, valid_green2, invalid_green, green;
@@ -143,7 +143,7 @@ _adg_test_green(void)
 }
 
 static void
-_adg_test_red(void)
+_adg_property_red(void)
 {
     AdgColorStyle *color_style;
     gdouble valid_red1, valid_red2, invalid_red, red;
@@ -190,10 +190,10 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/color-style/type/object", ADG_TYPE_COLOR_STYLE);
 
-    g_test_add_func("/adg/color-style/property/alpha", _adg_test_alpha);
-    g_test_add_func("/adg/color-style/property/blue", _adg_test_blue);
-    g_test_add_func("/adg/color-style/property/green", _adg_test_green);
-    g_test_add_func("/adg/color-style/property/red", _adg_test_red);
+    g_test_add_func("/adg/color-style/property/alpha", _adg_property_alpha);
+    g_test_add_func("/adg/color-style/property/blue", _adg_property_blue);
+    g_test_add_func("/adg/color-style/property/green", _adg_property_green);
+    g_test_add_func("/adg/color-style/property/red", _adg_property_red);
 
     return g_test_run();
 }

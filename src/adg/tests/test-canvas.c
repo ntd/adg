@@ -23,13 +23,13 @@
 
 
 static void
-_adg_test_misc(void)
+_adg_behavior_misc(void)
 {
     g_assert_cmpuint(ADG_CANVAS_ERROR, !=, 0);
 }
 
 static void
-_adg_test_background_dress(void)
+_adg_property_background_dress(void)
 {
     AdgCanvas *canvas;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -70,7 +70,7 @@ _adg_test_background_dress(void)
 }
 
 static void
-_adg_test_frame_dress(void)
+_adg_property_frame_dress(void)
 {
     AdgCanvas *canvas;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -111,7 +111,7 @@ _adg_test_frame_dress(void)
 }
 
 static void
-_adg_test_title_block(void)
+_adg_property_title_block(void)
 {
     AdgCanvas *canvas;
     AdgTitleBlock *valid_title_block, *invalid_title_block, *title_block;
@@ -162,7 +162,7 @@ _adg_test_title_block(void)
 }
 
 static void
-_adg_test_size(void)
+_adg_property_size(void)
 {
     AdgCanvas *canvas;
     CpmlPair null_size, sample_size;
@@ -213,7 +213,7 @@ _adg_test_size(void)
 }
 
 static void
-_adg_test_scales(void)
+_adg_property_scales(void)
 {
     AdgCanvas *canvas;
     gchar **scales;
@@ -276,7 +276,7 @@ _adg_test_scales(void)
 }
 
 static void
-_adg_test_top_margin(void)
+_adg_property_top_margin(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -308,7 +308,7 @@ _adg_test_top_margin(void)
 }
 
 static void
-_adg_test_right_margin(void)
+_adg_property_right_margin(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -340,7 +340,7 @@ _adg_test_right_margin(void)
 }
 
 static void
-_adg_test_bottom_margin(void)
+_adg_property_bottom_margin(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -372,7 +372,7 @@ _adg_test_bottom_margin(void)
 }
 
 static void
-_adg_test_left_margin(void)
+_adg_property_left_margin(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -404,7 +404,7 @@ _adg_test_left_margin(void)
 }
 
 static void
-_adg_test_has_frame(void)
+_adg_property_has_frame(void)
 {
     AdgCanvas *canvas;
     gboolean invalid_boolean;
@@ -443,7 +443,7 @@ _adg_test_has_frame(void)
 }
 
 static void
-_adg_test_top_padding(void)
+_adg_property_top_padding(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -475,7 +475,7 @@ _adg_test_top_padding(void)
 }
 
 static void
-_adg_test_right_padding(void)
+_adg_property_right_padding(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -507,7 +507,7 @@ _adg_test_right_padding(void)
 }
 
 static void
-_adg_test_bottom_padding(void)
+_adg_property_bottom_padding(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -539,7 +539,7 @@ _adg_test_bottom_padding(void)
 }
 
 static void
-_adg_test_left_padding(void)
+_adg_property_left_padding(void)
 {
     AdgCanvas *canvas;
     gdouble valid_value_1, valid_value_2;
@@ -742,29 +742,29 @@ main(int argc, char *argv[])
     adg_test_add_entity_checks("/adg/canvas/type/entity", ADG_TYPE_CANVAS);
     adg_test_add_container_checks("/adg/canvas/type/container", ADG_TYPE_CANVAS);
 
-    g_test_add_func("/adg/canvas/behavior/misc", _adg_test_misc);
+    g_test_add_func("/adg/canvas/behavior/misc", _adg_behavior_misc);
 
-    g_test_add_func("/adg/canvas/property/background-dress", _adg_test_background_dress);
-    g_test_add_func("/adg/canvas/property/frame-dress", _adg_test_frame_dress);
-    g_test_add_func("/adg/canvas/property/title-block", _adg_test_title_block);
-    g_test_add_func("/adg/canvas/property/size", _adg_test_size);
-    g_test_add_func("/adg/canvas/property/scales", _adg_test_scales);
-    g_test_add_func("/adg/canvas/property/top-margin", _adg_test_top_margin);
-    g_test_add_func("/adg/canvas/property/right-margin", _adg_test_right_margin);
-    g_test_add_func("/adg/canvas/property/bottom-margin", _adg_test_bottom_margin);
-    g_test_add_func("/adg/canvas/property/left-margin", _adg_test_left_margin);
-    g_test_add_func("/adg/canvas/property/has-frame", _adg_test_has_frame);
-    g_test_add_func("/adg/canvas/property/top-padding", _adg_test_top_padding);
-    g_test_add_func("/adg/canvas/property/right-padding", _adg_test_right_padding);
-    g_test_add_func("/adg/canvas/property/bottom-padding", _adg_test_bottom_padding);
-    g_test_add_func("/adg/canvas/property/left-padding", _adg_test_left_padding);
+    g_test_add_func("/adg/canvas/property/background-dress", _adg_property_background_dress);
+    g_test_add_func("/adg/canvas/property/frame-dress", _adg_property_frame_dress);
+    g_test_add_func("/adg/canvas/property/title-block", _adg_property_title_block);
+    g_test_add_func("/adg/canvas/property/size", _adg_property_size);
+    g_test_add_func("/adg/canvas/property/scales", _adg_property_scales);
+    g_test_add_func("/adg/canvas/property/top-margin", _adg_property_top_margin);
+    g_test_add_func("/adg/canvas/property/right-margin", _adg_property_right_margin);
+    g_test_add_func("/adg/canvas/property/bottom-margin", _adg_property_bottom_margin);
+    g_test_add_func("/adg/canvas/property/left-margin", _adg_property_left_margin);
+    g_test_add_func("/adg/canvas/property/has-frame", _adg_property_has_frame);
+    g_test_add_func("/adg/canvas/property/top-padding", _adg_property_top_padding);
+    g_test_add_func("/adg/canvas/property/right-padding", _adg_property_right_padding);
+    g_test_add_func("/adg/canvas/property/bottom-padding", _adg_property_bottom_padding);
+    g_test_add_func("/adg/canvas/property/left-padding", _adg_property_left_padding);
 
-    g_test_add_func("/adg/canvas/method/set_margins", _adg_method_set_margins);
-    g_test_add_func("/adg/canvas/method/set_paddings", _adg_method_set_paddings);
+    g_test_add_func("/adg/canvas/method/set-margins", _adg_method_set_margins);
+    g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
 #if GTK3_ENABLED || GTK2_ENABLED
-    g_test_add_func("/adg/canvas/method/set_paper", _adg_method_set_paper);
-    g_test_add_func("/adg/canvas/method/get_page_setup", _adg_method_get_page_setup);
-    g_test_add_func("/adg/canvas/method/set_page_setup", _adg_method_set_page_setup);
+    g_test_add_func("/adg/canvas/method/set-paper", _adg_method_set_paper);
+    g_test_add_func("/adg/canvas/method/get-page-setup", _adg_method_get_page_setup);
+    g_test_add_func("/adg/canvas/method/set-page-setup", _adg_method_set_page_setup);
 #endif
 
     return g_test_run();

@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_named_pair(void)
+_adg_property_named_pair(void)
 {
     AdgModel *model;
     CpmlPair valid_pair;
@@ -50,7 +50,7 @@ _adg_test_named_pair(void)
 }
 
 static void
-_adg_test_dependency(void)
+_adg_property_dependency(void)
 {
     AdgModel *model;
     AdgEntity *valid_entity, *invalid_entity;
@@ -112,8 +112,8 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/model/type/object", ADG_TYPE_MODEL);
 
-    g_test_add_func("/adg/model/named-pair", _adg_test_named_pair);
-    g_test_add_func("/adg/model/dependency", _adg_test_dependency);
+    g_test_add_func("/adg/model/named-pair", _adg_property_named_pair);
+    g_test_add_func("/adg/model/dependency", _adg_property_dependency);
 
     return g_test_run();
 }

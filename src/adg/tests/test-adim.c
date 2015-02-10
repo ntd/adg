@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_org1(void)
+_adg_property_org1(void)
 {
     AdgADim *adim;
     AdgModel *model;
@@ -102,7 +102,7 @@ _adg_test_org1(void)
 }
 
 static void
-_adg_test_org2(void)
+_adg_property_org2(void)
 {
     AdgADim *adim;
     AdgModel *model;
@@ -181,7 +181,7 @@ _adg_test_org2(void)
 }
 
 static void
-_adg_test_has_extension1(void)
+_adg_property_has_extension1(void)
 {
     AdgADim *adim;
     gboolean invalid_boolean;
@@ -220,7 +220,7 @@ _adg_test_has_extension1(void)
 }
 
 static void
-_adg_test_has_extension2(void)
+_adg_property_has_extension2(void)
 {
     AdgADim *adim;
     gboolean invalid_boolean;
@@ -276,10 +276,10 @@ main(int argc, char *argv[])
                                                                8, 7, 6, 9,
                                                                10, 9));
 
-    g_test_add_func("/adg/adim/property/org1", _adg_test_org1);
-    g_test_add_func("/adg/adim/property/org2", _adg_test_org2);
-    g_test_add_func("/adg/adim/property/has-extension1", _adg_test_has_extension1);
-    g_test_add_func("/adg/adim/property/has-extension2", _adg_test_has_extension2);
+    g_test_add_func("/adg/adim/property/org1", _adg_property_org1);
+    g_test_add_func("/adg/adim/property/org2", _adg_property_org2);
+    g_test_add_func("/adg/adim/property/has-extension1", _adg_property_has_extension1);
+    g_test_add_func("/adg/adim/property/has-extension2", _adg_property_has_extension2);
 
     return g_test_run();
 }

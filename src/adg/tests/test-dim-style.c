@@ -23,7 +23,7 @@
 
 
 static void
-_adg_baseline_spacing(void)
+_adg_property_baseline_spacing(void)
 {
     AdgDimStyle *dim_style;
     gdouble valid_baseline_spacing_1, valid_baseline_spacing_2, invalid_baseline_spacing;
@@ -64,7 +64,7 @@ _adg_baseline_spacing(void)
 }
 
 static void
-_adg_beyond(void)
+_adg_property_beyond(void)
 {
     AdgDimStyle *dim_style;
     gdouble valid_beyond_1, valid_beyond_2, invalid_beyond;
@@ -105,7 +105,7 @@ _adg_beyond(void)
 }
 
 static void
-_adg_color_dress(void)
+_adg_property_color_dress(void)
 {
     AdgDimStyle *dim_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -146,7 +146,7 @@ _adg_color_dress(void)
 }
 
 static void
-_adg_from_offset(void)
+_adg_property_from_offset(void)
 {
     AdgDimStyle *dim_style;
     gdouble valid_from_offset_1, valid_from_offset_2, invalid_from_offset;
@@ -187,7 +187,7 @@ _adg_from_offset(void)
 }
 
 static void
-_adg_limits_shift(void)
+_adg_property_limits_shift(void)
 {
     AdgDimStyle *dim_style;
     CpmlPair null_shift, identity_shift;
@@ -233,7 +233,7 @@ _adg_limits_shift(void)
 }
 
 static void
-_adg_limits_spacing(void)
+_adg_property_limits_spacing(void)
 {
     AdgDimStyle *dim_style;
     gdouble valid_limits_spacing_1, valid_limits_spacing_2, invalid_limits_spacing;
@@ -274,7 +274,7 @@ _adg_limits_spacing(void)
 }
 
 static void
-_adg_line_dress(void)
+_adg_property_line_dress(void)
 {
     AdgDimStyle *dim_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -315,7 +315,7 @@ _adg_line_dress(void)
 }
 
 static void
-_adg_marker1(void)
+_adg_property_marker1(void)
 {
     AdgDimStyle *dim_style;
     AdgMarker *valid_marker, *invalid_marker, *marker;
@@ -359,7 +359,7 @@ _adg_marker1(void)
 }
 
 static void
-_adg_marker2(void)
+_adg_property_marker2(void)
 {
     AdgDimStyle *dim_style;
     AdgMarker *valid_marker, *invalid_marker, *marker;
@@ -403,7 +403,7 @@ _adg_marker2(void)
 }
 
 static void
-_adg_max_dress(void)
+_adg_property_max_dress(void)
 {
     AdgDimStyle *dim_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -444,7 +444,7 @@ _adg_max_dress(void)
 }
 
 static void
-_adg_min_dress(void)
+_adg_property_min_dress(void)
 {
     AdgDimStyle *dim_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -485,7 +485,7 @@ _adg_min_dress(void)
 }
 
 static void
-_adg_number_format(void)
+_adg_property_number_format(void)
 {
     AdgDimStyle *dim_style;
     const gchar *valid_text_1, *valid_text_2;
@@ -528,7 +528,7 @@ _adg_number_format(void)
 }
 
 static void
-_adg_number_tag(void)
+_adg_property_number_tag(void)
 {
     AdgDimStyle *dim_style;
     const gchar *valid_text_1, *valid_text_2;
@@ -571,7 +571,7 @@ _adg_number_tag(void)
 }
 
 static void
-_adg_quote_shift(void)
+_adg_property_quote_shift(void)
 {
     AdgDimStyle *dim_style;
     CpmlPair null_shift, identity_shift;
@@ -617,7 +617,7 @@ _adg_quote_shift(void)
 }
 
 static void
-_adg_to_offset(void)
+_adg_property_to_offset(void)
 {
     AdgDimStyle *dim_style;
     gdouble valid_to_offset_1, valid_to_offset_2, invalid_to_offset;
@@ -658,7 +658,7 @@ _adg_to_offset(void)
 }
 
 static void
-_adg_value_dress(void)
+_adg_property_value_dress(void)
 {
     AdgDimStyle *dim_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -706,22 +706,22 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/dim-style/type/object", ADG_TYPE_DIM_STYLE);
 
-    g_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_baseline_spacing);
-    g_test_add_func("/adg/dim-style/property/beyond", _adg_beyond);
-    g_test_add_func("/adg/dim-style/property/color-dress", _adg_color_dress);
-    g_test_add_func("/adg/dim-style/property/from-offset", _adg_from_offset);
-    g_test_add_func("/adg/dim-style/property/limits-shift", _adg_limits_shift);
-    g_test_add_func("/adg/dim-style/property/limits-spacing", _adg_limits_spacing);
-    g_test_add_func("/adg/dim-style/property/line-dress", _adg_line_dress);
-    g_test_add_func("/adg/dim-style/property/marker1", _adg_marker1);
-    g_test_add_func("/adg/dim-style/property/marker2", _adg_marker2);
-    g_test_add_func("/adg/dim-style/property/max-dress", _adg_max_dress);
-    g_test_add_func("/adg/dim-style/property/min-dress", _adg_min_dress);
-    g_test_add_func("/adg/dim-style/property/number-format", _adg_number_format);
-    g_test_add_func("/adg/dim-style/property/number-tag", _adg_number_tag);
-    g_test_add_func("/adg/dim-style/property/quote-shift", _adg_quote_shift);
-    g_test_add_func("/adg/dim-style/property/to-offset", _adg_to_offset);
-    g_test_add_func("/adg/dim-style/property/value-dress", _adg_value_dress);
+    g_test_add_func("/adg/dim-style/property/baseline-spacing", _adg_property_baseline_spacing);
+    g_test_add_func("/adg/dim-style/property/beyond", _adg_property_beyond);
+    g_test_add_func("/adg/dim-style/property/color-dress", _adg_property_color_dress);
+    g_test_add_func("/adg/dim-style/property/from-offset", _adg_property_from_offset);
+    g_test_add_func("/adg/dim-style/property/limits-shift", _adg_property_limits_shift);
+    g_test_add_func("/adg/dim-style/property/limits-spacing", _adg_property_limits_spacing);
+    g_test_add_func("/adg/dim-style/property/line-dress", _adg_property_line_dress);
+    g_test_add_func("/adg/dim-style/property/marker1", _adg_property_marker1);
+    g_test_add_func("/adg/dim-style/property/marker2", _adg_property_marker2);
+    g_test_add_func("/adg/dim-style/property/max-dress", _adg_property_max_dress);
+    g_test_add_func("/adg/dim-style/property/min-dress", _adg_property_min_dress);
+    g_test_add_func("/adg/dim-style/property/number-format", _adg_property_number_format);
+    g_test_add_func("/adg/dim-style/property/number-tag", _adg_property_number_tag);
+    g_test_add_func("/adg/dim-style/property/quote-shift", _adg_property_quote_shift);
+    g_test_add_func("/adg/dim-style/property/to-offset", _adg_property_to_offset);
+    g_test_add_func("/adg/dim-style/property/value-dress", _adg_property_value_dress);
 
     return g_test_run();
 }

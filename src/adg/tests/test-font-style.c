@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_antialias(void)
+_adg_property_antialias(void)
 {
     AdgFontStyle *font_style;
     cairo_antialias_t valid_antialias_1, valid_antialias_2, antialias;
@@ -54,7 +54,7 @@ _adg_test_antialias(void)
 }
 
 static void
-_adg_test_color_dress(void)
+_adg_property_color_dress(void)
 {
     AdgFontStyle *font_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -95,7 +95,7 @@ _adg_test_color_dress(void)
 }
 
 static void
-_adg_test_family(void)
+_adg_property_family(void)
 {
     AdgFontStyle *font_style;
     const gchar *valid_text_1, *valid_text_2;
@@ -138,7 +138,7 @@ _adg_test_family(void)
 }
 
 static void
-_adg_test_hint_metrics(void)
+_adg_property_hint_metrics(void)
 {
     AdgFontStyle *font_style;
     cairo_hint_metrics_t valid_hint_metrics_1, valid_hint_metrics_2;
@@ -170,7 +170,7 @@ _adg_test_hint_metrics(void)
 }
 
 static void
-_adg_test_hint_style(void)
+_adg_property_hint_style(void)
 {
     AdgFontStyle *font_style;
     cairo_hint_style_t valid_hint_style_1, valid_hint_style_2;
@@ -202,7 +202,7 @@ _adg_test_hint_style(void)
 }
 
 static void
-_adg_test_size(void)
+_adg_property_size(void)
 {
     AdgFontStyle *font_style;
     gdouble valid_size_1, valid_size_2, invalid_size;
@@ -243,7 +243,7 @@ _adg_test_size(void)
 }
 
 static void
-_adg_test_slant(void)
+_adg_property_slant(void)
 {
     AdgFontStyle *font_style;
     cairo_font_slant_t valid_slant_1, valid_slant_2;
@@ -275,7 +275,7 @@ _adg_test_slant(void)
 }
 
 static void
-_adg_test_subpixel_order(void)
+_adg_property_subpixel_order(void)
 {
     AdgFontStyle *font_style;
     cairo_subpixel_order_t valid_subpixel_order_1, valid_subpixel_order_2;
@@ -307,7 +307,7 @@ _adg_test_subpixel_order(void)
 }
 
 static void
-_adg_test_weight(void)
+_adg_property_weight(void)
 {
     AdgFontStyle *font_style;
     cairo_font_weight_t valid_weight_1, valid_weight_2;
@@ -346,15 +346,15 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/font-style/type/object", ADG_TYPE_FONT_STYLE);
 
-    g_test_add_func("/adg/font-style/property/antialias", _adg_test_antialias);
-    g_test_add_func("/adg/font-style/property/color-dress", _adg_test_color_dress);
-    g_test_add_func("/adg/font-style/property/family", _adg_test_family);
-    g_test_add_func("/adg/font-style/property/hint-metrics", _adg_test_hint_metrics);
-    g_test_add_func("/adg/font-style/property/hint-style", _adg_test_hint_style);
-    g_test_add_func("/adg/font-style/property/size", _adg_test_size);
-    g_test_add_func("/adg/font-style/property/slant", _adg_test_slant);
-    g_test_add_func("/adg/font-style/property/subpixel-order", _adg_test_subpixel_order);
-    g_test_add_func("/adg/font-style/property/weight", _adg_test_weight);
+    g_test_add_func("/adg/font-style/property/antialias", _adg_property_antialias);
+    g_test_add_func("/adg/font-style/property/color-dress", _adg_property_color_dress);
+    g_test_add_func("/adg/font-style/property/family", _adg_property_family);
+    g_test_add_func("/adg/font-style/property/hint-metrics", _adg_property_hint_metrics);
+    g_test_add_func("/adg/font-style/property/hint-style", _adg_property_hint_style);
+    g_test_add_func("/adg/font-style/property/size", _adg_property_size);
+    g_test_add_func("/adg/font-style/property/slant", _adg_property_slant);
+    g_test_add_func("/adg/font-style/property/subpixel-order", _adg_property_subpixel_order);
+    g_test_add_func("/adg/font-style/property/weight", _adg_property_weight);
 
     return g_test_run();
 }

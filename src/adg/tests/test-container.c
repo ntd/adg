@@ -23,6 +23,45 @@
 
 
 static void
+_adg_behavior_misc(void)
+{
+    AdgContainer *container;
+    AdgEntity *entity1, *entity2;
+    GSList *children;
+
+    container = adg_container_new();
+    entity1 = ADG_ENTITY(adg_toy_text_new("Testing..."));
+    entity2 = ADG_ENTITY(adg_title_block_new());
+
+    children = adg_container_children(container);
+    g_assert_null(children);
+
+    adg_container_add(container, entity1);
+    children = adg_container_children(container);
+    g_assert_nonnull(children);
+    g_assert_cmpint(g_slist_length(children), ==, 1);
+    g_slist_free(children);
+
+    adg_container_add(container, entity2);
+    children = adg_container_children(container);
+    g_assert_nonnull(children);
+    g_assert_cmpint(g_slist_length(children), ==, 2);
+    g_slist_free(children);
+
+    adg_entity_destroy(entity1);
+    children = adg_container_children(container);
+    g_assert_nonnull(children);
+    g_assert_cmpint(g_slist_length(children), ==, 1);
+    g_slist_free(children);
+
+    adg_entity_destroy(entity2);
+    children = adg_container_children(container);
+    g_assert_null(children);
+
+    adg_entity_destroy(ADG_ENTITY(container));
+}
+
+static void
 _adg_property_child(void)
 {
     AdgContainer *container;
@@ -84,51 +123,14 @@ _adg_property_child(void)
     adg_entity_destroy(valid_entity);
 }
 
-static void
-_adg_misc(void)
-{
-    AdgContainer *container;
-    AdgEntity *entity1, *entity2;
-    GSList *children;
-
-    container = adg_container_new();
-    entity1 = ADG_ENTITY(adg_toy_text_new("Testing..."));
-    entity2 = ADG_ENTITY(adg_title_block_new());
-
-    children = adg_container_children(container);
-    g_assert_null(children);
-
-    adg_container_add(container, entity1);
-    children = adg_container_children(container);
-    g_assert_nonnull(children);
-    g_assert_cmpint(g_slist_length(children), ==, 1);
-    g_slist_free(children);
-
-    adg_container_add(container, entity2);
-    children = adg_container_children(container);
-    g_assert_nonnull(children);
-    g_assert_cmpint(g_slist_length(children), ==, 2);
-    g_slist_free(children);
-
-    adg_entity_destroy(entity1);
-    children = adg_container_children(container);
-    g_assert_nonnull(children);
-    g_assert_cmpint(g_slist_length(children), ==, 1);
-    g_slist_free(children);
-
-    adg_entity_destroy(entity2);
-    children = adg_container_children(container);
-    g_assert_null(children);
-
-    adg_entity_destroy(ADG_ENTITY(container));
-}
-
 
 int
 main(int argc, char *argv[])
 {
     AdgContainer *container;
     adg_test_init(&argc, &argv);
+
+    g_test_add_func("/adg/container/behavior/misc", _adg_behavior_misc);
 
     adg_test_add_object_checks("/adg/container/type/object", ADG_TYPE_CONTAINER);
     adg_test_add_entity_checks("/adg/container/type/entity", ADG_TYPE_CONTAINER);
@@ -142,8 +144,6 @@ main(int argc, char *argv[])
     adg_test_add_local_space_checks("/adg/container/behavior/local-space", container);
 
     g_test_add_func("/adg/container/property/child", _adg_property_child);
-
-    g_test_add_func("/adg/container/misc", _adg_misc);
 
     return g_test_run();
 }

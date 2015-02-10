@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_hadjustment(void)
+_adg_property_hadjustment(void)
 {
     AdgGtkLayout *layout;
     GtkAdjustment *valid_adjustment, *invalid_adjustment, *hadjustment;
@@ -83,7 +83,7 @@ _adg_test_hadjustment(void)
 }
 
 static void
-_adg_test_vadjustment(void)
+_adg_property_vadjustment(void)
 {
     AdgGtkLayout *layout;
     GtkAdjustment *valid_adjustment, *invalid_adjustment, *vadjustment;
@@ -150,8 +150,8 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/gtk/layout/type/object", ADG_GTK_TYPE_LAYOUT);
 
-    g_test_add_func("/adg/gtk/layout/hadjustment", _adg_test_hadjustment);
-    g_test_add_func("/adg/gtk/layout/vadjustment", _adg_test_vadjustment);
+    g_test_add_func("/adg-gtk/layout/property/hadjustment", _adg_property_hadjustment);
+    g_test_add_func("/adg-gtk/layout/property/vadjustment", _adg_property_vadjustment);
 
     return g_test_run();
 }

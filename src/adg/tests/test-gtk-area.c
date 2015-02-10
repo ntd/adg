@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_canvas(void)
+_adg_property_canvas(void)
 {
     AdgGtkArea *area;
     AdgCanvas *valid_canvas, *invalid_canvas, *canvas;
@@ -75,7 +75,7 @@ _adg_test_canvas(void)
 }
 
 static void
-_adg_test_factor(void)
+_adg_property_factor(void)
 {
     AdgGtkArea *area;
     gdouble valid_factor1, valid_factor2, invalid_factor, factor;
@@ -115,7 +115,7 @@ _adg_test_factor(void)
 }
 
 static void
-_adg_test_autozoom(void)
+_adg_property_autozoom(void)
 {
     AdgGtkArea *area;
     gboolean invalid_boolean;
@@ -154,7 +154,7 @@ _adg_test_autozoom(void)
 }
 
 static void
-_adg_test_render_map(void)
+_adg_property_render_map(void)
 {
     AdgGtkArea *area;
     const cairo_matrix_t *identity_map;
@@ -217,12 +217,12 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_object_checks("/adg/gtk/area/type/object", ADG_GTK_TYPE_AREA);
+    adg_test_add_object_checks("/adg-gtk/area/type/object", ADG_GTK_TYPE_AREA);
 
-    g_test_add_func("/adg/gtk/area/property/canvas", _adg_test_canvas);
-    g_test_add_func("/adg/gtk/area/property/factor", _adg_test_factor);
-    g_test_add_func("/adg/gtk/area/property/autozoom", _adg_test_autozoom);
-    g_test_add_func("/adg/gtk/area/property/render-map", _adg_test_render_map);
+    g_test_add_func("/adg-gtk/area/property/canvas", _adg_property_canvas);
+    g_test_add_func("/adg-gtk/area/property/factor", _adg_property_factor);
+    g_test_add_func("/adg-gtk/area/property/autozoom", _adg_property_autozoom);
+    g_test_add_func("/adg-gtk/area/property/render-map", _adg_property_render_map);
 
     return g_test_run();
 }

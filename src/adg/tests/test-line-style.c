@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_color_dress(void)
+_adg_property_color_dress(void)
 {
     AdgLineStyle *line_style;
     AdgDress valid_dress_1, valid_dress_2, incompatible_dress;
@@ -64,7 +64,7 @@ _adg_test_color_dress(void)
 }
 
 static void
-_adg_test_width(void)
+_adg_property_width(void)
 {
     AdgLineStyle *line_style;
     gdouble valid_width_1, valid_width_2, invalid_width;
@@ -105,7 +105,7 @@ _adg_test_width(void)
 }
 
 static void
-_adg_test_cap(void)
+_adg_property_cap(void)
 {
     AdgLineStyle *line_style;
     cairo_line_cap_t valid_cap_1, valid_cap_2, cap;
@@ -136,7 +136,7 @@ _adg_test_cap(void)
 }
 
 static void
-_adg_test_join(void)
+_adg_property_join(void)
 {
     AdgLineStyle *line_style;
     cairo_line_join_t valid_join_1, valid_join_2, join;
@@ -167,7 +167,7 @@ _adg_test_join(void)
 }
 
 static void
-_adg_test_miter_limit(void)
+_adg_property_miter_limit(void)
 {
     AdgLineStyle *line_style;
     gdouble valid_miter_limit_1, valid_miter_limit_2, invalid_miter_limit;
@@ -208,7 +208,7 @@ _adg_test_miter_limit(void)
 }
 
 static void
-_adg_test_antialias(void)
+_adg_property_antialias(void)
 {
     AdgLineStyle *line_style;
     cairo_antialias_t valid_antialias_1, valid_antialias_2, antialias;
@@ -239,7 +239,7 @@ _adg_test_antialias(void)
 }
 
 static void
-_adg_test_dash(void)
+_adg_property_dash(void)
 {
     AdgLineStyle *line_style;
     AdgDash *new_dash;
@@ -299,13 +299,13 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/line-style/type/object", ADG_TYPE_LINE_STYLE);
 
-    g_test_add_func("/adg/line-style/property/color-dress", _adg_test_color_dress);
-    g_test_add_func("/adg/line-style/property/width", _adg_test_width);
-    g_test_add_func("/adg/line-style/property/cap", _adg_test_cap);
-    g_test_add_func("/adg/line-style/property/join", _adg_test_join);
-    g_test_add_func("/adg/line-style/property/miter-limit", _adg_test_miter_limit);
-    g_test_add_func("/adg/line-style/property/antialias", _adg_test_antialias);
-    g_test_add_func("/adg/line-style/property/dash", _adg_test_dash);
+    g_test_add_func("/adg/line-style/property/color-dress", _adg_property_color_dress);
+    g_test_add_func("/adg/line-style/property/width", _adg_property_width);
+    g_test_add_func("/adg/line-style/property/cap", _adg_property_cap);
+    g_test_add_func("/adg/line-style/property/join", _adg_property_join);
+    g_test_add_func("/adg/line-style/property/miter-limit", _adg_property_miter_limit);
+    g_test_add_func("/adg/line-style/property/antialias", _adg_property_antialias);
+    g_test_add_func("/adg/line-style/property/dash", _adg_property_dash);
 
     return g_test_run();
 }

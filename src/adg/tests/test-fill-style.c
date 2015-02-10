@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_pattern(void)
+_adg_property_pattern(void)
 {
     AdgFillStyle *fill_style;
     cairo_pattern_t *valid_pattern_1, *valid_pattern_2;
@@ -76,7 +76,7 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/fill-style/type/object", ADG_TYPE_FILL_STYLE);
 
-    g_test_add_func("/adg/fill-style/property/pattern", _adg_test_pattern);
+    g_test_add_func("/adg/fill-style/property/pattern", _adg_property_pattern);
 
     return g_test_run();
 }

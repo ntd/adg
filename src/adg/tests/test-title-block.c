@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_local_mix(void)
+_adg_property_local_mix(void)
 {
     AdgTitleBlock *title_block;
     AdgEntity *entity;
@@ -49,7 +49,7 @@ _adg_test_local_mix(void)
 }
 
 static void
-_adg_test_author(void)
+_adg_property_author(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -92,7 +92,7 @@ _adg_test_author(void)
 }
 
 static void
-_adg_test_date(void)
+_adg_property_date(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -136,7 +136,7 @@ _adg_test_date(void)
 }
 
 static void
-_adg_test_drawing(void)
+_adg_property_drawing(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -179,7 +179,7 @@ _adg_test_drawing(void)
 }
 
 static void
-_adg_test_logo(void)
+_adg_property_logo(void)
 {
     AdgTitleBlock *title_block;
     AdgEntity *valid_entity, *invalid_entity, *logo;
@@ -234,7 +234,7 @@ _adg_test_logo(void)
 }
 
 static void
-_adg_test_projection(void)
+_adg_property_projection(void)
 {
     AdgTitleBlock *title_block;
     AdgEntity *valid_entity, *invalid_entity, *projection;
@@ -280,7 +280,7 @@ _adg_test_projection(void)
 }
 
 static void
-_adg_test_scale(void)
+_adg_property_scale(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -323,7 +323,7 @@ _adg_test_scale(void)
 }
 
 static void
-_adg_test_size(void)
+_adg_property_size(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -366,7 +366,7 @@ _adg_test_size(void)
 }
 
 static void
-_adg_test_title(void)
+_adg_property_title(void)
 {
     AdgTitleBlock *title_block;
     const gchar *valid_text, *latin1_text;
@@ -419,15 +419,15 @@ main(int argc, char *argv[])
 
     adg_test_add_global_space_checks("/adg/title-block/behavior/global-space", adg_title_block_new());
 
-    g_test_add_func("/adg/title-block/property/local-mix", _adg_test_local_mix);
-    g_test_add_func("/adg/title-block/property/author", _adg_test_author);
-    g_test_add_func("/adg/title-block/property/date", _adg_test_date);
-    g_test_add_func("/adg/title-block/property/drawing", _adg_test_drawing);
-    g_test_add_func("/adg/title-block/property/logo", _adg_test_logo);
-    g_test_add_func("/adg/title-block/property/projection", _adg_test_projection);
-    g_test_add_func("/adg/title-block/property/scale", _adg_test_scale);
-    g_test_add_func("/adg/title-block/property/size", _adg_test_size);
-    g_test_add_func("/adg/title-block/property/title", _adg_test_title);
+    g_test_add_func("/adg/title-block/property/local-mix", _adg_property_local_mix);
+    g_test_add_func("/adg/title-block/property/author", _adg_property_author);
+    g_test_add_func("/adg/title-block/property/date", _adg_property_date);
+    g_test_add_func("/adg/title-block/property/drawing", _adg_property_drawing);
+    g_test_add_func("/adg/title-block/property/logo", _adg_property_logo);
+    g_test_add_func("/adg/title-block/property/projection", _adg_property_projection);
+    g_test_add_func("/adg/title-block/property/scale", _adg_property_scale);
+    g_test_add_func("/adg/title-block/property/size", _adg_property_size);
+    g_test_add_func("/adg/title-block/property/title", _adg_property_title);
 
     return g_test_run();
 }

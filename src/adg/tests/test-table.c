@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_local_mix(void)
+_adg_property_local_mix(void)
 {
     AdgTable *table;
     AdgEntity *entity;
@@ -48,7 +48,7 @@ _adg_test_local_mix(void)
 }
 
 static void
-_adg_test_table_dress(void)
+_adg_property_table_dress(void)
 {
     AdgTable *table;
     AdgDress valid_dress, incompatible_dress;
@@ -80,7 +80,7 @@ _adg_test_table_dress(void)
 }
 
 static void
-_adg_test_has_frame(void)
+_adg_property_has_frame(void)
 {
     AdgTable *table;
     gboolean invalid_boolean;
@@ -127,9 +127,9 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/table/type/object", ADG_TYPE_TABLE);
     adg_test_add_entity_checks("/adg/table/type/entity", ADG_TYPE_TABLE);
 
-    g_test_add_func("/adg/table/property/local-mix", _adg_test_local_mix);
-    g_test_add_func("/adg/table/property/table-dress", _adg_test_table_dress);
-    g_test_add_func("/adg/table/property/has-frame", _adg_test_has_frame);
+    g_test_add_func("/adg/table/property/local-mix", _adg_property_local_mix);
+    g_test_add_func("/adg/table/property/table-dress", _adg_property_table_dress);
+    g_test_add_func("/adg/table/property/has-frame", _adg_property_has_frame);
 
     return g_test_run();
 }

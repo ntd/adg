@@ -23,7 +23,7 @@
 
 
 static void
-_adg_test_detached(void)
+_adg_property_detached(void)
 {
     AdgDim *dim;
     AdgThreeState valid_three_state_1, valid_three_state_2, invalid_three_state;
@@ -64,7 +64,7 @@ _adg_test_detached(void)
 }
 
 static void
-_adg_test_dim_dress(void)
+_adg_property_dim_dress(void)
 {
     AdgDim *dim;
     AdgDress valid_dress, incompatible_dress;
@@ -96,7 +96,7 @@ _adg_test_dim_dress(void)
 }
 
 static void
-_adg_test_level(void)
+_adg_property_level(void)
 {
     AdgDim *dim;
     gdouble valid_value_1, valid_value_2;
@@ -128,7 +128,7 @@ _adg_test_level(void)
 }
 
 static void
-_adg_test_max(void)
+_adg_property_max(void)
 {
     AdgDim *dim;
     const gchar *valid_text, *latin1_text;
@@ -171,7 +171,7 @@ _adg_test_max(void)
 }
 
 static void
-_adg_test_min(void)
+_adg_property_min(void)
 {
     AdgDim *dim;
     const gchar *valid_text, *latin1_text;
@@ -214,7 +214,7 @@ _adg_test_min(void)
 }
 
 static void
-_adg_test_outside(void)
+_adg_property_outside(void)
 {
     AdgDim *dim;
     AdgThreeState valid_three_state_1, valid_three_state_2, invalid_three_state;
@@ -255,7 +255,7 @@ _adg_test_outside(void)
 }
 
 static void
-_adg_test_pos(void)
+_adg_property_pos(void)
 {
     AdgDim *dim;
     AdgModel *model;
@@ -334,7 +334,7 @@ _adg_test_pos(void)
 }
 
 static void
-_adg_test_ref1(void)
+_adg_property_ref1(void)
 {
     AdgDim *dim;
     AdgModel *model;
@@ -413,7 +413,7 @@ _adg_test_ref1(void)
 }
 
 static void
-_adg_test_ref2(void)
+_adg_property_ref2(void)
 {
     AdgDim *dim;
     AdgModel *model;
@@ -492,7 +492,7 @@ _adg_test_ref2(void)
 }
 
 static void
-_adg_test_value(void)
+_adg_property_value(void)
 {
     AdgDim *dim;
     const gchar *valid_text, *latin1_text;
@@ -543,16 +543,16 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/dim/type/object", ADG_TYPE_DIM);
     adg_test_add_entity_checks("/adg/dim/type/entity", ADG_TYPE_DIM);
 
-    g_test_add_func("/adg/dim/property/detached", _adg_test_detached);
-    g_test_add_func("/adg/dim/property/dim-dress", _adg_test_dim_dress);
-    g_test_add_func("/adg/dim/property/level", _adg_test_level);
-    g_test_add_func("/adg/dim/property/max", _adg_test_max);
-    g_test_add_func("/adg/dim/property/min", _adg_test_min);
-    g_test_add_func("/adg/dim/property/outside", _adg_test_outside);
-    g_test_add_func("/adg/dim/property/pos", _adg_test_pos);
-    g_test_add_func("/adg/dim/property/ref1", _adg_test_ref1);
-    g_test_add_func("/adg/dim/property/ref2", _adg_test_ref2);
-    g_test_add_func("/adg/dim/property/value", _adg_test_value);
+    g_test_add_func("/adg/dim/property/detached", _adg_property_detached);
+    g_test_add_func("/adg/dim/property/dim-dress", _adg_property_dim_dress);
+    g_test_add_func("/adg/dim/property/level", _adg_property_level);
+    g_test_add_func("/adg/dim/property/max", _adg_property_max);
+    g_test_add_func("/adg/dim/property/min", _adg_property_min);
+    g_test_add_func("/adg/dim/property/outside", _adg_property_outside);
+    g_test_add_func("/adg/dim/property/pos", _adg_property_pos);
+    g_test_add_func("/adg/dim/property/ref1", _adg_property_ref1);
+    g_test_add_func("/adg/dim/property/ref2", _adg_property_ref2);
+    g_test_add_func("/adg/dim/property/value", _adg_property_value);
 
     return g_test_run();
 }
