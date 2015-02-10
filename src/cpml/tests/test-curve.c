@@ -40,7 +40,7 @@ CpmlPrimitive curve = {
 
 
 static void
-_cpml_test_sanity_pair_at_time(gint i)
+_cpml__pair_at_time(gint i)
 {
     CpmlPair pair;
 
@@ -59,7 +59,7 @@ _cpml_test_sanity_pair_at_time(gint i)
 }
 
 static void
-_cpml_test_sanity_vector_at_time(gint i)
+_cpml__vector_at_time(gint i)
 {
     CpmlVector vector;
 
@@ -78,7 +78,7 @@ _cpml_test_sanity_vector_at_time(gint i)
 }
 
 static void
-_cpml_test_sanity_offset_at_time(gint i)
+_cpml__offset_at_time(gint i)
 {
     CpmlPair pair;
 
@@ -97,7 +97,7 @@ _cpml_test_sanity_offset_at_time(gint i)
 }
 
 static void
-_cpml_test_offset_algorithm(void)
+_cpml_method_offset_algorithm(void)
 {
     g_assert_cmpint(cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL), ==, CPML_CURVE_OFFSET_ALGORITHM_HANDCRAFT);
     g_assert_cmpint(cpml_curve_offset_algorithm(CPML_CURVE_OFFSET_ALGORITHM_NONE), ==, CPML_CURVE_OFFSET_ALGORITHM_GEOMETRICAL);
@@ -109,7 +109,7 @@ _cpml_test_offset_algorithm(void)
 }
 
 static void
-_cpml_test_pair_at_time(void)
+_cpml_method_pair_at_time(void)
 {
     CpmlPair pair;
 
@@ -136,7 +136,7 @@ _cpml_test_pair_at_time(void)
 }
 
 static void
-_cpml_test_vector_at_time(void)
+_cpml_method_vector_at_time(void)
 {
     CpmlVector vector;
 
@@ -163,7 +163,7 @@ _cpml_test_vector_at_time(void)
 }
 
 static void
-_cpml_test_offset_at_time(void)
+_cpml_method_offset_at_time(void)
 {
     CpmlPair pair;
 
@@ -195,14 +195,14 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_traps("/cpml/curve/sanity/pair-at-time", _cpml_test_sanity_pair_at_time, 2);
-    adg_test_add_traps("/cpml/curve/sanity/vector-at-time", _cpml_test_sanity_vector_at_time, 2);
-    adg_test_add_traps("/cpml/curve/sanity/offset-at-time", _cpml_test_sanity_offset_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/pair-at-time", _cpml__pair_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/vector-at-time", _cpml__vector_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/offset-at-time", _cpml__offset_at_time, 2);
 
-    g_test_add_func("/cpml/curve/method/offset-algorithm", _cpml_test_offset_algorithm);
-    g_test_add_func("/cpml/curve/method/pair-at-time", _cpml_test_pair_at_time);
-    g_test_add_func("/cpml/curve/method/vector-at-time", _cpml_test_vector_at_time);
-    g_test_add_func("/cpml/curve/method/offset-at-time", _cpml_test_offset_at_time);
+    g_test_add_func("/cpml/curve/method/offset-algorithm", _cpml_method_offset_algorithm);
+    g_test_add_func("/cpml/curve/method/pair-at-time", _cpml_method_pair_at_time);
+    g_test_add_func("/cpml/curve/method/vector-at-time", _cpml_method_vector_at_time);
+    g_test_add_func("/cpml/curve/method/offset-at-time", _cpml_method_offset_at_time);
 
     return g_test_run();
 }

@@ -31,7 +31,7 @@ static CpmlPair junk = { .x = -12345.54321, .y = 9876543210.123456789 };
 
 
 static void
-_cpml_test_pair_misc(void)
+_cmpl_behavior_misc(void)
 {
     cairo_bool_t equals;
     cairo_path_data_t cairo_pair;
@@ -74,7 +74,7 @@ _cpml_test_pair_misc(void)
 }
 
 static void
-_cpml_test_pair_transform(void)
+_cpml_method_pair_transform(void)
 {
     CpmlPair pair;
     cairo_matrix_t matrix;
@@ -104,7 +104,7 @@ _cpml_test_pair_transform(void)
 }
 
 static void
-_cpml_test_pair_distance(void)
+_cpml_method_distance(void)
 {
     double distance, squared_distance;
 
@@ -134,7 +134,7 @@ _cpml_test_pair_distance(void)
 }
 
 static void
-_cpml_test_vector_angle(void)
+_cpml_method_angle(void)
 {
     double angle, angle2;
     CpmlVector vector;
@@ -186,7 +186,7 @@ _cpml_test_vector_angle(void)
 }
 
 static void
-_cpml_test_vector_length(void)
+_cpml_method_length(void)
 {
     CpmlVector vector;
     double length;
@@ -217,7 +217,7 @@ _cpml_test_vector_length(void)
 }
 
 static void
-_cpml_test_vector_transform(void)
+_cpml_method_vector_transform(void)
 {
     CpmlVector vector;
     cairo_matrix_t matrix;
@@ -252,13 +252,13 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/cpml/pair/behavior/misc", _cpml_test_pair_misc);
+    g_test_add_func("/cpml/pair/behavior/misc", _cmpl_behavior_misc);
 
-    g_test_add_func("/cpml/pair/method/transform", _cpml_test_pair_transform);
-    g_test_add_func("/cpml/pair/method/distance", _cpml_test_pair_distance);
-    g_test_add_func("/cpml/vector/method/angle", _cpml_test_vector_angle);
-    g_test_add_func("/cpml/vector/method/length", _cpml_test_vector_length);
-    g_test_add_func("/cpml/vector/method/transform", _cpml_test_vector_transform);
+    g_test_add_func("/cpml/pair/method/transform", _cpml_method_pair_transform);
+    g_test_add_func("/cpml/pair/method/distance", _cpml_method_distance);
+    g_test_add_func("/cpml/vector/method/angle", _cpml_method_angle);
+    g_test_add_func("/cpml/vector/method/length", _cpml_method_length);
+    g_test_add_func("/cpml/vector/method/transform", _cpml_method_vector_transform);
 
     return g_test_run();
 }

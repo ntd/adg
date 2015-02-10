@@ -23,7 +23,7 @@
 
 
 static void
-_cpml_test_misc(void)
+_cmpl_behavior_misc(void)
 {
     CpmlExtents extents = { 0 };
     CpmlExtents extents2 = { 0 };
@@ -52,7 +52,7 @@ _cpml_test_misc(void)
 }
 
 static void
-_cpml_test_add(void)
+_cpml_method_add(void)
 {
     CpmlPair org = { 0, 0 };
     CpmlPair pair1 = { 1, 2 };
@@ -113,7 +113,7 @@ _cpml_test_add(void)
 }
 
 static void
-_cpml_test_transform(void)
+_cpml_method_transform(void)
 {
     CpmlExtents extents;
     cairo_matrix_t matrix;
@@ -148,10 +148,10 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    g_test_add_func("/cpml/extents/behavior/misc", _cpml_test_misc);
+    g_test_add_func("/cpml/extents/behavior/misc", _cmpl_behavior_misc);
 
-    g_test_add_func("/cpml/extents/method/add", _cpml_test_add);
-    g_test_add_func("/cpml/extents/method/transform", _cpml_test_transform);
+    g_test_add_func("/cpml/extents/method/add", _cpml_method_add);
+    g_test_add_func("/cpml/extents/method/transform", _cpml_method_transform);
 
     return g_test_run();
 }
