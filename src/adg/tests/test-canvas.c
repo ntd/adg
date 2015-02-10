@@ -268,10 +268,6 @@ _adg_property_scales(void)
     g_assert_null(scales[3]);
     g_strfreev(scales);
 
-    /* Check autoscale does not crash on no scales */
-    g_object_set(canvas, "scales", NULL, NULL);
-    adg_canvas_autoscale(canvas);
-
     g_object_run_dispose(G_OBJECT(canvas));
 }
 
@@ -571,6 +567,68 @@ _adg_property_left_padding(void)
 }
 
 static void
+_adg_method_autoscale(void)
+{
+    AdgCanvas *canvas;
+    AdgTitleBlock *title_block;
+    AdgPath *path;
+    AdgStroke *stroke;
+    const cairo_matrix_t *matrix;
+
+    canvas = adg_canvas_new();
+
+    /* Check autoscale does not crash on no scales */
+    adg_canvas_set_scales(canvas, NULL);
+    adg_canvas_autoscale(canvas);
+
+    /* Set an arbitrary size on canvas */
+    adg_canvas_set_scales(canvas, "10:1", "1 a 1", "1:2", "1:10 ", NULL);
+    adg_canvas_set_size_explicit(canvas, 100, 100);
+
+    /* Check the scale will be reported on the title block */
+    title_block = adg_title_block_new();
+    adg_canvas_set_title_block(canvas, title_block);
+    g_object_unref(title_block);
+
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to_explicit(path, 5, 5);
+    stroke = adg_stroke_new(ADG_TRAIL(path));
+    g_object_unref(path);
+
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
+
+    adg_canvas_autoscale(canvas);
+    matrix = adg_entity_get_local_matrix(ADG_ENTITY(canvas));
+    adg_assert_isapprox(matrix->xx, 10);
+    g_assert_cmpstr(adg_title_block_get_scale(title_block), ==, "10:1");
+
+    adg_path_line_to_explicit(path, 50, 50);
+
+    adg_canvas_autoscale(canvas);
+    matrix = adg_entity_get_local_matrix(ADG_ENTITY(canvas));
+    adg_assert_isapprox(matrix->xx, 1);
+    g_assert_cmpstr(adg_title_block_get_scale(title_block), ==, "1 a 1");
+
+    adg_path_line_to_explicit(path, 0, 100);
+
+    adg_canvas_autoscale(canvas);
+    matrix = adg_entity_get_local_matrix(ADG_ENTITY(canvas));
+    adg_assert_isapprox(matrix->xx, 0.5);
+    g_assert_cmpstr(adg_title_block_get_scale(title_block), ==, "1:2");
+
+    adg_path_line_to_explicit(path, 800, 0);
+
+    adg_canvas_autoscale(canvas);
+    matrix = adg_entity_get_local_matrix(ADG_ENTITY(canvas));
+    adg_assert_isapprox(matrix->xx, 0.1);
+    g_assert_cmpstr(adg_title_block_get_scale(title_block), ==, "1:10 ");
+
+    g_object_run_dispose(G_OBJECT(stroke));
+    g_object_run_dispose(G_OBJECT(canvas));
+}
+
+static void
 _adg_method_set_margins(void)
 {
     AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
@@ -759,6 +817,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/canvas/property/bottom-padding", _adg_property_bottom_padding);
     g_test_add_func("/adg/canvas/property/left-padding", _adg_property_left_padding);
 
+    g_test_add_func("/adg/canvas/method/autoscale", _adg_method_autoscale);
     g_test_add_func("/adg/canvas/method/set-margins", _adg_method_set_margins);
     g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
 #if GTK3_ENABLED || GTK2_ENABLED
