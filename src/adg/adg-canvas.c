@@ -1379,9 +1379,6 @@ _adg_arrange(AdgEntity *entity)
         }
     }
 
-    /* Impose the new extents */
-    adg_entity_set_extents(entity, &extents);
-
     if (data->title_block) {
         AdgEntity *title_block_entity;
         const CpmlExtents *title_block_extents;
@@ -1410,8 +1407,13 @@ _adg_arrange(AdgEntity *entity)
 
             adg_entity_global_changed(title_block_entity);
             adg_entity_arrange(title_block_entity);
+            title_block_extents = adg_entity_get_extents(title_block_entity);
+            cpml_extents_add(&extents, title_block_extents);
         }
     }
+
+    /* Impose the new extents */
+    adg_entity_set_extents(entity, &extents);
 }
 
 static void
