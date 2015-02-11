@@ -308,6 +308,10 @@ adg_path_over_primitive(AdgPath *path)
 
     data = path->data;
 
+    /* Directly return NULL instead of returning an undefined primitive */
+    if (data->over.org == NULL || data->over.data == NULL)
+        return NULL;
+
     return &data->over;
 }
 
