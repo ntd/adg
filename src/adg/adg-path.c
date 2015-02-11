@@ -265,7 +265,7 @@ adg_path_has_current_point(AdgPath *path)
  * Gets the last primitive appended to @path. The returned struct
  * is owned by @path and should not be freed or modified.
  *
- * Returns: (transfer none): a pointer to the last appended primitive or <constant>NULL</constant> on errors.
+ * Returns: (transfer none): a pointer to the last appended primitive or <constant>NULL</constant> on no last primitive or on errors.
  *
  * Since: 1.0
  **/
@@ -277,6 +277,10 @@ adg_path_last_primitive(AdgPath *path)
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
     data = path->data;
+
+    /* Directly return NULL instead of returning an undefined primitive */
+    if (data->last.org == NULL || data->last.data == NULL)
+        return NULL;
 
     return &data->last;
 }
