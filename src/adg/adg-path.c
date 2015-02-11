@@ -461,6 +461,7 @@ adg_path_append_primitive(AdgPath *path, const CpmlPrimitive *primitive)
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(primitive != NULL);
     g_return_if_fail(primitive->org != NULL);
+    g_return_if_fail(primitive->data != NULL);
 
     data = path->data;
 
