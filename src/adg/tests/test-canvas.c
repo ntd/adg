@@ -40,7 +40,8 @@ _adg_non_empty_canvas(void)
 
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
 
-    /* */
+    /* stroke must be freed with dispose because of its circular
+     * dependency with path */
     g_object_weak_ref(G_OBJECT(canvas),
                       (GWeakNotify) g_object_run_dispose, stroke);
 
