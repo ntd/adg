@@ -21,6 +21,9 @@ test_type_builtins_SOURCES=	test-type-builtins.c
 TEST_PROGS+=			test-model$(EXEEXT)
 test_model_SOURCES=		test-model.c
 
+TEST_PROGS+=			test-path$(EXEEXT)
+test_path_SOURCES=		test-path.c
+
 TEST_PROGS+=			test-point$(EXEEXT)
 test_point_SOURCES=		test-point.c
 
