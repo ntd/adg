@@ -263,8 +263,12 @@ adg_path_has_current_point(AdgPath *path)
  * adg_path_last_primitive:
  * @path: an #AdgPath
  *
- * Gets the last primitive appended to @path. The returned struct
- * is owned by @path and should not be freed or modified.
+ * Gets the last primitive appended to @path. The #CPML_MOVE type is
+ * not considered a full-fledged primitive, i.e. adg_path_move_to()
+ * or similar does not change the last primitive.
+ *
+ * The returned struct is owned by @path and should not be freed or
+ * modified.
  *
  * Returns: (transfer none): a pointer to the last appended primitive or <constant>NULL</constant> on no last primitive or on errors.
  *
@@ -293,8 +297,12 @@ adg_path_last_primitive(AdgPath *path)
  * Gets the primitive before the last one appended to @path. The
  * "over" term comes from forth, where the <emphasis>OVER</emphasis>
  * operator works on the stack in the same way as
- * adg_path_over_primitive() works on @path. The returned struct
- * is owned by @path and should not be freed or modified.
+ * adg_path_over_primitive() works on @path. The #CPML_MOVE type is
+ * not considered a full-fledged primitive, i.e. adg_path_move_to()
+ * or similar does not change the over primitive.
+ *
+ * The returned struct is owned by @path and should not be freed or
+ * modified.
  *
  * Returns: (transfer none): a pointer to the primitive before the last appended one or <constant>NULL</constant> on errors.
  *
@@ -1089,12 +1097,15 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 {
     AdgPathPrivate *data;
     cairo_path_data_t *path_data;
+    CpmlPrimitiveType type;
     int length;
     gconstpointer old_data;
+    gpointer new_data;
 
     data = path->data;
     path_data = current->data;
-    length = path_data[0].header.length;
+    length = path_data->header.length;
+    type = path_data->header.type;
 
     /* Execute any pending operation */
     _adg_do_operation(path, path_data);
@@ -1102,26 +1113,36 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
     /* Append the path data to the internal path array */
     old_data = (data->cairo.array)->data;
     data->cairo.array = g_array_append_vals(data->cairo.array,
-                                           path_data, length);
+                                            path_data, length);
+    new_data = (data->cairo.array)->data;
 
     /* Set path data to point to the recently appended cairo_path_data_t
      * primitive: the first struct is the header */
-    path_data = (cairo_path_data_t *) (data->cairo.array)->data +
+    path_data = (cairo_path_data_t *) new_data +
                 (data->cairo.array)->len - length;
 
-    /* Store the last primitive into over */
-    _adg_primitive_remap(&data->over, (data->cairo.array)->data,
-                         &data->last, old_data);
+    if (type == CPML_MOVE) {
+        /* Remap last and over, but do not change their content */
+        _adg_primitive_remap(&data->last, new_data, &data->last, old_data);
+        _adg_primitive_remap(&data->over, new_data, &data->over, old_data);
+    } else {
+        /* Store the last primitive into over */
+        _adg_primitive_remap(&data->over, new_data, &data->last, old_data);
 
-    /* Set the last primitive for subsequent binary operations */
-    data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
-    data->last.segment = NULL;
-    data->last.data = path_data;
+        /* Set the last primitive for subsequent binary operations */
+        /* TODO: the assumption path_data - 1 is the last point is not true
+         * e.g. when there are embeeded data in primitives */
+        data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
+        data->last.segment = NULL;
+        data->last.data = path_data;
+    }
 
-    /* Save the last point as the current point, if applicable */
-    data->cp_is_valid = length > 1;
-    if (length > 1)
-        cpml_pair_from_cairo(&data->cp, &path_data[length-1]);
+    data->cp_is_valid = type != CPML_CLOSE;
+    if (data->cp_is_valid) {
+        /* Save the last point in the current point */
+        size_t n = type == CPML_MOVE ? 1 : cpml_primitive_type_get_n_points(type) - 1;
+        cpml_pair_from_cairo(&data->cp, &path_data[n]);
+    }
 
     /* Invalidate cairo_path: should be recomputed */
     _adg_clear_parent((AdgModel *) path);
