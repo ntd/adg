@@ -120,13 +120,23 @@ _adg_method_last_primitive(void)
     g_assert_cmpfloat(primitive->data[2].point.x, ==, 7);
     g_assert_cmpfloat(primitive->data[2].point.y, ==, 8);
 
+    adg_path_move_to_explicit(path, 0, 0);
+    primitive = adg_path_last_primitive(path);
+    g_assert_nonnull(primitive);
+    g_assert_cmpint(primitive->data->header.type, ==, CPML_ARC);
+
+    adg_path_move_to_explicit(path, 1, 1);
+    primitive = adg_path_last_primitive(path);
+    g_assert_nonnull(primitive);
+    g_assert_cmpint(primitive->data->header.type, ==, CPML_ARC);
+
     adg_path_curve_to_explicit(path, 9, 10, 11, 12, 13, 14);
     primitive = adg_path_last_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CURVE);
     g_assert_cmpint(primitive->data->header.length, ==, 4);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 7);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 8);
+    g_assert_cmpfloat(primitive->org->point.x, ==, 1);
+    g_assert_cmpfloat(primitive->org->point.y, ==, 1);
     g_assert_cmpfloat(primitive->data[1].point.x, ==, 9);
     g_assert_cmpfloat(primitive->data[1].point.y, ==, 10);
     g_assert_cmpfloat(primitive->data[2].point.x, ==, 11);
@@ -206,14 +216,24 @@ _adg_method_over_primitive(void)
     adg_path_move_to_explicit(path, 15, 16);
     primitive = adg_path_over_primitive(path);
     g_assert_nonnull(primitive);
+    g_assert_cmpint(primitive->data->header.type, ==, CPML_CURVE);
+    g_assert_cmpint(primitive->data->header.length, ==, 4);
+    g_assert_cmpfloat(primitive->org->point.x, ==, 7);
+    g_assert_cmpfloat(primitive->org->point.y, ==, 8);
+    g_assert_cmpfloat(primitive->data[1].point.x, ==, 9);
+    g_assert_cmpfloat(primitive->data[1].point.y, ==, 10);
+    g_assert_cmpfloat(primitive->data[2].point.x, ==, 11);
+    g_assert_cmpfloat(primitive->data[2].point.y, ==, 12);
+    g_assert_cmpfloat(primitive->data[3].point.x, ==, 13);
+    g_assert_cmpfloat(primitive->data[3].point.y, ==, 14);
+
+    adg_path_line_to_explicit(path, 17, 18);
+    primitive = adg_path_over_primitive(path);
+    g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CLOSE);
     g_assert_cmpint(primitive->data->header.length, ==, 1);
     g_assert_cmpfloat(primitive->org->point.x, ==, 13);
     g_assert_cmpfloat(primitive->org->point.y, ==, 14);
-
-    /* A new segment clear the over primitive */
-    adg_path_move_to_explicit(path, 17, 18);
-    g_assert_null(adg_path_over_primitive(path));
 
     g_object_unref(path);
 }
@@ -224,6 +244,7 @@ _adg_method_append_primitive(void)
     AdgPath *path;
     CpmlSegment segment;
     CpmlPrimitive primitive;
+    const CpmlPrimitive *last;
 
     path = adg_path_new();
     cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
@@ -233,43 +254,51 @@ _adg_method_append_primitive(void)
     adg_path_append_primitive(NULL, &primitive);
     adg_path_append_primitive(path, NULL);
 
-    adg_path_move_to_explicit(path, 0, 0);
-    g_assert_null(adg_path_last_primitive(path));
-
     adg_path_move_to_explicit(path, 0, 1);
 
     adg_path_append_primitive(path, &primitive);
-    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_LINE);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_LINE);
 
     cpml_primitive_next(&primitive);
-    adg_path_close(path);
-    adg_path_move_to_explicit(path, 0, 0);
     adg_path_append_primitive(path, &primitive);
-    g_assert_null(adg_path_last_primitive(path));
-
-    adg_path_line_to_explicit(path, 3, 1);
-    adg_path_append_primitive(path, &primitive);
-    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_ARC);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_ARC);
 
     cpml_primitive_next(&primitive);
-    adg_path_close(path);
-    adg_path_move_to_explicit(path, 0, 0);
     adg_path_append_primitive(path, &primitive);
-    g_assert_null(adg_path_last_primitive(path));
-
-    adg_path_move_to_explicit(path, 6, 7);
-    adg_path_append_primitive(path, &primitive);
-    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_CURVE);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_CURVE);
 
     cpml_primitive_next(&primitive);
-    adg_path_close(path);
-    adg_path_move_to_explicit(path, 0, 0);
     adg_path_append_primitive(path, &primitive);
-    g_assert_null(adg_path_last_primitive(path));
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_CLOSE);
 
-    adg_path_move_to_explicit(path, -2, 2);
+    /* Now trying to reappending with mismatching start point */
+    adg_path_move_to_explicit(path, -1, -2);
+
+    cpml_primitive_reset(&primitive);
     adg_path_append_primitive(path, &primitive);
-    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_CLOSE);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_CLOSE);
+
+    cpml_primitive_next(&primitive);
+    adg_path_append_primitive(path, &primitive);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_CLOSE);
+
+    cpml_primitive_next(&primitive);
+    adg_path_append_primitive(path, &primitive);
+    last = adg_path_last_primitive(path);
+    g_assert_nonnull(last);
+    g_assert_cmpint(last->data->header.type, ==, CPML_CLOSE);
 
     /* Invalid primitives must be discarded */
     adg_path_move_to_explicit(path, 0, 0);
