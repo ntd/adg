@@ -291,6 +291,61 @@ _adg_method_append_primitive(void)
     g_object_unref(path);
 }
 
+static void
+_adg_method_append_segment(void)
+{
+    AdgPath *path;
+    CpmlSegment segment;
+
+    path = adg_path_new();
+
+    /* Check sanity */
+    adg_path_append_segment(NULL, &segment);
+    adg_path_append_primitive(path, NULL);
+
+    /* First segment */
+    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
+    adg_path_append_segment(path, &segment);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    g_assert_nonnull(adg_path_over_primitive(path));
+    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_CLOSE);
+    g_assert_cmpint(adg_path_over_primitive(path)->data->header.type, ==, CPML_CURVE);
+
+    /* Second segment */
+    cpml_segment_next(&segment);
+    adg_path_append_segment(path, &segment);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    g_assert_nonnull(adg_path_over_primitive(path));
+    g_assert_cmpint(adg_path_over_primitive(path)->data->header.type, ==, CPML_LINE);
+    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_LINE);
+
+    /* Third segment */
+    cpml_segment_next(&segment);
+    adg_path_append_segment(path, &segment);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    g_assert_nonnull(adg_path_over_primitive(path));
+    g_assert_cmpint(adg_path_over_primitive(path)->data->header.type, ==, CPML_CURVE);
+    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_CLOSE);
+
+    /* Forth segment */
+    cpml_segment_next(&segment);
+    adg_path_append_segment(path, &segment);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    g_assert_nonnull(adg_path_over_primitive(path));
+    g_assert_cmpint(adg_path_over_primitive(path)->data->header.type, ==, CPML_ARC);
+    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_ARC);
+
+    /* Fifth segment */
+    cpml_segment_next(&segment);
+    adg_path_append_segment(path, &segment);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    g_assert_nonnull(adg_path_over_primitive(path));
+    g_assert_cmpint(adg_path_over_primitive(path)->data->header.type, ==, CPML_ARC);
+    g_assert_cmpint(adg_path_last_primitive(path)->data->header.type, ==, CPML_CLOSE);
+
+    g_object_unref(path);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -304,6 +359,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/last-primitive", _adg_method_last_primitive);
     g_test_add_func("/adg/path/method/over-primitive", _adg_method_over_primitive);
     g_test_add_func("/adg/path/method/append-primitive", _adg_method_append_primitive);
+    g_test_add_func("/adg/path/method/append-segment", _adg_method_append_segment);
 
     return g_test_run();
 }
