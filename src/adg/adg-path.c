@@ -92,6 +92,7 @@ static void             _adg_primitive_remap    (CpmlPrimitive  *primitive,
                                                  const CpmlPrimitive
                                                                 *old,
                                                  gconstpointer   from);
+static void             _adg_rescan             (AdgPath        *path);
 static void             _adg_append_primitive   (AdgPath        *path,
                                                  CpmlPrimitive  *primitive);
 static void             _adg_clear_operation    (AdgPath        *path);
@@ -489,16 +490,21 @@ adg_path_append_primitive(AdgPath *path, const CpmlPrimitive *primitive)
 void
 adg_path_append_segment(AdgPath *path, const CpmlSegment *segment)
 {
-    AdgPathPrivate *data;
-
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(segment != NULL);
 
-    data = path->data;
+    if (segment->num_data > 0) {
+        AdgPathPrivate *data;
 
-    _adg_clear_parent((AdgModel *) path);
-    data->cairo.array = g_array_append_vals(data->cairo.array,
-                                            segment->data, segment->num_data);
+        g_return_if_fail(segment->data != NULL);
+
+        data = path->data;
+
+        _adg_clear_parent((AdgModel *) path);
+        data->cairo.array = g_array_append_vals(data->cairo.array,
+                                                segment->data, segment->num_data);
+        _adg_rescan(path);
+    }
 }
 
 /**
@@ -1045,6 +1051,37 @@ _adg_primitive_remap(CpmlPrimitive *primitive, gpointer to,
     primitive->org =     REMAPPED(old->org,     from, to);
     primitive->segment = REMAPPED(old->segment, from, to);
     primitive->data =    REMAPPED(old->data,    from, to);
+}
+
+static void
+_adg_rescan(AdgPath *path)
+{
+    AdgPathPrivate *data;
+    CpmlSegment segment;
+    CpmlPrimitive current, *last, *over;
+
+    data = path->data;
+    last = &data->last;
+    over = &data->over;
+
+    last->segment = NULL;
+    last->org = NULL;
+    last->data = NULL;
+    over->segment = NULL;
+    over->org = NULL;
+    over->data = NULL;
+
+    /* When no data is present, just bail out */
+    if (! cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path)))
+        return;
+
+    do {
+        cpml_primitive_from_segment(&current, &segment);
+        do {
+            cpml_primitive_copy(over, last);
+            cpml_primitive_copy(last, &current);
+        } while (cpml_primitive_next(&current));
+    } while (cpml_segment_next(&segment));
 }
 
 static void
