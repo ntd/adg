@@ -169,14 +169,14 @@ adg_entity_class_init(AdgEntityClass *klass)
     param = g_param_spec_boxed("global-map",
                                P_("Global Map"),
                                P_("The transformation to be combined with the parent ones to get the global matrix"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_GLOBAL_MAP, param);
 
     param = g_param_spec_boxed("local-map",
                                P_("Local Map"),
                                P_("The local transformation that could be used to compute the local matrix in the way specified by the #AdgEntity:local-mix property"),
-                               ADG_TYPE_MATRIX,
+                               CAIRO_GOBJECT_TYPE_MATRIX,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LOCAL_MAP, param);
 

@@ -29,21 +29,6 @@
 
 G_BEGIN_DECLS
 
-
-#ifdef CAIRO_GOBJECT_TYPE_MATRIX
-
-/* CAIRO_GOBJECT_TYPE_MATRIX has been introduced only in cairo 1.12.16 */
-#define ADG_TYPE_MATRIX  (CAIRO_GOBJECT_TYPE_MATRIX)
-
-#else
-
-#define ADG_TYPE_MATRIX  (adg_matrix_get_type())
-
-GType           adg_matrix_get_type     (void);
-
-#endif
-
-
 const cairo_matrix_t *
                 adg_matrix_identity     (void);
 const cairo_matrix_t *

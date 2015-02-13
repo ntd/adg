@@ -36,24 +36,6 @@
 #include <math.h>
 
 
-#ifndef CAIRO_GOBJECT_TYPE_MATRIX
-
-GType
-adg_matrix_get_type(void)
-{
-    static GType matrix_type = 0;
-
-    if (G_UNLIKELY(matrix_type == 0))
-        matrix_type = g_boxed_type_register_static("AdgMatrix",
-                                                   (GBoxedCopyFunc) adg_matrix_dup,
-                                                   g_free);
-
-    return matrix_type;
-}
-
-#endif
-
-
 /**
  * adg_matrix_identity:
  *

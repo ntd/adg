@@ -255,7 +255,7 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_boxed_checks("/adg/matrix/type/boxed", ADG_TYPE_MATRIX, g_new0(cairo_matrix_t, 1));
+    adg_test_add_boxed_checks("/adg/matrix/type/boxed", CAIRO_GOBJECT_TYPE_MATRIX, g_new0(cairo_matrix_t, 1));
 
     g_test_add_func("/adg/matrix/behavior/misc", _adg_behavior_misc);
 
