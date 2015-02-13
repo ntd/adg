@@ -156,15 +156,15 @@ _adg_method_normalize(void)
     adg_assert_isapprox(matrix.xy, 0.8);
     adg_assert_isapprox(matrix.yx, -0.8);
 
-    matrix.xx = -4;
-    matrix.yy = -4;
+    matrix.xx = 0;
+    matrix.yy = 0;
     matrix.xy = -3;
     matrix.yx = 3;
     g_assert_true(adg_matrix_normalize(&matrix));
-    adg_assert_isapprox(matrix.xx, -0.8);
-    adg_assert_isapprox(matrix.yy, -0.8);
-    adg_assert_isapprox(matrix.xy, -0.6);
-    adg_assert_isapprox(matrix.yx, 0.6);
+    adg_assert_isapprox(matrix.xx, 0);
+    adg_assert_isapprox(matrix.yy, 0);
+    adg_assert_isapprox(matrix.xy, 1);
+    adg_assert_isapprox(matrix.yx, -1);
 }
 
 static void
