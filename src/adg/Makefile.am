@@ -27,6 +27,7 @@ h_sources=			adg-adim.h \
 				adg-edges.h \
 				adg-entity.h \
 				adg-enums.h \
+				adg-cairo-fallback.h \
 				adg-fill-style.h \
 				adg-font-style.h \
 				adg-forward-declarations.h \
@@ -58,7 +59,6 @@ built_h_sources=		adg-type-builtins.h
 private_h_sources=		adg-adim-private.h \
 				adg-alignment-private.h \
 				adg-arrow-private.h \
-				adg-cairo-fallback.h \
 				adg-canvas-private.h \
 				adg-color-style-private.h \
 				adg-container-private.h \
