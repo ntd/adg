@@ -330,7 +330,7 @@ _adg_method_append_segment(void)
 
     /* Check sanity */
     adg_path_append_segment(NULL, &segment);
-    adg_path_append_primitive(path, NULL);
+    adg_path_append_segment(path, NULL);
 
     /* First segment */
     cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
@@ -375,6 +375,291 @@ _adg_method_append_segment(void)
     g_object_unref(path);
 }
 
+static void
+_adg_method_append_cairo_path(void)
+{
+    AdgPath *path;
+    const cairo_path_t *cairo_path;
+
+    path = adg_path_new();
+    cairo_path = adg_test_path();
+
+    /* Check sanity */
+    adg_path_append_cairo_path(NULL, cairo_path);
+    adg_path_append_cairo_path(path, NULL);
+
+    /* Ensure the path is initially empty */
+    g_assert_null(adg_path_last_primitive(path));
+
+    adg_path_append_cairo_path(path, cairo_path);
+
+    /* Check the path is no more empty */
+    g_assert_nonnull(adg_path_last_primitive(path));
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_move_to(void)
+{
+    AdgPath *path = adg_path_new();
+    CpmlPair pair = { 1, 2 };
+    const CpmlPair *cp;
+
+    /* Check sanity */
+    adg_path_move_to(NULL, &pair);
+    adg_path_move_to(path, NULL);
+    adg_path_move_to_explicit(NULL, 3, 4);
+
+    adg_path_move_to(path, &pair);
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 1);
+    g_assert_cmpfloat(cp->y, ==, 2);
+
+    adg_path_move_to_explicit(path, 3, 4);
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 3);
+    g_assert_cmpfloat(cp->y, ==, 4);
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_line_to(void)
+{
+    AdgPath *path = adg_path_new();
+    CpmlPair pair = { 1, 2 };
+    const CpmlPair *cp;
+
+    /* Check sanity */
+    adg_path_line_to(NULL, &pair);
+    adg_path_line_to(path, NULL);
+    adg_path_line_to_explicit(NULL, 3, 4);
+
+    /* This should fail because there is no current point */
+    adg_path_line_to(path, &pair);
+    g_assert_null(adg_path_last_primitive(path));
+
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to(path, &pair);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 1);
+    g_assert_cmpfloat(cp->y, ==, 2);
+
+    adg_path_line_to_explicit(path, 3, 4);
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 3);
+    g_assert_cmpfloat(cp->y, ==, 4);
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_arc_to(void)
+{
+    AdgPath *path = adg_path_new();
+    CpmlPair pair[] = {
+        { 1, 2 },
+        { 3, 4 }
+    };
+    const CpmlPair *cp;
+
+    /* Check sanity */
+    adg_path_arc_to(NULL, &pair[0], &pair[1]);
+    adg_path_arc_to(path, NULL, &pair[1]);
+    adg_path_arc_to(path, &pair[0], NULL);
+    adg_path_arc_to_explicit(NULL, 5, 6, 7, 8);
+
+    /* This should fail because there is no current point */
+    adg_path_arc_to(path, &pair[0], &pair[1]);
+    g_assert_null(adg_path_last_primitive(path));
+
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_arc_to(path, &pair[0], &pair[1]);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 3);
+    g_assert_cmpfloat(cp->y, ==, 4);
+
+    adg_path_arc_to_explicit(path, 5, 6, 7, 8);
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 7);
+    g_assert_cmpfloat(cp->y, ==, 8);
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_curve_to(void)
+{
+    AdgPath *path = adg_path_new();
+    CpmlPair pair[] = {
+        { 1, 2 },
+        { 3, 4 },
+        { 5, 6 },
+    };
+    const CpmlPair *cp;
+
+    /* Check sanity */
+    adg_path_curve_to(NULL, &pair[0], &pair[1], &pair[2]);
+    adg_path_curve_to(path, NULL, &pair[1], &pair[2]);
+    adg_path_curve_to(path, &pair[0], NULL, &pair[2]);
+    adg_path_curve_to(path, &pair[0], &pair[1], NULL);
+    adg_path_curve_to_explicit(NULL, 7, 8, 9, 10, 11, 12);
+
+    /* This should fail because there is no current point */
+    adg_path_curve_to(path, &pair[0], &pair[1], &pair[2]);
+    g_assert_null(adg_path_last_primitive(path));
+
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_curve_to(path, &pair[0], &pair[1], &pair[2]);
+    g_assert_nonnull(adg_path_last_primitive(path));
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 5);
+    g_assert_cmpfloat(cp->y, ==, 6);
+
+    adg_path_curve_to_explicit(path, 7, 8, 9, 10, 11, 12);
+    cp = adg_path_get_current_point(path);
+    g_assert_cmpfloat(cp->x, ==, 11);
+    g_assert_cmpfloat(cp->y, ==, 12);
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_arc(void)
+{
+    AdgPath *path = adg_path_new();
+    CpmlPair pair = { 3, 4 };
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    /* Check sanity */
+    adg_path_arc(NULL, &pair, 1, 2, 3);
+    adg_path_arc(path, NULL, 1, 2, 3);
+    adg_path_arc_explicit(NULL, 1, 2, 3, 4, 5);
+
+    /* This should *not* fail because this primitive
+     * automatically adds a leading CPML_MOVE */
+    adg_path_arc(path, &pair, 2, 0, G_PI_2);
+    g_assert_nonnull(adg_path_last_primitive(path));
+
+    /* Disconnected arcs should be automatically
+     * joined with CPML_LINEs */
+    adg_path_arc_explicit(path, 3, 4, 2, G_PI, -G_PI);
+    g_assert_nonnull(adg_path_last_primitive(path));
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    cpml_primitive_from_segment(&primitive, &segment);
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_ARC);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 3);
+    adg_assert_isapprox((primitive.org)->point.x, 5);
+    adg_assert_isapprox((primitive.org)->point.y, 4);
+    adg_assert_isapprox(primitive.data[1].point.x, 4.414);
+    adg_assert_isapprox(primitive.data[1].point.y, 5.414);
+    adg_assert_isapprox(primitive.data[2].point.x, 3);
+    adg_assert_isapprox(primitive.data[2].point.y, 6);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 1);
+    adg_assert_isapprox(primitive.data[1].point.y, 4);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_ARC);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 3);
+    adg_assert_isapprox(primitive.data[1].point.x, 1);
+    adg_assert_isapprox(primitive.data[1].point.y, 4);
+    adg_assert_isapprox(primitive.data[2].point.x, 1);
+    adg_assert_isapprox(primitive.data[2].point.y, 4);
+
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_reflect(void)
+{
+    AdgPath *path;
+    CpmlVector vector;
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    path = adg_path_new();
+    vector.x = 1;
+    vector.y = 0;
+
+    /* Check sanity */
+    adg_path_reflect(NULL, &vector);
+    adg_path_reflect_explicit(NULL, 1, 2);
+    adg_path_reflect_explicit(path, 0, 0);
+
+    adg_path_move_to_explicit(path, 0, 1);
+    adg_path_line_to_explicit(path, 2, 3);
+    adg_path_arc_to_explicit(path, 4, 5, 6, 7);
+    adg_path_curve_to_explicit(path, 8, 9, 10, 11, 12, 13);
+
+    /* Not specifying the vector means reflect on y=0 */
+    adg_path_reflect(path, NULL);
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    /* Skip the original primitives */
+    cpml_primitive_from_segment(&primitive, &segment);  /* CPML_LINE */
+    g_assert_true(cpml_primitive_next(&primitive));     /* CPML_ARC */
+    g_assert_true(cpml_primitive_next(&primitive));     /* CPML_CURVE */
+
+    /* This line is the automatic joint between the
+     * original primitives and the reversed ones */
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 12);
+    adg_assert_isapprox((primitive.org)->point.y, 13);
+    adg_assert_isapprox(primitive.data[1].point.x, 12);
+    adg_assert_isapprox(primitive.data[1].point.y, -13);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_CURVE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 4);
+    adg_assert_isapprox(primitive.data[1].point.x, 10);
+    adg_assert_isapprox(primitive.data[1].point.y, -11);
+    adg_assert_isapprox(primitive.data[2].point.x, 8);
+    adg_assert_isapprox(primitive.data[2].point.y, -9);
+    adg_assert_isapprox(primitive.data[3].point.x, 6);
+    adg_assert_isapprox(primitive.data[3].point.y, -7);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_ARC);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 3);
+    adg_assert_isapprox(primitive.data[1].point.x, 4);
+    adg_assert_isapprox(primitive.data[1].point.y, -5);
+    adg_assert_isapprox(primitive.data[2].point.x, 2);
+    adg_assert_isapprox(primitive.data[2].point.y, -3);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 0);
+    adg_assert_isapprox(primitive.data[1].point.y, -1);
+
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    g_object_unref(path);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -389,6 +674,13 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/over-primitive", _adg_method_over_primitive);
     g_test_add_func("/adg/path/method/append-primitive", _adg_method_append_primitive);
     g_test_add_func("/adg/path/method/append-segment", _adg_method_append_segment);
+    g_test_add_func("/adg/path/method/append-cairo-path", _adg_method_append_cairo_path);
+    g_test_add_func("/adg/path/method/move-to", _adg_method_move_to);
+    g_test_add_func("/adg/path/method/line-to", _adg_method_line_to);
+    g_test_add_func("/adg/path/method/arc-to", _adg_method_arc_to);
+    g_test_add_func("/adg/path/method/curve-to", _adg_method_curve_to);
+    g_test_add_func("/adg/path/method/arc", _adg_method_arc);
+    g_test_add_func("/adg/path/method/reflect", _adg_method_reflect);
 
     return g_test_run();
 }
