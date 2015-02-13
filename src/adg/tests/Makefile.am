@@ -18,6 +18,9 @@ test_utils_SOURCES=		test-utils.c
 TEST_PROGS+=			test-type-builtins$(EXEEXT)
 test_type_builtins_SOURCES=	test-type-builtins.c
 
+TEST_PROGS+=			test-matrix$(EXEEXT)
+test_matrix_SOURCES=		test-matrix.c
+
 TEST_PROGS+=			test-model$(EXEEXT)
 test_model_SOURCES=		test-model.c
 
