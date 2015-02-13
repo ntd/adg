@@ -538,6 +538,7 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
     data->cairo.array = g_array_append_vals(data->cairo.array,
                                             cairo_path->data,
                                             cairo_path->num_data);
+    _adg_rescan(path);
 }
 
 /**
