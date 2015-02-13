@@ -374,6 +374,11 @@ adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
     array = g_array_new(TRUE, FALSE, sizeof(pair));
     while (-- length) {
         pair = va_arg(var_args, CpmlPair *);
+        if (pair == NULL) {
+            g_array_free(array, TRUE);
+            g_return_if_reached();
+            return;
+        }
         g_array_append_val(array, pair);
     }
 
