@@ -240,6 +240,9 @@ adg_entity_class_init(AdgEntityClass *klass)
      * has changed. The default handler will compute the new global
      * matrix, updating the internal cache.
      *
+     * This signal has lazy emission, i.e. it is emitted only when
+     * the global matrix is requested, typically in the arrange phase.
+     *
      * Since: 1.0
      **/
     _adg_signals[GLOBAL_CHANGED] =
@@ -258,6 +261,9 @@ adg_entity_class_init(AdgEntityClass *klass)
      * Emitted when the local map of @entity or any of its parent
      * has changed. The default handler will compute the new local
      * matrix, updating the internal cache.
+     *
+     * This signal has lazy emission, i.e. it is emitted only when
+     * the local matrix is requested, typically in the arrange phase.
      *
      * Since: 1.0
      **/
@@ -416,7 +422,7 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_LOCAL_MIX:
         data->local_mix = g_value_get_enum(value);
-        g_signal_emit(object, _adg_signals[LOCAL_CHANGED], 0);
+        data->local.is_defined = FALSE;
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
