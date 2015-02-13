@@ -207,7 +207,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgEntityClass, destroy),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**
@@ -229,7 +229,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgEntityClass, parent_set),
                      NULL, NULL,
-                     adg_marshal_VOID__OBJECT,
+                     g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -248,7 +248,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgEntityClass, global_changed),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**
@@ -267,7 +267,7 @@ adg_entity_class_init(AdgEntityClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgEntityClass, local_changed),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**
@@ -285,7 +285,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     _adg_signals[INVALIDATE] =
         g_signal_newv("invalidate", ADG_TYPE_ENTITY,
                       G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                      adg_marshal_VOID__VOID,
+                      g_cclosure_marshal_VOID__VOID,
                       G_TYPE_NONE, 0, param_types);
 
     /**
@@ -301,7 +301,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     _adg_signals[ARRANGE] =
         g_signal_newv("arrange", ADG_TYPE_ENTITY,
                       G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                      adg_marshal_VOID__VOID,
+                      g_cclosure_marshal_VOID__VOID,
                       G_TYPE_NONE, 0, param_types);
 
     /**
@@ -320,7 +320,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     _adg_signals[RENDER] =
         g_signal_newv("render", ADG_TYPE_ENTITY,
                       G_SIGNAL_RUN_LAST, closure, NULL, NULL,
-                      adg_marshal_VOID__POINTER,
+                      g_cclosure_marshal_VOID__POINTER,
                       G_TYPE_NONE, 1, param_types);
 }
 

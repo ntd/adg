@@ -105,7 +105,7 @@ adg_style_class_init(AdgStyleClass *klass)
                      G_SIGNAL_RUN_LAST,
                      G_STRUCT_OFFSET(AdgStyleClass, invalidate),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**

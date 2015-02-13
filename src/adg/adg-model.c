@@ -207,7 +207,7 @@ adg_model_class_init(AdgModelClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgModelClass, add_dependency),
                      NULL, NULL,
-                     adg_marshal_VOID__OBJECT,
+                     g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -226,7 +226,7 @@ adg_model_class_init(AdgModelClass *klass)
                      G_SIGNAL_RUN_FIRST,
                      G_STRUCT_OFFSET(AdgModelClass, remove_dependency),
                      NULL, NULL,
-                     adg_marshal_VOID__OBJECT,
+                     g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -276,7 +276,7 @@ adg_model_class_init(AdgModelClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgModelClass, clear),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**
@@ -305,7 +305,7 @@ adg_model_class_init(AdgModelClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgModelClass, reset),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 
     /**
@@ -322,7 +322,7 @@ adg_model_class_init(AdgModelClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgModelClass, changed),
                      NULL, NULL,
-                     adg_marshal_VOID__VOID,
+                     g_cclosure_marshal_VOID__VOID,
                      G_TYPE_NONE, 0);
 }
 

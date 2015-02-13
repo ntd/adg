@@ -135,7 +135,7 @@ _adg_iface_base(AdgTextualIface *iface)
                      G_SIGNAL_RUN_LAST,
                      G_STRUCT_OFFSET(AdgTextualIface, text_changed),
                      NULL, NULL,
-                     adg_marshal_VOID__POINTER,
+                     g_cclosure_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 

@@ -155,7 +155,7 @@ adg_container_class_init(AdgContainerClass *klass)
                                      G_SIGNAL_RUN_FIRST,
                                      G_STRUCT_OFFSET(AdgContainerClass, add),
                                      NULL, NULL,
-                                     adg_marshal_VOID__OBJECT,
+                                     g_cclosure_marshal_VOID__OBJECT,
                                      G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 
     /**
@@ -172,7 +172,7 @@ adg_container_class_init(AdgContainerClass *klass)
                                         G_SIGNAL_RUN_FIRST,
                                         G_STRUCT_OFFSET(AdgContainerClass, remove),
                                         NULL, NULL,
-                                        adg_marshal_VOID__OBJECT,
+                                        g_cclosure_marshal_VOID__OBJECT,
                                         G_TYPE_NONE, 1, ADG_TYPE_ENTITY);
 }
 

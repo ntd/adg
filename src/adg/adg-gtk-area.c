@@ -651,7 +651,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, canvas_changed),
                      NULL, NULL,
-                     adg_marshal_VOID__OBJECT,
+                     g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1, ADG_TYPE_CANVAS);
 
     /**
@@ -675,7 +675,7 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
                      G_SIGNAL_RUN_LAST|G_SIGNAL_NO_RECURSE,
                      G_STRUCT_OFFSET(AdgGtkAreaClass, extents_changed),
                      NULL, NULL,
-                     adg_marshal_VOID__POINTER,
+                     g_cclosure_marshal_VOID__POINTER,
                      G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
