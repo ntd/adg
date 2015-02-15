@@ -51,6 +51,9 @@ test_stroke_SOURCES=		test-stroke.c
 TEST_PROGS+=			test-hatch$(EXEEXT)
 test_hatch_SOURCES=		test-hatch.c
 
+TEST_PROGS+=			test-textual$(EXEEXT)
+test_textual_SOURCES=		test-textual.c
+
 TEST_PROGS+=			test-toy-text$(EXEEXT)
 test_toy_text_SOURCES=		test-toy-text.c
 
