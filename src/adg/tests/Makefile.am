@@ -114,6 +114,9 @@ test_dim_style_SOURCES=		test-dim-style.c
 TEST_PROGS+=			test-table-style$(EXEEXT)
 test_table_style_SOURCES=	test-table-style.c
 
+TEST_PROGS+=			test-param-dress$(EXEEXT)
+test_param_dress_SOURCES=	test-param-dress.c
+
 TEST_PROGS+=			test-dress$(EXEEXT)
 test_dress_SOURCES=		test-dress.c
 
