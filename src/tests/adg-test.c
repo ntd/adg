@@ -37,6 +37,12 @@ typedef struct {
     gint n_fragments;
 } _TrapsData;
 
+typedef struct {
+    gpointer instance;
+    gulong handler;
+    gboolean flag;
+} _SignalData;
+
 
 /* Using adg_nop() would require to pull in the whole libadg stack:
  * better to replicate that trivial function instead.
@@ -289,16 +295,38 @@ adg_test_add_object_checks(const gchar *testpath, GType type)
 }
 
 static void
-_adg_set(gboolean *p_flag)
+_adg_test_set(gboolean *p_flag)
 {
     *p_flag = TRUE;
 }
 
-static gulong
-_adg_set_on_signal(gboolean *p_flag, gpointer instance, const gchar *detailed_signal)
+static _SignalData signal_data;
+
+void
+adg_test_signal(gpointer instance, const gchar *detailed_signal)
 {
-    return g_signal_connect_swapped(instance, detailed_signal,
-                                    G_CALLBACK(_adg_set), p_flag);
+    signal_data.instance = instance;
+    signal_data.handler = g_signal_connect_swapped(instance,
+                                                   detailed_signal,
+                                                   G_CALLBACK(_adg_test_set),
+                                                   &signal_data.flag);
+    signal_data.flag = FALSE;
+}
+
+gboolean
+adg_test_signal_check(gboolean disconnect)
+{
+    gboolean last_flag;
+
+    if (disconnect) {
+        g_signal_handler_disconnect(signal_data.instance, signal_data.handler);
+        signal_data.instance = NULL;
+    }
+
+    last_flag = signal_data.flag;
+    signal_data.flag = FALSE;
+
+    return last_flag;
 }
 
 static void
@@ -313,8 +341,6 @@ _adg_entity_checks(GType *p_type)
     if (! G_TYPE_IS_ABSTRACT(type)) {
         AdgEntity *entity = g_object_new(type, NULL);
         const CpmlExtents *extents;
-        gboolean flag;
-        gulong handler;
 
         g_assert_nonnull(entity);
         g_assert_true(ADG_IS_ENTITY(entity));
@@ -323,21 +349,17 @@ _adg_entity_checks(GType *p_type)
         extents = adg_entity_get_extents(entity);
         g_assert_false(extents->is_defined);
 
-        flag = FALSE;
-        handler = _adg_set_on_signal(&flag, entity, "arrange");
+        adg_test_signal(entity, "arrange");
         adg_entity_arrange(entity);
-        g_signal_handler_disconnect(entity, handler);
-        g_assert_true(flag);
+        g_assert_true(adg_test_signal_check(TRUE));
 
         extents = adg_entity_get_extents(entity);
         if (extents->is_defined) {
             /* RENDERABLE ENTITY */
             /* Check that invalidate() clears the cached extents */
-            flag = FALSE;
-            handler = _adg_set_on_signal(&flag, entity, "invalidate");
+            adg_test_signal(entity, "invalidate");
             adg_entity_invalidate(entity);
-            g_signal_handler_disconnect(entity, handler);
-            g_assert_true(flag);
+            g_assert_true(adg_test_signal_check(TRUE));
 
             extents = adg_entity_get_extents(entity);
             g_assert_false(extents->is_defined);
@@ -378,8 +400,6 @@ _adg_container_checks(GType *p_type)
         AdgStroke *stroke;
         const CpmlExtents *extents;
         gint counter;
-        gboolean flag;
-        gulong handler;
 
         container = g_object_new(type, NULL);
 
@@ -398,11 +418,9 @@ _adg_container_checks(GType *p_type)
 
         /* stroke has a floating reference that will be owned by container */
         g_assert_null(adg_entity_get_parent(ADG_ENTITY(stroke)));
-        flag = FALSE;
-        handler = _adg_set_on_signal(&flag, container, "add");
+        adg_test_signal(container, "add");
         adg_container_add(container, ADG_ENTITY(stroke));
-        g_signal_handler_disconnect(container, handler);
-        g_assert_true(flag);
+        g_assert_true(adg_test_signal_check(TRUE));
         g_assert_true(adg_entity_get_parent(ADG_ENTITY(stroke)) == ADG_ENTITY(container));
 
         /* Ensure container-add add a reference to stroke */
@@ -428,11 +446,9 @@ _adg_container_checks(GType *p_type)
         /* Keep stroke around */
         g_object_ref(stroke);
 
-        flag = FALSE;
-        handler = _adg_set_on_signal(&flag, container, "remove");
+        adg_test_signal(container, "remove");
         adg_container_remove(container, ADG_ENTITY(stroke));
-        g_signal_handler_disconnect(container, handler);
-        g_assert_true(flag);
+        g_assert_true(adg_test_signal_check(TRUE));
         g_assert_null(adg_entity_get_parent(ADG_ENTITY(stroke)));
 
         counter = 0;
@@ -478,8 +494,6 @@ _adg_global_space_checks(AdgEntity *entity)
     const CpmlExtents *extents;
     cairo_matrix_t scale2X;
     gdouble width, height;
-    gboolean flag;
-    gulong handler;
 
     cr = adg_test_cairo_context();
     cairo_matrix_init_scale(&scale2X, 2, 2);
@@ -492,41 +506,34 @@ _adg_global_space_checks(AdgEntity *entity)
     height = extents->size.y;
 
     /* Check explicit global-changed emission */
-    flag = FALSE;
-    handler = _adg_set_on_signal(&flag, entity, "global-changed");
+    adg_test_signal(entity, "global-changed");
     adg_entity_global_changed(entity);
-    g_assert_true(flag);
+    g_assert_true(adg_test_signal_check(FALSE));
 
     /* Check that a zoom in global space scales is roughly equivalent to
      * the same zoom on extents too (not excactly because of fonts) */
-    flag = FALSE;
     adg_entity_transform_global_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
-    /* flag is still false here because global-changed emission is lazy,
-     * that is it will be emitted only when needed */
-    g_assert_false(flag);
+    /* The "global-changed" signal handler has not been called here because
+     * its emission is lazy, that is it will be emitted only when needed */
+    g_assert_false(adg_test_signal_check(FALSE));
 
     adg_entity_invalidate(entity);
     g_assert_false(extents->is_defined);
     /* Still no global-changed signal emitted */
-    g_assert_false(flag);
+    g_assert_false(adg_test_signal_check(FALSE));
 
     adg_entity_arrange(entity);
-    g_signal_handler_disconnect(entity, handler);
-    /* Now it is TRUE because "global-changed" has been emitted
-     * during the arrange phase */
-    g_assert_true(flag);
+    /* The "global-changed" signal has been emitted in the arrange phase */
+    g_assert_true(adg_test_signal_check(TRUE));
 
-    flag = FALSE;
-    handler = _adg_set_on_signal(&flag, entity, "render");
+    adg_test_signal(entity, "render");
     adg_entity_render(entity, cr);
-    g_signal_handler_disconnect(entity, handler);
-    g_assert_true(flag);
+    g_assert_true(adg_test_signal_check(TRUE));
 
-    flag = FALSE;
-    handler = _adg_set_on_signal(&flag, entity, "render");
+    /* Let's call render twice to check caching does not break anything */
+    adg_test_signal(entity, "render");
     adg_entity_render(entity, cr);
-    g_signal_handler_disconnect(entity, handler);
-    g_assert_true(flag);
+    g_assert_true(adg_test_signal_check(TRUE));
 
     extents = adg_entity_get_extents(entity);
     g_assert_cmpfloat(extents->size.x, >, width * 1.7);
@@ -562,18 +569,14 @@ _adg_local_space_checks(AdgEntity *entity)
     const CpmlExtents *extents;
     cairo_matrix_t scale2X;
     gdouble width, height;
-    gboolean flag;
-    gulong handler;
 
     cr = adg_test_cairo_context();
     cairo_matrix_init_scale(&scale2X, 2, 2);
 
     /* Store the original extents size in width/height */
-    flag = FALSE;
-    handler = _adg_set_on_signal(&flag, entity, "render");
+    adg_test_signal(entity, "render");
     adg_entity_render(entity, cr);
-    g_signal_handler_disconnect(entity, handler);
-    g_assert_true(flag);
+    g_assert_true(adg_test_signal_check(TRUE));
 
     extents = adg_entity_get_extents(entity);
     g_assert_true(extents->is_defined);
@@ -581,18 +584,16 @@ _adg_local_space_checks(AdgEntity *entity)
     height = extents->size.y;
 
     /* Check that a scale in local space somewhat scales the extents too */
-    flag = FALSE;
-    handler = _adg_set_on_signal(&flag, entity, "local-changed");
+    adg_test_signal(entity, "local-changed");
     adg_entity_transform_local_map(entity, &scale2X, ADG_TRANSFORM_BEFORE);
-    g_assert_false(flag);
+    g_assert_false(adg_test_signal_check(FALSE));
 
     adg_entity_invalidate(entity);
     g_assert_false(extents->is_defined);
     adg_entity_render(entity, cr);
-    g_signal_handler_disconnect(entity, handler);
-    /* flag is true here because "render" should also call "arrange" that,
-     * in turn, should trigger the "local-changed" signal */
-    g_assert_true(flag);
+    /* The "local-changed" signal has been emitted here because "render" must
+     * also call "arrange" that, in turn, should trigger "local-changed" */
+    g_assert_true(adg_test_signal_check(TRUE));
 
     extents = adg_entity_get_extents(entity);
     g_assert_cmpfloat(extents->size.x, >, width);
