@@ -46,6 +46,7 @@
 #include "adg/adg-dim-style.h"
 #include "adg/adg-fill-style.h"
 #include "adg/adg-ruled-fill.h"
+#include "adg/adg-param-dress.h"
 #include "adg/adg-dress.h"
 #include "adg/adg-stroke.h"
 #include "adg/adg-hatch.h"
