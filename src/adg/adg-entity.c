@@ -24,6 +24,14 @@
  *
  * This abstract class provides the base for all renderable objects.
  *
+ * To create a drawing you usually create entities by calling their
+ * specific constructors and add them to a single #AdgCanvas
+ * instance. When cleaning up, you therefore need to destroy only
+ * that canvas instance with adg_entity_destroy(): this in turn
+ * will destroy every contained entity. This is pretty similar to
+ * how the GTK+ world works: you add #GtkWidget instances to a
+ * single #GtkWindow and destroy only that window when finished.
+ *
  * To provide a proper #AdgEntity derived type, you must at least
  * implement its arrange() and render() virtual methods. Also, if
  * you are using some sort of caching, ensure to clear it in the
@@ -123,6 +131,7 @@ static void             _adg_set_property       (GObject         *object,
                                                  guint            prop_id,
                                                  const GValue    *value,
                                                  GParamSpec      *pspec);
+static void             _adg_destroy            (AdgEntity       *entity);
 static void             _adg_set_parent         (AdgEntity       *entity,
                                                  AdgEntity       *parent);
 static void             _adg_global_changed     (AdgEntity       *entity);
@@ -151,7 +160,7 @@ adg_entity_class_init(AdgEntityClass *klass)
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
-    klass->destroy = (void (*)(AdgEntity *)) g_object_unref;
+    klass->destroy = _adg_destroy;
     klass->parent_set = NULL;
     klass->global_changed = _adg_global_changed;
     klass->local_changed = _adg_local_changed;
@@ -1168,6 +1177,15 @@ adg_entity_point(AdgEntity *entity, AdgPoint *old_point, const AdgPoint *new_poi
     return point;
 }
 
+
+static void
+_adg_destroy(AdgEntity *entity)
+{
+    GObject *object = (GObject *) entity;
+
+    g_object_run_dispose(object);
+    g_object_unref(object);
+}
 
 static void
 _adg_set_parent(AdgEntity *entity, AdgEntity *parent)
