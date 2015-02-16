@@ -35,38 +35,53 @@ _adg_property_canvas(void)
     g_object_ref(valid_canvas);
 
     /* Using the public APIs */
+    adg_test_signal(area, "canvas-changed");
     adg_gtk_area_set_canvas(area, NULL);
+    g_assert_false(adg_test_signal_check(FALSE));
     canvas = adg_gtk_area_get_canvas(area);
     g_assert_null(canvas);
 
     adg_gtk_area_set_canvas(area, valid_canvas);
+    g_assert_true(adg_test_signal_check(FALSE));
     canvas = adg_gtk_area_get_canvas(area);
     g_assert_true(canvas == valid_canvas);
 
     adg_gtk_area_set_canvas(area, invalid_canvas);
+    g_assert_false(adg_test_signal_check(FALSE));
     canvas = adg_gtk_area_get_canvas(area);
     g_assert_true(canvas == valid_canvas);
 
+    /* Setting the canvas to NULL is a valid operation
+     * and means to unset the canvas */
     adg_gtk_area_set_canvas(area, NULL);
+    g_assert_true(adg_test_signal_check(FALSE));
+
+    /* Resetting the same value is a no-op */
+    adg_gtk_area_set_canvas(area, NULL);
+    g_assert_false(adg_test_signal_check(FALSE));
     canvas = adg_gtk_area_get_canvas(area);
     g_assert_null(canvas);
 
     /* Using GObject property methods */
     g_object_set(area, "canvas", NULL, NULL);
+    g_assert_false(adg_test_signal_check(FALSE));
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert_null(canvas);
 
     g_object_set(area, "canvas", valid_canvas, NULL);
+    g_assert_true(adg_test_signal_check(FALSE));
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert_true(canvas == valid_canvas);
     adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", invalid_canvas, NULL);
+    g_assert_false(adg_test_signal_check(FALSE));
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert_true(canvas == valid_canvas);
     adg_entity_destroy(ADG_ENTITY(canvas));
 
     g_object_set(area, "canvas", NULL, NULL);
+    g_assert_true(adg_test_signal_check(TRUE));
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert_null(canvas);
 
@@ -212,6 +227,78 @@ _adg_property_render_map(void)
     gtk_widget_destroy(GTK_WIDGET(area));
 }
 
+static void
+_adg_method_get_extents(void)
+{
+    AdgGtkArea *area;
+    const CpmlExtents *extents;
+    AdgCanvas *canvas;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    canvas = adg_test_canvas();
+
+    /* Sanity check */
+    g_assert_null(adg_gtk_area_get_extents(NULL));
+
+    /* With no canvas, the extents should be undefined */
+    extents = adg_gtk_area_get_extents(area);
+    g_assert_false(extents->is_defined);
+
+    adg_gtk_area_set_canvas(area, canvas);
+    g_object_unref(canvas);
+    extents = adg_gtk_area_get_extents(area);
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->org.x, ==, 0);
+    g_assert_cmpfloat(extents->org.y, ==, 0);
+    g_assert_cmpfloat(extents->size.x, ==, 1);
+    g_assert_cmpfloat(extents->size.y, ==, 1);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+static void
+_adg_method_get_zoom(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    canvas = adg_test_canvas();
+
+    /* Sanity check */
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(NULL), ==, 0);
+
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    adg_gtk_area_set_canvas(area, canvas);
+    g_object_unref(canvas);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+static void
+_adg_method_extents_changed(void)
+{
+    AdgGtkArea *area;
+    CpmlExtents extents;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    extents.is_defined = FALSE;
+
+    /* Sanity check */
+    adg_gtk_area_extents_changed(NULL, &extents);
+
+    adg_test_signal(area, "extents-changed");
+    adg_gtk_area_extents_changed(area, &extents);
+    g_assert_true(adg_test_signal_check(FALSE));
+
+    adg_gtk_area_extents_changed(area, NULL);
+    g_assert_true(adg_test_signal_check(TRUE));
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -224,6 +311,10 @@ main(int argc, char *argv[])
     g_test_add_func("/adg-gtk/area/property/factor", _adg_property_factor);
     g_test_add_func("/adg-gtk/area/property/autozoom", _adg_property_autozoom);
     g_test_add_func("/adg-gtk/area/property/render-map", _adg_property_render_map);
+
+    g_test_add_func("/adg-gtk/area/method/get-extents", _adg_method_get_extents);
+    g_test_add_func("/adg-gtk/area/method/get-zoom", _adg_method_get_zoom);
+    g_test_add_func("/adg-gtk/area/method/extents-changed", _adg_method_extents_changed);
 
     return g_test_run();
 }
