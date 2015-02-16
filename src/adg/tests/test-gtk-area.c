@@ -70,6 +70,7 @@ _adg_property_canvas(void)
     g_object_get(area, "canvas", &canvas, NULL);
     g_assert_null(canvas);
 
+    adg_gtk_area_set_canvas(area, valid_canvas);
     gtk_widget_destroy(GTK_WIDGET(area));
     adg_entity_destroy(ADG_ENTITY(valid_canvas));
 }
