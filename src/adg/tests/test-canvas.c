@@ -21,27 +21,6 @@
 #include <adg-test.h>
 #include <adg.h>
 
-static AdgCanvas *
-_adg_non_empty_canvas(void)
-{
-    AdgPath *path;
-    AdgStroke *stroke;
-    AdgCanvas *canvas;
-
-    path = adg_path_new();
-    adg_path_move_to_explicit(path, 0, 0);
-    adg_path_line_to_explicit(path, 1, 1);
-    stroke = adg_stroke_new(ADG_TRAIL(path));
-    g_object_unref(path);
-
-    canvas = adg_canvas_new();
-    adg_canvas_set_margins(canvas, 0, 0, 0, 0);
-    adg_canvas_set_paddings(canvas, 0, 0, 0, 0);
-
-    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
-
-    return canvas;
-}
 
 static void
 _adg_behavior_entity(void)
@@ -50,7 +29,7 @@ _adg_behavior_entity(void)
     const CpmlExtents *extents;
     AdgTitleBlock *title_block;
 
-    canvas = _adg_non_empty_canvas();
+    canvas = ADG_CANVAS(adg_test_canvas());
 
     adg_entity_arrange(ADG_ENTITY(canvas));
     extents = adg_entity_get_extents(ADG_ENTITY(canvas));
@@ -904,8 +883,8 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg/canvas/behavior/entity", _adg_behavior_entity);
     g_test_add_func("/adg/canvas/behavior/misc", _adg_behavior_misc);
-    adg_test_add_global_space_checks("/adg/canvas/behavior/global-space", _adg_non_empty_canvas());
-    adg_test_add_local_space_checks("/adg/canvas/behavior/local-space", _adg_non_empty_canvas());
+    adg_test_add_global_space_checks("/adg/canvas/behavior/global-space", adg_test_canvas());
+    adg_test_add_local_space_checks("/adg/canvas/behavior/local-space", adg_test_canvas());
 
     g_test_add_func("/adg/canvas/property/background-dress", _adg_property_background_dress);
     g_test_add_func("/adg/canvas/property/frame-dress", _adg_property_frame_dress);

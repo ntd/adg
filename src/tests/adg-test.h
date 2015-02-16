@@ -107,6 +107,7 @@ cairo_t *       adg_test_cairo_context          (void);
 int             adg_test_cairo_num_data         (cairo_t        *cr);
 const cairo_path_t *
                 adg_test_path                   (void);
+gpointer        adg_test_canvas                 (void);
 void            adg_test_signal                 (gpointer        instance,
                                                  const gchar    *detailed_signal);
 gboolean        adg_test_signal_check           (gboolean        disconnect);

@@ -24,6 +24,9 @@
 #include "adg-path.h"
 #include "adg-container.h"
 #include "adg-stroke.h"
+#include "adg-table.h"
+#include "adg-title-block.h"
+#include "adg-canvas.h"
 #include "adg-test.h"
 
 
@@ -181,6 +184,28 @@ adg_test_path(void)
         G_N_ELEMENTS(data)
     };
     return &path;
+}
+
+gpointer
+adg_test_canvas(void)
+{
+    AdgPath *path;
+    AdgStroke *stroke;
+    AdgCanvas *canvas;
+
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to_explicit(path, 1, 1);
+    stroke = adg_stroke_new(ADG_TRAIL(path));
+    g_object_unref(path);
+
+    canvas = adg_canvas_new();
+    adg_canvas_set_margins(canvas, 0, 0, 0, 0);
+    adg_canvas_set_paddings(canvas, 0, 0, 0, 0);
+
+    adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
+
+    return canvas;
 }
 
 static void
