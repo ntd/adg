@@ -40,11 +40,6 @@ _adg_non_empty_canvas(void)
 
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(stroke));
 
-    /* stroke must be freed with dispose because of its circular
-     * dependency with path */
-    g_object_weak_ref(G_OBJECT(canvas),
-                      (GWeakNotify) g_object_run_dispose, stroke);
-
     return canvas;
 }
 
@@ -84,7 +79,7 @@ _adg_behavior_entity(void)
     g_assert_cmpfloat(extents->size.x, ==, 5000);
     g_assert_cmpfloat(extents->size.y, ==, 5000);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -131,7 +126,7 @@ _adg_property_background_dress(void)
     g_object_get(canvas, "background-dress", &background_dress, NULL);
     g_assert_cmpint(background_dress, ==, valid_dress_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -172,7 +167,7 @@ _adg_property_frame_dress(void)
     g_object_get(canvas, "frame-dress", &frame_dress, NULL);
     g_assert_cmpint(frame_dress, ==, valid_dress_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -223,7 +218,7 @@ _adg_property_title_block(void)
     g_object_get(canvas, "title-block", &title_block, NULL);
     g_assert_null(title_block);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -274,7 +269,7 @@ _adg_property_size(void)
     g_assert_true(cpml_pair_equal(size_dup, &null_size));
     g_free(size_dup);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -288,7 +283,7 @@ _adg_property_scales(void)
     canvas = adg_canvas_new();
     scales = adg_canvas_get_scales(canvas);
     g_assert_nonnull(scales);
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 
     /* AdgCanvas:scales must be prefilled also when using g_object_new() */
     canvas = g_object_new(ADG_TYPE_CANVAS, NULL);
@@ -333,7 +328,7 @@ _adg_property_scales(void)
     g_assert_null(scales[3]);
     g_strfreev(scales);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -365,7 +360,7 @@ _adg_property_top_margin(void)
     g_object_get(canvas, "top-margin", &top_margin, NULL);
     g_assert_cmpfloat(top_margin, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -397,7 +392,7 @@ _adg_property_right_margin(void)
     g_object_get(canvas, "right-margin", &right_margin, NULL);
     g_assert_cmpfloat(right_margin, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -429,7 +424,7 @@ _adg_property_bottom_margin(void)
     g_object_get(canvas, "bottom-margin", &bottom_margin, NULL);
     g_assert_cmpfloat(bottom_margin, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -461,7 +456,7 @@ _adg_property_left_margin(void)
     g_object_get(canvas, "left-margin", &left_margin, NULL);
     g_assert_cmpfloat(left_margin, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -500,7 +495,7 @@ _adg_property_has_frame(void)
     g_object_get(canvas, "has-frame", &has_frame, NULL);
     g_assert_true(has_frame);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -532,7 +527,7 @@ _adg_property_top_padding(void)
     g_object_get(canvas, "top-padding", &top_padding, NULL);
     g_assert_cmpfloat(top_padding, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -564,7 +559,7 @@ _adg_property_right_padding(void)
     g_object_get(canvas, "right-padding", &right_padding, NULL);
     g_assert_cmpfloat(right_padding, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -596,7 +591,7 @@ _adg_property_bottom_padding(void)
     g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
     g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -628,7 +623,7 @@ _adg_property_left_padding(void)
     g_object_get(canvas, "left-padding", &left_padding, NULL);
     g_assert_cmpfloat(left_padding, ==, valid_value_2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -690,8 +685,7 @@ _adg_method_autoscale(void)
     adg_assert_isapprox(matrix->xx, 0.1);
     g_assert_cmpstr(adg_title_block_get_scale(title_block), ==, "1:10 ");
 
-    g_object_run_dispose(G_OBJECT(stroke));
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -713,7 +707,7 @@ _adg_method_set_margins(void)
     g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 5);
     g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 7);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -754,7 +748,7 @@ _adg_method_apply_margins(void)
     g_assert_cmpfloat(extents.size.x, ==, 22);
     g_assert_cmpfloat(extents.size.y, ==, 18);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -776,7 +770,7 @@ _adg_method_set_paddings(void)
     g_assert_cmpfloat(adg_canvas_get_bottom_padding(canvas), ==, 5);
     g_assert_cmpfloat(adg_canvas_get_left_padding(canvas),   ==, 7);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 #if GTK3_ENABLED || GTK2_ENABLED
@@ -824,7 +818,7 @@ _adg_method_set_paper(void)
     g_assert_cmpfloat(size->x, ==, width - 1);
     g_assert_cmpfloat(size->y, ==, height - 2);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -848,7 +842,7 @@ _adg_method_get_page_setup(void)
     adg_canvas_set_page_setup(canvas, NULL);
     g_assert_null(adg_canvas_get_page_setup(canvas));
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
@@ -894,7 +888,7 @@ _adg_method_set_page_setup(void)
     g_assert_cmpfloat(size->x, ==, width);
     g_assert_cmpfloat(size->y, ==, height);
 
-    g_object_run_dispose(G_OBJECT(canvas));
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 #endif
 
