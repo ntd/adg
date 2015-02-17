@@ -227,6 +227,18 @@ _adg_property_render_map(void)
     gtk_widget_destroy(GTK_WIDGET(area));
 }
 
+static AdgGtkArea *
+_adg_gtk_area_new(void)
+{
+    AdgGtkArea *area = ADG_GTK_AREA(adg_gtk_area_new());
+    AdgCanvas *canvas = adg_test_canvas();
+
+    adg_gtk_area_set_canvas(area, canvas);
+    g_object_unref(canvas);
+
+    return area;
+}
+
 static void
 _adg_method_get_extents(void)
 {
@@ -278,6 +290,83 @@ _adg_method_get_zoom(void)
 }
 
 static void
+_adg_method_switch_autozoom(void)
+{
+    AdgGtkArea *area;
+    GtkAllocation allocation;
+
+    area = _adg_gtk_area_new();
+    allocation.width = 100;
+    allocation.height = 100;
+
+    /* Allocation does not work if the widget is not visible: without a
+     * top-level this will hopefully do not require an X server running */
+    gtk_widget_show(GTK_WIDGET(area));
+
+    /* Without autozoom the zoom factor is left to 1 */
+    gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    /* The allocation phase is one-shot, so I must destroy and recreate
+     * the AdgGtkArea widget every time to trigger the size allocation */
+    gtk_widget_destroy(GTK_WIDGET(area));
+    area = _adg_gtk_area_new();
+    gtk_widget_show(GTK_WIDGET(area));
+
+    /* With autozoom */
+    adg_gtk_area_switch_autozoom(area, TRUE);
+    gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 100);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+    area = _adg_gtk_area_new();
+    gtk_widget_show(GTK_WIDGET(area));
+
+    /* Trying different allocation size */
+    adg_gtk_area_switch_autozoom(area, TRUE);
+    allocation.width = 200;
+    allocation.height = 200;
+    gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 200);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+static void
+_adg_method_reset(void)
+{
+    GtkWidget *window;
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+    cairo_matrix_t map;
+
+    /* Sanity check */
+    adg_gtk_area_reset(NULL);
+
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(area));
+
+    canvas = adg_test_canvas();
+    adg_gtk_area_set_canvas(area, canvas);
+    g_object_unref(canvas);
+
+    cairo_matrix_init_scale(&map, 2, 2);
+
+    adg_gtk_area_reset(area);
+    adg_gtk_area_reset(area);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    adg_gtk_area_set_render_map(area, &map);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 2);
+
+    adg_gtk_area_reset(area);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    gtk_widget_destroy(window);
+}
+
+static void
 _adg_method_extents_changed(void)
 {
     AdgGtkArea *area;
@@ -314,6 +403,8 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg-gtk/area/method/get-extents", _adg_method_get_extents);
     g_test_add_func("/adg-gtk/area/method/get-zoom", _adg_method_get_zoom);
+    g_test_add_func("/adg-gtk/area/method/switch-autozoom", _adg_method_switch_autozoom);
+    g_test_add_func("/adg-gtk/area/method/reset", _adg_method_reset);
     g_test_add_func("/adg-gtk/area/method/extents-changed", _adg_method_extents_changed);
 
     return g_test_run();
