@@ -18,9 +18,79 @@
  */
 
 
+#include <config.h>
 #include <adg-test.h>
 #include <adg.h>
 
+
+static AdgGtkArea *
+_adg_gtk_area_new(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+
+    canvas = adg_test_canvas();
+    area = ADG_GTK_AREA(adg_gtk_area_new_with_canvas(canvas));
+    g_object_unref(canvas);
+
+    return area;
+}
+
+static void
+_adg_behavior_translation(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+    GdkEventMotion event_motion;
+    GdkEventButton event_button;
+    gboolean stop;
+    const cairo_matrix_t *map;
+
+    area = _adg_gtk_area_new();
+    canvas = adg_gtk_area_get_canvas(area);
+
+    /* Translating requires an arranged canvas */
+    adg_entity_arrange(ADG_ENTITY(canvas));
+
+    /* Translating (local space) */
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    event_button.type = GDK_BUTTON_PRESS;
+    event_button.button = 2;
+    event_button.x = 10;
+    event_button.y = 20;
+    g_signal_emit_by_name(area, "button-press-event", &event_button, NULL, &stop);
+
+    event_motion.type = GDK_MOTION_NOTIFY;
+    event_motion.state = GDK_BUTTON2_MASK;
+    event_motion.x = 100;
+    event_motion.y = 200;
+    g_signal_emit_by_name(area, "motion-notify-event", &event_motion, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, ==, 90);
+    g_assert_cmpfloat(map->y0, ==, 180);
+
+    /* Translating (global space) */
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    event_button.x = 30;
+    event_button.y = 40;
+    g_signal_emit_by_name(area, "button-press-event", &event_button, NULL, &stop);
+
+    event_motion.state |= GDK_SHIFT_MASK;
+    event_motion.x = 300;
+    event_motion.y = 400;
+    g_signal_emit_by_name(area, "motion-notify-event", &event_motion, NULL, &stop);
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, ==, 270);
+    g_assert_cmpfloat(map->y0, ==, 360);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
 
 static void
 _adg_property_canvas(void)
@@ -227,18 +297,6 @@ _adg_property_render_map(void)
     gtk_widget_destroy(GTK_WIDGET(area));
 }
 
-static AdgGtkArea *
-_adg_gtk_area_new(void)
-{
-    AdgGtkArea *area = ADG_GTK_AREA(adg_gtk_area_new());
-    AdgCanvas *canvas = adg_test_canvas();
-
-    adg_gtk_area_set_canvas(area, canvas);
-    g_object_unref(canvas);
-
-    return area;
-}
-
 static void
 _adg_method_get_extents(void)
 {
@@ -388,6 +446,182 @@ _adg_method_extents_changed(void)
     gtk_widget_destroy(GTK_WIDGET(area));
 }
 
+static void
+_adg_method_canvas_changed(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    canvas = adg_canvas_new();
+
+    /* Sanity check */
+    adg_gtk_area_canvas_changed(NULL, canvas);
+
+    adg_test_signal(area, "canvas-changed");
+    adg_gtk_area_canvas_changed(area, canvas);
+    g_assert_true(adg_test_signal_check(FALSE));
+
+    adg_gtk_area_canvas_changed(area, NULL);
+    g_assert_true(adg_test_signal_check(TRUE));
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
+_adg_method_scroll_event(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+    GdkEventScroll event;
+    gboolean stop;
+    const cairo_matrix_t *map;
+
+    area = _adg_gtk_area_new();
+    canvas = adg_gtk_area_get_canvas(area);
+
+    /* Zooming requires an arranged canvas */
+    adg_entity_arrange(ADG_ENTITY(canvas));
+
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->xx, ==, 1);
+
+    /* Zoom in (local space) */
+    event.type = GDK_SCROLL;
+    event.direction = GDK_SCROLL_UP;
+    event.state = 0;
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->xx, >, 1);
+
+    /* Zoom out (local space) */
+    event.direction = GDK_SCROLL_DOWN;
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->xx, ==, 1);
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->xx, <, 1);
+
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+
+    /* Zoom out (global space) */
+    event.state = GDK_SHIFT_MASK;
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), <, 1);
+
+    /* Zoom in (global space) */
+    event.direction = GDK_SCROLL_UP;
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
+    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), >, 1);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+static void
+_adg_method_motion_event(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+    GdkEventMotion event;
+    gboolean stop;
+    const cairo_matrix_t *map;
+
+    area = _adg_gtk_area_new();
+    canvas = adg_gtk_area_get_canvas(area);
+
+    /* Checking motion requires an arranged canvas */
+    adg_entity_arrange(ADG_ENTITY(canvas));
+
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    /* Motion (local space) */
+    event.type = GDK_MOTION_NOTIFY;
+    event.state = GDK_BUTTON2_MASK;
+    event.x = 10;
+    event.y = 20;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, >, 0);
+    g_assert_cmpfloat(map->y0, >, 0);
+    event.x = -event.x;
+    event.y = -event.y;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, <, 0);
+    g_assert_cmpfloat(map->y0, <, 0);
+    event.x = 0;
+    event.y = 0;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_entity_get_local_map(ADG_ENTITY(canvas));
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    /* Motion (global space) */
+    event.state |= GDK_SHIFT_MASK;
+    event.x = 30;
+    event.y = 40;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, >, 0);
+    g_assert_cmpfloat(map->y0, >, 0);
+    event.x = -event.x;
+    event.y = -event.y;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, <, 0);
+    g_assert_cmpfloat(map->y0, <, 0);
+    event.x = 0;
+    event.y = 0;
+    g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
+    map = adg_gtk_area_get_render_map(area);
+    g_assert_cmpfloat(map->x0, ==, 0);
+    g_assert_cmpfloat(map->y0, ==, 0);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+#ifdef GTK2_ENABLED
+
+static void
+_adg_method_size_request(void)
+{
+    AdgGtkArea *area;
+    AdgCanvas *canvas;
+    GtkRequisition requisition;
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    canvas = adg_test_canvas();
+
+    gtk_widget_size_request(GTK_WIDGET(area), &requisition);
+    g_assert_cmpint(requisition.width, ==, 0);
+    g_assert_cmpint(requisition.height, ==, 0);
+
+    /* Size requests are cached so recreate the area widget */
+    gtk_widget_destroy(GTK_WIDGET(area));
+
+    area = ADG_GTK_AREA(adg_gtk_area_new());
+    adg_gtk_area_set_canvas(area, canvas);
+    g_object_unref(canvas);
+
+    gtk_widget_size_request(GTK_WIDGET(area), &requisition);
+    g_assert_cmpint(requisition.width, ==, 1);
+    g_assert_cmpint(requisition.height, ==, 1);
+
+    gtk_widget_destroy(GTK_WIDGET(area));
+}
+
+#endif
+
 
 int
 main(int argc, char *argv[])
@@ -395,6 +629,8 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg-gtk/area/type/object", ADG_GTK_TYPE_AREA);
+
+    g_test_add_func("/adg-gtk/area/behavior/translation", _adg_behavior_translation);
 
     g_test_add_func("/adg-gtk/area/property/canvas", _adg_property_canvas);
     g_test_add_func("/adg-gtk/area/property/factor", _adg_property_factor);
@@ -406,6 +642,12 @@ main(int argc, char *argv[])
     g_test_add_func("/adg-gtk/area/method/switch-autozoom", _adg_method_switch_autozoom);
     g_test_add_func("/adg-gtk/area/method/reset", _adg_method_reset);
     g_test_add_func("/adg-gtk/area/method/extents-changed", _adg_method_extents_changed);
+    g_test_add_func("/adg-gtk/area/method/canvas-changed", _adg_method_canvas_changed);
+    g_test_add_func("/adg-gtk/area/method/scroll-event", _adg_method_scroll_event);
+    g_test_add_func("/adg-gtk/area/method/motion-event", _adg_method_motion_event);
+#ifdef GTK2_ENABLED
+    g_test_add_func("/adg-gtk/area/method/size-request", _adg_method_size_request);
+#endif
 
     return g_test_run();
 }
