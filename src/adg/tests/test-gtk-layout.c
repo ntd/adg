@@ -372,6 +372,52 @@ _adg_method_value_changed(void)
     gtk_widget_destroy(GTK_WIDGET(layout));
 }
 
+static void
+_adg_method_set_parent(void)
+{
+    AdgGtkLayout *layout;
+    GtkScrolledWindow *scrolled_window;
+    GtkPolicyType hpolicy, vpolicy;
+    GtkRequisition size_request;
+
+    layout = _adg_gtk_layout_new();
+    scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
+
+    gtk_scrolled_window_get_policy(scrolled_window, GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
+    gtk_scrolled_window_get_policy(scrolled_window, &hpolicy, &vpolicy);
+    g_assert_cmpint(hpolicy, ==, GTK_POLICY_ALWAYS);
+    g_assert_cmpint(vpolicy, ==, GTK_POLICY_ALWAYS);
+
+#ifdef GTK2_ENABLED
+    gtk_widget_get_child_requisition(GTK_WIDGET(scrolled_window), &size_request);
+#endif
+#ifdef GTK3_ENABLED
+    gtk_widget_get_preferred_size(GTK_WIDGET(scrolled_window), &size_request, NULL);
+#endif
+    g_assert_cmpint(size_request.width, ==, 0);
+    g_assert_cmpint(size_request.height, ==, 0);
+
+    gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(layout));
+
+    /* Ensure the scrolling policy is set to NEVER */
+    gtk_scrolled_window_get_policy(scrolled_window, &hpolicy, &vpolicy);
+    g_assert_cmpint(hpolicy, ==, GTK_POLICY_NEVER);
+    g_assert_cmpint(vpolicy, ==, GTK_POLICY_NEVER);
+
+    /* Check the scrolled window size has been updated */
+#ifdef GTK2_ENABLED
+    gtk_widget_get_child_requisition(GTK_WIDGET(scrolled_window), &size_request);
+#endif
+#ifdef GTK3_ENABLED
+    gtk_widget_get_preferred_size(GTK_WIDGET(scrolled_window), &size_request, NULL);
+#endif
+    /* The current implementation adds 1 pixel margin (1x1 becomes 3x3) */
+    g_assert_cmpint(size_request.width, ==, 3);
+    g_assert_cmpint(size_request.height, ==, 3);
+
+    gtk_widget_destroy(GTK_WIDGET(scrolled_window));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -389,6 +435,7 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg-gtk/layout/method/size-allocate", _adg_method_size_allocate);
     g_test_add_func("/adg-gtk/layout/method/value-changed", _adg_method_value_changed);
+    g_test_add_func("/adg-gtk/layout/method/parent-set", _adg_method_set_parent);
 
     return g_test_run();
 }
