@@ -18,9 +18,23 @@
  */
 
 
+#include <config.h>
 #include <adg-test.h>
 #include <adg.h>
 
+
+static AdgGtkLayout *
+_adg_gtk_layout_new(void)
+{
+    AdgGtkLayout *layout;
+    AdgCanvas *canvas;
+
+    canvas = adg_test_canvas();
+    layout = ADG_GTK_LAYOUT(adg_gtk_layout_new_with_canvas(canvas));
+    g_object_unref(canvas);
+
+    return layout;
+}
 
 static void
 _adg_property_hadjustment(void)
@@ -142,6 +156,217 @@ _adg_property_vadjustment(void)
     g_object_unref(valid_adjustment);
 }
 
+#ifdef GTK3_ENABLED
+
+static void
+_adg_property_hscroll_policy(void)
+{
+    AdgGtkLayout *layout;
+    GtkScrollablePolicy policy;
+
+    layout = ADG_GTK_LAYOUT(adg_gtk_layout_new());
+
+    /* Using the public APIs */
+    g_assert_cmpint(gtk_scrollable_get_hscroll_policy(GTK_SCROLLABLE(layout)), ==, GTK_SCROLL_MINIMUM);
+
+    gtk_scrollable_set_hscroll_policy(GTK_SCROLLABLE(layout), GTK_SCROLL_NATURAL);
+    g_assert_cmpint(gtk_scrollable_get_hscroll_policy(GTK_SCROLLABLE(layout)), ==, GTK_SCROLL_NATURAL);
+
+    g_object_set(layout, "hscroll-policy", GTK_SCROLL_MINIMUM, NULL);
+    g_object_get(layout, "hscroll-policy", &policy, NULL);
+    g_assert_cmpint(policy, ==, GTK_SCROLL_MINIMUM);
+
+    gtk_widget_destroy(GTK_WIDGET(layout));
+}
+
+static void
+_adg_property_vscroll_policy(void)
+{
+    AdgGtkLayout *layout;
+    GtkScrollablePolicy policy;
+
+    layout = ADG_GTK_LAYOUT(adg_gtk_layout_new());
+
+    /* Using the public APIs */
+    g_assert_cmpint(gtk_scrollable_get_vscroll_policy(GTK_SCROLLABLE(layout)), ==, GTK_SCROLL_MINIMUM);
+
+    gtk_scrollable_set_vscroll_policy(GTK_SCROLLABLE(layout), GTK_SCROLL_NATURAL);
+    g_assert_cmpint(gtk_scrollable_get_vscroll_policy(GTK_SCROLLABLE(layout)), ==, GTK_SCROLL_NATURAL);
+
+    g_object_set(layout, "vscroll-policy", GTK_SCROLL_MINIMUM, NULL);
+    g_object_get(layout, "vscroll-policy", &policy, NULL);
+    g_assert_cmpint(policy, ==, GTK_SCROLL_MINIMUM);
+
+    gtk_widget_destroy(GTK_WIDGET(layout));
+}
+
+#endif
+
+static void
+_adg_method_size_allocate(void)
+{
+    AdgGtkLayout *layout;
+    AdgCanvas *canvas;
+    cairo_matrix_t scale_x200;
+    GtkAllocation allocation;
+    GtkAdjustment *adjustment;
+
+    layout = ADG_GTK_LAYOUT(adg_gtk_layout_new());
+    cairo_matrix_init_scale(&scale_x200, 200, 200);
+
+    /* Allocation does not work if the widget is not visible: without a
+     * top-level this will hopefully do not require an X server running */
+    gtk_widget_show(GTK_WIDGET(layout));
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    allocation.width = 100;
+    allocation.height = 100;
+    gtk_widget_size_allocate(GTK_WIDGET(layout), &allocation);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    /* The allocation phase is one-shot, so I must destroy and recreate
+     * the AdgGtkLayout widget every time to trigger the size allocation */
+    gtk_widget_destroy(GTK_WIDGET(layout));
+    layout = _adg_gtk_layout_new();
+    canvas = adg_gtk_area_get_canvas(ADG_GTK_AREA(layout));
+    gtk_widget_show(GTK_WIDGET(layout));
+
+    adg_entity_transform_global_map(ADG_ENTITY(canvas),
+                                    &scale_x200,
+                                    ADG_TRANSFORM_AFTER);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    allocation.width = 100;
+    allocation.height = 100;
+    gtk_widget_size_allocate(GTK_WIDGET(layout), &allocation);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    allocation.width = 20;
+    allocation.height = 30;
+    gtk_widget_size_allocate(GTK_WIDGET(layout), &allocation);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 20);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 30);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+
+    adg_gtk_area_canvas_changed(ADG_GTK_AREA(layout), NULL);
+
+    gtk_widget_destroy(GTK_WIDGET(layout));
+}
+
+static void
+_adg_method_value_changed(void)
+{
+    AdgGtkLayout *layout;
+    AdgCanvas *canvas;
+    cairo_matrix_t scale_x200;
+    GtkAllocation allocation;
+    GtkAdjustment *adjustment;
+
+    layout = _adg_gtk_layout_new();
+    canvas = adg_gtk_area_get_canvas(ADG_GTK_AREA(layout));
+    cairo_matrix_init_scale(&scale_x200, 200, 200);
+
+    adg_entity_transform_global_map(ADG_ENTITY(canvas),
+                                    &scale_x200,
+                                    ADG_TRANSFORM_AFTER);
+
+    /* Allocation does not work if the widget is not visible: without a
+     * top-level this will hopefully do not require an X server running */
+    gtk_widget_show(GTK_WIDGET(layout));
+
+    allocation.width = 100;
+    allocation.height = 100;
+    gtk_widget_size_allocate(GTK_WIDGET(layout), &allocation);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    gtk_adjustment_set_value(adjustment, 100);
+    gtk_adjustment_value_changed(adjustment);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    gtk_adjustment_set_value(adjustment, 40);
+    gtk_adjustment_value_changed(adjustment);
+    gtk_adjustment_changed(adjustment);
+
+    adjustment = adg_gtk_layout_get_hadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 50);
+
+    adjustment = adg_gtk_layout_get_vadjustment(layout);
+    g_assert_nonnull(adjustment);
+    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
+    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
+    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 40);
+
+    gtk_widget_destroy(GTK_WIDGET(layout));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -152,6 +377,13 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg-gtk/layout/property/hadjustment", _adg_property_hadjustment);
     g_test_add_func("/adg-gtk/layout/property/vadjustment", _adg_property_vadjustment);
+#ifdef GTK3_ENABLED
+    g_test_add_func("/adg-gtk/layout/property/hscroll-policy", _adg_property_hscroll_policy);
+    g_test_add_func("/adg-gtk/layout/property/vscroll-policy", _adg_property_vscroll_policy);
+#endif
+
+    g_test_add_func("/adg-gtk/layout/method/size-allocate", _adg_method_size_allocate);
+    g_test_add_func("/adg-gtk/layout/method/value-changed", _adg_method_value_changed);
 
     return g_test_run();
 }
