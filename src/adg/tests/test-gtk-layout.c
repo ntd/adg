@@ -355,7 +355,12 @@ _adg_method_value_changed(void)
     g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
     g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
     g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+#ifdef GTK2_ENABLED
+    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100);
+#endif
+#ifdef GTK3_ENABLED
     g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 50);
+#endif
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
