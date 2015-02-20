@@ -383,7 +383,8 @@ _adg_method_set_parent(void)
     layout = _adg_gtk_layout_new();
     scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
 
-    gtk_scrolled_window_get_policy(scrolled_window, GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
+    gtk_scrolled_window_set_policy(scrolled_window,
+                                   GTK_POLICY_ALWAYS, GTK_POLICY_ALWAYS);
     gtk_scrolled_window_get_policy(scrolled_window, &hpolicy, &vpolicy);
     g_assert_cmpint(hpolicy, ==, GTK_POLICY_ALWAYS);
     g_assert_cmpint(vpolicy, ==, GTK_POLICY_ALWAYS);
