@@ -331,6 +331,10 @@ void
 adg_test_signal(gpointer instance, const gchar *detailed_signal)
 {
     signal_data.instance = instance;
+
+    /* The swapped variant *must* be used, otherwise the position of flag
+     * would depend on the number of parameters of the signal. This also
+     * implies I cannot use _adg_increment() here. */
     signal_data.handler = g_signal_connect_swapped(instance,
                                                    detailed_signal,
                                                    G_CALLBACK(_adg_test_set),
@@ -344,6 +348,8 @@ adg_test_signal_check(gboolean disconnect)
     gboolean last_flag;
 
     if (disconnect) {
+        /* A handler cannot be disconnected twice */
+        g_assert(signal_data.instance != NULL);
         g_signal_handler_disconnect(signal_data.instance, signal_data.handler);
         signal_data.instance = NULL;
     }
