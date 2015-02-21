@@ -378,7 +378,7 @@ _adg_method_set_parent(void)
     AdgGtkLayout *layout;
     GtkScrolledWindow *scrolled_window;
     GtkPolicyType hpolicy, vpolicy;
-    GtkRequisition size_request;
+    gint width, height;
 
     layout = _adg_gtk_layout_new();
     scrolled_window = GTK_SCROLLED_WINDOW(gtk_scrolled_window_new(NULL, NULL));
@@ -389,15 +389,12 @@ _adg_method_set_parent(void)
     g_assert_cmpint(hpolicy, ==, GTK_POLICY_ALWAYS);
     g_assert_cmpint(vpolicy, ==, GTK_POLICY_ALWAYS);
 
-#ifdef GTK2_ENABLED
-    gtk_widget_get_child_requisition(GTK_WIDGET(scrolled_window), &size_request);
-#endif
-#ifdef GTK3_ENABLED
-    gtk_widget_get_preferred_size(GTK_WIDGET(scrolled_window), &size_request, NULL);
-#endif
-    g_assert_cmpint(size_request.width, ==, 0);
-    g_assert_cmpint(size_request.height, ==, 0);
+    gtk_widget_get_size_request(GTK_WIDGET(scrolled_window), &width, &height);
+    g_assert_cmpint(width, ==, -1);
+    g_assert_cmpint(height, ==, -1);
 
+    /* Adding layout inside scrolled_window triggers some customization
+     * of the latter */
     gtk_container_add(GTK_CONTAINER(scrolled_window), GTK_WIDGET(layout));
 
     /* Ensure the scrolling policy is set to NEVER */
@@ -406,15 +403,11 @@ _adg_method_set_parent(void)
     g_assert_cmpint(vpolicy, ==, GTK_POLICY_NEVER);
 
     /* Check the scrolled window size has been updated */
-#ifdef GTK2_ENABLED
-    gtk_widget_get_child_requisition(GTK_WIDGET(scrolled_window), &size_request);
-#endif
-#ifdef GTK3_ENABLED
-    gtk_widget_get_preferred_size(GTK_WIDGET(scrolled_window), &size_request, NULL);
-#endif
-    /* The current implementation adds 1 pixel margin (1x1 becomes 3x3) */
-    g_assert_cmpint(size_request.width, ==, 3);
-    g_assert_cmpint(size_request.height, ==, 3);
+    gtk_widget_get_size_request(GTK_WIDGET(scrolled_window), &width, &height);
+
+    /* The current implementation adds 1 pixel margin, so 1x1 becomes 3x3 */
+    g_assert_cmpint(width, ==, 3);
+    g_assert_cmpint(height, ==, 3);
 
     gtk_widget_destroy(GTK_WIDGET(scrolled_window));
 }
