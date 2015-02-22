@@ -361,6 +361,53 @@ adg_test_signal_check(gboolean disconnect)
 }
 
 static void
+_adg_model_checks(GType *p_type)
+{
+    GType type = *p_type;
+
+    g_free(p_type);
+
+    g_assert_true(g_type_is_a(type, ADG_TYPE_MODEL));
+
+    if (! G_TYPE_IS_ABSTRACT(type)) {
+        AdgModel *model = g_object_new(type, NULL);
+
+        g_assert_nonnull(model);
+        g_assert_true(ADG_IS_MODEL(model));
+
+        /* Check the clear signal */
+        adg_test_signal(model, "clear");
+        adg_model_clear(model);
+        g_assert_true(adg_test_signal_check(TRUE));
+
+        /* Check the reset signal */
+        adg_test_signal(model, "reset");
+        adg_model_reset(model);
+        g_assert_true(adg_test_signal_check(TRUE));
+
+        /* Check the reset signal triggers the clear signal */
+        adg_test_signal(model, "clear");
+        adg_model_reset(model);
+        g_assert_true(adg_test_signal_check(TRUE));
+
+        /* Check the changed signal */
+        adg_test_signal(model, "changed");
+        adg_model_changed(model);
+        g_assert_true(adg_test_signal_check(TRUE));
+
+        g_object_unref(model);
+    }
+}
+
+void
+adg_test_add_model_checks(const gchar *testpath, GType type)
+{
+    GType *p_type = g_new(GType, 1);
+    *p_type = type;
+    g_test_add_data_func(testpath, p_type, (gpointer) _adg_model_checks);
+}
+
+static void
 _adg_entity_checks(GType *p_type)
 {
     GType type = *p_type;

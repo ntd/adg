@@ -111,6 +111,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/model/type/object", ADG_TYPE_MODEL);
+    adg_test_add_model_checks("/adg/model/type/model", ADG_TYPE_MODEL);
 
     g_test_add_func("/adg/model/named-pair", _adg_property_named_pair);
     g_test_add_func("/adg/model/dependency", _adg_property_dependency);

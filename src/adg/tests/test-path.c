@@ -667,6 +667,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/path/type/object", ADG_TYPE_PATH);
+    adg_test_add_model_checks("/adg/path/type/model", ADG_TYPE_PATH);
 
     g_test_add_func("/adg/path/method/get-current-point", _adg_method_get_current_point);
     g_test_add_func("/adg/path/method/has-current-point", _adg_method_has_current_point);

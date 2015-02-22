@@ -136,6 +136,7 @@ main(int argc, char *argv[])
     adg_test_init(&argc, &argv);
 
     adg_test_add_object_checks("/adg/edges/type/object", ADG_TYPE_EDGES);
+    adg_test_add_model_checks("/adg/edges/type/model", ADG_TYPE_EDGES);
 
     g_test_add_func("/adg/edges/property/source", _adg_property_source);
     g_test_add_func("/adg/edges/property/axis-angle", _adg_property_axis_angle);
