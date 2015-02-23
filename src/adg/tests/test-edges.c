@@ -28,6 +28,7 @@ _adg_behavior_misc(void)
     AdgPath *path;
     AdgEdges *edges;
     CpmlSegment segment;
+    gint n;
 
     path = adg_path_new();
     adg_path_move_to_explicit(path, 0, 5);
@@ -38,30 +39,36 @@ _adg_behavior_misc(void)
 
     edges = adg_edges_new_with_source(ADG_TRAIL(path));
 
-    g_assert_true(adg_trail_put_segment(ADG_TRAIL(edges), 1, &segment));
-    g_assert_nonnull(segment.data);
-    g_assert_cmpint(segment.num_data, ==, 4);
-    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpfloat(segment.data[1].point.x, ==, 1);
-    g_assert_cmpfloat(segment.data[1].point.y, ==, 6);
-    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment.data[3].point.x, ==, 1);
-    g_assert_cmpfloat(segment.data[3].point.y, ==, -6);
+    /* Check repetition gives the same results */
+    for (n = 0; n < 2; ++n) {
+        g_assert_true(adg_trail_put_segment(ADG_TRAIL(edges), 1, &segment));
+        g_assert_nonnull(segment.data);
+        g_assert_cmpint(segment.num_data, ==, 4);
+        g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+        g_assert_cmpfloat(segment.data[1].point.x, ==, 1);
+        g_assert_cmpfloat(segment.data[1].point.y, ==, 6);
+        g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+        g_assert_cmpfloat(segment.data[3].point.x, ==, 1);
+        g_assert_cmpfloat(segment.data[3].point.y, ==, -6);
 
-    g_assert_true(cpml_segment_next(&segment));
-    g_assert_nonnull(segment.data);
-    g_assert_cmpint(segment.num_data, ==, 4);
-    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpfloat(segment.data[1].point.x, ==, 2);
-    g_assert_cmpfloat(segment.data[1].point.y, ==, 3);
-    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment.data[3].point.x, ==, 2);
-    g_assert_cmpfloat(segment.data[3].point.y, ==, -3);
+        g_assert_true(cpml_segment_next(&segment));
+        g_assert_nonnull(segment.data);
+        g_assert_cmpint(segment.num_data, ==, 4);
+        g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+        g_assert_cmpfloat(segment.data[1].point.x, ==, 2);
+        g_assert_cmpfloat(segment.data[1].point.y, ==, 3);
+        g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+        g_assert_cmpfloat(segment.data[3].point.x, ==, 2);
+        g_assert_cmpfloat(segment.data[3].point.y, ==, -3);
 
-    g_assert_false(cpml_segment_next(&segment));
+        g_assert_false(cpml_segment_next(&segment));
+    }
+
+    /* Check that destroying path unsets the source property */
+    g_object_unref(path);
+    g_assert_null(adg_edges_get_source(edges));
 
     g_object_unref(edges);
-    g_object_unref(path);
 }
 
 static void
