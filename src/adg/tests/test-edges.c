@@ -23,6 +23,48 @@
 
 
 static void
+_adg_behavior_misc(void)
+{
+    AdgPath *path;
+    AdgEdges *edges;
+    CpmlSegment segment;
+
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 5);
+    adg_path_line_to_explicit(path, 1, 6);
+    adg_path_line_to_explicit(path, 2, 3);
+    adg_path_line_to_explicit(path, 3, 1);
+    adg_path_reflect(path, NULL);
+
+    edges = adg_edges_new_with_source(ADG_TRAIL(path));
+
+    g_assert_true(adg_trail_put_segment(ADG_TRAIL(edges), 1, &segment));
+    g_assert_nonnull(segment.data);
+    g_assert_cmpint(segment.num_data, ==, 4);
+    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment.data[1].point.x, ==, 1);
+    g_assert_cmpfloat(segment.data[1].point.y, ==, 6);
+    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment.data[3].point.x, ==, 1);
+    g_assert_cmpfloat(segment.data[3].point.y, ==, -6);
+
+    g_assert_true(cpml_segment_next(&segment));
+    g_assert_nonnull(segment.data);
+    g_assert_cmpint(segment.num_data, ==, 4);
+    g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
+    g_assert_cmpfloat(segment.data[1].point.x, ==, 2);
+    g_assert_cmpfloat(segment.data[1].point.y, ==, 3);
+    g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
+    g_assert_cmpfloat(segment.data[3].point.x, ==, 2);
+    g_assert_cmpfloat(segment.data[3].point.y, ==, -3);
+
+    g_assert_false(cpml_segment_next(&segment));
+
+    g_object_unref(edges);
+    g_object_unref(path);
+}
+
+static void
 _adg_property_source(void)
 {
     AdgEdges *edges;
@@ -137,6 +179,8 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/edges/type/object", ADG_TYPE_EDGES);
     adg_test_add_model_checks("/adg/edges/type/model", ADG_TYPE_EDGES);
+
+    g_test_add_func("/adg/edges/behavior/misc", _adg_behavior_misc);
 
     g_test_add_func("/adg/edges/property/source", _adg_property_source);
     g_test_add_func("/adg/edges/property/axis-angle", _adg_property_axis_angle);
