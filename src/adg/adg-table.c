@@ -643,7 +643,7 @@ _adg_arrange(AdgEntity *entity)
     AdgTable *table;
     AdgTablePrivate *data;
     CpmlExtents extents = { 0 };
-    CpmlExtents row_layout = { 0 };
+    CpmlExtents row_layout;
     const CpmlExtents *row_extents;
     const CpmlPair *spacing;
     const CpmlPair *size;
@@ -671,6 +671,7 @@ _adg_arrange(AdgEntity *entity)
     }
 
     /* Arrange the layout of the table components */
+    row_layout.is_defined = 1;
     row_layout.org.x = extents.org.x;
     row_layout.org.y = extents.org.y + spacing->y;
     row_layout.size.x = extents.size.x;

@@ -416,6 +416,7 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
 
     g_return_val_if_fail(table_row != NULL, NULL);
     g_return_val_if_fail(layout != NULL, NULL);
+    g_return_val_if_fail(layout->is_defined, NULL);
 
     /* Set the new extents */
     extents = &table_row->extents;
