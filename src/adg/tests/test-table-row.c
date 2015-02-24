@@ -22,6 +22,122 @@
 #include <adg.h>
 
 
+static void
+_adg_behavior_misc(void)
+{
+    AdgTable *table;
+    AdgTableRow *row, *row2;
+    AdgTableCell *cell;
+    const CpmlExtents *extents;
+    CpmlExtents layout;
+    const CpmlPair *size;
+
+    table = adg_table_new();
+    row = adg_table_row_new(table);
+    layout.is_defined = 0;
+
+    /* Sanity check */
+    g_assert_null(adg_table_row_get_table(NULL));
+    g_assert_null(adg_table_row_new_before(NULL));
+    g_assert_null(adg_table_row_size_request(NULL));
+    g_assert_null(adg_table_row_get_extents(NULL));
+    g_assert_null(adg_table_row_arrange(NULL, &layout));
+    g_assert_null(adg_table_row_arrange(row, &layout));
+    g_assert_null(adg_table_row_arrange(row, NULL));
+    adg_table_row_free(NULL);
+
+    g_assert_true(adg_table_row_get_table(row) == table);
+
+    row2 = adg_table_row_new_before(row);
+    g_assert_true(adg_table_row_get_table(row2) == table);
+    adg_table_row_free(row2);
+
+    extents = adg_table_row_get_extents(row);
+    g_assert_nonnull(extents);
+    g_assert_false(extents->is_defined);
+
+    size = adg_table_row_size_request(row);
+    g_assert_nonnull(size);
+    g_assert_cmpfloat(size->x, ==, 0);
+    g_assert_cmpfloat(size->y, ==, 0);
+
+    extents = adg_table_row_get_extents(row);
+    g_assert_nonnull(extents);
+    g_assert_false(extents->is_defined);
+
+    adg_table_row_set_height(row, 12);
+
+    size = adg_table_row_size_request(row);
+    g_assert_nonnull(size);
+    g_assert_cmpfloat(size->x, ==, 0);
+    g_assert_cmpfloat(size->y, ==, 12);
+
+    cell = adg_table_cell_new_full(row, 34, "name", "title", FALSE);
+    g_assert_nonnull(cell);
+    size = adg_table_row_size_request(row);
+    g_assert_nonnull(size);
+    g_assert_cmpfloat(size->x, ==, 34);
+    g_assert_cmpfloat(size->y, ==, 12);
+
+    layout.is_defined = 1;
+    layout.org.x = 12;
+    layout.org.y = 34;
+    layout.size.x = -56;
+    layout.size.y = -78;
+    extents = adg_table_row_arrange(row, &layout);
+    g_assert_nonnull(extents);
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->org.x, ==, 12);
+    g_assert_cmpfloat(extents->org.y, ==, 34);
+    g_assert_cmpfloat(extents->size.x, ==, 34);
+    g_assert_cmpfloat(extents->size.y, ==, 12);
+
+    layout.size.x = 56;
+    extents = adg_table_row_arrange(row, &layout);
+    g_assert_nonnull(extents);
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->size.x, ==, 56);
+    g_assert_cmpfloat(extents->size.y, ==, 12);
+
+    layout.size.x = -1;
+    layout.size.y = 78;
+    extents = adg_table_row_arrange(row, &layout);
+    g_assert_nonnull(extents);
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->size.x, ==, 56);
+    g_assert_cmpfloat(extents->size.y, ==, 78);
+
+    adg_entity_destroy(ADG_ENTITY(table));
+}
+
+static void
+_adg_property_height(void)
+{
+    AdgTable *table;
+    AdgTableRow *row;
+
+    /* Sanity check */
+    adg_table_row_set_height(NULL, 1);
+    adg_table_row_get_height(NULL);
+
+    table = adg_table_new();
+    row = adg_table_row_new(table);
+
+    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 0);
+
+    adg_table_row_set_height(row, 123);
+    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 123);
+
+    adg_table_row_set_height(row, 0);
+    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 0);
+
+    adg_table_row_set_height(row, -123);
+    g_assert_cmpfloat(adg_table_row_get_height(row), ==, -123);
+
+    adg_entity_destroy(ADG_ENTITY(table));
+}
+
+
 int
 main(int argc, char *argv[])
 {
@@ -36,7 +152,12 @@ main(int argc, char *argv[])
     adg_test_add_boxed_checks("/adg/table-row/type/boxed", ADG_TYPE_TABLE_ROW,
                               adg_table_row_new(table));
 
+    g_test_add_func("/adg/table-row/behavior/misc", _adg_behavior_misc);
+
+    g_test_add_func("/adg/table-row/property/height", _adg_property_height);
+
     result = g_test_run();
-    g_object_unref(table);
+    adg_entity_destroy(ADG_ENTITY(table));
+
     return result;
 }
