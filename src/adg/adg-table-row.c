@@ -167,6 +167,8 @@ adg_table_row_free(AdgTableRow *table_row)
 {
     AdgTable *table;
 
+    g_return_if_fail(table_row != NULL);
+
     g_slist_foreach(table_row->cells, (GFunc) adg_table_cell_free, NULL);
     g_slist_free(table_row->cells);
 
@@ -410,6 +412,7 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
     GSList *cell_node;
 
     g_return_val_if_fail(table_row != NULL, NULL);
+    g_return_val_if_fail(layout != NULL, NULL);
 
     /* Set the new extents */
     extents = &table_row->extents;
