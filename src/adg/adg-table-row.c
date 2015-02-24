@@ -349,6 +349,7 @@ adg_table_row_size_request(AdgTableRow *table_row)
 {
     AdgTableStyle *table_style;
     const CpmlPair *spacing;
+    gdouble xpad;
     CpmlExtents *extents;
     CpmlVector *size;
     AdgTableCell *cell;
@@ -359,6 +360,7 @@ adg_table_row_size_request(AdgTableRow *table_row)
 
     table_style = (AdgTableStyle *) adg_table_get_table_style(table_row->table);
     spacing = adg_table_style_get_cell_spacing(table_style);
+    xpad = spacing ? spacing->x : 0;
     extents = &table_row->extents;
     size = &extents->size;
 
@@ -372,11 +374,11 @@ adg_table_row_size_request(AdgTableRow *table_row)
     for (cell_node = table_row->cells; cell_node; cell_node = cell_node->next) {
         cell = cell_node->data;
         cell_size = adg_table_cell_size_request(cell, extents);
-        size->x += cell_size->x + spacing->x;
+        size->x += cell_size->x + xpad;
     }
 
     if (size->x > 0)
-        size->x += spacing->x;
+        size->x += xpad;
 
     return size;
 }
@@ -408,6 +410,7 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
     const CpmlExtents *cell_extents;
     AdgTableStyle *table_style;
     const CpmlPair *spacing;
+    gdouble xpad;
     AdgTableCell *cell;
     GSList *cell_node;
 
@@ -425,9 +428,10 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
 
     table_style = (AdgTableStyle *) adg_table_get_table_style(table_row->table);
     spacing = adg_table_style_get_cell_spacing(table_style);
+    xpad = spacing ? spacing->x : 0;
 
     /* Propagate the arrange to the table cells */
-    cell_layout.org.x = extents->org.x + spacing->x;
+    cell_layout.org.x = extents->org.x + xpad;
     cell_layout.org.y = extents->org.y;
     cell_layout.size.x = -1;
     cell_layout.size.y = extents->size.y;
@@ -435,7 +439,7 @@ adg_table_row_arrange(AdgTableRow *table_row, const CpmlExtents *layout)
     for (cell_node = table_row->cells; cell_node; cell_node = cell_node->next) {
         cell = cell_node->data;
         cell_extents = adg_table_cell_arrange(cell, &cell_layout);
-        cell_layout.org.x += cell_extents->size.x + spacing->x;
+        cell_layout.org.x += cell_extents->size.x + xpad;
     }
 
     return extents;
