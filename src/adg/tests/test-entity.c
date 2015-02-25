@@ -97,6 +97,7 @@ _adg_behavior_style(void)
 static void
 _adg_behavior_local(void)
 {
+    AdgCanvas *canvas;
     AdgEntity *entity;
 
     /* Sanity check */
@@ -104,12 +105,13 @@ _adg_behavior_local(void)
     g_assert_cmpint(adg_entity_get_local_mix(NULL), ==, ADG_MIX_UNDEFINED);
     adg_entity_local_changed(NULL);
 
+    canvas = adg_test_canvas();
     entity = ADG_ENTITY(adg_logo_new());
+    adg_container_add(ADG_CONTAINER(canvas), entity);
 
     g_assert_cmpint(adg_entity_get_local_mix(entity), !=, ADG_MIX_UNDEFINED);
 
     /* Check any AdgMix value does not crash the process */
-
     adg_entity_set_local_mix(entity, ADG_MIX_UNDEFINED);
     adg_entity_local_changed(entity);
     g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_UNDEFINED);
@@ -138,7 +140,7 @@ _adg_behavior_local(void)
     adg_entity_local_changed(entity);
     g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_PARENT_NORMALIZED);
 
-    adg_entity_destroy(entity);
+    adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
 static void
