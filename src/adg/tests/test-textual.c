@@ -30,11 +30,6 @@ typedef GObjectClass AdgDummyClass;
 static void
 adg_dummy_class_init(AdgDummyClass *klass)
 {
-    /*
-    GObjectClass *gobject_class = (GObjectClass *) klass;
-    g_object_class_override_property(gobject_class, PROP_FONT_DRESS, "font-dress");
-    g_object_class_override_property(gobject_class, PROP_TEXT, "text");
-    */
 }
 
 static void
