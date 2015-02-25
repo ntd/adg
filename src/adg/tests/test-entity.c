@@ -21,6 +21,125 @@
 #include <adg-test.h>
 #include <adg.h>
 
+#define ADG_TYPE_DUMMY      (adg_dummy_get_type())
+
+
+typedef GObject AdgDummy;
+typedef GObjectClass AdgDummyClass;
+
+static void
+adg_dummy_class_init(AdgDummyClass *klass)
+{
+}
+
+static void
+adg_dummy_init(AdgDummy *dummy)
+{
+}
+
+G_DEFINE_TYPE(AdgDummy, adg_dummy, ADG_TYPE_ENTITY);
+
+
+static void
+_adg_behavior_misc(void)
+{
+    AdgDummy *dummy = g_object_new(ADG_TYPE_DUMMY, NULL);
+    cairo_t *cr = adg_test_cairo_context();
+
+    /* Ensure NULL virtual methods do not crash the process */
+    adg_entity_invalidate(ADG_ENTITY(dummy));
+    adg_entity_arrange(ADG_ENTITY(dummy));
+    adg_entity_render(ADG_ENTITY(dummy), cr);
+
+    cairo_destroy(cr);
+    g_object_unref(dummy);
+}
+
+static void
+_adg_behavior_style(void)
+{
+    AdgEntity *entity;
+    AdgStyle *style, *color_style, *line_style;
+
+    entity = ADG_ENTITY(adg_logo_new());
+    color_style = ADG_STYLE(adg_color_style_new());
+    line_style = ADG_STYLE(adg_line_style_new());
+
+    /* Sanity check */
+    adg_entity_set_style(NULL, ADG_DRESS_COLOR, color_style);
+    g_assert_null(adg_entity_get_style(NULL, ADG_DRESS_COLOR));
+
+    adg_entity_set_style(entity, ADG_DRESS_COLOR, color_style);
+
+    style = adg_entity_get_style(entity, ADG_DRESS_COLOR);
+    g_assert_nonnull(style);
+    g_assert_true(style == color_style);
+
+    adg_entity_set_style(entity, ADG_DRESS_COLOR, color_style);
+
+    style = adg_entity_get_style(entity, ADG_DRESS_COLOR);
+    g_assert_nonnull(style);
+    g_assert_true(style == color_style);
+
+    adg_entity_set_style(entity, ADG_DRESS_COLOR, NULL);
+    g_assert_null(adg_entity_get_style(NULL, ADG_DRESS_COLOR));
+
+    /* Try to set an incompatible style */
+    adg_entity_set_style(entity, ADG_DRESS_COLOR, line_style);
+
+    g_assert_null(adg_entity_get_style(NULL, ADG_DRESS_COLOR));
+
+    adg_entity_destroy(entity);
+    g_object_unref(color_style);
+    g_object_unref(line_style);
+}
+
+static void
+_adg_behavior_local(void)
+{
+    AdgEntity *entity;
+
+    /* Sanity check */
+    adg_entity_set_local_mix(NULL, ADG_MIX_UNDEFINED);
+    g_assert_cmpint(adg_entity_get_local_mix(NULL), ==, ADG_MIX_UNDEFINED);
+    adg_entity_local_changed(NULL);
+
+    entity = ADG_ENTITY(adg_logo_new());
+
+    g_assert_cmpint(adg_entity_get_local_mix(entity), !=, ADG_MIX_UNDEFINED);
+
+    /* Check any AdgMix value does not crash the process */
+
+    adg_entity_set_local_mix(entity, ADG_MIX_UNDEFINED);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_UNDEFINED);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_DISABLED);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_DISABLED);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_NONE);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_NONE);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_ANCESTORS);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_ANCESTORS_NORMALIZED);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_ANCESTORS_NORMALIZED);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_PARENT);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_PARENT);
+
+    adg_entity_set_local_mix(entity, ADG_MIX_PARENT_NORMALIZED);
+    adg_entity_local_changed(entity);
+    g_assert_cmpint(adg_entity_get_local_mix(entity), ==, ADG_MIX_PARENT_NORMALIZED);
+
+    adg_entity_destroy(entity);
+}
 
 static void
 _adg_property_parent(void)
@@ -222,6 +341,64 @@ _adg_property_local_mix(void)
     adg_entity_destroy(entity);
 }
 
+static void
+_adg_property_extents(void)
+{
+    AdgEntity *entity;
+    CpmlExtents new_extents;
+    const CpmlExtents *extents;
+
+    /* Sanity check */
+    adg_entity_set_extents(NULL, NULL);
+    g_assert_null(adg_entity_get_extents(NULL));
+
+    entity = ADG_ENTITY(adg_logo_new());
+    new_extents.is_defined = TRUE;
+    new_extents.org.x = 1;
+    new_extents.org.y = 2;
+    new_extents.size.x = 3;
+    new_extents.size.y = 4;
+
+    extents = adg_entity_get_extents(entity);
+    g_assert_false(extents->is_defined);
+
+    adg_entity_set_extents(entity, &new_extents);
+
+    extents = adg_entity_get_extents(entity);
+    g_assert_true(extents->is_defined);
+    g_assert_cmpfloat(extents->org.x, ==, 1);
+    g_assert_cmpfloat(extents->org.y, ==, 2);
+    g_assert_cmpfloat(extents->size.x, ==, 3);
+    g_assert_cmpfloat(extents->size.y, ==, 4);
+
+    adg_entity_set_extents(entity, NULL);
+    g_assert_false(extents->is_defined);
+
+    adg_entity_destroy(entity);
+}
+
+static void
+_adg_method_get_canvas(void)
+{
+    AdgCanvas *canvas, *response;
+    AdgEntity *entity;
+
+    /* Sanity check */
+    g_assert_null(adg_entity_get_canvas(NULL));
+
+    canvas = adg_test_canvas();
+    entity = ADG_ENTITY(adg_logo_new());
+
+    g_assert_null(adg_entity_get_canvas(entity));
+    adg_container_add(ADG_CONTAINER(canvas), entity);
+
+    response = adg_entity_get_canvas(entity);
+    g_assert_nonnull(response);
+    g_assert_true(response == canvas);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -231,10 +408,17 @@ main(int argc, char *argv[])
     adg_test_add_object_checks("/adg/entity/type/object", ADG_TYPE_ENTITY);
     adg_test_add_entity_checks("/adg/entity/type/entity", ADG_TYPE_ENTITY);
 
+    g_test_add_func("/adg/entity/behavior/misc", _adg_behavior_misc);
+    g_test_add_func("/adg/entity/behavior/style", _adg_behavior_style);
+    g_test_add_func("/adg/entity/behavior/local", _adg_behavior_local);
+
     g_test_add_func("/adg/entity/property/parent", _adg_property_parent);
     g_test_add_func("/adg/entity/property/global-map", _adg_property_global_map);
     g_test_add_func("/adg/entity/property/local-map", _adg_property_local_map);
     g_test_add_func("/adg/entity/property/local-mix", _adg_property_local_mix);
+    g_test_add_func("/adg/entity/property/extents", _adg_property_extents);
+
+    g_test_add_func("/adg/entity/method/get-canvas", _adg_method_get_canvas);
 
     return g_test_run();
 }
