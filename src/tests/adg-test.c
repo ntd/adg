@@ -576,6 +576,8 @@ _adg_global_space_checks(AdgEntity *entity)
     cr = adg_test_cairo_context();
     cairo_matrix_init_scale(&scale2X, 2, 2);
 
+    adg_switch_extents(g_test_rand_bit());
+
     /* Store the original extents size in width/height */
     adg_entity_render(entity, cr);
     extents = adg_entity_get_extents(entity);
