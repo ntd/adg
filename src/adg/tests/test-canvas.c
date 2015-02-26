@@ -21,6 +21,16 @@
 #include <adg-test.h>
 #include <adg.h>
 
+#ifdef G_OS_WIN32
+
+#define NULL_FILE "NUL"
+
+#else
+
+#define NULL_FILE "/dev/null"
+
+#endif
+
 
 static void
 _adg_behavior_entity(void)
@@ -752,7 +762,39 @@ _adg_method_set_paddings(void)
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
+static void
+_adg_method_export(void)
+{
+    AdgCanvas *canvas = adg_test_canvas();
+
+    /* Sanity check */
+    g_assert_false(adg_canvas_export(NULL, CAIRO_SURFACE_TYPE_IMAGE, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_IMAGE, NULL, NULL));
+
+    /* Supported surface types return TRUE while unsupported ones return FALSE */
+    g_assert_true(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_IMAGE, NULL_FILE, NULL));
+    g_assert_true(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_PDF, NULL_FILE, NULL));
+    g_assert_true(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_PS, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_XLIB, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_XCB, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_GLITZ, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_QUARTZ, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_WIN32, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_BEOS, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_DIRECTFB, NULL_FILE, NULL));
+    g_assert_true(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_SVG, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_OS2, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_WIN32_PRINTING, NULL_FILE, NULL));
+    g_assert_false(adg_canvas_export(canvas, CAIRO_SURFACE_TYPE_QUARTZ_IMAGE, NULL_FILE, NULL));
+
+    /* An empty canvas can fail depending on the surface type (e.g., the image
+     * surface fails while the PDF surface does not) so skipping that tests */
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
 #if GTK3_ENABLED || GTK2_ENABLED
+
 static void
 _adg_method_set_paper(void)
 {
@@ -806,6 +848,9 @@ _adg_method_get_page_setup(void)
     AdgCanvas *canvas;
     GtkPageSetup *page_setup;
 
+    /* Sanity checks */
+    g_assert_null(adg_canvas_get_page_setup(canvas));
+
     canvas = ADG_CANVAS(adg_canvas_new());
     page_setup = gtk_page_setup_new();
 
@@ -834,6 +879,9 @@ _adg_method_set_page_setup(void)
 
     canvas = ADG_CANVAS(adg_canvas_new());
     page_setup = gtk_page_setup_new();
+
+    /* Sanity checks */
+    adg_canvas_set_page_setup(NULL, page_setup);
 
     gtk_page_setup_set_top_margin(page_setup,    1, GTK_UNIT_POINTS);
     gtk_page_setup_set_right_margin(page_setup,  2, GTK_UNIT_POINTS);
@@ -869,6 +917,7 @@ _adg_method_set_page_setup(void)
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
+
 #endif
 
 
@@ -905,6 +954,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/canvas/method/set-margins", _adg_method_set_margins);
     g_test_add_func("/adg/canvas/method/apply-margins", _adg_method_apply_margins);
     g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
+    g_test_add_func("/adg/canvas/method/export", _adg_method_export);
 #if GTK3_ENABLED || GTK2_ENABLED
     g_test_add_func("/adg/canvas/method/set-paper", _adg_method_set_paper);
     g_test_add_func("/adg/canvas/method/get-page-setup", _adg_method_get_page_setup);
