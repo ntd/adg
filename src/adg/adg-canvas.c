@@ -1485,7 +1485,8 @@ gboolean
 adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
                   const gchar *file, GError **gerror)
 {
-    const CpmlPair *size;
+    AdgEntity *entity;
+    const CpmlExtents *extents;
     gdouble top, bottom, left, right, width, height;
     cairo_surface_t *surface;
     cairo_t *cr;
@@ -1495,13 +1496,17 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
     g_return_val_if_fail(file != NULL, FALSE);
     g_return_val_if_fail(gerror == NULL || *gerror == NULL, FALSE);
 
-    size = adg_canvas_get_size(canvas);
+    entity = (AdgEntity *) canvas;
+
+    adg_entity_arrange(entity);
+    extents = adg_entity_get_extents(entity);
+
     top = adg_canvas_get_top_margin(canvas);
     bottom = adg_canvas_get_bottom_margin(canvas);
     left = adg_canvas_get_left_margin(canvas);
     right = adg_canvas_get_right_margin(canvas);
-    width = size->x + left + right;
-    height = size->y + top + bottom;
+    width = extents->size.x + left + right;
+    height = extents->size.y + top + bottom;
     surface = NULL;
 
     switch (type) {
