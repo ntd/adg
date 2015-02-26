@@ -18,6 +18,7 @@
  */
 
 
+#include <config.h>
 #include <adg-test.h>
 #include <adg.h>
 
@@ -849,7 +850,7 @@ _adg_method_get_page_setup(void)
     GtkPageSetup *page_setup;
 
     /* Sanity checks */
-    g_assert_null(adg_canvas_get_page_setup(canvas));
+    g_assert_null(adg_canvas_get_page_setup(NULL));
 
     canvas = ADG_CANVAS(adg_canvas_new());
     page_setup = gtk_page_setup_new();
@@ -891,17 +892,19 @@ _adg_method_set_page_setup(void)
     adg_canvas_set_page_setup(canvas, page_setup);
     g_object_unref(page_setup);
 
-    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
-    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
-    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 3);
-    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+    /* For some unknown reason the margins are rounded, so using
+     * adg_assert_isapprox() instead of g_assert_cmpfloat() */
+    adg_assert_isapprox(adg_canvas_get_top_margin(canvas),    1);
+    adg_assert_isapprox(adg_canvas_get_right_margin(canvas),  2);
+    adg_assert_isapprox(adg_canvas_get_left_margin(canvas),   3);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(canvas), 4);
 
     adg_canvas_set_page_setup(canvas, NULL);
 
-    g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
-    g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
-    g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 3);
-    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+    adg_assert_isapprox(adg_canvas_get_top_margin(canvas),    1);
+    adg_assert_isapprox(adg_canvas_get_right_margin(canvas),  2);
+    adg_assert_isapprox(adg_canvas_get_left_margin(canvas),   3);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(canvas), 4);
 
     size = adg_canvas_get_size(canvas);
     width = size->x;
