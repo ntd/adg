@@ -586,6 +586,116 @@ _adg_method_arc(void)
 }
 
 static void
+_adg_method_chamfer(void)
+{
+    AdgPath *path;
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    /* Sanity checks */
+    adg_path_chamfer(NULL, 1, 2);
+
+    /* Perform an easy chamfer */
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to_explicit(path, 0, 8);
+    adg_path_chamfer(path, 2, 3);
+    adg_path_line_to_explicit(path, 10, 8);
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    cpml_primitive_from_segment(&primitive, &segment);
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 0);
+    adg_assert_isapprox(primitive.data[1].point.x, 0);
+    adg_assert_isapprox(primitive.data[1].point.y, 6);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 6);
+    adg_assert_isapprox(primitive.data[1].point.x, 3);
+    adg_assert_isapprox(primitive.data[1].point.y, 8);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 3);
+    adg_assert_isapprox((primitive.org)->point.y, 8);
+    adg_assert_isapprox(primitive.data[1].point.x, 10);
+    adg_assert_isapprox(primitive.data[1].point.y, 8);
+
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    /* TODO: perform more complex tests */
+
+    g_object_unref(path);
+}
+
+static void
+_adg_method_fillet(void)
+{
+    AdgPath *path;
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    /* Sanity checks */
+    adg_path_fillet(NULL, 1);
+
+    /* Perform an easy fillet */
+    path = adg_path_new();
+    adg_path_move_to_explicit(path, 0, 0);
+    adg_path_line_to_explicit(path, 0, 8);
+    adg_path_fillet(path, 3);
+    adg_path_line_to_explicit(path, 10, 8);
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    cpml_primitive_from_segment(&primitive, &segment);
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 0);
+    adg_assert_isapprox(primitive.data[1].point.x, 0);
+    adg_assert_isapprox(primitive.data[1].point.y, 5);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_ARC);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 3);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 5);
+    adg_assert_isapprox(primitive.data[1].point.x, 0.879);
+    adg_assert_isapprox(primitive.data[1].point.y, 7.121);
+    adg_assert_isapprox(primitive.data[2].point.x, 3);
+    adg_assert_isapprox(primitive.data[2].point.y, 8);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 3);
+    adg_assert_isapprox((primitive.org)->point.y, 8);
+    adg_assert_isapprox(primitive.data[1].point.x, 10);
+    adg_assert_isapprox(primitive.data[1].point.y, 8);
+
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    /* TODO: perform more complex tests */
+
+    g_object_unref(path);
+}
+
+static void
 _adg_method_reflect(void)
 {
     AdgPath *path;
@@ -681,6 +791,8 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/arc-to", _adg_method_arc_to);
     g_test_add_func("/adg/path/method/curve-to", _adg_method_curve_to);
     g_test_add_func("/adg/path/method/arc", _adg_method_arc);
+    g_test_add_func("/adg/path/method/chamfer", _adg_method_chamfer);
+    g_test_add_func("/adg/path/method/fillet", _adg_method_fillet);
     g_test_add_func("/adg/path/method/reflect", _adg_method_reflect);
 
     return g_test_run();
