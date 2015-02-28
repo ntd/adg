@@ -36,7 +36,7 @@ typedef cairo_path_data_type_t CpmlPrimitiveType;
 #define CPML_LINE   CAIRO_PATH_LINE_TO
 #define CPML_CURVE  CAIRO_PATH_CURVE_TO
 #define CPML_CLOSE  CAIRO_PATH_CLOSE_PATH
-#define CPML_ARC    ((CpmlPrimitiveType) 88)
+#define CPML_ARC    ((CpmlPrimitiveType) 19)
 
 struct _CpmlPrimitive {
     /*< public >*/

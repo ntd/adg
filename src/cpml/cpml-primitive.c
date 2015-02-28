@@ -85,6 +85,10 @@
 #include <string.h>
 #include <stdio.h>
 
+/* This is the best way I found to get the maximum value
+ * of a bunch of constant by using only the preprocessor */
+#define CPML_MAX (CPML_LINE | CPML_ARC | CPML_CURVE | CPML_CLOSE)
+
 
 static const _CpmlPrimitiveClass *
                 _cpml_class_from_type   (CpmlPrimitiveType        type);
@@ -794,20 +798,19 @@ cpml_primitive_dump(const CpmlPrimitive *primitive, int org_also)
     printf("\n");
 }
 
-
 static const _CpmlPrimitiveClass *
 _cpml_class_from_type(CpmlPrimitiveType type)
 {
-    if (type == CPML_LINE)
-        return _cpml_line_get_class();
-    else if (type == CPML_ARC)
-        return _cpml_arc_get_class();
-    else if (type == CPML_CURVE)
-        return _cpml_curve_get_class();
-    else if (type == CPML_CLOSE)
-        return _cpml_close_get_class();
+    static const _CpmlPrimitiveClass *table[CPML_MAX + 1] = { NULL };
 
-    return NULL;
+    if (table[CPML_LINE] == NULL) {
+        table[CPML_LINE]  = _cpml_line_get_class();
+        table[CPML_ARC]   = _cpml_arc_get_class();
+        table[CPML_CURVE] = _cpml_curve_get_class();
+        table[CPML_CLOSE] = _cpml_close_get_class();
+    }
+
+    return type <= CPML_MAX ? table[type] : NULL;
 }
 
 static const _CpmlPrimitiveClass *
