@@ -80,10 +80,10 @@ struct __CpmlPrimitiveClass {
 };
 
 
-const _CpmlPrimitiveClass * _cpml_line_get_class  (void) CPML_GNUC_CONST;
-const _CpmlPrimitiveClass * _cpml_arc_get_class   (void) CPML_GNUC_CONST;
-const _CpmlPrimitiveClass * _cpml_curve_get_class (void) CPML_GNUC_CONST;
-const _CpmlPrimitiveClass * _cpml_close_get_class (void) CPML_GNUC_CONST;
+const _CpmlPrimitiveClass * _cpml_line_get_class  (void);
+const _CpmlPrimitiveClass * _cpml_arc_get_class   (void);
+const _CpmlPrimitiveClass * _cpml_curve_get_class (void);
+const _CpmlPrimitiveClass * _cpml_close_get_class (void);
 
 
 CAIRO_END_DECLS

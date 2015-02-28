@@ -30,12 +30,6 @@
 #include <stdlib.h>
 #include <cairo.h>
 
-#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#define CPML_GNUC_CONST    __attribute__((__const__))
-#else
-#define CPML_GNUC_CONST
-#endif
-
 
 CAIRO_BEGIN_DECLS
 

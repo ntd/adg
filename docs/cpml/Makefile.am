@@ -4,8 +4,7 @@ DOC_MODULE=		cpml
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
 DOC_SOURCE_DIR=		$(abs_top_srcdir)/src/cpml
 SCANGOBJ_OPTIONS=
-SCAN_OPTIONS=		--ignore-decorators="CPML_GNUC_CONST" \
-			--rebuild-sections
+SCAN_OPTIONS=		--rebuild-sections
 MKDB_OPTIONS=		--name-space=cpml \
 			--sgml-mode \
 			--output-format=xml \

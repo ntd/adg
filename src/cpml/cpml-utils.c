@@ -35,19 +35,6 @@
 
 
 /**
- * CPML_GNUC_CONST:
- *
- * To be appended at the end of a function to notice the compiler (gcc)
- * that the return value is constant.
- *
- * The coded is an adaptation of the #G_GNUC_CONST macro defined by
- * glib-2.18.3 in <filename>glib/gmacros.h</filename>.
- *
- * Since: 1.0
- **/
-
-
-/**
  * cpml_angle:
  * @angle: an angle in radians
  *
