@@ -69,22 +69,24 @@ expand_content_files=
 
 GTKDOC_CFLAGS=		-I$(top_srcdir)/src \
 			$(CAIRO_CFLAGS) \
+			$(CAIRO_GOBJECT_CFLAGS) \
 			$(GOBJECT2_CFLAGS)
 GTKDOC_LIBS=		$(top_builddir)/src/adg/libadg-1.la \
-			$(top_builddir)/src/cpml/libcpml-1.la \
-			$(CAIRO_LIBS) \
-			$(GOBJECT2_LIBS)
-
-if HAVE_PANGO
-GTKDOC_CFLAGS+=		$(PANGO_CFLAGS)
-GTKDOC_LIBS+=		$(PANGO_LIBS)
-endif
+			$(top_builddir)/src/cpml/libcpml-1.la
 
 if HAVE_GTK2
 GTKDOC_CFLAGS+=		$(GTK2_CFLAGS)
 GTKDOC_LIBS+=		$(GTK2_LIBS)
 endif
 
+if HAVE_PANGO
+GTKDOC_CFLAGS+=		$(PANGO_CFLAGS)
+GTKDOC_LIBS+=		$(PANGO_LIBS)
+endif
+
+GTKDOC_LIBS+=		$(CAIRO_LIBS) \
+			$(CAIRO_GOBJECT_LIBS) \
+			$(GOBJECT2_LIBS)
 
 include $(top_srcdir)/build/Makefile.am.gtk-doc
 
