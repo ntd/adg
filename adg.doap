@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Project xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:foaf="http://xmlns.com/foaf/0.1/"
@@ -24,21 +25,47 @@
   <homepage rdf:resource="http://adg.entidi.com/"/>
   <license rdf:resource="http://www.gnu.org/licenses/lgpl-2.1.html"/>
   <screenshots rdf:resource="http://adg.entidi.com/home/hints/"/>
+  <audience>Developers</audience>
+  <programming-language>C</programming-language>
+  <platform>GTK+</platform>
   <download-page rdf:resource="http://adg.entidi.com/home/download/"/>
   <bug-database rdf:resource="http://dev.entidi.com/p/adg/"/>
+  <mailing-list rdf:resource="https://lists.sourceforge.net/lists/listinfo/adg-devel"/>
+  <service-endpoint rdf:resource="http://adg.entidi.com/demo/"/>
 
   <repository>
-    <Repository>
-      <location rdf:resource="http://dev.entidi.com/p/adg/source/tree/master/"/>
-      <anon-root rdf:resource="git://adg.git.sourceforge.net/gitroot/adg"/>
-      <browse rdf:resource="http://adg.git.sourceforge.net/git/gitweb.cgi?p=adg"/>
-    </Repository>
+    <GitRepository>
+      <location rdf:resource="git://repo.or.cz/adg.git"/>
+      <browse rdf:resource="http://repo.or.cz/w/adg.git/tree/"/>
+    </GitRepository>
+  </repository>
+
+  <repository>
+    <GitRepository>
+      <location rdf:resource="https://gitlab.com/libadg/adg.git"/>
+      <browse rdf:resource="https://gitlab.com/libadg/adg/tree/master"/>
+    </GitRepository>
+  </repository>
+
+  <repository>
+    <GitRepository>
+      <location rdf:resource="https://github.com/ntd/adg.git"/>
+      <browse rdf:resource="https://github.com/ntd/adg"/>
+    </GitRepository>
+  </repository>
+
+  <repository>
+    <GitRepository>
+      <location rdf:resource="git://git.code.sf.net/p/adg/code"/>
+      <browse rdf:resource="https://sourceforge.net/p/adg/code/"/>
+    </GitRepository>
   </repository>
 
   <maintainer>
     <foaf:Person>
       <foaf:name>Nicola Fontana</foaf:name>
-      <rdfs:seeAlso rdf:resource="http://www.entidi.com/data/foaf.rdf"/>
+      <rdfs:seeAlso rdf:resource="http://www.entidi.com/assets/foaf.rdf"/>
     </foaf:Person>
   </maintainer>
+
 </Project>
