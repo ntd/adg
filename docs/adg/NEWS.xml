@@ -16,7 +16,7 @@
 service provided by GitHub. The percentage has been raised
 from 53% to 94%.</para>
 
-<para>A fistfull of bugs found while improving the test coverage
+<para>A fistful of bugs found while improving the test coverage
 has been corrected, most notably cpml_extents_is_inside(),
 cpml_segment_reverse() and some intersection algorithm.</para>
 
