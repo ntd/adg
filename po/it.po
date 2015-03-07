@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2015-01-12 20:18+0100\n"
+"POT-Creation-Date: 2015-03-05 22:17+0100\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -462,11 +462,11 @@ msgstr "Angolo Freccia"
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
-#: src/adg/adg-canvas.c:186
+#: src/adg/adg-canvas.c:196
 msgid "Canvas Size"
 msgstr "Dimensione Canvas"
 
-#: src/adg/adg-canvas.c:187
+#: src/adg/adg-canvas.c:197
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
@@ -474,78 +474,78 @@ msgstr ""
 "La dimensione impostata per questo canvas: usare 0 per abilitare il "
 "dimensionamento automatico basato sui limiti del canvas"
 
-#: src/adg/adg-canvas.c:193
+#: src/adg/adg-canvas.c:203
 msgid "Valid Scales"
 msgstr "Scale Valide"
 
-#: src/adg/adg-canvas.c:194
+#: src/adg/adg-canvas.c:204
 msgid "List of scales to be tested while autoscaling the drawing"
 msgstr "Elenco di scale da provare durante l'autoscalatura del disegno"
 
-#: src/adg/adg-canvas.c:200
+#: src/adg/adg-canvas.c:210
 msgid "Background Dress"
 msgstr "Vestito Sfondo"
 
-#: src/adg/adg-canvas.c:201
+#: src/adg/adg-canvas.c:211
 msgid "The color dress to use for the canvas background"
 msgstr "Il vestito colore da usare come sfondo per il canvas"
 
-#: src/adg/adg-canvas.c:207 src/adg/adg-logo.c:109
+#: src/adg/adg-canvas.c:217 src/adg/adg-logo.c:109
 #: src/adg/adg-table-style.c:109
 msgid "Frame Dress"
 msgstr "Vestito Riquadro"
 
-#: src/adg/adg-canvas.c:208
+#: src/adg/adg-canvas.c:218
 msgid "Line dress to use while drawing the frame around the canvas"
 msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
-#: src/adg/adg-canvas.c:214
+#: src/adg/adg-canvas.c:224
 msgid "Title Block"
 msgstr "Blocco delle Iscrizioni"
 
-#: src/adg/adg-canvas.c:215
+#: src/adg/adg-canvas.c:225
 msgid "The title block to assign to this canvas"
 msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
-#: src/adg/adg-canvas.c:221
+#: src/adg/adg-canvas.c:231
 msgid "Top Margin"
 msgstr "Margine Superiore"
 
-#: src/adg/adg-canvas.c:222
+#: src/adg/adg-canvas.c:232
 msgid "The margin (in global space) to leave above the frame"
 msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
-#: src/adg/adg-canvas.c:228
+#: src/adg/adg-canvas.c:238
 msgid "Right Margin"
 msgstr "Margine Destro"
 
-#: src/adg/adg-canvas.c:229
+#: src/adg/adg-canvas.c:239
 msgid "The margin (in global space) to leave empty at the right of the frame"
 msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
-#: src/adg/adg-canvas.c:235
+#: src/adg/adg-canvas.c:245
 msgid "Bottom Margin"
 msgstr "Margine Inferiore"
 
-#: src/adg/adg-canvas.c:236
+#: src/adg/adg-canvas.c:246
 msgid "The margin (in global space) to leave empty below the frame"
 msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
-#: src/adg/adg-canvas.c:242
+#: src/adg/adg-canvas.c:252
 msgid "Left Margin"
 msgstr "Margine Sinistro"
 
-#: src/adg/adg-canvas.c:243
+#: src/adg/adg-canvas.c:253
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:249 src/adg/adg-table.c:154
+#: src/adg/adg-canvas.c:259 src/adg/adg-table.c:154
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
-#: src/adg/adg-canvas.c:250
+#: src/adg/adg-canvas.c:260
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
@@ -553,11 +553,11 @@ msgstr ""
 "Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
 "limiti dal canvas tenendo in considerazione i margini"
 
-#: src/adg/adg-canvas.c:256
+#: src/adg/adg-canvas.c:266
 msgid "Top Padding"
 msgstr "Spaziatura Superiore"
 
-#: src/adg/adg-canvas.c:257
+#: src/adg/adg-canvas.c:267
 msgid ""
 "The padding (in global space) to leave empty above between the drawing and "
 "the frame"
@@ -565,11 +565,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
 "cornice"
 
-#: src/adg/adg-canvas.c:263
+#: src/adg/adg-canvas.c:273
 msgid "Right Padding"
 msgstr "Spaziatura Destra"
 
-#: src/adg/adg-canvas.c:264
+#: src/adg/adg-canvas.c:274
 msgid ""
 "The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
@@ -577,11 +577,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:270
+#: src/adg/adg-canvas.c:280
 msgid "Bottom Padding"
 msgstr "Spaziatura Inferiore"
 
-#: src/adg/adg-canvas.c:271
+#: src/adg/adg-canvas.c:281
 msgid ""
 "The padding (in global space) to leave empty below between the drawing and "
 "the frame"
@@ -589,11 +589,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:277
+#: src/adg/adg-canvas.c:287
 msgid "Left Padding"
 msgstr "Spaziatura Sinistra"
 
-#: src/adg/adg-canvas.c:278
+#: src/adg/adg-canvas.c:288
 msgid ""
 "The padding (in global space) to leave empty at the left between the drawing "
 "and the frame"
@@ -980,21 +980,21 @@ msgstr ""
 "L'angolo che definisce quando considerare uno spigolo (se l'angolo dello "
 "spigolo è maggiore di questo valore) e quando ignorarlo"
 
-#: src/adg/adg-entity.c:163
+#: src/adg/adg-entity.c:172
 msgid "Parent Entity"
 msgstr "Entità Genitore"
 
-#: src/adg/adg-entity.c:164
+#: src/adg/adg-entity.c:173
 msgid "The parent entity of this entity or NULL if this is a top-level entity"
 msgstr ""
 "L'entità che contiene questa entità o NULL se l'entità corrente è una top-"
 "level"
 
-#: src/adg/adg-entity.c:170
+#: src/adg/adg-entity.c:179
 msgid "Global Map"
 msgstr "Trasformazione Globale"
 
-#: src/adg/adg-entity.c:171
+#: src/adg/adg-entity.c:180
 msgid ""
 "The transformation to be combined with the parent ones to get the global "
 "matrix"
@@ -1002,11 +1002,11 @@ msgstr ""
 "La trasformazione da combinare insieme a quelle dei progenitori per ottenere "
 "la matrice globale"
 
-#: src/adg/adg-entity.c:177
+#: src/adg/adg-entity.c:186
 msgid "Local Map"
 msgstr "Trasformazione Locale"
 
-#: src/adg/adg-entity.c:178
+#: src/adg/adg-entity.c:187
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
 "the way specified by the #AdgEntity:local-mix property"
@@ -1014,11 +1014,11 @@ msgstr ""
 "La trasformazione locale che può venir usata per calcolare la matrice locale "
 "nella modalità specificata dalla proprietà #AdgEntity:local-method"
 
-#: src/adg/adg-entity.c:184
+#: src/adg/adg-entity.c:193
 msgid "Local Mix Method"
 msgstr "Metodo di Combinazione Locale"
 
-#: src/adg/adg-entity.c:185
+#: src/adg/adg-entity.c:194
 msgid ""
 "Define how the local maps of the entity and its ancestors should be combined "
 "to get the local matrix"
@@ -1026,22 +1026,22 @@ msgstr ""
 "Specifica come le trasformazioni locali dell'entità corrente e dei suoi "
 "progenitori devono essere combinate per ottenere la matrice locale"
 
-#: src/adg/adg-entity.c:898
+#: src/adg/adg-entity.c:917
 #, c-format
 msgid "%s: '%s' is not compatible with '%s' for '%s' dress (%d)"
 msgstr "%s: '%s' non è compatibile con '%s' per il vestito '%s' (%d)"
 
-#: src/adg/adg-entity.c:1256
+#: src/adg/adg-entity.c:1278
 #, c-format
 msgid "%s: requested to mix the maps using an undefined mix method"
 msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
 
-#: src/adg/adg-entity.c:1302
+#: src/adg/adg-entity.c:1324
 #, c-format
 msgid "%s: 'arrange' method not implemented for type '%s'"
 msgstr "%s: metodo 'arrange' non implementato per il tipo '%s'"
 
-#: src/adg/adg-entity.c:1318
+#: src/adg/adg-entity.c:1340
 #, c-format
 msgid "%s: 'render' method not implemented for type '%s'"
 msgstr "%s: metodo 'render' non implementato per il tipo '%s'"
@@ -1338,7 +1338,7 @@ msgstr "Modello"
 msgid "A general purpose model usable by the marker implementations"
 msgstr "Un modello ad uso generale usato dall'implementazione dell'indicatore"
 
-#: src/adg/adg-marker.c:764
+#: src/adg/adg-marker.c:767
 #, c-format
 msgid "%s: 'create_model' method not implemented for type '%s'"
 msgstr "%s: 'create_model' non implementato per il tipo '%s'"
@@ -1384,51 +1384,51 @@ msgstr "Valore di slant inatteso (%d)"
 msgid "Unhandled weight value (%d)"
 msgstr "Valore di weight inatteso (%d)"
 
-#: src/adg/adg-path.c:408
+#: src/adg/adg-path.c:430
 #, c-format
 msgid "%s: null pair caught while parsing arguments"
 msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
 
-#: src/adg/adg-path.c:912
+#: src/adg/adg-path.c:941
 #, c-format
 msgid "%s: the axis of the reflection is not known"
 msgstr "%s: l'asse di riflessione non è conosciuta"
 
-#: src/adg/adg-path.c:1094
+#: src/adg/adg-path.c:1167
 #, c-format
 msgid "%s: a '%s' operation is still active while clearing the path"
 msgstr "%s: operazione '%s' ancora attiva durante l'azzeramento del path"
 
-#: src/adg/adg-path.c:1114
+#: src/adg/adg-path.c:1187
 #, c-format
 msgid "%s: requested a '%s' operation on a path without current primitive"
 msgstr "%s: richiesta l'operazione '%s' su un path senza primitiva attiva"
 
-#: src/adg/adg-path.c:1121
+#: src/adg/adg-path.c:1194
 #, c-format
 msgid "%s: requested a '%s' operation while a '%s' operation was active"
 msgstr "%s: richiesta l'operazione '%s' mentre l'operazione '%s' era in corso"
 
-#: src/adg/adg-path.c:1146
+#: src/adg/adg-path.c:1219
 #, c-format
 msgid "%s: %d path operation not recognized"
 msgstr "%s: l'operazione %d non è conosciuta"
 
-#: src/adg/adg-path.c:1256
+#: src/adg/adg-path.c:1329
 #, c-format
 msgid ""
 "%s: first chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il primo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1265
+#: src/adg/adg-path.c:1338
 #, c-format
 msgid ""
 "%s: second chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il secondo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1303
+#: src/adg/adg-path.c:1376
 #, c-format
 msgid "%s: fillet with radius of %lf is not applicable here"
 msgstr "%s: un raccordo di raggio %lf non è eseguibile ora"
@@ -1709,11 +1709,11 @@ msgstr "DATA"
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
 
-#: src/adg/adg-trail.c:136
+#: src/adg/adg-trail.c:135
 msgid "Max Angle"
 msgstr "Angolo Massimo"
 
-#: src/adg/adg-trail.c:137
+#: src/adg/adg-trail.c:136
 msgid ""
 "Max arc angle to approximate with a single Bezier curve: check "
 "adg_trail_set_max_angle() for details"
@@ -1721,28 +1721,28 @@ msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
 
-#: src/adg/adg-trail.c:338
+#: src/adg/adg-trail.c:337
 #, c-format
 msgid ""
 "%s: you cannot access the path from the callback you provided to build it"
 msgstr "%s: accesso al path non consentito dalla funzione che deve definirlo"
 
-#: src/adg/adg-trail.c:381
+#: src/adg/adg-trail.c:380
 #, c-format
 msgid "%s: requested undefined segment for type '%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo '%s'"
 
-#: src/adg/adg-trail.c:397
+#: src/adg/adg-trail.c:396
 #, c-format
 msgid "%s: segment %u is out of range for type '%s'"
 msgstr "%s: il numero di segmento %u è fuori scala per il tipo '%s'"
 
-#: src/adg/adg-trail.c:462
+#: src/adg/adg-trail.c:461
 #, c-format
 msgid "%s: invalid path data"
 msgstr "%s: dati del path non validi"
 
-#: src/adg/adg-trail.c:548
+#: src/adg/adg-trail.c:547
 #, c-format
 msgid "%s: callback not defined for instance of type '%s'"
 msgstr "%s: callback non definita per un'istanza di tipo '%s'"

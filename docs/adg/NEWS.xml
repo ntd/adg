@@ -6,6 +6,29 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.8.0">
+<title>ADG 0.8.0</title>
+
+<para>The code shared by tests has been moved on an internal library
+(libadgtest) shared by both CPML and ADG.</para>
+
+<para>The test coverage is now checked by leveraging the Coveralls
+service provided by GitHub. The percentage has been raised
+from 53% to 94%.</para>
+
+<para>A fistfull of bugs found while improving the test coverage
+has been corrected, most notably cpml_extents_is_inside(),
+cpml_segment_reverse() and some intersection algorithm.</para>
+
+<para>Children widgets now own weak references to parents, avoiding
+the circular dependency introduced by strong references.</para>
+
+<para>The overall sanity of the ADG library has been improved by
+adding additional checks where needed. The CPML library is
+not subject to those checks because by design it is not
+supposed to be sane.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.7.6">
 <title>ADG 0.7.6</title>
 
