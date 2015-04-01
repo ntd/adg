@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Builds a windows installer on a UNIX system. It depends
+# on a lot of stuff such as wine, a proper MinGW toolchain
+# and my GTK2/3 cross-compiled environment found at
+# http://github.com/ntd/aur-fedora-mingw
+#
+# It supersedes the old configure scripts still distributed
+# (build/configure-win32 and build/configure-win64) by
+# properly cross-compiling the ADG project with
+# gobject-introspection enabled.
+
+# If this script has a trailing win64 (e.g. build-win64), set
+# arch to x86_64-w64-mingw32, otherwise use i686-w64-mingw32
+if [ "$0" = "${0%win64}" ]; then
+    arch=i686-w64-mingw32
+else
+    arch=x86_64-w64-mingw32
+fi
+
+# This script only works in the root dir or in a VPATH build
+# one level under the root dir
+if [ -x ./configure ]; then
+    tardir=.
+elif [ -x ../configure ]; then
+    tardir=..
+fi
+
+# Step 1: cross-build ADG for $arch
+#  Execute the scripts inside a subshell so there will be
+#  no visible environment changes from outside.
+(
+    # The configure scripts provided by the aur-fedora-mingw
+    # found at http://github.com/ntd/aur-fedora-mingw are intended to
+    # be used from makepkg: let us adapt them for external usage
+    CHOST=$($tardir/build/config.guess)
+    srcdir="$TMPDIR"
+    [ -z "$srcdir" ] && srcdir=/tmp
+    srcdir="$srcdir/$(whoami)/adg-wine"
+    mkdir -p "$srcdir"
+
+    # Source the wrapper so the environment set by the configure script
+    # is retained for the next make call
+    MINGW_EXTRA_CFLAGS='-mwindows'
+    source /usr/bin/$arch-configure "$tardir" \
+	--prefix= \
+	--enable-shared \
+	--enable-static \
+	--enable-pango \
+	--disable-gtk-doc \
+	--with-gtk=gtk3 \
+	--enable-introspection \
+	--disable-test-framework \
+	"$@"
+
+    make -j
+)
+
+# Step 2: create the installer
+#   Force empty flags because the cached ones are intended for to be
+#   consumed by step 1 (cross-build), not by step 2 (straight build).
+make -j installer CPPFLAGS= CFLAGS= LDFLAGS=
