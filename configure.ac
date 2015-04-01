@@ -330,11 +330,11 @@ AC_C_CONST
 
 # Windows substitutions for NSis installer
 
-dnl Get the USRDIR from gobject-2.0.pc: all the dependencies *must* be
+dnl Get the HOSTPREFIX from gobject-2.0.pc: all the dependencies *must* be
 dnl installed under the same prefix.
-USRDIR="$($PKG_CONFIG --variable=prefix gobject-2.0)"
-AC_SUBST([USRDIR])
-AM_SUBST_NOTMAKE([USRDIR])
+HOSTPREFIX="$($PKG_CONFIG --variable=prefix gobject-2.0)"
+AC_SUBST([HOSTPREFIX])
+AM_SUBST_NOTMAKE([HOSTPREFIX])
 
 dnl -win$PACKAGE_ARCH will be appended to the installer file name
 AS_IF([test "x${host_cpu}" = "xx86_64"],[PACKAGE_ARCH=64],[PACKAGE_ARCH=32])

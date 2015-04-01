@@ -87,7 +87,7 @@ RequestExecutionLevel highest
 
 ; I. Introduction
 
-!define DLLDIR		"${USRDIR}/bin"
+!define DLLDIR		"${PREFIX}/bin"
 
 Section $(TITLE_SecBase) SecBase
   SectionIn RO

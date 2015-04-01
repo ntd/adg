@@ -5,4 +5,4 @@
 !define PACKAGE_ARCH	"@PACKAGE_ARCH@"
 !define SRCDIR		"@abs_top_srcdir@"
 !define BUILDDIR	"@abs_top_builddir@"
-!define USRDIR		"@USRDIR@"
+!define PREFIX		"@HOSTPREFIX@"
