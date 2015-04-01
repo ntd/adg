@@ -10,11 +10,13 @@ xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 hicolor_snapshot=		build/hicolor-snapshot-0.11.tar.bz2
 minitheme_snapshot=		build/minitheme-snapshot.tar.bz2
 ACLOCAL_AMFLAGS=		-I build
-AM_DISTCHECK_CONFIGURE_FLAGS=	--enable-pango \
+ADG_DIST_CONFIGURE_FLAGS=	--enable-pango \
+				--with-gtk=gtk3 \
 				--enable-gtk-doc \
+				--enable-gtk-doc-html
+AM_DISTCHECK_CONFIGURE_FLAGS=	$(ADG_DIST_CONFIGURE_FLAGS) \
 				--enable-test-framework \
 				--enable-introspection \
-				--with-gtk \
 				--with-glade-catalogdir
 
 BUILT_SOURCES=			ChangeLog \
@@ -73,6 +75,7 @@ _host:
 _host/docs/adg/adg.pdf: _host $(srcdir)/configure
 	cd _host ; \
 	$(abs_srcdir)/configure \
+		$(ADG_DIST_CONFIGURE_FLAGS) \
 		--prefix= \
 		--disable-dependency-tracking \
 		--disable-fast-install \
@@ -80,10 +83,8 @@ _host/docs/adg/adg.pdf: _host $(srcdir)/configure
 		--disable-introspection \
 		--disable-test-framework \
 		--without-glade-catalogdir \
-		--enable-gtk-doc \
-		--enable-gtk-doc-html \
 		--enable-gtk-doc-pdf && \
-	$(MAKE) -j7 ; \
+	$(MAKE) -j ; \
 	cd ..
 
 _host/hicolor: _host $(srcdir)/$(hicolor_snapshot)
