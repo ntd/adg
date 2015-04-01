@@ -47,3 +47,10 @@ LangString TITLE_SecPDF			${LANG_ITALIAN}		"Documentazione PDF"
 
 LangString DESC_SecPDF			${LANG_ENGLISH}		"Install manuals in PDF format."
 LangString DESC_SecPDF			${LANG_ITALIAN}		"Installare i manuali in formato PDF."
+
+LangString TITLE_SecLua			${LANG_ENGLISH}		"Lua support"
+LangString TITLE_SecLua			${LANG_ITALIAN}		"Supporto Lua"
+
+LangString DESC_SecLua			${LANG_ENGLISH}		"Include Lua language support for interactive development."
+LangString DESC_SecLua			${LANG_ITALIAN}		"Includere il supporto al linguaggio Lua per sviluppo interattivo."
+

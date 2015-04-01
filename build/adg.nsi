@@ -88,6 +88,10 @@ RequestExecutionLevel highest
 ; I. Introduction
 
 !define DLLDIR		"${PREFIX}/bin"
+!define GIRDIR		"${PREFIX}/share/gir-1.0"
+!define TYPELIBDIR	"${PREFIX}/lib/girepository-1.0"
+!define LUA_CMOD	"${PREFIX}/lib/lua/5.2"
+!define LUA_LMOD	"${PREFIX}/share/lua/5.2"
 
 Section $(TITLE_SecBase) SecBase
   SectionIn RO
@@ -174,7 +178,72 @@ Section $(TITLE_SecLanguages) SecLanguages
   !insertmacro FileLocale "it"
 SectionEnd
 
-; III. Documentation
+; III. Lua support
+
+Section $(TITLE_SecLua) SecLua
+  SetOutPath "$INSTDIR\bin"
+  File "${DLLDIR}/libgirepository-1.0-*.dll"
+  File "${DLLDIR}/lua52.dll"
+  File "${DLLDIR}/lua.exe"
+
+  SetOutPath "$INSTDIR\lib\lua\5.2\lgi"
+  File "${LUA_CMOD}/lgi/corelgilua51.dll"
+
+  SetOutPath "$INSTDIR\share\lua\5.2"
+  File "${LUA_LMOD}/lgi.lua"
+  File /r "${LUA_LMOD}/lgi"
+
+  SetOutPath "$INSTDIR\lib\girepository-1.0"
+  File "${TYPELIBDIR}/Atk-1.0.typelib"
+  ; DBus-1.0.typelib
+  ; DBusGLib-1.0.typelib
+  ; GIRepository-2.0.typelib
+  ; GL-1.0.typelib
+  File "${TYPELIBDIR}/GLib-2.0.typelib"
+  File "${TYPELIBDIR}/GModule-2.0.typelib"
+  File "${TYPELIBDIR}/GObject-2.0.typelib"
+  File "${TYPELIBDIR}/Gdk-3.0.typelib"
+  File "${TYPELIBDIR}/GdkPixbuf-2.0.typelib"
+  File "${TYPELIBDIR}/GdkWin32-3.0.typelib"
+  File "${TYPELIBDIR}/Gio-2.0.typelib"
+  File "${TYPELIBDIR}/Gtk-3.0.typelib"
+  File "${TYPELIBDIR}/HarfBuzz-0.0.typelib"
+  File "${TYPELIBDIR}/Pango-1.0.typelib"
+  File "${TYPELIBDIR}/PangoCairo-1.0.typelib"
+  File "${TYPELIBDIR}/PangoFT2-1.0.typelib"
+  File "${TYPELIBDIR}/cairo-1.0.typelib"
+  File "${TYPELIBDIR}/fontconfig-2.0.typelib"
+  File "${TYPELIBDIR}/freetype2-2.0.typelib"
+  ; libxml2-2.0.typelib
+  File "${TYPELIBDIR}/win32-1.0.typelib"
+  ; xfixes-4.0.typelib
+  ; xft-2.0.typelib
+  ; xlib-2.0.typelib
+  ; xrandr-1.3.typelib
+
+  SetOutPath "$INSTDIR\share\gir-1.0"
+  File "${GIRDIR}/Atk-1.0.gir"
+  File "${GIRDIR}/GLib-2.0.gir"
+  File "${GIRDIR}/GModule-2.0.gir"
+  File "${GIRDIR}/GObject-2.0.gir"
+  File "${GIRDIR}/Gdk-3.0.gir"
+  File "${GIRDIR}/GdkPixbuf-2.0.gir"
+  File "${GIRDIR}/GdkWin32-3.0.gir"
+  File "${GIRDIR}/Gio-2.0.gir"
+  File "${GIRDIR}/Gtk-3.0.gir"
+  File "${GIRDIR}/HarfBuzz-0.0.gir"
+  File "${GIRDIR}/Pango-1.0.gir"
+  File "${GIRDIR}/PangoCairo-1.0.gir"
+  File "${GIRDIR}/PangoFT2-1.0.gir"
+  File "${GIRDIR}/cairo-1.0.gir"
+  File "${GIRDIR}/fontconfig-2.0.gir"
+  File "${GIRDIR}/freetype2-2.0.gir"
+  File "${GIRDIR}/win32-1.0.gir"
+
+  CreateShortcut "$SMPROGRAMS\ADG Canvas\Lua interpreter.lnk" '"$INSTDIR\bin\lua.exe"'
+SectionEnd
+
+; IV. Documentation
 
 SectionGroup /e $(TITLE_SecDocumentation) SecDocumentation
 
@@ -200,15 +269,19 @@ SectionEnd
 
 SectionGroupEnd
 
-; IV. Uninstaller
+; V. Uninstaller
 
 Section "Uninstall"
   Delete "$SMPROGRAMS\ADG Canvas\ADG Demonstration program.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\CPML showcase.lnk"
+
+  Delete "$SMPROGRAMS\ADG Canvas\Lua interpreter.lnk"
+
   Delete "$SMPROGRAMS\ADG Canvas\CPML HTML manual.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\CPML PDF manual.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\ADG HTML manual.lnk"
   Delete "$SMPROGRAMS\ADG Canvas\ADG PDF manual.lnk"
+
   Delete "$SMPROGRAMS\ADG Canvas\Uninstall ADG Canvas.lnk"
   RMDir  "$SMPROGRAMS\ADG Canvas"
 
@@ -239,7 +312,38 @@ Section "Uninstall"
   Delete "$INSTDIR\bin\libwinpthread-*.dll"
   Delete "$INSTDIR\bin\libcpml-1-*.dll"
   Delete "$INSTDIR\bin\libadg-1-*.dll"
+
+  Delete "$INSTDIR\bin\libgirepository-1.0-*.dll"
+  Delete "$INSTDIR\bin\lua52.dll"
+  Delete "$INSTDIR\bin\lua.exe"
+
   RMDir  "$INSTDIR\bin"
+
+  Delete "$INSTDIR\lib\lua\5.2\lgi\corelgilua51.dll"
+  RMDir  "$INSTDIR\lib\lua\5.2\lgi"
+  RMDir  "$INSTDIR\lib\lua\5.2"
+  RMDir  "$INSTDIR\lib\lua"
+
+  Delete "$INSTDIR\lib\girepository-1.0\Atk-1.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\GLib-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\GModule-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\GObject-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\Gdk-3.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\GdkPixbuf-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\GdkWin32-3.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\Gio-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\Gtk-3.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\HarfBuzz-0.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\Pango-1.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\PangoCairo-1.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\PangoFT2-1.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\cairo-1.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\fontconfig-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\freetype2-2.0.typelib"
+  Delete "$INSTDIR\lib\girepository-1.0\win32-1.0.typelib"
+  RMDir  "$INSTDIR\lib\girepository-1.0"
+
+  RMDir  "$INSTDIR\lib"
 
   Delete "$INSTDIR\share\adg\icons\adg-segment.png"
   Delete "$INSTDIR\share\adg\icons\adg-intersection.png"
@@ -274,6 +378,32 @@ Section "Uninstall"
   RMDir  "$INSTDIR\share\gtk-doc"
 
   RMDir /r "$INSTDIR\share\icons"
+
+  SetOutPath "$INSTDIR\share\gir-1.0"
+  Delete "$INSTDIR\share\gir-1.0\Atk-1.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\GLib-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\GModule-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\GObject-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\Gdk-3.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\GdkPixbuf-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\GdkWin32-3.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\Gio-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\Gtk-3.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\HarfBuzz-0.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\Pango-1.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\PangoCairo-1.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\PangoFT2-1.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\cairo-1.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\fontconfig-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\freetype2-2.0.gir"
+  Delete "$INSTDIR\share\gir-1.0\win32-1.0.gir"
+  RMDir  "$INSTDIR\share\gir-1.0"
+
+  Delete "$INSTDIR\share\lua\5.2\lgi.lua"
+  RMDir /r "$INSTDIR\share\lua\5.2\lgi"
+  RMDir  "$INSTDIR\share\lua\5.2"
+  RMDir  "$INSTDIR\share\lua"
+
   RMDir  "$INSTDIR\share"
 
   Delete "$INSTDIR\etc\gtk-3.0\settings.ini"
