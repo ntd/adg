@@ -810,7 +810,7 @@ _cpml_class_from_type(CpmlPrimitiveType type)
         table[CPML_CLOSE] = _cpml_close_get_class();
     }
 
-    return type <= CPML_MAX ? table[type] : NULL;
+    return (int) type <= (int) CPML_MAX ? table[type] : NULL;
 }
 
 static const _CpmlPrimitiveClass *
