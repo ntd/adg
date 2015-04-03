@@ -88,8 +88,6 @@ RequestExecutionLevel highest
 ; I. Introduction
 
 !define DLLDIR		"${PREFIX}/bin"
-!define GIRDIR		"${PREFIX}/share/gir-1.0"
-!define TYPELIBDIR	"${PREFIX}/lib/girepository-1.0"
 !define LUA_CMOD	"${PREFIX}/lib/lua/5.2"
 !define LUA_LMOD	"${PREFIX}/share/lua/5.2"
 

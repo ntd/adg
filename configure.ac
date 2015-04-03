@@ -275,28 +275,10 @@ AS_IF([test "x$enable_gtk_doc" = "xyes"],
 
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
-AC_ARG_WITH(girdir,
-            [AS_HELP_STRING([--with-girdir=DIR],
-                            [where the gir files are installed @<:@default=check@:>@])],
-            [],[with_girdir=check])
-AS_IF([test "x${enable_introspection}" = "xyes" -a "x${with_girdir}" = "xcheck"],
-      [NTD_UNEXPAND([gobject-introspection-1.0],
-                    [girdir],
-                    [with_girdir="${NTD_UNEXPANDED}"])])
-AC_SUBST([GIRDIR],${with_girdir})
-AC_ARG_WITH(typelibdir,
-            [AS_HELP_STRING([--with-typelibdir=DIR],
-                            [where the typelib files are installed @<:@default=check@:>@])],
-            [],[with_typelibdir=check])
-AS_IF([test "x${enable_introspection}" = "xyes" -a "x${with_typelibdir}" = "xcheck"],
-      [NTD_UNEXPAND([gobject-introspection-1.0],
-                    [typelibdir],
-                    [with_typelibdir="${NTD_UNEXPANDED}"])])
-AC_SUBST([TYPELIBDIR],${with_typelibdir})
 AM_COND_IF([HAVE_INTROSPECTION],
            [report_introspection="
-         Where to install gir files: ${with_girdir}
- Where to install the typelib files: ${with_typelibdir}"],
+         Where to install gir files: $INTROSPECTION_GIRDIR
+ Where to install the typelib files: $INTROSPECTION_TYPELIBDIR"],
            [report_introspection=""])
 
 dnl If introspection is used GObject support in cairo must be enabled,

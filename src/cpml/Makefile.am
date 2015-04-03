@@ -81,9 +81,9 @@ Cpml_1_0_gir_FILES=		cpml-introspection.h \
 Cpml_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \
 				--c-include="cpml.h" \
 				--warn-all
-girdir=				$(GIRDIR)
+girdir=				$(INTROSPECTION_GIRDIR)
 dist_gir_DATA=			$(INTROSPECTION_GIRS)
-typelibdir=			$(TYPELIBDIR)
+typelibdir=			$(INTROSPECTION_TYPELIBDIR)
 typelib_DATA=			$(INTROSPECTION_GIRS:.gir=.typelib)
 CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)

@@ -6,3 +6,5 @@
 !define SRCDIR		"@abs_top_srcdir@"
 !define BUILDDIR	"@abs_top_builddir@"
 !define PREFIX		"@HOSTPREFIX@"
+!define GIRDIR		"@INTROSPECTION_GIRDIR@"
+!define TYPELIBDIR	"@INTROSPECTION_TYPELIBDIR@"
