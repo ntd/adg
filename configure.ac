@@ -275,20 +275,21 @@ AS_IF([test "x$enable_gtk_doc" = "xyes"],
 
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
-AM_COND_IF([HAVE_INTROSPECTION],
-           [report_introspection="
+
+dnl If introspection is used, GObject support in cairo must be enabled.
+dnl This in turn means cairo-gobject library must be present. That
+dnl library has been introduced in cairo 1.10.0.
+AS_IF([test "x$enable_introspection" = "xyes"],
+      [PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
+                         [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
+                                             [Defined if GObject support in cairo is present.])],
+                         [AC_MSG_ERROR([GObject introspection requires the cairo-gobject library])])])
+AS_IF([test "x$enable_introspection" = "xyes"],
+      [report_introspection="
          Where to install gir files: $INTROSPECTION_GIRDIR
  Where to install the typelib files: $INTROSPECTION_TYPELIBDIR"],
-           [report_introspection=""])
+      [report_introspection=""])
 
-dnl If introspection is used GObject support in cairo must be enabled,
-dnl that is the cairo-gobject library must be present. That support
-dnl was introduced since cairo 1.10.0.
-PKG_CHECK_MODULES([CAIRO_GOBJECT],[cairo-gobject],
-                  [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
-                                      [Defined if GObject support in cairo is present.])],
-                  [AS_IF([test "x${enable_introspection}" = "xyes"],
-                         [AC_MSG_ERROR([GObject introspection requires the cairo-gobject library])])])
 
 dnl GLib test framework
 AC_ARG_ENABLE([test_framework],

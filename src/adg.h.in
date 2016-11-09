@@ -21,7 +21,6 @@
 #ifndef __ADG_H__
 #define __ADG_H__
 
-#include <cairo-gobject.h>
 #include <cpml.h>
 
 #include "adg/adg-forward-declarations.h"
