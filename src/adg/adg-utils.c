@@ -386,6 +386,8 @@ adg_find_file(const gchar *file, ...)
  * documentation for details on the algorithm used.
  *
  * Returns: the (possibly approximated) double conversion of @scale or 0 on errors.
+ *
+ * Since: 1.0
  **/
 gdouble
 adg_scale_factor(const gchar *scale)
@@ -420,7 +422,10 @@ adg_scale_factor(const gchar *scale)
  * function returns <constant>CAIRO_SURFACE_TYPE_XLIB</constant>. This is
  * the value conventionally used to signal unrecognized file names.
  *
- * Returns: the surface type of @file or <constant>CAIRO_SURFACE_TYPE_XLIB</constant>.
+ * Returns: (type gint): the surface type of @file
+ *          or <constant>CAIRO_SURFACE_TYPE_XLIB</constant>.
+ *
+ * Since: 1.0
  **/
 cairo_surface_type_t
 adg_type_from_filename(const gchar *file)
@@ -460,6 +465,8 @@ adg_type_from_filename(const gchar *file)
  * A function that does nothing. It can be used as
  * <constant>/dev/null</constant> when callback are required, e.g. with
  * g_log_set_default_handler().
+ *
+ * Since: 1.0
  **/
 void
 adg_nop(void)

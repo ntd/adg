@@ -495,7 +495,7 @@ adg_font_style_set_slant(AdgFontStyle *font_style,
  *
  * Gets the slant variant of @font_style.
  *
- * Returns: (type gint) (transfer none): the slant variant.
+ * Returns: (type gint): the slant variant.
  *
  * Since: 1.0
  **/
@@ -535,7 +535,7 @@ adg_font_style_set_weight(AdgFontStyle *font_style,
  *
  * Gets the weight variant of @font_style.
  *
- * Returns: (type gint) (transfer none): the weight variant.
+ * Returns: (type gint): the weight variant.
  *
  * Since: 1.0
  **/
@@ -613,7 +613,7 @@ adg_font_style_set_antialias(AdgFontStyle *font_style,
  *
  * Gets the antialias mode used.
  *
- * Returns: (type gint) (transfer none): the requested antialias mode.
+ * Returns: (type gint): the requested antialias mode.
  *
  * Since: 1.0
  **/
@@ -655,7 +655,7 @@ adg_font_style_set_subpixel_order(AdgFontStyle *font_style,
  * within each pixel on the display device when rendering with an
  * antialiasing mode of %CAIRO_ANTIALIAS_SUBPIXEL.
  *
- * Returns: (type gint) (transfer none): the requested subpixel order mode.
+ * Returns: (type gint): the requested subpixel order mode.
  *
  * Since: 1.0
  **/
@@ -696,7 +696,7 @@ adg_font_style_set_hint_style(AdgFontStyle *font_style,
  * Gets the hint style mode used, that is how to fit outlines
  * to the pixel grid in order to improve the appearance of the result.
  *
- * Returns: (type gint) (transfer none): the requested hint style mode.
+ * Returns: (type gint): the requested hint style mode.
  *
  * Since: 1.0
  **/
@@ -736,7 +736,7 @@ adg_font_style_set_hint_metrics(AdgFontStyle *font_style,
  *
  * Gets the state on whether to hint font metrics.
  *
- * Returns: (type gint) (transfer none): the requested hint metrics state.
+ * Returns: (type gint): the requested hint metrics state.
  *
  * Since: 1.0
  **/

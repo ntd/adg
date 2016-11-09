@@ -360,7 +360,7 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
  *
  * Gets the line cap mode.
  *
- * Returns: (type gint) (transfer none): the requested line cap mode.
+ * Returns: (type gint): the requested line cap mode.
  *
  * Since: 1.0
  **/
@@ -405,7 +405,7 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
  *
  * Gets the line join mode.
  *
- * Returns: (type gint) (transfer none): the requested line join mode.
+ * Returns: (type gint): the requested line join mode.
  *
  * Since: 1.0
  **/
@@ -490,7 +490,7 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
  *
  * Gets the antialias mode used.
  *
- * Returns: (type gint) (transfer none): the requested antialias mode.
+ * Returns: (type gint): the requested antialias mode.
  *
  * Since: 1.0
  **/

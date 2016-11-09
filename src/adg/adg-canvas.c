@@ -1468,7 +1468,7 @@ _adg_apply_paddings(AdgCanvas *canvas, CpmlExtents *extents)
 /**
  * adg_canvas_export:
  * @canvas: an #AdgCanvas
- * @type: the export format
+ * @type: (type gint): the export format
  * @file: the name of the resulting file
  * @gerror: (allow-none): return location for errors
  *
