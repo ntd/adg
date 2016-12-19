@@ -51,6 +51,7 @@ struct _AdgDimStylePrivate {
     CpmlPair             limits_shift;
     gchar               *number_format;
     gchar               *number_tag;
+    gint                 decimals;
 };
 
 G_END_DECLS

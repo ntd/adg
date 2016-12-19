@@ -571,6 +571,46 @@ _adg_property_number_tag(void)
 }
 
 static void
+_adg_property_decimals(void)
+{
+    AdgDimStyle *dim_style;
+    gint decimals;
+
+    dim_style = adg_dim_style_new();
+
+    /* Using the public APIs */
+    adg_dim_style_set_decimals(dim_style, 2);
+    decimals = adg_dim_style_get_decimals(dim_style);
+    g_assert_cmpint(decimals, ==, 2);
+
+    adg_dim_style_set_decimals(dim_style, -2);
+    decimals = adg_dim_style_get_decimals(dim_style);
+    g_assert_cmpint(decimals, ==, 2);
+
+    decimals = adg_dim_style_get_decimals(NULL);
+    g_assert_cmpint(decimals, ==, -2);
+
+    adg_dim_style_set_decimals(dim_style, -1);
+    decimals = adg_dim_style_get_decimals(dim_style);
+    g_assert_cmpint(decimals, ==, -1);
+
+    /* Using GObject property methods */
+    g_object_set(dim_style, "decimals", 2, NULL);
+    g_object_get(dim_style, "decimals", &decimals, NULL);
+    g_assert_cmpint(decimals, ==, 2);
+
+    g_object_set(dim_style, "decimals", -2, NULL);
+    g_object_get(dim_style, "decimals", &decimals, NULL);
+    g_assert_cmpint(decimals, ==, 2);
+
+    g_object_set(dim_style, "decimals", -1, NULL);
+    g_object_get(dim_style, "decimals", &decimals, NULL);
+    g_assert_cmpint(decimals, ==, -1);
+
+    g_object_unref(dim_style);
+}
+
+static void
 _adg_property_quote_shift(void)
 {
     AdgDimStyle *dim_style;
@@ -719,6 +759,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim-style/property/min-dress", _adg_property_min_dress);
     g_test_add_func("/adg/dim-style/property/number-format", _adg_property_number_format);
     g_test_add_func("/adg/dim-style/property/number-tag", _adg_property_number_tag);
+    g_test_add_func("/adg/dim-style/property/decimals", _adg_property_decimals);
     g_test_add_func("/adg/dim-style/property/quote-shift", _adg_property_quote_shift);
     g_test_add_func("/adg/dim-style/property/to-offset", _adg_property_to_offset);
     g_test_add_func("/adg/dim-style/property/value-dress", _adg_property_value_dress);

@@ -73,7 +73,8 @@ enum {
     PROP_QUOTE_SHIFT,
     PROP_LIMITS_SHIFT,
     PROP_NUMBER_FORMAT,
-    PROP_NUMBER_TAG
+    PROP_NUMBER_TAG,
+    PROP_DECIMALS
 };
 
 
@@ -225,6 +226,14 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                 "<>",
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_TAG, param);
+
+    param = g_param_spec_int("decimals",
+                             P_("decimals"),
+                             P_("Number of significant decimals to round the value to (-1 to disable)"),
+                             -1, G_MAXINT,
+                             -1,
+                             G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_DECIMALS, param);
 }
 
 static void
@@ -257,6 +266,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->limits_shift.y = +2;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
+    data->decimals = -1;
 
     dim_style->data = data;
 }
@@ -325,6 +335,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_NUMBER_TAG:
         g_value_set_string(value, data->number_tag);
         break;
+    case PROP_DECIMALS:
+        g_value_set_int(value, data->decimals);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -391,6 +404,9 @@ _adg_set_property(GObject *object, guint prop_id,
     case PROP_NUMBER_TAG:
         g_free(data->number_tag);
         data->number_tag = g_value_dup_string(value);
+        break;
+    case PROP_DECIMALS:
+        data->decimals = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1060,6 +1076,45 @@ adg_dim_style_get_number_tag(AdgDimStyle *dim_style)
     data = dim_style->data;
 
     return data->number_tag;
+}
+
+/**
+ * adg_dim_style_set_decimals:
+ * @dim_style: an #AdgDimStyle object
+ * @decimals: number of significant decimals
+ *
+ * Sets a new value in the #AdgDimStyle:decimals property.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_style_set_decimals(AdgDimStyle *dim_style, gint decimals)
+{
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_object_set(dim_style, "decimals", decimals, NULL);
+}
+
+/**
+ * adg_dim_style_get_decimals:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the decimals the value of a dimension will be rounded to before the
+ * rendering.
+ *
+ * Returns: the number of significant decimals or -2 on errors.
+ *
+ * Since: 1.0
+ **/
+gint
+adg_dim_style_get_decimals(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), -2);
+
+    data = dim_style->data;
+
+    return data->decimals;
 }
 
 
