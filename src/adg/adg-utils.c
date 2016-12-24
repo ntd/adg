@@ -92,6 +92,7 @@
 #include "adg-internal.h"
 #include <string.h>
 #include <limits.h>
+#include <math.h>
 
 
 #if GLIB_CHECK_VERSION(2, 16, 0)
@@ -471,4 +472,24 @@ adg_type_from_filename(const gchar *file)
 void
 adg_nop(void)
 {
+}
+
+/**
+ * adg_round:
+ * @value: the value to round
+ * @decimals: the number of significald decimals to consider
+ *
+ * Rounds the @value floating number to a specific number of digits. Be aware
+ * a binary floating point is unable to represent all decimal numbers, i.e.
+ * (WARNING: pure theoretical example ahead) rounding 3.3333 to the second
+ * decimal can return in 3.32999999.
+ *
+ * Returns: (type gdouble): the rounded number.
+ *
+ * Since: 1.0
+ **/
+gdouble
+adg_round(gdouble value, gint decimals)
+{
+    return decimals > 0 ? adg_round(value*10, decimals-1) / 10 : round(value);
 }

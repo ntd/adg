@@ -129,6 +129,15 @@ _adg_method_nop(void)
     adg_nop();
 }
 
+static void
+_adg_method_round(void)
+{
+    g_assert_cmpfloat(adg_round(0, 12), ==, 0);
+    g_assert_cmpfloat(adg_round(3.2222222, 1), ==, 3.2);
+    g_assert_cmpfloat(adg_round(3.2222222, 2), ==, 3.22);
+    g_assert_cmpfloat(adg_round(-1234.56, 0), ==, -1235);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -144,6 +153,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/method/scale-factor", _adg_method_scale_factor);
     g_test_add_func("/adg/method/type-from-filename", _adg_method_type_from_filename);
     g_test_add_func("/adg/method/nop", _adg_method_nop);
+    g_test_add_func("/adg/method/round", _adg_method_round);
 
     return g_test_run();
 }

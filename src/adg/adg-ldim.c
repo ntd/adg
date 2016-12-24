@@ -734,16 +734,24 @@ _adg_default_value(AdgDim *dim)
     AdgLDimPrivate *data;
     AdgDimStyle *dim_style;
     const gchar *format;
+    gdouble value;
+    gint decimals;
 
     ldim = (AdgLDim *) dim;
-    data = ldim->data;
-    dim_style = _ADG_GET_DIM_STYLE(dim);
-    format = adg_dim_style_get_number_format(dim_style);
-
     if (! _adg_update_geometry(ldim))
         return g_strdup("undef");
 
-    return g_strdup_printf(format, data->geometry.distance);
+    data = ldim->data;
+    dim_style = _ADG_GET_DIM_STYLE(dim);
+    format = adg_dim_style_get_number_format(dim_style);
+    value = data->geometry.distance;
+
+    decimals = adg_dim_style_get_decimals(dim_style);
+    if (decimals > 0) {
+        value = adg_round(value, decimals);
+    }
+
+    return g_strdup_printf(format, value);
 }
 
 static gboolean
