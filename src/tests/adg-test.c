@@ -74,7 +74,7 @@ adg_test_init(int *p_argc, char **p_argv[])
     if (g_getenv("ADG_QUIET") != NULL)
         g_log_set_default_handler((GLogFunc) _adg_nop, NULL);
 
-    g_test_bug_base("http://dev.entidi.com/p/adg/issues/%s/");
+    g_test_bug_base("https://track.entidi.com/%s");
 }
 
 const gpointer
