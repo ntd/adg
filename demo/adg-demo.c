@@ -400,11 +400,6 @@ _adg_part_link(DemoPart *part, gpointer data, GObject *widget)
     g_object_ref(widget);
     g_hash_table_insert(part->widgets, data, widget);
 
-    if (GTK_IS_SPIN_BUTTON(widget)) {
-        GtkSpinButton *spin_button = GTK_SPIN_BUTTON(widget);
-        gtk_adjustment_value_changed(gtk_spin_button_get_adjustment(spin_button));
-    }
-
     edit_signal = GTK_IS_TOGGLE_BUTTON(widget) ? "toggled" : "changed";
     g_signal_connect_swapped(widget, edit_signal,
                              G_CALLBACK(_adg_part_unlock), part);
