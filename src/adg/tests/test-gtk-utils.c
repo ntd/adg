@@ -81,7 +81,10 @@ _adg_method_toggle_button_sensitivize(void)
     adg_gtk_toggle_button_sensitivize(button, widget);
     g_assert_true(gtk_widget_get_sensitive(widget));
 
+    g_object_ref_sink(button);
     g_object_unref(button);
+
+    g_object_ref_sink(widget);
     g_object_unref(widget);
 }
 
@@ -112,6 +115,7 @@ int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
+    gtk_init_check(&argc, &argv);
 
     g_test_add_func("/adg/method/widget-get-window", _adg_method_widget_get_window);
     g_test_add_func("/adg/method/widget-get-realized", _adg_method_widget_get_realized);

@@ -627,6 +627,7 @@ int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
+    gtk_init_check(&argc, &argv);
 
     adg_test_add_object_checks("/adg-gtk/area/type/object", ADG_GTK_TYPE_AREA);
 

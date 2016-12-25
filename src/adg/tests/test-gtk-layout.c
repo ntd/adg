@@ -343,12 +343,9 @@ _adg_method_value_changed(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     gtk_adjustment_set_value(adjustment, 100);
-    gtk_adjustment_value_changed(adjustment);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     gtk_adjustment_set_value(adjustment, 40);
-    gtk_adjustment_value_changed(adjustment);
-    gtk_adjustment_changed(adjustment);
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
@@ -417,6 +414,7 @@ int
 main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
+    gtk_init_check(&argc, &argv);
 
     adg_test_add_object_checks("/adg/gtk/layout/type/object", ADG_GTK_TYPE_LAYOUT);
 
