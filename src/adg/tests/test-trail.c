@@ -57,7 +57,7 @@ _adg_property_max_angle(void)
     /* Using the public APIs */
     adg_trail_set_max_angle(trail, valid_value);
     max_angle = adg_trail_get_max_angle(trail);
-    g_assert_cmpfloat(max_angle, ==, valid_value);
+    adg_assert_isapprox(max_angle, valid_value);
 
     adg_trail_set_max_angle(trail, invalid_value);
     max_angle = adg_trail_get_max_angle(trail);
@@ -66,7 +66,7 @@ _adg_property_max_angle(void)
     /* Using GObject property methods */
     g_object_set(trail, "max-angle", valid_value, NULL);
     g_object_get(trail, "max-angle", &max_angle, NULL);
-    g_assert_cmpfloat(max_angle, ==, valid_value);
+    adg_assert_isapprox(max_angle, valid_value);
 
     g_object_set(trail, "max-angle", invalid_value, NULL);
     g_object_get(trail, "max-angle", &max_angle, NULL);

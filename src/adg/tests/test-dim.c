@@ -109,20 +109,20 @@ _adg_property_level(void)
     /* Using the public APIs */
     adg_dim_set_level(dim, valid_value_1);
     level = adg_dim_get_level(dim);
-    g_assert_cmpfloat(level, ==, valid_value_1);
+    adg_assert_isapprox(level, valid_value_1);
 
     adg_dim_set_level(dim, valid_value_2);
     level = adg_dim_get_level(dim);
-    g_assert_cmpfloat(level, ==, valid_value_2);
+    adg_assert_isapprox(level, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(dim, "level", valid_value_1, NULL);
     g_object_get(dim, "level", &level, NULL);
-    g_assert_cmpfloat(level, ==, valid_value_1);
+    adg_assert_isapprox(level, valid_value_1);
 
     g_object_set(dim, "level", valid_value_2, NULL);
     g_object_get(dim, "level", &level, NULL);
-    g_assert_cmpfloat(level, ==, valid_value_2);
+    adg_assert_isapprox(level, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(dim));
 }

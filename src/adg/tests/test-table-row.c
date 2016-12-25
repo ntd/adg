@@ -58,8 +58,8 @@ _adg_behavior_misc(void)
 
     size = adg_table_row_size_request(row);
     g_assert_nonnull(size);
-    g_assert_cmpfloat(size->x, ==, 0);
-    g_assert_cmpfloat(size->y, ==, 0);
+    adg_assert_isapprox(size->x, 0);
+    adg_assert_isapprox(size->y, 0);
 
     extents = adg_table_row_get_extents(row);
     g_assert_nonnull(extents);
@@ -69,15 +69,15 @@ _adg_behavior_misc(void)
 
     size = adg_table_row_size_request(row);
     g_assert_nonnull(size);
-    g_assert_cmpfloat(size->x, ==, 0);
-    g_assert_cmpfloat(size->y, ==, 12);
+    adg_assert_isapprox(size->x, 0);
+    adg_assert_isapprox(size->y, 12);
 
     cell = adg_table_cell_new_full(row, 34, "name", "title", FALSE);
     g_assert_nonnull(cell);
     size = adg_table_row_size_request(row);
     g_assert_nonnull(size);
-    g_assert_cmpfloat(size->x, ==, 34);
-    g_assert_cmpfloat(size->y, ==, 12);
+    adg_assert_isapprox(size->x, 34);
+    adg_assert_isapprox(size->y, 12);
 
     layout.is_defined = 1;
     layout.org.x = 12;
@@ -87,25 +87,25 @@ _adg_behavior_misc(void)
     extents = adg_table_row_arrange(row, &layout);
     g_assert_nonnull(extents);
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->org.x, ==, 12);
-    g_assert_cmpfloat(extents->org.y, ==, 34);
-    g_assert_cmpfloat(extents->size.x, ==, 34);
-    g_assert_cmpfloat(extents->size.y, ==, 12);
+    adg_assert_isapprox(extents->org.x, 12);
+    adg_assert_isapprox(extents->org.y, 34);
+    adg_assert_isapprox(extents->size.x, 34);
+    adg_assert_isapprox(extents->size.y, 12);
 
     layout.size.x = 56;
     extents = adg_table_row_arrange(row, &layout);
     g_assert_nonnull(extents);
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->size.x, ==, 56);
-    g_assert_cmpfloat(extents->size.y, ==, 12);
+    adg_assert_isapprox(extents->size.x, 56);
+    adg_assert_isapprox(extents->size.y, 12);
 
     layout.size.x = -1;
     layout.size.y = 78;
     extents = adg_table_row_arrange(row, &layout);
     g_assert_nonnull(extents);
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->size.x, ==, 56);
-    g_assert_cmpfloat(extents->size.y, ==, 78);
+    adg_assert_isapprox(extents->size.x, 56);
+    adg_assert_isapprox(extents->size.y, 78);
 
     adg_entity_destroy(ADG_ENTITY(table));
 }
@@ -123,16 +123,16 @@ _adg_property_height(void)
     table = adg_table_new();
     row = adg_table_row_new(table);
 
-    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 0);
+    adg_assert_isapprox(adg_table_row_get_height(row), 0);
 
     adg_table_row_set_height(row, 123);
-    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 123);
+    adg_assert_isapprox(adg_table_row_get_height(row), 123);
 
     adg_table_row_set_height(row, 0);
-    g_assert_cmpfloat(adg_table_row_get_height(row), ==, 0);
+    adg_assert_isapprox(adg_table_row_get_height(row), 0);
 
     adg_table_row_set_height(row, -123);
-    g_assert_cmpfloat(adg_table_row_get_height(row), ==, -123);
+    adg_assert_isapprox(adg_table_row_get_height(row), -123);
 
     adg_entity_destroy(ADG_ENTITY(table));
 }

@@ -56,9 +56,20 @@ G_BEGIN_DECLS
                                            } while (0)
 #endif
 
-/* This macro is similar to g_assert_cmpfloat with the == operator but
+/**
+ * Check if a pair of numbers are approximately equals.
+ * @n1: (type gdouble): First value to compare
+ * @n2: (type gdouble): Second value to compare
+ *
+ * This macro is similar to g_assert_cmpfloat with the == operator but
  * considers only the first 3 decimal digits. This can be used instead of
  * the strict equality to avoid some false assertions due to rounding problems.
+ *
+ * WARNING: the implementation is quite naive and do not take overflow
+ * into account.
+ *
+ *     // This will always fail:
+ *     adg_assert_isapprox(G_MAXDOUBLE, G_MAXDOUBLE);
  **/
 #define adg_assert_isapprox(n1,n2)  G_STMT_START { \
                                         long double __n3 = (n1), __n4 = (n2); \

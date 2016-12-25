@@ -36,28 +36,28 @@ _adg_property_alpha(void)
     /* Using the public APIs */
     adg_color_style_set_alpha(color_style, valid_alpha1);
     alpha = adg_color_style_get_alpha(color_style);
-    g_assert_cmpfloat(alpha, ==, valid_alpha1);
+    adg_assert_isapprox(alpha, valid_alpha1);
 
     adg_color_style_set_alpha(color_style, invalid_alpha);
     alpha = adg_color_style_get_alpha(color_style);
-    g_assert_cmpfloat(alpha, ==, valid_alpha1);
+    adg_assert_isapprox(alpha, valid_alpha1);
 
     adg_color_style_set_alpha(color_style, valid_alpha2);
     alpha = adg_color_style_get_alpha(color_style);
-    g_assert_cmpfloat(alpha, ==, valid_alpha2);
+    adg_assert_isapprox(alpha, valid_alpha2);
 
     /* Using GObject property methods */
     g_object_set(color_style, "alpha", valid_alpha1, NULL);
     g_object_get(color_style, "alpha", &alpha, NULL);
-    g_assert_cmpfloat(alpha, ==, valid_alpha1);
+    adg_assert_isapprox(alpha, valid_alpha1);
 
     g_object_set(color_style, "alpha", invalid_alpha, NULL);
     g_object_get(color_style, "alpha", &alpha, NULL);
-    g_assert_cmpfloat(alpha, ==, valid_alpha1);
+    adg_assert_isapprox(alpha, valid_alpha1);
 
     g_object_set(color_style, "alpha", valid_alpha2, NULL);
     g_object_get(color_style, "alpha", &alpha, NULL);
-    g_assert_cmpfloat(alpha, ==, valid_alpha2);
+    adg_assert_isapprox(alpha, valid_alpha2);
 
     g_object_unref(color_style);
 }
@@ -76,28 +76,28 @@ _adg_property_blue(void)
     /* Using the public APIs */
     adg_color_style_set_blue(color_style, valid_blue1);
     blue = adg_color_style_get_blue(color_style);
-    g_assert_cmpfloat(blue, ==, valid_blue1);
+    adg_assert_isapprox(blue, valid_blue1);
 
     adg_color_style_set_blue(color_style, invalid_blue);
     blue = adg_color_style_get_blue(color_style);
-    g_assert_cmpfloat(blue, ==, valid_blue1);
+    adg_assert_isapprox(blue, valid_blue1);
 
     adg_color_style_set_blue(color_style, valid_blue2);
     blue = adg_color_style_get_blue(color_style);
-    g_assert_cmpfloat(blue, ==, valid_blue2);
+    adg_assert_isapprox(blue, valid_blue2);
 
     /* Using GObject property methods */
     g_object_set(color_style, "blue", valid_blue1, NULL);
     g_object_get(color_style, "blue", &blue, NULL);
-    g_assert_cmpfloat(blue, ==, valid_blue1);
+    adg_assert_isapprox(blue, valid_blue1);
 
     g_object_set(color_style, "blue", invalid_blue, NULL);
     g_object_get(color_style, "blue", &blue, NULL);
-    g_assert_cmpfloat(blue, ==, valid_blue1);
+    adg_assert_isapprox(blue, valid_blue1);
 
     g_object_set(color_style, "blue", valid_blue2, NULL);
     g_object_get(color_style, "blue", &blue, NULL);
-    g_assert_cmpfloat(blue, ==, valid_blue2);
+    adg_assert_isapprox(blue, valid_blue2);
 
     g_object_unref(color_style);
 }
@@ -116,28 +116,28 @@ _adg_property_green(void)
     /* Using the public APIs */
     adg_color_style_set_green(color_style, valid_green1);
     green = adg_color_style_get_green(color_style);
-    g_assert_cmpfloat(green, ==, valid_green1);
+    adg_assert_isapprox(green, valid_green1);
 
     adg_color_style_set_green(color_style, invalid_green);
     green = adg_color_style_get_green(color_style);
-    g_assert_cmpfloat(green, ==, valid_green1);
+    adg_assert_isapprox(green, valid_green1);
 
     adg_color_style_set_green(color_style, valid_green2);
     green = adg_color_style_get_green(color_style);
-    g_assert_cmpfloat(green, ==, valid_green2);
+    adg_assert_isapprox(green, valid_green2);
 
     /* Using GObject property methods */
     g_object_set(color_style, "green", valid_green1, NULL);
     g_object_get(color_style, "green", &green, NULL);
-    g_assert_cmpfloat(green, ==, valid_green1);
+    adg_assert_isapprox(green, valid_green1);
 
     g_object_set(color_style, "green", invalid_green, NULL);
     g_object_get(color_style, "green", &green, NULL);
-    g_assert_cmpfloat(green, ==, valid_green1);
+    adg_assert_isapprox(green, valid_green1);
 
     g_object_set(color_style, "green", valid_green2, NULL);
     g_object_get(color_style, "green", &green, NULL);
-    g_assert_cmpfloat(green, ==, valid_green2);
+    adg_assert_isapprox(green, valid_green2);
 
     g_object_unref(color_style);
 }
@@ -156,28 +156,28 @@ _adg_property_red(void)
     /* Using the public APIs */
     adg_color_style_set_red(color_style, valid_red1);
     red = adg_color_style_get_red(color_style);
-    g_assert_cmpfloat(red, ==, valid_red1);
+    adg_assert_isapprox(red, valid_red1);
 
     adg_color_style_set_red(color_style, invalid_red);
     red = adg_color_style_get_red(color_style);
-    g_assert_cmpfloat(red, ==, valid_red1);
+    adg_assert_isapprox(red, valid_red1);
 
     adg_color_style_set_red(color_style, valid_red2);
     red = adg_color_style_get_red(color_style);
-    g_assert_cmpfloat(red, ==, valid_red2);
+    adg_assert_isapprox(red, valid_red2);
 
     /* Using GObject property methods */
     g_object_set(color_style, "red", valid_red1, NULL);
     g_object_get(color_style, "red", &red, NULL);
-    g_assert_cmpfloat(red, ==, valid_red1);
+    adg_assert_isapprox(red, valid_red1);
 
     g_object_set(color_style, "red", invalid_red, NULL);
     g_object_get(color_style, "red", &red, NULL);
-    g_assert_cmpfloat(red, ==, valid_red1);
+    adg_assert_isapprox(red, valid_red1);
 
     g_object_set(color_style, "red", valid_red2, NULL);
     g_object_get(color_style, "red", &red, NULL);
-    g_assert_cmpfloat(red, ==, valid_red2);
+    adg_assert_isapprox(red, valid_red2);
 
     g_object_unref(color_style);
 }

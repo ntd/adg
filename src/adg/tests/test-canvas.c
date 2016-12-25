@@ -45,8 +45,8 @@ _adg_behavior_entity(void)
     adg_entity_arrange(ADG_ENTITY(canvas));
     extents = adg_entity_get_extents(ADG_ENTITY(canvas));
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->size.x, ==, 1);
-    g_assert_cmpfloat(extents->size.y, ==, 1);
+    adg_assert_isapprox(extents->size.x, 1);
+    adg_assert_isapprox(extents->size.y, 1);
 
     adg_entity_invalidate(ADG_ENTITY(canvas));
     extents = adg_entity_get_extents(ADG_ENTITY(canvas));
@@ -66,8 +66,8 @@ _adg_behavior_entity(void)
     adg_entity_arrange(ADG_ENTITY(canvas));
     extents = adg_entity_get_extents(ADG_ENTITY(canvas));
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->size.x, ==, 5000);
-    g_assert_cmpfloat(extents->size.y, ==, 5000);
+    adg_assert_isapprox(extents->size.x, 5000);
+    adg_assert_isapprox(extents->size.y, 5000);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -335,20 +335,20 @@ _adg_property_top_margin(void)
     /* Using the public APIs */
     adg_canvas_set_top_margin(canvas, valid_value_1);
     top_margin = adg_canvas_get_top_margin(canvas);
-    g_assert_cmpfloat(top_margin, ==, valid_value_1);
+    adg_assert_isapprox(top_margin, valid_value_1);
 
     adg_canvas_set_margins(canvas, valid_value_2, 0, 0, 0);
     top_margin = adg_canvas_get_top_margin(canvas);
-    g_assert_cmpfloat(top_margin, ==, valid_value_2);
+    adg_assert_isapprox(top_margin, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "top-margin", valid_value_1, NULL);
     g_object_get(canvas, "top-margin", &top_margin, NULL);
-    g_assert_cmpfloat(top_margin, ==, valid_value_1);
+    adg_assert_isapprox(top_margin, valid_value_1);
 
     g_object_set(canvas, "top-margin", valid_value_2, NULL);
     g_object_get(canvas, "top-margin", &top_margin, NULL);
-    g_assert_cmpfloat(top_margin, ==, valid_value_2);
+    adg_assert_isapprox(top_margin, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -367,20 +367,20 @@ _adg_property_right_margin(void)
     /* Using the public APIs */
     adg_canvas_set_right_margin(canvas, valid_value_1);
     right_margin = adg_canvas_get_right_margin(canvas);
-    g_assert_cmpfloat(right_margin, ==, valid_value_1);
+    adg_assert_isapprox(right_margin, valid_value_1);
 
     adg_canvas_set_margins(canvas, 0, valid_value_2, 0, 0);
     right_margin = adg_canvas_get_right_margin(canvas);
-    g_assert_cmpfloat(right_margin, ==, valid_value_2);
+    adg_assert_isapprox(right_margin, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "right-margin", valid_value_1, NULL);
     g_object_get(canvas, "right-margin", &right_margin, NULL);
-    g_assert_cmpfloat(right_margin, ==, valid_value_1);
+    adg_assert_isapprox(right_margin, valid_value_1);
 
     g_object_set(canvas, "right-margin", valid_value_2, NULL);
     g_object_get(canvas, "right-margin", &right_margin, NULL);
-    g_assert_cmpfloat(right_margin, ==, valid_value_2);
+    adg_assert_isapprox(right_margin, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -399,20 +399,20 @@ _adg_property_bottom_margin(void)
     /* Using the public APIs */
     adg_canvas_set_bottom_margin(canvas, valid_value_1);
     bottom_margin = adg_canvas_get_bottom_margin(canvas);
-    g_assert_cmpfloat(bottom_margin, ==, valid_value_1);
+    adg_assert_isapprox(bottom_margin, valid_value_1);
 
     adg_canvas_set_margins(canvas, 0, 0, valid_value_2, 0);
     bottom_margin = adg_canvas_get_bottom_margin(canvas);
-    g_assert_cmpfloat(bottom_margin, ==, valid_value_2);
+    adg_assert_isapprox(bottom_margin, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "bottom-margin", valid_value_1, NULL);
     g_object_get(canvas, "bottom-margin", &bottom_margin, NULL);
-    g_assert_cmpfloat(bottom_margin, ==, valid_value_1);
+    adg_assert_isapprox(bottom_margin, valid_value_1);
 
     g_object_set(canvas, "bottom-margin", valid_value_2, NULL);
     g_object_get(canvas, "bottom-margin", &bottom_margin, NULL);
-    g_assert_cmpfloat(bottom_margin, ==, valid_value_2);
+    adg_assert_isapprox(bottom_margin, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -431,20 +431,20 @@ _adg_property_left_margin(void)
     /* Using the public APIs */
     adg_canvas_set_left_margin(canvas, valid_value_1);
     left_margin = adg_canvas_get_left_margin(canvas);
-    g_assert_cmpfloat(left_margin, ==, valid_value_1);
+    adg_assert_isapprox(left_margin, valid_value_1);
 
     adg_canvas_set_margins(canvas, 0, 0, 0, valid_value_2);
     left_margin = adg_canvas_get_left_margin(canvas);
-    g_assert_cmpfloat(left_margin, ==, valid_value_2);
+    adg_assert_isapprox(left_margin, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "left-margin", valid_value_1, NULL);
     g_object_get(canvas, "left-margin", &left_margin, NULL);
-    g_assert_cmpfloat(left_margin, ==, valid_value_1);
+    adg_assert_isapprox(left_margin, valid_value_1);
 
     g_object_set(canvas, "left-margin", valid_value_2, NULL);
     g_object_get(canvas, "left-margin", &left_margin, NULL);
-    g_assert_cmpfloat(left_margin, ==, valid_value_2);
+    adg_assert_isapprox(left_margin, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -502,20 +502,20 @@ _adg_property_top_padding(void)
     /* Using the public APIs */
     adg_canvas_set_top_padding(canvas, valid_value_1);
     top_padding = adg_canvas_get_top_padding(canvas);
-    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+    adg_assert_isapprox(top_padding, valid_value_1);
 
     adg_canvas_set_paddings(canvas, valid_value_2, 0, 0, 0);
     top_padding = adg_canvas_get_top_padding(canvas);
-    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+    adg_assert_isapprox(top_padding, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "top-padding", valid_value_1, NULL);
     g_object_get(canvas, "top-padding", &top_padding, NULL);
-    g_assert_cmpfloat(top_padding, ==, valid_value_1);
+    adg_assert_isapprox(top_padding, valid_value_1);
 
     g_object_set(canvas, "top-padding", valid_value_2, NULL);
     g_object_get(canvas, "top-padding", &top_padding, NULL);
-    g_assert_cmpfloat(top_padding, ==, valid_value_2);
+    adg_assert_isapprox(top_padding, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -534,20 +534,20 @@ _adg_property_right_padding(void)
     /* Using the public APIs */
     adg_canvas_set_right_padding(canvas, valid_value_1);
     right_padding = adg_canvas_get_right_padding(canvas);
-    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+    adg_assert_isapprox(right_padding, valid_value_1);
 
     adg_canvas_set_paddings(canvas, 0, valid_value_2, 0, 0);
     right_padding = adg_canvas_get_right_padding(canvas);
-    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+    adg_assert_isapprox(right_padding, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "right-padding", valid_value_1, NULL);
     g_object_get(canvas, "right-padding", &right_padding, NULL);
-    g_assert_cmpfloat(right_padding, ==, valid_value_1);
+    adg_assert_isapprox(right_padding, valid_value_1);
 
     g_object_set(canvas, "right-padding", valid_value_2, NULL);
     g_object_get(canvas, "right-padding", &right_padding, NULL);
-    g_assert_cmpfloat(right_padding, ==, valid_value_2);
+    adg_assert_isapprox(right_padding, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -566,20 +566,20 @@ _adg_property_bottom_padding(void)
     /* Using the public APIs */
     adg_canvas_set_bottom_padding(canvas, valid_value_1);
     bottom_padding = adg_canvas_get_bottom_padding(canvas);
-    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+    adg_assert_isapprox(bottom_padding, valid_value_1);
 
     adg_canvas_set_paddings(canvas, 0, 0, valid_value_2, 0);
     bottom_padding = adg_canvas_get_bottom_padding(canvas);
-    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+    adg_assert_isapprox(bottom_padding, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "bottom-padding", valid_value_1, NULL);
     g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
-    g_assert_cmpfloat(bottom_padding, ==, valid_value_1);
+    adg_assert_isapprox(bottom_padding, valid_value_1);
 
     g_object_set(canvas, "bottom-padding", valid_value_2, NULL);
     g_object_get(canvas, "bottom-padding", &bottom_padding, NULL);
-    g_assert_cmpfloat(bottom_padding, ==, valid_value_2);
+    adg_assert_isapprox(bottom_padding, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -598,20 +598,20 @@ _adg_property_left_padding(void)
     /* Using the public APIs */
     adg_canvas_set_left_padding(canvas, valid_value_1);
     left_padding = adg_canvas_get_left_padding(canvas);
-    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+    adg_assert_isapprox(left_padding, valid_value_1);
 
     adg_canvas_set_paddings(canvas, 0, 0, 0, valid_value_2);
     left_padding = adg_canvas_get_left_padding(canvas);
-    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+    adg_assert_isapprox(left_padding, valid_value_2);
 
     /* Using GObject property methods */
     g_object_set(canvas, "left-padding", valid_value_1, NULL);
     g_object_get(canvas, "left-padding", &left_padding, NULL);
-    g_assert_cmpfloat(left_padding, ==, valid_value_1);
+    adg_assert_isapprox(left_padding, valid_value_1);
 
     g_object_set(canvas, "left-padding", valid_value_2, NULL);
     g_object_get(canvas, "left-padding", &left_padding, NULL);
-    g_assert_cmpfloat(left_padding, ==, valid_value_2);
+    adg_assert_isapprox(left_padding, valid_value_2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -687,14 +687,14 @@ _adg_method_set_margins(void)
 
     g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 0);
     g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 2);
-    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 4);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(canvas), 4);
     g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 6);
 
     adg_canvas_set_margins(canvas, 1, 3, 5, 7);
 
     g_assert_cmpfloat(adg_canvas_get_top_margin(canvas),    ==, 1);
     g_assert_cmpfloat(adg_canvas_get_right_margin(canvas),  ==, 3);
-    g_assert_cmpfloat(adg_canvas_get_bottom_margin(canvas), ==, 5);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(canvas), 5);
     g_assert_cmpfloat(adg_canvas_get_left_margin(canvas),   ==, 7);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
@@ -720,23 +720,23 @@ _adg_method_apply_margins(void)
 
     g_assert_cmpfloat(extents.org.x,  ==, -4);
     g_assert_cmpfloat(extents.org.y,  ==, -1);
-    g_assert_cmpfloat(extents.size.x, ==, 16);
-    g_assert_cmpfloat(extents.size.y, ==, 14);
+    adg_assert_isapprox(extents.size.x, 16);
+    adg_assert_isapprox(extents.size.y, 14);
 
     adg_canvas_apply_margins(canvas, &extents);
 
     g_assert_cmpfloat(extents.org.x,  ==, -8);
     g_assert_cmpfloat(extents.org.y,  ==, -2);
-    g_assert_cmpfloat(extents.size.x, ==, 22);
-    g_assert_cmpfloat(extents.size.y, ==, 18);
+    adg_assert_isapprox(extents.size.x, 22);
+    adg_assert_isapprox(extents.size.y, 18);
 
     extents.is_defined = 0;
     adg_canvas_apply_margins(canvas, &extents);
 
     g_assert_cmpfloat(extents.org.x,  ==, -8);
     g_assert_cmpfloat(extents.org.y,  ==, -2);
-    g_assert_cmpfloat(extents.size.x, ==, 22);
-    g_assert_cmpfloat(extents.size.y, ==, 18);
+    adg_assert_isapprox(extents.size.x, 22);
+    adg_assert_isapprox(extents.size.y, 18);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -750,14 +750,14 @@ _adg_method_set_paddings(void)
 
     g_assert_cmpfloat(adg_canvas_get_top_padding(canvas),    ==, 0);
     g_assert_cmpfloat(adg_canvas_get_right_padding(canvas),  ==, 2);
-    g_assert_cmpfloat(adg_canvas_get_bottom_padding(canvas), ==, 4);
+    adg_assert_isapprox(adg_canvas_get_bottom_padding(canvas), 4);
     g_assert_cmpfloat(adg_canvas_get_left_padding(canvas),   ==, 6);
 
     adg_canvas_set_paddings(canvas, 1, 3, 5, 7);
 
     g_assert_cmpfloat(adg_canvas_get_top_padding(canvas),    ==, 1);
     g_assert_cmpfloat(adg_canvas_get_right_padding(canvas),  ==, 3);
-    g_assert_cmpfloat(adg_canvas_get_bottom_padding(canvas), ==, 5);
+    adg_assert_isapprox(adg_canvas_get_bottom_padding(canvas), 5);
     g_assert_cmpfloat(adg_canvas_get_left_padding(canvas),   ==, 7);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
@@ -806,8 +806,8 @@ _adg_method_set_paper(void)
     canvas = ADG_CANVAS(adg_canvas_new());
 
     size = adg_canvas_get_size(canvas);
-    g_assert_cmpfloat(size->x, ==, 0);
-    g_assert_cmpfloat(size->y, ==, 0);
+    adg_assert_isapprox(size->x, 0);
+    adg_assert_isapprox(size->y, 0);
 
     adg_canvas_set_margins(canvas, 0, 0, 0, 0);
     adg_canvas_set_paper(canvas, GTK_PAPER_NAME_A4,
@@ -837,8 +837,8 @@ _adg_method_set_paper(void)
     adg_canvas_set_left_margin(canvas, adg_canvas_get_left_margin(canvas) + 1);
     adg_canvas_set_top_margin(canvas, adg_canvas_get_top_margin(canvas) + 2);
     size = adg_canvas_get_size(canvas);
-    g_assert_cmpfloat(size->x, ==, width - 1);
-    g_assert_cmpfloat(size->y, ==, height - 2);
+    adg_assert_isapprox(size->x, width - 1);
+    adg_assert_isapprox(size->y, height - 2);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
@@ -915,8 +915,8 @@ _adg_method_set_page_setup(void)
      * should not change the page size */
     adg_canvas_set_margins(canvas, 10, 20, 30, 40);
     size = adg_canvas_get_size(canvas);
-    g_assert_cmpfloat(size->x, ==, width);
-    g_assert_cmpfloat(size->y, ==, height);
+    adg_assert_isapprox(size->x, width);
+    adg_assert_isapprox(size->y, height);
 
     adg_entity_destroy(ADG_ENTITY(canvas));
 }

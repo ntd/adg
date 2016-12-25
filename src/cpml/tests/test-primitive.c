@@ -32,20 +32,20 @@ _cpml_behavior_browsing(void)
     cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
 
     cpml_primitive_from_segment(&primitive, &segment);
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 0);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 0);
+    adg_assert_isapprox((primitive.org)->point.y, 1);
     g_assert_cmpint((primitive.data)->header.type, ==, CPML_LINE);
     g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 3);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 1);
+    adg_assert_isapprox((primitive.org)->point.x, 3);
+    adg_assert_isapprox((primitive.org)->point.y, 1);
     g_assert_cmpint((primitive.data)->header.type, ==, CPML_ARC);
     g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, 6);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 7);
+    adg_assert_isapprox((primitive.org)->point.x, 6);
+    adg_assert_isapprox((primitive.org)->point.y, 7);
     g_assert_cmpint((primitive.data)->header.type, ==, CPML_CURVE);
     g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpfloat((primitive.org)->point.x, ==, -2);
-    g_assert_cmpfloat((primitive.org)->point.y, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, -2);
+    adg_assert_isapprox((primitive.org)->point.y, 2);
     g_assert_cmpint((primitive.data)->header.type, ==, CPML_CLOSE);
     g_assert_false(cpml_primitive_next(&primitive));
 
@@ -496,11 +496,11 @@ _cpml_method_copy_data(void)
             g_assert_cmpfloat(primitive->data[n].point.y, !=, original.data[n].point.y);
         }
         g_assert_cmpint(cpml_primitive_copy_data(primitive, &original), ==, 1);
-        g_assert_cmpfloat(primitive->org->point.x, ==, original.org->point.x);
-        g_assert_cmpfloat(primitive->org->point.y, ==, original.org->point.y);
+        adg_assert_isapprox(primitive->org->point.x, original.org->point.x);
+        adg_assert_isapprox(primitive->org->point.y, original.org->point.y);
         for (n = 1; n < primitive->data[0].header.length; ++n) {
-            g_assert_cmpfloat(primitive->data[n].point.x, ==, original.data[n].point.x);
-            g_assert_cmpfloat(primitive->data[n].point.y, ==, original.data[n].point.y);
+            adg_assert_isapprox(primitive->data[n].point.x, original.data[n].point.x);
+            adg_assert_isapprox(primitive->data[n].point.y, original.data[n].point.y);
         }
         g_free(primitive);
     } while (cpml_primitive_next(&original));
@@ -568,10 +568,10 @@ _cpml_method_get_length(void)
     cpml_segment_next(&segment);
     cpml_primitive_from_segment(&primitive, &segment);
 
-    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 1);
+    adg_assert_isapprox(cpml_primitive_get_length(&primitive), 1);
 
     cpml_primitive_next(&primitive);
-    g_assert_cmpfloat(cpml_primitive_get_length(&primitive), ==, 2);
+    adg_assert_isapprox(cpml_primitive_get_length(&primitive), 2);
 }
 
 static void
@@ -587,10 +587,10 @@ _cpml_method_put_extents(void)
     cpml_primitive_from_segment(&primitive, &segment);
     cpml_primitive_put_extents(&primitive, &extents);
     g_assert_true(extents.is_defined);
-    g_assert_cmpfloat(extents.org.x, ==, 0);
-    g_assert_cmpfloat(extents.org.y, ==, 1);
-    g_assert_cmpfloat(extents.size.x, ==, 3);
-    g_assert_cmpfloat(extents.size.y, ==, 0);
+    adg_assert_isapprox(extents.org.x, 0);
+    adg_assert_isapprox(extents.org.y, 1);
+    adg_assert_isapprox(extents.size.x, 3);
+    adg_assert_isapprox(extents.size.y, 0);
 
     /* Arc: the extents are computed precisely... let's ensure
      * at least all the 3 points are included */
@@ -607,19 +607,19 @@ _cpml_method_put_extents(void)
     cpml_primitive_next(&primitive);
     cpml_primitive_put_extents(&primitive, &extents);
     g_assert_true(extents.is_defined);
-    g_assert_cmpfloat(extents.org.x, ==, -2);
-    g_assert_cmpfloat(extents.org.y, ==, 2);
-    g_assert_cmpfloat(extents.size.x, ==, 12);
-    g_assert_cmpfloat(extents.size.y, ==, 9);
+    adg_assert_isapprox(extents.org.x, -2);
+    adg_assert_isapprox(extents.org.y, 2);
+    adg_assert_isapprox(extents.size.x, 12);
+    adg_assert_isapprox(extents.size.y, 9);
 
     /* Close */
     cpml_primitive_next(&primitive);
     cpml_primitive_put_extents(&primitive, &extents);
     g_assert_true(extents.is_defined);
-    g_assert_cmpfloat(extents.org.x, ==, -2);
-    g_assert_cmpfloat(extents.org.y, ==, 1);
-    g_assert_cmpfloat(extents.size.x, ==, 2);
-    g_assert_cmpfloat(extents.size.y, ==, 1);
+    adg_assert_isapprox(extents.org.x, -2);
+    adg_assert_isapprox(extents.org.y, 1);
+    adg_assert_isapprox(extents.size.x, 2);
+    adg_assert_isapprox(extents.size.y, 1);
 }
 
 static void
@@ -634,23 +634,23 @@ _cpml_method_put_pair_at(void)
     /* Line */
     cpml_primitive_from_segment(&primitive, &segment);
     cpml_primitive_put_pair_at(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_pair_at(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
-    g_assert_cmpfloat(pair.x, ==, 1.5);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 1.5);
+    adg_assert_isapprox(pair.y, 1);
 
     /* Arc */
     cpml_primitive_next(&primitive);
     cpml_primitive_put_pair_at(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_pair_at(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 6);
-    g_assert_cmpfloat(pair.y, ==, 7);
+    adg_assert_isapprox(pair.x, 6);
+    adg_assert_isapprox(pair.y, 7);
     cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
     adg_assert_isapprox(pair.x, 3.669);
     adg_assert_isapprox(pair.y, 4.415);
@@ -659,26 +659,26 @@ _cpml_method_put_pair_at(void)
     cpml_primitive_next(&primitive);
     /* TODO: not yet implemented
      * cpml_primitive_put_pair_at(&primitive, 0, &pair);
-     * g_assert_cmpfloat(pair.x, ==, 6);
-     * g_assert_cmpfloat(pair.y, ==, 7);
+     * adg_assert_isapprox(pair.x, 6);
+     * adg_assert_isapprox(pair.y, 7);
      * cpml_primitive_put_pair_at(&primitive, 1, &pair);
-     * g_assert_cmpfloat(pair.x, ==, -2);
-     * g_assert_cmpfloat(pair.y, ==, 2);
+     * adg_assert_isapprox(pair.x, -2);
+     * adg_assert_isapprox(pair.y, 2);
      * cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
-     * g_assert_cmpfloat(pair.x, ==, 1);
-     * g_assert_cmpfloat(pair.y, ==, 1); */
+     * adg_assert_isapprox(pair.x, 1);
+     * adg_assert_isapprox(pair.y, 1); */
 
     /* Close */
     cpml_primitive_next(&primitive);
     cpml_primitive_put_pair_at(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, -2);
-    g_assert_cmpfloat(pair.y, ==, 2);
+    adg_assert_isapprox(pair.x, -2);
+    adg_assert_isapprox(pair.y, 2);
     cpml_primitive_put_pair_at(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_pair_at(&primitive, 0.5, &pair);
-    g_assert_cmpfloat(pair.x, ==, -1);
-    g_assert_cmpfloat(pair.y, ==, 1.5);
+    adg_assert_isapprox(pair.x, -1);
+    adg_assert_isapprox(pair.y, 1.5);
 }
 
 static void
@@ -693,14 +693,14 @@ _cpml_method_put_vector_at(void)
     /* Line */
     cpml_primitive_from_segment(&primitive, &segment);
     cpml_primitive_put_vector_at(&primitive, 0, &vector);
-    g_assert_cmpfloat(vector.x, ==, 3);
-    g_assert_cmpfloat(vector.y, ==, 0);
+    adg_assert_isapprox(vector.x, 3);
+    adg_assert_isapprox(vector.y, 0);
     cpml_primitive_put_vector_at(&primitive, 1, &vector);
-    g_assert_cmpfloat(vector.x, ==, 3);
-    g_assert_cmpfloat(vector.y, ==, 0);
+    adg_assert_isapprox(vector.x, 3);
+    adg_assert_isapprox(vector.y, 0);
     cpml_primitive_put_vector_at(&primitive, 0.5, &vector);
-    g_assert_cmpfloat(vector.x, ==, 3);
-    g_assert_cmpfloat(vector.y, ==, 0);
+    adg_assert_isapprox(vector.x, 3);
+    adg_assert_isapprox(vector.y, 0);
 
     /* Arc */
     cpml_primitive_next(&primitive);
@@ -718,26 +718,26 @@ _cpml_method_put_vector_at(void)
     cpml_primitive_next(&primitive);
     /* TODO: not yet implemented
      * cpml_primitive_put_vector_at(&primitive, 0, &vector);
-     * g_assert_cmpfloat(vector.x, ==, 6);
-     * g_assert_cmpfloat(vector.y, ==, 7);
+     * adg_assert_isapprox(vector.x, 6);
+     * adg_assert_isapprox(vector.y, 7);
      * cpml_primitive_put_vector_at(&primitive, 1, &vector);
-     * g_assert_cmpfloat(vector.x, ==, -2);
-     * g_assert_cmpfloat(vector.y, ==, 2);
+     * adg_assert_isapprox(vector.x, -2);
+     * adg_assert_isapprox(vector.y, 2);
      * cpml_primitive_put_vector_at(&primitive, 0.5, &vector);
-     * g_assert_cmpfloat(vector.x, ==, 1);
-     * g_assert_cmpfloat(vector.y, ==, 1); */
+     * adg_assert_isapprox(vector.x, 1);
+     * adg_assert_isapprox(vector.y, 1); */
 
     /* Close */
     cpml_primitive_next(&primitive);
     cpml_primitive_put_vector_at(&primitive, 0, &vector);
-    g_assert_cmpfloat(vector.x, ==, 2);
-    g_assert_cmpfloat(vector.y, ==, -1);
+    adg_assert_isapprox(vector.x, 2);
+    adg_assert_isapprox(vector.y, -1);
     cpml_primitive_put_vector_at(&primitive, 1, &vector);
-    g_assert_cmpfloat(vector.x, ==, 2);
-    g_assert_cmpfloat(vector.y, ==, -1);
+    adg_assert_isapprox(vector.x, 2);
+    adg_assert_isapprox(vector.y, -1);
     cpml_primitive_put_vector_at(&primitive, 0.5, &vector);
-    g_assert_cmpfloat(vector.x, ==, 2);
-    g_assert_cmpfloat(vector.y, ==, -1);
+    adg_assert_isapprox(vector.x, 2);
+    adg_assert_isapprox(vector.y, -1);
 }
 
 static void
@@ -752,54 +752,54 @@ _cpml_method_get_closest_pos(void)
 
     /* Line */
     pair.x = 0; pair.y = 1;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
     pair.x = 3; pair.y = 1;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
     pair.x = -1; pair.y = -1;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
     pair.x = 4; pair.y = 2;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
     pair.x = 1.5; pair.y = 0;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0.5);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0.5);
 
     /* Arc */
     cpml_primitive_next(&primitive);
     /* TODO: not yet implemented
      * pair.x = 3; pair.y = 1;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
      * pair.x = 6; pair.y = 7;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
      * pair.x = 0; pair.y = 0;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
      * pair.x = 10; pair.y = 10;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
      */
 
     /* Close */
     cpml_primitive_next(&primitive);
     /* TODO: not yet implemented
      * pair.x = 6; pair.y = 7;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
      * pair.x = -2; pair.y = 2;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
      * pair.x = 10; pair.y = 10;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
      * pair.x = 0; pair.y = 0;
-     * g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+     * adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
      */
 
     /* Close */
     cpml_primitive_next(&primitive);
     pair.x = -2; pair.y = 2;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
     pair.x = 0; pair.y = 1;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
     pair.x = -3; pair.y = 3;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0);
     pair.x = 1; pair.y = 0;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 1);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 1);
     pair.x = -1; pair.y = 1.5;
-    g_assert_cmpfloat(cpml_primitive_get_closest_pos(&primitive, &pair), ==, 0.5);
+    adg_assert_isapprox(cpml_primitive_get_closest_pos(&primitive, &pair), 0.5);
 }
 
 static void
@@ -837,8 +837,8 @@ _cpml_method_set_point(void)
     g_assert_cmpint(equality, !=, 0);
     /* On a CPML_LINE primitives, -1 and 1 indices are equals */
     cpml_primitive_put_point(&primitive, -1, &pair2);
-    g_assert_cmpfloat(pair.x, ==, pair2.x);
-    g_assert_cmpfloat(pair.y, ==, pair2.y);
+    adg_assert_isapprox(pair.x, pair2.x);
+    adg_assert_isapprox(pair.y, pair2.y);
     memcpy(segment->data, original.data, data_size);
     equality = memcmp(original.data, segment->data, data_size);
     g_assert_cmpint(equality, ==, 0);
@@ -932,72 +932,72 @@ _cpml_method_put_point(void)
     cpml_primitive_from_segment(&primitive, &segment);
 
     cpml_primitive_put_point(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     /* The negative indices are checked only against CPML_LINE */
     cpml_primitive_put_point(&primitive, -1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, -2, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, -3, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
 
     /* Arc */
     cpml_primitive_next(&primitive);
 
     cpml_primitive_put_point(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 4);
-    g_assert_cmpfloat(pair.y, ==, 5);
+    adg_assert_isapprox(pair.x, 4);
+    adg_assert_isapprox(pair.y, 5);
     cpml_primitive_put_point(&primitive, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, 6);
-    g_assert_cmpfloat(pair.y, ==, 7);
+    adg_assert_isapprox(pair.x, 6);
+    adg_assert_isapprox(pair.y, 7);
     cpml_primitive_put_point(&primitive, 3, &pair);
-    g_assert_cmpfloat(pair.x, ==, 6);
-    g_assert_cmpfloat(pair.y, ==, 7);
+    adg_assert_isapprox(pair.x, 6);
+    adg_assert_isapprox(pair.y, 7);
 
     /* Curve */
     cpml_primitive_next(&primitive);
 
     cpml_primitive_put_point(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 6);
-    g_assert_cmpfloat(pair.y, ==, 7);
+    adg_assert_isapprox(pair.x, 6);
+    adg_assert_isapprox(pair.y, 7);
     cpml_primitive_put_point(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 8);
-    g_assert_cmpfloat(pair.y, ==, 9);
+    adg_assert_isapprox(pair.x, 8);
+    adg_assert_isapprox(pair.y, 9);
     cpml_primitive_put_point(&primitive, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, 10);
-    g_assert_cmpfloat(pair.y, ==, 11);
+    adg_assert_isapprox(pair.x, 10);
+    adg_assert_isapprox(pair.y, 11);
     cpml_primitive_put_point(&primitive, 3, &pair);
-    g_assert_cmpfloat(pair.x, ==, -2);
-    g_assert_cmpfloat(pair.y, ==, 2);
+    adg_assert_isapprox(pair.x, -2);
+    adg_assert_isapprox(pair.y, 2);
     cpml_primitive_put_point(&primitive, 4, &pair);
-    g_assert_cmpfloat(pair.x, ==, -2);
-    g_assert_cmpfloat(pair.y, ==, 2);
+    adg_assert_isapprox(pair.x, -2);
+    adg_assert_isapprox(pair.y, 2);
 
     /* Close */
     cpml_primitive_next(&primitive);
 
     cpml_primitive_put_point(&primitive, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, -2);
-    g_assert_cmpfloat(pair.y, ==, 2);
+    adg_assert_isapprox(pair.x, -2);
+    adg_assert_isapprox(pair.y, 2);
     cpml_primitive_put_point(&primitive, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
     cpml_primitive_put_point(&primitive, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
 }
 
 static void
@@ -1022,8 +1022,8 @@ _cpml_method_put_intersections(void)
 
     /* primitive1 (1.1) intersects primitive2 (2.2) in (1, 1) */
     g_assert_cmpuint(cpml_primitive_put_intersections(&primitive1, &primitive2, 2, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 1);
-    g_assert_cmpfloat(pair[0].y, ==, 1);
+    adg_assert_isapprox(pair[0].x, 1);
+    adg_assert_isapprox(pair[0].y, 1);
     g_assert_cmpint(cpml_primitive_is_inside(&primitive1, pair), ==, 1);
     g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 1);
 
@@ -1044,8 +1044,8 @@ _cpml_method_put_intersections(void)
 
     /* primitive1 (1.4) intersects primitive2 (2.2), but outside their boundaries */
     g_assert_cmpuint(cpml_primitive_put_intersections(&primitive1, &primitive2, 2, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 1);
-    g_assert_cmpfloat(pair[0].y, ==, -1);
+    adg_assert_isapprox(pair[0].x, 1);
+    adg_assert_isapprox(pair[0].y, -1);
     g_assert_cmpint(cpml_primitive_is_inside(&primitive1, pair), ==, 0);
     g_assert_cmpint(cpml_primitive_is_inside(&primitive2, pair), ==, 0);
 }
@@ -1066,8 +1066,8 @@ _cpml_method_put_intersections_with_segment(void)
 
     /* primitive (1.1) intersects segment (2) in (1, 1) */
     g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 1);
-    g_assert_cmpfloat(pair[0].y, ==, 1);
+    adg_assert_isapprox(pair[0].x, 1);
+    adg_assert_isapprox(pair[0].y, 1);
 
     cpml_primitive_next(&primitive);
 
@@ -1083,15 +1083,15 @@ _cpml_method_put_intersections_with_segment(void)
     /* primitive (2.1) intersects segment (1) in extrapolation.
      * TODO: change this behavior! They must not intersect. */
     g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 2);
-    g_assert_cmpfloat(pair[0].y, ==, 0);
+    adg_assert_isapprox(pair[0].x, 2);
+    adg_assert_isapprox(pair[0].y, 0);
 
     cpml_primitive_next(&primitive);
 
     /* primitive (2.2) wrongly intersects segment (1) */
     g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
-    g_assert_cmpfloat(pair[0].x, ==, 2);
-    g_assert_cmpfloat(pair[0].y, ==, 0);
+    adg_assert_isapprox(pair[0].x, 2);
+    adg_assert_isapprox(pair[0].y, 0);
 }
 
 static void
@@ -1245,8 +1245,8 @@ _cpml_method_join(void)
 
     /* primitive1 and primitive2 are already joint */
     g_assert_cmpint(cpml_primitive_join(&primitive1, &primitive2), ==, 1);
-    g_assert_cmpfloat((primitive2.org)->point.x, ==, 2);
-    g_assert_cmpfloat((primitive2.org)->point.y, ==, 0);
+    adg_assert_isapprox((primitive2.org)->point.x, 2);
+    adg_assert_isapprox((primitive2.org)->point.y, 0);
 
     cpml_primitive_next(&primitive2);
     /* Now primitive1 and primitive2 are divergent,
@@ -1255,8 +1255,8 @@ _cpml_method_join(void)
 
     cpml_primitive_next(&primitive2);
     g_assert_cmpint(cpml_primitive_join(&primitive1, &primitive2), ==, 1);
-    g_assert_cmpfloat((primitive2.org)->point.x, ==, 1);
-    g_assert_cmpfloat((primitive2.org)->point.y, ==, 0);
+    adg_assert_isapprox((primitive2.org)->point.x, 1);
+    adg_assert_isapprox((primitive2.org)->point.y, 0);
 }
 
 static void

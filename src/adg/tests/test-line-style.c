@@ -78,28 +78,28 @@ _adg_property_width(void)
     /* Using the public APIs */
     adg_line_style_set_width(line_style, valid_width_1);
     width = adg_line_style_get_width(line_style);
-    g_assert_cmpfloat(width, ==, valid_width_1);
+    adg_assert_isapprox(width, valid_width_1);
 
     adg_line_style_set_width(line_style, invalid_width);
     width = adg_line_style_get_width(line_style);
-    g_assert_cmpfloat(width, ==, valid_width_1);
+    adg_assert_isapprox(width, valid_width_1);
 
     adg_line_style_set_width(line_style, valid_width_2);
     width = adg_line_style_get_width(line_style);
-    g_assert_cmpfloat(width, ==, valid_width_2);
+    adg_assert_isapprox(width, valid_width_2);
 
     /* Using GObject property methods */
     g_object_set(line_style, "width", valid_width_1, NULL);
     g_object_get(line_style, "width", &width, NULL);
-    g_assert_cmpfloat(width, ==, valid_width_1);
+    adg_assert_isapprox(width, valid_width_1);
 
     g_object_set(line_style, "width", invalid_width, NULL);
     g_object_get(line_style, "width", &width, NULL);
-    g_assert_cmpfloat(width, ==, valid_width_1);
+    adg_assert_isapprox(width, valid_width_1);
 
     g_object_set(line_style, "width", valid_width_2, NULL);
     g_object_get(line_style, "width", &width, NULL);
-    g_assert_cmpfloat(width, ==, valid_width_2);
+    adg_assert_isapprox(width, valid_width_2);
 
     g_object_unref(line_style);
 }
@@ -181,28 +181,28 @@ _adg_property_miter_limit(void)
     /* Using the public APIs */
     adg_line_style_set_miter_limit(line_style, valid_miter_limit_1);
     miter_limit = adg_line_style_get_miter_limit(line_style);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_1);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_1);
 
     adg_line_style_set_miter_limit(line_style, invalid_miter_limit);
     miter_limit = adg_line_style_get_miter_limit(line_style);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_1);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_1);
 
     adg_line_style_set_miter_limit(line_style, valid_miter_limit_2);
     miter_limit = adg_line_style_get_miter_limit(line_style);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_2);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_2);
 
     /* Using GObject property methods */
     g_object_set(line_style, "miter-limit", valid_miter_limit_1, NULL);
     g_object_get(line_style, "miter-limit", &miter_limit, NULL);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_1);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_1);
 
     g_object_set(line_style, "miter-limit", invalid_miter_limit, NULL);
     g_object_get(line_style, "miter-limit", &miter_limit, NULL);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_1);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_1);
 
     g_object_set(line_style, "miter-limit", valid_miter_limit_2, NULL);
     g_object_get(line_style, "miter-limit", &miter_limit, NULL);
-    g_assert_cmpfloat(miter_limit, ==, valid_miter_limit_2);
+    adg_assert_isapprox(miter_limit, valid_miter_limit_2);
 
     g_object_unref(line_style);
 }
@@ -265,9 +265,9 @@ _adg_property_dash(void)
     dashes = adg_dash_get_dashes(dash);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(new_num_dashes, ==, num_dashes);
-    g_assert_cmpfloat(new_dashes[0], ==, dashes[0]);
-    g_assert_cmpfloat(new_dashes[1], ==, dashes[1]);
-    g_assert_cmpfloat(new_dashes[2], ==, dashes[2]);
+    adg_assert_isapprox(new_dashes[0], dashes[0]);
+    adg_assert_isapprox(new_dashes[1], dashes[1]);
+    adg_assert_isapprox(new_dashes[2], dashes[2]);
     adg_dash_destroy(new_dash);
 
     /* Using GObject property methods */
@@ -279,8 +279,8 @@ _adg_property_dash(void)
     dashes = adg_dash_get_dashes(dash);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(new_num_dashes, ==, num_dashes);
-    g_assert_cmpfloat(new_dashes[0], ==, dashes[0]);
-    g_assert_cmpfloat(new_dashes[1], ==, dashes[1]);
+    adg_assert_isapprox(new_dashes[0], dashes[0]);
+    adg_assert_isapprox(new_dashes[1], dashes[1]);
     adg_dash_destroy(new_dash);
 
     /* Checking the unset of dash */

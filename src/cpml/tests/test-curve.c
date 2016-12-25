@@ -114,25 +114,25 @@ _cpml_method_pair_at_time(void)
     CpmlPair pair;
 
     cpml_curve_put_pair_at_time(&curve, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 1);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 1);
+    adg_assert_isapprox(pair.y, 1);
 
     cpml_curve_put_pair_at_time(&curve, 0.5, &pair);
-    g_assert_cmpfloat(pair.x, ==, 2);
-    g_assert_cmpfloat(pair.y, ==, 3);
+    adg_assert_isapprox(pair.x, 2);
+    adg_assert_isapprox(pair.y, 3);
 
     cpml_curve_put_pair_at_time(&curve, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 3);
-    g_assert_cmpfloat(pair.y, ==, 5);
+    adg_assert_isapprox(pair.x, 3);
+    adg_assert_isapprox(pair.y, 5);
 
     /* t is not bound to domain 0..1 */
     cpml_curve_put_pair_at_time(&curve, -1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 11);
-    g_assert_cmpfloat(pair.y, ==, -15);
+    adg_assert_isapprox(pair.x, 11);
+    adg_assert_isapprox(pair.y, -15);
 
     cpml_curve_put_pair_at_time(&curve, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, -7);
-    g_assert_cmpfloat(pair.y, ==, 21);
+    adg_assert_isapprox(pair.x, -7);
+    adg_assert_isapprox(pair.y, 21);
 }
 
 static void
@@ -141,25 +141,25 @@ _cpml_method_vector_at_time(void)
     CpmlVector vector;
 
     cpml_curve_put_vector_at_time(&curve, 0, &vector);
-    g_assert_cmpfloat(vector.x, ==, 0);
-    g_assert_cmpfloat(vector.y, ==, 6);
+    adg_assert_isapprox(vector.x, 0);
+    adg_assert_isapprox(vector.y, 6);
 
     cpml_curve_put_vector_at_time(&curve, 0.5, &vector);
-    g_assert_cmpfloat(vector.x, ==, 3);
-    g_assert_cmpfloat(vector.y, ==, 3);
+    adg_assert_isapprox(vector.x, 3);
+    adg_assert_isapprox(vector.y, 3);
 
     cpml_curve_put_vector_at_time(&curve, 1, &vector);
-    g_assert_cmpfloat(vector.x, ==, 0);
-    g_assert_cmpfloat(vector.y, ==, 6);
+    adg_assert_isapprox(vector.x, 0);
+    adg_assert_isapprox(vector.y, 6);
 
     /* t is not bound to domain 0..1 */
     cpml_curve_put_vector_at_time(&curve, -1, &vector);
-    g_assert_cmpfloat(vector.x, ==, -24);
-    g_assert_cmpfloat(vector.y, ==, 30);
+    adg_assert_isapprox(vector.x, -24);
+    adg_assert_isapprox(vector.y, 30);
 
     cpml_curve_put_vector_at_time(&curve, 2, &vector);
-    g_assert_cmpfloat(vector.x, ==, -24);
-    g_assert_cmpfloat(vector.y, ==, 30);
+    adg_assert_isapprox(vector.x, -24);
+    adg_assert_isapprox(vector.y, 30);
 }
 
 static void
@@ -168,20 +168,20 @@ _cpml_method_offset_at_time(void)
     CpmlPair pair;
 
     cpml_curve_put_offset_at_time(&curve, 0, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 0);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, 0);
+    adg_assert_isapprox(pair.y, 1);
 
     cpml_curve_put_offset_at_time(&curve, 1, 1, &pair);
-    g_assert_cmpfloat(pair.x, ==, 2);
-    g_assert_cmpfloat(pair.y, ==, 5);
+    adg_assert_isapprox(pair.x, 2);
+    adg_assert_isapprox(pair.y, 5);
 
     cpml_curve_put_offset_at_time(&curve, 0, 2, &pair);
-    g_assert_cmpfloat(pair.x, ==, -1);
-    g_assert_cmpfloat(pair.y, ==, 1);
+    adg_assert_isapprox(pair.x, -1);
+    adg_assert_isapprox(pair.y, 1);
 
     cpml_curve_put_offset_at_time(&curve, 0.5, 0, &pair);
-    g_assert_cmpfloat(pair.x, ==, 2);
-    g_assert_cmpfloat(pair.y, ==, 3);
+    adg_assert_isapprox(pair.x, 2);
+    adg_assert_isapprox(pair.y, 3);
 
     cpml_curve_put_offset_at_time(&curve, 0.5, G_SQRT2, &pair);
     /* Check only the first 5 digits to avoid rounding errors */

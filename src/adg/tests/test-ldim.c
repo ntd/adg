@@ -36,11 +36,11 @@ _adg_property_direction(void)
     /* Using the public APIs */
     adg_ldim_set_direction(ldim, valid_value);
     direction = adg_ldim_get_direction(ldim);
-    g_assert_cmpfloat(direction, ==, valid_value);
+    adg_assert_isapprox(direction, valid_value);
 
     adg_ldim_set_direction(ldim, -G_PI);
     direction = adg_ldim_get_direction(ldim);
-    g_assert_cmpfloat(direction, ==, G_PI);
+    adg_assert_isapprox(direction, G_PI);
 
     adg_ldim_set_direction(ldim, invalid_value);
     direction = adg_ldim_get_direction(ldim);
@@ -49,11 +49,11 @@ _adg_property_direction(void)
     /* Using GObject property methods */
     g_object_set(ldim, "direction", valid_value, NULL);
     g_object_get(ldim, "direction", &direction, NULL);
-    g_assert_cmpfloat(direction, ==, valid_value);
+    adg_assert_isapprox(direction, valid_value);
 
     g_object_set(ldim, "direction", -G_PI, NULL);
     g_object_get(ldim, "direction", &direction, NULL);
-    g_assert_cmpfloat(direction, ==, G_PI);
+    adg_assert_isapprox(direction, G_PI);
 
     g_object_set(ldim, "direction", invalid_value, NULL);
     g_object_get(ldim, "direction", &direction, NULL);
@@ -64,12 +64,12 @@ _adg_property_direction(void)
     /* Checking constructors */
     ldim = adg_ldim_new();
     direction = adg_ldim_get_direction(ldim);
-    g_assert_cmpfloat(direction, ==, ADG_DIR_RIGHT);
+    adg_assert_isapprox(direction, ADG_DIR_RIGHT);
     adg_entity_destroy(ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full(NULL, NULL, NULL, 2);
     direction = adg_ldim_get_direction(ldim);
-    g_assert_cmpfloat(direction, ==, 2);
+    adg_assert_isapprox(direction, 2);
     adg_entity_destroy(ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_explicit(0, 1,
@@ -77,7 +77,7 @@ _adg_property_direction(void)
                                       4, 5,
                                       3);
     direction = adg_ldim_get_direction(ldim);
-    g_assert_cmpfloat(direction, ==, 3);
+    adg_assert_isapprox(direction, 3);
     adg_entity_destroy(ADG_ENTITY(ldim));
 }
 

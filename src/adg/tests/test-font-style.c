@@ -216,28 +216,28 @@ _adg_property_size(void)
     /* Using the public APIs */
     adg_font_style_set_size(font_style, valid_size_1);
     size = adg_font_style_get_size(font_style);
-    g_assert_cmpfloat(size, ==, valid_size_1);
+    adg_assert_isapprox(size, valid_size_1);
 
     adg_font_style_set_size(font_style, invalid_size);
     size = adg_font_style_get_size(font_style);
-    g_assert_cmpfloat(size, ==, valid_size_1);
+    adg_assert_isapprox(size, valid_size_1);
 
     adg_font_style_set_size(font_style, valid_size_2);
     size = adg_font_style_get_size(font_style);
-    g_assert_cmpfloat(size, ==, valid_size_2);
+    adg_assert_isapprox(size, valid_size_2);
 
     /* Using GObject property methods */
     g_object_set(font_style, "size", valid_size_1, NULL);
     g_object_get(font_style, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size_1);
+    adg_assert_isapprox(size, valid_size_1);
 
     g_object_set(font_style, "size", invalid_size, NULL);
     g_object_get(font_style, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size_1);
+    adg_assert_isapprox(size, valid_size_1);
 
     g_object_set(font_style, "size", valid_size_2, NULL);
     g_object_get(font_style, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size_2);
+    adg_assert_isapprox(size, valid_size_2);
 
     g_object_unref(font_style);
 }

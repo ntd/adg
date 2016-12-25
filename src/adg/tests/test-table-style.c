@@ -252,28 +252,28 @@ _adg_row_height(void)
     /* Using the public APIs */
     adg_table_style_set_row_height(table_style, valid_row_height_1);
     row_height = adg_table_style_get_row_height(table_style);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_1);
+    adg_assert_isapprox(row_height, valid_row_height_1);
 
     adg_table_style_set_row_height(table_style, invalid_row_height);
     row_height = adg_table_style_get_row_height(table_style);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_1);
+    adg_assert_isapprox(row_height, valid_row_height_1);
 
     adg_table_style_set_row_height(table_style, valid_row_height_2);
     row_height = adg_table_style_get_row_height(table_style);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_2);
+    adg_assert_isapprox(row_height, valid_row_height_2);
 
     /* Using GObject property methods */
     g_object_set(table_style, "row-height", valid_row_height_1, NULL);
     g_object_get(table_style, "row-height", &row_height, NULL);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_1);
+    adg_assert_isapprox(row_height, valid_row_height_1);
 
     g_object_set(table_style, "row-height", invalid_row_height, NULL);
     g_object_get(table_style, "row-height", &row_height, NULL);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_1);
+    adg_assert_isapprox(row_height, valid_row_height_1);
 
     g_object_set(table_style, "row-height", valid_row_height_2, NULL);
     g_object_get(table_style, "row-height", &row_height, NULL);
-    g_assert_cmpfloat(row_height, ==, valid_row_height_2);
+    adg_assert_isapprox(row_height, valid_row_height_2);
 
     g_object_unref(table_style);
 }

@@ -37,26 +37,26 @@ _adg_method_get_current_point(void)
     adg_path_move_to_explicit(path, 1, 2);
     cp = adg_path_get_current_point(path);
     g_assert_nonnull(cp);
-    g_assert_cmpfloat(cp->x, ==, 1);
-    g_assert_cmpfloat(cp->y, ==, 2);
+    adg_assert_isapprox(cp->x, 1);
+    adg_assert_isapprox(cp->y, 2);
 
     adg_path_line_to_explicit(path, 3, 4);
     cp = adg_path_get_current_point(path);
     g_assert_nonnull(cp);
-    g_assert_cmpfloat(cp->x, ==, 3);
-    g_assert_cmpfloat(cp->y, ==, 4);
+    adg_assert_isapprox(cp->x, 3);
+    adg_assert_isapprox(cp->y, 4);
 
     adg_path_arc_to_explicit(path, 5, 6, 7, 8);
     cp = adg_path_get_current_point(path);
     g_assert_nonnull(cp);
-    g_assert_cmpfloat(cp->x, ==, 7);
-    g_assert_cmpfloat(cp->y, ==, 8);
+    adg_assert_isapprox(cp->x, 7);
+    adg_assert_isapprox(cp->y, 8);
 
     adg_path_curve_to_explicit(path, 9, 10, 11, 12, 13, 14);
     cp = adg_path_get_current_point(path);
     g_assert_nonnull(cp);
-    g_assert_cmpfloat(cp->x, ==, 13);
-    g_assert_cmpfloat(cp->y, ==, 14);
+    adg_assert_isapprox(cp->x, 13);
+    adg_assert_isapprox(cp->y, 14);
 
     adg_path_close(path);
     g_assert_null(adg_path_get_current_point(path));
@@ -103,22 +103,22 @@ _adg_method_last_primitive(void)
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_LINE);
     g_assert_cmpint(primitive->data->header.length, ==, 2);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 1);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 2);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 3);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 4);
+    adg_assert_isapprox(primitive->org->point.x, 1);
+    adg_assert_isapprox(primitive->org->point.y, 2);
+    adg_assert_isapprox(primitive->data[1].point.x, 3);
+    adg_assert_isapprox(primitive->data[1].point.y, 4);
 
     adg_path_arc_to_explicit(path, 5, 6, 7, 8);
     primitive = adg_path_last_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_ARC);
     g_assert_cmpint(primitive->data->header.length, ==, 3);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 3);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 4);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 5);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 6);
-    g_assert_cmpfloat(primitive->data[2].point.x, ==, 7);
-    g_assert_cmpfloat(primitive->data[2].point.y, ==, 8);
+    adg_assert_isapprox(primitive->org->point.x, 3);
+    adg_assert_isapprox(primitive->org->point.y, 4);
+    adg_assert_isapprox(primitive->data[1].point.x, 5);
+    adg_assert_isapprox(primitive->data[1].point.y, 6);
+    adg_assert_isapprox(primitive->data[2].point.x, 7);
+    adg_assert_isapprox(primitive->data[2].point.y, 8);
 
     adg_path_move_to_explicit(path, 0, 0);
     primitive = adg_path_last_primitive(path);
@@ -135,22 +135,22 @@ _adg_method_last_primitive(void)
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CURVE);
     g_assert_cmpint(primitive->data->header.length, ==, 4);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 1);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 1);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 9);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 10);
-    g_assert_cmpfloat(primitive->data[2].point.x, ==, 11);
-    g_assert_cmpfloat(primitive->data[2].point.y, ==, 12);
-    g_assert_cmpfloat(primitive->data[3].point.x, ==, 13);
-    g_assert_cmpfloat(primitive->data[3].point.y, ==, 14);
+    adg_assert_isapprox(primitive->org->point.x, 1);
+    adg_assert_isapprox(primitive->org->point.y, 1);
+    adg_assert_isapprox(primitive->data[1].point.x, 9);
+    adg_assert_isapprox(primitive->data[1].point.y, 10);
+    adg_assert_isapprox(primitive->data[2].point.x, 11);
+    adg_assert_isapprox(primitive->data[2].point.y, 12);
+    adg_assert_isapprox(primitive->data[3].point.x, 13);
+    adg_assert_isapprox(primitive->data[3].point.y, 14);
 
     adg_path_close(path);
     primitive = adg_path_last_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CLOSE);
     g_assert_cmpint(primitive->data->header.length, ==, 1);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 13);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 14);
+    adg_assert_isapprox(primitive->org->point.x, 13);
+    adg_assert_isapprox(primitive->org->point.y, 14);
 
     /* This line is invalid because there is no current point */
     adg_path_line_to_explicit(path, 15, 16);
@@ -182,58 +182,58 @@ _adg_method_over_primitive(void)
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_LINE);
     g_assert_cmpint(primitive->data->header.length, ==, 2);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 1);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 2);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 3);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 4);
+    adg_assert_isapprox(primitive->org->point.x, 1);
+    adg_assert_isapprox(primitive->org->point.y, 2);
+    adg_assert_isapprox(primitive->data[1].point.x, 3);
+    adg_assert_isapprox(primitive->data[1].point.y, 4);
 
     adg_path_curve_to_explicit(path, 9, 10, 11, 12, 13, 14);
     primitive = adg_path_over_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_ARC);
     g_assert_cmpint(primitive->data->header.length, ==, 3);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 3);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 4);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 5);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 6);
-    g_assert_cmpfloat(primitive->data[2].point.x, ==, 7);
-    g_assert_cmpfloat(primitive->data[2].point.y, ==, 8);
+    adg_assert_isapprox(primitive->org->point.x, 3);
+    adg_assert_isapprox(primitive->org->point.y, 4);
+    adg_assert_isapprox(primitive->data[1].point.x, 5);
+    adg_assert_isapprox(primitive->data[1].point.y, 6);
+    adg_assert_isapprox(primitive->data[2].point.x, 7);
+    adg_assert_isapprox(primitive->data[2].point.y, 8);
 
     adg_path_close(path);
     primitive = adg_path_over_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CURVE);
     g_assert_cmpint(primitive->data->header.length, ==, 4);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 7);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 8);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 9);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 10);
-    g_assert_cmpfloat(primitive->data[2].point.x, ==, 11);
-    g_assert_cmpfloat(primitive->data[2].point.y, ==, 12);
-    g_assert_cmpfloat(primitive->data[3].point.x, ==, 13);
-    g_assert_cmpfloat(primitive->data[3].point.y, ==, 14);
+    adg_assert_isapprox(primitive->org->point.x, 7);
+    adg_assert_isapprox(primitive->org->point.y, 8);
+    adg_assert_isapprox(primitive->data[1].point.x, 9);
+    adg_assert_isapprox(primitive->data[1].point.y, 10);
+    adg_assert_isapprox(primitive->data[2].point.x, 11);
+    adg_assert_isapprox(primitive->data[2].point.y, 12);
+    adg_assert_isapprox(primitive->data[3].point.x, 13);
+    adg_assert_isapprox(primitive->data[3].point.y, 14);
 
     adg_path_move_to_explicit(path, 15, 16);
     primitive = adg_path_over_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CURVE);
     g_assert_cmpint(primitive->data->header.length, ==, 4);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 7);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 8);
-    g_assert_cmpfloat(primitive->data[1].point.x, ==, 9);
-    g_assert_cmpfloat(primitive->data[1].point.y, ==, 10);
-    g_assert_cmpfloat(primitive->data[2].point.x, ==, 11);
-    g_assert_cmpfloat(primitive->data[2].point.y, ==, 12);
-    g_assert_cmpfloat(primitive->data[3].point.x, ==, 13);
-    g_assert_cmpfloat(primitive->data[3].point.y, ==, 14);
+    adg_assert_isapprox(primitive->org->point.x, 7);
+    adg_assert_isapprox(primitive->org->point.y, 8);
+    adg_assert_isapprox(primitive->data[1].point.x, 9);
+    adg_assert_isapprox(primitive->data[1].point.y, 10);
+    adg_assert_isapprox(primitive->data[2].point.x, 11);
+    adg_assert_isapprox(primitive->data[2].point.y, 12);
+    adg_assert_isapprox(primitive->data[3].point.x, 13);
+    adg_assert_isapprox(primitive->data[3].point.y, 14);
 
     adg_path_line_to_explicit(path, 17, 18);
     primitive = adg_path_over_primitive(path);
     g_assert_nonnull(primitive);
     g_assert_cmpint(primitive->data->header.type, ==, CPML_CLOSE);
     g_assert_cmpint(primitive->data->header.length, ==, 1);
-    g_assert_cmpfloat(primitive->org->point.x, ==, 13);
-    g_assert_cmpfloat(primitive->org->point.y, ==, 14);
+    adg_assert_isapprox(primitive->org->point.x, 13);
+    adg_assert_isapprox(primitive->org->point.y, 14);
 
     g_object_unref(path);
 }
@@ -413,13 +413,13 @@ _adg_method_move_to(void)
 
     adg_path_move_to(path, &pair);
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 1);
-    g_assert_cmpfloat(cp->y, ==, 2);
+    adg_assert_isapprox(cp->x, 1);
+    adg_assert_isapprox(cp->y, 2);
 
     adg_path_move_to_explicit(path, 3, 4);
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 3);
-    g_assert_cmpfloat(cp->y, ==, 4);
+    adg_assert_isapprox(cp->x, 3);
+    adg_assert_isapprox(cp->y, 4);
 
     g_object_unref(path);
 }
@@ -444,13 +444,13 @@ _adg_method_line_to(void)
     adg_path_line_to(path, &pair);
     g_assert_nonnull(adg_path_last_primitive(path));
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 1);
-    g_assert_cmpfloat(cp->y, ==, 2);
+    adg_assert_isapprox(cp->x, 1);
+    adg_assert_isapprox(cp->y, 2);
 
     adg_path_line_to_explicit(path, 3, 4);
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 3);
-    g_assert_cmpfloat(cp->y, ==, 4);
+    adg_assert_isapprox(cp->x, 3);
+    adg_assert_isapprox(cp->y, 4);
 
     g_object_unref(path);
 }
@@ -479,13 +479,13 @@ _adg_method_arc_to(void)
     adg_path_arc_to(path, &pair[0], &pair[1]);
     g_assert_nonnull(adg_path_last_primitive(path));
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 3);
-    g_assert_cmpfloat(cp->y, ==, 4);
+    adg_assert_isapprox(cp->x, 3);
+    adg_assert_isapprox(cp->y, 4);
 
     adg_path_arc_to_explicit(path, 5, 6, 7, 8);
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 7);
-    g_assert_cmpfloat(cp->y, ==, 8);
+    adg_assert_isapprox(cp->x, 7);
+    adg_assert_isapprox(cp->y, 8);
 
     g_object_unref(path);
 }
@@ -516,13 +516,13 @@ _adg_method_curve_to(void)
     adg_path_curve_to(path, &pair[0], &pair[1], &pair[2]);
     g_assert_nonnull(adg_path_last_primitive(path));
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 5);
-    g_assert_cmpfloat(cp->y, ==, 6);
+    adg_assert_isapprox(cp->x, 5);
+    adg_assert_isapprox(cp->y, 6);
 
     adg_path_curve_to_explicit(path, 7, 8, 9, 10, 11, 12);
     cp = adg_path_get_current_point(path);
-    g_assert_cmpfloat(cp->x, ==, 11);
-    g_assert_cmpfloat(cp->y, ==, 12);
+    adg_assert_isapprox(cp->x, 11);
+    adg_assert_isapprox(cp->y, 12);
 
     g_object_unref(path);
 }

@@ -45,21 +45,21 @@ _adg_behavior_misc(void)
         g_assert_nonnull(segment.data);
         g_assert_cmpint(segment.num_data, ==, 4);
         g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
-        g_assert_cmpfloat(segment.data[1].point.x, ==, 1);
-        g_assert_cmpfloat(segment.data[1].point.y, ==, 6);
+        adg_assert_isapprox(segment.data[1].point.x, 1);
+        adg_assert_isapprox(segment.data[1].point.y, 6);
         g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
-        g_assert_cmpfloat(segment.data[3].point.x, ==, 1);
-        g_assert_cmpfloat(segment.data[3].point.y, ==, -6);
+        adg_assert_isapprox(segment.data[3].point.x, 1);
+        adg_assert_isapprox(segment.data[3].point.y, -6);
 
         g_assert_true(cpml_segment_next(&segment));
         g_assert_nonnull(segment.data);
         g_assert_cmpint(segment.num_data, ==, 4);
         g_assert_cmpint(segment.data[0].header.type, ==, CPML_MOVE);
-        g_assert_cmpfloat(segment.data[1].point.x, ==, 2);
-        g_assert_cmpfloat(segment.data[1].point.y, ==, 3);
+        adg_assert_isapprox(segment.data[1].point.x, 2);
+        adg_assert_isapprox(segment.data[1].point.y, 3);
         g_assert_cmpint(segment.data[2].header.type, ==, CPML_LINE);
-        g_assert_cmpfloat(segment.data[3].point.x, ==, 2);
-        g_assert_cmpfloat(segment.data[3].point.y, ==, -3);
+        adg_assert_isapprox(segment.data[3].point.x, 2);
+        adg_assert_isapprox(segment.data[3].point.y, -3);
 
         g_assert_false(cpml_segment_next(&segment));
     }
@@ -128,7 +128,7 @@ _adg_property_axis_angle(void)
     /* Using the public APIs */
     adg_edges_set_axis_angle(edges, valid_value);
     axis_angle = adg_edges_get_axis_angle(edges);
-    g_assert_cmpfloat(axis_angle, ==, valid_value);
+    adg_assert_isapprox(axis_angle, valid_value);
 
     adg_edges_set_axis_angle(edges, invalid_value);
     axis_angle = adg_edges_get_axis_angle(edges);
@@ -137,7 +137,7 @@ _adg_property_axis_angle(void)
     /* Using GObject property methods */
     g_object_set(edges, "axis-angle", valid_value, NULL);
     g_object_get(edges, "axis-angle", &axis_angle, NULL);
-    g_assert_cmpfloat(axis_angle, ==, valid_value);
+    adg_assert_isapprox(axis_angle, valid_value);
 
     g_object_set(edges, "axis-angle", invalid_value, NULL);
     g_object_get(edges, "axis-angle", &axis_angle, NULL);
@@ -160,7 +160,7 @@ _adg_property_critical_angle(void)
     /* Using the public APIs */
     adg_edges_set_critical_angle(edges, valid_value);
     critical_angle = adg_edges_get_critical_angle(edges);
-    g_assert_cmpfloat(critical_angle, ==, valid_value);
+    adg_assert_isapprox(critical_angle, valid_value);
 
     adg_edges_set_critical_angle(edges, invalid_value);
     critical_angle = adg_edges_get_critical_angle(edges);
@@ -169,7 +169,7 @@ _adg_property_critical_angle(void)
     /* Using GObject property methods */
     g_object_set(edges, "critical-angle", valid_value, NULL);
     g_object_get(edges, "critical-angle", &critical_angle, NULL);
-    g_assert_cmpfloat(critical_angle, ==, valid_value);
+    adg_assert_isapprox(critical_angle, valid_value);
 
     g_object_set(edges, "critical-angle", invalid_value, NULL);
     g_object_get(edges, "critical-angle", &critical_angle, NULL);

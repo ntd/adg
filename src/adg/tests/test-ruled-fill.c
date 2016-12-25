@@ -33,36 +33,36 @@ _adg_property_angle(void)
     /* Using the public APIs */
     adg_ruled_fill_set_angle(ruled_fill, G_PI_2);
     angle = adg_ruled_fill_get_angle(ruled_fill);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     adg_ruled_fill_set_angle(ruled_fill, G_PI + 1);
     angle = adg_ruled_fill_get_angle(ruled_fill);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     adg_ruled_fill_set_angle(ruled_fill, -1);
     angle = adg_ruled_fill_get_angle(ruled_fill);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     adg_ruled_fill_set_angle(ruled_fill, 0);
     angle = adg_ruled_fill_get_angle(ruled_fill);
-    g_assert_cmpfloat(angle, ==, 0);
+    adg_assert_isapprox(angle, 0);
 
     /* Using GObject property methods */
     g_object_set(ruled_fill, "angle", G_PI_2, NULL);
     g_object_get(ruled_fill, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     g_object_set(ruled_fill, "angle", G_PI + 1, NULL);
     g_object_get(ruled_fill, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     g_object_set(ruled_fill, "angle", (gdouble) -1, NULL);
     g_object_get(ruled_fill, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, G_PI_2);
+    adg_assert_isapprox(angle, G_PI_2);
 
     g_object_set(ruled_fill, "angle", (gdouble) 0, NULL);
     g_object_get(ruled_fill, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, 0);
+    adg_assert_isapprox(angle, 0);
 
     g_object_unref(ruled_fill);
 }
@@ -119,28 +119,28 @@ _adg_property_spacing(void)
     /* Using the public APIs */
     adg_ruled_fill_set_spacing(ruled_fill, 0);
     spacing = adg_ruled_fill_get_spacing(ruled_fill);
-    g_assert_cmpfloat(spacing, ==, 0);
+    adg_assert_isapprox(spacing, 0);
 
     adg_ruled_fill_set_spacing(ruled_fill, -1);
     spacing = adg_ruled_fill_get_spacing(ruled_fill);
-    g_assert_cmpfloat(spacing, ==, 0);
+    adg_assert_isapprox(spacing, 0);
 
     adg_ruled_fill_set_spacing(ruled_fill, 123);
     spacing = adg_ruled_fill_get_spacing(ruled_fill);
-    g_assert_cmpfloat(spacing, ==, 123);
+    adg_assert_isapprox(spacing, 123);
 
     /* Using GObject property methods */
     g_object_set(ruled_fill, "spacing", (gdouble) 0, NULL);
     g_object_get(ruled_fill, "spacing", &spacing, NULL);
-    g_assert_cmpfloat(spacing, ==, 0);
+    adg_assert_isapprox(spacing, 0);
 
     g_object_set(ruled_fill, "spacing", (gdouble) -1, NULL);
     g_object_get(ruled_fill, "spacing", &spacing, NULL);
-    g_assert_cmpfloat(spacing, ==, 0);
+    adg_assert_isapprox(spacing, 0);
 
     g_object_set(ruled_fill, "spacing", (gdouble) 123, NULL);
     g_object_get(ruled_fill, "spacing", &spacing, NULL);
-    g_assert_cmpfloat(spacing, ==, 123);
+    adg_assert_isapprox(spacing, 123);
 
     g_object_unref(ruled_fill);
 }

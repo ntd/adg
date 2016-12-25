@@ -133,28 +133,28 @@ _adg_property_pos(void)
     /* Using the public APIs */
     adg_marker_set_pos(marker, valid_pos1);
     pos = adg_marker_get_pos(marker);
-    g_assert_cmpfloat(pos, ==, valid_pos1);
+    adg_assert_isapprox(pos, valid_pos1);
 
     adg_marker_set_pos(marker, invalid_pos);
     pos = adg_marker_get_pos(marker);
-    g_assert_cmpfloat(pos, ==, valid_pos1);
+    adg_assert_isapprox(pos, valid_pos1);
 
     adg_marker_set_pos(marker, valid_pos2);
     pos = adg_marker_get_pos(marker);
-    g_assert_cmpfloat(pos, ==, valid_pos2);
+    adg_assert_isapprox(pos, valid_pos2);
 
     /* Using GObject property methods */
     g_object_set(marker, "pos", valid_pos1, NULL);
     g_object_get(marker, "pos", &pos, NULL);
-    g_assert_cmpfloat(pos, ==, valid_pos1);
+    adg_assert_isapprox(pos, valid_pos1);
 
     g_object_set(marker, "pos", invalid_pos, NULL);
     g_object_get(marker, "pos", &pos, NULL);
-    g_assert_cmpfloat(pos, ==, valid_pos1);
+    adg_assert_isapprox(pos, valid_pos1);
 
     g_object_set(marker, "pos", valid_pos2, NULL);
     g_object_get(marker, "pos", &pos, NULL);
-    g_assert_cmpfloat(pos, ==, valid_pos2);
+    adg_assert_isapprox(pos, valid_pos2);
 
     adg_entity_destroy(ADG_ENTITY(marker));
 }
@@ -233,28 +233,28 @@ _adg_property_size(void)
     /* Using the public APIs */
     adg_marker_set_size(marker, valid_size1);
     size = adg_marker_get_size(marker);
-    g_assert_cmpfloat(size, ==, valid_size1);
+    adg_assert_isapprox(size, valid_size1);
 
     adg_marker_set_size(marker, invalid_size);
     size = adg_marker_get_size(marker);
-    g_assert_cmpfloat(size, ==, valid_size1);
+    adg_assert_isapprox(size, valid_size1);
 
     adg_marker_set_size(marker, valid_size2);
     size = adg_marker_get_size(marker);
-    g_assert_cmpfloat(size, ==, valid_size2);
+    adg_assert_isapprox(size, valid_size2);
 
     /* Using GObject property methods */
     g_object_set(marker, "size", valid_size1, NULL);
     g_object_get(marker, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size1);
+    adg_assert_isapprox(size, valid_size1);
 
     g_object_set(marker, "size", invalid_size, NULL);
     g_object_get(marker, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size1);
+    adg_assert_isapprox(size, valid_size1);
 
     g_object_set(marker, "size", valid_size2, NULL);
     g_object_get(marker, "size", &size, NULL);
-    g_assert_cmpfloat(size, ==, valid_size2);
+    adg_assert_isapprox(size, valid_size2);
 
     adg_entity_destroy(ADG_ENTITY(marker));
 }

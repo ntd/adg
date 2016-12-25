@@ -61,11 +61,11 @@ _adg_property_angle(void)
     /* Using the public APIs */
     adg_arrow_set_angle(arrow, valid_value);
     angle = adg_arrow_get_angle(arrow);
-    g_assert_cmpfloat(angle, ==, valid_value);
+    adg_assert_isapprox(angle, valid_value);
 
     adg_arrow_set_angle(arrow, -G_PI);
     angle = adg_arrow_get_angle(arrow);
-    g_assert_cmpfloat(angle, ==, G_PI);
+    adg_assert_isapprox(angle, G_PI);
 
     adg_arrow_set_angle(arrow, invalid_value);
     angle = adg_arrow_get_angle(arrow);
@@ -74,11 +74,11 @@ _adg_property_angle(void)
     /* Using GObject property methods */
     g_object_set(arrow, "angle", valid_value, NULL);
     g_object_get(arrow, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, valid_value);
+    adg_assert_isapprox(angle, valid_value);
 
     g_object_set(arrow, "angle", -G_PI, NULL);
     g_object_get(arrow, "angle", &angle, NULL);
-    g_assert_cmpfloat(angle, ==, G_PI);
+    adg_assert_isapprox(angle, G_PI);
 
     g_object_set(arrow, "angle", invalid_value, NULL);
     g_object_get(arrow, "angle", &angle, NULL);

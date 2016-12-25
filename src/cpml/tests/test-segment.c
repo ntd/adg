@@ -352,12 +352,12 @@ _cpml_method_copy_data(void)
     g_assert_cmpfloat(segment->data[5].point.x, !=, original.data[5].point.x);
     g_assert_cmpfloat(segment->data[5].point.y, !=, original.data[5].point.y);
     g_assert_cmpint(cpml_segment_copy_data(segment, &original), ==, 1);
-    g_assert_cmpfloat(segment->data[1].point.x, ==, original.data[1].point.x);
-    g_assert_cmpfloat(segment->data[1].point.y, ==, original.data[1].point.y);
-    g_assert_cmpfloat(segment->data[3].point.x, ==, original.data[3].point.x);
-    g_assert_cmpfloat(segment->data[3].point.y, ==, original.data[3].point.y);
-    g_assert_cmpfloat(segment->data[5].point.x, ==, original.data[5].point.x);
-    g_assert_cmpfloat(segment->data[5].point.y, ==, original.data[5].point.y);
+    adg_assert_isapprox(segment->data[1].point.x, original.data[1].point.x);
+    adg_assert_isapprox(segment->data[1].point.y, original.data[1].point.y);
+    adg_assert_isapprox(segment->data[3].point.x, original.data[3].point.x);
+    adg_assert_isapprox(segment->data[3].point.y, original.data[3].point.y);
+    adg_assert_isapprox(segment->data[5].point.x, original.data[5].point.x);
+    adg_assert_isapprox(segment->data[5].point.y, original.data[5].point.y);
 
     g_free(segment);
 }
@@ -375,8 +375,8 @@ _cpml_method_get_length(void)
     cpml_segment_next(&segment);
 
     /* Second segment */
-    g_assert_cmpfloat(cpml_segment_get_length(&segment), ==, 3);
-    g_assert_cmpfloat(cpml_segment_get_length(&segment), ==, 3);
+    adg_assert_isapprox(cpml_segment_get_length(&segment), 3);
+    adg_assert_isapprox(cpml_segment_get_length(&segment), 3);
 
     cpml_segment_next(&segment);
 
@@ -392,7 +392,7 @@ _cpml_method_get_length(void)
     cpml_segment_next(&segment);
 
     /* Fifth segment */
-    g_assert_cmpfloat(cpml_segment_get_length(&segment), ==, 0);
+    adg_assert_isapprox(cpml_segment_get_length(&segment), 0);
 }
 
 static void
@@ -410,10 +410,10 @@ _cpml_method_put_intersections(void)
      * TODO: avoid extrapolated intersections! Check
      * cpml_primitive_put_intersections */
     g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 3);
-    g_assert_cmpfloat(pair[0].x, ==, 1);
-    g_assert_cmpfloat(pair[0].y, ==, 1);
-    g_assert_cmpfloat(pair[1].x, ==, 2);
-    g_assert_cmpfloat(pair[1].y, ==, 0);
+    adg_assert_isapprox(pair[0].x, 1);
+    adg_assert_isapprox(pair[0].y, 1);
+    adg_assert_isapprox(pair[1].x, 2);
+    adg_assert_isapprox(pair[1].y, 0);
 
     cpml_segment_next(&segment2);
 
@@ -438,16 +438,16 @@ _cpml_method_offset(void)
     cpml_segment_offset(segment, 1);
 
     g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpfloat(segment->data[1].point.x, ==, 0);
-    g_assert_cmpfloat(segment->data[1].point.y, ==, 1);
+    adg_assert_isapprox(segment->data[1].point.x, 0);
+    adg_assert_isapprox(segment->data[1].point.y, 1);
 
     g_assert_cmpint(segment->data[2].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment->data[3].point.x, ==, 0);
-    g_assert_cmpfloat(segment->data[3].point.y, ==, 1);
+    adg_assert_isapprox(segment->data[3].point.x, 0);
+    adg_assert_isapprox(segment->data[3].point.y, 1);
 
     g_assert_cmpint(segment->data[4].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment->data[5].point.x, ==, 0);
-    g_assert_cmpfloat(segment->data[5].point.y, ==, 2);
+    adg_assert_isapprox(segment->data[5].point.x, 0);
+    adg_assert_isapprox(segment->data[5].point.y, 2);
 
     g_free(segment);
 }
@@ -466,26 +466,26 @@ _cpml_method_transform(void)
     cpml_segment_transform(segment, &matrix);
 
     g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpfloat(segment->data[1].point.x, ==, 1);
-    g_assert_cmpfloat(segment->data[1].point.y, ==, 3);
+    adg_assert_isapprox(segment->data[1].point.x, 1);
+    adg_assert_isapprox(segment->data[1].point.y, 3);
 
     g_assert_cmpint(segment->data[2].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment->data[3].point.x, ==, 4);
-    g_assert_cmpfloat(segment->data[3].point.y, ==, 3);
+    adg_assert_isapprox(segment->data[3].point.x, 4);
+    adg_assert_isapprox(segment->data[3].point.y, 3);
 
     g_assert_cmpint(segment->data[4].header.type, ==, CPML_ARC);
-    g_assert_cmpfloat(segment->data[5].point.x, ==, 5);
-    g_assert_cmpfloat(segment->data[5].point.y, ==, 7);
-    g_assert_cmpfloat(segment->data[6].point.x, ==, 7);
-    g_assert_cmpfloat(segment->data[6].point.y, ==, 9);
+    adg_assert_isapprox(segment->data[5].point.x, 5);
+    adg_assert_isapprox(segment->data[5].point.y, 7);
+    adg_assert_isapprox(segment->data[6].point.x, 7);
+    adg_assert_isapprox(segment->data[6].point.y, 9);
 
     g_assert_cmpint(segment->data[7].header.type, ==, CPML_CURVE);
-    g_assert_cmpfloat(segment->data[8].point.x, ==, 9);
-    g_assert_cmpfloat(segment->data[8].point.y, ==, 11);
-    g_assert_cmpfloat(segment->data[9].point.x, ==, 11);
-    g_assert_cmpfloat(segment->data[9].point.y, ==, 13);
-    g_assert_cmpfloat(segment->data[10].point.x, ==, -1);
-    g_assert_cmpfloat(segment->data[10].point.y, ==, 4);
+    adg_assert_isapprox(segment->data[8].point.x, 9);
+    adg_assert_isapprox(segment->data[8].point.y, 11);
+    adg_assert_isapprox(segment->data[9].point.x, 11);
+    adg_assert_isapprox(segment->data[9].point.y, 13);
+    adg_assert_isapprox(segment->data[10].point.x, -1);
+    adg_assert_isapprox(segment->data[10].point.y, 4);
 
     g_assert_cmpint(segment->data[11].header.type, ==, CPML_CLOSE);
 
@@ -508,26 +508,26 @@ _cpml_method_reverse(void)
     g_assert_cmpint(segment->num_data, ==, 12);
 
     g_assert_cmpint(segment->data[0].header.type, ==, CPML_MOVE);
-    g_assert_cmpfloat(segment->data[1].point.x, ==, -2);
-    g_assert_cmpfloat(segment->data[1].point.y, ==, 2);
+    adg_assert_isapprox(segment->data[1].point.x, -2);
+    adg_assert_isapprox(segment->data[1].point.y, 2);
 
     g_assert_cmpint(segment->data[2].header.type, ==, CPML_CURVE);
-    g_assert_cmpfloat(segment->data[3].point.x, ==, 10);
-    g_assert_cmpfloat(segment->data[3].point.y, ==, 11);
-    g_assert_cmpfloat(segment->data[4].point.x, ==, 8);
-    g_assert_cmpfloat(segment->data[4].point.y, ==, 9);
-    g_assert_cmpfloat(segment->data[5].point.x, ==, 6);
-    g_assert_cmpfloat(segment->data[5].point.y, ==, 7);
+    adg_assert_isapprox(segment->data[3].point.x, 10);
+    adg_assert_isapprox(segment->data[3].point.y, 11);
+    adg_assert_isapprox(segment->data[4].point.x, 8);
+    adg_assert_isapprox(segment->data[4].point.y, 9);
+    adg_assert_isapprox(segment->data[5].point.x, 6);
+    adg_assert_isapprox(segment->data[5].point.y, 7);
 
     g_assert_cmpint(segment->data[6].header.type, ==, CPML_ARC);
-    g_assert_cmpfloat(segment->data[7].point.x, ==, 4);
-    g_assert_cmpfloat(segment->data[7].point.y, ==, 5);
-    g_assert_cmpfloat(segment->data[8].point.x, ==, 3);
-    g_assert_cmpfloat(segment->data[8].point.y, ==, 1);
+    adg_assert_isapprox(segment->data[7].point.x, 4);
+    adg_assert_isapprox(segment->data[7].point.y, 5);
+    adg_assert_isapprox(segment->data[8].point.x, 3);
+    adg_assert_isapprox(segment->data[8].point.y, 1);
 
     g_assert_cmpint(segment->data[9].header.type, ==, CPML_LINE);
-    g_assert_cmpfloat(segment->data[10].point.x, ==, 0);
-    g_assert_cmpfloat(segment->data[10].point.y, ==, 1);
+    adg_assert_isapprox(segment->data[10].point.x, 0);
+    adg_assert_isapprox(segment->data[10].point.y, 1);
 
     g_assert_cmpint(segment->data[11].header.type, ==, CPML_CLOSE);
 

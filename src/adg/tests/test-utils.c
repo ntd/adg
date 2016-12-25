@@ -94,20 +94,20 @@ _adg_method_find_file(void)
 static void
 _adg_method_scale_factor(void)
 {
-    g_assert_cmpfloat(adg_scale_factor(""), ==, 0);
-    g_assert_cmpfloat(adg_scale_factor(NULL), ==, 0);
-    g_assert_cmpfloat(adg_scale_factor("3"), ==, 3);
-    g_assert_cmpfloat(adg_scale_factor("3:3"), ==, 1);
-    g_assert_cmpfloat(adg_scale_factor("+010 garbage"), ==, 10);
+    adg_assert_isapprox(adg_scale_factor(""), 0);
+    adg_assert_isapprox(adg_scale_factor(NULL), 0);
+    adg_assert_isapprox(adg_scale_factor("3"), 3);
+    adg_assert_isapprox(adg_scale_factor("3:3"), 1);
+    adg_assert_isapprox(adg_scale_factor("+010 garbage"), 10);
 
     /* No idea if sign+space is invalid on every atoi implementation */
-    g_assert_cmpfloat(adg_scale_factor("+ 3"), ==, 0);
+    adg_assert_isapprox(adg_scale_factor("+ 3"), 0);
 
-    g_assert_cmpfloat(adg_scale_factor("-1:1"), ==, 0);
-    g_assert_cmpfloat(adg_scale_factor("1:-1"), ==, 0);
-    g_assert_cmpfloat(adg_scale_factor(" +5 : 05 garbage"), ==, 1);
-    g_assert_cmpfloat(adg_scale_factor("1:0"), ==, 0);
-    g_assert_cmpfloat(adg_scale_factor("1:"), ==, 0);
+    adg_assert_isapprox(adg_scale_factor("-1:1"), 0);
+    adg_assert_isapprox(adg_scale_factor("1:-1"), 0);
+    adg_assert_isapprox(adg_scale_factor(" +5 : 05 garbage"), 1);
+    adg_assert_isapprox(adg_scale_factor("1:0"), 0);
+    adg_assert_isapprox(adg_scale_factor("1:"), 0);
 }
 
 static void
@@ -132,10 +132,10 @@ _adg_method_nop(void)
 static void
 _adg_method_round(void)
 {
-    g_assert_cmpfloat(adg_round(0, 12), ==, 0);
-    g_assert_cmpfloat(adg_round(3.2222222, 1), ==, 3.2);
-    g_assert_cmpfloat(adg_round(3.2222222, 2), ==, 3.22);
-    g_assert_cmpfloat(adg_round(-1234.56, 0), ==, -1235);
+    adg_assert_isapprox(adg_round(0, 12), 0);
+    adg_assert_isapprox(adg_round(3.2222222, 1), 3.2);
+    adg_assert_isapprox(adg_round(3.2222222, 2), 3.22);
+    adg_assert_isapprox(adg_round(-1234.56, 0), -1235);
 }
 
 

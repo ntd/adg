@@ -28,20 +28,20 @@ _adg_behavior_misc(void)
     const cairo_matrix_t *matrix;
 
     matrix = adg_matrix_identity();
-    g_assert_cmpfloat(matrix->xx, ==, 1);
-    g_assert_cmpfloat(matrix->yx, ==, 0);
-    g_assert_cmpfloat(matrix->xy, ==, 0);
-    g_assert_cmpfloat(matrix->yy, ==, 1);
-    g_assert_cmpfloat(matrix->x0, ==, 0);
-    g_assert_cmpfloat(matrix->y0, ==, 0);
+    adg_assert_isapprox(matrix->xx, 1);
+    adg_assert_isapprox(matrix->yx, 0);
+    adg_assert_isapprox(matrix->xy, 0);
+    adg_assert_isapprox(matrix->yy, 1);
+    adg_assert_isapprox(matrix->x0, 0);
+    adg_assert_isapprox(matrix->y0, 0);
 
     matrix = adg_matrix_null();
-    g_assert_cmpfloat(matrix->xx, ==, 0);
-    g_assert_cmpfloat(matrix->yx, ==, 0);
-    g_assert_cmpfloat(matrix->xy, ==, 0);
-    g_assert_cmpfloat(matrix->yy, ==, 0);
-    g_assert_cmpfloat(matrix->x0, ==, 0);
-    g_assert_cmpfloat(matrix->y0, ==, 0);
+    adg_assert_isapprox(matrix->xx, 0);
+    adg_assert_isapprox(matrix->yx, 0);
+    adg_assert_isapprox(matrix->xy, 0);
+    adg_assert_isapprox(matrix->yy, 0);
+    adg_assert_isapprox(matrix->x0, 0);
+    adg_assert_isapprox(matrix->y0, 0);
 }
 
 static void
@@ -63,12 +63,12 @@ _adg_method_copy(void)
 
     adg_matrix_copy(&matrix, &original);
 
-    g_assert_cmpfloat(original.xx, ==, matrix.xx);
-    g_assert_cmpfloat(original.yx, ==, matrix.yx);
-    g_assert_cmpfloat(original.xy, ==, matrix.xy);
-    g_assert_cmpfloat(original.yy, ==, matrix.yy);
-    g_assert_cmpfloat(original.x0, ==, matrix.x0);
-    g_assert_cmpfloat(original.y0, ==, matrix.y0);
+    adg_assert_isapprox(original.xx, matrix.xx);
+    adg_assert_isapprox(original.yx, matrix.yx);
+    adg_assert_isapprox(original.xy, matrix.xy);
+    adg_assert_isapprox(original.yy, matrix.yy);
+    adg_assert_isapprox(original.x0, matrix.x0);
+    adg_assert_isapprox(original.y0, matrix.y0);
 }
 
 static void
@@ -82,12 +82,12 @@ _adg_method_dup(void)
 
     matrix = adg_matrix_dup(&original);
 
-    g_assert_cmpfloat(original.xx, ==, matrix->xx);
-    g_assert_cmpfloat(original.yx, ==, matrix->yx);
-    g_assert_cmpfloat(original.xy, ==, matrix->xy);
-    g_assert_cmpfloat(original.yy, ==, matrix->yy);
-    g_assert_cmpfloat(original.x0, ==, matrix->x0);
-    g_assert_cmpfloat(original.y0, ==, matrix->y0);
+    adg_assert_isapprox(original.xx, matrix->xx);
+    adg_assert_isapprox(original.yx, matrix->yx);
+    adg_assert_isapprox(original.xy, matrix->xy);
+    adg_assert_isapprox(original.yy, matrix->yy);
+    adg_assert_isapprox(original.x0, matrix->x0);
+    adg_assert_isapprox(original.y0, matrix->y0);
 
     g_free(matrix);
 }
@@ -135,10 +135,10 @@ _adg_method_normalize(void)
     matrix.xx = 5;
     matrix.yy = 5;
     g_assert_true(adg_matrix_normalize(&matrix));
-    g_assert_cmpfloat(matrix.xx, ==, 1);
-    g_assert_cmpfloat(matrix.yy, ==, 1);
-    g_assert_cmpfloat(matrix.xy, ==, 0);
-    g_assert_cmpfloat(matrix.yx, ==, 0);
+    adg_assert_isapprox(matrix.xx, 1);
+    adg_assert_isapprox(matrix.yy, 1);
+    adg_assert_isapprox(matrix.xy, 0);
+    adg_assert_isapprox(matrix.yx, 0);
 
     matrix.xx = 3;
     matrix.yy = 3;
@@ -189,39 +189,39 @@ _adg_method_transform(void)
     g_assert_true(adg_matrix_equal(&matrix, &original));
 
     adg_matrix_transform(&matrix, &map, ADG_TRANSFORM_BEFORE);
-    g_assert_cmpfloat(matrix.xx, ==, 2);
-    g_assert_cmpfloat(matrix.yx, ==, 4);
-    g_assert_cmpfloat(matrix.xy, ==, 6);
-    g_assert_cmpfloat(matrix.yy, ==, 8);
-    g_assert_cmpfloat(matrix.x0, ==, 9);
-    g_assert_cmpfloat(matrix.y0, ==, 12);
+    adg_assert_isapprox(matrix.xx, 2);
+    adg_assert_isapprox(matrix.yx, 4);
+    adg_assert_isapprox(matrix.xy, 6);
+    adg_assert_isapprox(matrix.yy, 8);
+    adg_assert_isapprox(matrix.x0, 9);
+    adg_assert_isapprox(matrix.y0, 12);
 
     adg_matrix_copy(&matrix, &original);
     adg_matrix_transform(&matrix, &map, ADG_TRANSFORM_AFTER);
-    g_assert_cmpfloat(matrix.xx, ==, 2);
-    g_assert_cmpfloat(matrix.yx, ==, 4);
-    g_assert_cmpfloat(matrix.xy, ==, 6);
-    g_assert_cmpfloat(matrix.yy, ==, 8);
-    g_assert_cmpfloat(matrix.x0, ==, 11);
-    g_assert_cmpfloat(matrix.y0, ==, 13);
+    adg_assert_isapprox(matrix.xx, 2);
+    adg_assert_isapprox(matrix.yx, 4);
+    adg_assert_isapprox(matrix.xy, 6);
+    adg_assert_isapprox(matrix.yy, 8);
+    adg_assert_isapprox(matrix.x0, 11);
+    adg_assert_isapprox(matrix.y0, 13);
 
     adg_matrix_copy(&matrix, &original);
     adg_matrix_transform(&matrix, &map, ADG_TRANSFORM_BEFORE_NORMALIZED);
-    g_assert_cmpfloat(matrix.xx, ==, 1);
-    g_assert_cmpfloat(matrix.yx, ==, 2);
-    g_assert_cmpfloat(matrix.xy, ==, 3);
-    g_assert_cmpfloat(matrix.yy, ==, 4);
-    g_assert_cmpfloat(matrix.x0, ==, 9);
-    g_assert_cmpfloat(matrix.y0, ==, 12);
+    adg_assert_isapprox(matrix.xx, 1);
+    adg_assert_isapprox(matrix.yx, 2);
+    adg_assert_isapprox(matrix.xy, 3);
+    adg_assert_isapprox(matrix.yy, 4);
+    adg_assert_isapprox(matrix.x0, 9);
+    adg_assert_isapprox(matrix.y0, 12);
 
     adg_matrix_copy(&matrix, &original);
     adg_matrix_transform(&matrix, &map, ADG_TRANSFORM_AFTER_NORMALIZED);
-    g_assert_cmpfloat(matrix.xx, ==, 1);
-    g_assert_cmpfloat(matrix.yx, ==, 2);
-    g_assert_cmpfloat(matrix.xy, ==, 3);
-    g_assert_cmpfloat(matrix.yy, ==, 4);
-    g_assert_cmpfloat(matrix.x0, ==, 6);
-    g_assert_cmpfloat(matrix.y0, ==, 7);
+    adg_assert_isapprox(matrix.xx, 1);
+    adg_assert_isapprox(matrix.yx, 2);
+    adg_assert_isapprox(matrix.xy, 3);
+    adg_assert_isapprox(matrix.yy, 4);
+    adg_assert_isapprox(matrix.x0, 6);
+    adg_assert_isapprox(matrix.y0, 7);
 }
 
 static void

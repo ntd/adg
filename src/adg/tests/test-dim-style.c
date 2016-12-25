@@ -37,28 +37,28 @@ _adg_property_baseline_spacing(void)
     /* Using the public APIs */
     adg_dim_style_set_baseline_spacing(dim_style, valid_baseline_spacing_1);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_1);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_1);
 
     adg_dim_style_set_baseline_spacing(dim_style, invalid_baseline_spacing);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_1);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_1);
 
     adg_dim_style_set_baseline_spacing(dim_style, valid_baseline_spacing_2);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_2);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_2);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "baseline-spacing", valid_baseline_spacing_1, NULL);
     g_object_get(dim_style, "baseline-spacing", &baseline_spacing, NULL);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_1);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_1);
 
     g_object_set(dim_style, "baseline-spacing", invalid_baseline_spacing, NULL);
     g_object_get(dim_style, "baseline-spacing", &baseline_spacing, NULL);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_1);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_1);
 
     g_object_set(dim_style, "baseline-spacing", valid_baseline_spacing_2, NULL);
     g_object_get(dim_style, "baseline-spacing", &baseline_spacing, NULL);
-    g_assert_cmpfloat(baseline_spacing, ==, valid_baseline_spacing_2);
+    adg_assert_isapprox(baseline_spacing, valid_baseline_spacing_2);
 
     g_object_unref(dim_style);
 }
@@ -78,28 +78,28 @@ _adg_property_beyond(void)
     /* Using the public APIs */
     adg_dim_style_set_beyond(dim_style, valid_beyond_1);
     beyond = adg_dim_style_get_beyond(dim_style);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_1);
+    adg_assert_isapprox(beyond, valid_beyond_1);
 
     adg_dim_style_set_beyond(dim_style, invalid_beyond);
     beyond = adg_dim_style_get_beyond(dim_style);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_1);
+    adg_assert_isapprox(beyond, valid_beyond_1);
 
     adg_dim_style_set_beyond(dim_style, valid_beyond_2);
     beyond = adg_dim_style_get_beyond(dim_style);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_2);
+    adg_assert_isapprox(beyond, valid_beyond_2);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "beyond", valid_beyond_1, NULL);
     g_object_get(dim_style, "beyond", &beyond, NULL);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_1);
+    adg_assert_isapprox(beyond, valid_beyond_1);
 
     g_object_set(dim_style, "beyond", invalid_beyond, NULL);
     g_object_get(dim_style, "beyond", &beyond, NULL);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_1);
+    adg_assert_isapprox(beyond, valid_beyond_1);
 
     g_object_set(dim_style, "beyond", valid_beyond_2, NULL);
     g_object_get(dim_style, "beyond", &beyond, NULL);
-    g_assert_cmpfloat(beyond, ==, valid_beyond_2);
+    adg_assert_isapprox(beyond, valid_beyond_2);
 
     g_object_unref(dim_style);
 }
@@ -160,28 +160,28 @@ _adg_property_from_offset(void)
     /* Using the public APIs */
     adg_dim_style_set_from_offset(dim_style, valid_from_offset_1);
     from_offset = adg_dim_style_get_from_offset(dim_style);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_1);
+    adg_assert_isapprox(from_offset, valid_from_offset_1);
 
     adg_dim_style_set_from_offset(dim_style, invalid_from_offset);
     from_offset = adg_dim_style_get_from_offset(dim_style);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_1);
+    adg_assert_isapprox(from_offset, valid_from_offset_1);
 
     adg_dim_style_set_from_offset(dim_style, valid_from_offset_2);
     from_offset = adg_dim_style_get_from_offset(dim_style);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_2);
+    adg_assert_isapprox(from_offset, valid_from_offset_2);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "from-offset", valid_from_offset_1, NULL);
     g_object_get(dim_style, "from-offset", &from_offset, NULL);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_1);
+    adg_assert_isapprox(from_offset, valid_from_offset_1);
 
     g_object_set(dim_style, "from-offset", invalid_from_offset, NULL);
     g_object_get(dim_style, "from-offset", &from_offset, NULL);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_1);
+    adg_assert_isapprox(from_offset, valid_from_offset_1);
 
     g_object_set(dim_style, "from-offset", valid_from_offset_2, NULL);
     g_object_get(dim_style, "from-offset", &from_offset, NULL);
-    g_assert_cmpfloat(from_offset, ==, valid_from_offset_2);
+    adg_assert_isapprox(from_offset, valid_from_offset_2);
 
     g_object_unref(dim_style);
 }
@@ -247,28 +247,28 @@ _adg_property_limits_spacing(void)
     /* Using the public APIs */
     adg_dim_style_set_limits_spacing(dim_style, valid_limits_spacing_1);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
 
     adg_dim_style_set_limits_spacing(dim_style, invalid_limits_spacing);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
 
     adg_dim_style_set_limits_spacing(dim_style, valid_limits_spacing_2);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_2);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_2);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "limits-spacing", valid_limits_spacing_1, NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
 
     g_object_set(dim_style, "limits-spacing", invalid_limits_spacing, NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
 
     g_object_set(dim_style, "limits-spacing", valid_limits_spacing_2, NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    g_assert_cmpfloat(limits_spacing, ==, valid_limits_spacing_2);
+    adg_assert_isapprox(limits_spacing, valid_limits_spacing_2);
 
     g_object_unref(dim_style);
 }
@@ -671,28 +671,28 @@ _adg_property_to_offset(void)
     /* Using the public APIs */
     adg_dim_style_set_to_offset(dim_style, valid_to_offset_1);
     to_offset = adg_dim_style_get_to_offset(dim_style);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_1);
+    adg_assert_isapprox(to_offset, valid_to_offset_1);
 
     adg_dim_style_set_to_offset(dim_style, invalid_to_offset);
     to_offset = adg_dim_style_get_to_offset(dim_style);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_1);
+    adg_assert_isapprox(to_offset, valid_to_offset_1);
 
     adg_dim_style_set_to_offset(dim_style, valid_to_offset_2);
     to_offset = adg_dim_style_get_to_offset(dim_style);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_2);
+    adg_assert_isapprox(to_offset, valid_to_offset_2);
 
     /* Using GObject property methods */
     g_object_set(dim_style, "to-offset", valid_to_offset_1, NULL);
     g_object_get(dim_style, "to-offset", &to_offset, NULL);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_1);
+    adg_assert_isapprox(to_offset, valid_to_offset_1);
 
     g_object_set(dim_style, "to-offset", invalid_to_offset, NULL);
     g_object_get(dim_style, "to-offset", &to_offset, NULL);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_1);
+    adg_assert_isapprox(to_offset, valid_to_offset_1);
 
     g_object_set(dim_style, "to-offset", valid_to_offset_2, NULL);
     g_object_get(dim_style, "to-offset", &to_offset, NULL);
-    g_assert_cmpfloat(to_offset, ==, valid_to_offset_2);
+    adg_assert_isapprox(to_offset, valid_to_offset_2);
 
     g_object_unref(dim_style);
 }

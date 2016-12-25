@@ -42,16 +42,16 @@ _adg_property_dashes(void)
     g_assert_cmpint(num_dashes, ==, 1);
     dashes = adg_dash_get_dashes(dash);
     g_assert_nonnull(dashes);
-    g_assert_cmpfloat(dashes[0], ==, 1234.);
+    adg_assert_isapprox(dashes[0], 1234.);
 
     adg_dash_append_dashes(dash, 2, 0., 4321.);
     num_dashes = adg_dash_get_num_dashes(dash);
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
     g_assert_nonnull(dashes);
-    g_assert_cmpfloat(dashes[0], ==, 1234.);
-    g_assert_cmpfloat(dashes[1], ==, 0.);
-    g_assert_cmpfloat(dashes[2], ==, 4321.);
+    adg_assert_isapprox(dashes[0], 1234.);
+    adg_assert_isapprox(dashes[1], 0.);
+    adg_assert_isapprox(dashes[2], 4321.);
 
     adg_dash_clear_dashes(dash);
     num_dashes = adg_dash_get_num_dashes(dash);
@@ -64,9 +64,9 @@ _adg_property_dashes(void)
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
     g_assert_nonnull(dashes);
-    g_assert_cmpfloat(dashes[0], ==, 1.);
-    g_assert_cmpfloat(dashes[1], ==, 2.);
-    g_assert_cmpfloat(dashes[2], ==, 3.);
+    adg_assert_isapprox(dashes[0], 1.);
+    adg_assert_isapprox(dashes[1], 2.);
+    adg_assert_isapprox(dashes[2], 3.);
 
     adg_dash_destroy(dash);
 
@@ -76,9 +76,9 @@ _adg_property_dashes(void)
     g_assert_cmpint(num_dashes, ==, 3);
     dashes = adg_dash_get_dashes(dash);
     g_assert_nonnull(dashes);
-    g_assert_cmpfloat(dashes[0], ==, 1.);
-    g_assert_cmpfloat(dashes[1], ==, 2.);
-    g_assert_cmpfloat(dashes[2], ==, 3.);
+    adg_assert_isapprox(dashes[0], 1.);
+    adg_assert_isapprox(dashes[1], 2.);
+    adg_assert_isapprox(dashes[2], 3.);
 
     adg_dash_destroy(dash);
 }
@@ -93,7 +93,7 @@ _adg_property_offset(void)
 
     /* Ensure the default is 0 */
     offset = adg_dash_get_offset(dash);
-    g_assert_cmpfloat(offset, ==, 0);
+    adg_assert_isapprox(offset, 0);
 
     /* Check some special values */
     adg_dash_set_offset(dash, G_MINDOUBLE);
@@ -106,7 +106,7 @@ _adg_property_offset(void)
 
     adg_dash_set_offset(dash, 0);
     offset = adg_dash_get_offset(dash);
-    g_assert_cmpfloat(offset, ==, 0);
+    adg_assert_isapprox(offset, 0);
 
     adg_dash_destroy(dash);
 }

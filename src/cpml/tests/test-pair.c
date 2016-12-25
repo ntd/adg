@@ -83,15 +83,15 @@ _cpml_method_pair_transform(void)
     cairo_matrix_init_translate(&matrix, junk.x, junk.y);
     cpml_pair_copy(&pair, &org);
     cpml_pair_transform(&pair, &matrix);
-    g_assert_cmpfloat(pair.x, ==, junk.x);
-    g_assert_cmpfloat(pair.y, ==, junk.y);
+    adg_assert_isapprox(pair.x, junk.x);
+    adg_assert_isapprox(pair.y, junk.y);
 
     g_test_message("Checking for scaling transformations...");
     cairo_matrix_init_scale(&matrix, 3, 3);
     cpml_pair_copy(&pair, &diag);
     cpml_pair_transform(&pair, &matrix);
-    g_assert_cmpfloat(pair.x, ==, diag3.x);
-    g_assert_cmpfloat(pair.y, ==, diag3.y);
+    adg_assert_isapprox(pair.x, diag3.x);
+    adg_assert_isapprox(pair.y, diag3.y);
 
     g_test_message("Checking for assorted transformations...");
     cairo_matrix_init_scale(&matrix, 3, 3);
@@ -99,8 +99,8 @@ _cpml_method_pair_transform(void)
     cairo_matrix_translate(&matrix, -junk.x, -junk.y);
     cpml_pair_copy(&pair, &junk);
     cpml_pair_transform(&pair, &matrix);
-    g_assert_cmpfloat(pair.x, ==, diag3.x);
-    g_assert_cmpfloat(pair.y, ==, diag3.y);
+    adg_assert_isapprox(pair.x, diag3.x);
+    adg_assert_isapprox(pair.y, diag3.y);
 }
 
 static void
@@ -109,28 +109,28 @@ _cpml_method_distance(void)
     double distance, squared_distance;
 
     distance = cpml_pair_distance(NULL, NULL);
-    g_assert_cmpfloat(distance, ==, 0);
+    adg_assert_isapprox(distance, 0);
 
     distance = cpml_pair_distance(&org, NULL);
-    g_assert_cmpfloat(distance, ==, 0);
+    adg_assert_isapprox(distance, 0);
 
     distance = cpml_pair_distance(NULL, &org);
-    g_assert_cmpfloat(distance, ==, 0);
+    adg_assert_isapprox(distance, 0);
 
     distance = cpml_pair_distance(&nord, &org);
-    g_assert_cmpfloat(distance, ==, 1);
+    adg_assert_isapprox(distance, 1);
 
     squared_distance = cpml_pair_squared_distance(NULL, NULL);
-    g_assert_cmpfloat(squared_distance, ==, 0);
+    adg_assert_isapprox(squared_distance, 0);
 
     squared_distance = cpml_pair_squared_distance(&org, NULL);
-    g_assert_cmpfloat(squared_distance, ==, 0);
+    adg_assert_isapprox(squared_distance, 0);
 
     squared_distance = cpml_pair_squared_distance(NULL, &org);
-    g_assert_cmpfloat(squared_distance, ==, 0);
+    adg_assert_isapprox(squared_distance, 0);
 
     squared_distance = cpml_pair_squared_distance(&nord, &org);
-    g_assert_cmpfloat(squared_distance, ==, 1);
+    adg_assert_isapprox(squared_distance, 1);
 }
 
 static void
@@ -140,49 +140,49 @@ _cpml_method_angle(void)
     CpmlVector vector;
 
     angle = cpml_vector_angle(&nord);
-    g_assert_cmpfloat(angle, ==, M_PI_2);
+    adg_assert_isapprox(angle, M_PI_2);
 
     angle = M_PI_2;
     cpml_vector_from_angle(&vector, angle);
-    g_assert_cmpfloat(vector.x, ==, nord.x);
-    g_assert_cmpfloat(vector.y, ==, nord.y);
+    adg_assert_isapprox(vector.x, nord.x);
+    adg_assert_isapprox(vector.y, nord.y);
 
     angle = cpml_vector_angle(&diag);
     angle2 = cpml_vector_angle(&diag3);
-    g_assert_cmpfloat(angle, ==, angle2);
+    adg_assert_isapprox(angle, angle2);
 
     angle = 1.234567;
     cpml_vector_from_angle(&vector, angle);
     angle2 = cpml_vector_angle(&vector);
-    g_assert_cmpfloat(angle, ==, angle2);
+    adg_assert_isapprox(angle, angle2);
 
     g_test_message("By convention, the vector (0,0) is considered a 0° angle");
     angle = cpml_vector_angle(&org);
-    g_assert_cmpfloat(angle, ==, 0);
+    adg_assert_isapprox(angle, 0);
 
     cpml_pair_copy(&vector, &org);
     cpml_vector_normal(&vector);
-    g_assert_cmpfloat(vector.x, ==, org.x);
-    g_assert_cmpfloat(vector.y, ==, org.y);
+    adg_assert_isapprox(vector.x, org.x);
+    adg_assert_isapprox(vector.y, org.y);
 
     g_test_message("Checking cpml_vector_normal() API...");
     vector.x = 1;
     vector.y = 1;
     cpml_vector_normal(&vector);
-    g_assert_cmpfloat(vector.x, ==, -1);
-    g_assert_cmpfloat(vector.y, ==, 1);
+    adg_assert_isapprox(vector.x, -1);
+    adg_assert_isapprox(vector.y, 1);
 
     cpml_vector_normal(&vector);
-    g_assert_cmpfloat(vector.x, ==, -1);
-    g_assert_cmpfloat(vector.y, ==, -1);
+    adg_assert_isapprox(vector.x, -1);
+    adg_assert_isapprox(vector.y, -1);
 
     cpml_vector_normal(&vector);
-    g_assert_cmpfloat(vector.x, ==, 1);
-    g_assert_cmpfloat(vector.y, ==, -1);
+    adg_assert_isapprox(vector.x, 1);
+    adg_assert_isapprox(vector.y, -1);
 
     cpml_vector_normal(&vector);
-    g_assert_cmpfloat(vector.x, ==, 1);
-    g_assert_cmpfloat(vector.y, ==, 1);
+    adg_assert_isapprox(vector.x, 1);
+    adg_assert_isapprox(vector.y, 1);
 }
 
 static void
@@ -193,17 +193,17 @@ _cpml_method_length(void)
 
     cpml_pair_copy(&vector, &junk);
     cpml_vector_set_length(&vector, 0);
-    g_assert_cmpfloat(vector.x, ==, org.x);
-    g_assert_cmpfloat(vector.y, ==, org.y);
+    adg_assert_isapprox(vector.x, org.x);
+    adg_assert_isapprox(vector.y, org.y);
 
     cpml_vector_set_length(&vector, 1234);
-    g_assert_cmpfloat(vector.x, ==, org.x);
-    g_assert_cmpfloat(vector.y, ==, org.y);
+    adg_assert_isapprox(vector.x, org.x);
+    adg_assert_isapprox(vector.y, org.y);
 
     cpml_pair_copy(&vector, &diag3);
     cpml_vector_set_length(&vector, 5);
-    g_assert_cmpfloat(vector.x, ==, diag.x);
-    g_assert_cmpfloat(vector.y, ==, diag.y);
+    adg_assert_isapprox(vector.x, diag.x);
+    adg_assert_isapprox(vector.y, diag.y);
 
     g_test_message("Using integer comparison to overcome rounding errors");
 
@@ -226,15 +226,15 @@ _cpml_method_vector_transform(void)
     cairo_matrix_init_translate(&matrix, junk.x, junk.y);
     cpml_pair_copy(&vector, &org);
     cpml_vector_transform(&vector, &matrix);
-    g_assert_cmpfloat(vector.x, ==, org.x);
-    g_assert_cmpfloat(vector.y, ==, org.y);
+    adg_assert_isapprox(vector.x, org.x);
+    adg_assert_isapprox(vector.y, org.y);
 
     g_test_message("Checking scaling transformations...");
     cairo_matrix_init_scale(&matrix, 3, 3);
     cpml_pair_copy(&vector, &diag);
     cpml_vector_transform(&vector, &matrix);
-    g_assert_cmpfloat(vector.x, ==, diag3.x);
-    g_assert_cmpfloat(vector.y, ==, diag3.y);
+    adg_assert_isapprox(vector.x, diag3.x);
+    adg_assert_isapprox(vector.y, diag3.y);
 
     g_test_message("Checking assorted transformations...");
     cairo_matrix_init_scale(&matrix, 3, 3);
@@ -242,8 +242,8 @@ _cpml_method_vector_transform(void)
     cairo_matrix_translate(&matrix, -junk.x, -junk.y);
     cpml_pair_copy(&vector, &diag);
     cpml_vector_transform(&vector, &matrix);
-    g_assert_cmpfloat(vector.x, ==, diag3.x);
-    g_assert_cmpfloat(vector.y, ==, diag3.y);
+    adg_assert_isapprox(vector.x, diag3.x);
+    adg_assert_isapprox(vector.y, diag3.y);
 }
 
 

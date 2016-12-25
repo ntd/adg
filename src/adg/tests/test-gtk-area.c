@@ -54,8 +54,8 @@ _adg_behavior_translation(void)
 
     /* Translating (local space) */
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     event_button.type = GDK_BUTTON_PRESS;
     event_button.button = 2;
@@ -69,13 +69,13 @@ _adg_behavior_translation(void)
     event_motion.y = 200;
     g_signal_emit_by_name(area, "motion-notify-event", &event_motion, NULL, &stop);
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->x0, ==, 90);
-    g_assert_cmpfloat(map->y0, ==, 180);
+    adg_assert_isapprox(map->x0, 90);
+    adg_assert_isapprox(map->y0, 180);
 
     /* Translating (global space) */
     map = adg_gtk_area_get_render_map(area);
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     event_button.x = 30;
     event_button.y = 40;
@@ -86,8 +86,8 @@ _adg_behavior_translation(void)
     event_motion.y = 400;
     g_signal_emit_by_name(area, "motion-notify-event", &event_motion, NULL, &stop);
     map = adg_gtk_area_get_render_map(area);
-    g_assert_cmpfloat(map->x0, ==, 270);
-    g_assert_cmpfloat(map->y0, ==, 360);
+    adg_assert_isapprox(map->x0, 270);
+    adg_assert_isapprox(map->y0, 360);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -174,28 +174,28 @@ _adg_property_factor(void)
     /* Using the public APIs */
     adg_gtk_area_set_factor(area, valid_factor1);
     factor = adg_gtk_area_get_factor(area);
-    g_assert_cmpfloat(factor, ==, valid_factor1);
+    adg_assert_isapprox(factor, valid_factor1);
 
     adg_gtk_area_set_factor(area, invalid_factor);
     factor = adg_gtk_area_get_factor(area);
-    g_assert_cmpfloat(factor, ==, valid_factor1);
+    adg_assert_isapprox(factor, valid_factor1);
 
     adg_gtk_area_set_factor(area, valid_factor2);
     factor = adg_gtk_area_get_factor(area);
-    g_assert_cmpfloat(factor, ==, valid_factor2);
+    adg_assert_isapprox(factor, valid_factor2);
 
     /* Using GObject property methods */
     g_object_set(area, "factor", valid_factor1, NULL);
     g_object_get(area, "factor", &factor, NULL);
-    g_assert_cmpfloat(factor, ==, valid_factor1);
+    adg_assert_isapprox(factor, valid_factor1);
 
     g_object_set(area, "factor", invalid_factor, NULL);
     g_object_get(area, "factor", &factor, NULL);
-    g_assert_cmpfloat(factor, ==, valid_factor1);
+    adg_assert_isapprox(factor, valid_factor1);
 
     g_object_set(area, "factor", valid_factor2, NULL);
     g_object_get(area, "factor", &factor, NULL);
-    g_assert_cmpfloat(factor, ==, valid_factor2);
+    adg_assert_isapprox(factor, valid_factor2);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -318,10 +318,10 @@ _adg_method_get_extents(void)
     g_object_unref(canvas);
     extents = adg_gtk_area_get_extents(area);
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->org.x, ==, 0);
-    g_assert_cmpfloat(extents->org.y, ==, 0);
-    g_assert_cmpfloat(extents->size.x, ==, 1);
-    g_assert_cmpfloat(extents->size.y, ==, 1);
+    adg_assert_isapprox(extents->org.x, 0);
+    adg_assert_isapprox(extents->org.y, 0);
+    adg_assert_isapprox(extents->size.x, 1);
+    adg_assert_isapprox(extents->size.y, 1);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -336,13 +336,13 @@ _adg_method_get_zoom(void)
     canvas = adg_test_canvas();
 
     /* Sanity check */
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(NULL), ==, 0);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(NULL), 0);
 
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     adg_gtk_area_set_canvas(area, canvas);
     g_object_unref(canvas);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -363,7 +363,7 @@ _adg_method_switch_autozoom(void)
 
     /* Without autozoom the zoom factor is left to 1 */
     gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     /* The allocation phase is one-shot, so I must destroy and recreate
      * the AdgGtkArea widget every time to trigger the size allocation */
@@ -374,7 +374,7 @@ _adg_method_switch_autozoom(void)
     /* With autozoom */
     adg_gtk_area_switch_autozoom(area, TRUE);
     gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 100);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 100);
 
     gtk_widget_destroy(GTK_WIDGET(area));
     area = _adg_gtk_area_new();
@@ -385,7 +385,7 @@ _adg_method_switch_autozoom(void)
     allocation.width = 200;
     allocation.height = 200;
     gtk_widget_size_allocate(GTK_WIDGET(area), &allocation);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 200);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 200);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }
@@ -413,13 +413,13 @@ _adg_method_reset(void)
 
     adg_gtk_area_reset(area);
     adg_gtk_area_reset(area);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     adg_gtk_area_set_render_map(area, &map);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 2);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 2);
 
     adg_gtk_area_reset(area);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     gtk_widget_destroy(window);
 }
@@ -485,7 +485,7 @@ _adg_method_scroll_event(void)
     adg_entity_arrange(ADG_ENTITY(canvas));
 
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->xx, ==, 1);
+    adg_assert_isapprox(map->xx, 1);
 
     /* Zoom in (local space) */
     event.type = GDK_SCROLL;
@@ -499,12 +499,12 @@ _adg_method_scroll_event(void)
     event.direction = GDK_SCROLL_DOWN;
     g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->xx, ==, 1);
+    adg_assert_isapprox(map->xx, 1);
     g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
     g_assert_cmpfloat(map->xx, <, 1);
 
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
 
     /* Zoom out (global space) */
     event.state = GDK_SHIFT_MASK;
@@ -514,7 +514,7 @@ _adg_method_scroll_event(void)
     /* Zoom in (global space) */
     event.direction = GDK_SCROLL_UP;
     g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
-    g_assert_cmpfloat(adg_gtk_area_get_zoom(area), ==, 1);
+    adg_assert_isapprox(adg_gtk_area_get_zoom(area), 1);
     g_signal_emit_by_name(area, "scroll-event", &event, NULL, &stop);
     g_assert_cmpfloat(adg_gtk_area_get_zoom(area), >, 1);
 
@@ -537,8 +537,8 @@ _adg_method_motion_event(void)
     adg_entity_arrange(ADG_ENTITY(canvas));
 
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     /* Motion (local space) */
     event.type = GDK_MOTION_NOTIFY;
@@ -559,12 +559,12 @@ _adg_method_motion_event(void)
     event.y = 0;
     g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
     map = adg_entity_get_local_map(ADG_ENTITY(canvas));
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     map = adg_gtk_area_get_render_map(area);
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     /* Motion (global space) */
     event.state |= GDK_SHIFT_MASK;
@@ -584,8 +584,8 @@ _adg_method_motion_event(void)
     event.y = 0;
     g_signal_emit_by_name(area, "motion-notify-event", &event, NULL, &stop);
     map = adg_gtk_area_get_render_map(area);
-    g_assert_cmpfloat(map->x0, ==, 0);
-    g_assert_cmpfloat(map->y0, ==, 0);
+    adg_assert_isapprox(map->x0, 0);
+    adg_assert_isapprox(map->y0, 0);
 
     gtk_widget_destroy(GTK_WIDGET(area));
 }

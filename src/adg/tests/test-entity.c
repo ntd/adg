@@ -368,10 +368,10 @@ _adg_property_extents(void)
 
     extents = adg_entity_get_extents(entity);
     g_assert_true(extents->is_defined);
-    g_assert_cmpfloat(extents->org.x, ==, 1);
-    g_assert_cmpfloat(extents->org.y, ==, 2);
-    g_assert_cmpfloat(extents->size.x, ==, 3);
-    g_assert_cmpfloat(extents->size.y, ==, 4);
+    adg_assert_isapprox(extents->org.x, 1);
+    adg_assert_isapprox(extents->org.y, 2);
+    adg_assert_isapprox(extents->size.x, 3);
+    adg_assert_isapprox(extents->size.y, 4);
 
     adg_entity_set_extents(entity, NULL);
     g_assert_false(extents->is_defined);

@@ -220,17 +220,17 @@ _adg_method_size_allocate(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     allocation.width = 100;
     allocation.height = 100;
@@ -238,17 +238,17 @@ _adg_method_size_allocate(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     /* The allocation phase is one-shot, so I must destroy and recreate
      * the AdgGtkLayout widget every time to trigger the size allocation */
@@ -263,17 +263,17 @@ _adg_method_size_allocate(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 0);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 0);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     allocation.width = 100;
     allocation.height = 100;
@@ -281,17 +281,17 @@ _adg_method_size_allocate(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 100);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 100);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     allocation.width = 20;
     allocation.height = 30;
@@ -299,17 +299,17 @@ _adg_method_size_allocate(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 20);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 20);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 30);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 0);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 30);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 0);
 
     adg_gtk_area_canvas_changed(ADG_GTK_AREA(layout), NULL);
 
@@ -352,22 +352,22 @@ _adg_method_value_changed(void)
 
     adjustment = adg_gtk_layout_get_hadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 100);
 #ifdef GTK2_ENABLED
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 100);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 100);
 #endif
 #ifdef GTK3_ENABLED
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 50);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 50);
 #endif
 
     adjustment = adg_gtk_layout_get_vadjustment(layout);
     g_assert_nonnull(adjustment);
-    g_assert_cmpfloat(gtk_adjustment_get_lower(adjustment), ==, -50);
-    g_assert_cmpfloat(gtk_adjustment_get_upper(adjustment), ==, 150);
-    g_assert_cmpfloat(gtk_adjustment_get_page_size(adjustment), ==, 100);
-    g_assert_cmpfloat(gtk_adjustment_get_value(adjustment), ==, 40);
+    adg_assert_isapprox(gtk_adjustment_get_lower(adjustment), -50);
+    adg_assert_isapprox(gtk_adjustment_get_upper(adjustment), 150);
+    adg_assert_isapprox(gtk_adjustment_get_page_size(adjustment), 100);
+    adg_assert_isapprox(gtk_adjustment_get_value(adjustment), 40);
 
     gtk_widget_destroy(GTK_WIDGET(layout));
 }

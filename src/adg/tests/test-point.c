@@ -34,13 +34,13 @@ _adg_behavior_misc(void)
 
     adg_point_set_pair_explicit(point, 1, 2);
     pair = (CpmlPair *) point;
-    g_assert_cmpfloat(pair->x, ==, 1);
-    g_assert_cmpfloat(pair->y, ==, 2);
+    adg_assert_isapprox(pair->x, 1);
+    adg_assert_isapprox(pair->y, 2);
 
     pair = adg_point_get_pair(point);
     g_assert_nonnull(pair);
-    g_assert_cmpfloat(pair->x, ==, 1);
-    g_assert_cmpfloat(pair->y, ==, 2);
+    adg_assert_isapprox(pair->x, 1);
+    adg_assert_isapprox(pair->y, 2);
 
     dup_point = adg_point_dup(point);
     g_assert_nonnull(dup_point);
@@ -53,8 +53,8 @@ _adg_behavior_misc(void)
     g_assert_nonnull(dup_pair);
     g_assert_true(dup_pair != pair);
 
-    g_assert_cmpfloat(pair->x, ==, dup_pair->x);
-    g_assert_cmpfloat(pair->y, ==, dup_pair->y);
+    adg_assert_isapprox(pair->x, dup_pair->x);
+    adg_assert_isapprox(pair->y, dup_pair->y);
     g_assert_true(adg_point_equal(point, dup_point));
 
     g_free(dup_pair);
@@ -67,8 +67,8 @@ _adg_behavior_misc(void)
     /* Should be a noop with explicit pairs */
     adg_point_invalidate(dup_point);
 
-    g_assert_cmpfloat(dup_pair->x, ==, 3.4);
-    g_assert_cmpfloat(dup_pair->y, ==, 5.6);
+    adg_assert_isapprox(dup_pair->x, 3.4);
+    adg_assert_isapprox(dup_pair->y, 5.6);
     g_assert_false(adg_point_equal(point, dup_point));
 
     adg_point_copy(dup_point, point);
@@ -76,8 +76,8 @@ _adg_behavior_misc(void)
     g_assert_nonnull(dup_pair);
     g_assert_nonnull(dup_pair);
 
-    g_assert_cmpfloat(pair->x, ==, dup_pair->x);
-    g_assert_cmpfloat(pair->y, ==, dup_pair->y);
+    adg_assert_isapprox(pair->x, dup_pair->x);
+    adg_assert_isapprox(pair->y, dup_pair->y);
     g_assert_true(adg_point_equal(point, dup_point));
 
     g_free(pair);
@@ -107,8 +107,8 @@ _adg_behavior_named_pair(void)
     adg_point_set_pair_explicit(explicit_point2, 78, 90);
     g_assert_false(adg_point_equal(explicit_point, explicit_point2));
     pair = (CpmlPair *) explicit_point2;
-    g_assert_cmpfloat(pair->x, ==, 78);
-    g_assert_cmpfloat(pair->y, ==, 90);
+    adg_assert_isapprox(pair->x, 78);
+    adg_assert_isapprox(pair->y, 90);
 
     pair = adg_point_get_pair(explicit_point);
     g_assert_true(cpml_pair_equal(pair, &p1));
@@ -133,8 +133,8 @@ _adg_behavior_named_pair(void)
     /* Check for lazy evaluation of named pairs */
     adg_point_set_pair_from_model(model_point, model, "unexistent-pair");
     pair = (CpmlPair *) model_point;
-    g_assert_cmpfloat(pair->x, ==, p1.x);
-    g_assert_cmpfloat(pair->y, ==, p1.y);
+    adg_assert_isapprox(pair->x, p1.x);
+    adg_assert_isapprox(pair->y, p1.y);
 
     /* Check behavior on undefined named pair */
     g_assert_false(adg_point_update(model_point));
