@@ -279,6 +279,15 @@ _adg_object_checks(GType *p_type)
         g_assert_nonnull(object);
         g_assert_true(G_IS_OBJECT(object));
 
+        /* Convert the floating reference, if present, to a hard reference so
+         * we can handle GTK+ widgets (that usually have a floating reference)
+         * and other object (that do not usually have floating references) in
+         * the same way.
+         */
+        if (g_object_is_floating(object)) {
+            g_object_ref_sink(object);
+        }
+
         /* Check that unknown or unexistent properties does
          * not return values (result should pass unmodified)
          */
