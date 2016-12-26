@@ -702,19 +702,26 @@ static void
 _adg_method_reflect(void)
 {
     AdgPath *path;
-    CpmlVector vector;
+    CpmlPair pair;
+    const CpmlPair *p;
     cairo_path_t *cairo_path;
     CpmlSegment segment;
     CpmlPrimitive primitive;
 
     path = adg_path_new();
-    vector.x = 1;
-    vector.y = 0;
 
     /* Check sanity */
-    adg_path_reflect(NULL, &vector);
+    adg_path_reflect(NULL, &pair);
     adg_path_reflect_explicit(NULL, 1, 2);
     adg_path_reflect_explicit(path, 0, 0);
+
+    pair.x = 1;
+    pair.y = 2;
+    adg_model_set_named_pair(ADG_MODEL(path), "P1", &pair);
+
+    pair.x = -2;
+    pair.y = -3;
+    adg_model_set_named_pair(ADG_MODEL(path), "P2", &pair);
 
     adg_path_move_to_explicit(path, 0, 1);
     adg_path_line_to_explicit(path, 2, 3);
@@ -769,6 +776,82 @@ _adg_method_reflect(void)
     adg_assert_isapprox(primitive.data[1].point.y, -1);
 
     g_assert_false(cpml_primitive_next(&primitive));
+
+    /* Check if the named pairs have been duplicated and mirrored */
+    p = adg_model_get_named_pair(ADG_MODEL(path), "P1");
+    adg_assert_isapprox(p->x, 1);
+    adg_assert_isapprox(p->y, 2);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "-P1");
+    adg_assert_isapprox(p->x, 1);
+    adg_assert_isapprox(p->y, -2);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "P2");
+    adg_assert_isapprox(p->x, -2);
+    adg_assert_isapprox(p->y, -3);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "-P2");
+    adg_assert_isapprox(p->x, -2);
+    adg_assert_isapprox(p->y, 3);
+
+    g_object_unref(path);
+
+    path = adg_path_new();
+
+    pair.x = 10;
+    pair.y = 20;
+    adg_model_set_named_pair(ADG_MODEL(path), "P1", &pair);
+
+    pair.x = -20;
+    pair.y = -30;
+    adg_model_set_named_pair(ADG_MODEL(path), "P2", &pair);
+
+    adg_path_move_to_explicit(path, 0, 10);
+    adg_path_line_to_explicit(path, 20, 30);
+
+    /* Reflect on the x=0 axis */
+    adg_path_reflect_explicit(path, 0, 100);
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    /* Skip the original primitives */
+    cpml_primitive_from_segment(&primitive, &segment);  /* CPML_LINE */
+
+    /* This line is the automatic joint between the
+     * original primitives and the reversed ones */
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox((primitive.org)->point.x, 20);
+    adg_assert_isapprox((primitive.org)->point.y, 30);
+    adg_assert_isapprox(primitive.data[1].point.x, -20);
+    adg_assert_isapprox(primitive.data[1].point.y, 30);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 0);
+    adg_assert_isapprox(primitive.data[1].point.y, 10);
+
+    /* Check if the named pairs have been duplicated and mirrored */
+    p = adg_model_get_named_pair(ADG_MODEL(path), "P1");
+    adg_assert_isapprox(p->x, 10);
+    adg_assert_isapprox(p->y, 20);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "-P1");
+    adg_assert_isapprox(p->x, -10);
+    adg_assert_isapprox(p->y, 20);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "P2");
+    adg_assert_isapprox(p->x, -20);
+    adg_assert_isapprox(p->y, -30);
+
+    p = adg_model_get_named_pair(ADG_MODEL(path), "-P2");
+    adg_assert_isapprox(p->x, 20);
+    adg_assert_isapprox(p->y, -30);
 
     g_object_unref(path);
 }
