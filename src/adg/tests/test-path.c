@@ -80,6 +80,9 @@ _adg_method_has_current_point(void)
     adg_path_close(path);
     g_assert_false(adg_path_has_current_point(path));
 
+    adg_path_line_to_explicit(path, 0, 0);
+    g_assert_true(adg_path_has_current_point(path));
+
     g_object_unref(path);
 }
 
