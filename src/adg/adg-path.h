@@ -61,7 +61,7 @@ const CpmlPrimitive *
 const CpmlPrimitive *
                 adg_path_over_primitive         (AdgPath        *path);
 void            adg_path_append                 (AdgPath        *path,
-                                                 CpmlPrimitiveType type,
+                                                 gint            type,
                                                  ...);
 void            adg_path_append_valist          (AdgPath        *path,
                                                  CpmlPrimitiveType type,

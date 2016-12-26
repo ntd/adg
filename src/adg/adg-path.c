@@ -97,7 +97,7 @@ static void             _adg_append_primitive   (AdgPath        *path,
                                                  CpmlPrimitive  *primitive);
 static void             _adg_clear_operation    (AdgPath        *path);
 static gboolean         _adg_append_operation   (AdgPath        *path,
-                                                 AdgAction       action,
+                                                 gint            action,
                                                  ...);
 static void             _adg_do_operation       (AdgPath        *path,
                                                  cairo_path_data_t
@@ -327,7 +327,7 @@ adg_path_over_primitive(AdgPath *path)
 /**
  * adg_path_append:
  * @path: an #AdgPath
- * @type: a #cairo_data_type_t value
+ * @type: (type CpmlPrimitiveType): a #cairo_data_type_t value
  * @...:  point data, specified as #CpmlPair pointers
  *
  * Generic method to append a primitive to @path. The number of #CpmlPair
@@ -341,12 +341,12 @@ adg_path_over_primitive(AdgPath *path)
  * Since: 1.0
  **/
 void
-adg_path_append(AdgPath *path, CpmlPrimitiveType type, ...)
+adg_path_append(AdgPath *path, gint type, ...)
 {
     va_list var_args;
 
     va_start(var_args, type);
-    adg_path_append_valist(path, type, var_args);
+    adg_path_append_valist(path, (CpmlPrimitiveType) type, var_args);
     va_end(var_args);
 }
 
@@ -1175,24 +1175,26 @@ _adg_clear_operation(AdgPath *path)
 }
 
 static gboolean
-_adg_append_operation(AdgPath *path, AdgAction action, ...)
+_adg_append_operation(AdgPath *path, gint action, ...)
 {
     AdgPathPrivate *data;
     AdgOperation *operation;
+    AdgAction real_action;
     va_list var_args;
 
+    real_action = (AdgAction) action;
     data = path->data;
 
     if (data->last.data == NULL) {
         g_warning(_("%s: requested a '%s' operation on a path without current primitive"),
-                  G_STRLOC, _adg_action_name(action));
+                  G_STRLOC, _adg_action_name(real_action));
         return FALSE;
     }
 
     operation = &data->operation;
     if (operation->action != ADG_ACTION_NONE) {
         g_warning(_("%s: requested a '%s' operation while a '%s' operation was active"),
-                  G_STRLOC, _adg_action_name(action),
+                  G_STRLOC, _adg_action_name(real_action),
                   _adg_action_name(operation->action));
         /* XXX: http://dev.entidi.com/p/adg/issues/50/ */
         return FALSE;
@@ -1200,7 +1202,7 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
 
     va_start(var_args, action);
 
-    switch (action) {
+    switch (real_action) {
 
     case ADG_ACTION_CHAMFER:
         operation->data.chamfer.delta1 = va_arg(var_args, double);
@@ -1216,12 +1218,12 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
         return TRUE;
 
     default:
-        g_warning(_("%s: %d path operation not recognized"), G_STRLOC, action);
+        g_warning(_("%s: %d path operation not recognized"), G_STRLOC, real_action);
         va_end(var_args);
         return FALSE;
     }
 
-    operation->action = action;
+    operation->action = real_action;
     va_end(var_args);
 
     if (data->last.data[0].header.type == CPML_CLOSE) {
@@ -1261,7 +1263,7 @@ _adg_append_operation(AdgPath *path, AdgAction action, ...)
         data->last.org = &path_data[length - 2];
         data->last.data = &path_data[length - 1];
 
-        _adg_do_action(path, action, &current);
+        _adg_do_action(path, real_action, &current);
     }
 
     return TRUE;
