@@ -27,7 +27,6 @@ h_sources=			adg-adim.h \
 				adg-edges.h \
 				adg-entity.h \
 				adg-enums.h \
-				adg-cairo-fallback.h \
 				adg-fill-style.h \
 				adg-font-style.h \
 				adg-forward-declarations.h \
@@ -89,10 +88,10 @@ private_h_sources=		adg-adim-private.h \
 				adg-toy-text-private.h \
 				adg-trail-private.h
 built_private_h_sources=	adg-marshal.h
+fallback_h_sources=		adg-cairo-fallback.h
 c_sources=			adg-adim.c \
 				adg-alignment.c \
 				adg-arrow.c \
-				adg-cairo-fallback.c \
 				adg-canvas.c \
 				adg-color-style.c \
 				adg-container.c \
@@ -131,6 +130,7 @@ c_sources=			adg-adim.c \
 				adg-utils.c
 built_c_sources=		adg-type-builtins.c \
 				adg-marshal.c
+fallback_c_sources=		adg-cairo-fallback.c
 template_sources=		adg-type-builtins.c.mkenums \
 				adg-type-builtins.h.mkenums \
 				adg-marshal.genmarshal
@@ -184,7 +184,9 @@ adg_include_DATA=		$(h_sources) \
 lib_LTLIBRARIES= 		libadg-1.la
 libadg_1_la_SOURCES=		$(h_sources) \
 				$(private_h_sources) \
-				$(c_sources)
+				$(fallback_h_sources) \
+				$(c_sources) \
+				$(fallback_c_sources)
 nodist_libadg_1_la_SOURCES=	$(built_c_sources)
 libadg_1_la_LDFLAGS=		-no-undefined \
 				-version-info $(ADG_LT_VERSION)
