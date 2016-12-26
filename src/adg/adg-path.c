@@ -363,27 +363,31 @@ adg_path_append(AdgPath *path, gint type, ...)
 void
 adg_path_append_valist(AdgPath *path, CpmlPrimitiveType type, va_list var_args)
 {
-    GArray *array;
-    CpmlPair *pair;
+    GPtrArray *array;
+    const CpmlPair *pair;
     gint length;
 
     length = _adg_primitive_length(type);
     if (length == 0)
         return;
 
-    array = g_array_new(TRUE, FALSE, sizeof(pair));
+    array = g_ptr_array_sized_new(4);
     while (-- length) {
-        pair = va_arg(var_args, CpmlPair *);
+        pair = va_arg(var_args, const CpmlPair *);
         if (pair == NULL) {
-            g_array_free(array, TRUE);
+            g_ptr_array_free(array, TRUE);
             g_return_if_reached();
             return;
         }
-        g_array_append_val(array, pair);
+        g_ptr_array_add(array, (gpointer) pair);
     }
 
-    adg_path_append_array(path, type, (const CpmlPair **) array->data);
-    g_array_free(array, TRUE);
+    /* The array must be NULL terminated */
+    g_ptr_array_add(array, NULL);
+
+    adg_path_append_array(path, type, (const CpmlPair **) array->pdata);
+
+    g_ptr_array_free(array, TRUE);
 }
 
 /**
