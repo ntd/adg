@@ -715,9 +715,7 @@ _adg_method_reflect(void)
     adg_path_reflect_explicit(NULL, 1, 2);
     adg_path_reflect_explicit(path, 0, 0);
 
-    pair.x = 1;
-    pair.y = 2;
-    adg_model_set_named_pair(ADG_MODEL(path), "P1", &pair);
+    adg_model_set_named_pair_explicit(ADG_MODEL(path), "P1", 1, 2);
 
     pair.x = -2;
     pair.y = -3;
@@ -802,9 +800,7 @@ _adg_method_reflect(void)
     pair.y = 20;
     adg_model_set_named_pair(ADG_MODEL(path), "P1", &pair);
 
-    pair.x = -20;
-    pair.y = -30;
-    adg_model_set_named_pair(ADG_MODEL(path), "P2", &pair);
+    adg_model_set_named_pair_explicit(ADG_MODEL(path), "P2", -20, -30);
 
     adg_path_move_to_explicit(path, 0, 10);
     adg_path_line_to_explicit(path, 20, 30);
