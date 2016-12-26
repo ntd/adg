@@ -1050,12 +1050,17 @@ _adg_read_cairo_path(AdgPath *path)
 static gint
 _adg_primitive_length(CpmlPrimitiveType type)
 {
-    if (type == CPML_CLOSE)
+    switch (type) {
+
+    case CPML_CLOSE:
         return 1;
-    else if (type == CPML_MOVE)
+
+    case CPML_MOVE:
         return 2;
 
-    return cpml_primitive_type_get_n_points(type);
+    default:
+        return cpml_primitive_type_get_n_points(type);
+    }
 }
 
 static void
