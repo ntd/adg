@@ -74,7 +74,7 @@
 
 #define REMAPPED(ptr, from, to) \
     (ptr) == NULL ? NULL : \
-        (gpointer) ((to) + ((gchar *) (ptr) - (gchar *) (from)))
+        (gpointer) ((guint8 *) (ptr) - (guint8 *) (from) + (guint8 *) (to))
 
 
 G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL)
