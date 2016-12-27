@@ -231,7 +231,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                              P_("decimals"),
                              P_("Number of significant decimals to round the value to (-1 to disable)"),
                              -1, G_MAXINT,
-                             -1,
+                             2,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DECIMALS, param);
 }
