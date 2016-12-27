@@ -266,7 +266,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->limits_shift.y = +2;
     data->number_format = g_strdup("%-.7g");
     data->number_tag = g_strdup("<>");
-    data->decimals = -1;
+    data->decimals = 2;
 
     dim_style->data = data;
 }
