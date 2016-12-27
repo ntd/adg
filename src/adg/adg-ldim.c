@@ -747,7 +747,7 @@ _adg_default_value(AdgDim *dim)
     value = data->geometry.distance;
 
     decimals = adg_dim_style_get_decimals(dim_style);
-    if (decimals > 0) {
+    if (decimals >= 0) {
         value = adg_round(value, decimals);
     }
 
