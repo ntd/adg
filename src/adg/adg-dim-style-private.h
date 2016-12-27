@@ -50,6 +50,7 @@ struct _AdgDimStylePrivate {
     CpmlPair             quote_shift;
     CpmlPair             limits_shift;
     gchar               *number_format;
+    gchar               *number_arguments;
     gchar               *number_tag;
     gint                 decimals;
 };

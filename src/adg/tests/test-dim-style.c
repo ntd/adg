@@ -528,6 +528,67 @@ _adg_property_number_format(void)
 }
 
 static void
+_adg_property_number_arguments(void)
+{
+    AdgDimStyle *dim_style;
+    const gchar *valid_text_1, *valid_text_2;
+    const gchar *number_arguments;
+    gchar *number_arguments_dup;
+
+    dim_style = adg_dim_style_new();
+    valid_text_1 = "RrdmSs";
+    valid_text_2 = "";
+
+    /* Using the public APIs */
+    adg_dim_style_set_number_arguments(dim_style, valid_text_1);
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_cmpstr(number_arguments, ==, valid_text_1);
+
+    adg_dim_style_set_number_arguments(dim_style, "invalid");
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_cmpstr(number_arguments, ==, valid_text_1);
+
+    adg_dim_style_set_number_arguments(dim_style, " ");
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_cmpstr(number_arguments, ==, valid_text_1);
+
+    adg_dim_style_set_number_arguments(dim_style, valid_text_2);
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_cmpstr(number_arguments, ==, valid_text_2);
+
+    adg_dim_style_set_number_arguments(dim_style, NULL);
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_null(number_arguments);
+
+    /* Using GObject property methods */
+    g_object_set(dim_style, "number-arguments", valid_text_1, NULL);
+    g_object_get(dim_style, "number-arguments", &number_arguments_dup, NULL);
+    g_assert_cmpstr(number_arguments_dup, ==, valid_text_1);
+    g_free(number_arguments_dup);
+
+    g_object_set(dim_style, "number-arguments", "invalid", NULL);
+    g_object_get(dim_style, "number-arguments", &number_arguments_dup, NULL);
+    g_assert_cmpstr(number_arguments_dup, ==, valid_text_1);
+    g_free(number_arguments_dup);
+
+    g_object_set(dim_style, "number-arguments", " ", NULL);
+    g_object_get(dim_style, "number-arguments", &number_arguments_dup, NULL);
+    g_assert_cmpstr(number_arguments_dup, ==, valid_text_1);
+    g_free(number_arguments_dup);
+
+    g_object_set(dim_style, "number-arguments", valid_text_2, NULL);
+    g_object_get(dim_style, "number-arguments", &number_arguments_dup, NULL);
+    g_assert_cmpstr(number_arguments_dup, ==, valid_text_2);
+    g_free(number_arguments_dup);
+
+    g_object_set(dim_style, "number-arguments", NULL, NULL);
+    g_object_get(dim_style, "number-arguments", &number_arguments_dup, NULL);
+    g_assert_null(number_arguments_dup);
+
+    g_object_unref(dim_style);
+}
+
+static void
 _adg_property_number_tag(void)
 {
     AdgDimStyle *dim_style;
@@ -758,6 +819,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim-style/property/max-dress", _adg_property_max_dress);
     g_test_add_func("/adg/dim-style/property/min-dress", _adg_property_min_dress);
     g_test_add_func("/adg/dim-style/property/number-format", _adg_property_number_format);
+    g_test_add_func("/adg/dim-style/property/number-arguments", _adg_property_number_arguments);
     g_test_add_func("/adg/dim-style/property/number-tag", _adg_property_number_tag);
     g_test_add_func("/adg/dim-style/property/decimals", _adg_property_decimals);
     g_test_add_func("/adg/dim-style/property/quote-shift", _adg_property_quote_shift);

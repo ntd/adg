@@ -53,6 +53,11 @@
 #include "adg-dim-style.h"
 #include "adg-dim-style-private.h"
 
+#include <string.h>
+
+
+#define VALID_ARGUMENTS "RrdmSs"
+
 
 G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
 
@@ -73,6 +78,7 @@ enum {
     PROP_QUOTE_SHIFT,
     PROP_LIMITS_SHIFT,
     PROP_NUMBER_FORMAT,
+    PROP_NUMBER_ARGUMENTS,
     PROP_NUMBER_TAG,
     PROP_DECIMALS
 };
@@ -220,6 +226,13 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_FORMAT, param);
 
+    param = g_param_spec_string("number-arguments",
+                                P_("Number Arguments"),
+                                P_("The arguments to pass to the format function: see adg_dim_style_set_number_arguments() for further details"),
+                                "r",
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_NUMBER_ARGUMENTS, param);
+
     param = g_param_spec_string("number-tag",
                                 P_("Number Tag"),
                                 P_("The tag to substitute inside the value template string"),
@@ -265,6 +278,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->limits_shift.x = +2;
     data->limits_shift.y = +2;
     data->number_format = g_strdup("%-.7g");
+    data->number_arguments = g_strdup("r");
     data->number_tag = g_strdup("<>");
     data->decimals = 2;
 
@@ -281,6 +295,9 @@ _adg_finalize(GObject *object)
 
     g_free(data->number_format);
     data->number_format = NULL;
+
+    g_free(data->number_arguments);
+    data->number_arguments = NULL;
 
     g_free(data->number_tag);
     data->number_tag = NULL;
@@ -331,6 +348,9 @@ _adg_get_property(GObject *object, guint prop_id,
         break;
     case PROP_NUMBER_FORMAT:
         g_value_set_string(value, data->number_format);
+        break;
+    case PROP_NUMBER_ARGUMENTS:
+        g_value_set_string(value, data->number_arguments);
         break;
     case PROP_NUMBER_TAG:
         g_value_set_string(value, data->number_tag);
@@ -401,6 +421,13 @@ _adg_set_property(GObject *object, guint prop_id,
         g_free(data->number_format);
         data->number_format = g_value_dup_string(value);
         break;
+    case PROP_NUMBER_ARGUMENTS: {
+        const gchar *arguments = g_value_get_string(value);
+        g_return_if_fail(arguments == NULL || strspn(arguments, VALID_ARGUMENTS) == strlen(arguments));
+        g_free(data->number_arguments);
+        data->number_arguments = g_strdup(arguments);
+        break;
+    }
     case PROP_NUMBER_TAG:
         g_free(data->number_tag);
         data->number_tag = g_value_dup_string(value);
@@ -1033,6 +1060,63 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
     data = dim_style->data;
 
     return data->number_format;
+}
+
+/**
+ * adg_dim_style_set_number_arguments:
+ * @dim_style: an #AdgDimStyle object
+ * @arguments: the arguments to pass to the formatting function
+ *
+ * A string that identifies the arguments to pass to the formatting function.
+ *
+ * Every character in @arguments specifies an additional argument, i.e.:
+ * - 'R' (a gdouble): the raw default value;
+ * - 'r' (a gdouble): the default value rounded to the #AdgDimStyle:decimals
+ *                    decimal;
+ * - 'd' (a gint): degrees, used for sexagesimal representation;
+ * - 'm' (a gint): minutes, used for sexagesimal representation;
+ * - 'S' (a gdouble): raw seconds, used for sexagesimal representation;
+ * - 's' (a gdouble): seconds rounded to the AdgDimStyle:decimals decimal,
+ *                    used for sexagesimal representation.
+ *
+ * The number and type of arguments must match the #AdgDimStyle:number-format
+ * property. For example, to express sexagesimal units you can use:
+ *
+ * |[
+ * adg_dim_style_set_number_format(dim_style, "%d°%d'%g\"");
+ * adg_dim_style_set_number_arguments(dim_style, "dms");
+ * ]|
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_style_set_number_arguments(AdgDimStyle *dim_style, const gchar *arguments)
+{
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_object_set(dim_style, "number-arguments", arguments, NULL);
+}
+
+/**
+ * adg_dim_style_get_number_arguments:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the arguments used by the formatting function. See
+ * adg_dim_style_set_number_arguments() for details on what this means.
+ *
+ * Returns: (transfer none): the requested arguments.
+ *
+ * Since: 1.0
+ **/
+const gchar *
+adg_dim_style_get_number_arguments(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
+
+    data = dim_style->data;
+
+    return data->number_arguments;
 }
 
 /**

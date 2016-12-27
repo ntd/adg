@@ -101,6 +101,11 @@ const CpmlPair *adg_dim_style_get_limits_shift  (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_number_format (AdgDimStyle    *dim_style,
                                                  const gchar    *format);
 const gchar *   adg_dim_style_get_number_format (AdgDimStyle    *dim_style);
+void            adg_dim_style_set_number_arguments
+                                                (AdgDimStyle    *dim_style,
+                                                 const gchar    *arguments);
+const gchar *   adg_dim_style_get_number_arguments
+                                                (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_number_tag    (AdgDimStyle    *dim_style,
                                                  const gchar    *tag);
 const gchar *   adg_dim_style_get_number_tag    (AdgDimStyle    *dim_style);
