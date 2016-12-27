@@ -989,16 +989,23 @@ _adg_default_value(AdgDim *dim)
     AdgDimStyle *dim_style;
     gdouble angle;
     const gchar *format;
+    gint decimals;
 
     adim = (AdgADim *) dim;
+    if (! _adg_update_geometry(adim)) {
+        return g_strdup("undef");
+    }
+
     data = adim->data;
     dim_style = _ADG_GET_DIM_STYLE(dim);
     format = adg_dim_style_get_number_format(dim_style);
-
-    if (! _adg_update_geometry(adim))
-        return g_strdup("undef");
-
     angle = (data->angle2 - data->angle1) * 180 / G_PI;
+
+    decimals = adg_dim_style_get_decimals(dim_style);
+    if (decimals >= 0) {
+        angle = adg_round(angle, decimals);
+    }
+
     return g_strdup_printf(format, angle);
 }
 
