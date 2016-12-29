@@ -112,6 +112,9 @@ const gchar *   adg_dim_style_get_number_tag    (AdgDimStyle    *dim_style);
 void            adg_dim_style_set_decimals      (AdgDimStyle    *dim_style,
                                                  gint            decimals);
 gint            adg_dim_style_get_decimals      (AdgDimStyle    *dim_style);
+gboolean        adg_dim_style_convert           (AdgDimStyle    *dim_style,
+                                                 gdouble        *value,
+                                                 gchar           format);
 
 G_END_DECLS
 

@@ -536,7 +536,7 @@ _adg_property_number_arguments(void)
     gchar *number_arguments_dup;
 
     dim_style = adg_dim_style_new();
-    valid_text_1 = "RrdmSs";
+    valid_text_1 = "aieDdMmSs";
     valid_text_2 = "";
 
     /* Using the public APIs */
@@ -799,6 +799,71 @@ _adg_property_value_dress(void)
     g_object_unref(dim_style);
 }
 
+static void
+_adg_method_convert(void)
+{
+    AdgDimStyle *dim_style;
+    gdouble value;
+
+    dim_style = adg_dim_style_new();
+    adg_dim_style_set_decimals(dim_style, 0);
+
+    /* Sanity check */
+    g_assert_false(adg_dim_style_convert(NULL, &value, 'a'));
+    g_assert_false(adg_dim_style_convert(dim_style, NULL, 'a'));
+    g_assert_false(adg_dim_style_convert(NULL, NULL, 'a'));
+
+    /* Checking the various conversions. For reference:
+     * - 'a': the raw @value, i.e. no conversion is performed;
+     * - 'i': the raw number of minutes, i.e. the fractional part of @value x 60
+     * - 'e': the raw number of seconds, i.e. the fractional part of the raw
+     *        number of minutes x 60
+     * - 'D': the truncated value of the raw value ('a');
+     * - 'd': the rounded value of the raw value ('a');
+     * - 'M': the truncated value of the raw number of minutes ('i');
+     * - 'm': the rounded value of the raw number of minutes ('i');
+     * - 'S': the truncated value of the raw number of seconds ('e');
+     * - 's': the rounded value of the raw number of seconds ('e');
+     */
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'a'));
+    adg_assert_isapprox(value, 5.678);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'i'));
+    adg_assert_isapprox(value, 40.68);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'e'));
+    adg_assert_isapprox(value, 40.8);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'D'));
+    adg_assert_isapprox(value, 5);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'd'));
+    adg_assert_isapprox(value, 6);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'M'));
+    adg_assert_isapprox(value, 40);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'm'));
+    adg_assert_isapprox(value, 41);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'S'));
+    adg_assert_isapprox(value, 40);
+
+    value = 5.678;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 's'));
+    adg_assert_isapprox(value, 41);
+
+    g_object_unref(dim_style);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -825,6 +890,8 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim-style/property/quote-shift", _adg_property_quote_shift);
     g_test_add_func("/adg/dim-style/property/to-offset", _adg_property_to_offset);
     g_test_add_func("/adg/dim-style/property/value-dress", _adg_property_value_dress);
+
+    g_test_add_func("/adg/dim-style/method/convert", _adg_method_convert);
 
     return g_test_run();
 }

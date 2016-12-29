@@ -56,7 +56,7 @@
 #include <string.h>
 
 
-#define VALID_ARGUMENTS "RrdmSs"
+#define VALID_FORMATS "aieDdMmSs"
 
 
 G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
@@ -423,7 +423,7 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_NUMBER_ARGUMENTS: {
         const gchar *arguments = g_value_get_string(value);
-        g_return_if_fail(arguments == NULL || strspn(arguments, VALID_ARGUMENTS) == strlen(arguments));
+        g_return_if_fail(arguments == NULL || strspn(arguments, VALID_FORMATS) == strlen(arguments));
         g_free(data->number_arguments);
         data->number_arguments = g_strdup(arguments);
         break;
@@ -1068,23 +1068,17 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
  * @arguments: the arguments to pass to the formatting function
  *
  * A string that identifies the arguments to pass to the formatting function.
+ * See adg_dim_style_convert() to know the allowed character that can be
+ * included into this string.
  *
- * Every character in @arguments specifies an additional argument, i.e.:
- * - 'R' (a gdouble): the raw default value;
- * - 'r' (a gdouble): the default value rounded to the #AdgDimStyle:decimals
- *                    decimal;
- * - 'd' (a gint): degrees, used for sexagesimal representation;
- * - 'm' (a gint): minutes, used for sexagesimal representation;
- * - 'S' (a gdouble): raw seconds, used for sexagesimal representation;
- * - 's' (a gdouble): seconds rounded to the AdgDimStyle:decimals decimal,
- *                    used for sexagesimal representation.
- *
- * The number and type of arguments must match the #AdgDimStyle:number-format
- * property. For example, to express sexagesimal units you can use:
+ * The number of arguments (i.e. the @arguments length) must match the
+ * #AdgDimStyle:number-format property (i.e. the number of % directives
+ * included in that property). For example, for expressing a value in
+ * sexagesimal units you can use:
  *
  * |[
- * adg_dim_style_set_number_format(dim_style, "%d°%d'%g\"");
- * adg_dim_style_set_number_arguments(dim_style, "dms");
+ * adg_dim_style_set_number_format(dim_style, "%g°%g'%g\"");
+ * adg_dim_style_set_number_arguments(dim_style, "DMs");
  * ]|
  *
  * Since: 1.0
@@ -1199,6 +1193,96 @@ adg_dim_style_get_decimals(AdgDimStyle *dim_style)
     data = dim_style->data;
 
     return data->decimals;
+}
+
+/**
+ * adg_dim_style_convert:
+ * @dim_style: an #AdgDimStyle object
+ * @value: (inout): the value to convert
+ * @format: the convertion to apply
+ *
+ * Converts @value using the specific @format algorithm and store the
+ * result in @value itself. If @value is %NULL, nothing is performed.
+ *
+ * In the following the allowed values for @format:
+ * - 'a': the raw @value, i.e. no conversion is performed;
+ * - 'i': the raw number of minutes, i.e. the fractional part of @value x 60
+ * - 'e': the raw number of seconds, i.e. the fractional part of the raw
+ *        number of minutes x 60
+ * - 'D': the truncated value of the raw value ('a');
+ * - 'd': the rounded value of the raw value ('a');
+ * - 'M': the truncated value of the raw number of minutes ('i');
+ * - 'm': the rounded value of the raw number of minutes ('i');
+ * - 'S': the truncated value of the raw number of seconds ('e');
+ * - 's': the rounded value of the raw number of seconds ('e');
+ *
+ * The rounding is done according to the number of decimal specified in
+ * #AdgDimStyle:decimals.
+ *
+ * Returns: %TRUE if @value has been converted, %FALSE on errors.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
+{
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), FALSE);
+
+    /* Inout parameter not provided: just return FALSE */
+    if (value == NULL) {
+        return FALSE;
+    }
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), FALSE);
+
+    switch (format) {
+
+    case 'a':                           /* Raw value */
+        break;
+
+    case 'i':                           /* Raw minutes */
+        *value = (*value - (gint) *value) * 60;
+        break;
+
+    case 'e':                           /* Raw seconds */
+        adg_dim_style_convert(dim_style, value, 'i');
+        *value = (*value - (gint) *value) * 60;
+        break;
+
+    case 'D':                           /* Truncated value */
+        *value = (gint) *value;
+        break;
+
+    case 'd':                           /* Rounded value */
+        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        break;
+
+    case 'M':                           /* Truncated minutes */
+        adg_dim_style_convert(dim_style, value, 'i');
+        *value = (gint) *value;
+        break;
+
+    case 'm':                           /* Rounded minutes */
+        adg_dim_style_convert(dim_style, value, 'i');
+        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        break;
+
+    case 'S':                           /* Truncated seconds */
+        adg_dim_style_convert(dim_style, value, 'e');
+        *value = (gint) *value;
+        break;
+
+    case 's':                           /* Rounded seconds */
+        adg_dim_style_convert(dim_style, value, 'e');
+        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        break;
+
+    default:
+        g_return_val_if_reached(FALSE);
+        return FALSE;
+    }
+
+    return TRUE;
 }
 
 
