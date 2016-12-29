@@ -29,7 +29,7 @@ _adg_property_detached(void)
     AdgThreeState valid_three_state_1, valid_three_state_2, invalid_three_state;
     AdgThreeState detached;
 
-    dim = ADG_DIM(adg_adim_new());
+    dim = ADG_DIM(adg_ldim_new());
     valid_three_state_1 = ADG_THREE_STATE_UNKNOWN;
     valid_three_state_2 = ADG_THREE_STATE_OFF;
     invalid_three_state = 1234;
@@ -70,7 +70,7 @@ _adg_property_dim_dress(void)
     AdgDress valid_dress, incompatible_dress;
     AdgDress dim_dress;
 
-    dim = ADG_DIM(adg_adim_new());
+    dim = ADG_DIM(adg_ldim_new());
     valid_dress = ADG_DRESS_DIMENSION;
     incompatible_dress = ADG_DRESS_LINE;
 

@@ -123,6 +123,9 @@
  * @ADG_DRESS_DIMENSION:             default built-in for dimensions. This
  *                                   dress will be resolved to an #AdgDimStyle
  *                                   instance.
+ * @ADG_DRESS_DIMENSION_ANGULAR:     default built-in for angular dimensions.
+ *                                   This dress will be resolved to an
+ *                                   #AdgDimStyle instance.
  * @ADG_DRESS_FILL:                  default built-in for filling. This is a
  *                                   pass-through dress, that is it does not
  *                                   change the cairo context when it is
@@ -612,6 +615,22 @@ _adg_data_register_builtins(void)
                        g_object_new(ADG_TYPE_DIM_STYLE,
                                     "marker1", arrow1,
                                     "marker2", arrow2,
+                                    NULL),
+                       ADG_TYPE_DIM_STYLE);
+    g_object_unref(arrow1);
+    g_object_unref(arrow2);
+
+    /* Predefined angular dimension styles */
+
+    arrow1 = (AdgMarker *) adg_arrow_new();
+    arrow2 = (AdgMarker *) adg_arrow_new();
+    adg_marker_set_pos(arrow2, 1);
+    _adg_data_register(ADG_DRESS_DIMENSION_ANGULAR,
+                       g_object_new(ADG_TYPE_DIM_STYLE,
+                                    "marker1", arrow1,
+                                    "marker2", arrow2,
+                                    "number-arguments", "d",
+                                    "number-format", "%g°",
                                     NULL),
                        ADG_TYPE_DIM_STYLE);
     g_object_unref(arrow1);

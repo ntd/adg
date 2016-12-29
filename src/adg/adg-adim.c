@@ -63,7 +63,6 @@ G_DEFINE_TYPE(AdgADim, adg_adim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,
-    PROP_VALUE,
     PROP_ORG1,
     PROP_ORG2,
     PROP_HAS_EXTENSION1,
@@ -106,7 +105,7 @@ adg_adim_class_init(AdgADimClass *klass)
     GObjectClass *gobject_class;
     AdgEntityClass *entity_class;
     AdgDimClass *dim_class;
-    GParamSpec *param, *old_param;
+    GParamSpec *param;
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
@@ -125,16 +124,6 @@ adg_adim_class_init(AdgADimClass *klass)
     entity_class->render = _adg_render;
 
     dim_class->default_value = _adg_default_value;
-
-    /* Override #AdgDim:value to append a degree symbol
-     * to the default set value template string */
-    old_param = g_object_class_find_property(gobject_class, "value");
-    param = g_param_spec_string(old_param->name,
-                                g_param_spec_get_nick(old_param),
-                                g_param_spec_get_blurb(old_param),
-                                "<>" ADG_UTF8_DEGREE,
-                                old_param->flags);
-    g_object_class_install_property(gobject_class, PROP_VALUE, param);
 
     param = g_param_spec_boxed("org1",
                                P_("First Origin"),
@@ -199,6 +188,9 @@ adg_adim_init(AdgADim *adim)
     data->geometry_arranged = FALSE;
 
     adim->data = data;
+
+    /* Override the generic default dress with a more specific one */
+    adg_dim_set_dim_dress((AdgDim *) adim, ADG_DRESS_DIMENSION_ANGULAR);
 }
 
 static void
@@ -232,9 +224,6 @@ _adg_get_property(GObject *object, guint prop_id,
     AdgADimPrivate *data = ((AdgADim *) object)->data;
 
     switch (prop_id) {
-    case PROP_VALUE:
-        g_value_set_string(value, adg_dim_get_value((AdgDim *) object));
-        break;
     case PROP_ORG1:
         g_value_set_boxed(value, data->org1);
         break;
@@ -264,9 +253,6 @@ _adg_set_property(GObject *object, guint prop_id,
     data = ((AdgADim *) object)->data;
 
     switch (prop_id) {
-    case PROP_VALUE:
-        adg_dim_set_value((AdgDim *) object, g_value_get_string(value));
-        break;
     case PROP_ORG1:
         data->org1 = adg_entity_point(entity, data->org1,
                                       g_value_get_boxed(value));

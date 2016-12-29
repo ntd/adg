@@ -23,6 +23,19 @@
 
 
 static void
+_adg_property_dim_dress(void)
+{
+    AdgADim *adim;
+
+    /* Check that the dimension dress for AdgADim instances is
+     * ADG_DRESS_DIMENSION_ANGULAR by default */
+    adim = adg_adim_new();
+    g_assert_cmpint(adg_dim_get_dim_dress(adim), ==, ADG_DRESS_DIMENSION_ANGULAR);
+
+    adg_entity_destroy(ADG_ENTITY(adim));
+}
+
+static void
 _adg_property_org1(void)
 {
     AdgADim *adim;
@@ -276,6 +289,7 @@ main(int argc, char *argv[])
                                                                8, 7, 6, 9,
                                                                10, 9));
 
+    g_test_add_func("/adg/adim/property/dim-dress", _adg_property_dim_dress);
     g_test_add_func("/adg/adim/property/org1", _adg_property_org1);
     g_test_add_func("/adg/adim/property/org2", _adg_property_org2);
     g_test_add_func("/adg/adim/property/has-extension1", _adg_property_has_extension1);
