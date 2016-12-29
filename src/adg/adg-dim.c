@@ -97,32 +97,35 @@ enum {
 };
 
 
-static void     _adg_dispose            (GObject        *object);
-static void     _adg_finalize           (GObject        *object);
-static void     _adg_get_property       (GObject        *object,
-                                         guint           param_id,
-                                         GValue         *value,
-                                         GParamSpec     *pspec);
-static void     _adg_set_property       (GObject        *object,
-                                         guint           param_id,
-                                         const GValue   *value,
-                                         GParamSpec     *pspec);
-static void     _adg_global_changed     (AdgEntity      *entity);
-static void     _adg_local_changed      (AdgEntity      *entity);
-static void     _adg_invalidate         (AdgEntity      *entity);
-static void     _adg_arrange            (AdgEntity      *entity);
-static gchar *  _adg_default_value      (AdgDim         *dim);
-static gdouble  _adg_quote_angle        (gdouble         angle);
-static gboolean _adg_set_outside        (AdgDim         *dim,
-                                         AdgThreeState   outside);
-static gboolean _adg_set_detached       (AdgDim         *dim,
-                                         AdgThreeState   detached);
-static gboolean _adg_set_value          (AdgDim         *dim,
-                                         const gchar    *value);
-static gboolean _adg_set_min            (AdgDim         *dim,
-                                         const gchar    *min);
-static gboolean _adg_set_max            (AdgDim         *dim,
-                                         const gchar    *max);
+static void     _adg_dispose            (GObject            *object);
+static void     _adg_finalize           (GObject            *object);
+static void     _adg_get_property       (GObject            *object,
+                                         guint               param_id,
+                                         GValue             *value,
+                                         GParamSpec         *pspec);
+static void     _adg_set_property       (GObject            *object,
+                                         guint               param_id,
+                                         const GValue       *value,
+                                         GParamSpec         *pspec);
+static void     _adg_global_changed     (AdgEntity          *entity);
+static void     _adg_local_changed      (AdgEntity          *entity);
+static void     _adg_invalidate         (AdgEntity          *entity);
+static void     _adg_arrange            (AdgEntity          *entity);
+static gchar *  _adg_default_value      (AdgDim             *dim);
+static gdouble  _adg_quote_angle        (gdouble             angle);
+static gboolean _adg_set_outside        (AdgDim             *dim,
+                                         AdgThreeState       outside);
+static gboolean _adg_set_detached       (AdgDim             *dim,
+                                         AdgThreeState       detached);
+static gboolean _adg_set_value          (AdgDim             *dim,
+                                         const gchar        *value);
+static gboolean _adg_set_min            (AdgDim             *dim,
+                                         const gchar        *min);
+static gboolean _adg_set_max            (AdgDim             *dim,
+                                         const gchar        *max);
+static gboolean _adg_replace            (const GMatchInfo   *match_info,
+                                         GString            *result,
+                                         gpointer            user_data);
 
 
 static void
@@ -972,6 +975,63 @@ adg_dim_get_value(AdgDim *dim)
 }
 
 /**
+ * adg_dim_get_text:
+ * @dim: an #AdgDim
+ * @value: the raw value of the quote
+ *
+ * Gets the final text to show as nominal value into the quote. The string is
+ * the same returned by adg_dim_get_value() with the tag properly expanded.
+ *
+ * The string substituted to the tag is formatted according to the
+ * #AdgDimStyle:number-format and #AdgDimStyle:number-arguments properties.
+ * See the #AdgDimStyle documentation for further details.
+ *
+ * Returns: (transfer full): the final text of the quote.
+ *
+ * Since: 1.0
+ **/
+gchar *
+adg_dim_get_text(AdgDim *dim, gdouble value)
+{
+    AdgDimStyle *dim_style;
+    const gchar *format;
+    const gchar *arguments;
+    AdgDimReplaceData replace_data;
+    GRegex *regex;
+    gchar *result;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    dim_style = _ADG_GET_DIM_STYLE(dim);
+    if (dim_style == NULL) {
+        dim_style = (AdgDimStyle *) adg_entity_style((AdgEntity *) dim,
+                                                     adg_dim_get_dim_dress(dim));
+    }
+
+    format = adg_dim_style_get_number_format(dim_style);
+    if (format == NULL) {
+        return NULL;
+    }
+
+    arguments = adg_dim_style_get_number_arguments(dim_style);
+    if (arguments == NULL) {
+        return g_strdup(format);
+    }
+
+    replace_data.dim_style = dim_style;
+    replace_data.value = value;
+    replace_data.argument = arguments;
+
+    regex = g_regex_new("(?<!%)%.*[eEfFgG]", G_REGEX_UNGREEDY, 0, NULL);
+    result = g_regex_replace_eval(regex, format, -1, 0, 0,
+                                  _adg_replace, &replace_data,
+                                  NULL);
+    g_regex_unref(regex);
+
+    return result;
+}
+
+/**
  * adg_dim_set_limits:
  * @dim: an #AdgDim
  * @min: (allow-none): the new minumum value
@@ -1430,4 +1490,35 @@ _adg_set_max(AdgDim *dim, const gchar *max)
     }
 
     return TRUE;
+}
+
+static gboolean
+_adg_replace(const GMatchInfo *match_info, GString *result, gpointer user_data)
+{
+    AdgDimReplaceData *replace_data;
+    gdouble value;
+    gchar *format;
+    gchar buffer[256];
+
+    replace_data = (AdgDimReplaceData *) user_data;
+    value = replace_data->value;
+
+    if (! adg_dim_style_convert(replace_data->dim_style, &value, *replace_data->argument)) {
+        /* Conversion failed: invalid argument? */
+        g_return_val_if_reached(TRUE);
+        return TRUE;
+    }
+
+    format = g_match_info_fetch(match_info, 0);
+
+    /* This should never happen */
+    g_return_val_if_fail(format != NULL, TRUE);
+
+    /* Consume the recently used argument */
+    ++ replace_data->argument;
+
+    g_ascii_formatd(buffer, 256, format, value);
+    g_free(format);
+    g_string_append(result, buffer);
+    return FALSE;
 }

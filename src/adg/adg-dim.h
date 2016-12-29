@@ -105,6 +105,8 @@ AdgThreeState   adg_dim_get_detached            (AdgDim         *dim);
 void            adg_dim_set_value               (AdgDim         *dim,
                                                  const gchar    *value);
 const gchar *   adg_dim_get_value               (AdgDim         *dim);
+gchar *         adg_dim_get_text                (AdgDim         *dim,
+                                                 gdouble         value);
 void            adg_dim_set_limits              (AdgDim         *dim,
                                                  const gchar    *min,
                                                  const gchar    *max);

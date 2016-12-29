@@ -534,6 +534,68 @@ _adg_property_value(void)
     adg_entity_destroy(ADG_ENTITY(dim));
 }
 
+static void
+_adg_method_get_text(void)
+{
+    AdgDim *dim;
+    AdgDimStyle *dim_style;
+    gchar *text;
+
+    dim = ADG_DIM(adg_ldim_new());
+    dim_style = ADG_DIM_STYLE(adg_entity_style(ADG_ENTITY(dim), ADG_DRESS_DIMENSION));
+
+    /* Default rendering should round to 2 decimals */
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7.89");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 3.456);
+    g_assert_cmpstr(text, ==, "3.46");
+    g_free(text);
+
+    /* Decrease the decimals */
+    adg_dim_style_set_decimals(dim_style, 1);
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7.9");
+    g_free(text);
+
+    /* Change the argument type */
+    adg_dim_style_set_number_arguments(dim_style, "a");
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7.891");
+    g_free(text);
+
+    adg_dim_style_set_number_arguments(dim_style, "D");
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7");
+    g_free(text);
+
+    adg_dim_style_set_number_arguments(dim_style, "d");
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7.9");
+    g_free(text);
+
+    /* Change the number format */
+    adg_dim_style_set_number_format(dim_style, "%.3f");
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "7.900");
+    g_free(text);
+
+    /* Trying a complex formatting with multiple fields */
+    adg_dim_style_set_decimals(dim_style, 2);
+    adg_dim_style_set_number_arguments(dim_style, "aieDMSdms");
+    adg_dim_style_set_number_format(dim_style, "%%Raw: (%g, %g, %g); Truncated: (%g, %g, %g); Rounded: (%g, %g, %g)");
+    text = adg_dim_get_text(dim, 7.891);
+    g_assert_cmpstr(text, ==, "%Raw: (7.891, 53.46, 27.6); Truncated: (7, 53, 27); Rounded: (7.89, 53.46, 27.6)");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 5.432);
+    g_assert_cmpstr(text, ==, "%Raw: (5.432, 25.92, 55.2); Truncated: (5, 25, 55); Rounded: (5.43, 25.92, 55.2)");
+    g_free(text);
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -553,6 +615,8 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim/property/ref1", _adg_property_ref1);
     g_test_add_func("/adg/dim/property/ref2", _adg_property_ref2);
     g_test_add_func("/adg/dim/property/value", _adg_property_value);
+
+    g_test_add_func("/adg/dim/method/get_text", _adg_method_get_text);
 
     return g_test_run();
 }

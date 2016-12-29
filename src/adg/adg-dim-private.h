@@ -28,6 +28,7 @@ G_BEGIN_DECLS
 
 
 typedef struct _AdgDimPrivate AdgDimPrivate;
+typedef struct _AdgDimReplaceData AdgDimReplaceData;
 
 struct _AdgDimPrivate {
     AdgDress             dim_dress;
@@ -49,6 +50,12 @@ struct _AdgDimPrivate {
         AdgTextual      *min;
         AdgTextual      *max;
     }                    quote;
+};
+
+struct _AdgDimReplaceData {
+    AdgDimStyle         *dim_style;
+    gdouble              value;
+    const gchar         *argument;
 };
 
 G_END_DECLS
