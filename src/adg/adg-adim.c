@@ -986,10 +986,7 @@ _adg_default_value(AdgDim *dim)
 {
     AdgADim *adim;
     AdgADimPrivate *data;
-    AdgDimStyle *dim_style;
     gdouble angle;
-    const gchar *format;
-    gint decimals;
 
     adim = (AdgADim *) dim;
     if (! _adg_update_geometry(adim)) {
@@ -997,16 +994,9 @@ _adg_default_value(AdgDim *dim)
     }
 
     data = adim->data;
-    dim_style = _ADG_GET_DIM_STYLE(dim);
-    format = adg_dim_style_get_number_format(dim_style);
     angle = (data->angle2 - data->angle1) * 180 / G_PI;
 
-    decimals = adg_dim_style_get_decimals(dim_style);
-    if (decimals >= 0) {
-        angle = adg_round(angle, decimals);
-    }
-
-    return g_strdup_printf(format, angle);
+    return adg_dim_get_text(dim, angle);
 }
 
 /* With "geometry" is considered any data (point, vector or angle)

@@ -528,18 +528,14 @@ _adg_default_value(AdgDim *dim)
 {
     AdgRDim *rdim;
     AdgRDimPrivate *data;
-    AdgDimStyle *dim_style;
-    const gchar *format;
 
     rdim = (AdgRDim *) dim;
     data = rdim->data;
-    dim_style = _ADG_GET_DIM_STYLE(dim);
-    format = adg_dim_style_get_number_format(dim_style);
 
     if (! _adg_update_geometry(rdim))
         return g_strdup("undef");
 
-    return g_strdup_printf(format, data->radius);
+    return adg_dim_get_text(dim, data->radius);
 }
 
 static gboolean
