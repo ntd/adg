@@ -596,6 +596,25 @@ _adg_method_get_text(void)
     adg_entity_destroy(ADG_ENTITY(dim));
 }
 
+static void
+_adg_method_set_limits(void)
+{
+    AdgDim *dim;
+
+    dim = ADG_DIM(adg_ldim_new());
+
+    /* Sanity checks */
+    adg_dim_set_limits(NULL, "", "");
+    adg_dim_set_limits(dim, NULL, "");
+    adg_dim_set_limits(dim, "", NULL);
+
+    adg_dim_set_limits(dim, "min", "max");
+    g_assert_cmpstr(adg_dim_get_min(dim), ==, "min");
+    g_assert_cmpstr(adg_dim_get_max(dim), ==, "max");
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -617,6 +636,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim/property/value", _adg_property_value);
 
     g_test_add_func("/adg/dim/method/get_text", _adg_method_get_text);
+    g_test_add_func("/adg/dim/method/set_limits", _adg_method_set_limits);
 
     return g_test_run();
 }
