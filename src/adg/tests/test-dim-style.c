@@ -496,6 +496,10 @@ _adg_property_number_format(void)
     valid_text_1 = "%lf";
     valid_text_2 = "%abc%";
 
+    /* Check default value */
+    number_format = adg_dim_style_get_number_format(dim_style);
+    g_assert_cmpstr(number_format, ==, "%-.7g");
+
     /* Using the public APIs */
     adg_dim_style_set_number_format(dim_style, valid_text_1);
     number_format = adg_dim_style_get_number_format(dim_style);
@@ -538,6 +542,10 @@ _adg_property_number_arguments(void)
     dim_style = adg_dim_style_new();
     valid_text_1 = "aieDdMmSs";
     valid_text_2 = "";
+
+    /* Check default value */
+    number_arguments = adg_dim_style_get_number_arguments(dim_style);
+    g_assert_cmpstr(number_arguments, ==, "d");
 
     /* Using the public APIs */
     adg_dim_style_set_number_arguments(dim_style, valid_text_1);
@@ -600,6 +608,10 @@ _adg_property_number_tag(void)
     valid_text_1 = "";
     valid_text_2 = "<è>";
 
+    /* Check default value */
+    number_tag = adg_dim_style_get_number_tag(dim_style);
+    g_assert_cmpstr(number_tag, ==, "<>");
+
     /* Using the public APIs */
     adg_dim_style_set_number_tag(dim_style, valid_text_1);
     number_tag = adg_dim_style_get_number_tag(dim_style);
@@ -639,14 +651,18 @@ _adg_property_decimals(void)
 
     dim_style = adg_dim_style_new();
 
-    /* Using the public APIs */
-    adg_dim_style_set_decimals(dim_style, 2);
+    /* Check default value */
     decimals = adg_dim_style_get_decimals(dim_style);
     g_assert_cmpint(decimals, ==, 2);
 
+    /* Using the public APIs */
+    adg_dim_style_set_decimals(dim_style, 4);
+    decimals = adg_dim_style_get_decimals(dim_style);
+    g_assert_cmpint(decimals, ==, 4);
+
     adg_dim_style_set_decimals(dim_style, -2);
     decimals = adg_dim_style_get_decimals(dim_style);
-    g_assert_cmpint(decimals, ==, 2);
+    g_assert_cmpint(decimals, ==, 4);
 
     decimals = adg_dim_style_get_decimals(NULL);
     g_assert_cmpint(decimals, ==, -2);

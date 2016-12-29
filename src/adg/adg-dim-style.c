@@ -229,7 +229,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_string("number-arguments",
                                 P_("Number Arguments"),
                                 P_("The arguments to pass to the format function: see adg_dim_style_set_number_arguments() for further details"),
-                                "r",
+                                "d",
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_NUMBER_ARGUMENTS, param);
 
@@ -278,7 +278,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->limits_shift.x = +2;
     data->limits_shift.y = +2;
     data->number_format = g_strdup("%-.7g");
-    data->number_arguments = g_strdup("r");
+    data->number_arguments = g_strdup("d");
     data->number_tag = g_strdup("<>");
     data->decimals = 2;
 
