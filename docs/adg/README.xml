@@ -76,7 +76,7 @@ list can be <ulink url="http://cairographics.org/backends/">browsed online</ulin
 <itemizedlist>
    <listitem><ulink url="http://cairographics.org/">cairo</ulink> 1.7.4 or later, required by
    either CPML and ADG;</listitem>
-   <listitem><ulink url="http://www.gtk.org/">GLib</ulink> 2.10.1 or later, required by ADG;</listitem>
+   <listitem><ulink url="http://www.gtk.org/">GLib</ulink> 2.14.0 or later, required by ADG;</listitem>
    <listitem><ulink url="http://www.gtk.org/">GTK+</ulink> 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the <command>adg-demo</command> program;</listitem>

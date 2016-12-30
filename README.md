@@ -65,7 +65,7 @@ The ADG library has the following dependencies:
 
  * [cairo](http://cairographics.org/) 1.7.4 or later, required by
    either CPML and ADG;
- * [GLib](http://www.gtk.org/) 2.10.1 or later, required by ADG;
+ * [GLib](http://www.gtk.org/) 2.14.0 or later, required by ADG;
  * [GTK+](http://www.gtk.org/) 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the adg-demo program;
