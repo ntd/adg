@@ -651,7 +651,7 @@ _adg_data_register_builtins(void)
                                     "marker1", arrow1,
                                     "marker2", arrow2,
                                     "number-arguments", "d",
-                                    "number-format", "R %g",
+                                    "number-format", "R%g",
                                     NULL),
                        ADG_TYPE_DIM_STYLE);
     g_object_unref(arrow1);
