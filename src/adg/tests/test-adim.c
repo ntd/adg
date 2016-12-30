@@ -30,7 +30,7 @@ _adg_property_dim_dress(void)
     /* Check that the dimension dress for AdgADim instances is
      * ADG_DRESS_DIMENSION_ANGULAR by default */
     adim = adg_adim_new();
-    g_assert_cmpint(adg_dim_get_dim_dress(adim), ==, ADG_DRESS_DIMENSION_ANGULAR);
+    g_assert_cmpint(adg_dim_get_dim_dress(ADG_DIM(adim)), ==, ADG_DRESS_DIMENSION_ANGULAR);
 
     adg_entity_destroy(ADG_ENTITY(adim));
 }
