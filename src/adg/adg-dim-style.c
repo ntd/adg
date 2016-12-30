@@ -1029,6 +1029,55 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  *
  * Sets a new value in the #AdgDimStyle:number-format property.
  *
+ * The format is similar to a printf() style format string but only 'e', 'E',
+ * 'f', 'F', 'g' and 'G' specifiers are allowed. For reference, the
+ * implementation leverages the g_ascii_formatd() GLib function.
+ *
+ * Furthermore you can group a value with other literals with round
+ * parenthesis. In that case, when the value will be 0, the whole group will
+ * disappear. Some example:
+ *
+ * |[
+ * AdgDim *dim;
+ * gchar *text;
+ *
+ * dim = ADG_DIM(adg_ldim_new());
+ * dim_style = ADG_DIM_STYLE(adg_entity_style(ADG_ENTITY(dim), ADG_DRESS_DIMENSION));
+ *
+ * adg_dim_style_set_number_arguments(dim_style, "dD");
+ * adg_dim_style_set_number_format(dim_style, "(%g)( truncated to %g)");
+ *
+ * text = adg_dim_get_text(dim, 1.2);
+ * g_print("%s\n", text); // Prints "1.2 truncated to 1"
+ * g_free(text);
+ *
+ * text = adg_dim_get_text(dim, 0.2);
+ * g_print("%s\n", text); // Prints "0.2"
+ * g_free(text);
+ *
+ * text = adg_dim_get_text(dim, 0);
+ * g_print("%s\n", text); // Prints ""
+ * g_free(text);
+ * ]|
+ *
+ * Groups can be nested.
+ *
+ * This comes in handy for removing trailing 0 fields. A typical example is
+ * the sexagesimal representation of angles:
+ *
+ * |[
+ * adg_dim_style_set_number_arguments(dim_style, "DMs");
+ * adg_dim_style_set_number_format(dim_style, "%g°(%g'(%g\"))");
+ *
+ * text = adg_dim_get_text(dim, 1.5);
+ * g_print("%s\n", text); // Prints "1°30'"
+ * g_free(text);
+ *
+ * text = adg_dim_get_text(dim, 2.002777);
+ * g_print("%s\n", text); // Prints "2°0'10\""
+ * g_free(text);
+ * ]|
+ *
  * Since: 1.0
  **/
 void
@@ -1073,13 +1122,8 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
  *
  * The number of arguments (i.e. the @arguments length) must match the
  * #AdgDimStyle:number-format property (i.e. the number of % directives
- * included in that property). For example, for expressing a value in
- * sexagesimal units you can use:
- *
- * |[
- * adg_dim_style_set_number_format(dim_style, "%g°%g'%g\"");
- * adg_dim_style_set_number_arguments(dim_style, "DMs");
- * ]|
+ * included in that property). See adg_dim_style_set_number_format() for more
+ * technical details and some examples.
  *
  * Since: 1.0
  **/

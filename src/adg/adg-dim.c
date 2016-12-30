@@ -74,10 +74,18 @@
 #include "adg-dim.h"
 #include "adg-dim-private.h"
 
+#include <string.h>
+
 
 
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_dim_parent_class)
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_dim_parent_class)
+
+/* A convenience macro for ORing two AdgThreeState values */
+#define OR_3S(a,b) ( \
+    ((a) == ADG_THREE_STATE_ON ||      (b) == ADG_THREE_STATE_ON)      ? ADG_THREE_STATE_ON : \
+    ((a) == ADG_THREE_STATE_UNKNOWN && (b) == ADG_THREE_STATE_UNKNOWN) ? ADG_THREE_STATE_UNKNOWN : \
+                                                                         ADG_THREE_STATE_OFF )
 
 
 G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY)
@@ -126,6 +134,7 @@ static gboolean _adg_set_max            (AdgDim             *dim,
 static gboolean _adg_replace            (const GMatchInfo   *match_info,
                                          GString            *result,
                                          gpointer            user_data);
+static gchar *  _adg_text_expand        (AdgDimReplaceData  *data);
 
 
 static void
@@ -996,9 +1005,9 @@ adg_dim_get_text(AdgDim *dim, gdouble value)
     AdgDimStyle *dim_style;
     const gchar *format;
     const gchar *arguments;
-    AdgDimReplaceData replace_data;
+    AdgDimReplaceData data;
+    gchar *raw, *result;
     GRegex *regex;
-    gchar *result;
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
@@ -1018,14 +1027,19 @@ adg_dim_get_text(AdgDim *dim, gdouble value)
         return g_strdup(format);
     }
 
-    replace_data.dim_style = dim_style;
-    replace_data.value = value;
-    replace_data.argument = arguments;
+    /* Expand the values */
+    data.dim_style = dim_style;
+    data.value = value;
+    data.format = format;
+    data.argument = arguments;
+    data.regex = g_regex_new("(?<!%)%(?!%).*[eEfFgG]", G_REGEX_UNGREEDY, 0, NULL);
+    raw = _adg_text_expand(&data);
+    g_regex_unref(data.regex);
 
-    regex = g_regex_new("(?<!%)%.*[eEfFgG]", G_REGEX_UNGREEDY, 0, NULL);
-    result = g_regex_replace_eval(regex, format, -1, 0, 0,
-                                  _adg_replace, &replace_data,
-                                  NULL);
+    /* Substitute the escape sequences ("%%", "((" and "))") */
+    regex = g_regex_new("([%()])\\1", G_REGEX_UNGREEDY, 0, NULL);
+    result = g_regex_replace(regex, raw, -1, 0, "\\1", 0, NULL);
+    g_free(raw);
     g_regex_unref(regex);
 
     return result;
@@ -1495,15 +1509,15 @@ _adg_set_max(AdgDim *dim, const gchar *max)
 static gboolean
 _adg_replace(const GMatchInfo *match_info, GString *result, gpointer user_data)
 {
-    AdgDimReplaceData *replace_data;
+    AdgDimReplaceData *data;
     gdouble value;
     gchar *format;
     gchar buffer[256];
 
-    replace_data = (AdgDimReplaceData *) user_data;
-    value = replace_data->value;
+    data = (AdgDimReplaceData *) user_data;
+    value = data->value;
 
-    if (! adg_dim_style_convert(replace_data->dim_style, &value, *replace_data->argument)) {
+    if (! adg_dim_style_convert(data->dim_style, &value, *data->argument)) {
         /* Conversion failed: invalid argument? */
         g_return_val_if_reached(TRUE);
         return TRUE;
@@ -1515,10 +1529,98 @@ _adg_replace(const GMatchInfo *match_info, GString *result, gpointer user_data)
     g_return_val_if_fail(format != NULL, TRUE);
 
     /* Consume the recently used argument */
-    ++ replace_data->argument;
+    ++ data->argument;
 
     g_ascii_formatd(buffer, 256, format, value);
     g_free(format);
     g_string_append(result, buffer);
+
+    /* Set the valorized flag */
+    if (value != 0) {
+        data->valorized = ADG_THREE_STATE_ON;
+    } else if (data->valorized == ADG_THREE_STATE_UNKNOWN) {
+        data->valorized = ADG_THREE_STATE_OFF;
+    }
+
     return FALSE;
+}
+
+static gchar *
+_adg_text_expand(AdgDimReplaceData *data)
+{
+    GString *result;
+    const gchar *bog, *eog;
+    gchar *string;
+    AdgThreeState valorized;
+    gssize len;
+
+    valorized = ADG_THREE_STATE_UNKNOWN;
+    result = g_string_new("");
+    eog = adg_single_strchr(data->format, ')');
+
+    /* Expand eventual groups found in the same nesting level */
+    while ((bog = adg_single_strchr(data->format, '(')) != NULL) {
+        /* If eog precedes bog, it means that bog is in another nest */
+        if (eog != NULL && eog < bog) {
+            break;
+        }
+
+        len = bog - data->format;
+
+        /* Parse template before the bog */
+        data->valorized = ADG_THREE_STATE_UNKNOWN;
+        string = g_regex_replace_eval(data->regex,
+                                      data->format, len, 0,
+                                      0,
+                                      _adg_replace, data,
+                                      NULL);
+        valorized = OR_3S(valorized, data->valorized);
+
+        data->format += len+1;
+        g_string_append(result, string);
+        g_free(string);
+
+        /* Recursively expand the group */
+        string = _adg_text_expand(data);
+        valorized = OR_3S(valorized, data->valorized);
+
+        g_string_append(result, string);
+        g_free(string);
+
+        /* Ensure there is a matching closing parenthesis */
+        if (*data->format != ')') {
+            g_string_free(result, TRUE);
+            g_return_val_if_reached(NULL);
+            return NULL;
+        }
+
+        /* Skip the closing parenthesis */
+        ++ data->format;
+        eog = adg_single_strchr(data->format, ')');
+    }
+
+    /* Expand until closing parenthesis (End Of Group) or '\0' */
+    len = eog == NULL ? strlen(data->format) : (eog - data->format);
+    data->valorized = ADG_THREE_STATE_UNKNOWN;
+    string = g_regex_replace_eval(data->regex,
+                                  data->format, len, 0,
+                                  0,
+                                  _adg_replace, data,
+                                  NULL);
+
+    data->format += len;
+    g_string_append(result, string);
+    g_free(string);
+
+    /* Store the final valorized state */
+    valorized = OR_3S(valorized, data->valorized);
+    data->valorized = valorized;
+
+    /* Drop the result only if we are inside a group */
+    if (*data->format && valorized == ADG_THREE_STATE_OFF) {
+        g_string_free(result, TRUE);
+        return g_strdup("");
+    }
+
+    return g_string_free(result, FALSE);
 }

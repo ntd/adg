@@ -55,7 +55,11 @@ struct _AdgDimPrivate {
 struct _AdgDimReplaceData {
     AdgDimStyle         *dim_style;
     gdouble              value;
+    const gchar         *format;
     const gchar         *argument;
+    AdgThreeState        valorized;
+    /* Just for conveniency */
+    GRegex              *regex;
 };
 
 G_END_DECLS

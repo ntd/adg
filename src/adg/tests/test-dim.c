@@ -603,13 +603,56 @@ _adg_method_get_text(void)
     /* Trying a complex formatting with multiple fields */
     adg_dim_style_set_decimals(dim_style, 2);
     adg_dim_style_set_number_arguments(dim_style, "aieDMSdms");
-    adg_dim_style_set_number_format(dim_style, "%%Raw: (%g, %g, %g); Truncated: (%g, %g, %g); Rounded: (%g, %g, %g)");
+    adg_dim_style_set_number_format(dim_style, "%%Raw: ((%g, %g, %g)); Truncated: ((%g, %g, %g)); Rounded: ((%g, %g, %g))");
     text = adg_dim_get_text(dim, 7.891);
     g_assert_cmpstr(text, ==, "%Raw: (7.891, 53.46, 27.6); Truncated: (7, 53, 27); Rounded: (7.89, 53.46, 27.6)");
     g_free(text);
 
     text = adg_dim_get_text(dim, 5.432);
     g_assert_cmpstr(text, ==, "%Raw: (5.432, 25.92, 55.2); Truncated: (5, 25, 55); Rounded: (5.43, 25.92, 55.2)");
+    g_free(text);
+
+    /* Testing simple disappearing of unvalorized values */
+    adg_dim_style_set_number_arguments(dim_style, "a");
+    adg_dim_style_set_number_format(dim_style, "(%g)");
+
+    text = adg_dim_get_text(dim, 123);
+    g_assert_cmpstr(text, ==, "123");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 0);
+    g_assert_cmpstr(text, ==, "");
+    g_free(text);
+
+    adg_dim_style_set_number_arguments(dim_style, "aD");
+    adg_dim_style_set_number_format(dim_style, ">(%g)--(%g)<");
+
+    text = adg_dim_get_text(dim, 0);
+    g_assert_cmpstr(text, ==, ">--<");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 0.42);
+    g_assert_cmpstr(text, ==, ">0.42--<");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 2.34);
+    g_assert_cmpstr(text, ==, ">2.34--2<");
+    g_free(text);
+
+    /* Testing nested parenthesis */
+    adg_dim_style_set_number_arguments(dim_style, "DMs");
+    adg_dim_style_set_number_format(dim_style, "%g°(%g'(%g\") )");
+
+    text = adg_dim_get_text(dim, 0);
+    g_assert_cmpstr(text, ==, "0°");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 1.5);
+    g_assert_cmpstr(text, ==, "1°30' ");
+    g_free(text);
+
+    text = adg_dim_get_text(dim, 2.002777);
+    g_assert_cmpstr(text, ==, "2°0'10\" ");
     g_free(text);
 
     adg_entity_destroy(ADG_ENTITY(dim));
