@@ -33,6 +33,111 @@ _adg_property_value(void)
     /* Check the default value (other options are checked by test-dim */
     value = adg_dim_get_value(dim);
     g_assert_cmpstr(value, ==, "R <>");
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
+static void
+_adg_method_new_full_from_model(void)
+{
+    AdgModel *model;
+    AdgDim *dim;
+    CpmlPair *pair;
+
+    model = ADG_MODEL(adg_path_new());
+    adg_model_set_named_pair_explicit(model, "P1", 1, 2);
+    adg_model_set_named_pair_explicit(model, "P2", 3, 4);
+    adg_model_set_named_pair_explicit(model, "P3", 5, 6);
+
+    /* Sanity check */
+    dim = ADG_DIM(adg_rdim_new_full_from_model(NULL, "P1", "P2", "P3"));
+    g_assert_null(dim);
+
+
+    /* The center point corresponds to AdgDim:ref1, the radius to
+     * AdgDim:ref2 and pos to AdgDim:pos */
+    dim = ADG_DIM(adg_rdim_new_full_from_model(model, NULL, NULL, NULL));
+    g_assert_nonnull(dim);
+
+    pair = (CpmlPair *) adg_dim_get_ref1(dim);
+    g_assert_null(pair);
+
+    pair = (CpmlPair *) adg_dim_get_ref2(dim);
+    g_assert_null(pair);
+
+    pair = (CpmlPair *) adg_dim_get_pos(dim);
+    g_assert_null(pair);
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+
+
+    dim = ADG_DIM(adg_rdim_new_full_from_model(model, "P1", "P2", "P3"));
+
+    pair = (CpmlPair *) adg_dim_get_ref1(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+    g_assert_true(adg_point_update((AdgPoint *) pair));
+    adg_assert_isapprox(pair->x, 1);
+    adg_assert_isapprox(pair->y, 2);
+
+    pair = (CpmlPair *) adg_dim_get_ref2(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+    g_assert_true(adg_point_update((AdgPoint *) pair));
+    adg_assert_isapprox(pair->x, 3);
+    adg_assert_isapprox(pair->y, 4);
+
+    pair = (CpmlPair *) adg_dim_get_pos(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+    g_assert_true(adg_point_update((AdgPoint *) pair));
+    adg_assert_isapprox(pair->x, 5);
+    adg_assert_isapprox(pair->y, 6);
+
+    /* Manually change all the points */
+    adg_dim_set_ref1_from_model(dim, model, "P3");
+    adg_dim_set_ref2_from_model(dim, model, "P1");
+    adg_dim_set_pos_from_model(dim, model, "P2");
+
+    /* The point will be updated only after an invalidate */
+    pair = (CpmlPair *) adg_dim_get_ref1(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+
+    pair = (CpmlPair *) adg_dim_get_ref2(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+
+    pair = (CpmlPair *) adg_dim_get_pos(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 0);
+    adg_assert_isapprox(pair->y, 0);
+
+    adg_entity_arrange(ADG_ENTITY(dim));
+
+    pair = (CpmlPair *) adg_dim_get_ref1(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 5);
+    adg_assert_isapprox(pair->y, 6);
+
+    pair = (CpmlPair *) adg_dim_get_ref2(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 1);
+    adg_assert_isapprox(pair->y, 2);
+
+    pair = (CpmlPair *) adg_dim_get_pos(dim);
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 3);
+    adg_assert_isapprox(pair->y, 4);
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+
+    g_object_unref(model);
 }
 
 
@@ -52,6 +157,8 @@ main(int argc, char *argv[])
      */
 
     g_test_add_func("/adg/rdim/property/value", _adg_property_value);
+
+    g_test_add_func("/adg/rdim/method/new-full-from-model", _adg_method_new_full_from_model);
 
     return g_test_run();
 }
