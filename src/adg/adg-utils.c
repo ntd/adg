@@ -493,3 +493,34 @@ adg_round(gdouble value, gint decimals)
 {
     return decimals > 0 ? adg_round(value*10, decimals-1) / 10 : round(value);
 }
+
+
+/**
+ * adg_single_strchr:
+ * @string: a string
+ * @ch: a character to find
+ *
+ * Similar to the standard strchr(), this function returns a pointer to the to
+ * the matched character that *is not* preceded by the same character. In
+ * other words it skips any double @ch sequence.
+ *
+ * Returns: (transfer none): a pointer to the matched @ch inside @string or
+ *          %NULL if not found.
+ *
+ * Since: 1.0
+ **/
+const gchar *
+adg_single_strchr(const gchar *string, gint ch)
+{
+    const gchar *ptr;
+
+    g_return_val_if_fail(string != NULL, NULL);
+
+    for (ptr = string; (ptr = strchr(ptr, ch)) != NULL; ptr += 2) {
+        if (*(ptr+1) != ch) {
+            break;
+        }
+    }
+
+    return ptr;
+}

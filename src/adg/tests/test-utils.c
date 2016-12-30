@@ -138,6 +138,27 @@ _adg_method_round(void)
     adg_assert_isapprox(adg_round(-1234.56, 0), -1235);
 }
 
+static void
+_adg_method_single_strchr(void)
+{
+    const gchar *result;
+
+    /* Sanity check */
+    g_assert_null(adg_single_strchr(NULL, '\0'));
+
+    result = adg_single_strchr("aabbaabab", 'a');
+    g_assert_cmpstr(result, ==, "ab");
+
+    result = adg_single_strchr("aabbaabab", 'b');
+    g_assert_cmpstr(result, ==, "bab");
+
+    result = adg_single_strchr("122", '1');
+    g_assert_cmpstr(result, ==, "122");
+
+    result = adg_single_strchr("122", '3');
+    g_assert_null(result);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -154,6 +175,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/method/type-from-filename", _adg_method_type_from_filename);
     g_test_add_func("/adg/method/nop", _adg_method_nop);
     g_test_add_func("/adg/method/round", _adg_method_round);
+    g_test_add_func("/adg/method/single-strchr", _adg_method_single_strchr);
 
     return g_test_run();
 }

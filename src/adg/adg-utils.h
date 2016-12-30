@@ -57,6 +57,8 @@ cairo_surface_type_t    adg_type_from_filename  (const gchar    *file);
 void                    adg_nop                 (void);
 gdouble                 adg_round               (gdouble         value,
                                                  gint            decimals);
+const gchar *           adg_single_strchr       (const gchar    *string,
+                                                 gint            ch);
 
 G_END_DECLS
 
