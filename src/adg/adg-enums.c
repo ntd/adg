@@ -38,7 +38,7 @@
  * @ADG_THREE_STATE_UNKNOWN: unknown / indefinite / automatic state
  *
  * A generic three state flags to be used whenever needed. Could be
- * user when a boolean is requested but also an indefinite / default
+ * used when a boolean is requested but also an indefinite / default
  * state should be caught.
  *
  * Since: 1.0
