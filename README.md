@@ -86,3 +86,62 @@ known to be cross platform so a porting should be quite easy, if
 not automatic. Anyway, the cross-compilation of a Windows
 installer is supported upstream and it is based on the ArchLinux
 [Fedora mingw port](http://github.com/ntd/aur-fedora-mingw).
+
+
+Installation
+============
+
+The ADG build system is based on GNU autotools, the de-facto
+standard for handling free software projects. The following
+step-by-step instructions are included only for reference: you are
+free to install ADG in the way you prefer. Just remember if you
+are copying and pasting to put the proper package version instead
+of the 0.6.0 placeholder used in the examples.
+
+1. Download the ADG tarball and put it somewhere into your file
+   system (your home directory is a good candidate). You can
+   browse the old releases or get the latest tarball directly
+   from [SourceForge](http://sourceforge.net/projects/adg/files/).
+
+    ```
+    cd $HOME
+    wget http://sourceforge.net/projects/adg/files/adg/0.6.0/adg-0.6.0.tar.bz2
+    ```
+2. Unpack the tarball:
+
+    ```
+    tar xjvf adg-0.6.0.tar.bz2
+    ```
+3. Configure the build. You can set different options while
+   configuring: check the output of ./configure --help to get a
+   list of all the available customizations.
+
+    ```
+    cd adg-0.6.0
+    ./configure
+    ```
+4. Build the ADG library.
+
+    ```
+    make
+    ```
+5. Once the building has finished, you are able to run the demo
+   program without installing anything. Just try it out by
+   launching the uninstalled executable:
+
+    ```
+    demo/adg-demo-uninstalled
+    ```
+6. Install the library. You must have root privileges, either
+   by previously logging in as root or by using the sudo command,
+   if you intend to install it system-wide (the default). Anyway
+   you can install to a custom destination where you have write
+   access by explicitely setting the --prefix option in the
+   configuration step.
+
+    ```
+    sudo make install
+    ```
+
+Further details on the installation are availables in the INSTALL
+text file distributed within the tarball.
