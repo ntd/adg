@@ -64,19 +64,10 @@ G_DEFINE_TYPE(AdgRDim, adg_rdim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,
-    PROP_VALUE
 };
 
 
 static void             _adg_dispose            (GObject        *object);
-static void             _adg_get_property       (GObject        *object,
-                                                 guint           param_id,
-                                                 GValue         *value,
-                                                 GParamSpec     *pspec);
-static void             _adg_set_property       (GObject        *object,
-                                                 guint           param_id,
-                                                 const GValue   *value,
-                                                 GParamSpec     *pspec);
 static void             _adg_global_changed     (AdgEntity      *entity);
 static void             _adg_local_changed      (AdgEntity      *entity);
 static void             _adg_invalidate         (AdgEntity      *entity);
@@ -99,7 +90,6 @@ adg_rdim_class_init(AdgRDimClass *klass)
     GObjectClass *gobject_class;
     AdgEntityClass *entity_class;
     AdgDimClass *dim_class;
-    GParamSpec *param, *old_param;
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
@@ -108,8 +98,6 @@ adg_rdim_class_init(AdgRDimClass *klass)
     g_type_class_add_private(klass, sizeof(AdgRDimPrivate));
 
     gobject_class->dispose = _adg_dispose;
-    gobject_class->get_property = _adg_get_property;
-    gobject_class->set_property = _adg_set_property;
 
     entity_class->global_changed = _adg_global_changed;
     entity_class->local_changed = _adg_local_changed;
@@ -118,16 +106,6 @@ adg_rdim_class_init(AdgRDimClass *klass)
     entity_class->render = _adg_render;
 
     dim_class->default_value = _adg_default_value;
-
-    /* Override #AdgDim:value to prepend "R "
-     * to the default set value template string */
-    old_param = g_object_class_find_property(gobject_class, "value");
-    param = g_param_spec_string(old_param->name,
-                                g_param_spec_get_nick(old_param),
-                                g_param_spec_get_blurb(old_param),
-                                "R <>",
-                                old_param->flags);
-    g_object_class_install_property(gobject_class, PROP_VALUE, param);
 }
 
 static void
@@ -158,6 +136,9 @@ adg_rdim_init(AdgRDim *rdim)
     data->cairo.path.data[6] = line_to;
 
     rdim->data = data;
+
+    /* Override the generic default dress with a more specific one */
+    adg_dim_set_dim_dress((AdgDim *) rdim, ADG_DRESS_DIMENSION_RADIUS);
 }
 
 static void
@@ -170,34 +151,6 @@ _adg_dispose(GObject *object)
 
     if (_ADG_OLD_OBJECT_CLASS->dispose)
         _ADG_OLD_OBJECT_CLASS->dispose(object);
-}
-
-static void
-_adg_get_property(GObject *object, guint prop_id,
-                  GValue *value, GParamSpec *pspec)
-{
-    switch (prop_id) {
-    case PROP_VALUE:
-        g_value_set_string(value, adg_dim_get_value((AdgDim *) object));
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
-}
-
-static void
-_adg_set_property(GObject *object, guint prop_id,
-                  const GValue *value, GParamSpec *pspec)
-{
-    switch (prop_id) {
-    case PROP_VALUE:
-        adg_dim_set_value((AdgDim *) object, g_value_get_string(value));
-        break;
-    default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
-        break;
-    }
 }
 
 

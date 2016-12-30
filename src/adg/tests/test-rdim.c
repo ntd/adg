@@ -23,18 +23,16 @@
 
 
 static void
-_adg_property_value(void)
+_adg_property_dim_dress(void)
 {
-    AdgDim *dim;
-    const gchar *value;
+    AdgRDim *rdim;
 
-    dim = ADG_DIM(adg_rdim_new());
+    /* Check that the dimension dress for AdgRDim instances is
+     * ADG_DRESS_DIMENSION_RADIUS by default */
+    rdim = adg_rdim_new();
+    g_assert_cmpint(adg_dim_get_dim_dress(ADG_DIM(rdim)), ==, ADG_DRESS_DIMENSION_RADIUS);
 
-    /* Check the default value (other options are checked by test-dim */
-    value = adg_dim_get_value(dim);
-    g_assert_cmpstr(value, ==, "R <>");
-
-    adg_entity_destroy(ADG_ENTITY(dim));
+    adg_entity_destroy(ADG_ENTITY(rdim));
 }
 
 static void
@@ -156,7 +154,7 @@ main(int argc, char *argv[])
      *                                 adg_rdim_new_full_explicit(1, 5, 2, 4, 9, 7));
      */
 
-    g_test_add_func("/adg/rdim/property/value", _adg_property_value);
+    g_test_add_func("/adg/adim/property/dim-dress", _adg_property_dim_dress);
 
     g_test_add_func("/adg/rdim/method/new-full-from-model", _adg_method_new_full_from_model);
 
