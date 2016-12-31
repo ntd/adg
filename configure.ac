@@ -1,11 +1,12 @@
-m4_define([adg_version],[0.8.0])
+m4_define([adg_version],[0.9.0])
 m4_define([cpml_version],adg_version)
 
 dnl How to handle {adg,cmpl}_lt_version (current:revision:age):
-dnl - Code refactoring: bump revision only, don’t touch current nor age.
-dnl - Interface modified: set revision to 0, bump current and age.
-m4_define([adg_lt_version],[5:0:2])
-m4_define([cpml_lt_version],[3:0:1])
+dnl - ABI unmodified (e.g. refactoring):      current:revision+1:age
+dnl - Backward compatible ABI (e.g. new API): current+1:0:age+1
+dnl - Backward incompatible ABI:              current+1:0:0
+m4_define([adg_lt_version],[6:0:0])
+m4_define([cpml_lt_version],[3:1:1])
 
 m4_define([gtkdoc_prereq],    [1.12]  )dnl Support introspection annotations
 m4_define([gobject_prereq],   [2.14.0])dnl Required by GRegex
