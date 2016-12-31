@@ -6,6 +6,39 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.9.0">
+<title>ADG 0.9.0</title>
+
+<para>Three new dresses have been added to address different quote
+types: <code>ADG_DRESS_DIMENSION_ANGULAR</code> (that formats numbers in
+sexagesimal units, bound by default to AdgADim instances),
+<code>ADG_DRESS_DIMENSION_RADIUS</code> (that prefixes values with <code>R</code>, bound
+to AdgRDim instances) and <code>ADG_DRESS_DIMENSION_DIAMETER</code> (that
+prefixes the value with a diameter symbol).</para>
+
+<para>The text generation algorithm has been greatly improved. The
+AdgDimStyle object now has 3 specific properties dedicated to
+the formatting of quotes: "number-format", "number-arguments"
+and "decimals". This allows, among other things, to properly
+render sexagesimal angles.</para>
+
+<para>Some <code>enum</code> type has been converted to <code>int</code> on public APIs. <code>enum</code>
+variables cannot precede ellipsis arguments: the last non
+ellipsis argument will be promoted to <code>int</code> and if the <code>enum</code> is
+not the same size (it could happen!) bad things will happen.</para>
+
+<para>A <ulink url="https://github.com/ntd/adg/issues/1">backward compatibility bug</ulink>
+that prevented out of the box building of the project on old
+platforms has been fixed.</para>
+
+<para>The testing provided by Travis-CI has been improved by building
+for GTK+2 and GTK+3 by using both gcc and clang.</para>
+
+<para>The Windows installer now includes Lua support. To be able to
+have that enabled by default, gobject introspection has been
+<ulink url="https://bugzilla.gnome.org/show_bug.cgi?id=658126">ported to Windows</ulink>.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.8.0">
 <title>ADG 0.8.0</title>
 
