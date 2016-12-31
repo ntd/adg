@@ -603,7 +603,7 @@ _adg_method_get_text(void)
     /* Trying a complex formatting with multiple fields */
     adg_dim_style_set_decimals(dim_style, 2);
     adg_dim_style_set_number_arguments(dim_style, "aieDMSdms");
-    adg_dim_style_set_number_format(dim_style, "%%Raw: ((%g, %g, %g)); Truncated: ((%g, %g, %g)); Rounded: ((%g, %g, %g))");
+    adg_dim_style_set_number_format(dim_style, "%%Raw: \\(%g, %g, %g\\); Truncated: \\(%g, %g, %g\\); Rounded: \\(%g, %g, %g\\)");
     text = adg_dim_get_text(dim, 7.891);
     g_assert_cmpstr(text, ==, "%Raw: (7.891, 53.46, 27.6); Truncated: (7, 53, 27); Rounded: (7.89, 53.46, 27.6)");
     g_free(text);
@@ -641,19 +641,26 @@ _adg_method_get_text(void)
 
     /* Testing nested parenthesis */
     adg_dim_style_set_number_arguments(dim_style, "DMs");
-    adg_dim_style_set_number_format(dim_style, "%g°(%g'(%g\") )");
+    adg_dim_style_set_number_format(dim_style, "%g°(%g'(%g\"))");
 
     text = adg_dim_get_text(dim, 0);
     g_assert_cmpstr(text, ==, "0°");
     g_free(text);
 
     text = adg_dim_get_text(dim, 1.5);
-    g_assert_cmpstr(text, ==, "1°30' ");
+    g_assert_cmpstr(text, ==, "1°30'");
     g_free(text);
 
     text = adg_dim_get_text(dim, 2.002777);
-    g_assert_cmpstr(text, ==, "2°0'10\" ");
+    g_assert_cmpstr(text, ==, "2°0'10\"");
     g_free(text);
+
+    /* Test errors on unmatched parenthesis */
+    adg_dim_style_set_number_format(dim_style, "%g°(%g'(%g\")");
+    g_assert_null(adg_dim_get_text(dim, 0));
+
+    adg_dim_style_set_number_format(dim_style, "%g°%g'(%g\"))");
+    g_assert_null(adg_dim_get_text(dim, 0));
 
     adg_entity_destroy(ADG_ENTITY(dim));
 }

@@ -1032,12 +1032,20 @@ adg_dim_get_text(AdgDim *dim, gdouble value)
     data.value = value;
     data.format = format;
     data.argument = arguments;
-    data.regex = g_regex_new("(?<!%)%(?!%).*[eEfFgG]", G_REGEX_UNGREEDY, 0, NULL);
+    data.regex = g_regex_new("(?<!\\\\)%.*[eEfFgG]", G_REGEX_UNGREEDY, 0, NULL);
     raw = _adg_text_expand(&data);
     g_regex_unref(data.regex);
 
-    /* Substitute the escape sequences ("%%", "((" and "))") */
-    regex = g_regex_new("([%()])\\1", G_REGEX_UNGREEDY, 0, NULL);
+    /* Check that all format string has been parsed, otherwise there are
+     * likely too many close parenthesis */
+    if (*data.format != '\0') {
+        g_free(raw);
+        g_return_val_if_reached(NULL);
+        return NULL;
+    }
+
+    /* Substitute the escape sequences ("\%", "\(" and "\)") */
+    regex = g_regex_new("\\\\([%()])", G_REGEX_UNGREEDY, 0, NULL);
     result = g_regex_replace(regex, raw, -1, 0, "\\1", 0, NULL);
     g_free(raw);
     g_regex_unref(regex);
@@ -1556,10 +1564,10 @@ _adg_text_expand(AdgDimReplaceData *data)
 
     valorized = ADG_THREE_STATE_UNKNOWN;
     result = g_string_new("");
-    eog = adg_single_strchr(data->format, ')');
+    eog = adg_unescaped_strchr(data->format, ')');
 
     /* Expand eventual groups found in the same nesting level */
-    while ((bog = adg_single_strchr(data->format, '(')) != NULL) {
+    while ((bog = adg_unescaped_strchr(data->format, '(')) != NULL) {
         /* If eog precedes bog, it means that bog is in another nest */
         if (eog != NULL && eog < bog) {
             break;
@@ -1596,7 +1604,7 @@ _adg_text_expand(AdgDimReplaceData *data)
 
         /* Skip the closing parenthesis */
         ++ data->format;
-        eog = adg_single_strchr(data->format, ')');
+        eog = adg_unescaped_strchr(data->format, ')');
     }
 
     /* Expand until closing parenthesis (End Of Group) or '\0' */

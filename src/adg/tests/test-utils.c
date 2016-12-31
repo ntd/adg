@@ -139,23 +139,26 @@ _adg_method_round(void)
 }
 
 static void
-_adg_method_single_strchr(void)
+_adg_method_unescaped_strchr(void)
 {
     const gchar *result;
 
     /* Sanity check */
-    g_assert_null(adg_single_strchr(NULL, '\0'));
+    g_assert_null(adg_unescaped_strchr(NULL, '\0'));
 
-    result = adg_single_strchr("aabbaabab", 'a');
+    result = adg_unescaped_strchr("\\a\\b\\abab", 'a');
     g_assert_cmpstr(result, ==, "ab");
 
-    result = adg_single_strchr("aabbaabab", 'b');
+    result = adg_unescaped_strchr("\\a\\b\\abab", 'b');
     g_assert_cmpstr(result, ==, "bab");
 
-    result = adg_single_strchr("122", '1');
-    g_assert_cmpstr(result, ==, "122");
+    result = adg_unescaped_strchr("1\\22", '1');
+    g_assert_cmpstr(result, ==, "1\\22");
 
-    result = adg_single_strchr("122", '3');
+    result = adg_unescaped_strchr("1\\22", '2');
+    g_assert_cmpstr(result, ==, "2");
+
+    result = adg_unescaped_strchr("122", '3');
     g_assert_null(result);
 }
 
@@ -175,7 +178,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/method/type-from-filename", _adg_method_type_from_filename);
     g_test_add_func("/adg/method/nop", _adg_method_nop);
     g_test_add_func("/adg/method/round", _adg_method_round);
-    g_test_add_func("/adg/method/single-strchr", _adg_method_single_strchr);
+    g_test_add_func("/adg/method/unescaped-strchr", _adg_method_unescaped_strchr);
 
     return g_test_run();
 }

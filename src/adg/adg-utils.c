@@ -501,8 +501,7 @@ adg_round(gdouble value, gint decimals)
  * @ch: a character to find
  *
  * Similar to the standard strchr(), this function returns a pointer to the to
- * the matched character that *is not* preceded by the same character. In
- * other words it skips any double @ch sequence.
+ * the matched character that *is not* preceded by a backslash.
  *
  * Returns: (transfer none): a pointer to the matched @ch inside @string or
  *          %NULL if not found.
@@ -510,14 +509,14 @@ adg_round(gdouble value, gint decimals)
  * Since: 1.0
  **/
 const gchar *
-adg_single_strchr(const gchar *string, gint ch)
+adg_unescaped_strchr(const gchar *string, gint ch)
 {
     const gchar *ptr;
 
     g_return_val_if_fail(string != NULL, NULL);
 
-    for (ptr = string; (ptr = strchr(ptr, ch)) != NULL; ptr += 2) {
-        if (*(ptr+1) != ch) {
+    for (ptr = string; (ptr = strchr(ptr, ch)) != NULL; ++ ptr) {
+        if (ptr == string || *(ptr-1) != '\\') {
             break;
         }
     }

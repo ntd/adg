@@ -1029,13 +1029,15 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  *
  * Sets a new value in the #AdgDimStyle:number-format property.
  *
- * The format is similar to a printf() style format string but only 'e', 'E',
+ * @format is similar to a printf() style format string but only 'e', 'E',
  * 'f', 'F', 'g' and 'G' specifiers are allowed. For reference, the
- * implementation leverages the g_ascii_formatd() GLib function.
+ * implementation leverages the g_ascii_formatd() GLib function. If you want
+ * to use special characters (%"(", %")" and %"%") as literals you need to
+ * escape them with a backslash.
  *
- * Furthermore you can group a value with other literals with round
- * parenthesis. In that case, when the value will be 0, the whole group will
- * disappear. Some example:
+ * You can use round parenthesis to group together one or more % directives
+ * with other related literals. In that case, when the value bound to the
+ * directive will be 0, the whole group will disappear. Some example:
  *
  * |[
  * AdgDim *dim;
@@ -1060,8 +1062,8 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  * g_free(text);
  * ]|
  *
- * Groups can be nested.
- *
+ * Groups can be nested and can have more than one value, in which case all
+ * the values contained in a group must be 0 in order to let it disappear.
  * This comes in handy for removing trailing 0 fields. A typical example is
  * the sexagesimal representation of angles:
  *
