@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2015-03-05 22:17+0100\n"
+"POT-Creation-Date: 2016-12-31 10:13+0100\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -48,11 +48,11 @@ msgstr "- Programma dimostrativo della ADG"
 msgid "Error from adg-demo"
 msgstr "Errore da adg-demo"
 
-#: demo/adg-demo.c:799
+#: demo/adg-demo.c:794
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: demo/adg-demo.c:1173
+#: demo/adg-demo.c:1168
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
 
@@ -386,11 +386,11 @@ msgstr "Segmenti paralleli"
 msgid "Invalid arguments: arg[0] not set"
 msgstr "Argomenti non validi: arg[0] è vuoto"
 
-#: src/adg/adg-adim.c:140
+#: src/adg/adg-adim.c:129
 msgid "First Origin"
 msgstr "Prima Origine"
 
-#: src/adg/adg-adim.c:141
+#: src/adg/adg-adim.c:130
 msgid ""
 "Where the first line comes from: this point is used toghether with \"ref1\" "
 "to align the first extension line"
@@ -398,11 +398,11 @@ msgstr ""
 "Da dove arriva la prima linea: questo punto è usato insieme a \"ref1\" per "
 "allineare la prima linea di estensione"
 
-#: src/adg/adg-adim.c:147
+#: src/adg/adg-adim.c:136
 msgid "Second Origin"
 msgstr "Seconda Origine"
 
-#: src/adg/adg-adim.c:148
+#: src/adg/adg-adim.c:137
 msgid ""
 "Where the second line comes from: this point is used toghether with \"ref2\" "
 "to align the second extension line"
@@ -410,33 +410,33 @@ msgstr ""
 "Da dove arriva la seconda linea: questo punto è usato insieme a \"ref2\" per "
 "allineare la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:154 src/adg/adg-ldim.c:143
+#: src/adg/adg-adim.c:143 src/adg/adg-ldim.c:143
 msgid "Has First Extension Line flag"
 msgstr "Flag di Prima Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:155 src/adg/adg-ldim.c:144
+#: src/adg/adg-adim.c:144 src/adg/adg-ldim.c:144
 msgid "Show (TRUE) or hide (FALSE) the first extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la prima linea di estensione"
 
-#: src/adg/adg-adim.c:160 src/adg/adg-ldim.c:149
+#: src/adg/adg-adim.c:149 src/adg/adg-ldim.c:149
 msgid "Has Second Extension Line flag"
 msgstr "Flag di Seconda Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:161 src/adg/adg-ldim.c:150
+#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:150
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:1183
+#: src/adg/adg-adim.c:1166
 #, c-format
 msgid "%s: ref1 and org1 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref1 e org1 non possono coincidere (%lf, %lf)"
 
-#: src/adg/adg-adim.c:1189
+#: src/adg/adg-adim.c:1172
 #, c-format
 msgid "%s: ref2 and org2 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref2 e org2 non possono coincidere (%lf, %lf)"
 
-#: src/adg/adg-adim.c:1202
+#: src/adg/adg-adim.c:1185
 #, c-format
 msgid "%s: trying to set an angular dimension on parallel lines"
 msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
@@ -667,35 +667,35 @@ msgstr ""
 "Si è provato ad eliminare una entità di tipo %s da un contenitore di tipo %s "
 "ma l'entità non è presente"
 
-#: src/adg/adg-dim.c:154
+#: src/adg/adg-dim.c:166
 msgid "Dimension Dress"
 msgstr "Vestito Dimensione"
 
-#: src/adg/adg-dim.c:155
+#: src/adg/adg-dim.c:167
 msgid "The dress to use for rendering this dimension"
 msgstr "Il vestito da usare per il rendering di questa dimensione"
 
-#: src/adg/adg-dim.c:161
+#: src/adg/adg-dim.c:173
 msgid "First Reference"
 msgstr "Primo Riferimento"
 
-#: src/adg/adg-dim.c:162
+#: src/adg/adg-dim.c:174
 msgid "First reference point of the dimension"
 msgstr "Primo punto di riferimento della dimensione"
 
-#: src/adg/adg-dim.c:168
+#: src/adg/adg-dim.c:180
 msgid "Second Reference"
 msgstr "Secondo Riferimento"
 
-#: src/adg/adg-dim.c:169
+#: src/adg/adg-dim.c:181
 msgid "Second reference point of the dimension"
 msgstr "Secondo punto di riferimento della dimensione"
 
-#: src/adg/adg-dim.c:175 src/adg/adg-marker.c:150
+#: src/adg/adg-dim.c:187 src/adg/adg-marker.c:150
 msgid "Position"
 msgstr "Posizione"
 
-#: src/adg/adg-dim.c:176
+#: src/adg/adg-dim.c:188
 msgid ""
 "The reference position of the quote: it will be combined with \"level\" to "
 "get the real quote position"
@@ -703,11 +703,11 @@ msgstr ""
 "Il punto di riferimento per il posizionamento della quota: sarà combinato "
 "con il \"level\" per ottenere la posizione reale della quota"
 
-#: src/adg/adg-dim.c:182
+#: src/adg/adg-dim.c:194
 msgid "Level"
 msgstr "Livello"
 
-#: src/adg/adg-dim.c:183
+#: src/adg/adg-dim.c:195
 msgid ""
 "The dimension level, that is the factor to multiply the baseline spacing "
 "(defined in the dimension style) to get the offset from pos where the quote "
@@ -717,11 +717,11 @@ msgstr ""
 "tra le linee base (definito nello stile della dimensione) per ottenere "
 "l'offset dal punto di posizionamento dove la quota dovrebbe essere riportata"
 
-#: src/adg/adg-dim.c:189
+#: src/adg/adg-dim.c:201
 msgid "Outside"
 msgstr "Esterna"
 
-#: src/adg/adg-dim.c:190
+#: src/adg/adg-dim.c:202
 msgid ""
 "Whether the arrows must be inside the extension lines (ADG_THREE_STATE_OFF), "
 "must be extended outside the extension lines (ADG_THREE_STATE_ON) or should "
@@ -732,11 +732,11 @@ msgstr ""
 "estensione (ADG_THREE_STATE_ON) oppure questa decisione viene gestita "
 "automaticamente in base allo spazio disponibile"
 
-#: src/adg/adg-dim.c:196
+#: src/adg/adg-dim.c:208
 msgid "Detached Quote"
 msgstr "Quota Distaccata"
 
-#: src/adg/adg-dim.c:197
+#: src/adg/adg-dim.c:209
 msgid ""
 "Where the quote must be positioned: in the middle of the base line "
 "(ADG_THREE_STATE_OFF), near the pos point (ADG_THREE_STATE_ON) or should be "
@@ -747,21 +747,21 @@ msgstr ""
 "(ADG_THREE_STATE_ON) oppure se questa decisione è subordinata allo spazio "
 "disponibile"
 
-#: src/adg/adg-dim.c:203
+#: src/adg/adg-dim.c:215
 msgid "Value Template"
 msgstr "Template Valore"
 
-#: src/adg/adg-dim.c:204
+#: src/adg/adg-dim.c:216
 msgid ""
 "The template string to be used for generating the set value of the quote"
 msgstr ""
 "La stringa di template da usare per generare il valore nominale della quota"
 
-#: src/adg/adg-dim.c:210
+#: src/adg/adg-dim.c:222
 msgid "Minimum Value or Low Tolerance"
 msgstr "Valore Minimo o Tolleranza Inferiore"
 
-#: src/adg/adg-dim.c:211
+#: src/adg/adg-dim.c:223
 msgid ""
 "The minimum value allowed or the lowest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
@@ -769,11 +769,11 @@ msgstr ""
 "Il valore minimo ammesso o la tolleranza inferiore dal valore nominale (a "
 "seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
-#: src/adg/adg-dim.c:217
+#: src/adg/adg-dim.c:229
 msgid "Maximum Value or High Tolerance"
 msgstr "Valore Massimo o Tolleranza Superiore"
 
-#: src/adg/adg-dim.c:218
+#: src/adg/adg-dim.c:230
 msgid ""
 "The maximum value allowed or the highest tolerance from value (depending of "
 "the dimension style): set to NULL to suppress"
@@ -781,85 +781,85 @@ msgstr ""
 "Il valore massimo ammesso o la tolleranza superiore dal valore nominale (a "
 "seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
-#: src/adg/adg-dim.c:1324
+#: src/adg/adg-dim.c:1406
 #, c-format
 msgid "AdgDim::default_value not implemented for '%s'"
 msgstr "AdgDim::default_value non implementato da '%s'"
 
-#: src/adg/adg-dim-style.c:118
+#: src/adg/adg-dim-style.c:125
 msgid "First Marker"
 msgstr "Primo Contrassegno"
 
-#: src/adg/adg-dim-style.c:119
+#: src/adg/adg-dim-style.c:126
 msgid "The template entity to use as first marker"
 msgstr "L'entità guida da usare per il primo contrassegno"
 
-#: src/adg/adg-dim-style.c:125
+#: src/adg/adg-dim-style.c:132
 msgid "Second Marker"
 msgstr "Secondo Contrassegno"
 
-#: src/adg/adg-dim-style.c:126
+#: src/adg/adg-dim-style.c:133
 msgid "The template entity to use as second marker"
 msgstr "L'entità guida da usare per il secondo contrassegno"
 
-#: src/adg/adg-dim-style.c:132 src/adg/adg-font-style.c:102
+#: src/adg/adg-dim-style.c:139 src/adg/adg-font-style.c:102
 #: src/adg/adg-line-style.c:98 src/adg/adg-table-style.c:95
 msgid "Color Dress"
 msgstr "Vestito Colore"
 
-#: src/adg/adg-dim-style.c:133
+#: src/adg/adg-dim-style.c:140
 msgid "Color dress for the whole dimension"
 msgstr "Vestito colore da usare per l'intera dimensione"
 
-#: src/adg/adg-dim-style.c:139 src/adg/adg-table-style.c:123
+#: src/adg/adg-dim-style.c:146 src/adg/adg-table-style.c:123
 msgid "Value Dress"
 msgstr "Vestito Valore"
 
-#: src/adg/adg-dim-style.c:140
+#: src/adg/adg-dim-style.c:147
 msgid "Font dress for the nominal value of the dimension"
 msgstr "Vestito del font per il valore nominale della dimensione"
 
-#: src/adg/adg-dim-style.c:146
+#: src/adg/adg-dim-style.c:153
 msgid "Minimum Limit Dress"
 msgstr "Vestito Limite Minimo"
 
-#: src/adg/adg-dim-style.c:147
+#: src/adg/adg-dim-style.c:154
 msgid "Font dress for the lower limit value"
 msgstr "Vestito del font per il valore limite basso"
 
-#: src/adg/adg-dim-style.c:153
+#: src/adg/adg-dim-style.c:160
 msgid "Maximum Limit Dress"
 msgstr "Vestito Limite Massimo"
 
-#: src/adg/adg-dim-style.c:154
+#: src/adg/adg-dim-style.c:161
 msgid "Font dress for the upper limit value"
 msgstr "Vestito del font per il valore limite alto"
 
-#: src/adg/adg-dim-style.c:160 src/adg/adg-ruled-fill.c:111
+#: src/adg/adg-dim-style.c:167 src/adg/adg-ruled-fill.c:111
 #: src/adg/adg-stroke.c:104
 msgid "Line Dress"
 msgstr "Vestito Linea"
 
-#: src/adg/adg-dim-style.c:161
+#: src/adg/adg-dim-style.c:168
 msgid "Line dress for the baseline and the extension lines"
 msgstr "Vestito della linea di quotatura e delle linee di estensione"
 
-#: src/adg/adg-dim-style.c:167
+#: src/adg/adg-dim-style.c:174
 msgid "From Offset"
 msgstr "Distanza Da"
 
-#: src/adg/adg-dim-style.c:168
+#: src/adg/adg-dim-style.c:175
 msgid ""
 "Offset (in global space) of the extension lines from the path to the quote"
 msgstr ""
 "Distanza (nello spazio globale) tra la linea di estensione e la forma da "
 "quotare"
 
-#: src/adg/adg-dim-style.c:174
+#: src/adg/adg-dim-style.c:181
 msgid "To Offset"
 msgstr "Distanza A"
 
-#: src/adg/adg-dim-style.c:175
+#: src/adg/adg-dim-style.c:182
 msgid ""
 "How many extend (in global space) the extension lines after hitting the "
 "baseline"
@@ -867,11 +867,11 @@ msgstr ""
 "Quanto allungare (nello spazio globale) le linee di estensione oltre la "
 "linea di quotatura"
 
-#: src/adg/adg-dim-style.c:181
+#: src/adg/adg-dim-style.c:188
 msgid "Beyond Length"
 msgstr "Lunghezza Oltre"
 
-#: src/adg/adg-dim-style.c:182
+#: src/adg/adg-dim-style.c:189
 msgid ""
 "How much the baseline should be extended (in global space) beyond the "
 "extension lines on dimensions with outside markers"
@@ -879,27 +879,27 @@ msgstr ""
 "Quanto la linea di quotatura si può allungare (nello spazio globale) oltre "
 "le linee di estensione nelle dimensioni con contrassegni esterni"
 
-#: src/adg/adg-dim-style.c:188
+#: src/adg/adg-dim-style.c:195
 msgid "Baseline Spacing"
 msgstr "Distanza Linee di Quotatura"
 
-#: src/adg/adg-dim-style.c:189
+#: src/adg/adg-dim-style.c:196
 msgid "Distance between two consecutive baselines while stacking dimensions"
 msgstr "Distanza tra due linee di quotatura nelle dimensioni sovrapposte"
 
-#: src/adg/adg-dim-style.c:195
+#: src/adg/adg-dim-style.c:202
 msgid "Limits Spacing"
 msgstr "Spaziatura Limiti"
 
-#: src/adg/adg-dim-style.c:196
+#: src/adg/adg-dim-style.c:203
 msgid "Distance between limits/tolerances"
 msgstr "Distanza tra i limiti/tolleranze"
 
-#: src/adg/adg-dim-style.c:202
+#: src/adg/adg-dim-style.c:209
 msgid "Quote Shift"
 msgstr "Spiazzamento Quota"
 
-#: src/adg/adg-dim-style.c:203
+#: src/adg/adg-dim-style.c:210
 msgid ""
 "Used to specify a smooth displacement (in global space) of the quote by "
 "taking as reference the perfect compact position (the middle of the baseline "
@@ -909,11 +909,11 @@ msgstr ""
 "con riferimento alla posizione compatta ideale (nelle comuni dimensioni "
 "lineari, la metà della linea di base, per esempio)"
 
-#: src/adg/adg-dim-style.c:209
+#: src/adg/adg-dim-style.c:216
 msgid "Limits Shift"
 msgstr "Scostamento dei Limiti"
 
-#: src/adg/adg-dim-style.c:210
+#: src/adg/adg-dim-style.c:217
 msgid ""
 "Used to specify a smooth displacement (in global space) for the limits/"
 "tolerances by taking as reference the perfect compact position"
@@ -921,25 +921,44 @@ msgstr ""
 "Usato per specificare un piccolo scostamento (in global space) per le "
 "tolleranze/limiti prendendo come riferimento la posizione compatta ideale"
 
-#: src/adg/adg-dim-style.c:216
+#: src/adg/adg-dim-style.c:223
 msgid "Number Format"
 msgstr "Formato Numero"
 
-#: src/adg/adg-dim-style.c:217
+#: src/adg/adg-dim-style.c:224
 msgid ""
 "The format (in printf style) of the numeric component of the basic value"
 msgstr ""
 "Il formato (in modalità printf) del componente numerico della quota nominale"
 
-#: src/adg/adg-dim-style.c:223
+#: src/adg/adg-dim-style.c:230
+#, fuzzy
+msgid "Number Arguments"
+msgstr "Formato Numero"
+
+#: src/adg/adg-dim-style.c:231
+msgid ""
+"The arguments to pass to the format function: see "
+"adg_dim_style_set_number_arguments() for further details"
+msgstr ""
+
+#: src/adg/adg-dim-style.c:237
 msgid "Number Tag"
 msgstr "Tag di Quota"
 
-#: src/adg/adg-dim-style.c:224
+#: src/adg/adg-dim-style.c:238
 msgid "The tag to substitute inside the value template string"
 msgstr "Il tag da sostituire all'interno della stringa template del valore"
 
-#: src/adg/adg-dress.c:338
+#: src/adg/adg-dim-style.c:244
+msgid "decimals"
+msgstr ""
+
+#: src/adg/adg-dim-style.c:245
+msgid "Number of significant decimals to round the value to (-1 to disable)"
+msgstr ""
+
+#: src/adg/adg-dress.c:347
 #, c-format
 msgid ""
 "%s: the fallback style of '%s' dress (%d) must be a '%s' derived type, but a "
@@ -1215,7 +1234,7 @@ msgstr "Direzione"
 msgid "The inclination angle of the extension lines"
 msgstr "L'angolo di inclinazione delle linee di estensione"
 
-#: src/adg/adg-ldim.c:782 src/adg/adg-rdim.c:579
+#: src/adg/adg-ldim.c:780 src/adg/adg-rdim.c:528
 #, c-format
 msgid "%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"
 msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
@@ -1384,51 +1403,51 @@ msgstr "Valore di slant inatteso (%d)"
 msgid "Unhandled weight value (%d)"
 msgstr "Valore di weight inatteso (%d)"
 
-#: src/adg/adg-path.c:430
+#: src/adg/adg-path.c:434
 #, c-format
 msgid "%s: null pair caught while parsing arguments"
 msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
 
-#: src/adg/adg-path.c:941
+#: src/adg/adg-path.c:945
 #, c-format
 msgid "%s: the axis of the reflection is not known"
 msgstr "%s: l'asse di riflessione non è conosciuta"
 
-#: src/adg/adg-path.c:1167
+#: src/adg/adg-path.c:1176
 #, c-format
 msgid "%s: a '%s' operation is still active while clearing the path"
 msgstr "%s: operazione '%s' ancora attiva durante l'azzeramento del path"
 
-#: src/adg/adg-path.c:1187
+#: src/adg/adg-path.c:1198
 #, c-format
 msgid "%s: requested a '%s' operation on a path without current primitive"
 msgstr "%s: richiesta l'operazione '%s' su un path senza primitiva attiva"
 
-#: src/adg/adg-path.c:1194
+#: src/adg/adg-path.c:1205
 #, c-format
 msgid "%s: requested a '%s' operation while a '%s' operation was active"
 msgstr "%s: richiesta l'operazione '%s' mentre l'operazione '%s' era in corso"
 
-#: src/adg/adg-path.c:1219
+#: src/adg/adg-path.c:1230
 #, c-format
 msgid "%s: %d path operation not recognized"
 msgstr "%s: l'operazione %d non è conosciuta"
 
-#: src/adg/adg-path.c:1329
+#: src/adg/adg-path.c:1340
 #, c-format
 msgid ""
 "%s: first chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il primo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1338
+#: src/adg/adg-path.c:1349
 #, c-format
 msgid ""
 "%s: second chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il secondo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1376
+#: src/adg/adg-path.c:1387
 #, c-format
 msgid "%s: fillet with radius of %lf is not applicable here"
 msgstr "%s: un raccordo di raggio %lf non è eseguibile ora"
