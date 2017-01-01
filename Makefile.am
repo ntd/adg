@@ -34,8 +34,6 @@ EXTRA_DIST=			COPYING \
 				build/config.rpath \
 				build/build-win32 \
 				build/build-win64 \
-				build/configure-win32 \
-				build/configure-win64 \
 				build/adg.nsi \
 				build/adg-header.bmp \
 				build/adg-welcome.bmp \
