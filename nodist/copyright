@@ -1,0 +1,21 @@
+#!/bin/sh
+
+error() {
+    [ -n "$1" ] && printf "$1\n" > /dev/stderr
+    cat <<EOT
+Usage: $0 [NEW COPYRIGHT]
+Show or update all copyright comments in source files.
+EOT
+}
+
+[ -n "$2" ] &&
+    error "Too many arguments" &&
+    exit 1
+
+[ -z "$1" ] &&
+    find . -name "*.[hc]" -exec cat {} \; | grep Copyright | uniq &&
+    exit 0
+
+replace=$(sed 's/[&/\]/\\&/g' <<<"$1")
+
+find . -name "*.[hc]" -exec sed -i "s/.*Copyright.*/$replace/" {} \;
