@@ -526,8 +526,8 @@ adg_path_append_segment(AdgPath *path, const CpmlSegment *segment)
 
 /**
  * adg_path_append_cairo_path:
- * @path:                        an #AdgPath
- * @cairo_path: (type gpointer): the #cairo_path_t path to append
+ * @path:       an #AdgPath
+ * @cairo_path: the #cairo_path_t path to append
  *
  * Appends a whole #cairo_path_t to @path.
  *
