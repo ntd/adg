@@ -235,9 +235,9 @@ Adg_1_0_gir_FILES=		adg-introspection.h \
 Adg_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \
 				--c-include='adg.h' \
 				--warn-all
-girdir=				$(datadir)/gir-1.0
+girdir=				$(ADG_GIRDIR)
 dist_gir_DATA=			$(INTROSPECTION_GIRS)
-typelibdir=			$(libdir)/girepository-1.0
+typelibdir=			$(ADG_TYPELIBDIR)
 typelib_DATA=			Adg-1.0.typelib
 CLEANFILES+=			$(dist_gir_DATA) \
 				$(typelib_DATA)

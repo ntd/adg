@@ -230,6 +230,7 @@ AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" != "xno"])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
 AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
 
+
 dnl Glade catalog dir
 AC_ARG_WITH(glade_catalogdir,
             [AS_HELP_STRING([--with-glade-catalogdir@<:@=DIR@:>@],
@@ -269,10 +270,12 @@ AM_COND_IF([HAVE_GLADE],
             report_glade=""])
 AC_SUBST([GLADE_CATALOGDIR],${with_glade_catalogdir})
 
+
 dnl gtk-doc
 GTK_DOC_CHECK(gtkdoc_prereq)
 AS_IF([test "x$enable_gtk_doc" = "xyes"],
       [gtkdoc_postfix=" (gtk-doc-$($PKG_CONFIG --modversion gtk-doc))"])
+
 
 dnl GObject introspection
 GOBJECT_INTROSPECTION_CHECK(gi_prereq)
@@ -285,10 +288,30 @@ AS_IF([test "x$enable_introspection" = "xyes"],
                          [AC_DEFINE_UNQUOTED([CAIRO_GOBJECT_ENABLED],[1],
                                              [Defined if GObject support in cairo is present.])],
                          [AC_MSG_ERROR([GObject introspection requires the cairo-gobject library])])])
+
+dnl Introspection girdir
+AC_ARG_WITH(girdir,
+            [AS_HELP_STRING([--with-girdir@<:@=DIR@:>@],
+                            [where to install the .gir files @<:@default=check@:>@])],
+            [],[with_girdir=check])
+AS_IF([test "x$with_girdir" = "xcheck"],
+      [with_girdir="$INTROSPECTION_GIRDIR"])
+AC_SUBST([ADG_GIRDIR],${with_girdir})
+
+dnl Introspection typelibdir
+AC_ARG_WITH(typelibdir,
+            [AS_HELP_STRING([--with-typelibdir@<:@=DIR@:>@],
+                            [where to install the .typelib files @<:@default=check@:>@])],
+            [],[with_typelibdir=check])
+AS_IF([test "x$with_typelibdir" = "xcheck"],
+      [with_typelibdir="$INTROSPECTION_TYPELIBDIR"])
+AC_SUBST([ADG_TYPELIBDIR],${with_typelibdir})
+
+dnl Introspection report
 AS_IF([test "x$enable_introspection" = "xyes"],
       [report_introspection="
-         Where to install gir files: $INTROSPECTION_GIRDIR
- Where to install the typelib files: $INTROSPECTION_TYPELIBDIR"],
+         Where to install gir files: $with_girdir
+ Where to install the typelib files: $with_typelibdir"],
       [report_introspection=""])
 
 

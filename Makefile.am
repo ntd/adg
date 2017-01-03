@@ -17,7 +17,9 @@ ADG_DIST_CONFIGURE_FLAGS=	--enable-pango \
 AM_DISTCHECK_CONFIGURE_FLAGS=	$(ADG_DIST_CONFIGURE_FLAGS) \
 				--enable-test-framework \
 				--enable-introspection \
-				--with-glade-catalogdir
+				--with-glade-catalogdir \
+				--with-girdir='$$(datadir)/gir-1.0' \
+				--with-typelibdir='$$(libdir)/girepository-1.0'
 
 BUILT_SOURCES=			ChangeLog \
 				README \
