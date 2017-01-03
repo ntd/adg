@@ -755,8 +755,8 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
 
 /**
  * cpml_primitive_dump:
- * @primitive: a #CpmlPrimitive
- * @org_also:  whether to output also the origin coordinates
+ * @primitive:                a #CpmlPrimitive
+ * @org_also: (type boolean): whether to output also the origin coordinates
  *
  * Dumps info on the specified @primitive to stdout: useful for
  * debugging purposes. If @org_also is 1, a #CPML_MOVE to the
