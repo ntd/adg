@@ -792,7 +792,7 @@ adg_path_arc(AdgPath *path, const CpmlPair *center, gdouble r,
 
     data = path->data;
     cpml_vector_from_angle(&p[0], start);
-    cpml_vector_from_angle(&p[1], (end-start) / 2);
+    cpml_vector_from_angle(&p[1], (start+end) / 2);
     cpml_vector_from_angle(&p[2], end);
 
     cpml_vector_set_length(&p[0], r);
