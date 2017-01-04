@@ -578,7 +578,7 @@ _adg_method_arc(void)
     g_assert_true(cpml_primitive_next(&primitive));
     g_assert_cmpint(primitive.data[0].header.type, ==, CPML_ARC);
     g_assert_cmpint(primitive.data[0].header.length, ==, 3);
-    adg_assert_isapprox(primitive.data[1].point.x, 1);
+    adg_assert_isapprox(primitive.data[1].point.x, 5);
     adg_assert_isapprox(primitive.data[1].point.y, 4);
     adg_assert_isapprox(primitive.data[2].point.x, 1);
     adg_assert_isapprox(primitive.data[2].point.y, 4);
