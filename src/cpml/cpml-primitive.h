@@ -45,56 +45,55 @@ struct _CpmlPrimitive {
     cairo_path_data_t *data;
 };
 
-size_t          cpml_primitive_type_get_n_points
-                                           (CpmlPrimitiveType    type);
-void            cpml_primitive_from_segment(CpmlPrimitive       *primitive,
-                                            CpmlSegment         *segment);
-void            cpml_primitive_copy        (CpmlPrimitive       *primitive,
-                                            const CpmlPrimitive *src);
-int             cpml_primitive_copy_data   (CpmlPrimitive       *primitive,
-                                            const CpmlPrimitive *src);
-void            cpml_primitive_reset       (CpmlPrimitive       *primitive);
-int             cpml_primitive_next        (CpmlPrimitive       *primitive);
-size_t          cpml_primitive_get_n_points(const CpmlPrimitive *primitive);
-double          cpml_primitive_get_length  (const CpmlPrimitive *primitive);
-void            cpml_primitive_put_extents (const CpmlPrimitive *primitive,
-                                            CpmlExtents         *extents);
-int             cpml_primitive_set_point   (CpmlPrimitive       *primitive,
-                                            int                  n_point,
-                                            const CpmlPair      *pair);
-int             cpml_primitive_put_point   (const CpmlPrimitive *primitive,
-                                            int                  n_point,
-                                            CpmlPair            *pair);
-void            cpml_primitive_put_pair_at (const CpmlPrimitive *primitive,
-                                            double               pos,
-                                            CpmlPair            *pair);
-void            cpml_primitive_put_vector_at
-                                           (const CpmlPrimitive *primitive,
-                                            double               pos,
-                                            CpmlVector          *vector);
-int             cpml_primitive_is_inside   (const CpmlPrimitive *primitive,
-                                            const CpmlPair      *pair);
-double          cpml_primitive_get_closest_pos
-                                           (const CpmlPrimitive *primitive,
-                                            const CpmlPair      *pair);
-size_t          cpml_primitive_put_intersections
-                                           (const CpmlPrimitive *primitive,
-                                            const CpmlPrimitive *primitive2,
-                                            size_t               n_dest,
-                                            CpmlPair            *dest);
-size_t          cpml_primitive_put_intersections_with_segment
-                                           (const CpmlPrimitive *primitive,
-                                            const CpmlSegment   *segment,
-                                            size_t               n_dest,
-                                            CpmlPair            *dest);
-void            cpml_primitive_offset      (CpmlPrimitive       *primitive,
-                                            double               offset);
-int             cpml_primitive_join        (CpmlPrimitive       *primitive,
-                                            CpmlPrimitive       *primitive2);
-void            cpml_primitive_to_cairo    (const CpmlPrimitive *primitive,
-                                            cairo_t             *cr);
-void            cpml_primitive_dump        (const CpmlPrimitive *primitive,
-                                            int                  org_also);
+size_t  cpml_primitive_type_get_n_points(CpmlPrimitiveType       type);
+
+CpmlPrimitiveType
+        cpml_primitive_type             (const CpmlPrimitive    *primitive);
+void    cpml_primitive_from_segment     (CpmlPrimitive          *primitive,
+                                         CpmlSegment            *segment);
+void    cpml_primitive_copy             (CpmlPrimitive          *primitive,
+                                         const CpmlPrimitive    *src);
+int     cpml_primitive_copy_data        (CpmlPrimitive          *primitive,
+                                         const CpmlPrimitive    *src);
+void    cpml_primitive_reset            (CpmlPrimitive          *primitive);
+int     cpml_primitive_next             (CpmlPrimitive          *primitive);
+size_t  cpml_primitive_get_n_points     (const CpmlPrimitive    *primitive);
+double  cpml_primitive_get_length       (const CpmlPrimitive    *primitive);
+void    cpml_primitive_put_extents      (const CpmlPrimitive    *primitive,
+                                         CpmlExtents            *extents);
+int     cpml_primitive_set_point        (CpmlPrimitive          *primitive,
+                                         int                     n_point,
+                                         const CpmlPair         *pair);
+int     cpml_primitive_put_point        (const CpmlPrimitive    *primitive,
+                                         int                     n_point,
+                                         CpmlPair               *pair);
+void    cpml_primitive_put_pair_at      (const CpmlPrimitive    *primitive,
+                                         double                  pos,
+                                         CpmlPair               *pair);
+void    cpml_primitive_put_vector_at    (const CpmlPrimitive    *primitive,
+                                         double                  pos,
+                                         CpmlVector             *vector);
+int     cpml_primitive_is_inside        (const CpmlPrimitive    *primitive,
+                                         const CpmlPair         *pair);
+double  cpml_primitive_get_closest_pos  (const CpmlPrimitive    *primitive,
+                                         const CpmlPair         *pair);
+size_t  cpml_primitive_put_intersections(const CpmlPrimitive    *primitive,
+                                         const CpmlPrimitive    *primitive2,
+                                         size_t                  n_dest,
+                                         CpmlPair               *dest);
+size_t  cpml_primitive_put_intersections_with_segment
+                                        (const CpmlPrimitive    *primitive,
+                                         const CpmlSegment      *segment,
+                                         size_t                  n_dest,
+                                         CpmlPair               *dest);
+void    cpml_primitive_offset           (CpmlPrimitive          *primitive,
+                                         double                  offset);
+int     cpml_primitive_join             (CpmlPrimitive          *primitive,
+                                         CpmlPrimitive          *primitive2);
+void    cpml_primitive_to_cairo         (const CpmlPrimitive    *primitive,
+                                         cairo_t                *cr);
+void    cpml_primitive_dump             (const CpmlPrimitive    *primitive,
+                                         int                     org_also);
 
 CAIRO_END_DECLS
 

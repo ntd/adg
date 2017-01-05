@@ -122,6 +122,26 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
 }
 
 /**
+ * cpml_primitive_type:
+ * @primitive: a #CpmlPrimitive struct
+ *
+ * Returns the type of @primitive, i.e. %CPML_LINE for lines,
+ * %CPML_ARC for arcs or circles, %CPML_CURVE for cubic Bézier
+ * curves and %CPML_CLOSE for closing lines. The %CPML_MOVE is
+ * used extensively *between* segments but it is not considered
+ * by itself a primitive, so it should never been returned.
+ *
+ * Returns: the type of the primitive.
+ *
+ * Since: 1.0
+ **/
+CpmlPrimitiveType
+cpml_primitive_type(const CpmlPrimitive *primitive)
+{
+    return primitive->data[0].header.type;
+}
+
+/**
  * cpml_primitive_from_segment:
  * @primitive: (out): the destination #CpmlPrimitive struct
  * @segment: (in):    the source segment

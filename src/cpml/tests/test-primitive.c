@@ -67,6 +67,19 @@ _cpml_behavior_browsing(void)
 }
 
 static void
+_cpml_sanity_type(gint i)
+{
+    switch (i) {
+    case 1:
+        cpml_primitive_type(NULL);
+        break;
+    default:
+        g_test_trap_assert_failed();
+        break;
+    }
+}
+
+static void
 _cpml_sanity_from_segment(gint i)
 {
     CpmlPrimitive primitive;
@@ -425,6 +438,27 @@ _cpml_sanity_to_cairo(gint i)
         g_test_trap_assert_failed();
         break;
     }
+}
+
+static void
+_cpml_method_type(void)
+{
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    g_assert_true(cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path()));
+
+    cpml_primitive_from_segment(&primitive, &segment);
+    g_assert_cmpint(cpml_primitive_type(&primitive), ==, CPML_LINE);
+
+    cpml_primitive_next(&primitive);
+    g_assert_cmpint(cpml_primitive_type(&primitive), ==, CPML_ARC);
+
+    cpml_primitive_next(&primitive);
+    g_assert_cmpint(cpml_primitive_type(&primitive), ==, CPML_CURVE);
+
+    cpml_primitive_next(&primitive);
+    g_assert_cmpint(cpml_primitive_type(&primitive), ==, CPML_CLOSE);
 }
 
 static void
@@ -1316,7 +1350,8 @@ main(int argc, char *argv[])
 
     g_test_add_func("/cpml/primitive/behavior/browsing", _cpml_behavior_browsing);
 
-    adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_sanity_from_segment, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/type", _cpml_sanity_type, 1);
+    adg_test_add_traps("/cpml/primitive/sanity/from-segment", _cpml_sanity_from_segment, 2);
     adg_test_add_traps("/cpml/primitive/sanity/copy", _cpml_sanity_copy, 2);
     adg_test_add_traps("/cpml/primitive/sanity/copy-data", _cpml_sanity_copy_data, 2);
     adg_test_add_traps("/cpml/primitive/sanity/get-n-points", _cpml_sanity_get_n_points, 1);
@@ -1334,6 +1369,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/primitive/sanity/to-cairo", _cpml_sanity_to_cairo, 2);
     adg_test_add_traps("/cpml/primitive/sanity/dump", _cpml_sanity_dump, 1);
 
+    g_test_add_func("/cpml/primitive/method/type", _cpml_method_type);
     g_test_add_func("/cpml/primitive/method/from-segment", _cpml_method_from_segment);
     g_test_add_func("/cpml/primitive/method/copy", _cpml_method_copy);
     g_test_add_func("/cpml/primitive/method/copy-data", _cpml_method_copy_data);
