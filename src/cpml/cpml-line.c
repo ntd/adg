@@ -41,8 +41,7 @@ static size_t   put_intersections       (const CpmlPrimitive    *line,
                                          CpmlPair               *dest);
 static void     offset                  (CpmlPrimitive          *line,
                                          double                  offset);
-static int
-                intersection            (const CpmlPair         *p1_4,
+static int      intersection            (const CpmlPair         *p1_4,
                                          CpmlPair               *dest,
                                          double                 *get_factor);
 
