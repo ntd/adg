@@ -40,11 +40,10 @@ CpmlPrimitive curve = {
 
 
 static void
-_cpml__pair_at_time(gint i)
+_cpml_sanity_pair_at_time(gint i)
 {
     CpmlPair pair;
 
-    /* Check that invalid arguments crashes the process */
     switch (i) {
     case 1:
         cpml_curve_put_pair_at_time(NULL, 0, &pair);
@@ -59,11 +58,10 @@ _cpml__pair_at_time(gint i)
 }
 
 static void
-_cpml__vector_at_time(gint i)
+_cpml_sanity_vector_at_time(gint i)
 {
     CpmlVector vector;
 
-    /* Check that invalid arguments crashes the process */
     switch (i) {
     case 1:
         cpml_curve_put_vector_at_time(NULL, 0, &vector);
@@ -78,11 +76,10 @@ _cpml__vector_at_time(gint i)
 }
 
 static void
-_cpml__offset_at_time(gint i)
+_cpml_sanity_offset_at_time(gint i)
 {
     CpmlPair pair;
 
-    /* Check that invalid arguments crashes the process */
     switch (i) {
     case 1:
         cpml_curve_put_offset_at_time(NULL, 0, 0, &pair);
@@ -195,9 +192,9 @@ main(int argc, char *argv[])
 {
     adg_test_init(&argc, &argv);
 
-    adg_test_add_traps("/cpml/curve/sanity/pair-at-time", _cpml__pair_at_time, 2);
-    adg_test_add_traps("/cpml/curve/sanity/vector-at-time", _cpml__vector_at_time, 2);
-    adg_test_add_traps("/cpml/curve/sanity/offset-at-time", _cpml__offset_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/pair-at-time", _cpml_sanity_pair_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/vector-at-time", _cpml_sanity_vector_at_time, 2);
+    adg_test_add_traps("/cpml/curve/sanity/offset-at-time", _cpml_sanity_offset_at_time, 2);
 
     g_test_add_func("/cpml/curve/method/offset-algorithm", _cpml_method_offset_algorithm);
     g_test_add_func("/cpml/curve/method/pair-at-time", _cpml_method_pair_at_time);
