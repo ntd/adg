@@ -551,6 +551,42 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
 }
 
 /**
+ * adg_path_append_trail:
+ * @path:  an #AdgPath
+ * @trail: an #AdgTrail instance
+ *
+ * Appends the content of @trail to @path. It is similar to
+ * adg_path_append_cairo_path() but it also appends to @path the named pairs
+ * eventually defined in @trail.
+ *
+ * Since: 1.0
+ **/
+void
+adg_path_append_trail(AdgPath *path, AdgTrail *trail)
+{
+    GSList *named_pairs;
+    AdgNamedPair *named_pair;
+
+    g_return_if_fail(ADG_IS_PATH(path));
+    g_return_if_fail(ADG_IS_TRAIL(trail));
+
+    adg_path_append_cairo_path(path, adg_trail_get_cairo_path(trail));
+
+    /* Populate named_pairs with all the named pairs of trail */
+    named_pairs = NULL;
+    adg_model_foreach_named_pair((AdgModel *)trail,
+                                 _adg_get_named_pair, &named_pairs);
+
+    /* Readd the pairs to path */
+    while (named_pairs) {
+        named_pair = (AdgNamedPair *) named_pairs->data;
+        adg_model_set_named_pair((AdgModel *) path,
+                                 named_pair->name, &named_pair->pair);
+        named_pairs = g_slist_delete_link(named_pairs, named_pairs);
+    }
+}
+
+/**
  * adg_path_move_to:
  * @path: an #AdgPath
  * @pair: the destination coordinates

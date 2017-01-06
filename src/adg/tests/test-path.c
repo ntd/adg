@@ -403,6 +403,41 @@ _adg_method_append_cairo_path(void)
 }
 
 static void
+_adg_method_append_trail(void)
+{
+    AdgPath *path;
+    AdgTrail *trail;
+    const CpmlPair *pair;
+
+    path = adg_path_new();
+    trail = ADG_TRAIL(adg_path_new());
+
+    /* The trail must be non-empty and with a named pair */
+    adg_path_append_cairo_path(ADG_PATH(trail), adg_test_path());
+    adg_model_set_named_pair_explicit(ADG_MODEL(trail), "test", 1, 2);
+
+    /* Check sanity */
+    adg_path_append_trail(NULL, trail);
+    adg_path_append_trail(path, NULL);
+
+    /* Ensure path is initially empty */
+    g_assert_null(adg_path_last_primitive(path));
+
+    adg_path_append_trail(path, trail);
+
+    /* Check that path is no more empty */
+    g_assert_nonnull(adg_path_last_primitive(path));
+
+    /* Check that "test" named pair has been transferred to path */
+    pair = adg_model_get_named_pair(ADG_MODEL(path), "test");
+    g_assert_nonnull(pair);
+    adg_assert_isapprox(pair->x, 1);
+    adg_assert_isapprox(pair->y, 2);
+
+    g_object_unref(path);
+}
+
+static void
 _adg_method_move_to(void)
 {
     AdgPath *path = adg_path_new();
@@ -868,6 +903,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/append-primitive", _adg_method_append_primitive);
     g_test_add_func("/adg/path/method/append-segment", _adg_method_append_segment);
     g_test_add_func("/adg/path/method/append-cairo-path", _adg_method_append_cairo_path);
+    g_test_add_func("/adg/path/method/append-trail", _adg_method_append_trail);
     g_test_add_func("/adg/path/method/move-to", _adg_method_move_to);
     g_test_add_func("/adg/path/method/line-to", _adg_method_line_to);
     g_test_add_func("/adg/path/method/arc-to", _adg_method_arc_to);
