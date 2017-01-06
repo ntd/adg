@@ -113,6 +113,43 @@ _cpml_method_info(void)
     adg_assert_isapprox(end, -M_PI_2);
 }
 
+static void
+_cpml_method_to_curves(void)
+{
+    cairo_path_data_t data[4*2];
+    CpmlSegment segment = { NULL, data, 0 };
+
+    /* Approximate with a single curve */
+    cpml_arc_to_curves(&arc, &segment, 1);
+
+    g_assert_cmpint(data[0].header.type, ==, CPML_CURVE);
+    adg_assert_isapprox(data[1].point.x, 4);
+    adg_assert_isapprox(data[1].point.y, 3);
+    adg_assert_isapprox(data[2].point.x, 4);
+    adg_assert_isapprox(data[2].point.y, -3);
+    adg_assert_isapprox(data[3].point.x, 0);
+    adg_assert_isapprox(data[3].point.y, -3);
+
+    /* Approximate with two curves */
+    cpml_arc_to_curves(&arc, &segment, 2);
+
+    g_assert_cmpint(data[0].header.type, ==, CPML_CURVE);
+    adg_assert_isapprox(data[1].point.x, 1.65685425);
+    adg_assert_isapprox(data[1].point.y, 3);
+    adg_assert_isapprox(data[2].point.x, 3);
+    adg_assert_isapprox(data[2].point.y, 1.65685425);
+    adg_assert_isapprox(data[3].point.x, 3);
+    adg_assert_isapprox(data[3].point.y, 0);
+
+    g_assert_cmpint(data[4].header.type, ==, CPML_CURVE);
+    adg_assert_isapprox(data[5].point.x, 3);
+    adg_assert_isapprox(data[5].point.y, -1.65685425);
+    adg_assert_isapprox(data[6].point.x, 1.65685425);
+    adg_assert_isapprox(data[6].point.y, -3);
+    adg_assert_isapprox(data[7].point.x, 0);
+    adg_assert_isapprox(data[7].point.y, -3);
+}
+
 
 
 int
@@ -125,6 +162,7 @@ main(int argc, char *argv[])
     adg_test_add_traps("/cpml/arc/sanity/to-curves", _cpml_sanity_to_curves, 3);
 
     g_test_add_func("/cpml/arc/method/info", _cpml_method_info);
+    g_test_add_func("/cpml/arc/method/to-curves", _cpml_method_to_curves);
 
     return g_test_run();
 }
