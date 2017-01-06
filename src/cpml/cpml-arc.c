@@ -65,8 +65,8 @@
  * <itemizedlist>
  * <listitem>the <function>get_closest_pos</function> method must be
  *    implemented;</listitem>
- * <listitem>the <function>put_intersections</function> method must be
- *    implemented;</listitem>
+ * <listitem>the <function>put_intersections</function> method must
+ *    implement arc-arc intersections.</listitem>
  * </itemizedlist>
  * </important>
  *
@@ -93,28 +93,37 @@
     ((start < (d) && end > (d)) || (start > (d) && end < (d)))
 
 
-static double           get_length      (const CpmlPrimitive    *arc);
-static void             put_extents     (const CpmlPrimitive    *arc,
+static double   get_length              (const CpmlPrimitive    *arc);
+static void     put_extents             (const CpmlPrimitive    *arc,
                                          CpmlExtents            *extents);
-static void             put_pair_at     (const CpmlPrimitive    *arc,
+static void     put_pair_at             (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlPair               *pair);
-static void             put_vector_at   (const CpmlPrimitive    *arc,
+static void     put_vector_at           (const CpmlPrimitive    *arc,
                                          double                  pos,
                                          CpmlVector             *vector);
-static void             offset          (CpmlPrimitive          *arc,
-                                         double                  offset);
-static int              get_center      (const CpmlPair         *p,
+static size_t   put_intersections       (const CpmlPrimitive    *line,
+                                         const CpmlPrimitive    *primitive,
+                                         size_t                  n_dest,
                                          CpmlPair               *dest);
-static void             get_angles      (const CpmlPair         *p,
+static void     offset                  (CpmlPrimitive          *arc,
+                                         double                  offset);
+static int      get_center              (const CpmlPair         *p,
+                                         CpmlPair               *dest);
+static void     get_angles              (const CpmlPair         *p,
                                          const CpmlPair         *center,
                                          double                 *start,
                                          double                 *end);
-static void             arc_to_curve    (CpmlPrimitive          *curve,
+static void     arc_to_curve            (CpmlPrimitive          *curve,
                                          const CpmlPair         *center,
                                          double                  r,
                                          double                  start,
                                          double                  end);
+static int      circle_line             (const CpmlPair         *center,
+                                         double                  r,
+                                         const CpmlPair         *p1,
+                                         const CpmlPair         *p2,
+                                         CpmlPair               *dest);
 
 
 const _CpmlPrimitiveClass *
@@ -130,7 +139,7 @@ _cpml_arc_get_class(void)
             put_pair_at,
             put_vector_at,
             NULL,
-            NULL,
+            put_intersections,
             offset,
             NULL
         };
@@ -397,6 +406,32 @@ put_vector_at(const CpmlPrimitive *arc, double pos, CpmlVector *vector)
     }
 }
 
+static size_t
+put_intersections(const CpmlPrimitive *arc, const CpmlPrimitive *primitive,
+                  size_t n_dest, CpmlPair *dest)
+{
+    CpmlPair center;
+    double r;
+
+    cpml_arc_info(arc, &center, &r, NULL, NULL);
+
+    switch ((int) cpml_primitive_type(primitive)) {
+
+    case CPML_LINE: {
+        CpmlPair p1, p2;
+        cpml_primitive_put_point(primitive, 0, &p1);
+        cpml_primitive_put_point(primitive, -1, &p2);
+        return circle_line(&center, r, &p1, &p2, dest);
+    }
+
+    case CPML_ARC:
+        /* TODO: Not Yet Implemented */
+        return 0;
+    }
+
+    return 0;
+}
+
 static void
 offset(CpmlPrimitive *arc, double offset)
 {
@@ -537,4 +572,46 @@ arc_to_curve(CpmlPrimitive *curve, const CpmlPair *center,
     curve->data[2].point.y = center->y + r_sin2 - h*r_cos2;
     curve->data[3].point.x = center->x + r_cos2;
     curve->data[3].point.y = center->y + r_sin2;
+}
+
+static int
+circle_line(const CpmlPair *center, double r,
+            const CpmlPair *p1, const CpmlPair *p2,
+            CpmlPair *dest)
+{
+    double x1, y1, x2, y2;
+    double a, b, c, d, e;
+
+    /* Translate to have the circle origin in (0, 0) */
+    x1 = p1->x - center->x;
+    y1 = p1->y - center->y;
+    x2 = p2->x - center->x;
+    y2 = p2->y - center->y;
+
+    /* Equation of line:   ax + by = c
+     * Equation of circle: x² + y² = r² */
+    a = y2 - y1;
+    b = x1 - x2;
+    c = x1*y2 - x2*y1;
+
+    d = r*r * (a*a + b*b) - c*c;
+    if (d < 0) {
+        /* No intersections found */
+        return 0;
+    }
+
+    d = sqrt(d);
+    e = a*a + b*b;
+
+    dest->x = (a*c - b*d) / e + center->x;
+    dest->y = (b*c + a*d) / e + center->y;
+    if (d == 0) {
+        /* Only one soultion found (tangent line) */
+        return 1;
+    }
+
+    ++ dest;
+    dest->x = (a*c + b*d) / e + center->x;
+    dest->y = (b*c - a*d) / e + center->y;
+    return 2;
 }
