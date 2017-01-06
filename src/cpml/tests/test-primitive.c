@@ -1087,45 +1087,34 @@ _cpml_method_put_intersections(void)
 static void
 _cpml_method_put_intersections_with_segment(void)
 {
-    CpmlSegment segment;
+    CpmlSegment segment1, segment2;
     CpmlPrimitive primitive;
     CpmlPair pair[4];
 
-    /* Set primitive to first segment, first primitive */
-    cpml_segment_from_cairo(&segment, (cairo_path_t *) adg_test_path());
-    cpml_primitive_from_segment(&primitive, &segment);
+    /* Initialize segment1 and segment2 */
+    cpml_segment_from_cairo(&segment1, (cairo_path_t *) adg_test_path());
+    cpml_segment_from_cairo(&segment2, (cairo_path_t *) adg_test_path());
+    cpml_segment_next(&segment2);
 
-    /* Set segment to the second segment */
-    cpml_segment_next(&segment);
-
-    /* primitive (1.1) intersects segment (2) in (1, 1) */
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
+    /* primitive 1 segment1 intersects segment2 in (1, 1) */
+    cpml_primitive_from_segment(&primitive, &segment1);
+    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment2, 4, pair), ==, 1);
     adg_assert_isapprox(pair[0].x, 1);
     adg_assert_isapprox(pair[0].y, 1);
 
+    /* primitive 2 segment1 does not intersect segment2 */
     cpml_primitive_next(&primitive);
+    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment2, 4, pair), ==, 0);
 
-    /* primitive (1.1) does not intersect segment (2) */
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 0);
+    /* primitive 1 segment2 does not intersect segment1 */
+    cpml_primitive_from_segment(&primitive, &segment2);
+    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment1, 4, pair), ==, 0);
 
-    /* Set primitive to second segment, first primitive */
-    cpml_primitive_from_segment(&primitive, &segment);
-
-    /* Set segment to the first segment */
-    cpml_segment_reset(&segment);
-
-    /* primitive (2.1) intersects segment (1) in extrapolation.
-     * TODO: change this behavior! They must not intersect. */
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
-    adg_assert_isapprox(pair[0].x, 2);
-    adg_assert_isapprox(pair[0].y, 0);
-
+    /* primitive 2 segment2 intersects segment1 in (1, 1) */
     cpml_primitive_next(&primitive);
-
-    /* primitive (2.2) wrongly intersects segment (1) */
-    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment, 4, pair), ==, 1);
-    adg_assert_isapprox(pair[0].x, 2);
-    adg_assert_isapprox(pair[0].y, 0);
+    g_assert_cmpuint(cpml_primitive_put_intersections_with_segment(&primitive, &segment1, 4, pair), ==, 1);
+    adg_assert_isapprox(pair[0].x, 1);
+    adg_assert_isapprox(pair[0].y, 1);
 }
 
 static void

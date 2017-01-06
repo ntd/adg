@@ -406,18 +406,14 @@ _cpml_method_put_intersections(void)
 
     cpml_segment_next(&segment2);
 
-    /* The first segment intersects the second segment in (1, 1).
-     * TODO: avoid extrapolated intersections! Check
-     * cpml_primitive_put_intersections */
-    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 3);
+    /* The first segment intersects the second segment in (1, 1). */
+    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 1);
     adg_assert_isapprox(pair[0].x, 1);
     adg_assert_isapprox(pair[0].y, 1);
-    adg_assert_isapprox(pair[1].x, 2);
-    adg_assert_isapprox(pair[1].y, 0);
 
     cpml_segment_next(&segment2);
 
-    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 1);
+    g_assert_cmpuint(cpml_segment_put_intersections(&segment1, &segment2, 10, pair), ==, 0);
 }
 
 static void

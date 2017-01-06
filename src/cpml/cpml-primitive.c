@@ -622,7 +622,12 @@ cpml_primitive_put_intersections(const CpmlPrimitive *primitive,
  * If the intersections are more than @n_dest, only the first
  * @n_dest pairs are stored.
  *
- * Returns: the number of intersections found
+ * Beware: this function returns only real intersections. This is in contrast
+ * to cpml_primitive_put_intersections() that, instead, returns all
+ * intersections. Check that function documentation to know what virtual and
+ * real intersections are.
+ *
+ * Returns: the number of real intersections found.
  *
  * Since: 1.0
  **/
@@ -632,19 +637,30 @@ cpml_primitive_put_intersections_with_segment(const CpmlPrimitive *primitive,
                                               size_t n_dest, CpmlPair *dest)
 {
     CpmlPrimitive portion;
-    size_t found;
+    CpmlPair partial[5];
+    const CpmlPair *pair;
+    size_t found, total;
 
     cpml_primitive_from_segment(&portion, (CpmlSegment *) segment);
-    found = 0;
+    total = 0;
 
-    while (found < n_dest) {
-        found += cpml_primitive_put_intersections(&portion, primitive,
-                                                  n_dest-found, dest+found);
+    while (total < n_dest) {
+        found = cpml_primitive_put_intersections(&portion, primitive, 5, partial);
+
+        /* Store only real intersections */
+        for (pair = partial; found; -- found, ++ pair) {
+            if (cpml_primitive_is_inside(&portion, pair) &&
+                cpml_primitive_is_inside(primitive, pair)) {
+                cpml_pair_copy(dest+total, pair);
+                ++ total;
+            }
+        }
+
         if (!cpml_primitive_next(&portion))
             break;
     }
 
-    return found;
+    return total;
 }
 
 /**
