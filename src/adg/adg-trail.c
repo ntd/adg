@@ -392,10 +392,6 @@ adg_trail_put_segment(AdgTrail *trail, guint n_segment, CpmlSegment *segment)
     if (found && segment != NULL)
         cpml_segment_copy(segment, &iterator);
 
-    if (!found)
-        g_warning(_("%s: segment %u is out of range for type '%s'"),
-                  G_STRLOC, n_segment, g_type_name(G_OBJECT_TYPE(trail)));
-
     return found;
 }
 
