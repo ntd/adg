@@ -350,7 +350,7 @@ adg_trail_cairo_path(AdgTrail *trail)
  * adg_trail_put_segment:
  * @trail: an #AdgTrail
  * @n_segment: the segment to retrieve, where 1 is the first segment
- * @segment: (allow-none): the destination #CpmlSegment
+ * @segment: (out): the destination #CpmlSegment
  *
  * Convenient function to get a segment from @trail. The segment is
  * got from the cairo path: check out adg_trail_cairo_path() for
