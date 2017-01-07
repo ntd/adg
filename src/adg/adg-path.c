@@ -962,6 +962,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     AdgModel *model;
     cairo_matrix_t matrix;
     CpmlSegment segment, *dup_segment;
+    gint n;
 
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(vector == NULL || vector->x != 0 || vector->y != 0);
@@ -990,24 +991,23 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
                           sin2angle, -cos2angle, 0, 0);
     }
 
-    if (!adg_trail_put_segment((AdgTrail *) path, 1, &segment))
-        return;
+    for (n = 1; adg_trail_put_segment((AdgTrail *) path, n, &segment); ++ n) {
+        /* No need to reverse an empty segment */
+        if (segment.num_data == 0 || segment.num_data == 0)
+            continue;
 
-    /* No need to reverse an empty segment */
-    if (segment.num_data == 0 || segment.num_data == 0)
-        return;
+        dup_segment = cpml_segment_deep_dup(&segment);
+        if (dup_segment == NULL)
+            return;
 
-    dup_segment = cpml_segment_deep_dup(&segment);
-    if (dup_segment == NULL)
-        return;
+        cpml_segment_reverse(dup_segment);
+        cpml_segment_transform(dup_segment, &matrix);
+        dup_segment->data[0].header.type = CPML_LINE;
 
-    cpml_segment_reverse(dup_segment);
-    cpml_segment_transform(dup_segment, &matrix);
-    dup_segment->data[0].header.type = CPML_LINE;
+        adg_path_append_segment(path, dup_segment);
 
-    adg_path_append_segment(path, dup_segment);
-
-    g_free(dup_segment);
+        g_free(dup_segment);
+    }
 
     _adg_dup_reverse_named_pairs(model, &matrix);
 }
