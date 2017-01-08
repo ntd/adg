@@ -85,7 +85,8 @@ static void             _adg_clear              (AdgModel       *model);
 static cairo_path_t *   _adg_get_cairo_path     (AdgTrail       *trail);
 static void             _adg_unset_source       (AdgEdges       *edges);
 static void             _adg_clear_cairo_path   (AdgEdges       *edges);
-static GSList *         _adg_get_vertices       (CpmlSegment    *segment,
+static GSList *         _adg_get_vertices       (GSList         *vertices,
+                                                 CpmlSegment    *segment,
                                                  gdouble         threshold);
 static GSList *         _adg_optimize_vertices  (GSList         *vertices);
 static GArray *         _adg_path_build         (const GSList   *vertices);
@@ -442,7 +443,7 @@ _adg_get_cairo_path(AdgTrail *trail)
     _adg_clear_cairo_path((AdgEdges *) trail);
 
     if (data->source != NULL) {
-        adg_trail_put_segment(data->source, 1, &segment);
+        gint n;
 
         /* The threshold is squared because the _adg_get_vertices()
          * function uses cpml_pair_squared_distance() against the
@@ -450,7 +451,10 @@ _adg_get_cairo_path(AdgTrail *trail)
         threshold = sin(data->critical_angle);
         threshold *= threshold * 2;
 
-        vertices = _adg_get_vertices(&segment, threshold);
+        vertices = NULL;
+        for (n = 1; adg_trail_put_segment(data->source, n, &segment); ++ n) {
+            vertices = _adg_get_vertices(vertices, &segment, threshold);
+        }
 
         /* Rotate all the vertices so the axis will always be on y=0:
          * this is mainly needed to not complicate the _adg_path_build()
@@ -500,6 +504,7 @@ _adg_clear_cairo_path(AdgEdges *edges)
 
 /**
  * _adg_get_vertices:
+ * @vertices: a #GSList
  * @segment: a #CpmlSegment
  * @threshold: a theshold value
  *
@@ -508,21 +513,17 @@ _adg_clear_cairo_path(AdgEdges *edges)
  * the squared distance between the two unit vectors, the one before
  * and the one after every corner.
  *
- * Returns: a #GSList of #CpmlPair: the list should be freed with
- *          g_slist_free() and all the pairs freed with g_free()
- *          when no longer needed
+ * Returns: the original #GSList with new vertices appended.
  *
  * Since: 1.0
  **/
 static GSList *
-_adg_get_vertices(CpmlSegment *segment, gdouble threshold)
+_adg_get_vertices(GSList *vertices, CpmlSegment *segment, gdouble threshold)
 {
-    GSList *vertices;
     CpmlPrimitive primitive;
     CpmlVector old, new;
     CpmlPair pair;
 
-    vertices = NULL;
     cpml_primitive_from_segment(&primitive, segment);
     old.x = old.y = 0;
 
@@ -540,14 +541,14 @@ _adg_get_vertices(CpmlSegment *segment, gdouble threshold)
             if (new.x == 0 ||
                 cpml_pair_squared_distance(&old, &new) > threshold) {
                 cpml_primitive_put_pair_at(&primitive, 0, &pair);
-                vertices = g_slist_prepend(vertices, cpml_pair_dup(&pair));
+                vertices = g_slist_append(vertices, cpml_pair_dup(&pair));
             }
         }
 
         cpml_primitive_put_vector_at(&primitive, 1, &old);
     } while (cpml_primitive_next(&primitive));
 
-    return g_slist_reverse(vertices);
+    return vertices;
 }
 
 /* Removes adjacent vertices lying on the same edge */
