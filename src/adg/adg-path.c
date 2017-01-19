@@ -960,6 +960,7 @@ void
 adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 {
     AdgModel *model;
+    AdgTrail *trail;
     cairo_matrix_t matrix;
     CpmlSegment segment, *dup_segment;
     gint n;
@@ -968,6 +969,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
     g_return_if_fail(vector == NULL || vector->x != 0 || vector->y != 0);
 
     model = (AdgModel *) path;
+    trail = (AdgTrail *) path;
 
     if (vector == NULL) {
         cairo_matrix_init_scale(&matrix, 1, -1);
@@ -991,7 +993,9 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
                           sin2angle, -cos2angle, 0, 0);
     }
 
-    for (n = 1; adg_trail_put_segment((AdgTrail *) path, n, &segment); ++ n) {
+    for (n = adg_trail_n_segments(trail); n > 0; --n) {
+        adg_trail_put_segment(trail, n, &segment);
+
         /* No need to reverse an empty segment */
         if (segment.num_data == 0 || segment.num_data == 0)
             continue;
