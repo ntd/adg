@@ -1006,7 +1006,7 @@ adg_path_reflect(AdgPath *path, const CpmlVector *vector)
 
         cpml_segment_reverse(dup_segment);
         cpml_segment_transform(dup_segment, &matrix);
-        dup_segment->data[0].header.type = CPML_LINE;
+        dup_segment->data[0].header.type = CPML_MOVE;
 
         adg_path_append_segment(path, dup_segment);
 

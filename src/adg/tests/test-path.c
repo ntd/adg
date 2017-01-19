@@ -774,18 +774,16 @@ _adg_method_reflect(void)
     g_assert_true(cpml_primitive_next(&primitive));     /* CPML_ARC */
     g_assert_true(cpml_primitive_next(&primitive));     /* CPML_CURVE */
 
-    /* This line is the automatic joint between the
-     * original primitives and the reversed ones */
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
-    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
-    adg_assert_isapprox((primitive.org)->point.x, 12);
-    adg_assert_isapprox((primitive.org)->point.y, 13);
-    adg_assert_isapprox(primitive.data[1].point.x, 12);
-    adg_assert_isapprox(primitive.data[1].point.y, -13);
+    /* There must not be an automatic join between segments */
+    g_assert_false(cpml_primitive_next(&primitive));
 
-    g_assert_true(cpml_primitive_next(&primitive));
+    /* Check if the reverted segment matches */
+    g_assert_true(cpml_segment_next(&segment));
+    cpml_primitive_from_segment(&primitive, &segment);
+
     g_assert_cmpint(primitive.data[0].header.type, ==, CPML_CURVE);
+    adg_assert_isapprox(primitive.org->point.x, 12);
+    adg_assert_isapprox(primitive.org->point.y, -13);
     g_assert_cmpint(primitive.data[0].header.length, ==, 4);
     adg_assert_isapprox(primitive.data[1].point.x, 10);
     adg_assert_isapprox(primitive.data[1].point.y, -11);
@@ -851,18 +849,16 @@ _adg_method_reflect(void)
     /* Skip the original primitives */
     cpml_primitive_from_segment(&primitive, &segment);  /* CPML_LINE */
 
-    /* This line is the automatic joint between the
-     * original primitives and the reversed ones */
-    g_assert_true(cpml_primitive_next(&primitive));
-    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
-    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
-    adg_assert_isapprox((primitive.org)->point.x, 20);
-    adg_assert_isapprox((primitive.org)->point.y, 30);
-    adg_assert_isapprox(primitive.data[1].point.x, -20);
-    adg_assert_isapprox(primitive.data[1].point.y, 30);
+    /* There must not be an automatic join between segments */
+    g_assert_false(cpml_primitive_next(&primitive));
 
-    g_assert_true(cpml_primitive_next(&primitive));
+    /* Check if the reverted segment matches */
+    g_assert_true(cpml_segment_next(&segment));
+    cpml_primitive_from_segment(&primitive, &segment);
+
     g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    adg_assert_isapprox(primitive.org->point.x, -20);
+    adg_assert_isapprox(primitive.org->point.y, 30);
     g_assert_cmpint(primitive.data[0].header.length, ==, 2);
     adg_assert_isapprox(primitive.data[1].point.x, 0);
     adg_assert_isapprox(primitive.data[1].point.y, 10);
