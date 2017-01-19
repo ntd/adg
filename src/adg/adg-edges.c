@@ -525,24 +525,23 @@ _adg_get_vertices(GSList *vertices, CpmlSegment *segment, gdouble threshold)
     CpmlPair pair;
 
     cpml_primitive_from_segment(&primitive, segment);
+    /* The first vector starts undefined, so it will always be
+     * included (the squared distance between any vector and an
+     * undefined vector will always be greater than threshold) */
     old.x = old.y = 0;
 
     do {
-        /* The first vector and the undefined ones
-         * must always be skipped */
-        if (old.x != 0 || old.y != 0) {
-            cpml_vector_set_length(&old, 1);
-            cpml_primitive_put_vector_at(&primitive, 0, &new);
-            cpml_vector_set_length(&new, 1);
+        cpml_vector_set_length(&old, 1);
+        cpml_primitive_put_vector_at(&primitive, 0, &new);
+        cpml_vector_set_length(&new, 1);
 
-            /* Vertical vectors are always added, as they represent
-             * a vertical side and could be filleted, thus skipping
-             * the edge detection */
-            if (new.x == 0 ||
-                cpml_pair_squared_distance(&old, &new) > threshold) {
-                cpml_primitive_put_pair_at(&primitive, 0, &pair);
-                vertices = g_slist_append(vertices, cpml_pair_dup(&pair));
-            }
+        /* Vertical vectors are always added, as they represent
+         * a vertical side and could be filleted, thus skipping
+         * the edge detection */
+        if (new.x == 0 ||
+            cpml_pair_squared_distance(&old, &new) > threshold) {
+            cpml_primitive_put_pair_at(&primitive, 0, &pair);
+            vertices = g_slist_append(vertices, cpml_pair_dup(&pair));
         }
 
         cpml_primitive_put_vector_at(&primitive, 1, &old);
