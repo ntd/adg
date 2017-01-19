@@ -127,6 +127,7 @@ void            adg_path_chamfer                (AdgPath        *path,
                                                  gdouble         delta2);
 void            adg_path_fillet                 (AdgPath        *path,
                                                  gdouble         radius);
+void            adg_path_join                   (AdgPath        *path);
 void            adg_path_reflect                (AdgPath        *path,
                                                  const CpmlVector *vector);
 void            adg_path_reflect_explicit       (AdgPath        *path,

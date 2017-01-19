@@ -734,6 +734,65 @@ _adg_method_fillet(void)
 }
 
 static void
+_adg_method_join(void)
+{
+    AdgPath *path;
+    cairo_path_t *cairo_path;
+    CpmlSegment segment;
+    CpmlPrimitive primitive;
+
+    path = adg_path_new();
+
+    /* Check sanity */
+    adg_path_join(NULL);
+
+    adg_path_move_to_explicit(path, 0, 1);
+    adg_path_move_to_explicit(path, 2, 3);
+    adg_path_line_to_explicit(path, 4, 5);
+    adg_path_move_to_explicit(path, 6, 7);
+    adg_path_line_to_explicit(path, 8, 9);
+
+    /* Not specifying the vector means reflect on y=0 */
+    adg_path_join(path);
+
+    /* Check that the result is the expected one */
+    cairo_path = adg_trail_cairo_path(ADG_TRAIL(path));
+    g_assert_nonnull(cairo_path);
+    g_assert_true(cpml_segment_from_cairo(&segment, cairo_path));
+
+    /* Check if the reverted segment matches */
+    cpml_primitive_from_segment(&primitive, &segment);
+
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.org->point.x, 2);
+    adg_assert_isapprox(primitive.org->point.y, 3);
+    adg_assert_isapprox(primitive.data[1].point.x, 4);
+    adg_assert_isapprox(primitive.data[1].point.y, 5);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 6);
+    adg_assert_isapprox(primitive.data[1].point.y, 7);
+
+    g_assert_true(cpml_primitive_next(&primitive));
+
+    g_assert_cmpint(primitive.data[0].header.type, ==, CPML_LINE);
+    g_assert_cmpint(primitive.data[0].header.length, ==, 2);
+    adg_assert_isapprox(primitive.data[1].point.x, 8);
+    adg_assert_isapprox(primitive.data[1].point.y, 9);
+
+    g_assert_false(cpml_primitive_next(&primitive));
+
+    /* Check there are no more segments */
+    g_assert_false(cpml_segment_next(&segment));
+
+    g_object_unref(path);
+}
+
+static void
 _adg_method_reflect(void)
 {
     AdgPath *path;
@@ -907,6 +966,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/arc", _adg_method_arc);
     g_test_add_func("/adg/path/method/chamfer", _adg_method_chamfer);
     g_test_add_func("/adg/path/method/fillet", _adg_method_fillet);
+    g_test_add_func("/adg/path/method/join", _adg_method_join);
     g_test_add_func("/adg/path/method/reflect", _adg_method_reflect);
 
     return g_test_run();

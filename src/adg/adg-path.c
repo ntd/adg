@@ -940,6 +940,41 @@ adg_path_fillet(AdgPath *path, gdouble radius)
 }
 
 /**
+ * adg_path_join:
+ * @path: an #AdgPath
+ *
+ * Joins all the segments of @path. After the call there will be only one
+ * single segment.
+ *
+ * This operation is roughly equivalent to converting embedded %CPML_MOVE
+ * primitives into %CPML_LINE ones.
+ *
+ * Since: 1.0
+ **/
+void
+adg_path_join(AdgPath *path)
+{
+    cairo_path_t *cairo_path;
+    cairo_path_data_t *data;
+    gboolean pen_down;
+
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    cairo_path = _adg_read_cairo_path(path);
+    pen_down = FALSE;
+    data = cairo_path->data;
+
+    while (data - cairo_path->data < cairo_path->num_data) {
+        if (data->header.type != CPML_MOVE) {
+            pen_down = TRUE;
+        } else if (pen_down) {
+            data->header.type = CPML_LINE;
+        }
+        data += data->header.length;
+    }
+}
+
+/**
  * adg_path_reflect:
  * @path:                 an #AdgPath
  * @vector: (allow-none): the slope of the axis
