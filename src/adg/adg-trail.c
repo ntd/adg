@@ -347,6 +347,37 @@ adg_trail_cairo_path(AdgTrail *trail)
 }
 
 /**
+ * adg_trail_n_segments:
+ * @trail: an #AdgTrail
+ *
+ * Convenient function that returns the number of non-empty segments defined
+ * by the cairo path embedded in @trail.
+ *
+ * Returns: the number of segments or 0 on errrors.
+ *
+ * Since: 1.0
+ **/
+guint
+adg_trail_n_segments(AdgTrail *trail)
+{
+    cairo_path_t *cairo_path;
+    CpmlSegment iterator;
+    guint n;
+
+    g_return_val_if_fail(ADG_IS_TRAIL(trail), 0);
+
+    cairo_path = adg_trail_cairo_path(trail);
+
+    n = 0;
+    if (! EMPTY_PATH(cairo_path) && cpml_segment_from_cairo(&iterator, cairo_path)) {
+        for (n = 1; cpml_segment_next(&iterator); ++n) {
+        }
+    }
+
+    return n;
+}
+
+/**
  * adg_trail_put_segment:
  * @trail: an #AdgTrail
  * @n_segment: the segment to retrieve, where 1 is the first segment

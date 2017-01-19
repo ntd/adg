@@ -76,6 +76,27 @@ _adg_property_max_angle(void)
 }
 
 static void
+_adg_method_n_segments(void)
+{
+    AdgPath *path;
+
+    path = adg_path_new();
+
+    /* Sanity checks */
+    g_assert_cmpuint(adg_trail_n_segments(NULL), ==, 0);
+
+    /* Check empty path */
+    g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 0);
+
+    adg_path_append_cairo_path(path, adg_test_path());
+
+    /* Count segments on test path */
+    g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 5);
+
+    g_object_unref(path);
+}
+
+static void
 _adg_method_put_segment(void)
 {
     AdgTrail *trail;
@@ -147,6 +168,7 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg/trail/property/max-angle", _adg_property_max_angle);
 
+    g_test_add_func("/adg/trail/method/n-segments", _adg_method_n_segments);
     g_test_add_func("/adg/trail/method/put-segment", _adg_method_put_segment);
 
     return g_test_run();
