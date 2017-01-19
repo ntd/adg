@@ -88,10 +88,15 @@ _adg_method_n_segments(void)
     /* Check empty path */
     g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 0);
 
+    /* Check single segment */
+    adg_path_move_to_explicit(path, 0, 1);
+    adg_path_line_to_explicit(path, 2, 3);
+    g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 1);
+
     adg_path_append_cairo_path(path, adg_test_path());
 
-    /* Count segments on test path */
-    g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 5);
+    /* Count segments on a more complex path */
+    g_assert_cmpuint(adg_trail_n_segments((AdgTrail *) path), ==, 5+1);
 
     g_object_unref(path);
 }
