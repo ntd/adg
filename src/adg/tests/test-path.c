@@ -475,6 +475,7 @@ _adg_method_line_to(void)
     adg_path_line_to_explicit(NULL, 3, 4);
 
     /* This should fail because there is no current point */
+    g_assert_null(adg_path_get_current_point(path));
     adg_path_line_to(path, &pair);
     g_assert_null(adg_path_last_primitive(path));
 
@@ -482,11 +483,13 @@ _adg_method_line_to(void)
     adg_path_line_to(path, &pair);
     g_assert_nonnull(adg_path_last_primitive(path));
     cp = adg_path_get_current_point(path);
+    g_assert_nonnull(cp);
     adg_assert_isapprox(cp->x, 1);
     adg_assert_isapprox(cp->y, 2);
 
     adg_path_line_to_explicit(path, 3, 4);
     cp = adg_path_get_current_point(path);
+    g_assert_nonnull(cp);
     adg_assert_isapprox(cp->x, 3);
     adg_assert_isapprox(cp->y, 4);
 
