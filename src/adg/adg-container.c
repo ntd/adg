@@ -507,7 +507,9 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_add_extents(AdgEntity *entity, CpmlExtents *extents)
 {
-    cpml_extents_add(extents, adg_entity_get_extents(entity));
+    if (! adg_entity_has_floating(entity)) {
+        cpml_extents_add(extents, adg_entity_get_extents(entity));
+    }
 }
 
 static void

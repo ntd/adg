@@ -27,6 +27,7 @@ G_BEGIN_DECLS
 typedef struct _AdgEntityPrivate AdgEntityPrivate;
 
 struct _AdgEntityPrivate {
+    gboolean             floating;
     AdgEntity           *parent;
     cairo_matrix_t       global_map;
     cairo_matrix_t       local_map;

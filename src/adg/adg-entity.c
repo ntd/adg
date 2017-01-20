@@ -104,6 +104,7 @@ G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED)
 
 enum {
     PROP_0,
+    PROP_FLOATING,
     PROP_PARENT,
     PROP_GLOBAL_MAP,
     PROP_LOCAL_MAP,
@@ -167,6 +168,12 @@ adg_entity_class_init(AdgEntityClass *klass)
     klass->invalidate = NULL;
     klass->arrange= NULL;
     klass->render = NULL;
+
+    param = g_param_spec_boolean("floating",
+                                 P_("Floating Entity"),
+                                 P_("Flag that includes (FALSE) or excludes (TRUE) this entity from the computation of the parent entity extents"),
+                                 FALSE, G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FLOATING, param);
 
     param = g_param_spec_object("parent",
                                 P_("Parent Entity"),
@@ -345,6 +352,7 @@ adg_entity_init(AdgEntity *entity)
     AdgEntityPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(entity,
                                                          ADG_TYPE_ENTITY,
                                                          AdgEntityPrivate);
+    data->floating = FALSE;
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
     cairo_matrix_init_identity(&data->local_map);
@@ -392,6 +400,9 @@ _adg_get_property(GObject *object, guint prop_id,
     data = entity->data;
 
     switch (prop_id) {
+    case PROP_FLOATING:
+        g_value_set_boolean(value, data->floating);
+        break;
     case PROP_PARENT:
         g_value_set_object(value, data->parent);
         break;
@@ -417,6 +428,9 @@ _adg_set_property(GObject *object, guint prop_id,
     AdgEntityPrivate *data = ((AdgEntity *) object)->data;
 
     switch (prop_id) {
+    case PROP_FLOATING:
+        data->floating = g_value_get_boolean(value);
+        break;
     case PROP_PARENT:
         _adg_set_parent((AdgEntity *) object,
                         (AdgEntity *) g_value_get_object(value));
@@ -471,6 +485,63 @@ adg_entity_destroy(AdgEntity *entity)
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
     g_signal_emit(entity, _adg_signals[DESTROY], 0);
+}
+
+/**
+ * adg_entity_switch_floating:
+ * @entity: an #AdgEntity
+ * @new_state: the new floating state
+ *
+ * Sets or resets the floating state of @entity.
+ *
+ * By default all entities are not floating. When an entity is "floating", its
+ * extents does not concur on increasing the extents of its own container. In
+ * other words, during the arrange phase #AdgContainer only considers the
+ * non-floating children to compute its extents. In particular, this affects
+ * how adg_canvas_autoscale() works: all floating entities are not taken into
+ * consideration.
+ *
+ * A typical example is the title block or any other annotation not dependent
+ * from the model for positioning.
+ *
+ * Since: 1.0
+ **/
+void
+adg_entity_switch_floating(AdgEntity  *entity, gboolean new_state)
+{
+    AdgEntityPrivate *data;
+
+    g_return_if_fail(ADG_IS_ENTITY(entity));
+    g_return_if_fail(adg_is_boolean_value(new_state));
+
+    data = entity->data;
+
+    data->floating = new_state;
+}
+
+/**
+ * adg_entity_has_floating:
+ * @entity: an #AdgEntity
+ *
+ * Checks if @entity has the floating state enabled.
+ *
+ * See adg_entity_switch_floating() for a description of what the floating
+ * state is.
+ *
+ * Returns: the current state of the floating flag.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_entity_has_floating(AdgEntity *entity)
+{
+    AdgEntityPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
+
+    data = entity->data;
+
+    return data->floating;
 }
 
 /**

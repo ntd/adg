@@ -67,6 +67,9 @@ void            adg_switch_extents              (gboolean         state);
 
 GType           adg_entity_get_type             (void);
 void            adg_entity_destroy              (AdgEntity       *entity);
+void            adg_entity_switch_floating      (AdgEntity       *entity,
+                                                 gboolean         new_state);
+gboolean        adg_entity_has_floating         (AdgEntity       *entity);
 AdgCanvas *     adg_entity_get_canvas           (AdgEntity       *entity);
 void            adg_entity_set_parent           (AdgEntity       *entity,
                                                  AdgEntity       *parent);

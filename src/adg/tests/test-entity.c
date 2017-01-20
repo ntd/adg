@@ -144,6 +144,42 @@ _adg_behavior_local(void)
 }
 
 static void
+_adg_property_floating(void)
+{
+    AdgEntity *entity;
+    gboolean invalid_boolean;
+    gboolean floating;
+
+    entity = ADG_ENTITY(adg_logo_new());
+    invalid_boolean = (gboolean) 1234;
+
+    /* Ensure the default state is false */
+    g_assert_false(adg_entity_has_floating(entity));
+
+    /* Using the public APIs */
+    adg_entity_switch_floating(entity, invalid_boolean);
+    g_assert_false(adg_entity_has_floating(entity));
+
+    adg_entity_switch_floating(entity, TRUE);
+    g_assert_true(adg_entity_has_floating(entity));
+
+    /* Using GObject property methods */
+    g_object_set(entity, "floating", FALSE, NULL);
+    g_object_get(entity, "floating", &floating, NULL);
+    g_assert_false(floating);
+
+    g_object_set(entity, "floating", invalid_boolean, NULL);
+    g_object_get(entity, "floating", &floating, NULL);
+    g_assert_false(floating);
+
+    g_object_set(entity, "floating", TRUE, NULL);
+    g_object_get(entity, "floating", &floating, NULL);
+    g_assert_true(floating);
+
+    adg_entity_destroy(entity);
+}
+
+static void
 _adg_property_parent(void)
 {
     AdgEntity *entity;
@@ -414,6 +450,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/entity/behavior/style", _adg_behavior_style);
     g_test_add_func("/adg/entity/behavior/local", _adg_behavior_local);
 
+    g_test_add_func("/adg/entity/property/floating", _adg_property_floating);
     g_test_add_func("/adg/entity/property/parent", _adg_property_parent);
     g_test_add_func("/adg/entity/property/global-map", _adg_property_global_map);
     g_test_add_func("/adg/entity/property/local-map", _adg_property_local_map);
