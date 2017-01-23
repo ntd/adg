@@ -173,6 +173,9 @@ adg_title_block_init(AdgTitleBlock *title_block)
 
     title_block->data = data;
 
+    /* By default the title block should be floating */
+    adg_entity_switch_floating((AdgEntity *) title_block, TRUE);
+
     /* Create the title block template*/
 
     /* First row */
