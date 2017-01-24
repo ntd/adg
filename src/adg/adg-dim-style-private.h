@@ -53,6 +53,7 @@ struct _AdgDimStylePrivate {
     gchar               *number_arguments;
     gchar               *number_tag;
     gint                 decimals;
+    gint                 rounding;
 };
 
 G_END_DECLS

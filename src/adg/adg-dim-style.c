@@ -54,6 +54,7 @@
 #include "adg-dim-style-private.h"
 
 #include <string.h>
+#include <math.h>
 
 
 #define VALID_FORMATS "aieDdMmSs"
@@ -80,7 +81,8 @@ enum {
     PROP_NUMBER_FORMAT,
     PROP_NUMBER_ARGUMENTS,
     PROP_NUMBER_TAG,
-    PROP_DECIMALS
+    PROP_DECIMALS,
+    PROP_ROUNDING,
 };
 
 
@@ -241,12 +243,20 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     g_object_class_install_property(gobject_class, PROP_NUMBER_TAG, param);
 
     param = g_param_spec_int("decimals",
-                             P_("decimals"),
-                             P_("Number of significant decimals to round the value to (-1 to disable)"),
+                             P_("Rounded Value Decimals"),
+                             P_("Number of significant decimals to use in the format string for rounded values (-1 to disable)"),
                              -1, G_MAXINT,
                              2,
                              G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_DECIMALS, param);
+
+    param = g_param_spec_int("rounding",
+                             P_("Raw Value Decimals"),
+                             P_("Number of significant decimals the raw value must be rounded to (-1 to disable)"),
+                             -1, G_MAXINT,
+                             6,
+                             G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_ROUNDING, param);
 }
 
 static void
@@ -281,6 +291,7 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->number_arguments = g_strdup("d");
     data->number_tag = g_strdup("<>");
     data->decimals = 2;
+    data->rounding = 6;
 
     dim_style->data = data;
 }
@@ -358,6 +369,9 @@ _adg_get_property(GObject *object, guint prop_id,
     case PROP_DECIMALS:
         g_value_set_int(value, data->decimals);
         break;
+    case PROP_ROUNDING:
+        g_value_set_int(value, data->rounding);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
         break;
@@ -434,6 +448,9 @@ _adg_set_property(GObject *object, guint prop_id,
         break;
     case PROP_DECIMALS:
         data->decimals = g_value_get_int(value);
+        break;
+    case PROP_ROUNDING:
+        data->rounding = g_value_get_int(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1242,6 +1259,44 @@ adg_dim_style_get_decimals(AdgDimStyle *dim_style)
 }
 
 /**
+ * adg_dim_style_set_rounding:
+ * @dim_style: an #AdgDimStyle object
+ * @rounding: number of significant decimals of the raw value
+ *
+ * Sets a new value in the #AdgDimStyle:rounding property.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_style_set_rounding(AdgDimStyle *dim_style, gint rounding)
+{
+    g_return_if_fail(ADG_IS_DIM_STYLE(dim_style));
+    g_object_set(dim_style, "rounding", rounding, NULL);
+}
+
+/**
+ * adg_dim_style_get_rounding:
+ * @dim_style: an #AdgDimStyle object
+ *
+ * Gets the number of decimals the raw value must be rounded to.
+ *
+ * Returns: the number of significant decimals or -2 on errors.
+ *
+ * Since: 1.0
+ **/
+gint
+adg_dim_style_get_rounding(AdgDimStyle *dim_style)
+{
+    AdgDimStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), -2);
+
+    data = dim_style->data;
+
+    return data->rounding;
+}
+
+/**
  * adg_dim_style_convert:
  * @dim_style: an #AdgDimStyle object
  * @value: (inout): the value to convert
@@ -1272,6 +1327,8 @@ adg_dim_style_get_decimals(AdgDimStyle *dim_style)
 gboolean
 adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
 {
+    AdgDimStylePrivate *data;
+
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), FALSE);
 
     /* Inout parameter not provided: just return FALSE */
@@ -1279,7 +1336,13 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
         return FALSE;
     }
 
-    g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), FALSE);
+    data = dim_style->data;
+
+    /* Round the raw value, if requested */
+    if (data->rounding > -1) {
+        gdouble coefficient = pow(10, data->rounding);
+        *value = round(*value * coefficient) / coefficient;
+    }
 
     switch (format) {
 
@@ -1300,7 +1363,7 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
         break;
 
     case 'd':                           /* Rounded value */
-        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        *value = adg_round(*value, data->decimals);
         break;
 
     case 'M':                           /* Truncated minutes */
@@ -1310,7 +1373,7 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
 
     case 'm':                           /* Rounded minutes */
         adg_dim_style_convert(dim_style, value, 'i');
-        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        *value = adg_round(*value, data->decimals);
         break;
 
     case 'S':                           /* Truncated seconds */
@@ -1320,7 +1383,7 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
 
     case 's':                           /* Rounded seconds */
         adg_dim_style_convert(dim_style, value, 'e');
-        *value = adg_round(*value, adg_dim_style_get_decimals(dim_style));
+        *value = adg_round(*value, data->decimals);
         break;
 
     default:

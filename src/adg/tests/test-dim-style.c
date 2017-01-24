@@ -688,6 +688,50 @@ _adg_property_decimals(void)
 }
 
 static void
+_adg_property_rounding(void)
+{
+    AdgDimStyle *dim_style;
+    gint rounding;
+
+    dim_style = adg_dim_style_new();
+
+    /* Check default value */
+    rounding = adg_dim_style_get_rounding(dim_style);
+    g_assert_cmpint(rounding, ==, 6);
+
+    /* Using the public APIs */
+    adg_dim_style_set_rounding(dim_style, 4);
+    rounding = adg_dim_style_get_rounding(dim_style);
+    g_assert_cmpint(rounding, ==, 4);
+
+    adg_dim_style_set_rounding(dim_style, -2);
+    rounding = adg_dim_style_get_rounding(dim_style);
+    g_assert_cmpint(rounding, ==, 4);
+
+    rounding = adg_dim_style_get_rounding(NULL);
+    g_assert_cmpint(rounding, ==, -2);
+
+    adg_dim_style_set_rounding(dim_style, -1);
+    rounding = adg_dim_style_get_rounding(dim_style);
+    g_assert_cmpint(rounding, ==, -1);
+
+    /* Using GObject property methods */
+    g_object_set(dim_style, "rounding", 2, NULL);
+    g_object_get(dim_style, "rounding", &rounding, NULL);
+    g_assert_cmpint(rounding, ==, 2);
+
+    g_object_set(dim_style, "rounding", -2, NULL);
+    g_object_get(dim_style, "rounding", &rounding, NULL);
+    g_assert_cmpint(rounding, ==, 2);
+
+    g_object_set(dim_style, "rounding", -1, NULL);
+    g_object_get(dim_style, "rounding", &rounding, NULL);
+    g_assert_cmpint(rounding, ==, -1);
+
+    g_object_unref(dim_style);
+}
+
+static void
 _adg_property_quote_shift(void)
 {
     AdgDimStyle *dim_style;
@@ -877,6 +921,22 @@ _adg_method_convert(void)
     g_assert_true(adg_dim_style_convert(dim_style, &value, 's'));
     adg_assert_isapprox(value, 41);
 
+    /* Checking that the round property rounds */
+    value = 59.999;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'D'));
+    adg_assert_isapprox(value, 59);
+
+    adg_dim_style_set_rounding(dim_style, 3);
+
+    value = 59.999;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'D'));
+    adg_assert_isapprox(value, 59);
+
+    adg_dim_style_set_rounding(dim_style, 2);
+
+    value = 59.999;
+    g_assert_true(adg_dim_style_convert(dim_style, &value, 'D'));
+    adg_assert_isapprox(value, 60);
     g_object_unref(dim_style);
 }
 
@@ -903,6 +963,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim-style/property/number-arguments", _adg_property_number_arguments);
     g_test_add_func("/adg/dim-style/property/number-tag", _adg_property_number_tag);
     g_test_add_func("/adg/dim-style/property/decimals", _adg_property_decimals);
+    g_test_add_func("/adg/dim-style/property/rounding", _adg_property_rounding);
     g_test_add_func("/adg/dim-style/property/quote-shift", _adg_property_quote_shift);
     g_test_add_func("/adg/dim-style/property/to-offset", _adg_property_to_offset);
     g_test_add_func("/adg/dim-style/property/value-dress", _adg_property_value_dress);
