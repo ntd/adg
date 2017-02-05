@@ -456,10 +456,10 @@ _adg_method_remove_primitive(void)
 
     /* Remove from non-empty path */
     adg_path_append_cairo_path(path, adg_test_path());
-    for (n = 1; adg_trail_cairo_path(ADG_TRAIL(path))->num_data > 0; ++n) {
+    for (n = 1; adg_trail_put_segment(ADG_TRAIL(path), 1, NULL); ++n) {
         adg_path_remove_primitive(path);
     }
-    g_assert_cmpint(n, ==, 24);
+    g_assert_cmpint(n, ==, 12);
 
     g_object_unref(path);
 }

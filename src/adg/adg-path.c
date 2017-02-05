@@ -590,32 +590,34 @@ adg_path_append_trail(AdgPath *path, AdgTrail *trail)
  * adg_path_remove_primitive:
  * @path: an #AdgPath
  *
- * Removes the last primitive from @path and returns it to the caller.
- * WARNING: any subsequent write operation on @path will likely convert the
- * returned primitive to garbage.
- *
- * Returns: (transfer none): a pointer to the primitive removed or
- *          <constant>NULL</constant> on empty path or on errors.
+ * Removes the last primitive from @path.
  *
  * Since: 1.0
  **/
 void
 adg_path_remove_primitive(AdgPath *path)
 {
-    const CpmlPrimitive *last;
+    const CpmlPrimitive *over;
+    guint len;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    last = adg_path_last_primitive(path);
+    AdgPathPrivate *data = path->data;
 
-    if (last) {
-        AdgPathPrivate *data = path->data;
-        GArray *array = data->cairo.array;
-        int primitive_len = ((cairo_path_data_t *) array->data)->header.length;
-        guint new_len = array->len - primitive_len;
-
-        data->cairo.array = g_array_set_size(array, new_len);
+    over = adg_path_over_primitive(path);
+    if (over) {
+        cairo_path_data_t *end = over->data + over->data->header.length;
+        len = end - (cairo_path_data_t *) (data->cairo.array)->data;
+    } else {
+        len = 0;
     }
+
+    /* Resize the data array */
+    g_array_set_size(data->cairo.array, len);
+
+    /* Rescan path to compute the new over and last primitives */
+    _adg_clear_parent((AdgModel *) path);
+    _adg_rescan(path);
 }
 
 /**
@@ -1253,7 +1255,7 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 
         /* Set the last primitive for subsequent binary operations */
         /* TODO: the assumption path_data - 1 is the last point is not true
-         * e.g. when there are embeeded data in primitives */
+         * e.g. when there are embedded data in primitives */
         data->last.org = data->cp_is_valid ? path_data - 1 : NULL;
         data->last.segment = NULL;
         data->last.data = path_data;
