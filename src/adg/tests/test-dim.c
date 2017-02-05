@@ -553,7 +553,7 @@ _adg_method_get_text(void)
 
     adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION_ANGULAR);
     text = adg_dim_get_text(dim, 7.891);
-    g_assert_cmpstr(text, ==, "7°53.5'");
+    g_assert_cmpstr(text, ==, "7°53'");
     g_free(text);
 
     adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION_RADIUS);
