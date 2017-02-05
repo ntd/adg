@@ -1204,8 +1204,10 @@ _adg_rescan(AdgPath *path)
     over->data = NULL;
 
     /* When no data is present, just bail out */
-    if (! cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path)))
+    if (! cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path))) {
+        data->cp_is_valid = FALSE;
         return;
+    }
 
     do {
         cpml_primitive_from_segment(&current, &segment);
@@ -1214,6 +1216,14 @@ _adg_rescan(AdgPath *path)
             cpml_primitive_copy(last, &current);
         } while (cpml_primitive_next(&current));
     } while (cpml_segment_next(&segment));
+
+    /* Save the last point in the current point */
+    data->cp_is_valid = last->data && last->data->header.type != CPML_CLOSE;
+    if (data->cp_is_valid) {
+        CpmlPrimitiveType type = last->data->header.type;
+        size_t n = type == CPML_MOVE ? 1 : cpml_primitive_type_get_n_points(type) - 1;
+        cpml_pair_from_cairo(&data->cp, &last->data[n]);
+    }
 }
 
 static void

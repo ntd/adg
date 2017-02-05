@@ -383,6 +383,18 @@ _adg_method_append_cairo_path(void)
 {
     AdgPath *path;
     const cairo_path_t *cairo_path;
+    cairo_path_data_t open_data[] = {
+        { .header = { CPML_MOVE, 2 }},
+        { .point = { 0, 1 }},
+        { .header = { CPML_LINE, 2 }},
+        { .point = { 2, 3 }}
+    };
+    cairo_path_t open_path = {
+        CAIRO_STATUS_SUCCESS,
+        open_data,
+        G_N_ELEMENTS(open_data)
+    };
+    const CpmlPair *cp;
 
     path = adg_path_new();
     cairo_path = adg_test_path();
@@ -393,11 +405,26 @@ _adg_method_append_cairo_path(void)
 
     /* Ensure the path is initially empty */
     g_assert_null(adg_path_last_primitive(path));
+    g_assert_false(adg_path_has_current_point(path));
 
     adg_path_append_cairo_path(path, cairo_path);
 
     /* Check the path is no more empty */
     g_assert_nonnull(adg_path_last_primitive(path));
+
+    /* The provided test path ends with a CPML_CLOSE primitive so the current
+     * point should be still unset */
+    g_assert_false(adg_path_has_current_point(path));
+
+    /* Append an open path to check if the current point is set */
+    adg_path_append_cairo_path(path, &open_path);
+
+    /* Check that the current point is properly set */
+    g_assert_true(adg_path_has_current_point(path));
+    cp = adg_path_get_current_point(path);
+    g_assert_nonnull(cp);
+    adg_assert_isapprox(cp->x, 2);
+    adg_assert_isapprox(cp->y, 3);
 
     g_object_unref(path);
 }
@@ -447,19 +474,18 @@ _adg_method_remove_primitive(void)
 
     /* Check sanity */
     adg_path_remove_primitive(NULL);
-
-    /* Remove from an empty path */
-    adg_path_remove_primitive(NULL);
-    g_assert_cmpint(adg_trail_cairo_path(ADG_TRAIL(path))->num_data, ==, 0);
     adg_path_remove_primitive(path);
-    g_assert_cmpint(adg_trail_cairo_path(ADG_TRAIL(path))->num_data, ==, 0);
 
-    /* Remove from non-empty path */
     adg_path_append_cairo_path(path, adg_test_path());
+
+    /* Remove all primitives from test path */
     for (n = 1; adg_trail_put_segment(ADG_TRAIL(path), 1, NULL); ++n) {
         adg_path_remove_primitive(path);
     }
     g_assert_cmpint(n, ==, 12);
+
+    /* Ensure the current point is no more set */
+    g_assert_false(adg_path_has_current_point(path));
 
     g_object_unref(path);
 }
