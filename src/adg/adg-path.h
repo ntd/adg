@@ -80,6 +80,7 @@ void            adg_path_append_cairo_path      (AdgPath        *path,
                                                                 *cairo_path);
 void            adg_path_append_trail           (AdgPath        *path,
                                                  AdgTrail       *trail);
+void            adg_path_remove_primitive       (AdgPath        *path);
 void            adg_path_move_to                (AdgPath        *path,
                                                  const CpmlPair *pair);
 void            adg_path_move_to_explicit       (AdgPath        *path,

@@ -587,6 +587,38 @@ adg_path_append_trail(AdgPath *path, AdgTrail *trail)
 }
 
 /**
+ * adg_path_remove_primitive:
+ * @path: an #AdgPath
+ *
+ * Removes the last primitive from @path and returns it to the caller.
+ * WARNING: any subsequent write operation on @path will likely convert the
+ * returned primitive to garbage.
+ *
+ * Returns: (transfer none): a pointer to the primitive removed or
+ *          <constant>NULL</constant> on empty path or on errors.
+ *
+ * Since: 1.0
+ **/
+void
+adg_path_remove_primitive(AdgPath *path)
+{
+    const CpmlPrimitive *last;
+
+    g_return_if_fail(ADG_IS_PATH(path));
+
+    last = adg_path_last_primitive(path);
+
+    if (last) {
+        AdgPathPrivate *data = path->data;
+        GArray *array = data->cairo.array;
+        int primitive_len = ((cairo_path_data_t *) array->data)->header.length;
+        guint new_len = array->len - primitive_len;
+
+        data->cairo.array = g_array_set_size(array, new_len);
+    }
+}
+
+/**
  * adg_path_move_to:
  * @path: an #AdgPath
  * @pair: the destination coordinates

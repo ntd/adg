@@ -438,6 +438,33 @@ _adg_method_append_trail(void)
 }
 
 static void
+_adg_method_remove_primitive(void)
+{
+    AdgPath *path;
+    int n;
+
+    path = adg_path_new();
+
+    /* Check sanity */
+    adg_path_remove_primitive(NULL);
+
+    /* Remove from an empty path */
+    adg_path_remove_primitive(NULL);
+    g_assert_cmpint(adg_trail_cairo_path(ADG_TRAIL(path))->num_data, ==, 0);
+    adg_path_remove_primitive(path);
+    g_assert_cmpint(adg_trail_cairo_path(ADG_TRAIL(path))->num_data, ==, 0);
+
+    /* Remove from non-empty path */
+    adg_path_append_cairo_path(path, adg_test_path());
+    for (n = 1; adg_trail_cairo_path(ADG_TRAIL(path))->num_data > 0; ++n) {
+        adg_path_remove_primitive(path);
+    }
+    g_assert_cmpint(n, ==, 24);
+
+    g_object_unref(path);
+}
+
+static void
 _adg_method_move_to(void)
 {
     AdgPath *path = adg_path_new();
@@ -962,6 +989,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/path/method/append-segment", _adg_method_append_segment);
     g_test_add_func("/adg/path/method/append-cairo-path", _adg_method_append_cairo_path);
     g_test_add_func("/adg/path/method/append-trail", _adg_method_append_trail);
+    g_test_add_func("/adg/path/method/remove-primitive", _adg_method_remove_primitive);
     g_test_add_func("/adg/path/method/move-to", _adg_method_move_to);
     g_test_add_func("/adg/path/method/line-to", _adg_method_line_to);
     g_test_add_func("/adg/path/method/arc-to", _adg_method_arc_to);
