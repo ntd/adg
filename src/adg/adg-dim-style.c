@@ -22,9 +22,47 @@
  * SECTION:adg-dim-style
  * @short_description: Dimension style related stuff
  *
- * Contains parameters on how to build dimensions such as the different font
- * styles (for value and limits), line style, offsets of the various
- * dimension components etc...
+ * Contains parameters on how to build dimensions such as the format of the
+ * label, the different font styles (for value and limits), line style,
+ * offsets of the various dimension components etc.
+ *
+ * A typical use case is to set the quote of angular dimensions in sexagesimal
+ * units. To do this, use something similar to the following code:
+ *
+ * |[
+ * AdgDimStyle *fallback, *dim_style;
+ * AdgMarker   *marker;
+ *
+ * fallback = ADG_DIM_STYLE(adg_dress_get_fallback(ADG_DRESS_DIMENSION);
+ * dim_style = adg_dim_style_new();
+ *
+ * // Use the same markers of the fallback style
+ * marker = adg_dim_style_marker1_new(fallback);
+ * adg_dim_style_set_marker1(dim_style, marker);
+ * g_object_unref(marker);
+ *
+ * marker = adg_dim_style_marker2_new(fallback);
+ * adg_dim_style_set_marker2(dim_style, marker);
+ * g_object_unref(marker);
+ *
+ * // Set the decimals and rounding properties
+ * adg_dim_style_set_decimals(dim_style, 0);
+ * adg_dim_style_set_rounding(dim_style, 3);
+ *
+ * // Set the arguments and the format of the quote number
+ * adg_dim_style_set_number_arguments(dim_style, "Dm");
+ * adg_dim_style_set_number_format(dim_style, "%g°(%g')");
+ * ]|
+ *
+ * After that you can apply the new style to the
+ * <constant>ADG_DRESS_DIMENSION</constant> of the entity you want to change,
+ * e.g.:
+ *
+ * |[
+ * adg_entity_set_style(my_angular_dimension,
+ *                      ADG_DRESS_DIMENSION,
+ *                      ADG_STYLE(dim_style));
+ * ]|
  *
  * Since: 1.0
  */
@@ -1058,6 +1096,7 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
  *
  * |[
  * AdgDim *dim;
+ * AdgDimStyle *dim_style;
  * gchar *text;
  *
  * dim = ADG_DIM(adg_ldim_new());
