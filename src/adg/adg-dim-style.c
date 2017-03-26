@@ -30,20 +30,7 @@
  * units. To do this, use something similar to the following code:
  *
  * |[
- * AdgDimStyle *fallback, *dim_style;
- * AdgMarker   *marker;
- *
- * fallback = ADG_DIM_STYLE(adg_dress_get_fallback(ADG_DRESS_DIMENSION);
- * dim_style = adg_dim_style_new();
- *
- * // Use the same markers of the fallback style
- * marker = adg_dim_style_marker1_new(fallback);
- * adg_dim_style_set_marker1(dim_style, marker);
- * g_object_unref(marker);
- *
- * marker = adg_dim_style_marker2_new(fallback);
- * adg_dim_style_set_marker2(dim_style, marker);
- * g_object_unref(marker);
+ * AdgDimStyle *dim_style = ADG_DIM_STYLE(adg_style_clone(adg_dress_get_fallback(adg_dress_dimension)));
  *
  * // Set the decimals and rounding properties
  * adg_dim_style_set_decimals(dim_style, 0);
@@ -133,6 +120,7 @@ static void             _adg_set_property       (GObject        *object,
                                                  guint           prop_id,
                                                  const GValue   *value,
                                                  GParamSpec     *pspec);
+static AdgStyle *       _adg_clone              (AdgStyle       *style);
 static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
                                                  cairo_t        *cr);
@@ -159,6 +147,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
+    style_class->clone = _adg_clone;
     style_class->apply = _adg_apply;
 
     param = g_param_spec_object("marker1",
@@ -1433,6 +1422,27 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
     return TRUE;
 }
 
+
+static AdgStyle *
+_adg_clone(AdgStyle *style)
+{
+    AdgDimStyle *dim_style;
+    AdgMarker *marker;
+
+    dim_style = (AdgDimStyle *) adg_object_clone(G_OBJECT(style));
+
+    /* Manually clone the marker because the underlying properties are
+     * writable only */
+    marker = adg_dim_style_marker1_new((AdgDimStyle *) style);
+    adg_dim_style_set_marker1(dim_style, marker);
+    g_object_unref(marker);
+
+    marker = adg_dim_style_marker2_new((AdgDimStyle *) style);
+    adg_dim_style_set_marker2(dim_style, marker);
+    g_object_unref(marker);
+
+    return (AdgStyle *) dim_style;
+}
 
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)

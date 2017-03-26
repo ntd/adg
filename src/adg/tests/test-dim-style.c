@@ -940,6 +940,40 @@ _adg_method_convert(void)
     g_object_unref(dim_style);
 }
 
+static void
+_adg_method_clone(void)
+{
+    AdgDimStyle *dim_style, *clone;
+    AdgMarker *org, *dup;
+
+    dim_style = adg_dim_style_new();
+    clone = ADG_DIM_STYLE(adg_style_clone(ADG_STYLE(dim_style)));
+
+
+    /* Check that first markers are complatible */
+    org = adg_dim_style_marker1_new(dim_style);
+    dup = adg_dim_style_marker1_new(clone);
+    g_assert_cmpuint(adg_marker_get_n_segment(org), ==, adg_marker_get_n_segment(org));
+    adg_assert_isapprox(adg_marker_get_pos(org), adg_marker_get_pos(dup));
+    adg_assert_isapprox(adg_marker_get_size(org), adg_marker_get_size(dup));
+    g_object_unref(org);
+    g_object_unref(dup);
+
+
+    /* Check that second markers are complatible */
+    org = adg_dim_style_marker2_new(dim_style);
+    dup = adg_dim_style_marker2_new(clone);
+    g_assert_cmpuint(adg_marker_get_n_segment(org), ==, adg_marker_get_n_segment(org));
+    adg_assert_isapprox(adg_marker_get_pos(org), adg_marker_get_pos(dup));
+    adg_assert_isapprox(adg_marker_get_size(org), adg_marker_get_size(dup));
+    g_object_unref(org);
+    g_object_unref(dup);
+
+
+    g_object_unref(dim_style);
+    g_object_unref(clone);
+}
+
 
 int
 main(int argc, char *argv[])
@@ -969,6 +1003,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/dim-style/property/value-dress", _adg_property_value_dress);
 
     g_test_add_func("/adg/dim-style/method/convert", _adg_method_convert);
+    g_test_add_func("/adg/dim-style/method/clone", _adg_method_clone);
 
     return g_test_run();
 }

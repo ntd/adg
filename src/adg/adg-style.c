@@ -82,6 +82,7 @@ adg_style_class_init(AdgStyleClass *klass)
 
     gobject_class->dispose = _adg_dispose;
 
+    klass->clone = (AdgStyle *(*)(AdgStyle *)) adg_object_clone;
     klass->invalidate = NULL;
     klass->apply = _adg_apply;
 
@@ -165,6 +166,31 @@ adg_style_invalidate(AdgStyle *style)
     g_return_if_fail(ADG_IS_STYLE(style));
 
     g_signal_emit(style, _adg_signals[INVALIDATE], 0);
+}
+
+/**
+ * adg_style_clone:
+ * @style: (transfer none): an #AdgStyle derived style
+ *
+ * Clones @style. Useful for customizing styles.
+ *
+ * Returns: (transfer full): a newly created style.
+ *
+ * Since: 1.0
+ **/
+AdgStyle *
+adg_style_clone(AdgStyle *style)
+{
+    AdgStyleClass *klass;
+
+    g_return_val_if_fail(ADG_IS_STYLE(style), NULL);
+
+    klass = ADG_STYLE_GET_CLASS(style);
+
+    if (klass->clone == NULL)
+        return NULL;
+
+    return klass->clone(style);
 }
 
 /**

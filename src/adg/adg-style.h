@@ -49,6 +49,9 @@ struct _AdgStyleClass {
     GObjectClass         parent_class;
 
     /*< public >*/
+    /* Virtual table */
+    AdgStyle *          (*clone)                (AdgStyle       *style);
+
     /* Signals */
     void                (*invalidate)           (AdgStyle       *style);
     void                (*apply)                (AdgStyle       *style,
@@ -59,6 +62,7 @@ struct _AdgStyleClass {
 
 GType                   adg_style_get_type      (void);
 
+AdgStyle *              adg_style_clone         (AdgStyle       *style);
 void                    adg_style_invalidate    (AdgStyle       *style);
 void                    adg_style_apply         (AdgStyle       *style,
                                                  AdgEntity      *entity,
