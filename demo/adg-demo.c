@@ -476,6 +476,11 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
     AdgLDim *ldim;
     AdgADim *adim;
     AdgRDim *rdim;
+    AdgStyle *style, *diameter;
+
+    style = adg_dress_get_fallback(ADG_DRESS_DIMENSION);
+    diameter = adg_style_clone(style);
+    adg_dim_style_set_number_format(ADG_DIM_STYLE(diameter), ADG_UTF8_DIAMETER "%g");
 
     /* NORTH */
     ldim = adg_ldim_new_full_from_model(model, "-D3I_X", "-D3F_X", "-D3F_Y",
@@ -510,14 +515,14 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "DGROOVEI_Y", "-DGROOVEI_Y",
                                         "-DGROOVEY_POS", ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_outside(ADG_DIM(ldim), ADG_THREE_STATE_OFF);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* SOUTH */
@@ -575,45 +580,45 @@ _adg_demo_canvas_add_dimensions(AdgCanvas *canvas, AdgModel *model)
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 4);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D4F", "-D4F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_level(ADG_DIM(ldim), 3);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D5F", "-D5F", "East",
                                         ADG_DIR_RIGHT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.1", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 2);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D7F", "-D7F", "East",
                                         ADG_DIR_RIGHT);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     /* WEST */
     ldim = adg_ldim_new_full_from_model(model, "DHOLE", "-DHOLE", "-West",
                                         ADG_DIR_LEFT);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D1I", "-D1I", "-West",
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.05", "+0.05");
     adg_dim_set_level(ADG_DIM(ldim), 2);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 
     ldim = adg_ldim_new_full_from_model(model, "D3I_Y", "-D3I_Y", "-West",
                                         ADG_DIR_LEFT);
     adg_dim_set_limits(ADG_DIM(ldim), "-0.25", NULL);
     adg_dim_set_level(ADG_DIM(ldim), 3);
-    adg_dim_set_dim_dress(ADG_DIM(ldim), ADG_DRESS_DIMENSION_DIAMETER);
+    adg_entity_set_style(ADG_ENTITY(ldim), ADG_DRESS_DIMENSION, diameter);
     adg_container_add(ADG_CONTAINER(canvas), ADG_ENTITY(ldim));
 }
 

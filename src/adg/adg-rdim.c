@@ -46,6 +46,7 @@
 #include "adg-marker.h"
 #include "adg-style.h"
 #include "adg-dim-style.h"
+#include "adg-dress.h"
 #include "adg-textual.h"
 #include "adg-toy-text.h"
 #include "adg-dim.h"
@@ -112,6 +113,8 @@ static void
 adg_rdim_init(AdgRDim *rdim)
 {
     AdgRDimPrivate *data;
+    AdgStyle *style;
+    AdgDimStyle *dim_style;
     cairo_path_data_t move_to, line_to;
 
     data = G_TYPE_INSTANCE_GET_PRIVATE(rdim, ADG_TYPE_RDIM, AdgRDimPrivate);
@@ -137,8 +140,15 @@ adg_rdim_init(AdgRDim *rdim)
 
     rdim->data = data;
 
-    /* Override the generic default dress with a more specific one */
-    adg_dim_set_dim_dress((AdgDim *) rdim, ADG_DRESS_DIMENSION_RADIUS);
+    /* Override the default dimension style to prefix the quote with an R */
+    style = adg_dress_get_fallback(ADG_DRESS_DIMENSION);
+    dim_style = (AdgDimStyle *) adg_style_clone(style);
+
+    adg_dim_style_set_number_format(dim_style, "R%g");
+
+    adg_entity_set_style((AdgEntity *) rdim,
+                         ADG_DRESS_DIMENSION,
+                         (AdgStyle *) dim_style);
 }
 
 static void

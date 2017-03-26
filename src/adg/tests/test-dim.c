@@ -551,21 +551,6 @@ _adg_method_get_text(void)
     g_assert_cmpstr(text, ==, "7.89");
     g_free(text);
 
-    adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION_ANGULAR);
-    text = adg_dim_get_text(dim, 7.891);
-    g_assert_cmpstr(text, ==, "7°53'");
-    g_free(text);
-
-    adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION_RADIUS);
-    text = adg_dim_get_text(dim, 7.891);
-    g_assert_cmpstr(text, ==, "R7.89");
-    g_free(text);
-
-    adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION_DIAMETER);
-    text = adg_dim_get_text(dim, 7.891);
-    g_assert_cmpstr(text, ==, ADG_UTF8_DIAMETER "7.89");
-    g_free(text);
-
     /* Restore the default dress */
     adg_dim_set_dim_dress(dim, ADG_DRESS_DIMENSION);
     text = adg_dim_get_text(dim, 3.456);

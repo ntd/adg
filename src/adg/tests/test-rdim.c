@@ -28,9 +28,9 @@ _adg_property_dim_dress(void)
     AdgRDim *rdim;
 
     /* Check that the dimension dress for AdgRDim instances is
-     * ADG_DRESS_DIMENSION_RADIUS by default */
+     * ADG_DRESS_DIMENSION by default */
     rdim = adg_rdim_new();
-    g_assert_cmpint(adg_dim_get_dim_dress(ADG_DIM(rdim)), ==, ADG_DRESS_DIMENSION_RADIUS);
+    g_assert_cmpint(adg_dim_get_dim_dress(ADG_DIM(rdim)), ==, ADG_DRESS_DIMENSION);
 
     adg_entity_destroy(ADG_ENTITY(rdim));
 }

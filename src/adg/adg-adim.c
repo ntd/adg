@@ -46,6 +46,7 @@
 #include "adg-marker.h"
 #include "adg-style.h"
 #include "adg-dim-style.h"
+#include "adg-dress.h"
 #include "adg-textual.h"
 #include "adg-toy-text.h"
 #include "adg-dim.h"
@@ -156,6 +157,8 @@ static void
 adg_adim_init(AdgADim *adim)
 {
     AdgADimPrivate *data;
+    AdgStyle *style;
+    AdgDimStyle *dim_style;
     cairo_path_data_t move_to, line_to, arc_to;
 
     data = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM, AdgADimPrivate);
@@ -189,8 +192,19 @@ adg_adim_init(AdgADim *adim)
 
     adim->data = data;
 
-    /* Override the generic default dress with a more specific one */
-    adg_dim_set_dim_dress((AdgDim *) adim, ADG_DRESS_DIMENSION_ANGULAR);
+    /* Override the default style of the dimension dress to express angles in
+     * sexagesimal units */
+    style = adg_dress_get_fallback(ADG_DRESS_DIMENSION);
+    dim_style = (AdgDimStyle *) adg_style_clone(style);
+
+    adg_dim_style_set_decimals(dim_style, 0);
+    adg_dim_style_set_rounding(dim_style, 3);
+    adg_dim_style_set_number_arguments(dim_style, "Dm");
+    adg_dim_style_set_number_format(dim_style, "%g°(%g')");
+
+    adg_entity_set_style((AdgEntity *) adim,
+                         ADG_DRESS_DIMENSION,
+                         (AdgStyle *) dim_style);
 }
 
 static void
