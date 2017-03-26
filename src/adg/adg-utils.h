@@ -54,6 +54,7 @@ gchar *                 adg_find_file           (const gchar    *file,
                                                  ...);
 gdouble                 adg_scale_factor        (const gchar    *scale);
 cairo_surface_type_t    adg_type_from_filename  (const gchar    *file);
+GObject *               adg_object_clone        (GObject        *src);
 void                    adg_nop                 (void);
 gdouble                 adg_round               (gdouble         value,
                                                  gint            decimals);

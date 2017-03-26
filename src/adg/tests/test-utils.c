@@ -123,6 +123,48 @@ _adg_method_type_from_filename(void)
 }
 
 static void
+_adg_method_clone(void)
+{
+    AdgCanvas *canvas, *clone;
+    AdgTitleBlock *title_block;
+
+    /* Sanity check */
+    g_assert_null(adg_object_clone(NULL));
+
+    canvas = adg_canvas_new();
+    title_block = adg_title_block_new();
+
+    adg_canvas_set_background_dress(canvas, ADG_DRESS_COLOR_ANNOTATION);
+    adg_canvas_set_title_block(canvas, title_block);
+    g_object_unref(title_block);
+    adg_canvas_set_margins(canvas, 1, 2, 3, 4);
+    adg_canvas_switch_frame(canvas, FALSE);
+
+    /* Check that the original canvas matches the expected states */
+    g_assert_cmpint(adg_canvas_get_background_dress(canvas), ==, ADG_DRESS_COLOR_ANNOTATION);
+    g_assert_true(adg_canvas_get_title_block(canvas) == title_block);
+    adg_assert_isapprox(adg_canvas_get_top_margin(canvas), 1);
+    adg_assert_isapprox(adg_canvas_get_right_margin(canvas), 2);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(canvas), 3);
+    adg_assert_isapprox(adg_canvas_get_left_margin(canvas), 4);
+    g_assert_false(adg_canvas_has_frame(canvas));
+
+    clone = ADG_CANVAS(adg_object_clone(G_OBJECT(canvas)));
+    g_object_unref(canvas);
+
+    /* Check the states on the clone are the same */
+    g_assert_cmpint(adg_canvas_get_background_dress(clone), ==, ADG_DRESS_COLOR_ANNOTATION);
+    g_assert_true(adg_canvas_get_title_block(clone) == title_block);
+    adg_assert_isapprox(adg_canvas_get_top_margin(clone), 1);
+    adg_assert_isapprox(adg_canvas_get_right_margin(clone), 2);
+    adg_assert_isapprox(adg_canvas_get_bottom_margin(clone), 3);
+    adg_assert_isapprox(adg_canvas_get_left_margin(clone), 4);
+    g_assert_false(adg_canvas_has_frame(clone));
+
+    g_object_unref(clone);
+}
+
+static void
 _adg_method_nop(void)
 {
     /* Just check for this function existence */
@@ -176,6 +218,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/method/find-file", _adg_method_find_file);
     g_test_add_func("/adg/method/scale-factor", _adg_method_scale_factor);
     g_test_add_func("/adg/method/type-from-filename", _adg_method_type_from_filename);
+    g_test_add_func("/adg/method/clone", _adg_method_clone);
     g_test_add_func("/adg/method/nop", _adg_method_nop);
     g_test_add_func("/adg/method/round", _adg_method_round);
     g_test_add_func("/adg/method/unescaped-strchr", _adg_method_unescaped_strchr);

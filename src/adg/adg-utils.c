@@ -461,6 +461,51 @@ adg_type_from_filename(const gchar *file)
 }
 
 /**
+ * adg_object_clone:
+ * @src: (transfer none): the source #GObject to clone
+ *
+ * A helper method that clones a generic #GObject instance. The implementation
+ * leverages the g_object_get_property() method on @src to get all the
+ * properties and uses g_object_newv() to create the destination clone.
+ *
+ * The code is not as sophisticated as one might expect, so apart from what
+ * described there is no other magic involved. It is internally used by ADG to
+ * clone #AdgStyle instances in adg_style_clone().
+ *
+ * Returns: (transfer full): the clone of @src.
+ *
+ * Since: 1.0
+ **/
+GObject *
+adg_object_clone(GObject *src)
+{
+    GObject     *dst;
+    GParameter  *params;
+    GParamSpec **specs;
+    guint        n, n_specs, n_params;
+
+    g_return_val_if_fail(G_IS_OBJECT(src), NULL);
+    specs = g_object_class_list_properties(G_OBJECT_GET_CLASS(src), &n_specs);
+    params = g_new0(GParameter, n_specs);
+    n_params = 0;
+
+    for (n = 0; n < n_specs; ++n) {
+        if ((specs[n]->flags & G_PARAM_READWRITE) == G_PARAM_READWRITE) {
+            params[n_params].name = g_intern_string(specs[n]->name);
+            g_value_init(&params[n_params].value, specs[n]->value_type);
+            g_object_get_property(src, specs[n]->name, &params[n_params].value);
+            ++ n_params;
+        }
+    }
+
+    dst = g_object_newv(G_TYPE_FROM_INSTANCE(src), n_params, params);
+    g_free(specs);
+    g_free(params);
+
+    return dst;
+}
+
+/**
  * adg_nop:
  *
  * A function that does nothing. It can be used as
