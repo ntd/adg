@@ -209,6 +209,7 @@ _adg_part_define_hole(DemoPart *part)
                                part->LHOLE + 2, part->D1 / 2,
                                part->LHOLE + 2, 0);
     adg_path_reflect(path, NULL);
+    adg_path_join(path);
     adg_path_close(path);
 
     /* No need to incomodate an AdgEdge model for two reasons:
@@ -358,6 +359,7 @@ _adg_part_define_body(DemoPart *part)
     adg_model_set_named_pair(model, "D7F", &pair);
 
     adg_path_reflect(path, NULL);
+    adg_path_join(path);
     adg_path_close(path);
 }
 
