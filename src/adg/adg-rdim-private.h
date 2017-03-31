@@ -43,7 +43,6 @@ struct _AdgRDimPrivate {
     AdgTrail             *trail;
     AdgMarker            *marker;
 
-    gboolean              geometry_arranged;
     gdouble               radius;
     gdouble               angle;
 

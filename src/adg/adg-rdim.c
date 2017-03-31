@@ -76,7 +76,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static gboolean         _adg_update_geometry    (AdgRDim        *rdim);
+static gboolean         _adg_compute_geometry   (AdgDim         *dim);
 static void             _adg_update_entities    (AdgRDim        *rdim);
 static void             _adg_clear_trail        (AdgRDim        *rdim);
 static void             _adg_dispose_trail      (AdgRDim        *rdim);
@@ -107,6 +107,7 @@ adg_rdim_class_init(AdgRDimClass *klass)
     entity_class->render = _adg_render;
 
     dim_class->default_value = _adg_default_value;
+    dim_class->compute_geometry = _adg_compute_geometry;
 }
 
 static void
@@ -125,7 +126,6 @@ adg_rdim_init(AdgRDim *rdim)
 
     data->trail = NULL;
     data->marker = NULL;
-    data->geometry_arranged = FALSE;
     data->radius = -1.;
     data->shift.base.x = data->shift.base.y = 0;
     cairo_matrix_init_identity(&data->quote.global_map);
@@ -315,15 +315,10 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_invalidate(AdgEntity *entity)
 {
-    AdgRDim *rdim;
-    AdgRDimPrivate *data;
-
-    rdim = (AdgRDim *) entity;
-    data = rdim->data;
+    AdgRDim *rdim = (AdgRDim *) entity;
 
     _adg_dispose_trail(rdim);
     _adg_dispose_marker(rdim);
-    data->geometry_arranged = FALSE;
     _adg_clear_trail(rdim);
 
     if (_ADG_OLD_ENTITY_CLASS->invalidate)
@@ -347,14 +342,15 @@ _adg_arrange(AdgEntity *entity)
     if (_ADG_OLD_ENTITY_CLASS->arrange != NULL)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
+    dim = (AdgDim *) entity;
+
+    if (! adg_dim_compute_geometry(dim))
+        return;
+
     rdim = (AdgRDim *) entity;
-    dim = (AdgDim *) rdim;
     data = rdim->data;
     quote = adg_dim_get_quote(dim);
     quote_entity = (AdgEntity *) quote;
-
-    if (! _adg_update_geometry(rdim))
-        return;
 
     _adg_update_entities(rdim);
 
@@ -453,22 +449,22 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgRDim *rdim;
     AdgDim *dim;
+    AdgRDim *rdim;
     AdgRDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgDress dress;
     const cairo_path_t *cairo_path;
 
-    rdim = (AdgRDim *) entity;
-    data = rdim->data;
+    dim = (AdgDim *) entity;
 
-    if (!data->geometry_arranged) {
+    if (! adg_dim_compute_geometry(dim)) {
         /* Entity not arranged, probably due to undefined pair found */
         return;
     }
 
-    dim = (AdgDim *) entity;
+    rdim = (AdgRDim *) entity;
+    data = rdim->data;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -492,54 +488,54 @@ _adg_default_value(AdgDim *dim)
     AdgRDim *rdim;
     AdgRDimPrivate *data;
 
+    if (! adg_dim_compute_geometry(dim))
+        return g_strdup("undef");
+
     rdim = (AdgRDim *) dim;
     data = rdim->data;
-
-    if (! _adg_update_geometry(rdim))
-        return g_strdup("undef");
 
     return adg_dim_get_text(dim, data->radius);
 }
 
 static gboolean
-_adg_update_geometry(AdgRDim *rdim)
+_adg_compute_geometry(AdgDim *dim)
 {
+    AdgRDim *rdim;
     AdgRDimPrivate *data;
-    AdgDim *dim;
     AdgDimStyle *dim_style;
     AdgPoint *ref1_point, *ref2_point, *pos_point;
     const CpmlPair *ref1, *ref2, *pos;
     gdouble spacing, level, pos_distance;
     CpmlVector vector;
 
-    data = rdim->data;
-
-    /* Check for cached results */
-    if (data->geometry_arranged)
-        return TRUE;
-
-    dim = (AdgDim *) rdim;
     ref1_point = adg_dim_get_ref1(dim);
-    ref2_point = adg_dim_get_ref2(dim);
-    pos_point =  adg_dim_get_pos(dim);
-
-    /* Check if the needed points are all properly defined */
-    if (! adg_point_update(ref1_point) ||
-        ! adg_point_update(ref2_point) ||
-        ! adg_point_update(pos_point))
-        return FALSE;
-
-    ref1 = (CpmlPair *) ref1_point;
-    ref2 = (CpmlPair *) ref2_point;
-    pos =  (CpmlPair *) pos_point;
-
-    /* Check if the given points have valid coordinates */
-    if (cpml_pair_equal(ref1, ref2)) {
-        g_warning(_("%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"),
-                  G_STRLOC, ref1->x, ref1->y);
+    if (! adg_point_update(ref1_point)) {
+        adg_dim_geometry_missing(dim, "ref1");
         return FALSE;
     }
 
+    ref2_point = adg_dim_get_ref2(dim);
+    if (! adg_point_update(ref2_point)) {
+        adg_dim_geometry_missing(dim, "ref2");
+        return FALSE;
+    }
+
+    pos_point =  adg_dim_get_pos(dim);
+    if (! adg_point_update(pos_point)) {
+        adg_dim_geometry_missing(dim, "pos");
+        return FALSE;
+    }
+
+    ref1 = (CpmlPair *) ref1_point;
+    ref2 = (CpmlPair *) ref2_point;
+    if (cpml_pair_equal(ref1, ref2)) {
+        adg_dim_geometry_coincident(dim, "ref1", "ref2", ref1);
+        return FALSE;
+    }
+
+    rdim = (AdgRDim *) dim;
+    data = rdim->data;
+    pos = (CpmlPair *) pos_point;
     dim_style = _ADG_GET_DIM_STYLE(rdim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
@@ -568,8 +564,6 @@ _adg_update_geometry(AdgRDim *rdim)
     /* shift.base */
     cpml_pair_copy(&data->shift.base, &vector);
     cpml_vector_set_length(&data->shift.base, spacing * level);
-
-    data->geometry_arranged = TRUE;
 
     return TRUE;
 }
