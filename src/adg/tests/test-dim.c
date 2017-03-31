@@ -23,6 +23,41 @@
 
 
 static void
+_adg_behavior_geometry(void)
+{
+    AdgDim *dim = ADG_DIM(adg_ldim_new());
+
+    /* Sanity checks */
+    g_assert_false(adg_dim_has_geometry(NULL));
+    adg_dim_switch_geometry(NULL, FALSE);
+    g_assert_null(adg_dim_get_geometry_notice(NULL));
+    adg_dim_set_geometry_notice(NULL, NULL);
+    g_assert_false(adg_dim_compute_geometry(NULL));
+
+    /* Check geometry computed flag */
+    g_assert_false(adg_dim_has_geometry(dim));
+    adg_dim_switch_geometry(dim, TRUE);
+    g_assert_true(adg_dim_has_geometry(dim));
+    adg_dim_switch_geometry(dim, FALSE);
+    g_assert_false(adg_dim_has_geometry(dim));
+
+    /* Check geometry notice */
+    g_assert_null(adg_dim_get_geometry_notice(dim));
+    adg_dim_set_geometry_notice(dim, "test");
+    g_assert_nonnull(adg_dim_get_geometry_notice(dim));
+    g_assert_cmpstr(adg_dim_get_geometry_notice(dim), ==, "test");
+    adg_dim_set_geometry_notice(dim, NULL);
+    g_assert_null(adg_dim_get_geometry_notice(dim));
+
+    /* Check that compute-geometry call is cached */
+    g_assert_false(adg_dim_compute_geometry(dim));
+    adg_dim_switch_geometry(dim, TRUE);
+    g_assert_true(adg_dim_compute_geometry(dim));
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
+static void
 _adg_property_detached(void)
 {
     AdgDim *dim;
@@ -677,6 +712,8 @@ main(int argc, char *argv[])
 
     adg_test_add_object_checks("/adg/dim/type/object", ADG_TYPE_DIM);
     adg_test_add_entity_checks("/adg/dim/type/entity", ADG_TYPE_DIM);
+
+    g_test_add_func("/adg/dim/behavior/geometry", _adg_behavior_geometry);
 
     g_test_add_func("/adg/dim/property/detached", _adg_property_detached);
     g_test_add_func("/adg/dim/property/dim-dress", _adg_property_dim_dress);

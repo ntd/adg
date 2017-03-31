@@ -51,6 +51,7 @@ struct _AdgDimClass {
 
     /*< public >*/
     /* Virtual table */
+    gboolean            (*compute_geometry)     (AdgDim         *dim);
     gdouble             (*quote_angle)          (gdouble         angle);
     gchar *             (*default_value)        (AdgDim         *dim);
 };
@@ -119,6 +120,13 @@ const gchar *   adg_dim_get_max                 (AdgDim         *dim);
 gdouble         adg_dim_quote_angle             (AdgDim         *dim,
                                                  gdouble         angle);
 AdgAlignment *  adg_dim_get_quote               (AdgDim         *dim);
+gboolean        adg_dim_has_geometry            (AdgDim         *dim);
+void            adg_dim_switch_geometry         (AdgDim         *dim,
+                                                 gboolean        computed);
+const gchar *   adg_dim_get_geometry_notice     (AdgDim         *dim);
+void            adg_dim_set_geometry_notice     (AdgDim         *dim,
+                                                 const gchar    *notice);
+gboolean        adg_dim_compute_geometry        (AdgDim         *dim);
 
 G_END_DECLS
 

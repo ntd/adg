@@ -50,6 +50,11 @@ struct _AdgDimPrivate {
         AdgTextual      *min;
         AdgTextual      *max;
     }                    quote;
+
+    struct {
+        gboolean         computed;
+        gchar           *notice;
+    }                    geometry;
 };
 
 struct _AdgDimReplaceData {

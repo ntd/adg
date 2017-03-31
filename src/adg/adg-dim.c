@@ -119,6 +119,7 @@ static void     _adg_global_changed     (AdgEntity          *entity);
 static void     _adg_local_changed      (AdgEntity          *entity);
 static void     _adg_invalidate         (AdgEntity          *entity);
 static void     _adg_arrange            (AdgEntity          *entity);
+static gboolean _adg_compute_geometry   (AdgDim             *dim);
 static gchar *  _adg_default_value      (AdgDim             *dim);
 static gdouble  _adg_quote_angle        (gdouble             angle);
 static gboolean _adg_set_outside        (AdgDim             *dim,
@@ -159,6 +160,7 @@ adg_dim_class_init(AdgDimClass *klass)
     entity_class->invalidate = _adg_invalidate;
     entity_class->arrange = _adg_arrange;
 
+    klass->compute_geometry = _adg_compute_geometry;
     klass->quote_angle = _adg_quote_angle;
     klass->default_value = _adg_default_value;
 
@@ -248,6 +250,8 @@ adg_dim_init(AdgDim *dim)
     data->detached = ADG_THREE_STATE_UNKNOWN;
     data->min = NULL;
     data->max = NULL;
+    data->geometry.computed = FALSE;
+    data->geometry.notice = NULL;
 
 #if 0
     /* This one is G_PARAM_CONSTRUCT, so set by property inizialization */
@@ -1225,6 +1229,152 @@ adg_dim_quote_angle(AdgDim *dim, gdouble angle)
     return klass->quote_angle(angle);
 }
 
+/**
+ * adg_dim_has_geometry:
+ * @dim: an #AdgDim
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Checks if the geometry data of @dim has already been computed.
+ *
+ * Returns: TRUE if the geometry has already been computed, FALSE otherwise.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_dim_has_geometry(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), FALSE);
+
+    data = dim->data;
+
+    return data->geometry.computed;
+}
+
+/**
+ * adg_dim_switch_geometry:
+ * @dim: an #AdgDim
+ * @computed: the new computed state
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Sets the computed state of @dim to @computed. This is an internal flag that
+ * keeps track of when the geometry data is up to date.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_switch_geometry(AdgDim *dim, gboolean computed)
+{
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    data = dim->data;
+
+    data->geometry.computed = computed;
+}
+
+/**
+ * adg_dim_get_geometry_notice:
+ * @dim: an #AdgDim
+ *
+ * Gets the geometry message of @dim, i.e. a notice that explains why a
+ * geometry computation has failed. This message can be used for debugging
+ * purposes, e.g. to know why it is not possible to draw a dimension.
+ *
+ * Returns: the geometry notice or NULL on no notification.
+ *
+ * Since: 1.0
+ **/
+const gchar *
+adg_dim_get_geometry_notice(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+
+    return data->geometry.notice;
+}
+
+/**
+ * adg_dim_set_geometry_notice:
+ * @dim: an #AdgDim
+ * @notice: new notice message
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Sets the geometry message of @dim to @notice whenever a geometry
+ * computation has failed. This message can later be read with
+ * adg_dim_get_geometry_notice(): see its documentation for further details.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_set_geometry_notice(AdgDim *dim, const gchar *notice)
+{
+    AdgDimPrivate *data;
+
+    g_return_if_fail(ADG_IS_DIM(dim));
+
+    data = dim->data;
+
+    if (data->geometry.notice)
+        g_free(data->geometry.notice);
+
+    data->geometry.notice = g_strdup(notice);
+}
+
+/**
+ * adg_dim_compute_geometry:
+ * @dim: an #AdgDim
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Updates the geometry data of @dim, i.e. a set of support data (coordinates,
+ * offsets, shifts) needed in the arrange() phase to build up the entity.
+ *
+ * The data is cached, so further calls just return TRUE. Use
+ * adg_entity_invalidate() to force a recomputation.
+ *
+ * Returns: TRUE if the geometry has already been computed, FALSE otherwise.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_dim_compute_geometry(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+    AdgDimClass *klass;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), FALSE);
+
+    data = dim->data;
+    if (data->geometry.computed)
+        return TRUE;
+
+    /* compute_geometry virtual method explicitely set to NULL means the
+     * entity does not have any geometry data, so just set computed to TRUE */
+    klass = ADG_DIM_GET_CLASS(dim);
+    if (klass->compute_geometry != NULL && ! klass->compute_geometry(dim))
+        return FALSE;
+
+    data->geometry.computed = TRUE;
+    return TRUE;
+}
+
 
 static void
 _adg_global_changed(AdgEntity *entity)
@@ -1267,6 +1417,12 @@ _adg_invalidate(AdgEntity *entity)
         adg_point_invalidate(data->ref2);
     if (data->pos)
         adg_point_invalidate(data->pos);
+
+    data->geometry.computed = FALSE;
+    if (data->geometry.notice != NULL) {
+        g_free(data->geometry.notice);
+        data->geometry.notice = NULL;
+    }
 
     if (_ADG_OLD_ENTITY_CLASS->invalidate)
         _ADG_OLD_ENTITY_CLASS->invalidate(entity);
@@ -1398,6 +1554,14 @@ _adg_arrange(AdgEntity *entity)
             adg_entity_arrange(max_entity);
         }
     }
+}
+
+static gboolean
+_adg_compute_geometry(AdgDim *dim)
+{
+    g_warning(_("AdgDim::compute_geometry not implemented for '%s'"),
+              g_type_name(G_TYPE_FROM_INSTANCE(dim)));
+    return FALSE;
 }
 
 static gchar *
