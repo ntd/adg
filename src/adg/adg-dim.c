@@ -1336,6 +1336,64 @@ adg_dim_set_geometry_notice(AdgDim *dim, const gchar *notice)
 }
 
 /**
+ * adg_dim_geometry_missing:
+ * @dim: an #AdgDim
+ * @subject: what is missing
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Wrapper around adg_dim_set_geometry_notice() that sets a default
+ * notification message when a reference is missing.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_geometry_missing(AdgDim *dim, const gchar *subject)
+{
+    gchar *notice;
+
+    g_return_if_fail(subject != NULL);
+
+    notice = g_strdup_printf(_("'%s' is missing"), subject);
+    adg_dim_set_geometry_notice(dim, notice);
+    g_free(notice);
+}
+
+/**
+ * adg_dim_geometry_coincidents:
+ * @dim: an #AdgDim
+ * @subject: what is missing
+ *
+ * <note><para>
+ * This function is only useful in new dimension implementations.
+ * </para></note>
+ *
+ * Wrapper around adg_dim_set_geometry_notice() that sets a default
+ * notification message when two references that must be different are
+ * coincidents.
+ *
+ * Since: 1.0
+ **/
+void
+adg_dim_geometry_coincident(AdgDim *dim,
+                            const gchar *first, const gchar *second,
+                            const CpmlPair *pos)
+{
+    gchar *notice;
+
+    g_return_if_fail(first != NULL);
+    g_return_if_fail(second != NULL);
+    g_return_if_fail(pos != NULL);
+
+    notice = g_strdup_printf(_("'%s' and '%s' cannot be coincident (%lf, %lf)"),
+                             first, second, pos->x, pos->y);
+    adg_dim_set_geometry_notice(dim, notice);
+    g_free(notice);
+}
+
+/**
  * adg_dim_compute_geometry:
  * @dim: an #AdgDim
  *

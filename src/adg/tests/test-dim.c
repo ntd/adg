@@ -20,6 +20,7 @@
 
 #include <adg-test.h>
 #include <adg.h>
+#include <string.h>
 
 
 static void
@@ -704,6 +705,68 @@ _adg_method_set_limits(void)
     adg_entity_destroy(ADG_ENTITY(dim));
 }
 
+static void
+_adg_method_geometry_missing(void)
+{
+    AdgDim *dim;
+    const gchar *notice;
+
+    dim = ADG_DIM(adg_ldim_new());
+
+    /* Sanity checks */
+    adg_dim_geometry_missing(NULL, "");
+    adg_dim_geometry_missing(dim, NULL);
+
+    /* Ensure there is no previous notice */
+    notice = adg_dim_get_geometry_notice(dim);
+    g_assert_null(notice);
+
+    /* The results cannot be compared for equality because the message is
+     * localization dependent, so just check if the provided argument
+     * is present in the result */
+    adg_dim_geometry_missing(dim, "test123");
+    notice = adg_dim_get_geometry_notice(dim);
+    g_assert_nonnull(notice);
+    g_assert_nonnull(strstr(notice, "test123"));
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
+static void
+_adg_method_geometry_coincident(void)
+{
+    AdgDim *dim;
+    const gchar *notice;
+    CpmlPair pair;
+
+    dim = ADG_DIM(adg_ldim_new());
+    pair.x = 1.2;
+    pair.y = 3.4;
+
+    /* Sanity checks */
+    adg_dim_geometry_coincident(NULL, "", "", &pair);
+    adg_dim_geometry_coincident(dim, NULL, "", &pair);
+    adg_dim_geometry_coincident(dim, "", NULL, &pair);
+    adg_dim_geometry_coincident(dim, "", "", NULL);
+
+    /* Ensure there is no previous notice */
+    notice = adg_dim_get_geometry_notice(dim);
+    g_assert_null(notice);
+
+    /* The results cannot be compared for equality because the message is
+     * localization dependent, so just check if the provided arguments
+     * are presents in the result */
+    adg_dim_geometry_coincident(dim, "first", "second", &pair);
+    notice = adg_dim_get_geometry_notice(dim);
+    g_assert_nonnull(notice);
+    g_assert_nonnull(strstr(notice, "first"));
+    g_assert_nonnull(strstr(notice, "second"));
+    g_assert_nonnull(strstr(notice, "1.2"));
+    g_assert_nonnull(strstr(notice, "3.4"));
+
+    adg_entity_destroy(ADG_ENTITY(dim));
+}
+
 
 int
 main(int argc, char *argv[])
@@ -728,6 +791,8 @@ main(int argc, char *argv[])
 
     g_test_add_func("/adg/dim/method/get_text", _adg_method_get_text);
     g_test_add_func("/adg/dim/method/set_limits", _adg_method_set_limits);
+    g_test_add_func("/adg/dim/method/geometry_missing", _adg_method_geometry_missing);
+    g_test_add_func("/adg/dim/method/geometry_coincident", _adg_method_geometry_coincident);
 
     return g_test_run();
 }

@@ -126,6 +126,12 @@ void            adg_dim_switch_geometry         (AdgDim         *dim,
 const gchar *   adg_dim_get_geometry_notice     (AdgDim         *dim);
 void            adg_dim_set_geometry_notice     (AdgDim         *dim,
                                                  const gchar    *notice);
+void            adg_dim_geometry_missing        (AdgDim         *dim,
+                                                 const gchar    *subject);
+void            adg_dim_geometry_coincident     (AdgDim         *dim,
+                                                 const gchar    *first,
+                                                 const gchar    *second,
+                                                 const CpmlPair *pos);
 gboolean        adg_dim_compute_geometry        (AdgDim         *dim);
 
 G_END_DECLS
