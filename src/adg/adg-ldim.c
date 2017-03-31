@@ -85,7 +85,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static gboolean         _adg_update_geometry    (AdgLDim        *ldim);
+static gboolean         _adg_compute_geometry   (AdgDim         *dim);
 static void             _adg_update_shift       (AdgLDim        *ldim);
 static void             _adg_update_entities    (AdgLDim        *ldim);
 static void             _adg_choose_flags       (AdgLDim        *ldim,
@@ -131,6 +131,7 @@ adg_ldim_class_init(AdgLDimClass *klass)
     entity_class->render = _adg_render;
 
     dim_class->default_value = _adg_default_value;
+    dim_class->compute_geometry = _adg_compute_geometry;
 
     param = g_param_spec_double("direction",
                                 P_("Direction"),
@@ -185,9 +186,6 @@ adg_ldim_init(AdgLDim *ldim)
     data->trail = NULL;
     data->marker1 = NULL;
     data->marker2 = NULL;
-
-    data->geometry.is_arranged = FALSE;
-    data->shift.is_arranged = FALSE;
 
     ldim->data = data;
 }
@@ -537,16 +535,10 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_invalidate(AdgEntity *entity)
 {
-    AdgLDim *ldim;
-    AdgLDimPrivate *data;
-
-    ldim = (AdgLDim *) entity;
-    data = ldim->data;
+    AdgLDim *ldim = (AdgLDim *) entity;
 
     _adg_dispose_trail(ldim);
     _adg_dispose_markers(ldim);
-    data->geometry.is_arranged = FALSE;
-    data->shift.is_arranged = FALSE;
     _adg_unset_trail(ldim);
 
     if (_ADG_OLD_ENTITY_CLASS->invalidate)
@@ -569,15 +561,14 @@ _adg_arrange(AdgEntity *entity)
     if (_ADG_OLD_ENTITY_CLASS->arrange)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
-    ldim = (AdgLDim *) entity;
-    if (! _adg_update_geometry(ldim))
+    dim = (AdgDim *) entity;
+    if (! adg_dim_compute_geometry(dim))
         return;
 
-    dim = (AdgDim *) ldim;
+    ldim = (AdgLDim *) entity;
     data = ldim->data;
     quote = adg_dim_get_quote(dim);
 
-    _adg_update_shift(ldim);
     _adg_update_entities(ldim);
 
     /* Check for cached result */
@@ -699,15 +690,12 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     AdgDress dress;
     const cairo_path_t *cairo_path;
 
+    dim = (AdgDim *) entity;
+    if (! adg_dim_compute_geometry(dim))
+        return;
+
     ldim = (AdgLDim *) entity;
     data = ldim->data;
-
-    if (!data->geometry.is_arranged) {
-        /* Entity not arranged, probably due to undefined pair found */
-        return;
-    }
-
-    dim = (AdgDim *) entity;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -734,10 +722,10 @@ _adg_default_value(AdgDim *dim)
     AdgLDimPrivate *data;
     gdouble value;
 
-    ldim = (AdgLDim *) dim;
-    if (! _adg_update_geometry(ldim))
+    if (! adg_dim_compute_geometry(dim))
         return g_strdup("undef");
 
+    ldim = (AdgLDim *) dim;
     data = ldim->data;
     value = data->geometry.distance;
 
@@ -745,42 +733,43 @@ _adg_default_value(AdgDim *dim)
 }
 
 static gboolean
-_adg_update_geometry(AdgLDim *ldim)
+_adg_compute_geometry(AdgDim *dim)
 {
+    AdgLDim *ldim;
     AdgLDimPrivate *data;
-    AdgDim *dim;
     AdgPoint *ref1_point, *ref2_point, *pos_point;
     const CpmlPair *ref1, *ref2, *pos;
     CpmlVector baseline, extension;
     gdouble d, k;
 
-    data = ldim->data;
-
-    /* Check for cached results */
-    if (data->geometry.is_arranged)
-        return TRUE;
-
-    dim = (AdgDim *) ldim;
     ref1_point = adg_dim_get_ref1(dim);
-    ref2_point = adg_dim_get_ref2(dim);
-    pos_point =  adg_dim_get_pos(dim);
-
-    /* Check if the needed points are all defined */
-    if (! adg_point_update(ref1_point) ||
-        ! adg_point_update(ref2_point) ||
-        ! adg_point_update(pos_point))
+    if (! adg_point_update(ref1_point)) {
+        adg_dim_geometry_missing(dim, "ref1");
         return FALSE;
+    }
+
+    ref2_point = adg_dim_get_ref2(dim);
+    if (! adg_point_update(ref2_point)) {
+        adg_dim_geometry_missing(dim, "ref2");
+        return FALSE;
+    }
+
+    pos_point =  adg_dim_get_pos(dim);
+    if (! adg_point_update(pos_point)) {
+        adg_dim_geometry_missing(dim, "pos");
+        return FALSE;
+    }
 
     ref1 = (CpmlPair *) ref1_point;
     ref2 = (CpmlPair *) ref2_point;
-    pos =  (CpmlPair *) pos_point;
-
-    /* Check if the given points have valid coordinates */
     if (cpml_pair_equal(ref1, ref2)) {
-        g_warning(_("%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"),
-                  G_STRLOC, ref1->x, ref1->y);
+        adg_dim_geometry_coincident(dim, "ref1", "ref2", ref1);
         return FALSE;
     }
+
+    pos = (CpmlPair *) pos_point;
+    ldim = (AdgLDim *) dim;
+    data = ldim->data;
 
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);
@@ -803,8 +792,7 @@ _adg_update_geometry(AdgLDim *ldim)
     data->geometry.distance = cpml_pair_distance(&data->geometry.base1,
                                                  &data->geometry.base2);
 
-    data->geometry.is_arranged = TRUE;
-
+    _adg_update_shift(ldim);
     return TRUE;
 }
 
@@ -838,8 +826,6 @@ _adg_update_shift(AdgLDim *ldim)
 
     cpml_vector_set_length(&vector, level * baseline_spacing);
     cpml_pair_copy(&data->shift.base, &vector);
-
-    data->shift.is_arranged = TRUE;
 }
 
 static void
