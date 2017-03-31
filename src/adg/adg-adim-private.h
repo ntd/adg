@@ -54,7 +54,6 @@ struct _AdgADimPrivate {
     AdgMarker            *marker1;
     AdgMarker            *marker2;
 
-    gboolean              geometry_arranged;
     gdouble               angle1, angle2;
 
     struct {

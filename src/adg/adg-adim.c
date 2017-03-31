@@ -87,7 +87,7 @@ static void             _adg_arrange            (AdgEntity      *entity);
 static void             _adg_render             (AdgEntity      *entity,
                                                  cairo_t        *cr);
 static gchar *          _adg_default_value      (AdgDim         *dim);
-static gboolean         _adg_update_geometry    (AdgADim        *adim);
+static gboolean         _adg_compute_geometry   (AdgDim         *dim);
 static void             _adg_update_entities    (AdgADim        *adim);
 static void             _adg_unset_trail        (AdgADim        *adim);
 static void             _adg_dispose_trail      (AdgADim        *adim);
@@ -125,6 +125,7 @@ adg_adim_class_init(AdgADimClass *klass)
     entity_class->render = _adg_render;
 
     dim_class->default_value = _adg_default_value;
+    dim_class->compute_geometry = _adg_compute_geometry;
 
     param = g_param_spec_boxed("org1",
                                P_("First Origin"),
@@ -187,8 +188,6 @@ adg_adim_init(AdgADim *adim)
     data->trail = NULL;
     data->marker1 = NULL;
     data->marker2 = NULL;
-
-    data->geometry_arranged = FALSE;
 
     adim->data = data;
 
@@ -793,7 +792,6 @@ _adg_invalidate(AdgEntity *entity)
 
     _adg_dispose_trail(adim);
     _adg_dispose_markers(adim);
-    data->geometry_arranged = FALSE;
     _adg_unset_trail(adim);
 
     if (data->org1)
@@ -808,8 +806,8 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgADim *adim;
     AdgDim *dim;
+    AdgADim *adim;
     AdgADimPrivate *data;
     AdgAlignment *quote;
     const cairo_matrix_t *global, *local;
@@ -821,12 +819,11 @@ _adg_arrange(AdgEntity *entity)
     if (_ADG_OLD_ENTITY_CLASS->arrange)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
 
-    adim = (AdgADim *) entity;
-
-    if (! _adg_update_geometry(adim))
+    dim = (AdgDim *) entity;
+    if (! adg_dim_compute_geometry(dim))
         return;
 
-    dim = (AdgDim *) adim;
+    adim = (AdgADim *) entity;
     data = adim->data;
     quote = adg_dim_get_quote(dim);
 
@@ -946,22 +943,21 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgADim *adim;
     AdgDim *dim;
+    AdgADim *adim;
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
     AdgDress dress;
     const cairo_path_t *cairo_path;
 
-    adim = (AdgADim *) entity;
-    data = adim->data;
-
-    if (!data->geometry_arranged) {
+    dim = (AdgDim *) entity;
+    if (! adg_dim_compute_geometry(dim)) {
         /* Entity not arranged, probably due to undefined pair found */
         return;
     }
 
-    dim = (AdgDim *) entity;
+    adim = (AdgADim *) entity;
+    data = adim->data;
     dim_style = _ADG_GET_DIM_STYLE(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -988,11 +984,11 @@ _adg_default_value(AdgDim *dim)
     AdgADimPrivate *data;
     gdouble angle;
 
-    adim = (AdgADim *) dim;
-    if (! _adg_update_geometry(adim)) {
+    if (! adg_dim_compute_geometry(dim)) {
         return g_strdup("undef");
     }
 
+    adim = (AdgADim *) dim;
     data = adim->data;
     angle = (data->angle2 - data->angle1) * 180 / G_PI;
 
@@ -1003,8 +999,9 @@ _adg_default_value(AdgDim *dim)
  * that can be cached: this is strictly related on how the arrange()
  * method works */
 static gboolean
-_adg_update_geometry(AdgADim *adim)
+_adg_compute_geometry(AdgDim *dim)
 {
+    AdgADim *adim;
     AdgADimPrivate *data;
     AdgDimStyle *dim_style;
     gdouble from_offset, to_offset;
@@ -1013,15 +1010,11 @@ _adg_update_geometry(AdgADim *adim)
     CpmlPair center;
     gdouble distance;
 
-    data = adim->data;
-
-    /* Check for cached results */
-    if (data->geometry_arranged)
-        return TRUE;
-
+    adim = (AdgADim *) dim;
     if (! _adg_get_info(adim, vector, &center, &distance))
         return FALSE;
 
+    data = adim->data;
     dim_style = _ADG_GET_DIM_STYLE(adim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
@@ -1073,8 +1066,6 @@ _adg_update_geometry(AdgADim *adim)
     cpml_vector_set_length(&vector[1], distance);
     data->point.base12.x = vector[1].x + center.x;
     data->point.base12.y = vector[1].y + center.y;
-
-    data->geometry_arranged = TRUE;
 
     return TRUE;
 }
@@ -1159,13 +1150,28 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     ref2_point = adg_dim_get_ref2(dim);
     pos_point  = adg_dim_get_pos(dim);
 
-    /* Check if the needed points are all properly defined */
-    if (! adg_point_update(ref1_point) ||
-        ! adg_point_update(ref2_point) ||
-        ! adg_point_update(pos_point)  ||
-        ! adg_point_update(data->org1) ||
-        ! adg_point_update(data->org2))
-    {
+    if (! adg_point_update(ref1_point)) {
+        adg_dim_geometry_missing(dim, "ref1");
+        return FALSE;
+    }
+
+    if (! adg_point_update(ref2_point)) {
+        adg_dim_geometry_missing(dim, "ref2");
+        return FALSE;
+    }
+
+    if (! adg_point_update(pos_point)) {
+        adg_dim_geometry_missing(dim, "pos");
+        return FALSE;
+    }
+
+    if (! adg_point_update(data->org1)) {
+        adg_dim_geometry_missing(dim, "org1");
+        return FALSE;
+    }
+
+    if (! adg_point_update(data->org2)) {
+        adg_dim_geometry_missing(dim, "org2");
         return FALSE;
     }
 
@@ -1177,14 +1183,12 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 
     /* Check if the given points have valid coordinates */
     if (cpml_pair_equal(ref1, org1)) {
-        g_warning(_("%s: ref1 and org1 cannot be coincidents (%lf, %lf)"),
-                  G_STRLOC, ref1->x, ref1->y);
+        adg_dim_geometry_coincident(dim, "ref1", "org1", ref1);
         return FALSE;
     }
 
     if (cpml_pair_equal(ref2, org2)) {
-        g_warning(_("%s: ref2 and org2 cannot be coincidents (%lf, %lf)"),
-                  G_STRLOC, ref2->x, ref2->y);
+        adg_dim_geometry_coincident(dim, "ref2", "org2", ref2);
         return FALSE;
     }
 
@@ -1195,9 +1199,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 
     factor = vector[0].x * vector[2].y - vector[0].y * vector[2].x;
     if (factor == 0) {
-        /* Parallel lines: hang with an error message */
-        g_warning(_("%s: trying to set an angular dimension on parallel lines"),
-                  G_STRLOC);
+        adg_dim_set_geometry_notice(dim, _("Trying to set an angular dimension on parallel lines"));
         return FALSE;
     }
 
