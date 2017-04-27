@@ -6,6 +6,42 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.9.1">
+<title>ADG 0.9.1</title>
+
+<para>Entities can now be "floating". When an entity is floating (the
+default is not), its extents does not concur on increasing the
+extents of its own container.</para>
+
+<para>A new path method (<code>adg_path_append_trail</code>) allows to append an
+AdgTrail to an AdgPath, also importing the named pairs.</para>
+
+<para>Styles can be cloned with a single API call (<code>adg_style_clone</code>).
+This greatly simplifies the way one can customize the styles.</para>
+
+<para>Custom dimension dresses introduced in 0.9.0 have been dropped to
+favor custom styles.</para>
+
+<para>Working directly on the primitives of an AdgPath has been improved:
+some new APIs have been added on this regard (<code>cpml_primitive_type</code>,
+<code>adg_trail_n_segments</code> and <code>adg_path_remove_primitive</code>).</para>
+
+<para>The reflect operation of AdgPath has been heavily tested and
+improved: now you can reflect a multisegment path without issues.</para>
+
+<para>Similarly, the AdgEdge entity has been tested and improved and now
+can be applied on multisegment paths.</para>
+
+<para>A new API (<code>adg_path_join</code>) allows to join all the segments inside
+the path into a single segment.</para>
+
+<para>AdgDim now has a "rounding" property.</para>
+
+<para>Some annotation bugs have been fixed, so the bindings of those APIs
+now work correctly (<code>adg_path_arc</code>, <code>cpml_primitive_dump</code>,
+<code>adg_path_append_cairo_path</code> and <code>adg_trail_put_segment</code>).</para>
+</simplesect>
+
 <simplesect id="NEWS.0.9.0">
 <title>ADG 0.9.0</title>
 
@@ -451,7 +487,7 @@ involved.</para>
 abstract class is now in place. Above this class, the new AdgPath
 model is derived, providing a full set of APIs to construct paths
 from scratch. Also, AdgPath gives full access the model throught
-CPML, allowing to modify and manipulate the path data.</para> 
+CPML, allowing to modify and manipulate the path data.</para>
 
 <para>The CPML library now natively supports arcs. Although cairo does
 not recognize arcs, a lot of work has been done to hide the
@@ -541,10 +577,10 @@ other than the default identity matrix.</para>
 
 <para>Reworked styles and implemented AdgContext, a clean and well defined
 approach to manage rendering customization.</para>
- 
+
 <para>Moved all the geometrical stuff in Cairo Path Manipulation Library
 (CPML), an internal library depending only on cairo.</para>
-  
+
 <para>Greatly improved documentation.</para>
 </simplesect>
 
@@ -553,7 +589,7 @@ approach to manage rendering customization.</para>
 
 <para>Strongly separated model and paper matrix concepts and updated their
 management using nested transformations.</para>
- 
+
 <para>Reworked the rendering process in a cleaner way by propagating the
 "render" signal and using internal entity states to let the application
 know what changed from the previous rendering.</para>
@@ -568,7 +604,7 @@ and used private structs instead of populating the instance structure.</para>
 
 <simplesect id="NEWS.0.2.0">
 <title>ADG 0.2.0</title>
- 
+
 <para>This is the first public release of the ADG library. It is in a early
 stage of developement, but the goal is quite ambitious!</para>
 </simplesect>
