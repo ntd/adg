@@ -9,14 +9,27 @@
 # (build/configure-win32 and build/configure-win64) by
 # properly cross-compiling the ADG project with
 # gobject-introspection enabled.
+#
+# It accepts an optional argument for specifying the target
+# architecture. Use "win32" (or omit the argument altogether)
+# for a 32 bit build, use "win64" for a 64 bit build.
 
-# If this script has a trailing win64 (e.g. build-win64), set
-# arch to x86_64-w64-mingw32, otherwise use i686-w64-mingw32
-if [ "$0" = "${0%win64}" ]; then
+case "$1" in
+
+"win32" | "")
     arch=i686-w64-mingw32
-else
+    ;;
+
+"win64")
     arch=x86_64-w64-mingw32
-fi
+    ;;
+
+*)
+    echo "Invalid argument"
+    echo "Usage: $0 [win32|win64]"
+    exit 1
+    ;;
+esac
 
 # This script only works in the root dir or in a VPATH build
 # one level under the root dir

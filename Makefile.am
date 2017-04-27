@@ -34,8 +34,7 @@ EXTRA_DIST=			COPYING \
 				THANKS \
 				adg.doap \
 				build/config.rpath \
-				build/build-win32 \
-				build/build-win64 \
+				build/build-win \
 				build/adg.nsi \
 				build/adg-header.bmp \
 				build/adg-welcome.bmp \
