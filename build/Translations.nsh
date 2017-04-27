@@ -40,7 +40,7 @@ LangString TITLE_SecHTML		${LANG_ENGLISH}		"HTML format"
 LangString TITLE_SecHTML		${LANG_ITALIAN}		"Formato HTML"
 
 LangString DESC_SecHTML			${LANG_ENGLISH}		"Install manuals in HTML format. This is the better supported option."
-LangString DESC_SecHTML			${LANG_ITALIAN}		"Installare i manuali in formato HTML. Questa è l'opzione supportata meglio."
+LangString DESC_SecHTML			${LANG_ITALIAN}		"Installare i manuali in formato HTML. Questa Ã¨ l'opzione supportata meglio."
 
 LangString TITLE_SecPDF			${LANG_ENGLISH}		"PDF documentation"
 LangString TITLE_SecPDF			${LANG_ITALIAN}		"Documentazione PDF"
