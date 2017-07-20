@@ -878,8 +878,8 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
     data = ldim->data;
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
     global = adg_entity_get_global_matrix((AdgEntity *) ldim);
-    local_factor = (local->xx + local->yy) / 2;
-    global_factor = (global->xx + global->yy) / 2;
+    local_factor = abs(local->xx + local->yy) / 2;
+    global_factor = abs(global->xx + global->yy) / 2;
     available_space = data->geometry.distance * local_factor * global_factor;
 
     markers_space = 0;
