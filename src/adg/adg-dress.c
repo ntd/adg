@@ -550,7 +550,7 @@ _adg_data_register_builtins(void)
                        ADG_TYPE_LINE_STYLE);
     adg_dash_destroy(dash);
 
-    dash = adg_dash_new_with_dashes(2, 6 MM, 6 MM);
+    dash = adg_dash_new_with_dashes(2, 6 MM, 3 MM);
     _adg_data_register(ADG_DRESS_LINE_HIDDEN,
                        g_object_new(ADG_TYPE_LINE_STYLE,
                                     "color-dress", ADG_DRESS_COLOR_HIDDEN,
