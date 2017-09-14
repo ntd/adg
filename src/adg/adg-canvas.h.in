@@ -131,6 +131,11 @@ void            adg_canvas_set_paddings         (AdgCanvas      *canvas,
                                                  gdouble         right,
                                                  gdouble         bottom,
                                                  gdouble         left);
+void            adg_canvas_get_paddings         (AdgCanvas      *canvas,
+                                                 gdouble        *top,
+                                                 gdouble        *right,
+                                                 gdouble        *bottom,
+                                                 gdouble        *left);
 gboolean        adg_canvas_export               (AdgCanvas      *canvas,
                                                  cairo_surface_type_t type,
                                                  const gchar    *file,

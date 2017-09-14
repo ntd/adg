@@ -1129,7 +1129,7 @@ adg_canvas_set_margins(AdgCanvas *canvas,
  * @bottom: (out) (nullable): where to store the bottom margin or NULL
  * @left: (out) (nullable):   where to store the left margin or NULL
  *
- * Convenient function to set all the margins at once.
+ * Convenient function to get all the margins at once.
  *
  * Since: 1.0
  **/
@@ -1400,6 +1400,43 @@ adg_canvas_set_paddings(AdgCanvas *canvas,
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_object_set(canvas, "top-padding", top, "right-padding", right,
                  "bottom-padding", bottom, "left-padding", left, NULL);
+}
+
+/**
+ * adg_canvas_get_paddings:
+ * @canvas: an #AdgCanvas
+ * @top: (out) (nullable):    where to store the top padding or NULL
+ * @right: (out) (nullable):  where to store the right padding or NULL
+ * @bottom: (out) (nullable): where to store the bottom padding or NULL
+ * @left: (out) (nullable):   where to store the left padding or NULL
+ *
+ * Convenient function to get all the paddings at once.
+ *
+ * Since: 1.0
+ **/
+void
+adg_canvas_get_paddings(AdgCanvas *canvas,
+                        gdouble *top, gdouble *right,
+                        gdouble *bottom, gdouble *left)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    data = canvas->data;
+
+    if (top != NULL) {
+        *top = data->top_padding;
+    }
+    if (right != NULL) {
+        *right = data->right_padding;
+    }
+    if (bottom != NULL) {
+        *bottom = data->bottom_padding;
+    }
+    if (left != NULL) {
+        *left = data->left_padding;
+    }
 }
 
 

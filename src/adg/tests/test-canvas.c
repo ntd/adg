@@ -761,6 +761,26 @@ _adg_method_get_margins(void)
 }
 
 static void
+_adg_method_get_paddings(void)
+{
+    AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
+    gdouble top, right, bottom, left;
+
+    adg_canvas_set_paddings(canvas, 1, 2, 3, 4);
+
+    /* Check that passing NULL does not crash the process */
+    adg_canvas_get_paddings(canvas, NULL, NULL, NULL, NULL);
+
+    adg_canvas_get_paddings(canvas, &top, &right, &bottom, &left);
+    adg_assert_isapprox(top, 1);
+    adg_assert_isapprox(right, 2);
+    adg_assert_isapprox(bottom, 3);
+    adg_assert_isapprox(left, 4);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
 _adg_method_apply_margins(void)
 {
     AdgCanvas *canvas = ADG_CANVAS(adg_canvas_new());
@@ -1019,6 +1039,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/canvas/method/get-margins", _adg_method_get_margins);
     g_test_add_func("/adg/canvas/method/apply-margins", _adg_method_apply_margins);
     g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
+    g_test_add_func("/adg/canvas/method/get-paddings", _adg_method_get_paddings);
     g_test_add_func("/adg/canvas/method/export", _adg_method_export);
 #if GTK3_ENABLED || GTK2_ENABLED
     g_test_add_func("/adg/canvas/method/set-paper", _adg_method_set_paper);
