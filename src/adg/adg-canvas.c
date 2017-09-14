@@ -711,7 +711,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
         _ADG_OLD_ENTITY_CLASS->arrange(entity);
         cpml_extents_copy(&extents, adg_entity_get_extents(entity));
 
-        /* Just in case @canvas is emtpy */
+        /* Just in case @canvas is empty */
         if (! extents.is_defined)
             return;
 
