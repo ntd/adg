@@ -134,12 +134,48 @@ adg_dash_new_with_dashes(gint num_dashes, ...)
     AdgDash *dash;
     va_list var_args;
 
-    dash = adg_dash_new();
-
     va_start(var_args, num_dashes);
-    adg_dash_append_dashes_valist(dash, num_dashes, var_args);
+    dash = adg_dash_new_with_dashes_valist(num_dashes, var_args);
     va_end(var_args);
 
+    return dash;
+}
+
+/**
+ * adg_dash_new_with_dashes_valist:
+ * @num_dashes: number of dashes to append
+ * @var_args: a va_list containing @num_dashes list of #gdouble
+ *
+ * Variadic version of adg_dash_new_with_dashes().
+ *
+ * Returns: (transfer full): the newly created dash pattern.
+ *
+ * Since: 1.0
+ **/
+AdgDash *
+adg_dash_new_with_dashes_valist(gint num_dashes, va_list var_args)
+{
+    AdgDash *dash = adg_dash_new();
+    adg_dash_append_dashes_valist(dash, num_dashes, var_args);
+    return dash;
+}
+
+/**
+ * adg_dash_new_with_dashes_array: (rename-to adg_dash_new_with_dashes)
+ * @num_dashes: number of dashes to append
+ * @dashes: (array length=num_dashes): array of @num_dashes gdoubles
+ *
+ * Array version of adg_dash_new_with_dashes().
+ *
+ * Returns: (transfer full): the newly created dash pattern.
+ *
+ * Since: 1.0
+ **/
+AdgDash *
+adg_dash_new_with_dashes_array(gint num_dashes, const gdouble *dashes)
+{
+    AdgDash *dash = adg_dash_new();
+    adg_dash_append_dashes_array(dash, num_dashes, dashes);
     return dash;
 }
 

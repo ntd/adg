@@ -41,6 +41,10 @@ AdgDash *       adg_dash_dup                    (const AdgDash  *src);
 AdgDash *       adg_dash_new                    (void);
 AdgDash *       adg_dash_new_with_dashes        (gint            num_dashes,
                                                  ...);
+AdgDash *       adg_dash_new_with_dashes_valist (gint            num_dashes,
+                                                 va_list         var_args);
+AdgDash *       adg_dash_new_with_dashes_array  (gint            num_dashes,
+                                                 const gdouble  *dashes);
 void            adg_dash_append_dash            (AdgDash        *dash,
                                                  gdouble         length);
 void            adg_dash_append_dashes          (AdgDash        *dash,
