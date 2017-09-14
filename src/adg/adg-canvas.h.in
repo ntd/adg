@@ -67,6 +67,9 @@ void            adg_canvas_set_size_explicit    (AdgCanvas      *canvas,
                                                  gdouble         x,
                                                  gdouble         y);
 const CpmlPair *adg_canvas_get_size             (AdgCanvas      *canvas);
+void            adg_canvas_set_factor           (AdgCanvas      *canvas,
+                                                 double          factor);
+double          adg_canvas_get_factor           (AdgCanvas      *canvas);
 void            adg_canvas_set_scales           (AdgCanvas      *canvas,
                                                  ...) G_GNUC_NULL_TERMINATED;
 void            adg_canvas_set_scales_valist    (AdgCanvas      *canvas,

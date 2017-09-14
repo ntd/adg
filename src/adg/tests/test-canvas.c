@@ -263,6 +263,46 @@ _adg_property_size(void)
 }
 
 static void
+_adg_property_factor(void)
+{
+    AdgCanvas *canvas;
+    gdouble factor;
+
+    canvas = ADG_CANVAS(adg_canvas_new());
+
+    /* Using the public APIs */
+    factor = adg_canvas_get_factor(canvas);
+    adg_assert_isapprox(factor, 1);
+
+    adg_canvas_set_factor(canvas, 123);
+    factor = adg_canvas_get_factor(canvas);
+    adg_assert_isapprox(factor, 123);
+
+    adg_canvas_set_factor(canvas, -123);
+    factor = adg_canvas_get_factor(canvas);
+    adg_assert_isapprox(factor, 123);
+
+    adg_canvas_set_factor(canvas, 0);
+    factor = adg_canvas_get_factor(canvas);
+    adg_assert_isapprox(factor, 123);
+
+    /* Using GObject property methods */
+    g_object_set(canvas, "factor", 321., NULL);
+    g_object_get(canvas, "factor", &factor, NULL);
+    adg_assert_isapprox(factor, 321);
+
+    g_object_set(canvas, "factor", -321., NULL);
+    g_object_get(canvas, "factor", &factor, NULL);
+    adg_assert_isapprox(factor, 321);
+
+    g_object_set(canvas, "factor", 0., NULL);
+    g_object_get(canvas, "factor", &factor, NULL);
+    adg_assert_isapprox(factor, 321);
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
+static void
 _adg_property_scales(void)
 {
     AdgCanvas *canvas;
@@ -942,6 +982,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/canvas/property/frame-dress", _adg_property_frame_dress);
     g_test_add_func("/adg/canvas/property/title-block", _adg_property_title_block);
     g_test_add_func("/adg/canvas/property/size", _adg_property_size);
+    g_test_add_func("/adg/canvas/property/factor", _adg_property_factor);
     g_test_add_func("/adg/canvas/property/scales", _adg_property_scales);
     g_test_add_func("/adg/canvas/property/top-margin", _adg_property_top_margin);
     g_test_add_func("/adg/canvas/property/right-margin", _adg_property_right_margin);

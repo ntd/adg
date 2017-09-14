@@ -42,6 +42,9 @@
  * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
  * only one dimension and let the other one be computed automatically.
  * This can be done by setting it to <constant>0</constant>.
+ * The ratio between the media unit (typically points on printing
+ * surfaces and pixels on video surfaces) can be changed with
+ * adg_canvas_set_factor().
  *
  * By default either width and height are autocalculated, i.e. they
  * are initially set to 0. In this case the arrange() phase is executed.
@@ -120,6 +123,7 @@ G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER)
 enum {
     PROP_0,
     PROP_SIZE,
+    PROP_FACTOR,
     PROP_SCALES,
     PROP_BACKGROUND_DRESS,
     PROP_FRAME_DRESS,
@@ -198,6 +202,13 @@ adg_canvas_class_init(AdgCanvasClass *klass)
                                CPML_TYPE_PAIR,
                                G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_SIZE, param);
+
+    param = g_param_spec_double("factor",
+                                P_("Factor"),
+                                P_("Global space units per point (1 point == 1/72 inch)"),
+                                0, G_MAXDOUBLE, 1,
+                                G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_FACTOR, param);
 
     param = g_param_spec_boxed("scales",
                                P_("Valid Scales"),
@@ -305,6 +316,7 @@ adg_canvas_init(AdgCanvas *canvas)
 
     data->size.x = 0;
     data->size.y = 0;
+    data->factor = 1;
     data->scales = g_strdupv((gchar **) scales);
     data->background_dress = ADG_DRESS_COLOR_BACKGROUND;
     data->frame_dress = ADG_DRESS_LINE_FRAME;
@@ -355,6 +367,9 @@ _adg_get_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_SIZE:
         g_value_set_boxed(value, &data->size);
+        break;
+    case PROP_FACTOR:
+        g_value_set_double(value, data->factor);
         break;
     case PROP_SCALES:
         g_value_set_boxed(value, data->scales);
@@ -408,6 +423,7 @@ _adg_set_property(GObject *object, guint prop_id,
     AdgCanvas *canvas;
     AdgCanvasPrivate *data;
     AdgTitleBlock *title_block;
+    gdouble factor;
 
     canvas = (AdgCanvas *) object;
     data = canvas->data;
@@ -415,6 +431,11 @@ _adg_set_property(GObject *object, guint prop_id,
     switch (prop_id) {
     case PROP_SIZE:
         cpml_pair_copy(&data->size, g_value_get_boxed(value));
+        break;
+    case PROP_FACTOR:
+        factor = g_value_get_double(value);
+        g_return_if_fail(factor > 0);
+        data->factor = factor;
         break;
     case PROP_SCALES:
         g_strfreev(data->scales);
@@ -557,6 +578,62 @@ adg_canvas_get_size(AdgCanvas *canvas)
 
     data = canvas->data;
     return &data->size;
+}
+
+/**
+ * adg_canvas_set_factor:
+ * @canvas: an #AdgCanvas
+ * @factor: the new factor: must be greater than 0
+ *
+ * The ADG library is intentionally unit agnostic, i.e. the global space is
+ * represented in whatever unit you want. There are a couple of cairo APIs
+ * that explicitely requires points though, most notably
+ * cairo_pdf_surface_set_size() and cairo_ps_surface_set_size().
+ *
+ * On PDF and postscript surfaces, the AdgCanvas:factor property will be the
+ * number typography points per global space units:
+ * https://en.wikipedia.org/wiki/Point_(typography)
+ *
+ * For other surfaces, the factor will be used to scale the final surface to
+ * the specific number of pixels.
+ *
+ * As an example, if you are working in millimeters you will set a factor of
+ * 2.83465 on PDF and postscript surfaces (1 mm = 2.83465 points) so the
+ * drawing will show the correct scale on paper. For X11 and PNG surfaces you
+ * will set it depending on the resolution you want to get, e.g. if the
+ * drawing is 100x200 mm and you want a 1000x2000 image, just set it to 10.
+ *
+ * Since: 1.0
+ **/
+void
+adg_canvas_set_factor(AdgCanvas *canvas, double factor)
+{
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+    g_return_if_fail(factor > 0);
+
+    g_object_set(canvas, "factor", factor, NULL);
+}
+
+/**
+ * adg_canvas_get_factor:
+ * @canvas: an #AdgCanvas
+ *
+ * Gets the current factor of @canvas. See adg_canvas_set_factor() to learn
+ * what a factor is in this context.
+ *
+ * Returns: the canvas factor or 0 on error.
+ *
+ * Since: 1.0
+ **/
+double
+adg_canvas_get_factor(AdgCanvas *canvas)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
+
+    data = canvas->data;
+    return data->factor;
 }
 
 /**
@@ -1487,7 +1564,7 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
 {
     AdgEntity *entity;
     const CpmlExtents *extents;
-    gdouble top, bottom, left, right, width, height;
+    gdouble top, bottom, left, right, width, height, factor;
     cairo_surface_t *surface;
     cairo_t *cr;
     cairo_status_t status;
@@ -1501,13 +1578,13 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
     adg_entity_arrange(entity);
     extents = adg_entity_get_extents(entity);
 
-    top = adg_canvas_get_top_margin(canvas);
-    bottom = adg_canvas_get_bottom_margin(canvas);
-    left = adg_canvas_get_left_margin(canvas);
-    right = adg_canvas_get_right_margin(canvas);
-    width = extents->size.x + left + right;
-    height = extents->size.y + top + bottom;
-    surface = NULL;
+    factor = adg_canvas_get_factor(canvas);
+    top    = factor * adg_canvas_get_top_margin(canvas);
+    bottom = factor * adg_canvas_get_bottom_margin(canvas);
+    left   = factor * adg_canvas_get_left_margin(canvas);
+    right  = factor * adg_canvas_get_right_margin(canvas);
+    width  = factor * extents->size.x + left + right;
+    height = factor * extents->size.y + top + bottom;
 
     switch (type) {
 #ifdef CAIRO_HAS_PNG_FUNCTIONS
@@ -1531,6 +1608,7 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
         break;
 #endif
     default:
+        surface = NULL;
         break;
     }
 
@@ -1542,6 +1620,7 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
     }
 
     cairo_surface_set_device_offset(surface, left, top);
+    cairo_surface_set_device_scale(surface, factor, factor);
     cr = cairo_create(surface);
     cairo_surface_destroy(surface);
 

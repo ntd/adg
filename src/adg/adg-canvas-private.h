@@ -28,6 +28,7 @@ typedef struct _AdgCanvasPrivate AdgCanvasPrivate;
 
 struct _AdgCanvasPrivate {
     CpmlPair       size;
+    gdouble        factor;
     gchar        **scales;
     AdgDress       background_dress;
     AdgDress       frame_dress;

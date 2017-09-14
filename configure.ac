@@ -10,7 +10,7 @@ m4_define([cpml_lt_version],[4:0:0])
 
 m4_define([gtkdoc_prereq],    [1.12]  )dnl Support introspection annotations
 m4_define([gobject_prereq],   [2.14.0])dnl Required by GRegex
-m4_define([cairo_prereq],     [1.7.4] )dnl Required by cairo_scaled_font_text_to_glyphs()
+m4_define([cairo_prereq],     [1.14.0])dnl Required by cairo_surface_set_device_scale()
 m4_define([gtk2_prereq],      [2.18.0])dnl Required by gtk_widget_get_allocation()
 m4_define([gtk3_prereq],      [3.0.0] )dnl First stable release
 m4_define([pangocairo_prereq],[1.10.0])dnl Cairo support in Pango
