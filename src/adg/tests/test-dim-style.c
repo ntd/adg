@@ -236,39 +236,36 @@ static void
 _adg_property_limits_spacing(void)
 {
     AdgDimStyle *dim_style;
-    gdouble valid_limits_spacing_1, valid_limits_spacing_2, invalid_limits_spacing;
     gdouble limits_spacing;
 
     dim_style = adg_dim_style_new();
-    valid_limits_spacing_1 = 0;
-    valid_limits_spacing_2 = 999;
-    invalid_limits_spacing = -1;
 
     /* Using the public APIs */
-    adg_dim_style_set_limits_spacing(dim_style, valid_limits_spacing_1);
+    adg_dim_style_set_limits_spacing(dim_style, 999.);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, 999.);
 
-    adg_dim_style_set_limits_spacing(dim_style, invalid_limits_spacing);
+    /* Negative spacing is allowed */
+    adg_dim_style_set_limits_spacing(dim_style, -1.);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, -1.);
 
-    adg_dim_style_set_limits_spacing(dim_style, valid_limits_spacing_2);
+    adg_dim_style_set_limits_spacing(dim_style, 0.);
     limits_spacing = adg_dim_style_get_limits_spacing(dim_style);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_2);
+    adg_assert_isapprox(limits_spacing, 0.);
 
     /* Using GObject property methods */
-    g_object_set(dim_style, "limits-spacing", valid_limits_spacing_1, NULL);
+    g_object_set(dim_style, "limits-spacing", 999., NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, 999.);
 
-    g_object_set(dim_style, "limits-spacing", invalid_limits_spacing, NULL);
+    g_object_set(dim_style, "limits-spacing", -1., NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_1);
+    adg_assert_isapprox(limits_spacing, -1.);
 
-    g_object_set(dim_style, "limits-spacing", valid_limits_spacing_2, NULL);
+    g_object_set(dim_style, "limits-spacing", 0., NULL);
     g_object_get(dim_style, "limits-spacing", &limits_spacing, NULL);
-    adg_assert_isapprox(limits_spacing, valid_limits_spacing_2);
+    adg_assert_isapprox(limits_spacing, 0.);
 
     g_object_unref(dim_style);
 }

@@ -230,7 +230,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
     param = g_param_spec_double("limits-spacing",
                                 P_("Limits Spacing"),
                                 P_("Distance between limits/tolerances"),
-                                0, G_MAXDOUBLE, 2,
+                                -G_MAXDOUBLE, G_MAXDOUBLE, 2,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_LIMITS_SPACING, param);
 
