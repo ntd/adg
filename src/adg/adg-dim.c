@@ -1596,8 +1596,8 @@ _adg_arrange(AdgEntity *entity)
             adg_entity_arrange(min_entity);
             size = adg_entity_get_extents(min_entity)->size;
 
-            org_min.y += spacing / 2;
-            org_max.y = org_min.y - size.y - spacing / 2;
+            org_min.y += (size.y + spacing) / 2;
+            org_max.y = org_min.y - size.y - spacing;
         }
 
         if (min_entity != NULL) {
