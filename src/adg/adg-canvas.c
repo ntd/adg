@@ -1122,6 +1122,43 @@ adg_canvas_set_margins(AdgCanvas *canvas,
 }
 
 /**
+ * adg_canvas_get_margins:
+ * @canvas: an #AdgCanvas
+ * @top: (out) (nullable):    where to store the top margin or NULL
+ * @right: (out) (nullable):  where to store the right margin or NULL
+ * @bottom: (out) (nullable): where to store the bottom margin or NULL
+ * @left: (out) (nullable):   where to store the left margin or NULL
+ *
+ * Convenient function to set all the margins at once.
+ *
+ * Since: 1.0
+ **/
+void
+adg_canvas_get_margins(AdgCanvas *canvas,
+                       gdouble *top, gdouble *right,
+                       gdouble *bottom, gdouble *left)
+{
+    AdgCanvasPrivate *data;
+
+    g_return_if_fail(ADG_IS_CANVAS(canvas));
+
+    data = canvas->data;
+
+    if (top != NULL) {
+        *top = data->top_margin;
+    }
+    if (right != NULL) {
+        *right = data->right_margin;
+    }
+    if (bottom != NULL) {
+        *bottom = data->bottom_margin;
+    }
+    if (left != NULL) {
+        *left = data->left_margin;
+    }
+}
+
+/**
  * adg_canvas_apply_margins:
  * @canvas:  an #AdgCanvas
  * @extents: where apply the margins
