@@ -484,7 +484,8 @@ _adg_get_cairo_path(AdgTrail *trail)
 static void
 _adg_unset_source(AdgEdges *edges)
 {
-    g_object_set(edges, "source", NULL, NULL);
+    AdgEdgesPrivate *data = edges->data;
+    data->source = NULL;
 }
 
 static void
