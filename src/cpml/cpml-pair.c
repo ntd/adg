@@ -194,7 +194,7 @@ cpml_pair_squared_distance(const CpmlPair *from, const CpmlPair *to)
  * The algorithm used is adapted from:
  * "Replacing Square Roots by Pythagorean Sums"
  * by Clave Moler and Donald Morrison (1983)
- * IBM Journal of Research and Development 27 (6): 577–581
+ * IBM Journal of Research and Development 27 (6): 577-581
  * http://www.research.ibm.com/journal/rd/276/ibmrd2706P.pdf
  *
  * Returns: the distance
