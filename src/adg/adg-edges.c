@@ -57,8 +57,9 @@
 #include "adg-edges-private.h"
 
 
-#define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_edges_parent_class)
-#define _ADG_OLD_MODEL_CLASS   ((AdgModelClass *) adg_edges_parent_class)
+#define _ADG_OLD_OBJECT_CLASS   ((GObjectClass *) adg_edges_parent_class)
+#define _ADG_OLD_MODEL_CLASS    ((AdgModelClass *) adg_edges_parent_class)
+#define DEFAULT_CRITICAL_ANGLE  (G_PI / 180)
 
 
 G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL)
@@ -134,7 +135,7 @@ adg_edges_class_init(AdgEdgesClass *klass)
     param = g_param_spec_double("critical-angle",
                                 P_("Critical Angle"),
                                 P_("The angle that defines which corner generates an edge (if the corner angle is greater than this critical angle) and which edge is ignored"),
-                                0, G_PI, G_PI / 45,
+                                0, G_PI, DEFAULT_CRITICAL_ANGLE,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_CRITICAL_ANGLE, param);
 }
@@ -146,7 +147,7 @@ adg_edges_init(AdgEdges *edges)
                                                         AdgEdgesPrivate);
 
     data->source = NULL;
-    data->critical_angle = G_PI / 45;
+    data->critical_angle = DEFAULT_CRITICAL_ANGLE;
     data->axis_angle = 0;
 
     data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
