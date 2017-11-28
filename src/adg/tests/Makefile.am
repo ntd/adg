@@ -97,7 +97,7 @@ TEST_PROGS+=			test-dash$(EXEEXT)
 test_dash_SOURCES=		test-dash.c
 
 TEST_PROGS+=			test-style$(EXEEXT)
-test_color_style_SOURCES=	test-style.c
+test_style_SOURCES=		test-style.c
 
 TEST_PROGS+=			test-color-style$(EXEEXT)
 test_color_style_SOURCES=	test-color-style.c
