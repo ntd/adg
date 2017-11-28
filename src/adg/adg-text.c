@@ -305,14 +305,14 @@ _adg_arrange(AdgEntity *entity)
         cairo_font_options_t *options;
         PangoContext *context;
 
-        /* Keep around a font_map object. The rationale is here:
+        /* Keep around the font_map object. The rationale is:
          * https://bugzilla.gnome.org/show_bug.cgi?id=143542
          *
-         * Basically, PangoFontMap is an heavy object and
-         * creating/destroying it is not the right way.
+         * Basically, PangoFontMap is a heavy object and
+         * creating/destroying it is not the right thing to do.
          *
          * In reality, the blocking issue for me was the following
-         * line make the adg-demo program crash on MinGW32:
+         * line makes the adg-demo program crash on MinGW32:
          * g_object_unref(font_map);
          */
         if (font_map == NULL)
