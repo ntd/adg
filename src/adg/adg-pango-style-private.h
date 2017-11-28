@@ -27,7 +27,8 @@ G_BEGIN_DECLS
 typedef struct _AdgPangoStylePrivate AdgPangoStylePrivate;
 
 struct _AdgPangoStylePrivate {
-    PangoFontDescription        *font_description;
+    PangoFontDescription   *font_description;
+    gint                    spacing;
 };
 
 G_END_DECLS

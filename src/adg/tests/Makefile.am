@@ -130,9 +130,13 @@ TEST_PROGS+=			test-canvas$(EXEEXT)
 test_canvas_SOURCES=		test-canvas.c
 
 if HAVE_PANGO
+AM_CFLAGS+=			$(PANGO_CFLAGS)
+
+TEST_PROGS+=			test-pango-style$(EXEEXT)
+test_pango_style_SOURCES=	test-pango-style.c
+
 TEST_PROGS+=			test-text$(EXEEXT)
 test_text_SOURCES=		test-text.c
-AM_CFLAGS+=			$(PANGO_CFLAGS)
 endif
 
 if HAVE_GTK

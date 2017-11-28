@@ -333,6 +333,7 @@ _adg_arrange(AdgEntity *entity)
         data->layout = pango_layout_new(context);
         g_object_unref(context);
 
+        pango_layout_set_spacing(data->layout, adg_pango_style_get_spacing(pango_style));
         pango_layout_set_text(data->layout, data->text, -1);
         pango_layout_set_font_description(data->layout, font_description);
     }

@@ -56,6 +56,9 @@ GType           adg_pango_style_get_type        (void);
 AdgPangoStyle * adg_pango_style_new             (void);
 PangoFontDescription *
                 adg_pango_style_get_description (AdgPangoStyle  *pango_style);
+gint            adg_pango_style_get_spacing     (AdgPangoStyle  *pango_style);
+void            adg_pango_style_set_spacing     (AdgPangoStyle  *pango_style,
+                                                 gint            spacing);
 
 
 G_END_DECLS

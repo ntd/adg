@@ -53,7 +53,20 @@
 
 G_DEFINE_TYPE(AdgPangoStyle, adg_pango_style, ADG_TYPE_FONT_STYLE)
 
+enum {
+    PROP_0,
+    PROP_SPACING
+};
 
+
+static void             _adg_get_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 GValue         *value,
+                                                 GParamSpec     *pspec);
+static void             _adg_set_property       (GObject        *object,
+                                                 guint           prop_id,
+                                                 const GValue   *value,
+                                                 GParamSpec     *pspec);
 static void             _adg_invalidate         (AdgStyle       *style);
 static void             _adg_apply              (AdgStyle       *style,
                                                  AdgEntity      *entity,
@@ -63,14 +76,27 @@ static void             _adg_apply              (AdgStyle       *style,
 static void
 adg_pango_style_class_init(AdgPangoStyleClass *klass)
 {
+    GObjectClass *gobject_class;
     AdgStyleClass *style_class;
+    GParamSpec *param;
 
+    gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
 
     g_type_class_add_private(klass, sizeof(AdgPangoStylePrivate));
 
+    gobject_class->get_property = _adg_get_property;
+    gobject_class->set_property = _adg_set_property;
+
     style_class->invalidate = _adg_invalidate;
     style_class->apply = _adg_apply;
+
+    param = g_param_spec_int("spacing",
+                             P_("Spacing"),
+                             P_("Amount of spacing between lines on multiline text"),
+                             G_MININT, G_MAXINT, 0,
+                             G_PARAM_READWRITE);
+    g_object_class_install_property(gobject_class, PROP_SPACING, param);
 }
 
 static void
@@ -81,8 +107,41 @@ adg_pango_style_init(AdgPangoStyle *pango_style)
                                                              AdgPangoStylePrivate);
 
     data->font_description = NULL;
+    data->spacing = 0;
 
     pango_style->data = data;
+}
+
+static void
+_adg_get_property(GObject *object, guint prop_id,
+                  GValue *value, GParamSpec *pspec)
+{
+    AdgPangoStylePrivate *data = ((AdgPangoStyle *) object)->data;
+
+    switch (prop_id) {
+    case PROP_SPACING:
+        g_value_set_int(value, data->spacing);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void
+_adg_set_property(GObject *object, guint prop_id,
+                  const GValue *value, GParamSpec *pspec)
+{
+    AdgPangoStylePrivate *data = ((AdgPangoStyle *) object)->data;
+
+    switch (prop_id) {
+    case PROP_SPACING:
+        data->spacing = g_value_get_int(value);
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
 }
 
 
@@ -173,6 +232,44 @@ adg_pango_style_get_description(AdgPangoStyle *pango_style)
     }
 
     return data->font_description;
+}
+
+/**
+ * adg_pango_style_set_spacing:
+ * @pango_style: an #AdgPangoStyle object
+ * @spacing: the new spacing
+ *
+ * Sets the new spacing to @spacing on @pango_style.
+ *
+ * Since: 1.0
+ **/
+void
+adg_pango_style_set_spacing(AdgPangoStyle *pango_style, gint spacing)
+{
+    g_return_if_fail(ADG_IS_PANGO_STYLE(pango_style));
+    g_object_set(pango_style, "spacing", spacing, NULL);
+}
+
+/**
+ * adg_pango_style_get_spacing:
+ * @pango_style: an #AdgPangoStyle object
+ *
+ * Gets the spacing of @pango_style.
+ *
+ * Returns: (type gint): the current spacing value.
+ *
+ * Since: 1.0
+ **/
+gint
+adg_pango_style_get_spacing(AdgPangoStyle *pango_style)
+{
+    AdgPangoStylePrivate *data;
+
+    g_return_val_if_fail(ADG_IS_PANGO_STYLE(pango_style), 0);
+
+    data = pango_style->data;
+
+    return data->spacing;
 }
 
 
