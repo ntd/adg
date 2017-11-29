@@ -30,6 +30,16 @@ G_BEGIN_DECLS
  * if the cairo version is too old to provide them. */
 
 
+#if CAIRO_VERSION < CAIRO_VERSION_ENCODE(1, 14, 0)
+#warning "Media scaling with adg_canvas_set_factor() not supported"
+
+void        cairo_surface_set_device_scale (cairo_surface_t *surface,
+                                            double           x_scale,
+                                            double           y_scale);
+
+#endif /* cairo < 1.14.0 */
+
+
 #ifndef CAIRO_GOBJECT_TYPE_MATRIX
 
 #define ADG_MISSING_GBOXED_MATRIX       1
