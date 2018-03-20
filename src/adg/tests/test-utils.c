@@ -100,14 +100,19 @@ _adg_method_scale_factor(void)
     adg_assert_isapprox(adg_scale_factor("3:3"), 1);
     adg_assert_isapprox(adg_scale_factor("+010 garbage"), 10);
 
-    /* No idea if sign+space is invalid on every atoi implementation */
+    /* No idea if sign+space is invalid on every atof implementation */
     adg_assert_isapprox(adg_scale_factor("+ 3"), 0);
 
-    adg_assert_isapprox(adg_scale_factor("-1:1"), 0);
-    adg_assert_isapprox(adg_scale_factor("1:-1"), 0);
+    adg_assert_isapprox(adg_scale_factor("-1:1"), -1);
+    adg_assert_isapprox(adg_scale_factor("1:-1"), -1);
     adg_assert_isapprox(adg_scale_factor(" +5 : 05 garbage"), 1);
     adg_assert_isapprox(adg_scale_factor("1:0"), 0);
     adg_assert_isapprox(adg_scale_factor("1:"), 0);
+
+    adg_assert_isapprox(adg_scale_factor("3:2"), 1.5);
+    adg_assert_isapprox(adg_scale_factor("3.2:3.20"), 1);
+    adg_assert_isapprox(adg_scale_factor("3.25:1"), 3.25);
+    adg_assert_isapprox(adg_scale_factor("1:0.33333333333"), 3);
 }
 
 static void

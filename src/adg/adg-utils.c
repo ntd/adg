@@ -383,7 +383,7 @@ adg_find_file(const gchar *file, ...)
  * x+garbage:y+garbage is equivalent to x:y. Furthermore, the postfix
  * :y can be omitted, in which case (double) x will be returned.
  *
- * x and y are converted by using atoi(), so refer to your C library
+ * x and y are converted by using atof(), so refer to your C library
  * documentation for details on the algorithm used.
  *
  * Returns: the (possibly approximated) double conversion of @scale or 0 on errors.
@@ -393,24 +393,26 @@ adg_find_file(const gchar *file, ...)
 gdouble
 adg_scale_factor(const gchar *scale)
 {
-    gint numerator, denominator;
+    gdouble numerator, denominator;
     const gchar *ptr;
+    gchar *orig;
 
     g_return_val_if_fail(scale != NULL, 0);
 
-    numerator = atoi(scale);
-    if (numerator <= 0)
-        return 0;
+    orig = setlocale(LC_NUMERIC, NULL);
+    setlocale(LC_NUMERIC, "C");
+
+    numerator = atof(scale);
 
     ptr = strchr(scale, ':');
-    if (ptr == NULL)
-        return numerator;
+    denominator = ptr == NULL ? 1 : atof(ptr + 1);
 
-    denominator = atoi(ptr + 1);
-    if (denominator <= 0)
+    setlocale(LC_NUMERIC, orig);
+
+    if (denominator == 0)
         return 0;
 
-    return (gdouble) numerator / (gdouble) denominator;
+    return numerator / denominator;
 }
 
 /**
