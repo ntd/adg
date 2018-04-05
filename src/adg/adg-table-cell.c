@@ -43,7 +43,7 @@
  * When using these methods keep in mind the underlying #AdgToyText
  * entities will be displaced accordingly to the
  * #AdgTableStyle:cell-padding value, not used when setting the
- * entities throught other APIs.
+ * entities through other APIs.
  *
  * Since: 1.0
  **/

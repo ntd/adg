@@ -92,7 +92,7 @@ void            adg_path_line_to_explicit       (AdgPath        *path,
                                                  gdouble         x,
                                                  gdouble         y);
 void            adg_path_arc_to                 (AdgPath        *path,
-                                                 const CpmlPair *throught,
+                                                 const CpmlPair *through,
                                                  const CpmlPair *pair);
 void            adg_path_arc_to_explicit        (AdgPath        *path,
                                                  gdouble         x1,

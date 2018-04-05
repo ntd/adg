@@ -468,7 +468,7 @@ in the path definition. They do not work yet for Bézier curves but
 the infrastructure is in place.</para>
 
 <para>A Gtk+ widget for easily showing the canvas has been implemented. It
-is based on GtkDrawingArea and provides some interaction throught the
+is based on GtkDrawingArea and provides some interaction through the
 mouse, such as zooming and panning. It is not viable for serious work
 but it is funny to use and opened to improvements.</para>
 
@@ -486,7 +486,7 @@ involved.</para>
 <para>The work on model-view separation has been started: the AdgModel
 abstract class is now in place. Above this class, the new AdgPath
 model is derived, providing a full set of APIs to construct paths
-from scratch. Also, AdgPath gives full access the model throught
+from scratch. Also, AdgPath gives full access the model through
 CPML, allowing to modify and manipulate the path data.</para>
 
 <para>The CPML library now natively supports arcs. Although cairo does

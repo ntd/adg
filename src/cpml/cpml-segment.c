@@ -34,7 +34,7 @@
  * #CpmlSegment provides an unobtrusive way to access a cairo path.
  * This means #CpmlSegment itsself does not hold any coordinates but
  * instead a bunch of pointers to the original #cairo_path_t struct:
- * modifying data throught this struct also changes the original path.
+ * modifying data through this struct also changes the original path.
  *
  * Every #cairo_path_t struct can contain more than one segment: the CPML
  * library provides iteration APIs to browse the segments of a path.

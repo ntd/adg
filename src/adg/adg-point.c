@@ -26,7 +26,7 @@
  *                     (either named or explicit)
  *
  * AdgPoint is an opaque structure that manages 2D coordinates,
- * either set explicitely throught adg_point_set_pair() and
+ * either set explicitely through adg_point_set_pair() and
  * adg_point_set_pair_explicit() or taken from a model with
  * adg_point_set_pair_from_model(). It can be thought as an
  * #CpmlPair on steroid, because it adds named pair support to

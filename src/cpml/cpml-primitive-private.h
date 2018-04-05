@@ -50,7 +50,7 @@ CAIRO_BEGIN_DECLS
  *
  * Any primitive type must implement an instance of this class as a
  * global variable. This will abstract the primitives and allows to
- * access them throught the cpml_primitive_...() APIs.
+ * access them through the cpml_primitive_...() APIs.
  */
 typedef struct __CpmlPrimitiveClass _CpmlPrimitiveClass;
 

@@ -700,12 +700,12 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
 
 /**
  * adg_path_arc_to:
- * @path:     an #AdgPath
- * @throught: an arbitrary point on the arc
+ * @path:    an #AdgPath
+ * @through: an arbitrary point on the arc
  * @pair:     the destination coordinates
  *
  * Adds an arc to the path from the current point to @pair, passing
- * throught @throught. After this call the current point will be @pair.
+ * through @through. After this call the current point will be @pair.
  *
  * If @path has no current point before this call, this function will
  * trigger a warning without other effect.
@@ -713,9 +713,9 @@ adg_path_line_to_explicit(AdgPath *path, gdouble x, gdouble y)
  * Since: 1.0
  **/
 void
-adg_path_arc_to(AdgPath *path, const CpmlPair *throught, const CpmlPair *pair)
+adg_path_arc_to(AdgPath *path, const CpmlPair *through, const CpmlPair *pair)
 {
-    adg_path_append(path, CPML_ARC, throught, pair);
+    adg_path_append(path, CPML_ARC, through, pair);
 }
 
 /**
@@ -1014,7 +1014,7 @@ adg_path_join(AdgPath *path)
  * @vector: (allow-none): the slope of the axis
  *
  * Reflects the first segment or @path around the axis passing
- * throught (0, 0) and with a @vector slope. The internal segment
+ * through (0, 0) and with a @vector slope. The internal segment
  * is duplicated and the proper transformation (computed from
  * @vector) to mirror the segment is applied on all its points.
  * The result is then reversed with cpml_segment_reverse() and
