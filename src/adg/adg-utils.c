@@ -524,7 +524,7 @@ adg_nop(void)
 /**
  * adg_round:
  * @value: the value to round
- * @decimals: the number of significald decimals to consider
+ * @decimals: the number of significant decimals to consider
  *
  * Rounds the @value floating number to a specific number of digits. Be aware
  * a binary floating point is unable to represent all decimal numbers, i.e.
@@ -540,7 +540,6 @@ adg_round(gdouble value, gint decimals)
 {
     return decimals > 0 ? adg_round(value*10, decimals-1) / 10 : round(value);
 }
-
 
 /**
  * adg_single_strchr:
