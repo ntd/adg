@@ -34,6 +34,8 @@
 CAIRO_BEGIN_DECLS
 
 double          cpml_angle              (double         angle);
+double          cpml_angle_distance     (double         angle,
+                                         double         from);
 
 CAIRO_END_DECLS
 

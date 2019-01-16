@@ -57,3 +57,22 @@ cpml_angle(double angle)
 
     return angle;
 }
+
+/**
+ * cpml_angle_distance:
+ * @angle: first angle in radians
+ * @from: second angle in radians
+ *
+ * Computes the distance between the two given angles. The returned
+ * distance is always positive and is never greater than M_PI.
+ *
+ * Returns: the distance in radians
+ *
+ * Since: 1.0
+ **/
+double
+cpml_angle_distance(double angle, double from)
+{
+    double delta = cpml_angle(from - angle);
+    return fabs(delta);
+}

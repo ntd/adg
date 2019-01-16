@@ -10,6 +10,9 @@ LDADD=				$(top_builddir)/src/tests/libadgtest.la \
 				$(ADG_LIBS)
 
 
+TEST_PROGS+=			test-utils$(EXEEXT)
+test_utils_SOURCES=		test-utils.c
+
 TEST_PROGS+=			test-pair$(EXEEXT)
 test_pair_SOURCES=		test-pair.c
 
