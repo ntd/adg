@@ -127,6 +127,7 @@ adg_rdim_init(AdgRDim *rdim)
     data->trail = NULL;
     data->marker = NULL;
     data->radius = -1.;
+    data->angle = 0.;
     data->shift.base.x = data->shift.base.y = 0;
     cairo_matrix_init_identity(&data->quote.global_map);
 
@@ -409,12 +410,15 @@ _adg_arrange(AdgEntity *entity)
     /* Arrange the quote */
     if (quote != NULL) {
         cairo_matrix_t map;
+        gdouble x_align;
+        gdouble quote_angle = adg_dim_quote_angle(dim, data->angle);
 
-        adg_alignment_set_factor_explicit(quote, 1, 0);
+        x_align = cpml_angle_distance(quote_angle, data->angle) > G_PI_2 ? 0 : 1;
+        adg_alignment_set_factor_explicit(quote, x_align, 0);
 
         cpml_pair_from_cairo(&pair, &data->cairo.data[1]);
         cairo_matrix_init_translate(&map, pair.x, pair.y);
-        cairo_matrix_rotate(&map, data->angle);
+        cairo_matrix_rotate(&map, quote_angle);
         adg_entity_set_global_map(quote_entity, &map);
         adg_entity_arrange(quote_entity);
         cpml_extents_add(&extents, adg_entity_get_extents(quote_entity));
@@ -553,7 +557,7 @@ _adg_compute_geometry(AdgDim *dim)
     data->radius = cpml_pair_distance(&vector, NULL);
 
     /* angle */
-    data->angle = adg_dim_quote_angle(dim, cpml_vector_angle(&vector));
+    data->angle = cpml_vector_angle(&vector);
 
     /* point.base */
     cpml_pair_copy(&data->point.base, &vector);

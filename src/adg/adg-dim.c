@@ -1635,7 +1635,7 @@ _adg_quote_angle(gdouble angle)
 {
     angle = cpml_angle(angle);
 
-    if (angle > G_PI_4 * 4 / 3 || angle <= -G_PI_4 * 3)
+    if (angle > G_PI / 3 || angle <= -G_PI_4 * 3)
         angle = cpml_angle(angle + G_PI);
 
     return angle;
