@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2016-12-31 10:13+0100\n"
+"POT-Creation-Date: 2019-03-25 23:10+0100\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -48,11 +48,11 @@ msgstr "- Programma dimostrativo della ADG"
 msgid "Error from adg-demo"
 msgstr "Errore da adg-demo"
 
-#: demo/adg-demo.c:794
+#: demo/adg-demo.c:801
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: demo/adg-demo.c:1168
+#: demo/adg-demo.c:1175
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
 
@@ -410,42 +410,32 @@ msgstr ""
 "Da dove arriva la seconda linea: questo punto è usato insieme a \"ref2\" per "
 "allineare la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:143 src/adg/adg-ldim.c:143
+#: src/adg/adg-adim.c:143 src/adg/adg-ldim.c:142
 msgid "Has First Extension Line flag"
 msgstr "Flag di Prima Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:144 src/adg/adg-ldim.c:144
+#: src/adg/adg-adim.c:144 src/adg/adg-ldim.c:143
 msgid "Show (TRUE) or hide (FALSE) the first extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la prima linea di estensione"
 
-#: src/adg/adg-adim.c:149 src/adg/adg-ldim.c:149
+#: src/adg/adg-adim.c:149 src/adg/adg-ldim.c:148
 msgid "Has Second Extension Line flag"
 msgstr "Flag di Seconda Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:150
+#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:149
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:1166
-#, c-format
-msgid "%s: ref1 and org1 cannot be coincidents (%lf, %lf)"
-msgstr "%s: ref1 e org1 non possono coincidere (%lf, %lf)"
+#: src/adg/adg-adim.c:1188
+msgid "Trying to set an angular dimension on parallel lines"
+msgstr "Si è provato a quotare con un angolo due linee parallele"
 
-#: src/adg/adg-adim.c:1172
-#, c-format
-msgid "%s: ref2 and org2 cannot be coincidents (%lf, %lf)"
-msgstr "%s: ref2 e org2 non possono coincidere (%lf, %lf)"
-
-#: src/adg/adg-adim.c:1185
-#, c-format
-msgid "%s: trying to set an angular dimension on parallel lines"
-msgstr "%s: si è provato a quotare l'angolo di due linee parallele"
-
-#: src/adg/adg-alignment.c:105 src/adg/adg-gtk-area.c:618
+#: src/adg/adg-alignment.c:103 src/adg/adg-canvas.c:205
+#: src/adg/adg-gtk-area.c:590
 msgid "Factor"
 msgstr "Fattore"
 
-#: src/adg/adg-alignment.c:106
+#: src/adg/adg-alignment.c:104
 msgid ""
 "Portion of extents, either in x and y, the content will be displaced: a "
 "(0.5, 0.5) factor means the origin is the middle point of the extents"
@@ -454,19 +444,19 @@ msgstr ""
 "posizionato: per esempio, usando (0.5, 0.5) l'origine si troverà al centro "
 "dell'esetensione"
 
-#: src/adg/adg-arrow.c:102
+#: src/adg/adg-arrow.c:99
 msgid "Arrow Angle"
 msgstr "Angolo Freccia"
 
-#: src/adg/adg-arrow.c:103
+#: src/adg/adg-arrow.c:100
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
-#: src/adg/adg-canvas.c:196
+#: src/adg/adg-canvas.c:198
 msgid "Canvas Size"
 msgstr "Dimensione Canvas"
 
-#: src/adg/adg-canvas.c:197
+#: src/adg/adg-canvas.c:199
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
@@ -474,78 +464,82 @@ msgstr ""
 "La dimensione impostata per questo canvas: usare 0 per abilitare il "
 "dimensionamento automatico basato sui limiti del canvas"
 
-#: src/adg/adg-canvas.c:203
+#: src/adg/adg-canvas.c:206
+msgid "Global space units per point (1 point == 1/72 inch)"
+msgstr "Unità spazio globale per punto (1 punto == 1/72 di pollice)"
+
+#: src/adg/adg-canvas.c:212
 msgid "Valid Scales"
 msgstr "Scale Valide"
 
-#: src/adg/adg-canvas.c:204
+#: src/adg/adg-canvas.c:213
 msgid "List of scales to be tested while autoscaling the drawing"
 msgstr "Elenco di scale da provare durante l'autoscalatura del disegno"
 
-#: src/adg/adg-canvas.c:210
+#: src/adg/adg-canvas.c:219
 msgid "Background Dress"
 msgstr "Vestito Sfondo"
 
-#: src/adg/adg-canvas.c:211
+#: src/adg/adg-canvas.c:220
 msgid "The color dress to use for the canvas background"
 msgstr "Il vestito colore da usare come sfondo per il canvas"
 
-#: src/adg/adg-canvas.c:217 src/adg/adg-logo.c:109
-#: src/adg/adg-table-style.c:109
+#: src/adg/adg-canvas.c:226 src/adg/adg-logo.c:107
+#: src/adg/adg-table-style.c:107
 msgid "Frame Dress"
 msgstr "Vestito Riquadro"
 
-#: src/adg/adg-canvas.c:218
+#: src/adg/adg-canvas.c:227
 msgid "Line dress to use while drawing the frame around the canvas"
 msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
-#: src/adg/adg-canvas.c:224
+#: src/adg/adg-canvas.c:233
 msgid "Title Block"
 msgstr "Blocco delle Iscrizioni"
 
-#: src/adg/adg-canvas.c:225
+#: src/adg/adg-canvas.c:234
 msgid "The title block to assign to this canvas"
 msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
-#: src/adg/adg-canvas.c:231
+#: src/adg/adg-canvas.c:240
 msgid "Top Margin"
 msgstr "Margine Superiore"
 
-#: src/adg/adg-canvas.c:232
+#: src/adg/adg-canvas.c:241
 msgid "The margin (in global space) to leave above the frame"
 msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
-#: src/adg/adg-canvas.c:238
+#: src/adg/adg-canvas.c:247
 msgid "Right Margin"
 msgstr "Margine Destro"
 
-#: src/adg/adg-canvas.c:239
+#: src/adg/adg-canvas.c:248
 msgid "The margin (in global space) to leave empty at the right of the frame"
 msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
-#: src/adg/adg-canvas.c:245
+#: src/adg/adg-canvas.c:254
 msgid "Bottom Margin"
 msgstr "Margine Inferiore"
 
-#: src/adg/adg-canvas.c:246
+#: src/adg/adg-canvas.c:255
 msgid "The margin (in global space) to leave empty below the frame"
 msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
-#: src/adg/adg-canvas.c:252
+#: src/adg/adg-canvas.c:261
 msgid "Left Margin"
 msgstr "Margine Sinistro"
 
-#: src/adg/adg-canvas.c:253
+#: src/adg/adg-canvas.c:262
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:259 src/adg/adg-table.c:154
+#: src/adg/adg-canvas.c:268 src/adg/adg-table.c:151
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
-#: src/adg/adg-canvas.c:260
+#: src/adg/adg-canvas.c:269
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
@@ -553,11 +547,11 @@ msgstr ""
 "Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
 "limiti dal canvas tenendo in considerazione i margini"
 
-#: src/adg/adg-canvas.c:266
+#: src/adg/adg-canvas.c:275
 msgid "Top Padding"
 msgstr "Spaziatura Superiore"
 
-#: src/adg/adg-canvas.c:267
+#: src/adg/adg-canvas.c:276
 msgid ""
 "The padding (in global space) to leave empty above between the drawing and "
 "the frame"
@@ -565,11 +559,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
 "cornice"
 
-#: src/adg/adg-canvas.c:273
+#: src/adg/adg-canvas.c:282
 msgid "Right Padding"
 msgstr "Spaziatura Destra"
 
-#: src/adg/adg-canvas.c:274
+#: src/adg/adg-canvas.c:283
 msgid ""
 "The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
@@ -577,11 +571,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:280
+#: src/adg/adg-canvas.c:289
 msgid "Bottom Padding"
 msgstr "Spaziatura Inferiore"
 
-#: src/adg/adg-canvas.c:281
+#: src/adg/adg-canvas.c:290
 msgid ""
 "The padding (in global space) to leave empty below between the drawing and "
 "the frame"
@@ -589,11 +583,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:287
+#: src/adg/adg-canvas.c:296
 msgid "Left Padding"
 msgstr "Spaziatura Sinistra"
 
-#: src/adg/adg-canvas.c:288
+#: src/adg/adg-canvas.c:297
 msgid ""
 "The padding (in global space) to leave empty at the left between the drawing "
 "and the frame"
@@ -601,55 +595,55 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sinistra tra il disegno "
 "e la cornice"
 
-#: src/adg/adg-color-style.c:93
+#: src/adg/adg-color-style.c:91
 msgid "Red Channel"
 msgstr "Canale Rosso"
 
-#: src/adg/adg-color-style.c:94
+#: src/adg/adg-color-style.c:92
 msgid "The red value, where 0 means no red and 1 is full red"
 msgstr "Quantità di rosso, dove 0 significa assenza di rosso e 1 rosso pieno"
 
-#: src/adg/adg-color-style.c:100
+#: src/adg/adg-color-style.c:98
 msgid "Green Channel"
 msgstr "Canale Verde"
 
-#: src/adg/adg-color-style.c:101
+#: src/adg/adg-color-style.c:99
 msgid "The green value, where 0 means no green and 1 is full green"
 msgstr "Quantità di verde, dove 0 significa assenza di verde e 1 verde pieno"
 
-#: src/adg/adg-color-style.c:107
+#: src/adg/adg-color-style.c:105
 msgid "Blue Channel"
 msgstr "Canale Blu"
 
-#: src/adg/adg-color-style.c:108
+#: src/adg/adg-color-style.c:106
 msgid "The blue value, where 0 means no blue and 1 is full blue"
 msgstr "Quantità di blu, dove 0 significa assenza di blu e 1 blu pieno"
 
-#: src/adg/adg-color-style.c:114
+#: src/adg/adg-color-style.c:112
 msgid "Alpha Channel"
 msgstr "Canale Alfa"
 
-#: src/adg/adg-color-style.c:115
+#: src/adg/adg-color-style.c:113
 msgid ""
 "The alpha value, where 0 means completely transparent and 1 is fully opaque"
 msgstr ""
 "Il valore alfa, dove 0 significa totalmente trasparente e 1 completamente "
 "opaco"
 
-#: src/adg/adg-container.c:137
+#: src/adg/adg-container.c:135
 msgid "Child"
 msgstr "Figlio"
 
-#: src/adg/adg-container.c:138
+#: src/adg/adg-container.c:136
 msgid "Can be used to add a new child to the container"
 msgstr "Può essere usato per aggiungere una nuova entità al contenitore"
 
-#: src/adg/adg-container.c:416
+#: src/adg/adg-container.c:406
 #, c-format
 msgid "%s: signal '%s' is invalid for instance %p"
 msgstr "%s: segnale '%s' non valido per l'oggetto %p"
 
-#: src/adg/adg-container.c:537
+#: src/adg/adg-container.c:529
 #, c-format
 msgid ""
 "Attempting to add an entity with type %s to a container of type %s, but the "
@@ -658,7 +652,7 @@ msgstr ""
 "Si è provato ad aggiungere una entità di tipo %s ad un contenitore di tipo "
 "%s ma l'entità è già all'interno di un contenitore di tipo %s"
 
-#: src/adg/adg-container.c:571
+#: src/adg/adg-container.c:560
 #, c-format
 msgid ""
 "Attempting to remove an entity with type %s from a container of type %s, but "
@@ -691,7 +685,7 @@ msgstr "Secondo Riferimento"
 msgid "Second reference point of the dimension"
 msgstr "Secondo punto di riferimento della dimensione"
 
-#: src/adg/adg-dim.c:187 src/adg/adg-marker.c:150
+#: src/adg/adg-dim.c:187 src/adg/adg-marker.c:148
 msgid "Position"
 msgstr "Posizione"
 
@@ -781,85 +775,100 @@ msgstr ""
 "Il valore massimo ammesso o la tolleranza superiore dal valore nominale (a "
 "seconda dello stile dimensione): impostare a NULL per disattivarlo"
 
-#: src/adg/adg-dim.c:1406
+#: src/adg/adg-dim.c:1350
+#, c-format
+msgid "'%s' is missing"
+msgstr "'%s' assente"
+
+#: src/adg/adg-dim.c:1381
+#, c-format
+msgid "'%s' and '%s' cannot be coincident (%lf, %lf)"
+msgstr "'%s' e '%s' non possono essere coincidenti (%lf, %lf)"
+
+#: src/adg/adg-dim.c:1611
+#, c-format
+msgid "AdgDim::compute_geometry not implemented for '%s'"
+msgstr "AdgDim::compute_geometry non implementata per '%s'"
+
+#: src/adg/adg-dim.c:1619
 #, c-format
 msgid "AdgDim::default_value not implemented for '%s'"
 msgstr "AdgDim::default_value non implementato da '%s'"
 
-#: src/adg/adg-dim-style.c:125
+#: src/adg/adg-dim-style.c:152
 msgid "First Marker"
 msgstr "Primo Contrassegno"
 
-#: src/adg/adg-dim-style.c:126
+#: src/adg/adg-dim-style.c:153
 msgid "The template entity to use as first marker"
 msgstr "L'entità guida da usare per il primo contrassegno"
 
-#: src/adg/adg-dim-style.c:132
+#: src/adg/adg-dim-style.c:159
 msgid "Second Marker"
 msgstr "Secondo Contrassegno"
 
-#: src/adg/adg-dim-style.c:133
+#: src/adg/adg-dim-style.c:160
 msgid "The template entity to use as second marker"
 msgstr "L'entità guida da usare per il secondo contrassegno"
 
-#: src/adg/adg-dim-style.c:139 src/adg/adg-font-style.c:102
-#: src/adg/adg-line-style.c:98 src/adg/adg-table-style.c:95
+#: src/adg/adg-dim-style.c:166 src/adg/adg-font-style.c:100
+#: src/adg/adg-line-style.c:96 src/adg/adg-table-style.c:93
 msgid "Color Dress"
 msgstr "Vestito Colore"
 
-#: src/adg/adg-dim-style.c:140
+#: src/adg/adg-dim-style.c:167
 msgid "Color dress for the whole dimension"
 msgstr "Vestito colore da usare per l'intera dimensione"
 
-#: src/adg/adg-dim-style.c:146 src/adg/adg-table-style.c:123
+#: src/adg/adg-dim-style.c:173 src/adg/adg-table-style.c:121
 msgid "Value Dress"
 msgstr "Vestito Valore"
 
-#: src/adg/adg-dim-style.c:147
+#: src/adg/adg-dim-style.c:174
 msgid "Font dress for the nominal value of the dimension"
 msgstr "Vestito del font per il valore nominale della dimensione"
 
-#: src/adg/adg-dim-style.c:153
+#: src/adg/adg-dim-style.c:180
 msgid "Minimum Limit Dress"
 msgstr "Vestito Limite Minimo"
 
-#: src/adg/adg-dim-style.c:154
+#: src/adg/adg-dim-style.c:181
 msgid "Font dress for the lower limit value"
 msgstr "Vestito del font per il valore limite basso"
 
-#: src/adg/adg-dim-style.c:160
+#: src/adg/adg-dim-style.c:187
 msgid "Maximum Limit Dress"
 msgstr "Vestito Limite Massimo"
 
-#: src/adg/adg-dim-style.c:161
+#: src/adg/adg-dim-style.c:188
 msgid "Font dress for the upper limit value"
 msgstr "Vestito del font per il valore limite alto"
 
-#: src/adg/adg-dim-style.c:167 src/adg/adg-ruled-fill.c:111
-#: src/adg/adg-stroke.c:104
+#: src/adg/adg-dim-style.c:194 src/adg/adg-ruled-fill.c:109
+#: src/adg/adg-stroke.c:102
 msgid "Line Dress"
 msgstr "Vestito Linea"
 
-#: src/adg/adg-dim-style.c:168
+#: src/adg/adg-dim-style.c:195
 msgid "Line dress for the baseline and the extension lines"
 msgstr "Vestito della linea di quotatura e delle linee di estensione"
 
-#: src/adg/adg-dim-style.c:174
+#: src/adg/adg-dim-style.c:201
 msgid "From Offset"
 msgstr "Distanza Da"
 
-#: src/adg/adg-dim-style.c:175
+#: src/adg/adg-dim-style.c:202
 msgid ""
 "Offset (in global space) of the extension lines from the path to the quote"
 msgstr ""
 "Distanza (nello spazio globale) tra la linea di estensione e la forma da "
 "quotare"
 
-#: src/adg/adg-dim-style.c:181
+#: src/adg/adg-dim-style.c:208
 msgid "To Offset"
 msgstr "Distanza A"
 
-#: src/adg/adg-dim-style.c:182
+#: src/adg/adg-dim-style.c:209
 msgid ""
 "How many extend (in global space) the extension lines after hitting the "
 "baseline"
@@ -867,11 +876,11 @@ msgstr ""
 "Quanto allungare (nello spazio globale) le linee di estensione oltre la "
 "linea di quotatura"
 
-#: src/adg/adg-dim-style.c:188
+#: src/adg/adg-dim-style.c:215
 msgid "Beyond Length"
 msgstr "Lunghezza Oltre"
 
-#: src/adg/adg-dim-style.c:189
+#: src/adg/adg-dim-style.c:216
 msgid ""
 "How much the baseline should be extended (in global space) beyond the "
 "extension lines on dimensions with outside markers"
@@ -879,27 +888,27 @@ msgstr ""
 "Quanto la linea di quotatura si può allungare (nello spazio globale) oltre "
 "le linee di estensione nelle dimensioni con contrassegni esterni"
 
-#: src/adg/adg-dim-style.c:195
+#: src/adg/adg-dim-style.c:222
 msgid "Baseline Spacing"
 msgstr "Distanza Linee di Quotatura"
 
-#: src/adg/adg-dim-style.c:196
+#: src/adg/adg-dim-style.c:223
 msgid "Distance between two consecutive baselines while stacking dimensions"
 msgstr "Distanza tra due linee di quotatura nelle dimensioni sovrapposte"
 
-#: src/adg/adg-dim-style.c:202
+#: src/adg/adg-dim-style.c:229
 msgid "Limits Spacing"
 msgstr "Spaziatura Limiti"
 
-#: src/adg/adg-dim-style.c:203
+#: src/adg/adg-dim-style.c:230
 msgid "Distance between limits/tolerances"
 msgstr "Distanza tra i limiti/tolleranze"
 
-#: src/adg/adg-dim-style.c:209
+#: src/adg/adg-dim-style.c:236
 msgid "Quote Shift"
 msgstr "Spiazzamento Quota"
 
-#: src/adg/adg-dim-style.c:210
+#: src/adg/adg-dim-style.c:237
 msgid ""
 "Used to specify a smooth displacement (in global space) of the quote by "
 "taking as reference the perfect compact position (the middle of the baseline "
@@ -909,11 +918,11 @@ msgstr ""
 "con riferimento alla posizione compatta ideale (nelle comuni dimensioni "
 "lineari, la metà della linea di base, per esempio)"
 
-#: src/adg/adg-dim-style.c:216
+#: src/adg/adg-dim-style.c:243
 msgid "Limits Shift"
 msgstr "Scostamento dei Limiti"
 
-#: src/adg/adg-dim-style.c:217
+#: src/adg/adg-dim-style.c:244
 msgid ""
 "Used to specify a smooth displacement (in global space) for the limits/"
 "tolerances by taking as reference the perfect compact position"
@@ -921,44 +930,61 @@ msgstr ""
 "Usato per specificare un piccolo scostamento (in global space) per le "
 "tolleranze/limiti prendendo come riferimento la posizione compatta ideale"
 
-#: src/adg/adg-dim-style.c:223
+#: src/adg/adg-dim-style.c:250
 msgid "Number Format"
 msgstr "Formato Numero"
 
-#: src/adg/adg-dim-style.c:224
+#: src/adg/adg-dim-style.c:251
 msgid ""
 "The format (in printf style) of the numeric component of the basic value"
 msgstr ""
 "Il formato (in modalità printf) del componente numerico della quota nominale"
 
-#: src/adg/adg-dim-style.c:230
-#, fuzzy
+#: src/adg/adg-dim-style.c:257
 msgid "Number Arguments"
-msgstr "Formato Numero"
+msgstr "Argomenti Numero"
 
-#: src/adg/adg-dim-style.c:231
+#: src/adg/adg-dim-style.c:258
 msgid ""
 "The arguments to pass to the format function: see "
 "adg_dim_style_set_number_arguments() for further details"
 msgstr ""
+"Gli argomenti da passare alla funzione di formattazione: vedere "
+"adg_dim_style_set_number_arguments() per maggiori dettagli"
 
-#: src/adg/adg-dim-style.c:237
+#: src/adg/adg-dim-style.c:264
 msgid "Number Tag"
 msgstr "Tag di Quota"
 
-#: src/adg/adg-dim-style.c:238
+#: src/adg/adg-dim-style.c:265
 msgid "The tag to substitute inside the value template string"
 msgstr "Il tag da sostituire all'interno della stringa template del valore"
 
-#: src/adg/adg-dim-style.c:244
-msgid "decimals"
-msgstr ""
+#: src/adg/adg-dim-style.c:271
+msgid "Rounded Value Decimals"
+msgstr "Decimali Valore Arrotondato"
 
-#: src/adg/adg-dim-style.c:245
-msgid "Number of significant decimals to round the value to (-1 to disable)"
+#: src/adg/adg-dim-style.c:272
+msgid ""
+"Number of significant decimals to use in the format string for rounded "
+"values (-1 to disable)"
 msgstr ""
+"Numero di decimali significativi da usare come formato formato per i "
+"valori arrotondati (-1 per disabilitare)"
 
-#: src/adg/adg-dress.c:347
+#: src/adg/adg-dim-style.c:279
+msgid "Raw Value Decimals"
+msgstr "Decimali Valore Originale"
+
+#: src/adg/adg-dim-style.c:280
+msgid ""
+"Number of significant decimals the raw value must be rounded to (-1 to "
+"disable)"
+msgstr ""
+"Numero di decimali significativi a cui il valore originale deve "
+"essere arrotondato (-1 per disabilitare)"
+
+#: src/adg/adg-dress.c:338
 #, c-format
 msgid ""
 "%s: the fallback style of '%s' dress (%d) must be a '%s' derived type, but a "
@@ -999,21 +1025,33 @@ msgstr ""
 "L'angolo che definisce quando considerare uno spigolo (se l'angolo dello "
 "spigolo è maggiore di questo valore) e quando ignorarlo"
 
+#: src/adg/adg-entity.c:171
+msgid "Floating Entity"
+msgstr "Entità Flottante"
+
 #: src/adg/adg-entity.c:172
+msgid ""
+"Flag that includes (FALSE) or excludes (TRUE) this entity from the "
+"computation of the parent entity extents"
+msgstr ""
+"Impostazione per includere (FALSE) o escludere (TRUE) questa entità "
+"dal calcolo dell'estensione del genitore"
+
+#: src/adg/adg-entity.c:177
 msgid "Parent Entity"
 msgstr "Entità Genitore"
 
-#: src/adg/adg-entity.c:173
+#: src/adg/adg-entity.c:178
 msgid "The parent entity of this entity or NULL if this is a top-level entity"
 msgstr ""
 "L'entità che contiene questa entità o NULL se l'entità corrente è una top-"
 "level"
 
-#: src/adg/adg-entity.c:179
+#: src/adg/adg-entity.c:184
 msgid "Global Map"
 msgstr "Trasformazione Globale"
 
-#: src/adg/adg-entity.c:180
+#: src/adg/adg-entity.c:185
 msgid ""
 "The transformation to be combined with the parent ones to get the global "
 "matrix"
@@ -1021,11 +1059,11 @@ msgstr ""
 "La trasformazione da combinare insieme a quelle dei progenitori per ottenere "
 "la matrice globale"
 
-#: src/adg/adg-entity.c:186
+#: src/adg/adg-entity.c:191
 msgid "Local Map"
 msgstr "Trasformazione Locale"
 
-#: src/adg/adg-entity.c:187
+#: src/adg/adg-entity.c:192
 msgid ""
 "The local transformation that could be used to compute the local matrix in "
 "the way specified by the #AdgEntity:local-mix property"
@@ -1033,11 +1071,11 @@ msgstr ""
 "La trasformazione locale che può venir usata per calcolare la matrice locale "
 "nella modalità specificata dalla proprietà #AdgEntity:local-method"
 
-#: src/adg/adg-entity.c:193
+#: src/adg/adg-entity.c:198
 msgid "Local Mix Method"
 msgstr "Metodo di Combinazione Locale"
 
-#: src/adg/adg-entity.c:194
+#: src/adg/adg-entity.c:199
 msgid ""
 "Define how the local maps of the entity and its ancestors should be combined "
 "to get the local matrix"
@@ -1045,89 +1083,89 @@ msgstr ""
 "Specifica come le trasformazioni locali dell'entità corrente e dei suoi "
 "progenitori devono essere combinate per ottenere la matrice locale"
 
-#: src/adg/adg-entity.c:917
+#: src/adg/adg-entity.c:967
 #, c-format
 msgid "%s: '%s' is not compatible with '%s' for '%s' dress (%d)"
 msgstr "%s: '%s' non è compatibile con '%s' per il vestito '%s' (%d)"
 
-#: src/adg/adg-entity.c:1278
+#: src/adg/adg-entity.c:1317
 #, c-format
 msgid "%s: requested to mix the maps using an undefined mix method"
 msgstr "%s: metodo di combinazione delle trasformazioni sconosciuto"
 
-#: src/adg/adg-entity.c:1324
+#: src/adg/adg-entity.c:1360
 #, c-format
 msgid "%s: 'arrange' method not implemented for type '%s'"
 msgstr "%s: metodo 'arrange' non implementato per il tipo '%s'"
 
-#: src/adg/adg-entity.c:1340
+#: src/adg/adg-entity.c:1376
 #, c-format
 msgid "%s: 'render' method not implemented for type '%s'"
 msgstr "%s: metodo 'render' non implementato per il tipo '%s'"
 
-#: src/adg/adg-fill-style.c:108
+#: src/adg/adg-fill-style.c:106
 msgid "Pattern"
 msgstr "Pattern"
 
-#: src/adg/adg-fill-style.c:109
+#: src/adg/adg-fill-style.c:107
 msgid "The cairo pattern set for this entity"
 msgstr "Il pattern cairo impostato per questa entità"
 
-#: src/adg/adg-fill-style.c:289
+#: src/adg/adg-fill-style.c:279
 #, c-format
 msgid "%s: pattern undefined for type '%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo '%s'"
 
-#: src/adg/adg-font-style.c:103
+#: src/adg/adg-font-style.c:101
 msgid "The fallback color dress to bind to this style"
 msgstr "Il vestito colore implicito da associare a questo stile"
 
-#: src/adg/adg-font-style.c:109
+#: src/adg/adg-font-style.c:107
 msgid "Font Family"
 msgstr "Famiglia di Font"
 
-#: src/adg/adg-font-style.c:110
+#: src/adg/adg-font-style.c:108
 msgid "The font family name, encoded in UTF-8"
 msgstr "Il nome della famiglia di font, codificata in UTF-8"
 
-#: src/adg/adg-font-style.c:116
+#: src/adg/adg-font-style.c:114
 msgid "Font Slant"
 msgstr "Slant del Font"
 
-#: src/adg/adg-font-style.c:117
+#: src/adg/adg-font-style.c:115
 msgid "Variant of a font face based on its slant"
 msgstr "Variante del font basato sullo slant"
 
-#: src/adg/adg-font-style.c:123
+#: src/adg/adg-font-style.c:121
 msgid "Font Weight"
 msgstr "Spessore del Font"
 
-#: src/adg/adg-font-style.c:124
+#: src/adg/adg-font-style.c:122
 msgid "Variant of a font face based on its weight"
 msgstr "Variante del font basato sul suo spessore"
 
-#: src/adg/adg-font-style.c:130
+#: src/adg/adg-font-style.c:128
 msgid "Font Size"
 msgstr "Dimensione Font"
 
-#: src/adg/adg-font-style.c:131
+#: src/adg/adg-font-style.c:129
 msgid "Font size in user space units"
 msgstr "Dimensione del font nello spazio utente"
 
-#: src/adg/adg-font-style.c:137
+#: src/adg/adg-font-style.c:135
 msgid "Font Antialiasing Mode"
 msgstr "Modalità di Antialiasing del Font"
 
-#: src/adg/adg-font-style.c:138
+#: src/adg/adg-font-style.c:136
 msgid "Type of antialiasing to do when rendering text"
 msgstr "Tipo di antialiasing da applicare durante il disegno del testo"
 
-#: src/adg/adg-font-style.c:144
+#: src/adg/adg-font-style.c:142
 msgid "Font Subpixel Order"
 msgstr "Ordine di Subpixel del Font"
 
 # TODO: questa traduzione fa cagare
-#: src/adg/adg-font-style.c:145
+#: src/adg/adg-font-style.c:143
 msgid ""
 "The order of color elements within each pixel on the display device when "
 "rendering with subpixel antialiasing mode"
@@ -1135,11 +1173,11 @@ msgstr ""
 "Ordine di colori all'interno di ogni pixel del display durante il disegno "
 "del testo con modalità di antialiasing subpixel abilitata"
 
-#: src/adg/adg-font-style.c:152
+#: src/adg/adg-font-style.c:150
 msgid "Type of Hinting"
 msgstr "Tipo di Hinting"
 
-#: src/adg/adg-font-style.c:153
+#: src/adg/adg-font-style.c:151
 msgid ""
 "How outlines must fit to the pixel grid in order to improve the glyph "
 "appearance"
@@ -1147,11 +1185,11 @@ msgstr ""
 "Come il bordo deve adattarsi alla griglia di pixel per migliorare "
 "l'apparenza del segno"
 
-#: src/adg/adg-font-style.c:159
+#: src/adg/adg-font-style.c:157
 msgid "Font Metric Hinting"
 msgstr "Metrica di Hinting del Font"
 
-#: src/adg/adg-font-style.c:160
+#: src/adg/adg-font-style.c:158
 msgid ""
 "Whether to hint font metrics, that is align them to integer values in device "
 "space"
@@ -1159,26 +1197,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:611
+#: src/adg/adg-gtk-area.c:583
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:612
+#: src/adg/adg-gtk-area.c:584
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:619
+#: src/adg/adg-gtk-area.c:591
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:625
+#: src/adg/adg-gtk-area.c:597
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:626
+#: src/adg/adg-gtk-area.c:598
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -1186,19 +1224,19 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:632
+#: src/adg/adg-gtk-area.c:604
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:633
+#: src/adg/adg-gtk-area.c:605
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
-#: src/adg/adg-gtk-layout.c:424
+#: src/adg/adg-gtk-layout.c:412
 msgid "Horizontal adjustment"
 msgstr "Regolazione orizzontale"
 
-#: src/adg/adg-gtk-layout.c:425
+#: src/adg/adg-gtk-layout.c:413
 msgid ""
 "The GtkAdjustment that determines the values of the horizontal position for "
 "this viewport"
@@ -1206,11 +1244,11 @@ msgstr ""
 "Il GtkAdjustment che specifica il valore della posizione orizzontale di "
 "questa viewport"
 
-#: src/adg/adg-gtk-layout.c:431
+#: src/adg/adg-gtk-layout.c:419
 msgid "Vertical adjustment"
 msgstr "Regolazione verticale"
 
-#: src/adg/adg-gtk-layout.c:432
+#: src/adg/adg-gtk-layout.c:420
 msgid ""
 "The GtkAdjustment that determines the values of the vertical position for "
 "this viewport"
@@ -1218,114 +1256,109 @@ msgstr ""
 "Il GtkAdjustment che specifica il valore della posizione verticale di questa "
 "viewport"
 
-#: src/adg/adg-hatch.c:92
+#: src/adg/adg-hatch.c:90
 msgid "Fill Dress"
 msgstr "Vestito Riempimento"
 
-#: src/adg/adg-hatch.c:93
+#: src/adg/adg-hatch.c:91
 msgid "The dress to use for filling this entity"
 msgstr "Il vestito da usare per riempire questa entità"
 
-#: src/adg/adg-ldim.c:136
+#: src/adg/adg-ldim.c:135
 msgid "Direction"
 msgstr "Direzione"
 
-#: src/adg/adg-ldim.c:137
+#: src/adg/adg-ldim.c:136
 msgid "The inclination angle of the extension lines"
 msgstr "L'angolo di inclinazione delle linee di estensione"
 
-#: src/adg/adg-ldim.c:780 src/adg/adg-rdim.c:528
-#, c-format
-msgid "%s: ref1 and ref2 cannot be coincidents (%lf, %lf)"
-msgstr "%s: ref1 e ref2 non possono coindicere (%lf, %lf)"
-
-#: src/adg/adg-line-style.c:99
+#: src/adg/adg-line-style.c:97
 msgid "The color dress to bind to this line style"
 msgstr "Il vestito colore da allegare a questo stile di linea"
 
-#: src/adg/adg-line-style.c:105
+#: src/adg/adg-line-style.c:103
 msgid "Line Width"
 msgstr "Spessore Linea"
 
-#: src/adg/adg-line-style.c:106
+#: src/adg/adg-line-style.c:104
 msgid "The line thickness in device unit"
 msgstr "Lo spessore della linea in unità device"
 
-#: src/adg/adg-line-style.c:111
+#: src/adg/adg-line-style.c:109
 msgid "Line Cap"
 msgstr "Terminazione Linea"
 
-#: src/adg/adg-line-style.c:112
+#: src/adg/adg-line-style.c:110
 msgid "The line cap mode"
 msgstr "La modalità di terminazione della linea"
 
-#: src/adg/adg-line-style.c:118
+#: src/adg/adg-line-style.c:116
 msgid "Line Join"
 msgstr "Unione Linee"
 
-#: src/adg/adg-line-style.c:119
+#: src/adg/adg-line-style.c:117
 msgid "The line join mode"
 msgstr "La modalità di unione delle linee"
 
-#: src/adg/adg-line-style.c:125
+#: src/adg/adg-line-style.c:123
 msgid "Miter Limit"
 msgstr "Limite Punta"
 
-#: src/adg/adg-line-style.c:126
+#: src/adg/adg-line-style.c:124
 msgid "Whether the lines should be joined with a bevel instead of a miter"
 msgstr ""
 "Quando le linee devono essere unite da un trapezio invece che da un triangolo"
 
-#: src/adg/adg-line-style.c:132
+#: src/adg/adg-line-style.c:130
 msgid "Antialiasing Mode"
 msgstr "Modalità di Antialiasing"
 
-#: src/adg/adg-line-style.c:133
+#: src/adg/adg-line-style.c:131
 msgid "Type of antialiasing to do when rendering lines"
 msgstr "Tipo di antialiasing da applicare durante il rendering delle linee"
 
-#: src/adg/adg-line-style.c:139
+#: src/adg/adg-line-style.c:137
 msgid "Dash Pattern"
 msgstr "Pattern Tratteggio"
 
-#: src/adg/adg-line-style.c:140
+#: src/adg/adg-line-style.c:138
 msgid "The dash pattern to be used while stroking a path"
 msgstr "Il pattern del tratteggio da usare durante il disegno di un path"
 
-#: src/adg/adg-logo.c:95 src/adg/adg-projection.c:97
+#: src/adg/adg-logo.c:93 src/adg/adg-projection.c:95
 msgid "Symbol Dress"
 msgstr "Vestito Simbolo"
 
-#: src/adg/adg-logo.c:96
+#: src/adg/adg-logo.c:94
 msgid "The line dress to use for rendering the symbol of the logo"
 msgstr "Il vestito da usare per il disegno delle linee del simbolo del logo"
 
-#: src/adg/adg-logo.c:102
+#: src/adg/adg-logo.c:100
 msgid "Screen Dress"
 msgstr "Vestito Schermo"
 
-#: src/adg/adg-logo.c:103
+#: src/adg/adg-logo.c:101
 msgid "The line dress to use for rendering the screen shape around the logo"
 msgstr ""
 "Il vestito da usare per il disegno delle linee della forma attorno al logo"
 
-#: src/adg/adg-logo.c:110
+#: src/adg/adg-logo.c:108
 msgid "The line dress to use for rendering the frame"
 msgstr "Il vestito da usare per disegnare le linee del riquadro"
 
-#: src/adg/adg-marker.c:136 src/adg/adg-stroke.c:111
+#: src/adg/adg-marker.c:134 src/adg/adg-stroke.c:109
 msgid "Trail"
 msgstr "Scia"
 
-#: src/adg/adg-marker.c:137
+#: src/adg/adg-marker.c:135
 msgid "The subject AdgTrail for this marker"
 msgstr "L'AdgTrail soggetto per questo indicatore"
 
-#: src/adg/adg-marker.c:143
+#: src/adg/adg-marker.c:141
 msgid "Segment Index"
 msgstr "Indice del Segmento"
 
-#: src/adg/adg-marker.c:144
+#: src/adg/adg-marker.c:142
 msgid ""
 "The segment on trail where this marker should be applied (where 0 means "
 "undefined segment, 1 the first segment and so on)"
@@ -1333,7 +1366,7 @@ msgstr ""
 "Il segmento dell'AdgTrail dove questo indicatore dovrebbe essere applicato "
 "(dove 0 significa nessun segmento, 1 il primo segmento e così via)"
 
-#: src/adg/adg-marker.c:151
+#: src/adg/adg-marker.c:149
 msgid ""
 "The position ratio inside the segment where to put the marker (0 means the "
 "start point while 1 means the end point)"
@@ -1341,23 +1374,23 @@ msgstr ""
 "Il ratio di posizione all'interno del segmento dove inserire l'indicatore (0 "
 "significa punto iniziale mentre 1 significa punto finale)"
 
-#: src/adg/adg-marker.c:157
+#: src/adg/adg-marker.c:155
 msgid "Marker Size"
 msgstr "Dimensione Indicatore"
 
-#: src/adg/adg-marker.c:158
+#: src/adg/adg-marker.c:156
 msgid "The size (in global space) of the marker"
 msgstr "La dimensione (in global space) dell'indicatore"
 
-#: src/adg/adg-marker.c:164
+#: src/adg/adg-marker.c:162
 msgid "Model"
 msgstr "Modello"
 
-#: src/adg/adg-marker.c:165
+#: src/adg/adg-marker.c:163
 msgid "A general purpose model usable by the marker implementations"
 msgstr "Un modello ad uso generale usato dall'implementazione dell'indicatore"
 
-#: src/adg/adg-marker.c:767
+#: src/adg/adg-marker.c:754
 #, c-format
 msgid "%s: 'create_model' method not implemented for type '%s'"
 msgstr "%s: 'create_model' non implementato per il tipo '%s'"
@@ -1367,11 +1400,11 @@ msgstr "%s: 'create_model' non implementato per il tipo '%s'"
 msgid "%s: normalization of anamorphic matrices not supported"
 msgstr "%s: normalizzazione di matrici anamorfiche non supportata"
 
-#: src/adg/adg-model.c:188
+#: src/adg/adg-model.c:186
 msgid "Dependency"
 msgstr "Dipendenza"
 
-#: src/adg/adg-model.c:189
+#: src/adg/adg-model.c:187
 msgid ""
 "Can be used to add a new dependency from this model (this entity will be "
 "invalidated on model changed)"
@@ -1379,7 +1412,7 @@ msgstr ""
 "Può essere usato per aggiungere una nuova dipendenza da questo modello "
 "(questa entità sarà invalidata quando cambia il modello)"
 
-#: src/adg/adg-model.c:692
+#: src/adg/adg-model.c:679
 #, c-format
 msgid ""
 "%s: attempting to remove the nonexistent dependency on the entity with type "
@@ -1388,66 +1421,74 @@ msgstr ""
 "%s: si è provato ad eliminare un'inesistente dipendenza da un'entità di tipo "
 "%s in un modello di tipo %s"
 
-#: src/adg/adg-model.c:731
+#: src/adg/adg-model.c:715
 #, c-format
 msgid "%s: attempting to remove nonexistent '%s' named pair"
 msgstr "%s: si è provato ad eliminare l'inesistente named pair '%s'"
 
-#: src/adg/adg-pango-style.c:155
+#: src/adg/adg-pango-style.c:93 src/adg/adg-ruled-fill.c:116
+msgid "Spacing"
+msgstr "Distanza"
+
+#: src/adg/adg-pango-style.c:94
+msgid "Amount of spacing between lines on multiline text"
+msgstr "Quantità di spazio tra le linee di un testo multilinea"
+
+#: src/adg/adg-pango-style.c:207
 #, c-format
 msgid "Unhandled slant value (%d)"
 msgstr "Valore di slant inatteso (%d)"
 
-#: src/adg/adg-pango-style.c:168
+#: src/adg/adg-pango-style.c:220
 #, c-format
 msgid "Unhandled weight value (%d)"
 msgstr "Valore di weight inatteso (%d)"
 
-#: src/adg/adg-path.c:434
+#: src/adg/adg-path.c:424
 #, c-format
 msgid "%s: null pair caught while parsing arguments"
 msgstr "%s: rilevato un named pair nullo durante l'analisi degli argomenti"
 
-#: src/adg/adg-path.c:945
+#: src/adg/adg-path.c:1044
 #, c-format
 msgid "%s: the axis of the reflection is not known"
 msgstr "%s: l'asse di riflessione non è conosciuta"
 
-#: src/adg/adg-path.c:1176
+#: src/adg/adg-path.c:1273
 #, c-format
 msgid "%s: a '%s' operation is still active while clearing the path"
 msgstr "%s: operazione '%s' ancora attiva durante l'azzeramento del path"
 
-#: src/adg/adg-path.c:1198
+#: src/adg/adg-path.c:1292
 #, c-format
 msgid "%s: requested a '%s' operation on a path without current primitive"
 msgstr "%s: richiesta l'operazione '%s' su un path senza primitiva attiva"
 
-#: src/adg/adg-path.c:1205
+#: src/adg/adg-path.c:1299
 #, c-format
 msgid "%s: requested a '%s' operation while a '%s' operation was active"
 msgstr "%s: richiesta l'operazione '%s' mentre l'operazione '%s' era in corso"
 
-#: src/adg/adg-path.c:1230
+#: src/adg/adg-path.c:1324
 #, c-format
 msgid "%s: %d path operation not recognized"
 msgstr "%s: l'operazione %d non è conosciuta"
 
-#: src/adg/adg-path.c:1340
+#: src/adg/adg-path.c:1428
 #, c-format
 msgid ""
 "%s: first chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il primo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1349
+#: src/adg/adg-path.c:1437
 #, c-format
 msgid ""
 "%s: second chamfer delta of %lf is greather than the available %lf length"
 msgstr ""
 "%s: il secondo delta dello smusso %lf è maggiore dello spazio disponibile %lf"
 
-#: src/adg/adg-path.c:1387
+#: src/adg/adg-path.c:1472
 #, c-format
 msgid "%s: fillet with radius of %lf is not applicable here"
 msgstr "%s: un raccordo di raggio %lf non è eseguibile ora"
@@ -1457,65 +1498,61 @@ msgstr "%s: un raccordo di raggio %lf non è eseguibile ora"
 msgid "%s: trying to get a pair from an undefined point"
 msgstr "%s: si è provato ad ottenere le coordinate da un punto indefinito"
 
-#: src/adg/adg-projection.c:98
+#: src/adg/adg-projection.c:96
 msgid "The line dress to use for rendering the views of the projection"
 msgstr ""
 "Il vestito linea da usare per il rendering delle viste della proiezione"
 
-#: src/adg/adg-projection.c:104
+#: src/adg/adg-projection.c:102
 msgid "Axis Dress"
 msgstr "Vestito Assi"
 
-#: src/adg/adg-projection.c:105
+#: src/adg/adg-projection.c:103
 msgid "The line dress to use for rendering the axis of the projection scheme"
 msgstr "Il vestito linea da usare per il rendering degli assi della proiezione"
 
-#: src/adg/adg-projection.c:111 src/adg/adg-title-block.c:149
+#: src/adg/adg-projection.c:109 src/adg/adg-title-block.c:147
 msgid "Projection Scheme"
 msgstr "Proiezione Ortografica"
 
-#: src/adg/adg-projection.c:112
+#: src/adg/adg-projection.c:110
 msgid "The projection scheme to be represented"
 msgstr "Il tipo di proiezione ortografica da adottare"
 
-#: src/adg/adg-ruled-fill.c:112
+#: src/adg/adg-ruled-fill.c:110
 msgid "Dress to be used for rendering the lines"
 msgstr "Vestito da usare per disegnare le linee"
 
-#: src/adg/adg-ruled-fill.c:118
-msgid "Spacing"
-msgstr "Distanza"
-
-#: src/adg/adg-ruled-fill.c:119
+#: src/adg/adg-ruled-fill.c:117
 msgid "The spacing in global spaces between the lines"
 msgstr "La distanza nello spazio globale tra le linee"
 
-#: src/adg/adg-ruled-fill.c:125
+#: src/adg/adg-ruled-fill.c:123
 msgid "Angle"
 msgstr "Angolo"
 
-#: src/adg/adg-ruled-fill.c:126
+#: src/adg/adg-ruled-fill.c:124
 msgid "The angle (in radians) of the lines"
 msgstr "L'angolo (in radianti) delle linee"
 
-#: src/adg/adg-stroke.c:105 src/adg/adg-table.c:148
+#: src/adg/adg-stroke.c:103 src/adg/adg-table.c:145
 msgid "The dress to use for stroking this entity"
 msgstr "Il vestito da usare per tracciare questa entità"
 
-#: src/adg/adg-stroke.c:112
+#: src/adg/adg-stroke.c:110
 msgid "The trail to be stroked"
 msgstr "La scia da tracciare"
 
-#: src/adg/adg-style.c:196
+#: src/adg/adg-style.c:222
 #, c-format
 msgid "%s: 'apply' method not implemented for type '%s'"
 msgstr "%s: metodo 'arrange' non implementato per il tipo '%s'"
 
-#: src/adg/adg-table.c:147
+#: src/adg/adg-table.c:144
 msgid "Table Dress"
 msgstr "Vestito Tabella"
 
-#: src/adg/adg-table.c:155
+#: src/adg/adg-table.c:152
 msgid ""
 "If enabled, a frame using the proper dress found in this table style will be "
 "drawn around the table extents"
@@ -1523,42 +1560,42 @@ msgstr ""
 "Se abilitato, un riquadro attorno alla tabella verrà disegnato usando il "
 "vestito specificato dallo stile della tabella stessa"
 
-#: src/adg/adg-table-style.c:96
+#: src/adg/adg-table-style.c:94
 msgid "Fallback color dress, used when no specific dresses are selected"
 msgstr ""
 "Vestito colore implicito, da usare quando nessun altro vestito è stato "
 "specificato"
 
-#: src/adg/adg-table-style.c:102
+#: src/adg/adg-table-style.c:100
 msgid "Grid Dress"
 msgstr "Vestito Griglia"
 
-#: src/adg/adg-table-style.c:103
+#: src/adg/adg-table-style.c:101
 msgid "Line dress to use while rendering the grid of the table"
 msgstr "Vestito da usare per tracciare la griglia della tabella"
 
-#: src/adg/adg-table-style.c:110
+#: src/adg/adg-table-style.c:108
 msgid "Line dress to use while drawing the table frame"
 msgstr "Vestito da usare per tracciare il riquadro della tabella"
 
-#: src/adg/adg-table-style.c:116
+#: src/adg/adg-table-style.c:114
 msgid "Title Dress"
 msgstr "Vestito Titolo"
 
-#: src/adg/adg-table-style.c:117
+#: src/adg/adg-table-style.c:115
 msgid "Font dress to use for titles"
 msgstr "Vestito del font da usare per il titolo"
 
-#: src/adg/adg-table-style.c:124
+#: src/adg/adg-table-style.c:122
 msgid "Font dress to use for values inside the cells"
 msgstr ""
 "Vestito del font da usare per scrivere il valore all'interno delle celle"
 
-#: src/adg/adg-table-style.c:130
+#: src/adg/adg-table-style.c:128
 msgid "Row Height"
 msgstr "Altezza Riga"
 
-#: src/adg/adg-table-style.c:131
+#: src/adg/adg-table-style.c:129
 msgid ""
 "The fallback row height when not explicitely specified while creating a new "
 "row"
@@ -1566,19 +1603,19 @@ msgstr ""
 "L'altezza implicita della riga da usare quando non è stata specificata "
 "un'altezza durante la creazione di una nuova riga"
 
-#: src/adg/adg-table-style.c:137
+#: src/adg/adg-table-style.c:135
 msgid "Cell Padding"
 msgstr "Spaziatura Celle"
 
-#: src/adg/adg-table-style.c:138
+#: src/adg/adg-table-style.c:136
 msgid "How much space from the bounding box must left inside every cell"
 msgstr "Quanto spazio lasciare vuoto all'interno di ogni cella"
 
-#: src/adg/adg-table-style.c:144
+#: src/adg/adg-table-style.c:142
 msgid "Cell Spacing"
 msgstr "Distanza Celle"
 
-#: src/adg/adg-table-style.c:145
+#: src/adg/adg-table-style.c:143
 msgid "How much space to left between the cells"
 msgstr "Quanto spazio lasciare vuoto tra le celle"
 
@@ -1618,19 +1655,19 @@ msgstr "%s: metodo 'set_text' non implementato per il tipo '%s'"
 msgid "%s: 'dup_text' method not implemented for type '%s'"
 msgstr "%s: metodo 'dup_text' non implementato per il tipo '%s'"
 
-#: src/adg/adg-title-block.c:100
+#: src/adg/adg-title-block.c:98
 msgid "Title"
 msgstr "Titolo"
 
-#: src/adg/adg-title-block.c:101
+#: src/adg/adg-title-block.c:99
 msgid "A descriptive title of the drawing"
 msgstr "Un titolo descrittivo del disegno"
 
-#: src/adg/adg-title-block.c:107
+#: src/adg/adg-title-block.c:105
 msgid "Drawing Name"
 msgstr "Nome Disegno"
 
-#: src/adg/adg-title-block.c:108
+#: src/adg/adg-title-block.c:106
 msgid ""
 "The name of the drawing: the ADG canvas does not make any assumtpion on this "
 "text string"
@@ -1638,11 +1675,11 @@ msgstr ""
 "Il nome del disegno: il canvas ADG non avanza alcuna ipotesi sul significato "
 "di questa stringa"
 
-#: src/adg/adg-title-block.c:114
+#: src/adg/adg-title-block.c:112
 msgid "Media Size"
 msgstr "Dimensione del Supporto"
 
-#: src/adg/adg-title-block.c:115
+#: src/adg/adg-title-block.c:113
 msgid ""
 "The media size to be used to print the drawing, usually something like "
 "\"A3\" or \"Letter\""
@@ -1650,27 +1687,27 @@ msgstr ""
 "La dimensione del supporto usato per stampare il disegno, solitamente una "
 "stringa tipo \"A3\" o \"Letter\""
 
-#: src/adg/adg-title-block.c:121
+#: src/adg/adg-title-block.c:119
 msgid "Scale"
 msgstr "Scala"
 
-#: src/adg/adg-title-block.c:122
+#: src/adg/adg-title-block.c:120
 msgid "The scale of the drawing, if it makes sense"
 msgstr "La scala del disegno, se significativa"
 
-#: src/adg/adg-title-block.c:128
+#: src/adg/adg-title-block.c:126
 msgid "Author"
 msgstr "Autore"
 
-#: src/adg/adg-title-block.c:129
+#: src/adg/adg-title-block.c:127
 msgid "Name and last name of the author of the drawing"
 msgstr "Nome e cognome dell'autore del disegno"
 
-#: src/adg/adg-title-block.c:135
+#: src/adg/adg-title-block.c:133
 msgid "Date"
 msgstr "Data"
 
-#: src/adg/adg-title-block.c:136
+#: src/adg/adg-title-block.c:134
 msgid ""
 "The date this drawing has been generated: setting it to an empty string will "
 "fallback to today in the preferred representation for the current locale"
@@ -1679,11 +1716,11 @@ msgstr ""
 "verrà inizializzata automaticamente ad oggi nel formato privilegiato dalle "
 "impostazioni di localizzazione correnti"
 
-#: src/adg/adg-title-block.c:142
+#: src/adg/adg-title-block.c:140
 msgid "Logo"
 msgstr "Logo"
 
-#: src/adg/adg-title-block.c:143
+#: src/adg/adg-title-block.c:141
 msgid ""
 "An entity to be displayed in the title block as the logo of the owner: the "
 "containing cell has a 1:1 ratio"
@@ -1691,7 +1728,7 @@ msgstr ""
 "L'entità da mostrare nel riquadro delle iscrizioni come logo del "
 "proprietario: la cella contenitrice ha un ratio 1:1"
 
-#: src/adg/adg-title-block.c:150
+#: src/adg/adg-title-block.c:148
 msgid ""
 "The entity usually reserved to identify the projection scheme adopted by "
 "this drawing"
@@ -1699,40 +1736,40 @@ msgstr ""
 "Entità solitamente riservata per identificare il tipo di proiezione "
 "ortografica usata in questo disegno"
 
-#: src/adg/adg-title-block.c:181
+#: src/adg/adg-title-block.c:178
 msgid "TITLE"
 msgstr "TITOLO"
 
-#: src/adg/adg-title-block.c:186
+#: src/adg/adg-title-block.c:183
 msgid "SIZE"
 msgstr "FOGLIO"
 
-#: src/adg/adg-title-block.c:187
+#: src/adg/adg-title-block.c:184
 msgid "SCALE"
 msgstr "SCALA"
 
-#: src/adg/adg-title-block.c:188
+#: src/adg/adg-title-block.c:185
 msgid "DRAWING"
 msgstr "DISEGNO"
 
-#: src/adg/adg-title-block.c:193
+#: src/adg/adg-title-block.c:190
 msgid "AUTHOR"
 msgstr "AUTORE"
 
-#: src/adg/adg-title-block.c:194
+#: src/adg/adg-title-block.c:191
 msgid "DATE"
 msgstr "DATA"
 
-#: src/adg/adg-toy-text.c:308
+#: src/adg/adg-toy-text.c:287
 #, c-format
 msgid "Unable to build glyphs (cairo message: %s)"
 msgstr "Non riesco a generare i glifi (messaggio da cairo: %s)"
 
-#: src/adg/adg-trail.c:135
+#: src/adg/adg-trail.c:133
 msgid "Max Angle"
 msgstr "Angolo Massimo"
 
-#: src/adg/adg-trail.c:136
+#: src/adg/adg-trail.c:134
 msgid ""
 "Max arc angle to approximate with a single Bezier curve: check "
 "adg_trail_set_max_angle() for details"
@@ -1740,28 +1777,23 @@ msgstr ""
 "Massimo angolo di arco da approssimare con una singola linea di Bézier: "
 "consultare adg_trail_set_max_angle() per dettagli"
 
-#: src/adg/adg-trail.c:337
+#: src/adg/adg-trail.c:322
 #, c-format
 msgid ""
 "%s: you cannot access the path from the callback you provided to build it"
 msgstr "%s: accesso al path non consentito dalla funzione che deve definirlo"
 
-#: src/adg/adg-trail.c:380
+#: src/adg/adg-trail.c:396
 #, c-format
 msgid "%s: requested undefined segment for type '%s'"
 msgstr "%s: è stato richiesto un segmento indefinito per il tipo '%s'"
 
-#: src/adg/adg-trail.c:396
-#, c-format
-msgid "%s: segment %u is out of range for type '%s'"
-msgstr "%s: il numero di segmento %u è fuori scala per il tipo '%s'"
-
-#: src/adg/adg-trail.c:461
+#: src/adg/adg-trail.c:473
 #, c-format
 msgid "%s: invalid path data"
 msgstr "%s: dati del path non validi"
 
-#: src/adg/adg-trail.c:547
+#: src/adg/adg-trail.c:559
 #, c-format
 msgid "%s: callback not defined for instance of type '%s'"
 msgstr "%s: callback non definita per un'istanza di tipo '%s'"
