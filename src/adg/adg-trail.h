@@ -43,13 +43,12 @@ typedef cairo_path_t * (*AdgTrailCallback) (AdgTrail *trail, gpointer user_data)
 
 struct _AdgTrail {
     /*< private >*/
-    AdgModel             parent;
-    gpointer             data;
+    AdgModel        parent;
 };
 
 struct _AdgTrailClass {
     /*< private >*/
-    AdgModelClass        parent_class;
+    AdgModelClass   parent_class;
 
     /*< public >*/
     /* Virtual table */

@@ -42,13 +42,12 @@ typedef struct _AdgRuledFillClass   AdgRuledFillClass;
 
 struct _AdgRuledFill {
     /*< private >*/
-    AdgFillStyle         parent;
-    gpointer             data;
+    AdgFillStyle        parent;
 };
 
 struct _AdgRuledFillClass {
     /*< private >*/
-    AdgFillStyleClass    parent_class;
+    AdgFillStyleClass   parent_class;
 };
 
 

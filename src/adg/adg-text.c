@@ -67,7 +67,8 @@ static void             _adg_iface_init         (AdgTextualIface *iface);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgText, adg_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init))
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init)
+                        G_ADD_PRIVATE(AdgText))
 
 enum {
     PROP_0,
@@ -111,8 +112,6 @@ adg_text_class_init(AdgTextClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgTextPrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
@@ -141,15 +140,10 @@ _adg_iface_init(AdgTextualIface *iface)
 static void
 adg_text_init(AdgText *text)
 {
-    AdgTextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(text, ADG_TYPE_TEXT,
-                                                       AdgTextPrivate);
-
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
     data->font_dress = ADG_DRESS_FONT_TEXT;
     data->text = NULL;
     data->layout = NULL;
-
-    text->data = data;
-
     adg_entity_set_local_mix((AdgEntity *) text, ADG_MIX_ANCESTORS_NORMALIZED);
 }
 
@@ -167,11 +161,7 @@ _adg_dispose(GObject *object)
 static void
 _adg_finalize(GObject *object)
 {
-    AdgText *text;
-    AdgTextPrivate *data;
-
-    text = (AdgText *) object;
-    data = text->data;
+    AdgTextPrivate *data = adg_text_get_instance_private((AdgText *) object);
 
     g_free(data->text);
 
@@ -183,7 +173,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgTextPrivate *data = ((AdgText *) object)->data;
+    AdgTextPrivate *data = adg_text_get_instance_private((AdgText *) object);
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
@@ -202,11 +192,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgText *text;
-    AdgTextPrivate *data;
-
-    text = (AdgText *) object;
-    data = text->data;
+    AdgText *text = (AdgText *) object;
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
@@ -273,12 +260,9 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgText *text;
-    AdgTextPrivate *data;
+    AdgText *text = (AdgText *) entity;;
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
     PangoRectangle size;
-
-    text = (AdgText *) entity;
-    data = text->data;
 
     if (adg_is_string_empty(data->text)) {
         /* Undefined text */
@@ -347,11 +331,8 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgText *text;
-    AdgTextPrivate *data;
-
-    text = (AdgText *) entity;
-    data = text->data;
+    AdgText *text = (AdgText *) entity;;
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
 
     if (data->layout != NULL) {
         adg_entity_apply_dress(entity, data->font_dress, cr);
@@ -376,7 +357,7 @@ _adg_set_font_dress(AdgTextual *textual, AdgDress dress)
 static AdgDress
 _adg_get_font_dress(AdgTextual *textual)
 {
-    AdgTextPrivate *data = ((AdgText *) textual)->data;
+    AdgTextPrivate *data = adg_text_get_instance_private((AdgText *) textual);
     return data->font_dress;
 }
 
@@ -389,19 +370,17 @@ _adg_set_text(AdgTextual *textual, const gchar *text)
 static gchar *
 _adg_dup_text(AdgTextual *textual)
 {
-    AdgTextPrivate *data = ((AdgText *) textual)->data;
+    AdgTextPrivate *data = adg_text_get_instance_private((AdgText *) textual);
     return g_strdup(data->text);
 }
 
 static void
 _adg_refresh_extents(AdgText *text)
 {
-    AdgTextPrivate *data;
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
     AdgEntity *entity;
     cairo_matrix_t ctm;
     CpmlExtents new_extents;
-
-    data = text->data;
 
     if (! data->raw_extents.is_defined)
         return;
@@ -424,7 +403,7 @@ _adg_refresh_extents(AdgText *text)
 static void
 _adg_clear_layout(AdgText *text)
 {
-    AdgTextPrivate *data = text->data;
+    AdgTextPrivate *data = adg_text_get_instance_private(text);
 
     if (data->layout != NULL) {
         g_object_unref(data->layout);

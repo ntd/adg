@@ -49,7 +49,7 @@
 #include "adg-projection-private.h"
 
 
-G_DEFINE_TYPE(AdgProjection, adg_projection, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgProjection, adg_projection, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -84,8 +84,6 @@ adg_projection_class_init(AdgProjectionClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgProjectionPrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -133,21 +131,17 @@ adg_projection_class_init(AdgProjectionClass *klass)
 static void
 adg_projection_init(AdgProjection *projection)
 {
-    AdgProjectionPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(projection, ADG_TYPE_PROJECTION,
-                                                       AdgProjectionPrivate);
-
+    AdgProjectionPrivate *data = adg_projection_get_instance_private(projection);
     data->symbol_dress = ADG_DRESS_LINE;
     data->axis_dress = ADG_DRESS_LINE;
     data->scheme = ADG_PROJECTION_SCHEME_UNDEFINED;
-
-    projection->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgProjectionPrivate *data = ((AdgProjection *) object)->data;
+    AdgProjectionPrivate *data = adg_projection_get_instance_private((AdgProjection *) object);
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
@@ -169,11 +163,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgProjection *projection;
-    AdgProjectionPrivate *data;
-
-    projection = (AdgProjection *) object;
-    data = projection->data;
+    AdgProjectionPrivate *data = adg_projection_get_instance_private((AdgProjection *) object);
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
@@ -252,8 +242,7 @@ adg_projection_get_symbol_dress(AdgProjection *projection)
 
     g_return_val_if_fail(ADG_IS_PROJECTION(projection), ADG_DRESS_UNDEFINED);
 
-    data = projection->data;
-
+    data = adg_projection_get_instance_private(projection);
     return data->symbol_dress;
 }
 
@@ -297,8 +286,7 @@ adg_projection_get_axis_dress(AdgProjection *projection)
 
     g_return_val_if_fail(ADG_IS_PROJECTION(projection), ADG_DRESS_UNDEFINED);
 
-    data = projection->data;
-
+    data = adg_projection_get_instance_private(projection);
     return data->axis_dress;
 }
 
@@ -338,8 +326,7 @@ adg_projection_get_scheme(AdgProjection *projection)
     g_return_val_if_fail(ADG_IS_PROJECTION(projection),
                          ADG_PROJECTION_SCHEME_UNDEFINED);
 
-    data = projection->data;
-
+    data = adg_projection_get_instance_private(projection);
     return data->scheme;
 }
 
@@ -347,14 +334,10 @@ adg_projection_get_scheme(AdgProjection *projection)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgProjectionPrivate *data;
-    AdgProjectionClass *projection_class;
-    AdgProjectionClassPrivate *data_class;
+    AdgProjectionPrivate *data = adg_projection_get_instance_private((AdgProjection *) entity);
+    AdgProjectionClass *projection_class = ADG_PROJECTION_GET_CLASS(entity);
+    AdgProjectionClassPrivate *data_class = projection_class->data_class;
     CpmlExtents extents;
-
-    data = ((AdgProjection *) entity)->data;
-    projection_class = ADG_PROJECTION_GET_CLASS(entity);
-    data_class = projection_class->data_class;
 
     _adg_arrange_class(projection_class, data->scheme);
     cpml_extents_copy(&extents, &data_class->extents);
@@ -446,12 +429,9 @@ _adg_arrange_class(AdgProjectionClass *projection_class,
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgProjectionClassPrivate *data_class;
-    AdgProjectionPrivate *data;
+    AdgProjectionPrivate *data = adg_projection_get_instance_private((AdgProjection *) entity);
+    AdgProjectionClassPrivate *data_class = ADG_PROJECTION_GET_CLASS(entity)->data_class;
     const cairo_path_t *cairo_path;
-
-    data_class = ADG_PROJECTION_GET_CLASS(entity)->data_class;
-    data = ((AdgProjection *) entity)->data;
 
     cairo_transform(cr, adg_entity_get_global_matrix(entity));
 

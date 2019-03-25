@@ -48,7 +48,7 @@
 #include "adg-line-style-private.h"
 
 
-G_DEFINE_TYPE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgLineStyle, adg_line_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -86,8 +86,6 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgLineStylePrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -145,10 +143,7 @@ adg_line_style_class_init(AdgLineStyleClass *klass)
 static void
 adg_line_style_init(AdgLineStyle *line_style)
 {
-    AdgLineStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(line_style,
-                                                            ADG_TYPE_LINE_STYLE,
-                                                            AdgLineStylePrivate);
-
+    AdgLineStylePrivate *data = adg_line_style_get_instance_private(line_style);
     data->color_dress = ADG_DRESS_COLOR;
     data->width = 2.;
     data->cap = CAIRO_LINE_CAP_ROUND;
@@ -156,15 +151,13 @@ adg_line_style_init(AdgLineStyle *line_style)
     data->miter_limit = 10.;
     data->antialias = CAIRO_ANTIALIAS_DEFAULT;
     data->dash = NULL;
-
-    line_style->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgLineStylePrivate *data = ((AdgLineStyle *) object)->data;
+    AdgLineStylePrivate *data = adg_line_style_get_instance_private((AdgLineStyle *) object);
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -198,11 +191,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgLineStyle *line_style;
-    AdgLineStylePrivate *data;
-
-    line_style = (AdgLineStyle *) object;
-    data = line_style->data;
+    AdgLineStyle *line_style = (AdgLineStyle *) object;
+    AdgLineStylePrivate *data = adg_line_style_get_instance_private(line_style);
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -289,8 +279,7 @@ adg_line_style_get_color_dress(AdgLineStyle *line_style)
 
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), ADG_DRESS_UNDEFINED);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->color_dress;
 }
 
@@ -327,8 +316,7 @@ adg_line_style_get_width(AdgLineStyle *line_style)
 
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->width;
 }
 
@@ -348,9 +336,8 @@ adg_line_style_set_cap(AdgLineStyle *line_style, cairo_line_cap_t cap)
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data = line_style->data;
+    data = adg_line_style_get_instance_private(line_style);
     data->cap = cap;
-
     g_object_notify((GObject *) line_style, "cap");
 }
 
@@ -372,8 +359,7 @@ adg_line_style_get_cap(AdgLineStyle *line_style)
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_LINE_CAP_BUTT);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->cap;
 }
 
@@ -393,9 +379,8 @@ adg_line_style_set_join(AdgLineStyle *line_style, cairo_line_join_t join)
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data = line_style->data;
+    data = adg_line_style_get_instance_private(line_style);
     data->join = join;
-
     g_object_notify((GObject *) line_style, "join");
 }
 
@@ -417,8 +402,7 @@ adg_line_style_get_join(AdgLineStyle *line_style)
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_LINE_JOIN_MITER);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->join;
 }
 
@@ -456,8 +440,7 @@ adg_line_style_get_miter_limit(AdgLineStyle *line_style)
 
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), 0.);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->miter_limit;
 }
 
@@ -478,9 +461,8 @@ adg_line_style_set_antialias(AdgLineStyle *line_style,
 
     g_return_if_fail(ADG_IS_LINE_STYLE(line_style));
 
-    data = line_style->data;
+    data = adg_line_style_get_instance_private(line_style);
     data->antialias = antialias;
-
     g_object_notify((GObject *) line_style, "antialias");
 }
 
@@ -502,8 +484,7 @@ adg_line_style_get_antialias(AdgLineStyle *line_style)
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style),
                          CAIRO_ANTIALIAS_DEFAULT);
 
-    data = line_style->data;
-
+    data = adg_line_style_get_instance_private(line_style);
     return data->antialias;
 }
 
@@ -577,7 +558,7 @@ adg_line_style_get_dash(AdgLineStyle *line_style)
 
     g_return_val_if_fail(ADG_IS_LINE_STYLE(line_style), NULL);
 
-    data = line_style->data;
+    data = adg_line_style_get_instance_private(line_style);
     return data->dash;
 }
 
@@ -585,7 +566,7 @@ adg_line_style_get_dash(AdgLineStyle *line_style)
 static gboolean
 _adg_change_dash(AdgLineStyle *line_style, const AdgDash *dash)
 {
-    AdgLineStylePrivate *data = line_style->data;
+    AdgLineStylePrivate *data = adg_line_style_get_instance_private(line_style);
 
     if (data->dash == dash)
         return FALSE;
@@ -605,7 +586,7 @@ _adg_change_dash(AdgLineStyle *line_style, const AdgDash *dash)
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
-    AdgLineStylePrivate *data = ((AdgLineStyle *) style)->data;
+    AdgLineStylePrivate *data = adg_line_style_get_instance_private((AdgLineStyle *) style);
 
     adg_entity_apply_dress(entity, data->color_dress, cr);
     cairo_set_line_width(cr, data->width);

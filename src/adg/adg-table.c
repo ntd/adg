@@ -69,7 +69,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_table_parent_class)
 
 
-G_DEFINE_TYPE(AdgTable, adg_table, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgTable, adg_table, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -128,8 +128,6 @@ adg_table_class_init(AdgTableClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgTablePrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
@@ -160,21 +158,14 @@ adg_table_class_init(AdgTableClass *klass)
 static void
 adg_table_init(AdgTable *table)
 {
-    AdgTablePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(table,
-                                                        ADG_TYPE_TABLE,
-                                                        AdgTablePrivate);
-
+    AdgTablePrivate *data = adg_table_get_instance_private(table);
     data->table_dress = ADG_DRESS_TABLE;
     data->has_frame = TRUE;
-
     data->table_style = NULL;
     data->grid = NULL;
     data->frame = NULL;
     data->rows = NULL;
     data->cell_names = NULL;
-
-    table->data = data;
-
     adg_entity_set_local_mix((AdgEntity *) table, ADG_MIX_DISABLED);
 }
 
@@ -182,7 +173,7 @@ static void
 _adg_dispose(GObject *object)
 {
     AdgTable *table = (AdgTable *) object;
-    AdgTablePrivate *data = table->data;
+    AdgTablePrivate *data = adg_table_get_instance_private(table);
 
     adg_table_invalidate_grid(table);
 
@@ -204,11 +195,7 @@ _adg_dispose(GObject *object)
 static void
 _adg_finalize(GObject *object)
 {
-    AdgTable *table;
-    AdgTablePrivate *data;
-
-    table = (AdgTable *) object;
-    data = table->data;
+    AdgTablePrivate *data = adg_table_get_instance_private((AdgTable *) object);
 
     if (data->rows) {
         g_slist_foreach(data->rows, (GFunc) adg_table_row_free, NULL);
@@ -226,7 +213,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgTablePrivate *data = ((AdgTable *) object)->data;
+    AdgTablePrivate *data = adg_table_get_instance_private((AdgTable *) object);
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
@@ -245,7 +232,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgTablePrivate *data = ((AdgTable *) object)->data;
+    AdgTablePrivate *data = adg_table_get_instance_private((AdgTable *) object);
 
     switch (prop_id) {
     case PROP_TABLE_DRESS:
@@ -296,7 +283,7 @@ adg_table_insert(AdgTable *table, AdgTableRow *table_row,
     g_return_if_fail(ADG_IS_TABLE(table));
     g_return_if_fail(table_row != NULL);
 
-    data = table->data;
+    data = adg_table_get_instance_private(table);
 
     if (before_row == NULL) {
         data->rows = g_slist_append(data->rows, table_row);
@@ -327,7 +314,7 @@ adg_table_remove(AdgTable *table, AdgTableRow *table_row)
     g_return_if_fail(ADG_IS_TABLE(table));
     g_return_if_fail(table_row != NULL);
 
-    data = table->data;
+    data = adg_table_get_instance_private(table);
     data->rows = g_slist_remove(data->rows, table_row);
 }
 
@@ -349,11 +336,12 @@ adg_table_remove(AdgTable *table, AdgTableRow *table_row)
 void
 adg_table_foreach(AdgTable *table, GCallback callback, gpointer user_data)
 {
-    AdgTablePrivate *data = table->data;
+    AdgTablePrivate *data;
 
     g_return_if_fail(table != NULL);
     g_return_if_fail(callback != NULL);
 
+    data = adg_table_get_instance_private(table);
     g_slist_foreach(data->rows, (GFunc) callback, user_data);
 }
 
@@ -410,7 +398,7 @@ adg_table_set_cell(AdgTable *table, const gchar *name,
     g_return_if_fail(ADG_IS_TABLE(table));
     g_return_if_fail(name != NULL || table_cell != NULL);
 
-    data = table->data;
+    data = adg_table_get_instance_private(table);
 
     if (data->cell_names == NULL) {
         /* Check if trying to remove from an empty hash table */
@@ -453,7 +441,7 @@ adg_table_get_table_style(AdgTable *table)
 
     g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
 
-    data = table->data;
+    data = adg_table_get_instance_private(table);
     return (AdgStyle *) data->table_style;
 }
 
@@ -479,8 +467,7 @@ adg_table_get_cell(AdgTable *table, const gchar *name)
 
     g_return_val_if_fail(ADG_IS_TABLE(table), NULL);
 
-    data = table->data;
-
+    data = adg_table_get_instance_private(table);
     if (data->cell_names == NULL)
         return NULL;
 
@@ -527,8 +514,7 @@ adg_table_get_table_dress(AdgTable *table)
 
     g_return_val_if_fail(ADG_IS_TABLE(table), ADG_DRESS_UNDEFINED);
 
-    data = table->data;
-
+    data = adg_table_get_instance_private(table);
     return data->table_dress;
 }
 
@@ -567,8 +553,7 @@ adg_table_has_frame(AdgTable *table)
 
     g_return_val_if_fail(ADG_IS_TABLE(table), FALSE);
 
-    data = table->data;
-
+    data = adg_table_get_instance_private(table);
     return data->has_frame;
 }
 
@@ -590,8 +575,7 @@ adg_table_invalidate_grid(AdgTable *table)
 
     g_return_if_fail(ADG_IS_TABLE(table));
 
-    data = table->data;
-
+    data = adg_table_get_instance_private(table);
     if (data->grid) {
         g_object_unref(data->grid);
         data->grid = NULL;
@@ -635,8 +619,8 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgTable *table;
-    AdgTablePrivate *data;
+    AdgTable *table = (AdgTable *) entity;
+    AdgTablePrivate *data = adg_table_get_instance_private(table);
     CpmlExtents extents = { 0 };
     CpmlExtents row_layout;
     const CpmlExtents *row_extents;
@@ -644,9 +628,6 @@ _adg_arrange(AdgEntity *entity)
     const CpmlPair *size;
     GSList *row_node;
     AdgTableRow *row;
-
-    table = (AdgTable *) entity;
-    data = table->data;
 
     /* Resolve the table style */
     if (data->table_style == NULL)
@@ -689,14 +670,11 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_arrange_grid(AdgEntity *entity)
 {
-    AdgTable *table;
-    AdgTablePrivate *data;
+    AdgTable *table = (AdgTable *) entity;
+    AdgTablePrivate *data = adg_table_get_instance_private(table);
     AdgPath *path;
     AdgTrail *trail;
     AdgDress dress;
-
-    table = (AdgTable *) entity;
-    data = table->data;
 
     if (data->grid)
         return;
@@ -721,13 +699,11 @@ _adg_arrange_grid(AdgEntity *entity)
 static void
 _adg_arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
 {
-    AdgTablePrivate *data;
+    AdgTablePrivate *data = adg_table_get_instance_private((AdgTable *) entity);
     AdgPath *path;
     AdgTrail *trail;
     CpmlPair pair;
     AdgDress dress;
-
-    data = ((AdgTable *) entity)->data;
 
     if (data->frame || !data->has_frame)
         return;
@@ -757,7 +733,7 @@ _adg_arrange_frame(AdgEntity *entity, const CpmlExtents *extents)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgTablePrivate *data = ((AdgTable *) entity)->data;
+    AdgTablePrivate *data = adg_table_get_instance_private((AdgTable *) entity);
 
     adg_style_apply((AdgStyle *) data->table_style, entity, cr);
 
@@ -777,7 +753,7 @@ _adg_propagate(AdgTable *table, const gchar *detailed_signal, ...)
     }
 
     va_start(proxy_data.var_args, detailed_signal);
-    data = table->data;
+    data = adg_table_get_instance_private(table);
 
     if (data->frame) {
         G_VA_COPY(var_copy, proxy_data.var_args);

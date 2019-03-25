@@ -60,7 +60,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_adim_parent_class)
 
 
-G_DEFINE_TYPE(AdgADim, adg_adim, ADG_TYPE_DIM)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgADim, adg_adim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,
@@ -112,8 +112,6 @@ adg_adim_class_init(AdgADimClass *klass)
     entity_class = (AdgEntityClass *) klass;
     dim_class = (AdgDimClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgADimPrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -162,7 +160,7 @@ adg_adim_init(AdgADim *adim)
     AdgDimStyle *dim_style;
     cairo_path_data_t move_to, line_to, arc_to;
 
-    data = G_TYPE_INSTANCE_GET_PRIVATE(adim, ADG_TYPE_ADIM, AdgADimPrivate);
+    data = adg_adim_get_instance_private(adim);
     move_to.header.type = CPML_MOVE;
     move_to.header.length = 2;
     line_to.header.type = CPML_LINE;
@@ -189,8 +187,6 @@ adg_adim_init(AdgADim *adim)
     data->marker1 = NULL;
     data->marker2 = NULL;
 
-    adim->data = data;
-
     /* Override the default style of the dimension dress to express angles in
      * sexagesimal units */
     style = adg_dress_get_fallback(ADG_DRESS_DIMENSION);
@@ -215,7 +211,7 @@ _adg_dispose(GObject *object)
 
     entity = (AdgEntity *) object;
     adim = (AdgADim *) entity;
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
 
     _adg_dispose_trail(adim);
     _adg_dispose_markers(adim);
@@ -234,7 +230,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgADimPrivate *data = ((AdgADim *) object)->data;
+    AdgADimPrivate *data = adg_adim_get_instance_private((AdgADim *) object);
 
     switch (prop_id) {
     case PROP_ORG1:
@@ -259,11 +255,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity;
-    AdgADimPrivate *data;
-
-    entity = (AdgEntity *) object;
-    data = ((AdgADim *) object)->data;
+    AdgEntity *entity = (AdgEntity *) object;
+    AdgADimPrivate *data = adg_adim_get_instance_private((AdgADim *) object);
 
     switch (prop_id) {
     case PROP_ORG1:
@@ -550,7 +543,7 @@ adg_adim_get_org1(AdgADim *adim)
 
     g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
 
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
 
     return data->org1;
 }
@@ -667,7 +660,7 @@ adg_adim_get_org2(AdgADim *adim)
 
     g_return_val_if_fail(ADG_IS_ADIM(adim), NULL);
 
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
 
     return data->org2;
 }
@@ -708,7 +701,7 @@ adg_adim_has_extension1(AdgADim *adim)
 
     g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
 
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
 
     return data->has_extension1;
 }
@@ -749,7 +742,7 @@ adg_adim_has_extension2(AdgADim *adim)
 
     g_return_val_if_fail(ADG_IS_ADIM(adim), FALSE);
 
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
 
     return data->has_extension2;
 }
@@ -758,7 +751,7 @@ adg_adim_has_extension2(AdgADim *adim)
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgADimPrivate *data = ((AdgADim *) entity)->data;
+    AdgADimPrivate *data = adg_adim_get_instance_private((AdgADim *) entity);
 
     _adg_unset_trail((AdgADim *) entity);
 
@@ -784,11 +777,8 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_invalidate(AdgEntity *entity)
 {
-    AdgADim *adim;
-    AdgADimPrivate *data;
-
-    adim = (AdgADim *) entity;
-    data = adim->data;
+    AdgADim *adim = (AdgADim *) entity;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
 
     _adg_dispose_trail(adim);
     _adg_dispose_markers(adim);
@@ -824,7 +814,7 @@ _adg_arrange(AdgEntity *entity)
         return;
 
     adim = (AdgADim *) entity;
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
     quote = adg_dim_get_quote(dim);
 
     _adg_update_entities(adim);
@@ -957,7 +947,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     }
 
     adim = (AdgADim *) entity;
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
     dim_style = adg_dim_get_dim_style(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -989,7 +979,7 @@ _adg_default_value(AdgDim *dim)
     }
 
     adim = (AdgADim *) dim;
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
     angle = (data->angle2 - data->angle1) * 180 / G_PI;
 
     return adg_dim_get_text(dim, angle);
@@ -1014,7 +1004,7 @@ _adg_compute_geometry(AdgDim *dim)
     if (! _adg_get_info(adim, vector, &center, &distance))
         return FALSE;
 
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
     dim_style = adg_dim_get_dim_style(dim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
@@ -1073,13 +1063,9 @@ _adg_compute_geometry(AdgDim *dim)
 static void
 _adg_update_entities(AdgADim *adim)
 {
-    AdgEntity *entity;
-    AdgADimPrivate *data;
-    AdgDimStyle *dim_style;
-
-    entity = (AdgEntity *) adim;
-    data = adim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) adim);
+    AdgEntity *entity = (AdgEntity *) adim;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
+    AdgDimStyle *dim_style = adg_dim_get_dim_style((AdgDim *) adim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(_adg_trail_callback, adim);
@@ -1098,7 +1084,7 @@ _adg_update_entities(AdgADim *adim)
 static void
 _adg_unset_trail(AdgADim *adim)
 {
-    AdgADimPrivate *data = adim->data;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
 
     if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
@@ -1109,7 +1095,7 @@ _adg_unset_trail(AdgADim *adim)
 static void
 _adg_dispose_trail(AdgADim *adim)
 {
-    AdgADimPrivate *data = adim->data;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
 
     if (data->trail != NULL) {
         g_object_unref(data->trail);
@@ -1120,7 +1106,7 @@ _adg_dispose_trail(AdgADim *adim)
 static void
 _adg_dispose_markers(AdgADim *adim)
 {
-    AdgADimPrivate *data = adim->data;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
 
     if (data->marker1 != NULL) {
         g_object_unref(data->marker1);
@@ -1145,7 +1131,7 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
     gdouble factor;
 
     dim = (AdgDim *) adim;
-    data = adim->data;
+    data = adg_adim_get_instance_private(adim);
     ref1_point = adg_dim_get_ref1(dim);
     ref2_point = adg_dim_get_ref2(dim);
     pos_point  = adg_dim_get_pos(dim);
@@ -1222,11 +1208,8 @@ _adg_get_info(AdgADim *adim, CpmlVector vector[],
 static cairo_path_t *
 _adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
-    AdgADim *adim;
-    AdgADimPrivate *data;
-
-    adim = (AdgADim *) user_data;
-    data = adim->data;
+    AdgADim *adim = (AdgADim *) user_data;
+    AdgADimPrivate *data = adg_adim_get_instance_private(adim);
 
     return &data->cairo.path;
 }

@@ -41,13 +41,12 @@ typedef struct _AdgGtkAreaClass   AdgGtkAreaClass;
 
 struct _AdgGtkArea {
     /*< private >*/
-    GtkDrawingArea       parent;
-    gpointer             data;
+    GtkDrawingArea      parent;
 };
 
 struct _AdgGtkAreaClass {
     /*< private >*/
-    GtkDrawingAreaClass  parent_class;
+    GtkDrawingAreaClass parent_class;
 
     /*< public >*/
     /* Signals */

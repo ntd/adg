@@ -62,7 +62,7 @@
 #define DEFAULT_CRITICAL_ANGLE  (G_PI / 180)
 
 
-G_DEFINE_TYPE(AdgEdges, adg_edges, ADG_TYPE_TRAIL)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgEdges, adg_edges, ADG_TYPE_TRAIL)
 
 enum {
     PROP_0,
@@ -107,8 +107,6 @@ adg_edges_class_init(AdgEdgesClass *klass)
     model_class = (AdgModelClass *) klass;
     trail_class = (AdgTrailClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgEdgesPrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
@@ -143,17 +141,12 @@ adg_edges_class_init(AdgEdgesClass *klass)
 static void
 adg_edges_init(AdgEdges *edges)
 {
-    AdgEdgesPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(edges, ADG_TYPE_EDGES,
-                                                        AdgEdgesPrivate);
-
+    AdgEdgesPrivate *data = adg_edges_get_instance_private(edges);
     data->source = NULL;
     data->critical_angle = DEFAULT_CRITICAL_ANGLE;
     data->axis_angle = 0;
-
     data->cairo.path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cairo.array = NULL;
-
-    edges->data = data;
 }
 
 static void
@@ -180,11 +173,8 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgEdges *edges;
-    AdgEdgesPrivate *data;
-
-    edges = (AdgEdges *) object;
-    data = edges->data;
+    AdgEdges *edges = (AdgEdges *) object;
+    AdgEdgesPrivate *data = adg_edges_get_instance_private(edges);
 
     switch (prop_id) {
     case PROP_SOURCE:
@@ -206,13 +196,10 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgEdges *edges;
-    AdgEdgesPrivate *data;
+    AdgEdges *edges = (AdgEdges *) object;
+    AdgEdgesPrivate *data = adg_edges_get_instance_private(edges);
     gpointer tmp_pointer;
     gdouble tmp_double;
-
-    edges = (AdgEdges *) object;
-    data = edges->data;
 
     switch (prop_id) {
     case PROP_SOURCE:
@@ -304,8 +291,7 @@ adg_edges_get_source(AdgEdges *edges)
 
     g_return_val_if_fail(ADG_IS_EDGES(edges), NULL);
 
-    data = edges->data;
-
+    data = adg_edges_get_instance_private(edges);
     return data->source;
 }
 
@@ -366,7 +352,7 @@ adg_edges_get_axis_angle(AdgEdges *edges)
 
     g_return_val_if_fail(ADG_IS_EDGES(edges), 0);
 
-    data = edges->data;
+    data = adg_edges_get_instance_private(edges);
     return data->axis_angle;
 }
 
@@ -410,7 +396,7 @@ adg_edges_get_critical_angle(AdgEdges *edges)
 
     g_return_val_if_fail(ADG_IS_EDGES(edges), 0);
 
-    data = edges->data;
+    data = adg_edges_get_instance_private(edges);
     return data->critical_angle;
 }
 
@@ -435,7 +421,7 @@ _adg_get_cairo_path(AdgTrail *trail)
     cairo_matrix_t map;
 
     edges = (AdgEdges *) trail;
-    data = edges->data;
+    data = adg_edges_get_instance_private(edges);
 
     /* Check for cached path */
     if (data->cairo.path.status == CAIRO_STATUS_SUCCESS)
@@ -485,14 +471,14 @@ _adg_get_cairo_path(AdgTrail *trail)
 static void
 _adg_unset_source(AdgEdges *edges)
 {
-    AdgEdgesPrivate *data = edges->data;
+    AdgEdgesPrivate *data = adg_edges_get_instance_private(edges);
     data->source = NULL;
 }
 
 static void
 _adg_clear_cairo_path(AdgEdges *edges)
 {
-    AdgEdgesPrivate *data = edges->data;
+    AdgEdgesPrivate *data = adg_edges_get_instance_private(edges);
 
     if (data->cairo.array != NULL) {
         g_array_free(data->cairo.array, TRUE);

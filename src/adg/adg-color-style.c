@@ -48,7 +48,7 @@
 #include "adg-color-style-private.h"
 
 
-G_DEFINE_TYPE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgColorStyle, adg_color_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -81,8 +81,6 @@ adg_color_style_class_init(AdgColorStyleClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgColorStylePrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -121,23 +119,18 @@ adg_color_style_class_init(AdgColorStyleClass *klass)
 static void
 adg_color_style_init(AdgColorStyle *color_style)
 {
-    AdgColorStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(color_style,
-                                                            ADG_TYPE_COLOR_STYLE,
-                                                            AdgColorStylePrivate);
-
+    AdgColorStylePrivate *data = adg_color_style_get_instance_private(color_style);
     data->red = 0;
     data->green = 0;
     data->blue = 0;
     data->alpha = 1;
-
-    color_style->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgColorStylePrivate *data = ((AdgColorStyle *) object)->data;
+    AdgColorStylePrivate *data = adg_color_style_get_instance_private((AdgColorStyle *) object);
 
     switch (prop_id) {
     case PROP_RED:
@@ -162,7 +155,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgColorStylePrivate *data = ((AdgColorStyle *) object)->data;
+    AdgColorStylePrivate *data = adg_color_style_get_instance_private((AdgColorStyle *) object);
 
     switch (prop_id) {
     case PROP_RED:
@@ -234,8 +227,7 @@ adg_color_style_get_red(AdgColorStyle *color_style)
 
     g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
 
-    data = color_style->data;
-
+    data = adg_color_style_get_instance_private(color_style);
     return data->red;
 }
 
@@ -274,8 +266,7 @@ adg_color_style_get_green(AdgColorStyle *color_style)
 
     g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
 
-    data = color_style->data;
-
+    data = adg_color_style_get_instance_private(color_style);
     return data->green;
 }
 
@@ -314,8 +305,7 @@ adg_color_style_get_blue(AdgColorStyle *color_style)
 
     g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
 
-    data = color_style->data;
-
+    data = adg_color_style_get_instance_private(color_style);
     return data->blue;
 }
 
@@ -359,7 +349,7 @@ adg_color_style_put_rgb(AdgColorStyle *color_style,
 
     g_return_if_fail(ADG_IS_COLOR_STYLE(color_style));
 
-    data = color_style->data;
+    data = adg_color_style_get_instance_private(color_style);
 
     if (red != NULL)
         *red = data->red;
@@ -406,8 +396,7 @@ adg_color_style_get_alpha(AdgColorStyle *color_style)
 
     g_return_val_if_fail(ADG_IS_COLOR_STYLE(color_style), 0.);
 
-    data = color_style->data;
-
+    data = adg_color_style_get_instance_private(color_style);
     return data->alpha;
 }
 
@@ -415,7 +404,7 @@ adg_color_style_get_alpha(AdgColorStyle *color_style)
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
-    AdgColorStylePrivate *data = ((AdgColorStyle *) style)->data;
+    AdgColorStylePrivate *data = adg_color_style_get_instance_private((AdgColorStyle *) style);
 
     if (data->alpha == 1.)
         cairo_set_source_rgb(cr, data->red, data->green, data->blue);

@@ -77,7 +77,7 @@
         (gpointer) ((guint8 *) (ptr) - (guint8 *) (from) + (guint8 *) (to))
 
 
-G_DEFINE_TYPE(AdgPath, adg_path, ADG_TYPE_TRAIL)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgPath, adg_path, ADG_TYPE_TRAIL)
 
 
 static void             _adg_finalize           (GObject        *object);
@@ -135,8 +135,6 @@ adg_path_class_init(AdgPathClass *klass)
     model_class = (AdgModelClass *) klass;
     trail_class = (AdgTrailClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgPathPrivate));
-
     gobject_class->finalize = _adg_finalize;
 
     model_class->clear = _adg_clear;
@@ -148,9 +146,7 @@ adg_path_class_init(AdgPathClass *klass)
 static void
 adg_path_init(AdgPath *path)
 {
-    AdgPathPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(path, ADG_TYPE_PATH,
-                                                       AdgPathPrivate);
-
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
     data->cp_is_valid = FALSE;
     data->cp.x = 0;
     data->cp.y = 0;
@@ -165,18 +161,13 @@ adg_path_init(AdgPath *path)
     data->over.org = NULL;
     data->over.data = NULL;
     data->operation.action = ADG_ACTION_NONE;
-
-    path->data = data;
 }
 
 static void
 _adg_finalize(GObject *object)
 {
-    AdgPath *path;
-    AdgPathPrivate *data;
-
-    path = (AdgPath *) object;
-    data = path->data;
+    AdgPath *path = (AdgPath *) object;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
 
     g_array_free(data->cairo.array, TRUE);
     _adg_clear_operation(path);
@@ -228,7 +219,7 @@ adg_path_get_current_point(AdgPath *path)
 
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
 
     if (!data->cp_is_valid)
         return NULL;
@@ -254,8 +245,7 @@ adg_path_has_current_point(AdgPath *path)
 
     g_return_val_if_fail(ADG_IS_PATH(path), FALSE);
 
-    data = path->data;
-
+    data = adg_path_get_instance_private(path);
     return data->cp_is_valid;
 }
 
@@ -281,7 +271,7 @@ adg_path_last_primitive(AdgPath *path)
 
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
 
     /* Directly return NULL instead of returning an undefined primitive */
     if (data->last.org == NULL || data->last.data == NULL)
@@ -315,7 +305,7 @@ adg_path_over_primitive(AdgPath *path)
 
     g_return_val_if_fail(ADG_IS_PATH(path), NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
 
     /* Directly return NULL instead of returning an undefined primitive */
     if (data->over.org == NULL || data->over.data == NULL)
@@ -433,12 +423,11 @@ adg_path_append_array(AdgPath *path, CpmlPrimitiveType type,
         /* Not enough pairs have been provided */
         g_warning(_("%s: null pair caught while parsing arguments"), G_STRLOC);
     } else {
-        AdgPathPrivate *data;
+        AdgPathPrivate *data = adg_path_get_instance_private(path);
         CpmlPrimitive primitive;
         cairo_path_data_t org;
 
         /* Save a copy of the current point as primitive origin */
-        data = path->data;
         cpml_pair_to_cairo(&data->cp, &org);
 
         /* Prepend the cairo header */
@@ -481,7 +470,7 @@ adg_path_append_primitive(AdgPath *path, const CpmlPrimitive *primitive)
     g_return_if_fail(primitive->org != NULL);
     g_return_if_fail(primitive->data != NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
 
     g_return_if_fail(primitive->org->point.x == data->cp.x &&
                      primitive->org->point.y == data->cp.y);
@@ -515,7 +504,7 @@ adg_path_append_segment(AdgPath *path, const CpmlSegment *segment)
 
         g_return_if_fail(segment->data != NULL);
 
-        data = path->data;
+        data = adg_path_get_instance_private(path);
 
         _adg_clear_parent((AdgModel *) path);
         data->cairo.array = g_array_append_vals(data->cairo.array,
@@ -541,7 +530,7 @@ adg_path_append_cairo_path(AdgPath *path, const cairo_path_t *cairo_path)
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(cairo_path != NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
 
     _adg_clear_parent((AdgModel *) path);
     data->cairo.array = g_array_append_vals(data->cairo.array,
@@ -597,14 +586,15 @@ adg_path_append_trail(AdgPath *path, AdgTrail *trail)
 void
 adg_path_remove_primitive(AdgPath *path)
 {
+    AdgPathPrivate *data;
     const CpmlPrimitive *over;
     guint len;
 
     g_return_if_fail(ADG_IS_PATH(path));
 
-    AdgPathPrivate *data = path->data;
-
+    data = adg_path_get_instance_private(path);
     over = adg_path_over_primitive(path);
+
     if (over) {
         cairo_path_data_t *end = over->data + over->data->header.length;
         len = end - (cairo_path_data_t *) (data->cairo.array)->data;
@@ -860,7 +850,8 @@ adg_path_arc(AdgPath *path, const CpmlPair *center, gdouble r,
     g_return_if_fail(ADG_IS_PATH(path));
     g_return_if_fail(center != NULL);
 
-    data = path->data;
+    data = adg_path_get_instance_private(path);
+
     cpml_vector_from_angle(&p[0], start);
     cpml_vector_from_angle(&p[1], (start+end) / 2);
     cpml_vector_from_angle(&p[2], end);
@@ -1111,11 +1102,8 @@ adg_path_reflect_explicit(AdgPath *path, gdouble x, gdouble y)
 static void
 _adg_clear(AdgModel *model)
 {
-    AdgPath *path;
-    AdgPathPrivate *data;
-
-    path = (AdgPath *) model;
-    data = path->data;
+    AdgPath *path = (AdgPath *) model;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
 
     g_array_set_size(data->cairo.array, 0);
     _adg_clear_operation(path);
@@ -1148,7 +1136,7 @@ _adg_get_cairo_path(AdgTrail *trail)
 static cairo_path_t *
 _adg_read_cairo_path(AdgPath *path)
 {
-    AdgPathPrivate *data = path->data;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
     cairo_path_t *cairo_path = &data->cairo.path;
     GArray *array = data->cairo.array;
 
@@ -1188,13 +1176,11 @@ _adg_primitive_remap(CpmlPrimitive *primitive, gpointer to,
 static void
 _adg_rescan(AdgPath *path)
 {
-    AdgPathPrivate *data;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    CpmlPrimitive *last = &data->last;
+    CpmlPrimitive *over = &data->over;
     CpmlSegment segment;
-    CpmlPrimitive current, *last, *over;
-
-    data = path->data;
-    last = &data->last;
-    over = &data->over;
+    CpmlPrimitive current;
 
     last->segment = NULL;
     last->org = NULL;
@@ -1229,17 +1215,12 @@ _adg_rescan(AdgPath *path)
 static void
 _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 {
-    AdgPathPrivate *data;
-    cairo_path_data_t *path_data;
-    CpmlPrimitiveType type;
-    int length;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    cairo_path_data_t *path_data = current->data;
+    int length = path_data->header.length;
+    CpmlPrimitiveType type = path_data->header.type;
     gconstpointer old_data;
     gpointer new_data;
-
-    data = path->data;
-    path_data = current->data;
-    length = path_data->header.length;
-    type = path_data->header.type;
 
     /* Execute any pending operation */
     _adg_do_operation(path, path_data);
@@ -1285,11 +1266,8 @@ _adg_append_primitive(AdgPath *path, CpmlPrimitive *current)
 static void
 _adg_clear_operation(AdgPath *path)
 {
-    AdgPathPrivate *data;
-    AdgOperation *operation;
-
-    data = path->data;
-    operation = &data->operation;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    AdgOperation *operation = &data->operation;
 
     if (operation->action != ADG_ACTION_NONE) {
         g_warning(_("%s: a '%s' operation is still active while clearing the path"),
@@ -1305,13 +1283,10 @@ _adg_clear_operation(AdgPath *path)
 static gboolean
 _adg_append_operation(AdgPath *path, gint action, ...)
 {
-    AdgPathPrivate *data;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    AdgAction real_action = (AdgAction) action;
     AdgOperation *operation;
-    AdgAction real_action;
     va_list var_args;
-
-    real_action = (AdgAction) action;
-    data = path->data;
 
     if (data->last.data == NULL) {
         g_warning(_("%s: requested a '%s' operation on a path without current primitive"),
@@ -1400,14 +1375,12 @@ _adg_append_operation(AdgPath *path, gint action, ...)
 static void
 _adg_do_operation(AdgPath *path, cairo_path_data_t *path_data)
 {
-    AdgPathPrivate *data;
-    AdgAction action;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    AdgAction action = data->operation.action;
     CpmlSegment segment;
     CpmlPrimitive current;
     cairo_path_data_t current_org;
 
-    data = path->data;
-    action = data->operation.action;
     cpml_segment_from_cairo(&segment, _adg_read_cairo_path(path));
 
     /* Construct the current primitive, that is the primitive to be
@@ -1444,16 +1417,12 @@ _adg_do_action(AdgPath *path, AdgAction action, CpmlPrimitive *primitive)
 static void
 _adg_do_chamfer(AdgPath *path, CpmlPrimitive *current)
 {
-    AdgPathPrivate *data;
-    CpmlPrimitive *last;
-    gdouble delta1, delta2;
-    gdouble len1, len2;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    CpmlPrimitive *last = &data->last;
+    gdouble delta1 = data->operation.data.chamfer.delta1;
+    gdouble len1 = cpml_primitive_get_length(last);
+    gdouble delta2, len2;
     CpmlPair pair;
-
-    data = path->data;
-    last = &data->last;
-    delta1 = data->operation.data.chamfer.delta1;
-    len1 = cpml_primitive_get_length(last);
 
     if (delta1 >= len1) {
         g_warning(_("%s: first chamfer delta of %lf is greather than the available %lf length"),
@@ -1486,17 +1455,14 @@ _adg_do_chamfer(AdgPath *path, CpmlPrimitive *current)
 static void
 _adg_do_fillet(AdgPath *path, CpmlPrimitive *current)
 {
-    AdgPathPrivate *data;
-    CpmlPrimitive *last, *current_dup, *last_dup;
-    gdouble radius, offset, pos;
+    AdgPathPrivate *data = adg_path_get_instance_private(path);
+    CpmlPrimitive *last = &data->last;
+    CpmlPrimitive *current_dup = cpml_primitive_deep_dup(current);
+    CpmlPrimitive *last_dup = cpml_primitive_deep_dup(last);
+    gdouble radius = data->operation.data.fillet.radius;
+    gdouble offset = _adg_is_convex(last_dup, current_dup) ? -radius : radius;
+    gdouble pos;
     CpmlPair center, vector, p[3];
-
-    data = path->data;
-    last = &data->last;
-    current_dup = cpml_primitive_deep_dup(current);
-    last_dup = cpml_primitive_deep_dup(last);
-    radius = data->operation.data.fillet.radius;
-    offset = _adg_is_convex(last_dup, current_dup) ? -radius : radius;
 
     /* Find the center of the fillet from the intersection between
      * the last and current primitives offseted by radius */

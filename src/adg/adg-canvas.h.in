@@ -43,7 +43,6 @@ typedef struct _AdgCanvasClass   AdgCanvasClass;
 struct _AdgCanvas {
     /*< private >*/
     AdgContainer         parent;
-    gpointer             data;
 };
 
 struct _AdgCanvasClass {

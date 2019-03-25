@@ -42,7 +42,6 @@ typedef struct _AdgLogoClass   AdgLogoClass;
 struct _AdgLogo {
     /*< private >*/
     AdgEntity           parent;
-    gpointer            data;
 };
 
 struct _AdgLogoClass {

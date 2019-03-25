@@ -42,7 +42,6 @@ typedef struct _AdgStrokeClass   AdgStrokeClass;
 struct _AdgStroke {
     /*< private >*/
     AdgEntity           parent;
-    gpointer            data;
 };
 
 struct _AdgStrokeClass {

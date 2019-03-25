@@ -42,13 +42,12 @@ typedef struct _AdgDimStyleClass   AdgDimStyleClass;
 
 struct _AdgDimStyle {
     /*< private >*/
-    AdgStyle             parent;
-    gpointer             data;
+    AdgStyle            parent;
 };
 
 struct _AdgDimStyleClass {
     /*< private >*/
-    AdgStyleClass        parent_class;
+    AdgStyleClass       parent_class;
 };
 
 

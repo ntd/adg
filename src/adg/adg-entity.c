@@ -100,7 +100,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_entity_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(AdgEntity, adg_entity, G_TYPE_INITIALLY_UNOWNED)
 
 enum {
     PROP_0,
@@ -154,8 +154,6 @@ adg_entity_class_init(AdgEntityClass *klass)
     GType param_types[1];
 
     gobject_class = (GObjectClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgEntityPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
@@ -349,9 +347,7 @@ adg_entity_class_init(AdgEntityClass *klass)
 static void
 adg_entity_init(AdgEntity *entity)
 {
-    AdgEntityPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(entity,
-                                                         ADG_TYPE_ENTITY,
-                                                         AdgEntityPrivate);
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
     data->floating = FALSE;
     data->parent = NULL;
     cairo_matrix_init_identity(&data->global_map);
@@ -363,18 +359,13 @@ adg_entity_init(AdgEntity *entity)
     data->local.is_defined = FALSE;
     adg_matrix_copy(&data->local.matrix, adg_matrix_null());
     data->extents.is_defined = FALSE;
-
-    entity->data = data;
 }
 
 static void
 _adg_dispose(GObject *object)
 {
-    AdgEntity *entity;
-    AdgEntityPrivate *data;
-
-    entity = (AdgEntity *) object;
-    data = entity->data;
+    AdgEntity *entity = (AdgEntity *) object;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
 
     /* This call will emit a "notify" signal for parent.
      * Consequentially, the references to the old parent is dropped. */
@@ -393,11 +384,8 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity;
-    AdgEntityPrivate *data;
-
-    entity = (AdgEntity *) object;
-    data = entity->data;
+    AdgEntity *entity = (AdgEntity *) object;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
 
     switch (prop_id) {
     case PROP_FLOATING:
@@ -425,7 +413,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgEntityPrivate *data = ((AdgEntity *) object)->data;
+    AdgEntityPrivate *data = adg_entity_get_instance_private((AdgEntity *) object);
 
     switch (prop_id) {
     case PROP_FLOATING:
@@ -514,8 +502,7 @@ adg_entity_switch_floating(AdgEntity  *entity, gboolean new_state)
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(adg_is_boolean_value(new_state));
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     data->floating = new_state;
 }
 
@@ -539,8 +526,7 @@ adg_entity_has_floating(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), FALSE);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return data->floating;
 }
 
@@ -613,8 +599,7 @@ adg_entity_get_parent(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return data->parent;
 }
 
@@ -666,7 +651,7 @@ adg_entity_transform_global_map(AdgEntity *entity,
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
-    data = entity->data;
+    data = adg_entity_get_instance_private(entity);
 
     adg_matrix_copy(&map, &data->global_map);
     adg_matrix_transform(&map, transformation, mode);
@@ -692,8 +677,7 @@ adg_entity_get_global_map(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return &data->global_map;
 }
 
@@ -719,8 +703,7 @@ adg_entity_get_global_matrix(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return &data->global.matrix;
 }
 
@@ -772,7 +755,7 @@ adg_entity_transform_local_map(AdgEntity *entity,
     g_return_if_fail(ADG_IS_ENTITY(entity));
     g_return_if_fail(transformation != NULL);
 
-    data = entity->data;
+    data = adg_entity_get_instance_private(entity);
 
     adg_matrix_copy(&map, &data->local_map);
     adg_matrix_transform(&map, transformation, mode);
@@ -797,8 +780,7 @@ adg_entity_get_local_map(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return &data->local_map;
 }
 
@@ -824,8 +806,7 @@ adg_entity_get_local_matrix(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return &data->local.matrix;
 }
 
@@ -871,8 +852,7 @@ adg_entity_get_local_mix(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), ADG_MIX_UNDEFINED);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return data->local_mix;
 }
 
@@ -897,7 +877,7 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    data = entity->data;
+    data = adg_entity_get_instance_private(entity);
 
     if (extents == NULL)
         data->extents.is_defined = FALSE;
@@ -932,8 +912,7 @@ adg_entity_get_extents(AdgEntity *entity)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
-
+    data = adg_entity_get_instance_private(entity);
     return &data->extents;
 }
 
@@ -962,7 +941,7 @@ adg_entity_set_style(AdgEntity *entity, AdgDress dress, AdgStyle *style)
 
     g_return_if_fail(ADG_IS_ENTITY(entity));
 
-    data = entity->data;
+    data = adg_entity_get_instance_private(entity);
 
     if (data->hash_styles == NULL && style == NULL)
         return;
@@ -1017,7 +996,7 @@ adg_entity_get_style(AdgEntity *entity, AdgDress dress)
 
     g_return_val_if_fail(ADG_IS_ENTITY(entity), NULL);
 
-    data = entity->data;
+    data = adg_entity_get_instance_private(entity);
 
     if (data->hash_styles == NULL)
         return NULL;
@@ -1061,7 +1040,7 @@ adg_entity_style(AdgEntity *entity, AdgDress dress)
     style = adg_entity_get_style(entity, dress);
 
     if (style == NULL) {
-        AdgEntityPrivate *data = entity->data;
+        AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
 
         if (data->parent != NULL)
             style = adg_entity_style(data->parent, dress);
@@ -1261,11 +1240,8 @@ _adg_destroy(AdgEntity *entity)
 static void
 _adg_set_parent(AdgEntity *entity, AdgEntity *parent)
 {
-    AdgEntityPrivate *data;
-    AdgEntity *old_parent;
-
-    data = entity->data;
-    old_parent = data->parent;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
+    AdgEntity *old_parent = data->parent;
 
     data->parent = parent;
     data->global.is_defined = FALSE;
@@ -1277,13 +1253,9 @@ _adg_set_parent(AdgEntity *entity, AdgEntity *parent)
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgEntityPrivate *data;
-    const cairo_matrix_t *map;
-    cairo_matrix_t *matrix;
-
-    data = entity->data;
-    map = &data->global_map;
-    matrix = &data->global.matrix;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
+    const cairo_matrix_t *map = &data->global_map;
+    cairo_matrix_t *matrix = &data->global.matrix;
 
     if (data->parent) {
         adg_matrix_copy(matrix, adg_entity_get_global_matrix(data->parent));
@@ -1296,13 +1268,9 @@ _adg_global_changed(AdgEntity *entity)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    AdgEntityPrivate *data;
-    const cairo_matrix_t *map;
-    cairo_matrix_t *matrix;
-
-    data = entity->data;
-    map = &data->local_map;
-    matrix = &data->local.matrix;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
+    const cairo_matrix_t *map = &data->local_map;
+    cairo_matrix_t *matrix = &data->local.matrix;
 
     switch (data->local_mix) {
     case ADG_MIX_DISABLED:
@@ -1359,7 +1327,7 @@ static void
 _adg_real_invalidate(AdgEntity *entity)
 {
     AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
-    AdgEntityPrivate *data = entity->data;
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
 
     /* Do not raise any warning if invalidate() is not defined,
      * assuming entity does not have additional cache to be cleared */
@@ -1372,11 +1340,8 @@ _adg_real_invalidate(AdgEntity *entity)
 static void
 _adg_real_arrange(AdgEntity *entity)
 {
-    AdgEntityClass *klass;
-    AdgEntityPrivate *data;
-
-    klass = ADG_ENTITY_GET_CLASS(entity);
-    data = entity->data;
+    AdgEntityClass *klass = ADG_ENTITY_GET_CLASS(entity);
+    AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
 
     /* Update the global matrix, if required */
     if (!data->global.is_defined) {
@@ -1421,7 +1386,7 @@ _adg_real_render(AdgEntity *entity, cairo_t *cr)
     cairo_restore(cr);
 
     if (_adg_show_extents) {
-        AdgEntityPrivate *data = entity->data;
+        AdgEntityPrivate *data = adg_entity_get_instance_private(entity);
         CpmlExtents *extents = &data->extents;
 
         if (extents->is_defined) {

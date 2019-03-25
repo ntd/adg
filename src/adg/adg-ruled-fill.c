@@ -55,7 +55,7 @@
 #define _ADG_OLD_FILL_STYLE_CLASS ((AdgFillStyleClass *) adg_ruled_fill_parent_class)
 
 
-G_DEFINE_TYPE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgRuledFill, adg_ruled_fill, ADG_TYPE_FILL_STYLE)
 
 enum {
     PROP_0,
@@ -98,8 +98,6 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
     style_class = (AdgStyleClass *) klass;
     fill_style_class = (AdgFillStyleClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgRuledFillPrivate));
-
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
@@ -132,22 +130,17 @@ adg_ruled_fill_class_init(AdgRuledFillClass *klass)
 static void
 adg_ruled_fill_init(AdgRuledFill *ruled_fill)
 {
-    AdgRuledFillPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(ruled_fill,
-                                                            ADG_TYPE_RULED_FILL,
-                                                            AdgRuledFillPrivate);
-
+    AdgRuledFillPrivate *data = adg_ruled_fill_get_instance_private(ruled_fill);
     data->line_dress = ADG_DRESS_LINE_FILL;
     data->angle = G_PI_4;
     data->spacing = 16;
-
-    ruled_fill->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgRuledFillPrivate *data = ((AdgRuledFill *) object)->data;
+    AdgRuledFillPrivate *data = adg_ruled_fill_get_instance_private((AdgRuledFill *) object);
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
@@ -169,11 +162,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgRuledFill *ruled_fill;
-    AdgRuledFillPrivate *data;
-
-    ruled_fill = (AdgRuledFill *) object;
-    data = ruled_fill->data;
+    AdgRuledFillPrivate *data = adg_ruled_fill_get_instance_private((AdgRuledFill *) object);
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
@@ -242,8 +231,7 @@ adg_ruled_fill_get_line_dress(AdgRuledFill *ruled_fill)
 
     g_return_val_if_fail(ADG_IS_RULED_FILL(ruled_fill), ADG_DRESS_UNDEFINED);
 
-    data = ruled_fill->data;
-
+    data = adg_ruled_fill_get_instance_private(ruled_fill);
     return data->line_dress;
 }
 
@@ -280,8 +268,7 @@ adg_ruled_fill_get_spacing(AdgRuledFill *ruled_fill)
 
     g_return_val_if_fail(ADG_IS_RULED_FILL(ruled_fill), 0);
 
-    data = ruled_fill->data;
-
+    data = adg_ruled_fill_get_instance_private(ruled_fill);
     return data->spacing;
 }
 
@@ -318,8 +305,7 @@ adg_ruled_fill_get_angle(AdgRuledFill *ruled_fill)
 
     g_return_val_if_fail(ADG_IS_RULED_FILL(ruled_fill), 0);
 
-    data = ruled_fill->data;
-
+    data = adg_ruled_fill_get_instance_private(ruled_fill);
     return data->angle;
 }
 
@@ -390,7 +376,7 @@ _adg_create_pattern(AdgRuledFill *ruled_fill, AdgEntity *entity, cairo_t *cr)
     if (!extents->is_defined)
         return NULL;
 
-    data = ruled_fill->data;
+    data = adg_ruled_fill_get_instance_private(ruled_fill);
     line_style = adg_entity_style(entity, data->line_dress);
     surface = cairo_surface_create_similar(cairo_get_target(cr),
                                            CAIRO_CONTENT_COLOR_ALPHA,

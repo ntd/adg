@@ -95,7 +95,7 @@
 #define _ADG_OLD_WIDGET_CLASS   ((GtkWidgetClass *) adg_gtk_area_parent_class)
 
 
-G_DEFINE_TYPE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgGtkArea, adg_gtk_area, GTK_TYPE_DRAWING_AREA)
 
 enum {
     PROP_0,
@@ -118,14 +118,11 @@ static guint    _adg_signals[LAST_SIGNAL] = { 0 };
 static const CpmlExtents *
 _adg_get_extents(AdgGtkArea *area)
 {
-    AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-    CpmlExtents old_extents;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private(area);
+    CpmlExtents old_extents = data->extents;;
+    AdgCanvas *canvas = data->canvas;;
 
-    data = area->data;
-    old_extents = data->extents;
     data->extents.is_defined = FALSE;
-    canvas = data->canvas;
 
     if (ADG_IS_CANVAS(canvas)) {
         const CpmlExtents *extents;
@@ -154,7 +151,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgGtkAreaPrivate *data = ((AdgGtkArea *) object)->data;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) object);
 
     switch (prop_id) {
     case PROP_CANVAS:
@@ -179,12 +176,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgGtkArea *area;
-    AdgGtkAreaPrivate *data;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) object);
     AdgCanvas *new_canvas, *old_canvas;
-
-    area = (AdgGtkArea *) object;
-    data = area->data;
 
     switch (prop_id) {
     case PROP_CANVAS:
@@ -196,7 +189,7 @@ _adg_set_property(GObject *object, guint prop_id,
             if (old_canvas != NULL)
                 g_object_unref(old_canvas);
             data->canvas = new_canvas;
-            g_signal_emit(area, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
+            g_signal_emit(object, _adg_signals[CANVAS_CHANGED], 0, old_canvas);
         }
         break;
     case PROP_FACTOR:
@@ -218,7 +211,7 @@ _adg_set_property(GObject *object, guint prop_id,
 static void
 _adg_dispose(GObject *object)
 {
-    AdgGtkAreaPrivate *data = ((AdgGtkArea *) object)->data;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) object);
 
     if (data->canvas) {
         g_object_unref(data->canvas);
@@ -248,17 +241,14 @@ _adg_dispose(GObject *object)
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
-    AdgGtkArea *area;
-    AdgGtkAreaPrivate *data;
+    AdgGtkArea *area = (AdgGtkArea *) widget;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private(area);
     const CpmlExtents *sheet;
     CpmlVector size;
     gdouble factor;
 
     if (_ADG_OLD_WIDGET_CLASS->size_allocate)
         _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
-
-    area = (AdgGtkArea *) widget;
-    data = area->data;
 
     sheet = _adg_get_extents(area);
     if (!sheet->is_defined || sheet->size.x <= 0 || sheet->size.y <= 0)
@@ -297,11 +287,9 @@ static gboolean
 _adg_get_map(GtkWidget *widget, gboolean local_space,
              cairo_matrix_t *map, cairo_matrix_t *inverted)
 {
-    AdgGtkAreaPrivate *data;
-    AdgEntity *entity;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+    AdgEntity *entity = (AdgEntity *) data->canvas;
 
-    data = ((AdgGtkArea *) widget)->data;
-    entity = (AdgEntity *) data->canvas;
     if (entity == NULL)
         return FALSE;
 
@@ -324,11 +312,8 @@ _adg_set_map(GtkWidget *widget,
              gboolean local_space,
              const cairo_matrix_t *map)
 {
-    AdgGtkAreaPrivate *data;
-    AdgEntity *entity;
-
-    data = ((AdgGtkArea *) widget)->data;
-    entity = (AdgEntity *) data->canvas;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+    AdgEntity *entity = (AdgEntity *) data->canvas;
 
     if (entity == NULL)
         return;
@@ -349,8 +334,6 @@ _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 {
     gboolean zoom_in, zoom_out, local_space, global_space;
     cairo_matrix_t map, inverted;
-    AdgGtkAreaPrivate *data;
-    double factor, x, y;
 
     zoom_in = event->direction == GDK_SCROLL_UP;
     zoom_out = event->direction == GDK_SCROLL_DOWN;
@@ -359,10 +342,10 @@ _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 
     if ((zoom_in || zoom_out) && (local_space || global_space) &&
         _adg_get_map(widget, local_space, &map, &inverted)) {
-        data = ((AdgGtkArea *) widget)->data;
-        factor = zoom_in ? data->factor : 1. / data->factor;
-        x = event->x;
-        y = event->y;
+        AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+        double factor = zoom_in ? data->factor : 1. / data->factor;
+        gdouble x = event->x;
+        gdouble y = event->y;
 
         cairo_matrix_transform_point(&inverted, &x, &y);
         cairo_matrix_scale(&map, factor, factor);
@@ -386,9 +369,8 @@ _adg_scroll_event(GtkWidget *widget, GdkEventScroll *event)
 static gboolean
 _adg_button_press_event(GtkWidget *widget, GdkEventButton *event)
 {
-    AdgGtkAreaPrivate *data = ((AdgGtkArea *) widget)->data;
-
     if (event->type == GDK_BUTTON_PRESS && event->button == 2) {
+        AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
         /* Remember the starting coordinates of a (probable) translation */
         data->x_event = event->x;
         data->y_event = event->y;
@@ -405,8 +387,6 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 {
     gboolean translating, local_space, global_space;
     cairo_matrix_t map, inverted;
-    AdgGtkAreaPrivate *data;
-    double x, y;
 
     translating = (event->state & GDK_BUTTON2_MASK) == GDK_BUTTON2_MASK;
     local_space = (event->state & ADG_GTK_MODIFIERS) == 0;
@@ -414,9 +394,9 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 
     if (translating && (local_space || global_space) &&
         _adg_get_map(widget, local_space, &map, &inverted)) {
-        data = ((AdgGtkArea *) widget)->data;
-        x = event->x - data->x_event;
-        y = event->y - data->y_event;
+        AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+        gdouble x = event->x - data->x_event;
+        gdouble y = event->y - data->y_event;
 
         cairo_matrix_transform_distance(&inverted, &x, &y);
         cairo_matrix_translate(&map, x, y);
@@ -441,7 +421,7 @@ _adg_motion_notify_event(GtkWidget *widget, GdkEventMotion *event)
 static void
 _adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
 {
-    AdgGtkAreaPrivate *data = area->data;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private(area);
     data->initialized = FALSE;
 }
 
@@ -450,11 +430,8 @@ _adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
 static void
 _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 {
-    AdgGtkArea *area;
-    const CpmlExtents *extents;
-
-    area = (AdgGtkArea *) widget;
-    extents = _adg_get_extents(area);
+    AdgGtkArea *area = (AdgGtkArea *) widget;
+    const CpmlExtents *extents = _adg_get_extents(area);
 
     if (extents->is_defined) {
         requisition->width = extents->size.x;
@@ -555,11 +532,8 @@ _adg_get_preferred_width_for_height(GtkWidget *widget, gint height,
 static gboolean
 _adg_draw(GtkWidget *widget, cairo_t *cr)
 {
-    AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-
-    data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+    AdgCanvas *canvas = data->canvas;
 
     if (canvas != NULL) {
         cairo_transform(cr, &data->render_map);
@@ -580,8 +554,6 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     widget_class = (GtkWidgetClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgGtkAreaPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
@@ -682,20 +654,14 @@ adg_gtk_area_class_init(AdgGtkAreaClass *klass)
 static void
 adg_gtk_area_init(AdgGtkArea *area)
 {
-    AdgGtkAreaPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(area,
-                                                          ADG_GTK_TYPE_AREA,
-                                                          AdgGtkAreaPrivate);
-
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private(area);
     data->canvas = NULL;
     data->factor = 1.05;
     data->autozoom = FALSE;
     cairo_matrix_init_identity(&data->render_map);
-
     data->initialized = FALSE;
     data->x_event = 0;
     data->y_event = 0;
-
-    area->data = data;
 
     /* Enable GDK events to catch wheel rotation and drag */
     gtk_widget_add_events((GtkWidget *) area,
@@ -778,8 +744,7 @@ adg_gtk_area_get_canvas(AdgGtkArea *area)
 
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), NULL);
 
-    data = area->data;
-
+    data = adg_gtk_area_get_instance_private(area);
     return data->canvas;
 }
 
@@ -841,7 +806,7 @@ adg_gtk_area_transform_render_map(AdgGtkArea *area,
     g_return_if_fail(ADG_GTK_IS_AREA(area));
     g_return_if_fail(transformation != NULL);
 
-    data = area->data;
+    data = adg_gtk_area_get_instance_private(area);
 
     adg_matrix_copy(&map, &data->render_map);
     adg_matrix_transform(&map, transformation, mode);
@@ -866,8 +831,7 @@ adg_gtk_area_get_render_map(AdgGtkArea *area)
 
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), NULL);
 
-    data = area->data;
-
+    data = adg_gtk_area_get_instance_private(area);
     return &data->render_map;
 }
 
@@ -921,7 +885,7 @@ adg_gtk_area_get_zoom(AdgGtkArea *area)
 
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
 
-    data = area->data;
+    data = adg_gtk_area_get_instance_private(area);
     return data->render_map.xx;
 }
 
@@ -962,7 +926,7 @@ adg_gtk_area_get_factor(AdgGtkArea *area)
 
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), 0.);
 
-    data = area->data;
+    data = adg_gtk_area_get_instance_private(area);
     return data->factor;
 }
 
@@ -1004,7 +968,7 @@ adg_gtk_area_has_autozoom(AdgGtkArea *area)
 
     g_return_val_if_fail(ADG_GTK_IS_AREA(area), FALSE);
 
-    data = area->data;
+    data = adg_gtk_area_get_instance_private(area);
     return data->autozoom;
 }
 
@@ -1028,7 +992,7 @@ adg_gtk_area_reset(AdgGtkArea *area)
 
     g_return_if_fail(ADG_GTK_IS_AREA(area));
 
-    data = area->data;
+    data = adg_gtk_area_get_instance_private(area);
     cairo_matrix_init_identity(&data->render_map);
 
     sheet = _adg_get_extents(area);

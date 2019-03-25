@@ -41,13 +41,12 @@ typedef struct _AdgDimClass   AdgDimClass;
 
 struct _AdgDim {
     /*< private >*/
-    AdgEntity            parent;
-    gpointer             data;
+    AdgEntity           parent;
 };
 
 struct _AdgDimClass {
     /*< private >*/
-    AdgEntityClass       parent_class;
+    AdgEntityClass      parent_class;
 
     /*< public >*/
     /* Virtual table */

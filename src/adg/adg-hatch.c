@@ -51,7 +51,7 @@
 #include "adg-hatch-private.h"
 
 
-G_DEFINE_TYPE(AdgHatch, adg_hatch, ADG_TYPE_STROKE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgHatch, adg_hatch, ADG_TYPE_STROKE)
 
 enum {
     PROP_0,
@@ -81,8 +81,6 @@ adg_hatch_class_init(AdgHatchClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgHatchPrivate));
-
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
@@ -99,19 +97,15 @@ adg_hatch_class_init(AdgHatchClass *klass)
 static void
 adg_hatch_init(AdgHatch *hatch)
 {
-    AdgHatchPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(hatch, ADG_TYPE_HATCH,
-                                                        AdgHatchPrivate);
-
+    AdgHatchPrivate *data = adg_hatch_get_instance_private(hatch);
     data->fill_dress = ADG_DRESS_FILL_HATCH;
-
-    hatch->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgHatchPrivate *data = ((AdgHatch *) object)->data;
+    AdgHatchPrivate *data = adg_hatch_get_instance_private((AdgHatch *) object);
 
     switch (prop_id) {
     case PROP_FILL_DRESS:
@@ -127,11 +121,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgHatch *hatch;
-    AdgHatchPrivate *data;
-
-    hatch = (AdgHatch *) object;
-    data = hatch->data;
+    AdgHatch *hatch = (AdgHatch *) object;
+    AdgHatchPrivate *data = adg_hatch_get_instance_private(hatch);
 
     switch (prop_id) {
     case PROP_FILL_DRESS:
@@ -201,8 +192,7 @@ adg_hatch_get_fill_dress(AdgHatch *hatch)
 
     g_return_val_if_fail(ADG_IS_HATCH(hatch), ADG_DRESS_UNDEFINED);
 
-    data = hatch->data;
-
+    data = adg_hatch_get_instance_private(hatch);
     return data->fill_dress;
 }
 
@@ -210,19 +200,15 @@ adg_hatch_get_fill_dress(AdgHatch *hatch)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgHatch *hatch;
-    AdgStroke *stroke;
-    AdgHatchPrivate *data;
-    const cairo_path_t *cairo_path;
-
-    hatch = (AdgHatch *) entity;
-    stroke = (AdgStroke *) entity;
-    data = hatch->data;
-    cairo_path = adg_trail_get_cairo_path(adg_stroke_get_trail(stroke));
+    AdgHatch *hatch = (AdgHatch *) entity;
+    AdgStroke *stroke = (AdgStroke *) entity;
+    AdgTrail *trail = adg_stroke_get_trail(stroke);
+    const cairo_path_t *cairo_path = adg_trail_get_cairo_path(trail);
 
     if (cairo_path != NULL) {
-        AdgFillStyle *fill_style = (AdgFillStyle *)
-            adg_entity_style(entity, data->fill_dress);
+        AdgHatchPrivate *data = adg_hatch_get_instance_private(hatch);
+        AdgFillStyle *fill_style =
+            (AdgFillStyle *) adg_entity_style(entity, data->fill_dress);
 
         adg_fill_style_set_extents(fill_style, adg_entity_get_extents(entity));
 

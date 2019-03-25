@@ -88,7 +88,7 @@
                                                                          ADG_THREE_STATE_OFF )
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgDim, adg_dim, ADG_TYPE_ENTITY)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(AdgDim, adg_dim, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -147,8 +147,6 @@ adg_dim_class_init(AdgDimClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgDimPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->finalize = _adg_finalize;
@@ -238,9 +236,7 @@ adg_dim_class_init(AdgDimClass *klass)
 static void
 adg_dim_init(AdgDim *dim)
 {
-    AdgDimPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim, ADG_TYPE_DIM,
-                                                      AdgDimPrivate);
-
+    AdgDimPrivate *data = adg_dim_get_instance_private(dim);
     data->dim_dress = ADG_DRESS_DIMENSION;
     data->ref1 = NULL;
     data->ref2 = NULL;
@@ -252,23 +248,17 @@ adg_dim_init(AdgDim *dim)
     data->max = NULL;
     data->geometry.computed = FALSE;
     data->geometry.notice = NULL;
-
 #if 0
     /* This one is G_PARAM_CONSTRUCT, so set by property inizialization */
     data->value = NULL
 #endif
-
-    dim->data = data;
 }
 
 static void
 _adg_dispose(GObject *object)
 {
-    AdgEntity *entity;
-    AdgDimPrivate *data;
-
-    entity = (AdgEntity *) object;
-    data = ((AdgDim *) object)->data;
+    AdgEntity *entity = (AdgEntity *) object;
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) object);
 
     if (data->quote.entity) {
         g_object_unref(data->quote.entity);
@@ -291,8 +281,7 @@ _adg_dispose(GObject *object)
 static void
 _adg_finalize(GObject *object)
 {
-    AdgDimPrivate *data = ((AdgDim *) object)->data;
-
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) object);
     g_free(data->value);
     g_free(data->min);
     g_free(data->max);
@@ -305,7 +294,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgDimPrivate *data = ((AdgDim *) object)->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) object);
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
@@ -348,13 +337,9 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgEntity *entity;
-    AdgDim *dim;
-    AdgDimPrivate *data;
-
-    entity = (AdgEntity *) object;
-    dim = (AdgDim *) object;
-    data = dim->data;
+    AdgEntity *entity = (AdgEntity *) object;
+    AdgDim *dim = (AdgDim *) object;
+    AdgDimPrivate *data = adg_dim_get_instance_private(dim);
 
     switch (prop_id) {
     case PROP_DIM_DRESS:
@@ -414,7 +399,7 @@ adg_dim_get_dim_style(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
     return data->dim_style;
 }
 
@@ -457,8 +442,7 @@ adg_dim_get_dim_dress(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), ADG_DRESS_UNDEFINED);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->dim_dress;
 }
 
@@ -578,8 +562,7 @@ adg_dim_get_ref1(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->ref1;
 }
 
@@ -699,8 +682,7 @@ adg_dim_get_ref2(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->ref2;
 }
 
@@ -820,8 +802,7 @@ adg_dim_get_pos(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->pos;
 }
 
@@ -843,9 +824,8 @@ adg_dim_set_level(AdgDim *dim, gdouble level)
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
     data->level = level;
-
     g_object_notify((GObject *) dim, "level");
 }
 
@@ -866,8 +846,7 @@ adg_dim_get_level(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), 0);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->level;
 }
 
@@ -908,8 +887,7 @@ adg_dim_get_outside(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), ADG_THREE_STATE_UNKNOWN);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->outside;
 }
 
@@ -954,8 +932,7 @@ adg_dim_get_detached(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), ADG_THREE_STATE_UNKNOWN);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->detached;
 }
 
@@ -1003,8 +980,7 @@ adg_dim_get_value(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->value;
 }
 
@@ -1138,8 +1114,7 @@ adg_dim_get_min(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->min;
 }
 
@@ -1182,8 +1157,7 @@ adg_dim_get_max(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->max;
 }
 
@@ -1213,8 +1187,7 @@ adg_dim_get_quote(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->quote.entity;
 }
 
@@ -1271,8 +1244,7 @@ adg_dim_has_geometry(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), FALSE);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->geometry.computed;
 }
 
@@ -1297,8 +1269,7 @@ adg_dim_switch_geometry(AdgDim *dim, gboolean computed)
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     data->geometry.computed = computed;
 }
 
@@ -1321,8 +1292,7 @@ adg_dim_get_geometry_notice(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    data = dim->data;
-
+    data = adg_dim_get_instance_private(dim);
     return data->geometry.notice;
 }
 
@@ -1348,9 +1318,9 @@ adg_dim_set_geometry_notice(AdgDim *dim, const gchar *notice)
 
     g_return_if_fail(ADG_IS_DIM(dim));
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
 
-    if (data->geometry.notice)
+    if (data->geometry.notice != NULL)
         g_free(data->geometry.notice);
 
     data->geometry.notice = g_strdup(notice);
@@ -1440,7 +1410,7 @@ adg_dim_compute_geometry(AdgDim *dim)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), FALSE);
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
     if (data->geometry.computed)
         return TRUE;
 
@@ -1458,7 +1428,7 @@ adg_dim_compute_geometry(AdgDim *dim)
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) entity);
 
     if (_ADG_OLD_ENTITY_CLASS->global_changed)
         _ADG_OLD_ENTITY_CLASS->global_changed(entity);
@@ -1470,7 +1440,7 @@ _adg_global_changed(AdgEntity *entity)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) entity);
 
     if (_ADG_OLD_ENTITY_CLASS->local_changed)
         _ADG_OLD_ENTITY_CLASS->local_changed(entity);
@@ -1482,7 +1452,7 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_invalidate(AdgEntity *entity)
 {
-    AdgDimPrivate *data = ((AdgDim *) entity)->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private((AdgDim *) entity);
 
     if (data->quote.value) {
         g_object_unref(data->quote.value);
@@ -1521,7 +1491,7 @@ _adg_arrange(AdgEntity *entity)
     cairo_matrix_t map;
 
     dim = (AdgDim *) entity;
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
 
     /* Resolve the dim style */
     if (data->dim_style == NULL)
@@ -1670,13 +1640,12 @@ _adg_set_outside(AdgDim *dim, AdgThreeState outside)
     g_return_val_if_fail(adg_is_enum_value(outside, ADG_TYPE_THREE_STATE),
                          FALSE);
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
 
     if (data->outside == outside)
         return FALSE;
 
     data->outside = outside;
-
     return TRUE;
 }
 
@@ -1685,25 +1654,21 @@ _adg_set_detached(AdgDim *dim, AdgThreeState detached)
 {
     AdgDimPrivate *data;
 
-    g_return_val_if_fail(adg_is_enum_value(detached, ADG_TYPE_THREE_STATE),
-                         FALSE);
+    g_return_val_if_fail(adg_is_enum_value(detached, ADG_TYPE_THREE_STATE), FALSE);
 
-    data = dim->data;
+    data = adg_dim_get_instance_private(dim);
 
     if (data->detached == detached)
         return FALSE;
 
     data->detached = detached;
-
     return TRUE;
 }
 
 static gboolean
 _adg_set_value(AdgDim *dim, const gchar *value)
 {
-    AdgDimPrivate *data;
-
-    data = dim->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private(dim);
 
     if (g_strcmp0(value, data->value) == 0)
         return FALSE;
@@ -1722,7 +1687,7 @@ _adg_set_value(AdgDim *dim, const gchar *value)
 static gboolean
 _adg_set_min(AdgDim *dim, const gchar *min)
 {
-    AdgDimPrivate *data = dim->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private(dim);
 
     if (g_strcmp0(min, data->min) == 0)
         return FALSE;
@@ -1741,7 +1706,7 @@ _adg_set_min(AdgDim *dim, const gchar *min)
 static gboolean
 _adg_set_max(AdgDim *dim, const gchar *max)
 {
-    AdgDimPrivate *data = dim->data;
+    AdgDimPrivate *data = adg_dim_get_instance_private(dim);
 
     if (g_strcmp0(max, data->max) == 0)
         return FALSE;

@@ -42,13 +42,12 @@ typedef struct _AdgFontStyleClass   AdgFontStyleClass;
 
 struct _AdgFontStyle {
     /*< private >*/
-    AdgStyle             parent;
-    gpointer             data;
+    AdgStyle            parent;
 };
 
 struct _AdgFontStyleClass {
     /*< private >*/
-    AdgStyleClass        parent_class;
+    AdgStyleClass       parent_class;
 };
 
 

@@ -63,7 +63,8 @@ static void             _adg_iface_init         (AdgTextualIface *iface);
 
 
 G_DEFINE_TYPE_WITH_CODE(AdgToyText, adg_toy_text, ADG_TYPE_ENTITY,
-                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init))
+                        G_IMPLEMENT_INTERFACE(ADG_TYPE_TEXTUAL, _adg_iface_init)
+                        G_ADD_PRIVATE(AdgToyText))
 
 enum {
     PROP_0,
@@ -106,8 +107,6 @@ adg_toy_text_class_init(AdgToyTextClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgToyTextPrivate));
-
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -135,27 +134,18 @@ _adg_iface_init(AdgTextualIface *iface)
 static void
 adg_toy_text_init(AdgToyText *toy_text)
 {
-    AdgToyTextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(toy_text,
-                                                          ADG_TYPE_TOY_TEXT,
-                                                          AdgToyTextPrivate);
-
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
     data->font_dress = ADG_DRESS_FONT_TEXT;
     data->text = NULL;
     data->glyphs = NULL;
-
-    toy_text->data = data;
-
     adg_entity_set_local_mix((AdgEntity *) toy_text, ADG_MIX_ANCESTORS_NORMALIZED);
 }
 
 static void
 _adg_finalize(GObject *object)
 {
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) object;
-    data = toy_text->data;
+    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
 
     g_free(data->text);
     _adg_clear_font(toy_text);
@@ -169,7 +159,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgToyTextPrivate *data = ((AdgToyText *) object)->data;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private((AdgToyText *) object);
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
@@ -188,11 +178,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) object;
-    data = toy_text->data;
+    AdgToyText *toy_text = (AdgToyText *) object;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
 
     switch (prop_id) {
     case PROP_FONT_DRESS:
@@ -260,12 +247,9 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
+    AdgToyText *toy_text = (AdgToyText *) entity;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
     CpmlExtents extents;
-
-    toy_text = (AdgToyText *) entity;
-    data = toy_text->data;
 
     if (data->font == NULL) {
         AdgDress dress;
@@ -319,11 +303,8 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgToyText *toy_text;
-    AdgToyTextPrivate *data;
-
-    toy_text = (AdgToyText *) entity;
-    data = toy_text->data;
+    AdgToyText *toy_text = (AdgToyText *) entity;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
 
     if (data->glyphs != NULL) {
         adg_entity_apply_dress(entity, data->font_dress, cr);
@@ -342,7 +323,7 @@ _adg_set_font_dress(AdgTextual *textual, AdgDress dress)
 static AdgDress
 _adg_get_font_dress(AdgTextual *textual)
 {
-    AdgToyTextPrivate *data = ((AdgToyText *) textual)->data;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private((AdgToyText *) textual);
     return data->font_dress;
 }
 
@@ -355,22 +336,21 @@ _adg_set_text(AdgTextual *textual, const gchar *text)
 static gchar *
 _adg_dup_text(AdgTextual *textual)
 {
-    AdgToyTextPrivate *data = ((AdgToyText *) textual)->data;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private((AdgToyText *) textual);
     return g_strdup(data->text);
 }
 
 static void
 _adg_clear_font(AdgToyText *toy_text)
 {
-    AdgToyTextPrivate *data = toy_text->data;
-
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
     data->font = NULL;
 }
 
 static void
 _adg_clear_glyphs(AdgToyText *toy_text)
 {
-    AdgToyTextPrivate *data = toy_text->data;
+    AdgToyTextPrivate *data = adg_toy_text_get_instance_private(toy_text);
 
     if (data->glyphs != NULL) {
         cairo_glyph_free(data->glyphs);

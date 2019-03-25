@@ -68,7 +68,7 @@
 #define _ADG_PARENT_ENTITY_CLASS  ((AdgEntityClass *) adg_container_parent_class)
 
 
-G_DEFINE_TYPE(AdgContainer, adg_container, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgContainer, adg_container, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -116,8 +116,6 @@ adg_container_class_init(AdgContainerClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgContainerPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->set_property = _adg_set_property;
@@ -179,23 +177,15 @@ adg_container_class_init(AdgContainerClass *klass)
 static void
 adg_container_init(AdgContainer *container)
 {
-    AdgContainerPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(container,
-                                                            ADG_TYPE_CONTAINER,
-                                                            AdgContainerPrivate);
-
+    AdgContainerPrivate *data = adg_container_get_instance_private(container);
     data->children = NULL;
-
-    container->data = data;
 }
 
 static void
 _adg_dispose(GObject *object)
 {
-    AdgContainer *container;
-    AdgContainerPrivate *data;
-
-    container = (AdgContainer *) object;
-    data = container->data;
+    AdgContainer *container = (AdgContainer *) object;
+    AdgContainerPrivate *data = adg_container_get_instance_private(container);
 
     /* Remove all the children from the container: these will emit
      * a "remove" signal for every child and will drop all the
@@ -522,7 +512,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 static GSList *
 _adg_children(AdgContainer *container)
 {
-    AdgContainerPrivate *data = container->data;
+    AdgContainerPrivate *data = adg_container_get_instance_private(container);
 
     /* The NULL case is already managed by GLib */
     return g_slist_copy(data->children);
@@ -545,7 +535,7 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
         return;
     }
 
-    data = container->data;
+    data = adg_container_get_instance_private(container);
     data->children = g_slist_prepend(data->children, entity);
 
     g_object_ref_sink(entity);
@@ -556,18 +546,15 @@ _adg_add(AdgContainer *container, AdgEntity *entity)
 static void
 _adg_remove_from_list(gpointer container, GObject *entity)
 {
-    AdgContainerPrivate *data = ((AdgContainer *) container)->data;
+    AdgContainerPrivate *data = adg_container_get_instance_private((AdgContainer *) container);
     data->children = g_slist_remove(data->children, entity);
 }
 
 static void
 _adg_remove(AdgContainer *container, AdgEntity *entity)
 {
-    AdgContainerPrivate *data;
-    GSList *node;
-
-    data = container->data;
-    node = g_slist_find(data->children, entity);
+    AdgContainerPrivate *data = adg_container_get_instance_private(container);
+    GSList *node = g_slist_find(data->children, entity);
 
     if (node == NULL) {
         g_warning(_("Attempting to remove an entity with type %s from a "

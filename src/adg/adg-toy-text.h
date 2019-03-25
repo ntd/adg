@@ -41,13 +41,12 @@ typedef struct _AdgToyTextClass   AdgToyTextClass;
 
 struct _AdgToyText {
     /*< private >*/
-    AdgEntity            parent;
-    gpointer             data;
+    AdgEntity           parent;
 };
 
 struct _AdgToyTextClass {
     /*< private >*/
-    AdgEntityClass       parent_class;
+    AdgEntityClass      parent_class;
 };
 
 

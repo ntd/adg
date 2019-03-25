@@ -42,13 +42,12 @@ typedef struct _AdgRDimClass   AdgRDimClass;
 
 struct _AdgRDim {
     /*< private >*/
-    AdgDim               parent;
-    gpointer             data;
+    AdgDim              parent;
 };
 
 struct _AdgRDimClass {
     /*< private >*/
-    AdgDimClass          parent_class;
+    AdgDimClass         parent_class;
 };
 
 

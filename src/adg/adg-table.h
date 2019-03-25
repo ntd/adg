@@ -43,7 +43,6 @@ typedef struct _AdgTableClass   AdgTableClass;
 struct _AdgTable {
     /*< private >*/
     AdgEntity           parent;
-    gpointer            data;
 };
 
 struct _AdgTableClass {

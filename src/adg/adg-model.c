@@ -120,7 +120,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_model_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgModel, adg_model, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(AdgModel, adg_model, G_TYPE_OBJECT)
 
 enum {
     PROP_0,
@@ -170,8 +170,6 @@ adg_model_class_init(AdgModelClass *klass)
     GParamSpec *param;
 
     gobject_class = (GObjectClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgModelPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->set_property = _adg_set_property;
@@ -329,12 +327,8 @@ adg_model_class_init(AdgModelClass *klass)
 static void
 adg_model_init(AdgModel *model)
 {
-    AdgModelPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(model, ADG_TYPE_MODEL,
-                                                        AdgModelPrivate);
-
+    AdgModelPrivate *data = adg_model_get_instance_private(model);
     data->dependencies = NULL;
-
-    model->data = data;
 }
 
 static void
@@ -343,12 +337,9 @@ _adg_dispose(GObject *object)
     static gboolean is_disposed = FALSE;
 
     if (G_UNLIKELY(!is_disposed)) {
-        AdgModel *model;
-        AdgModelPrivate *data;
+        AdgModel *model = (AdgModel *) object;
+        AdgModelPrivate *data = adg_model_get_instance_private(model);
         AdgEntity *entity;
-
-        model = (AdgModel *) object;
-        data = model->data;
 
         /* Remove all the dependencies: this will emit a
          * "remove-dependency" signal for every dependency, dropping
@@ -447,8 +438,7 @@ adg_model_get_dependencies(AdgModel *model)
 
     g_return_val_if_fail(ADG_IS_MODEL(model), NULL);
 
-    data = model->data;
-
+    data = adg_model_get_instance_private(model);
     return data->dependencies;
 }
 
@@ -473,7 +463,7 @@ adg_model_foreach_dependency(AdgModel *model, AdgDependencyFunc callback,
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(callback != NULL);
 
-    data = model->data;
+    data = adg_model_get_instance_private(model);
     dependency = data->dependencies;
 
     while (dependency) {
@@ -593,7 +583,7 @@ adg_model_foreach_named_pair(AdgModel *model, AdgNamedPairFunc callback,
     g_return_if_fail(ADG_IS_MODEL(model));
     g_return_if_fail(callback != NULL);
 
-    data = model->data;
+    data = adg_model_get_instance_private(model);
 
     if (data->named_pairs == NULL)
         return;
@@ -671,7 +661,7 @@ _adg_add_dependency(AdgModel *model, AdgEntity *entity)
     if (entity == NULL)
         return;
 
-    data = model->data;
+    data = adg_model_get_instance_private(model);
 
     /* The prepend operation is more efficient */
     data->dependencies = g_slist_prepend(data->dependencies, entity);
@@ -682,11 +672,8 @@ _adg_add_dependency(AdgModel *model, AdgEntity *entity)
 static void
 _adg_remove_dependency(AdgModel *model, AdgEntity *entity)
 {
-    AdgModelPrivate *data;
-    GSList *node;
-
-    data = model->data;
-    node = g_slist_find(data->dependencies, entity);
+    AdgModelPrivate *data = adg_model_get_instance_private(model);
+    GSList *node = g_slist_find(data->dependencies, entity);
 
     if (node == NULL) {
         g_warning(_("%s: attempting to remove the nonexistent dependency "
@@ -704,7 +691,7 @@ _adg_remove_dependency(AdgModel *model, AdgEntity *entity)
 static void
 _adg_reset(AdgModel *model)
 {
-    AdgModelPrivate *data = model->data;
+    AdgModelPrivate *data = adg_model_get_instance_private(model);
 
     adg_model_clear(model);
 
@@ -717,13 +704,10 @@ _adg_reset(AdgModel *model)
 static void
 _adg_set_named_pair(AdgModel *model, const gchar *name, const CpmlPair *pair)
 {
-    AdgModelPrivate *data;
-    GHashTable **hash;
+    AdgModelPrivate *data = adg_model_get_instance_private(model);
+    GHashTable **hash = &data->named_pairs;
     gchar *key;
     CpmlPair *value;
-
-    data = model->data;
-    hash = &data->named_pairs;
 
     if (pair == NULL) {
         /* Delete mode: raise a warning if @name is not found */
@@ -747,7 +731,7 @@ _adg_set_named_pair(AdgModel *model, const gchar *name, const CpmlPair *pair)
 static const CpmlPair *
 _adg_named_pair(AdgModel *model, const gchar *name)
 {
-    AdgModelPrivate *data = model->data;
+    AdgModelPrivate *data = adg_model_get_instance_private(model);
 
     if (data->named_pairs == NULL)
         return NULL;

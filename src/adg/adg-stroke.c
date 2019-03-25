@@ -53,7 +53,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_stroke_parent_class)
 
 
-G_DEFINE_TYPE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgStroke, adg_stroke, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -89,8 +89,6 @@ adg_stroke_class_init(AdgStrokeClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgStrokePrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -118,14 +116,9 @@ adg_stroke_class_init(AdgStrokeClass *klass)
 static void
 adg_stroke_init(AdgStroke *stroke)
 {
-    AdgStrokePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(stroke,
-                                                         ADG_TYPE_STROKE,
-                                                         AdgStrokePrivate);
-
+    AdgStrokePrivate *data = adg_stroke_get_instance_private(stroke);
     data->line_dress = ADG_DRESS_LINE_STROKE;
     data->trail = NULL;
-
-    stroke->data = data;
 }
 
 static void
@@ -143,7 +136,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgStrokePrivate *data = ((AdgStroke *) object)->data;
+    AdgStrokePrivate *data = adg_stroke_get_instance_private((AdgStroke *) object);
 
     switch (prop_id) {
     case PROP_LINE_DRESS:
@@ -162,7 +155,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgStrokePrivate *data = ((AdgStroke *) object)->data;
+    AdgStrokePrivate *data = adg_stroke_get_instance_private((AdgStroke *) object);
     AdgTrail *old_trail;
 
     switch (prop_id) {
@@ -255,8 +248,7 @@ adg_stroke_get_line_dress(AdgStroke *stroke)
 
     g_return_val_if_fail(ADG_IS_STROKE(stroke), ADG_DRESS_UNDEFINED);
 
-    data = stroke->data;
-
+    data = adg_stroke_get_instance_private(stroke);
     return data->line_dress;
 }
 
@@ -295,8 +287,7 @@ adg_stroke_get_trail(AdgStroke *stroke)
 
     g_return_val_if_fail(ADG_IS_STROKE(stroke), NULL);
 
-    data = stroke->data;
-
+    data = adg_stroke_get_instance_private(stroke);
     return data->trail;
 }
 
@@ -322,7 +313,6 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgStroke *stroke;
     AdgStrokePrivate *data;
     const CpmlExtents *trail_extents;
     CpmlExtents extents;
@@ -331,8 +321,7 @@ _adg_arrange(AdgEntity *entity)
     if (adg_entity_get_extents(entity)->is_defined)
         return;
 
-    stroke = (AdgStroke *) entity;
-    data = stroke->data;
+    data = adg_stroke_get_instance_private((AdgStroke *) entity);
     trail_extents = adg_trail_get_extents(data->trail);
 
     /* Ensure a trail is bound to this entity */
@@ -348,13 +337,8 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgStroke *stroke;
-    AdgStrokePrivate *data;
-    const cairo_path_t *cairo_path;
-
-    stroke = (AdgStroke *) entity;
-    data = stroke->data;
-    cairo_path = adg_trail_get_cairo_path(data->trail);
+    AdgStrokePrivate *data = adg_stroke_get_instance_private((AdgStroke *) entity);
+    const cairo_path_t *cairo_path = adg_trail_get_cairo_path(data->trail);
 
     if (cairo_path != NULL) {
         cairo_transform(cr, adg_entity_get_global_matrix(entity));

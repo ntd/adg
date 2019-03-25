@@ -48,7 +48,7 @@
 #include "adg-logo-private.h"
 
 
-G_DEFINE_TYPE(AdgLogo, adg_logo, ADG_TYPE_ENTITY)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgLogo, adg_logo, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -82,8 +82,6 @@ adg_logo_class_init(AdgLogoClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgLogoPrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -130,21 +128,17 @@ adg_logo_class_init(AdgLogoClass *klass)
 static void
 adg_logo_init(AdgLogo *logo)
 {
-    AdgLogoPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(logo, ADG_TYPE_LOGO,
-                                                       AdgLogoPrivate);
-
+    AdgLogoPrivate *data = adg_logo_get_instance_private(logo);
     data->symbol_dress = ADG_DRESS_LINE;
     data->screen_dress = ADG_DRESS_LINE;
     data->frame_dress = ADG_DRESS_LINE;
-
-    logo->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgLogoPrivate *data = ((AdgLogo *) object)->data;
+    AdgLogoPrivate *data = adg_logo_get_instance_private((AdgLogo *) object);
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
@@ -166,11 +160,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgLogo *logo;
-    AdgLogoPrivate *data;
-
-    logo = (AdgLogo *) object;
-    data = logo->data;
+    AdgLogoPrivate *data = adg_logo_get_instance_private((AdgLogo *) object);
 
     switch (prop_id) {
     case PROP_SYMBOL_DRESS:
@@ -244,8 +234,7 @@ adg_logo_get_symbol_dress(AdgLogo *logo)
 
     g_return_val_if_fail(ADG_IS_LOGO(logo), ADG_DRESS_UNDEFINED);
 
-    data = logo->data;
-
+    data = adg_logo_get_instance_private(logo);
     return data->symbol_dress;
 }
 
@@ -290,8 +279,7 @@ adg_logo_get_screen_dress(AdgLogo *logo)
 
     g_return_val_if_fail(ADG_IS_LOGO(logo), ADG_DRESS_UNDEFINED);
 
-    data = logo->data;
-
+    data = adg_logo_get_instance_private(logo);
     return data->screen_dress;
 }
 
@@ -336,8 +324,7 @@ adg_logo_get_frame_dress(AdgLogo *logo)
 
     g_return_val_if_fail(ADG_IS_LOGO(logo), ADG_DRESS_UNDEFINED);
 
-    data = logo->data;
-
+    data = adg_logo_get_instance_private(logo);
     return data->frame_dress;
 }
 
@@ -432,12 +419,9 @@ _adg_arrange_class(AdgLogoClass *logo_class)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgLogoClassPrivate *data_class;
-    AdgLogoPrivate *data;
+    AdgLogoClassPrivate *data_class = ADG_LOGO_GET_CLASS(entity)->data_class;
+    AdgLogoPrivate *data = adg_logo_get_instance_private((AdgLogo *) entity);
     const cairo_path_t *cairo_path;
-
-    data_class = ADG_LOGO_GET_CLASS(entity)->data_class;
-    data = ((AdgLogo *) entity)->data;
 
     cairo_transform(cr, adg_entity_get_global_matrix(entity));
     cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);

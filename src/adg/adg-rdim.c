@@ -61,7 +61,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_rdim_parent_class)
 
 
-G_DEFINE_TYPE(AdgRDim, adg_rdim, ADG_TYPE_DIM)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgRDim, adg_rdim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,
@@ -96,8 +96,6 @@ adg_rdim_class_init(AdgRDimClass *klass)
     entity_class = (AdgEntityClass *) klass;
     dim_class = (AdgDimClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgRDimPrivate));
-
     gobject_class->dispose = _adg_dispose;
 
     entity_class->global_changed = _adg_global_changed;
@@ -113,12 +111,11 @@ adg_rdim_class_init(AdgRDimClass *klass)
 static void
 adg_rdim_init(AdgRDim *rdim)
 {
-    AdgRDimPrivate *data;
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
     AdgStyle *style;
     AdgDimStyle *dim_style;
     cairo_path_data_t move_to, line_to;
 
-    data = G_TYPE_INSTANCE_GET_PRIVATE(rdim, ADG_TYPE_RDIM, AdgRDimPrivate);
     move_to.header.type = CPML_MOVE;
     move_to.header.length = 2;
     line_to.header.type = CPML_LINE;
@@ -138,8 +135,6 @@ adg_rdim_init(AdgRDim *rdim)
     data->cairo.path.data[2] = line_to;
     data->cairo.path.data[4] = move_to;
     data->cairo.path.data[6] = line_to;
-
-    rdim->data = data;
 
     /* Override the default dimension style to prefix the quote with an R */
     style = adg_dress_get_fallback(ADG_DRESS_DIMENSION);
@@ -293,9 +288,10 @@ adg_rdim_new_full_from_model(AdgModel *model, const gchar *center,
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgRDimPrivate *data = ((AdgRDim *) entity)->data;
+    AdgRDim *rdim = (AdgRDim *) entity;
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
 
-    _adg_clear_trail((AdgRDim *) entity);
+    _adg_clear_trail(rdim);
 
     if (_ADG_OLD_ENTITY_CLASS->global_changed)
         _ADG_OLD_ENTITY_CLASS->global_changed(entity);
@@ -349,7 +345,7 @@ _adg_arrange(AdgEntity *entity)
         return;
 
     rdim = (AdgRDim *) entity;
-    data = rdim->data;
+    data = adg_rdim_get_instance_private(rdim);
     quote = adg_dim_get_quote(dim);
     quote_entity = (AdgEntity *) quote;
 
@@ -454,7 +450,6 @@ static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
     AdgDim *dim;
-    AdgRDim *rdim;
     AdgRDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgDress dress;
@@ -467,8 +462,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         return;
     }
 
-    rdim = (AdgRDim *) entity;
-    data = rdim->data;
+    data = adg_rdim_get_instance_private((AdgRDim *) dim);
     dim_style = adg_dim_get_dim_style(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -489,22 +483,18 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 static gchar *
 _adg_default_value(AdgDim *dim)
 {
-    AdgRDim *rdim;
     AdgRDimPrivate *data;
 
     if (! adg_dim_compute_geometry(dim))
         return g_strdup("undef");
 
-    rdim = (AdgRDim *) dim;
-    data = rdim->data;
-
+    data = adg_rdim_get_instance_private((AdgRDim *) dim);
     return adg_dim_get_text(dim, data->radius);
 }
 
 static gboolean
 _adg_compute_geometry(AdgDim *dim)
 {
-    AdgRDim *rdim;
     AdgRDimPrivate *data;
     AdgDimStyle *dim_style;
     AdgPoint *ref1_point, *ref2_point, *pos_point;
@@ -537,8 +527,7 @@ _adg_compute_geometry(AdgDim *dim)
         return FALSE;
     }
 
-    rdim = (AdgRDim *) dim;
-    data = rdim->data;
+    data = adg_rdim_get_instance_private((AdgRDim *) dim);
     pos = (CpmlPair *) pos_point;
     dim_style = adg_dim_get_dim_style(dim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
@@ -575,13 +564,9 @@ _adg_compute_geometry(AdgDim *dim)
 static void
 _adg_update_entities(AdgRDim *rdim)
 {
-    AdgEntity *entity;
-    AdgRDimPrivate *data;
-    AdgDimStyle *dim_style;
-
-    entity = (AdgEntity *) rdim;
-    data = rdim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) rdim);
+    AdgEntity *entity = (AdgEntity *) rdim;
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
+    AdgDimStyle *dim_style = adg_dim_get_dim_style((AdgDim *) rdim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(_adg_trail_callback, rdim);
@@ -595,7 +580,7 @@ _adg_update_entities(AdgRDim *rdim)
 static void
 _adg_clear_trail(AdgRDim *rdim)
 {
-    AdgRDimPrivate *data = rdim->data;
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
 
     if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
@@ -606,8 +591,7 @@ _adg_clear_trail(AdgRDim *rdim)
 static void
 _adg_dispose_trail(AdgRDim *rdim)
 {
-    AdgRDimPrivate *data = rdim->data;
-
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
     if (data->trail != NULL) {
         g_object_unref(data->trail);
         data->trail = NULL;
@@ -617,8 +601,7 @@ _adg_dispose_trail(AdgRDim *rdim)
 static void
 _adg_dispose_marker(AdgRDim *rdim)
 {
-    AdgRDimPrivate *data = rdim->data;
-
+    AdgRDimPrivate *data = adg_rdim_get_instance_private(rdim);
     if (data->marker != NULL) {
         g_object_unref(data->marker);
         data->marker = NULL;
@@ -628,11 +611,6 @@ _adg_dispose_marker(AdgRDim *rdim)
 static cairo_path_t *
 _adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
-    AdgRDim *rdim;
-    AdgRDimPrivate *data;
-
-    rdim = (AdgRDim *) user_data;
-    data = rdim->data;
-
+    AdgRDimPrivate *data = adg_rdim_get_instance_private((AdgRDim *) user_data);
     return &data->cairo.path;
 }

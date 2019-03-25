@@ -49,13 +49,12 @@ typedef void    (*AdgNamedPairFunc)             (AdgModel       *model,
 
 struct _AdgModel {
     /*< private >*/
-    GObject              parent;
-    gpointer             data;
+    GObject             parent;
 };
 
 struct _AdgModelClass {
     /*< private >*/
-    GObjectClass         parent_class;
+    GObjectClass        parent_class;
 
     /*< public >*/
     /* Virtual table */

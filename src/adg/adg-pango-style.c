@@ -51,7 +51,7 @@
 #define _ADG_OLD_STYLE_CLASS  ((AdgStyleClass *) adg_pango_style_parent_class)
 
 
-G_DEFINE_TYPE(AdgPangoStyle, adg_pango_style, ADG_TYPE_FONT_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgPangoStyle, adg_pango_style, ADG_TYPE_FONT_STYLE)
 
 enum {
     PROP_0,
@@ -83,8 +83,6 @@ adg_pango_style_class_init(AdgPangoStyleClass *klass)
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgPangoStylePrivate));
-
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
@@ -102,21 +100,16 @@ adg_pango_style_class_init(AdgPangoStyleClass *klass)
 static void
 adg_pango_style_init(AdgPangoStyle *pango_style)
 {
-    AdgPangoStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(pango_style,
-                                                             ADG_TYPE_PANGO_STYLE,
-                                                             AdgPangoStylePrivate);
-
+    AdgPangoStylePrivate *data = adg_pango_style_get_instance_private(pango_style);
     data->font_description = NULL;
     data->spacing = 0;
-
-    pango_style->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgPangoStylePrivate *data = ((AdgPangoStyle *) object)->data;
+    AdgPangoStylePrivate *data = adg_pango_style_get_instance_private((AdgPangoStyle *) object);
 
     switch (prop_id) {
     case PROP_SPACING:
@@ -132,7 +125,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgPangoStylePrivate *data = ((AdgPangoStyle *) object)->data;
+    AdgPangoStylePrivate *data = adg_pango_style_get_instance_private((AdgPangoStyle *) object);
 
     switch (prop_id) {
     case PROP_SPACING:
@@ -178,7 +171,7 @@ adg_pango_style_get_description(AdgPangoStyle *pango_style)
 
     g_return_val_if_fail(ADG_IS_PANGO_STYLE(pango_style), NULL);
 
-    data = pango_style->data;
+    data = adg_pango_style_get_instance_private(pango_style);
 
     if (data->font_description == NULL) {
         AdgFontStyle *font_style;
@@ -267,8 +260,7 @@ adg_pango_style_get_spacing(AdgPangoStyle *pango_style)
 
     g_return_val_if_fail(ADG_IS_PANGO_STYLE(pango_style), 0);
 
-    data = pango_style->data;
-
+    data = adg_pango_style_get_instance_private(pango_style);
     return data->spacing;
 }
 
@@ -276,11 +268,8 @@ adg_pango_style_get_spacing(AdgPangoStyle *pango_style)
 static void
 _adg_invalidate(AdgStyle *style)
 {
-    AdgPangoStyle *pango_style;
-    AdgPangoStylePrivate *data;
-
-    pango_style = (AdgPangoStyle *) style;
-    data = pango_style->data;
+    AdgPangoStyle *pango_style = (AdgPangoStyle *) style;
+    AdgPangoStylePrivate *data = adg_pango_style_get_instance_private(pango_style);
 
     if (data->font_description != NULL) {
         pango_font_description_free(data->font_description);

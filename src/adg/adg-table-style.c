@@ -46,7 +46,7 @@
 #include "adg-table-style-private.h"
 
 
-G_DEFINE_TYPE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgTableStyle, adg_table_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -83,8 +83,6 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgTableStylePrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;

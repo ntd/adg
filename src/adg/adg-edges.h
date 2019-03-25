@@ -42,13 +42,12 @@ typedef struct _AdgEdgesClass   AdgEdgesClass;
 
 struct _AdgEdges {
     /*< private >*/
-    AdgTrail             parent;
-    gpointer             data;
+    AdgTrail        parent;
 };
 
 struct _AdgEdgesClass {
     /*< private >*/
-    AdgTrailClass        parent_class;
+    AdgTrailClass   parent_class;
 };
 
 

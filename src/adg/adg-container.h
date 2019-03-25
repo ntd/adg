@@ -42,22 +42,21 @@ typedef struct _AdgContainerClass  AdgContainerClass;
 
 struct _AdgContainer {
     /*< private >*/
-    AdgEntity            parent;
-    gpointer             data;
+    AdgEntity           parent;
 };
 
 struct _AdgContainerClass {
     /*< private >*/
-    AdgEntityClass       parent_class;
+    AdgEntityClass      parent_class;
 
     /*< public >*/
     /* Virtual table */
-    GSList *    (*children)                     (AdgContainer   *container);
+    GSList *            (*children)             (AdgContainer   *container);
 
     /* Signals */
-    void        (*add)                          (AdgContainer   *container,
+    void                (*add)                  (AdgContainer   *container,
                                                  AdgEntity      *entity);
-    void        (*remove)                       (AdgContainer   *container,
+    void                (*remove)               (AdgContainer   *container,
                                                  AdgEntity      *entity);
 };
 

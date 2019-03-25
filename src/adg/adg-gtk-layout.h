@@ -41,13 +41,12 @@ typedef struct _AdgGtkLayoutClass   AdgGtkLayoutClass;
 
 struct _AdgGtkLayout {
     /*< private >*/
-    AdgGtkArea           parent;
-    gpointer             data;
+    AdgGtkArea          parent;
 };
 
 struct _AdgGtkLayoutClass {
     /*< private >*/
-    AdgGtkAreaClass      parent_class;
+    AdgGtkAreaClass     parent_class;
 };
 
 

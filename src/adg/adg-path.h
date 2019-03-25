@@ -41,13 +41,12 @@ typedef struct _AdgPathClass   AdgPathClass;
 
 struct _AdgPath {
     /*< private >*/
-    AdgTrail             parent;
-    gpointer             data;
+    AdgTrail            parent;
 };
 
 struct _AdgPathClass {
     /*< private >*/
-    AdgTrailClass        parent_class;
+    AdgTrailClass       parent_class;
 };
 
 

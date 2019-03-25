@@ -43,7 +43,6 @@ typedef struct _AdgADimClass   AdgADimClass;
 struct _AdgADim {
     /*< private >*/
     AdgDim               parent;
-    gpointer             data;
 };
 
 struct _AdgADimClass {

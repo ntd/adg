@@ -56,7 +56,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_title_block_parent_class)
 
 
-G_DEFINE_TYPE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE);
+G_DEFINE_TYPE_WITH_PRIVATE(AdgTitleBlock, adg_title_block, ADG_TYPE_TABLE);
 
 enum {
     PROP_0,
@@ -89,8 +89,6 @@ adg_title_block_class_init(AdgTitleBlockClass *klass)
     GParamSpec *param;
 
     gobject_class = (GObjectClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgTitleBlockPrivate));
 
     gobject_class->finalize = _adg_finalize;
     gobject_class->set_property = _adg_set_property;
@@ -157,10 +155,8 @@ static void
 adg_title_block_init(AdgTitleBlock *title_block)
 {
     AdgTable *table = (AdgTable *) title_block;
+    AdgTitleBlockPrivate *data = adg_title_block_get_instance_private(title_block);
     AdgTableRow *row;
-    AdgTitleBlockPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(title_block,
-                                                             ADG_TYPE_TITLE_BLOCK,
-                                                             AdgTitleBlockPrivate);
 
     data->author = NULL;
     data->title = NULL;
@@ -170,8 +166,6 @@ adg_title_block_init(AdgTitleBlock *title_block)
     data->author = NULL;
     data->date = NULL;
     data->projection = NULL;
-
-    title_block->data = data;
 
     /* By default the title block should be floating */
     adg_entity_switch_floating((AdgEntity *) title_block, TRUE);
@@ -200,7 +194,7 @@ adg_title_block_init(AdgTitleBlock *title_block)
 static void
 _adg_finalize(GObject *object)
 {
-    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
+    AdgTitleBlockPrivate *data = adg_title_block_get_instance_private((AdgTitleBlock *) object);
 
     g_free(data->title);
     g_free(data->drawing);
@@ -217,7 +211,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgTitleBlockPrivate *data = ((AdgTitleBlock *) object)->data;
+    AdgTitleBlockPrivate *data = adg_title_block_get_instance_private((AdgTitleBlock *) object);
 
     switch (prop_id) {
     case PROP_TITLE:
@@ -254,14 +248,9 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgTitleBlock *title_block;
-    AdgTitleBlockPrivate *data;
-    AdgTable *table;
+    AdgTitleBlockPrivate *data = adg_title_block_get_instance_private((AdgTitleBlock *) object);
+    AdgTable *table = (AdgTable *) object;
     AdgTableCell *cell;
-
-    title_block = (AdgTitleBlock *) object;
-    data = title_block->data;
-    table = (AdgTable *) object;
 
     switch (prop_id) {
     case PROP_TITLE:
@@ -382,8 +371,7 @@ adg_title_block_get_title(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->title;
 }
 
@@ -422,8 +410,7 @@ adg_title_block_get_drawing(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->drawing;
 }
 
@@ -464,8 +451,7 @@ adg_title_block_get_size(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->size;
 }
 
@@ -502,8 +488,7 @@ adg_title_block_get_scale(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->scale;
 }
 
@@ -540,8 +525,7 @@ adg_title_block_get_author(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->author;
 }
 
@@ -588,8 +572,7 @@ adg_title_block_get_date(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->date;
 }
 
@@ -633,8 +616,7 @@ adg_title_block_logo(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->logo;
 }
 
@@ -680,7 +662,6 @@ adg_title_block_projection(AdgTitleBlock *title_block)
 
     g_return_val_if_fail(ADG_IS_TITLE_BLOCK(title_block), NULL);
 
-    data = title_block->data;
-
+    data = adg_title_block_get_instance_private(title_block);
     return data->projection;
 }

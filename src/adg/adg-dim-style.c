@@ -85,7 +85,7 @@
 #define VALID_FORMATS "aieDdMmSs"
 
 
-G_DEFINE_TYPE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgDimStyle, adg_dim_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -140,8 +140,6 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgDimStylePrivate));
 
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
@@ -289,10 +287,7 @@ adg_dim_style_class_init(AdgDimStyleClass *klass)
 static void
 adg_dim_style_init(AdgDimStyle *dim_style)
 {
-    AdgDimStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(dim_style,
-                                                           ADG_TYPE_DIM_STYLE,
-                                                           AdgDimStylePrivate);
-
+    AdgDimStylePrivate *data = adg_dim_style_get_instance_private(dim_style);
     data->marker1.type = 0;
     data->marker1.n_parameters = 0;
     data->marker1.parameters = NULL;
@@ -319,14 +314,12 @@ adg_dim_style_init(AdgDimStyle *dim_style)
     data->number_tag = g_strdup("<>");
     data->decimals = 2;
     data->rounding = 6;
-
-    dim_style->data = data;
 }
 
 static void
 _adg_finalize(GObject *object)
 {
-    AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
+    AdgDimStylePrivate *data = adg_dim_style_get_instance_private((AdgDimStyle *) object);
 
     _adg_free_marker(&data->marker1);
     _adg_free_marker(&data->marker2);
@@ -345,7 +338,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgDimStylePrivate *data = ((AdgDimStyle *) object)->data;
+    AdgDimStylePrivate *data = adg_dim_style_get_instance_private((AdgDimStyle *) object);
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -409,11 +402,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgDimStyle *dim_style;
-    AdgDimStylePrivate *data;
-
-    dim_style = (AdgDimStyle *) object;
-    data = dim_style->data;
+    AdgDimStyle *dim_style = (AdgDimStyle *) object;
+    AdgDimStylePrivate *data = adg_dim_style_get_instance_private(dim_style);
 
     switch (prop_id) {
     case PROP_MARKER1:
@@ -545,8 +535,7 @@ adg_dim_style_marker1_new(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return _adg_marker_new(&data->marker1);
 }
 
@@ -594,8 +583,7 @@ adg_dim_style_marker2_new(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return _adg_marker_new(&data->marker2);
 }
 
@@ -635,8 +623,7 @@ adg_dim_style_get_color_dress(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->color_dress;
 }
 
@@ -674,8 +661,7 @@ adg_dim_style_get_value_dress(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->value_dress;
 }
 
@@ -712,8 +698,7 @@ adg_dim_style_get_min_dress(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->min_dress;
 }
 
@@ -750,8 +735,7 @@ adg_dim_style_get_max_dress(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->max_dress;
 }
 
@@ -789,8 +773,7 @@ adg_dim_style_get_line_dress(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), ADG_DRESS_UNDEFINED);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->line_dress;
 }
 
@@ -828,8 +811,7 @@ adg_dim_style_get_from_offset(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->from_offset;
 }
 
@@ -867,8 +849,7 @@ adg_dim_style_get_to_offset(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->to_offset;
 }
 
@@ -906,8 +887,7 @@ adg_dim_style_get_beyond(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->beyond;
 }
 
@@ -945,8 +925,7 @@ adg_dim_style_get_baseline_spacing(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->baseline_spacing;
 }
 
@@ -983,8 +962,7 @@ adg_dim_style_get_limits_spacing(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), 0);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->limits_spacing;
 }
 
@@ -1022,8 +1000,7 @@ adg_dim_style_get_quote_shift(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return &data->quote_shift;
 }
 
@@ -1061,8 +1038,7 @@ adg_dim_style_get_limits_shift(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return &data->limits_shift;
 }
 
@@ -1153,8 +1129,7 @@ adg_dim_style_get_number_format(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->number_format;
 }
 
@@ -1199,8 +1174,7 @@ adg_dim_style_get_number_arguments(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->number_arguments;
 }
 
@@ -1242,8 +1216,7 @@ adg_dim_style_get_number_tag(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), NULL);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->number_tag;
 }
 
@@ -1281,8 +1254,7 @@ adg_dim_style_get_decimals(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), -2);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->decimals;
 }
 
@@ -1319,8 +1291,7 @@ adg_dim_style_get_rounding(AdgDimStyle *dim_style)
 
     g_return_val_if_fail(ADG_IS_DIM_STYLE(dim_style), -2);
 
-    data = dim_style->data;
-
+    data = adg_dim_style_get_instance_private(dim_style);
     return data->rounding;
 }
 
@@ -1364,7 +1335,7 @@ adg_dim_style_convert(AdgDimStyle *dim_style, gdouble *value, gchar format)
         return FALSE;
     }
 
-    data = dim_style->data;
+    data = adg_dim_style_get_instance_private(dim_style);
 
     /* Round the raw value, if requested */
     if (data->rounding > -1) {
@@ -1447,7 +1418,7 @@ _adg_clone(AdgStyle *style)
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
-    AdgDimStylePrivate *data = ((AdgDimStyle *) style)->data;
+    AdgDimStylePrivate *data = adg_dim_style_get_instance_private((AdgDimStyle *) style);
     adg_entity_apply_dress(entity, data->color_dress, cr);
 }
 

@@ -43,7 +43,6 @@ typedef struct _AdgColorStyleClass   AdgColorStyleClass;
 struct _AdgColorStyle {
     /*< private >*/
     AdgStyle             parent;
-    gpointer             data;
 };
 
 struct _AdgColorStyleClass {

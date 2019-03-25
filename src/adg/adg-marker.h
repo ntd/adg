@@ -42,7 +42,6 @@ typedef struct _AdgMarkerClass  AdgMarkerClass;
 struct _AdgMarker {
     /*< private >*/
     AdgEntity           parent;
-    gpointer            data;
 };
 
 struct _AdgMarkerClass {

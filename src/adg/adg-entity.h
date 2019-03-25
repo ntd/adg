@@ -42,13 +42,13 @@ typedef struct _AdgEntityClass  AdgEntityClass;
 
 struct _AdgEntity {
     /*< private >*/
-    GInitiallyUnowned    parent;
-    gpointer             data;
+    GInitiallyUnowned   parent;
 };
 
 struct _AdgEntityClass {
     /*< private >*/
-    GInitiallyUnownedClass      parent_class;
+    GInitiallyUnownedClass
+                        parent_class;
     /*< public >*/
     /* Signals */
     void                (*destroy)              (AdgEntity       *entity);

@@ -42,7 +42,6 @@ typedef struct _AdgProjectionClass   AdgProjectionClass;
 struct _AdgProjection {
     /*< private >*/
     AdgEntity           parent;
-    gpointer            data;
 };
 
 struct _AdgProjectionClass {

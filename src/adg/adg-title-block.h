@@ -41,13 +41,12 @@ typedef struct _AdgTitleBlockClass   AdgTitleBlockClass;
 
 struct _AdgTitleBlock {
     /*< private >*/
-    AdgTable             parent;
-    gpointer             data;
+    AdgTable            parent;
 };
 
 struct _AdgTitleBlockClass {
     /*< private >*/
-    AdgTableClass        parent_class;
+    AdgTableClass       parent_class;
 };
 
 

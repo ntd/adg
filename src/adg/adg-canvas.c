@@ -118,7 +118,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_canvas_parent_class)
 
 
-G_DEFINE_TYPE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgCanvas, adg_canvas, ADG_TYPE_CONTAINER)
 
 enum {
     PROP_0,
@@ -183,8 +183,6 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgCanvasPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
@@ -305,14 +303,11 @@ adg_canvas_class_init(AdgCanvasClass *klass)
 static void
 adg_canvas_init(AdgCanvas *canvas)
 {
-    AdgCanvasPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(canvas,
-                                                         ADG_TYPE_CANVAS,
-                                                         AdgCanvasPrivate);
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private(canvas);
     const gchar *scales[] = {
         "10:1", "5:1", "3:1", "2:1", "1:1", "1:2", "1:3", "1:5", "1:10",
         NULL
     };
-
 
     data->size.x = 0;
     data->size.y = 0;
@@ -330,18 +325,13 @@ adg_canvas_init(AdgCanvas *canvas)
     data->right_padding = 15;
     data->bottom_padding = 15;
     data->left_padding = 15;
-
-    canvas->data = data;
 }
 
 static void
 _adg_dispose(GObject *object)
 {
-    AdgCanvas *canvas;
-    AdgCanvasPrivate *data;
-
-    canvas = (AdgCanvas *) object;
-    data = canvas->data;
+    AdgCanvas *canvas = (AdgCanvas *) object;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private(canvas);
 
     if (data->title_block) {
         g_object_unref(data->title_block);
@@ -362,7 +352,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) object)->data;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private((AdgCanvas *) object);
 
     switch (prop_id) {
     case PROP_SIZE:
@@ -420,13 +410,10 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgCanvas *canvas;
-    AdgCanvasPrivate *data;
+    AdgCanvas *canvas = (AdgCanvas *) object;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private(canvas);
     AdgTitleBlock *title_block;
     gdouble factor;
-
-    canvas = (AdgCanvas *) object;
-    data = canvas->data;
 
     switch (prop_id) {
     case PROP_SIZE:
@@ -576,7 +563,7 @@ adg_canvas_get_size(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return &data->size;
 }
 
@@ -632,7 +619,7 @@ adg_canvas_get_factor(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->factor;
 }
 
@@ -732,7 +719,7 @@ adg_canvas_get_scales(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->scales;
 }
 
@@ -765,7 +752,7 @@ adg_canvas_autoscale(AdgCanvas *canvas)
     g_return_if_fail(ADG_IS_CANVAS(canvas));
     g_return_if_fail(_ADG_OLD_ENTITY_CLASS->arrange != NULL);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     entity = (AdgEntity *) canvas;
     title_block = data->title_block;
 
@@ -851,8 +838,7 @@ adg_canvas_get_background_dress(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), ADG_DRESS_UNDEFINED);
 
-    data = canvas->data;
-
+    data = adg_canvas_get_instance_private(canvas);
     return data->background_dress;
 }
 
@@ -890,7 +876,7 @@ adg_canvas_get_frame_dress(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), ADG_DRESS_UNDEFINED);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->frame_dress;
 }
 
@@ -943,7 +929,7 @@ adg_canvas_get_title_block(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), NULL);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->title_block;
 }
 
@@ -981,7 +967,7 @@ adg_canvas_get_top_margin(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->top_margin;
 }
 
@@ -1019,7 +1005,7 @@ adg_canvas_get_right_margin(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->right_margin;
 }
 
@@ -1057,7 +1043,7 @@ adg_canvas_get_bottom_margin(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->bottom_margin;
 }
 
@@ -1095,7 +1081,7 @@ adg_canvas_get_left_margin(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->left_margin;
 }
 
@@ -1142,7 +1128,7 @@ adg_canvas_get_margins(AdgCanvas *canvas,
 
     g_return_if_fail(ADG_IS_CANVAS(canvas));
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
 
     if (top != NULL) {
         *top = data->top_margin;
@@ -1176,7 +1162,7 @@ adg_canvas_apply_margins(AdgCanvas *canvas, CpmlExtents *extents)
     g_return_if_fail(extents != NULL);
 
     if (extents->is_defined) {
-        AdgCanvasPrivate *data = canvas->data;
+        AdgCanvasPrivate *data = adg_canvas_get_instance_private(canvas);
 
         extents->org.x -= data->left_margin;
         extents->org.y -= data->top_margin;
@@ -1223,7 +1209,7 @@ adg_canvas_has_frame(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), FALSE);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->has_frame;
 }
 
@@ -1261,7 +1247,7 @@ adg_canvas_get_top_padding(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->top_padding;
 }
 
@@ -1299,7 +1285,7 @@ adg_canvas_get_right_padding(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->right_padding;
 }
 
@@ -1338,7 +1324,7 @@ adg_canvas_get_bottom_padding(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->bottom_padding;
 }
 
@@ -1376,7 +1362,7 @@ adg_canvas_get_left_padding(AdgCanvas *canvas)
 
     g_return_val_if_fail(ADG_IS_CANVAS(canvas), 0.);
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
     return data->left_padding;
 }
 
@@ -1423,7 +1409,7 @@ adg_canvas_get_paddings(AdgCanvas *canvas,
 
     g_return_if_fail(ADG_IS_CANVAS(canvas));
 
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
 
     if (top != NULL) {
         *top = data->top_padding;
@@ -1443,7 +1429,7 @@ adg_canvas_get_paddings(AdgCanvas *canvas,
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private((AdgCanvas *) entity);
 
     if (_ADG_OLD_ENTITY_CLASS->global_changed)
         _ADG_OLD_ENTITY_CLASS->global_changed(entity);
@@ -1455,7 +1441,7 @@ _adg_global_changed(AdgEntity *entity)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private((AdgCanvas *) entity);
     AdgTitleBlock *title_block = data->title_block;
 
     if (_ADG_OLD_ENTITY_CLASS->local_changed)
@@ -1479,7 +1465,7 @@ _adg_local_changed(AdgEntity *entity)
 static void
 _adg_invalidate(AdgEntity *entity)
 {
-    AdgCanvasPrivate *data = ((AdgCanvas *) entity)->data;
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private((AdgCanvas *) entity);
 
     if (_ADG_OLD_ENTITY_CLASS->invalidate)
         _ADG_OLD_ENTITY_CLASS->invalidate(entity);
@@ -1504,7 +1490,7 @@ _adg_arrange(AdgEntity *entity)
     g_return_if_fail(extents.is_defined);
 
     canvas = (AdgCanvas *) entity;
-    data = canvas->data;
+    data = adg_canvas_get_instance_private(canvas);
 
     _adg_apply_paddings(canvas, &extents);
 
@@ -1570,11 +1556,8 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgCanvasPrivate *data;
-    const CpmlExtents *extents;
-
-    data = ((AdgCanvas *) entity)->data;
-    extents = adg_entity_get_extents(entity);
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private((AdgCanvas *) entity);
+    const CpmlExtents *extents = adg_entity_get_extents(entity);
 
     cairo_save(cr);
 
@@ -1607,8 +1590,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 static void
 _adg_apply_paddings(AdgCanvas *canvas, CpmlExtents *extents)
 {
-    AdgCanvasPrivate *data = canvas->data;
-
+    AdgCanvasPrivate *data = adg_canvas_get_instance_private(canvas);
     extents->org.x -= data->left_padding;
     extents->size.x += data->left_padding + data->right_padding;
     extents->org.y -= data->top_padding;

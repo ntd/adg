@@ -59,7 +59,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_ldim_parent_class)
 
 
-G_DEFINE_TYPE(AdgLDim, adg_ldim, ADG_TYPE_DIM)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgLDim, adg_ldim, ADG_TYPE_DIM)
 
 enum {
     PROP_0,
@@ -118,8 +118,6 @@ adg_ldim_class_init(AdgLDimClass *klass)
     entity_class = (AdgEntityClass *) klass;
     dim_class = (AdgDimClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgLDimPrivate));
-
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -156,10 +154,9 @@ adg_ldim_class_init(AdgLDimClass *klass)
 static void
 adg_ldim_init(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
     cairo_path_data_t move_to, line_to;
 
-    data = G_TYPE_INSTANCE_GET_PRIVATE(ldim, ADG_TYPE_LDIM, AdgLDimPrivate);
     move_to.header.type = CPML_MOVE;
     move_to.header.length = 2;
     line_to.header.type = CPML_LINE;
@@ -186,8 +183,6 @@ adg_ldim_init(AdgLDim *ldim)
     data->trail = NULL;
     data->marker1 = NULL;
     data->marker2 = NULL;
-
-    ldim->data = data;
 }
 
 static void
@@ -206,7 +201,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgLDimPrivate *data = ((AdgLDim *) object)->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private((AdgLDim *) object);
 
     switch (prop_id) {
     case PROP_DIRECTION:
@@ -228,11 +223,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgLDim *ldim;
-    AdgLDimPrivate *data;
-
-    ldim = (AdgLDim *) object;
-    data = ldim->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private((AdgLDim *) object);
 
     switch (prop_id) {
     case PROP_DIRECTION:
@@ -418,8 +409,7 @@ adg_ldim_get_direction(AdgLDim *ldim)
 
     g_return_val_if_fail(ADG_IS_LDIM(ldim), 0);
 
-    data = ldim->data;
-
+    data = adg_ldim_get_instance_private(ldim);
     return data->direction;
 }
 
@@ -459,8 +449,7 @@ adg_ldim_has_extension1(AdgLDim *ldim)
 
     g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
 
-    data = ldim->data;
-
+    data = adg_ldim_get_instance_private(ldim);
     return data->has_extension1;
 }
 
@@ -500,8 +489,7 @@ adg_ldim_has_extension2(AdgLDim *ldim)
 
     g_return_val_if_fail(ADG_IS_LDIM(ldim), FALSE);
 
-    data = ldim->data;
-
+    data = adg_ldim_get_instance_private(ldim);
     return data->has_extension2;
 }
 
@@ -509,7 +497,7 @@ adg_ldim_has_extension2(AdgLDim *ldim)
 static void
 _adg_global_changed(AdgEntity *entity)
 {
-    AdgLDimPrivate *data = ((AdgLDim *) entity)->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private((AdgLDim *) entity);
 
     _adg_unset_trail((AdgLDim *) entity);
 
@@ -566,7 +554,7 @@ _adg_arrange(AdgEntity *entity)
         return;
 
     ldim = (AdgLDim *) entity;
-    data = ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
     quote = adg_dim_get_quote(dim);
 
     _adg_update_entities(ldim);
@@ -695,7 +683,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
         return;
 
     ldim = (AdgLDim *) entity;
-    data = ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
     dim_style = adg_dim_get_dim_style(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
@@ -726,7 +714,7 @@ _adg_default_value(AdgDim *dim)
         return g_strdup("undef");
 
     ldim = (AdgLDim *) dim;
-    data = ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
     value = data->geometry.distance;
 
     return adg_dim_get_text(dim, value);
@@ -769,7 +757,7 @@ _adg_compute_geometry(AdgDim *dim)
 
     pos = (CpmlPair *) pos_point;
     ldim = (AdgLDim *) dim;
-    data = ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
 
     cpml_vector_from_angle(&extension, data->direction);
     cpml_pair_copy(&baseline, &extension);
@@ -799,13 +787,11 @@ _adg_compute_geometry(AdgDim *dim)
 static void
 _adg_update_shift(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
     AdgDimStyle *dim_style;
     gdouble from_offset, to_offset;
     gdouble baseline_spacing, level;
     CpmlVector vector;
-
-    data = ldim->data;
 
     if (data->shift.is_arranged)
         return;
@@ -831,13 +817,9 @@ _adg_update_shift(AdgLDim *ldim)
 static void
 _adg_update_entities(AdgLDim *ldim)
 {
-    AdgEntity *entity;
-    AdgLDimPrivate *data;
-    AdgDimStyle *dim_style;
-
-    entity = (AdgEntity *) ldim;
-    data = ldim->data;
-    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
+    AdgEntity *entity = (AdgEntity *) ldim;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
+    AdgDimStyle *dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(_adg_trail_callback, ldim);
@@ -875,7 +857,7 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
         detached != ADG_THREE_STATE_UNKNOWN)
         return;
 
-    data = ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
     global = adg_entity_get_global_matrix((AdgEntity *) ldim);
     local_factor = abs(local->xx + local->yy) / 2;
@@ -937,7 +919,7 @@ _adg_update_quote(AdgLDim *ldim, CpmlPair *base1, CpmlPair *base2, CpmlPair *pos
     if (quote_entity == NULL)
         return;
 
-    data = (AdgLDimPrivate *) ldim->data;
+    data = adg_ldim_get_instance_private(ldim);
     middle.x = (base1->x + base2->x) / 2;
     middle.y = (base1->y + base2->y) / 2;
     dir.x = base2->x - base1->x;
@@ -1018,14 +1000,12 @@ _adg_update_quote(AdgLDim *ldim, CpmlPair *base1, CpmlPair *base2, CpmlPair *pos
 static void
 _adg_update_extents(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
+    AdgEntity *quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     CpmlExtents new_extents;
     const CpmlExtents *extents;
-    AdgEntity *quote;
     AdgEntity *marker_entity;
 
-    data = ldim->data;
-    quote = (AdgEntity *) adg_dim_get_quote((AdgDim *) ldim);
     new_extents.is_defined = FALSE;
 
     /* The quote is always present (otherwise something bad happened) */
@@ -1063,7 +1043,7 @@ _adg_update_extents(AdgLDim *ldim)
 static void
 _adg_unset_trail(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data = ldim->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
 
     if (data->trail != NULL)
         adg_model_clear((AdgModel *) data->trail);
@@ -1074,7 +1054,7 @@ _adg_unset_trail(AdgLDim *ldim)
 static void
 _adg_dispose_trail(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data = ldim->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
 
     if (data->trail != NULL) {
         g_object_unref(data->trail);
@@ -1085,7 +1065,7 @@ _adg_dispose_trail(AdgLDim *ldim)
 static void
 _adg_dispose_markers(AdgLDim *ldim)
 {
-    AdgLDimPrivate *data = ldim->data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
 
     if (data->marker1 != NULL) {
         g_object_unref(data->marker1);
@@ -1101,11 +1081,7 @@ _adg_dispose_markers(AdgLDim *ldim)
 static cairo_path_t *
 _adg_trail_callback(AdgTrail *trail, gpointer user_data)
 {
-    AdgLDim *ldim;
-    AdgLDimPrivate *data;
-
-    ldim = (AdgLDim *) user_data;
-    data = ldim->data;
-
+    AdgLDim *ldim = (AdgLDim *) user_data;
+    AdgLDimPrivate *data = adg_ldim_get_instance_private(ldim);
     return &data->cairo.path;
 }

@@ -42,7 +42,6 @@ typedef struct _AdgArrowClass  AdgArrowClass;
 struct _AdgArrow {
     /*< private >*/
     AdgMarker            parent;
-    gpointer             data;
 };
 
 struct _AdgArrowClass {

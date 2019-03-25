@@ -50,7 +50,7 @@
 #define _ADG_OLD_OBJECT_CLASS  ((GObjectClass *) adg_font_style_parent_class)
 
 
-G_DEFINE_TYPE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgFontStyle, adg_font_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -89,8 +89,6 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgFontStylePrivate));
 
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -167,10 +165,7 @@ adg_font_style_class_init(AdgFontStyleClass *klass)
 static void
 adg_font_style_init(AdgFontStyle *font_style)
 {
-    AdgFontStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(font_style,
-                                                            ADG_TYPE_FONT_STYLE,
-                                                            AdgFontStylePrivate);
-
+    AdgFontStylePrivate *data = adg_font_style_get_instance_private(font_style);
     data->color_dress = ADG_DRESS_COLOR;
     data->family = NULL;
     data->slant = CAIRO_FONT_SLANT_NORMAL;
@@ -181,15 +176,13 @@ adg_font_style_init(AdgFontStyle *font_style)
     data->hint_style = CAIRO_HINT_STYLE_DEFAULT;
     data->hint_metrics = CAIRO_HINT_METRICS_DEFAULT;
     data->font = NULL;
-
-    font_style->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgFontStylePrivate *data = ((AdgFontStyle *) object)->data;
+    AdgFontStylePrivate *data = adg_font_style_get_instance_private((AdgFontStyle *) object);
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -229,13 +222,9 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgStyle *style;
-    AdgFontStyle *font_style;
-    AdgFontStylePrivate *data;
-
-    style = (AdgStyle *) object;
-    font_style = (AdgFontStyle *) object;
-    data = font_style->data;
+    AdgStyle *style = (AdgStyle *) object;
+    AdgFontStyle *font_style = (AdgFontStyle *) object;
+    AdgFontStylePrivate *data = adg_font_style_get_instance_private(font_style);
 
     switch (prop_id) {
     case PROP_COLOR_DRESS:
@@ -316,7 +305,7 @@ adg_font_style_new_options(AdgFontStyle *font_style)
 
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
 
-    data = font_style->data;
+    data = adg_font_style_get_instance_private(font_style);
     options = cairo_font_options_create();
 
     /* Check for cached font */
@@ -355,7 +344,7 @@ adg_font_style_get_scaled_font(AdgFontStyle *font_style,
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
     g_return_val_if_fail(ctm != NULL, NULL);
 
-    data = font_style->data;
+    data = adg_font_style_get_instance_private(font_style);
 
     /* Check for cached font */
     if (data->font != NULL) {
@@ -428,8 +417,7 @@ adg_font_style_get_color_dress(AdgFontStyle *font_style)
 
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), ADG_DRESS_UNDEFINED);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->color_dress;
 }
 
@@ -467,8 +455,7 @@ adg_font_style_get_family(AdgFontStyle *font_style)
 
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), NULL);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->family;
 }
 
@@ -507,8 +494,7 @@ adg_font_style_get_slant(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_FONT_SLANT_NORMAL);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->slant;
 }
 
@@ -547,8 +533,7 @@ adg_font_style_get_weight(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_FONT_WEIGHT_NORMAL);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->weight;
 }
 
@@ -585,8 +570,7 @@ adg_font_style_get_size(AdgFontStyle *font_style)
 
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style), 0.);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->size;
 }
 
@@ -625,8 +609,7 @@ adg_font_style_get_antialias(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_ANTIALIAS_DEFAULT);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->antialias;
 }
 
@@ -667,8 +650,7 @@ adg_font_style_get_subpixel_order(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_SUBPIXEL_ORDER_DEFAULT);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->subpixel_order;
 }
 
@@ -708,8 +690,7 @@ adg_font_style_get_hint_style(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_HINT_STYLE_DEFAULT);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->hint_style;
 }
 
@@ -748,8 +729,7 @@ adg_font_style_get_hint_metrics(AdgFontStyle *font_style)
     g_return_val_if_fail(ADG_IS_FONT_STYLE(font_style),
                          CAIRO_HINT_METRICS_DEFAULT);
 
-    data = font_style->data;
-
+    data = adg_font_style_get_instance_private(font_style);
     return data->hint_metrics;
 }
 
@@ -757,11 +737,8 @@ adg_font_style_get_hint_metrics(AdgFontStyle *font_style)
 static void
 _adg_invalidate(AdgStyle *style)
 {
-    AdgFontStyle *font_style;
-    AdgFontStylePrivate *data;
-
-    font_style = (AdgFontStyle *) style;
-    data = font_style->data;
+    AdgFontStyle *font_style = (AdgFontStyle *) style;
+    AdgFontStylePrivate *data = adg_font_style_get_instance_private(font_style);
 
     if (data->font != NULL) {
         cairo_scaled_font_destroy(data->font);
@@ -783,7 +760,7 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
     cairo_scaled_font_t *font;
 
     font_style = (AdgFontStyle *) style;
-    data = font_style->data;
+    data = adg_font_style_get_instance_private(font_style);
 
     adg_entity_apply_dress(entity, data->color_dress, cr);
 

@@ -81,7 +81,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_marker_parent_class)
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgMarker, adg_marker, ADG_TYPE_ENTITY)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(AdgMarker, adg_marker, ADG_TYPE_ENTITY)
 
 enum {
     PROP_0,
@@ -120,8 +120,6 @@ adg_marker_class_init(AdgMarkerClass *klass)
 
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgMarkerPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->set_property = _adg_set_property;
@@ -171,9 +169,7 @@ adg_marker_class_init(AdgMarkerClass *klass)
 static void
 adg_marker_init(AdgMarker *marker)
 {
-    AdgMarkerPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(marker,
-                                                         ADG_TYPE_MARKER,
-                                                         AdgMarkerPrivate);
+    AdgMarkerPrivate *data = adg_marker_get_instance_private(marker);
     data->trail = NULL;
     data->n_segment = 0;
     data->backup_segment = NULL;
@@ -181,8 +177,6 @@ adg_marker_init(AdgMarker *marker)
     data->pos = 0;
     data->size = 10;
     data->model = NULL;
-
-    marker->data = data;
 }
 
 static void
@@ -202,7 +196,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgMarkerPrivate *data = ((AdgMarker *) object)->data;
+    AdgMarkerPrivate *data = adg_marker_get_instance_private((AdgMarker *) object);
 
     switch (prop_id) {
     case PROP_TRAIL:
@@ -231,7 +225,7 @@ _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
     AdgMarker *marker = (AdgMarker *) object;
-    AdgMarkerPrivate *data = ((AdgMarker *) object)->data;
+    AdgMarkerPrivate *data = adg_marker_get_instance_private(marker);
     AdgModel *old_model;
 
     switch (prop_id) {
@@ -307,8 +301,7 @@ adg_marker_get_trail(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->trail;
 }
 
@@ -349,8 +342,7 @@ adg_marker_get_n_segment(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), 0);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->n_segment;
 }
 
@@ -403,8 +395,7 @@ adg_marker_get_segment(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return &data->segment;
 }
 
@@ -436,7 +427,7 @@ adg_marker_backup_segment(AdgMarker *marker)
 
     g_return_if_fail(ADG_IS_MARKER(marker));
 
-    data = marker->data;
+    data = adg_marker_get_instance_private(marker);
 
     if (data->n_segment > 0) {
         g_return_if_fail(data->trail != NULL);
@@ -483,8 +474,7 @@ adg_marker_get_backup_segment(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->backup_segment;
 }
 
@@ -524,8 +514,7 @@ adg_marker_get_pos(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), 0);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->pos;
 }
 
@@ -563,8 +552,7 @@ adg_marker_get_size(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), 0);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->size;
 }
 
@@ -614,8 +602,7 @@ adg_marker_get_model(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
 
-    data = marker->data;
-
+    data = adg_marker_get_instance_private(marker);
     return data->model;
 }
 
@@ -643,7 +630,7 @@ adg_marker_model(AdgMarker *marker)
 
     g_return_val_if_fail(ADG_IS_MARKER(marker), NULL);
 
-    data = marker->data;
+    data = adg_marker_get_instance_private(marker);
 
     if (data->model == NULL) {
         /* Model not found: regenerate it */
@@ -660,7 +647,7 @@ adg_marker_model(AdgMarker *marker)
 static void
 _adg_local_changed(AdgEntity *entity)
 {
-    AdgMarkerPrivate *data = ((AdgMarker *) entity)->data;
+    AdgMarkerPrivate *data = adg_marker_get_instance_private((AdgMarker *) entity);
 
     /* On invalid segments, segment.data is not set: do not crash */
     if (data->segment.data != NULL) {
@@ -698,7 +685,7 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_clear_trail(AdgMarker *marker)
 {
-    AdgMarkerPrivate *data = marker->data;
+    AdgMarkerPrivate *data = adg_marker_get_instance_private(marker);
 
     if (data->trail && data->backup_segment) {
         /* Restore the original segment in the old trail */
@@ -723,7 +710,7 @@ _adg_set_segment(AdgMarker *marker, AdgTrail *trail, guint n_segment)
     if (trail && n_segment > 0 && !adg_trail_put_segment(trail, n_segment, &segment))
         return FALSE;
 
-    data = marker->data;
+    data = adg_marker_get_instance_private(marker);
 
     /* Do not try to cache results! Although @trail and @n_segment
      * could be the same, the internal CpmlSegment could change.

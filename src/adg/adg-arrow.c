@@ -53,7 +53,7 @@
 #include "adg-arrow-private.h"
 
 
-G_DEFINE_TYPE(AdgArrow, adg_arrow, ADG_TYPE_MARKER)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgArrow, adg_arrow, ADG_TYPE_MARKER)
 
 enum {
     PROP_0,
@@ -87,8 +87,6 @@ adg_arrow_class_init(AdgArrowClass *klass)
     entity_class = (AdgEntityClass *) klass;
     marker_class = (AdgMarkerClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgArrowPrivate));
-
     gobject_class->set_property = _adg_set_property;
     gobject_class->get_property = _adg_get_property;
 
@@ -108,13 +106,9 @@ adg_arrow_class_init(AdgArrowClass *klass)
 static void
 adg_arrow_init(AdgArrow *arrow)
 {
-    AdgArrowPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(arrow,
-                                                        ADG_TYPE_ARROW,
-                                                        AdgArrowPrivate);
+    AdgArrowPrivate *data = adg_arrow_get_instance_private(arrow);
 
     data->angle = G_PI/6;
-
-    arrow->data = data;
 
     adg_entity_set_local_mix((AdgEntity *) arrow, ADG_MIX_PARENT);
 }
@@ -123,7 +117,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgArrowPrivate *data = ((AdgArrow *) object)->data;
+    AdgArrowPrivate *data = adg_arrow_get_instance_private((AdgArrow *) object);
 
     switch (prop_id) {
     case PROP_ANGLE:
@@ -139,7 +133,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgArrowPrivate *data = ((AdgArrow *) object)->data;
+    AdgArrowPrivate *data = adg_arrow_get_instance_private((AdgArrow *) object);
 
     switch (prop_id) {
     case PROP_ANGLE:
@@ -227,8 +221,7 @@ adg_arrow_get_angle(AdgArrow *arrow)
 
     g_return_val_if_fail(ADG_IS_ARROW(arrow), 0);
 
-    data = arrow->data;
-
+    data = adg_arrow_get_instance_private(arrow);
     return data->angle;
 }
 
@@ -283,7 +276,7 @@ _adg_create_model(AdgMarker *marker)
     AdgPath *path;
     CpmlPair p1, p2;
 
-    data = ((AdgArrow *) marker)->data;
+    data = adg_arrow_get_instance_private((AdgArrow *) marker);
     path = adg_path_new();
     cpml_vector_from_angle(&p1, data->angle / 2);
     p2.x = p1.x;

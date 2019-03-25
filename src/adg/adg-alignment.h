@@ -43,7 +43,6 @@ typedef struct _AdgAlignmentClass  AdgAlignmentClass;
 struct _AdgAlignment {
     /*< private >*/
     AdgContainer         parent;
-    gpointer             data;
 };
 
 struct _AdgAlignmentClass {

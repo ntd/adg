@@ -62,7 +62,7 @@
 #define _ADG_OLD_ENTITY_CLASS  ((AdgEntityClass *) adg_alignment_parent_class)
 
 
-G_DEFINE_TYPE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgAlignment, adg_alignment, ADG_TYPE_CONTAINER)
 
 enum {
     PROP_0,
@@ -93,8 +93,6 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
     gobject_class = (GObjectClass *) klass;
     entity_class = (AdgEntityClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgAlignmentPrivate));
-
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
 
@@ -112,23 +110,18 @@ adg_alignment_class_init(AdgAlignmentClass *klass)
 static void
 adg_alignment_init(AdgAlignment *alignment)
 {
-    AdgAlignmentPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(alignment,
-                                                            ADG_TYPE_ALIGNMENT,
-                                                            AdgAlignmentPrivate);
-
+    AdgAlignmentPrivate *data = adg_alignment_get_instance_private(alignment);
     data->factor.x = 0;
     data->factor.y = 0;
     data->shift.x = 0;
     data->shift.y = 0;
-
-    alignment->data = data;
 }
 
 static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgAlignmentPrivate *data = ((AdgAlignment *) object)->data;
+    AdgAlignmentPrivate *data = adg_alignment_get_instance_private((AdgAlignment *) object);
 
     switch (prop_id) {
     case PROP_FACTOR:
@@ -144,10 +137,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgAlignmentPrivate *data;
+    AdgAlignmentPrivate *data = adg_alignment_get_instance_private((AdgAlignment *) object);
     const CpmlPair *pair;
-
-    data = ((AdgAlignment *) object)->data;
 
     switch (prop_id) {
     case PROP_FACTOR:
@@ -264,7 +255,7 @@ adg_alignment_get_factor(AdgAlignment *alignment)
 
     g_return_val_if_fail(ADG_IS_ALIGNMENT(alignment), NULL);
 
-    data = alignment->data;
+    data = adg_alignment_get_instance_private(alignment);
 
     return &data->factor;
 }
@@ -281,7 +272,7 @@ _adg_arrange(AdgEntity *entity)
     if (_ADG_OLD_ENTITY_CLASS->arrange == NULL)
         return;
 
-    data = ((AdgAlignment *) entity)->data;
+    data = adg_alignment_get_instance_private((AdgAlignment *) entity);
     extents = adg_entity_get_extents(entity);
     data->shift.x = 0;
     data->shift.y = 0;
@@ -329,7 +320,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
     if (_ADG_OLD_ENTITY_CLASS->render == NULL)
         return;
 
-    data = ((AdgAlignment *) entity)->data;
+    data = adg_alignment_get_instance_private((AdgAlignment *) entity);
 
     cairo_translate(cr, data->shift.x, data->shift.y);
     _ADG_OLD_ENTITY_CLASS->render(entity, cr);

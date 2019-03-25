@@ -63,7 +63,7 @@ enum {
     PROP_VADJUSTMENT
 };
 
-G_DEFINE_TYPE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA)
 
 static void
 _adg_set_scroll_adjustments(GtkWidget *widget,
@@ -87,7 +87,8 @@ enum {
 };
 
 G_DEFINE_TYPE_WITH_CODE(AdgGtkLayout, adg_gtk_layout, ADG_GTK_TYPE_AREA,
-                        G_IMPLEMENT_INTERFACE(GTK_TYPE_SCROLLABLE, NULL))
+                        G_IMPLEMENT_INTERFACE(GTK_TYPE_SCROLLABLE, NULL)
+                        G_ADD_PRIVATE(AdgGtkLayout))
 #endif
 
 
@@ -106,7 +107,7 @@ _adg_set_parent_size(AdgGtkLayout *layout)
     if (gtk_widget_get_realized(widget))
         return;
 
-    data = layout->data;
+    data = adg_gtk_layout_get_instance_private(layout);
     parent = gtk_widget_get_parent(widget);
     if (!GTK_IS_WIDGET(parent))
         return;
@@ -156,15 +157,13 @@ _adg_parent_set(GtkWidget *widget, GtkWidget *old_parent)
 static void
 _adg_update_adjustments(AdgGtkLayout *layout)
 {
-    AdgGtkArea *area;
-    AdgCanvas *canvas;
+    AdgGtkArea *area = (AdgGtkArea *) layout;
+    AdgCanvas *canvas = adg_gtk_area_get_canvas(area);
     const CpmlExtents *sheet, *viewport;
     AdgGtkLayoutPrivate *data;
     GtkAdjustment *hadj, *vadj;
     CpmlExtents surface;
 
-    area = (AdgGtkArea *) layout;
-    canvas = adg_gtk_area_get_canvas(area);
     if (canvas == NULL)
         return;
 
@@ -172,7 +171,7 @@ _adg_update_adjustments(AdgGtkLayout *layout)
     if (sheet == NULL || !sheet->is_defined)
         return;
 
-    data = layout->data;
+    data = adg_gtk_layout_get_instance_private(layout);
     hadj = data->hadjustment;
     vadj = data->vadjustment;
     viewport = &data->viewport;
@@ -210,11 +209,8 @@ _adg_update_adjustments(AdgGtkLayout *layout)
 static void
 _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 {
-    AdgGtkLayout *layout;
-    AdgGtkLayoutPrivate *data;
-
-    layout = (AdgGtkLayout *) widget;
-    data = layout->data;
+    AdgGtkLayout *layout = (AdgGtkLayout *) widget;
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private(layout);
 
     if (_ADG_OLD_WIDGET_CLASS->size_allocate != NULL)
         _ADG_OLD_WIDGET_CLASS->size_allocate(widget, allocation);
@@ -233,11 +229,8 @@ _adg_size_allocate(GtkWidget *widget, GtkAllocation *allocation)
 static void
 _adg_canvas_changed(AdgGtkArea *area, AdgCanvas *old_canvas)
 {
-    AdgGtkLayout *layout;
-    AdgGtkLayoutPrivate *data;
-
-    layout = (AdgGtkLayout *) area;
-    data = layout->data;
+    AdgGtkLayout *layout = (AdgGtkLayout *) area;
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private(layout);
 
     if (_ADG_OLD_AREA_CLASS->canvas_changed != NULL)
         _ADG_OLD_AREA_CLASS->canvas_changed(area, old_canvas);
@@ -274,7 +267,7 @@ _adg_value_changed(AdgGtkLayout *layout)
         return;
 
     area = (AdgGtkArea *) layout;
-    data = layout->data;
+    data = adg_gtk_layout_get_instance_private(layout);
     org.x = gtk_adjustment_get_value(data->hadjustment);
     org.y = gtk_adjustment_get_value(data->vadjustment);
 
@@ -312,7 +305,7 @@ _adg_set_adjustment(AdgGtkLayout *layout,
 static void
 _adg_dispose(GObject *object)
 {
-    AdgGtkLayoutPrivate *data = ((AdgGtkLayout *) object)->data;
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private((AdgGtkLayout *) object);
 
     if (data->hadjustment != NULL) {
         g_object_unref(data->hadjustment);
@@ -332,7 +325,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgGtkLayoutPrivate *data = ((AdgGtkLayout *) object)->data;
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private((AdgGtkLayout *) object);
 
     switch (prop_id) {
     case PROP_HADJUSTMENT:
@@ -359,12 +352,9 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgGtkLayout *layout;
-    AdgGtkLayoutPrivate *data;
+    AdgGtkLayout *layout = (AdgGtkLayout *) object;
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private(layout);
     GtkAdjustment *adjustment;
-
-    layout = (AdgGtkLayout *) object;
-    data = layout->data;
 
     switch (prop_id) {
     case PROP_HADJUSTMENT:
@@ -405,8 +395,6 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
     gobject_class = (GObjectClass *) klass;
     widget_class = (GtkWidgetClass *) klass;
     area_class = (AdgGtkAreaClass *) klass;
-
-    g_type_class_add_private(klass, sizeof(AdgGtkLayoutPrivate));
 
     gobject_class->dispose = _adg_dispose;
     gobject_class->get_property = _adg_get_property;
@@ -468,16 +456,11 @@ adg_gtk_layout_class_init(AdgGtkLayoutClass *klass)
 static void
 adg_gtk_layout_init(AdgGtkLayout *layout)
 {
-    AdgGtkLayoutPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(layout,
-                                                            ADG_GTK_TYPE_LAYOUT,
-                                                            AdgGtkLayoutPrivate);
-
+    AdgGtkLayoutPrivate *data = adg_gtk_layout_get_instance_private(layout);
     data->hadjustment = NULL;
     data->vadjustment = NULL;
     data->policy_stored = FALSE;
     data->viewport.is_defined = FALSE;
-
-    layout->data = data;
 }
 
 
@@ -558,8 +541,7 @@ adg_gtk_layout_get_hadjustment(AdgGtkLayout *layout)
 
     g_return_val_if_fail(ADG_GTK_IS_LAYOUT(layout), NULL);
 
-    data = layout->data;
-
+    data = adg_gtk_layout_get_instance_private(layout);
     return data->hadjustment;
 }
 
@@ -604,7 +586,6 @@ adg_gtk_layout_get_vadjustment(AdgGtkLayout *layout)
 
     g_return_val_if_fail(ADG_GTK_IS_LAYOUT(layout), NULL);
 
-    data = layout->data;
-
+    data = adg_gtk_layout_get_instance_private(layout);
     return data->vadjustment;
 }

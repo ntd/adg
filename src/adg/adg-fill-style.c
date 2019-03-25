@@ -60,7 +60,7 @@
 #include "adg-fill-style-private.h"
 
 
-G_DEFINE_ABSTRACT_TYPE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE)
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE(AdgFillStyle, adg_fill_style, ADG_TYPE_STYLE)
 
 enum {
     PROP_0,
@@ -94,8 +94,6 @@ adg_fill_style_class_init(AdgFillStyleClass *klass)
     gobject_class = (GObjectClass *) klass;
     style_class = (AdgStyleClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgFillStylePrivate));
-
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -115,19 +113,14 @@ adg_fill_style_class_init(AdgFillStyleClass *klass)
 static void
 adg_fill_style_init(AdgFillStyle *fill_style)
 {
-    AdgFillStylePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(fill_style,
-                                                            ADG_TYPE_FILL_STYLE,
-                                                            AdgFillStylePrivate);
-
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private(fill_style);
     data->pattern = NULL;
-
-    fill_style->data = data;
 }
 
 static void
 _adg_finalize(GObject *object)
 {
-    AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private((AdgFillStyle *) object);
 
     if (data->pattern != NULL) {
         cairo_pattern_destroy(data->pattern);
@@ -139,7 +132,7 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private((AdgFillStyle *) object);
 
     switch (prop_id) {
     case PROP_PATTERN:
@@ -155,7 +148,7 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgFillStylePrivate *data = ((AdgFillStyle *) object)->data;
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private((AdgFillStyle *) object);
     cairo_pattern_t *old_pattern;
 
     switch (prop_id) {
@@ -215,8 +208,7 @@ adg_fill_style_get_pattern(AdgFillStyle *fill_style)
 
     g_return_val_if_fail(ADG_IS_FILL_STYLE(fill_style), NULL);
 
-    data = fill_style->data;
-
+    data = adg_fill_style_get_instance_private(fill_style);
     return data->pattern;
 }
 
@@ -274,8 +266,7 @@ adg_fill_style_get_extents(AdgFillStyle *fill_style)
 
     g_return_val_if_fail(ADG_IS_FILL_STYLE(fill_style), NULL);
 
-    data = fill_style->data;
-
+    data = adg_fill_style_get_instance_private(fill_style);
     return &data->extents;
 }
 
@@ -283,8 +274,7 @@ adg_fill_style_get_extents(AdgFillStyle *fill_style)
 static void
 _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 {
-    AdgFillStylePrivate *data = ((AdgFillStyle *) style)->data;
-
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private((AdgFillStyle *) style);
     if (data->pattern == NULL)
         g_warning(_("%s: pattern undefined for type '%s'"),
                   G_STRLOC, g_type_name(G_OBJECT_TYPE(style)));
@@ -295,7 +285,6 @@ _adg_apply(AdgStyle *style, AdgEntity *entity, cairo_t *cr)
 static void
 _adg_set_extents(AdgFillStyle *fill_style, const CpmlExtents *extents)
 {
-    AdgFillStylePrivate *data = fill_style->data;
-
+    AdgFillStylePrivate *data = adg_fill_style_get_instance_private(fill_style);
     cpml_extents_copy(&data->extents, extents);
 }

@@ -42,13 +42,12 @@ typedef struct _AdgFillStyleClass   AdgFillStyleClass;
 
 struct _AdgFillStyle {
     /*< private >*/
-    AdgStyle             parent;
-    gpointer             data;
+    AdgStyle            parent;
 };
 
 struct _AdgFillStyleClass {
     /*< private >*/
-    AdgStyleClass        parent_class;
+    AdgStyleClass       parent_class;
 
     /*< public >*/
     /* Virtual table */

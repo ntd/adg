@@ -42,7 +42,6 @@ typedef struct _AdgHatchClass   AdgHatchClass;
 struct _AdgHatch {
     /*< private >*/
     AdgStroke           parent;
-    gpointer            data;
 };
 
 struct _AdgHatchClass {

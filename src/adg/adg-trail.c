@@ -87,7 +87,7 @@
 
 #define EMPTY_PATH(p)          ((p) == NULL || (p)->data == NULL || (p)->num_data <= 0)
 
-G_DEFINE_TYPE(AdgTrail, adg_trail, ADG_TYPE_MODEL)
+G_DEFINE_TYPE_WITH_PRIVATE(AdgTrail, adg_trail, ADG_TYPE_MODEL)
 
 enum {
     PROP_0,
@@ -121,8 +121,6 @@ adg_trail_class_init(AdgTrailClass *klass)
     gobject_class = (GObjectClass *) klass;
     model_class = (AdgModelClass *) klass;
 
-    g_type_class_add_private(klass, sizeof(AdgTrailPrivate));
-
     gobject_class->finalize = _adg_finalize;
     gobject_class->get_property = _adg_get_property;
     gobject_class->set_property = _adg_set_property;
@@ -142,9 +140,7 @@ adg_trail_class_init(AdgTrailClass *klass)
 static void
 adg_trail_init(AdgTrail *trail)
 {
-    AdgTrailPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(trail, ADG_TYPE_TRAIL,
-                                                        AdgTrailPrivate);
-
+    AdgTrailPrivate *data = adg_trail_get_instance_private(trail);
     data->cairo_path.status = CAIRO_STATUS_INVALID_PATH_DATA;
     data->cairo_path.data = NULL;
     data->cairo_path.num_data = 0;
@@ -153,8 +149,6 @@ adg_trail_init(AdgTrail *trail)
     data->max_angle = G_PI_2;
     data->in_construction = FALSE;
     data->extents.is_defined = FALSE;
-
-    trail->data = data;
 }
 
 static void
@@ -170,11 +164,8 @@ static void
 _adg_get_property(GObject *object, guint prop_id,
                   GValue *value, GParamSpec *pspec)
 {
-    AdgTrail *trail;
-    AdgTrailPrivate *data;
-
-    trail = (AdgTrail *) object;
-    data = trail->data;
+    AdgTrail *trail = (AdgTrail *) object;
+    AdgTrailPrivate *data = adg_trail_get_instance_private(trail);
 
     switch (prop_id) {
     case PROP_MAX_ANGLE:
@@ -190,11 +181,8 @@ static void
 _adg_set_property(GObject *object, guint prop_id,
                   const GValue *value, GParamSpec *pspec)
 {
-    AdgTrail *trail;
-    AdgTrailPrivate *data;
-
-    trail = (AdgTrail *) object;
-    data = trail->data;
+    AdgTrail *trail = (AdgTrail *) object;
+    AdgTrailPrivate *data = adg_trail_get_instance_private(trail);
 
     switch (prop_id) {
     case PROP_MAX_ANGLE:
@@ -223,11 +211,8 @@ _adg_set_property(GObject *object, guint prop_id,
 AdgTrail *
 adg_trail_new(AdgTrailCallback callback, gpointer user_data)
 {
-    AdgTrail *trail;
-    AdgTrailPrivate *data;
-
-    trail = g_object_new(ADG_TYPE_TRAIL, NULL);
-    data = trail->data;
+    AdgTrail *trail = g_object_new(ADG_TYPE_TRAIL, NULL);
+    AdgTrailPrivate *data = adg_trail_get_instance_private(trail);
 
     data->callback = callback;
     data->user_data = user_data;
@@ -264,7 +249,7 @@ adg_trail_get_cairo_path(AdgTrail *trail)
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
-    data = trail->data;
+    data = adg_trail_get_instance_private(trail);
 
     /* Check for cached result */
     if (data->cairo_path.data != NULL)
@@ -332,7 +317,7 @@ adg_trail_cairo_path(AdgTrail *trail)
     if (klass->get_cairo_path == NULL)
         return NULL;
 
-    data = trail->data;
+    data = adg_trail_get_instance_private(trail);
     if (data->in_construction) {
         g_warning(_("%s: you cannot access the path from the callback you provided to build it"),
                   G_STRLOC);
@@ -444,7 +429,7 @@ adg_trail_get_extents(AdgTrail *trail)
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), NULL);
 
-    data = trail->data;
+    data = adg_trail_get_instance_private(trail);
 
     if (!data->extents.is_defined) {
         cairo_path_t *cairo_path;
@@ -544,7 +529,7 @@ adg_trail_get_max_angle(AdgTrail *trail)
 
     g_return_val_if_fail(ADG_IS_TRAIL(trail), 0);
 
-    data = trail->data;
+    data = adg_trail_get_instance_private(trail);
     return data->max_angle;
 }
 
@@ -552,7 +537,7 @@ adg_trail_get_max_angle(AdgTrail *trail)
 static void
 _adg_clear(AdgModel *model)
 {
-    AdgTrailPrivate *data = ((AdgTrail *) model)->data;
+    AdgTrailPrivate *data = adg_trail_get_instance_private((AdgTrail *) model);
 
     g_free(data->cairo_path.data);
 
@@ -568,7 +553,7 @@ _adg_clear(AdgModel *model)
 static cairo_path_t *
 _adg_get_cairo_path(AdgTrail *trail)
 {
-    AdgTrailPrivate *data = trail->data;
+    AdgTrailPrivate *data = adg_trail_get_instance_private(trail);
 
     if (data->callback == NULL) {
         g_warning(_("%s: callback not defined for instance of type '%s'"),
