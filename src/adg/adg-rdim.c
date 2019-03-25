@@ -388,7 +388,7 @@ _adg_arrange(AdgEntity *entity)
         gdouble beyond;
         CpmlVector vector;
 
-        dim_style = _ADG_GET_DIM_STYLE(dim);
+        dim_style = adg_dim_get_dim_style(dim);
         beyond = adg_dim_style_get_beyond(dim_style);
         vector.x = ref2.x - base.x;
         vector.y = ref2.y - base.y;
@@ -469,7 +469,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     rdim = (AdgRDim *) entity;
     data = rdim->data;
-    dim_style = _ADG_GET_DIM_STYLE(dim);
+    dim_style = adg_dim_get_dim_style(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
     adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
@@ -540,7 +540,7 @@ _adg_compute_geometry(AdgDim *dim)
     rdim = (AdgRDim *) dim;
     data = rdim->data;
     pos = (CpmlPair *) pos_point;
-    dim_style = _ADG_GET_DIM_STYLE(rdim);
+    dim_style = adg_dim_get_dim_style(dim);
     spacing = adg_dim_style_get_baseline_spacing(dim_style);
     level = adg_dim_get_level(dim);
     pos_distance = cpml_pair_distance(pos, ref1);
@@ -581,7 +581,7 @@ _adg_update_entities(AdgRDim *rdim)
 
     entity = (AdgEntity *) rdim;
     data = rdim->data;
-    dim_style = _ADG_GET_DIM_STYLE(rdim);
+    dim_style = adg_dim_get_dim_style((AdgDim *) rdim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(_adg_trail_callback, rdim);

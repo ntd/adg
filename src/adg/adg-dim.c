@@ -398,6 +398,27 @@ _adg_set_property(GObject *object, guint prop_id,
 
 
 /**
+ * adg_dim_get_dim_style:
+ * @dim: an #AdgDim
+ *
+ * Gets the internal cached dim style of @dim.
+ *
+ * Returns: (transfer none): the internal AdgDimStyle style.
+ *
+ * Since: 1.0
+ **/
+AdgDimStyle *
+adg_dim_get_dim_style(AdgDim *dim)
+{
+    AdgDimPrivate *data;
+
+    g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
+
+    data = dim->data;
+    return data->dim_style;
+}
+
+/**
  * adg_dim_set_dim_dress:
  * @dim: an #AdgDim
  * @dress: the new #AdgDress to use
@@ -1015,7 +1036,7 @@ adg_dim_get_text(AdgDim *dim, gdouble value)
 
     g_return_val_if_fail(ADG_IS_DIM(dim), NULL);
 
-    dim_style = _ADG_GET_DIM_STYLE(dim);
+    dim_style = adg_dim_get_dim_style(dim);
     if (dim_style == NULL) {
         dim_style = (AdgDimStyle *) adg_entity_style((AdgEntity *) dim,
                                                      adg_dim_get_dim_dress(dim));

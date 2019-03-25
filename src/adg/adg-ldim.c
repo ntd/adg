@@ -579,7 +579,7 @@ _adg_arrange(AdgEntity *entity)
 
     _adg_choose_flags(ldim, &outside, &detach);
 
-    dim_style = _ADG_GET_DIM_STYLE(dim);
+    dim_style = adg_dim_get_dim_style(dim);
     local = adg_entity_get_local_matrix(entity);
 
     cpml_pair_copy(&ref1, (CpmlPair *) adg_dim_get_ref1(dim));
@@ -696,7 +696,7 @@ _adg_render(AdgEntity *entity, cairo_t *cr)
 
     ldim = (AdgLDim *) entity;
     data = ldim->data;
-    dim_style = _ADG_GET_DIM_STYLE(dim);
+    dim_style = adg_dim_get_dim_style(dim);
 
     adg_style_apply((AdgStyle *) dim_style, entity, cr);
     adg_entity_render((AdgEntity *) adg_dim_get_quote(dim), cr);
@@ -810,7 +810,7 @@ _adg_update_shift(AdgLDim *ldim)
     if (data->shift.is_arranged)
         return;
 
-    dim_style = _ADG_GET_DIM_STYLE(ldim);
+    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
     from_offset = adg_dim_style_get_from_offset(dim_style);
     to_offset = adg_dim_style_get_to_offset(dim_style);
     baseline_spacing = adg_dim_style_get_baseline_spacing(dim_style);
@@ -837,7 +837,7 @@ _adg_update_entities(AdgLDim *ldim)
 
     entity = (AdgEntity *) ldim;
     data = ldim->data;
-    dim_style = _ADG_GET_DIM_STYLE(ldim);
+    dim_style = adg_dim_get_dim_style((AdgDim *) ldim);
 
     if (data->trail == NULL)
         data->trail = adg_trail_new(_adg_trail_callback, ldim);

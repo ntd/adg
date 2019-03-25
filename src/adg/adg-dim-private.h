@@ -24,9 +24,6 @@
 
 G_BEGIN_DECLS
 
-#define _ADG_GET_DIM_STYLE(dim)  (((AdgDimPrivate *) ((AdgDim *) (dim))->data)->dim_style)
-
-
 typedef struct _AdgDimPrivate AdgDimPrivate;
 typedef struct _AdgDimReplaceData AdgDimReplaceData;
 
