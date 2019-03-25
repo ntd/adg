@@ -56,7 +56,6 @@
 #include "adg-stroke.h"
 #include "adg-container.h"
 #include "adg-alignment.h"
-#include "adg-entity-private.h"
 #include "adg-dress.h"
 #include "adg-param-dress.h"
 
@@ -164,7 +163,6 @@ adg_table_init(AdgTable *table)
     AdgTablePrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(table,
                                                         ADG_TYPE_TABLE,
                                                         AdgTablePrivate);
-    AdgEntityPrivate *entity_data = ((AdgEntity *) table)->data;
 
     data->table_dress = ADG_DRESS_TABLE;
     data->has_frame = TRUE;
@@ -177,10 +175,7 @@ adg_table_init(AdgTable *table)
 
     table->data = data;
 
-    /* Initialize to custom default some AdgEntity field by directly
-     * accessing the private struct to avoid notify signal emissions
-     */
-    entity_data->local_mix = ADG_MIX_DISABLED;
+    adg_entity_set_local_mix((AdgEntity *) table, ADG_MIX_DISABLED);
 }
 
 static void

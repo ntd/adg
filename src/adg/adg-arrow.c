@@ -48,7 +48,6 @@
 #include "adg-trail.h"
 #include "adg-path.h"
 #include "adg-marker.h"
-#include "adg-entity-private.h"
 
 #include "adg-arrow.h"
 #include "adg-arrow-private.h"
@@ -112,16 +111,12 @@ adg_arrow_init(AdgArrow *arrow)
     AdgArrowPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(arrow,
                                                         ADG_TYPE_ARROW,
                                                         AdgArrowPrivate);
-    AdgEntityPrivate *entity_data = ((AdgEntity *) arrow)->data;
 
     data->angle = G_PI/6;
 
     arrow->data = data;
 
-    /* Initialize to custom default some AdgEntity field by directly
-     * accessing the private struct to avoid notify signal emissions
-     */
-    entity_data->local_mix = ADG_MIX_PARENT;
+    adg_entity_set_local_mix((AdgEntity *) arrow, ADG_MIX_PARENT);
 }
 
 static void

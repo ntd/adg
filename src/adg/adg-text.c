@@ -54,7 +54,6 @@
 #include "adg-font-style.h"
 #include "adg-pango-style.h"
 #include "adg-textual.h"
-#include "adg-entity-private.h"
 
 #include "adg-text.h"
 #include "adg-text-private.h"
@@ -144,7 +143,6 @@ adg_text_init(AdgText *text)
 {
     AdgTextPrivate *data = G_TYPE_INSTANCE_GET_PRIVATE(text, ADG_TYPE_TEXT,
                                                        AdgTextPrivate);
-    AdgEntityPrivate *entity_data = ((AdgEntity *) text)->data;
 
     data->font_dress = ADG_DRESS_FONT_TEXT;
     data->text = NULL;
@@ -152,10 +150,7 @@ adg_text_init(AdgText *text)
 
     text->data = data;
 
-    /* Initialize to custom default some AdgEntity field by directly
-     * accessing the private struct to avoid notify signal emissions
-     */
-    entity_data->local_mix = ADG_MIX_ANCESTORS_NORMALIZED;
+    adg_entity_set_local_mix((AdgEntity *) text, ADG_MIX_ANCESTORS_NORMALIZED);
 }
 
 static void
