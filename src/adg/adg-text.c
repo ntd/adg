@@ -260,7 +260,7 @@ _adg_invalidate(AdgEntity *entity)
 static void
 _adg_arrange(AdgEntity *entity)
 {
-    AdgText *text = (AdgText *) entity;;
+    AdgText *text = (AdgText *) entity;
     AdgTextPrivate *data = adg_text_get_instance_private(text);
     PangoRectangle size;
 
@@ -331,7 +331,7 @@ _adg_arrange(AdgEntity *entity)
 static void
 _adg_render(AdgEntity *entity, cairo_t *cr)
 {
-    AdgText *text = (AdgText *) entity;;
+    AdgText *text = (AdgText *) entity;
     AdgTextPrivate *data = adg_text_get_instance_private(text);
 
     if (data->layout != NULL) {

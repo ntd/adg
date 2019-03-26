@@ -119,8 +119,8 @@ static const CpmlExtents *
 _adg_get_extents(AdgGtkArea *area)
 {
     AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private(area);
-    CpmlExtents old_extents = data->extents;;
-    AdgCanvas *canvas = data->canvas;;
+    CpmlExtents old_extents = data->extents;
+    AdgCanvas *canvas = data->canvas;
 
     data->extents.is_defined = FALSE;
 
