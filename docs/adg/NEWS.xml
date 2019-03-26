@@ -6,6 +6,25 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.9.2">
+<title>ADG 0.9.2</title>
+
+<para>Allow negative values in spacing options so text can be squeezed in
+less space than line height (useful on e.g. limits).</para>
+
+<para>Proper bindings for AdgDash have been provided, so now line styles
+can be customized outside of the C world.</para>
+
+<para>Floating values are now accepted as scale arguments, so "4.2:1" or
+"2:3.2" are now perfectly valid scale strings.</para>
+
+<para>The private data handling has been modernized by leveraging the latest
+APIs provided by GLib. Private accessors and workarounds have been
+definitely removed. Because of this, glib-2.38.0 is now required.</para>
+
+<para>Many minor bugs have been squashed in this release.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.9.1">
 <title>ADG 0.9.1</title>
 
