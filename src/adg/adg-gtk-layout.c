@@ -39,14 +39,6 @@
  * Since: 1.0
  **/
 
-/**
- * AdgGtkLayoutClass:
- *
- * All fields are private.
- *
- * Since: 1.0
- **/
-
 
 #include "adg-internal.h"
 #include <gtk/gtk.h>
