@@ -1743,7 +1743,7 @@ _adg_update_margin(AdgCanvas *canvas, gdouble *margin,
  * is to gtk_paper_size_new(), so use any valid name accepted
  * by that function.
  *
- * This has the same effect as creating a #GtkPaperSetup object
+ * This has the same effect as creating a #GtkPageSetup object
  * and binding it to @canvas with adg_canvas_set_page_setup():
  * check its documentation for knowing the implications.
  *
