@@ -11,7 +11,7 @@ MKDB_OPTIONS=		--name-space=adg \
 			--output-format=xml \
 			--default-includes="$(DOC_MODULE)-1/$(DOC_MODULE).h"
 MKHTML_OPTIONS=
-FIXXREF_OPTIONS=	--extra-dir=$(top_srcdir)/docs/cpml/html \
+FIXXREF_OPTIONS=	--extra-dir=$(top_builddir)/docs/cpml/html \
 			$(EXTRADIR)
 HFILE_GLOB=		$(DOC_SOURCE_DIR)/*.h
 EXTRA_HFILES=		$(top_builddir)/src/adg/adg-canvas.h
