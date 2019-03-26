@@ -416,7 +416,15 @@ AM_COND_IF([HAVE_GTK3],
 AC_SUBST([ADG_CFLAGS])
 AC_SUBST([ADG_LIBS])
 
+# Path to external dependencies, used by gtkdoc-fixxref
 AC_SUBST([EXTRADIR])
+
+# On VPATH builds, adg-canvas.h is created in the builddir so it must be
+# manually included by gtkdoc. On in-place builds, this is not needed.
+AS_IF([test "x${srcdir}" = "x."],
+      [ADG_CANVAS_H=],
+      [ADG_CANVAS_H='$(top_builddir)/src/adg/adg-canvas.h'])
+AC_SUBST([ADG_CANVAS_H])
 
 
 # Generation

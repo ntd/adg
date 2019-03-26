@@ -14,7 +14,7 @@ MKHTML_OPTIONS=
 FIXXREF_OPTIONS=	--extra-dir=$(top_builddir)/docs/cpml/html \
 			$(EXTRADIR)
 HFILE_GLOB=		$(DOC_SOURCE_DIR)/*.h
-EXTRA_HFILES=		$(top_builddir)/src/adg/adg-canvas.h
+EXTRA_HFILES=		$(ADG_CANVAS_H)
 CFILE_GLOB=		$(DOC_SOURCE_DIR)/*.c
 IGNORE_HFILES=		adg.h \
 			adg-adim-private.h \
