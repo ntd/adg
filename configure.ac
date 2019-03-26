@@ -1,4 +1,4 @@
-m4_define([adg_version],[0.9.1])
+m4_define([adg_version],[0.9.2])
 m4_define([cpml_version],adg_version)
 
 dnl How to handle {adg,cmpl}_lt_version (current:revision:age):
