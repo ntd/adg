@@ -38,11 +38,6 @@
 
 G_BEGIN_DECLS
 
-#if GLIB_MINOR_VERSION < 16
-gint                    g_strcmp0               (const gchar    *s1,
-                                                 const gchar    *s2);
-#endif
-
 gboolean                adg_is_string_empty     (const gchar    *str);
 gboolean                adg_is_enum_value       (int             value,
                                                  GType           enum_type);

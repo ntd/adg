@@ -95,39 +95,6 @@
 #include <math.h>
 
 
-#if GLIB_CHECK_VERSION(2, 16, 0)
-#else
-/**
- * g_strcmp0:
- * @s1: a C string or <constant>NULL</constant>
- * @s2: another C string or <constant>NULL</constant>
- *
- * Compares @s1 and @s2 like strcmp(). Handles
- * <constant>NULL</constant> gracefully by sorting it
- * before non-<constant>NULL</constant> strings.
- * Comparing two <constant>NULL</constant> pointers
- * returns 0.
- *
- * This is a backward compatibility fallback for GLib
- * prior to 2.16.0.
- *
- * Returns: an integer less than, equal to, or greater than zero, if @s1 is less than, equal to or greater than @s2.
- *
- * Since: 1.0
- */
-int
-g_strcmp0(const char *s1, const char *s2)
-{
-    if (!s1)
-        return -(s1 != s2);
-
-    if (!s2)
-        return s1 != s2;
-
-    return strcmp(s1, s2);
-}
-#endif
-
 /**
  * adg_is_string_empty:
  * @str: the subject string
@@ -280,11 +247,7 @@ _adg_dgettext(const gchar *domain, const gchar *msgid)
         initialized = TRUE;
     }
 
-#if GLIB_CHECK_VERSION(2, 18, 0)
     return g_dgettext(domain, msgid);
-#else
-    return dgettext(domain, msgid);
-#endif
 }
 
 /**
@@ -542,7 +505,7 @@ adg_round(gdouble value, gint decimals)
 }
 
 /**
- * adg_single_strchr:
+ * adg_unescaped_strchr:
  * @string: a string
  * @ch: a character to find
  *
