@@ -442,11 +442,8 @@ _adg_size_request(GtkWidget *widget, GtkRequisition *requisition)
 static gboolean
 _adg_expose_event(GtkWidget *widget, GdkEventExpose *event)
 {
-    AdgGtkAreaPrivate *data;
-    AdgCanvas *canvas;
-
-    data = ((AdgGtkArea *) widget)->data;
-    canvas = data->canvas;
+    AdgGtkAreaPrivate *data = adg_gtk_area_get_instance_private((AdgGtkArea *) widget);
+    AdgCanvas *canvas = data->canvas;
 
     if (canvas != NULL && event->window != NULL) {
         cairo_t *cr = gdk_cairo_create(event->window);
