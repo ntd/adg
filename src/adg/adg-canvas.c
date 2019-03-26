@@ -163,6 +163,15 @@ static void             _adg_update_margin      (AdgCanvas      *canvas,
                                                  gdouble         new_margin);
 
 
+/**
+ * adg_canvas_error_quark:
+ *
+ * Registers an error quark specific for #AdgCanvas.
+ *
+ * Returns: The error quark used for #AdgCanvas errors.
+ *
+ * Since: 1.0
+ **/
 GQuark
 adg_canvas_error_quark(void)
 {

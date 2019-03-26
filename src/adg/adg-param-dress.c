@@ -43,6 +43,8 @@
 
 #include "adg-param-dress.h"
 
+#define ADG_PARAM_SPEC_DRESS(pspec)     (G_TYPE_CHECK_INSTANCE_CAST((pspec), ADG_TYPE_PARAM_DRESS, AdgParamSpecDress))
+
 
 typedef struct _AdgParamSpecDress AdgParamSpecDress;
 

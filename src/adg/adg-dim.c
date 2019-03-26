@@ -1353,9 +1353,11 @@ adg_dim_geometry_missing(AdgDim *dim, const gchar *subject)
 }
 
 /**
- * adg_dim_geometry_coincidents:
+ * adg_dim_geometry_coincident:
  * @dim: an #AdgDim
- * @subject: what is missing
+ * @first: the name of the first point
+ * @second: the name of the second point
+ * @pos: the coordinates of both points
  *
  * <note><para>
  * This function is only useful in new dimension implementations.

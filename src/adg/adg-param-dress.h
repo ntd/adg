@@ -30,7 +30,6 @@
 G_BEGIN_DECLS
 
 #define ADG_TYPE_PARAM_DRESS            (adg_param_dress_get_type())
-#define ADG_PARAM_SPEC_DRESS(pspec)     (G_TYPE_CHECK_INSTANCE_CAST((pspec), ADG_TYPE_PARAM_DRESS, AdgParamSpecDress))
 #define ADG_IS_PARAM_DRESS(pspec)       (G_TYPE_CHECK_INSTANCE_TYPE((pspec), ADG_TYPE_PARAM_DRESS))
 
 

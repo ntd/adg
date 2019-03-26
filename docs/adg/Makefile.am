@@ -20,6 +20,7 @@ IGNORE_HFILES=		adg.h \
 			adg-adim-private.h \
 			adg-alignment-private.h \
 			adg-arrow-private.h \
+			adg-cairo-fallback.h \
 			adg-canvas-private.h \
 			adg-color-style-private.h \
 			adg-container-private.h \

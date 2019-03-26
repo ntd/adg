@@ -423,7 +423,7 @@ adg_model_remove_dependency(AdgModel *model, AdgEntity *entity)
 /**
  * adg_model_get_dependencies:
  * @model: an #AdgModel
- *.
+ *
  * Gets the list of entities dependending on @model. This list
  * is owned by @model and must not be modified or freed.
  *

@@ -18,20 +18,6 @@
  */
 
 
-/**
- * SECTION:adg-cairo-fallback
- * @title: Cairo wrappers
- * @short_description: GObject wrappers for cairo structs
- *
- * If GObject support has not been compiled in cairo, either by
- * explicitely disabling it or because the installed cairo version
- * does not provide them, a compatible selection of wrappers used
- * by ADG is provided anyway.
- *
- * Since: 1.0
- **/
-
-
 #include "adg-internal.h"
 #include <string.h>
 #include <math.h>
