@@ -65,7 +65,7 @@ The ADG library has the following dependencies:
 
  * [cairo](http://cairographics.org/) 1.7.4 or later, required by
    either CPML and ADG;
- * [GLib](http://www.gtk.org/) 2.14.0 or later, required by ADG;
+ * [GLib](http://www.gtk.org/) 2.38.0 or later, required by ADG;
  * [GTK+](http://www.gtk.org/) 3.0.0 or later (or GTK+ 2.12.0 or
    later for GTK+2 support) to optionally include GTK+ support and
    build the adg-demo program;
@@ -75,7 +75,7 @@ The ADG library has the following dependencies:
  * [gtk-doc](http://www.gtk.org/gtk-doc/) 1.12 or later (optional),
    used to regenerate the API documentation
  * [GObject introspection](http://live.gnome.org/GObjectIntrospection)
-   0.9.5 or later (optional) to dinamically generate bindings
+   1.0.0 or later (optional) to dinamically generate bindings
    metadata.
 
 The required packages must be installed prior the ADG building:
