@@ -41,6 +41,16 @@ GdkWindow *     gtk_widget_get_window           (GtkWidget      *widget);
 gboolean        gtk_widget_get_realized         (GtkWidget      *widget);
 #endif
 
+#if GTK_CHECK_VERSION(2, 54, 0)
+#else
+
+GObject *       g_object_new_with_properties    (GType          object_type,
+                                                 guint          n_properties,
+                                                 const char    *names[],
+                                                 const GValue   values[]);
+
+#endif
+
 void            adg_gtk_window_hide_here        (GtkWindow      *window);
 void            adg_gtk_toggle_button_sensitivize
                                                 (GtkToggleButton*toggle_button,
