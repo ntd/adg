@@ -126,9 +126,9 @@ static void             _adg_apply              (AdgStyle       *style,
                                                  cairo_t        *cr);
 static AdgMarker *      _adg_marker_new         (const AdgMarkerData
                                                                 *marker_data);
-static void             _adg_set_marker         (AdgMarkerData  *marker_data,
+static void             _adg_marker_data_set    (AdgMarkerData  *marker_data,
                                                  AdgMarker      *marker);
-static void             _adg_free_marker        (AdgMarkerData  *marker_data);
+static void             _adg_marker_data_unset  (AdgMarkerData  *marker_data);
 
 
 static void
@@ -289,11 +289,13 @@ adg_dim_style_init(AdgDimStyle *dim_style)
 {
     AdgDimStylePrivate *data = adg_dim_style_get_instance_private(dim_style);
     data->marker1.type = 0;
-    data->marker1.n_parameters = 0;
-    data->marker1.parameters = NULL;
+    data->marker1.n_properties = 0;
+    data->marker1.names = NULL;
+    data->marker1.values = NULL;
     data->marker2.type = 0;
-    data->marker2.n_parameters = 0;
-    data->marker2.parameters = NULL;
+    data->marker2.n_properties = 0;
+    data->marker2.names = NULL;
+    data->marker2.values = NULL;
     data->color_dress = ADG_DRESS_COLOR_DIMENSION;
     data->value_dress = ADG_DRESS_FONT_QUOTE_TEXT;
     data->min_dress = ADG_DRESS_FONT_QUOTE_ANNOTATION;
@@ -321,8 +323,8 @@ _adg_finalize(GObject *object)
 {
     AdgDimStylePrivate *data = adg_dim_style_get_instance_private((AdgDimStyle *) object);
 
-    _adg_free_marker(&data->marker1);
-    _adg_free_marker(&data->marker2);
+    _adg_marker_data_unset(&data->marker1);
+    _adg_marker_data_unset(&data->marker2);
 
     g_free(data->number_format);
     data->number_format = NULL;
@@ -407,10 +409,10 @@ _adg_set_property(GObject *object, guint prop_id,
 
     switch (prop_id) {
     case PROP_MARKER1:
-        _adg_set_marker(&data->marker1, g_value_get_object(value));
+        _adg_marker_data_set(&data->marker1, g_value_get_object(value));
         break;
     case PROP_MARKER2:
-        _adg_set_marker(&data->marker2, g_value_get_object(value));
+        _adg_marker_data_set(&data->marker2, g_value_get_object(value));
         break;
     case PROP_COLOR_DRESS:
         data->color_dress = g_value_get_enum(value);
@@ -1428,44 +1430,46 @@ _adg_marker_new(const AdgMarkerData *marker_data)
     if (marker_data->type == 0)
         return NULL;
 
-    return g_object_newv(marker_data->type,
-                         marker_data->n_parameters,
-                         marker_data->parameters);
+    return (AdgMarker *) g_object_new_with_properties(marker_data->type,
+                                                      marker_data->n_properties,
+                                                      marker_data->names,
+                                                      marker_data->values);
 }
 
 static void
-_adg_set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
+_adg_marker_data_set(AdgMarkerData *marker_data, AdgMarker *marker)
 {
     g_return_if_fail(marker == NULL || ADG_IS_MARKER(marker));
 
     /* Free the previous marker data, if any */
-    _adg_free_marker(marker_data);
+    _adg_marker_data_unset(marker_data);
 
     if (marker) {
         GObject *object;
         GParamSpec **specs;
         GParamSpec *spec;
-        GParameter *parameter;
         guint n;
+        GValue *value;
 
         object = (GObject *) marker;
         specs = g_object_class_list_properties(G_OBJECT_GET_CLASS(marker),
-                                               &marker_data->n_parameters);
+                                               &marker_data->n_properties);
 
         marker_data->type = G_TYPE_FROM_INSTANCE(marker);
-        marker_data->parameters = g_new0(GParameter, marker_data->n_parameters);
+        marker_data->names = g_new0(const gchar *, marker_data->n_properties);
+        marker_data->values = g_new0(GValue, marker_data->n_properties);
 
-        for (n = 0; n < marker_data->n_parameters; ++n) {
+        for (n = 0; n < marker_data->n_properties; ++n) {
             spec = specs[n];
-            parameter = &marker_data->parameters[n];
 
-            /* Using intern strings because GParameter:name is const.
+            /* Using intern strings because `name` is const.
              * GObject properties are internally managed using non-static
              * GQuark, so g_intern_string() is the way to go */
-            parameter->name = g_intern_string(spec->name);
+            marker_data->names[n] = g_intern_string(spec->name);
 
-            g_value_init(&parameter->value, spec->value_type);
-            g_object_get_property(object, spec->name, &parameter->value);
+            value = &marker_data->values[n];
+            g_value_init(value, spec->value_type);
+            g_object_get_property(object, spec->name, value);
         }
 
         g_free(specs);
@@ -1473,14 +1477,19 @@ _adg_set_marker(AdgMarkerData *marker_data, AdgMarker *marker)
 }
 
 static void
-_adg_free_marker(AdgMarkerData *marker_data)
+_adg_marker_data_unset(AdgMarkerData *marker_data)
 {
     guint n;
 
-    for (n = 0; n < marker_data->n_parameters; ++n)
-        g_value_unset(&marker_data->parameters[n].value);
+    for (n = 0; n < marker_data->n_properties; ++n) {
+        g_value_unset(&marker_data->values[n]);
+    }
+
+    g_free(marker_data->names);
+    g_free(marker_data->values);
 
     marker_data->type = 0;
-    marker_data->n_parameters = 0;
-    marker_data->parameters = NULL;
+    marker_data->n_properties = 0;
+    marker_data->names = NULL;
+    marker_data->values = NULL;
 }

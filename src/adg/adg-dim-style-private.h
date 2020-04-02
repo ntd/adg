@@ -29,8 +29,9 @@ typedef struct _AdgDimStylePrivate AdgDimStylePrivate;
 
 struct _AdgMarkerData {
     GType                type;
-    guint                n_parameters;
-    GParameter          *parameters;
+    guint                n_properties;
+    const char         **names;
+    GValue              *values;
 };
 
 struct _AdgDimStylePrivate {
