@@ -38,6 +38,15 @@
 
 G_BEGIN_DECLS
 
+#if GLIB_CHECK_VERSION(2, 54, 0)
+#else
+GObject *               g_object_new_with_properties
+                                                (GType           object_type,
+                                                 guint           n_properties,
+                                                 const char     *names[],
+                                                 const GValue    values[]);
+#endif
+
 gboolean                adg_is_string_empty     (const gchar    *str);
 gboolean                adg_is_enum_value       (int             value,
                                                  GType           enum_type);

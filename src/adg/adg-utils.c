@@ -95,6 +95,45 @@
 #include <math.h>
 
 
+#if GLIB_CHECK_VERSION(2, 54, 0)
+#else
+
+/**
+ * g_object_new_with_properties: (skip)
+ * @object_type: the object type to instantiate
+ * @n_properties: the number of properties
+ * @names: (array length=n_properties): the names of each property to be set
+ * @values: (array length=n_properties): the values of each property to be set
+ *
+ * Creates a new instance of a #GObject subtype and sets its properties using
+ * the provided arrays. Both arrays must have exactly @n_properties elements,
+ * and the names and values correspond by index.
+ *
+ * Construction parameters (see %G_PARAM_CONSTRUCT, %G_PARAM_CONSTRUCT_ONLY)
+ * which are not explicitly specified are set to their default values.
+ *
+ * Returns: (type GObject.Object) (transfer full): a new instance of
+ * @object_type
+ *
+ * Since: 1.0
+ */
+GObject *
+g_object_new_with_properties(GType object_type, guint n_properties,
+                             const char *names[], const GValue values[])
+{
+    GParameter *params = g_newa(GParameter, n_properties);
+    guint n;
+
+    for (n = 0; n < n_properties; ++n) {
+        params[n].name = names[n];
+        memcpy(&params[n].value,  &values[n], sizeof(GValue));
+    }
+
+    return g_object_newv(object_type, n_properties, params);
+}
+
+#endif
+
 /**
  * adg_is_string_empty:
  * @str: the subject string
