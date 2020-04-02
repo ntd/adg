@@ -149,10 +149,7 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
 static void
 adg_table_style_init(AdgTableStyle *table_style)
 {
-    AdgTableStylePrivate *data;
-
-    data = G_TYPE_INSTANCE_GET_PRIVATE(table_style, ADG_TYPE_TABLE_STYLE,
-                                       AdgTableStylePrivate);
+    AdgTableStylePrivate *data = adg_table_style_get_instance_private(table_style);
 
     data->color_dress = ADG_DRESS_COLOR_ANNOTATION,
     data->grid_dress = ADG_DRESS_LINE_GRID;
