@@ -217,8 +217,10 @@ AS_IF([test "x${with_gtk}" = "xcheck"],[with_gtk=no])
 AS_IF([test "x${with_gtk}" != "xno" -a "x${gtk_pkg}" = "x"],
       [AC_MSG_ERROR([GTK+ support explicitely required but no valid GTK+ found])])
 
+# 3.10.8 is the last GTK3 version known to run tests properly
 AS_IF([test "x${with_gtk}" = "xgtk3"],
       [gtk_postfix=" (gtk+-$($PKG_CONFIG --modversion gtk+-3.0))"
+       PKG_CHECK_EXISTS([gtk+-3.0 > 3.10.8], [disable_gtk3_tests=yes])
        AC_DEFINE_UNQUOTED([GTK3_ENABLED],[1],
                           [Defined if the GTK+3 support is enabled.])])
 AS_IF([test "x${with_gtk}" = "xgtk2"],
@@ -229,6 +231,7 @@ AS_IF([test "x${with_gtk}" = "xgtk2"],
 AM_CONDITIONAL([HAVE_GTK], [test "x${with_gtk}" != "xno"])
 AM_CONDITIONAL([HAVE_GTK2],[test "x${with_gtk}" = "xgtk2"])
 AM_CONDITIONAL([HAVE_GTK3],[test "x${with_gtk}" = "xgtk3"])
+AM_CONDITIONAL([DISABLE_GTK3_TESTS],[test "x${disable_gtk3_tests}" = "xyes"])
 
 
 dnl Glade catalog dir

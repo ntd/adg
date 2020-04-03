@@ -140,6 +140,8 @@ test_text_SOURCES=		test-text.c
 endif
 
 if HAVE_GTK
+if !DISABLE_GTK3_TESTS
+
 TEST_PROGS+=			test-gtk-area$(EXEEXT)
 test_gtk_area_SOURCES=		test-gtk-area.c
 
@@ -149,6 +151,7 @@ test_gtk_layout_SOURCES=	test-gtk-layout.c
 TEST_PROGS+=			test-gtk-utils$(EXEEXT)
 test_gtk_utils_SOURCES=		test-gtk-utils.c
 
+endif
 endif
 
 
