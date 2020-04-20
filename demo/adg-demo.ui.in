@@ -142,7 +142,7 @@
     <property name="transient_for">wndMain</property>
     <property name="program_name">adg-demo</property>
     <property name="version">@PACKAGE_VERSION@</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2007-2015  Nicola Fontana</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2007-2020  Nicola Fontana</property>
     <property name="comments" translatable="yes">Demonstration program for the ADG library</property>
     <property name="website">@PACKAGE_URL@</property>
     <property name="license" translatable="yes">The ADG library is free software; you can redistribute it and/or
