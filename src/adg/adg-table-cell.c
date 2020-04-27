@@ -213,8 +213,8 @@ adg_table_cell_new_with_width(AdgTableRow *table_row, gdouble width)
  * adg_table_cell_new_full:
  * @table_row: a valid #AdgTableRow
  * @width: the cell width
- * @name: (allow-none): the name to bound to this cell
- * @title: (allow-none): the title text
+ * @name: (nullable): the name to bound to this cell
+ * @title: (nullable): the title text
  * @has_frame: whether to draw or not the frame
  *
  * A convenient function to add a cell and specifies some common
@@ -894,6 +894,14 @@ _adg_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
     if (table_cell->value == value)
         return FALSE;
 
+    if (table_cell->value) {
+        alignment = adg_entity_get_parent(table_cell->value);
+        adg_container_remove((AdgContainer *) alignment, table_cell->value);
+        g_object_unref(alignment);
+    }
+
+    table_cell->value = value;
+
     if (value) {
         AdgEntity *table = (AdgEntity *) adg_table_cell_get_table(table_cell);
         alignment = (AdgEntity *) adg_alignment_new_explicit(0.5, 0);
@@ -902,13 +910,6 @@ _adg_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
         adg_container_add((AdgContainer *) alignment, value);
     }
 
-    if (table_cell->value) {
-        alignment = adg_entity_get_parent(table_cell->value);
-        adg_container_remove((AdgContainer *) alignment, table_cell->value);
-        g_object_unref(alignment);
-    }
-
-    table_cell->value = value;
     return TRUE;
 }
 
