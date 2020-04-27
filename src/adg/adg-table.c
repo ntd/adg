@@ -371,8 +371,8 @@ adg_table_foreach_cell(AdgTable *table,
 /**
  * adg_table_set_cell:
  * @table: an #AdgTable
- * @name: the name of the cell
- * @table_cell: the named cell
+ * @name: (nullable): the name of the cell
+ * @table_cell: (transfer none) (nullable): the named cell
  *
  * Binds @table_cell to @name, so it can be accessed by name later
  * with adg_table_get_cell(). Internally the binding is handled with
@@ -410,10 +410,7 @@ adg_table_set_cell(AdgTable *table, const gchar *name,
     }
 
     if (name == NULL) {
-        /* _adg_value_match() will return the key in user_data[1] */
-        gpointer user_data[] = { table_cell, NULL };
-        g_hash_table_find(data->cell_names, _adg_value_match, user_data);
-        g_hash_table_remove(data->cell_names, user_data[1]);
+        g_hash_table_foreach_remove(data->cell_names, _adg_value_match, table_cell);
     } else if (table_cell == NULL) {
         g_hash_table_remove(data->cell_names, name);
     } else {
@@ -826,11 +823,5 @@ _adg_proxy_signal(AdgTableCell *table_cell, AdgProxyData *proxy_data)
 static gboolean
 _adg_value_match(gpointer key, gpointer value, gpointer user_data)
 {
-    gpointer *array = user_data;
-
-    if (value == array[0]) {
-        array[1] = key;
-        return TRUE;
-    }
-    return FALSE;
+    return value == user_data;
 }
