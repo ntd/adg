@@ -201,8 +201,11 @@ adg_table_cell_new_before(AdgTableCell *before_cell)
 AdgTableCell *
 adg_table_cell_new_with_width(AdgTableRow *table_row, gdouble width)
 {
-    AdgTableCell *table_cell = adg_table_cell_new(table_row);
+    AdgTableCell *table_cell;
 
+    g_return_val_if_fail(width >= 0, NULL);
+
+    table_cell = adg_table_cell_new(table_row);
     if (table_cell != NULL)
         adg_table_cell_set_width(table_cell, width);
 
@@ -236,8 +239,11 @@ adg_table_cell_new_full(AdgTableRow *table_row, gdouble width,
                         const gchar *name, const gchar *title,
                         gboolean has_frame)
 {
-    AdgTableCell *table_cell = adg_table_cell_new(table_row);
+    AdgTableCell *table_cell;
 
+    g_return_val_if_fail(width >= 0, NULL);
+
+    table_cell = adg_table_cell_new(table_row);
     if (table_cell == NULL)
         return NULL;
 
@@ -266,6 +272,8 @@ adg_table_cell_new_full(AdgTableRow *table_row, gdouble width,
 void
 adg_table_cell_dispose(AdgTableCell *table_cell)
 {
+    g_return_if_fail(table_cell != NULL);
+
     _adg_cell_set_title(table_cell, NULL);
     _adg_cell_set_value(table_cell, NULL);
 }
@@ -281,7 +289,11 @@ adg_table_cell_dispose(AdgTableCell *table_cell)
 void
 adg_table_cell_free(AdgTableCell *table_cell)
 {
-    AdgTableRow *table_row = table_cell->row;
+    AdgTableRow *table_row;
+
+    g_return_if_fail(table_cell != NULL);
+
+    table_row = table_cell->row;
 
     if (table_cell->row != NULL) {
         AdgTable *table = adg_table_row_get_table(table_row);
@@ -337,7 +349,7 @@ adg_table_cell_get_table(AdgTableCell *table_cell)
 /**
  * adg_table_cell_set_title:
  * @table_cell: a valid #AdgTableCell
- * @title: the new title entity
+ * @title: (nullable): the new title entity
  *
  * Sets @title as the new title entity of @table_cell. The top left
  * corner of the bounding box of @title will be cohincident to
@@ -453,7 +465,8 @@ adg_table_cell_title(AdgTableCell *table_cell)
  * not <constant>NULL</constant>) is referenced with
  * g_object_ref_sink().
  *
- * @value can be <constant>NULL</constant>, in which case the old entity is removed.
+ * @value can be <constant>NULL</constant>, in which case the old entity
+ * is removed.
  *
  * Since: 1.0
  **/
@@ -470,11 +483,14 @@ adg_table_cell_set_value(AdgTableCell *table_cell, AdgEntity *value)
 /**
  * adg_table_cell_set_text_value:
  * @table_cell: a valid #AdgTableCell
- * @value: a text string
+ * @value: (nullable): a text string
  *
  * Convenient function to set a the value of a cell using an #AdgToyText
  * entity with a value font dress picked from #AdgTable:table-dress with
  * a call to adg_table_style_get_value_dress().
+ *
+ * @value can be <constant>NULL</constant>, in which case the old entity
+ * is removed.
  *
  * Since: 1.0
  **/
@@ -490,8 +506,10 @@ adg_table_cell_set_text_value(AdgTableCell *table_cell, const gchar *value)
 
     g_return_if_fail(table_cell != NULL);
 
-    if (value == NULL)
+    if (value == NULL) {
         adg_table_cell_set_value(table_cell, NULL);
+        return;
+    }
 
     if (table_cell->value) {
         gchar *old_value;
