@@ -1,5 +1,7 @@
+/.clangd
 /codeset.m4
 /compile
+/compile_commands.json
 /config.guess
 /config.rpath
 /config.sub

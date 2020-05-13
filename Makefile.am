@@ -98,14 +98,19 @@ _host/minitheme: _host $(srcdir)/$(minitheme_snapshot)
 	$(BZIP2) -dc $(abs_srcdir)/$(minitheme_snapshot) | $(TAR) xf - ; \
 	cd ..
 
-clean-local:
-	-rm -fr _host
-
 $(INSTALLER): _host/docs/adg/adg.pdf _host/hicolor _host/minitheme $(srcdir)/build/adg.nsi
 	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
 
-mostlyclean-local:
+clean-installer:
+	-rm -fr _host
+
+mostlyclean-installer:
 	-rm $(INSTALLER)
+
+else
+
+clean-installer:
+mostlyclean-installer:
 
 endif
 
@@ -118,7 +123,18 @@ src/cpml/cpml-primitive.c.gcov:
 src/adg/adg-canvas.c.gcov:
 	$(MAKE) -C src/adg $(AM_MAKEFLAGS) coverage
 
-.PHONY: installer coverage
+
+# Compilation database, used by language servers
+cdb: clean build/compile_commands.json
+
+build/compile_commands.json:
+	bear -o $@ $(MAKE) $(AM_MAKEFLAGS)
+
+clean-cdb:
+	-rm -f  build/compile_commands.json
+
+
+.PHONY: installer coverage database
 
 
 # Creating ChangeLog files from git log:
@@ -151,3 +167,8 @@ CONTRIBUTING: $(xml2txt_stylesheet) $(abs_srcdir)/docs/adg/CONTRIBUTING.xml
 
 HACKING: $(xml2txt_stylesheet) $(abs_srcdir)/docs/adg/HACKING.xml
 	$(xml2txt_command) $(abs_srcdir)/docs/adg/HACKING.xml
+
+
+clean-local: clean-installer clean-cdb
+
+mostlyclean-local: mostlyclean-installer
