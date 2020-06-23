@@ -30,8 +30,8 @@
 
 G_BEGIN_DECLS
 
-gboolean is_installed;
-gchar *  basedir;
+extern gboolean is_installed;
+extern gchar *  basedir;
 
 
 void        _demo_init          (gint            argc,
