@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2019-03-25 23:10+0100\n"
+"POT-Creation-Date: 2020-06-23 08:20+0200\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -65,7 +65,8 @@ msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
 #: demo/adg-demo.ui.in:145
-msgid "Copyright (C) 2007-2015  Nicola Fontana"
+#, fuzzy
+msgid "Copyright (C) 2007-2020  Nicola Fontana"
 msgstr "Copyright (C) 2007-2015  Nicola Fontana"
 
 #: demo/adg-demo.ui.in:146
@@ -430,8 +431,8 @@ msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 msgid "Trying to set an angular dimension on parallel lines"
 msgstr "Si è provato a quotare con un angolo due linee parallele"
 
-#: src/adg/adg-alignment.c:103 src/adg/adg-canvas.c:205
-#: src/adg/adg-gtk-area.c:590
+#: src/adg/adg-alignment.c:103 src/adg/adg-canvas.c:214
+#: src/adg/adg-gtk-area.c:587
 msgid "Factor"
 msgstr "Fattore"
 
@@ -452,11 +453,11 @@ msgstr "Angolo Freccia"
 msgid "The opening angle of the arrow"
 msgstr "L'angolo di apertura della freccia"
 
-#: src/adg/adg-canvas.c:198
+#: src/adg/adg-canvas.c:207
 msgid "Canvas Size"
 msgstr "Dimensione Canvas"
 
-#: src/adg/adg-canvas.c:199
+#: src/adg/adg-canvas.c:208
 msgid ""
 "The size set on this canvas: use 0 to have an automatic dimension based on "
 "the canvas extents"
@@ -464,82 +465,82 @@ msgstr ""
 "La dimensione impostata per questo canvas: usare 0 per abilitare il "
 "dimensionamento automatico basato sui limiti del canvas"
 
-#: src/adg/adg-canvas.c:206
+#: src/adg/adg-canvas.c:215
 msgid "Global space units per point (1 point == 1/72 inch)"
 msgstr "Unità spazio globale per punto (1 punto == 1/72 di pollice)"
 
-#: src/adg/adg-canvas.c:212
+#: src/adg/adg-canvas.c:221
 msgid "Valid Scales"
 msgstr "Scale Valide"
 
-#: src/adg/adg-canvas.c:213
+#: src/adg/adg-canvas.c:222
 msgid "List of scales to be tested while autoscaling the drawing"
 msgstr "Elenco di scale da provare durante l'autoscalatura del disegno"
 
-#: src/adg/adg-canvas.c:219
+#: src/adg/adg-canvas.c:228
 msgid "Background Dress"
 msgstr "Vestito Sfondo"
 
-#: src/adg/adg-canvas.c:220
+#: src/adg/adg-canvas.c:229
 msgid "The color dress to use for the canvas background"
 msgstr "Il vestito colore da usare come sfondo per il canvas"
 
-#: src/adg/adg-canvas.c:226 src/adg/adg-logo.c:107
+#: src/adg/adg-canvas.c:235 src/adg/adg-logo.c:107
 #: src/adg/adg-table-style.c:107
 msgid "Frame Dress"
 msgstr "Vestito Riquadro"
 
-#: src/adg/adg-canvas.c:227
+#: src/adg/adg-canvas.c:236
 msgid "Line dress to use while drawing the frame around the canvas"
 msgstr "Vesito linea da usare durante il rendering della cornice del canvas"
 
-#: src/adg/adg-canvas.c:233
+#: src/adg/adg-canvas.c:242
 msgid "Title Block"
 msgstr "Blocco delle Iscrizioni"
 
-#: src/adg/adg-canvas.c:234
+#: src/adg/adg-canvas.c:243
 msgid "The title block to assign to this canvas"
 msgstr "Il blocco delle iscrizioni da allegare a questo canvas"
 
-#: src/adg/adg-canvas.c:240
+#: src/adg/adg-canvas.c:249
 msgid "Top Margin"
 msgstr "Margine Superiore"
 
-#: src/adg/adg-canvas.c:241
+#: src/adg/adg-canvas.c:250
 msgid "The margin (in global space) to leave above the frame"
 msgstr "Lo spazio (in global space) da lasciare sopra la cornice"
 
-#: src/adg/adg-canvas.c:247
+#: src/adg/adg-canvas.c:256
 msgid "Right Margin"
 msgstr "Margine Destro"
 
-#: src/adg/adg-canvas.c:248
+#: src/adg/adg-canvas.c:257
 msgid "The margin (in global space) to leave empty at the right of the frame"
 msgstr "Lo spazio (in global space) da lasciare alla destra della cornice"
 
-#: src/adg/adg-canvas.c:254
+#: src/adg/adg-canvas.c:263
 msgid "Bottom Margin"
 msgstr "Margine Inferiore"
 
-#: src/adg/adg-canvas.c:255
+#: src/adg/adg-canvas.c:264
 msgid "The margin (in global space) to leave empty below the frame"
 msgstr "Lo spazio (in global space) da lasciare vuoto sotto la cornice"
 
-#: src/adg/adg-canvas.c:261
+#: src/adg/adg-canvas.c:270
 msgid "Left Margin"
 msgstr "Margine Sinistro"
 
-#: src/adg/adg-canvas.c:262
+#: src/adg/adg-canvas.c:271
 msgid "The margin (in global space) to leave empty at the left of the frame"
 msgstr ""
 "Lo spazio (nello spazio globale) da lasciare vuoto alla sinistra della "
 "cornice"
 
-#: src/adg/adg-canvas.c:268 src/adg/adg-table.c:151
+#: src/adg/adg-canvas.c:277 src/adg/adg-table.c:151
 msgid "Has Frame Flag"
 msgstr "Flag di Riquadro Presente"
 
-#: src/adg/adg-canvas.c:269
+#: src/adg/adg-canvas.c:278
 msgid ""
 "If enabled, a frame using the frame dress will be drawn around the canvas "
 "extents, taking into account the margins"
@@ -547,11 +548,11 @@ msgstr ""
 "Se abilitato verrà disegnata una cornice, usando vestito cornice, attorno ai "
 "limiti dal canvas tenendo in considerazione i margini"
 
-#: src/adg/adg-canvas.c:275
+#: src/adg/adg-canvas.c:284
 msgid "Top Padding"
 msgstr "Spaziatura Superiore"
 
-#: src/adg/adg-canvas.c:276
+#: src/adg/adg-canvas.c:285
 msgid ""
 "The padding (in global space) to leave empty above between the drawing and "
 "the frame"
@@ -559,11 +560,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota sopra tra il disegno e la "
 "cornice"
 
-#: src/adg/adg-canvas.c:282
+#: src/adg/adg-canvas.c:291
 msgid "Right Padding"
 msgstr "Spaziatura Destra"
 
-#: src/adg/adg-canvas.c:283
+#: src/adg/adg-canvas.c:292
 msgid ""
 "The padding (in global space) to leave empty at the right between the "
 "drawing and the frame"
@@ -571,11 +572,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a destra tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:289
+#: src/adg/adg-canvas.c:298
 msgid "Bottom Padding"
 msgstr "Spaziatura Inferiore"
 
-#: src/adg/adg-canvas.c:290
+#: src/adg/adg-canvas.c:299
 msgid ""
 "The padding (in global space) to leave empty below between the drawing and "
 "the frame"
@@ -583,11 +584,11 @@ msgstr ""
 "La spaziatura (in global space) da lasciare vuota a sotto tra il disegno e "
 "la cornice"
 
-#: src/adg/adg-canvas.c:296
+#: src/adg/adg-canvas.c:305
 msgid "Left Padding"
 msgstr "Spaziatura Sinistra"
 
-#: src/adg/adg-canvas.c:297
+#: src/adg/adg-canvas.c:306
 msgid ""
 "The padding (in global space) to leave empty at the left between the drawing "
 "and the frame"
@@ -780,17 +781,17 @@ msgstr ""
 msgid "'%s' is missing"
 msgstr "'%s' assente"
 
-#: src/adg/adg-dim.c:1381
+#: src/adg/adg-dim.c:1383
 #, c-format
 msgid "'%s' and '%s' cannot be coincident (%lf, %lf)"
 msgstr "'%s' e '%s' non possono essere coincidenti (%lf, %lf)"
 
-#: src/adg/adg-dim.c:1611
+#: src/adg/adg-dim.c:1613
 #, c-format
 msgid "AdgDim::compute_geometry not implemented for '%s'"
 msgstr "AdgDim::compute_geometry non implementata per '%s'"
 
-#: src/adg/adg-dim.c:1619
+#: src/adg/adg-dim.c:1621
 #, c-format
 msgid "AdgDim::default_value not implemented for '%s'"
 msgstr "AdgDim::default_value non implementato da '%s'"
@@ -969,8 +970,8 @@ msgid ""
 "Number of significant decimals to use in the format string for rounded "
 "values (-1 to disable)"
 msgstr ""
-"Numero di decimali significativi da usare come formato formato per i "
-"valori arrotondati (-1 per disabilitare)"
+"Numero di decimali significativi da usare come formato formato per i valori "
+"arrotondati (-1 per disabilitare)"
 
 #: src/adg/adg-dim-style.c:279
 msgid "Raw Value Decimals"
@@ -981,8 +982,8 @@ msgid ""
 "Number of significant decimals the raw value must be rounded to (-1 to "
 "disable)"
 msgstr ""
-"Numero di decimali significativi a cui il valore originale deve "
-"essere arrotondato (-1 per disabilitare)"
+"Numero di decimali significativi a cui il valore originale deve essere "
+"arrotondato (-1 per disabilitare)"
 
 #: src/adg/adg-dress.c:338
 #, c-format
@@ -1034,8 +1035,8 @@ msgid ""
 "Flag that includes (FALSE) or excludes (TRUE) this entity from the "
 "computation of the parent entity extents"
 msgstr ""
-"Impostazione per includere (FALSE) o escludere (TRUE) questa entità "
-"dal calcolo dell'estensione del genitore"
+"Impostazione per includere (FALSE) o escludere (TRUE) questa entità dal "
+"calcolo dell'estensione del genitore"
 
 #: src/adg/adg-entity.c:177
 msgid "Parent Entity"
@@ -1197,26 +1198,26 @@ msgstr ""
 "Specifica se adottare l'hint metrico, ossia se applicare l'allineamento a "
 "valori interi nello spazio dispositivo"
 
-#: src/adg/adg-gtk-area.c:583
+#: src/adg/adg-gtk-area.c:580
 msgid "Canvas"
 msgstr "Canvas"
 
-#: src/adg/adg-gtk-area.c:584
+#: src/adg/adg-gtk-area.c:581
 msgid "The canvas to be shown"
 msgstr "Il canvas da mostrare"
 
-#: src/adg/adg-gtk-area.c:591
+#: src/adg/adg-gtk-area.c:588
 msgid ""
 "The factor to use while zooming in and out (usually with the mouse wheel)"
 msgstr ""
 "Il fattore da usare per ingrandire (di solito con la rotella del mouse) "
 "avanti e indietro"
 
-#: src/adg/adg-gtk-area.c:597
+#: src/adg/adg-gtk-area.c:594
 msgid "Autozoom"
 msgstr "Autozoom"
 
-#: src/adg/adg-gtk-area.c:598
+#: src/adg/adg-gtk-area.c:595
 msgid ""
 "When enabled, automatically adjust the zoom in global space at every size "
 "allocation"
@@ -1224,11 +1225,11 @@ msgstr ""
 "Quando abilitato, corregge automaticamente l'ingrandimento in global space "
 "ad ogni nuovo cambiamento di dimensione"
 
-#: src/adg/adg-gtk-area.c:604
+#: src/adg/adg-gtk-area.c:601
 msgid "Render Map"
 msgstr "Mappa di Render"
 
-#: src/adg/adg-gtk-area.c:605
+#: src/adg/adg-gtk-area.c:602
 msgid "The transformation to be applied on the canvas before rendering it"
 msgstr "La trasformazione da applicare al canvas prima del rendering"
 
