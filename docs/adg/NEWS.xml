@@ -6,6 +6,23 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.9.3">
+<title>ADG 0.9.3</title>
+
+<para>Get rid of deprecated code, specifically G_TYPE_INSTANCE_GET_PRIVATE
+(deprecated since 2.58) and GParameter (deprecated since 2.54 because
+that type is not introspectable).</para>
+<para>Use g_object_new_with_properties where available and provide fallback
+code for older glib-object code.</para>
+<para>Fix a long standing bug on table cell desctruction, resulting in a
+core dump when trying to destroy cells with duplicate names.</para>
+<para>Fix test units. On recent GTK releases the code crashes when creating
+a widget without X server: just skip GTK tests when gtk > 3.10.8.</para>
+<para>Allow to build the compilation database, used by language servers used
+for example to add semantic features to editors (e.g.: coc-vim).</para>
+<para>Minor docs improvements.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.9.2">
 <title>ADG 0.9.2</title>
 
