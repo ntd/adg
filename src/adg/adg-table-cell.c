@@ -123,7 +123,7 @@ AdgTableCell *
 adg_table_cell_dup(const AdgTableCell *src)
 {
     g_return_val_if_fail(src != NULL, NULL);
-    return g_memdup(src, sizeof(AdgTableCell));
+    return cpml_memdup(src, sizeof(AdgTableCell));
 }
 
 /**

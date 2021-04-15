@@ -94,7 +94,7 @@ AdgTableRow *
 adg_table_row_dup(const AdgTableRow *src)
 {
     g_return_val_if_fail(src != NULL, NULL);
-    return g_memdup(src, sizeof(AdgTableRow));
+    return cpml_memdup(src, sizeof(AdgTableRow));
 }
 
 /**

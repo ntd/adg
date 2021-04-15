@@ -71,8 +71,7 @@ cpml_pair_get_type(void)
 CpmlPair *
 cpml_pair_dup(const CpmlPair *pair)
 {
-    /* g_memdup() returns NULL if pair is NULL */
-    return g_memdup(pair, sizeof(CpmlPair));
+    return cpml_memdup(pair, sizeof(CpmlPair));
 }
 
 
@@ -107,7 +106,7 @@ cpml_primitive_get_type(void)
 CpmlPrimitive *
 cpml_primitive_dup(const CpmlPrimitive *primitive)
 {
-    return g_memdup(primitive, sizeof(CpmlPrimitive));
+    return cpml_memdup(primitive, sizeof(CpmlPrimitive));
 }
 
 /**
@@ -221,7 +220,7 @@ cpml_segment_get_type(void)
 CpmlSegment *
 cpml_segment_dup(const CpmlSegment *segment)
 {
-    return g_memdup(segment, sizeof(CpmlSegment));
+    return cpml_memdup(segment, sizeof(CpmlSegment));
 }
 
 /**

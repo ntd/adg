@@ -424,7 +424,7 @@ _adg_data_register(AdgDress dress, AdgStyle *fallback, GType ancestor_type)
     data.fallback = fallback;
     data.ancestor_type = ancestor_type;
 
-    g_array_insert_vals(array, dress, g_memdup(&data, sizeof(data)), 1);
+    g_array_insert_vals(array, dress, cpml_memdup(&data, sizeof(data)), 1);
 }
 
 static void

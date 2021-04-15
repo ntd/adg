@@ -90,8 +90,8 @@ adg_dash_dup(const AdgDash *src)
 
     g_return_val_if_fail(src != NULL, NULL);
 
-    dash = g_memdup(src, sizeof(AdgDash));
-    dash->dashes = g_memdup(src->dashes, sizeof(gdouble) * src->num_dashes);
+    dash = cpml_memdup(src, sizeof(AdgDash));
+    dash->dashes = cpml_memdup(src->dashes, sizeof(gdouble) * src->num_dashes);
 
     return dash;
 }

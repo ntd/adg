@@ -112,7 +112,7 @@ adg_point_dup(const AdgPoint *src)
     if (src->model)
         g_object_ref(src->model);
 
-    point = g_memdup(src, sizeof(AdgPoint));
+    point = cpml_memdup(src, sizeof(AdgPoint));
     point->name = g_strdup(src->name);
 
     return point;

@@ -29,6 +29,13 @@
 
 G_BEGIN_DECLS
 
+/* See https://nvd.nist.gov/vuln/detail/CVE-2021-27219 */
+#if GLIB_CHECK_VERSION(2, 68, 0)
+#define cpml_memdup g_memdup2
+#else
+#define cpml_memdup g_memdup
+#endif
+
 #define         CPML_TYPE_PAIR              (cpml_pair_get_type())
 GType           cpml_pair_get_type          (void);
 CpmlPair *      cpml_pair_dup               (const CpmlPair         *pair);

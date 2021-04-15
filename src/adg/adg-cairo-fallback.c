@@ -54,7 +54,7 @@ cairo_gobject_matrix_get_type(void)
 cairo_matrix_t *
 cairo_gobject_cairo_matrix_copy(const cairo_matrix_t *matrix)
 {
-    return g_memdup(matrix, sizeof(cairo_matrix_t));
+    return cpml_memdup(matrix, sizeof(cairo_matrix_t));
 }
 
 #endif /* ADG_MISSING_GBOXED_MATRIX */

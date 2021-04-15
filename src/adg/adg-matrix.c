@@ -112,7 +112,7 @@ adg_matrix_dup(const cairo_matrix_t *matrix)
 {
     g_return_val_if_fail(matrix != NULL, NULL);
 
-    return g_memdup(matrix, sizeof(cairo_matrix_t));
+    return cpml_memdup(matrix, sizeof(cairo_matrix_t));
 }
 
 /**
