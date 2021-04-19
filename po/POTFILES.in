@@ -1,7 +1,7 @@
 demo/adg-demo.c
 demo/adg-demo.ui.in
 demo/cpml-demo.c
-demo/cpml-demo.ui.in
+demo/cpml-demo.ui
 demo/demo.c
 src/adg/adg-adim.c
 src/adg/adg-alignment.c

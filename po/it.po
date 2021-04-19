@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2020-06-23 08:20+0200\n"
+"POT-Creation-Date: 2021-04-20 00:18+0200\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -32,7 +32,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: demo/adg-demo.c:96 demo/cpml-demo.c:299
+#: demo/adg-demo.c:96 demo/cpml-demo.c:289
 msgid "Display version information"
 msgstr "Stampa le informazioni sulla versione"
 
@@ -52,7 +52,7 @@ msgstr "Errore da adg-demo"
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: demo/adg-demo.c:1175
+#: demo/adg-demo.c:1170
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
 
@@ -65,9 +65,8 @@ msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
 #: demo/adg-demo.ui.in:145
-#, fuzzy
 msgid "Copyright (C) 2007-2020  Nicola Fontana"
-msgstr "Copyright (C) 2007-2015  Nicola Fontana"
+msgstr "Copyright (C) 2007-2020  Nicola Fontana"
 
 #: demo/adg-demo.ui.in:146
 msgid "Demonstration program for the ADG library"
@@ -308,82 +307,82 @@ msgstr "File _PostScript"
 msgid "<b>File format</b>"
 msgstr "<b>Formato file</b>"
 
-#: demo/cpml-demo.c:202
+#: demo/cpml-demo.c:192
 msgid "cpml-demo.ui not found!\n"
 msgstr "cpml-demo.ui non trovato!\n"
 
-#: demo/cpml-demo.c:303
+#: demo/cpml-demo.c:293
 msgid "- CPML demonstration program"
 msgstr "- Programma dimostrativo della CPML"
 
-#: demo/cpml-demo.c:486
+#: demo/cpml-demo.c:476
 #, c-format
 msgid "Unable to get arc info (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
 msgstr "Impossibile elaborare l'arco (%lf, %lf) (%lf, %lf) (%lf, %lf)\n"
 
-#: demo/cpml-demo.ui.in:24
+#: demo/cpml-demo.ui:24
 msgid ""
 "<b>Browsing</b>\n"
 "Primitives and segments"
 msgstr "Primitive e segmenti"
 
-#: demo/cpml-demo.ui.in:29
+#: demo/cpml-demo.ui:29
 msgid ""
 "<b>Arcs</b>\n"
 "Native support for arcs and circles"
 msgstr "Supporto nativo per archi e cerchi"
 
-#: demo/cpml-demo.ui.in:34
+#: demo/cpml-demo.ui:34
 msgid ""
 "<b>Intersections</b>\n"
 "Geometrical helper functions"
 msgstr "Funzioni geometriche di supporto"
 
-#: demo/cpml-demo.ui.in:39
+#: demo/cpml-demo.ui:39
 msgid ""
 "<b>Offset curves</b>\n"
 "Test bed for cubic Bézier offset"
 msgstr "Banco prova per l'offset delle Bézier cubiche"
 
-#: demo/cpml-demo.ui.in:44
+#: demo/cpml-demo.ui:44
 msgid ""
 "<b>Offset segments</b>\n"
 "Offseting complex segments"
 msgstr "Offset di segmenti complessi"
 
-#: demo/cpml-demo.ui.in:74
+#: demo/cpml-demo.ui:74
 msgid "Pages"
 msgstr "Pagine"
 
-#: demo/cpml-demo.ui.in:176
+#: demo/cpml-demo.ui:176
 msgid "<b>Browsing subject:</b>"
 msgstr "<b>Soggetto navigazione:</b>"
 
-#: demo/cpml-demo.ui.in:247
+#: demo/cpml-demo.ui:247
 msgid "Browsing"
 msgstr "Navigazione"
 
-#: demo/cpml-demo.ui.in:267
+#: demo/cpml-demo.ui:267
 msgid "Arcs"
 msgstr "Archi"
 
-#: demo/cpml-demo.ui.in:288
+#: demo/cpml-demo.ui:288
 msgid "Intersections"
 msgstr "Intersezioni"
 
-#: demo/cpml-demo.ui.in:398
+#: demo/cpml-demo.ui:398
 msgid "<b>Offset algorithm:</b>"
 msgstr "<b>Algoritmo di offset:</b>"
 
-#: demo/cpml-demo.ui.in:419
+#: demo/cpml-demo.ui:419
 msgid "Offset curves"
 msgstr "Curve parallele"
 
-#: demo/cpml-demo.ui.in:440
+#: demo/cpml-demo.ui:440
 msgid "Offset segments"
 msgstr "Segmenti paralleli"
 
-#: demo/demo.c:38
+#: demo/demo.c:72
 msgid "Invalid arguments: arg[0] not set"
 msgstr "Argomenti non validi: arg[0] è vuoto"
 
