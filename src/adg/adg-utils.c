@@ -92,6 +92,7 @@
 #include "adg-internal.h"
 #include <string.h>
 #include <limits.h>
+#include <libintl.h>
 #include <math.h>
 
 
