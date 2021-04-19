@@ -138,7 +138,6 @@ template_sources=		adg-type-builtins.c.mkenums \
 
 # targets
 EXTRA_DIST=			$(template_sources) \
-				adg-introspection.h \
 				adg-1.pc.in
 BUILT_SOURCES=			$(built_h_sources) \
 				$(built_private_h_sources)
@@ -229,7 +228,7 @@ endif
 Adg_1_0_gir_INCLUDES+=		Cpml-1.0 \
 				cairo-1.0 \
 				GObject-2.0
-Adg_1_0_gir_FILES=		adg-introspection.h \
+Adg_1_0_gir_FILES=		../adg.h \
 				$(h_sources) \
 				$(c_sources)
 Adg_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \

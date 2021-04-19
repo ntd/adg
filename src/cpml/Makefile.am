@@ -32,8 +32,7 @@ c_sources=			cpml-arc.c \
 				cpml-segment.c \
 				cpml-utils.c
 built_c_sources=
-EXTRA_DIST=			cpml-introspection.h \
-				cpml-1.pc.in
+EXTRA_DIST=			cpml-1.pc.in
 
 # targets
 BUILT_SOURCES=			$(built_h_sources) \
@@ -75,7 +74,7 @@ Cpml-1.0.gir: libcpml-1.la
 INTROSPECTION_GIRS+=		Cpml-1.0.gir
 Cpml_1_0_gir_LIBS=		libcpml-1.la
 Cpml_1_0_gir_INCLUDES=		cairo-1.0
-Cpml_1_0_gir_FILES=		cpml-introspection.h \
+Cpml_1_0_gir_FILES=		../cpml.h \
 				$(h_sources) \
 				$(c_sources)
 Cpml_1_0_gir_SCANNERFLAGS=	$(AM_CPPFLAGS) \
