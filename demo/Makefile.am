@@ -53,9 +53,9 @@ endif
 
 
 
-nodist_pkgdata_DATA=		adg-demo.ui \
-				cpml-demo.ui
-dist_pkgdata_DATA=		adg-16.png \
+nodist_pkgdata_DATA=		adg-demo.ui
+dist_pkgdata_DATA=		cpml-demo.ui \
+				adg-16.png \
 				adg-32.png \
 				adg-48.png \
 				adg-64.png \
@@ -69,8 +69,7 @@ dist_icons_DATA=		icons/adg-arc.png \
 				icons/adg-segment.png
 
 
-EXTRA_DIST=			cpml-demo.ui.in \
-				adg-demo.ui.in \
+EXTRA_DIST=			adg-demo.ui.in \
 				adg.rc \
 				adg.ico \
 				adg.manifest

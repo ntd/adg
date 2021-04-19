@@ -445,7 +445,6 @@ AC_CONFIG_FILES([build/Custom.nsh
                  src/adg/adg-canvas.h
                  src/adg/tests/Makefile
                  demo/Makefile
-                 demo/cpml-demo.ui
                  demo/adg-demo.ui
                  po/Makefile.in
                  docs/Makefile
