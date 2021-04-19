@@ -54,15 +54,15 @@ endif
 
 
 nodist_pkgdata_DATA=		adg-demo.ui
-dist_pkgdata_DATA=		cpml-demo.ui \
-				adg-16.png \
-				adg-32.png \
-				adg-48.png \
-				adg-64.png \
-				adg-128.png
+dist_pkgdata_DATA=		cpml-demo.ui
 
 iconsdir=			$(pkgdatadir)/icons
-dist_icons_DATA=		icons/adg-arc.png \
+dist_icons_DATA=		icons/adg-16.png \
+				icons/adg-32.png \
+				icons/adg-48.png \
+				icons/adg-64.png \
+				icons/adg-128.png \
+				icons/adg-arc.png \
 				icons/adg-browsing.png \
 				icons/adg-curve.png \
 				icons/adg-intersection.png \
