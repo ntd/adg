@@ -178,24 +178,14 @@ main(gint argc, gchar **argv)
     GtkBuilder *builder;
     GError *error;
     GtkWidget *window;
-    gchar *icons_dir;
 
     _demo_init(argc, argv);
     parse_args(&argc, &argv);
 
     /* Prepend the package icons path */
-    if (is_installed) {
-#ifdef G_OS_WIN32
-        icons_dir = g_build_filename(basedir, PKGDATADIR, "icons", NULL);
-#else
-        icons_dir = g_strdup(PKGDATADIR "/icons");
-#endif
-    } else {
-        icons_dir = g_strdup(SRCDIR "/icons");
-    }
-
-    gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), icons_dir);
-    g_free(icons_dir);
+    path = _demo_file("icons");
+    gtk_icon_theme_append_search_path(gtk_icon_theme_get_default(), path);
+    g_free(path);
 
     path = _demo_file("cpml-demo.ui");
     if (path == NULL) {

@@ -13,27 +13,27 @@ AM_CFLAGS=			-mwindows
 endif
 
 
-bin_PROGRAMS=			adg-demo-uninstalled \
-				cpml-demo-uninstalled
+bin_PROGRAMS=			adg-demo \
+				cpml-demo
 
-adg_demo_uninstalled_SOURCES=	adg-demo.c \
+adg_demo_SOURCES=		adg-demo.c \
 				demo.c \
 				demo.h
-adg_demo_uninstalled_CFLAGS=	$(CPML_CFLAGS) \
+adg_demo_CFLAGS=		$(CPML_CFLAGS) \
 				$(ADG_CFLAGS)
-adg_demo_uninstalled_LDADD=	$(CPML_LIBS) \
+adg_demo_LDADD=			$(CPML_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(ADG_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
 
 # The CPML demo program uses the ADG library only marginally for
 # looking up the ui file (adg_find_file()) and for i18n.
-cpml_demo_uninstalled_SOURCES=	cpml-demo.c \
+cpml_demo_SOURCES=		cpml-demo.c \
 				demo.c \
 				demo.h
-cpml_demo_uninstalled_CFLAGS=	$(CPML_CFLAGS) \
+cpml_demo_CFLAGS=		$(CPML_CFLAGS) \
 				$(ADG_CFLAGS)
-cpml_demo_uninstalled_LDADD=	$(CPML_LIBS) \
+cpml_demo_LDADD=		$(CPML_LIBS) \
 				$(top_builddir)/src/cpml/libcpml-1.la \
 				$(ADG_LIBS) \
 				$(top_builddir)/src/adg/libadg-1.la
@@ -47,8 +47,8 @@ if OS_WINDOWS
 	    --define PACKAGE_VERSIONS=`echo $(PACKAGE_VERSION) | tr . ,` \
 	    $(srcdir)/adg.rc $@
 
-adg_demo_uninstalled_LDADD+=	adg-demo.rc.o
-cpml_demo_uninstalled_LDADD+=	cpml-demo.rc.o
+adg_demo_LDADD+=		adg-demo.rc.o
+cpml_demo_LDADD+=		cpml-demo.rc.o
 endif
 
 
@@ -79,20 +79,3 @@ EXTRA_DIST=			cpml-demo.ui.in \
 # Possibly remove files created by 'make coverage'
 mostlyclean-local:
 	-rm -f *.gcno
-
-
-# adg-demo-uninstalled and cpml-demo-uninstalled are renamed after installation:
-# the uninstalled version should not be checked for --help and --version.
-AM_INSTALLCHECK_STD_OPTIONS_EXEMPT= \
-				adg-demo-uninstalled$(EXEEXT) \
-				cpml-demo-uninstalled$(EXEEXT)
-
-install-exec-hook:
-	$(AM_V_at)cd $(DESTDIR)$(bindir) ; \
-	mv -f adg-demo-uninstalled$(EXEEXT) adg-demo$(EXEEXT) ; \
-	mv -f cpml-demo-uninstalled$(EXEEXT) cpml-demo$(EXEEXT)
-
-uninstall-hook:
-	$(AM_V_at)cd $(DESTDIR)$(bindir) ; \
-	rm -f adg-demo$(EXEEXT) ; \
-	rm -f cpml-demo$(EXEEXT)

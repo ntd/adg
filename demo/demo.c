@@ -21,55 +21,88 @@
 #include <string.h>
 
 
-/* Whether the program is running installed or uninstalled */
-gboolean is_installed = TRUE;
+#if GLIB_CHECK_VERSION(2, 58, 0)
 
-/* The base directory where all files must be referred,
- * usually left unset _adg_init() on POSIX systems. */
-gchar *basedir = NULL;
+static gchar *
+_demo_absolutepath(const gchar *path)
+{
+    return g_canonicalize_filename(path, NULL);
+}
 
+#else
+
+#include <limits.h>
+#include <stdlib.h>
+
+static gchar *
+_demo_absolutepath(const gchar *path)
+{
+    char abspath[PATH_MAX];
+    return g_strdup(realpath(path, abspath));
+}
+
+#endif
+
+
+/* Base folder all installed files should be referred to. */
+static gchar *pkg_data_dir = NULL;
+
+
+static gchar *
+_demo_basedir(const gchar *program)
+{
+    gchar *dir, *absdir;
+
+    dir = g_path_get_dirname(program);
+    if (dir == NULL) {
+        return NULL;
+    }
+
+    absdir = _demo_absolutepath(dir);
+    g_free(dir);
+    return absdir;
+}
 
 void
 _demo_init(gint argc, gchar *argv[])
 {
-    gchar  *name;
+    gchar *basedir;
 
     if (argc < 1 || argv == NULL || argv[0] == NULL) {
         g_error(_("Invalid arguments: arg[0] not set"));
         g_assert_not_reached();
     }
 
-    name = g_path_get_basename(argv[0]);
-    if (name != NULL) {
-        is_installed = strstr(name, "uninstalled") == NULL;
-        g_free(name);
+    basedir = _demo_basedir(argv[0]);
+    if (basedir == NULL) {
+        /* This should never happen but... just in case */
+        pkg_data_dir = ".";
+        return;
     }
 
-    basedir = g_path_get_dirname(argv[0]);
-    if (basedir == NULL)
-        basedir = g_strdup("");
+    if (strcmp(basedir, BUILDDIR) != 0) {
+        /* Installed program: set pkg_data_dir */
+#ifdef G_OS_WIN32
+        gchar *parent = g_path_get_dirname(dirname);
+        /* XXX: `pkg_data_dir` will be leaked... who cares? */
+        pkg_data_dir = g_build_filename(parent, PKGDATADIR, NULL);
+        g_free(parent);
+#else
+        pkg_data_dir = PKGDATADIR;
+#endif
+    }
+    g_free(basedir);
 }
 
 gchar *
 _demo_file(const gchar *file_name)
 {
-    static gchar *pkg_data_dir = NULL;
-
-    if (! is_installed) {
-        /* Running uninstalled: look up the file in BUILDDIR before and
-         * in SRCDIR after, returning the first match */
+    if (pkg_data_dir == NULL) {
+        /* Running uninstalled: look up the file in BUILDDIR first and
+         * SRCDIR later, returning the first match */
         return adg_find_file(file_name, BUILDDIR, SRCDIR, NULL);
     }
 
-    /* Otherwise, look up the file only in PKGDATADIR */
-    if (pkg_data_dir == NULL) {
-#ifdef G_OS_WIN32
-        /* On windows, PKGDATADIR is relative to basedir */
-        pkg_data_dir = g_build_filename(basedir, PKGDATADIR, NULL);
-#else
-        pkg_data_dir = g_strdup(PKGDATADIR);
-#endif
-    }
-
+    /* Running installed: look up the file only in `pkg_data_dir` */
     return adg_find_file(file_name, pkg_data_dir, NULL);
 }

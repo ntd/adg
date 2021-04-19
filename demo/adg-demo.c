@@ -1095,23 +1095,18 @@ _adg_save_as_window(GtkBuilder *builder, AdgCanvas *canvas)
 static GtkWidget *
 _adg_main_window(GtkBuilder *builder)
 {
+    gchar *icon, *path;
     GtkWidget *window;
     DemoPart *part;
     AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_print;
     GtkWidget *button_help, *button_about, *button_quit;
 
-    if (is_installed) {
-#ifdef G_OS_WIN32
-        gchar *icondir = g_build_filename(basedir, PKGDATADIR, NULL);
-        adg_gtk_use_default_icons(icondir);
-        g_free(icondir);
-#else
-        adg_gtk_use_default_icons(PKGDATADIR);
-#endif
-    } else {
-        adg_gtk_use_default_icons(SRCDIR);
-    }
+    icon = _demo_file("adg-64.png");
+    path = g_path_get_dirname(icon);
+    free(icon);
+    adg_gtk_use_default_icons(path);
+    g_free(path);
 
     window = (GtkWidget *) gtk_builder_get_object(builder, "wndMain");
     part = _adg_part_new(builder);
