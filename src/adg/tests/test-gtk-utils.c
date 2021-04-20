@@ -103,7 +103,7 @@ _adg_method_use_default_icons(void)
     g_assert_null(list);
 
     /* Set to the demo directory, where the real icons *must* be presents */
-    adg_gtk_use_default_icons(SRCDIR "/../../../demo");
+    adg_gtk_use_default_icons(SRCDIR "/../../../demo/icons");
 
     list = gtk_window_get_default_icon_list();
     g_assert_nonnull(list);
