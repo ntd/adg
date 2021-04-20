@@ -1174,6 +1174,10 @@ main(gint argc, gchar **argv)
     builder = gtk_builder_new();
     error = NULL;
 
+    /* Ensure AdgGtkLayout (referenced by adg-demo.ui) is registered
+     * to possibly avoid an "Invalid object type" error */
+    g_type_ensure(ADG_GTK_TYPE_LAYOUT);
+
     gtk_builder_set_translation_domain(builder, GETTEXT_PACKAGE);
     gtk_builder_add_from_file(builder, path, &error);
     g_free(path);
