@@ -80,7 +80,8 @@ _demo_init(gint argc, gchar *argv[])
         return;
     }
 
-    if (strcmp(basedir, BUILDDIR) != 0) {
+    g_print("basedir = '%s'\nbuilddir= '%s'\n", basedir, BUILDDIR);
+    if (! g_str_has_prefix(basedir, BUILDDIR)) {
         /* Installed program: set pkg_data_dir */
 #ifdef G_OS_WIN32
         gchar *parent = g_path_get_dirname(dirname);
