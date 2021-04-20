@@ -1,5 +1,5 @@
 /*** BEGIN file-header ***/
-#include "adg-internal.h"
+#include <adg/adg-internal.h>
 
 
 /*** END file-header ***/
