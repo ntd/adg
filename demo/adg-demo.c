@@ -1095,16 +1095,14 @@ _adg_save_as_window(GtkBuilder *builder, AdgCanvas *canvas)
 static GtkWidget *
 _adg_main_window(GtkBuilder *builder)
 {
-    gchar *icon, *path;
+    gchar *path;
     GtkWidget *window;
     DemoPart *part;
     AdgCanvas *canvas;
     GtkWidget *button_edit, *button_save_as, *button_print;
     GtkWidget *button_help, *button_about, *button_quit;
 
-    icon = _demo_file("adg-64.png");
-    path = g_path_get_dirname(icon);
-    free(icon);
+    path = _demo_file("icons");
     adg_gtk_use_default_icons(path);
     g_free(path);
 
