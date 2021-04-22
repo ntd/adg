@@ -18,15 +18,15 @@
  */
 
 
-#include "adg-internal.h"
-#include "adg-model.h"
-#include "adg-trail.h"
-#include "adg-path.h"
-#include "adg-container.h"
-#include "adg-stroke.h"
-#include "adg-table.h"
-#include "adg-title-block.h"
-#include "adg-canvas.h"
+#include <adg/adg-internal.h>
+#include <adg/adg-model.h>
+#include <adg/adg-trail.h>
+#include <adg/adg-path.h>
+#include <adg/adg-container.h>
+#include <adg/adg-stroke.h>
+#include <adg/adg-table.h>
+#include <adg/adg-title-block.h>
+#include <adg/adg-canvas.h>
 #include "adg-test.h"
 
 
