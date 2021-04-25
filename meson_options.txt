@@ -1,0 +1,18 @@
+option('pango', type: 'feature',
+       description: 'Use pango for text rendering')
+
+option('gtk', type: 'combo', value: 'auto',
+       choices: [ 'gtk2', 'gtk3', 'auto', 'no' ],
+       description: 'Include GTK specific widgets')
+
+option('catalogdir', type: 'string', value: 'check',
+       description: 'Where to install the glade catalogs (check,yes,no,/specific/path)')
+
+option('gtk-doc', type: 'feature',
+       description: 'Build API reference with gtk-doc')
+
+option('introspection', type: 'feature',
+       description: 'Enable introspection for this build')
+
+option('tests', type: 'feature',
+       description: 'Enable GLib test framework')

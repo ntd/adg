@@ -1,0 +1,40 @@
+/* src/config.h
+ *
+ * This is a generated file. Please modify `src/config.h.meson`.
+ */
+
+/* Name of package */
+#define PACKAGE "@PACKAGE_NAME@"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "@PACKAGE_NAME@-@PACKAGE_API@"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "@PACKAGE_NAME@"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "@PACKAGE_VERSION@"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "@PACKAGE_NAME@ @PACKAGE_VERSION@"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL "@PACKAGE_URL@"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "@PACKAGE_BUGREPORT@"
+
+/* Define to the domain used by gettext. */
+#define GETTEXT_PACKAGE "@PACKAGE_NAME@-@PACKAGE_API@"
+
+/* Defined if GObject support in cairo is present. */
+#mesondefine CAIRO_GOBJECT_ENABLED
+
+/* Defined if the GTK+2 support is enabled. */
+#mesondefine GTK2_ENABLED
+
+/* Defined if the GTK+3 support is enabled. */
+#mesondefine GTK3_ENABLED
+
+/* Defined if the pango support is enabled. */
+#mesondefine PANGO_ENABLED
