@@ -4,7 +4,7 @@
 <bookinfo>
   <title>@PACKAGE_NAME@ reference manual</title>
   <releaseinfo>
-      for @PACKAGE_STRING@.
+      for @PACKAGE_NAME@ @PACKAGE_VERSION@.
       The latest version of this document can be browsed online at
       <ulink role="online-location" url="@PACKAGE_URL@">@PACKAGE_URL@</ulink>.
   </releaseinfo>
