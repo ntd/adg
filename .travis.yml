@@ -17,19 +17,18 @@ before_install:
 
 install:
     - sudo pip install cpp-coveralls
-    - sudo apt-get -qq install libcairo2-dev libcairo-gobject2 libgtk2.0-dev libgtk-3-dev gtk-doc-tools
-
-before_script:
-    - ./autogen.sh --verbose && mkdir -p _build && cd _build
+    - sudo pip3 install meson
+    - sudo apt-get -qq install libcairo2-dev libcairo-gobject2 libgtk2.0-dev libgtk-3-dev gtk-doc-tools ninja-build
 
 script:
-    - ../configure --enable-gcov --with-gtk=$GTK && make && make V=1 check
+    - meson -Db_coverage=true -Dgtk=$GTK _build &&
+      meson compile -C _build &&
+      meson test    -C _build
 
 after_success:
-    - if [ "$CC" = "gcc" ]; then coveralls -r .. -x c -e demo -e src/tests -e src/cpml/tests -e src/adg/tests -e _build/src/adg/adg-marshal.c --gcov-options '\-lp'; fi
-
-after_script:
-    - cd ..
+    - if [ "$CC" = "gcc" ]; then
+      coveralls -x c -e demo -e src/tests -e src/cpml/tests -e src/adg/tests --gcov-options '\-lp';
+      fi
 
 notifications:
     email:
