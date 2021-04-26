@@ -16,9 +16,10 @@ before_install:
     - sudo apt-get update -qq
 
 install:
+    - sudo apt-get -qq install python3-pip ninja-build gtk-doc-tools
+      libcairo2-dev libcairo-gobject2 libgtk2.0-dev libgtk-3-dev
     - sudo pip install cpp-coveralls
     - sudo pip3 install meson
-    - sudo apt-get -qq install libcairo2-dev libcairo-gobject2 libgtk2.0-dev libgtk-3-dev gtk-doc-tools ninja-build
 
 script:
     - meson -Db_coverage=true -Dgtk=$GTK _build &&
