@@ -50,6 +50,7 @@
 #include "adg-toy-text.h"
 #include "adg-dim.h"
 #include "adg-dim-private.h"
+#include <math.h>
 
 #include "adg-ldim.h"
 #include "adg-ldim-private.h"
@@ -860,8 +861,8 @@ _adg_choose_flags(AdgLDim *ldim, gboolean *to_outside, gboolean *to_detach)
     data = adg_ldim_get_instance_private(ldim);
     local = adg_entity_get_local_matrix((AdgEntity *) ldim);
     global = adg_entity_get_global_matrix((AdgEntity *) ldim);
-    local_factor = abs(local->xx + local->yy) / 2;
-    global_factor = abs(global->xx + global->yy) / 2;
+    local_factor = fabs(local->xx + local->yy) / 2;
+    global_factor = fabs(global->xx + global->yy) / 2;
     available_space = data->geometry.distance * local_factor * global_factor;
 
     markers_space = 0;
