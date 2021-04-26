@@ -80,7 +80,9 @@ if catalogdir == 'yes' or catalogdir == 'check'
     if not glade_dep.found()
         glade_dep = dependency('gladeui-1.0', required: catalogdir == 'yes')
     endif
-    catalogdir = glade_dep.get_pkgconfig_variable('catalogdir')
+    if glade_dep.found()
+        catalogdir = glade_dep.get_variable(pkgconfig: 'catalogdir')
+    endif
 elif catalogdir == 'no'
     # Both 'no' and '' mean "Do not install catalogs"
     catalogdir = ''
