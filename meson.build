@@ -82,6 +82,8 @@ if catalogdir == 'yes' or catalogdir == 'check'
     endif
     if glade_dep.found()
         catalogdir = glade_dep.get_variable(pkgconfig: 'catalogdir')
+    else
+        catalogdir = ''
     endif
 elif catalogdir == 'no'
     # Both 'no' and '' mean "Do not install catalogs"
