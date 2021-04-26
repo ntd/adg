@@ -13,9 +13,6 @@ adg_tests = [
     'test-entity',
     'test-fill-style',
     'test-font-style',
-    'test-gtk-area',
-    'test-gtk-layout',
-    'test-gtk-utils',
     'test-hatch',
     'test-ldim',
     'test-line-style',
@@ -44,6 +41,14 @@ adg_tests = [
     'test-type-builtins',
     'test-utils',
 ]
+
+if gtk_dep.found() and gtk_dep.version().version_compare('<3.10.8')
+    adg_tests += [
+        'test-gtk-area',
+        'test-gtk-layout',
+        'test-gtk-utils',
+    ]
+endif
 
 adg_tests_cflags = [
     '-DSRCDIR="' + meson.current_source_dir() + '"'
