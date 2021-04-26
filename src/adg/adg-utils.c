@@ -93,6 +93,7 @@
 #include <string.h>
 #include <limits.h>
 #include <libintl.h>
+#include <locale.h>
 #include <math.h>
 
 
