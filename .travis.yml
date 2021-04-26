@@ -21,7 +21,7 @@ install:
       libcairo2-dev libcairo-gobject2
       libgtk2.0-dev libgtk-3-dev gtk-doc-tools
     - sudo pip install cpp-coveralls
-    - sudo pip3 install meson
+    - sudo pip3 install 'meson<0.57'
 
 script:
     - meson -Db_coverage=true -Dgtk=$GTK _build &&

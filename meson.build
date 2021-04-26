@@ -1,4 +1,9 @@
-project('adg', 'c', version: '0.9.3', license: 'LGPL-2.1-or-later')
+project('adg', 'c',
+    meson_version: '>=0.56.0',
+    version:       '0.9.3',
+    license:       'LGPL-2.1-or-later'
+)
+
 metadata = {
     'api':      '1.0',
     'homepage': 'http://adg.entidi.com/',
