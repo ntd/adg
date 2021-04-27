@@ -4,6 +4,9 @@ branches:
 
 language: c
 
+os: linux
+dist: xenial
+
 compiler:
     - clang
     - gcc
