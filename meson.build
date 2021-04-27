@@ -115,6 +115,8 @@ endif
 
 
 summary({
+    'Compiler':
+        cc.get_id(),
     'CPML library to use':
         'internal (cpml-@0@ @1@)'.format(metadata['api'], meson.project_version()),
     'Use pango for text':
