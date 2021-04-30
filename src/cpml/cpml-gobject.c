@@ -31,6 +31,18 @@
  * Since: 1.0
  **/
 
+/**
+ * cpml_memdup:
+ * @src: the memory to copy.
+ * @size: the number of bytes to copy.
+ *
+ * A backward compatibility wrapper that calls g_memdup2() (if present)
+ * or g_memdup(). Needed because the latter has been deprecated because
+ * of a unfixable vulnerability (the size was guint instead of gsize).
+ *
+ * Since: 1.0
+ **/
+
 
 #include "cpml-internal.h"
 

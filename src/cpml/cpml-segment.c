@@ -93,7 +93,7 @@ static int              reshape                 (CpmlSegment       *segment);
  * cairo context (to know the current position) is needed.
  *
  * This function will fail if @path is empty or if its
- * <structfield>status</structfield> member is not %CAIRO_STATUS_SUCCESS.
+ * <structfield>status</structfield> member is not CAIRO_STATUS_SUCCESS.
  *
  * Returns: (type gboolean): 1 if @segment has been succesfully computed, 0 on errors.
  *

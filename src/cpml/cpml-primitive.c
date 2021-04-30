@@ -36,11 +36,6 @@
 
 /**
  * CpmlPrimitiveType:
- * @CPML_MOVE:  equivalent to %CAIRO_PATH_MOVE_TO
- * @CPML_LINE:  equivalent to %CAIRO_PATH_LINE_TO
- * @CPML_CURVE: equivalent to %CAIRO_PATH_CURVE_TO
- * @CPML_CLOSE: equivalent to %CAIRO_PATH_CLOSE_PATH
- * @CPML_ARC:   an arc representation at CPML level
  *
  * This is a type compatible with #cairo_path_data_type_t type. It is
  * basically the same enum but it embodies an important difference:
@@ -56,6 +51,47 @@
  * The CPML library supports arc natively, converting them to curves
  * when the #CpmlSegment is returned to the cairo context, for instance
  * when using cpml_segment_to_cairo().
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * CPML_MOVE:
+ *
+ * A #CpmlPrimitiveType value equivalent to CAIRO_PATH_MOVE_TO.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * CPML_LINE:
+ *
+ * A #CpmlPrimitiveType value equivalent to CAIRO_PATH_LINE_TO.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * CPML_CURVE:
+ *
+ * A #CpmlPrimitiveType value equivalent to CAIRO_PATH_CURVE_TO.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * CPML_CLOSE:
+ *
+ * A #CpmlPrimitiveType value equivalent to CAIRO_PATH_CLOSE_PATH.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * CPML_ARC:
+ *
+ * A #CpmlPrimitiveType value that represents an arc representation at
+ * CPML level.
  *
  * Since: 1.0
  **/
@@ -127,7 +163,7 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
  *
  * Returns the type of @primitive, i.e. %CPML_LINE for lines,
  * %CPML_ARC for arcs or circles, %CPML_CURVE for cubic Bézier
- * curves and %CPML_CLOSE for closing lines. The %CPML_MOVE is
+ * curves and CPML_CLOSE for closing lines. The %CPML_MOVE is
  * used extensively *between* segments but it is not considered
  * by itself a primitive, so it should never been returned.
  *
@@ -356,7 +392,7 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * that -1 is the end point, -2 the point before the end point and
  * so on.
  *
- * #CPML_CLOSE is managed in a special way: if @n_point
+ * CPML_CLOSE is managed in a special way: if @n_point
  * is -1 or 1 and @primitive is a close-path, this function cycles
  * the source #CpmlSegment and returns the first point. This is
  * needed because requesting the end point (or the second point)
@@ -756,7 +792,7 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * @cr:        (inout): the destination cairo context
  *
  * Renders a single @primitive to the @cr cairo context.
- * As a special case, if the primitive is a #CPML_CLOSE, an
+ * As a special case, if the primitive is a CPML_CLOSE, an
  * equivalent line is rendered, because a close path left alone
  * is not renderable.
  *
@@ -867,7 +903,7 @@ _cpml_class_from_obj(const CpmlPrimitive *primitive)
  * so that -1 is the end point, -2 the point before the end point
  * and so on.
  *
- * #CPML_CLOSE is managed in a special way: if @n_point
+ * CPML_CLOSE is managed in a special way: if @n_point
  * is -1 or 1 and @primitive is a close-path, this function cycles
  * the source #CpmlSegment and returns the first point. This is
  * needed because requesting the end point (or the second point)
