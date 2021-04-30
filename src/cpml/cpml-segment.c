@@ -640,7 +640,7 @@ ensure_one_leading_move(CpmlSegment *segment)
     }
 
     /* Skip all duplicate CPML_MOVE but the last one */
-    while (length = data->header.length,
+    while (num_data > 0 && (length = data->header.length) > 0 &&
            num_data > length && data[length].header.type == CPML_MOVE) {
         data += length;
         num_data -= length;
