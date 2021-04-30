@@ -25,10 +25,12 @@ cpml_h_files = files([
     'cpml-utils.h',
 ])
 
-cpml_internals = files([
+cpml_internal_names = [
     'cpml-primitive-private.h',
-])
+]
 
+
+cpml_internal_files = files(cpml_internal_names)
 
 # Build the CPML library
 cpml_deps = [
@@ -44,18 +46,14 @@ cpml_soversion = '@0@.@1@.@2@'.format(
     cpml_revision
 )
 
-cpml_headers = cpml_h_files + [ cpml_h ]
-cpml_sources = cpml_c_files + cpml_headers + cpml_internals
-
 cpml = library('cpml-' + metadata['api'],
-    sources:      cpml_sources,
+    sources:      cpml_c_files + cpml_h_files + cpml_internal_files,
     dependencies: cpml_deps,
     version:      cpml_soversion,
     install:      true
 )
 
 cpml_dep = declare_dependency(
-    sources:             cpml_headers,
     dependencies:        cpml_deps,
     link_with:           cpml,
     include_directories: src_directories
@@ -78,7 +76,7 @@ pkgconfig.generate(cpml,
 # GObject introspection support for CPML library
 if introspection_dep.found()
     cpml_gir = gnome.generate_gir(cpml,
-        sources:           cpml_c_files + [ cpml_h ] + cpml_h_files,
+        sources:           [ cpml_h ] + cpml_h_files + cpml_c_files,
         namespace:         'Cpml',
         nsversion:         metadata['api'],
         identifier_prefix: 'Cpml',
@@ -89,6 +87,7 @@ if introspection_dep.found()
         extra_args: [
             '--quiet',
             '--sources-top-dirs=' + meson.current_source_dir(),
+            '--sources-top-dirs=' + meson.current_build_dir(),
         ]
     )
 endif

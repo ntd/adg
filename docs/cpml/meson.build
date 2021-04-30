@@ -7,9 +7,13 @@ bookinfo_xml = configure_file(
 gnome.gtkdoc('cpml',
     namespace: 'cpml',
     src_dir: cpml_directories,
+    ignore_headers: cpml_internal_names,
     dependencies: cpml_dep,
     main_xml: 'cpml-docs.xml',
     content_files: bookinfo_xml,
+    scan_args: [
+        '--rebuild-sections',
+    ],
     mkdb_args: [
         '--default-includes=cpml.h',
     ],
