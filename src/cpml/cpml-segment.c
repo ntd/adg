@@ -638,14 +638,15 @@ ensure_one_leading_move(CpmlSegment *segment)
         data += length;
         num_data -= length;
     }
+    if (num_data <= 0)
+        return 0;
 
     /* Skip all duplicate CPML_MOVE but the last one */
-    while (num_data > 0 && (length = data->header.length) > 0 &&
-           num_data > length && data[length].header.type == CPML_MOVE) {
+    while (num_data > (length = data->header.length) &&
+           data[length].header.type == CPML_MOVE) {
         data += length;
         num_data -= length;
     }
-
     if (num_data <= length)
         return 0;
 
