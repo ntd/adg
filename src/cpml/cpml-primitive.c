@@ -26,8 +26,8 @@
  *
  * A primitive is an atomic geometric element found inside #CpmlSegment.
  * The available primitives are the same defined by #cairo_path_data_type_t
- * with the additional #CPML_ARC type (check #CpmlPrimitiveType
- * for further information) and without #CPML_MOVE as it is not
+ * with the additional %CPML_ARC type (check #CpmlPrimitiveType
+ * for further information) and without %CPML_MOVE as it is not
  * considered a primitive and it is managed in different way: the move-to
  * primitives are only used to define the origin of a segment.
  *
@@ -39,9 +39,9 @@
  *
  * This is a type compatible with #cairo_path_data_type_t type. It is
  * basically the same enum but it embodies an important difference:
- * it can be used to specify the special #CPML_ARC primitive. Having
+ * it can be used to specify the special %CPML_ARC primitive. Having
  * two different types is a good way to make clear when a function
- * expect or not embedded #CPML_ARC primitives.
+ * expect or not embedded %CPML_ARC primitives.
  *
  * Arcs are used extensively in technical drawing: some operations are
  * trivials with arcs and a nightmare with cubic Bézier curves. Actually,
@@ -163,7 +163,7 @@ cpml_primitive_type_get_n_points(CpmlPrimitiveType type)
  *
  * Returns the type of @primitive, i.e. %CPML_LINE for lines,
  * %CPML_ARC for arcs or circles, %CPML_CURVE for cubic Bézier
- * curves and CPML_CLOSE for closing lines. The %CPML_MOVE is
+ * curves and %CPML_CLOSE for closing lines. The %CPML_MOVE is
  * used extensively *between* segments but it is not considered
  * by itself a primitive, so it should never been returned.
  *
@@ -392,7 +392,7 @@ cpml_primitive_put_extents(const CpmlPrimitive *primitive,
  * that -1 is the end point, -2 the point before the end point and
  * so on.
  *
- * CPML_CLOSE is managed in a special way: if @n_point
+ * %CPML_CLOSE is managed in a special way: if @n_point
  * is -1 or 1 and @primitive is a close-path, this function cycles
  * the source #CpmlSegment and returns the first point. This is
  * needed because requesting the end point (or the second point)
@@ -598,8 +598,8 @@ cpml_primitive_get_closest_pos(const CpmlPrimitive *primitive,
  * The convention used by the CPML library is that a primitive should
  * implement only the intersection algorithms with lower degree
  * primitives. This is required to avoid code duplication: intersection
- * between arc and Bézier curves must be implemented by #CPML_CURVE and
- * intersection between lines and arcs must be implemented by #CPML_ARC.
+ * between arc and Bézier curves must be implemented by %CPML_CURVE and
+ * intersection between lines and arcs must be implemented by %CPML_ARC.
  * cpml_primitive_put_intersections() will take care of swapping the
  * arguments if they are not properly ordered.
  * </para>
@@ -792,11 +792,11 @@ cpml_primitive_join(CpmlPrimitive *primitive, CpmlPrimitive *primitive2)
  * @cr:        (inout): the destination cairo context
  *
  * Renders a single @primitive to the @cr cairo context.
- * As a special case, if the primitive is a CPML_CLOSE, an
+ * As a special case, if the primitive is a %CPML_CLOSE, an
  * equivalent line is rendered, because a close path left alone
  * is not renderable.
  *
- * Also a #CPML_ARC primitive is treated specially, as it is not
+ * Also a %CPML_ARC primitive is treated specially, as it is not
  * natively supported by cairo and has its own rendering API.
  *
  * Since: 1.0
@@ -831,7 +831,7 @@ cpml_primitive_to_cairo(const CpmlPrimitive *primitive, cairo_t *cr)
  * @org_also: (type boolean): whether to output also the origin coordinates
  *
  * Dumps info on the specified @primitive to stdout: useful for
- * debugging purposes. If @org_also is 1, a #CPML_MOVE to the
+ * debugging purposes. If @org_also is 1, a %CPML_MOVE to the
  * origin is prepended to the data otherwise the
  * <structfield>org</structfield> field is not used.
  *
@@ -903,7 +903,7 @@ _cpml_class_from_obj(const CpmlPrimitive *primitive)
  * so that -1 is the end point, -2 the point before the end point
  * and so on.
  *
- * CPML_CLOSE is managed in a special way: if @n_point
+ * %CPML_CLOSE is managed in a special way: if @n_point
  * is -1 or 1 and @primitive is a close-path, this function cycles
  * the source #CpmlSegment and returns the first point. This is
  * needed because requesting the end point (or the second point)
