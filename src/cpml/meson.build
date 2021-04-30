@@ -18,7 +18,6 @@ cpml_h_files = files([
     'cpml-curve.h',
     'cpml-extents.h',
     'cpml-gobject.h',
-    'cpml-internal.h',
     'cpml-pair.h',
     'cpml-primitive.h',
     'cpml-segment.h',
@@ -26,6 +25,7 @@ cpml_h_files = files([
 ])
 
 cpml_internal_names = [
+    'cpml-internal.h',
     'cpml-primitive-private.h',
 ]
 
