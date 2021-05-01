@@ -253,7 +253,7 @@ adg_path_has_current_point(AdgPath *path)
  * adg_path_last_primitive:
  * @path: an #AdgPath
  *
- * Gets the last primitive appended to @path. The #CPML_MOVE type is
+ * Gets the last primitive appended to @path. The %CPML_MOVE type is
  * not considered a full-fledged primitive, i.e. adg_path_move_to()
  * or similar does not change the last primitive.
  *
@@ -287,7 +287,7 @@ adg_path_last_primitive(AdgPath *path)
  * Gets the primitive before the last one appended to @path. The
  * "over" term comes from forth, where the <emphasis>OVER</emphasis>
  * operator works on the stack in the same way as
- * adg_path_over_primitive() works on @path. The #CPML_MOVE type is
+ * adg_path_over_primitive() works on @path. The %CPML_MOVE type is
  * not considered a full-fledged primitive, i.e. adg_path_move_to()
  * or similar does not change the over primitive.
  *

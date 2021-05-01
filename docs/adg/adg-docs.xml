@@ -57,6 +57,7 @@
       <xi:include href="xml/adg-logo.xml"/>
       <xi:include href="xml/adg-projection.xml"/>
       <xi:include href="xml/adg-title-block.xml"/>
+      <xi:include href="xml/adg-text-internal.xml"/>
     </chapter>
     <chapter id="Populating-quoting">
       <title>Quoting</title>

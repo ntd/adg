@@ -17,16 +17,43 @@
  * Boston, MA  02110-1301, USA.
  */
 
-/*
- * This header provides:
+/**
+ * SECTION:adg-text-internal
+ * @Section_Id:adg-text-internal
+ * @title: AdgBestText and AdgBestFontStyle
+ * @short_description: Fake types for text renderdering
  *
- * - an internal proxy type (AdgBestFontStyle) that resolves to
- *   AdgFontStyle or AdgPangoStyle, depending on wheter or not
+ * The `adg-text-internal.h` helper header provides:
+ *
+ * - an internal proxy type (`AdgBestFontStyle`) that resolves to
+ *   #AdgFontStyle or #AdgPangoStyle, depending on wheter or not
  *   the pango support has been compiled;
- * - an internal proxy type (AdgBestText) that resolves to
- *   AdgToyText or AdgText, depending on wheter or not  the pango
+ * - an internal proxy type (`AdgBestText`) that resolves to
+ *   #AdgToyText or #AdgText, depending on wheter or not the pango
  *   support has been compiled;
- */
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * ADG_TYPE_BEST_TEXT:
+ *
+ * A GType identifier that resolves to the best available text entity,
+ * i.e. ADG_TYPE_TEXT (if the Pango support has been enabled) or
+ * or ADG_TYPE_TOY_TEXT.
+ *
+ * Since: 1.0
+ **/
+
+/**
+ * ADG_TYPE_BEST_FONT_STYLE:
+ *
+ * A GType identifier that resolves to the best available font style,
+ * i.e. ADG_TYPE_PANGO_STYLE (if the Pango support has been enabled)
+ * or ADG_TYPE_FONT_STYLE.
+ *
+ * Since: 1.0
+ **/
 
 #ifndef __ADG_TEXT_INTERNAL_H__
 #define __ADG_TEXT_INTERNAL_H__
