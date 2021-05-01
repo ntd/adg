@@ -11,6 +11,9 @@ option('catalogdir', type: 'string', value: 'check',
 option('gtk-doc', type: 'feature',
        description: 'Build API reference with gtk-doc')
 
+option('gtkdocdir', type: 'string', value: '',
+       description: 'Where to install gtk-doc html')
+
 option('introspection', type: 'feature',
        description: 'Enable introspection for this build')
 

@@ -28,16 +28,16 @@ adg_revision = 1
 adg_age      = 1
 
 
-cc          = meson.get_compiler('c')
-gnome       = import('gnome')
-i18n        = import('i18n')
-pkgconfig   = import('pkgconfig')
-pkgdir      = meson.project_name() + '-' + metadata['api']
-prefix      = get_option('prefix')
-datadir     = join_paths(prefix, get_option('datadir'))
-pkgdatadir  = join_paths(datadir, pkgdir)
-localedir   = join_paths(prefix, get_option('localedir'))
-includedir  = join_paths(prefix, get_option('includedir'), pkgdir)
+cc         = meson.get_compiler('c')
+gnome      = import('gnome')
+i18n       = import('i18n')
+pkgconfig  = import('pkgconfig')
+pkgdir     = meson.project_name() + '-' + metadata['api']
+prefix     = get_option('prefix')
+datadir    = join_paths(prefix, get_option('datadir'))
+pkgdatadir = join_paths(datadir, pkgdir)
+localedir  = join_paths(prefix, get_option('localedir'))
+includedir = join_paths(prefix, get_option('includedir'), pkgdir)
 
 
 m_dep = cc.find_library('m', required: false)
@@ -94,6 +94,11 @@ endif
 gtkdoc_dep = dependency('gtk-doc', required: get_option('gtk-doc'),
                         version: '>=1.12')
 
+gtkdocdir = get_option('gtkdocdir')
+if gtkdocdir == ''
+    gtkdocdir = join_paths(get_option('prefix'), get_option('datadir'), 'gtk-doc', 'html')
+endif
+
 # First stable release
 introspection_dep = dependency('gobject-introspection-1.0', version: '>=1.0.0',
                                required: get_option('introspection'))
@@ -128,10 +133,11 @@ summary({
             'yes (@0@ @1@)'.format(gtk_dep.name(), gtk_dep.version()) :
             'no',
     'Install glade catalogs':
-        catalogdir == '' ? 'no' : 'yes (@0@)'.format(catalogdir),
+        catalogdir == '' ? 'no' : 'yes, install into @0@'.format(catalogdir),
     'Build API reference':
         gtkdoc_dep.found() ?
-            'yes (@0@ @1@)'.format(gtkdoc_dep.name(), gtkdoc_dep.version()) :
+            'yes (@0@ @1@), install into @2@'.
+                format(gtkdoc_dep.name(), gtkdoc_dep.version(), gtkdocdir) :
             'no',
     'GObject instrospection':
         introspection_dep.found() ?
