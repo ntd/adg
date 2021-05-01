@@ -1,5 +1,5 @@
 /* ADG - Automatic Drawing Generation
- * Copyright (C) 2007-2020  Nicola Fontana <ntd at entidi.it>
+ * Copyright (C) 2007-2021  Nicola Fontana <ntd at entidi.it>
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
