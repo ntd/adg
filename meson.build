@@ -58,7 +58,7 @@ pangocairo_dep = dependency('pangocairo', version: '>=1.10.0',
 # Lookup which GTK package to use
 gtk = get_option('gtk')
 if gtk == 'no'
-    gtk_dep = []
+    gtk_dep = dependency('', required: false)
 else
     if gtk != 'gtk2'
         # First stable release
