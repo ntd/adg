@@ -14,22 +14,19 @@
 arg1=$1
 
 step() {
-    local message="$1"
-    local command="$2"
-
-    printf "$message... "
+    printf "$1... "
 
     if test "$arg1" = --verbose; then
-	eval $command
+	eval $2
     else
-	eval $command >/dev/null 2>&1
+	eval $2 >/dev/null 2>&1
     fi
-    local result=$?
+    result=$?
 
     if test "$result" = "0"; then
 	printf "\033[32mok\033[0m\n"
     else
-	printf "\033[31mfailed\033[0m\n  ** \"$command\" returned $result\n"
+	printf "\033[31mfailed\033[0m\n  ** \"$2\" returned $result\n"
 	exit $result
     fi
 }
