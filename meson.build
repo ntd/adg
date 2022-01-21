@@ -32,12 +32,12 @@ cc         = meson.get_compiler('c')
 gnome      = import('gnome')
 i18n       = import('i18n')
 pkgconfig  = import('pkgconfig')
-pkgdir     = meson.project_name() + '-' + metadata['api']
+pkg        = meson.project_name() + '-' + metadata['api'].split('.')[0]
 prefix     = get_option('prefix')
 datadir    = join_paths(prefix, get_option('datadir'))
-pkgdatadir = join_paths(datadir, pkgdir)
+pkgdatadir = join_paths(datadir, pkg)
 localedir  = join_paths(prefix, get_option('localedir'))
-includedir = join_paths(prefix, get_option('includedir'), pkgdir)
+includedir = join_paths(prefix, get_option('includedir'), pkg)
 
 
 m_dep = cc.find_library('m', required: false)
@@ -123,7 +123,7 @@ summary({
     'Compiler':
         cc.get_id(),
     'CPML library to use':
-        'internal (cpml-@0@ @1@)'.format(metadata['api'], meson.project_version()),
+        'internal (cpml-1 @0@)'.format(meson.project_version()),
     'Use pango for text':
         pangocairo_dep.found() ?
             'yes (@0@ @1@)'.format(pangocairo_dep.name(), pangocairo_dep.version()) :

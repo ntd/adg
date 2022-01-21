@@ -59,6 +59,8 @@ config_h = configure_file(
 
 cpml_h = files('cpml.h')[0]
 
+install_headers(cpml_h, subdir: 'adg-1')
+
 adg_h = configure_file(
     input: 'adg.h.in',
     output: '@BASENAME@',

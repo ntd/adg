@@ -46,7 +46,7 @@ cpml_soversion = '@0@.@1@.@2@'.format(
     cpml_revision
 )
 
-cpml = library('cpml-' + metadata['api'],
+cpml = library('cpml-1',
     sources:      cpml_c_files + cpml_h_files + cpml_internal_files,
     dependencies: cpml_deps,
     version:      cpml_soversion,
@@ -59,16 +59,16 @@ cpml_dep = declare_dependency(
     include_directories: src_directories
 )
 
-install_headers(cpml_h_files, subdir: 'cpml')
+install_headers(cpml_h_files, subdir: 'adg-1/cpml')
 
 
 # pkg-config support for CPML library
 pkgconfig.generate(cpml,
     name:        'CPML',
-    filebase:    'cpml-' + metadata['api'],
+    filebase:    'cpml-1',
     description: 'Cairo Path Manipulation Library',
     url:         metadata['homepage'],
-    subdirs:     pkgdir,
+    subdirs:     pkg,
     version:     meson.project_version()
 )
 

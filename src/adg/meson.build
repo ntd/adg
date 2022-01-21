@@ -202,7 +202,7 @@ adg_soversion = '@0@.@1@.@2@'.format(
     adg_revision
 )
 
-adg = library('adg-' + metadata['api'],
+adg = library(pkg,
     sources:      adg_c_files + adg_c_built + adg_h_files + adg_h_built + adg_internal_files,
     dependencies: adg_deps,
     version:      adg_soversion,
@@ -218,16 +218,16 @@ adg_dep = declare_dependency(
     include_directories: src_directories
 )
 
-install_headers(adg_h_files, subdir: 'adg')
+install_headers(adg_h_files, subdir: 'adg-1/adg')
 
 
 # pkg-config support for ADG library
 pkgconfig.generate(adg,
     name:        'ADG',
-    filebase:    'adg-' + metadata['api'],
+    filebase:    pkg,
     description: 'Automatic Drawing Generation',
     url:         metadata['homepage'],
-    subdirs:     pkgdir,
+    subdirs:     pkg,
     version:     meson.project_version()
 )
 
