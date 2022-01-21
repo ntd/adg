@@ -28,7 +28,7 @@ BEGIN
 	    VALUE "OriginalFilename",	QUOTE(PACKAGE_NAME) ".exe"
 	    VALUE "ProductName",	QUOTE(PACKAGE_NAME)
 	    VALUE "ProductVersion",	QUOTE(PACKAGE_VERSION)
-	    VALUE "LegalCopyright",	"Copyright (C) 2007-2020"
+	    VALUE "LegalCopyright",	"Copyright (C) 2007-2022"
 	END
     END
     BLOCK "VarFileInfo"
