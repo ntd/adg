@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: adg 0.7.5\n"
 "Report-Msgid-Bugs-To: http://dev.entidi.com/p/adg/issues/\n"
-"POT-Creation-Date: 2021-04-20 00:18+0200\n"
+"POT-Creation-Date: 2022-01-21 22:25+0100\n"
 "PO-Revision-Date: 2014-12-29 22:00+0100\n"
 "Last-Translator: Nicola Fontana <ntd@entidi.it>\n"
 "Language-Team: \n"
@@ -52,7 +52,7 @@ msgstr "Errore da adg-demo"
 msgid "Requested format not supported"
 msgstr "Formato richiesto non supportato"
 
-#: demo/adg-demo.c:1170
+#: demo/adg-demo.c:1168
 msgid "adg-demo.ui not found!\n"
 msgstr "adg-demo.ui non trovato!\n"
 
@@ -65,8 +65,8 @@ msgid "About adg-demo"
 msgstr "Informazioni su adg-demo"
 
 #: demo/adg-demo.ui.in:145
-msgid "Copyright (C) 2007-2020  Nicola Fontana"
-msgstr "Copyright (C) 2007-2020  Nicola Fontana"
+msgid "Copyright (C) 2007-2022  Nicola Fontana"
+msgstr "Copyright (C) 2007-2022  Nicola Fontana"
 
 #: demo/adg-demo.ui.in:146
 msgid "Demonstration program for the ADG library"
@@ -410,19 +410,19 @@ msgstr ""
 "Da dove arriva la seconda linea: questo punto è usato insieme a \"ref2\" per "
 "allineare la seconda linea di estensione"
 
-#: src/adg/adg-adim.c:143 src/adg/adg-ldim.c:142
+#: src/adg/adg-adim.c:143 src/adg/adg-ldim.c:143
 msgid "Has First Extension Line flag"
 msgstr "Flag di Prima Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:144 src/adg/adg-ldim.c:143
+#: src/adg/adg-adim.c:144 src/adg/adg-ldim.c:144
 msgid "Show (TRUE) or hide (FALSE) the first extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la prima linea di estensione"
 
-#: src/adg/adg-adim.c:149 src/adg/adg-ldim.c:148
+#: src/adg/adg-adim.c:149 src/adg/adg-ldim.c:149
 msgid "Has Second Extension Line flag"
 msgstr "Flag di Seconda Linea di Estensione Presente"
 
-#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:149
+#: src/adg/adg-adim.c:150 src/adg/adg-ldim.c:150
 msgid "Show (TRUE) or hide (FALSE) the second extension line"
 msgstr "Mostrare (TRUE) o nascondere (FALSE) la seconda linea di estensione"
 
@@ -1264,11 +1264,11 @@ msgstr "Vestito Riempimento"
 msgid "The dress to use for filling this entity"
 msgstr "Il vestito da usare per riempire questa entità"
 
-#: src/adg/adg-ldim.c:135
+#: src/adg/adg-ldim.c:136
 msgid "Direction"
 msgstr "Direzione"
 
-#: src/adg/adg-ldim.c:136
+#: src/adg/adg-ldim.c:137
 msgid "The inclination angle of the extension lines"
 msgstr "L'angolo di inclinazione delle linee di estensione"
 
