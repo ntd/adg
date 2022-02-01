@@ -140,6 +140,11 @@ gboolean        adg_canvas_export               (AdgCanvas      *canvas,
                                                  cairo_surface_type_t type,
                                                  const gchar    *file,
                                                  GError        **gerror);
+gboolean        adg_canvas_export_data          (AdgCanvas      *canvas,
+                                                 cairo_surface_type_t type,
+                                                 gchar         **contents,
+                                                 gsize          *length,
+                                                 GError        **gerror);
 @ADG_CANVAS_H_ADDITIONAL@
 G_END_DECLS
 

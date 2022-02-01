@@ -874,6 +874,71 @@ _adg_method_export(void)
     adg_entity_destroy(ADG_ENTITY(canvas));
 }
 
+static void
+_adg_method_export_data(void)
+{
+    AdgCanvas *canvas = adg_test_canvas();
+    gchar *contents;
+
+    /* Sanity check */
+    g_assert_false(adg_canvas_export_data(NULL, CAIRO_SURFACE_TYPE_IMAGE, &contents, NULL, NULL));
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_IMAGE, NULL, NULL, NULL));
+
+    /* Supported surface types return TRUE while unsupported ones return FALSE */
+    contents = NULL;
+    g_assert_true(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_IMAGE, &contents, NULL, NULL));
+    g_assert_nonnull(contents);
+    g_free(contents);
+
+    contents = NULL;
+    g_assert_true(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_PDF, &contents, NULL, NULL));
+    g_assert_nonnull(contents);
+    g_free(contents);
+
+    contents = NULL;
+    g_assert_true(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_PS, &contents, NULL, NULL));
+    g_assert_nonnull(contents);
+    g_free(contents);
+
+    contents = NULL;
+    g_assert_true(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_SVG, &contents, NULL, NULL));
+    g_assert_nonnull(contents);
+    g_free(contents);
+
+    contents = NULL;
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_XLIB, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_XCB, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_QUARTZ, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_WIN32, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_BEOS, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_DIRECTFB, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_OS2, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_WIN32_PRINTING, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    g_assert_false(adg_canvas_export_data(canvas, CAIRO_SURFACE_TYPE_QUARTZ_IMAGE, &contents, NULL, NULL));
+    g_assert_null(contents);
+
+    /* An empty canvas can fail depending on the surface type (e.g., the image
+     * surface fails while the PDF surface does not) so skipping that tests */
+
+    adg_entity_destroy(ADG_ENTITY(canvas));
+}
+
 #if GTK3_ENABLED || GTK2_ENABLED
 
 static void
@@ -1041,6 +1106,7 @@ main(int argc, char *argv[])
     g_test_add_func("/adg/canvas/method/set-paddings", _adg_method_set_paddings);
     g_test_add_func("/adg/canvas/method/get-paddings", _adg_method_get_paddings);
     g_test_add_func("/adg/canvas/method/export", _adg_method_export);
+    g_test_add_func("/adg/canvas/method/export_data", _adg_method_export_data);
 #if GTK3_ENABLED || GTK2_ENABLED
     g_test_add_func("/adg/canvas/method/set-paper", _adg_method_set_paper);
     g_test_add_func("/adg/canvas/method/get-page-setup", _adg_method_get_page_setup);

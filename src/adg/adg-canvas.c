@@ -91,6 +91,7 @@
 
 
 #include "adg-internal.h"
+#include <unistd.h>
 
 #include "adg-container.h"
 #include "adg-table.h"
@@ -1612,14 +1613,14 @@ _adg_apply_paddings(AdgCanvas *canvas, CpmlExtents *extents)
  * @canvas: an #AdgCanvas
  * @type: (type gint): the export format
  * @file: the name of the resulting file
- * @gerror: (allow-none): return location for errors
+ * @gerror: return location for errors
  *
  * A helper function that provides a bare export functionality.
  * It basically exports the drawing in @canvas in the @file
  * in the @type format. Any error will be reported in @gerror,
  * if not <constant>NULL</constant>.
  *
- * Returns: <constant>TRUE</constant> on success, <constant>FALSE</constant> otherwise.
+ * Returns: %TRUE on success, %FALSE on errors.
  *
  * Since: 1.0
  **/
@@ -1708,6 +1709,46 @@ adg_canvas_export(AdgCanvas *canvas, cairo_surface_type_t type,
     }
 
     return TRUE;
+}
+
+/**
+ * adg_canvas_export_data:
+ * @canvas: an #AdgCanvas
+ * @type: (type gint): the export format
+ * @contents: (out) (array length=length) (element-type guint8): location to store the contents, use g_free() to free
+ * @length: (optional): location to store the length in bytes, or %NULL
+ * @gerror: return location for errors, or %NULL
+ *
+ * A wrapper around adg_canvas_export() that returns the rendered
+ * data instead of writing it to a file.
+ *
+ * Returns: %TRUE on success, %FALSE on errors.
+ *
+ * Since: 1.0
+ **/
+gboolean
+adg_canvas_export_data(AdgCanvas *canvas, cairo_surface_type_t type,
+                       gchar **contents, gsize *length, GError **gerror)
+{
+    gchar *file;
+    gboolean done;
+    gint h;
+
+    g_return_val_if_fail(ADG_IS_CANVAS(canvas), FALSE);
+    g_return_val_if_fail(contents != NULL, FALSE);
+    g_return_val_if_fail(gerror == NULL || *gerror == NULL, FALSE);
+
+    h = g_file_open_tmp(NULL, &file, gerror);
+    if (h < 0) {
+        return FALSE;
+    }
+
+    done = adg_canvas_export(canvas, type, file, gerror) &&
+           g_file_get_contents(file, contents, length, gerror);
+    g_free(file);
+    close(h);
+
+    return done;
 }
 
 
