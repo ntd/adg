@@ -241,6 +241,14 @@ if introspection_dep.found()
     if gtk_dep.found()
         adg_gir_includes += use_gtk2 ? 'Gtk-2.0' : 'Gtk-3.0'
     endif
+    adg_gir_args = [ '--quiet' ]
+    # --source-top-dirs only available on recent gobject-introspection
+    if introspection_dep.version().version_compare('>=1.59.1')
+        adg_gir_args += [
+            '--sources-top-dirs=' + meson.current_source_dir(),
+            '--sources-top-dirs=' + meson.current_build_dir(),
+        ]
+    endif
     adg_gir = gnome.generate_gir(adg,
         sources:             [ adg_h ] + adg_h_files + adg_h_built + adg_c_files + adg_c_built,
         namespace:           'Adg',
@@ -251,10 +259,6 @@ if introspection_dep.found()
         include_directories: src_directories,
         header:              'adg.h',
         install:             true,
-        extra_args: [
-            '--quiet',
-            '--sources-top-dirs=' + meson.current_source_dir(),
-            '--sources-top-dirs=' + meson.current_build_dir(),
-        ]
+        extra_args:          adg_gir_args
     )
 endif

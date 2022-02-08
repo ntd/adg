@@ -75,6 +75,14 @@ pkgconfig.generate(cpml,
 
 # GObject introspection support for CPML library
 if introspection_dep.found()
+    cpml_gir_args = [ '--quiet' ]
+    # --source-top-dirs only available on recent gobject-introspection
+    if introspection_dep.version().version_compare('>=1.59.1')
+        cpml_gir_args += [
+            '--sources-top-dirs=' + meson.current_source_dir(),
+            '--sources-top-dirs=' + meson.current_build_dir(),
+        ]
+    endif
     cpml_gir = gnome.generate_gir(cpml,
         sources:           [ cpml_h ] + cpml_h_files + cpml_c_files,
         namespace:         'Cpml',
@@ -84,10 +92,6 @@ if introspection_dep.found()
         includes:          [ 'cairo-1.0' ],
         header:            'cpml.h',
         install:           true,
-        extra_args: [
-            '--quiet',
-            '--sources-top-dirs=' + meson.current_source_dir(),
-            '--sources-top-dirs=' + meson.current_build_dir(),
-        ]
+        extra_args:        cpml_gir_args
     )
 endif
