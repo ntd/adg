@@ -94,7 +94,8 @@ they should be availables on nearly every decent unix-like system.</para>
 
 <para>The ADG is mainly developed on GNU/Linux but its dependecies are
 known to be cross platform so a porting should be quite easy, if
-not automatic.</para></simplesect>
+not automatic.</para>
+</simplesect>
 
 
 <simplesect id="README.installation">
@@ -104,38 +105,44 @@ not automatic.</para></simplesect>
 system is still supported.</para>
 
 <para>The following instructions are included only for reference: you are
-free to install ADG in the way you prefer. Just remember (if you
-are copying and pasting) to put the proper package version instead
-of the <code>0.9.4</code> placeholder used in the examples.</para>
+expected to customize and install the ADG in the way you prefer.
+Just remember (if you are copying and pasting) to put the proper
+package version instead of <code>0.9.4</code> and to select the appropriate
+commands for meson or autotools based builds.</para>
 
 <orderedlist>
    <listitem>Unpack the ADG tarball somewhere in your file system: your home
-   folder is a good candidate. You can get the latest tarball directly
-   from <ulink url="https://github.com/ntd/adg/releases">GitHub</ulink>.
-<programlisting>cd $HOME
+   folder is a good candidate. You can get the latest tarball from
+   <ulink url="https://github.com/ntd/adg/releases">GitHub</ulink>.
+<programlisting># For meson-based builds
+wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.xz
+tar xf adg-0.9.4.tar.xz
+cd adg-0.9.4
+# For autotools-based builds
 wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.bz2
-tar xjvf adg-0.9.4.tar.bz2
+tar xf adg-0.9.4.tar.bz2
 cd adg-0.9.4</programlisting></listitem>
-   <listitem>Configure and run the build using autotools or the meson system
-   (the latter only available on adg >= 0.9.4). The autotools build
-   system will be dropped somewhere in the future.
-<programlisting># Using autotools (VPATH build)
-mkdir build &amp;&amp; cd build
-../configure
-make
-# Using meson
+   <listitem>Configure and run the build using meson or autotools (the former
+   only available on adg >= 0.9.4). The autotools build system will
+   be dropped somewhere in the future.
+<programlisting># Using meson
 meson build
 cd build
-ninja</programlisting></listitem>
+ninja
+# Using autotools (VPATH build)
+mkdir build &amp;&amp; cd build
+../configure
+make</programlisting></listitem>
    <listitem>Once the building has finished, you are able to run the demo
    program without installing anything. Just try it out by
    launching the uninstalled executable:
 <programlisting>demo/adg-demo</programlisting></listitem>
-   <listitem>Install the library. You must usually have root privileges if you
-   intend to install the library on your system folders.
-<programlisting># Using autotools
-make install
-# Using meson
-ninja intall</programlisting></listitem></orderedlist></simplesect>
+   <listitem>Permanently install the ADG. You must usually have root privileges
+   if you intend to install it in your system folders.
+<programlisting># Using meson
+ninja intall
+# Using autotools
+make install</programlisting></listitem></orderedlist>
+</simplesect>
 
 </chapter>

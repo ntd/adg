@@ -92,31 +92,36 @@ The ADG build system is based on meson but a legacy autotools based
 system is still supported.
 
 The following instructions are included only for reference: you are
-free to install ADG in the way you prefer. Just remember (if you
-are copying and pasting) to put the proper package version instead
-of the 0.9.4 placeholder used in the examples.
+expected to customize and install the ADG in the way you prefer.
+Just remember (if you are copying and pasting) to put the proper
+package version instead of `0.9.4` and to select the appropriate
+commands for meson or autotools based builds.
 
 1. Unpack the ADG tarball somewhere in your file system: your home
-   folder is a good candidate. You can get the latest tarball directly
-   from [GitHub](https://github.com/ntd/adg/releases).
+   folder is a good candidate. You can get the latest tarball from
+   [GitHub](https://github.com/ntd/adg/releases).
     ```
-    cd $HOME
+    # For meson-based builds
+    wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.xz
+    tar xf adg-0.9.4.tar.xz
+    cd adg-0.9.4
+    # For autotools-based builds
     wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.bz2
-    tar xjvf adg-0.9.4.tar.bz2
+    tar xf adg-0.9.4.tar.bz2
     cd adg-0.9.4
     ```
-2. Configure and run the build using autotools or the meson system
-   (the latter only available on adg >= 0.9.4). The autotools build
-   system will be dropped somewhere in the future.
+2. Configure and run the build using meson or autotools (the former
+   only available on adg >= 0.9.4). The autotools build system will
+   be dropped somewhere in the future.
     ```
-    # Using autotools (VPATH build)
-    mkdir build && cd build
-    ../configure
-    make
     # Using meson
     meson build
     cd build
     ninja
+    # Using autotools (VPATH build)
+    mkdir build && cd build
+    ../configure
+    make
     ```
 3. Once the building has finished, you are able to run the demo
    program without installing anything. Just try it out by
@@ -124,11 +129,11 @@ of the 0.9.4 placeholder used in the examples.
     ```
     demo/adg-demo
     ```
-4. Install the library. You must usually have root privileges if you
-   intend to install the library on your system folders.
+4. Permanently install the ADG. You must usually have root privileges
+   if you intend to install it in your system folders.
     ```
-    # Using autotools
-    make install
     # Using meson
     ninja intall
+    # Using autotools
+    make install
     ```
