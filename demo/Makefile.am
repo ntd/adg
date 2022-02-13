@@ -77,4 +77,4 @@ EXTRA_DIST=			adg-demo.ui.in \
 
 # Possibly remove files created by 'make coverage'
 mostlyclean-local:
-	-rm -f *.gcno
+	-rm -f *.gcda *.gcno

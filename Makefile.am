@@ -172,3 +172,4 @@ HACKING: $(xml2txt_stylesheet) $(abs_srcdir)/docs/adg/HACKING.xml
 clean-local: clean-installer clean-cdb
 
 mostlyclean-local: mostlyclean-installer
+	-rm -f *.gcno
