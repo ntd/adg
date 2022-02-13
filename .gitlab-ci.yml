@@ -19,7 +19,7 @@ install-deps:
             libgtk-3-dev
             gtk-doc-tools
         # A recent meson is required, so use `pip3` instead of `apt`
-        - apt install python3-pip
+        - apt-get install -qq python3-pip
         - pip3 install meson ninja
 
 build-gtk2-autotools:
