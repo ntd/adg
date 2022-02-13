@@ -28,9 +28,9 @@ install:
     - sudo pip3 install 'meson<0.57'
 
 script:
-    - meson -Db_coverage=true -Dgtk=$GTK _build &&
-      meson compile -C _build &&
-      meson test    -C _build
+    - meson -Db_coverage=true -Dgtk=$GTK build &&
+      meson compile -C build &&
+      meson test    -C build
 
 after_success:
     - if [ "$CC" = "gcc" ]; then
