@@ -5,6 +5,10 @@ stages:
     - build
     - test
 
+# Append `/usr/local/bin` to PATH: meson and ninja will be there
+before_script:
+    - export PATH="/usr/local/bin:$PATH"
+
 install-deps:
     stage: prepare
     script:
@@ -21,6 +25,8 @@ install-deps:
         # A recent meson is required, so use `pip3` instead of `apt`
         - apt-get install -qq python3-pip
         - pip3 install meson ninja
+        # Bootstrap the naked repository for autotools based builds
+        - ./autogen.sh
 
 build-gtk2-autotools:
     stage: build
