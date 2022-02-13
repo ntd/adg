@@ -39,7 +39,7 @@ An application can then be developed using any specific language
 available, much in the same way as [GNOME](https://www.gnome.org/)
 applications are conceived.
 
-Lua bindings based on [LGI](https://github.com/pavouk/lgi) are
+Lua bindings based on [LGI](https://github.com/lgi-devs/lgi) are
 already availables and effectively used upstream to test the APIs.
 The [adg-lua](https://github.com/ntd/adg-lua) project provides code
 examples on how to use them.
@@ -64,7 +64,7 @@ The ADG library has the following dependencies:
  * [cairo](https://www.cairographics.org/) 1.7.4 or later, required
    by both CPML and ADG;
  * [GLib](https://www.gtk.org/) 2.38.0 or later, required by ADG;
- * [GTK+](https://www.gtk.org/) 3.0.0 or later (or GTK 2.18.0 or
+ * [GTK](https://www.gtk.org/) 3.0.0 or later (or GTK 2.18.0 or
    later for GTK2 support) to optionally include GTK support and build
    the `adg-demo` program;
  * [pango](https://pango.gnome.org/) 1.10.0 or later (optional) to
@@ -86,39 +86,41 @@ not automatic.
 Installation
 ============
 
-The ADG build system is based on GNU autotools, the de-facto
-standard for handling free software projects. The following
-step-by-step instructions are included only for reference: you are
-free to install ADG in the way you prefer. Just remember if you
-are copying and pasting to put the proper package version instead
-of the 0.6.0 placeholder used in the examples.
+The ADG build system is based on meson but a legacy autotools based
+system is still supported.
+
+The following instructions are included only for reference: you are
+free to install ADG in the way you prefer. Just remember (if you
+are copying and pasting) to put the proper package version instead
+of the 0.9.4 placeholder used in the examples.
 
 1. Unpack the ADG tarball somewhere in your file system: your home
    folder is a good candidate. You can get the latest tarball directly
    from [GitHub](https://github.com/ntd/adg/releases).
     ```
     cd $HOME
-    wget https://github.com/ntd/adg/releases/download/0.9.3/adg-0.9.3.tar.bz2
-    tar xjvf adg-0.9.3.tar.bz2
-    cd adg-0.9.3
+    wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.bz2
+    tar xjvf adg-0.9.4.tar.bz2
+    cd adg-0.9.4
     ```
 2. Configure and run the build using autotools or the meson system
-   (the latter only available on adg >= 0.9.4). Meson is using the
-   `_build` folder instead of the usual `build` to avoid clashes
-   with aldready existing folders.
+   (the latter only available on adg >= 0.9.4). The autotools build
+   system will be dropped somewhere in the future.
     ```
-    # Using autotools
-    ./configure
+    # Using autotools (VPATH build)
+    mkdir build && cd build
+    ../configure
     make
     # Using meson
-    meson setup _build
-    meson compile -C _build
+    meson build
+    cd build
+    ninja
     ```
 3. Once the building has finished, you are able to run the demo
    program without installing anything. Just try it out by
    launching the uninstalled executable:
     ```
-    demo/adg-demo-uninstalled
+    demo/adg-demo
     ```
 4. Install the library. You must usually have root privileges if you
    intend to install the library on your system folders.
@@ -126,5 +128,5 @@ of the 0.6.0 placeholder used in the examples.
     # Using autotools
     make install
     # Using meson
-    meson intall -C _build
+    ninja intall
     ```

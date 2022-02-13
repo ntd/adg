@@ -11,8 +11,8 @@
 
 <para>Automatic Drawing Generation is GObject-based library that provides
 a non-interactive cairo canvas specifically designed for generating
-technical drawings. It can be viewed as a tool for programmatically
-representing an abstract model into a layout (<emphasis>2D drafting</emphasis>).</para>
+technical drawings. It can be viewed as a 2D CAD without user
+interface.</para>
 
 <para>If you want to develop an application that needs to show and print
 drawings where some data change but the overall design is similar,
@@ -31,7 +31,7 @@ application provides the following benefits:</para>
    could be used in web-based applications.</listitem>
 </itemizedlist>
 
-<para>Visit the <ulink url="http://adg.entidi.com/">ADG web site</ulink> for further
+<para>Visit the <ulink url="https://adg.entidi.com/">ADG web site</ulink> for further
 details.</para>
 
 </simplesect>
@@ -39,32 +39,30 @@ details.</para>
 <simplesect id="README.design">
 <title>Design overview</title>
 
-<para>The project is based on the <ulink url="http://www.gtk.org/">GObject</ulink> library:
+<para>The project is based on the <ulink url="https://www.gtk.org/">GObject</ulink> library:
 the ADG canvas is developed in plain C using an object-oriented
 approach. Applications based on ADG are not expected to be
 developed in C, though: the basic idea is to have a set of bindings
 for higher level languages (the garbage-collected ones, above all).
 An application can then be developed using any specific language
-available, much in the same way as <ulink url="http://www.gnome.org/">GNOME</ulink>
+available, much in the same way as <ulink url="https://www.gnome.org/">GNOME</ulink>
 applications are conceived.</para>
 
-<para>Lua bindings based on <ulink url="http://github.com/pavouk/lgi">LGI</ulink> are
+<para>Lua bindings based on <ulink url="https://github.com/lgi-devs/lgi">LGI</ulink> are
 already availables and effectively used upstream to test the APIs.
-The <ulink url="http://dev.entidi.com/p/adg-lua/">adg-lua</ulink> project provides
-code examples on how to use them.</para>
+The <ulink url="https://github.com/ntd/adg-lua">adg-lua</ulink> project provides code
+examples on how to use them.</para>
 
 <para>The mathematical and geometrical algorithms, together with a bunch
 of other useful functions for manipulating cairo paths, are kept
-in a separated library called <ulink url="http://adg.entidi.com/cpml/">CPML</ulink>
-(Cairo Path Manipulation Library). Although actually embedded into
-the ADG project, this library can be easily splitted on its own,
-if needed.</para>
+in a separated library called <code>CPML</code> (Cairo Path Manipulation Library).
+Although actually embedded into the ADG project, this library can be
+easily splitted on its own, if needed.</para>
 
-<para>The rendering leverages <ulink url="http://cairographics.org/">cairo</ulink>, so the
-ADG canvas fully shares strong and weak points of that library.
-Most notably, the availables export formats include PostScript,
-SVG, PDF, PNG but no CAD specific ones (such as DXF). A complete
-list can be <ulink url="http://cairographics.org/backends/">browsed online</ulink>.</para>
+<para>The rendering leverages <ulink url="https://www.cairographics.org/">cairo</ulink>, so
+the ADG canvas fully shares strong and weak points of that library.
+Most notably, the availables export formats include PostScript, SVG,
+PDF, PNG but no CAD specific ones (such as DXF).</para>
 </simplesect>
 
 
@@ -74,20 +72,19 @@ list can be <ulink url="http://cairographics.org/backends/">browsed online</ulin
 <para>The ADG library has the following dependencies:</para>
 
 <itemizedlist>
-   <listitem><ulink url="http://cairographics.org/">cairo</ulink> 1.7.4 or later, required by
-   either CPML and ADG;</listitem>
-   <listitem><ulink url="http://www.gtk.org/">GLib</ulink> 2.14.0 or later, required by ADG;</listitem>
-   <listitem><ulink url="http://www.gtk.org/">GTK+</ulink> 3.0.0 or later (or GTK+ 2.12.0 or
-   later for GTK+2 support) to optionally include GTK+ support and
-   build the <command>adg-demo</command> program;</listitem>
-   <listitem><ulink url="http://www.pango.org/">pango</ulink> 1.18.0 or later (optional)
-   to support a serious engine for rendering text instead of using
-   the cairo "toy" APIs (only the pango-cairo module will be used);</listitem>
-   <listitem><ulink url="http://www.gtk.org/gtk-doc/">gtk-doc</ulink> 1.12 or later (optional),
-   used to regenerate the API documentation</listitem>
-   <listitem><ulink url="http://live.gnome.org/GObjectIntrospection">GObject introspection</ulink>
-   0.9.5 or later (optional) to dinamically generate bindings
-   metadata.</listitem>
+   <listitem><ulink url="https://www.cairographics.org/">cairo</ulink> 1.7.4 or later, required
+   by both CPML and ADG;</listitem>
+   <listitem><ulink url="https://www.gtk.org/">GLib</ulink> 2.38.0 or later, required by ADG;</listitem>
+   <listitem><ulink url="https://www.gtk.org/">GTK</ulink> 3.0.0 or later (or GTK+ 2.18.0 or
+   later for GTK2 support) to optionally include GTK support and build
+   the <command>adg-demo</command> program;</listitem>
+   <listitem><ulink url="https://pango.gnome.org/">pango</ulink> 1.10.0 or later (optional) to
+   support a serious engine for rendering text instead of using the
+   cairo "toy" APIs (only the <code>pango-cairo</code> module will be used);</listitem>
+   <listitem><ulink url="https://wiki.gnome.org/DocumentationProject/GtkDoc">gtk-doc</ulink> 1.12
+   or later (optional), used to regenerate the API documentation;</listitem>
+   <listitem><ulink url="https://gi.readthedocs.io/">GObject introspection</ulink> 1.0.0 or later
+   (optional) to dinamically generate bindings metadata.</listitem>
 </itemizedlist>
 
 <para>The required packages must be installed prior the ADG building:
@@ -95,53 +92,48 @@ they should be availables on nearly every decent unix-like system.</para>
 
 <para>The ADG is mainly developed on GNU/Linux but its dependecies are
 known to be cross platform so a porting should be quite easy, if
-not automatic. Anyway, the cross-compilation of a Windows
-installer is supported upstream and it is based on the ArchLinux
-<ulink url="http://github.com/ntd/aur-fedora-mingw">Fedora mingw port</ulink>.</para>
-</simplesect>
+not automatic.</para></simplesect>
 
 
 <simplesect id="README.installation">
 <title>Installation</title>
 
-<para>The ADG build system is based on GNU autotools, the de-facto
-standard for handling free software projects. The following
-step-by-step instructions are included only for reference: you are
-free to install ADG in the way you prefer. Just remember if you
-are copying and pasting to put the proper package version instead
-of the <code>0.6.0</code> placeholder used in the examples.</para>
+<para>The ADG build system is based on meson but a legacy autotools based
+system is still supported.</para>
+
+<para>The following instructions are included only for reference: you are
+free to install ADG in the way you prefer. Just remember (if you
+are copying and pasting) to put the proper package version instead
+of the <code>0.9.4</code> placeholder used in the examples.</para>
 
 <orderedlist>
-   <listitem>Download the ADG tarball and put it somewhere into your file
-   system (your home directory is a good candidate). You can
-   browse the old releases or get the latest tarball directly
-   from <ulink url="http://sourceforge.net/projects/adg/files/">SourceForge</ulink>.
+   <listitem>Unpack the ADG tarball somewhere in your file system: your home
+   folder is a good candidate. You can get the latest tarball directly
+   from <ulink url="https://github.com/ntd/adg/releases">GitHub</ulink>.
 <programlisting>cd $HOME
-wget http://sourceforge.net/projects/adg/files/adg/0.6.0/adg-0.6.0.tar.bz2</programlisting></listitem>
-   <listitem>Unpack the tarball:
-<programlisting>tar xjvf adg-0.6.0.tar.bz2</programlisting></listitem>
-   <listitem>Configure the build. You can set different options while
-   configuring: check the output of <code>./configure --help</code> to get a
-   list of all the available customizations.
-<programlisting>cd adg-0.6.0
-./configure</programlisting></listitem>
-   <listitem>Build the ADG library.
-<programlisting>make</programlisting></listitem>
+wget https://github.com/ntd/adg/releases/download/0.9.4/adg-0.9.4.tar.bz2
+tar xjvf adg-0.9.4.tar.bz2
+cd adg-0.9.4</programlisting></listitem>
+   <listitem>Configure and run the build using autotools or the meson system
+   (the latter only available on adg >= 0.9.4). The autotools build
+   system will be dropped somewhere in the future.
+<programlisting># Using autotools (VPATH build)
+mkdir build &amp;&amp; cd build
+../configure
+make
+# Using meson
+meson build
+cd build
+ninja</programlisting></listitem>
    <listitem>Once the building has finished, you are able to run the demo
    program without installing anything. Just try it out by
    launching the uninstalled executable:
-<programlisting>demo/adg-demo-uninstalled</programlisting></listitem>
-   <listitem>Install the library. You must have root privileges, either
-   by previously logging in as root or by using the <command>sudo</command> command,
-   if you intend to install it system-wide (the default). Anyway
-   you can install to a custom destination where you have write
-   access by explicitely setting the <code>--prefix</code> option in the
-   configuration step.
-<programlisting>sudo make install</programlisting></listitem>
-</orderedlist>
-
-<para>Further details on the installation are availables in the <filename>INSTALL</filename>
-text file distributed within the tarball.</para>
-</simplesect>
+<programlisting>demo/adg-demo</programlisting></listitem>
+   <listitem>Install the library. You must usually have root privileges if you
+   intend to install the library on your system folders.
+<programlisting># Using autotools
+make install
+# Using meson
+ninja intall</programlisting></listitem></orderedlist></simplesect>
 
 </chapter>
