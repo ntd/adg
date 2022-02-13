@@ -42,7 +42,9 @@ applications are conceived.
 Lua bindings based on [LGI](https://github.com/lgi-devs/lgi) are
 already availables and effectively used upstream to test the APIs.
 The [adg-lua](https://github.com/ntd/adg-lua) project provides code
-examples on how to use them.
+examples on how to use them. A modern web approach is shown by the
+[adg-openresty](https://github.com/ntd/adg-openresty) project, where
+the Lua bindings are directly used inside an NGINX webserver.
 
 The mathematical and geometrical algorithms, together with a bunch
 of other useful functions for manipulating cairo paths, are kept
