@@ -25,8 +25,8 @@ AC_PREREQ([2.62])
 AC_INIT([adg-1],adg_version,[http://dev.entidi.com/p/adg/],[adg],[http://adg.entidi.com/])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_HEADERS([src/config.h])
-AC_CONFIG_AUX_DIR([build])
-AC_CONFIG_MACRO_DIR([build])
+AC_CONFIG_AUX_DIR([autotools])
+AC_CONFIG_MACRO_DIR([autotools])
 AM_INIT_AUTOMAKE([1.10 gnits no-dist-gzip dist-bzip2 -Wall -Wno-portability])
 
 dnl m4 backward compatibility stuff
@@ -432,7 +432,7 @@ AC_SUBST([ADG_CANVAS_H])
 
 # Generation
 
-AC_CONFIG_FILES([build/Custom.nsh
+AC_CONFIG_FILES([autotools/Custom.nsh
                  Makefile
                  src/Makefile
                  src/tests/Makefile

@@ -1,4 +1,4 @@
-include $(top_srcdir)/build/Makefile.am.common
+include $(top_srcdir)/autotools/Makefile.am.common
 
 xml2txt_stylesheet=		$(abs_srcdir)/docs/docbook2txt.xsl
 xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
@@ -7,9 +7,9 @@ xml2txt_command=		$(AM_V_GEN)if test -x $(XSLTPROC) ; then : ; else \
 				  exit 0 ; \
 				fi ; \
 				$(XSLTPROC) --novalid -o $@ $(xml2txt_stylesheet)
-hicolor_snapshot=		build/hicolor-snapshot-0.11.tar.bz2
-minitheme_snapshot=		build/minitheme-snapshot.tar.bz2
-ACLOCAL_AMFLAGS=		-I build
+hicolor_snapshot=		autotools/hicolor-snapshot-0.11.tar.bz2
+minitheme_snapshot=		autotools/minitheme-snapshot.tar.bz2
+ACLOCAL_AMFLAGS=		-I autotools
 ADG_DIST_CONFIGURE_FLAGS=	--enable-pango \
 				--with-gtk=gtk3 \
 				--enable-gtk-doc \
@@ -33,17 +33,17 @@ EXTRA_DIST=			COPYING \
 				INSTALL \
 				THANKS \
 				adg.doap \
-				build/config.rpath \
-				build/build-win \
-				build/adg.nsi \
-				build/adg-header.bmp \
-				build/adg-welcome.bmp \
-				build/adg.ico \
-				build/gschemas.compiled \
-				build/settings.ini \
+				autotools/config.rpath \
+				autotools/build-win \
+				autotools/adg.nsi \
+				autotools/adg-header.bmp \
+				autotools/adg-welcome.bmp \
+				autotools/adg.ico \
+				autotools/gschemas.compiled \
+				autotools/settings.ini \
 				$(hicolor_snapshot) \
 				$(minitheme_snapshot) \
-				build/minitheme-snapshot.tar.bz2 \
+				autotools/minitheme-snapshot.tar.bz2 \
 				$(BUILT_SOURCES)
 CLEANFILES=			test-report.xml \
 				test-report.html \
@@ -98,8 +98,8 @@ _host/minitheme: _host $(srcdir)/$(minitheme_snapshot)
 	$(BZIP2) -dc $(abs_srcdir)/$(minitheme_snapshot) | $(TAR) xf - ; \
 	cd ..
 
-$(INSTALLER): _host/docs/adg/adg.pdf _host/hicolor _host/minitheme $(srcdir)/build/adg.nsi
-	$(MAKENSIS) -NOCD $(srcdir)/build/adg.nsi
+$(INSTALLER): _host/docs/adg/adg.pdf _host/hicolor _host/minitheme $(srcdir)/autotools/adg.nsi
+	$(MAKENSIS) -NOCD $(srcdir)/autotools/adg.nsi
 
 clean-installer:
 	-rm -fr _host
@@ -125,13 +125,13 @@ src/adg/adg-canvas.c.gcov:
 
 
 # Compilation database, used by language servers
-cdb: clean build/compile_commands.json
+cdb: clean autotools/compile_commands.json
 
-build/compile_commands.json:
+autotools/compile_commands.json:
 	bear -o $@ $(MAKE) $(AM_MAKEFLAGS)
 
 clean-cdb:
-	-rm -f  build/compile_commands.json
+	-rm -f  autotools/compile_commands.json
 
 
 .PHONY: installer coverage database

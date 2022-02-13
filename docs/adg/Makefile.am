@@ -1,4 +1,4 @@
-include $(top_srcdir)/build/Makefile.am.common
+include $(top_srcdir)/autotools/Makefile.am.common
 
 DOC_MODULE=		adg
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
@@ -88,7 +88,7 @@ GTKDOC_LIBS+=		$(CAIRO_LIBS) \
 			$(CAIRO_GOBJECT_LIBS) \
 			$(GOBJECT2_LIBS)
 
-include $(top_srcdir)/build/Makefile.am.gtk-doc
+include $(top_srcdir)/autotools/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE)-sections.txt \
 			$(DOC_MODULE).types

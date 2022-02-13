@@ -7,4 +7,4 @@ abs_builddir=@abs_builddir@
 abs_top_builddir=@abs_top_builddir@
 pkgconfigdir=$(libdir)/pkgconfig
 
-include $(top_srcdir)/build/Makefile.am.gtester
+include $(top_srcdir)/autotools/Makefile.am.gtester

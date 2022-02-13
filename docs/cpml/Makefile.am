@@ -1,4 +1,4 @@
-include $(top_srcdir)/build/Makefile.am.common
+include $(top_srcdir)/autotools/Makefile.am.common
 
 DOC_MODULE=		cpml
 DOC_MAIN_SGML_FILE=	$(DOC_MODULE)-docs.xml
@@ -22,7 +22,7 @@ HTML_IMAGES=
 content_files=
 expand_content_files=
 
-include $(top_srcdir)/build/Makefile.am.gtk-doc
+include $(top_srcdir)/autotools/Makefile.am.gtk-doc
 
 DISTCLEANFILES=		$(DOC_MODULE)-sections.txt
 

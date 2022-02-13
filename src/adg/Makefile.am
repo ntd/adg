@@ -1,4 +1,4 @@
-include $(top_srcdir)/build/Makefile.am.common
+include $(top_srcdir)/autotools/Makefile.am.common
 
 
 if HAVE_TEST_FRAMEWORK

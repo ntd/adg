@@ -1,4 +1,4 @@
-include $(top_srcdir)/build/Makefile.am.common
+include $(top_srcdir)/autotools/Makefile.am.common
 
 AM_CPPFLAGS=			-I$(top_srcdir)/src \
 				-I$(top_builddir)/src \
