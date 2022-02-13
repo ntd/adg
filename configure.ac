@@ -96,6 +96,7 @@ AC_ARG_VAR([TAR])
 AC_PATH_PROG([TAR],[tar],[/usr/bin/tar])
 AC_ARG_VAR([BZIP2])
 AC_PATH_PROG([BZIP2],[bzip2],[/usr/bin/bzip2])
+AC_PATH_PROG([BEAR],[bear],[/usr/bin/bear])
 
 
 # Check for coverage build

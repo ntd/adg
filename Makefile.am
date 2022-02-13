@@ -125,10 +125,16 @@ src/adg/adg-canvas.c.gcov:
 
 
 # Compilation database, used by language servers
-cdb: clean autotools/compile_commands.json
+cdb: autotools/compile_commands.json
 
 autotools/compile_commands.json:
-	bear -o $@ $(MAKE) $(AM_MAKEFLAGS)
+	$(AM_V_GEN)if test -x $(BEAR) ; then \
+		$(MAKE) $(AM_MAKEFLAGS) clean ; \
+		$(BEAR) --output $@ -- $(MAKE) $(AM_MAKEFLAGS) ; \
+	else \
+		echo ' *WARN  bear is required to generate $@' ; \
+		exit 1 ; \
+	fi
 
 clean-cdb:
 	-rm -f  autotools/compile_commands.json
