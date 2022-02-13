@@ -1,0 +1,66 @@
+image: debian:stretch
+
+stages:
+    - prepare
+    - build
+    - test
+
+install-deps:
+    stage: prepare
+    script:
+        - apt install -qq
+            build-essential
+            gobject-introspection
+            libgirepository1.0-dev
+            libcairo2-dev
+            libpango1.0-dev
+            libgtk2.0-dev
+            libgtk-3-dev
+            gtk-doc-tools
+        # A recent meson is required, so use `pip3` instead of `apt`
+        - apt install python3-pip
+        - pip3 install meson ninja
+
+build-gtk2-autotools:
+    stage: build
+    script:
+        - mkdir build-autotools-gtk2
+        - cd build-autotools-gtk2
+        - ../configure --enable-gtk-doc --with-gtk=gtk2
+        - make
+
+build-gtk3-autotools:
+    stage: build
+    script:
+        - mkdir build-autotools-gtk3
+        - cd build-autotools-gtk3
+        - ../configure --enable-gtk-doc --with-gtk=gtk3
+        - make
+
+build-gtk2-meson:
+    stage: build
+    script:
+        - meson -D gtk=gtk2 build-meson-gtk2
+        - cd build-meson-gtk2
+        - ninja
+
+# Default build target: include everything possible
+build-meson:
+    stage: build
+    script:
+        - meson -D b_coverage=true
+                -D gtk=gtk3
+                -D pango=enabled
+                -D gtk-doc=enabled
+                -D introspection=enabled
+                -D tests=enabled
+                build
+        - cd build
+        - ninja
+
+test-meson:
+    stage: test
+    needs: [build-meson]
+    script:
+        - cd build
+        - ninja test
