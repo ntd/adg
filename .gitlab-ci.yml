@@ -2,6 +2,7 @@ image: registry.gitlab.com/libadg/adg:stretch
 
 stages:
     - build
+    - coverage
 
 build-autotools-gtk2:
     stage: build
@@ -32,12 +33,12 @@ build-autotools:
         - make
         - make check
         - make distcheck
-        - mkdir autotools-dist
-        - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
+        - mkdir ../autotools-dist
+        - for f in *.bz2; do sha256sum -b $f > ../autotools-dist/$f.sha256sum && mv $f ../autotools-dist/; done
     artifacts:
         expire_in: 1 day
         paths:
-            - build/autotools-dist/
+            - autotools-dist/
 
 build-meson-gtk2:
     stage: build
@@ -55,8 +56,7 @@ build-meson-gtk2:
 build-meson:
     stage: build
     script:
-        - meson -D b_coverage=true
-                -D gtk=gtk3
+        - meson -D gtk=gtk3
                 -D gtk-doc=enabled
                 -D introspection=enabled
                 -D pango=enabled
@@ -66,7 +66,34 @@ build-meson:
         - ninja
         - ninja test
         - ninja dist
+        - mv meson-dist ..
     artifacts:
         expire_in: 1 day
         paths:
-            - build/meson-dist/
+            - meson-dist/
+
+coverage-meson:
+    stage: coverage
+    script:
+        # Build from the tarball to validate it
+        - mkdir dist
+        - cd meson-dist
+        - sha256sum -c *.sha256sum
+        - tar xf *.xz --directory ../dist/ --strip-components=1
+        - cd ../dist
+        - meson -D b_coverage=true
+                -D gtk=gtk3
+                -D gtk-doc=disabled
+                -D introspection=disabled
+                -D pango=enabled
+                -D tests=enabled
+                build
+        - cd build
+        - ninja test
+        - gcovr --xml-pretty --exclude-unreachable-branches --print-summary -o coverage.xml --root ..
+    coverage: /^\s*lines:\s*\d+.\d+\%/
+    artifacts:
+        expire_in: 1 day
+        name: ${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}-${CI_COMMIT_SHA}
+        reports:
+            cobertura: dist/build/coverage.xml
