@@ -23,6 +23,7 @@ USER root
 RUN apt-get update -qq && \
     apt-get install -qq --no-install-suggests \
         build-essential \
+        gcovr \
         git \
         gobject-introspection \
         gtk-doc-tools \
