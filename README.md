@@ -1,7 +1,7 @@
 General information
 ===================
-[![Pipeline Status](https://gitlab.com/libadg/adg/badges/master/pipeline.svg)](https://gitlab.com/libadg/adg/commits/master)
-[![Coverage Status](https://gitlab.com/libadg/adg/badges/master/coverage.svg)](https://gitlab.com/libadg/adg/commits/master)
+[![Pipeline Status](https://gitlab.com/libadg/adg/badges/master/pipeline.svg)](https://gitlab.com/libadg/adg/-/pipelines)
+[![Coverage Status](https://gitlab.com/libadg/adg/badges/master/coverage.svg)](https://gitlab.com/libadg/adg/-/commits)
 
 Automatic Drawing Generation is GObject-based library that provides
 a non-interactive cairo canvas specifically designed for generating
