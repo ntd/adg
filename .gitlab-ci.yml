@@ -42,6 +42,9 @@ build-meson:
                 build
         - cd build
         - ninja
+    artifacts:
+        paths:
+            - build/
 
 test-meson:
     stage: test
