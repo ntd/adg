@@ -47,5 +47,6 @@ test-meson:
     stage: test
     needs: [build-meson]
     script:
-        - cd build
+        - pwd
+        - ls -la
         - ninja test
