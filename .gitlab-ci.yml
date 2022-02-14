@@ -22,8 +22,11 @@ build-autotools:
     stage: build
     script:
         - ./autogen.sh
-        - mkdir build
-        - cd build
+        # `autogen.sh` generated files must be shared across stages,
+        # so copy everything under `tree/` for future consumption
+        - mkdir -p tree/build
+        - find . -maxdepth 1 -not -iname '.*' -not -iname 'tree' -exec cp -a {} tree/ '\;'
+        - cd tree/build
         - ../configure --enable-gcov
                        --enable-gtk-doc
                        --enable-introspection
@@ -33,7 +36,7 @@ build-autotools:
         - make
     artifacts:
         paths:
-            - build/
+            - tree/
 
 build-meson-gtk2:
     stage: build
@@ -68,11 +71,11 @@ test-autotools:
     needs:
         - build-autotools
     script:
-        - cd build
+        - cd tree/build
         - make check
     artifacts:
         paths:
-            - build/
+            - tree/
 
 test-meson:
     stage: test
@@ -90,14 +93,14 @@ dist-autotools:
     needs:
         - test-autotools
     script:
-        - cd build
+        - cd tree/build
         - make distcheck
         - mkdir autotools-dist
         - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
     artifacts:
         expire_in: 1 day
         paths:
-            - build/autotools-dist/
+            - tree/build/autotools-dist/
 
 dist-meson:
     stage: dist
