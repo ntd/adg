@@ -3,41 +3,58 @@ image: registry.gitlab.com/libadg/adg:stretch
 stages:
     - build
     - test
+    - dist
 
-build-gtk2-autotools:
+build-autotools-gtk2:
     stage: build
     script:
         - ./autogen.sh
-        - mkdir build-autotools-gtk2
-        - cd build-autotools-gtk2
-        - ../configure --enable-gtk-doc --with-gtk=gtk2
+        - mkdir build
+        - cd build
+        - ../configure --disable-gtk-doc
+                       --disable-introspection
+                       --disable-pango
+                       --with-gtk=gtk2
+                       --disable-test-framework
         - make
 
-build-gtk3-autotools:
+build-autotools:
     stage: build
     script:
         - ./autogen.sh
-        - mkdir build-autotools-gtk3
-        - cd build-autotools-gtk3
-        - ../configure --enable-gtk-doc --with-gtk=gtk3
+        - mkdir build
+        - cd build
+        - ../configure --enable-gcov
+                       --enable-gtk-doc
+                       --enable-introspection
+                       --enable-pango
+                       --with-gtk=gtk3
+                       --enable-test-framework
         - make
+    artifacts:
+        paths:
+            - build/
 
-build-gtk2-meson:
+build-meson-gtk2:
     stage: build
     script:
-        - meson -D gtk=gtk2 build-meson-gtk2
-        - cd build-meson-gtk2
+        - meson -D gtk=gtk2
+                -D gtk-doc=disabled
+                -D introspection=disabled
+                -D pango=disabled
+                -D tests=disabled
+                build
+        - cd build
         - ninja
 
-# Default build target: include everything possible
 build-meson:
     stage: build
     script:
         - meson -D b_coverage=true
                 -D gtk=gtk3
-                -D pango=enabled
                 -D gtk-doc=enabled
                 -D introspection=enabled
+                -D pango=enabled
                 -D tests=enabled
                 build
         - cd build
@@ -46,10 +63,50 @@ build-meson:
         paths:
             - build/
 
+test-autotools:
+    stage: test
+    needs:
+        - build-autotools
+    script:
+        - cd build
+        - make check
+    artifacts:
+        paths:
+            - build/
+
 test-meson:
     stage: test
-    needs: [build-meson]
+    needs:
+        - build-meson
     script:
-        - pwd
-        - ls -la
+        - cd build
         - ninja test
+    artifacts:
+        paths:
+            - build/
+
+dist-autotools:
+    stage: dist
+    needs:
+        - test-autotools
+    script:
+        - cd build
+        - make distcheck
+        - mkdir autotools-dist
+        - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
+    artifacts:
+        expire_in: 1 day
+        paths:
+            - build/autotools-dist/
+
+dist-meson:
+    stage: dist
+    needs:
+        - test-meson
+    script:
+        - cd build
+        - ninja dist
+    artifacts:
+        expire_in: 1 day
+        paths:
+            - build/meson-dist/
