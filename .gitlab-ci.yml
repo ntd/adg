@@ -8,6 +8,7 @@ build-autotools-gtk2:
     stage: build
     script:
         - ./autogen.sh
+        # Using a VPATH build
         - mkdir build
         - cd build
         - ../configure --disable-gtk-doc
@@ -22,19 +23,20 @@ build-autotools:
     stage: build
     script:
         - ./autogen.sh
-        - mkdir build
-        - cd build
-        - ../configure --enable-gcov
-                       --enable-gtk-doc
-                       --enable-introspection
-                       --enable-pango
-                       --with-gtk=gtk3
-                       --enable-test-framework
+        # `make distcheck` does not work on VPATH builds because
+        # it expects NEWS (and possibly other files) in srcdir while
+        # I am autogenerating them in builddir
+        - ./configure --enable-gcov
+                      --enable-gtk-doc
+                      --enable-introspection
+                      --enable-pango
+                      --with-gtk=gtk3
+                      --enable-test-framework
         - make
         - make check
         - make distcheck
-        - mkdir ../autotools-dist
-        - for f in *.bz2; do sha256sum -b $f > ../autotools-dist/$f.sha256sum && mv $f ../autotools-dist/; done
+        - mkdir autotools-dist
+        - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
     artifacts:
         expire_in: 1 day
         paths:
