@@ -29,6 +29,7 @@ RUN apt-get update -qq && \
         gtk-doc-tools \
         libcairo2-dev \
         libgirepository1.0-dev \
+        libgladeui-dev \
         libgtk2.0-dev \
         libgtk-3-dev \
         libpango1.0-dev \
