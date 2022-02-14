@@ -2,8 +2,6 @@ image: registry.gitlab.com/libadg/adg:stretch
 
 stages:
     - build
-    - test
-    - dist
 
 build-autotools-gtk2:
     stage: build
@@ -17,16 +15,14 @@ build-autotools-gtk2:
                        --with-gtk=gtk2
                        --disable-test-framework
         - make
+        - make check
 
 build-autotools:
     stage: build
     script:
         - ./autogen.sh
-        # `autogen.sh` generated files must be shared across stages,
-        # so copy everything under `tree/` for future consumption
-        - mkdir -p tree/build
-        - find . -maxdepth 1 -not -iname '.*' -not -iname 'tree' -exec cp -a {} tree/ ';'
-        - cd tree/build
+        - mkdir build
+        - cd build
         - ../configure --enable-gcov
                        --enable-gtk-doc
                        --enable-introspection
@@ -34,9 +30,14 @@ build-autotools:
                        --with-gtk=gtk3
                        --enable-test-framework
         - make
+        - make check
+        - make distcheck
+        - mkdir autotools-dist
+        - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
     artifacts:
+        expire_in: 1 day
         paths:
-            - tree/
+            - build/autotools-dist/
 
 build-meson-gtk2:
     stage: build
@@ -49,6 +50,7 @@ build-meson-gtk2:
                 build
         - cd build
         - ninja
+        - ninja test
 
 build-meson:
     stage: build
@@ -62,52 +64,7 @@ build-meson:
                 build
         - cd build
         - ninja
-    artifacts:
-        paths:
-            - build/
-
-test-autotools:
-    stage: test
-    needs:
-        - build-autotools
-    script:
-        - cd tree/build
-        - make check
-    artifacts:
-        paths:
-            - tree/
-
-test-meson:
-    stage: test
-    needs:
-        - build-meson
-    script:
-        - cd build
         - ninja test
-    artifacts:
-        paths:
-            - build/
-
-dist-autotools:
-    stage: dist
-    needs:
-        - test-autotools
-    script:
-        - cd tree/build
-        - make distcheck
-        - mkdir autotools-dist
-        - for f in *.bz2; do sha256sum -b $f > autotools-dist/$f.sha256sum && mv $f autotools-dist/; done
-    artifacts:
-        expire_in: 1 day
-        paths:
-            - tree/build/autotools-dist/
-
-dist-meson:
-    stage: dist
-    needs:
-        - test-meson
-    script:
-        - cd build
         - ninja dist
     artifacts:
         expire_in: 1 day
