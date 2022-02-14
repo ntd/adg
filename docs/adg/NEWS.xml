@@ -6,6 +6,24 @@
 <title>News archive</title>
 <subtitle>Summary of changes between releases</subtitle>
 
+<simplesect id="NEWS.0.9.4">
+<title>ADG 0.9.4</title>
+
+<para>Allow to build the ADG project with <ulink url="https://mesonbuild.com">meson</ulink>.
+This is a major feature that allows to modernize part of the codebase
+and speed up the building process. The legacy autotools code will be
+kept around for some time, but meson is the preferred one.</para>
+<para>Drop Travis code integration and switch to GitLab. Thanks for the
+fish Travis, but the new model is not that opensource friendly.</para>
+<para>New API (<code>adg_canvas_export_data</code>) that returns the data as a memory
+chunk instead of writing it to a file. This is a requirement for
+<ulink url="https://github.com/ntd/adg-openresty">adg-openresty</ulink>.</para>
+<para>Update documentation building to latest gtk-doc changes.</para>
+<para>Improve uninstalled detection at runtime: the <code>adg-demo-uninstalled</code>
+hack is no longer needed.</para>
+<para>Fix <code>g_memdup</code> vulnerability.</para>
+</simplesect>
+
 <simplesect id="NEWS.0.9.3">
 <title>ADG 0.9.3</title>
 
