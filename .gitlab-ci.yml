@@ -25,7 +25,7 @@ build-autotools:
         # `autogen.sh` generated files must be shared across stages,
         # so copy everything under `tree/` for future consumption
         - mkdir -p tree/build
-        - find . -maxdepth 1 -not -iname '.*' -not -iname 'tree' -exec cp -a {} tree/ '\;'
+        - find . -maxdepth 1 -not -iname '.*' -not -iname 'tree' -exec cp -a {} tree/ ';'
         - cd tree/build
         - ../configure --enable-gcov
                        --enable-gtk-doc
