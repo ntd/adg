@@ -67,7 +67,6 @@ adg_c_files = files([
     'adg-table-row.c',
     'adg-table-style.c',
     'adg-table.c',
-    'adg-text.c',
     'adg-textual.c',
     'adg-title-block.c',
     'adg-toy-text.c',
@@ -110,7 +109,6 @@ adg_h_files = files([
     'adg-table-row.h',
     'adg-table-style.h',
     'adg-table.h',
-    'adg-text.h',
     'adg-text-internal.h',
     'adg-textual.h',
     'adg-toy-text.h',
@@ -149,7 +147,6 @@ adg_internal_names = [
     'adg-stroke-private.h',
     'adg-table-private.h',
     'adg-table-style-private.h',
-    'adg-text-private.h',
     'adg-title-block-private.h',
     'adg-toy-text-private.h',
     'adg-trail-private.h',
@@ -158,11 +155,16 @@ adg_internal_names = [
 if pangocairo_dep.found()
     adg_c_files += files([
         'adg-pango-style.c',
+        'adg-text.c',
     ])
     adg_h_files += files([
         'adg-pango-style.h',
+        'adg-text.h',
     ])
-    adg_internal_names += 'adg-pango-style-private.h'
+    adg_internal_names += [
+        'adg-pango-style-private.h',
+        'adg-text-private.h',
+    ]
 endif
 
 if gtk_dep.found()

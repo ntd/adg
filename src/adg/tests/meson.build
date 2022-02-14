@@ -20,7 +20,6 @@ adg_tests = [
     'test-marker',
     'test-matrix',
     'test-model',
-    'test-pango-style',
     'test-param-dress',
     'test-path',
     'test-point',
@@ -41,6 +40,12 @@ adg_tests = [
     'test-type-builtins',
     'test-utils',
 ]
+
+if pangocairo_dep.found()
+    adg_tests += [
+        'test-pango-style',
+    ]
+endif
 
 if gtk_dep.found() and gtk_dep.version().version_compare('<3.10.8')
     adg_tests += [
