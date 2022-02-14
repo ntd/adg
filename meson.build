@@ -1,6 +1,6 @@
 project('adg', 'c',
     meson_version: '>=0.56.0',
-    version:       '0.9.3',
+    version:       '0.9.4',
     license:       'LGPL-2.1-or-later'
 )
 
@@ -21,10 +21,10 @@ metadata = {
 # - If any interfaces have been removed or changed since the last
 #   public release, then set age to 0.
 cpml_current  = 4
-cpml_revision = 2
+cpml_revision = 3
 cpml_age      = 0
-adg_current  = 8
-adg_revision = 1
+adg_current  = 9
+adg_revision = 0
 adg_age      = 1
 
 
