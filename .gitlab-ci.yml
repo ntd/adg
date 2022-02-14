@@ -74,6 +74,8 @@ build-meson:
 
 coverage-meson:
     stage: coverage
+    needs:
+        - build-meson
     script:
         # Build from the tarball to validate it
         - mkdir dist
