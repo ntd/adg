@@ -624,7 +624,7 @@ _adg_method_get_text(void)
     /* Trying a complex formatting with multiple fields */
     adg_dim_style_set_decimals(dim_style, 2);
     adg_dim_style_set_number_arguments(dim_style, "aieDMSdms");
-    adg_dim_style_set_number_format(dim_style, "%%Raw: \\(%g, %g, %g\\); Truncated: \\(%g, %g, %g\\); Rounded: \\(%g, %g, %g\\)");
+    adg_dim_style_set_number_format(dim_style, "\\%Raw: \\(%g, %g, %g\\); Truncated: \\(%g, %g, %g\\); Rounded: \\(%g, %g, %g\\)");
     text = adg_dim_get_text(dim, 7.891);
     g_assert_cmpstr(text, ==, "%Raw: (7.891, 53.46, 27.6); Truncated: (7, 53, 27); Rounded: (7.89, 53.46, 27.6)");
     g_free(text);
