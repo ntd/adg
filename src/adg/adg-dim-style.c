@@ -611,7 +611,7 @@ adg_dim_style_set_color_dress(AdgDimStyle *dim_style, AdgDress dress)
  *
  * Gets the @dim_style color dress to be used. This dress should be
  * intended as a fallback color as it could be overriden by more
- * specific dresses, such as a color explicitely specified on the
+ * specific dresses, such as a color explicitly specified on the
  * #AdgDimStyle:value-dress.
  *
  * Returns: (transfer none): the color dress.

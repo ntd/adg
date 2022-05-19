@@ -941,7 +941,7 @@ adg_dim_get_detached(AdgDim *dim)
  * @dim: an #AdgDim
  * @value: (allow-none): the value text
  *
- * Explicitely sets the text to use as value. If @value
+ * Explicitly sets the text to use as value. If @value
  * is <constant>NULL</constant> or was never set, an automatic
  * text is calculated using the format specified in the current
  * #AdgDimStyle and getting its value by calling
@@ -1416,7 +1416,7 @@ adg_dim_compute_geometry(AdgDim *dim)
     if (data->geometry.computed)
         return TRUE;
 
-    /* compute_geometry virtual method explicitely set to NULL means the
+    /* compute_geometry virtual method explicitly set to NULL means the
      * entity does not have any geometry data, so just set computed to TRUE */
     klass = ADG_DIM_GET_CLASS(dim);
     if (klass->compute_geometry != NULL && ! klass->compute_geometry(dim))

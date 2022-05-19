@@ -270,7 +270,7 @@ cpml_arc_to_cairo(const CpmlPrimitive *arc, cairo_t *cr)
  *
  * This function works in a similar way as cpml_arc_to_cairo() but
  * has two important differences: it does not need a cairo context
- * and the number of curves to be generated is explicitely defined.
+ * and the number of curves to be generated is explicitly defined.
  * The latter difference allows a more specific error control from
  * the application: in the file src/cairo-arc.c, found in the cairo
  * tarball (at least in cairo-1.9.1), there is a table showing the

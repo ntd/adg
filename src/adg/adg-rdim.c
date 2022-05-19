@@ -184,7 +184,7 @@ adg_rdim_new(void)
  * @radius: (allow-none): where the quote must be applied on the arc
  * @pos:    (allow-none): position of the quote text
  *
- * Creates a new quote by specifying explicitely all the needed
+ * Creates a new quote by specifying explicitly all the needed
  * data to get a valid quote.
  *
  * Returns: the newly created quote.

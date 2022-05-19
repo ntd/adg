@@ -41,7 +41,7 @@ CAIRO_BEGIN_DECLS
  *                     to another given point.
  * @put_intersections: gets the intersection points between a primitive of
  *                     this type and a primitive of any type. The number
- *                     of returned intersections can be explicitely limited.
+ *                     of returned intersections can be explicitly limited.
  * @offset:            creates a new primitive of tha same type parallel
  *                     to the original one with a given distance.
  * @join:              join two primitives (the first one of this class type)

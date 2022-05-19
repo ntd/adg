@@ -126,7 +126,7 @@ adg_table_style_class_init(AdgTableStyleClass *klass)
 
     param = g_param_spec_double("row-height",
                                 P_("Row Height"),
-                                P_("The fallback row height when not explicitely specified while creating a new row"),
+                                P_("The fallback row height when not explicitly specified while creating a new row"),
                                 0, G_MAXDOUBLE, 30,
                                 G_PARAM_READWRITE);
     g_object_class_install_property(gobject_class, PROP_ROW_HEIGHT, param);
@@ -277,7 +277,7 @@ adg_table_style_set_color_dress(AdgTableStyle *table_style, AdgDress dress)
  *
  * Gets the @table_style color dress to be used. This dress should be
  * intended as a fallback color as it could be overriden by more
- * specific dresses, such as a color explicitely specified on the
+ * specific dresses, such as a color explicitly specified on the
  * #AdgTableStyle:value-dress.
  *
  * Returns: (transfer none): the color dress.

@@ -44,7 +44,7 @@ step	"Creating dummy ChangeLog, if needed" \
 	"test -f './ChangeLog' || touch './ChangeLog'"
 
 # autoreconf interaction with libtool has been broken for ages:
-# explicitely calling libtoolize seems to avoid some problem
+# explicitly calling libtoolize seems to avoid some problem
 step	"Calling libtoolize" \
 	"libtoolize --automake"
 

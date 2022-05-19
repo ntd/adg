@@ -216,7 +216,7 @@ AS_IF([test "x${with_gtk}" = "xcheck"],[with_gtk=no])
 
 # Handle failures
 AS_IF([test "x${with_gtk}" != "xno" -a "x${gtk_pkg}" = "x"],
-      [AC_MSG_ERROR([GTK+ support explicitely required but no valid GTK+ found])])
+      [AC_MSG_ERROR([GTK+ support explicitly required but no valid GTK+ found])])
 
 # 3.10.8 is the last GTK3 version known to run tests properly
 AS_IF([test "x${with_gtk}" = "xgtk3"],
@@ -259,7 +259,7 @@ AS_IF([test "x${glade_pkg}" != "x" -a "x${glade_pkg}" != "xcheck"],
 
 # Handle "yes" failure
 AS_IF([test "x${glade_pkg}" = "xcheck" -a "x${with_glade_catalogdir}" = "xyes"],
-      [AC_MSG_ERROR([Glade support explicitely required but no valid gladeui found])])
+      [AC_MSG_ERROR([Glade support explicitly required but no valid gladeui found])])
 
 # Handle "check" graceful degradation
 AS_IF([test "x${glade_pkg}" = "xcheck" -a "x${with_glade_catalogdir}" = "xcheck"],

@@ -422,7 +422,7 @@ adg_table_set_cell(AdgTable *table, const gchar *name,
  * adg_table_get_table_style:
  * @table: an #AdgTable
  *
- * Gets the #AdgTableStyle explicitely set on @table. This is a kind
+ * Gets the #AdgTableStyle explicitly set on @table. This is a kind
  * of accessor function: for rendering purpose use adg_entity_style()
  * instead. The returned object is owned by @table and should not be
  * freed or modified.

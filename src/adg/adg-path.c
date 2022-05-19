@@ -831,7 +831,7 @@ adg_path_close(AdgPath *path)
  * @start is greather than @end, the arc will be rendered in couterclockwise
  * direction.
  *
- * By explicitely setting the whole arc data, the start point could be
+ * By explicitly setting the whole arc data, the start point could be
  * different from the current point. In this case, if @path has no
  * current point before the call a %CPML_MOVE to the start point of
  * the arc will be automatically prepended to the arc. If @path has a

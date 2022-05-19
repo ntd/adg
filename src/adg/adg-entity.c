@@ -51,7 +51,7 @@
 
 /**
  * AdgEntityClass:
- * @destroy:        when a destroy request has been explicitely requested
+ * @destroy:        when a destroy request has been explicitly requested
  * @parent_set:     called whenever the parent of an entity has changed
  * @global_changed: the global matrix has been invalidated
  * @local_changed:  the local matrix has been invalidated
@@ -205,7 +205,7 @@ adg_entity_class_init(AdgEntityClass *klass)
      * AdgEntity::destroy:
      * @entity: an #AdgEntity
      *
-     * Emitted to explicitely destroy @entity. It unreferences
+     * Emitted to explicitly destroy @entity. It unreferences
      * @entity so that will be destroyed, unless the caller owns
      * an additional references added with g_object_ref().
      *
@@ -897,7 +897,7 @@ adg_entity_set_extents(AdgEntity *entity, const CpmlExtents *extents)
  * account rendering properties such as line thickness or caps.
  *
  * The #AdgEntity::arrange signal should be emitted before
- * this call (either explicitely trought adg_entity_arrange()
+ * this call (either explicitly trought adg_entity_arrange()
  * or implicitely with adg_entity_render()) in order to get
  * an up to date boundary box.
  *

@@ -35,11 +35,11 @@
  * by the canvas and the border. The margins specify the distance
  * between the canvas border and the media extents.
  *
- * The canvas (hence the media) size can be explicitely specified
+ * The canvas (hence the media) size can be explicitly specified
  * by directly writing to the #AdgCanvas:size property or using any
  * valid setter, such as adg_canvas_set_size(),
  * adg_canvas_set_size_explicit() or the convenient
- * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitely
+ * adg_canvas_set_paper() GTK+ wrapper. You can also set explicitly
  * only one dimension and let the other one be computed automatically.
  * This can be done by setting it to <constant>0</constant>.
  * The ratio between the media unit (typically points on printing
@@ -51,7 +51,7 @@
  * Margins and paddings are then added to the extents to get the
  * border coordinates and the final bounding box.
  *
- * Instead, when the size is explicitely set, the final bounding
+ * Instead, when the size is explicitly set, the final bounding
  * box is forcibly set to this value without taking the canvas
  * extents into account. The margins are then subtracted to get
  * the coordinates of the border. In this case the paddings are
@@ -584,7 +584,7 @@ adg_canvas_get_size(AdgCanvas *canvas)
  *
  * The ADG library is intentionally unit agnostic, i.e. the global space is
  * represented in whatever unit you want. There are a couple of cairo APIs
- * that explicitely requires points though, most notably
+ * that explicitly requires points though, most notably
  * cairo_pdf_surface_set_size() and cairo_ps_surface_set_size().
  *
  * On PDF and postscript surfaces, the AdgCanvas:factor property will be the
