@@ -311,7 +311,7 @@ const gchar *
 _adg_dpgettext(const gchar *domain, const gchar *msgctxtid, gsize msgidoffset)
 {
     const gchar *translation;
-    gchar *sep;
+    const gchar *sep;
 
     translation = _adg_dgettext(domain, msgctxtid);
 
